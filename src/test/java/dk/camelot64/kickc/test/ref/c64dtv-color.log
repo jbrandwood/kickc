@@ -311,11 +311,32 @@ const byte LIGHT_GREEN = $d;
 const byte LIGHT_BLUE = $e;
 const byte LIGHT_GREY = $f;
 
+// Get the value to store into D018 to display a specific screen and charset/bitmap
+// Optimized for ASM from (byte)((((word)screen&$3fff)/$40)|(((word)charset&$3fff)/$400));
+inline byte toD018(byte* screen, byte* gfx) {
+    return (>((((word)screen&$3fff)<<2)))|(((>((word)gfx))>>2)&$f);
+}
+
+// Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
+// Optimized for ASM from %00000011 ^ (byte)((word)gfx/$4000)
+inline byte toDd00(byte* gfx) {
+    return %00000011 ^ (>((word)gfx))>>6;
+}
+
+// Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed
+inline void vicSelectGfxBank(byte* gfx) {
+    *CIA2_PORT_A_DDR = %00000011;
+    *CIA2_PORT_A = toDd00(gfx);
+}
+
 Adding pre/post-modifier *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
 Adding pre/post-modifier *((byte[16]) main::palette + (byte) main::c) ← ++ *((byte[16]) main::palette + (byte) main::c)
 SYMBOLS
 (label) @1
 (label) @2
+(label) @3
+(label) @4
+(label) @5
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -508,6 +529,34 @@ SYMBOLS
 (byte) main::c
 (byte[16]) main::palette
 (byte) main::r
+inline (byte()) toD018((byte*) toD018::screen , (byte*) toD018::gfx)
+(word~) toD018::$0
+(word~) toD018::$1
+(word~) toD018::$2
+(byte~) toD018::$3
+(word~) toD018::$4
+(byte~) toD018::$5
+(byte~) toD018::$6
+(byte~) toD018::$7
+(byte~) toD018::$8
+(label) toD018::@1
+(label) toD018::@return
+(byte*) toD018::gfx
+(byte) toD018::return
+(byte*) toD018::screen
+inline (byte()) toDd00((byte*) toDd00::gfx)
+(word~) toDd00::$0
+(byte~) toDd00::$1
+(byte~) toDd00::$2
+(byte/word/dword~) toDd00::$3
+(label) toDd00::@1
+(label) toDd00::@return
+(byte*) toDd00::gfx
+(byte) toDd00::return
+inline (void()) vicSelectGfxBank((byte*) vicSelectGfxBank::gfx)
+(byte~) vicSelectGfxBank::$0
+(label) vicSelectGfxBank::@return
+(byte*) vicSelectGfxBank::gfx
 
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT_DDR ← ((byte*)) 0
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT ← ((byte*)) 1
@@ -663,6 +712,51 @@ INITIAL CONTROL FLOW GRAPH
   (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
   (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
   (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
+  to:@1
+toD018: scope:[toD018]  from
+  (word~) toD018::$0 ← ((word)) (byte*) toD018::screen
+  (word~) toD018::$1 ← (word~) toD018::$0 & (word/signed word/dword/signed dword) 16383
+  (word~) toD018::$2 ← (word~) toD018::$1 << (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$3 ← > (word~) toD018::$2
+  (word~) toD018::$4 ← ((word)) (byte*) toD018::gfx
+  (byte~) toD018::$5 ← > (word~) toD018::$4
+  (byte~) toD018::$6 ← (byte~) toD018::$5 >> (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$7 ← (byte~) toD018::$6 & (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte~) toD018::$8 ← (byte~) toD018::$3 | (byte~) toD018::$7
+  (byte) toD018::return ← (byte~) toD018::$8
+  to:toD018::@return
+toD018::@return: scope:[toD018]  from toD018 toD018::@1
+  (byte) toD018::return ← (byte) toD018::return
+  return (byte) toD018::return
+  to:@return
+toD018::@1: scope:[toD018]  from
+  to:toD018::@return
+@1: scope:[]  from @begin
+  to:@2
+toDd00: scope:[toDd00]  from
+  (word~) toDd00::$0 ← ((word)) (byte*) toDd00::gfx
+  (byte~) toDd00::$1 ← > (word~) toDd00::$0
+  (byte~) toDd00::$2 ← (byte~) toDd00::$1 >> (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte/word/dword~) toDd00::$3 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) toDd00::$2
+  (byte) toDd00::return ← (byte/word/dword~) toDd00::$3
+  to:toDd00::@return
+toDd00::@return: scope:[toDd00]  from toDd00 toDd00::@1
+  (byte) toDd00::return ← (byte) toDd00::return
+  return (byte) toDd00::return
+  to:@return
+toDd00::@1: scope:[toDd00]  from
+  to:toDd00::@return
+@2: scope:[]  from @1
+  to:@3
+vicSelectGfxBank: scope:[vicSelectGfxBank]  from
+  *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+  *((byte*) CIA2_PORT_A) ← (byte~) vicSelectGfxBank::$0
+  to:vicSelectGfxBank::@return
+vicSelectGfxBank::@return: scope:[vicSelectGfxBank]  from vicSelectGfxBank
+  return 
+  to:@return
+@3: scope:[]  from @2
   (byte*) DTV_FEATURE ← ((byte*)) (word/dword/signed dword) 53311
   (byte) DTV_FEATURE_ENABLE ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) DTV_FEATURE_DISABLE_TIL_RESET ← (byte/signed byte/word/signed word/dword/signed dword) 2
@@ -694,7 +788,7 @@ INITIAL CONTROL FLOW GRAPH
   (dword) DTV_COLOR_BANK_DEFAULT ← (dword/signed dword) 120832
   (byte*) DTV_GRAPHICS_VIC_BANK ← ((byte*)) (word/dword/signed dword) 53309
   (byte*) DTV_GRAPHICS_HICOL_BANK ← ((byte*)) (word/dword/signed dword) 53310
-  to:@1
+  to:@4
 dtvSetCpuBankSegment1: scope:[dtvSetCpuBankSegment1]  from
   (byte*) dtvSetCpuBankSegment1::cpuBank ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
   *((byte*) dtvSetCpuBankSegment1::cpuBank) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx
@@ -703,7 +797,7 @@ dtvSetCpuBankSegment1: scope:[dtvSetCpuBankSegment1]  from
 dtvSetCpuBankSegment1::@return: scope:[dtvSetCpuBankSegment1]  from dtvSetCpuBankSegment1
   return 
   to:@return
-@1: scope:[]  from @begin
+@4: scope:[]  from @3
   (byte*) DTV_BLITTER_SRCA_LO ← ((byte*)) (word/dword/signed dword) 54048
   (byte*) DTV_BLITTER_SRCA_MI ← ((byte*)) (word/dword/signed dword) 54049
   (byte*) DTV_BLITTER_SRCA_HI ← ((byte*)) (word/dword/signed dword) 54050
@@ -768,7 +862,7 @@ dtvSetCpuBankSegment1::@return: scope:[dtvSetCpuBankSegment1]  from dtvSetCpuBan
   (byte) DTV_BLIT_DEST_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 8
   (byte) DTV_BLIT_STATUS_BUSY ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) DTV_BLIT_STATUS_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  to:@2
+  to:@5
 main: scope:[main]  from
   asm { sei  }
   *((byte*) DTV_FEATURE) ← (byte) DTV_FEATURE_ENABLE
@@ -828,11 +922,15 @@ main::@16: scope:[main]  from
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@2: scope:[]  from @1
+@5: scope:[]  from @4
   call main 
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @5
 
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Removing unused procedure toD018
+Removing unused procedure toDd00
+Removing unused procedure vicSelectGfxBank
 Removing unused procedure dtvSetCpuBankSegment1
 Eliminating unused variable (byte*) PROCPORT_DDR and assignment [0] (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
 Eliminating unused variable (byte) PROCPORT_DDR_MEMORY_MASK and assignment [1] (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
@@ -986,6 +1084,8 @@ Eliminating unused variable (byte) DTV_BLIT_DEST_CONT and assignment [157] (byte
 Eliminating unused variable (byte) DTV_BLIT_STATUS_BUSY and assignment [158] (byte) DTV_BLIT_STATUS_BUSY ← (byte/signed byte/word/signed word/dword/signed dword) 1
 Eliminating unused variable (byte) DTV_BLIT_STATUS_IRQ and assignment [159] (byte) DTV_BLIT_STATUS_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 2
 Removing empty block @1
+Removing empty block @2
+Removing empty block @4
 Removing empty block main::@9
 Removing empty block main::@3
 Removing empty block main::@10
@@ -1002,6 +1102,8 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) 53266
   (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
+  to:@3
+@3: scope:[]  from @begin
   (byte*) DTV_FEATURE#0 ← ((byte*)) (word/dword/signed dword) 53311
   (byte) DTV_FEATURE_ENABLE#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte*) DTV_CONTROL#0 ← ((byte*)) (word/dword/signed dword) 53308
@@ -1009,8 +1111,8 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte) DTV_HIGHCOLOR#0 ← (byte/signed byte/word/signed word/dword/signed dword) 4
   (byte) DTV_BADLINE_OFF#0 ← (byte/signed byte/word/signed word/dword/signed dword) 32
   (byte*) DTV_PALETTE#0 ← ((byte*)) (word/dword/signed dword) 53760
-  to:@2
-main: scope:[main]  from @2
+  to:@5
+main: scope:[main]  from @5
   asm { sei  }
   *((byte*) DTV_FEATURE#0) ← (byte) DTV_FEATURE_ENABLE#0
   (byte~) main::$0 ← (byte) DTV_HIGHCOLOR#0 | (byte) DTV_BORDER_OFF#0
@@ -1055,16 +1157,17 @@ main::@8: scope:[main]  from main::@14 main::@8
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@2: scope:[]  from @begin
+@5: scope:[]  from @3
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@6
+@6: scope:[]  from @5
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @6
 
 SYMBOL TABLE SSA
-(label) @2
 (label) @3
+(label) @5
+(label) @6
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -1114,7 +1217,7 @@ SYMBOL TABLE SSA
 OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@5
-Culled Empty Block (label) @3
+Culled Empty Block (label) @6
 Succesful SSA optimization Pass2CullEmptyBlocks
 Simple Condition (bool~) main::$2 if(*((byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4
 Simple Condition (bool~) main::$3 if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7
@@ -1141,6 +1244,7 @@ if() condition always true - replacing block destination if(true) goto main::@4
 Succesful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Succesful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) @3
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@14
 Succesful SSA optimization Pass2CullEmptyBlocks
@@ -1154,12 +1258,12 @@ Constant inlined main::c#0 = (byte/signed byte/word/signed word/dword/signed dwo
 Constant inlined main::$1 = (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0
 Constant inlined main::$0 = (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @2 @end main main::@4 main::@6 main::@7 main::@8 
+Block Sequence Planned @begin @5 @end main main::@4 main::@6 main::@7 main::@8 
 Added new block during phi lifting main::@17(between main::@7 and main::@7)
 Added new block during phi lifting main::@18(between main::@8 and main::@8)
-Block Sequence Planned @begin @2 @end main main::@4 main::@6 main::@7 main::@8 main::@18 main::@17 
+Block Sequence Planned @begin @5 @end main main::@4 main::@6 main::@7 main::@8 main::@18 main::@17 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
+Adding NOP phi() at start of @5
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
@@ -1174,9 +1278,9 @@ Coalesced [20] main::r#3 ← main::r#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) main::@18
 Culled Empty Block (label) main::@17
-Block Sequence Planned @begin @2 @end main main::@4 main::@6 main::@7 main::@8 
+Block Sequence Planned @begin @5 @end main main::@4 main::@6 main::@7 main::@8 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
+Adding NOP phi() at start of @5
 Adding NOP phi() at start of @end
 Propagating live ranges...
 Propagating live ranges...
@@ -1186,14 +1290,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@2
-@2: scope:[]  from @begin
+  to:@5
+@5: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @5
   [3] phi() [ ] ( )
-main: scope:[main]  from @2
+main: scope:[main]  from @5
   asm { sei  }
   [5] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 [ ] ( main:2 [ ] )
   [6] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_BORDER_OFF#0|(const byte) DTV_BADLINE_OFF#0 [ ] ( main:2 [ ] )
@@ -1221,13 +1325,13 @@ main::@8: scope:[main]  from main::@7 main::@8
 
 DOMINATORS
 @begin dominated by  @begin 
-@2 dominated by  @2 @begin 
-@end dominated by  @2 @begin @end 
-main dominated by  @2 @begin main 
-main::@4 dominated by  @2 @begin main main::@4 
-main::@6 dominated by  @2 @begin main main::@6 main::@4 
-main::@7 dominated by  @2 main::@7 @begin main main::@6 main::@4 
-main::@8 dominated by  @2 main::@7 @begin main::@8 main main::@6 main::@4 
+@5 dominated by  @begin @5 
+@end dominated by  @begin @5 @end 
+main dominated by  @begin @5 main 
+main::@4 dominated by  @begin @5 main main::@4 
+main::@6 dominated by  @begin @5 main main::@6 main::@4 
+main::@7 dominated by  main::@7 @begin @5 main main::@6 main::@4 
+main::@8 dominated by  main::@7 @begin main::@8 @5 main main::@6 main::@4 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@4 tails: main::@4 blocks: null
@@ -1301,15 +1405,15 @@ INITIAL ASM
   .label DTV_PALETTE = $d200
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG4 @2
-b2:
+//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
+b5_from_bbegin:
+  jmp b5
+//SEG4 @5
+b5:
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG6 [3] phi from @5 to @end [phi:@5->@end]
+bend_from_b5:
   jmp bend
 //SEG7 @end
 bend:
@@ -1451,15 +1555,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label DTV_PALETTE = $d200
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG4 @2
-b2:
+//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
+b5_from_bbegin:
+  jmp b5
+//SEG4 @5
+b5:
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG6 [3] phi from @5 to @end [phi:@5->@end]
+bend_from_b5:
   jmp bend
 //SEG7 @end
 bend:
@@ -1556,7 +1660,7 @@ main: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b2
+Removing instruction jmp b5
 Removing instruction jmp bend
 Removing instruction jmp b4
 Removing instruction jmp b6
@@ -1566,12 +1670,12 @@ Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b7_from_b7 with b7
 Replacing label b8_from_b8 with b8
 Removing instruction bbegin:
-Removing instruction b2_from_bbegin:
-Removing instruction bend_from_b2:
+Removing instruction b5_from_bbegin:
+Removing instruction bend_from_b5:
 Removing instruction b7_from_b7:
 Removing instruction b8_from_b8:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
+Removing instruction b5:
 Removing instruction bend:
 Removing instruction b6:
 Removing instruction b7_from_b6:
@@ -1582,7 +1686,7 @@ Removing instruction jmp b8
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @2
+(label) @5
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -1639,11 +1743,11 @@ Score: 10180
   .const DTV_BADLINE_OFF = $20
   .label DTV_PALETTE = $d200
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
+//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
+//SEG4 @5
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+//SEG6 [3] phi from @5 to @end [phi:@5->@end]
 //SEG7 @end
 //SEG8 main
 main: {

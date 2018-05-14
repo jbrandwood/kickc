@@ -310,6 +310,24 @@ const byte LIGHT_GREEN = $d;
 const byte LIGHT_BLUE = $e;
 const byte LIGHT_GREY = $f;
 
+// Get the value to store into D018 to display a specific screen and charset/bitmap
+// Optimized for ASM from (byte)((((word)screen&$3fff)/$40)|(((word)charset&$3fff)/$400));
+inline byte toD018(byte* screen, byte* gfx) {
+    return (>((((word)screen&$3fff)<<2)))|(((>((word)gfx))>>2)&$f);
+}
+
+// Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
+// Optimized for ASM from %00000011 ^ (byte)((word)gfx/$4000)
+inline byte toDd00(byte* gfx) {
+    return %00000011 ^ (>((word)gfx))>>6;
+}
+
+// Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed
+inline void vicSelectGfxBank(byte* gfx) {
+    *CIA2_PORT_A_DDR = %00000011;
+    *CIA2_PORT_A = toDd00(gfx);
+}
+
 Importing basic-floats
 PARSING src/test/java/dk/camelot64/kickc/test/kc/basic-floats.kc
 // Library wrapping the BASIC floating point functions
@@ -776,6 +794,9 @@ SYMBOLS
 (label) @5
 (label) @50
 (label) @51
+(label) @52
+(label) @53
+(label) @54
 (label) @6
 (label) @7
 (label) @8
@@ -1244,6 +1265,34 @@ SYMBOLS
 (byte*) subFACfromMEM::mem
 (void()) tanFAC()
 (label) tanFAC::@return
+inline (byte()) toD018((byte*) toD018::screen , (byte*) toD018::gfx)
+(word~) toD018::$0
+(word~) toD018::$1
+(word~) toD018::$2
+(byte~) toD018::$3
+(word~) toD018::$4
+(byte~) toD018::$5
+(byte~) toD018::$6
+(byte~) toD018::$7
+(byte~) toD018::$8
+(label) toD018::@1
+(label) toD018::@return
+(byte*) toD018::gfx
+(byte) toD018::return
+(byte*) toD018::screen
+inline (byte()) toDd00((byte*) toDd00::gfx)
+(word~) toDd00::$0
+(byte~) toDd00::$1
+(byte~) toDd00::$2
+(byte/word/dword~) toDd00::$3
+(label) toDd00::@1
+(label) toDd00::@return
+(byte*) toDd00::gfx
+(byte) toDd00::return
+inline (void()) vicSelectGfxBank((byte*) vicSelectGfxBank::gfx)
+(byte~) vicSelectGfxBank::$0
+(label) vicSelectGfxBank::@return
+(byte*) vicSelectGfxBank::gfx
 
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT_DDR ← ((byte*)) 0
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT ← ((byte*)) 1
@@ -1354,9 +1403,54 @@ INITIAL CONTROL FLOW GRAPH
   (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
   (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
   (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
+  to:@1
+toD018: scope:[toD018]  from
+  (word~) toD018::$0 ← ((word)) (byte*) toD018::screen
+  (word~) toD018::$1 ← (word~) toD018::$0 & (word/signed word/dword/signed dword) 16383
+  (word~) toD018::$2 ← (word~) toD018::$1 << (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$3 ← > (word~) toD018::$2
+  (word~) toD018::$4 ← ((word)) (byte*) toD018::gfx
+  (byte~) toD018::$5 ← > (word~) toD018::$4
+  (byte~) toD018::$6 ← (byte~) toD018::$5 >> (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$7 ← (byte~) toD018::$6 & (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte~) toD018::$8 ← (byte~) toD018::$3 | (byte~) toD018::$7
+  (byte) toD018::return ← (byte~) toD018::$8
+  to:toD018::@return
+toD018::@return: scope:[toD018]  from toD018 toD018::@1
+  (byte) toD018::return ← (byte) toD018::return
+  return (byte) toD018::return
+  to:@return
+toD018::@1: scope:[toD018]  from
+  to:toD018::@return
+@1: scope:[]  from @begin
+  to:@2
+toDd00: scope:[toDd00]  from
+  (word~) toDd00::$0 ← ((word)) (byte*) toDd00::gfx
+  (byte~) toDd00::$1 ← > (word~) toDd00::$0
+  (byte~) toDd00::$2 ← (byte~) toDd00::$1 >> (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte/word/dword~) toDd00::$3 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) toDd00::$2
+  (byte) toDd00::return ← (byte/word/dword~) toDd00::$3
+  to:toDd00::@return
+toDd00::@return: scope:[toDd00]  from toDd00 toDd00::@1
+  (byte) toDd00::return ← (byte) toDd00::return
+  return (byte) toDd00::return
+  to:@return
+toDd00::@1: scope:[toDd00]  from
+  to:toDd00::@return
+@2: scope:[]  from @1
+  to:@3
+vicSelectGfxBank: scope:[vicSelectGfxBank]  from
+  *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+  *((byte*) CIA2_PORT_A) ← (byte~) vicSelectGfxBank::$0
+  to:vicSelectGfxBank::@return
+vicSelectGfxBank::@return: scope:[vicSelectGfxBank]  from vicSelectGfxBank
+  return 
+  to:@return
+@3: scope:[]  from @2
   (byte*) memLo ← ((byte*)) (byte/word/signed word/dword/signed dword) 254
   (byte*) memHi ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
-  to:@1
+  to:@4
 prepareMEM: scope:[prepareMEM]  from
   (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem
   *((byte*) memLo) ← (byte~) prepareMEM::$0
@@ -1366,8 +1460,8 @@ prepareMEM: scope:[prepareMEM]  from
 prepareMEM::@return: scope:[prepareMEM]  from prepareMEM
   return 
   to:@return
-@1: scope:[]  from @begin
-  to:@2
+@4: scope:[]  from @3
+  to:@5
 setFAC: scope:[setFAC]  from
   (byte*~) setFAC::$0 ← ((byte*)) (word) setFAC::w
   (void~) setFAC::$1 ← call prepareMEM (byte*~) setFAC::$0 
@@ -1376,8 +1470,8 @@ setFAC: scope:[setFAC]  from
 setFAC::@return: scope:[setFAC]  from setFAC
   return 
   to:@return
-@2: scope:[]  from @1
-  to:@3
+@5: scope:[]  from @4
+  to:@6
 getFAC: scope:[getFAC]  from
   asm { jsr$b1aa sty$fe sta$ff  }
   (word) getFAC::w ← { *((byte*) memHi), *((byte*) memLo) }
@@ -1389,24 +1483,24 @@ getFAC::@return: scope:[getFAC]  from getFAC getFAC::@1
   to:@return
 getFAC::@1: scope:[getFAC]  from
   to:getFAC::@return
-@3: scope:[]  from @2
-  to:@4
+@6: scope:[]  from @5
+  to:@7
 setARGtoFAC: scope:[setARGtoFAC]  from
   asm { jsr$bc0f  }
   to:setARGtoFAC::@return
 setARGtoFAC::@return: scope:[setARGtoFAC]  from setARGtoFAC
   return 
   to:@return
-@4: scope:[]  from @3
-  to:@5
+@7: scope:[]  from @6
+  to:@8
 setFACtoARG: scope:[setFACtoARG]  from
   asm { jsr$bbfc  }
   to:setFACtoARG::@return
 setFACtoARG::@return: scope:[setFACtoARG]  from setFACtoARG
   return 
   to:@return
-@5: scope:[]  from @4
-  to:@6
+@8: scope:[]  from @7
+  to:@9
 setMEMtoFAC: scope:[setMEMtoFAC]  from
   (void~) setMEMtoFAC::$0 ← call prepareMEM (byte*) setMEMtoFAC::mem 
   asm { ldx$fe ldy$ff jsr$bbd4  }
@@ -1414,8 +1508,8 @@ setMEMtoFAC: scope:[setMEMtoFAC]  from
 setMEMtoFAC::@return: scope:[setMEMtoFAC]  from setMEMtoFAC
   return 
   to:@return
-@6: scope:[]  from @5
-  to:@7
+@9: scope:[]  from @8
+  to:@10
 setFACtoMEM: scope:[setFACtoMEM]  from
   (void~) setFACtoMEM::$0 ← call prepareMEM (byte*) setFACtoMEM::mem 
   asm { lda$fe ldy$ff jsr$bba2  }
@@ -1423,24 +1517,24 @@ setFACtoMEM: scope:[setFACtoMEM]  from
 setFACtoMEM::@return: scope:[setFACtoMEM]  from setFACtoMEM
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@10: scope:[]  from @9
+  to:@11
 setFACtoPIhalf: scope:[setFACtoPIhalf]  from
   asm { lda#$e0 ldy#$e2 jsr$bba2  }
   to:setFACtoPIhalf::@return
 setFACtoPIhalf::@return: scope:[setFACtoPIhalf]  from setFACtoPIhalf
   return 
   to:@return
-@8: scope:[]  from @7
-  to:@9
+@11: scope:[]  from @10
+  to:@12
 setFACto2PI: scope:[setFACto2PI]  from
   asm { lda#$e5 ldy#$e2 jsr$bba2  }
   to:setFACto2PI::@return
 setFACto2PI::@return: scope:[setFACto2PI]  from setFACto2PI
   return 
   to:@return
-@9: scope:[]  from @8
-  to:@10
+@12: scope:[]  from @11
+  to:@13
 setARGtoMEM: scope:[setARGtoMEM]  from
   (void~) setARGtoMEM::$0 ← call prepareMEM (byte*) setARGtoMEM::mem 
   asm { lda$fe ldy$ff jsr$ba8c  }
@@ -1448,8 +1542,8 @@ setARGtoMEM: scope:[setARGtoMEM]  from
 setARGtoMEM::@return: scope:[setARGtoMEM]  from setARGtoMEM
   return 
   to:@return
-@10: scope:[]  from @9
-  to:@11
+@13: scope:[]  from @12
+  to:@14
 addMEMtoFAC: scope:[addMEMtoFAC]  from
   (void~) addMEMtoFAC::$0 ← call prepareMEM (byte*) addMEMtoFAC::mem 
   asm { lda$fe ldy$ff jsr$b867  }
@@ -1457,16 +1551,16 @@ addMEMtoFAC: scope:[addMEMtoFAC]  from
 addMEMtoFAC::@return: scope:[addMEMtoFAC]  from addMEMtoFAC
   return 
   to:@return
-@11: scope:[]  from @10
-  to:@12
+@14: scope:[]  from @13
+  to:@15
 addARGtoFAC: scope:[addARGtoFAC]  from
   asm { jsr$b86a  }
   to:addARGtoFAC::@return
 addARGtoFAC::@return: scope:[addARGtoFAC]  from addARGtoFAC
   return 
   to:@return
-@12: scope:[]  from @11
-  to:@13
+@15: scope:[]  from @14
+  to:@16
 subFACfromMEM: scope:[subFACfromMEM]  from
   (void~) subFACfromMEM::$0 ← call prepareMEM (byte*) subFACfromMEM::mem 
   asm { lda$fe ldy$ff jsr$b850  }
@@ -1474,16 +1568,16 @@ subFACfromMEM: scope:[subFACfromMEM]  from
 subFACfromMEM::@return: scope:[subFACfromMEM]  from subFACfromMEM
   return 
   to:@return
-@13: scope:[]  from @12
-  to:@14
+@16: scope:[]  from @15
+  to:@17
 subFACfromARG: scope:[subFACfromARG]  from
   asm { jsr$b853  }
   to:subFACfromARG::@return
 subFACfromARG::@return: scope:[subFACfromARG]  from subFACfromARG
   return 
   to:@return
-@14: scope:[]  from @13
-  to:@15
+@17: scope:[]  from @16
+  to:@18
 divMEMbyFAC: scope:[divMEMbyFAC]  from
   (void~) divMEMbyFAC::$0 ← call prepareMEM (byte*) divMEMbyFAC::mem 
   asm { lda$fe ldy$ff jsr$bb0f  }
@@ -1491,8 +1585,8 @@ divMEMbyFAC: scope:[divMEMbyFAC]  from
 divMEMbyFAC::@return: scope:[divMEMbyFAC]  from divMEMbyFAC
   return 
   to:@return
-@15: scope:[]  from @14
-  to:@16
+@18: scope:[]  from @17
+  to:@19
 mulFACbyMEM: scope:[mulFACbyMEM]  from
   (void~) mulFACbyMEM::$0 ← call prepareMEM (byte*) mulFACbyMEM::mem 
   asm { lda$fe ldy$ff jsr$ba28  }
@@ -1500,8 +1594,8 @@ mulFACbyMEM: scope:[mulFACbyMEM]  from
 mulFACbyMEM::@return: scope:[mulFACbyMEM]  from mulFACbyMEM
   return 
   to:@return
-@16: scope:[]  from @15
-  to:@17
+@19: scope:[]  from @18
+  to:@20
 pwrMEMbyFAC: scope:[pwrMEMbyFAC]  from
   (void~) pwrMEMbyFAC::$0 ← call prepareMEM (byte*) pwrMEMbyFAC::mem 
   asm { lda$fe ldy$ff jsr$bf78  }
@@ -1509,91 +1603,91 @@ pwrMEMbyFAC: scope:[pwrMEMbyFAC]  from
 pwrMEMbyFAC::@return: scope:[pwrMEMbyFAC]  from pwrMEMbyFAC
   return 
   to:@return
-@17: scope:[]  from @16
-  to:@18
+@20: scope:[]  from @19
+  to:@21
 intFAC: scope:[intFAC]  from
   asm { jsr$bccc  }
   to:intFAC::@return
 intFAC::@return: scope:[intFAC]  from intFAC
   return 
   to:@return
-@18: scope:[]  from @17
-  to:@19
+@21: scope:[]  from @20
+  to:@22
 sinFAC: scope:[sinFAC]  from
   asm { jsr$e26b  }
   to:sinFAC::@return
 sinFAC::@return: scope:[sinFAC]  from sinFAC
   return 
   to:@return
-@19: scope:[]  from @18
-  to:@20
+@22: scope:[]  from @21
+  to:@23
 cosFAC: scope:[cosFAC]  from
   asm { jsr$e264  }
   to:cosFAC::@return
 cosFAC::@return: scope:[cosFAC]  from cosFAC
   return 
   to:@return
-@20: scope:[]  from @19
-  to:@21
+@23: scope:[]  from @22
+  to:@24
 tanFAC: scope:[tanFAC]  from
   asm { jsr$e2b4  }
   to:tanFAC::@return
 tanFAC::@return: scope:[tanFAC]  from tanFAC
   return 
   to:@return
-@21: scope:[]  from @20
-  to:@22
+@24: scope:[]  from @23
+  to:@25
 atnFAC: scope:[atnFAC]  from
   asm { jsr$e303  }
   to:atnFAC::@return
 atnFAC::@return: scope:[atnFAC]  from atnFAC
   return 
   to:@return
-@22: scope:[]  from @21
-  to:@23
+@25: scope:[]  from @24
+  to:@26
 sqrFAC: scope:[sqrFAC]  from
   asm { jsr$bf71  }
   to:sqrFAC::@return
 sqrFAC::@return: scope:[sqrFAC]  from sqrFAC
   return 
   to:@return
-@23: scope:[]  from @22
-  to:@24
+@26: scope:[]  from @25
+  to:@27
 expFAC: scope:[expFAC]  from
   asm { jsr$bfed  }
   to:expFAC::@return
 expFAC::@return: scope:[expFAC]  from expFAC
   return 
   to:@return
-@24: scope:[]  from @23
-  to:@25
+@27: scope:[]  from @26
+  to:@28
 logFAC: scope:[logFAC]  from
   asm { jsr$b9ea  }
   to:logFAC::@return
 logFAC::@return: scope:[logFAC]  from logFAC
   return 
   to:@return
-@25: scope:[]  from @24
-  to:@26
+@28: scope:[]  from @27
+  to:@29
 divFACby10: scope:[divFACby10]  from
   asm { jsr$bafe  }
   to:divFACby10::@return
 divFACby10::@return: scope:[divFACby10]  from divFACby10
   return 
   to:@return
-@26: scope:[]  from @25
-  to:@27
+@29: scope:[]  from @28
+  to:@30
 mulFACby10: scope:[mulFACby10]  from
   asm { jsr$bae2  }
   to:mulFACby10::@return
 mulFACby10::@return: scope:[mulFACby10]  from mulFACby10
   return 
   to:@return
-@27: scope:[]  from @26
+@30: scope:[]  from @29
   (byte*) print_screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor ← (byte*) print_screen
   (byte*) print_char_cursor ← (byte*) print_line_cursor
-  to:@28
+  to:@31
 print_str_lines: scope:[print_str_lines]  from
   to:print_str_lines::@1
 print_str_lines::@1: scope:[print_str_lines]  from print_str_lines print_str_lines::@9
@@ -1631,8 +1725,8 @@ print_str_lines::@10: scope:[print_str_lines]  from
 print_str_lines::@return: scope:[print_str_lines]  from print_str_lines::@3
   return 
   to:@return
-@28: scope:[]  from @27
-  to:@29
+@31: scope:[]  from @30
+  to:@32
 print_str_ln: scope:[print_str_ln]  from
   (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
   (void~) print_str_ln::$1 ← call print_ln 
@@ -1640,8 +1734,8 @@ print_str_ln: scope:[print_str_ln]  from
 print_str_ln::@return: scope:[print_str_ln]  from print_str_ln
   return 
   to:@return
-@29: scope:[]  from @28
-  to:@30
+@32: scope:[]  from @31
+  to:@33
 print_str: scope:[print_str]  from
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -1664,8 +1758,8 @@ print_str::@6: scope:[print_str]  from
 print_str::@return: scope:[print_str]  from print_str::@3
   return 
   to:@return
-@30: scope:[]  from @29
-  to:@31
+@33: scope:[]  from @32
+  to:@34
 print_str_at: scope:[print_str_at]  from
   to:print_str_at::@1
 print_str_at::@1: scope:[print_str_at]  from print_str_at print_str_at::@2
@@ -1688,8 +1782,8 @@ print_str_at::@6: scope:[print_str_at]  from
 print_str_at::@return: scope:[print_str_at]  from print_str_at::@3
   return 
   to:@return
-@31: scope:[]  from @30
-  to:@32
+@34: scope:[]  from @33
+  to:@35
 print_ln: scope:[print_ln]  from
   to:print_ln::@1
 print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
@@ -1704,8 +1798,8 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@32: scope:[]  from @31
-  to:@33
+@35: scope:[]  from @34
+  to:@36
 print_sword: scope:[print_sword]  from
   (bool~) print_sword::$0 ← (signed word) print_sword::w < (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) print_sword::$1 ← ! (bool~) print_sword::$0
@@ -1723,8 +1817,8 @@ print_sword::@2: scope:[print_sword]  from print_sword
 print_sword::@return: scope:[print_sword]  from print_sword::@1
   return 
   to:@return
-@33: scope:[]  from @32
-  to:@34
+@36: scope:[]  from @35
+  to:@37
 print_sbyte: scope:[print_sbyte]  from
   (bool~) print_sbyte::$0 ← (signed byte) print_sbyte::b < (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) print_sbyte::$1 ← ! (bool~) print_sbyte::$0
@@ -1742,8 +1836,8 @@ print_sbyte::@2: scope:[print_sbyte]  from print_sbyte
 print_sbyte::@return: scope:[print_sbyte]  from print_sbyte::@1
   return 
   to:@return
-@34: scope:[]  from @33
-  to:@35
+@37: scope:[]  from @36
+  to:@38
 print_word: scope:[print_word]  from
   (byte~) print_word::$0 ← > (word) print_word::w
   (void~) print_word::$1 ← call print_byte (byte~) print_word::$0 
@@ -1753,8 +1847,8 @@ print_word: scope:[print_word]  from
 print_word::@return: scope:[print_word]  from print_word
   return 
   to:@return
-@35: scope:[]  from @34
-  to:@36
+@38: scope:[]  from @37
+  to:@39
 print_dword: scope:[print_dword]  from
   (word~) print_dword::$0 ← > (dword) print_dword::dw
   (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
@@ -1764,8 +1858,8 @@ print_dword: scope:[print_dword]  from
 print_dword::@return: scope:[print_dword]  from print_dword
   return 
   to:@return
-@36: scope:[]  from @35
-  to:@37
+@39: scope:[]  from @38
+  to:@40
 print_sdword: scope:[print_sdword]  from
   (bool~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) print_sdword::$1 ← ! (bool~) print_sdword::$0
@@ -1783,9 +1877,9 @@ print_sdword::@2: scope:[print_sdword]  from print_sdword
 print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
   return 
   to:@return
-@37: scope:[]  from @36
+@40: scope:[]  from @39
   (byte[]) print_hextab ← (string) "0123456789abcdef"
-  to:@38
+  to:@41
 print_byte: scope:[print_byte]  from
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
   (void~) print_byte::$1 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$0) 
@@ -1795,8 +1889,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@38: scope:[]  from @37
-  to:@39
+@41: scope:[]  from @40
+  to:@42
 print_char: scope:[print_char]  from
   *((byte*) print_char_cursor) ← (byte) print_char::ch
   (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
@@ -1804,8 +1898,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@39: scope:[]  from @38
-  to:@40
+@42: scope:[]  from @41
+  to:@43
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) print_screen
   to:print_cls::@1
@@ -1823,8 +1917,8 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@40: scope:[]  from @39
-  to:@41
+@43: scope:[]  from @42
+  to:@44
 print_set_screen: scope:[print_set_screen]  from
   (byte*) print_screen ← (byte*) print_set_screen::screen
   (byte*) print_line_cursor ← (byte*) print_screen
@@ -1833,14 +1927,14 @@ print_set_screen: scope:[print_set_screen]  from
 print_set_screen::@return: scope:[print_set_screen]  from print_set_screen
   return 
   to:@return
-@41: scope:[]  from @40
+@44: scope:[]  from @43
   (byte) sinlen_x ← (byte/word/signed word/dword/signed dword) 221
   (byte[221]) sintab_x ← { fill( 221, 0) }
   (byte) sinlen_y ← (byte/word/signed word/dword/signed dword) 197
   (byte[197]) sintab_y ← { fill( 197, 0) }
   (byte*) sprites ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@42
+  to:@45
 main: scope:[main]  from
   (void~) main::$0 ← call init 
   to:main::@1
@@ -1859,8 +1953,8 @@ main::@4: scope:[main]  from main::@3
 main::@return: scope:[main]  from main::@4
   return 
   to:@return
-@42: scope:[]  from @41
-  to:@43
+@45: scope:[]  from @44
+  to:@46
 init: scope:[init]  from
   (void~) init::$0 ← call clear_screen 
   (byte) init::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1886,8 +1980,8 @@ init::@2: scope:[init]  from init::@1
 init::@return: scope:[init]  from init::@2
   return 
   to:@return
-@43: scope:[]  from @42
-  to:@44
+@46: scope:[]  from @45
+  to:@47
 clear_screen: scope:[clear_screen]  from
   (byte*) clear_screen::sc ← (byte*) SCREEN
   to:clear_screen::@1
@@ -1903,10 +1997,10 @@ clear_screen::@2: scope:[clear_screen]  from clear_screen::@1
 clear_screen::@return: scope:[clear_screen]  from clear_screen::@2
   return 
   to:@return
-@44: scope:[]  from @43
+@47: scope:[]  from @46
   (byte*) progress_cursor ← (byte*) SCREEN
   (byte) progress_idx ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@45
+  to:@48
 progress_init: scope:[progress_init]  from
   (byte*) progress_cursor ← (byte*) progress_init::line
   (byte) progress_idx ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1914,8 +2008,8 @@ progress_init: scope:[progress_init]  from
 progress_init::@return: scope:[progress_init]  from progress_init
   return 
   to:@return
-@45: scope:[]  from @44
-  to:@46
+@48: scope:[]  from @47
+  to:@49
 progress_inc: scope:[progress_inc]  from
   (byte[]) progress_inc::progress_chars ← { (byte/signed byte/word/signed word/dword/signed dword) 32, (byte/signed byte/word/signed word/dword/signed dword) 101, (byte/signed byte/word/signed word/dword/signed dword) 116, (byte/signed byte/word/signed word/dword/signed dword) 117, (byte/signed byte/word/signed word/dword/signed dword) 97, (byte/word/signed word/dword/signed dword) 246, (byte/word/signed word/dword/signed dword) 231, (byte/word/signed word/dword/signed dword) 234, (byte/word/signed word/dword/signed dword) 224 }
   (byte) progress_idx ← ++ (byte) progress_idx
@@ -1934,10 +2028,10 @@ progress_inc::@2: scope:[progress_inc]  from progress_inc
 progress_inc::@return: scope:[progress_inc]  from progress_inc::@1
   return 
   to:@return
-@46: scope:[]  from @45
+@49: scope:[]  from @48
   (byte) sin_idx_x ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) sin_idx_y ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@47
+  to:@50
 anim: scope:[anim]  from
   *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
   (byte) anim::xidx ← (byte) sin_idx_x
@@ -2010,8 +2104,8 @@ anim::@10: scope:[anim]  from anim::@4
 anim::@return: scope:[anim]  from anim::@5
   return 
   to:@return
-@47: scope:[]  from @46
-  to:@48
+@50: scope:[]  from @49
+  to:@51
 place_sprites: scope:[place_sprites]  from
   *((byte*) SPRITES_ENABLE) ← (byte/signed byte/word/signed word/dword/signed dword) 127
   *((byte*) SPRITES_EXPAND_X) ← (byte/signed byte/word/signed word/dword/signed dword) 127
@@ -2048,8 +2142,8 @@ place_sprites::@2: scope:[place_sprites]  from place_sprites::@1
 place_sprites::@return: scope:[place_sprites]  from place_sprites::@2
   return 
   to:@return
-@48: scope:[]  from @47
-  to:@49
+@51: scope:[]  from @50
+  to:@52
 gen_sprites: scope:[gen_sprites]  from
   (byte[]) gen_sprites::cml ← (string) "camelot"
   (byte*) gen_sprites::spr ← (byte*) sprites
@@ -2068,8 +2162,8 @@ gen_sprites::@2: scope:[gen_sprites]  from gen_sprites::@1
 gen_sprites::@return: scope:[gen_sprites]  from gen_sprites::@2
   return 
   to:@return
-@49: scope:[]  from @48
-  to:@50
+@52: scope:[]  from @51
+  to:@53
 gen_chargen_sprite: scope:[gen_chargen_sprite]  from
   (word~) gen_chargen_sprite::$0 ← ((word)) (byte) gen_chargen_sprite::ch
   (word~) gen_chargen_sprite::$1 ← (word~) gen_chargen_sprite::$0 << (byte/signed byte/word/signed word/dword/signed dword) 3
@@ -2141,8 +2235,8 @@ gen_chargen_sprite::@10: scope:[gen_chargen_sprite]  from gen_chargen_sprite::@9
 gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite::@10
   return 
   to:@return
-@50: scope:[]  from @49
-  to:@51
+@53: scope:[]  from @52
+  to:@54
 gen_sintab: scope:[gen_sintab]  from
   (byte[]) gen_sintab::f_i ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   (byte[]) gen_sintab::f_min ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
@@ -2188,11 +2282,15 @@ gen_sintab::@2: scope:[gen_sintab]  from gen_sintab::@1
 gen_sintab::@return: scope:[gen_sintab]  from gen_sintab::@2
   return 
   to:@return
-@51: scope:[]  from @50
+@54: scope:[]  from @53
   call main 
   to:@end
-@end: scope:[]  from @51
+@end: scope:[]  from @54
 
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Removing unused procedure toD018
+Removing unused procedure toDd00
+Removing unused procedure vicSelectGfxBank
 Removing unused procedure setFACtoARG
 Removing unused procedure setFACtoMEM
 Removing unused procedure setFACtoPIhalf
@@ -2320,10 +2418,9 @@ Eliminating unused variable (byte*) print_screen and assignment [46] (byte*) pri
 Creating constant string variable for inline (const string) gen_sprites::$3 "camelot"
 Removing empty block @1
 Removing empty block @2
-Removing empty block getFAC::@1
-Removing empty block @3
 Removing empty block @4
 Removing empty block @5
+Removing empty block getFAC::@1
 Removing empty block @6
 Removing empty block @7
 Removing empty block @8
@@ -2359,17 +2456,20 @@ Removing empty block @37
 Removing empty block @38
 Removing empty block @39
 Removing empty block @40
-Removing empty block main::@4
+Removing empty block @41
 Removing empty block @42
 Removing empty block @43
-Removing empty block clear_screen::@2
+Removing empty block main::@4
 Removing empty block @45
-Removing empty block @47
-Removing empty block place_sprites::@2
+Removing empty block @46
+Removing empty block clear_screen::@2
 Removing empty block @48
-Removing empty block gen_sprites::@2
-Removing empty block @49
 Removing empty block @50
+Removing empty block place_sprites::@2
+Removing empty block @51
+Removing empty block gen_sprites::@2
+Removing empty block @52
+Removing empty block @53
 Removing empty block gen_sintab::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
 main modifies progress_cursor
@@ -2425,9 +2525,11 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
   (byte*) SPRITES_COLS#0 ← ((byte*)) (word/dword/signed dword) 53287
   (byte*) COLS#0 ← ((byte*)) (word/dword/signed dword) 55296
+  to:@3
+@3: scope:[]  from @begin
   (byte*) memLo#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 254
   (byte*) memHi#0 ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
-  to:@41
+  to:@44
 prepareMEM: scope:[prepareMEM]  from addMEMtoFAC divMEMbyFAC mulFACbyMEM setFAC setMEMtoFAC
   (byte*) prepareMEM::mem#5 ← phi( addMEMtoFAC/(byte*) prepareMEM::mem#2 divMEMbyFAC/(byte*) prepareMEM::mem#3 mulFACbyMEM/(byte*) prepareMEM::mem#4 setFAC/(byte*) prepareMEM::mem#0 setMEMtoFAC/(byte*) prepareMEM::mem#1 )
   (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5
@@ -2522,19 +2624,19 @@ sinFAC: scope:[sinFAC]  from gen_sintab::@18
 sinFAC::@return: scope:[sinFAC]  from sinFAC
   return 
   to:@return
-@41: scope:[]  from @begin
+@44: scope:[]  from @3
   (byte) sinlen_x#0 ← (byte/word/signed word/dword/signed dword) 221
   (byte[221]) sintab_x#0 ← { fill( 221, 0) }
   (byte) sinlen_y#0 ← (byte/word/signed word/dword/signed dword) 197
   (byte[197]) sintab_y#0 ← { fill( 197, 0) }
   (byte*) sprites#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@44
-main: scope:[main]  from @51
-  (byte) sin_idx_y#24 ← phi( @51/(byte) sin_idx_y#17 )
-  (byte) sin_idx_x#26 ← phi( @51/(byte) sin_idx_x#16 )
-  (byte) progress_idx#30 ← phi( @51/(byte) progress_idx#35 )
-  (byte*) progress_cursor#29 ← phi( @51/(byte*) progress_cursor#35 )
+  to:@47
+main: scope:[main]  from @54
+  (byte) sin_idx_y#24 ← phi( @54/(byte) sin_idx_y#17 )
+  (byte) sin_idx_x#26 ← phi( @54/(byte) sin_idx_x#16 )
+  (byte) progress_idx#30 ← phi( @54/(byte) progress_idx#35 )
+  (byte*) progress_cursor#29 ← phi( @54/(byte*) progress_cursor#35 )
   call init 
   to:main::@5
 main::@5: scope:[main]  from main
@@ -2686,10 +2788,10 @@ clear_screen::@1: scope:[clear_screen]  from clear_screen clear_screen::@1
 clear_screen::@return: scope:[clear_screen]  from clear_screen::@1
   return 
   to:@return
-@44: scope:[]  from @41
+@47: scope:[]  from @44
   (byte*) progress_cursor#7 ← (byte*) SCREEN#0
   (byte) progress_idx#7 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@46
+  to:@49
 progress_init: scope:[progress_init]  from init::@5 init::@7
   (byte*) progress_init::line#2 ← phi( init::@5/(byte*) progress_init::line#0 init::@7/(byte*) progress_init::line#1 )
   (byte*) progress_cursor#8 ← (byte*) progress_init::line#2
@@ -2729,12 +2831,12 @@ progress_inc::@return: scope:[progress_inc]  from progress_inc::@1
   (byte*) progress_cursor#11 ← (byte*) progress_cursor#25
   return 
   to:@return
-@46: scope:[]  from @44
-  (byte) progress_idx#39 ← phi( @44/(byte) progress_idx#7 )
-  (byte*) progress_cursor#39 ← phi( @44/(byte*) progress_cursor#7 )
+@49: scope:[]  from @47
+  (byte) progress_idx#39 ← phi( @47/(byte) progress_idx#7 )
+  (byte*) progress_cursor#39 ← phi( @47/(byte*) progress_cursor#7 )
   (byte) sin_idx_x#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) sin_idx_y#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@51
+  to:@54
 anim: scope:[anim]  from main::@3
   (byte) sin_idx_y#9 ← phi( main::@3/(byte) sin_idx_y#13 )
   (byte) sin_idx_x#9 ← phi( main::@3/(byte) sin_idx_x#13 )
@@ -3294,31 +3396,32 @@ gen_sintab::@return: scope:[gen_sintab]  from gen_sintab::@23
   (byte*) progress_cursor#13 ← (byte*) progress_cursor#27
   return 
   to:@return
-@51: scope:[]  from @46
-  (byte) sin_idx_y#17 ← phi( @46/(byte) sin_idx_y#2 )
-  (byte) sin_idx_x#16 ← phi( @46/(byte) sin_idx_x#2 )
-  (byte) progress_idx#35 ← phi( @46/(byte) progress_idx#39 )
-  (byte*) progress_cursor#35 ← phi( @46/(byte*) progress_cursor#39 )
+@54: scope:[]  from @49
+  (byte) sin_idx_y#17 ← phi( @49/(byte) sin_idx_y#2 )
+  (byte) sin_idx_x#16 ← phi( @49/(byte) sin_idx_x#2 )
+  (byte) progress_idx#35 ← phi( @49/(byte) progress_idx#39 )
+  (byte*) progress_cursor#35 ← phi( @49/(byte*) progress_cursor#39 )
   call main 
-  to:@52
-@52: scope:[]  from @51
-  (byte) sin_idx_y#12 ← phi( @51/(byte) sin_idx_y#1 )
-  (byte) sin_idx_x#12 ← phi( @51/(byte) sin_idx_x#1 )
-  (byte) progress_idx#29 ← phi( @51/(byte) progress_idx#1 )
-  (byte*) progress_cursor#28 ← phi( @51/(byte*) progress_cursor#1 )
+  to:@55
+@55: scope:[]  from @54
+  (byte) sin_idx_y#12 ← phi( @54/(byte) sin_idx_y#1 )
+  (byte) sin_idx_x#12 ← phi( @54/(byte) sin_idx_x#1 )
+  (byte) progress_idx#29 ← phi( @54/(byte) progress_idx#1 )
+  (byte*) progress_cursor#28 ← phi( @54/(byte*) progress_cursor#1 )
   (byte*) progress_cursor#14 ← (byte*) progress_cursor#28
   (byte) progress_idx#15 ← (byte) progress_idx#29
   (byte) sin_idx_x#6 ← (byte) sin_idx_x#12
   (byte) sin_idx_y#6 ← (byte) sin_idx_y#12
   to:@end
-@end: scope:[]  from @52
+@end: scope:[]  from @55
 
 SYMBOL TABLE SSA
-(label) @41
+(label) @3
 (label) @44
-(label) @46
-(label) @51
-(label) @52
+(label) @47
+(label) @49
+(label) @54
+(label) @55
 (label) @begin
 (label) @end
 (byte*) BORDERCOL
@@ -4613,19 +4716,20 @@ Eliminating Noop Cast (byte*) prepareMEM::mem#0 ← ((byte*)) (word) setFAC::w#5
 Succesful SSA optimization Pass2NopCastElimination
 Removing unused block main::@return
 Succesful SSA optimization Pass2EliminateUnusedBlocks
-Culled Empty Block (label) @41
+Culled Empty Block (label) @3
+Culled Empty Block (label) @44
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) init::@3
 Culled Empty Block (label) init::@10
-Culled Empty Block (label) @44
-Culled Empty Block (label) @46
+Culled Empty Block (label) @47
+Culled Empty Block (label) @49
 Not culling empty block because it shares successor with its predecessor. (label) anim::@9
 Not culling empty block because it shares successor with its predecessor. (label) anim::@10
 Not culling empty block because it shares successor with its predecessor. (label) gen_chargen_sprite::@6
 Culled Empty Block (label) gen_sintab::@13
-Culled Empty Block (label) @52
+Culled Empty Block (label) @55
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not culling empty block because it shares successor with its predecessor. (label) anim::@9
 Not culling empty block because it shares successor with its predecessor. (label) anim::@10
@@ -4886,7 +4990,7 @@ Inlining constant with var siblings (const byte[]) prepareMEM::mem#2
 Inlining constant with var siblings (const byte[]) prepareMEM::mem#2
 Constant inlined prepareMEM::mem#2 = (const byte[]) gen_sintab::f_min#0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @51 @end main main::@2 main::@3 anim anim::@1 anim::@6 anim::@2 anim::@7 anim::@3 anim::@8 anim::@9 anim::@4 anim::@10 anim::@5 anim::@return init init::@1 init::@2 init::@4 init::@5 init::@6 init::@7 init::@8 init::@9 init::@return clear_screen clear_screen::@1 clear_screen::@return gen_sintab gen_sintab::@3 gen_sintab::@4 gen_sintab::@5 gen_sintab::@6 gen_sintab::@7 gen_sintab::@8 gen_sintab::@9 gen_sintab::@10 gen_sintab::@11 gen_sintab::@12 gen_sintab::@1 gen_sintab::@14 gen_sintab::@15 gen_sintab::@16 gen_sintab::@17 gen_sintab::@18 gen_sintab::@19 gen_sintab::@20 gen_sintab::@21 gen_sintab::@22 gen_sintab::@23 gen_sintab::@return progress_inc progress_inc::@2 progress_inc::@1 progress_inc::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return subFACfromARG subFACfromARG::@return setARGtoFAC setARGtoFAC::@return progress_init progress_init::@return gen_sprites gen_sprites::@1 gen_sprites::@3 gen_sprites::@return gen_chargen_sprite gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@6 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite::@7 gen_chargen_sprite::@5 gen_chargen_sprite::@8 gen_chargen_sprite::@9 gen_chargen_sprite::@10 gen_chargen_sprite::@return place_sprites place_sprites::@1 place_sprites::@return 
+Block Sequence Planned @begin @54 @end main main::@2 main::@3 anim anim::@1 anim::@6 anim::@2 anim::@7 anim::@3 anim::@8 anim::@9 anim::@4 anim::@10 anim::@5 anim::@return init init::@1 init::@2 init::@4 init::@5 init::@6 init::@7 init::@8 init::@9 init::@return clear_screen clear_screen::@1 clear_screen::@return gen_sintab gen_sintab::@3 gen_sintab::@4 gen_sintab::@5 gen_sintab::@6 gen_sintab::@7 gen_sintab::@8 gen_sintab::@9 gen_sintab::@10 gen_sintab::@11 gen_sintab::@12 gen_sintab::@1 gen_sintab::@14 gen_sintab::@15 gen_sintab::@16 gen_sintab::@17 gen_sintab::@18 gen_sintab::@19 gen_sintab::@20 gen_sintab::@21 gen_sintab::@22 gen_sintab::@23 gen_sintab::@return progress_inc progress_inc::@2 progress_inc::@1 progress_inc::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return subFACfromARG subFACfromARG::@return setARGtoFAC setARGtoFAC::@return progress_init progress_init::@return gen_sprites gen_sprites::@1 gen_sprites::@3 gen_sprites::@return gen_chargen_sprite gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@6 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite::@7 gen_chargen_sprite::@5 gen_chargen_sprite::@8 gen_chargen_sprite::@9 gen_chargen_sprite::@10 gen_chargen_sprite::@return place_sprites place_sprites::@1 place_sprites::@return 
 Added new block during phi lifting anim::@11(between anim::@3 and anim::@1)
 Added new block during phi lifting anim::@12(between anim::@1 and anim::@2)
 Added new block during phi lifting anim::@13(between anim::@2 and anim::@3)
@@ -4902,9 +5006,9 @@ Added new block during phi lifting gen_chargen_sprite::@12(between gen_chargen_s
 Added new block during phi lifting gen_chargen_sprite::@13(between gen_chargen_sprite::@5 and gen_chargen_sprite::@4)
 Added new block during phi lifting gen_chargen_sprite::@14(between gen_chargen_sprite::@4 and gen_chargen_sprite::@5)
 Added new block during phi lifting place_sprites::@3(between place_sprites::@1 and place_sprites::@1)
-Block Sequence Planned @begin @51 @end main main::@2 main::@3 anim anim::@1 anim::@6 anim::@2 anim::@7 anim::@3 anim::@8 anim::@9 anim::@4 anim::@10 anim::@5 anim::@return anim::@15 anim::@14 anim::@11 anim::@13 anim::@12 init init::@1 init::@2 init::@4 init::@5 init::@6 init::@7 init::@8 init::@9 init::@return init::@11 clear_screen clear_screen::@1 clear_screen::@return clear_screen::@3 gen_sintab gen_sintab::@3 gen_sintab::@4 gen_sintab::@5 gen_sintab::@6 gen_sintab::@7 gen_sintab::@8 gen_sintab::@9 gen_sintab::@10 gen_sintab::@11 gen_sintab::@12 gen_sintab::@1 gen_sintab::@14 gen_sintab::@15 gen_sintab::@16 gen_sintab::@17 gen_sintab::@18 gen_sintab::@19 gen_sintab::@20 gen_sintab::@21 gen_sintab::@22 gen_sintab::@23 gen_sintab::@return gen_sintab::@24 progress_inc progress_inc::@2 progress_inc::@1 progress_inc::@return progress_inc::@3 getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return subFACfromARG subFACfromARG::@return setARGtoFAC setARGtoFAC::@return progress_init progress_init::@return gen_sprites gen_sprites::@1 gen_sprites::@3 gen_sprites::@return gen_sprites::@4 gen_chargen_sprite gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@6 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite::@7 gen_chargen_sprite::@5 gen_chargen_sprite::@8 gen_chargen_sprite::@9 gen_chargen_sprite::@10 gen_chargen_sprite::@return gen_chargen_sprite::@11 gen_chargen_sprite::@12 gen_chargen_sprite::@13 gen_chargen_sprite::@14 place_sprites place_sprites::@1 place_sprites::@return place_sprites::@3 
+Block Sequence Planned @begin @54 @end main main::@2 main::@3 anim anim::@1 anim::@6 anim::@2 anim::@7 anim::@3 anim::@8 anim::@9 anim::@4 anim::@10 anim::@5 anim::@return anim::@15 anim::@14 anim::@11 anim::@13 anim::@12 init init::@1 init::@2 init::@4 init::@5 init::@6 init::@7 init::@8 init::@9 init::@return init::@11 clear_screen clear_screen::@1 clear_screen::@return clear_screen::@3 gen_sintab gen_sintab::@3 gen_sintab::@4 gen_sintab::@5 gen_sintab::@6 gen_sintab::@7 gen_sintab::@8 gen_sintab::@9 gen_sintab::@10 gen_sintab::@11 gen_sintab::@12 gen_sintab::@1 gen_sintab::@14 gen_sintab::@15 gen_sintab::@16 gen_sintab::@17 gen_sintab::@18 gen_sintab::@19 gen_sintab::@20 gen_sintab::@21 gen_sintab::@22 gen_sintab::@23 gen_sintab::@return gen_sintab::@24 progress_inc progress_inc::@2 progress_inc::@1 progress_inc::@return progress_inc::@3 getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return subFACfromARG subFACfromARG::@return setARGtoFAC setARGtoFAC::@return progress_init progress_init::@return gen_sprites gen_sprites::@1 gen_sprites::@3 gen_sprites::@return gen_sprites::@4 gen_chargen_sprite gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@6 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite::@7 gen_chargen_sprite::@5 gen_chargen_sprite::@8 gen_chargen_sprite::@9 gen_chargen_sprite::@10 gen_chargen_sprite::@return gen_chargen_sprite::@11 gen_chargen_sprite::@12 gen_chargen_sprite::@13 gen_chargen_sprite::@14 place_sprites place_sprites::@1 place_sprites::@return place_sprites::@3 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @51
+Adding NOP phi() at start of @54
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -5082,9 +5186,9 @@ Culled Empty Block (label) gen_chargen_sprite::@12
 Culled Empty Block (label) gen_chargen_sprite::@13
 Culled Empty Block (label) gen_chargen_sprite::@14
 Culled Empty Block (label) place_sprites::@3
-Block Sequence Planned @begin @51 @end main main::@2 main::@3 anim anim::@1 anim::@6 anim::@2 anim::@7 anim::@3 anim::@8 anim::@4 anim::@5 anim::@return anim::@15 anim::@14 init init::@1 init::@2 init::@4 init::@5 init::@6 init::@7 init::@8 init::@9 init::@return clear_screen clear_screen::@1 clear_screen::@return gen_sintab gen_sintab::@3 gen_sintab::@4 gen_sintab::@5 gen_sintab::@6 gen_sintab::@7 gen_sintab::@8 gen_sintab::@9 gen_sintab::@10 gen_sintab::@11 gen_sintab::@12 gen_sintab::@1 gen_sintab::@14 gen_sintab::@15 gen_sintab::@16 gen_sintab::@17 gen_sintab::@18 gen_sintab::@19 gen_sintab::@20 gen_sintab::@21 gen_sintab::@22 gen_sintab::@23 gen_sintab::@return progress_inc progress_inc::@2 progress_inc::@1 progress_inc::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return subFACfromARG subFACfromARG::@return setARGtoFAC setARGtoFAC::@return progress_init progress_init::@return gen_sprites gen_sprites::@1 gen_sprites::@3 gen_sprites::@return gen_chargen_sprite gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@6 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite::@7 gen_chargen_sprite::@5 gen_chargen_sprite::@8 gen_chargen_sprite::@9 gen_chargen_sprite::@10 gen_chargen_sprite::@return place_sprites place_sprites::@1 place_sprites::@return 
+Block Sequence Planned @begin @54 @end main main::@2 main::@3 anim anim::@1 anim::@6 anim::@2 anim::@7 anim::@3 anim::@8 anim::@4 anim::@5 anim::@return anim::@15 anim::@14 init init::@1 init::@2 init::@4 init::@5 init::@6 init::@7 init::@8 init::@9 init::@return clear_screen clear_screen::@1 clear_screen::@return gen_sintab gen_sintab::@3 gen_sintab::@4 gen_sintab::@5 gen_sintab::@6 gen_sintab::@7 gen_sintab::@8 gen_sintab::@9 gen_sintab::@10 gen_sintab::@11 gen_sintab::@12 gen_sintab::@1 gen_sintab::@14 gen_sintab::@15 gen_sintab::@16 gen_sintab::@17 gen_sintab::@18 gen_sintab::@19 gen_sintab::@20 gen_sintab::@21 gen_sintab::@22 gen_sintab::@23 gen_sintab::@return progress_inc progress_inc::@2 progress_inc::@1 progress_inc::@return getFAC getFAC::@return addMEMtoFAC addMEMtoFAC::@1 addMEMtoFAC::@return prepareMEM prepareMEM::@return mulFACbyMEM mulFACbyMEM::@1 mulFACbyMEM::@return sinFAC sinFAC::@return divMEMbyFAC divMEMbyFAC::@1 divMEMbyFAC::@return setFAC setFAC::@1 setFAC::@return setMEMtoFAC setMEMtoFAC::@1 setMEMtoFAC::@return subFACfromARG subFACfromARG::@return setARGtoFAC setARGtoFAC::@return progress_init progress_init::@return gen_sprites gen_sprites::@1 gen_sprites::@3 gen_sprites::@return gen_chargen_sprite gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@6 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite::@7 gen_chargen_sprite::@5 gen_chargen_sprite::@8 gen_chargen_sprite::@9 gen_chargen_sprite::@10 gen_chargen_sprite::@return place_sprites place_sprites::@1 place_sprites::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @51
+Adding NOP phi() at start of @54
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -5169,14 +5273,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@51
-@51: scope:[]  from @begin
+  to:@54
+@54: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @51
+@end: scope:[]  from @54
   [3] phi() [ ] ( )
-main: scope:[main]  from @51
+main: scope:[main]  from @54
   [4] phi() [ ] ( main:2 [ ] )
   [5] call init  [ ] ( main:2 [ ] )
   to:main::@2
@@ -5631,109 +5735,109 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@51 dominated by  @begin @51 
-@end dominated by  @end @begin @51 
-main dominated by  main @begin @51 
-main::@2 dominated by  main::@2 main @begin @51 
-main::@3 dominated by  main::@2 main::@3 main @begin @51 
-anim dominated by  main::@2 main::@3 anim main @begin @51 
-anim::@1 dominated by  main::@2 main::@3 anim anim::@1 main @begin @51 
-anim::@6 dominated by  main::@2 main::@3 anim anim::@6 anim::@1 main @begin @51 
-anim::@2 dominated by  main::@2 main::@3 anim anim::@2 anim::@1 main @begin @51 
-anim::@7 dominated by  main::@2 main::@3 anim anim::@2 anim::@1 anim::@7 main @begin @51 
-anim::@3 dominated by  main::@2 main::@3 anim anim::@3 anim::@2 anim::@1 main @begin @51 
-anim::@8 dominated by  main::@2 main::@3 anim anim::@3 anim::@2 anim::@1 anim::@8 main @begin @51 
-anim::@4 dominated by  main::@2 main::@3 anim anim::@4 anim::@3 anim::@2 anim::@1 anim::@8 main @begin @51 
-anim::@5 dominated by  main::@2 main::@3 anim anim::@5 anim::@4 anim::@3 anim::@2 anim::@1 anim::@8 main @begin @51 
-anim::@return dominated by  main::@2 main::@3 anim anim::@5 anim::@4 anim::@3 anim::@2 anim::@1 anim::@8 anim::@return main @begin @51 
-anim::@15 dominated by  main::@2 main::@3 anim anim::@4 anim::@3 anim::@2 anim::@1 anim::@8 main @begin anim::@15 @51 
-anim::@14 dominated by  main::@2 main::@3 anim anim::@3 anim::@2 anim::@1 anim::@8 main @begin anim::@14 @51 
-init dominated by  init main @begin @51 
-init::@1 dominated by  init main @begin init::@1 @51 
-init::@2 dominated by  init main @begin init::@2 init::@1 @51 
-init::@4 dominated by  init main @begin init::@2 init::@1 init::@4 @51 
-init::@5 dominated by  init main @begin init::@2 init::@1 init::@5 init::@4 @51 
-init::@6 dominated by  init main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 
-init::@7 dominated by  init main @begin init::@2 init::@1 init::@7 init::@6 init::@5 init::@4 @51 
-init::@8 dominated by  init main @begin init::@2 init::@1 init::@7 init::@6 init::@5 init::@4 init::@8 @51 
-init::@9 dominated by  init main @begin init::@2 init::@1 init::@7 init::@6 init::@5 init::@4 init::@9 init::@8 @51 
-init::@return dominated by  init main @begin init::@return init::@2 init::@1 init::@7 init::@6 init::@5 init::@4 init::@9 init::@8 @51 
-clear_screen dominated by  init clear_screen main @begin @51 
-clear_screen::@1 dominated by  init clear_screen main @begin @51 clear_screen::@1 
-clear_screen::@return dominated by  init clear_screen main @begin @51 clear_screen::@1 clear_screen::@return 
-gen_sintab dominated by  init gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 
-gen_sintab::@3 dominated by  init gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@4 dominated by  init gen_sintab main gen_sintab::@4 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@5 dominated by  init gen_sintab main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@6 dominated by  init gen_sintab gen_sintab::@6 main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@7 dominated by  init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@8 dominated by  init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@9 dominated by  init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@10 dominated by  gen_sintab::@10 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@11 dominated by  gen_sintab::@10 gen_sintab::@11 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@12 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-gen_sintab::@1 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@14 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@15 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@15 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@16 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@17 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@17 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@18 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@19 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@20 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@20 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@21 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@22 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@23 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@23 gen_sintab::@22 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-gen_sintab::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@23 gen_sintab::@22 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 gen_sintab::@return @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-progress_inc dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 progress_inc gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-progress_inc::@2 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 progress_inc gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 progress_inc::@2 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-progress_inc::@1 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 progress_inc gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 progress_inc::@1 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-progress_inc::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 progress_inc gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 progress_inc::@1 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 progress_inc::@return @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-getFAC dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 getFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-getFAC::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 getFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 getFAC::@return 
-addMEMtoFAC dominated by  gen_sintab::@10 gen_sintab::@11 init addMEMtoFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-addMEMtoFAC::@1 dominated by  gen_sintab::@10 gen_sintab::@11 init addMEMtoFAC::@1 addMEMtoFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-addMEMtoFAC::@return dominated by  gen_sintab::@10 gen_sintab::@11 init addMEMtoFAC::@1 addMEMtoFAC addMEMtoFAC::@return gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-prepareMEM dominated by  init prepareMEM gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 
-prepareMEM::@return dominated by  init prepareMEM gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 prepareMEM::@return 
-mulFACbyMEM dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 mulFACbyMEM init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-mulFACbyMEM::@1 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 mulFACbyMEM init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 mulFACbyMEM::@1 gen_sintab::@3 gen_sintab::@1 
-mulFACbyMEM::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 mulFACbyMEM::@return mulFACbyMEM init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 mulFACbyMEM::@1 gen_sintab::@3 gen_sintab::@1 
-sinFAC dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 init sinFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-sinFAC::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 init sinFAC sinFAC::@return gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 gen_sintab::@1 
-divMEMbyFAC dominated by  init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 divMEMbyFAC gen_sintab::@3 
-divMEMbyFAC::@1 dominated by  init divMEMbyFAC::@1 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 divMEMbyFAC gen_sintab::@3 
-divMEMbyFAC::@return dominated by  init divMEMbyFAC::@1 divMEMbyFAC::@return gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 divMEMbyFAC gen_sintab::@3 
-setFAC dominated by  init setFAC gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 
-setFAC::@1 dominated by  init setFAC gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 setFAC::@1 @51 
-setFAC::@return dominated by  setFAC::@return init setFAC gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 setFAC::@1 @51 
-setMEMtoFAC dominated by  init setMEMtoFAC gen_sintab main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-setMEMtoFAC::@1 dominated by  init setMEMtoFAC setMEMtoFAC::@1 gen_sintab main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-setMEMtoFAC::@return dominated by  init setMEMtoFAC setMEMtoFAC::@1 gen_sintab main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 setMEMtoFAC::@return gen_sintab::@3 
-subFACfromARG dominated by  init subFACfromARG gen_sintab gen_sintab::@6 main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-subFACfromARG::@return dominated by  init subFACfromARG gen_sintab gen_sintab::@6 main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 subFACfromARG::@return gen_sintab::@3 
-setARGtoFAC dominated by  setARGtoFAC init gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-setARGtoFAC::@return dominated by  setARGtoFAC init gen_sintab main setARGtoFAC::@return @begin init::@2 init::@1 init::@6 init::@5 init::@4 @51 gen_sintab::@3 
-progress_init dominated by  init progress_init main @begin init::@2 init::@1 init::@5 init::@4 @51 
-progress_init::@return dominated by  init progress_init main @begin init::@2 init::@1 init::@5 init::@4 progress_init::@return @51 
-gen_sprites dominated by  init main @begin gen_sprites init::@2 init::@1 init::@4 @51 
-gen_sprites::@1 dominated by  init main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_sprites::@3 dominated by  init main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 gen_sprites::@3 @51 
-gen_sprites::@return dominated by  init main gen_sprites::@return @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 gen_sprites::@3 @51 
-gen_chargen_sprite dominated by  init gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@1 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@2 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@6 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@6 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@3 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@3 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@4 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@7 dominated by  init gen_chargen_sprite::@7 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@5 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@8 dominated by  init gen_chargen_sprite::@8 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@9 dominated by  init gen_chargen_sprite::@9 gen_chargen_sprite::@8 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@10 dominated by  init gen_chargen_sprite::@10 gen_chargen_sprite::@9 gen_chargen_sprite::@8 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-gen_chargen_sprite::@return dominated by  init gen_chargen_sprite::@10 gen_chargen_sprite::@return gen_chargen_sprite::@9 gen_chargen_sprite::@8 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @51 
-place_sprites dominated by  init main @begin init::@2 init::@1 @51 place_sprites 
-place_sprites::@1 dominated by  init place_sprites::@1 main @begin init::@2 init::@1 @51 place_sprites 
-place_sprites::@return dominated by  init place_sprites::@return place_sprites::@1 main @begin init::@2 init::@1 @51 place_sprites 
+@54 dominated by  @begin @54 
+@end dominated by  @end @begin @54 
+main dominated by  main @begin @54 
+main::@2 dominated by  main::@2 main @begin @54 
+main::@3 dominated by  main::@2 main::@3 main @begin @54 
+anim dominated by  main::@2 main::@3 anim main @begin @54 
+anim::@1 dominated by  main::@2 main::@3 anim anim::@1 main @begin @54 
+anim::@6 dominated by  main::@2 main::@3 anim anim::@6 anim::@1 main @begin @54 
+anim::@2 dominated by  main::@2 main::@3 anim anim::@2 anim::@1 main @begin @54 
+anim::@7 dominated by  main::@2 main::@3 anim anim::@2 anim::@1 anim::@7 main @begin @54 
+anim::@3 dominated by  main::@2 main::@3 anim anim::@3 anim::@2 anim::@1 main @begin @54 
+anim::@8 dominated by  main::@2 main::@3 anim anim::@3 anim::@2 anim::@1 anim::@8 main @begin @54 
+anim::@4 dominated by  main::@2 main::@3 anim anim::@4 anim::@3 anim::@2 anim::@1 anim::@8 main @begin @54 
+anim::@5 dominated by  main::@2 main::@3 anim anim::@5 anim::@4 anim::@3 anim::@2 anim::@1 anim::@8 main @begin @54 
+anim::@return dominated by  main::@2 main::@3 anim anim::@5 anim::@4 anim::@3 anim::@2 anim::@1 anim::@8 anim::@return main @begin @54 
+anim::@15 dominated by  main::@2 main::@3 anim anim::@4 anim::@3 anim::@2 anim::@1 anim::@8 main @begin anim::@15 @54 
+anim::@14 dominated by  main::@2 main::@3 anim anim::@3 anim::@2 anim::@1 anim::@8 main @begin anim::@14 @54 
+init dominated by  init main @begin @54 
+init::@1 dominated by  init main @begin init::@1 @54 
+init::@2 dominated by  init main @begin init::@2 init::@1 @54 
+init::@4 dominated by  init main @begin init::@2 init::@1 init::@4 @54 
+init::@5 dominated by  init main @begin init::@2 init::@1 init::@5 init::@4 @54 
+init::@6 dominated by  init main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 
+init::@7 dominated by  init main @begin init::@2 init::@1 init::@7 init::@6 init::@5 init::@4 @54 
+init::@8 dominated by  init main @begin init::@2 init::@1 init::@7 init::@6 init::@5 init::@4 init::@8 @54 
+init::@9 dominated by  init main @begin init::@2 init::@1 init::@7 init::@6 init::@5 init::@4 init::@9 init::@8 @54 
+init::@return dominated by  init main @begin init::@return init::@2 init::@1 init::@7 init::@6 init::@5 init::@4 init::@9 init::@8 @54 
+clear_screen dominated by  init clear_screen main @begin @54 
+clear_screen::@1 dominated by  init clear_screen main @begin @54 clear_screen::@1 
+clear_screen::@return dominated by  init clear_screen main @begin @54 clear_screen::@1 clear_screen::@return 
+gen_sintab dominated by  init gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 
+gen_sintab::@3 dominated by  init gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@4 dominated by  init gen_sintab main gen_sintab::@4 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@5 dominated by  init gen_sintab main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@6 dominated by  init gen_sintab gen_sintab::@6 main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@7 dominated by  init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@8 dominated by  init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@9 dominated by  init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@10 dominated by  gen_sintab::@10 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@11 dominated by  gen_sintab::@10 gen_sintab::@11 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@12 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+gen_sintab::@1 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@14 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@15 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@15 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@16 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@17 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@17 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@18 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@19 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@20 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@20 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@21 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@22 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@23 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@23 gen_sintab::@22 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+gen_sintab::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@23 gen_sintab::@22 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 gen_sintab::@return @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+progress_inc dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 progress_inc gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+progress_inc::@2 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 progress_inc gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 progress_inc::@2 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+progress_inc::@1 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 progress_inc gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 progress_inc::@1 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+progress_inc::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 progress_inc gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 gen_sintab::@22 progress_inc::@1 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 progress_inc::@return @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+getFAC dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 getFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+getFAC::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 gen_sintab::@19 init gen_sintab::@21 gen_sintab::@20 getFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 getFAC::@return 
+addMEMtoFAC dominated by  gen_sintab::@10 gen_sintab::@11 init addMEMtoFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+addMEMtoFAC::@1 dominated by  gen_sintab::@10 gen_sintab::@11 init addMEMtoFAC::@1 addMEMtoFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+addMEMtoFAC::@return dominated by  gen_sintab::@10 gen_sintab::@11 init addMEMtoFAC::@1 addMEMtoFAC addMEMtoFAC::@return gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+prepareMEM dominated by  init prepareMEM gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 
+prepareMEM::@return dominated by  init prepareMEM gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 prepareMEM::@return @54 
+mulFACbyMEM dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 mulFACbyMEM init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+mulFACbyMEM::@1 dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 mulFACbyMEM init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 mulFACbyMEM::@1 gen_sintab::@3 gen_sintab::@1 
+mulFACbyMEM::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 mulFACbyMEM::@return mulFACbyMEM init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 mulFACbyMEM::@1 gen_sintab::@3 gen_sintab::@1 
+sinFAC dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 init sinFAC gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+sinFAC::@return dominated by  gen_sintab::@10 gen_sintab::@12 gen_sintab::@11 gen_sintab::@14 gen_sintab::@16 gen_sintab::@15 gen_sintab::@18 gen_sintab::@17 init sinFAC sinFAC::@return gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 gen_sintab::@1 
+divMEMbyFAC dominated by  init gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 divMEMbyFAC gen_sintab::@3 
+divMEMbyFAC::@1 dominated by  init divMEMbyFAC::@1 gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 divMEMbyFAC gen_sintab::@3 
+divMEMbyFAC::@return dominated by  init divMEMbyFAC::@1 divMEMbyFAC::@return gen_sintab gen_sintab::@6 gen_sintab::@7 main gen_sintab::@4 gen_sintab::@5 gen_sintab::@8 gen_sintab::@9 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 divMEMbyFAC gen_sintab::@3 
+setFAC dominated by  init setFAC gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 
+setFAC::@1 dominated by  init setFAC gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 setFAC::@1 @54 
+setFAC::@return dominated by  setFAC::@return init setFAC gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 setFAC::@1 @54 
+setMEMtoFAC dominated by  init setMEMtoFAC gen_sintab main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+setMEMtoFAC::@1 dominated by  init setMEMtoFAC setMEMtoFAC::@1 gen_sintab main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+setMEMtoFAC::@return dominated by  init setMEMtoFAC setMEMtoFAC::@1 gen_sintab main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 setMEMtoFAC::@return gen_sintab::@3 
+subFACfromARG dominated by  init subFACfromARG gen_sintab gen_sintab::@6 main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+subFACfromARG::@return dominated by  init subFACfromARG gen_sintab gen_sintab::@6 main gen_sintab::@4 gen_sintab::@5 @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 subFACfromARG::@return gen_sintab::@3 
+setARGtoFAC dominated by  setARGtoFAC init gen_sintab main @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+setARGtoFAC::@return dominated by  setARGtoFAC init gen_sintab main setARGtoFAC::@return @begin init::@2 init::@1 init::@6 init::@5 init::@4 @54 gen_sintab::@3 
+progress_init dominated by  init progress_init main @begin init::@2 init::@1 init::@5 init::@4 @54 
+progress_init::@return dominated by  init progress_init main @begin init::@2 init::@1 init::@5 init::@4 progress_init::@return @54 
+gen_sprites dominated by  init main @begin gen_sprites init::@2 init::@1 init::@4 @54 
+gen_sprites::@1 dominated by  init main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_sprites::@3 dominated by  init main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 gen_sprites::@3 @54 
+gen_sprites::@return dominated by  init main gen_sprites::@return @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 gen_sprites::@3 @54 
+gen_chargen_sprite dominated by  init gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@1 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@2 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@6 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@6 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@3 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@3 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@4 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@7 dominated by  init gen_chargen_sprite::@7 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@5 dominated by  init gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@8 dominated by  init gen_chargen_sprite::@8 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@9 dominated by  init gen_chargen_sprite::@9 gen_chargen_sprite::@8 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@10 dominated by  init gen_chargen_sprite::@10 gen_chargen_sprite::@9 gen_chargen_sprite::@8 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+gen_chargen_sprite::@return dominated by  init gen_chargen_sprite::@10 gen_chargen_sprite::@return gen_chargen_sprite::@9 gen_chargen_sprite::@8 gen_chargen_sprite::@1 gen_chargen_sprite::@2 gen_chargen_sprite::@5 gen_chargen_sprite::@3 gen_chargen_sprite::@4 gen_chargen_sprite main @begin gen_sprites init::@2 init::@1 init::@4 gen_sprites::@1 @54 
+place_sprites dominated by  init main @begin init::@2 init::@1 @54 place_sprites 
+place_sprites::@1 dominated by  init place_sprites::@1 main @begin init::@2 init::@1 @54 place_sprites 
+place_sprites::@return dominated by  init place_sprites::@return place_sprites::@1 main @begin init::@2 init::@1 @54 place_sprites 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@2 tails: main::@2 blocks: null
@@ -6208,17 +6312,17 @@ INITIAL ASM
   .label sin_idx_y = 3
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @51 [phi:@begin->@51]
-b51_from_bbegin:
-  jmp b51
-//SEG4 @51
-b51:
+//SEG3 [1] phi from @begin to @54 [phi:@begin->@54]
+b54_from_bbegin:
+  jmp b54
+//SEG4 @54
+b54:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @51 to main [phi:@51->main]
-main_from_b51:
+//SEG6 [4] phi from @54 to main [phi:@54->main]
+main_from_b54:
   jsr main
-//SEG7 [3] phi from @51 to @end [phi:@51->@end]
-bend_from_b51:
+//SEG7 [3] phi from @54 to @end [phi:@54->@end]
+bend_from_b54:
   jmp bend
 //SEG8 @end
 bend:
@@ -7936,17 +8040,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label sin_idx_y = 3
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @51 [phi:@begin->@51]
-b51_from_bbegin:
-  jmp b51
-//SEG4 @51
-b51:
+//SEG3 [1] phi from @begin to @54 [phi:@begin->@54]
+b54_from_bbegin:
+  jmp b54
+//SEG4 @54
+b54:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @51 to main [phi:@51->main]
-main_from_b51:
+//SEG6 [4] phi from @54 to main [phi:@54->main]
+main_from_b54:
   jsr main
-//SEG7 [3] phi from @51 to @end [phi:@51->@end]
-bend_from_b51:
+//SEG7 [3] phi from @54 to @end [phi:@54->@end]
+bend_from_b54:
   jmp bend
 //SEG8 @end
 bend:
@@ -9222,7 +9326,7 @@ place_sprites: {
   sintab_y: .fill $c5, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b51
+Removing instruction jmp b54
 Removing instruction jmp bend
 Removing instruction jmp b2
 Removing instruction jmp b3
@@ -9340,9 +9444,9 @@ Replacing label b2_from_b8 with b2
 Replacing label b1_from_b9 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b51_from_bbegin:
-Removing instruction main_from_b51:
-Removing instruction bend_from_b51:
+Removing instruction b54_from_bbegin:
+Removing instruction main_from_b54:
+Removing instruction bend_from_b54:
 Removing instruction b2_from_b2:
 Removing instruction b3_from_b2:
 Removing instruction b1_from_b3:
@@ -9409,7 +9513,7 @@ Removing instruction b4_from_b5:
 Removing instruction b5_from_b4:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b51:
+Removing instruction b54:
 Removing instruction bend:
 Removing instruction init_from_main:
 Removing instruction b2_from_main:
@@ -9528,7 +9632,7 @@ Removing unreachable instruction jmp b4
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
-(label) @51
+(label) @54
 (label) @begin
 (label) @end
 (byte*) BORDERCOL
@@ -9896,12 +10000,12 @@ Score: 768747
   .label sin_idx_x = 2
   .label sin_idx_y = 3
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @51 [phi:@begin->@51]
-//SEG4 @51
+//SEG3 [1] phi from @begin to @54 [phi:@begin->@54]
+//SEG4 @54
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @51 to main [phi:@51->main]
+//SEG6 [4] phi from @54 to main [phi:@54->main]
   jsr main
-//SEG7 [3] phi from @51 to @end [phi:@51->@end]
+//SEG7 [3] phi from @54 to @end [phi:@54->@end]
 //SEG8 @end
 //SEG9 main
 main: {

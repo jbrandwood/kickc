@@ -168,6 +168,24 @@ const byte LIGHT_GREEN = $d;
 const byte LIGHT_BLUE = $e;
 const byte LIGHT_GREY = $f;
 
+// Get the value to store into D018 to display a specific screen and charset/bitmap
+// Optimized for ASM from (byte)((((word)screen&$3fff)/$40)|(((word)charset&$3fff)/$400));
+inline byte toD018(byte* screen, byte* gfx) {
+    return (>((((word)screen&$3fff)<<2)))|(((>((word)gfx))>>2)&$f);
+}
+
+// Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
+// Optimized for ASM from %00000011 ^ (byte)((word)gfx/$4000)
+inline byte toDd00(byte* gfx) {
+    return %00000011 ^ (>((word)gfx))>>6;
+}
+
+// Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed
+inline void vicSelectGfxBank(byte* gfx) {
+    *CIA2_PORT_A_DDR = %00000011;
+    *CIA2_PORT_A = toDd00(gfx);
+}
+
 Adding pre/post-modifier (byte*) init::sc ← ++ (byte*) init::sc
 SYMBOLS
 (byte*~) $0
@@ -175,6 +193,9 @@ SYMBOLS
 (label) @1
 (label) @2
 (label) @3
+(label) @4
+(label) @5
+(label) @6
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -293,6 +314,34 @@ SYMBOLS
 (label) main::@3
 (label) main::@4
 (label) main::@return
+inline (byte()) toD018((byte*) toD018::screen , (byte*) toD018::gfx)
+(word~) toD018::$0
+(word~) toD018::$1
+(word~) toD018::$2
+(byte~) toD018::$3
+(word~) toD018::$4
+(byte~) toD018::$5
+(byte~) toD018::$6
+(byte~) toD018::$7
+(byte~) toD018::$8
+(label) toD018::@1
+(label) toD018::@return
+(byte*) toD018::gfx
+(byte) toD018::return
+(byte*) toD018::screen
+inline (byte()) toDd00((byte*) toDd00::gfx)
+(word~) toDd00::$0
+(byte~) toDd00::$1
+(byte~) toDd00::$2
+(byte/word/dword~) toDd00::$3
+(label) toDd00::@1
+(label) toDd00::@return
+(byte*) toDd00::gfx
+(byte) toDd00::return
+inline (void()) vicSelectGfxBank((byte*) vicSelectGfxBank::gfx)
+(byte~) vicSelectGfxBank::$0
+(label) vicSelectGfxBank::@return
+(byte*) vicSelectGfxBank::gfx
 (signed word) xpos
 (signed word) xvel
 (signed word) ypos
@@ -404,11 +453,56 @@ INITIAL CONTROL FLOW GRAPH
   (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
   (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
   (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
+  to:@1
+toD018: scope:[toD018]  from
+  (word~) toD018::$0 ← ((word)) (byte*) toD018::screen
+  (word~) toD018::$1 ← (word~) toD018::$0 & (word/signed word/dword/signed dword) 16383
+  (word~) toD018::$2 ← (word~) toD018::$1 << (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$3 ← > (word~) toD018::$2
+  (word~) toD018::$4 ← ((word)) (byte*) toD018::gfx
+  (byte~) toD018::$5 ← > (word~) toD018::$4
+  (byte~) toD018::$6 ← (byte~) toD018::$5 >> (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$7 ← (byte~) toD018::$6 & (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte~) toD018::$8 ← (byte~) toD018::$3 | (byte~) toD018::$7
+  (byte) toD018::return ← (byte~) toD018::$8
+  to:toD018::@return
+toD018::@return: scope:[toD018]  from toD018 toD018::@1
+  (byte) toD018::return ← (byte) toD018::return
+  return (byte) toD018::return
+  to:@return
+toD018::@1: scope:[toD018]  from
+  to:toD018::@return
+@1: scope:[]  from @begin
+  to:@2
+toDd00: scope:[toDd00]  from
+  (word~) toDd00::$0 ← ((word)) (byte*) toDd00::gfx
+  (byte~) toDd00::$1 ← > (word~) toDd00::$0
+  (byte~) toDd00::$2 ← (byte~) toDd00::$1 >> (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte/word/dword~) toDd00::$3 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) toDd00::$2
+  (byte) toDd00::return ← (byte/word/dword~) toDd00::$3
+  to:toDd00::@return
+toDd00::@return: scope:[toDd00]  from toDd00 toDd00::@1
+  (byte) toDd00::return ← (byte) toDd00::return
+  return (byte) toDd00::return
+  to:@return
+toDd00::@1: scope:[toDd00]  from
+  to:toDd00::@return
+@2: scope:[]  from @1
+  to:@3
+vicSelectGfxBank: scope:[vicSelectGfxBank]  from
+  *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+  *((byte*) CIA2_PORT_A) ← (byte~) vicSelectGfxBank::$0
+  to:vicSelectGfxBank::@return
+vicSelectGfxBank::@return: scope:[vicSelectGfxBank]  from vicSelectGfxBank
+  return 
+  to:@return
+@3: scope:[]  from @2
   (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*~) $0 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1016
   (byte*) SPRITES_PTR ← (byte*~) $0
   (byte*) SPRITE ← ((byte*)) (word/signed word/dword/signed dword) 8192
-  to:@1
+  to:@4
 main: scope:[main]  from
   (void~) main::$0 ← call init 
   to:main::@1
@@ -427,8 +521,8 @@ main::@4: scope:[main]  from main::@3
 main::@return: scope:[main]  from main::@4
   return 
   to:@return
-@1: scope:[]  from @begin
-  to:@2
+@4: scope:[]  from @3
+  to:@5
 init: scope:[init]  from
   *((byte*) SPRITES_ENABLE) ← (byte/signed byte/word/signed word/dword/signed dword) 1
   *((byte*) SPRITES_EXPAND_X) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -462,7 +556,7 @@ init::@4: scope:[init]  from init::@2
 init::@return: scope:[init]  from init::@4
   return 
   to:@return
-@2: scope:[]  from @1
+@5: scope:[]  from @4
   (signed word) xpos ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (signed word) ypos ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (signed word) yvel_init ← (byte/signed byte/word/signed word/dword/signed dword) 100
@@ -470,7 +564,7 @@ init::@return: scope:[init]  from init::@4
   (signed word) yvel ← (signed word) yvel_init
   (signed byte/signed word/signed dword~) $1 ← - (byte/signed byte/word/signed word/dword/signed dword) 5
   (signed word) g ← (signed byte/signed word/signed dword~) $1
-  to:@3
+  to:@6
 anim: scope:[anim]  from
   (bool~) anim::$0 ← (signed word) ypos < (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) anim::$1 ← ! (bool~) anim::$0
@@ -517,11 +611,15 @@ anim::@4: scope:[anim]  from anim::@3
 anim::@return: scope:[anim]  from anim::@1
   return 
   to:@return
-@3: scope:[]  from @2
+@6: scope:[]  from @5
   call main 
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @6
 
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Removing unused procedure toD018
+Removing unused procedure toDd00
+Removing unused procedure vicSelectGfxBank
 Eliminating unused variable (byte*) PROCPORT_DDR and assignment [0] (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
 Eliminating unused variable (byte) PROCPORT_DDR_MEMORY_MASK and assignment [1] (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
 Eliminating unused variable (byte*) PROCPORT and assignment [2] (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
@@ -580,8 +678,10 @@ Eliminating unused variable (byte) LIGHT_BLUE and assignment [63] (byte) LIGHT_B
 Eliminating unused variable (byte) LIGHT_GREY and assignment [64] (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
 Eliminating unused variable - keeping the call (void~) main::$0
 Eliminating unused variable - keeping the call (void~) main::$2
-Removing empty block main::@4
 Removing empty block @1
+Removing empty block @2
+Removing empty block main::@4
+Removing empty block @4
 Removing empty block init::@4
 PROCEDURE MODIFY VARIABLE ANALYSIS
 main modifies yvel
@@ -612,17 +712,19 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) SPRITES_EXPAND_X#0 ← ((byte*)) (word/dword/signed dword) 53277
   (byte*) SPRITES_COLS#0 ← ((byte*)) (word/dword/signed dword) 53287
   (byte) WHITE#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  to:@3
+@3: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*~) $0 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) 1016
   (byte*) SPRITES_PTR#0 ← (byte*~) $0
   (byte*) SPRITE#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
-  to:@2
-main: scope:[main]  from @3
-  (signed word) yvel_init#20 ← phi( @3/(signed word) yvel_init#16 )
-  (signed word) xvel#20 ← phi( @3/(signed word) xvel#15 )
-  (signed word) ypos#20 ← phi( @3/(signed word) ypos#15 )
-  (signed word) xpos#20 ← phi( @3/(signed word) xpos#15 )
-  (signed word) yvel#18 ← phi( @3/(signed word) yvel#14 )
+  to:@5
+main: scope:[main]  from @6
+  (signed word) yvel_init#20 ← phi( @6/(signed word) yvel_init#16 )
+  (signed word) xvel#20 ← phi( @6/(signed word) xvel#15 )
+  (signed word) ypos#20 ← phi( @6/(signed word) ypos#15 )
+  (signed word) xpos#20 ← phi( @6/(signed word) xpos#15 )
+  (signed word) yvel#18 ← phi( @6/(signed word) yvel#14 )
   call init 
   to:main::@5
 main::@5: scope:[main]  from main
@@ -715,7 +817,7 @@ init::@2: scope:[init]  from init::@2 init::@3
 init::@return: scope:[init]  from init::@2
   return 
   to:@return
-@2: scope:[]  from @begin
+@5: scope:[]  from @3
   (signed word) xpos#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (signed word) ypos#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (signed word) yvel_init#2 ← (byte/signed byte/word/signed word/dword/signed dword) 100
@@ -723,7 +825,7 @@ init::@return: scope:[init]  from init::@2
   (signed word) yvel#2 ← (signed word) yvel_init#2
   (signed byte/signed word/signed dword~) $1 ← - (byte/signed byte/word/signed word/dword/signed dword) 5
   (signed word) g#0 ← (signed byte/signed word/signed dword~) $1
-  to:@3
+  to:@6
 anim: scope:[anim]  from main::@3
   (signed word) yvel_init#14 ← phi( main::@3/(signed word) yvel_init#13 )
   (signed word) xvel#13 ← phi( main::@3/(signed word) xvel#12 )
@@ -799,34 +901,35 @@ anim::@return: scope:[anim]  from anim::@1
   (signed word) yvel_init#5 ← (signed word) yvel_init#11
   return 
   to:@return
-@3: scope:[]  from @2
-  (signed word) yvel_init#16 ← phi( @2/(signed word) yvel_init#2 )
-  (signed word) xvel#15 ← phi( @2/(signed word) xvel#2 )
-  (signed word) ypos#15 ← phi( @2/(signed word) ypos#2 )
-  (signed word) xpos#15 ← phi( @2/(signed word) xpos#2 )
-  (signed word) yvel#14 ← phi( @2/(signed word) yvel#2 )
+@6: scope:[]  from @5
+  (signed word) yvel_init#16 ← phi( @5/(signed word) yvel_init#2 )
+  (signed word) xvel#15 ← phi( @5/(signed word) xvel#2 )
+  (signed word) ypos#15 ← phi( @5/(signed word) ypos#2 )
+  (signed word) xpos#15 ← phi( @5/(signed word) xpos#2 )
+  (signed word) yvel#14 ← phi( @5/(signed word) yvel#2 )
   call main 
-  to:@4
-@4: scope:[]  from @3
-  (signed word) yvel_init#12 ← phi( @3/(signed word) yvel_init#1 )
-  (signed word) xvel#11 ← phi( @3/(signed word) xvel#1 )
-  (signed word) ypos#12 ← phi( @3/(signed word) ypos#1 )
-  (signed word) xpos#11 ← phi( @3/(signed word) xpos#1 )
-  (signed word) yvel#11 ← phi( @3/(signed word) yvel#1 )
+  to:@7
+@7: scope:[]  from @6
+  (signed word) yvel_init#12 ← phi( @6/(signed word) yvel_init#1 )
+  (signed word) xvel#11 ← phi( @6/(signed word) xvel#1 )
+  (signed word) ypos#12 ← phi( @6/(signed word) ypos#1 )
+  (signed word) xpos#11 ← phi( @6/(signed word) xpos#1 )
+  (signed word) yvel#11 ← phi( @6/(signed word) yvel#1 )
   (signed word) yvel#6 ← (signed word) yvel#11
   (signed word) xpos#6 ← (signed word) xpos#11
   (signed word) ypos#6 ← (signed word) ypos#12
   (signed word) xvel#5 ← (signed word) xvel#11
   (signed word) yvel_init#6 ← (signed word) yvel_init#12
   to:@end
-@end: scope:[]  from @4
+@end: scope:[]  from @7
 
 SYMBOL TABLE SSA
 (byte*~) $0
 (signed byte/signed word/signed dword~) $1
-(label) @2
 (label) @3
-(label) @4
+(label) @5
+(label) @6
+(label) @7
 (label) @begin
 (label) @end
 (byte*) RASTER
@@ -1202,13 +1305,14 @@ if() condition always true - replacing block destination if(true) goto main::@1
 Succesful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Succesful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) @3
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) init::@3
-Culled Empty Block (label) @2
+Culled Empty Block (label) @5
 Not culling empty block because it shares successor with its predecessor. (label) anim::@4
-Culled Empty Block (label) @4
+Culled Empty Block (label) @7
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not culling empty block because it shares successor with its predecessor. (label) anim::@4
 Not aliassing across scopes: yvel#12 yvel#10
@@ -1273,14 +1377,14 @@ Constant inlined xpos#14 = (byte/signed byte/word/signed word/dword/signed dword
 Constant inlined yvel_init#4 = (byte/word/signed word/dword/signed dword) 200
 Constant inlined init::sc#0 = (const byte*) SCREEN#0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @3 @end main main::@2 main::@3 anim anim::@3 anim::@4 anim::@2 anim::@1 anim::@return init init::@1 init::@2 init::@return 
+Block Sequence Planned @begin @6 @end main main::@2 main::@3 anim anim::@3 anim::@4 anim::@2 anim::@1 anim::@return init init::@1 init::@2 init::@return 
 Added new block during phi lifting anim::@5(between anim::@3 and anim::@2)
 Added new block during phi lifting anim::@6(between anim and anim::@1)
 Added new block during phi lifting init::@5(between init::@1 and init::@1)
 Added new block during phi lifting init::@6(between init::@2 and init::@2)
-Block Sequence Planned @begin @3 @end main main::@2 main::@3 anim anim::@3 anim::@4 anim::@2 anim::@1 anim::@return anim::@5 anim::@6 init init::@1 init::@2 init::@return init::@6 init::@5 
+Block Sequence Planned @begin @6 @end main main::@2 main::@3 anim anim::@3 anim::@4 anim::@2 anim::@1 anim::@return anim::@5 anim::@6 init init::@1 init::@2 init::@return init::@6 init::@5 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
+Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -1332,9 +1436,9 @@ Not culling empty block because it shares successor with its predecessor. (label
 Culled Empty Block (label) anim::@6
 Culled Empty Block (label) init::@6
 Culled Empty Block (label) init::@5
-Block Sequence Planned @begin @3 @end main main::@2 main::@3 anim anim::@3 anim::@2 anim::@1 anim::@return anim::@5 init init::@1 init::@2 init::@return 
+Block Sequence Planned @begin @6 @end main main::@2 main::@3 anim anim::@3 anim::@2 anim::@1 anim::@return anim::@5 init init::@1 init::@2 init::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
+Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -1358,14 +1462,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@3
-@3: scope:[]  from @begin
+  to:@6
+@6: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @6
   [3] phi() [ ] ( )
-main: scope:[main]  from @3
+main: scope:[main]  from @6
   [4] phi() [ ] ( main:2 [ ] )
   [5] call init  [ ] ( main:2 [ ] )
   to:main::@2
@@ -1446,21 +1550,21 @@ init::@return: scope:[init]  from init::@2
 
 DOMINATORS
 @begin dominated by  @begin 
-@3 dominated by  @begin @3 
-@end dominated by  @begin @end @3 
-main dominated by  @begin main @3 
-main::@2 dominated by  @begin main @3 main::@2 
-main::@3 dominated by  @begin main @3 main::@2 main::@3 
-anim dominated by  @begin main @3 main::@2 anim main::@3 
-anim::@3 dominated by  @begin anim::@3 main @3 main::@2 anim main::@3 
-anim::@2 dominated by  @begin anim::@3 anim::@2 main @3 main::@2 anim main::@3 
-anim::@1 dominated by  @begin anim::@1 main @3 main::@2 anim main::@3 
-anim::@return dominated by  @begin anim::@1 main anim::@return @3 main::@2 anim main::@3 
-anim::@5 dominated by  anim::@5 @begin anim::@3 main @3 main::@2 anim main::@3 
-init dominated by  init @begin main @3 
-init::@1 dominated by  init @begin main init::@1 @3 
-init::@2 dominated by  init @begin main init::@2 init::@1 @3 
-init::@return dominated by  init @begin init::@return main init::@2 init::@1 @3 
+@6 dominated by  @begin @6 
+@end dominated by  @begin @end @6 
+main dominated by  @begin main @6 
+main::@2 dominated by  @begin main @6 main::@2 
+main::@3 dominated by  @begin main @6 main::@2 main::@3 
+anim dominated by  @begin main @6 main::@2 anim main::@3 
+anim::@3 dominated by  @begin anim::@3 main @6 main::@2 anim main::@3 
+anim::@2 dominated by  @begin anim::@3 anim::@2 main @6 main::@2 anim main::@3 
+anim::@1 dominated by  @begin anim::@1 main @6 main::@2 anim main::@3 
+anim::@return dominated by  @begin anim::@1 main anim::@return @6 main::@2 anim main::@3 
+anim::@5 dominated by  anim::@5 @begin anim::@3 main @6 main::@2 anim main::@3 
+init dominated by  init @begin main @6 
+init::@1 dominated by  init @begin main init::@1 @6 
+init::@2 dominated by  init @begin main init::@2 init::@1 @6 
+init::@return dominated by  init @begin init::@return main init::@2 init::@1 @6 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@2 tails: main::@2 blocks: null
@@ -1621,17 +1725,17 @@ INITIAL ASM
   .label yvel_22 = 6
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG4 @3
-b3:
+//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+b6_from_bbegin:
+  jmp b6
+//SEG4 @6
+b6:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @3 to main [phi:@3->main]
-main_from_b3:
+//SEG6 [4] phi from @6 to main [phi:@6->main]
+main_from_b6:
   jsr main
-//SEG7 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG7 [3] phi from @6 to @end [phi:@6->@end]
+bend_from_b6:
   jmp bend
 //SEG8 @end
 bend:
@@ -2081,17 +2185,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label yvel_22 = 6
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG4 @3
-b3:
+//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+b6_from_bbegin:
+  jmp b6
+//SEG4 @6
+b6:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @3 to main [phi:@3->main]
-main_from_b3:
+//SEG6 [4] phi from @6 to main [phi:@6->main]
+main_from_b6:
   jsr main
-//SEG7 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG7 [3] phi from @6 to @end [phi:@6->@end]
+bend_from_b6:
   jmp bend
 //SEG8 @end
 bend:
@@ -2414,7 +2518,7 @@ init: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b3
+Removing instruction jmp b6
 Removing instruction jmp bend
 Removing instruction jmp b2
 Removing instruction jmp b3
@@ -2443,9 +2547,9 @@ Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b2_from_b2 with b2
 Removing instruction bbegin:
-Removing instruction b3_from_bbegin:
-Removing instruction main_from_b3:
-Removing instruction bend_from_b3:
+Removing instruction b6_from_bbegin:
+Removing instruction main_from_b6:
+Removing instruction bend_from_b6:
 Removing instruction b2_from_b2:
 Removing instruction b3_from_b2:
 Removing instruction b1_from_anim:
@@ -2454,7 +2558,7 @@ Removing instruction b2_from_b5:
 Removing instruction b1_from_b1:
 Removing instruction b2_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b3:
+Removing instruction b6:
 Removing instruction bend:
 Removing instruction b2_from_main:
 Removing instruction b3:
@@ -2480,7 +2584,7 @@ Removing unreachable instruction jmp b2
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
-(label) @3
+(label) @6
 (label) @begin
 (label) @end
 (byte*) RASTER
@@ -2604,12 +2708,12 @@ Score: 6623
   .label yvel_12 = 6
   .label yvel_22 = 6
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
-//SEG4 @3
+//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+//SEG4 @6
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @3 to main [phi:@3->main]
+//SEG6 [4] phi from @6 to main [phi:@6->main]
   jsr main
-//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+//SEG7 [3] phi from @6 to @end [phi:@6->@end]
 //SEG8 @end
 //SEG9 main
 main: {

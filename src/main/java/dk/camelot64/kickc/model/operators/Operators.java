@@ -35,8 +35,8 @@ public class Operators {
    public static final OperatorBinary MINUS = new OperatorMinus(4);
    public static final OperatorBinary SHIFT_LEFT = new OperatorShiftLeft(5);
    public static final OperatorBinary SHIFT_RIGHT = new OperatorShiftRight(5);
-   public static final OperatorUnary LOWBYTE = new OperatorGetLow(6);
-   public static final OperatorUnary HIBYTE = new OperatorGetHigh(6);
+   public static final OperatorUnary LOWBYTE = new OperatorGetLow(14);
+   public static final OperatorUnary HIBYTE = new OperatorGetHigh(14);
    public static final OperatorBinary LT = new OperatorLessThan(7);
    public static final OperatorBinary LE = new OperatorLessThanEqual(7);
    public static final OperatorBinary GT = new OperatorGreaterThan(7);

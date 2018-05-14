@@ -130,6 +130,24 @@ const byte LIGHT_GREEN = $d;
 const byte LIGHT_BLUE = $e;
 const byte LIGHT_GREY = $f;
 
+// Get the value to store into D018 to display a specific screen and charset/bitmap
+// Optimized for ASM from (byte)((((word)screen&$3fff)/$40)|(((word)charset&$3fff)/$400));
+inline byte toD018(byte* screen, byte* gfx) {
+    return (>((((word)screen&$3fff)<<2)))|(((>((word)gfx))>>2)&$f);
+}
+
+// Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
+// Optimized for ASM from %00000011 ^ (byte)((word)gfx/$4000)
+inline byte toDd00(byte* gfx) {
+    return %00000011 ^ (>((word)gfx))>>6;
+}
+
+// Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed
+inline void vicSelectGfxBank(byte* gfx) {
+    *CIA2_PORT_A_DDR = %00000011;
+    *CIA2_PORT_A = toDd00(gfx);
+}
+
 Importing bitmap-draw.kc
 PARSING src/test/java/dk/camelot64/kickc/test/kc/bitmap-draw.kc
 // Plot and line drawing routines for HIRES bitmaps
@@ -293,6 +311,9 @@ SYMBOLS
 (label) @1
 (label) @10
 (label) @11
+(label) @12
+(label) @13
+(label) @14
 (label) @2
 (label) @3
 (label) @4
@@ -602,6 +623,34 @@ SYMBOLS
 (label) main::@1
 (label) main::@2
 (label) main::@return
+inline (byte()) toD018((byte*) toD018::screen , (byte*) toD018::gfx)
+(word~) toD018::$0
+(word~) toD018::$1
+(word~) toD018::$2
+(byte~) toD018::$3
+(word~) toD018::$4
+(byte~) toD018::$5
+(byte~) toD018::$6
+(byte~) toD018::$7
+(byte~) toD018::$8
+(label) toD018::@1
+(label) toD018::@return
+(byte*) toD018::gfx
+(byte) toD018::return
+(byte*) toD018::screen
+inline (byte()) toDd00((byte*) toDd00::gfx)
+(word~) toDd00::$0
+(byte~) toDd00::$1
+(byte~) toDd00::$2
+(byte/word/dword~) toDd00::$3
+(label) toDd00::@1
+(label) toDd00::@return
+(byte*) toDd00::gfx
+(byte) toDd00::return
+inline (void()) vicSelectGfxBank((byte*) vicSelectGfxBank::gfx)
+(byte~) vicSelectGfxBank::$0
+(label) vicSelectGfxBank::@return
+(byte*) vicSelectGfxBank::gfx
 
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT_DDR ← ((byte*)) 0
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT ← ((byte*)) 1
@@ -710,12 +759,57 @@ INITIAL CONTROL FLOW GRAPH
   (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
   (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
   (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
+  to:@1
+toD018: scope:[toD018]  from
+  (word~) toD018::$0 ← ((word)) (byte*) toD018::screen
+  (word~) toD018::$1 ← (word~) toD018::$0 & (word/signed word/dword/signed dword) 16383
+  (word~) toD018::$2 ← (word~) toD018::$1 << (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$3 ← > (word~) toD018::$2
+  (word~) toD018::$4 ← ((word)) (byte*) toD018::gfx
+  (byte~) toD018::$5 ← > (word~) toD018::$4
+  (byte~) toD018::$6 ← (byte~) toD018::$5 >> (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$7 ← (byte~) toD018::$6 & (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte~) toD018::$8 ← (byte~) toD018::$3 | (byte~) toD018::$7
+  (byte) toD018::return ← (byte~) toD018::$8
+  to:toD018::@return
+toD018::@return: scope:[toD018]  from toD018 toD018::@1
+  (byte) toD018::return ← (byte) toD018::return
+  return (byte) toD018::return
+  to:@return
+toD018::@1: scope:[toD018]  from
+  to:toD018::@return
+@1: scope:[]  from @begin
+  to:@2
+toDd00: scope:[toDd00]  from
+  (word~) toDd00::$0 ← ((word)) (byte*) toDd00::gfx
+  (byte~) toDd00::$1 ← > (word~) toDd00::$0
+  (byte~) toDd00::$2 ← (byte~) toDd00::$1 >> (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte/word/dword~) toDd00::$3 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) toDd00::$2
+  (byte) toDd00::return ← (byte/word/dword~) toDd00::$3
+  to:toDd00::@return
+toDd00::@return: scope:[toDd00]  from toDd00 toDd00::@1
+  (byte) toDd00::return ← (byte) toDd00::return
+  return (byte) toDd00::return
+  to:@return
+toDd00::@1: scope:[toDd00]  from
+  to:toDd00::@return
+@2: scope:[]  from @1
+  to:@3
+vicSelectGfxBank: scope:[vicSelectGfxBank]  from
+  *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+  *((byte*) CIA2_PORT_A) ← (byte~) vicSelectGfxBank::$0
+  to:vicSelectGfxBank::@return
+vicSelectGfxBank::@return: scope:[vicSelectGfxBank]  from vicSelectGfxBank
+  return 
+  to:@return
+@3: scope:[]  from @2
   (byte[256]) bitmap_plot_xlo ← { fill( 256, 0) }
   (byte[256]) bitmap_plot_xhi ← { fill( 256, 0) }
   (byte[256]) bitmap_plot_ylo ← { fill( 256, 0) }
   (byte[256]) bitmap_plot_yhi ← { fill( 256, 0) }
   (byte[256]) bitmap_plot_bit ← { fill( 256, 0) }
-  to:@1
+  to:@4
 bitmap_init: scope:[bitmap_init]  from
   (byte) bitmap_init::bits ← (byte/word/signed word/dword/signed dword) 128
   (byte) bitmap_init::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -771,8 +865,8 @@ bitmap_init::@8: scope:[bitmap_init]  from bitmap_init::@4
 bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@8
   return 
   to:@return
-@1: scope:[]  from @begin
-  to:@2
+@4: scope:[]  from @3
+  to:@5
 bitmap_clear: scope:[bitmap_clear]  from
   (byte*~) bitmap_clear::$0 ← ((byte*)) { *((byte[256]) bitmap_plot_xhi + (byte/signed byte/word/signed word/dword/signed dword) 0), *((byte[256]) bitmap_plot_xlo + (byte/signed byte/word/signed word/dword/signed dword) 0) }
   (byte*) bitmap_clear::bitmap ← (byte*~) bitmap_clear::$0
@@ -798,8 +892,8 @@ bitmap_clear::@4: scope:[bitmap_clear]  from bitmap_clear::@3
 bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@4
   return 
   to:@return
-@2: scope:[]  from @1
-  to:@3
+@5: scope:[]  from @4
+  to:@6
 bitmap_plot: scope:[bitmap_plot]  from
   (word) bitmap_plot::plotter_x ← { *((byte[256]) bitmap_plot_xhi + (byte) bitmap_plot::x), *((byte[256]) bitmap_plot_xlo + (byte) bitmap_plot::x) }
   (word) bitmap_plot::plotter_y ← { *((byte[256]) bitmap_plot_yhi + (byte) bitmap_plot::y), *((byte[256]) bitmap_plot_ylo + (byte) bitmap_plot::y) }
@@ -811,8 +905,8 @@ bitmap_plot: scope:[bitmap_plot]  from
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   return 
   to:@return
-@3: scope:[]  from @2
-  to:@4
+@6: scope:[]  from @5
+  to:@7
 bitmap_line: scope:[bitmap_line]  from
   (bool~) bitmap_line::$0 ← (byte) bitmap_line::x0 < (byte) bitmap_line::x1
   if((bool~) bitmap_line::$0) goto bitmap_line::@1
@@ -908,8 +1002,8 @@ bitmap_line::@28: scope:[bitmap_line]  from
 bitmap_line::@return: scope:[bitmap_line]  from bitmap_line::@8
   return 
   to:@return
-@4: scope:[]  from @3
-  to:@5
+@7: scope:[]  from @6
+  to:@8
 bitmap_line_xdyi: scope:[bitmap_line_xdyi]  from
   (byte~) bitmap_line_xdyi::$0 ← (byte) bitmap_line_xdyi::yd >> (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) bitmap_line_xdyi::e ← (byte~) bitmap_line_xdyi::$0
@@ -938,8 +1032,8 @@ bitmap_line_xdyi::@4: scope:[bitmap_line_xdyi]  from bitmap_line_xdyi::@2
 bitmap_line_xdyi::@return: scope:[bitmap_line_xdyi]  from bitmap_line_xdyi::@4
   return 
   to:@return
-@5: scope:[]  from @4
-  to:@6
+@8: scope:[]  from @7
+  to:@9
 bitmap_line_xdyd: scope:[bitmap_line_xdyd]  from
   (byte~) bitmap_line_xdyd::$0 ← (byte) bitmap_line_xdyd::yd >> (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) bitmap_line_xdyd::e ← (byte~) bitmap_line_xdyd::$0
@@ -968,8 +1062,8 @@ bitmap_line_xdyd::@4: scope:[bitmap_line_xdyd]  from bitmap_line_xdyd::@2
 bitmap_line_xdyd::@return: scope:[bitmap_line_xdyd]  from bitmap_line_xdyd::@4
   return 
   to:@return
-@6: scope:[]  from @5
-  to:@7
+@9: scope:[]  from @8
+  to:@10
 bitmap_line_ydxi: scope:[bitmap_line_ydxi]  from
   (byte~) bitmap_line_ydxi::$0 ← (byte) bitmap_line_ydxi::xd >> (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) bitmap_line_ydxi::e ← (byte~) bitmap_line_ydxi::$0
@@ -998,8 +1092,8 @@ bitmap_line_ydxi::@4: scope:[bitmap_line_ydxi]  from bitmap_line_ydxi::@2
 bitmap_line_ydxi::@return: scope:[bitmap_line_ydxi]  from bitmap_line_ydxi::@4
   return 
   to:@return
-@7: scope:[]  from @6
-  to:@8
+@10: scope:[]  from @9
+  to:@11
 bitmap_line_ydxd: scope:[bitmap_line_ydxd]  from
   (byte~) bitmap_line_ydxd::$0 ← (byte) bitmap_line_ydxd::xd >> (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) bitmap_line_ydxd::e ← (byte~) bitmap_line_ydxd::$0
@@ -1029,13 +1123,13 @@ bitmap_line_ydxd::@4: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@2
 bitmap_line_ydxd::@return: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@4
   return 
   to:@return
-@8: scope:[]  from @7
+@11: scope:[]  from @10
   (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) BITMAP ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (byte[]) lines_x ← { (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 110, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 10, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 60 }
   (byte[]) lines_y ← { (byte/signed byte/word/signed word/dword/signed dword) 10, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 110, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 10 }
   (byte) lines_cnt ← (byte/signed byte/word/signed word/dword/signed dword) 8
-  to:@9
+  to:@12
 main: scope:[main]  from
   *((byte*) BORDERCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1065,8 +1159,8 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@9: scope:[]  from @8
-  to:@10
+@12: scope:[]  from @11
+  to:@13
 lines: scope:[lines]  from
   (byte) lines::l ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:lines::@1
@@ -1083,8 +1177,8 @@ lines::@2: scope:[lines]  from lines::@1
 lines::@return: scope:[lines]  from lines::@2
   return 
   to:@return
-@10: scope:[]  from @9
-  to:@11
+@13: scope:[]  from @12
+  to:@14
 init_screen: scope:[init_screen]  from
   (byte*) init_screen::c ← (byte*) SCREEN
   to:init_screen::@1
@@ -1100,11 +1194,15 @@ init_screen::@2: scope:[init_screen]  from init_screen::@1
 init_screen::@return: scope:[init_screen]  from init_screen::@2
   return 
   to:@return
-@11: scope:[]  from @10
+@14: scope:[]  from @13
   call main 
   to:@end
-@end: scope:[]  from @11
+@end: scope:[]  from @14
 
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Removing unused procedure toD018
+Removing unused procedure toDd00
+Removing unused procedure vicSelectGfxBank
 Eliminating unused variable (byte*) PROCPORT_DDR and assignment [0] (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
 Eliminating unused variable (byte) PROCPORT_DDR_MEMORY_MASK and assignment [1] (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
 Eliminating unused variable (byte*) PROCPORT and assignment [2] (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
@@ -1180,11 +1278,13 @@ Eliminating unused variable - keeping the call (void~) main::$12
 Eliminating unused variable - keeping the call (void~) main::$13
 Eliminating unused variable - keeping the call (void~) main::$14
 Eliminating unused variable - keeping the call (void~) lines::$2
-Removing empty block bitmap_init::@8
 Removing empty block @1
-Removing empty block bitmap_clear::@4
 Removing empty block @2
-Removing empty block @3
+Removing empty block bitmap_init::@8
+Removing empty block @4
+Removing empty block bitmap_clear::@4
+Removing empty block @5
+Removing empty block @6
 Removing empty block bitmap_line::@4
 Removing empty block bitmap_line::@18
 Removing empty block bitmap_line::@5
@@ -1199,18 +1299,18 @@ Removing empty block bitmap_line::@12
 Removing empty block bitmap_line::@26
 Removing empty block bitmap_line::@14
 Removing empty block bitmap_line::@28
-Removing empty block @4
-Removing empty block bitmap_line_xdyi::@4
-Removing empty block @5
-Removing empty block bitmap_line_xdyd::@4
-Removing empty block @6
-Removing empty block bitmap_line_ydxi::@4
 Removing empty block @7
+Removing empty block bitmap_line_xdyi::@4
+Removing empty block @8
+Removing empty block bitmap_line_xdyd::@4
+Removing empty block @9
+Removing empty block bitmap_line_ydxi::@4
+Removing empty block @10
 Removing empty block bitmap_line_ydxd::@4
 Removing empty block main::@2
-Removing empty block @9
+Removing empty block @12
 Removing empty block lines::@2
-Removing empty block @10
+Removing empty block @13
 Removing empty block init_screen::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
@@ -1233,12 +1333,14 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte) VIC_DEN#0 ← (byte/signed byte/word/signed word/dword/signed dword) 16
   (byte) VIC_RSEL#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8
   (byte*) VIC_MEMORY#0 ← ((byte*)) (word/dword/signed dword) 53272
+  to:@3
+@3: scope:[]  from @begin
   (byte[256]) bitmap_plot_xlo#0 ← { fill( 256, 0) }
   (byte[256]) bitmap_plot_xhi#0 ← { fill( 256, 0) }
   (byte[256]) bitmap_plot_ylo#0 ← { fill( 256, 0) }
   (byte[256]) bitmap_plot_yhi#0 ← { fill( 256, 0) }
   (byte[256]) bitmap_plot_bit#0 ← { fill( 256, 0) }
-  to:@8
+  to:@11
 bitmap_init: scope:[bitmap_init]  from main
   (byte*) bitmap_init::bitmap#2 ← phi( main/(byte*) bitmap_init::bitmap#0 )
   (byte) bitmap_init::bits#0 ← (byte/word/signed word/dword/signed dword) 128
@@ -1782,15 +1884,15 @@ bitmap_line_ydxd::@3: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@5
 bitmap_line_ydxd::@return: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@2
   return 
   to:@return
-@8: scope:[]  from @begin
+@11: scope:[]  from @3
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) BITMAP#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (byte[]) lines_x#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 110, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 10, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 60 }
   (byte[]) lines_y#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 10, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 110, (byte/signed byte/word/signed word/dword/signed dword) 80, (byte/signed byte/word/signed word/dword/signed dword) 60, (byte/signed byte/word/signed word/dword/signed dword) 40, (byte/signed byte/word/signed word/dword/signed dword) 10 }
   (byte) lines_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8
-  to:@11
-main: scope:[main]  from @11
-  (byte) lines_cnt#9 ← phi( @11/(byte) lines_cnt#10 )
+  to:@14
+main: scope:[main]  from @14
+  (byte) lines_cnt#9 ← phi( @14/(byte) lines_cnt#10 )
   *((byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   *((byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte~) main::$0 ← (byte) VIC_BMM#0 | (byte) VIC_DEN#0
@@ -1870,18 +1972,19 @@ init_screen::@1: scope:[init_screen]  from init_screen init_screen::@1
 init_screen::@return: scope:[init_screen]  from init_screen::@1
   return 
   to:@return
-@11: scope:[]  from @8
-  (byte) lines_cnt#10 ← phi( @8/(byte) lines_cnt#0 )
+@14: scope:[]  from @11
+  (byte) lines_cnt#10 ← phi( @11/(byte) lines_cnt#0 )
   call main 
-  to:@12
-@12: scope:[]  from @11
+  to:@15
+@15: scope:[]  from @14
   to:@end
-@end: scope:[]  from @12
+@end: scope:[]  from @15
 
 SYMBOL TABLE SSA
 (label) @11
-(label) @12
-(label) @8
+(label) @14
+(label) @15
+(label) @3
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -2456,7 +2559,7 @@ Culled Empty Block (label) bitmap_line::@33
 Culled Empty Block (label) bitmap_line::@34
 Culled Empty Block (label) bitmap_line::@35
 Culled Empty Block (label) bitmap_line::@36
-Culled Empty Block (label) @12
+Culled Empty Block (label) @15
 Succesful SSA optimization Pass2CullEmptyBlocks
 Inversing boolean not (bool~) bitmap_init::$4 ← (byte) bitmap_init::bits#1 != (byte/signed byte/word/signed word/dword/signed dword) 0 from (bool~) bitmap_init::$3 ← (byte) bitmap_init::bits#1 == (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (bool~) bitmap_init::$12 ← (byte~) bitmap_init::$10 != (byte/signed byte/word/signed word/dword/signed dword) 7 from (bool~) bitmap_init::$11 ← (byte~) bitmap_init::$10 == (byte/signed byte/word/signed word/dword/signed dword) 7
@@ -2915,9 +3018,10 @@ Eliminating Noop Cast (byte*) bitmap_plot::plotter#0 ← ((byte*)) (word~) bitma
 Succesful SSA optimization Pass2NopCastElimination
 Removing unused block main::@return
 Succesful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) @3
 Not culling empty block because it shares successor with its predecessor. (label) bitmap_init::@5
 Culled Empty Block (label) bitmap_init::@6
-Culled Empty Block (label) @8
+Culled Empty Block (label) @11
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
 Succesful SSA optimization Pass2CullEmptyBlocks
@@ -3187,7 +3291,7 @@ Constant inlined init_screen::$0 = (const byte*) SCREEN#0+(word/signed word/dwor
 Constant inlined main::$8 = ((word))(const byte*) BITMAP#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024
 Constant inlined bitmap_init::bitmap#0 = (const byte*) BITMAP#0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @11 @end main main::@3 main::@4 main::@1 lines lines::@1 lines::@3 lines::@return bitmap_line bitmap_line::@15 bitmap_line::@16 bitmap_line::@17 bitmap_line::@return bitmap_line::@3 bitmap_line::@2 bitmap_line::@20 bitmap_line::@6 bitmap_line::@1 bitmap_line::@23 bitmap_line::@24 bitmap_line::@10 bitmap_line::@9 bitmap_line::@27 bitmap_line::@13 bitmap_line_xdyi bitmap_line_xdyi::@1 bitmap_line_xdyi::@5 bitmap_line_xdyi::@3 bitmap_line_xdyi::@2 bitmap_line_xdyi::@return bitmap_plot bitmap_plot::@return bitmap_line_ydxi bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 bitmap_line_ydxi::@3 bitmap_line_ydxi::@2 bitmap_line_ydxi::@return bitmap_line_xdyd bitmap_line_xdyd::@1 bitmap_line_xdyd::@5 bitmap_line_xdyd::@3 bitmap_line_xdyd::@2 bitmap_line_xdyd::@return bitmap_line_ydxd bitmap_line_ydxd::@1 bitmap_line_ydxd::@5 bitmap_line_ydxd::@3 bitmap_line_ydxd::@2 bitmap_line_ydxd::@return init_screen init_screen::@1 init_screen::@return bitmap_clear bitmap_clear::@1 bitmap_clear::@2 bitmap_clear::@3 bitmap_clear::@return bitmap_init bitmap_init::@1 bitmap_init::@5 bitmap_init::@2 bitmap_init::@3 bitmap_init::@7 bitmap_init::@4 bitmap_init::@return 
+Block Sequence Planned @begin @14 @end main main::@3 main::@4 main::@1 lines lines::@1 lines::@3 lines::@return bitmap_line bitmap_line::@15 bitmap_line::@16 bitmap_line::@17 bitmap_line::@return bitmap_line::@3 bitmap_line::@2 bitmap_line::@20 bitmap_line::@6 bitmap_line::@1 bitmap_line::@23 bitmap_line::@24 bitmap_line::@10 bitmap_line::@9 bitmap_line::@27 bitmap_line::@13 bitmap_line_xdyi bitmap_line_xdyi::@1 bitmap_line_xdyi::@5 bitmap_line_xdyi::@3 bitmap_line_xdyi::@2 bitmap_line_xdyi::@return bitmap_plot bitmap_plot::@return bitmap_line_ydxi bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 bitmap_line_ydxi::@3 bitmap_line_ydxi::@2 bitmap_line_ydxi::@return bitmap_line_xdyd bitmap_line_xdyd::@1 bitmap_line_xdyd::@5 bitmap_line_xdyd::@3 bitmap_line_xdyd::@2 bitmap_line_xdyd::@return bitmap_line_ydxd bitmap_line_ydxd::@1 bitmap_line_ydxd::@5 bitmap_line_ydxd::@3 bitmap_line_ydxd::@2 bitmap_line_ydxd::@return init_screen init_screen::@1 init_screen::@return bitmap_clear bitmap_clear::@1 bitmap_clear::@2 bitmap_clear::@3 bitmap_clear::@return bitmap_init bitmap_init::@1 bitmap_init::@5 bitmap_init::@2 bitmap_init::@3 bitmap_init::@7 bitmap_init::@4 bitmap_init::@return 
 Added new block during phi lifting lines::@4(between lines::@3 and lines::@1)
 Added new block during phi lifting bitmap_line_xdyi::@6(between bitmap_line_xdyi::@2 and bitmap_line_xdyi::@1)
 Added new block during phi lifting bitmap_line_xdyi::@7(between bitmap_line_xdyi::@5 and bitmap_line_xdyi::@2)
@@ -3204,9 +3308,9 @@ Added new block during phi lifting bitmap_init::@9(between bitmap_init::@2 and b
 Added new block during phi lifting bitmap_init::@10(between bitmap_init::@1 and bitmap_init::@2)
 Added new block during phi lifting bitmap_init::@11(between bitmap_init::@4 and bitmap_init::@3)
 Added new block during phi lifting bitmap_init::@12(between bitmap_init::@3 and bitmap_init::@4)
-Block Sequence Planned @begin @11 @end main main::@3 main::@4 main::@1 lines lines::@1 lines::@3 lines::@return lines::@4 bitmap_line bitmap_line::@15 bitmap_line::@16 bitmap_line::@17 bitmap_line::@return bitmap_line::@3 bitmap_line::@2 bitmap_line::@20 bitmap_line::@6 bitmap_line::@1 bitmap_line::@23 bitmap_line::@24 bitmap_line::@10 bitmap_line::@9 bitmap_line::@27 bitmap_line::@13 bitmap_line_xdyi bitmap_line_xdyi::@1 bitmap_line_xdyi::@5 bitmap_line_xdyi::@3 bitmap_line_xdyi::@2 bitmap_line_xdyi::@return bitmap_line_xdyi::@6 bitmap_line_xdyi::@7 bitmap_plot bitmap_plot::@return bitmap_line_ydxi bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 bitmap_line_ydxi::@3 bitmap_line_ydxi::@2 bitmap_line_ydxi::@return bitmap_line_ydxi::@6 bitmap_line_ydxi::@7 bitmap_line_xdyd bitmap_line_xdyd::@1 bitmap_line_xdyd::@5 bitmap_line_xdyd::@3 bitmap_line_xdyd::@2 bitmap_line_xdyd::@return bitmap_line_xdyd::@6 bitmap_line_xdyd::@7 bitmap_line_ydxd bitmap_line_ydxd::@1 bitmap_line_ydxd::@5 bitmap_line_ydxd::@3 bitmap_line_ydxd::@2 bitmap_line_ydxd::@return bitmap_line_ydxd::@6 bitmap_line_ydxd::@7 init_screen init_screen::@1 init_screen::@return init_screen::@3 bitmap_clear bitmap_clear::@1 bitmap_clear::@2 bitmap_clear::@3 bitmap_clear::@return bitmap_clear::@5 bitmap_clear::@6 bitmap_init bitmap_init::@1 bitmap_init::@5 bitmap_init::@2 bitmap_init::@3 bitmap_init::@7 bitmap_init::@4 bitmap_init::@return bitmap_init::@11 bitmap_init::@12 bitmap_init::@9 bitmap_init::@10 
+Block Sequence Planned @begin @14 @end main main::@3 main::@4 main::@1 lines lines::@1 lines::@3 lines::@return lines::@4 bitmap_line bitmap_line::@15 bitmap_line::@16 bitmap_line::@17 bitmap_line::@return bitmap_line::@3 bitmap_line::@2 bitmap_line::@20 bitmap_line::@6 bitmap_line::@1 bitmap_line::@23 bitmap_line::@24 bitmap_line::@10 bitmap_line::@9 bitmap_line::@27 bitmap_line::@13 bitmap_line_xdyi bitmap_line_xdyi::@1 bitmap_line_xdyi::@5 bitmap_line_xdyi::@3 bitmap_line_xdyi::@2 bitmap_line_xdyi::@return bitmap_line_xdyi::@6 bitmap_line_xdyi::@7 bitmap_plot bitmap_plot::@return bitmap_line_ydxi bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 bitmap_line_ydxi::@3 bitmap_line_ydxi::@2 bitmap_line_ydxi::@return bitmap_line_ydxi::@6 bitmap_line_ydxi::@7 bitmap_line_xdyd bitmap_line_xdyd::@1 bitmap_line_xdyd::@5 bitmap_line_xdyd::@3 bitmap_line_xdyd::@2 bitmap_line_xdyd::@return bitmap_line_xdyd::@6 bitmap_line_xdyd::@7 bitmap_line_ydxd bitmap_line_ydxd::@1 bitmap_line_ydxd::@5 bitmap_line_ydxd::@3 bitmap_line_ydxd::@2 bitmap_line_ydxd::@return bitmap_line_ydxd::@6 bitmap_line_ydxd::@7 init_screen init_screen::@1 init_screen::@return init_screen::@3 bitmap_clear bitmap_clear::@1 bitmap_clear::@2 bitmap_clear::@3 bitmap_clear::@return bitmap_clear::@5 bitmap_clear::@6 bitmap_init bitmap_init::@1 bitmap_init::@5 bitmap_init::@2 bitmap_init::@3 bitmap_init::@7 bitmap_init::@4 bitmap_init::@return bitmap_init::@11 bitmap_init::@12 bitmap_init::@9 bitmap_init::@10 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @11
+Adding NOP phi() at start of @14
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
@@ -3363,9 +3467,9 @@ Culled Empty Block (label) bitmap_init::@11
 Culled Empty Block (label) bitmap_init::@12
 Culled Empty Block (label) bitmap_init::@9
 Not culling empty block because it shares successor with its predecessor. (label) bitmap_init::@10
-Block Sequence Planned @begin @11 @end main main::@3 main::@4 main::@1 lines lines::@1 lines::@3 lines::@return bitmap_line bitmap_line::@15 bitmap_line::@16 bitmap_line::@17 bitmap_line::@return bitmap_line::@3 bitmap_line::@2 bitmap_line::@20 bitmap_line::@6 bitmap_line::@1 bitmap_line::@23 bitmap_line::@24 bitmap_line::@10 bitmap_line::@9 bitmap_line::@27 bitmap_line::@13 bitmap_line_xdyi bitmap_line_xdyi::@1 bitmap_line_xdyi::@5 bitmap_line_xdyi::@3 bitmap_line_xdyi::@2 bitmap_line_xdyi::@return bitmap_plot bitmap_plot::@return bitmap_line_ydxi bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 bitmap_line_ydxi::@3 bitmap_line_ydxi::@2 bitmap_line_ydxi::@return bitmap_line_xdyd bitmap_line_xdyd::@1 bitmap_line_xdyd::@5 bitmap_line_xdyd::@3 bitmap_line_xdyd::@2 bitmap_line_xdyd::@return bitmap_line_ydxd bitmap_line_ydxd::@1 bitmap_line_ydxd::@5 bitmap_line_ydxd::@3 bitmap_line_ydxd::@2 bitmap_line_ydxd::@return init_screen init_screen::@1 init_screen::@return bitmap_clear bitmap_clear::@1 bitmap_clear::@2 bitmap_clear::@3 bitmap_clear::@return bitmap_init bitmap_init::@1 bitmap_init::@2 bitmap_init::@3 bitmap_init::@7 bitmap_init::@4 bitmap_init::@return bitmap_init::@10 
+Block Sequence Planned @begin @14 @end main main::@3 main::@4 main::@1 lines lines::@1 lines::@3 lines::@return bitmap_line bitmap_line::@15 bitmap_line::@16 bitmap_line::@17 bitmap_line::@return bitmap_line::@3 bitmap_line::@2 bitmap_line::@20 bitmap_line::@6 bitmap_line::@1 bitmap_line::@23 bitmap_line::@24 bitmap_line::@10 bitmap_line::@9 bitmap_line::@27 bitmap_line::@13 bitmap_line_xdyi bitmap_line_xdyi::@1 bitmap_line_xdyi::@5 bitmap_line_xdyi::@3 bitmap_line_xdyi::@2 bitmap_line_xdyi::@return bitmap_plot bitmap_plot::@return bitmap_line_ydxi bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 bitmap_line_ydxi::@3 bitmap_line_ydxi::@2 bitmap_line_ydxi::@return bitmap_line_xdyd bitmap_line_xdyd::@1 bitmap_line_xdyd::@5 bitmap_line_xdyd::@3 bitmap_line_xdyd::@2 bitmap_line_xdyd::@return bitmap_line_ydxd bitmap_line_ydxd::@1 bitmap_line_ydxd::@5 bitmap_line_ydxd::@3 bitmap_line_ydxd::@2 bitmap_line_ydxd::@return init_screen init_screen::@1 init_screen::@return bitmap_clear bitmap_clear::@1 bitmap_clear::@2 bitmap_clear::@3 bitmap_clear::@return bitmap_init bitmap_init::@1 bitmap_init::@2 bitmap_init::@3 bitmap_init::@7 bitmap_init::@4 bitmap_init::@return bitmap_init::@10 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @11
+Adding NOP phi() at start of @14
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
@@ -3389,14 +3493,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@11
-@11: scope:[]  from @begin
+  to:@14
+@14: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @11
+@end: scope:[]  from @14
   [3] phi() [ ] ( )
-main: scope:[main]  from @11
+main: scope:[main]  from @14
   [4] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
   [5] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
   [6] *((const byte*) D011#0) ← (const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2 [ ] )
@@ -3757,74 +3861,74 @@ bitmap_init::@10: scope:[bitmap_init]  from bitmap_init::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@11 dominated by  @begin @11 
-@end dominated by  @end @begin @11 
-main dominated by  main @begin @11 
-main::@3 dominated by  main main::@3 @begin @11 
-main::@4 dominated by  main main::@3 main::@4 @begin @11 
-main::@1 dominated by  main main::@1 main::@3 main::@4 @begin @11 
-lines dominated by  main main::@1 main::@3 main::@4 @begin lines @11 
-lines::@1 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 lines @11 
-lines::@3 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 lines::@3 lines @11 
-lines::@return dominated by  main main::@1 main::@3 main::@4 @begin lines::@return lines::@1 lines::@3 lines @11 
-bitmap_line dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @11 
-bitmap_line::@15 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@15 lines::@1 bitmap_line lines @11 
-bitmap_line::@16 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@16 bitmap_line::@15 lines::@1 bitmap_line lines @11 
-bitmap_line::@17 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@17 bitmap_line::@16 bitmap_line::@15 lines::@1 bitmap_line lines @11 
-bitmap_line::@return dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@return lines::@1 bitmap_line lines @11 
-bitmap_line::@3 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@16 bitmap_line::@15 lines::@1 bitmap_line::@3 bitmap_line lines @11 
-bitmap_line::@2 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@15 lines::@1 bitmap_line::@2 bitmap_line lines @11 
-bitmap_line::@20 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@15 bitmap_line::@20 lines::@1 bitmap_line::@2 bitmap_line lines @11 
-bitmap_line::@6 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@15 lines::@1 bitmap_line::@2 bitmap_line::@6 bitmap_line lines @11 
-bitmap_line::@1 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line::@1 bitmap_line lines @11 
-bitmap_line::@23 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@23 lines::@1 bitmap_line::@1 bitmap_line lines @11 
-bitmap_line::@24 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@24 bitmap_line::@23 lines::@1 bitmap_line::@1 bitmap_line lines @11 
-bitmap_line::@10 dominated by  main bitmap_line::@10 main::@1 main::@3 main::@4 @begin bitmap_line::@23 lines::@1 bitmap_line::@1 bitmap_line lines @11 
-bitmap_line::@9 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line::@1 bitmap_line::@9 bitmap_line lines @11 
-bitmap_line::@27 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line::@1 bitmap_line::@27 bitmap_line::@9 bitmap_line lines @11 
-bitmap_line::@13 dominated by  main bitmap_line::@13 main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line::@1 bitmap_line::@9 bitmap_line lines @11 
-bitmap_line_xdyi dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @11 bitmap_line_xdyi 
-bitmap_line_xdyi::@1 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @11 bitmap_line_xdyi bitmap_line_xdyi::@1 
-bitmap_line_xdyi::@5 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @11 bitmap_line_xdyi bitmap_line_xdyi::@5 bitmap_line_xdyi::@1 
-bitmap_line_xdyi::@3 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @11 bitmap_line_xdyi bitmap_line_xdyi::@5 bitmap_line_xdyi::@3 bitmap_line_xdyi::@1 
-bitmap_line_xdyi::@2 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @11 bitmap_line_xdyi bitmap_line_xdyi::@5 bitmap_line_xdyi::@1 bitmap_line_xdyi::@2 
-bitmap_line_xdyi::@return dominated by  main bitmap_line_xdyi::@return main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @11 bitmap_line_xdyi bitmap_line_xdyi::@5 bitmap_line_xdyi::@1 bitmap_line_xdyi::@2 
-bitmap_plot dominated by  main main::@1 main::@3 main::@4 @begin bitmap_plot lines::@1 bitmap_line lines @11 
-bitmap_plot::@return dominated by  main main::@1 main::@3 main::@4 @begin bitmap_plot bitmap_plot::@return lines::@1 bitmap_line lines @11 
-bitmap_line_ydxi dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @11 
-bitmap_line_ydxi::@1 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @11 bitmap_line_ydxi::@1 
-bitmap_line_ydxi::@5 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @11 bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 
-bitmap_line_ydxi::@3 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @11 bitmap_line_ydxi::@3 bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 
-bitmap_line_ydxi::@2 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @11 bitmap_line_ydxi::@1 bitmap_line_ydxi::@2 bitmap_line_ydxi::@5 
-bitmap_line_ydxi::@return dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi bitmap_line_ydxi::@return lines::@1 bitmap_line lines @11 bitmap_line_ydxi::@1 bitmap_line_ydxi::@2 bitmap_line_ydxi::@5 
-bitmap_line_xdyd dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @11 bitmap_line_xdyd 
-bitmap_line_xdyd::@1 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@1 lines::@1 bitmap_line lines @11 bitmap_line_xdyd 
-bitmap_line_xdyd::@5 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@5 bitmap_line_xdyd::@1 lines::@1 bitmap_line lines @11 bitmap_line_xdyd 
-bitmap_line_xdyd::@3 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@5 bitmap_line_xdyd::@3 bitmap_line_xdyd::@1 lines::@1 bitmap_line lines @11 bitmap_line_xdyd 
-bitmap_line_xdyd::@2 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@5 bitmap_line_xdyd::@2 bitmap_line_xdyd::@1 lines::@1 bitmap_line lines @11 bitmap_line_xdyd 
-bitmap_line_xdyd::@return dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@5 bitmap_line_xdyd::@2 bitmap_line_xdyd::@1 lines::@1 bitmap_line bitmap_line_xdyd::@return lines @11 bitmap_line_xdyd 
-bitmap_line_ydxd dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @11 
-bitmap_line_ydxd::@1 dominated by  main main::@1 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @11 
-bitmap_line_ydxd::@5 dominated by  main main::@1 bitmap_line_ydxd::@5 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @11 
-bitmap_line_ydxd::@3 dominated by  main main::@1 bitmap_line_ydxd::@3 bitmap_line_ydxd::@5 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @11 
-bitmap_line_ydxd::@2 dominated by  main main::@1 bitmap_line_ydxd::@2 bitmap_line_ydxd::@5 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @11 
-bitmap_line_ydxd::@return dominated by  main main::@1 bitmap_line_ydxd::@2 bitmap_line_ydxd::@5 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd bitmap_line_ydxd::@return lines::@1 bitmap_line lines @11 
-init_screen dominated by  main main::@3 main::@4 @begin init_screen @11 
-init_screen::@1 dominated by  main main::@3 main::@4 @begin init_screen init_screen::@1 @11 
-init_screen::@return dominated by  main main::@3 main::@4 @begin init_screen init_screen::@1 @11 init_screen::@return 
-bitmap_clear dominated by  main main::@3 @begin bitmap_clear @11 
-bitmap_clear::@1 dominated by  main main::@3 bitmap_clear::@1 @begin bitmap_clear @11 
-bitmap_clear::@2 dominated by  main main::@3 bitmap_clear::@1 bitmap_clear::@2 @begin bitmap_clear @11 
-bitmap_clear::@3 dominated by  bitmap_clear::@3 main main::@3 bitmap_clear::@1 bitmap_clear::@2 @begin bitmap_clear @11 
-bitmap_clear::@return dominated by  bitmap_clear::@3 main main::@3 bitmap_clear::@1 bitmap_clear::@2 @begin bitmap_clear::@return bitmap_clear @11 
-bitmap_init dominated by  main @begin @11 bitmap_init 
-bitmap_init::@1 dominated by  main @begin bitmap_init::@1 @11 bitmap_init 
-bitmap_init::@2 dominated by  main @begin bitmap_init::@2 bitmap_init::@1 @11 bitmap_init 
-bitmap_init::@3 dominated by  main @begin bitmap_init::@2 bitmap_init::@3 bitmap_init::@1 @11 bitmap_init 
-bitmap_init::@7 dominated by  main @begin bitmap_init::@2 bitmap_init::@3 bitmap_init::@1 bitmap_init::@7 @11 bitmap_init 
-bitmap_init::@4 dominated by  main @begin bitmap_init::@2 bitmap_init::@3 bitmap_init::@1 bitmap_init::@4 @11 bitmap_init 
-bitmap_init::@return dominated by  main @begin bitmap_init::@2 bitmap_init::@3 bitmap_init::@1 bitmap_init::@4 bitmap_init::@return @11 bitmap_init 
-bitmap_init::@10 dominated by  main @begin bitmap_init::@10 bitmap_init::@1 @11 bitmap_init 
+@14 dominated by  @begin @14 
+@end dominated by  @end @begin @14 
+main dominated by  main @begin @14 
+main::@3 dominated by  main main::@3 @begin @14 
+main::@4 dominated by  main main::@3 main::@4 @begin @14 
+main::@1 dominated by  main main::@1 main::@3 main::@4 @begin @14 
+lines dominated by  main main::@1 main::@3 main::@4 @begin lines @14 
+lines::@1 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 lines @14 
+lines::@3 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 lines::@3 lines @14 
+lines::@return dominated by  main main::@1 main::@3 main::@4 @begin lines::@return lines::@1 lines::@3 lines @14 
+bitmap_line dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @14 
+bitmap_line::@15 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@15 lines::@1 bitmap_line lines @14 
+bitmap_line::@16 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@16 bitmap_line::@15 lines::@1 bitmap_line lines @14 
+bitmap_line::@17 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@17 bitmap_line::@16 bitmap_line::@15 lines::@1 bitmap_line lines @14 
+bitmap_line::@return dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@return lines::@1 bitmap_line lines @14 
+bitmap_line::@3 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@16 bitmap_line::@15 lines::@1 bitmap_line::@3 bitmap_line lines @14 
+bitmap_line::@2 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@15 lines::@1 bitmap_line::@2 bitmap_line lines @14 
+bitmap_line::@20 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@15 bitmap_line::@20 lines::@1 bitmap_line::@2 bitmap_line lines @14 
+bitmap_line::@6 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@15 lines::@1 bitmap_line::@2 bitmap_line::@6 bitmap_line lines @14 
+bitmap_line::@1 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line::@1 bitmap_line lines @14 
+bitmap_line::@23 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@23 lines::@1 bitmap_line::@1 bitmap_line lines @14 
+bitmap_line::@24 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line::@24 bitmap_line::@23 lines::@1 bitmap_line::@1 bitmap_line lines @14 
+bitmap_line::@10 dominated by  main bitmap_line::@10 main::@1 main::@3 main::@4 @begin bitmap_line::@23 lines::@1 bitmap_line::@1 bitmap_line lines @14 
+bitmap_line::@9 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line::@1 bitmap_line::@9 bitmap_line lines @14 
+bitmap_line::@27 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line::@1 bitmap_line::@27 bitmap_line::@9 bitmap_line lines @14 
+bitmap_line::@13 dominated by  main bitmap_line::@13 main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line::@1 bitmap_line::@9 bitmap_line lines @14 
+bitmap_line_xdyi dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @14 bitmap_line_xdyi 
+bitmap_line_xdyi::@1 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @14 bitmap_line_xdyi bitmap_line_xdyi::@1 
+bitmap_line_xdyi::@5 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @14 bitmap_line_xdyi bitmap_line_xdyi::@5 bitmap_line_xdyi::@1 
+bitmap_line_xdyi::@3 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @14 bitmap_line_xdyi bitmap_line_xdyi::@5 bitmap_line_xdyi::@3 bitmap_line_xdyi::@1 
+bitmap_line_xdyi::@2 dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @14 bitmap_line_xdyi bitmap_line_xdyi::@5 bitmap_line_xdyi::@1 bitmap_line_xdyi::@2 
+bitmap_line_xdyi::@return dominated by  main bitmap_line_xdyi::@return main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @14 bitmap_line_xdyi bitmap_line_xdyi::@5 bitmap_line_xdyi::@1 bitmap_line_xdyi::@2 
+bitmap_plot dominated by  main main::@1 main::@3 main::@4 @begin bitmap_plot lines::@1 bitmap_line lines @14 
+bitmap_plot::@return dominated by  main main::@1 main::@3 main::@4 @begin bitmap_plot bitmap_plot::@return lines::@1 bitmap_line lines @14 
+bitmap_line_ydxi dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @14 
+bitmap_line_ydxi::@1 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @14 bitmap_line_ydxi::@1 
+bitmap_line_ydxi::@5 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @14 bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 
+bitmap_line_ydxi::@3 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @14 bitmap_line_ydxi::@3 bitmap_line_ydxi::@1 bitmap_line_ydxi::@5 
+bitmap_line_ydxi::@2 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi lines::@1 bitmap_line lines @14 bitmap_line_ydxi::@1 bitmap_line_ydxi::@2 bitmap_line_ydxi::@5 
+bitmap_line_ydxi::@return dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxi bitmap_line_ydxi::@return lines::@1 bitmap_line lines @14 bitmap_line_ydxi::@1 bitmap_line_ydxi::@2 bitmap_line_ydxi::@5 
+bitmap_line_xdyd dominated by  main main::@1 main::@3 main::@4 @begin lines::@1 bitmap_line lines @14 bitmap_line_xdyd 
+bitmap_line_xdyd::@1 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@1 lines::@1 bitmap_line lines @14 bitmap_line_xdyd 
+bitmap_line_xdyd::@5 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@5 bitmap_line_xdyd::@1 lines::@1 bitmap_line lines @14 bitmap_line_xdyd 
+bitmap_line_xdyd::@3 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@5 bitmap_line_xdyd::@3 bitmap_line_xdyd::@1 lines::@1 bitmap_line lines @14 bitmap_line_xdyd 
+bitmap_line_xdyd::@2 dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@5 bitmap_line_xdyd::@2 bitmap_line_xdyd::@1 lines::@1 bitmap_line lines @14 bitmap_line_xdyd 
+bitmap_line_xdyd::@return dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_xdyd::@5 bitmap_line_xdyd::@2 bitmap_line_xdyd::@1 lines::@1 bitmap_line bitmap_line_xdyd::@return lines @14 bitmap_line_xdyd 
+bitmap_line_ydxd dominated by  main main::@1 main::@3 main::@4 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @14 
+bitmap_line_ydxd::@1 dominated by  main main::@1 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @14 
+bitmap_line_ydxd::@5 dominated by  main main::@1 bitmap_line_ydxd::@5 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @14 
+bitmap_line_ydxd::@3 dominated by  main main::@1 bitmap_line_ydxd::@3 bitmap_line_ydxd::@5 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @14 
+bitmap_line_ydxd::@2 dominated by  main main::@1 bitmap_line_ydxd::@2 bitmap_line_ydxd::@5 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd lines::@1 bitmap_line lines @14 
+bitmap_line_ydxd::@return dominated by  main main::@1 bitmap_line_ydxd::@2 bitmap_line_ydxd::@5 main::@3 main::@4 bitmap_line_ydxd::@1 @begin bitmap_line_ydxd bitmap_line_ydxd::@return lines::@1 bitmap_line lines @14 
+init_screen dominated by  main main::@3 main::@4 @begin init_screen @14 
+init_screen::@1 dominated by  main main::@3 main::@4 @begin init_screen init_screen::@1 @14 
+init_screen::@return dominated by  main main::@3 main::@4 @begin init_screen init_screen::@1 @14 init_screen::@return 
+bitmap_clear dominated by  main main::@3 @begin bitmap_clear @14 
+bitmap_clear::@1 dominated by  main main::@3 bitmap_clear::@1 @begin bitmap_clear @14 
+bitmap_clear::@2 dominated by  main main::@3 bitmap_clear::@1 bitmap_clear::@2 @begin bitmap_clear @14 
+bitmap_clear::@3 dominated by  bitmap_clear::@3 main main::@3 bitmap_clear::@1 bitmap_clear::@2 @begin bitmap_clear @14 
+bitmap_clear::@return dominated by  bitmap_clear::@3 main main::@3 bitmap_clear::@1 bitmap_clear::@2 @begin bitmap_clear::@return bitmap_clear @14 
+bitmap_init dominated by  main @begin @14 bitmap_init 
+bitmap_init::@1 dominated by  main @begin bitmap_init::@1 @14 bitmap_init 
+bitmap_init::@2 dominated by  main @begin bitmap_init::@2 bitmap_init::@1 @14 bitmap_init 
+bitmap_init::@3 dominated by  main @begin bitmap_init::@2 bitmap_init::@3 bitmap_init::@1 @14 bitmap_init 
+bitmap_init::@7 dominated by  main @begin bitmap_init::@2 bitmap_init::@3 bitmap_init::@1 bitmap_init::@7 @14 bitmap_init 
+bitmap_init::@4 dominated by  main @begin bitmap_init::@2 bitmap_init::@3 bitmap_init::@1 bitmap_init::@4 @14 bitmap_init 
+bitmap_init::@return dominated by  main @begin bitmap_init::@2 bitmap_init::@3 bitmap_init::@1 bitmap_init::@4 bitmap_init::@return @14 bitmap_init 
+bitmap_init::@10 dominated by  main @begin bitmap_init::@10 bitmap_init::@1 @14 bitmap_init 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@1 tails: main::@1 blocks: null
@@ -4331,15 +4435,15 @@ INITIAL ASM
   .const lines_cnt = 8
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
-b11_from_bbegin:
-  jmp b11
-//SEG4 @11
-b11:
+//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
+b14_from_bbegin:
+  jmp b14
+//SEG4 @14
+b14:
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @11 to @end [phi:@11->@end]
-bend_from_b11:
+//SEG6 [3] phi from @14 to @end [phi:@14->@end]
+bend_from_b14:
   jmp bend
 //SEG7 @end
 bend:
@@ -5746,15 +5850,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const lines_cnt = 8
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
-b11_from_bbegin:
-  jmp b11
-//SEG4 @11
-b11:
+//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
+b14_from_bbegin:
+  jmp b14
+//SEG4 @14
+b14:
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @11 to @end [phi:@11->@end]
-bend_from_b11:
+//SEG6 [3] phi from @14 to @end [phi:@14->@end]
+bend_from_b14:
   jmp bend
 //SEG7 @end
 bend:
@@ -6701,7 +6805,7 @@ bitmap_init: {
   lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b11
+Removing instruction jmp b14
 Removing instruction jmp bend
 Removing instruction jmp b3
 Removing instruction jmp b4
@@ -6783,8 +6887,8 @@ Replacing label b1_from_b2 with b1
 Replacing label b4_from_b3 with b4
 Replacing label b3_from_b4 with b3
 Removing instruction bbegin:
-Removing instruction b11_from_bbegin:
-Removing instruction bend_from_b11:
+Removing instruction b14_from_bbegin:
+Removing instruction bend_from_b14:
 Removing instruction b3_from_main:
 Removing instruction b4_from_b3:
 Removing instruction init_screen_from_b4:
@@ -6819,7 +6923,7 @@ Removing instruction b4_from_b7:
 Removing instruction b10_from_b1:
 Removing instruction b2_from_b10:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b11:
+Removing instruction b14:
 Removing instruction bend:
 Removing instruction bitmap_init_from_main:
 Removing instruction b3:
@@ -6887,7 +6991,7 @@ Removing unreachable instruction jmp b2
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
-(label) @11
+(label) @14
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -7242,11 +7346,11 @@ Score: 221049
   .label BITMAP = $2000
   .const lines_cnt = 8
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
-//SEG4 @11
+//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
+//SEG4 @14
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @11 to @end [phi:@11->@end]
+//SEG6 [3] phi from @14 to @end [phi:@14->@end]
 //SEG7 @end
 //SEG8 main
 main: {

@@ -189,6 +189,24 @@ const byte LIGHT_GREEN = $d;
 const byte LIGHT_BLUE = $e;
 const byte LIGHT_GREY = $f;
 
+// Get the value to store into D018 to display a specific screen and charset/bitmap
+// Optimized for ASM from (byte)((((word)screen&$3fff)/$40)|(((word)charset&$3fff)/$400));
+inline byte toD018(byte* screen, byte* gfx) {
+    return (>((((word)screen&$3fff)<<2)))|(((>((word)gfx))>>2)&$f);
+}
+
+// Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
+// Optimized for ASM from %00000011 ^ (byte)((word)gfx/$4000)
+inline byte toDd00(byte* gfx) {
+    return %00000011 ^ (>((word)gfx))>>6;
+}
+
+// Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed
+inline void vicSelectGfxBank(byte* gfx) {
+    *CIA2_PORT_A_DDR = %00000011;
+    *CIA2_PORT_A = toDd00(gfx);
+}
+
 Importing multiply.kc
 PARSING src/test/java/dk/camelot64/kickc/test/kc/multiply.kc
 // Simple binary multiplication implementation
@@ -510,6 +528,9 @@ SYMBOLS
 (label) @13
 (label) @14
 (label) @15
+(label) @16
+(label) @17
+(label) @18
 (label) @2
 (label) @3
 (label) @4
@@ -1003,6 +1024,34 @@ SYMBOLS
 (label) print_str_at::@return
 (byte*) print_str_at::at
 (byte*) print_str_at::str
+inline (byte()) toD018((byte*) toD018::screen , (byte*) toD018::gfx)
+(word~) toD018::$0
+(word~) toD018::$1
+(word~) toD018::$2
+(byte~) toD018::$3
+(word~) toD018::$4
+(byte~) toD018::$5
+(byte~) toD018::$6
+(byte~) toD018::$7
+(byte~) toD018::$8
+(label) toD018::@1
+(label) toD018::@return
+(byte*) toD018::gfx
+(byte) toD018::return
+(byte*) toD018::screen
+inline (byte()) toDd00((byte*) toDd00::gfx)
+(word~) toDd00::$0
+(byte~) toDd00::$1
+(byte~) toDd00::$2
+(byte/word/dword~) toDd00::$3
+(label) toDd00::@1
+(label) toDd00::@return
+(byte*) toDd00::gfx
+(byte) toDd00::return
+inline (void()) vicSelectGfxBank((byte*) vicSelectGfxBank::gfx)
+(byte~) vicSelectGfxBank::$0
+(label) vicSelectGfxBank::@return
+(byte*) vicSelectGfxBank::gfx
 
 Fixing lo/hi-lvalue with new tmpVar mul8s::$16 mul8s::$16 ← mul8s::$8
 Fixing lo/hi-lvalue with new tmpVar mul8s::$17 mul8s::$17 ← mul8s::$14
@@ -1116,6 +1165,51 @@ INITIAL CONTROL FLOW GRAPH
   (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
   (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
   to:@1
+toD018: scope:[toD018]  from
+  (word~) toD018::$0 ← ((word)) (byte*) toD018::screen
+  (word~) toD018::$1 ← (word~) toD018::$0 & (word/signed word/dword/signed dword) 16383
+  (word~) toD018::$2 ← (word~) toD018::$1 << (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$3 ← > (word~) toD018::$2
+  (word~) toD018::$4 ← ((word)) (byte*) toD018::gfx
+  (byte~) toD018::$5 ← > (word~) toD018::$4
+  (byte~) toD018::$6 ← (byte~) toD018::$5 >> (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$7 ← (byte~) toD018::$6 & (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte~) toD018::$8 ← (byte~) toD018::$3 | (byte~) toD018::$7
+  (byte) toD018::return ← (byte~) toD018::$8
+  to:toD018::@return
+toD018::@return: scope:[toD018]  from toD018 toD018::@1
+  (byte) toD018::return ← (byte) toD018::return
+  return (byte) toD018::return
+  to:@return
+toD018::@1: scope:[toD018]  from
+  to:toD018::@return
+@1: scope:[]  from @begin
+  to:@2
+toDd00: scope:[toDd00]  from
+  (word~) toDd00::$0 ← ((word)) (byte*) toDd00::gfx
+  (byte~) toDd00::$1 ← > (word~) toDd00::$0
+  (byte~) toDd00::$2 ← (byte~) toDd00::$1 >> (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte/word/dword~) toDd00::$3 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) toDd00::$2
+  (byte) toDd00::return ← (byte/word/dword~) toDd00::$3
+  to:toDd00::@return
+toDd00::@return: scope:[toDd00]  from toDd00 toDd00::@1
+  (byte) toDd00::return ← (byte) toDd00::return
+  return (byte) toDd00::return
+  to:@return
+toDd00::@1: scope:[toDd00]  from
+  to:toDd00::@return
+@2: scope:[]  from @1
+  to:@3
+vicSelectGfxBank: scope:[vicSelectGfxBank]  from
+  *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+  *((byte*) CIA2_PORT_A) ← (byte~) vicSelectGfxBank::$0
+  to:vicSelectGfxBank::@return
+vicSelectGfxBank::@return: scope:[vicSelectGfxBank]  from vicSelectGfxBank
+  return 
+  to:@return
+@3: scope:[]  from @2
+  to:@4
 mul8u: scope:[mul8u]  from
   (word) mul8u::res ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (word) mul8u::mb ← ((word)) (byte) mul8u::b
@@ -1155,8 +1249,8 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3 mul8u::@9
   to:@return
 mul8u::@9: scope:[mul8u]  from
   to:mul8u::@return
-@1: scope:[]  from @begin
-  to:@2
+@4: scope:[]  from @3
+  to:@5
 mul8s: scope:[mul8s]  from
   (byte~) mul8s::$0 ← ((byte)) (signed byte) mul8s::a
   (byte~) mul8s::$1 ← ((byte)) (signed byte) mul8s::b
@@ -1197,8 +1291,8 @@ mul8s::@return: scope:[mul8s]  from mul8s::@2 mul8s::@5
   to:@return
 mul8s::@5: scope:[mul8s]  from
   to:mul8s::@return
-@2: scope:[]  from @1
-  to:@3
+@5: scope:[]  from @4
+  to:@6
 mul8su: scope:[mul8su]  from
   (byte~) mul8su::$0 ← ((byte)) (signed byte) mul8su::a
   (byte~) mul8su::$1 ← ((byte)) (byte) mul8su::b
@@ -1226,8 +1320,8 @@ mul8su::@return: scope:[mul8su]  from mul8su::@1 mul8su::@3
   to:@return
 mul8su::@3: scope:[mul8su]  from
   to:mul8su::@return
-@3: scope:[]  from @2
-  to:@4
+@6: scope:[]  from @5
+  to:@7
 mul16u: scope:[mul16u]  from
   (dword) mul16u::res ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (dword) mul16u::mb ← ((dword)) (word) mul16u::b
@@ -1267,8 +1361,8 @@ mul16u::@return: scope:[mul16u]  from mul16u::@3 mul16u::@9
   to:@return
 mul16u::@9: scope:[mul16u]  from
   to:mul16u::@return
-@4: scope:[]  from @3
-  to:@5
+@7: scope:[]  from @6
+  to:@8
 mul16s: scope:[mul16s]  from
   (word~) mul16s::$0 ← ((word)) (signed word) mul16s::a
   (word~) mul16s::$1 ← ((word)) (signed word) mul16s::b
@@ -1309,7 +1403,7 @@ mul16s::@return: scope:[mul16s]  from mul16s::@2 mul16s::@5
   to:@return
 mul16s::@5: scope:[mul16s]  from
   to:mul16s::@return
-@5: scope:[]  from @4
+@8: scope:[]  from @7
   (byte) KEY_DEL ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) KEY_RETURN ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) KEY_CRSR_RIGHT ← (byte/signed byte/word/signed word/dword/signed dword) 2
@@ -1377,7 +1471,7 @@ mul16s::@5: scope:[mul16s]  from
   (byte[]) keyboard_char_keycodes ← { (byte) KEY_AT, (byte) KEY_A, (byte) KEY_B, (byte) KEY_C, (byte) KEY_D, (byte) KEY_E, (byte) KEY_F, (byte) KEY_G, (byte) KEY_H, (byte) KEY_I, (byte) KEY_J, (byte) KEY_K, (byte) KEY_L, (byte) KEY_M, (byte) KEY_N, (byte) KEY_O, (byte) KEY_P, (byte) KEY_Q, (byte) KEY_R, (byte) KEY_S, (byte) KEY_T, (byte) KEY_U, (byte) KEY_V, (byte) KEY_W, (byte) KEY_X, (byte) KEY_Y, (byte) KEY_Z, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_POUND, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ARROW_UP, (byte) KEY_ARROW_LEFT, (byte) KEY_SPACE, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ASTERISK, (byte) KEY_PLUS, (byte) KEY_COMMA, (byte) KEY_MINUS, (byte) KEY_DOT, (byte) KEY_SLASH, (byte) KEY_0, (byte) KEY_1, (byte) KEY_2, (byte) KEY_3, (byte) KEY_4, (byte) KEY_5, (byte) KEY_6, (byte) KEY_7, (byte) KEY_8, (byte) KEY_9, (byte) KEY_COLON, (byte) KEY_SEMICOLON, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_EQUALS, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63 }
   (byte[8]) keyboard_matrix_row_bitmask ← { (byte/word/signed word/dword/signed dword) 254, (byte/word/signed word/dword/signed dword) 253, (byte/word/signed word/dword/signed dword) 251, (byte/word/signed word/dword/signed dword) 247, (byte/word/signed word/dword/signed dword) 239, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 191, (byte/signed byte/word/signed word/dword/signed dword) 127 }
   (byte[8]) keyboard_matrix_col_bitmask ← { (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 2, (byte/signed byte/word/signed word/dword/signed dword) 4, (byte/signed byte/word/signed word/dword/signed dword) 8, (byte/signed byte/word/signed word/dword/signed dword) 16, (byte/signed byte/word/signed word/dword/signed dword) 32, (byte/signed byte/word/signed word/dword/signed dword) 64, (byte/word/signed word/dword/signed dword) 128 }
-  to:@6
+  to:@9
 keyboard_init: scope:[keyboard_init]  from
   *((byte*) CIA1_PORT_A_DDR) ← (byte/word/signed word/dword/signed dword) 255
   *((byte*) CIA1_PORT_B_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1385,8 +1479,8 @@ keyboard_init: scope:[keyboard_init]  from
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   return 
   to:@return
-@6: scope:[]  from @5
-  to:@7
+@9: scope:[]  from @8
+  to:@10
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from
   *((byte*) CIA1_PORT_A) ← *((byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid)
   (byte~) keyboard_matrix_read::$0 ← ~ *((byte*) CIA1_PORT_B)
@@ -1399,8 +1493,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
   to:@return
 keyboard_matrix_read::@1: scope:[keyboard_matrix_read]  from
   to:keyboard_matrix_read::@return
-@7: scope:[]  from @6
-  to:@8
+@10: scope:[]  from @9
+  to:@11
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from
   (byte~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key & (byte/signed byte/word/signed word/dword/signed dword) 7
   (byte) keyboard_key_pressed::colidx ← (byte~) keyboard_key_pressed::$0
@@ -1416,8 +1510,8 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
   to:@return
 keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from
   to:keyboard_key_pressed::@return
-@8: scope:[]  from @7
-  to:@9
+@11: scope:[]  from @10
+  to:@12
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from
   (byte) keyboard_get_keycode::return ← *((byte[]) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch)
   to:keyboard_get_keycode::@return
@@ -1427,7 +1521,7 @@ keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_k
   to:@return
 keyboard_get_keycode::@1: scope:[keyboard_get_keycode]  from
   to:keyboard_get_keycode::@return
-@9: scope:[]  from @8
+@12: scope:[]  from @11
   (byte[8]) keyboard_events ← { fill( 8, 0) }
   (byte) keyboard_events_size ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) keyboard_modifiers ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1438,7 +1532,7 @@ keyboard_get_keycode::@1: scope:[keyboard_get_keycode]  from
   (byte~) $0 ← (byte) KEY_MODIFIER_LSHIFT | (byte) KEY_MODIFIER_RSHIFT
   (byte) KEY_MODIFIER_SHIFT ← (byte~) $0
   (byte[8]) keyboard_scan_values ← { fill( 8, 0) }
-  to:@10
+  to:@13
 keyboard_event_scan: scope:[keyboard_event_scan]  from
   (byte) keyboard_event_scan::keycode ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) keyboard_event_scan::row ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1551,8 +1645,8 @@ keyboard_event_scan::@24: scope:[keyboard_event_scan]  from keyboard_event_scan:
 keyboard_event_scan::@return: scope:[keyboard_event_scan]  from keyboard_event_scan::@12
   return 
   to:@return
-@10: scope:[]  from @9
-  to:@11
+@13: scope:[]  from @12
+  to:@14
 keyboard_event_pressed: scope:[keyboard_event_pressed]  from
   (byte~) keyboard_event_pressed::$0 ← (byte) keyboard_event_pressed::keycode >> (byte/signed byte/word/signed word/dword/signed dword) 3
   (byte) keyboard_event_pressed::row_bits ← *((byte[8]) keyboard_scan_values + (byte~) keyboard_event_pressed::$0)
@@ -1566,8 +1660,8 @@ keyboard_event_pressed::@return: scope:[keyboard_event_pressed]  from keyboard_e
   to:@return
 keyboard_event_pressed::@1: scope:[keyboard_event_pressed]  from
   to:keyboard_event_pressed::@return
-@11: scope:[]  from @10
-  to:@12
+@14: scope:[]  from @13
+  to:@15
 keyboard_event_get: scope:[keyboard_event_get]  from
   (bool~) keyboard_event_get::$0 ← (byte) keyboard_events_size == (byte/signed byte/word/signed word/dword/signed dword) 0
   if((bool~) keyboard_event_get::$0) goto keyboard_event_get::@1
@@ -1591,9 +1685,9 @@ keyboard_event_get::@5: scope:[keyboard_event_get]  from
   to:keyboard_event_get::@1
 keyboard_event_get::@6: scope:[keyboard_event_get]  from
   to:keyboard_event_get::@2
-@12: scope:[]  from @11
+@15: scope:[]  from @14
   (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@13
+  to:@16
 main: scope:[main]  from
   (byte*) main::sc ← (byte*) SCREEN
   to:main::@1
@@ -1713,8 +1807,8 @@ main::@24: scope:[main]  from main::@23
 main::@return: scope:[main]  from main::@24
   return 
   to:@return
-@13: scope:[]  from @12
-  to:@14
+@16: scope:[]  from @15
+  to:@17
 print_str_at: scope:[print_str_at]  from
   to:print_str_at::@1
 print_str_at::@1: scope:[print_str_at]  from print_str_at print_str_at::@2
@@ -1737,8 +1831,8 @@ print_str_at::@6: scope:[print_str_at]  from
 print_str_at::@return: scope:[print_str_at]  from print_str_at::@3
   return 
   to:@return
-@14: scope:[]  from @13
-  to:@15
+@17: scope:[]  from @16
+  to:@18
 plot_chargen: scope:[plot_chargen]  from
   asm { sei  }
   (word~) plot_chargen::$0 ← ((word)) (byte) plot_chargen::ch
@@ -1799,11 +1893,15 @@ plot_chargen::@8: scope:[plot_chargen]  from plot_chargen::@7
 plot_chargen::@return: scope:[plot_chargen]  from plot_chargen::@8
   return 
   to:@return
-@15: scope:[]  from @14
+@18: scope:[]  from @17
   call main 
   to:@end
-@end: scope:[]  from @15
+@end: scope:[]  from @18
 
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Removing unused procedure toD018
+Removing unused procedure toDd00
+Removing unused procedure vicSelectGfxBank
 Removing unused procedure mul8s
 Removing unused procedure mul8su
 Removing unused procedure mul16s
@@ -1902,31 +2000,34 @@ Creating constant string variable for inline (const string) main::str "f1@"
 Creating constant string variable for inline (const string) main::str1 "f3@"
 Creating constant string variable for inline (const string) main::str2 "f5@"
 Creating constant string variable for inline (const string) main::str3 "f7@"
+Removing empty block @1
+Removing empty block @2
+Removing empty block @3
 Removing empty block mul8u::@5
 Removing empty block mul8u::@6
 Removing empty block mul8u::@8
 Removing empty block mul8u::@9
-Removing empty block @1
-Removing empty block @2
-Removing empty block @3
 Removing empty block @4
+Removing empty block @5
 Removing empty block @6
-Removing empty block keyboard_matrix_read::@1
 Removing empty block @7
-Removing empty block keyboard_key_pressed::@1
-Removing empty block @8
-Removing empty block keyboard_get_keycode::@1
 Removing empty block @9
+Removing empty block keyboard_matrix_read::@1
 Removing empty block @10
+Removing empty block keyboard_key_pressed::@1
 Removing empty block @11
+Removing empty block keyboard_get_keycode::@1
+Removing empty block @12
+Removing empty block @13
+Removing empty block @14
 Removing empty block main::@20
 Removing empty block main::@24
-Removing empty block @13
+Removing empty block @16
 Removing empty block print_str_at::@4
 Removing empty block print_str_at::@3
 Removing empty block print_str_at::@5
 Removing empty block print_str_at::@6
-Removing empty block @14
+Removing empty block @17
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
 Completing Phi functions...
@@ -1955,7 +2056,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) CHARGEN#0 ← ((byte*)) (word/dword/signed dword) 53248
   (byte*) CIA1_PORT_A#0 ← ((byte*)) (word/dword/signed dword) 56320
   (byte*) CIA1_PORT_B#0 ← ((byte*)) (word/dword/signed dword) 56321
-  to:@5
+  to:@8
 mul8u: scope:[mul8u]  from plot_chargen::@1
   (byte) mul8u::a#5 ← phi( plot_chargen::@1/(byte) mul8u::a#1 )
   (byte) mul8u::b#1 ← phi( plot_chargen::@1/(byte) mul8u::b#0 )
@@ -2003,7 +2104,7 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3
   (word) mul8u::return#1 ← (word) mul8u::return#3
   return 
   to:@return
-@5: scope:[]  from @begin
+@8: scope:[]  from @begin
   (byte) KEY_F7#0 ← (byte/signed byte/word/signed word/dword/signed dword) 3
   (byte) KEY_F1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 4
   (byte) KEY_F3#0 ← (byte/signed byte/word/signed word/dword/signed dword) 5
@@ -2062,7 +2163,7 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3
   (byte[]) keyboard_char_keycodes#0 ← { (byte) KEY_AT#0, (byte) KEY_A#0, (byte) KEY_B#0, (byte) KEY_C#0, (byte) KEY_D#0, (byte) KEY_E#0, (byte) KEY_F#0, (byte) KEY_G#0, (byte) KEY_H#0, (byte) KEY_I#0, (byte) KEY_J#0, (byte) KEY_K#0, (byte) KEY_L#0, (byte) KEY_M#0, (byte) KEY_N#0, (byte) KEY_O#0, (byte) KEY_P#0, (byte) KEY_Q#0, (byte) KEY_R#0, (byte) KEY_S#0, (byte) KEY_T#0, (byte) KEY_U#0, (byte) KEY_V#0, (byte) KEY_W#0, (byte) KEY_X#0, (byte) KEY_Y#0, (byte) KEY_Z#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_POUND#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ARROW_UP#0, (byte) KEY_ARROW_LEFT#0, (byte) KEY_SPACE#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ASTERISK#0, (byte) KEY_PLUS#0, (byte) KEY_COMMA#0, (byte) KEY_MINUS#0, (byte) KEY_DOT#0, (byte) KEY_SLASH#0, (byte) KEY_0#0, (byte) KEY_1#0, (byte) KEY_2#0, (byte) KEY_3#0, (byte) KEY_4#0, (byte) KEY_5#0, (byte) KEY_6#0, (byte) KEY_7#0, (byte) KEY_8#0, (byte) KEY_9#0, (byte) KEY_COLON#0, (byte) KEY_SEMICOLON#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_EQUALS#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63 }
   (byte[8]) keyboard_matrix_row_bitmask#0 ← { (byte/word/signed word/dword/signed dword) 254, (byte/word/signed word/dword/signed dword) 253, (byte/word/signed word/dword/signed dword) 251, (byte/word/signed word/dword/signed dword) 247, (byte/word/signed word/dword/signed dword) 239, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 191, (byte/signed byte/word/signed word/dword/signed dword) 127 }
   (byte[8]) keyboard_matrix_col_bitmask#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 2, (byte/signed byte/word/signed word/dword/signed dword) 4, (byte/signed byte/word/signed word/dword/signed dword) 8, (byte/signed byte/word/signed word/dword/signed dword) 16, (byte/signed byte/word/signed word/dword/signed dword) 32, (byte/signed byte/word/signed word/dword/signed dword) 64, (byte/word/signed word/dword/signed dword) 128 }
-  to:@12
+  to:@15
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
   *((byte*) CIA1_PORT_A#0) ← *((byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#1)
@@ -2106,11 +2207,11 @@ keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_k
   (byte) keyboard_get_keycode::return#1 ← (byte) keyboard_get_keycode::return#3
   return 
   to:@return
-@12: scope:[]  from @5
+@15: scope:[]  from @8
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@15
-main: scope:[main]  from @15
-  (byte*) SCREEN#1 ← phi( @15/(byte*) SCREEN#8 )
+  to:@18
+main: scope:[main]  from @18
+  (byte*) SCREEN#1 ← phi( @18/(byte*) SCREEN#8 )
   (byte*) main::sc#0 ← (byte*) SCREEN#1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -2493,19 +2594,19 @@ plot_chargen::@8: scope:[plot_chargen]  from plot_chargen::@7
 plot_chargen::@return: scope:[plot_chargen]  from plot_chargen::@8
   return 
   to:@return
-@15: scope:[]  from @12
-  (byte*) SCREEN#8 ← phi( @12/(byte*) SCREEN#0 )
+@18: scope:[]  from @15
+  (byte*) SCREEN#8 ← phi( @15/(byte*) SCREEN#0 )
   call main 
-  to:@16
-@16: scope:[]  from @15
+  to:@19
+@19: scope:[]  from @18
   to:@end
-@end: scope:[]  from @16
+@end: scope:[]  from @19
 
 SYMBOL TABLE SSA
-(label) @12
 (label) @15
-(label) @16
-(label) @5
+(label) @18
+(label) @19
+(label) @8
 (label) @begin
 (label) @end
 (byte*) CHARGEN
@@ -3033,7 +3134,7 @@ SYMBOL TABLE SSA
 (byte*) print_str_at::str#7
 
 OPTIMIZING CONTROL FLOW GRAPH
-Culled Empty Block (label) @16
+Culled Empty Block (label) @19
 Succesful SSA optimization Pass2CullEmptyBlocks
 Inversing boolean not (bool~) mul8u::$3 ← (byte~) mul8u::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (bool~) mul8u::$2 ← (byte~) mul8u::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (bool~) main::$17 ← (byte~) main::$15 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (bool~) main::$16 ← (byte~) main::$15 != (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -3418,8 +3519,8 @@ Succesful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Succesful SSA optimization Pass2EliminateUnusedBlocks
 Culled Empty Block (label) mul8u::@3
-Culled Empty Block (label) @5
-Culled Empty Block (label) @12
+Culled Empty Block (label) @8
+Culled Empty Block (label) @15
 Culled Empty Block (label) main::@28
 Culled Empty Block (label) main::@14
 Not culling empty block because it shares successor with its predecessor. (label) main::@15
@@ -3674,7 +3775,7 @@ Constant inlined main::$7 = (const byte*) SCREEN#0+(byte/signed byte/word/signed
 Constant inlined main::pressed#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined plot_chargen::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @15 @end main main::@1 main::@13 main::@25 main::@26 main::@27 main::@2 main::@29 main::@3 main::@30 main::@15 main::@4 main::@31 main::@16 main::@5 main::@32 main::@17 main::@6 main::@33 main::@18 main::@7 main::@34 main::@19 main::@9 main::@10 main::@35 main::@21 main::@36 main::@11 main::@22 main::@12 plot_chargen plot_chargen::@5 plot_chargen::@1 plot_chargen::@9 plot_chargen::@2 plot_chargen::@3 plot_chargen::@6 plot_chargen::@4 plot_chargen::@7 plot_chargen::@8 plot_chargen::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return print_str_at print_str_at::@1 print_str_at::@return print_str_at::@2 
+Block Sequence Planned @begin @18 @end main main::@1 main::@13 main::@25 main::@26 main::@27 main::@2 main::@29 main::@3 main::@30 main::@15 main::@4 main::@31 main::@16 main::@5 main::@32 main::@17 main::@6 main::@33 main::@18 main::@7 main::@34 main::@19 main::@9 main::@10 main::@35 main::@21 main::@36 main::@11 main::@22 main::@12 plot_chargen plot_chargen::@5 plot_chargen::@1 plot_chargen::@9 plot_chargen::@2 plot_chargen::@3 plot_chargen::@6 plot_chargen::@4 plot_chargen::@7 plot_chargen::@8 plot_chargen::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return print_str_at print_str_at::@1 print_str_at::@return print_str_at::@2 
 Added new block during phi lifting main::@38(between main::@1 and main::@1)
 Added new block during phi lifting main::@39(between main::@29 and main::@2)
 Added new block during phi lifting main::@40(between main::@12 and main::@3)
@@ -3687,9 +3788,9 @@ Added new block during phi lifting plot_chargen::@10(between plot_chargen and pl
 Added new block during phi lifting plot_chargen::@11(between plot_chargen::@7 and plot_chargen::@2)
 Added new block during phi lifting plot_chargen::@12(between plot_chargen::@4 and plot_chargen::@3)
 Added new block during phi lifting mul8u::@10(between mul8u::@2 and mul8u::@4)
-Block Sequence Planned @begin @15 @end main main::@1 main::@13 main::@25 main::@26 main::@27 main::@2 main::@29 main::@3 main::@30 main::@15 main::@4 main::@31 main::@16 main::@5 main::@32 main::@17 main::@6 main::@33 main::@18 main::@7 main::@34 main::@19 main::@9 main::@10 main::@35 main::@21 main::@36 main::@11 main::@22 main::@12 main::@40 main::@45 main::@44 main::@43 main::@42 main::@41 main::@39 main::@38 plot_chargen plot_chargen::@5 plot_chargen::@1 plot_chargen::@9 plot_chargen::@2 plot_chargen::@3 plot_chargen::@6 plot_chargen::@4 plot_chargen::@7 plot_chargen::@8 plot_chargen::@return plot_chargen::@11 plot_chargen::@12 plot_chargen::@10 mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mul8u::@10 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return print_str_at print_str_at::@1 print_str_at::@return print_str_at::@2 
+Block Sequence Planned @begin @18 @end main main::@1 main::@13 main::@25 main::@26 main::@27 main::@2 main::@29 main::@3 main::@30 main::@15 main::@4 main::@31 main::@16 main::@5 main::@32 main::@17 main::@6 main::@33 main::@18 main::@7 main::@34 main::@19 main::@9 main::@10 main::@35 main::@21 main::@36 main::@11 main::@22 main::@12 main::@40 main::@45 main::@44 main::@43 main::@42 main::@41 main::@39 main::@38 plot_chargen plot_chargen::@5 plot_chargen::@1 plot_chargen::@9 plot_chargen::@2 plot_chargen::@3 plot_chargen::@6 plot_chargen::@4 plot_chargen::@7 plot_chargen::@8 plot_chargen::@return plot_chargen::@11 plot_chargen::@12 plot_chargen::@10 mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mul8u::@10 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return print_str_at print_str_at::@1 print_str_at::@return print_str_at::@2 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @15
+Adding NOP phi() at start of @18
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@13
@@ -3780,9 +3881,9 @@ Culled Empty Block (label) plot_chargen::@11
 Culled Empty Block (label) plot_chargen::@12
 Culled Empty Block (label) plot_chargen::@10
 Culled Empty Block (label) mul8u::@10
-Block Sequence Planned @begin @15 @end main main::@1 main::@13 main::@25 main::@26 main::@27 main::@2 main::@29 main::@3 main::@30 main::@4 main::@31 main::@5 main::@32 main::@6 main::@33 main::@7 main::@34 main::@19 main::@9 main::@10 main::@35 main::@21 main::@36 main::@11 main::@22 main::@12 main::@44 main::@43 main::@42 main::@41 plot_chargen plot_chargen::@5 plot_chargen::@1 plot_chargen::@9 plot_chargen::@2 plot_chargen::@3 plot_chargen::@6 plot_chargen::@4 plot_chargen::@7 plot_chargen::@8 plot_chargen::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return print_str_at print_str_at::@1 print_str_at::@return print_str_at::@2 
+Block Sequence Planned @begin @18 @end main main::@1 main::@13 main::@25 main::@26 main::@27 main::@2 main::@29 main::@3 main::@30 main::@4 main::@31 main::@5 main::@32 main::@6 main::@33 main::@7 main::@34 main::@19 main::@9 main::@10 main::@35 main::@21 main::@36 main::@11 main::@22 main::@12 main::@44 main::@43 main::@42 main::@41 plot_chargen plot_chargen::@5 plot_chargen::@1 plot_chargen::@9 plot_chargen::@2 plot_chargen::@3 plot_chargen::@6 plot_chargen::@4 plot_chargen::@7 plot_chargen::@8 plot_chargen::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return print_str_at print_str_at::@1 print_str_at::@return print_str_at::@2 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @15
+Adding NOP phi() at start of @18
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@13
@@ -3815,14 +3916,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@15
-@15: scope:[]  from @begin
+  to:@18
+@18: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @15
+@end: scope:[]  from @18
   [3] phi() [ ] ( )
-main: scope:[main]  from @15
+main: scope:[main]  from @18
   [4] phi() [ ] ( main:2 [ ] )
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -4082,67 +4183,67 @@ print_str_at::@2: scope:[print_str_at]  from print_str_at::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@15 dominated by  @begin @15 
-@end dominated by  @end @begin @15 
-main dominated by  main @begin @15 
-main::@1 dominated by  main main::@1 @begin @15 
-main::@13 dominated by  main main::@1 @begin @15 main::@13 
-main::@25 dominated by  main main::@1 @begin main::@25 @15 main::@13 
-main::@26 dominated by  main main::@1 @begin main::@26 main::@25 @15 main::@13 
-main::@27 dominated by  main main::@1 @begin main::@27 main::@26 main::@25 @15 main::@13 
-main::@2 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 @15 main::@13 
-main::@29 dominated by  main main::@1 main::@2 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@3 dominated by  main main::@1 main::@2 main::@3 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@30 dominated by  main main::@1 main::@2 main::@3 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@4 dominated by  main main::@1 main::@2 main::@3 main::@4 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@31 dominated by  main main::@1 main::@2 main::@3 main::@4 main::@31 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@5 dominated by  main main::@1 main::@2 main::@5 main::@3 main::@4 main::@31 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@32 dominated by  main main::@1 main::@2 main::@5 main::@3 main::@4 main::@31 main::@30 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@6 dominated by  main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@33 dominated by  main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@7 dominated by  main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@34 dominated by  main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@19 dominated by  main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 @15 main::@19 main::@13 
-main::@9 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@10 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 main::@10 @15 main::@13 
-main::@35 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@27 main::@29 main::@26 main::@25 main::@10 @15 main::@13 
-main::@21 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@21 main::@27 main::@29 main::@26 main::@25 main::@10 @15 main::@13 
-main::@36 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@36 main::@21 main::@27 main::@29 main::@26 main::@25 main::@10 @15 main::@13 
-main::@11 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@27 main::@29 main::@26 main::@25 main::@11 main::@10 @15 main::@13 
-main::@22 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@22 main::@27 main::@29 main::@26 main::@25 main::@11 main::@10 @15 main::@13 
-main::@12 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@27 main::@29 main::@26 main::@25 main::@11 main::@10 @15 main::@13 main::@12 
-main::@44 dominated by  main::@44 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@43 dominated by  main::@43 main main::@1 main::@2 main::@5 main::@3 main::@4 main::@31 main::@30 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@42 dominated by  main::@42 main main::@1 main::@2 main::@3 main::@4 main::@31 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-main::@41 dominated by  main::@41 main main::@1 main::@2 main::@3 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 
-plot_chargen dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 @15 main::@13 plot_chargen 
-plot_chargen::@5 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 @15 plot_chargen::@5 main::@13 plot_chargen 
-plot_chargen::@1 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 @15 main::@13 plot_chargen plot_chargen::@1 
-plot_chargen::@9 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @15 main::@13 plot_chargen plot_chargen::@1 
-plot_chargen::@2 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @15 main::@13 plot_chargen plot_chargen::@2 plot_chargen::@1 
-plot_chargen::@3 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @15 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
-plot_chargen::@6 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @15 plot_chargen::@6 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
-plot_chargen::@4 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @15 plot_chargen::@4 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
-plot_chargen::@7 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @15 plot_chargen::@7 plot_chargen::@4 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
-plot_chargen::@8 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 plot_chargen::@8 @15 plot_chargen::@7 plot_chargen::@4 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
-plot_chargen::@return dominated by  main main::@1 main::@2 plot_chargen::@return @begin main::@27 main::@26 main::@25 plot_chargen::@9 plot_chargen::@8 @15 plot_chargen::@7 plot_chargen::@4 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
-mul8u dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @15 main::@13 plot_chargen plot_chargen::@1 
-mul8u::@1 dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @15 main::@13 plot_chargen plot_chargen::@1 mul8u::@1 
-mul8u::@return dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @15 main::@13 mul8u::@return plot_chargen plot_chargen::@1 mul8u::@1 
-mul8u::@2 dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @15 main::@13 plot_chargen plot_chargen::@1 mul8u::@2 mul8u::@1 
-mul8u::@7 dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @15 main::@13 mul8u::@7 plot_chargen plot_chargen::@1 mul8u::@2 mul8u::@1 
-mul8u::@4 dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @15 main::@13 plot_chargen plot_chargen::@1 mul8u::@2 mul8u::@1 mul8u::@4 
-keyboard_key_pressed dominated by  main main::@1 main::@2 main::@3 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 keyboard_key_pressed 
-keyboard_key_pressed::@2 dominated by  main main::@1 main::@2 keyboard_key_pressed::@2 main::@3 @begin main::@27 main::@29 main::@26 main::@25 @15 main::@13 keyboard_key_pressed 
-keyboard_key_pressed::@return dominated by  main main::@1 main::@2 keyboard_key_pressed::@2 main::@3 @begin main::@27 main::@29 main::@26 main::@25 keyboard_key_pressed::@return @15 main::@13 keyboard_key_pressed 
-keyboard_matrix_read dominated by  main main::@1 main::@2 main::@3 @begin keyboard_matrix_read main::@27 main::@29 main::@26 main::@25 @15 main::@13 keyboard_key_pressed 
-keyboard_matrix_read::@return dominated by  main main::@1 main::@2 main::@3 @begin keyboard_matrix_read main::@27 main::@29 main::@26 main::@25 @15 main::@13 keyboard_matrix_read::@return keyboard_key_pressed 
-keyboard_get_keycode dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 keyboard_get_keycode main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 main::@10 @15 main::@13 
-keyboard_get_keycode::@return dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 keyboard_get_keycode main::@31 main::@30 main::@33 @begin main::@32 main::@34 keyboard_get_keycode::@return main::@27 main::@29 main::@26 main::@25 main::@10 @15 main::@13 
-print_str_at dominated by  main main::@1 @begin print_str_at @15 main::@13 
-print_str_at::@1 dominated by  main main::@1 @begin print_str_at @15 print_str_at::@1 main::@13 
-print_str_at::@return dominated by  main main::@1 @begin print_str_at @15 print_str_at::@1 main::@13 print_str_at::@return 
-print_str_at::@2 dominated by  main main::@1 @begin print_str_at @15 print_str_at::@1 print_str_at::@2 main::@13 
+@18 dominated by  @begin @18 
+@end dominated by  @end @begin @18 
+main dominated by  main @begin @18 
+main::@1 dominated by  main main::@1 @begin @18 
+main::@13 dominated by  main main::@1 @begin @18 main::@13 
+main::@25 dominated by  main main::@1 @begin main::@25 @18 main::@13 
+main::@26 dominated by  main main::@1 @begin main::@26 main::@25 @18 main::@13 
+main::@27 dominated by  main main::@1 @begin main::@27 main::@26 main::@25 @18 main::@13 
+main::@2 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 @18 main::@13 
+main::@29 dominated by  main main::@1 main::@2 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@3 dominated by  main main::@1 main::@2 main::@3 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@30 dominated by  main main::@1 main::@2 main::@3 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@4 dominated by  main main::@1 main::@2 main::@3 main::@4 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@31 dominated by  main main::@1 main::@2 main::@3 main::@4 main::@31 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@5 dominated by  main main::@1 main::@2 main::@5 main::@3 main::@4 main::@31 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@32 dominated by  main main::@1 main::@2 main::@5 main::@3 main::@4 main::@31 main::@30 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@6 dominated by  main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@33 dominated by  main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@7 dominated by  main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@34 dominated by  main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@19 dominated by  main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 @18 main::@19 main::@13 
+main::@9 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@10 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 main::@10 @18 main::@13 
+main::@35 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@27 main::@29 main::@26 main::@25 main::@10 @18 main::@13 
+main::@21 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@21 main::@27 main::@29 main::@26 main::@25 main::@10 @18 main::@13 
+main::@36 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@36 main::@21 main::@27 main::@29 main::@26 main::@25 main::@10 @18 main::@13 
+main::@11 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@27 main::@29 main::@26 main::@25 main::@11 main::@10 @18 main::@13 
+main::@22 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@22 main::@27 main::@29 main::@26 main::@25 main::@11 main::@10 @18 main::@13 
+main::@12 dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@35 main::@34 main::@27 main::@29 main::@26 main::@25 main::@11 main::@10 @18 main::@13 main::@12 
+main::@44 dominated by  main::@44 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 main::@31 main::@30 main::@33 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@43 dominated by  main::@43 main main::@1 main::@2 main::@5 main::@3 main::@4 main::@31 main::@30 @begin main::@32 main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@42 dominated by  main::@42 main main::@1 main::@2 main::@3 main::@4 main::@31 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+main::@41 dominated by  main::@41 main main::@1 main::@2 main::@3 main::@30 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 
+plot_chargen dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 @18 main::@13 plot_chargen 
+plot_chargen::@5 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@5 @18 main::@13 plot_chargen 
+plot_chargen::@1 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 @18 main::@13 plot_chargen plot_chargen::@1 
+plot_chargen::@9 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @18 main::@13 plot_chargen plot_chargen::@1 
+plot_chargen::@2 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @18 main::@13 plot_chargen plot_chargen::@2 plot_chargen::@1 
+plot_chargen::@3 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @18 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
+plot_chargen::@6 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 plot_chargen::@6 @18 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
+plot_chargen::@4 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 @18 plot_chargen::@4 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
+plot_chargen::@7 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 plot_chargen::@7 @18 plot_chargen::@4 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
+plot_chargen::@8 dominated by  main main::@1 main::@2 @begin main::@27 main::@26 main::@25 plot_chargen::@9 plot_chargen::@8 plot_chargen::@7 @18 plot_chargen::@4 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
+plot_chargen::@return dominated by  main main::@1 main::@2 plot_chargen::@return @begin main::@27 main::@26 main::@25 plot_chargen::@9 plot_chargen::@8 plot_chargen::@7 @18 plot_chargen::@4 main::@13 plot_chargen plot_chargen::@3 plot_chargen::@2 plot_chargen::@1 
+mul8u dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @18 main::@13 plot_chargen plot_chargen::@1 
+mul8u::@1 dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @18 main::@13 plot_chargen plot_chargen::@1 mul8u::@1 
+mul8u::@return dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @18 main::@13 mul8u::@return plot_chargen plot_chargen::@1 mul8u::@1 
+mul8u::@2 dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @18 main::@13 plot_chargen plot_chargen::@1 mul8u::@2 mul8u::@1 
+mul8u::@7 dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @18 main::@13 mul8u::@7 plot_chargen plot_chargen::@1 mul8u::@2 mul8u::@1 
+mul8u::@4 dominated by  main main::@1 main::@2 @begin mul8u main::@27 main::@26 main::@25 @18 main::@13 plot_chargen plot_chargen::@1 mul8u::@2 mul8u::@1 mul8u::@4 
+keyboard_key_pressed dominated by  main main::@1 main::@2 main::@3 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 keyboard_key_pressed 
+keyboard_key_pressed::@2 dominated by  main main::@1 main::@2 keyboard_key_pressed::@2 main::@3 @begin main::@27 main::@29 main::@26 main::@25 @18 main::@13 keyboard_key_pressed 
+keyboard_key_pressed::@return dominated by  main main::@1 main::@2 keyboard_key_pressed::@2 main::@3 @begin main::@27 main::@29 main::@26 main::@25 keyboard_key_pressed::@return @18 main::@13 keyboard_key_pressed 
+keyboard_matrix_read dominated by  main main::@1 main::@2 main::@3 @begin keyboard_matrix_read main::@27 main::@29 main::@26 main::@25 @18 main::@13 keyboard_key_pressed 
+keyboard_matrix_read::@return dominated by  main main::@1 main::@2 main::@3 @begin keyboard_matrix_read main::@27 main::@29 main::@26 main::@25 @18 main::@13 keyboard_matrix_read::@return keyboard_key_pressed 
+keyboard_get_keycode dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 keyboard_get_keycode main::@31 main::@30 main::@33 @begin main::@32 main::@34 main::@27 main::@29 main::@26 main::@25 main::@10 @18 main::@13 
+keyboard_get_keycode::@return dominated by  main::@9 main::@7 main main::@1 main::@2 main::@5 main::@6 main::@3 main::@4 keyboard_get_keycode main::@31 main::@30 main::@33 @begin main::@32 main::@34 keyboard_get_keycode::@return main::@27 main::@29 main::@26 main::@25 main::@10 @18 main::@13 
+print_str_at dominated by  main main::@1 @begin print_str_at @18 main::@13 
+print_str_at::@1 dominated by  main main::@1 @begin print_str_at print_str_at::@1 @18 main::@13 
+print_str_at::@return dominated by  main main::@1 @begin print_str_at print_str_at::@1 @18 main::@13 print_str_at::@return 
+print_str_at::@2 dominated by  main main::@1 @begin print_str_at print_str_at::@1 @18 print_str_at::@2 main::@13 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@1 tails: main::@1 blocks: null
@@ -4600,17 +4701,17 @@ INITIAL ASM
   .label SCREEN = $400
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @15 [phi:@begin->@15]
-b15_from_bbegin:
-  jmp b15
-//SEG4 @15
-b15:
+//SEG3 [1] phi from @begin to @18 [phi:@begin->@18]
+b18_from_bbegin:
+  jmp b18
+//SEG4 @18
+b18:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @15 to main [phi:@15->main]
-main_from_b15:
+//SEG6 [4] phi from @18 to main [phi:@18->main]
+main_from_b18:
   jsr main
-//SEG7 [3] phi from @15 to @end [phi:@15->@end]
-bend_from_b15:
+//SEG7 [3] phi from @18 to @end [phi:@18->@end]
+bend_from_b18:
   jmp bend
 //SEG8 @end
 bend:
@@ -5727,17 +5828,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @15 [phi:@begin->@15]
-b15_from_bbegin:
-  jmp b15
-//SEG4 @15
-b15:
+//SEG3 [1] phi from @begin to @18 [phi:@begin->@18]
+b18_from_bbegin:
+  jmp b18
+//SEG4 @18
+b18:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @15 to main [phi:@15->main]
-main_from_b15:
+//SEG6 [4] phi from @18 to main [phi:@18->main]
+main_from_b18:
   jsr main
-//SEG7 [3] phi from @15 to @end [phi:@15->@end]
-bend_from_b15:
+//SEG7 [3] phi from @18 to @end [phi:@18->@end]
+bend_from_b18:
   jmp bend
 //SEG8 @end
 bend:
@@ -6502,7 +6603,7 @@ print_str_at: {
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b15
+Removing instruction jmp b18
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b13
@@ -6572,9 +6673,9 @@ Replacing label b2_from_b7 with b2
 Replacing label b4_from_b2 with b4
 Replacing label b1_from_b2 with b1
 Removing instruction bbegin:
-Removing instruction b15_from_bbegin:
-Removing instruction main_from_b15:
-Removing instruction bend_from_b15:
+Removing instruction b18_from_bbegin:
+Removing instruction main_from_b18:
+Removing instruction bend_from_b18:
 Removing instruction b1_from_b1:
 Removing instruction b13_from_b1:
 Removing instruction print_str_at_from_b13:
@@ -6613,7 +6714,7 @@ Removing instruction b4_from_b7:
 Removing instruction b1_from_print_str_at:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b15:
+Removing instruction b18:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b13:
@@ -6688,7 +6789,7 @@ Removing unreachable instruction jmp b4
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
-(label) @15
+(label) @18
 (label) @begin
 (label) @end
 (byte*) CHARGEN
@@ -7106,12 +7207,12 @@ Score: 628899
   .const KEY_Q = $3e
   .label SCREEN = $400
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @15 [phi:@begin->@15]
-//SEG4 @15
+//SEG3 [1] phi from @begin to @18 [phi:@begin->@18]
+//SEG4 @18
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @15 to main [phi:@15->main]
+//SEG6 [4] phi from @18 to main [phi:@18->main]
   jsr main
-//SEG7 [3] phi from @15 to @end [phi:@15->@end]
+//SEG7 [3] phi from @18 to @end [phi:@18->@end]
 //SEG8 @end
 //SEG9 main
 main: {

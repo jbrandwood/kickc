@@ -376,6 +376,24 @@ const byte LIGHT_GREEN = $d;
 const byte LIGHT_BLUE = $e;
 const byte LIGHT_GREY = $f;
 
+// Get the value to store into D018 to display a specific screen and charset/bitmap
+// Optimized for ASM from (byte)((((word)screen&$3fff)/$40)|(((word)charset&$3fff)/$400));
+inline byte toD018(byte* screen, byte* gfx) {
+    return (>((((word)screen&$3fff)<<2)))|(((>((word)gfx))>>2)&$f);
+}
+
+// Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
+// Optimized for ASM from %00000011 ^ (byte)((word)gfx/$4000)
+inline byte toDd00(byte* gfx) {
+    return %00000011 ^ (>((word)gfx))>>6;
+}
+
+// Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed
+inline void vicSelectGfxBank(byte* gfx) {
+    *CIA2_PORT_A_DDR = %00000011;
+    *CIA2_PORT_A = toDd00(gfx);
+}
+
 Adding pre/post-modifier (byte) keyboard_events_size ← ++ (byte) keyboard_events_size
 Adding pre/post-modifier (byte) keyboard_events_size ← ++ (byte) keyboard_events_size
 Adding pre/post-modifier (byte) keyboard_event_scan::keycode ← ++ (byte) keyboard_event_scan::keycode
@@ -386,6 +404,8 @@ Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
 SYMBOLS
 (byte~) $0
 (label) @1
+(label) @10
+(label) @11
 (label) @2
 (label) @3
 (label) @4
@@ -393,6 +413,7 @@ SYMBOLS
 (label) @6
 (label) @7
 (label) @8
+(label) @9
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -697,6 +718,34 @@ SYMBOLS
 (byte) main::row_pressed_bits
 (byte*) main::sc
 (byte*) main::screen
+inline (byte()) toD018((byte*) toD018::screen , (byte*) toD018::gfx)
+(word~) toD018::$0
+(word~) toD018::$1
+(word~) toD018::$2
+(byte~) toD018::$3
+(word~) toD018::$4
+(byte~) toD018::$5
+(byte~) toD018::$6
+(byte~) toD018::$7
+(byte~) toD018::$8
+(label) toD018::@1
+(label) toD018::@return
+(byte*) toD018::gfx
+(byte) toD018::return
+(byte*) toD018::screen
+inline (byte()) toDd00((byte*) toDd00::gfx)
+(word~) toDd00::$0
+(byte~) toDd00::$1
+(byte~) toDd00::$2
+(byte/word/dword~) toDd00::$3
+(label) toDd00::@1
+(label) toDd00::@return
+(byte*) toDd00::gfx
+(byte) toDd00::return
+inline (void()) vicSelectGfxBank((byte*) vicSelectGfxBank::gfx)
+(byte~) vicSelectGfxBank::$0
+(label) vicSelectGfxBank::@return
+(byte*) vicSelectGfxBank::gfx
 
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT_DDR ← ((byte*)) 0
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT ← ((byte*)) 1
@@ -803,6 +852,51 @@ INITIAL CONTROL FLOW GRAPH
   (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
   (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
   (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
+  to:@1
+toD018: scope:[toD018]  from
+  (word~) toD018::$0 ← ((word)) (byte*) toD018::screen
+  (word~) toD018::$1 ← (word~) toD018::$0 & (word/signed word/dword/signed dword) 16383
+  (word~) toD018::$2 ← (word~) toD018::$1 << (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$3 ← > (word~) toD018::$2
+  (word~) toD018::$4 ← ((word)) (byte*) toD018::gfx
+  (byte~) toD018::$5 ← > (word~) toD018::$4
+  (byte~) toD018::$6 ← (byte~) toD018::$5 >> (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$7 ← (byte~) toD018::$6 & (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte~) toD018::$8 ← (byte~) toD018::$3 | (byte~) toD018::$7
+  (byte) toD018::return ← (byte~) toD018::$8
+  to:toD018::@return
+toD018::@return: scope:[toD018]  from toD018 toD018::@1
+  (byte) toD018::return ← (byte) toD018::return
+  return (byte) toD018::return
+  to:@return
+toD018::@1: scope:[toD018]  from
+  to:toD018::@return
+@1: scope:[]  from @begin
+  to:@2
+toDd00: scope:[toDd00]  from
+  (word~) toDd00::$0 ← ((word)) (byte*) toDd00::gfx
+  (byte~) toDd00::$1 ← > (word~) toDd00::$0
+  (byte~) toDd00::$2 ← (byte~) toDd00::$1 >> (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte/word/dword~) toDd00::$3 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) toDd00::$2
+  (byte) toDd00::return ← (byte/word/dword~) toDd00::$3
+  to:toDd00::@return
+toDd00::@return: scope:[toDd00]  from toDd00 toDd00::@1
+  (byte) toDd00::return ← (byte) toDd00::return
+  return (byte) toDd00::return
+  to:@return
+toDd00::@1: scope:[toDd00]  from
+  to:toDd00::@return
+@2: scope:[]  from @1
+  to:@3
+vicSelectGfxBank: scope:[vicSelectGfxBank]  from
+  *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+  *((byte*) CIA2_PORT_A) ← (byte~) vicSelectGfxBank::$0
+  to:vicSelectGfxBank::@return
+vicSelectGfxBank::@return: scope:[vicSelectGfxBank]  from vicSelectGfxBank
+  return 
+  to:@return
+@3: scope:[]  from @2
   (byte) KEY_DEL ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) KEY_RETURN ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) KEY_CRSR_RIGHT ← (byte/signed byte/word/signed word/dword/signed dword) 2
@@ -870,7 +964,7 @@ INITIAL CONTROL FLOW GRAPH
   (byte[]) keyboard_char_keycodes ← { (byte) KEY_AT, (byte) KEY_A, (byte) KEY_B, (byte) KEY_C, (byte) KEY_D, (byte) KEY_E, (byte) KEY_F, (byte) KEY_G, (byte) KEY_H, (byte) KEY_I, (byte) KEY_J, (byte) KEY_K, (byte) KEY_L, (byte) KEY_M, (byte) KEY_N, (byte) KEY_O, (byte) KEY_P, (byte) KEY_Q, (byte) KEY_R, (byte) KEY_S, (byte) KEY_T, (byte) KEY_U, (byte) KEY_V, (byte) KEY_W, (byte) KEY_X, (byte) KEY_Y, (byte) KEY_Z, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_POUND, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ARROW_UP, (byte) KEY_ARROW_LEFT, (byte) KEY_SPACE, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ASTERISK, (byte) KEY_PLUS, (byte) KEY_COMMA, (byte) KEY_MINUS, (byte) KEY_DOT, (byte) KEY_SLASH, (byte) KEY_0, (byte) KEY_1, (byte) KEY_2, (byte) KEY_3, (byte) KEY_4, (byte) KEY_5, (byte) KEY_6, (byte) KEY_7, (byte) KEY_8, (byte) KEY_9, (byte) KEY_COLON, (byte) KEY_SEMICOLON, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_EQUALS, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63 }
   (byte[8]) keyboard_matrix_row_bitmask ← { (byte/word/signed word/dword/signed dword) 254, (byte/word/signed word/dword/signed dword) 253, (byte/word/signed word/dword/signed dword) 251, (byte/word/signed word/dword/signed dword) 247, (byte/word/signed word/dword/signed dword) 239, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 191, (byte/signed byte/word/signed word/dword/signed dword) 127 }
   (byte[8]) keyboard_matrix_col_bitmask ← { (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 2, (byte/signed byte/word/signed word/dword/signed dword) 4, (byte/signed byte/word/signed word/dword/signed dword) 8, (byte/signed byte/word/signed word/dword/signed dword) 16, (byte/signed byte/word/signed word/dword/signed dword) 32, (byte/signed byte/word/signed word/dword/signed dword) 64, (byte/word/signed word/dword/signed dword) 128 }
-  to:@1
+  to:@4
 keyboard_init: scope:[keyboard_init]  from
   *((byte*) CIA1_PORT_A_DDR) ← (byte/word/signed word/dword/signed dword) 255
   *((byte*) CIA1_PORT_B_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -878,8 +972,8 @@ keyboard_init: scope:[keyboard_init]  from
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   return 
   to:@return
-@1: scope:[]  from @begin
-  to:@2
+@4: scope:[]  from @3
+  to:@5
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from
   *((byte*) CIA1_PORT_A) ← *((byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid)
   (byte~) keyboard_matrix_read::$0 ← ~ *((byte*) CIA1_PORT_B)
@@ -892,8 +986,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
   to:@return
 keyboard_matrix_read::@1: scope:[keyboard_matrix_read]  from
   to:keyboard_matrix_read::@return
-@2: scope:[]  from @1
-  to:@3
+@5: scope:[]  from @4
+  to:@6
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from
   (byte~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key & (byte/signed byte/word/signed word/dword/signed dword) 7
   (byte) keyboard_key_pressed::colidx ← (byte~) keyboard_key_pressed::$0
@@ -909,8 +1003,8 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
   to:@return
 keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from
   to:keyboard_key_pressed::@return
-@3: scope:[]  from @2
-  to:@4
+@6: scope:[]  from @5
+  to:@7
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from
   (byte) keyboard_get_keycode::return ← *((byte[]) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch)
   to:keyboard_get_keycode::@return
@@ -920,7 +1014,7 @@ keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_k
   to:@return
 keyboard_get_keycode::@1: scope:[keyboard_get_keycode]  from
   to:keyboard_get_keycode::@return
-@4: scope:[]  from @3
+@7: scope:[]  from @6
   (byte[8]) keyboard_events ← { fill( 8, 0) }
   (byte) keyboard_events_size ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) keyboard_modifiers ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -931,7 +1025,7 @@ keyboard_get_keycode::@1: scope:[keyboard_get_keycode]  from
   (byte~) $0 ← (byte) KEY_MODIFIER_LSHIFT | (byte) KEY_MODIFIER_RSHIFT
   (byte) KEY_MODIFIER_SHIFT ← (byte~) $0
   (byte[8]) keyboard_scan_values ← { fill( 8, 0) }
-  to:@5
+  to:@8
 keyboard_event_scan: scope:[keyboard_event_scan]  from
   (byte) keyboard_event_scan::keycode ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) keyboard_event_scan::row ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1044,8 +1138,8 @@ keyboard_event_scan::@24: scope:[keyboard_event_scan]  from keyboard_event_scan:
 keyboard_event_scan::@return: scope:[keyboard_event_scan]  from keyboard_event_scan::@12
   return 
   to:@return
-@5: scope:[]  from @4
-  to:@6
+@8: scope:[]  from @7
+  to:@9
 keyboard_event_pressed: scope:[keyboard_event_pressed]  from
   (byte~) keyboard_event_pressed::$0 ← (byte) keyboard_event_pressed::keycode >> (byte/signed byte/word/signed word/dword/signed dword) 3
   (byte) keyboard_event_pressed::row_bits ← *((byte[8]) keyboard_scan_values + (byte~) keyboard_event_pressed::$0)
@@ -1059,8 +1153,8 @@ keyboard_event_pressed::@return: scope:[keyboard_event_pressed]  from keyboard_e
   to:@return
 keyboard_event_pressed::@1: scope:[keyboard_event_pressed]  from
   to:keyboard_event_pressed::@return
-@6: scope:[]  from @5
-  to:@7
+@9: scope:[]  from @8
+  to:@10
 keyboard_event_get: scope:[keyboard_event_get]  from
   (bool~) keyboard_event_get::$0 ← (byte) keyboard_events_size == (byte/signed byte/word/signed word/dword/signed dword) 0
   if((bool~) keyboard_event_get::$0) goto keyboard_event_get::@1
@@ -1084,8 +1178,8 @@ keyboard_event_get::@5: scope:[keyboard_event_get]  from
   to:keyboard_event_get::@1
 keyboard_event_get::@6: scope:[keyboard_event_get]  from
   to:keyboard_event_get::@2
-@7: scope:[]  from @6
-  to:@8
+@10: scope:[]  from @9
+  to:@11
 main: scope:[main]  from
   (byte*) main::sc ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:main::@1
@@ -1195,11 +1289,15 @@ main::@26: scope:[main]  from
 main::@return: scope:[main]  from main::@4
   return 
   to:@return
-@8: scope:[]  from @7
+@11: scope:[]  from @10
   call main 
   to:@end
-@end: scope:[]  from @8
+@end: scope:[]  from @11
 
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Removing unused procedure toD018
+Removing unused procedure toDd00
+Removing unused procedure vicSelectGfxBank
 Removing unused procedure keyboard_event_scan
 Removing unused procedure keyboard_event_get
 Removing unused procedure keyboard_event_pressed
@@ -1289,15 +1387,17 @@ Eliminating unused variable (byte~) $0 and assignment [81] (byte~) $0 ← (byte)
 Eliminating unused variable (byte) KEY_MODIFIER_LSHIFT and assignment [79] (byte) KEY_MODIFIER_LSHIFT ← (byte/signed byte/word/signed word/dword/signed dword) 1
 Eliminating unused variable (byte) KEY_MODIFIER_RSHIFT and assignment [80] (byte) KEY_MODIFIER_RSHIFT ← (byte/signed byte/word/signed word/dword/signed dword) 2
 Removing empty block @1
-Removing empty block keyboard_matrix_read::@1
 Removing empty block @2
-Removing empty block keyboard_key_pressed::@1
-Removing empty block @3
-Removing empty block keyboard_get_keycode::@1
 Removing empty block @4
+Removing empty block keyboard_matrix_read::@1
 Removing empty block @5
+Removing empty block keyboard_key_pressed::@1
 Removing empty block @6
+Removing empty block keyboard_get_keycode::@1
 Removing empty block @7
+Removing empty block @8
+Removing empty block @9
+Removing empty block @10
 Removing empty block main::@15
 Removing empty block main::@4
 Removing empty block main::@16
@@ -1320,6 +1420,8 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) CIA1_PORT_B#0 ← ((byte*)) (word/dword/signed dword) 56321
   (byte*) CIA1_PORT_A_DDR#0 ← ((byte*)) (word/dword/signed dword) 56322
   (byte*) CIA1_PORT_B_DDR#0 ← ((byte*)) (word/dword/signed dword) 56323
+  to:@3
+@3: scope:[]  from @begin
   (byte) KEY_3#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8
   (byte) KEY_W#0 ← (byte/signed byte/word/signed word/dword/signed dword) 9
   (byte) KEY_A#0 ← (byte/signed byte/word/signed word/dword/signed dword) 10
@@ -1373,7 +1475,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte[]) keyboard_char_keycodes#0 ← { (byte) KEY_AT#0, (byte) KEY_A#0, (byte) KEY_B#0, (byte) KEY_C#0, (byte) KEY_D#0, (byte) KEY_E#0, (byte) KEY_F#0, (byte) KEY_G#0, (byte) KEY_H#0, (byte) KEY_I#0, (byte) KEY_J#0, (byte) KEY_K#0, (byte) KEY_L#0, (byte) KEY_M#0, (byte) KEY_N#0, (byte) KEY_O#0, (byte) KEY_P#0, (byte) KEY_Q#0, (byte) KEY_R#0, (byte) KEY_S#0, (byte) KEY_T#0, (byte) KEY_U#0, (byte) KEY_V#0, (byte) KEY_W#0, (byte) KEY_X#0, (byte) KEY_Y#0, (byte) KEY_Z#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_POUND#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ARROW_UP#0, (byte) KEY_ARROW_LEFT#0, (byte) KEY_SPACE#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_ASTERISK#0, (byte) KEY_PLUS#0, (byte) KEY_COMMA#0, (byte) KEY_MINUS#0, (byte) KEY_DOT#0, (byte) KEY_SLASH#0, (byte) KEY_0#0, (byte) KEY_1#0, (byte) KEY_2#0, (byte) KEY_3#0, (byte) KEY_4#0, (byte) KEY_5#0, (byte) KEY_6#0, (byte) KEY_7#0, (byte) KEY_8#0, (byte) KEY_9#0, (byte) KEY_COLON#0, (byte) KEY_SEMICOLON#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte) KEY_EQUALS#0, (byte/signed byte/word/signed word/dword/signed dword) 63, (byte/signed byte/word/signed word/dword/signed dword) 63 }
   (byte[8]) keyboard_matrix_row_bitmask#0 ← { (byte/word/signed word/dword/signed dword) 254, (byte/word/signed word/dword/signed dword) 253, (byte/word/signed word/dword/signed dword) 251, (byte/word/signed word/dword/signed dword) 247, (byte/word/signed word/dword/signed dword) 239, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 191, (byte/signed byte/word/signed word/dword/signed dword) 127 }
   (byte[8]) keyboard_matrix_col_bitmask#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 2, (byte/signed byte/word/signed word/dword/signed dword) 4, (byte/signed byte/word/signed word/dword/signed dword) 8, (byte/signed byte/word/signed word/dword/signed dword) 16, (byte/signed byte/word/signed word/dword/signed dword) 32, (byte/signed byte/word/signed word/dword/signed dword) 64, (byte/word/signed word/dword/signed dword) 128 }
-  to:@8
+  to:@11
 keyboard_init: scope:[keyboard_init]  from main::@14
   *((byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255
   *((byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -1424,7 +1526,7 @@ keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_k
   (byte) keyboard_get_keycode::return#1 ← (byte) keyboard_get_keycode::return#3
   return 
   to:@return
-main: scope:[main]  from @8
+main: scope:[main]  from @11
   (byte*) main::sc#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -1587,16 +1689,17 @@ main::@13: scope:[main]  from main::@11 main::@13
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@8: scope:[]  from @begin
+@11: scope:[]  from @3
   call main 
-  to:@9
-@9: scope:[]  from @8
+  to:@12
+@12: scope:[]  from @11
   to:@end
-@end: scope:[]  from @9
+@end: scope:[]  from @12
 
 SYMBOL TABLE SSA
-(label) @8
-(label) @9
+(label) @11
+(label) @12
+(label) @3
 (label) @begin
 (label) @end
 (byte*) CIA1_PORT_A
@@ -1887,7 +1990,7 @@ SYMBOL TABLE SSA
 OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) main::@27
 Culled Empty Block (label) main::@3
-Culled Empty Block (label) @9
+Culled Empty Block (label) @12
 Succesful SSA optimization Pass2CullEmptyBlocks
 Inversing boolean not (bool~) main::$14 ← (byte) main::key#0 == (byte/signed byte/word/signed word/dword/signed dword) 63 from (bool~) main::$13 ← (byte) main::key#0 != (byte/signed byte/word/signed word/dword/signed dword) 63
 Inversing boolean not (bool~) main::$17 ← (byte~) main::$15 == (byte/signed byte/word/signed word/dword/signed dword) 0 from (bool~) main::$16 ← (byte~) main::$15 != (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -2064,6 +2167,7 @@ if() condition always true - replacing block destination if(true) goto main::@5
 Succesful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Succesful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) @3
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@17
 Culled Empty Block (label) main::@12
@@ -2119,7 +2223,7 @@ Constant inlined main::sc#0 = ((byte*))(word/signed word/dword/signed dword) 102
 Constant inlined main::row#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::ch#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @8 @end main main::@1 main::@14 main::@5 main::@6 main::@28 main::@7 main::@18 main::@9 main::@20 main::@21 main::@10 main::@29 main::@22 main::@30 main::@23 main::@11 main::@13 main::@8 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return keyboard_init keyboard_init::@return 
+Block Sequence Planned @begin @11 @end main main::@1 main::@14 main::@5 main::@6 main::@28 main::@7 main::@18 main::@9 main::@20 main::@21 main::@10 main::@29 main::@22 main::@30 main::@23 main::@11 main::@13 main::@8 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return keyboard_init keyboard_init::@return 
 Added new block during phi lifting main::@31(between main::@1 and main::@1)
 Added new block during phi lifting main::@32(between main::@20 and main::@6)
 Added new block during phi lifting main::@33(between main::@9 and main::@7)
@@ -2128,9 +2232,9 @@ Added new block during phi lifting main::@35(between main::@30 and main::@11)
 Added new block during phi lifting main::@36(between main::@29 and main::@11)
 Added new block during phi lifting main::@37(between main::@11 and main::@13)
 Added new block during phi lifting main::@38(between main::@13 and main::@13)
-Block Sequence Planned @begin @8 @end main main::@1 main::@14 main::@5 main::@6 main::@28 main::@7 main::@18 main::@9 main::@20 main::@21 main::@10 main::@29 main::@22 main::@30 main::@23 main::@11 main::@37 main::@13 main::@38 main::@34 main::@35 main::@36 main::@32 main::@33 main::@8 main::@31 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return keyboard_init keyboard_init::@return 
+Block Sequence Planned @begin @11 @end main main::@1 main::@14 main::@5 main::@6 main::@28 main::@7 main::@18 main::@9 main::@20 main::@21 main::@10 main::@29 main::@22 main::@30 main::@23 main::@11 main::@37 main::@13 main::@38 main::@34 main::@35 main::@36 main::@32 main::@33 main::@8 main::@31 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return keyboard_init keyboard_init::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @8
+Adding NOP phi() at start of @11
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@14
@@ -2178,9 +2282,9 @@ Culled Empty Block (label) main::@36
 Culled Empty Block (label) main::@32
 Culled Empty Block (label) main::@33
 Culled Empty Block (label) main::@31
-Block Sequence Planned @begin @8 @end main main::@1 main::@14 main::@5 main::@6 main::@28 main::@7 main::@18 main::@9 main::@20 main::@21 main::@10 main::@29 main::@22 main::@30 main::@23 main::@11 main::@13 main::@8 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return keyboard_init keyboard_init::@return 
+Block Sequence Planned @begin @11 @end main main::@1 main::@14 main::@5 main::@6 main::@28 main::@7 main::@18 main::@9 main::@20 main::@21 main::@10 main::@29 main::@22 main::@30 main::@23 main::@11 main::@13 main::@8 keyboard_key_pressed keyboard_key_pressed::@2 keyboard_key_pressed::@return keyboard_matrix_read keyboard_matrix_read::@return keyboard_get_keycode keyboard_get_keycode::@return keyboard_init keyboard_init::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @8
+Adding NOP phi() at start of @11
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@14
@@ -2200,14 +2304,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@8
-@8: scope:[]  from @begin
+  to:@11
+@11: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @8
+@end: scope:[]  from @11
   [3] phi() [ ] ( )
-main: scope:[main]  from @8
+main: scope:[main]  from @11
   [4] phi() [ ] ( main:2 [ ] )
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -2331,36 +2435,36 @@ keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
 
 DOMINATORS
 @begin dominated by  @begin 
-@8 dominated by  @begin @8 
-@end dominated by  @end @begin @8 
-main dominated by  main @begin @8 
-main::@1 dominated by  main main::@1 @begin @8 
-main::@14 dominated by  main main::@1 @begin main::@14 @8 
-main::@5 dominated by  main main::@1 main::@5 @begin main::@14 @8 
-main::@6 dominated by  main main::@1 main::@5 main::@6 @begin main::@14 @8 
-main::@28 dominated by  main::@28 main main::@1 main::@5 main::@6 @begin main::@14 @8 
-main::@7 dominated by  main::@7 main::@28 main main::@1 main::@5 main::@6 @begin main::@14 @8 
-main::@18 dominated by  main::@7 main::@28 main main::@1 main::@5 main::@6 @begin main::@18 main::@14 @8 
-main::@9 dominated by  main::@9 main::@7 main::@28 main main::@1 main::@5 main::@6 @begin main::@14 @8 
-main::@20 dominated by  main::@9 main::@20 main::@7 main::@28 main main::@1 main::@5 main::@6 @begin main::@14 @8 
-main::@21 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@1 main::@5 main::@6 @begin main::@14 @8 
-main::@10 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@1 main::@5 main::@6 @begin main::@10 main::@14 @8 
-main::@29 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 @begin main::@10 main::@14 @8 
-main::@22 dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 @begin main::@10 main::@14 @8 
-main::@30 dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 main::@30 @begin main::@10 main::@14 @8 
-main::@23 dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@23 main::@1 main::@5 main::@6 main::@30 @begin main::@10 main::@14 @8 
-main::@11 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 main::@11 @begin main::@10 main::@14 @8 
-main::@13 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 main::@11 @begin main::@10 main::@13 main::@14 @8 
-main::@8 dominated by  main::@7 main::@8 main::@28 main main::@1 main::@5 main::@6 @begin main::@14 @8 
-keyboard_key_pressed dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 @begin main::@10 main::@14 keyboard_key_pressed @8 
-keyboard_key_pressed::@2 dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@1 keyboard_key_pressed::@2 main::@5 main::@6 @begin main::@10 main::@14 keyboard_key_pressed @8 
-keyboard_key_pressed::@return dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 keyboard_key_pressed::@return main::@1 keyboard_key_pressed::@2 main::@5 main::@6 @begin main::@10 main::@14 keyboard_key_pressed @8 
-keyboard_matrix_read dominated by  keyboard_matrix_read main main::@1 main::@5 main::@6 @begin main::@14 @8 
-keyboard_matrix_read::@return dominated by  keyboard_matrix_read main main::@1 main::@5 main::@6 @begin keyboard_matrix_read::@return main::@14 @8 
-keyboard_get_keycode dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@1 main::@5 main::@6 keyboard_get_keycode @begin main::@10 main::@14 @8 
-keyboard_get_keycode::@return dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@1 main::@5 main::@6 keyboard_get_keycode @begin main::@10 main::@14 @8 keyboard_get_keycode::@return 
-keyboard_init dominated by  main keyboard_init main::@1 @begin main::@14 @8 
-keyboard_init::@return dominated by  main keyboard_init main::@1 keyboard_init::@return @begin main::@14 @8 
+@11 dominated by  @11 @begin 
+@end dominated by  @end @11 @begin 
+main dominated by  main @11 @begin 
+main::@1 dominated by  main main::@1 @11 @begin 
+main::@14 dominated by  main main::@1 @11 @begin main::@14 
+main::@5 dominated by  main main::@1 main::@5 @11 @begin main::@14 
+main::@6 dominated by  main main::@1 main::@5 main::@6 @11 @begin main::@14 
+main::@28 dominated by  main::@28 main main::@1 main::@5 main::@6 @11 @begin main::@14 
+main::@7 dominated by  main::@7 main::@28 main main::@1 main::@5 main::@6 @11 @begin main::@14 
+main::@18 dominated by  main::@7 main::@28 main main::@1 main::@5 main::@6 @11 @begin main::@18 main::@14 
+main::@9 dominated by  main::@9 main::@7 main::@28 main main::@1 main::@5 main::@6 @11 @begin main::@14 
+main::@20 dominated by  main::@9 main::@20 main::@7 main::@28 main main::@1 main::@5 main::@6 @11 @begin main::@14 
+main::@21 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@1 main::@5 main::@6 @11 @begin main::@14 
+main::@10 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@1 main::@5 main::@6 @11 @begin main::@10 main::@14 
+main::@29 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 @11 @begin main::@10 main::@14 
+main::@22 dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 @11 @begin main::@10 main::@14 
+main::@30 dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 @11 main::@30 @begin main::@10 main::@14 
+main::@23 dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@23 main::@1 main::@5 main::@6 @11 main::@30 @begin main::@10 main::@14 
+main::@11 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 @11 main::@11 @begin main::@10 main::@14 
+main::@13 dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 @11 main::@11 @begin main::@10 main::@13 main::@14 
+main::@8 dominated by  main::@7 main::@8 main::@28 main main::@1 main::@5 main::@6 @11 @begin main::@14 
+keyboard_key_pressed dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@1 main::@5 main::@6 @11 @begin main::@10 main::@14 keyboard_key_pressed 
+keyboard_key_pressed::@2 dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 main::@1 keyboard_key_pressed::@2 main::@5 main::@6 @11 @begin main::@10 main::@14 keyboard_key_pressed 
+keyboard_key_pressed::@return dominated by  main::@9 main::@20 main::@7 main::@22 main::@21 main::@28 main main::@29 keyboard_key_pressed::@return main::@1 keyboard_key_pressed::@2 main::@5 main::@6 @11 @begin main::@10 main::@14 keyboard_key_pressed 
+keyboard_matrix_read dominated by  keyboard_matrix_read main main::@1 main::@5 main::@6 @11 @begin main::@14 
+keyboard_matrix_read::@return dominated by  keyboard_matrix_read main main::@1 main::@5 main::@6 @11 @begin keyboard_matrix_read::@return main::@14 
+keyboard_get_keycode dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@1 main::@5 main::@6 keyboard_get_keycode @11 @begin main::@10 main::@14 
+keyboard_get_keycode::@return dominated by  main::@9 main::@20 main::@7 main::@21 main::@28 main main::@1 main::@5 main::@6 keyboard_get_keycode @11 @begin main::@10 main::@14 keyboard_get_keycode::@return 
+keyboard_init dominated by  main keyboard_init main::@1 @11 @begin main::@14 
+keyboard_init::@return dominated by  main keyboard_init main::@1 keyboard_init::@return @11 @begin main::@14 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@1 tails: main::@1 blocks: null
@@ -2665,17 +2769,17 @@ INITIAL ASM
   .const KEY_Q = $3e
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @8 [phi:@begin->@8]
-b8_from_bbegin:
-  jmp b8
-//SEG4 @8
-b8:
+//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
+b11_from_bbegin:
+  jmp b11
+//SEG4 @11
+b11:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @8 to main [phi:@8->main]
-main_from_b8:
+//SEG6 [4] phi from @11 to main [phi:@11->main]
+main_from_b11:
   jsr main
-//SEG7 [3] phi from @8 to @end [phi:@8->@end]
-bend_from_b8:
+//SEG7 [3] phi from @11 to @end [phi:@11->@end]
+bend_from_b11:
   jmp bend
 //SEG8 @end
 bend:
@@ -3205,17 +3309,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const KEY_Q = $3e
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @8 [phi:@begin->@8]
-b8_from_bbegin:
-  jmp b8
-//SEG4 @8
-b8:
+//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
+b11_from_bbegin:
+  jmp b11
+//SEG4 @11
+b11:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @8 to main [phi:@8->main]
-main_from_b8:
+//SEG6 [4] phi from @11 to main [phi:@11->main]
+main_from_b11:
   jsr main
-//SEG7 [3] phi from @8 to @end [phi:@8->@end]
-bend_from_b8:
+//SEG7 [3] phi from @11 to @end [phi:@11->@end]
+bend_from_b11:
   jmp bend
 //SEG8 @end
 bend:
@@ -3541,7 +3645,7 @@ keyboard_init: {
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b8
+Removing instruction jmp b11
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b14
@@ -3576,9 +3680,9 @@ Replacing label b11_from_b30 with b11
 Replacing label b10_from_b11 with b10
 Replacing label b13_from_b13 with b13
 Removing instruction bbegin:
-Removing instruction b8_from_bbegin:
-Removing instruction main_from_b8:
-Removing instruction bend_from_b8:
+Removing instruction b11_from_bbegin:
+Removing instruction main_from_b11:
+Removing instruction bend_from_b11:
 Removing instruction b1_from_b1:
 Removing instruction b14_from_b1:
 Removing instruction b6_from_b20:
@@ -3590,7 +3694,7 @@ Removing instruction b11_from_b30:
 Removing instruction b13_from_b11:
 Removing instruction b13_from_b13:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b8:
+Removing instruction b11:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b14:
@@ -3620,7 +3724,7 @@ Removing instruction jmp b10
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @8
+(label) @11
 (label) @begin
 (label) @end
 (byte*) CIA1_PORT_A
@@ -3909,12 +4013,12 @@ Score: 56827
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @8 [phi:@begin->@8]
-//SEG4 @8
+//SEG3 [1] phi from @begin to @11 [phi:@begin->@11]
+//SEG4 @11
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @8 to main [phi:@8->main]
+//SEG6 [4] phi from @11 to main [phi:@11->main]
   jsr main
-//SEG7 [3] phi from @8 to @end [phi:@8->@end]
+//SEG7 [3] phi from @11 to @end [phi:@11->@end]
 //SEG8 @end
 //SEG9 main
 main: {

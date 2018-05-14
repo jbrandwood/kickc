@@ -1,8 +1,8 @@
 // Animated lines drawn on a single color bitmap
 import "c64.kc"
 
-byte* BITMAP = $2000;
-byte* SCREEN = $400;
+byte* BITMAP = $a000;
+byte* SCREEN = $8800;
 
 // The number of points
 const byte SIZE = 4;
@@ -29,10 +29,16 @@ byte[4] delay;
 byte[4] frame;
 
 void main() {
+    asm { sei }  // Disable normal interrupt
+    // Disable kernal & basic
+    *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+    *PROCPORT = PROCPORT_RAM_IO;
     *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
-    *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400));
+    vicSelectGfxBank(SCREEN);
+    *D018 =  toD018(SCREEN, BITMAP);
     bitmap_init(BITMAP);
     bitmap_clear();
+    screen_fill(SCREEN, $10);
     for( byte i=0; i!=8; i+=2) {
         point_init(i);
         bitmap_plot(x_start[i], y_start[i>>1]);
@@ -42,10 +48,20 @@ void main() {
     }
 }
 
+// Initialize the points to be animated
 void point_init(byte point_idx) {
     x_cur[point_idx] = x_start[point_idx]<<4;
     y_cur[point_idx] = ((word)y_start[point_idx>>1])<<4;
     delay[point_idx>>1] = DELAY;
+}
+
+// Fill the screen with a specific char
+void screen_fill(byte* screen, byte ch) {
+    for( byte y: 0..24) {
+        for(byte x:0..39) {
+            *screen++ = ch;
+        }
+    }
 }
 
 // Tables for the plotter - initialized by calling bitmap_draw_init();
@@ -85,7 +101,7 @@ void bitmap_clear() {
 // Plot a single dot in the bitmap
 void bitmap_plot(word x, byte y) {
     byte* plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
-    plotter += ( x & $fff7 );
+    plotter += ( x & $fff8 );
     *plotter |= bitmap_plot_bit[<x];
 }
 

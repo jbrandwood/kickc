@@ -166,10 +166,31 @@ const byte LIGHT_GREEN = $d;
 const byte LIGHT_BLUE = $e;
 const byte LIGHT_GREY = $f;
 
+// Get the value to store into D018 to display a specific screen and charset/bitmap
+// Optimized for ASM from (byte)((((word)screen&$3fff)/$40)|(((word)charset&$3fff)/$400));
+inline byte toD018(byte* screen, byte* gfx) {
+    return (>((((word)screen&$3fff)<<2)))|(((>((word)gfx))>>2)&$f);
+}
+
+// Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
+// Optimized for ASM from %00000011 ^ (byte)((word)gfx/$4000)
+inline byte toDd00(byte* gfx) {
+    return %00000011 ^ (>((word)gfx))>>6;
+}
+
+// Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed
+inline void vicSelectGfxBank(byte* gfx) {
+    *CIA2_PORT_A_DDR = %00000011;
+    *CIA2_PORT_A = toDd00(gfx);
+}
+
 Adding pre/post-modifier (byte) raster::i ← ++ (byte) raster::i
 SYMBOLS
 (label) @1
 (label) @2
+(label) @3
+(label) @4
+(label) @5
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -256,6 +277,34 @@ SYMBOLS
 (byte) raster::col
 (byte) raster::i
 (byte[]) rastercols
+inline (byte()) toD018((byte*) toD018::screen , (byte*) toD018::gfx)
+(word~) toD018::$0
+(word~) toD018::$1
+(word~) toD018::$2
+(byte~) toD018::$3
+(word~) toD018::$4
+(byte~) toD018::$5
+(byte~) toD018::$6
+(byte~) toD018::$7
+(byte~) toD018::$8
+(label) toD018::@1
+(label) toD018::@return
+(byte*) toD018::gfx
+(byte) toD018::return
+(byte*) toD018::screen
+inline (byte()) toDd00((byte*) toDd00::gfx)
+(word~) toDd00::$0
+(byte~) toDd00::$1
+(byte~) toDd00::$2
+(byte/word/dword~) toDd00::$3
+(label) toDd00::@1
+(label) toDd00::@return
+(byte*) toDd00::gfx
+(byte) toDd00::return
+inline (void()) vicSelectGfxBank((byte*) vicSelectGfxBank::gfx)
+(byte~) vicSelectGfxBank::$0
+(label) vicSelectGfxBank::@return
+(byte*) vicSelectGfxBank::gfx
 
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT_DDR ← ((byte*)) 0
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT ← ((byte*)) 1
@@ -361,6 +410,51 @@ INITIAL CONTROL FLOW GRAPH
   (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
   (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
   to:@1
+toD018: scope:[toD018]  from
+  (word~) toD018::$0 ← ((word)) (byte*) toD018::screen
+  (word~) toD018::$1 ← (word~) toD018::$0 & (word/signed word/dword/signed dword) 16383
+  (word~) toD018::$2 ← (word~) toD018::$1 << (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$3 ← > (word~) toD018::$2
+  (word~) toD018::$4 ← ((word)) (byte*) toD018::gfx
+  (byte~) toD018::$5 ← > (word~) toD018::$4
+  (byte~) toD018::$6 ← (byte~) toD018::$5 >> (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$7 ← (byte~) toD018::$6 & (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte~) toD018::$8 ← (byte~) toD018::$3 | (byte~) toD018::$7
+  (byte) toD018::return ← (byte~) toD018::$8
+  to:toD018::@return
+toD018::@return: scope:[toD018]  from toD018 toD018::@1
+  (byte) toD018::return ← (byte) toD018::return
+  return (byte) toD018::return
+  to:@return
+toD018::@1: scope:[toD018]  from
+  to:toD018::@return
+@1: scope:[]  from @begin
+  to:@2
+toDd00: scope:[toDd00]  from
+  (word~) toDd00::$0 ← ((word)) (byte*) toDd00::gfx
+  (byte~) toDd00::$1 ← > (word~) toDd00::$0
+  (byte~) toDd00::$2 ← (byte~) toDd00::$1 >> (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte/word/dword~) toDd00::$3 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) toDd00::$2
+  (byte) toDd00::return ← (byte/word/dword~) toDd00::$3
+  to:toDd00::@return
+toDd00::@return: scope:[toDd00]  from toDd00 toDd00::@1
+  (byte) toDd00::return ← (byte) toDd00::return
+  return (byte) toDd00::return
+  to:@return
+toDd00::@1: scope:[toDd00]  from
+  to:toDd00::@return
+@2: scope:[]  from @1
+  to:@3
+vicSelectGfxBank: scope:[vicSelectGfxBank]  from
+  *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+  *((byte*) CIA2_PORT_A) ← (byte~) vicSelectGfxBank::$0
+  to:vicSelectGfxBank::@return
+vicSelectGfxBank::@return: scope:[vicSelectGfxBank]  from vicSelectGfxBank
+  return 
+  to:@return
+@3: scope:[]  from @2
+  to:@4
 main: scope:[main]  from
   asm { sei  }
   to:main::@1
@@ -385,9 +479,9 @@ main::@6: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@6
   return 
   to:@return
-@1: scope:[]  from @begin
+@4: scope:[]  from @3
   (byte[]) rastercols ← { (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/word/signed word/dword/signed dword) 255 }
-  to:@2
+  to:@5
 raster: scope:[raster]  from
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   (byte) raster::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -407,11 +501,15 @@ raster::@2: scope:[raster]  from raster::@1
 raster::@return: scope:[raster]  from raster::@2
   return 
   to:@return
-@2: scope:[]  from @1
+@5: scope:[]  from @4
   call main 
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @5
 
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Removing unused procedure toD018
+Removing unused procedure toDd00
+Removing unused procedure vicSelectGfxBank
 Eliminating unused variable (byte*) PROCPORT_DDR and assignment [0] (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
 Eliminating unused variable (byte) PROCPORT_DDR_MEMORY_MASK and assignment [1] (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
 Eliminating unused variable (byte*) PROCPORT and assignment [2] (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
@@ -475,6 +573,9 @@ Eliminating unused variable (byte) LIGHT_GREEN and assignment [62] (byte) LIGHT_
 Eliminating unused variable (byte) LIGHT_BLUE and assignment [63] (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
 Eliminating unused variable (byte) LIGHT_GREY and assignment [64] (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
 Eliminating unused variable - keeping the call (void~) main::$2
+Removing empty block @1
+Removing empty block @2
+Removing empty block @3
 Removing empty block main::@4
 Removing empty block main::@6
 Removing empty block raster::@2
@@ -487,8 +588,8 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) 53266
   (byte*) BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
   (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
-  to:@1
-main: scope:[main]  from @2
+  to:@4
+main: scope:[main]  from @5
   asm { sei  }
   to:main::@2
 main::@1: scope:[main]  from main::@7
@@ -510,9 +611,9 @@ main::@7: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@7
   return 
   to:@return
-@1: scope:[]  from @begin
+@4: scope:[]  from @begin
   (byte[]) rastercols#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 11, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/word/signed word/dword/signed dword) 255 }
-  to:@2
+  to:@5
 raster: scope:[raster]  from main::@5
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   (byte) raster::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -532,17 +633,17 @@ raster::@1: scope:[raster]  from raster raster::@1
 raster::@return: scope:[raster]  from raster::@1
   return 
   to:@return
-@2: scope:[]  from @1
+@5: scope:[]  from @4
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@6
+@6: scope:[]  from @5
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @6
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
+(label) @4
+(label) @5
+(label) @6
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -577,7 +678,7 @@ SYMBOL TABLE SSA
 
 OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) main::@1
-Culled Empty Block (label) @3
+Culled Empty Block (label) @6
 Succesful SSA optimization Pass2CullEmptyBlocks
 Simple Condition (bool~) main::$0 if(*((byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2
 Simple Condition (bool~) main::$1 if(*((byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@3
@@ -596,18 +697,18 @@ Succesful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Succesful SSA optimization Pass2EliminateUnusedBlocks
 Culled Empty Block (label) main::@7
-Culled Empty Block (label) @1
+Culled Empty Block (label) @4
 Succesful SSA optimization Pass2CullEmptyBlocks
 OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) raster::i#0
 Inlining constant with var siblings (const byte) raster::i#0
 Constant inlined raster::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @2 @end main main::@2 main::@3 main::@5 raster raster::@1 raster::@return 
+Block Sequence Planned @begin @5 @end main main::@2 main::@3 main::@5 raster raster::@1 raster::@return 
 Added new block during phi lifting raster::@3(between raster::@1 and raster::@1)
-Block Sequence Planned @begin @2 @end main main::@2 main::@3 main::@5 raster raster::@1 raster::@return raster::@3 
+Block Sequence Planned @begin @5 @end main main::@2 main::@3 main::@5 raster raster::@1 raster::@return raster::@3 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
+Adding NOP phi() at start of @5
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@5
 CALL GRAPH
@@ -625,9 +726,9 @@ Coalesced [20] raster::col#4 ← raster::col#1
 Coalesced [21] raster::i#3 ← raster::i#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) raster::@3
-Block Sequence Planned @begin @2 @end main main::@2 main::@3 main::@5 raster raster::@1 raster::@return 
+Block Sequence Planned @begin @5 @end main main::@2 main::@3 main::@5 raster raster::@1 raster::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
+Adding NOP phi() at start of @5
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@5
 Propagating live ranges...
@@ -638,14 +739,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@2
-@2: scope:[]  from @begin
+  to:@5
+@5: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @5
   [3] phi() [ ] ( )
-main: scope:[main]  from @2
+main: scope:[main]  from @5
   asm { sei  }
   to:main::@2
 main::@2: scope:[main]  from main main::@2 main::@5
@@ -678,15 +779,15 @@ raster::@return: scope:[raster]  from raster::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@2 dominated by  @2 @begin 
-@end dominated by  @2 @begin @end 
-main dominated by  @2 @begin main 
-main::@2 dominated by  @2 @begin main::@2 main 
-main::@3 dominated by  @2 @begin main::@2 main main::@3 
-main::@5 dominated by  @2 @begin main::@2 main main::@5 main::@3 
-raster dominated by  @2 @begin raster main::@2 main main::@5 main::@3 
-raster::@1 dominated by  @2 @begin raster main::@2 raster::@1 main main::@5 main::@3 
-raster::@return dominated by  @2 @begin raster main::@2 raster::@1 raster::@return main main::@5 main::@3 
+@5 dominated by  @begin @5 
+@end dominated by  @begin @5 @end 
+main dominated by  @begin @5 main 
+main::@2 dominated by  @begin @5 main::@2 main 
+main::@3 dominated by  @begin @5 main::@2 main main::@3 
+main::@5 dominated by  @begin @5 main::@2 main main::@5 main::@3 
+raster dominated by  @begin @5 raster main::@2 main main::@5 main::@3 
+raster::@1 dominated by  @begin @5 raster main::@2 raster::@1 main main::@5 main::@3 
+raster::@return dominated by  @begin @5 raster main::@2 raster::@1 raster::@return main main::@5 main::@3 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@2 tails: main::@2 blocks: null
@@ -751,15 +852,15 @@ INITIAL ASM
   .label BGCOL = $d021
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG4 @2
-b2:
+//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
+b5_from_bbegin:
+  jmp b5
+//SEG4 @5
+b5:
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG6 [3] phi from @5 to @end [phi:@5->@end]
+bend_from_b5:
   jmp bend
 //SEG7 @end
 bend:
@@ -904,15 +1005,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d021
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG4 @2
-b2:
+//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
+b5_from_bbegin:
+  jmp b5
+//SEG4 @5
+b5:
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG6 [3] phi from @5 to @end [phi:@5->@end]
+bend_from_b5:
   jmp bend
 //SEG7 @end
 bend:
@@ -1023,7 +1124,7 @@ raster: {
   rastercols: .byte $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b2
+Removing instruction jmp b5
 Removing instruction jmp bend
 Removing instruction jmp b2
 Removing instruction jmp b3
@@ -1033,12 +1134,12 @@ Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b2_from_bbegin:
-Removing instruction bend_from_b2:
+Removing instruction b5_from_bbegin:
+Removing instruction bend_from_b5:
 Removing instruction b5_from_b3:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
+Removing instruction b5:
 Removing instruction bend:
 Removing instruction b5:
 Removing instruction b1_from_raster:
@@ -1048,7 +1149,7 @@ Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @2
+(label) @5
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -1090,11 +1191,11 @@ Score: 8346
   .label BORDERCOL = $d020
   .label BGCOL = $d021
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
+//SEG3 [1] phi from @begin to @5 [phi:@begin->@5]
+//SEG4 @5
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+//SEG6 [3] phi from @5 to @end [phi:@5->@end]
 //SEG7 @end
 //SEG8 main
 main: {

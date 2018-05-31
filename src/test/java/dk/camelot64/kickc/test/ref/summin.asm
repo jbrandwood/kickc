@@ -7,18 +7,18 @@ main: {
     .label s1 = 2
     .label s3 = 3
     lda #2
-    ldx #1
+    ldy #1
     jsr sum
     sta s1
     lda #4
-    ldx #3
+    ldy #3
     jsr sum
-    tay
+    tax
     lda #$d
-    ldx #9
+    ldy #9
     jsr sum
     sta s3
-    tya
+    txa
     clc
     adc s1
     clc
@@ -27,7 +27,7 @@ main: {
     rts
 }
 sum: {
-    stx $ff
+    sty $ff
     clc
     adc $ff
     rts

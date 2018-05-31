@@ -16,6 +16,7 @@
   .label CIA2_PORT_A_DDR = $dd02
   .label BITMAP = $a000
   .label SCREEN = $8800
+  .const DELAY = 8
   .label rem16s = 3
   .label rem16u = 9
   jsr main
@@ -46,12 +47,11 @@ main: {
     sta rem16u+1
     sta i
   b1:
-    ldx i
     jsr point_init
     lda i
     lsr
     tax
-    tay
+    ldy i
     lda x_start,y
     sta bitmap_plot.x
     lda x_start+1,y
@@ -102,24 +102,32 @@ bitmap_plot: {
     rts
 }
 point_init: {
-    .label _4 = $d
+    .label _4 = $e
     .label _5 = 5
-    .label y_diff = $d
+    .label _16 = 5
+    .label _17 = 5
+    .label _18 = 5
+    .label point_idx = 2
+    .label point_idx1 = $d
+    .label y_diff = $e
     .label abs16s1__2 = 5
     .label abs16s1_return = 5
     .label abs16s2__2 = 7
     .label abs16s2_return = 7
+    .label x_stepf = 5
     .label x_diff = $b
-    txa
+    lda point_idx
     lsr
-    tay
+    sta point_idx1
+    ldy point_idx
     sec
-    lda x_end,x
-    sbc x_start,x
+    lda x_end,y
+    sbc x_start,y
     sta x_diff
-    lda x_end+1,x
-    sbc x_start+1,x
+    lda x_end+1,y
+    sbc x_start+1,y
     sta x_diff+1
+    ldy point_idx1
     lda y_end,y
     sta _4
     lda #0
@@ -136,14 +144,18 @@ point_init: {
     sbc _5+1
     sta y_diff+1
     lda x_diff+1
-    bmi abs16s1_b1
+    bpl !abs16s1_b1+
+    jmp abs16s1_b1
+  !abs16s1_b1:
     lda x_diff
     sta abs16s1_return
     lda x_diff+1
     sta abs16s1_return+1
   abs16s2:
     lda y_diff+1
-    bmi abs16s2_b1
+    bpl !abs16s2_b1+
+    jmp abs16s2_b1
+  !abs16s2_b1:
     lda y_diff
     sta abs16s2_return
     lda y_diff+1
@@ -157,23 +169,70 @@ point_init: {
     eor #$80
   !:
     bpl b1
-  breturn:
+  b2:
+    ldy point_idx
+    lda x_start,y
+    sta _16
+    lda x_start+1,y
+    sta _16+1
+    asl _16
+    rol _16+1
+    asl _16
+    rol _16+1
+    asl _16
+    rol _16+1
+    asl _16
+    rol _16+1
+    lda _16
+    sta x_cur,y
+    lda _16+1
+    sta x_cur+1,y
+    ldy point_idx1
+    lda y_start,y
+    sta _17
+    lda #0
+    sta _17+1
+    asl _18
+    rol _18+1
+    asl _18
+    rol _18+1
+    asl _18
+    rol _18+1
+    asl _18
+    rol _18+1
+    ldy point_idx
+    lda _18
+    sta y_cur,y
+    lda _18+1
+    sta y_cur+1,y
+    ldy point_idx1
+    lda #DELAY
+    sta delay,y
     rts
   b1:
     lda x_diff+1
     bmi b3
+    ldy point_idx
     lda #$10
-    sta x_add,x
+    sta x_add,y
   b4:
     lda y_diff
     sta divr16s.rem
     lda y_diff+1
     sta divr16s.rem+1
     jsr divr16s
-    jmp breturn
+    lda x_stepf+1
+    lsr
+    lsr
+    lsr
+    lsr
+    ldy point_idx1
+    sta y_add,y
+    jmp b2
   b3:
+    ldy point_idx
     lda #-$10
-    sta x_add,x
+    sta x_add,y
     jmp b4
   abs16s2_b1:
     sec
@@ -202,6 +261,8 @@ divr16s: {
     .const dividend = 0
     .label _7 = 9
     .label _11 = $b
+    .label resultu = 5
+    .label return = 5
     .label divisor = $b
     .label rem = 9
     .label dividendu = 3
@@ -230,6 +291,15 @@ divr16s: {
     eor #$ff
     adc #0
     sta rem16s+1
+    sec
+    lda return
+    eor #$ff
+    adc #0
+    sta return
+    lda return+1
+    eor #$ff
+    adc #0
+    sta return+1
   breturn:
     rts
   b19:
@@ -427,7 +497,11 @@ bitmap_init: {
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
+  x_cur: .fill 8, 0
+  y_cur: .fill 8, 0
   x_add: .fill 4, 0
+  y_add: .fill 4, 0
+  delay: .fill 4, 0
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0

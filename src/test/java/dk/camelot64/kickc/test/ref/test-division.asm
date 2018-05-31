@@ -3,8 +3,8 @@
 .pc = $80d "Program"
   .label print_char_cursor = 8
   .label print_line_cursor = 3
-  .label rem16u = $e
-  .label rem16s = $e
+  .label rem16u = $a
+  .label rem16s = $a
   jsr main
 main: {
     jsr print_cls
@@ -17,7 +17,7 @@ main: {
 test_16s: {
     .label dividend = 5
     .label divisor = $13
-    .label res = $c
+    .label res = $e
     .label i = 2
     lda #0
     sta i
@@ -31,14 +31,6 @@ test_16s: {
     sta divisor
     lda divisors+1,y
     sta divisor+1
-    lda dividend
-    sta div16s.dividend
-    lda dividend+1
-    sta div16s.dividend+1
-    lda divisor
-    sta div16s.divisor
-    lda divisor+1
-    sta div16s.divisor+1
     jsr div16s
     lda print_line_cursor
     sta print_char_cursor
@@ -81,9 +73,7 @@ test_16s: {
     adc #2
     sta i
     cmp #$c
-    beq !b1+
-    jmp b1
-  !b1:
+    bne b1
     rts
     str: .text " / @"
     str1: .text " = @"
@@ -188,22 +178,43 @@ print_str: {
     jmp b1
 }
 div16s: {
-    .label _2 = 8
-    .label _6 = $a
-    .label resultu = $c
-    .label return = $c
+    .label return = $e
+    .label dividend = 5
+    .label divisor = $13
+    lda dividend
+    sta divr16s.dividend
+    lda dividend+1
+    sta divr16s.dividend+1
+    lda divisor
+    sta divr16s.divisor
+    lda divisor+1
+    sta divr16s.divisor+1
+    jsr divr16s
+    rts
+}
+divr16s: {
+    .const rem = 0
+    .label _5 = 8
+    .label _11 = $c
+    .label resultu = $e
+    .label return = $e
     .label dividend = 8
-    .label divisor = $a
+    .label divisor = $c
     .label dividendu = 8
-    .label divisoru = $a
+    .label divisoru = $c
+    .label remu = $a
     lda dividend+1
     bmi b1
+    lda #<rem
+    sta remu
+    lda #>rem
+    sta remu+1
     ldy #0
   b2:
     lda divisor+1
     bmi b3
   b4:
-    jsr div16u
+    jsr divr16u
     cpy #0
     beq breturn
     sec
@@ -228,50 +239,45 @@ div16s: {
     rts
   b3:
     sec
-    lda _6
+    lda _11
     eor #$ff
     adc #0
-    sta _6
-    lda _6+1
+    sta _11
+    lda _11+1
     eor #$ff
     adc #0
-    sta _6+1
+    sta _11+1
     tya
     eor #1
     tay
     jmp b4
   b1:
     sec
-    lda _2
+    lda _5
     eor #$ff
     adc #0
-    sta _2
-    lda _2+1
+    sta _5
+    lda _5+1
     eor #$ff
     adc #0
-    sta _2+1
+    sta _5+1
+    lda #<-rem
+    sta remu
+    lda #>-rem
+    sta remu+1
     ldy #1
     jmp b2
 }
-div16u: {
-    .label return = $c
-    .label dividend = 8
-    .label divisor = $a
-    jsr divr16u
-    rts
-}
 divr16u: {
-    .label rem = $e
+    .label rem = $a
     .label dividend = 8
-    .label quotient = $c
-    .label return = $c
-    .label divisor = $a
+    .label quotient = $e
+    .label return = $e
+    .label divisor = $c
     ldx #0
     txa
     sta quotient
     sta quotient+1
-    sta rem
-    sta rem+1
   b1:
     asl rem
     rol rem+1
@@ -481,8 +487,8 @@ divr8u: {
 }
 test_16u: {
     .label dividend = 5
-    .label divisor = $a
-    .label res = $c
+    .label divisor = $c
+    .label res = $e
     .label i = 2
     lda #0
     sta i
@@ -496,10 +502,6 @@ test_16u: {
     sta divisor
     lda divisors+1,y
     sta divisor+1
-    lda dividend
-    sta div16u.dividend
-    lda dividend+1
-    sta div16u.dividend+1
     jsr div16u
     lda print_line_cursor
     sta print_char_cursor
@@ -549,6 +551,20 @@ test_16u: {
     str2: .text " @"
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
     divisors: .word 5, 7, $b, $d, $11, $13
+}
+div16u: {
+    .label return = $e
+    .label dividend = 5
+    .label divisor = $c
+    lda dividend
+    sta divr16u.dividend
+    lda dividend+1
+    sta divr16u.dividend+1
+    lda #<0
+    sta divr16u.rem
+    sta divr16u.rem+1
+    jsr divr16u
+    rts
 }
 test_8u: {
     .label dividend = 7

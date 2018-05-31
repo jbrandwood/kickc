@@ -39,6 +39,10 @@ public class AsmInstructionType {
       return addressingMode.getBytes();
    }
 
+   public int getOpcode() {
+      return opcode;
+   }
+
    public String getAsm(String parameter) {
       return addressingMode.getAsm(mnemnonic, parameter);
    }

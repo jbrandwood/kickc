@@ -306,7 +306,20 @@ public class AsmInstructionSet {
       for(AsmInstructionType instruction : instructions) {
          if(cas.contains(instruction.getMnemnonic())) {
             instruction.getClobber().setClobberA(true);
+         } else if(instruction.getOpcode()==0x0a) {
+            // Special handling of ASL A
+            instruction.getClobber().setClobberA(true);
+         } else if(instruction.getOpcode()==0x2a) {
+            // Special handling of ROL A
+            instruction.getClobber().setClobberA(true);
+         } else if(instruction.getOpcode()==0x4a) {
+            // Special handling of LSR A
+            instruction.getClobber().setClobberA(true);
+         } else if(instruction.getOpcode()==0x6a) {
+            // Special handling of ROR A
+            instruction.getClobber().setClobberA(true);
          }
+
       }
       List<String> ccs = Arrays.asList("adc", "sbc", "cmp", "cpx", "cpy", "asl", "rol", "lsr", "ror", "plp", "rti", "clc", "sec", "slo", "rla", "sre", "rra", "dcp", "isc", "anc", "alr", "arr", "axs");
       for(AsmInstructionType instruction : instructions) {

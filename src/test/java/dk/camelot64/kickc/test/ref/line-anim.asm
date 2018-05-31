@@ -5,6 +5,7 @@
   .const PROCPORT_DDR_MEMORY_MASK = 7
   .label PROCPORT = 1
   .const PROCPORT_RAM_IO = $35
+  .label RASTER = $d012
   .label BORDERCOL = $d020
   .label D011 = $d011
   .const VIC_BMM = $20
@@ -15,11 +16,13 @@
   .label CIA2_PORT_A_DDR = $dd02
   .label BITMAP = $a000
   .label SCREEN = $8800
-  .const DELAY = 8
+  .label rem16s = 3
+  .label rem16u = 9
   jsr main
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)>>6
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>BITMAP)>>2&$f
+    .label i = 2
     sei
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
@@ -36,32 +39,43 @@ main: {
     jsr bitmap_init
     jsr bitmap_clear
     jsr screen_fill
-    ldx #0
+    lda #<0
+    sta rem16s
+    sta rem16s+1
+    sta rem16u
+    sta rem16u+1
+    sta i
   b1:
+    ldx i
     jsr point_init
-    txa
+    lda i
     lsr
+    tax
     tay
-    lda x_start,x
+    lda x_start,y
     sta bitmap_plot.x
-    lda x_start+1,x
+    lda x_start+1,y
     sta bitmap_plot.x+1
-    lda y_start,y
+    ldy y_start,x
     jsr bitmap_plot
-    inx
-    inx
-    cpx #8
+    lda i
+    clc
+    adc #2
+    sta i
+    cmp #8
     bne b1
-  b3:
+  b5:
+    lda RASTER
+    cmp #$ff
+    bne b5
     inc BORDERCOL
-    jmp b3
+    jmp b5
 }
 bitmap_plot: {
-    .label _1 = 7
-    .label x = 3
-    .label plotter = 5
-    .label _3 = 5
-    tay
+    .label _1 = $b
+    .label x = 5
+    .label plotter = 7
+    .label _3 = 7
     lda bitmap_plot_yhi,y
     sta _3+1
     lda bitmap_plot_ylo,y
@@ -88,49 +102,221 @@ bitmap_plot: {
     rts
 }
 point_init: {
-    .label _0 = 3
-    .label _2 = 3
-    .label _3 = 3
-    lda x_start,x
-    sta _0
-    lda x_start+1,x
-    sta _0+1
-    asl _0
-    rol _0+1
-    asl _0
-    rol _0+1
-    asl _0
-    rol _0+1
-    asl _0
-    rol _0+1
-    lda _0
-    sta x_cur,x
-    lda _0+1
-    sta x_cur+1,x
+    .label _4 = $d
+    .label _5 = 5
+    .label y_diff = $d
+    .label abs16s1__2 = 5
+    .label abs16s1_return = 5
+    .label abs16s2__2 = 7
+    .label abs16s2_return = 7
+    .label x_diff = $b
     txa
     lsr
     tay
-    lda y_start,y
-    sta _2
+    sec
+    lda x_end,x
+    sbc x_start,x
+    sta x_diff
+    lda x_end+1,x
+    sbc x_start+1,x
+    sta x_diff+1
+    lda y_end,y
+    sta _4
     lda #0
-    sta _2+1
-    asl _3
-    rol _3+1
-    asl _3
-    rol _3+1
-    asl _3
-    rol _3+1
-    asl _3
-    rol _3+1
-    lda _3
-    sta y_cur,x
-    lda _3+1
-    sta y_cur+1,x
-    txa
-    lsr
+    sta _4+1
+    lda y_start,y
+    sta _5
+    lda #0
+    sta _5+1
+    lda y_diff
+    sec
+    sbc _5
+    sta y_diff
+    lda y_diff+1
+    sbc _5+1
+    sta y_diff+1
+    lda x_diff+1
+    bmi abs16s1_b1
+    lda x_diff
+    sta abs16s1_return
+    lda x_diff+1
+    sta abs16s1_return+1
+  abs16s2:
+    lda y_diff+1
+    bmi abs16s2_b1
+    lda y_diff
+    sta abs16s2_return
+    lda y_diff+1
+    sta abs16s2_return+1
+  b10:
+    lda abs16s1_return
+    cmp abs16s2_return
+    lda abs16s1_return+1
+    sbc abs16s2_return+1
+    bvc !+
+    eor #$80
+  !:
+    bpl b1
+  breturn:
+    rts
+  b1:
+    lda x_diff+1
+    bmi b3
+    lda #$10
+    sta x_add,x
+  b4:
+    lda y_diff
+    sta divr16s.rem
+    lda y_diff+1
+    sta divr16s.rem+1
+    jsr divr16s
+    jmp breturn
+  b3:
+    lda #-$10
+    sta x_add,x
+    jmp b4
+  abs16s2_b1:
+    sec
+    lda y_diff
+    eor #$ff
+    adc #0
+    sta abs16s2__2
+    lda y_diff+1
+    eor #$ff
+    adc #0
+    sta abs16s2__2+1
+    jmp b10
+  abs16s1_b1:
+    sec
+    lda x_diff
+    eor #$ff
+    adc #0
+    sta abs16s1__2
+    lda x_diff+1
+    eor #$ff
+    adc #0
+    sta abs16s1__2+1
+    jmp abs16s2
+}
+divr16s: {
+    .const dividend = 0
+    .label _7 = 9
+    .label _11 = $b
+    .label divisor = $b
+    .label rem = 9
+    .label dividendu = 3
+    .label divisoru = $b
+    .label remu = 9
+    lda rem+1
+    bmi b1
+    lda #<dividend
+    sta dividendu
+    lda #>dividend
+    sta dividendu+1
+    ldy #0
+  b2:
+    lda divisor+1
+    bmi b3
+  b4:
+    jsr divr16u
+    cpy #0
+    beq b19
+    sec
+    lda divr16u.rem
+    eor #$ff
+    adc #0
+    sta rem16s
+    lda divr16u.rem+1
+    eor #$ff
+    adc #0
+    sta rem16s+1
+  breturn:
+    rts
+  b19:
+    lda divr16u.rem
+    sta rem16s
+    lda divr16u.rem+1
+    sta rem16s+1
+    jmp breturn
+  b3:
+    sec
+    lda _11
+    eor #$ff
+    adc #0
+    sta _11
+    lda _11+1
+    eor #$ff
+    adc #0
+    sta _11+1
+    tya
+    eor #1
     tay
-    lda #DELAY
-    sta delay,y
+    jmp b4
+  b1:
+    sec
+    lda _7
+    eor #$ff
+    adc #0
+    sta _7
+    lda _7+1
+    eor #$ff
+    adc #0
+    sta _7+1
+    lda #<-dividend
+    sta dividendu
+    lda #>-dividend
+    sta dividendu+1
+    ldy #1
+    jmp b2
+}
+divr16u: {
+    .label rem = 9
+    .label dividend = 3
+    .label quotient = 5
+    .label return = 5
+    .label divisor = $b
+    ldx #0
+    txa
+    sta quotient
+    sta quotient+1
+  b1:
+    asl rem
+    rol rem+1
+    lda dividend+1
+    and #$80
+    cmp #0
+    beq b2
+    lda #1
+    ora rem
+    sta rem
+  b2:
+    asl dividend
+    rol dividend+1
+    asl quotient
+    rol quotient+1
+    lda rem+1
+    cmp divisor+1
+    bcc b3
+    bne !+
+    lda rem
+    cmp divisor
+    bcc b3
+  !:
+    inc quotient
+    bne !+
+    inc quotient+1
+  !:
+    lda rem
+    sec
+    sbc divisor
+    sta rem
+    lda rem+1
+    sbc divisor+1
+    sta rem+1
+  b3:
+    inx
+    cpx #$10
+    bne b1
     rts
 }
 screen_fill: {
@@ -239,9 +425,9 @@ bitmap_init: {
 }
   x_start: .word $a, $14, $1e, $1e
   y_start: .byte $a, $a, $a, $14
-  x_cur: .fill 8, 0
-  y_cur: .fill 8, 0
-  delay: .fill 4, 0
+  x_end: .word $14, $a, $14, $14
+  y_end: .byte $14, $14, $a, $14
+  x_add: .fill 4, 0
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0

@@ -1,5 +1,6 @@
 // Animated lines drawn on a single color bitmap
 import "c64.kc"
+import "division.kc"
 
 byte* BITMAP = $a000;
 byte* SCREEN = $8800;
@@ -44,15 +45,43 @@ void main() {
         bitmap_plot(x_start[i], y_start[i>>1]);
     }
     while(true) {
+        while(*RASTER!=$ff) {}
         (*BORDERCOL)++;
     }
 }
 
 // Initialize the points to be animated
 void point_init(byte point_idx) {
+    byte point_idx1 = point_idx>>1;
+    signed word x_diff = ((signed word)x_end[point_idx])-((signed word)x_start[point_idx]);
+    signed word y_diff = ((signed word)y_end[point_idx1])-((signed word)y_start[point_idx1]);
+
+    if(abs16s(x_diff)>abs16s(y_diff)) {
+        // X is driver - abs(y/x) is < 1
+        if(x_diff<0){
+            // x add = -1.0
+            x_add[point_idx] = -$10;
+        } else {
+            // x add = 1.0
+            x_add[point_idx] = $10;
+        }
+        signed word x_stepf = divr16s(0, x_diff, y_diff);
+        y_add[point_idx1] = (signed byte)((>x_stepf)>>4);
+    } else {
+        // X is driver - abs(x/y) is < 1
+    }
     x_cur[point_idx] = x_start[point_idx]<<4;
-    y_cur[point_idx] = ((word)y_start[point_idx>>1])<<4;
-    delay[point_idx>>1] = DELAY;
+    y_cur[point_idx] = ((word)y_start[point_idx1])<<4;
+    delay[point_idx1] = DELAY;
+}
+
+// Return the absolute (unsigned) value of a word
+inline word abs16s(signed word w) {
+    if(w<0) {
+        return (word) -w;
+    } else {
+        return (word) w;
+    }
 }
 
 // Fill the screen with a specific char
@@ -104,6 +133,3 @@ void bitmap_plot(word x, byte y) {
     plotter += ( x & $fff8 );
     *plotter |= bitmap_plot_bit[<x];
 }
-
-
-

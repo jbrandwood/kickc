@@ -115,20 +115,22 @@ signed byte div8s(signed byte dividend, signed byte divisor) {
 // Remainder after signed 16 bit division
 signed word rem16s = 0;
 
-// Perform division on two signed 16-bit numbers
-// Returns dividend/divisor.
-// The remainder will be set into the global variable rem16s.
+// Perform division on two signed 16-bit numbers with an initial remainder.
+// Returns dividend/divisor. The remainder will be set into the global variable rem16s.
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-signed word div16s(signed word dividend, signed word divisor) {
+signed word divr16s(signed word dividend, signed word divisor, signed word rem) {
     byte neg = 0;
     word dividendu = 0;
-    if(dividend<0) {
+    word remu = 0;
+    if(dividend<0 || rem<0) {
       dividendu = (word)-dividend;
+      remu = (word)-rem;
       neg = 1;
     } else {
       dividendu = (word)dividend;
+      remu = (word)rem;
     }
     word divisoru = 0;
     if(divisor<0) {
@@ -137,7 +139,7 @@ signed word div16s(signed word dividend, signed word divisor) {
     } else {
         divisoru = (word)divisor;
     }
-    word resultu = div16u(dividendu, divisoru);
+    word resultu = divr16u(dividendu, divisoru, remu);
     if(neg==0) {
         rem16s = (signed word)rem16u;
         return (signed word)resultu;
@@ -145,4 +147,14 @@ signed word div16s(signed word dividend, signed word divisor) {
         rem16s = -(signed word)rem16u;
         return -(signed word)resultu;
     }
+}
+
+// Perform division on two signed 16-bit numbers
+// Returns dividend/divisor.
+// The remainder will be set into the global variable rem16s.
+// Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+signed word div16s(signed word dividend, signed word divisor) {
+    return divr16s(dividend, divisor, 0);
 }

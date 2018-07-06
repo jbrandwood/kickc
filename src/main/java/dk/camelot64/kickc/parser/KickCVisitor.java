@@ -59,6 +59,36 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclFunction(KickCParser.DeclFunctionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link KickCParser#declKasm}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclKasm(KickCParser.DeclKasmContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#kasmParams}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKasmParams(KickCParser.KasmParamsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKasmParam(KickCParser.KasmParamContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#kasmImportList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKasmImportList(KickCParser.KasmImportListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#kasmParamList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKasmParamList(KickCParser.KasmParamListContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -77,6 +107,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDirectiveConst(KickCParser.DirectiveConstContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code directiveExtern}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveExtern(KickCParser.DirectiveExternContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code directiveAlign}
 	 * labeled alternative in {@link KickCParser#directive}.
@@ -167,6 +204,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStmtAsm(KickCParser.StmtAsmContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code stmtDeclKasm}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code forDecl}
 	 * labeled alternative in {@link KickCParser#forDeclaration}.

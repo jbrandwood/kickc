@@ -88,6 +88,56 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitDeclFunction(KickCParser.DeclFunctionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link KickCParser#declKasm}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclKasm(KickCParser.DeclKasmContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#declKasm}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclKasm(KickCParser.DeclKasmContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#kasmParams}.
+	 * @param ctx the parse tree
+	 */
+	void enterKasmParams(KickCParser.KasmParamsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#kasmParams}.
+	 * @param ctx the parse tree
+	 */
+	void exitKasmParams(KickCParser.KasmParamsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterKasmParam(KickCParser.KasmParamContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitKasmParam(KickCParser.KasmParamContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#kasmImportList}.
+	 * @param ctx the parse tree
+	 */
+	void enterKasmImportList(KickCParser.KasmImportListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#kasmImportList}.
+	 * @param ctx the parse tree
+	 */
+	void exitKasmImportList(KickCParser.KasmImportListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#kasmParamList}.
+	 * @param ctx the parse tree
+	 */
+	void enterKasmParamList(KickCParser.KasmParamListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#kasmParamList}.
+	 * @param ctx the parse tree
+	 */
+	void exitKasmParamList(KickCParser.KasmParamListContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree
 	 */
@@ -119,6 +169,18 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveConst(KickCParser.DirectiveConstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveExtern}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveExtern(KickCParser.DirectiveExternContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveExtern}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveExtern(KickCParser.DirectiveExternContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveAlign}
 	 * labeled alternative in {@link KickCParser#directive}.
@@ -273,6 +335,18 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStmtAsm(KickCParser.StmtAsmContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtDeclKasm}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtDeclKasm}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code forDecl}
 	 * labeled alternative in {@link KickCParser#forDeclaration}.

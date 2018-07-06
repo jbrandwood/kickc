@@ -24,6 +24,7 @@ declSeq
 decl
     : declVariable
     | declFunction
+    | declKasm
     ;
 
 declVariable
@@ -34,6 +35,28 @@ declFunction
     : directive* typeDecl directive* NAME '(' parameterListDecl? ')' '{' stmtSeq? '}'
     ;
 
+declKasm
+    : 'kickasm' kasmParams? KICKASM
+    ;
+
+kasmParams
+    : '(' kasmParam ( ';' kasmParam )* ')'
+    ;
+
+kasmParam
+    : 'import' kasmImportList
+    | 'clobber' STRING
+    | 'param' kasmParamList
+    ;
+
+kasmImportList
+    : STRING ( ',' STRING )*
+    ;
+
+kasmParamList
+    : NAME ':' expr ( ',' NAME ':' expr )*
+    ;
+
 parameterListDecl
     : parameterDecl (',' parameterDecl)* ;
 
@@ -42,6 +65,7 @@ parameterDecl
 
 directive
     : 'const' #directiveConst
+    | 'extern' #directiveExtern
     | 'align' '(' NUMBER ')' #directiveAlign
     | 'register' '(' NAME ')' #directiveRegister
     | 'inline' #directiveInline
@@ -61,6 +85,7 @@ stmt
     | 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
     | 'return' expr? ';' #stmtReturn
     | 'asm' '{' asmLines '}' #stmtAsm
+    | declKasm #stmtDeclKasm
     ;
 
 forDeclaration
@@ -164,6 +189,8 @@ MNEMONIC:
     'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror'
     ;
 
+
+KICKASM: '{{' .*? '}}';
 SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'void' ;
 STRING : '"' ('\\"' | ~'"')* '"';
 CHAR : '\''  ('\\\'' | ~'\'' ) '\'';

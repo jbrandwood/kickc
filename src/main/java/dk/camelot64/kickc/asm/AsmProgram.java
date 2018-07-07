@@ -131,6 +131,13 @@ public class AsmProgram {
       addLine(new AsmDataAlignment(alignment));
    }
 
+   /**
+    * Add inlines kick assembler code
+    * @param kickAsmCode The kickassembler code
+    */
+   public void addInlinedKickAsm(String kickAsmCode) {
+      addLine(new AsmInlineKickAsm(kickAsmCode));
+   }
 
    /**
     * Get the number of bytes the segment occupies in memory.

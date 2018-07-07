@@ -43,6 +43,8 @@ public class ControlFlowGraphBaseVisitor<T> {
          return visitProcedureEnd((StatementProcedureEnd) statement);
       } else if(statement instanceof StatementAsm) {
          return visitAsm((StatementAsm) statement);
+      } else if(statement instanceof StatementKickAsm) {
+         return visitKickAsm((StatementKickAsm) statement);
       } else {
          throw new RuntimeException("Unhandled statement type " + statement);
       }
@@ -85,6 +87,10 @@ public class ControlFlowGraphBaseVisitor<T> {
    }
 
    public T visitAsm(StatementAsm asm) {
+      return null;
+   }
+
+   public T visitKickAsm(StatementKickAsm asm) {
       return null;
    }
 }

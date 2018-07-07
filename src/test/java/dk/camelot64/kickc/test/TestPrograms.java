@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testKasm() throws IOException, URISyntaxException {
+      compileAndCompare("test-kasm");
+   }
+
+   @Test
    public void testLineAnim() throws IOException, URISyntaxException {
       compileAndCompare("line-anim");
    }

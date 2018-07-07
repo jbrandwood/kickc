@@ -175,7 +175,7 @@ public class AsmSegment {
       if(printState.isComments()) {
          out.append(printState.getIndent()).append("//SEG").append(getIndex());
          if(source != null) {
-            out.append(" ").append(source);
+            out.append(" ").append(source.replace('\r', ' ').replace('\n', ' '));
          }
          if(phiTransitionId != null) {
             out.append(" [").append(phiTransitionId);

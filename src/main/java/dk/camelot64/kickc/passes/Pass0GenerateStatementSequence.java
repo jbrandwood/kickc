@@ -19,6 +19,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Generates program SSA form by visiting the ANTLR4 parse tree
@@ -140,6 +142,18 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitDeclKasm(KickCParser.DeclKasmContext ctx) {
+      String kasm = ctx.KICKASM().getText();
+      Pattern p = Pattern.compile("\\{\\{[\\s]*(.*)[\\s]*\\}\\}", Pattern.DOTALL);
+      Matcher m = p.matcher(kasm);
+      if(m.find()) {
+         String kickAsmCode = m.group(1);
+         sequence.addStatement(new StatementKickAsm(kickAsmCode, new StatementSource(ctx)));
+      }
+      return null;
+   }
+
+   @Override
    public Object visitDeclVariable(KickCParser.DeclVariableContext ctx) {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String varName = ctx.NAME().getText();
@@ -165,8 +179,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       return null;
    }
-
-
 
    /**
     * Add declared directives to an lValue (typically a variable).
@@ -223,7 +235,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          }
       }
    }
-
 
    @Override
    public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {

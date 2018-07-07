@@ -386,6 +386,9 @@ public class Pass4CodeGeneration {
             HashMap<String, Value> bindings = new HashMap<>();
             AsmFragmentInstance asmFragmentInstance = new AsmFragmentInstance(program, "inline", block.getScope(), new AsmFragmentTemplate(statementAsm.getAsmLines()), bindings);
             asmFragmentInstance.generate(asm);
+         } else if(statement instanceof StatementKickAsm) {
+            StatementKickAsm statementKasm = (StatementKickAsm) statement;
+            asm.addInlinedKickAsm(statementKasm.getKickAsmCode());
          } else {
             throw new RuntimeException("Statement not supported " + statement);
          }

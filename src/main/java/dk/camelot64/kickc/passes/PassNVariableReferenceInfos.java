@@ -346,6 +346,8 @@ public class PassNVariableReferenceInfos extends Pass2Base {
          referenced.addAll(getReferenced(statementReturn.getValue()));
       } else if(statement instanceof StatementAsm) {
          // No references in ASM atm.
+      } else if(statement instanceof StatementKickAsm) {
+         // No references in ASM atm.
       } else {
          throw new RuntimeException("Unknown statement type " + statement);
       }

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -148,13 +148,13 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKasmImportList(KickCParser.KasmImportListContext ctx) { }
+	@Override public void enterKasmResourceList(KickCParser.KasmResourceListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKasmImportList(KickCParser.KasmImportListContext ctx) { }
+	@Override public void exitKasmResourceList(KickCParser.KasmResourceListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -1,0 +1,41 @@
+import "c64.kc"
+
+byte* SCREEN = $400;
+byte* LOGO = $2000;
+
+void main() {
+    *BORDERCOL = WHITE;
+    *BGCOL = *BGCOL2 = DARK_GREY;
+    *BGCOL3 = BLACK;
+    *D018 = toD018(SCREEN, LOGO);
+    *D016 = VIC_MCM | VIC_CSEL;
+    fill(SCREEN, 40*25, BLACK);
+    fill(COLS, 40*25, WHITE|8);
+    for(byte ch: 0..239) {
+        SCREEN[ch] = ch;
+    }
+    while(true) {
+        (*(SCREEN+999))++;
+        kickasm {{ inc $d020 }}
+    }
+}
+
+// Fill some memory with a value
+void fill(byte* start, word size, byte val) {
+    byte* end = start + size;
+    for(byte* addr = start; addr!=end; addr++) {
+        *addr = val;
+    }
+}
+
+kickasm(resources "logo.png" ) {{
+    .label pc_restore = *
+    .pc = $2000
+    logo:
+    .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+    .for (var y=0; y<6	; y++)
+        .for (var x=0;x<40; x++)
+            .for(var cp=0; cp<8; cp++)
+                .byte logoPic.getMulticolorByte(x,cp+y*8)
+    .pc = pc_restore
+}}

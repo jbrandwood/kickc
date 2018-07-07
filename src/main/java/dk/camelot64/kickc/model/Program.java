@@ -5,6 +5,7 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class Program {
    private ControlFlowGraph graph;
    /** The 6502 ASM program. */
    private AsmProgram asm;
+   /** Resource files that should be copied to the output folder to be compiled with the generated ASM. */
+   private List<Path> asmResourceFiles;
 
    /** The log containing information about the compilation process. */
    private CompileLog log;
@@ -62,6 +65,7 @@ public class Program {
       this.log = new CompileLog();
       this.importPaths = new ArrayList<>();
       this.imported = new ArrayList<>();
+      this.asmResourceFiles = new ArrayList<>();
    }
 
    public List<String> getImportPaths() {
@@ -70,6 +74,14 @@ public class Program {
 
    public List<String> getImported() {
       return imported;
+   }
+
+   public List<Path> getAsmResourceFiles() {
+      return asmResourceFiles;
+   }
+
+   public void addAsmResourceFile(Path asmResourceFile) {
+      asmResourceFiles.add(asmResourceFile);
    }
 
    public StatementSequence getStatementSequence() {
@@ -244,4 +256,5 @@ public class Program {
    public String getFileName() {
       return fileName;
    }
+
 }

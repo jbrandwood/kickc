@@ -203,7 +203,7 @@ public class AsmSegment {
             out.append("["+line.getIndex()+"]");
          }
          out.append(printState.getIndent());
-         if(line instanceof AsmComment || line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment) {
+         if(line instanceof AsmComment || line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment || line instanceof AsmInlineKickAsm) {
             out.append("  ");
          }
          out.append(line.getAsm() + "\n");

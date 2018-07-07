@@ -44,12 +44,12 @@ kasmParams
     ;
 
 kasmParam
-    : 'import' kasmImportList
+    : 'resources' kasmResourceList
     | 'clobber' STRING
     | 'param' kasmParamList
     ;
 
-kasmImportList
+kasmResourceList
     : STRING ( ',' STRING )*
     ;
 

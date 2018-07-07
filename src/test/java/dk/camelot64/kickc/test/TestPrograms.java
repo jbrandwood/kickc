@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static junit.framework.TestCase.fail;
@@ -42,6 +43,11 @@ public class TestPrograms {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
+   }
+
+   @Test
+   public void testShowLogo() throws IOException, URISyntaxException {
+      compileAndCompare("showlogo");
    }
 
    @Test
@@ -880,6 +886,11 @@ public class TestPrograms {
 
    private void compileAsm(String fileName, Program program) throws IOException {
       writeBinFile(fileName, ".asm", program.getAsm().toString(false));
+      for(Path asmResourceFile : program.getAsmResourceFiles()) {
+         File binFile = getBinFile(asmResourceFile.getFileName().toString());
+         Files.copy(asmResourceFile, binFile.toPath());
+      };
+
       File asmFile = getBinFile(fileName, ".asm");
       File asmPrgFile = getBinFile(fileName, ".prg");
       File asmLogFile = getBinFile(fileName, ".log");
@@ -908,7 +919,11 @@ public class TestPrograms {
       return new File(getBinDir(), fileName + extension);
    }
 
-   private File getBinDir() {
+   public File getBinFile(String fileName) {
+      return new File(getBinDir(), fileName);
+   }
+
+   public File getBinDir() {
       Path tempDir = helper.getTempDir();
       File binDir = new File(tempDir.toFile(), "bin");
       if(!binDir.exists()) {

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -118,15 +118,15 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitKasmParam(KickCParser.KasmParamContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#kasmImportList}.
+	 * Enter a parse tree produced by {@link KickCParser#kasmResourceList}.
 	 * @param ctx the parse tree
 	 */
-	void enterKasmImportList(KickCParser.KasmImportListContext ctx);
+	void enterKasmResourceList(KickCParser.KasmResourceListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#kasmImportList}.
+	 * Exit a parse tree produced by {@link KickCParser#kasmResourceList}.
 	 * @param ctx the parse tree
 	 */
-	void exitKasmImportList(KickCParser.KasmImportListContext ctx);
+	void exitKasmResourceList(KickCParser.KasmResourceListContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#kasmParamList}.
 	 * @param ctx the parse tree

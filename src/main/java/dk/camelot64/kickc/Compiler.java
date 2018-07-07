@@ -27,6 +27,9 @@ public class Compiler {
 
    public static void loadAndParseFile(String fileName, Program program, Pass0GenerateStatementSequence pass0GenerateStatementSequence) {
       try {
+         if(!fileName.endsWith(".kc")) {
+            fileName += ".kc";
+         }
          File file = loadFile(fileName, program);
          List<String> imported = program.getImported();
          if(imported.contains(file.getAbsolutePath())) {
@@ -57,10 +60,7 @@ public class Compiler {
       }
    }
 
-   private static File loadFile(String fileName, Program program) {
-      if(!fileName.endsWith(".kc")) {
-         fileName += ".kc";
-      }
+   public static File loadFile(String fileName, Program program) {
       List<String> importPaths = program.getImportPaths();
       for(String importPath : importPaths) {
          if(!importPath.endsWith("/")) {

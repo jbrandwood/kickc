@@ -16,6 +16,7 @@ import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -149,6 +150,21 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(m.find()) {
          String kickAsmCode = m.group(1);
          sequence.addStatement(new StatementKickAsm(kickAsmCode, new StatementSource(ctx)));
+      }
+      if(ctx.kasmParams()!=null) {
+         this.visitKasmParams(ctx.kasmParams());
+      }
+      return null;
+   }
+
+   @Override
+   public Object visitKasmResourceList(KickCParser.KasmResourceListContext ctx) {
+      for(TerminalNode resource : ctx.STRING()) {
+         String resourceName = resource.getText();
+         resourceName = resourceName.substring(1, resourceName.length() - 1);
+         File resourceFile = Compiler.loadFile(resourceName, program);
+         program.addAsmResourceFile(resourceFile.toPath());
+         program.getLog().append("Added resource "+resourceFile.getAbsolutePath());
       }
       return null;
    }

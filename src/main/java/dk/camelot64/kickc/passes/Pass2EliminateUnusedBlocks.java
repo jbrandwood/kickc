@@ -3,10 +3,15 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.LinkedHashSet;
 import java.util.ListIterator;
@@ -26,9 +31,18 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
       Set<LabelRef> unusedBlocks = new LinkedHashSet<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          if(!referencedBlocks.contains(block.getLabel())) {
-
-
             unusedBlocks.add(block.getLabel());
+            for(Statement stmt : block.getStatements()) {
+               if(stmt instanceof StatementAssignment) {
+                  StatementAssignment assignment = (StatementAssignment) stmt;
+                  LValue lValue = assignment.getlValue();
+                  if(lValue instanceof VariableRef) {
+                     getLog().append("Eliminating variable " + lValue.toString(getProgram()) + " and from unused block " + block.getLabel());
+                     Variable variable = getScope().getVariable((VariableRef) lValue);
+                     variable.getScope().remove(variable);
+                  }
+               }
+            }
          }
       }
       for(LabelRef unusedBlock : unusedBlocks) {

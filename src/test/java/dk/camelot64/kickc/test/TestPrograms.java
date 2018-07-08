@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testScrollLogo() throws IOException, URISyntaxException {
+      compileAndCompare("scrolllogo");
+   }
+
+   @Test
    public void testShowLogo() throws IOException, URISyntaxException {
       compileAndCompare("showlogo");
    }

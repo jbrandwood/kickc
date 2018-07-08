@@ -1,0 +1,79 @@
+import "c64.kc"
+import "sinus.kc"
+
+byte* SCREEN = $400;
+byte* LOGO = $2000;
+
+const word XSIN_SIZE = 512;
+
+signed word[512] align($100) xsin;
+
+void main() {
+    *BORDERCOL = WHITE;
+    *BGCOL = *BGCOL2 = DARK_GREY;
+    *BGCOL3 = BLACK;
+    *D018 = toD018(SCREEN, LOGO);
+    *D016 = VIC_MCM | VIC_CSEL;
+    fill(SCREEN, 1000, BLACK);
+    fill(COLS, 1000, WHITE|8);
+    for(byte ch: 0..239) {
+        SCREEN[ch] = ch;
+    }
+    sin16s_gen2(xsin, XSIN_SIZE, -320, 320);
+    loop();
+}
+
+// Generate signed word sinus table - with values in the range min-max.
+// sintab - the table to generate into
+// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+void sin16s_gen2(signed word* sintab, word wavelength, signed word min, signed word max) {
+    signed word ampl = max-min;
+    signed word offs = min + ampl>>1; // ampl is always positive so shifting left does not alter the sign
+    // u[4.28] step = PI*2/wavelength
+    dword step = div32u16u(PI2_u4f28, wavelength); // u[4.28]
+    // Iterate over the table
+    dword x = 0; // u[4.28]
+    for( word i=0; i<wavelength; i++) {
+        signed dword ssin = mul16s(sin16s(x), ampl); // The signed sin() only has values [-1/2 ; 1/2] there ampl*sin has the right amplitude
+        *sintab = offs + (signed word)>ssin;
+        sintab = sintab + 2;
+        x = x + step;
+    }
+}
+
+
+word xsin_idx = 0;
+
+void loop() {
+    while(true) {
+        while(*RASTER!=$ff) {}
+        signed word xpos = *(xsin+xsin_idx>>1);
+        SCREEN[0] = <xpos;
+        SCREEN[1] = >xpos;
+        xsin_idx += 2;
+        if(xsin_idx==XSIN_SIZE) {
+            xsin_idx = 0;
+        }
+    }
+}
+
+
+// Fill some memory with a value
+void fill(byte* start, word size, byte val) {
+    byte* end = start + size;
+    for(byte* addr = start; addr!=end; addr++) {
+        *addr = val;
+    }
+}
+
+kickasm(resources "logo.png" ) {{
+    .label pc_restore = *
+    .pc = $2000
+    logo:
+    .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+    .for (var y=0; y<6	; y++)
+        .for (var x=0;x<40; x++)
+            .for(var cp=0; cp<8; cp++)
+                .byte logoPic.getMulticolorByte(x,cp+y*8)
+    .pc = pc_restore
+}}

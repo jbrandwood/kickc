@@ -44,6 +44,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
 
    /**
     * Detect if any branch distance is to long, and fix it by rewriting the branch if it is.
+    *
     * @return true if any branch was rewritten
     */
    private boolean step() {
@@ -62,7 +63,15 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       try {
          //getLog().append("ASM");
          //getLog().append(getProgram().getAsm().toString(false, true));
+
          writeOutputFile(fileName, ".asm", getProgram().getAsm().toString(false));
+
+         // Copy Resource Files
+         for(Path asmResourceFile : getProgram().getAsmResourceFiles()) {
+            File binFile = getTmpFile(asmResourceFile.getFileName().toString());
+            Files.copy(asmResourceFile, binFile.toPath());
+         }
+
       } catch(IOException e) {
          throw new CompileError("Error writing ASM temp file.", e);
       }
@@ -96,7 +105,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                      return true;
                   }
                }
-               getLog().append("Warning! Failed to fix long branch at "+contextLine);
+               getLog().append("Warning! Failed to fix long branch at " + contextLine);
             }
          }
       }
@@ -105,6 +114,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
 
    /**
     * Fix a long branch detected at a specific ASM index
+    *
     * @param idx The index of the ASM line with the long branch
     * @return True if the branch was fixed
     */
@@ -121,14 +131,14 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
             AsmInstructionType inverseType = invertBranch(asmInstructionType);
             if(inverseType != null) {
                //getLog().append("Inversed branch instruction "+asmInstructionType.getMnemnonic()+" -> "+inverseType.getMnemnonic());
-               getLog().append("Fixing long branch ["+idx+"] "+asmLine.toString() + " to "+inverseType.getMnemnonic());
+               getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseType.getMnemnonic());
                String branchDest = asmInstruction.getParameter();
                asmInstruction.setType(inverseType);
-               asmInstruction.setParameter("!"+branchDest+"+");
+               asmInstruction.setParameter("!" + branchDest + "+");
                AsmInstructionType jmpType = AsmInstructionSet.getInstructionType("jmp", AsmAddressingMode.ABS, false);
                AsmInstruction jmpInstruction = new AsmInstruction(jmpType, branchDest);
                asmSegment.addLineAfter(asmInstruction, jmpInstruction);
-               asmSegment.addLineAfter(jmpInstruction, new AsmLabel("!"+branchDest));
+               asmSegment.addLineAfter(jmpInstruction, new AsmLabel("!" + branchDest));
                return true;
             }
          }
@@ -173,6 +183,10 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
 
    public File getTmpFile(String fileName, String extension) {
       return new File(tmpDir.toFile(), fileName + extension);
+   }
+
+   public File getTmpFile(String fileName) {
+      return new File(tmpDir.toFile(), fileName );
    }
 
 }

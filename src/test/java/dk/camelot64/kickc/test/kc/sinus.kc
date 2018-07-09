@@ -36,6 +36,23 @@ void sin16s_gen(signed word* sintab, word wavelength) {
     }
 }
 
+// Generate signed word sinus table - with values in the range min-max.
+// sintab - the table to generate into
+// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+void sin16s_gen2(signed word* sintab, word wavelength, signed word min, signed word max) {
+    signed word ampl = max-min;
+    signed word offs = min + ampl>>1; // ampl is always positive so shifting left does not alter the sign
+    // u[4.28] step = PI*2/wavelength
+    dword step = div32u16u(PI2_u4f28, wavelength); // u[4.28]
+    // Iterate over the table
+    dword x = 0; // u[4.28]
+    for( word i=0; i<wavelength; i++) {
+        *sintab = offs + (signed word)>mul16s(sin16s(x), ampl); // The signed sin() has values [-7fff;7fff] = [-1/2 ; 1/2], so ampl*sin has the right amplitude
+        sintab = sintab + 2;
+        x = x + step;
+    }
+}
+
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)

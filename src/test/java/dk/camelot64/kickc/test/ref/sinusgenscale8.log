@@ -105,6 +105,23 @@ void sin16s_gen(signed word* sintab, word wavelength) {
     }
 }
 
+// Generate signed word sinus table - with values in the range min-max.
+// sintab - the table to generate into
+// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+void sin16s_gen2(signed word* sintab, word wavelength, signed word min, signed word max) {
+    signed word ampl = max-min;
+    signed word offs = min + ampl>>1; // ampl is always positive so shifting left does not alter the sign
+    // u[4.28] step = PI*2/wavelength
+    dword step = div32u16u(PI2_u4f28, wavelength); // u[4.28]
+    // Iterate over the table
+    dword x = 0; // u[4.28]
+    for( word i=0; i<wavelength; i++) {
+        *sintab = offs + (signed word)>mul16s(sin16s(x), ampl); // The signed sin() has values [-7fff;7fff] = [-1/2 ; 1/2], so ampl*sin has the right amplitude
+        sintab = sintab + 2;
+        x = x + step;
+    }
+}
+
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
@@ -427,6 +444,7 @@ signed dword mul16s(signed word a, signed word b) {
 }
 
 Adding pre/post-modifier (word) sin16s_gen::i ← ++ (word) sin16s_gen::i
+Adding pre/post-modifier (word) sin16s_gen2::i ← ++ (word) sin16s_gen2::i
 Adding pre/post-modifier (signed byte*) sin8s_gen::sintab ← ++ (signed byte*) sin8s_gen::sintab
 Adding pre/post-modifier (word) sin8s_gen::i ← ++ (word) sin8s_gen::i
 Adding pre/post-modifier (byte) sin8s::usinx ← -- (byte) sin8s::usinx
@@ -589,6 +607,7 @@ SYMBOLS
 (label) @33
 (label) @34
 (label) @35
+(label) @36
 (label) @4
 (label) @5
 (label) @6
@@ -1105,6 +1124,31 @@ SYMBOLS
 (dword) sin16s_gen::step
 (word) sin16s_gen::wavelength
 (dword) sin16s_gen::x
+(void()) sin16s_gen2((signed word*) sin16s_gen2::sintab , (word) sin16s_gen2::wavelength , (signed word) sin16s_gen2::min , (signed word) sin16s_gen2::max)
+(signed word~) sin16s_gen2::$0
+(signed word~) sin16s_gen2::$1
+(dword~) sin16s_gen2::$10
+(bool~) sin16s_gen2::$11
+(signed word~) sin16s_gen2::$2
+(dword~) sin16s_gen2::$3
+(signed word~) sin16s_gen2::$4
+(signed dword~) sin16s_gen2::$5
+(word~) sin16s_gen2::$6
+(signed word~) sin16s_gen2::$7
+(signed word~) sin16s_gen2::$8
+(signed word*~) sin16s_gen2::$9
+(label) sin16s_gen2::@1
+(label) sin16s_gen2::@2
+(label) sin16s_gen2::@return
+(signed word) sin16s_gen2::ampl
+(word) sin16s_gen2::i
+(signed word) sin16s_gen2::max
+(signed word) sin16s_gen2::min
+(signed word) sin16s_gen2::offs
+(signed word*) sin16s_gen2::sintab
+(dword) sin16s_gen2::step
+(word) sin16s_gen2::wavelength
+(dword) sin16s_gen2::x
 (signed byte()) sin8s((word) sin8s::x)
 (bool~) sin8s::$0
 (bool~) sin8s::$1
@@ -1754,6 +1798,39 @@ sin16s_gen::@return: scope:[sin16s_gen]  from sin16s_gen::@2
   to:@return
 @14: scope:[]  from @13
   to:@15
+sin16s_gen2: scope:[sin16s_gen2]  from
+  (signed word~) sin16s_gen2::$0 ← (signed word) sin16s_gen2::max - (signed word) sin16s_gen2::min
+  (signed word) sin16s_gen2::ampl ← (signed word~) sin16s_gen2::$0
+  (signed word~) sin16s_gen2::$1 ← (signed word) sin16s_gen2::ampl >> (byte/signed byte/word/signed word/dword/signed dword) 1
+  (signed word~) sin16s_gen2::$2 ← (signed word) sin16s_gen2::min + (signed word~) sin16s_gen2::$1
+  (signed word) sin16s_gen2::offs ← (signed word~) sin16s_gen2::$2
+  (dword~) sin16s_gen2::$3 ← call div32u16u (dword) PI2_u4f28 (word) sin16s_gen2::wavelength 
+  (dword) sin16s_gen2::step ← (dword~) sin16s_gen2::$3
+  (dword) sin16s_gen2::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (word) sin16s_gen2::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:sin16s_gen2::@1
+sin16s_gen2::@1: scope:[sin16s_gen2]  from sin16s_gen2 sin16s_gen2::@1
+  (signed word~) sin16s_gen2::$4 ← call sin16s (dword) sin16s_gen2::x 
+  (signed dword~) sin16s_gen2::$5 ← call mul16s (signed word~) sin16s_gen2::$4 (signed word) sin16s_gen2::ampl 
+  (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5
+  (signed word~) sin16s_gen2::$7 ← ((signed word)) (word~) sin16s_gen2::$6
+  (signed word~) sin16s_gen2::$8 ← (signed word) sin16s_gen2::offs + (signed word~) sin16s_gen2::$7
+  *((signed word*) sin16s_gen2::sintab) ← (signed word~) sin16s_gen2::$8
+  (signed word*~) sin16s_gen2::$9 ← (signed word*) sin16s_gen2::sintab + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (signed word*) sin16s_gen2::sintab ← (signed word*~) sin16s_gen2::$9
+  (dword~) sin16s_gen2::$10 ← (dword) sin16s_gen2::x + (dword) sin16s_gen2::step
+  (dword) sin16s_gen2::x ← (dword~) sin16s_gen2::$10
+  (word) sin16s_gen2::i ← ++ (word) sin16s_gen2::i
+  (bool~) sin16s_gen2::$11 ← (word) sin16s_gen2::i < (word) sin16s_gen2::wavelength
+  if((bool~) sin16s_gen2::$11) goto sin16s_gen2::@1
+  to:sin16s_gen2::@2
+sin16s_gen2::@2: scope:[sin16s_gen2]  from sin16s_gen2::@1
+  to:sin16s_gen2::@return
+sin16s_gen2::@return: scope:[sin16s_gen2]  from sin16s_gen2::@2
+  return 
+  to:@return
+@15: scope:[]  from @14
+  to:@16
 sin8s_gen: scope:[sin8s_gen]  from
   (word~) sin8s_gen::$0 ← call div16u (word) PI2_u4f12 (word) sin8s_gen::wavelength 
   (word) sin8s_gen::step ← (word~) sin8s_gen::$0
@@ -1775,8 +1852,8 @@ sin8s_gen::@2: scope:[sin8s_gen]  from sin8s_gen::@1
 sin8s_gen::@return: scope:[sin8s_gen]  from sin8s_gen::@2
   return 
   to:@return
-@15: scope:[]  from @14
-  to:@16
+@16: scope:[]  from @15
+  to:@17
 sin16s: scope:[sin16s]  from
   (byte) sin16s::isUpper ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) sin16s::$0 ← (dword) sin16s::x >= (dword) PI_u4f28
@@ -1838,8 +1915,8 @@ sin16s::@return: scope:[sin16s]  from sin16s::@3 sin16s::@7
   to:@return
 sin16s::@7: scope:[sin16s]  from
   to:sin16s::@return
-@16: scope:[]  from @15
-  to:@17
+@17: scope:[]  from @16
+  to:@18
 sin8s: scope:[sin8s]  from
   (byte) sin8s::isUpper ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) sin8s::$0 ← (word) sin8s::x >= (word) PI_u4f12
@@ -1909,8 +1986,8 @@ sin8s::@return: scope:[sin8s]  from sin8s::@4 sin8s::@9
   to:@return
 sin8s::@9: scope:[sin8s]  from
   to:sin8s::@return
-@17: scope:[]  from @16
-  to:@18
+@18: scope:[]  from @17
+  to:@19
 mulu16_sel: scope:[mulu16_sel]  from
   (dword~) mulu16_sel::$0 ← call mul16u (word) mulu16_sel::v1 (word) mulu16_sel::v2 
   (dword~) mulu16_sel::$1 ← (dword~) mulu16_sel::$0 << (byte) mulu16_sel::select
@@ -1923,8 +2000,8 @@ mulu16_sel::@return: scope:[mulu16_sel]  from mulu16_sel mulu16_sel::@1
   to:@return
 mulu16_sel::@1: scope:[mulu16_sel]  from
   to:mulu16_sel::@return
-@18: scope:[]  from @17
-  to:@19
+@19: scope:[]  from @18
+  to:@20
 mulu8_sel: scope:[mulu8_sel]  from
   (word~) mulu8_sel::$0 ← call mul8u (byte) mulu8_sel::v1 (byte) mulu8_sel::v2 
   (word~) mulu8_sel::$1 ← (word~) mulu8_sel::$0 << (byte) mulu8_sel::select
@@ -1937,11 +2014,11 @@ mulu8_sel::@return: scope:[mulu8_sel]  from mulu8_sel mulu8_sel::@1
   to:@return
 mulu8_sel::@1: scope:[mulu8_sel]  from
   to:mulu8_sel::@return
-@19: scope:[]  from @18
+@20: scope:[]  from @19
   (byte*) print_screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor ← (byte*) print_screen
   (byte*) print_char_cursor ← (byte*) print_line_cursor
-  to:@20
+  to:@21
 print_str_lines: scope:[print_str_lines]  from
   to:print_str_lines::@1
 print_str_lines::@1: scope:[print_str_lines]  from print_str_lines print_str_lines::@9
@@ -1979,8 +2056,8 @@ print_str_lines::@10: scope:[print_str_lines]  from
 print_str_lines::@return: scope:[print_str_lines]  from print_str_lines::@3
   return 
   to:@return
-@20: scope:[]  from @19
-  to:@21
+@21: scope:[]  from @20
+  to:@22
 print_str_ln: scope:[print_str_ln]  from
   (void~) print_str_ln::$0 ← call print_str (byte*) print_str_ln::str 
   (void~) print_str_ln::$1 ← call print_ln 
@@ -1988,8 +2065,8 @@ print_str_ln: scope:[print_str_ln]  from
 print_str_ln::@return: scope:[print_str_ln]  from print_str_ln
   return 
   to:@return
-@21: scope:[]  from @20
-  to:@22
+@22: scope:[]  from @21
+  to:@23
 print_str: scope:[print_str]  from
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -2012,8 +2089,8 @@ print_str::@6: scope:[print_str]  from
 print_str::@return: scope:[print_str]  from print_str::@3
   return 
   to:@return
-@22: scope:[]  from @21
-  to:@23
+@23: scope:[]  from @22
+  to:@24
 print_str_at: scope:[print_str_at]  from
   to:print_str_at::@1
 print_str_at::@1: scope:[print_str_at]  from print_str_at print_str_at::@2
@@ -2036,8 +2113,8 @@ print_str_at::@6: scope:[print_str_at]  from
 print_str_at::@return: scope:[print_str_at]  from print_str_at::@3
   return 
   to:@return
-@23: scope:[]  from @22
-  to:@24
+@24: scope:[]  from @23
+  to:@25
 print_ln: scope:[print_ln]  from
   to:print_ln::@1
 print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
@@ -2052,8 +2129,8 @@ print_ln::@2: scope:[print_ln]  from print_ln::@1
 print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
-@24: scope:[]  from @23
-  to:@25
+@25: scope:[]  from @24
+  to:@26
 print_sword: scope:[print_sword]  from
   (bool~) print_sword::$0 ← (signed word) print_sword::w < (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) print_sword::$1 ← ! (bool~) print_sword::$0
@@ -2071,8 +2148,8 @@ print_sword::@2: scope:[print_sword]  from print_sword
 print_sword::@return: scope:[print_sword]  from print_sword::@1
   return 
   to:@return
-@25: scope:[]  from @24
-  to:@26
+@26: scope:[]  from @25
+  to:@27
 print_sbyte: scope:[print_sbyte]  from
   (bool~) print_sbyte::$0 ← (signed byte) print_sbyte::b < (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) print_sbyte::$1 ← ! (bool~) print_sbyte::$0
@@ -2090,8 +2167,8 @@ print_sbyte::@2: scope:[print_sbyte]  from print_sbyte
 print_sbyte::@return: scope:[print_sbyte]  from print_sbyte::@1
   return 
   to:@return
-@26: scope:[]  from @25
-  to:@27
+@27: scope:[]  from @26
+  to:@28
 print_word: scope:[print_word]  from
   (byte~) print_word::$0 ← > (word) print_word::w
   (void~) print_word::$1 ← call print_byte (byte~) print_word::$0 
@@ -2101,8 +2178,8 @@ print_word: scope:[print_word]  from
 print_word::@return: scope:[print_word]  from print_word
   return 
   to:@return
-@27: scope:[]  from @26
-  to:@28
+@28: scope:[]  from @27
+  to:@29
 print_dword: scope:[print_dword]  from
   (word~) print_dword::$0 ← > (dword) print_dword::dw
   (void~) print_dword::$1 ← call print_word (word~) print_dword::$0 
@@ -2112,8 +2189,8 @@ print_dword: scope:[print_dword]  from
 print_dword::@return: scope:[print_dword]  from print_dword
   return 
   to:@return
-@28: scope:[]  from @27
-  to:@29
+@29: scope:[]  from @28
+  to:@30
 print_sdword: scope:[print_sdword]  from
   (bool~) print_sdword::$0 ← (signed dword) print_sdword::dw < (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) print_sdword::$1 ← ! (bool~) print_sdword::$0
@@ -2131,9 +2208,9 @@ print_sdword::@2: scope:[print_sdword]  from print_sdword
 print_sdword::@return: scope:[print_sdword]  from print_sdword::@1
   return 
   to:@return
-@29: scope:[]  from @28
+@30: scope:[]  from @29
   (byte[]) print_hextab ← (string) "0123456789abcdef"
-  to:@30
+  to:@31
 print_byte: scope:[print_byte]  from
   (byte~) print_byte::$0 ← (byte) print_byte::b >> (byte/signed byte/word/signed word/dword/signed dword) 4
   (void~) print_byte::$1 ← call print_char *((byte[]) print_hextab + (byte~) print_byte::$0) 
@@ -2143,8 +2220,8 @@ print_byte: scope:[print_byte]  from
 print_byte::@return: scope:[print_byte]  from print_byte
   return 
   to:@return
-@30: scope:[]  from @29
-  to:@31
+@31: scope:[]  from @30
+  to:@32
 print_char: scope:[print_char]  from
   *((byte*) print_char_cursor) ← (byte) print_char::ch
   (byte*) print_char_cursor ← ++ (byte*) print_char_cursor
@@ -2152,8 +2229,8 @@ print_char: scope:[print_char]  from
 print_char::@return: scope:[print_char]  from print_char
   return 
   to:@return
-@31: scope:[]  from @30
-  to:@32
+@32: scope:[]  from @31
+  to:@33
 print_cls: scope:[print_cls]  from
   (byte*) print_cls::sc ← (byte*) print_screen
   to:print_cls::@1
@@ -2171,8 +2248,8 @@ print_cls::@2: scope:[print_cls]  from print_cls::@1
 print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
-@32: scope:[]  from @31
-  to:@33
+@33: scope:[]  from @32
+  to:@34
 print_set_screen: scope:[print_set_screen]  from
   (byte*) print_screen ← (byte*) print_set_screen::screen
   (byte*) print_line_cursor ← (byte*) print_screen
@@ -2181,8 +2258,8 @@ print_set_screen: scope:[print_set_screen]  from
 print_set_screen::@return: scope:[print_set_screen]  from print_set_screen
   return 
   to:@return
-@33: scope:[]  from @32
-  to:@34
+@34: scope:[]  from @33
+  to:@35
 main: scope:[main]  from
   (word) main::tabsize ← (byte/signed byte/word/signed word/dword/signed dword) 20
   (byte[20]) main::sintab ← { fill( 20, 0) }
@@ -2192,8 +2269,8 @@ main: scope:[main]  from
 main::@return: scope:[main]  from main
   return 
   to:@return
-@34: scope:[]  from @33
-  to:@35
+@35: scope:[]  from @34
+  to:@36
 sin8u_table: scope:[sin8u_table]  from
   (byte~) sin8u_table::$0 ← (byte) sin8u_table::max - (byte) sin8u_table::min
   (byte) sin8u_table::amplitude ← (byte~) sin8u_table::$0
@@ -2251,16 +2328,16 @@ sin8u_table::@2: scope:[sin8u_table]  from sin8u_table::@1
 sin8u_table::@return: scope:[sin8u_table]  from sin8u_table::@2
   return 
   to:@return
-@35: scope:[]  from @34
+@36: scope:[]  from @35
   call main 
   to:@end
-@end: scope:[]  from @35
+@end: scope:[]  from @36
 
 Removing unused procedure div8s
 Removing unused procedure div16s
 Removing unused procedure mul8s
-Removing unused procedure mul16s
 Removing unused procedure sin16s_gen
+Removing unused procedure sin16s_gen2
 Removing unused procedure sin8s_gen
 Removing unused procedure print_str_lines
 Removing unused procedure print_str_ln
@@ -2270,6 +2347,7 @@ Removing unused procedure print_set_screen
 Removing unused procedure div8u
 Removing unused procedure div32u16u
 Removing unused procedure divr16s
+Removing unused procedure mul16s
 Removing unused procedure sin16s
 Removing unused procedure print_dword
 Removing unused procedure divr8u
@@ -2343,28 +2421,29 @@ Removing empty block @12
 Removing empty block @14
 Removing empty block @15
 Removing empty block @16
-Removing empty block sin8s::@9
 Removing empty block @17
+Removing empty block sin8s::@9
 Removing empty block @18
+Removing empty block @19
 Removing empty block mulu8_sel::@1
-Removing empty block @20
 Removing empty block @21
+Removing empty block @22
 Removing empty block print_str::@4
 Removing empty block print_str::@3
 Removing empty block print_str::@5
 Removing empty block print_str::@6
-Removing empty block @22
 Removing empty block @23
 Removing empty block @24
 Removing empty block @25
 Removing empty block @26
 Removing empty block @27
 Removing empty block @28
-Removing empty block @30
+Removing empty block @29
 Removing empty block @31
 Removing empty block @32
 Removing empty block @33
 Removing empty block @34
+Removing empty block @35
 Removing empty block sin8u_table::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
 divr16u modifies rem16u
@@ -2609,7 +2688,7 @@ mul8su::@return: scope:[mul8su]  from mul8su::@1
   (word) PI2_u4f12#0 ← (word/signed word/dword/signed dword) 25736
   (word) PI_u4f12#0 ← (word/signed word/dword/signed dword) 12868
   (word) PI_HALF_u4f12#0 ← (word/signed word/dword/signed dword) 6434
-  to:@19
+  to:@20
 sin8s: scope:[sin8s]  from sin8u_table::@1
   (word) sin8s::x#3 ← phi( sin8u_table::@1/(word) sin8s::x#2 )
   (byte) sin8s::isUpper#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -2766,12 +2845,12 @@ mulu8_sel::@return: scope:[mulu8_sel]  from mulu8_sel::@2
   (byte) mulu8_sel::return#6 ← (byte) mulu8_sel::return#12
   return 
   to:@return
-@19: scope:[]  from @13
+@20: scope:[]  from @13
   (word) rem16u#26 ← phi( @13/(word) rem16u#28 )
   (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@29
+  to:@30
 print_str: scope:[print_str]  from sin8u_table::@11 sin8u_table::@16 sin8u_table::@18 sin8u_table::@20 sin8u_table::@22 sin8u_table::@3 sin8u_table::@5 sin8u_table::@7 sin8u_table::@9
   (byte*) print_char_cursor#102 ← phi( sin8u_table::@11/(byte*) print_char_cursor#31 sin8u_table::@16/(byte*) print_char_cursor#100 sin8u_table::@18/(byte*) print_char_cursor#36 sin8u_table::@20/(byte*) print_char_cursor#38 sin8u_table::@22/(byte*) print_char_cursor#40 sin8u_table::@3/(byte*) print_char_cursor#99 sin8u_table::@5/(byte*) print_char_cursor#25 sin8u_table::@7/(byte*) print_char_cursor#27 sin8u_table::@9/(byte*) print_char_cursor#29 )
   (byte*) print_str::str#12 ← phi( sin8u_table::@11/(byte*) print_str::str#5 sin8u_table::@16/(byte*) print_str::str#6 sin8u_table::@18/(byte*) print_str::str#7 sin8u_table::@20/(byte*) print_str::str#8 sin8u_table::@22/(byte*) print_str::str#9 sin8u_table::@3/(byte*) print_str::str#1 sin8u_table::@5/(byte*) print_str::str#2 sin8u_table::@7/(byte*) print_str::str#3 sin8u_table::@9/(byte*) print_str::str#4 )
@@ -2913,13 +2992,13 @@ print_word::@return: scope:[print_word]  from print_word::@2
   (byte*) print_char_cursor#13 ← (byte*) print_char_cursor#58
   return 
   to:@return
-@29: scope:[]  from @19
-  (byte*) print_screen#6 ← phi( @19/(byte*) print_screen#0 )
-  (word) rem16u#25 ← phi( @19/(word) rem16u#26 )
-  (byte*) print_char_cursor#107 ← phi( @19/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#30 ← phi( @19/(byte*) print_line_cursor#0 )
+@30: scope:[]  from @20
+  (byte*) print_screen#6 ← phi( @20/(byte*) print_screen#0 )
+  (word) rem16u#25 ← phi( @20/(word) rem16u#26 )
+  (byte*) print_char_cursor#107 ← phi( @20/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#30 ← phi( @20/(byte*) print_line_cursor#0 )
   (byte[]) print_hextab#0 ← (const string) $0
-  to:@35
+  to:@36
 print_byte: scope:[print_byte]  from print_sbyte::@1 print_word print_word::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@23 sin8u_table::@6 sin8u_table::@8
   (byte*) print_char_cursor#97 ← phi( print_sbyte::@1/(byte*) print_char_cursor#94 print_word/(byte*) print_char_cursor#96 print_word::@1/(byte*) print_char_cursor#11 sin8u_table::@10/(byte*) print_char_cursor#30 sin8u_table::@12/(byte*) print_char_cursor#32 sin8u_table::@23/(byte*) print_char_cursor#41 sin8u_table::@6/(byte*) print_char_cursor#26 sin8u_table::@8/(byte*) print_char_cursor#28 )
   (byte) print_byte::b#8 ← phi( print_sbyte::@1/(byte) print_byte::b#0 print_word/(byte) print_byte::b#1 print_word::@1/(byte) print_byte::b#2 sin8u_table::@10/(byte) print_byte::b#5 sin8u_table::@12/(byte) print_byte::b#6 sin8u_table::@23/(byte) print_byte::b#7 sin8u_table::@6/(byte) print_byte::b#3 sin8u_table::@8/(byte) print_byte::b#4 )
@@ -2980,11 +3059,11 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   (byte*) print_char_cursor#20 ← (byte*) print_char_cursor#64
   return 
   to:@return
-main: scope:[main]  from @35
-  (word) rem16u#23 ← phi( @35/(word) rem16u#22 )
-  (byte*) print_char_cursor#98 ← phi( @35/(byte*) print_char_cursor#101 )
-  (byte*) print_line_cursor#24 ← phi( @35/(byte*) print_line_cursor#27 )
-  (byte*) print_screen#4 ← phi( @35/(byte*) print_screen#5 )
+main: scope:[main]  from @36
+  (word) rem16u#23 ← phi( @36/(word) rem16u#22 )
+  (byte*) print_char_cursor#98 ← phi( @36/(byte*) print_char_cursor#101 )
+  (byte*) print_line_cursor#24 ← phi( @36/(byte*) print_line_cursor#27 )
+  (byte*) print_screen#4 ← phi( @36/(byte*) print_screen#5 )
   (word) main::tabsize#0 ← (byte/signed byte/word/signed word/dword/signed dword) 20
   (byte[20]) main::sintab#0 ← { fill( 20, 0) }
   call print_cls 
@@ -3429,31 +3508,31 @@ sin8u_table::@return: scope:[sin8u_table]  from sin8u_table::@25
   (byte*) print_line_cursor#10 ← (byte*) print_line_cursor#21
   return 
   to:@return
-@35: scope:[]  from @29
-  (byte*) print_screen#5 ← phi( @29/(byte*) print_screen#6 )
-  (word) rem16u#22 ← phi( @29/(word) rem16u#25 )
-  (byte*) print_char_cursor#101 ← phi( @29/(byte*) print_char_cursor#107 )
-  (byte*) print_line_cursor#27 ← phi( @29/(byte*) print_line_cursor#30 )
+@36: scope:[]  from @30
+  (byte*) print_screen#5 ← phi( @30/(byte*) print_screen#6 )
+  (word) rem16u#22 ← phi( @30/(word) rem16u#25 )
+  (byte*) print_char_cursor#101 ← phi( @30/(byte*) print_char_cursor#107 )
+  (byte*) print_line_cursor#27 ← phi( @30/(byte*) print_line_cursor#30 )
   call main 
-  to:@36
-@36: scope:[]  from @35
-  (word) rem16u#17 ← phi( @35/(word) rem16u#6 )
-  (byte*) print_char_cursor#89 ← phi( @35/(byte*) print_char_cursor#23 )
-  (byte*) print_line_cursor#22 ← phi( @35/(byte*) print_line_cursor#7 )
+  to:@37
+@37: scope:[]  from @36
+  (word) rem16u#17 ← phi( @36/(word) rem16u#6 )
+  (byte*) print_char_cursor#89 ← phi( @36/(byte*) print_char_cursor#23 )
+  (byte*) print_line_cursor#22 ← phi( @36/(byte*) print_line_cursor#7 )
   (byte*) print_line_cursor#11 ← (byte*) print_line_cursor#22
   (byte*) print_char_cursor#45 ← (byte*) print_char_cursor#89
   (word) rem16u#9 ← (word) rem16u#17
   to:@end
-@end: scope:[]  from @36
+@end: scope:[]  from @37
 
 SYMBOL TABLE SSA
 (const string) $0 = (string) "0123456789abcdef"
 (label) @13
-(label) @19
 (label) @2
-(label) @29
-(label) @35
+(label) @20
+(label) @30
 (label) @36
+(label) @37
 (label) @begin
 (label) @end
 (word) PI2_u4f12
@@ -5117,17 +5196,17 @@ Culled Empty Block (label) @2
 Culled Empty Block (label) divr16u::@6
 Culled Empty Block (label) mul8u::@3
 Culled Empty Block (label) @13
-Culled Empty Block (label) @19
+Culled Empty Block (label) @20
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_sword::@3
 Culled Empty Block (label) print_sbyte::@3
 Culled Empty Block (label) print_word::@2
-Culled Empty Block (label) @29
+Culled Empty Block (label) @30
 Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) sin8u_table::@14
-Culled Empty Block (label) @36
+Culled Empty Block (label) @37
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: divr16u::return#2 divr16u::return#0
 Not aliassing across scopes: div16u::return#0 divr16u::return#2
@@ -5383,7 +5462,7 @@ Constant inlined print_str::str#7 = (const string) sin8u_table::str6
 Constant inlined print_str::str#6 = (const string) sin8u_table::str5
 Constant inlined print_str::str#5 = (const string) sin8u_table::str4
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @35 @end main main::@1 main::@return sin8u_table sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@8 sin8u_table::@9 sin8u_table::@10 sin8u_table::@11 sin8u_table::@12 sin8u_table::@13 sin8u_table::@1 sin8u_table::@15 sin8u_table::@16 sin8u_table::@17 sin8u_table::@18 sin8u_table::@19 sin8u_table::@20 sin8u_table::@21 sin8u_table::@22 sin8u_table::@23 sin8u_table::@24 sin8u_table::@25 sin8u_table::@return print_ln print_ln::@1 print_ln::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8su mul8su::@4 mul8su::@2 mul8su::@1 mul8su::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 sin8s sin8s::@5 sin8s::@1 sin8s::@6 sin8s::@2 sin8s::@10 sin8s::@11 sin8s::@12 sin8s::@13 sin8s::@14 sin8s::@7 sin8s::@3 sin8s::@8 sin8s::@4 sin8s::@return mulu8_sel mulu8_sel::@2 mulu8_sel::@return div16u div16u::@2 div16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@return print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @36 @end main main::@1 main::@return sin8u_table sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@8 sin8u_table::@9 sin8u_table::@10 sin8u_table::@11 sin8u_table::@12 sin8u_table::@13 sin8u_table::@1 sin8u_table::@15 sin8u_table::@16 sin8u_table::@17 sin8u_table::@18 sin8u_table::@19 sin8u_table::@20 sin8u_table::@21 sin8u_table::@22 sin8u_table::@23 sin8u_table::@24 sin8u_table::@25 sin8u_table::@return print_ln print_ln::@1 print_ln::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8su mul8su::@4 mul8su::@2 mul8su::@1 mul8su::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 sin8s sin8s::@5 sin8s::@1 sin8s::@6 sin8s::@2 sin8s::@10 sin8s::@11 sin8s::@12 sin8s::@13 sin8s::@14 sin8s::@7 sin8s::@3 sin8s::@8 sin8s::@4 sin8s::@return mulu8_sel mulu8_sel::@2 mulu8_sel::@return div16u div16u::@2 div16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@return print_cls print_cls::@1 print_cls::@return 
 Added new block during phi lifting sin8u_table::@26(between sin8u_table::@25 and sin8u_table::@1)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting print_sword::@5(between print_sword and print_sword::@1)
@@ -5399,9 +5478,9 @@ Added new block during phi lifting divr16u::@8(between divr16u::@3 and divr16u::
 Added new block during phi lifting divr16u::@9(between divr16u::@1 and divr16u::@2)
 Added new block during phi lifting divr16u::@10(between divr16u::@2 and divr16u::@3)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
-Block Sequence Planned @begin @35 @end main main::@1 main::@return sin8u_table sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@8 sin8u_table::@9 sin8u_table::@10 sin8u_table::@11 sin8u_table::@12 sin8u_table::@13 sin8u_table::@1 sin8u_table::@15 sin8u_table::@16 sin8u_table::@17 sin8u_table::@18 sin8u_table::@19 sin8u_table::@20 sin8u_table::@21 sin8u_table::@22 sin8u_table::@23 sin8u_table::@24 sin8u_table::@25 sin8u_table::@return sin8u_table::@26 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return print_sbyte::@5 mul8su mul8su::@4 mul8su::@2 mul8su::@1 mul8su::@return mul8su::@5 mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mul8u::@10 sin8s sin8s::@5 sin8s::@1 sin8s::@6 sin8s::@2 sin8s::@10 sin8s::@11 sin8s::@12 sin8s::@13 sin8s::@14 sin8s::@7 sin8s::@3 sin8s::@8 sin8s::@4 sin8s::@return sin8s::@18 sin8s::@17 sin8s::@16 sin8s::@15 mulu8_sel mulu8_sel::@2 mulu8_sel::@return div16u div16u::@2 div16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@return divr16u::@8 divr16u::@10 divr16u::@9 print_cls print_cls::@1 print_cls::@return print_cls::@3 
+Block Sequence Planned @begin @36 @end main main::@1 main::@return sin8u_table sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@8 sin8u_table::@9 sin8u_table::@10 sin8u_table::@11 sin8u_table::@12 sin8u_table::@13 sin8u_table::@1 sin8u_table::@15 sin8u_table::@16 sin8u_table::@17 sin8u_table::@18 sin8u_table::@19 sin8u_table::@20 sin8u_table::@21 sin8u_table::@22 sin8u_table::@23 sin8u_table::@24 sin8u_table::@25 sin8u_table::@return sin8u_table::@26 print_ln print_ln::@1 print_ln::@return print_ln::@3 print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_sword::@5 print_word print_word::@1 print_word::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return print_sbyte::@5 mul8su mul8su::@4 mul8su::@2 mul8su::@1 mul8su::@return mul8su::@5 mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 mul8u::@10 sin8s sin8s::@5 sin8s::@1 sin8s::@6 sin8s::@2 sin8s::@10 sin8s::@11 sin8s::@12 sin8s::@13 sin8s::@14 sin8s::@7 sin8s::@3 sin8s::@8 sin8s::@4 sin8s::@return sin8s::@18 sin8s::@17 sin8s::@16 sin8s::@15 mulu8_sel mulu8_sel::@2 mulu8_sel::@return div16u div16u::@2 div16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@return divr16u::@8 divr16u::@10 divr16u::@9 print_cls print_cls::@1 print_cls::@return print_cls::@3 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @35
+Adding NOP phi() at start of @36
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -5582,9 +5661,9 @@ Culled Empty Block (label) divr16u::@8
 Culled Empty Block (label) divr16u::@10
 Culled Empty Block (label) divr16u::@9
 Culled Empty Block (label) print_cls::@3
-Block Sequence Planned @begin @35 @end main main::@1 main::@return sin8u_table sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@8 sin8u_table::@9 sin8u_table::@10 sin8u_table::@11 sin8u_table::@12 sin8u_table::@13 sin8u_table::@1 sin8u_table::@15 sin8u_table::@16 sin8u_table::@17 sin8u_table::@18 sin8u_table::@19 sin8u_table::@20 sin8u_table::@21 sin8u_table::@22 sin8u_table::@23 sin8u_table::@24 sin8u_table::@25 sin8u_table::@return print_ln print_ln::@1 print_ln::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8su mul8su::@4 mul8su::@2 mul8su::@1 mul8su::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 sin8s sin8s::@5 sin8s::@1 sin8s::@6 sin8s::@2 sin8s::@10 sin8s::@11 sin8s::@12 sin8s::@13 sin8s::@14 sin8s::@7 sin8s::@3 sin8s::@8 sin8s::@4 sin8s::@return sin8s::@18 mulu8_sel mulu8_sel::@2 mulu8_sel::@return div16u div16u::@2 div16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@return print_cls print_cls::@1 print_cls::@return 
+Block Sequence Planned @begin @36 @end main main::@1 main::@return sin8u_table sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@8 sin8u_table::@9 sin8u_table::@10 sin8u_table::@11 sin8u_table::@12 sin8u_table::@13 sin8u_table::@1 sin8u_table::@15 sin8u_table::@16 sin8u_table::@17 sin8u_table::@18 sin8u_table::@19 sin8u_table::@20 sin8u_table::@21 sin8u_table::@22 sin8u_table::@23 sin8u_table::@24 sin8u_table::@25 sin8u_table::@return print_ln print_ln::@1 print_ln::@return print_byte print_byte::@1 print_byte::@return print_char print_char::@return print_str print_str::@1 print_str::@return print_str::@2 print_sword print_sword::@2 print_sword::@4 print_sword::@1 print_sword::@return print_word print_word::@1 print_word::@return print_sbyte print_sbyte::@2 print_sbyte::@4 print_sbyte::@1 print_sbyte::@return mul8su mul8su::@4 mul8su::@2 mul8su::@1 mul8su::@return mul8u mul8u::@1 mul8u::@return mul8u::@2 mul8u::@7 mul8u::@4 sin8s sin8s::@5 sin8s::@1 sin8s::@6 sin8s::@2 sin8s::@10 sin8s::@11 sin8s::@12 sin8s::@13 sin8s::@14 sin8s::@7 sin8s::@3 sin8s::@8 sin8s::@4 sin8s::@return sin8s::@18 mulu8_sel mulu8_sel::@2 mulu8_sel::@return div16u div16u::@2 div16u::@return divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@return print_cls print_cls::@1 print_cls::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @35
+Adding NOP phi() at start of @36
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -5663,14 +5742,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@35
-@35: scope:[]  from @begin
+  to:@36
+@36: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @35
+@end: scope:[]  from @36
   [3] phi() [ ] ( )
-main: scope:[main]  from @35
+main: scope:[main]  from @36
   [4] phi() [ ] ( main:2 [ ] )
   [5] call print_cls  [ ] ( main:2 [ ] )
   to:main::@1
@@ -6096,104 +6175,104 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
 
 DOMINATORS
 @begin dominated by  @begin 
-@35 dominated by  @35 @begin 
-@end dominated by  @end @35 @begin 
-main dominated by  main @35 @begin 
-main::@1 dominated by  main::@1 main @35 @begin 
-main::@return dominated by  main::@1 main::@return main @35 @begin 
-sin8u_table dominated by  main::@1 sin8u_table main @35 @begin 
-sin8u_table::@3 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 
-sin8u_table::@4 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@4 
-sin8u_table::@5 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 
-sin8u_table::@6 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 
-sin8u_table::@7 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 
-sin8u_table::@8 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@8 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 
-sin8u_table::@9 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 
-sin8u_table::@10 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 
-sin8u_table::@11 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@11 
-sin8u_table::@12 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 
-sin8u_table::@13 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@1 dominated by  main::@1 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@15 dominated by  main::@1 sin8u_table::@15 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@16 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@17 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@17 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@18 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@19 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@20 dominated by  main::@1 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@21 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@22 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@22 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@23 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@23 sin8u_table::@22 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@24 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@23 sin8u_table::@22 sin8u_table::@24 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@25 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@23 sin8u_table::@22 sin8u_table::@25 sin8u_table::@24 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8u_table::@return dominated by  sin8u_table::@return main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@23 sin8u_table::@22 sin8u_table::@25 sin8u_table::@24 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_ln dominated by  main::@1 print_ln sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_ln::@1 dominated by  main::@1 print_ln sin8u_table print_ln::@1 main @35 @begin sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_ln::@return dominated by  print_ln::@return main::@1 print_ln sin8u_table print_ln::@1 main @35 @begin sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_byte dominated by  main::@1 sin8u_table print_byte main @35 @begin sin8u_table::@3 sin8u_table::@4 
-print_byte::@1 dominated by  main::@1 sin8u_table print_byte::@1 print_byte main @35 @begin sin8u_table::@3 sin8u_table::@4 
-print_byte::@return dominated by  main::@1 sin8u_table print_byte::@1 print_byte main @35 @begin print_byte::@return sin8u_table::@3 sin8u_table::@4 
-print_char dominated by  main::@1 sin8u_table main print_char @35 @begin sin8u_table::@3 sin8u_table::@4 
-print_char::@return dominated by  main::@1 sin8u_table main print_char print_char::@return @35 @begin sin8u_table::@3 sin8u_table::@4 
-print_str dominated by  main::@1 sin8u_table print_str main @35 @begin sin8u_table::@3 
-print_str::@1 dominated by  main::@1 print_str::@1 sin8u_table print_str main @35 @begin sin8u_table::@3 
-print_str::@return dominated by  main::@1 print_str::@return print_str::@1 sin8u_table print_str main @35 @begin sin8u_table::@3 
-print_str::@2 dominated by  main::@1 print_str::@1 print_str::@2 sin8u_table print_str main @35 @begin sin8u_table::@3 
-print_sword dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_sword::@2 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword print_sword::@2 main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_sword::@4 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword print_sword::@2 print_sword::@4 main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_sword::@1 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword print_sword::@1 main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_sword::@return dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword print_sword::@1 main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 print_sword::@return 
-print_word dominated by  print_word main::@1 sin8u_table main @35 @begin sin8u_table::@3 sin8u_table::@4 
-print_word::@1 dominated by  print_word main::@1 sin8u_table print_word::@1 main @35 @begin sin8u_table::@3 sin8u_table::@4 
-print_word::@return dominated by  print_word main::@1 print_word::@return sin8u_table print_word::@1 main @35 @begin sin8u_table::@3 sin8u_table::@4 
-print_sbyte dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_sbyte::@2 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main print_sbyte::@2 @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_sbyte::@4 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main print_sbyte::@4 print_sbyte::@2 @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_sbyte::@1 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main print_sbyte::@1 @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-print_sbyte::@return dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main print_sbyte::@1 @35 @begin print_sbyte::@return sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-mul8su dominated by  main::@1 sin8u_table::@15 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
-mul8su::@4 dominated by  main::@1 sin8u_table::@15 mul8su::@4 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
-mul8su::@2 dominated by  main::@1 sin8u_table::@15 mul8su::@2 mul8su::@4 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
-mul8su::@1 dominated by  main::@1 mul8su::@1 sin8u_table::@15 mul8su::@4 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
-mul8su::@return dominated by  mul8su::@return main::@1 mul8su::@1 sin8u_table::@15 mul8su::@4 sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
-mul8u dominated by  main::@1 mul8u sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-mul8u::@1 dominated by  main::@1 mul8u sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@1 
-mul8u::@return dominated by  main::@1 mul8u sin8u_table mul8u::@return main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@1 
-mul8u::@2 dominated by  main::@1 mul8u sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@2 mul8u::@1 
-mul8u::@7 dominated by  main::@1 mul8u sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@7 mul8u::@2 mul8u::@1 
-mul8u::@4 dominated by  main::@1 mul8u sin8u_table main @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@2 mul8u::@1 mul8u::@4 
-sin8s dominated by  main::@1 sin8u_table main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@5 dominated by  main::@1 sin8u_table main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 sin8s::@5 
-sin8s::@1 dominated by  main::@1 sin8u_table main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@6 dominated by  main::@1 sin8u_table main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 sin8s::@6 
-sin8s::@2 dominated by  main::@1 sin8u_table main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@10 dominated by  main::@1 sin8u_table sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@11 dominated by  main::@1 sin8u_table sin8s::@11 sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@12 dominated by  main::@1 sin8u_table sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@13 dominated by  main::@1 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@14 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@7 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 sin8s::@7 
-sin8s::@3 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@8 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 sin8s::@8 
-sin8s::@4 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@4 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@return dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 sin8s::@return main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@4 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-sin8s::@18 dominated by  main::@1 sin8s::@18 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-mulu8_sel dominated by  main::@1 sin8u_table mulu8_sel main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-mulu8_sel::@2 dominated by  mulu8_sel::@2 main::@1 sin8u_table mulu8_sel main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-mulu8_sel::@return dominated by  mulu8_sel::@2 main::@1 mulu8_sel::@return sin8u_table mulu8_sel main sin8s @35 @begin sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
-div16u dominated by  main::@1 div16u sin8u_table main @35 @begin 
-div16u::@2 dominated by  main::@1 div16u div16u::@2 sin8u_table main @35 @begin 
-div16u::@return dominated by  div16u::@return main::@1 div16u div16u::@2 sin8u_table main @35 @begin 
-divr16u dominated by  main::@1 div16u sin8u_table divr16u main @35 @begin 
-divr16u::@1 dominated by  divr16u::@1 main::@1 div16u sin8u_table divr16u main @35 @begin 
-divr16u::@4 dominated by  divr16u::@1 divr16u::@4 main::@1 div16u sin8u_table divr16u main @35 @begin 
-divr16u::@2 dominated by  divr16u::@2 divr16u::@1 main::@1 div16u sin8u_table divr16u main @35 @begin 
-divr16u::@5 dominated by  divr16u::@2 divr16u::@1 divr16u::@5 main::@1 div16u sin8u_table divr16u main @35 @begin 
-divr16u::@3 dominated by  divr16u::@2 divr16u::@1 divr16u::@3 main::@1 div16u sin8u_table divr16u main @35 @begin 
-divr16u::@return dominated by  divr16u::@2 divr16u::@1 divr16u::@3 main::@1 div16u sin8u_table divr16u::@return divr16u main @35 @begin 
-print_cls dominated by  print_cls main @35 @begin 
-print_cls::@1 dominated by  print_cls main @35 @begin print_cls::@1 
-print_cls::@return dominated by  print_cls main @35 @begin print_cls::@return print_cls::@1 
+@36 dominated by  @begin @36 
+@end dominated by  @end @begin @36 
+main dominated by  main @begin @36 
+main::@1 dominated by  main::@1 main @begin @36 
+main::@return dominated by  main::@1 main::@return main @begin @36 
+sin8u_table dominated by  main::@1 sin8u_table main @begin @36 
+sin8u_table::@3 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 
+sin8u_table::@4 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@4 
+sin8u_table::@5 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 
+sin8u_table::@6 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 
+sin8u_table::@7 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 
+sin8u_table::@8 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@8 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 
+sin8u_table::@9 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 
+sin8u_table::@10 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 
+sin8u_table::@11 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@11 
+sin8u_table::@12 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 
+sin8u_table::@13 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@1 dominated by  main::@1 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@15 dominated by  main::@1 sin8u_table::@15 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@16 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@17 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@17 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@18 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@19 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@20 dominated by  main::@1 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@21 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@22 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@22 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@23 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@23 sin8u_table::@22 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@24 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@23 sin8u_table::@22 sin8u_table::@24 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@25 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@23 sin8u_table::@22 sin8u_table::@25 sin8u_table::@24 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8u_table::@return dominated by  sin8u_table::@return main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@23 sin8u_table::@22 sin8u_table::@25 sin8u_table::@24 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_ln dominated by  main::@1 print_ln sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_ln::@1 dominated by  main::@1 print_ln sin8u_table print_ln::@1 main @begin @36 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_ln::@return dominated by  print_ln::@return main::@1 print_ln sin8u_table print_ln::@1 main @begin @36 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_byte dominated by  main::@1 sin8u_table print_byte main @begin @36 sin8u_table::@3 sin8u_table::@4 
+print_byte::@1 dominated by  main::@1 sin8u_table print_byte::@1 print_byte main @begin @36 sin8u_table::@3 sin8u_table::@4 
+print_byte::@return dominated by  main::@1 sin8u_table print_byte::@1 print_byte main @begin @36 print_byte::@return sin8u_table::@3 sin8u_table::@4 
+print_char dominated by  main::@1 sin8u_table main print_char @begin @36 sin8u_table::@3 sin8u_table::@4 
+print_char::@return dominated by  main::@1 sin8u_table main print_char print_char::@return @begin @36 sin8u_table::@3 sin8u_table::@4 
+print_str dominated by  main::@1 sin8u_table print_str main @begin @36 sin8u_table::@3 
+print_str::@1 dominated by  main::@1 print_str::@1 sin8u_table print_str main @begin @36 sin8u_table::@3 
+print_str::@return dominated by  main::@1 print_str::@return print_str::@1 sin8u_table print_str main @begin @36 sin8u_table::@3 
+print_str::@2 dominated by  main::@1 print_str::@1 print_str::@2 sin8u_table print_str main @begin @36 sin8u_table::@3 
+print_sword dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_sword::@2 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword print_sword::@2 main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_sword::@4 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword print_sword::@2 print_sword::@4 main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_sword::@1 dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword print_sword::@1 main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_sword::@return dominated by  main::@1 sin8u_table::@21 sin8u_table::@20 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sword print_sword::@1 main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 print_sword::@return 
+print_word dominated by  print_word main::@1 sin8u_table main @begin @36 sin8u_table::@3 sin8u_table::@4 
+print_word::@1 dominated by  print_word main::@1 sin8u_table print_word::@1 main @begin @36 sin8u_table::@3 sin8u_table::@4 
+print_word::@return dominated by  print_word main::@1 print_word::@return sin8u_table print_word::@1 main @begin @36 sin8u_table::@3 sin8u_table::@4 
+print_sbyte dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_sbyte::@2 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main print_sbyte::@2 @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_sbyte::@4 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main print_sbyte::@4 print_sbyte::@2 @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_sbyte::@1 dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main print_sbyte::@1 @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+print_sbyte::@return dominated by  main::@1 sin8u_table::@16 sin8u_table::@15 sin8u_table::@18 sin8u_table::@17 sin8u_table::@19 sin8u_table print_sbyte main print_sbyte::@1 @begin @36 print_sbyte::@return sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+mul8su dominated by  main::@1 sin8u_table::@15 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
+mul8su::@4 dominated by  main::@1 sin8u_table::@15 mul8su::@4 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
+mul8su::@2 dominated by  main::@1 sin8u_table::@15 mul8su::@2 mul8su::@4 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
+mul8su::@1 dominated by  main::@1 mul8su::@1 sin8u_table::@15 mul8su::@4 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
+mul8su::@return dominated by  mul8su::@return main::@1 mul8su::@1 sin8u_table::@15 mul8su::@4 sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8su 
+mul8u dominated by  main::@1 mul8u sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+mul8u::@1 dominated by  main::@1 mul8u sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@1 
+mul8u::@return dominated by  main::@1 mul8u sin8u_table mul8u::@return main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@1 
+mul8u::@2 dominated by  main::@1 mul8u sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@2 mul8u::@1 
+mul8u::@7 dominated by  main::@1 mul8u sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@7 mul8u::@2 mul8u::@1 
+mul8u::@4 dominated by  main::@1 mul8u sin8u_table main @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 mul8u::@2 mul8u::@1 mul8u::@4 
+sin8s dominated by  main::@1 sin8u_table main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@5 dominated by  main::@1 sin8u_table main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 sin8s::@5 
+sin8s::@1 dominated by  main::@1 sin8u_table main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@6 dominated by  main::@1 sin8u_table main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 sin8s::@6 
+sin8s::@2 dominated by  main::@1 sin8u_table main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@10 dominated by  main::@1 sin8u_table sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@11 dominated by  main::@1 sin8u_table sin8s::@11 sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@12 dominated by  main::@1 sin8u_table sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@13 dominated by  main::@1 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@14 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@7 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 sin8s::@7 
+sin8s::@3 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@8 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 sin8s::@8 
+sin8s::@4 dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@4 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@return dominated by  main::@1 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 sin8s::@return main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@4 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+sin8s::@18 dominated by  main::@1 sin8s::@18 sin8s::@14 sin8u_table sin8s::@13 sin8s::@12 sin8s::@11 sin8s::@10 main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8s::@3 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+mulu8_sel dominated by  main::@1 sin8u_table mulu8_sel main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+mulu8_sel::@2 dominated by  mulu8_sel::@2 main::@1 sin8u_table mulu8_sel main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+mulu8_sel::@return dominated by  mulu8_sel::@2 main::@1 mulu8_sel::@return sin8u_table mulu8_sel main sin8s @begin @36 sin8u_table::@1 sin8u_table::@3 sin8u_table::@8 sin8u_table::@9 sin8u_table::@4 sin8u_table::@5 sin8u_table::@6 sin8u_table::@7 sin8s::@2 sin8s::@1 sin8u_table::@10 sin8u_table::@12 sin8u_table::@11 sin8u_table::@13 
+div16u dominated by  main::@1 div16u sin8u_table main @begin @36 
+div16u::@2 dominated by  main::@1 div16u div16u::@2 sin8u_table main @begin @36 
+div16u::@return dominated by  div16u::@return main::@1 div16u div16u::@2 sin8u_table main @begin @36 
+divr16u dominated by  main::@1 div16u sin8u_table divr16u main @begin @36 
+divr16u::@1 dominated by  divr16u::@1 main::@1 div16u sin8u_table divr16u main @begin @36 
+divr16u::@4 dominated by  divr16u::@1 divr16u::@4 main::@1 div16u sin8u_table divr16u main @begin @36 
+divr16u::@2 dominated by  divr16u::@2 divr16u::@1 main::@1 div16u sin8u_table divr16u main @begin @36 
+divr16u::@5 dominated by  divr16u::@2 divr16u::@1 divr16u::@5 main::@1 div16u sin8u_table divr16u main @begin @36 
+divr16u::@3 dominated by  divr16u::@2 divr16u::@1 divr16u::@3 main::@1 div16u sin8u_table divr16u main @begin @36 
+divr16u::@return dominated by  divr16u::@2 divr16u::@1 divr16u::@3 main::@1 div16u sin8u_table divr16u::@return divr16u main @begin @36 
+print_cls dominated by  print_cls main @begin @36 
+print_cls::@1 dominated by  print_cls main @begin @36 print_cls::@1 
+print_cls::@return dominated by  print_cls main @begin @36 print_cls::@return print_cls::@1 
 
 NATURAL LOOPS
 Found back edge: Loop head: sin8u_table::@1 tails: sin8u_table::@25 blocks: null
@@ -6674,17 +6753,17 @@ INITIAL ASM
   .label print_line_cursor = 8
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @35 [phi:@begin->@35]
-b35_from_bbegin:
-  jmp b35
-//SEG4 @35
-b35:
+//SEG3 [1] phi from @begin to @36 [phi:@begin->@36]
+b36_from_bbegin:
+  jmp b36
+//SEG4 @36
+b36:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @35 to main [phi:@35->main]
-main_from_b35:
+//SEG6 [4] phi from @36 to main [phi:@36->main]
+main_from_b36:
   jsr main
-//SEG7 [3] phi from @35 to @end [phi:@35->@end]
-bend_from_b35:
+//SEG7 [3] phi from @36 to @end [phi:@36->@end]
+bend_from_b36:
   jmp bend
 //SEG8 @end
 bend:
@@ -8375,17 +8454,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_line_cursor = 8
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @35 [phi:@begin->@35]
-b35_from_bbegin:
-  jmp b35
-//SEG4 @35
-b35:
+//SEG3 [1] phi from @begin to @36 [phi:@begin->@36]
+b36_from_bbegin:
+  jmp b36
+//SEG4 @36
+b36:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @35 to main [phi:@35->main]
-main_from_b35:
+//SEG6 [4] phi from @36 to main [phi:@36->main]
+main_from_b36:
   jsr main
-//SEG7 [3] phi from @35 to @end [phi:@35->@end]
-bend_from_b35:
+//SEG7 [3] phi from @36 to @end [phi:@36->@end]
+bend_from_b36:
   jmp bend
 //SEG8 @end
 bend:
@@ -9635,7 +9714,7 @@ print_cls: {
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b35
+Removing instruction jmp b36
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
@@ -9748,9 +9827,9 @@ Replacing label b1_from_b3 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b35_from_bbegin:
-Removing instruction main_from_b35:
-Removing instruction bend_from_b35:
+Removing instruction b36_from_bbegin:
+Removing instruction main_from_b36:
+Removing instruction bend_from_b36:
 Removing instruction b1_from_main:
 Removing instruction sin8u_table_from_b1:
 Removing instruction b5_from_b4:
@@ -9811,7 +9890,7 @@ Removing instruction b3_from_b2:
 Removing instruction b3_from_b5:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b35:
+Removing instruction b36:
 Removing instruction bend:
 Removing instruction print_cls_from_main:
 Removing instruction b1:
@@ -9912,7 +9991,7 @@ Fixing long branch [163] bcc b1 to bcs
 Fixing long branch [169] bcc b1 to bcs
 
 FINAL SYMBOL TABLE
-(label) @35
+(label) @36
 (label) @begin
 (label) @end
 (word) PI2_u4f12
@@ -10291,12 +10370,12 @@ Score: 19469
   .label print_char_cursor = $d
   .label print_line_cursor = 8
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @35 [phi:@begin->@35]
-//SEG4 @35
+//SEG3 [1] phi from @begin to @36 [phi:@begin->@36]
+//SEG4 @36
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @35 to main [phi:@35->main]
+//SEG6 [4] phi from @36 to main [phi:@36->main]
   jsr main
-//SEG7 [3] phi from @35 to @end [phi:@35->@end]
+//SEG7 [3] phi from @36 to @end [phi:@36->@end]
 //SEG8 @end
 //SEG9 main
 main: {

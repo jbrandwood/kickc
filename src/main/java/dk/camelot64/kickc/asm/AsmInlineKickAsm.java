@@ -25,6 +25,14 @@ public class AsmInlineKickAsm implements AsmLine {
       this.kickAsmCode = kickAsmCode;
    }
 
+   /**
+    * Get the number of source lines in the inline assembler code (for line indexing)
+    * @return The number of source lines
+    */
+   public long getLineCount() {
+      return kickAsmCode.chars().filter(x -> x == '\n').count() + 1;
+   }
+
    @Override
    public int getLineBytes() {
       return bytes;

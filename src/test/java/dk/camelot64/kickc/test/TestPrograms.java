@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -893,8 +894,12 @@ public class TestPrograms {
       writeBinFile(fileName, ".asm", program.getAsm().toString(false));
       for(Path asmResourceFile : program.getAsmResourceFiles()) {
          File binFile = getBinFile(asmResourceFile.getFileName().toString());
-         Files.copy(asmResourceFile, binFile.toPath());
-      };
+         try {
+            Files.copy(asmResourceFile, binFile.toPath());
+         } catch(FileAlreadyExistsException e) {
+            // Ignore this
+         }
+      }
 
       File asmFile = getBinFile(fileName, ".asm");
       File asmPrgFile = getBinFile(fileName, ".prg");

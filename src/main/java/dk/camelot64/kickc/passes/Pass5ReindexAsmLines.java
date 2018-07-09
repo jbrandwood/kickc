@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmComment;
+import dk.camelot64.kickc.asm.AsmInlineKickAsm;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.model.Program;
@@ -20,6 +21,10 @@ public class Pass5ReindexAsmLines extends Pass5AsmOptimization {
          for(AsmLine asmLine : asmSegment.getLines()) {
             if((asmLine instanceof AsmComment)) {
                asmLine.setIndex(-1);
+            } else if(asmLine instanceof AsmInlineKickAsm) {
+               asmLine.setIndex(nextIndex);
+               AsmInlineKickAsm inlineKickAsm = (AsmInlineKickAsm) asmLine;
+               nextIndex += inlineKickAsm.getLineCount();
             } else {
                asmLine.setIndex(nextIndex++);
             }

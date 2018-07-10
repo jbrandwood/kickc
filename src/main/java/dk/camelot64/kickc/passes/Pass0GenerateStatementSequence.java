@@ -148,7 +148,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Pattern p = Pattern.compile("\\{\\{[\\s]*(.*)[\\s]*\\}\\}", Pattern.DOTALL);
       Matcher m = p.matcher(kasm);
       if(m.find()) {
-         String kickAsmCode = m.group(1);
+         String kickAsmCode = m.group(1).replaceAll("\r", "");
          sequence.addStatement(new StatementKickAsm(kickAsmCode, new StatementSource(ctx)));
       }
       if(ctx.kasmParams()!=null) {
@@ -164,7 +164,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          resourceName = resourceName.substring(1, resourceName.length() - 1);
          File resourceFile = Compiler.loadFile(resourceName, program);
          program.addAsmResourceFile(resourceFile.toPath());
-         program.getLog().append("Added resource "+resourceFile.getPath());
+         program.getLog().append("Added resource "+resourceFile.getPath().replace('\\', '/'));
       }
       return null;
    }

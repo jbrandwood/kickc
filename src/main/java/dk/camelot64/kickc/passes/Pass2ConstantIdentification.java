@@ -243,6 +243,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          case "((dword))":
          case "((signed dword))":
          case "((byte*))":
+         case "((signed byte*))":
+         case "((word*))":
+         case "((signed word*))":
+         case "((dword*))":
+         case "((signed dword*))":
          case "((boolean*))":
          case "!":
             return new ConstantUnary(operator, c);

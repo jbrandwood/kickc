@@ -108,7 +108,7 @@ public class AsmFormat {
          } else {
             return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xff), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
          }
-      } else if(Operators.CAST_WORD.equals(operator) || Operators.CAST_SWORD.equals(operator) || Operators.CAST_PTRBY.equals(operator)|| Operators.CAST_PTRBO.equals(operator)) {
+      } else if(Operators.CAST_WORD.equals(operator) || Operators.CAST_SWORD.equals(operator) || Operators.CAST_PTRBY.equals(operator)|| Operators.CAST_PTRSBY.equals(operator)|| Operators.CAST_PTRWO.equals(operator)|| Operators.CAST_PTRSWO.equals(operator)|| Operators.CAST_PTRDWO.equals(operator)|| Operators.CAST_PTRSDWO.equals(operator)|| Operators.CAST_PTRBO.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || SymbolType.isByte(operandType) || SymbolType.isSByte(operandType) || operandType instanceof SymbolTypePointer) {
             // No cast needed

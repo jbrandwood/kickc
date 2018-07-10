@@ -47,6 +47,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSinePlotter() throws IOException, URISyntaxException {
+      compileAndCompare("sine-plotter");
+   }
+
+   @Test
    public void testScrollLogo() throws IOException, URISyntaxException {
       compileAndCompare("scrolllogo");
    }

@@ -1,6 +1,7 @@
 PARSING src/test/java/dk/camelot64/kickc/test/kc/scrolllogo.kc
 import "c64.kc"
 import "sinus.kc"
+import "memory.kc"
 
 byte* SCREEN = $400;
 byte* LOGO = $2000;
@@ -98,14 +99,6 @@ void render_logo(signed word xpos) {
     }
 }
 
-
-// Fill some memory with a value
-void fill(byte* start, word size, byte val) {
-    byte* end = start + size;
-    for(byte* addr = start; addr!=end; addr++) {
-        *addr = val;
-    }
-}
 
 kickasm(resources "logo.png" ) {{
     .label pc_restore = *
@@ -616,6 +609,19 @@ Adding pre/post-modifier (word) sin16s_gen2::i ← ++ (word) sin16s_gen2::i
 Adding pre/post-modifier (signed byte*) sin8s_gen::sintab ← ++ (signed byte*) sin8s_gen::sintab
 Adding pre/post-modifier (word) sin8s_gen::i ← ++ (word) sin8s_gen::i
 Adding pre/post-modifier (byte) sin8s::usinx ← -- (byte) sin8s::usinx
+Importing memory.kc
+PARSING src/test/java/dk/camelot64/kickc/test/kc/memory.kc
+// Simple outines for working with memory
+
+// Fill some memory with a value
+void fill(byte* start, word size, byte val) {
+    byte* end = start + size;
+    for(byte* addr = start; addr!=end; addr++) {
+        *addr = val;
+    }
+}
+
+Adding pre/post-modifier (byte*) fill::addr ← ++ (byte*) fill::addr
 Adding pre/post-modifier *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
 Adding pre/post-modifier *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
 Adding pre/post-modifier (byte) render_logo::screen_idx ← ++ (byte) render_logo::screen_idx
@@ -624,7 +630,6 @@ Adding pre/post-modifier (byte) render_logo::logo_idx ← ++ (byte) render_logo:
 Adding pre/post-modifier (byte) render_logo::screen_idx ← ++ (byte) render_logo::screen_idx
 Adding pre/post-modifier (byte) render_logo::logo_idx ← ++ (byte) render_logo::logo_idx
 Adding pre/post-modifier (byte) render_logo::screen_idx ← ++ (byte) render_logo::screen_idx
-Adding pre/post-modifier (byte*) fill::addr ← ++ (byte*) fill::addr
 Added resource src/test/java/dk/camelot64/kickc/test/kc/logo.png
 SYMBOLS
 (label) @1
@@ -2276,11 +2281,29 @@ mulu8_sel::@return: scope:[mulu8_sel]  from mulu8_sel mulu8_sel::@1
 mulu8_sel::@1: scope:[mulu8_sel]  from
   to:mulu8_sel::@return
 @23: scope:[]  from @22
+  to:@24
+fill: scope:[fill]  from
+  (byte*~) fill::$0 ← (byte*) fill::start + (word) fill::size
+  (byte*) fill::end ← (byte*~) fill::$0
+  (byte*) fill::addr ← (byte*) fill::start
+  to:fill::@1
+fill::@1: scope:[fill]  from fill fill::@1
+  *((byte*) fill::addr) ← (byte) fill::val
+  (byte*) fill::addr ← ++ (byte*) fill::addr
+  (bool~) fill::$1 ← (byte*) fill::addr != (byte*) fill::end
+  if((bool~) fill::$1) goto fill::@1
+  to:fill::@2
+fill::@2: scope:[fill]  from fill::@1
+  to:fill::@return
+fill::@return: scope:[fill]  from fill::@2
+  return 
+  to:@return
+@24: scope:[]  from @23
   (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) LOGO ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (word) XSIN_SIZE ← (word/signed word/dword/signed dword) 512
   (signed word[512]) xsin ← { fill( 512, 0) }
-  to:@24
+  to:@25
 main: scope:[main]  from
   asm { sei  }
   *((byte*) BORDERCOL) ← (byte) WHITE
@@ -2309,9 +2332,9 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@24: scope:[]  from @23
+@25: scope:[]  from @24
   (word) xsin_idx ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@25
+  to:@26
 loop: scope:[loop]  from
   to:loop::@1
 loop::@1: scope:[loop]  from loop loop::@7
@@ -2359,8 +2382,8 @@ loop::@14: scope:[loop]  from
 loop::@return: scope:[loop]  from loop::@3
   return 
   to:@return
-@25: scope:[]  from @24
-  to:@26
+@26: scope:[]  from @25
+  to:@27
 render_logo: scope:[render_logo]  from
   (byte~) render_logo::$0 ← ((byte)) (signed word) render_logo::xpos
   (byte~) render_logo::$1 ← (byte~) render_logo::$0 & (byte/signed byte/word/signed word/dword/signed dword) 7
@@ -2537,24 +2560,6 @@ render_logo::@28: scope:[render_logo]  from
 render_logo::@return: scope:[render_logo]  from render_logo::@8
   return 
   to:@return
-@26: scope:[]  from @25
-  to:@27
-fill: scope:[fill]  from
-  (byte*~) fill::$0 ← (byte*) fill::start + (word) fill::size
-  (byte*) fill::end ← (byte*~) fill::$0
-  (byte*) fill::addr ← (byte*) fill::start
-  to:fill::@1
-fill::@1: scope:[fill]  from fill fill::@1
-  *((byte*) fill::addr) ← (byte) fill::val
-  (byte*) fill::addr ← ++ (byte*) fill::addr
-  (bool~) fill::$1 ← (byte*) fill::addr != (byte*) fill::end
-  if((bool~) fill::$1) goto fill::@1
-  to:fill::@2
-fill::@2: scope:[fill]  from fill::@1
-  to:fill::@return
-fill::@return: scope:[fill]  from fill::@2
-  return 
-  to:@return
 @27: scope:[]  from @26
   kickasm {{ .label pc_restore = *
     .pc = $2000
@@ -2684,6 +2689,8 @@ Removing empty block @20
 Removing empty block @21
 Removing empty block mulu16_sel::@1
 Removing empty block @22
+Removing empty block @23
+Removing empty block fill::@2
 Removing empty block main::toD0181_@1
 Removing empty block loop::@8
 Removing empty block loop::@3
@@ -2692,7 +2699,7 @@ Removing empty block loop::@10
 Removing empty block loop::@11
 Removing empty block loop::@12
 Removing empty block loop::@14
-Removing empty block @25
+Removing empty block @26
 Removing empty block render_logo::@16
 Removing empty block render_logo::@17
 Removing empty block render_logo::@18
@@ -2710,8 +2717,6 @@ Removing empty block render_logo::@26
 Removing empty block render_logo::@14
 Removing empty block render_logo::@27
 Removing empty block render_logo::@28
-Removing empty block @26
-Removing empty block fill::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
 divr16u modifies rem16u
 div32u16u modifies rem16u
@@ -2979,7 +2984,7 @@ mul16s::@return: scope:[mul16s]  from mul16s::@2
   (dword) PI2_u4f28#0 ← (dword/signed dword) 1686629713
   (dword) PI_u4f28#0 ← (dword/signed dword) 843314857
   (dword) PI_HALF_u4f28#0 ← (dword/signed dword) 421657428
-  to:@23
+  to:@24
 sin16s_gen2: scope:[sin16s_gen2]  from main::@2
   (signed word*) sin16s_gen2::sintab#6 ← phi( main::@2/(signed word*) sin16s_gen2::sintab#1 )
   (word) rem16u#21 ← phi( main::@2/(word) rem16u#23 )
@@ -3210,13 +3215,33 @@ mulu16_sel::@return: scope:[mulu16_sel]  from mulu16_sel::@2
   (word) mulu16_sel::return#6 ← (word) mulu16_sel::return#12
   return 
   to:@return
-@23: scope:[]  from @16
+fill: scope:[fill]  from main::@3 main::@4
+  (byte) fill::val#3 ← phi( main::@3/(byte) fill::val#0 main::@4/(byte) fill::val#1 )
+  (word) fill::size#2 ← phi( main::@3/(word) fill::size#0 main::@4/(word) fill::size#1 )
+  (byte*) fill::start#2 ← phi( main::@3/(byte*) fill::start#0 main::@4/(byte*) fill::start#1 )
+  (byte*~) fill::$0 ← (byte*) fill::start#2 + (word) fill::size#2
+  (byte*) fill::end#0 ← (byte*~) fill::$0
+  (byte*) fill::addr#0 ← (byte*) fill::start#2
+  to:fill::@1
+fill::@1: scope:[fill]  from fill fill::@1
+  (byte*) fill::end#1 ← phi( fill/(byte*) fill::end#0 fill::@1/(byte*) fill::end#1 )
+  (byte*) fill::addr#2 ← phi( fill/(byte*) fill::addr#0 fill::@1/(byte*) fill::addr#1 )
+  (byte) fill::val#2 ← phi( fill/(byte) fill::val#3 fill::@1/(byte) fill::val#2 )
+  *((byte*) fill::addr#2) ← (byte) fill::val#2
+  (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2
+  (bool~) fill::$1 ← (byte*) fill::addr#1 != (byte*) fill::end#1
+  if((bool~) fill::$1) goto fill::@1
+  to:fill::@return
+fill::@return: scope:[fill]  from fill::@1
+  return 
+  to:@return
+@24: scope:[]  from @16
   (word) rem16u#31 ← phi( @16/(word) rem16u#32 )
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) LOGO#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (word) XSIN_SIZE#0 ← (word/signed word/dword/signed dword) 512
   (signed word[512]) xsin#0 ← { fill( 512, 0) }
-  to:@24
+  to:@25
 main: scope:[main]  from @27
   (word) xsin_idx#28 ← phi( @27/(word) xsin_idx#16 )
   (word) rem16u#37 ← phi( @27/(word) rem16u#25 )
@@ -3323,10 +3348,10 @@ main::@return: scope:[main]  from main::@7
   (word) xsin_idx#1 ← (word) xsin_idx#8
   return 
   to:@return
-@24: scope:[]  from @23
-  (word) rem16u#28 ← phi( @23/(word) rem16u#31 )
-  (byte*) LOGO#3 ← phi( @23/(byte*) LOGO#0 )
-  (byte*) SCREEN#20 ← phi( @23/(byte*) SCREEN#0 )
+@25: scope:[]  from @24
+  (word) rem16u#28 ← phi( @24/(word) rem16u#31 )
+  (byte*) LOGO#3 ← phi( @24/(byte*) LOGO#0 )
+  (byte*) SCREEN#20 ← phi( @24/(byte*) SCREEN#0 )
   (word) xsin_idx#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:@27
 loop: scope:[loop]  from main::@6
@@ -3556,31 +3581,11 @@ render_logo::@13: scope:[render_logo]  from render_logo::@12
 render_logo::@return: scope:[render_logo]  from render_logo::@12 render_logo::@5
   return 
   to:@return
-fill: scope:[fill]  from main::@3 main::@4
-  (byte) fill::val#3 ← phi( main::@3/(byte) fill::val#0 main::@4/(byte) fill::val#1 )
-  (word) fill::size#2 ← phi( main::@3/(word) fill::size#0 main::@4/(word) fill::size#1 )
-  (byte*) fill::start#2 ← phi( main::@3/(byte*) fill::start#0 main::@4/(byte*) fill::start#1 )
-  (byte*~) fill::$0 ← (byte*) fill::start#2 + (word) fill::size#2
-  (byte*) fill::end#0 ← (byte*~) fill::$0
-  (byte*) fill::addr#0 ← (byte*) fill::start#2
-  to:fill::@1
-fill::@1: scope:[fill]  from fill fill::@1
-  (byte*) fill::end#1 ← phi( fill/(byte*) fill::end#0 fill::@1/(byte*) fill::end#1 )
-  (byte*) fill::addr#2 ← phi( fill/(byte*) fill::addr#0 fill::@1/(byte*) fill::addr#1 )
-  (byte) fill::val#2 ← phi( fill/(byte) fill::val#3 fill::@1/(byte) fill::val#2 )
-  *((byte*) fill::addr#2) ← (byte) fill::val#2
-  (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2
-  (bool~) fill::$1 ← (byte*) fill::addr#1 != (byte*) fill::end#1
-  if((bool~) fill::$1) goto fill::@1
-  to:fill::@return
-fill::@return: scope:[fill]  from fill::@1
-  return 
-  to:@return
-@27: scope:[]  from @24
-  (word) xsin_idx#16 ← phi( @24/(word) xsin_idx#2 )
-  (word) rem16u#25 ← phi( @24/(word) rem16u#28 )
-  (byte*) LOGO#2 ← phi( @24/(byte*) LOGO#3 )
-  (byte*) SCREEN#8 ← phi( @24/(byte*) SCREEN#20 )
+@27: scope:[]  from @25
+  (word) xsin_idx#16 ← phi( @25/(word) xsin_idx#2 )
+  (word) rem16u#25 ← phi( @25/(word) rem16u#28 )
+  (byte*) LOGO#2 ← phi( @25/(byte*) LOGO#3 )
+  (byte*) SCREEN#8 ← phi( @25/(byte*) SCREEN#20 )
   kickasm {{ .label pc_restore = *
     .pc = $2000
     logo:
@@ -3603,8 +3608,8 @@ fill::@return: scope:[fill]  from fill::@1
 
 SYMBOL TABLE SSA
 (label) @16
-(label) @23
 (label) @24
+(label) @25
 (label) @27
 (label) @28
 (label) @5
@@ -4448,6 +4453,9 @@ Not aliassing across scopes: mul16u::a#2 mulu16_sel::v1#5
 Not aliassing across scopes: mul16u::b#1 mulu16_sel::v2#5
 Not aliassing across scopes: mul16u::return#3 mul16u::return#1
 Not aliassing across scopes: mulu16_sel::$0 mul16u::return#6
+Not aliassing across scopes: fill::start#2 fill::start#0
+Not aliassing across scopes: fill::size#2 fill::size#0
+Not aliassing across scopes: fill::val#3 fill::val#0
 Not aliassing across scopes: SCREEN#1 SCREEN#8
 Not aliassing across scopes: LOGO#1 LOGO#2
 Not aliassing across scopes: rem16u#37 rem16u#25
@@ -4469,9 +4477,6 @@ Not aliassing across scopes: SCREEN#27 SCREEN#29
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
 Not aliassing across scopes: render_logo::xpos#1 render_logo::xpos#0
 Not aliassing across scopes: SCREEN#21 SCREEN#22
-Not aliassing across scopes: fill::start#2 fill::start#0
-Not aliassing across scopes: fill::size#2 fill::size#0
-Not aliassing across scopes: fill::val#3 fill::val#0
 Not aliassing across scopes: rem16u#19 rem16u#9
 Not aliassing across scopes: xsin_idx#12 xsin_idx#1
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
@@ -4565,6 +4570,8 @@ Alias (signed word) sin16s::sinx#1 = (signed word~) sin16s::$21
 Alias (dword) mul16u::return#3 = (dword) mul16u::return#6 
 Alias (byte) mulu16_sel::select#5 = (byte) mulu16_sel::select#6 
 Alias (word) mulu16_sel::return#12 = (word) mulu16_sel::return#5 (word~) mulu16_sel::$2 (word) mulu16_sel::return#6 
+Alias (byte*) fill::end#0 = (byte*~) fill::$0 
+Alias (byte*) fill::addr#0 = (byte*) fill::start#2 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
 Alias (byte*) SCREEN#1 = (byte*) SCREEN#15 (byte*) SCREEN#9 (byte*) SCREEN#2 (byte*) SCREEN#16 (byte*) SCREEN#10 
@@ -4599,8 +4606,6 @@ Alias (byte*) SCREEN#13 = (byte*) SCREEN#6
 Alias (byte) render_logo::screen_idx#10 = (byte) render_logo::screen_idx#14 
 Alias (byte*) SCREEN#14 = (byte*) SCREEN#7 
 Alias (byte) render_logo::screen_idx#11 = (byte) render_logo::screen_idx#12 
-Alias (byte*) fill::end#0 = (byte*~) fill::$0 
-Alias (byte*) fill::addr#0 = (byte*) fill::start#2 
 Alias (word) xsin_idx#16 = (word) xsin_idx#2 
 Alias (word) rem16u#10 = (word) rem16u#19 
 Alias (word) xsin_idx#12 = (word) xsin_idx#6 
@@ -4670,6 +4675,9 @@ Not aliassing across scopes: mul16u::a#2 mulu16_sel::v1#5
 Not aliassing across scopes: mul16u::b#1 mulu16_sel::v2#5
 Not aliassing across scopes: mul16u::return#3 mul16u::res#2
 Not aliassing across scopes: mulu16_sel::$0 mul16u::return#3
+Not aliassing across scopes: fill::addr#0 fill::start#0
+Not aliassing across scopes: fill::size#2 fill::size#0
+Not aliassing across scopes: fill::val#3 fill::val#0
 Not aliassing across scopes: SCREEN#1 SCREEN#0
 Not aliassing across scopes: LOGO#1 LOGO#0
 Not aliassing across scopes: rem16u#30 rem16u#0
@@ -4692,9 +4700,6 @@ Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
 Not aliassing across scopes: render_logo::xpos#1 render_logo::xpos#0
 Not aliassing across scopes: SCREEN#17 SCREEN#22
 Not aliassing identity: SCREEN#14 SCREEN#14
-Not aliassing across scopes: fill::addr#0 fill::start#0
-Not aliassing across scopes: fill::size#2 fill::size#0
-Not aliassing across scopes: fill::val#3 fill::val#0
 Not aliassing across scopes: rem16u#10 rem16u#17
 Not aliassing across scopes: xsin_idx#12 xsin_idx#0
 Alias (word) divr16u::dividend#3 = (word) divr16u::dividend#4 
@@ -4774,6 +4779,9 @@ Not aliassing across scopes: mul16u::a#2 mulu16_sel::v1#5
 Not aliassing across scopes: mul16u::b#1 mulu16_sel::v2#5
 Not aliassing across scopes: mul16u::return#3 mul16u::res#2
 Not aliassing across scopes: mulu16_sel::$0 mul16u::return#3
+Not aliassing across scopes: fill::addr#0 fill::start#0
+Not aliassing across scopes: fill::size#2 fill::size#0
+Not aliassing across scopes: fill::val#3 fill::val#0
 Not aliassing across scopes: SCREEN#1 SCREEN#0
 Not aliassing across scopes: LOGO#1 LOGO#0
 Not aliassing across scopes: rem16u#30 rem16u#0
@@ -4796,9 +4804,6 @@ Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
 Not aliassing across scopes: render_logo::xpos#1 render_logo::xpos#0
 Not aliassing across scopes: SCREEN#17 SCREEN#22
 Not aliassing identity: SCREEN#14 SCREEN#14
-Not aliassing across scopes: fill::addr#0 fill::start#0
-Not aliassing across scopes: fill::size#2 fill::size#0
-Not aliassing across scopes: fill::val#3 fill::val#0
 Not aliassing across scopes: rem16u#10 rem16u#17
 Not aliassing across scopes: xsin_idx#12 xsin_idx#0
 Self Phi Eliminated (word) divr16u::divisor#2
@@ -4807,6 +4812,8 @@ Self Phi Eliminated (signed word) sin16s_gen2::offs#1
 Self Phi Eliminated (dword) sin16s_gen2::step#1
 Self Phi Eliminated (word) sin16s_gen2::wavelength#2
 Self Phi Eliminated (word) rem16u#16
+Self Phi Eliminated (byte) fill::val#2
+Self Phi Eliminated (byte*) fill::end#1
 Self Phi Eliminated (byte*) SCREEN#29
 Self Phi Eliminated (word) rem16u#23
 Self Phi Eliminated (word) xsin_idx#13
@@ -4817,8 +4824,6 @@ Self Phi Eliminated (byte*) SCREEN#11
 Self Phi Eliminated (byte*) SCREEN#12
 Self Phi Eliminated (byte*) SCREEN#13
 Self Phi Eliminated (byte*) SCREEN#14
-Self Phi Eliminated (byte) fill::val#2
-Self Phi Eliminated (byte*) fill::end#1
 Succesful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (word) divr16u::divisor#2 (word) divr16u::divisor#6
 Redundant Phi (dword) div32u16u::dividend#1 (dword) div32u16u::dividend#0
@@ -4840,6 +4845,8 @@ Redundant Phi (dword) sin16s_gen2::step#1 (dword) sin16s_gen2::step#0
 Redundant Phi (word) sin16s_gen2::wavelength#2 (word) sin16s_gen2::wavelength#1
 Redundant Phi (word) rem16u#16 (word) rem16u#15
 Redundant Phi (dword) sin16s::x#3 (dword) sin16s::x#0
+Redundant Phi (byte) fill::val#2 (byte) fill::val#3
+Redundant Phi (byte*) fill::end#1 (byte*) fill::end#0
 Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
 Redundant Phi (byte*) LOGO#1 (byte*) LOGO#0
 Redundant Phi (word) rem16u#30 (word) rem16u#0
@@ -4860,8 +4867,6 @@ Redundant Phi (byte*) SCREEN#11 (byte*) SCREEN#17
 Redundant Phi (byte*) SCREEN#12 (byte*) SCREEN#11
 Redundant Phi (byte*) SCREEN#13 (byte*) SCREEN#17
 Redundant Phi (byte*) SCREEN#14 (byte*) SCREEN#13
-Redundant Phi (byte) fill::val#2 (byte) fill::val#3
-Redundant Phi (byte*) fill::end#1 (byte*) fill::end#0
 Redundant Phi (word) rem16u#10 (word) rem16u#17
 Redundant Phi (word) xsin_idx#12 (word) xsin_idx#0
 Succesful SSA optimization Pass2RedundantPhiElimination
@@ -4876,6 +4881,7 @@ Simple Condition (bool~) sin16s_gen2::$11 if((word) sin16s_gen2::i#1<(word) sin1
 Simple Condition (bool~) sin16s::$1 if((dword) sin16s::x#0<(dword) PI_u4f28#0) goto sin16s::@1
 Simple Condition (bool~) sin16s::$4 if((dword) sin16s::x#4<(dword) PI_HALF_u4f28#0) goto sin16s::@2
 Simple Condition (bool~) sin16s::$19 if((byte) sin16s::isUpper#2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto sin16s::@3
+Simple Condition (bool~) fill::$1 if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
 Simple Condition (bool~) main::$4 if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) 240) goto main::@1
 Simple Condition (bool~) loop::$0 if(*((byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto loop::@5
 Simple Condition (bool~) loop::$5 if((word) xsin_idx#3!=(word/signed dword/dword~) loop::$3) goto loop::@7
@@ -4884,7 +4890,6 @@ Simple Condition (bool~) render_logo::$7 if((byte) render_logo::screen_idx#13!=(
 Simple Condition (bool~) render_logo::$18 if((byte) render_logo::screen_idx#8!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto render_logo::@6
 Simple Condition (bool~) render_logo::$41 if((byte) render_logo::logo_idx#5!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto render_logo::@10
 Simple Condition (bool~) render_logo::$62 if((byte) render_logo::screen_idx#11!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto render_logo::@13
-Simple Condition (bool~) fill::$1 if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) RASTER#0 = ((byte*))53266
 Constant (const byte*) BORDERCOL#0 = ((byte*))53280
@@ -5022,11 +5027,11 @@ Succesful SSA optimization Pass2EliminateUnusedBlocks
 Culled Empty Block (label) @5
 Culled Empty Block (label) mul16u::@3
 Culled Empty Block (label) @16
-Culled Empty Block (label) @23
+Culled Empty Block (label) @24
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@7
-Culled Empty Block (label) @24
+Culled Empty Block (label) @25
 Culled Empty Block (label) loop::@2
 Culled Empty Block (label) loop::@5
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
@@ -5251,33 +5256,33 @@ Inlining constant with different constant siblings (const byte) mulu16_sel::sele
 Inlining constant with var siblings (const byte) mulu16_sel::select#4
 Inlining constant with different constant siblings (const byte) mulu16_sel::select#4
 Inlining constant with different constant siblings (const byte) mulu16_sel::select#4
-Inlining constant with var siblings (const byte) main::ch#0
-Inlining constant with var siblings (const byte) main::ch#0
-Inlining constant with var siblings (const byte) render_logo::screen_idx#0
-Inlining constant with var siblings (const byte) render_logo::screen_idx#0
-Inlining constant with var siblings (const byte) render_logo::screen_idx#0
-Inlining constant with var siblings (const byte) render_logo::screen_idx#0
-Inlining constant with var siblings (const byte) render_logo::screen_idx#0
-Inlining constant with var siblings (const byte) render_logo::screen_idx#0
-Inlining constant with var siblings (const byte) render_logo::screen_idx#0
-Inlining constant with var siblings (const byte) render_logo::screen_idx#0
-Inlining constant with var siblings (const byte) render_logo::screen_idx#1
-Inlining constant with var siblings (const byte) render_logo::screen_idx#1
-Inlining constant with var siblings (const byte) render_logo::screen_idx#1
-Inlining constant with var siblings (const byte) render_logo::screen_idx#1
-Inlining constant with var siblings (const byte) render_logo::screen_idx#1
-Inlining constant with var siblings (const byte) render_logo::screen_idx#1
-Inlining constant with var siblings (const byte) render_logo::screen_idx#1
-Inlining constant with var siblings (const byte) render_logo::screen_idx#1
-Inlining constant with var siblings (const byte) render_logo::logo_idx#1
-Inlining constant with var siblings (const byte) render_logo::logo_idx#1
-Inlining constant with var siblings (const byte) render_logo::logo_idx#1
-Inlining constant with var siblings (const byte) render_logo::logo_idx#1
 Inlining constant with var siblings (const word) fill::size#0
 Inlining constant with var siblings (const word) fill::size#1
 Inlining constant with var siblings (const byte) fill::val#0
 Inlining constant with different constant siblings (const byte) fill::val#0
 Inlining constant with var siblings (const byte) fill::val#1
+Inlining constant with var siblings (const byte) main::ch#0
+Inlining constant with var siblings (const byte) main::ch#0
+Inlining constant with var siblings (const byte) render_logo::screen_idx#0
+Inlining constant with var siblings (const byte) render_logo::screen_idx#0
+Inlining constant with var siblings (const byte) render_logo::screen_idx#0
+Inlining constant with var siblings (const byte) render_logo::screen_idx#0
+Inlining constant with var siblings (const byte) render_logo::screen_idx#0
+Inlining constant with var siblings (const byte) render_logo::screen_idx#0
+Inlining constant with var siblings (const byte) render_logo::screen_idx#0
+Inlining constant with var siblings (const byte) render_logo::screen_idx#0
+Inlining constant with var siblings (const byte) render_logo::screen_idx#1
+Inlining constant with var siblings (const byte) render_logo::screen_idx#1
+Inlining constant with var siblings (const byte) render_logo::screen_idx#1
+Inlining constant with var siblings (const byte) render_logo::screen_idx#1
+Inlining constant with var siblings (const byte) render_logo::screen_idx#1
+Inlining constant with var siblings (const byte) render_logo::screen_idx#1
+Inlining constant with var siblings (const byte) render_logo::screen_idx#1
+Inlining constant with var siblings (const byte) render_logo::screen_idx#1
+Inlining constant with var siblings (const byte) render_logo::logo_idx#1
+Inlining constant with var siblings (const byte) render_logo::logo_idx#1
+Inlining constant with var siblings (const byte) render_logo::logo_idx#1
+Inlining constant with var siblings (const byte) render_logo::logo_idx#1
 Inlining constant with var siblings (const word) xsin_idx#16
 Inlining constant with var siblings (const word) xsin_idx#16
 Inlining constant with var siblings (const word) xsin_idx#16

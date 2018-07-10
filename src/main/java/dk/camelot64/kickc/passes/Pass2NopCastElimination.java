@@ -54,6 +54,21 @@ public class Pass2NopCastElimination extends Pass2SsaOptimization {
                   } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRBY.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = new SymbolTypePointer(SymbolType.BYTE);
+                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRSBY.equals(assignment.getOperator())) {
+                     isNopCast = true;
+                     toType = new SymbolTypePointer(SymbolType.SBYTE);
+                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRWO.equals(assignment.getOperator())) {
+                     isNopCast = true;
+                     toType = new SymbolTypePointer(SymbolType.WORD);
+                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRSWO.equals(assignment.getOperator())) {
+                     isNopCast = true;
+                     toType = new SymbolTypePointer(SymbolType.SWORD);
+                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRDWO.equals(assignment.getOperator())) {
+                     isNopCast = true;
+                     toType = new SymbolTypePointer(SymbolType.DWORD);
+                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRSDWO.equals(assignment.getOperator())) {
+                     isNopCast = true;
+                     toType = new SymbolTypePointer(SymbolType.SDWORD);
                   } else if(rValType instanceof SymbolTypePointer  && Operators.CAST_WORD.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.WORD;

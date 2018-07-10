@@ -1,0 +1,50 @@
+// Fill the screen with a specific char
+void screen_fill(byte* screen, byte ch) {
+    for( byte y: 0..24) {
+        for(byte x:0..39) {
+            *screen++ = ch;
+        }
+    }
+}
+
+// Tables for the plotter - initialized by calling bitmap_init();
+const byte[256] bitmap_plot_ylo;
+const byte[256] bitmap_plot_yhi;
+const byte[256] bitmap_plot_bit;
+
+// Initialize bitmap plotting tables
+void bitmap_init(byte* bitmap) {
+    byte bits = $80;
+    for(byte x : 0..255) {
+        bitmap_plot_bit[x] = bits;
+        bits >>= 1;
+        if(bits==0) {
+          bits = $80;
+        }
+    }
+    byte* yoffs = bitmap;
+    for(byte y : 0..255) {
+        bitmap_plot_ylo[y] = y&$7 | <yoffs;
+        bitmap_plot_yhi[y] = >yoffs;
+        if((y&$7)==7) {
+            yoffs = yoffs + 40*8;
+        }
+    }
+}
+
+// Clear all graphics on the bitmap
+void bitmap_clear() {
+    byte* bitmap = (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] };
+    for( byte y: 0..39 ) {
+        for( byte x: 0..199 ) {
+            *bitmap++ = 0;
+        }
+    }
+}
+
+// Plot a single dot in the bitmap
+void bitmap_plot(word x, byte y) {
+    byte* plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
+    plotter += ( x & $fff8 );
+    *plotter |= bitmap_plot_bit[<x];
+}

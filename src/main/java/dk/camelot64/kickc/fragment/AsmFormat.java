@@ -52,6 +52,8 @@ public class AsmFormat {
                (parenthesis ? "(" : "") +
                      getAsmConstantBinary(program, binary.getLeft(), operator, binary.getRight(), codeScope) +
                      (parenthesis ? ")" : "");
+      } else if(value instanceof ConstantPointer) {
+         return getAsmNumber(((ConstantPointer) value).getValue());
       } else if(value instanceof ConstantVarPointer) {
          VariableRef toVar = ((ConstantVarPointer) value).getToVar();
          Variable variable = program.getScope().getVariable(toVar);

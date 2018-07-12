@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.values;
 
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.symbols.Symbol;
 
 /** A reference to a symbol (variable, procedure or label) */
 public class SymbolRef implements Value {
@@ -49,7 +50,8 @@ public class SymbolRef implements Value {
          return fullName;
       } else {
          try {
-            return program.getScope().getSymbol(fullName).toString(program);
+            Symbol symbol = program.getScope().getSymbol(fullName);
+            return symbol.toString(program);
          } catch(NullPointerException e) {
             throw e;
          }

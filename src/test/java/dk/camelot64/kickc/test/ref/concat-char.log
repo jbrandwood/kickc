@@ -37,8 +37,8 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   *((byte*) main::screen + (byte) main::i) ← *((byte[]) main::msg + (byte) main::i)
-  (byte) main::i ← ++ (byte) main::i
-  (bool~) main::$1 ← (byte) main::i != (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte) main::i ← (byte) main::i + rangenext(0,2)
+  (bool~) main::$1 ← (byte) main::i != rangelast(0,2)
   if((bool~) main::$1) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -71,8 +71,8 @@ main::@1: scope:[main]  from main main::@1
   (byte*) main::screen#1 ← phi( main/(byte*) main::screen#0 main::@1/(byte*) main::screen#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   *((byte*) main::screen#1 + (byte) main::i#2) ← *((byte[]) main::msg#0 + (byte) main::i#2)
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (bool~) main::$1 ← (byte) main::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,2)
+  (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,2)
   if((bool~) main::$1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -117,7 +117,7 @@ Self Phi Eliminated (byte*) main::screen#1
 Succesful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte*) main::screen#1 (byte*) main::screen#0
 Succesful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$1 if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto main::@1
+Simple Condition (bool~) main::$1 if((byte) main::i#1!=rangelast(0,2)) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::screen#0 = ((byte*))1024
 Constant (const byte) main::l#0 = 'l'
@@ -128,6 +128,8 @@ Succesful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const string) main::$2
 Eliminating unused constant (const byte) main::l#0
 Succesful SSA optimization PassNEliminateUnusedVars
+Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value if(main::i#1!=rangelast(0,2)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 3
 OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0

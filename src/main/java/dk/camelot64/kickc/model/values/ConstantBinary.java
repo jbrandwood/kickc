@@ -36,6 +36,18 @@ public class ConstantBinary implements ConstantValue {
       return right;
    }
 
+   public void setLeft(ConstantValue left) {
+      this.left = left;
+   }
+
+   public void setOperator(OperatorBinary operator) {
+      this.operator = operator;
+   }
+
+   public void setRight(ConstantValue right) {
+      this.right = right;
+   }
+
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
       return operator.calculateLiteral(left.calculateLiteral(scope), right.calculateLiteral(scope));

@@ -967,8 +967,8 @@ main::@3: scope:[main]  from main::@2
   (byte~) main::$18 ← (byte~) main::$17 | (byte) DTV_BLIT_SRCB_FWD
   (byte~) main::$19 ← (byte~) main::$18 | (byte) DTV_BLIT_DEST_FWD
   *((byte*) DTV_BLITTER_CONTROL) ← (byte~) main::$19
-  (byte) main::r ← ++ (byte) main::r
-  (bool~) main::$20 ← (byte) main::r != (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) main::r ← (byte) main::r + rangenext(0,7)
+  (bool~) main::$20 ← (byte) main::r != rangelast(0,7)
   if((bool~) main::$20) goto main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -1232,8 +1232,8 @@ main::@3: scope:[main]  from main::@2
   (byte~) main::$18 ← (byte~) main::$17 | (byte) DTV_BLIT_SRCB_FWD#0
   (byte~) main::$19 ← (byte~) main::$18 | (byte) DTV_BLIT_DEST_FWD#0
   *((byte*) DTV_BLITTER_CONTROL#0) ← (byte~) main::$19
-  (byte) main::r#1 ← ++ (byte) main::r#2
-  (bool~) main::$20 ← (byte) main::r#1 != (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) main::r#1 ← (byte) main::r#2 + rangenext(0,7)
+  (bool~) main::$20 ← (byte) main::r#1 != rangelast(0,7)
   if((bool~) main::$20) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -1393,7 +1393,7 @@ Succesful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte*) DTV_BLITTER_ALU#1 (byte*) DTV_BLITTER_ALU#0
 Succesful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) main::$16 if((byte~) main::$15!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2
-Simple Condition (bool~) main::$20 if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@1
+Simple Condition (bool~) main::$20 if((byte) main::r#1!=rangelast(0,7)) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) DTV_FEATURE#0 = ((byte*))53311
 Constant (const byte) DTV_FEATURE_ENABLE#0 = 1
@@ -1463,6 +1463,8 @@ Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte) main::$14 = main::$13|DTV_BLIT_DEST_FWD#0
 Constant (const byte) main::$19 = main::$18|DTV_BLIT_DEST_FWD#0
 Succesful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value main::r#1 ← ++ main::r#2 to ++
+Resolved ranged comparison value if(main::r#1!=rangelast(0,7)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 8
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
 Culled Empty Block (label) main::@1

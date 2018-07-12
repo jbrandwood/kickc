@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeInteger;
 import java.util.ArrayList;
 
 /** SSA form constant integer value */
-public class ConstantInteger implements ConstantLiteral<Long> {
+public class ConstantInteger implements ConstantEnumerable<Long> {
 
    private Long number;
 

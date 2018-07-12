@@ -547,8 +547,8 @@ main::@1: scope:[main]  from main main::@1
   (void~) main::$1 ← call print_str (byte[]) txt 
   (void~) main::$2 ← call print_ln 
   *((byte[]) txt + (byte/signed byte/word/signed word/dword/signed dword) 1) ← ++ *((byte[]) txt + (byte/signed byte/word/signed word/dword/signed dword) 1)
-  (byte) main::i ← ++ (byte) main::i
-  (bool~) main::$3 ← (byte) main::i != (byte/signed byte/word/signed word/dword/signed dword) 11
+  (byte) main::i ← (byte) main::i + rangenext(0,10)
+  (bool~) main::$3 ← (byte) main::i != rangelast(0,10)
   if((bool~) main::$3) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -725,8 +725,8 @@ main::@5: scope:[main]  from main::@4
   (byte*) print_line_cursor#6 ← (byte*) print_line_cursor#14
   (byte*) print_char_cursor#9 ← (byte*) print_char_cursor#19
   *((byte[]) txt#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← ++ *((byte[]) txt#0 + (byte/signed byte/word/signed word/dword/signed dword) 1)
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (bool~) main::$3 ← (byte) main::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 11
+  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,10)
+  (bool~) main::$3 ← (byte) main::i#1 != rangelast(0,10)
   if((bool~) main::$3) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@5
@@ -936,7 +936,7 @@ Succesful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) print_str::$0 if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
 Simple Condition (bool~) print_ln::$1 if((byte*) print_line_cursor#1<(byte*) print_char_cursor#12) goto print_ln::@1
 Simple Condition (bool~) print_cls::$1 if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
-Simple Condition (bool~) main::$3 if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1
+Simple Condition (bool~) main::$3 if((byte) main::i#1!=rangelast(0,10)) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_line_cursor#0 = ((byte*))1024
 Constant (const string) txt#0 = $0
@@ -949,6 +949,8 @@ Succesful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(txt#0+1)
 Consolidated array index constant in *(txt#0+1)
 Succesful SSA optimization Pass2ConstantAdditionElimination
+Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value if(main::i#1!=rangelast(0,10)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 11
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) @14

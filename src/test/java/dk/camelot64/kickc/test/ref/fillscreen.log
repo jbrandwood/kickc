@@ -71,8 +71,8 @@ fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
   *((byte*) fillscreen::SCREEN2 + (byte) fillscreen::j) ← (byte) fillscreen::c
   *((byte*) fillscreen::SCREEN3 + (byte) fillscreen::j) ← (byte) fillscreen::c
   *((byte*) fillscreen::SCREEN4 + (byte) fillscreen::j) ← (byte) fillscreen::c
-  (byte) fillscreen::j ← ++ (byte) fillscreen::j
-  (bool~) fillscreen::$3 ← (byte) fillscreen::j != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) fillscreen::j ← (byte) fillscreen::j + rangenext(0,255)
+  (bool~) fillscreen::$3 ← (byte) fillscreen::j != rangelast(0,255)
   if((bool~) fillscreen::$3) goto fillscreen::@1
   to:fillscreen::@2
 fillscreen::@2: scope:[fillscreen]  from fillscreen::@1
@@ -127,8 +127,8 @@ fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
   *((byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#1
   *((byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#1
   *((byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#1
-  (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2
-  (bool~) fillscreen::$3 ← (byte) fillscreen::j#1 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) fillscreen::j#1 ← (byte) fillscreen::j#2 + rangenext(0,255)
+  (bool~) fillscreen::$3 ← (byte) fillscreen::j#1 != rangelast(0,255)
   if((bool~) fillscreen::$3) goto fillscreen::@1
   to:fillscreen::@return
 fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
@@ -206,7 +206,7 @@ Redundant Phi (byte) fillscreen::c#2 (byte) fillscreen::c#0
 Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#4
 Redundant Phi (byte) fillscreen::c#1 (byte) fillscreen::c#2
 Succesful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) fillscreen::$3 if((byte) fillscreen::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto fillscreen::@1
+Simple Condition (bool~) fillscreen::$3 if((byte) fillscreen::j#1!=rangelast(0,255)) goto fillscreen::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) fillscreen::j#0 = 0
@@ -215,6 +215,8 @@ Constant (const byte*) fillscreen::SCREEN2#0 = SCREEN#0+256
 Constant (const byte*) fillscreen::SCREEN3#0 = SCREEN#0+512
 Constant (const byte*) fillscreen::SCREEN4#0 = SCREEN#0+1000
 Succesful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value fillscreen::j#1 ← ++ fillscreen::j#2 to ++
+Resolved ranged comparison value if(fillscreen::j#1!=rangelast(0,255)) goto fillscreen::@1 to (byte/signed byte/word/signed word/dword/signed dword) 0
 Not aliassing across scopes: fillscreen::c#0 main::c#0
 OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) fillscreen::j#0

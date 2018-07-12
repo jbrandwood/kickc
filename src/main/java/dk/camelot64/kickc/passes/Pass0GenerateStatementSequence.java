@@ -2,15 +2,18 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.Registers;
+import dk.camelot64.kickc.model.StatementSequence;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -390,18 +393,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
       KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
       // Create and assign declared loop variable
-      String varName = forDeclCtx.NAME().getText();
-      Variable lValue;
-      if(forDeclCtx.typeDecl() != null) {
-         SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
-         lValue = getCurrentSymbols().addVariable(varName, type);
-         // Add directives
-         addDirectives(type, lValue, forDeclCtx.directive());
-      } else {
-         lValue = getCurrentSymbols().getVariable(varName);
-      }
-
-
+      Variable lValue = getForVariable(forDeclCtx);
       KickCParser.ExprContext initializer = forDeclCtx.expr();
       if(initializer != null) {
          addInitialAssignment(initializer, lValue);
@@ -435,6 +427,43 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
       KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
       // Create declared loop variable
+      Variable lValue = getForVariable(forDeclCtx);
+      KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);
+      KickCParser.ExprContext rangeLastCtx = ctx.expr(1);
+      // Assign loop variable with first value
+      RValue rangeLastValue = (RValue) visit(rangeLastCtx);
+      RValue rangeFirstValue = (RValue) visit(rangeFirstCtx);
+      Statement stmtInit = new StatementAssignment(lValue.getRef(), rangeFirstValue, new StatementSource(ctx));
+      sequence.addStatement(stmtInit);
+      // Add label
+      Label repeatLabel = getCurrentSymbols().addLabelIntermediate();
+      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef(), new StatementSource(ctx));
+      sequence.addStatement(repeatTarget);
+      // Add body
+      if(stmtForCtx.stmt() != null) {
+         this.visit(stmtForCtx.stmt());
+      }
+      // Add increment
+      Statement stmtNxt = new StatementAssignment(lValue.getRef(), lValue.getRef(), Operators.PLUS, new RangeNext(rangeFirstValue, rangeLastValue), new StatementSource(ctx));
+      sequence.addStatement(stmtNxt);
+      // Add condition i!=last+1 or i!=last-1
+      RValue beyondLastVal = new RangeComparison(rangeFirstValue, rangeLastValue, lValue.getType());
+      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
+      VariableRef tmpVarRef = tmpVar.getRef();
+      Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), Operators.NEQ, beyondLastVal, new StatementSource(ctx));
+      sequence.addStatement(stmtTmpVar);
+      // Add jump if condition was met
+      Statement doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef(), new StatementSource(ctx));
+      sequence.addStatement(doJmpStmt);
+      return null;
+   }
+
+   /**
+    * Get the variable of a for-loop.
+    * @param forDeclCtx The variable declaration
+    * @return The variable of the for loop
+    */
+   private Variable getForVariable(KickCParser.ForDeclContext forDeclCtx) {
       String varName = forDeclCtx.NAME().getText();
       Variable lValue;
       if(forDeclCtx.typeDecl() != null) {
@@ -446,55 +475,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          lValue = getCurrentSymbols().getVariable(varName);
       }
       if(lValue == null) {
-         throw new CompileError("Unknown variable! " + varName, new StatementSource(ctx));
+         throw new CompileError("Unknown variable! " + varName, new StatementSource(forDeclCtx));
       }
-      KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);
-      KickCParser.ExprContext rangeLastCtx = ctx.expr(1);
-      // Find the iteration first/last & direction by evaluating first/last as constants
-      ConstantInteger rangeFirst = (ConstantInteger) ParseTreeConstantEvaluator.evaluate(rangeFirstCtx);
-      ConstantInteger rangeLast = (ConstantInteger) ParseTreeConstantEvaluator.evaluate(rangeLastCtx);
-      // Assign loop variable with first value
-      RValue rValue = (RValue) visit(rangeFirstCtx);
-      Statement stmtInit = new StatementAssignment(lValue.getRef(), rValue, new StatementSource(ctx));
-      sequence.addStatement(stmtInit);
-      // Add label
-      Label repeatLabel = getCurrentSymbols().addLabelIntermediate();
-      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef(), new StatementSource(ctx));
-      sequence.addStatement(repeatTarget);
-      // Add body
-      if(stmtForCtx.stmt() != null) {
-         this.visit(stmtForCtx.stmt());
-      }
-      // Add increment
-      ConstantInteger beyondLastVal;
-      if(rangeFirst.getValue() > rangeLast.getValue()) {
-         Statement stmtInc = new StatementAssignment(lValue.getRef(), Operators.DECREMENT, lValue.getRef(), new StatementSource(ctx));
-         sequence.addStatement(stmtInc);
-         if(rangeLast.getValue() == 0) {
-            beyondLastVal = new ConstantInteger(255L);
-         } else {
-            beyondLastVal = new ConstantInteger(rangeLast.getValue() - 1);
-         }
-      } else {
-         Statement stmtInc = new StatementAssignment(lValue.getRef(), Operators.INCREMENT, lValue.getRef(), new StatementSource(ctx));
-         sequence.addStatement(stmtInc);
-         if(rangeLast.getValue() == 255) {
-            beyondLastVal = new ConstantInteger(0L);
-         } else {
-            beyondLastVal = new ConstantInteger(rangeLast.getValue() + 1);
-         }
-      }
-
-      // Add condition i!=last+1 or i!=last-1
-      VariableIntermediate tmpVar = getCurrentSymbols().addVariableIntermediate();
-      VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), Operators.NEQ, beyondLastVal, new StatementSource(ctx));
-      sequence.addStatement(stmtTmpVar);
-      // Add jump if condition was met
-      Statement doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef(), new StatementSource(ctx));
-      sequence.addStatement(doJmpStmt);
-      return null;
+      return lValue;
    }
+
 
    @Override
    public Object visitStmtAsm(KickCParser.StmtAsmContext ctx) {

@@ -121,8 +121,131 @@ public class ValueReplacer {
             subValues.add(new ReplaceableConstantCastValue((ConstantCastValue) value));
          } else if(value instanceof ConstantVarPointer) {
             subValues.add(new ReplaceableVarPointer((ConstantVarPointer) value));
+         } else if(value instanceof RangeValue) {
+            subValues.add(new ReplaceableRangeFirst((RangeValue) value));
+            subValues.add(new ReplaceableRangeLast((RangeValue) value));
+         } else if(value instanceof ConstantBinary) {
+            subValues.add(new ReplaceableConstantBinaryLeft((ConstantBinary) value));
+            subValues.add(new ReplaceableConstantBinaryRight((ConstantBinary) value));
+         } else if(value instanceof ConstantUnary) {
+            subValues.add(new ReplaceableConstantUnaryValue((ConstantUnary) value));
+         } else if(
+               value == null ||
+                     value instanceof VariableRef ||
+                     value instanceof ConstantLiteral ||
+                     value instanceof ConstantRef ||
+                     value instanceof ConstantArrayFilled ||
+                     value instanceof LvalueIntermediate
+               ) {
+            // No sub values
+         } else {
+            throw new RuntimeException("Unhandled value type " + value.getClass());
          }
          return subValues;
+      }
+
+   }
+
+   /** Replaceable value inside a constant unary expression. */
+   public static class ReplaceableConstantUnaryValue extends ReplaceableValue {
+      private final ConstantUnary unary;
+
+      ReplaceableConstantUnaryValue(ConstantUnary unary) {
+         this.unary = unary;
+      }
+
+      @Override
+      public RValue get() {
+         return unary.getOperand();
+      }
+
+      @Override
+      public void set(RValue val) {
+         unary.setOperand((ConstantValue) val);
+      }
+
+   }
+
+   /** Replaceable left value inside a constant binary expression. */
+   public static class ReplaceableConstantBinaryLeft extends ReplaceableValue {
+      private final ConstantBinary binary;
+
+      ReplaceableConstantBinaryLeft(ConstantBinary binary) {
+         this.binary = binary;
+      }
+
+      @Override
+      public RValue get() {
+         return binary.getLeft();
+      }
+
+      @Override
+      public void set(RValue val) {
+         binary.setLeft((ConstantValue) val);
+      }
+
+   }
+
+   /** Replaceable right value inside a constant binary expression. */
+   public static class ReplaceableConstantBinaryRight extends ReplaceableValue {
+      private final ConstantBinary binary;
+
+      ReplaceableConstantBinaryRight(ConstantBinary range) {
+         this.binary = range;
+      }
+
+      @Override
+      public RValue get() {
+         return binary.getRight();
+      }
+
+      @Override
+      public void set(RValue val) {
+         binary.setRight((ConstantValue) val);
+      }
+
+   }
+
+   /**
+    * Replaceable first value inside a ranged comparison value.
+    */
+   public static class ReplaceableRangeFirst extends ReplaceableValue {
+      private final RangeValue range;
+
+      ReplaceableRangeFirst(RangeValue range) {
+         this.range = range;
+      }
+
+      @Override
+      public RValue get() {
+         return range.getRangeFirst();
+      }
+
+      @Override
+      public void set(RValue val) {
+         range.setRangeFirst(val);
+      }
+
+   }
+
+   /**
+    * Replaceable last value inside inside a ranged comparison value.
+    */
+   public static class ReplaceableRangeLast extends ReplaceableValue {
+      private final RangeValue range;
+
+      ReplaceableRangeLast(RangeValue range) {
+         this.range = range;
+      }
+
+      @Override
+      public RValue get() {
+         return range.getRangeLast();
+      }
+
+      @Override
+      public void set(RValue val) {
+         range.setRangeLast(val);
       }
 
    }

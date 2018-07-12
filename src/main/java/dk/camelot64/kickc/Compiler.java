@@ -200,6 +200,8 @@ public class Compiler {
       optimizations.add(new PassNEliminateUnusedVars(program));
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
+      optimizations.add(new Pass2RangeResolving(program));
+
       pass2OptimizeSSA(optimizations);
 
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
@@ -238,7 +240,7 @@ public class Compiler {
 
    private void pass3Analysis() {
 
-      new Pass3AssertNoValueLists(program).check();
+      new Pass3AssertRValues(program).check();
       new Pass3AssertNoMulDivMod(program).check();
       new Pass3BlockSequencePlanner(program).plan();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes

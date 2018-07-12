@@ -47,6 +47,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testForRangeSymbolic() throws IOException, URISyntaxException {
+      compileAndCompare("forrangesymbolic");
+   }
+
+   @Test
    public void testSinePlotter() throws IOException, URISyntaxException {
       compileAndCompare("sine-plotter");
    }

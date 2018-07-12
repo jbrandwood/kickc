@@ -180,6 +180,12 @@ public class SymbolTypeInference {
          return ((CastValue) rValue).getToType();
       } else if(rValue instanceof ConstantCastValue) {
          return ((ConstantCastValue) rValue).getToType();
+      } else if(rValue instanceof ConstantPointer) {
+         return new SymbolTypePointer(((ConstantPointer) rValue).getElementType());
+      } else if(rValue instanceof RangeComparison) {
+         return ((RangeComparison) rValue).getType();
+      } else if(rValue instanceof RangeNext) {
+         return SymbolType.BYTE;
       }
       if(type == null) {
          throw new RuntimeException("Cannot infer type for " + rValue.toString());

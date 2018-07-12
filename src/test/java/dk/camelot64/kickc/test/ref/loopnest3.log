@@ -52,8 +52,8 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (void~) main::$0 ← call b (byte) main::i 
-  (byte) main::i ← ++ (byte) main::i
-  (bool~) main::$1 ← (byte) main::i != (byte/signed byte/word/signed word/dword/signed dword) 101
+  (byte) main::i ← (byte) main::i + rangenext(0,100)
+  (bool~) main::$1 ← (byte) main::i != rangelast(0,100)
   if((bool~) main::$1) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -77,8 +77,8 @@ c: scope:[c]  from
   to:c::@1
 c::@1: scope:[c]  from c c::@1
   *((byte*) SCREEN + (byte) c::j) ← (byte) c::i
-  (byte) c::j ← ++ (byte) c::j
-  (bool~) c::$0 ← (byte) c::j != (byte/signed byte/word/signed word/dword/signed dword) 101
+  (byte) c::j ← (byte) c::j + rangenext(0,100)
+  (bool~) c::$0 ← (byte) c::j != rangelast(0,100)
   if((bool~) c::$0) goto c::@1
   to:c::@2
 c::@2: scope:[c]  from c::@1
@@ -114,8 +114,8 @@ main::@1: scope:[main]  from main main::@3
   to:main::@3
 main::@3: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte) main::i#1 ← ++ (byte) main::i#3
-  (bool~) main::$1 ← (byte) main::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 101
+  (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,100)
+  (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,100)
   if((bool~) main::$1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -142,8 +142,8 @@ c::@1: scope:[c]  from c c::@1
   (byte) c::j#2 ← phi( c/(byte) c::j#0 c::@1/(byte) c::j#1 )
   (byte) c::i#1 ← phi( c/(byte) c::i#2 c::@1/(byte) c::i#1 )
   *((byte*) SCREEN#0 + (byte) c::j#2) ← (byte) c::i#1
-  (byte) c::j#1 ← ++ (byte) c::j#2
-  (bool~) c::$0 ← (byte) c::j#1 != (byte/signed byte/word/signed word/dword/signed dword) 101
+  (byte) c::j#1 ← (byte) c::j#2 + rangenext(0,100)
+  (bool~) c::$0 ← (byte) c::j#1 != rangelast(0,100)
   if((bool~) c::$0) goto c::@1
   to:c::@return
 c::@return: scope:[c]  from c::@1
@@ -213,13 +213,17 @@ Redundant Phi (byte) b::i#1 (byte) b::i#0
 Redundant Phi (byte) c::i#2 (byte) c::i#0
 Redundant Phi (byte) c::i#1 (byte) c::i#2
 Succesful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$1 if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1
-Simple Condition (bool~) c::$0 if((byte) c::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto c::@1
+Simple Condition (bool~) main::$1 if((byte) main::i#1!=rangelast(0,100)) goto main::@1
+Simple Condition (bool~) c::$0 if((byte) c::j#1!=rangelast(0,100)) goto c::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 0
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) c::j#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value if(main::i#1!=rangelast(0,100)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 101
+Resolved ranged next value c::j#1 ← ++ c::j#2 to ++
+Resolved ranged comparison value if(c::j#1!=rangelast(0,100)) goto c::@1 to (byte/signed byte/word/signed word/dword/signed dword) 101
 Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: b::i#0 main::i#2

@@ -901,8 +901,8 @@ main::@13: scope:[main]  from
 main::@7: scope:[main]  from main::@6 main::@7
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  (byte) main::r ← ++ (byte) main::r
-  (bool~) main::$3 ← (byte) main::r != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::r ← (byte) main::r + rangenext(49,255)
+  (bool~) main::$3 ← (byte) main::r != rangelast(49,255)
   if((bool~) main::$3) goto main::@7
   to:main::@14
 main::@14: scope:[main]  from main::@7
@@ -911,8 +911,8 @@ main::@14: scope:[main]  from main::@7
 main::@8: scope:[main]  from main::@14 main::@8
   *((byte*) DTV_PALETTE + (byte) main::c) ← *((byte[16]) main::palette + (byte) main::c)
   *((byte[16]) main::palette + (byte) main::c) ← ++ *((byte[16]) main::palette + (byte) main::c)
-  (byte) main::c ← ++ (byte) main::c
-  (bool~) main::$4 ← (byte) main::c != (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte) main::c ← (byte) main::c + rangenext(0,15)
+  (bool~) main::$4 ← (byte) main::c != rangelast(0,15)
   if((bool~) main::$4) goto main::@8
   to:main::@15
 main::@15: scope:[main]  from main::@8
@@ -1139,8 +1139,8 @@ main::@7: scope:[main]  from main::@6 main::@7
   (byte) main::r#2 ← phi( main::@6/(byte) main::r#0 main::@7/(byte) main::r#1 )
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
-  (byte) main::r#1 ← ++ (byte) main::r#2
-  (bool~) main::$3 ← (byte) main::r#1 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::r#1 ← (byte) main::r#2 + rangenext(49,255)
+  (bool~) main::$3 ← (byte) main::r#1 != rangelast(49,255)
   if((bool~) main::$3) goto main::@7
   to:main::@14
 main::@14: scope:[main]  from main::@7
@@ -1150,8 +1150,8 @@ main::@8: scope:[main]  from main::@14 main::@8
   (byte) main::c#2 ← phi( main::@14/(byte) main::c#0 main::@8/(byte) main::c#1 )
   *((byte*) DTV_PALETTE#0 + (byte) main::c#2) ← *((byte[16]) main::palette#0 + (byte) main::c#2)
   *((byte[16]) main::palette#0 + (byte) main::c#2) ← ++ *((byte[16]) main::palette#0 + (byte) main::c#2)
-  (byte) main::c#1 ← ++ (byte) main::c#2
-  (bool~) main::$4 ← (byte) main::c#1 != (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte) main::c#1 ← (byte) main::c#2 + rangenext(0,15)
+  (bool~) main::$4 ← (byte) main::c#1 != rangelast(0,15)
   if((bool~) main::$4) goto main::@8
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -1220,8 +1220,8 @@ Culled Empty Block (label) main::@5
 Culled Empty Block (label) @6
 Succesful SSA optimization Pass2CullEmptyBlocks
 Simple Condition (bool~) main::$2 if(*((byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@4
-Simple Condition (bool~) main::$3 if((byte) main::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@7
-Simple Condition (bool~) main::$4 if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto main::@8
+Simple Condition (bool~) main::$3 if((byte) main::r#1!=rangelast(49,255)) goto main::@7
+Simple Condition (bool~) main::$4 if((byte) main::c#1!=rangelast(0,15)) goto main::@8
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) RASTER#0 = ((byte*))53266
 Constant (const byte*) BGCOL#0 = ((byte*))53281
@@ -1244,6 +1244,10 @@ if() condition always true - replacing block destination if(true) goto main::@4
 Succesful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Succesful SSA optimization Pass2EliminateUnusedBlocks
+Resolved ranged next value main::r#1 ← ++ main::r#2 to ++
+Resolved ranged comparison value if(main::r#1!=rangelast(49,255)) goto main::@7 to (byte/signed byte/word/signed word/dword/signed dword) 0
+Resolved ranged next value main::c#1 ← ++ main::c#2 to ++
+Resolved ranged comparison value if(main::c#1!=rangelast(0,15)) goto main::@8 to (byte/signed byte/word/signed word/dword/signed dword) 16
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@14

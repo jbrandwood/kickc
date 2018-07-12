@@ -466,8 +466,8 @@ main: scope:[main]  from
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   *((byte*) SCREEN + (byte) main::ch) ← (byte) main::ch
-  (byte) main::ch ← ++ (byte) main::ch
-  (bool~) main::$7 ← (byte) main::ch != (byte/word/signed word/dword/signed dword) 240
+  (byte) main::ch ← (byte) main::ch + rangenext(0,239)
+  (bool~) main::$7 ← (byte) main::ch != rangelast(0,239)
   if((bool~) main::$7) goto main::@1
   to:main::@5
 main::@5: scope:[main]  from main::@1
@@ -683,8 +683,8 @@ main::@1: scope:[main]  from main::@1 main::@11
   (byte*) SCREEN#3 ← phi( main::@1/(byte*) SCREEN#3 main::@11/(byte*) SCREEN#7 )
   (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@11/(byte) main::ch#0 )
   *((byte*) SCREEN#3 + (byte) main::ch#2) ← (byte) main::ch#2
-  (byte) main::ch#1 ← ++ (byte) main::ch#2
-  (bool~) main::$7 ← (byte) main::ch#1 != (byte/word/signed word/dword/signed dword) 240
+  (byte) main::ch#1 ← (byte) main::ch#2 + rangenext(0,239)
+  (bool~) main::$7 ← (byte) main::ch#1 != rangelast(0,239)
   if((bool~) main::$7) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
@@ -911,7 +911,7 @@ Redundant Phi (byte*) SCREEN#4 (byte*) SCREEN#3
 Redundant Phi (byte) fill::val#2 (byte) fill::val#3
 Redundant Phi (byte*) fill::end#1 (byte*) fill::end#0
 Succesful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$7 if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) 240) goto main::@1
+Simple Condition (bool~) main::$7 if((byte) main::ch#1!=rangelast(0,239)) goto main::@1
 Simple Condition (bool~) fill::$1 if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) BORDERCOL#0 = ((byte*))53280
@@ -959,6 +959,8 @@ if() condition always true - replacing block destination if(true) goto main::@3
 Succesful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Succesful SSA optimization Pass2EliminateUnusedBlocks
+Resolved ranged next value main::ch#1 ← ++ main::ch#2 to ++
+Resolved ranged comparison value if(main::ch#1!=rangelast(0,239)) goto main::@1 to (byte/word/signed word/dword/signed dword) 240
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@11

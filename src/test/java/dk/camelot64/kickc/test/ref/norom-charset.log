@@ -138,8 +138,8 @@ gen_char3::@3: scope:[gen_char3]  from gen_char3::@2 gen_char3::@4
   (byte) gen_char3::b ← (byte~) gen_char3::$5
   (word~) gen_char3::$6 ← (word) gen_char3::spec << (byte/signed byte/word/signed word/dword/signed dword) 1
   (word) gen_char3::spec ← (word~) gen_char3::$6
-  (byte) gen_char3::c ← ++ (byte) gen_char3::c
-  (bool~) gen_char3::$7 ← (byte) gen_char3::c != (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte) gen_char3::c ← (byte) gen_char3::c + rangenext(0,2)
+  (bool~) gen_char3::$7 ← (byte) gen_char3::c != rangelast(0,2)
   if((bool~) gen_char3::$7) goto gen_char3::@2
   to:gen_char3::@5
 gen_char3::@4: scope:[gen_char3]  from gen_char3::@2
@@ -148,8 +148,8 @@ gen_char3::@4: scope:[gen_char3]  from gen_char3::@2
   to:gen_char3::@3
 gen_char3::@5: scope:[gen_char3]  from gen_char3::@3
   *((byte*) gen_char3::dst + (byte) gen_char3::r) ← (byte) gen_char3::b
-  (byte) gen_char3::r ← ++ (byte) gen_char3::r
-  (bool~) gen_char3::$8 ← (byte) gen_char3::r != (byte/signed byte/word/signed word/dword/signed dword) 5
+  (byte) gen_char3::r ← (byte) gen_char3::r + rangenext(0,4)
+  (bool~) gen_char3::$8 ← (byte) gen_char3::r != rangelast(0,4)
   if((bool~) gen_char3::$8) goto gen_char3::@1
   to:gen_char3::@6
 gen_char3::@6: scope:[gen_char3]  from gen_char3::@5
@@ -260,8 +260,8 @@ gen_char3::@3: scope:[gen_char3]  from gen_char3::@2 gen_char3::@4
   (byte) gen_char3::b#1 ← (byte~) gen_char3::$5
   (word~) gen_char3::$6 ← (word) gen_char3::spec#3 << (byte/signed byte/word/signed word/dword/signed dword) 1
   (word) gen_char3::spec#1 ← (word~) gen_char3::$6
-  (byte) gen_char3::c#1 ← ++ (byte) gen_char3::c#2
-  (bool~) gen_char3::$7 ← (byte) gen_char3::c#1 != (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte) gen_char3::c#1 ← (byte) gen_char3::c#2 + rangenext(0,2)
+  (bool~) gen_char3::$7 ← (byte) gen_char3::c#1 != rangelast(0,2)
   if((bool~) gen_char3::$7) goto gen_char3::@2
   to:gen_char3::@5
 gen_char3::@4: scope:[gen_char3]  from gen_char3::@2
@@ -279,8 +279,8 @@ gen_char3::@5: scope:[gen_char3]  from gen_char3::@3
   (byte*) gen_char3::dst#1 ← phi( gen_char3::@3/(byte*) gen_char3::dst#2 )
   (byte) gen_char3::b#5 ← phi( gen_char3::@3/(byte) gen_char3::b#1 )
   *((byte*) gen_char3::dst#1 + (byte) gen_char3::r#2) ← (byte) gen_char3::b#5
-  (byte) gen_char3::r#1 ← ++ (byte) gen_char3::r#2
-  (bool~) gen_char3::$8 ← (byte) gen_char3::r#1 != (byte/signed byte/word/signed word/dword/signed dword) 5
+  (byte) gen_char3::r#1 ← (byte) gen_char3::r#2 + rangenext(0,4)
+  (bool~) gen_char3::$8 ← (byte) gen_char3::r#1 != rangelast(0,4)
   if((bool~) gen_char3::$8) goto gen_char3::@1
   to:gen_char3::@return
 gen_char3::@return: scope:[gen_char3]  from gen_char3::@5
@@ -474,8 +474,8 @@ Redundant Phi (byte) gen_char3::r#2 (byte) gen_char3::r#6
 Succesful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) main::$4 if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto main::@1
 Simple Condition (bool~) gen_char3::$3 if((byte~) gen_char3::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto gen_char3::@3
-Simple Condition (bool~) gen_char3::$7 if((byte) gen_char3::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto gen_char3::@2
-Simple Condition (bool~) gen_char3::$8 if((byte) gen_char3::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 5) goto gen_char3::@1
+Simple Condition (bool~) gen_char3::$7 if((byte) gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2
+Simple Condition (bool~) gen_char3::$8 if((byte) gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) VIC_MEMORY#0 = ((byte*))53272
 Constant (const byte*) SCREEN#0 = ((byte*))1024
@@ -497,6 +497,10 @@ Constant (const word/dword) main::$9 = main::$6|main::$8
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte) main::$10 = ((byte))main::$9
 Succesful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value gen_char3::c#1 ← ++ gen_char3::c#2 to ++
+Resolved ranged comparison value if(gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2 to (byte/signed byte/word/signed word/dword/signed dword) 3
+Resolved ranged next value gen_char3::r#1 ← ++ gen_char3::r#6 to ++
+Resolved ranged comparison value if(gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1 to (byte/signed byte/word/signed word/dword/signed dword) 5
 Not aliassing across scopes: gen_char3::dst#0 main::charset#2
 Not aliassing across scopes: gen_char3::spec#4 gen_char3::spec#0
 Not aliassing across scopes: gen_char3::dst#5 gen_char3::dst#0

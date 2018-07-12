@@ -28,6 +28,14 @@ public class ConstantUnary implements ConstantValue {
       return operand;
    }
 
+   public void setOperator(OperatorUnary operator) {
+      this.operator = operator;
+   }
+
+   public void setOperand(ConstantValue operand) {
+      this.operand = operand;
+   }
+
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
       return operator.calculateLiteral(operand.calculateLiteral(scope));

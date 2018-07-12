@@ -57,8 +57,8 @@ main::@2: scope:[main]  from main::@1 main::@2
   *((byte*) main::colors + (byte) main::column) ← (byte) main::color
   (byte/word/dword~) main::$0 ← (byte) main::color ^ (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) main::color ← (byte/word/dword~) main::$0
-  (byte) main::column ← ++ (byte) main::column
-  (bool~) main::$1 ← (byte) main::column != (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) main::column ← (byte) main::column + rangenext(0,7)
+  (bool~) main::$1 ← (byte) main::column != rangelast(0,7)
   if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -68,8 +68,8 @@ main::@3: scope:[main]  from main::@2
   (byte*) main::screen ← (byte*~) main::$3
   (byte*~) main::$4 ← (byte*) main::colors + (byte/signed byte/word/signed word/dword/signed dword) 40
   (byte*) main::colors ← (byte*~) main::$4
-  (byte) main::row ← ++ (byte) main::row
-  (bool~) main::$5 ← (byte) main::row != (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) main::row ← (byte) main::row + rangenext(0,7)
+  (bool~) main::$5 ← (byte) main::row != rangelast(0,7)
   if((bool~) main::$5) goto main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -115,8 +115,8 @@ main::@2: scope:[main]  from main::@1 main::@2
   *((byte*) main::colors#2 + (byte) main::column#2) ← (byte) main::color#3
   (byte/word/dword~) main::$0 ← (byte) main::color#3 ^ (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) main::color#1 ← (byte/word/dword~) main::$0
-  (byte) main::column#1 ← ++ (byte) main::column#2
-  (bool~) main::$1 ← (byte) main::column#1 != (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) main::column#1 ← (byte) main::column#2 + rangenext(0,7)
+  (bool~) main::$1 ← (byte) main::column#1 != rangelast(0,7)
   if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -130,8 +130,8 @@ main::@3: scope:[main]  from main::@2
   (byte*) main::screen#1 ← (byte*~) main::$3
   (byte*~) main::$4 ← (byte*) main::colors#3 + (byte/signed byte/word/signed word/dword/signed dword) 40
   (byte*) main::colors#1 ← (byte*~) main::$4
-  (byte) main::row#1 ← ++ (byte) main::row#2
-  (bool~) main::$5 ← (byte) main::row#1 != (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) main::row#1 ← (byte) main::row#2 + rangenext(0,7)
+  (bool~) main::$5 ← (byte) main::row#1 != rangelast(0,7)
   if((bool~) main::$5) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -209,8 +209,8 @@ Redundant Phi (byte*) main::screen#2 (byte*) main::screen#4
 Redundant Phi (byte*) main::colors#2 (byte*) main::colors#4
 Redundant Phi (byte) main::row#2 (byte) main::row#4
 Succesful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$1 if((byte) main::column#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2
-Simple Condition (bool~) main::$5 if((byte) main::row#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@1
+Simple Condition (bool~) main::$1 if((byte) main::column#1!=rangelast(0,7)) goto main::@2
+Simple Condition (bool~) main::$5 if((byte) main::row#1!=rangelast(0,7)) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::screen#0 = ((byte*))1024
 Constant (const byte*) main::colors#0 = ((byte*))55296
@@ -218,6 +218,10 @@ Constant (const byte) main::color#0 = 1
 Constant (const byte) main::row#0 = 0
 Constant (const byte) main::column#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value main::column#1 ← ++ main::column#2 to ++
+Resolved ranged comparison value if(main::column#1!=rangelast(0,7)) goto main::@2 to (byte/signed byte/word/signed word/dword/signed dword) 8
+Resolved ranged next value main::row#1 ← ++ main::row#4 to ++
+Resolved ranged comparison value if(main::row#1!=rangelast(0,7)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 8
 OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte*) main::screen#0
 Inlining constant with var siblings (const byte*) main::screen#0

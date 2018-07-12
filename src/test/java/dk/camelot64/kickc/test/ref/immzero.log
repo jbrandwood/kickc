@@ -36,8 +36,8 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::i ← (byte) main::j
   (word~) main::$1 ← (word) main::w + (byte) main::j
   (word) main::w ← (word~) main::$1
-  (byte) main::j ← ++ (byte) main::j
-  (bool~) main::$2 ← (byte) main::j != (byte/signed byte/word/signed word/dword/signed dword) 11
+  (byte) main::j ← (byte) main::j + rangenext(0,10)
+  (bool~) main::$2 ← (byte) main::j != rangelast(0,10)
   if((bool~) main::$2) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -70,8 +70,8 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::i#1 ← (byte) main::j#2
   (word~) main::$1 ← (word) main::w#2 + (byte) main::j#2
   (word) main::w#1 ← (word~) main::$1
-  (byte) main::j#1 ← ++ (byte) main::j#2
-  (bool~) main::$2 ← (byte) main::j#1 != (byte/signed byte/word/signed word/dword/signed dword) 11
+  (byte) main::j#1 ← (byte) main::j#2 + rangenext(0,10)
+  (bool~) main::$2 ← (byte) main::j#1 != rangelast(0,10)
   if((bool~) main::$2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -114,7 +114,7 @@ Alias (word) main::w#0 = (byte/signed byte/word/signed word/dword/signed dword~)
 Alias (byte) main::i#1 = (byte) main::j#2 
 Alias (word) main::w#1 = (word~) main::$1 
 Succesful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$2 if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1
+Simple Condition (bool~) main::$2 if((byte) main::j#1!=rangelast(0,10)) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 0
 Constant (const word) main::w#0 = ((word))0
@@ -122,6 +122,8 @@ Constant (const byte) main::j#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte) main::i#0
 Succesful SSA optimization PassNEliminateUnusedVars
+Resolved ranged next value main::j#1 ← ++ main::i#1 to ++
+Resolved ranged comparison value if(main::j#1!=rangelast(0,10)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 11
 OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const word) main::w#0
 Inlining constant with var siblings (const word) main::w#0

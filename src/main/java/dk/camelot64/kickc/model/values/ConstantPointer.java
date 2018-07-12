@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
 /** Constant pointer (meaning it points to a constant location)*/
-public class ConstantPointer implements ConstantLiteral<Long> {
+public class ConstantPointer implements ConstantEnumerable<Long> {
 
    /** The memory location pointed to. */
    private Long location;
@@ -25,6 +25,11 @@ public class ConstantPointer implements ConstantLiteral<Long> {
    }
 
    public Long getLocation() {
+      return location;
+   }
+
+   @Override
+   public Long getInteger() {
       return location;
    }
 

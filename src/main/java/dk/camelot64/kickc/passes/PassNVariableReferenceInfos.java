@@ -82,6 +82,8 @@ public class PassNVariableReferenceInfos extends Pass2Base {
          return new ArrayList<>();
       } else if(rValue instanceof ConstantChar) {
          return new ArrayList<>();
+      } else if(rValue instanceof ConstantPointer) {
+         return new ArrayList<>();
       } else if(rValue instanceof PointerDereferenceSimple) {
          return getReferenced(((PointerDereferenceSimple) rValue).getPointer());
       } else if(rValue instanceof PointerDereferenceIndexed) {
@@ -103,6 +105,11 @@ public class PassNVariableReferenceInfos extends Pass2Base {
          return getReferenced(((ConstantCastValue) rValue).getValue());
       } else if(rValue instanceof ConstantVarPointer) {
          return getReferenced(((ConstantVarPointer) rValue).getToVar());
+      } else if(rValue instanceof RangeValue) {
+         Collection<SymbolRef> used = new LinkedHashSet<>();
+         used.addAll(getReferenced(((RangeValue) rValue).getRangeFirst()));
+         used.addAll(getReferenced(((RangeValue) rValue).getRangeLast()));
+         return used;
       } else {
          throw new RuntimeException("Unhandled RValue type " + rValue);
       }

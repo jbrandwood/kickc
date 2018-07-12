@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
+import dk.camelot64.kickc.model.values.ConstantPointer;
 
 /** Binary minus Operator ( x - y ) */
 public class OperatorMinus extends OperatorBinary {
@@ -20,6 +21,9 @@ public class OperatorMinus extends OperatorBinary {
       if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
          long val = ((ConstantInteger) left).getInteger() - ((ConstantInteger) right).getInteger();
          return new ConstantInteger(val);
+      } else if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
+         long location = ((ConstantPointer) left).getLocation() - ((ConstantInteger) right).getInteger();
+         return new ConstantPointer(location, ((ConstantPointer) left).getElementType());
       }
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }

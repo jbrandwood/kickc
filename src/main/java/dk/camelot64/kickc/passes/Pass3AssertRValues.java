@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ValueReplacer;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.RangeValue;
 import dk.camelot64.kickc.model.values.ValueList;

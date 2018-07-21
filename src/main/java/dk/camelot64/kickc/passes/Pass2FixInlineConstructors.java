@@ -1,6 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.iterator.ReplaceableValue;
+import dk.camelot64.kickc.model.iterator.Replacer;
+import dk.camelot64.kickc.model.iterator.ValueReplacer;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.values.RValue;
@@ -62,7 +65,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
    }
 
 
-   private abstract class InlineConstructor implements ValueReplacer.Replacer {
+   private abstract class InlineConstructor implements Replacer {
       private SymbolTypeInteger constructType;
       private Operator constructOperator;
       private boolean optimized;
@@ -79,7 +82,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
       }
 
       @Override
-      public void execute(ValueReplacer.ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      public void execute(ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
          RValue rValue = replaceable.get();
          if(rValue instanceof ValueList) {
             ValueList list = (ValueList) rValue;

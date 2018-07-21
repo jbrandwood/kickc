@@ -3,6 +3,9 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ReplaceableValue;
+import dk.camelot64.kickc.model.iterator.Replacer;
+import dk.camelot64.kickc.model.iterator.ValueReplacer;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -197,7 +200,7 @@ public class Pass1ProcedureInline extends Pass1Base {
     * Ensures that all VariableRefs pointing to variables in the procedure being inlined are converted to refs to the new inlined variables
     * Also copies all intermediate RValue objects to ensure they are not references to objects from the original statements in the procedure being inlined
     */
-   private class RValueInliner implements ValueReplacer.Replacer {
+   private class RValueInliner implements Replacer {
 
       /** The scope where the precedure is being inlined into. */
       private final Scope callScope;
@@ -213,7 +216,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       }
 
       @Override
-      public void execute(ValueReplacer.ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      public void execute(ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
          RValue rValue = replaceable.get();
          if(rValue instanceof VariableRef) {
             VariableRef procVarRef = (VariableRef) rValue;

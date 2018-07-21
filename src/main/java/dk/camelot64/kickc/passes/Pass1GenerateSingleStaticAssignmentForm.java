@@ -1,7 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.iterator.ReplaceableValue;
+import dk.camelot64.kickc.model.iterator.ValueReplacer;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -47,7 +48,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
                StatementLValue statementLValue = (StatementLValue) statement;
-               LValue lValue = statementLValue.getlValue();
+               dk.camelot64.kickc.model.values.LValue lValue = statementLValue.getlValue();
                if(lValue instanceof VariableRef) {
                   VariableRef lValueRef = (VariableRef) lValue;
                   Variable assignedVar = getScope().getVariable(lValueRef);
@@ -81,7 +82,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * @param blockNewPhis New phi functions introduced in the block to create versions of variables.
     */
    private void execute(
-         ValueReplacer.ReplaceableValue replaceableValue,
+         ReplaceableValue replaceableValue,
          Map<VariableUnversioned, VariableVersion> blockVersions,
          Map<VariableUnversioned, VariableVersion> blockNewPhis) {
       RValue value = replaceableValue.get();
@@ -89,7 +90,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       if(version != null) {
          replaceableValue.set(version.getRef());
       }
-      for(ValueReplacer.ReplaceableValue subValue : replaceableValue.getSubValues()) {
+      for(ReplaceableValue subValue : ValueReplacer.getSubValues(replaceableValue.get())) {
          execute(subValue, blockVersions, blockNewPhis);
       }
    }
@@ -105,17 +106,17 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          Map<VariableUnversioned, VariableVersion> blockNewPhis = new LinkedHashMap<>();
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementReturn) {
-               execute(new ValueReplacer.ReplaceableReturn((StatementReturn) statement), blockVersions, blockNewPhis);
+               execute(new ReplaceableValue.Return((StatementReturn) statement), blockVersions, blockNewPhis);
             } else if(statement instanceof StatementConditionalJump) {
-               execute(new ValueReplacer.ReplaceableCondRValue2((StatementConditionalJump) statement), blockVersions, blockNewPhis);
+               execute(new ReplaceableValue.CondRValue2((StatementConditionalJump) statement), blockVersions, blockNewPhis);
             } else if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               execute(new ValueReplacer.ReplaceableRValue1(assignment), blockVersions, blockNewPhis);
-               execute(new ValueReplacer.ReplaceableRValue2(assignment), blockVersions, blockNewPhis);
-               execute(new ValueReplacer.ReplaceableLValue(assignment), blockVersions, blockNewPhis);
+               execute(new ReplaceableValue.RValue1(assignment), blockVersions, blockNewPhis);
+               execute(new ReplaceableValue.RValue2(assignment), blockVersions, blockNewPhis);
+               execute(new ReplaceableValue.LValue(assignment), blockVersions, blockNewPhis);
 
                // Update map of versions encountered in the block
-               LValue lValue = assignment.getlValue();
+               dk.camelot64.kickc.model.values.LValue lValue = assignment.getlValue();
                if(lValue instanceof VariableRef) {
                   VariableRef lValueRef = (VariableRef) lValue;
                   Variable variable = getScope().getVariable(lValueRef);
@@ -260,7 +261,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       return symbolMap;
    }
 
-   private void addSymbolToMap(Map<LabelRef, Map<VariableUnversioned, VariableVersion>> symbolMap, ControlFlowBlock block, LValue lValue) {
+   private void addSymbolToMap(Map<LabelRef, Map<VariableUnversioned, VariableVersion>> symbolMap, ControlFlowBlock block, dk.camelot64.kickc.model.values.LValue lValue) {
       if(lValue instanceof VariableRef) {
          Variable lValueVar = getScope().getVariable((VariableRef) lValue);
          if(lValueVar instanceof VariableVersion) {

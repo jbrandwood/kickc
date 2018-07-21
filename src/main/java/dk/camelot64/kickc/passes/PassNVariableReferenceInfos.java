@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
@@ -54,16 +55,16 @@ public class PassNVariableReferenceInfos extends Pass2Base {
     * @param rValue The rValue
     * @return All referenced variables / constants
     */
-   private static Collection<SymbolRef> getReferenced(RValue rValue) {
+   private static Collection<SymbolVariableRef> getReferenced(RValue rValue) {
       if(rValue == null) {
          return new ArrayList<>();
       } else if(rValue instanceof ConstantBinary) {
-         Collection<SymbolRef> used = new LinkedHashSet<>();
+         Collection<SymbolVariableRef> used = new LinkedHashSet<>();
          used.addAll(getReferenced(((ConstantBinary) rValue).getLeft()));
          used.addAll(getReferenced(((ConstantBinary) rValue).getRight()));
          return used;
       } else if(rValue instanceof ConstantArrayList) {
-         Collection<SymbolRef> used = new LinkedHashSet<>();
+         Collection<SymbolVariableRef> used = new LinkedHashSet<>();
          for(ConstantValue elem : ((ConstantArrayList) rValue).getElements()) {
             used.addAll(getReferenced(elem));
          }
@@ -75,7 +76,7 @@ public class PassNVariableReferenceInfos extends Pass2Base {
       } else if(rValue instanceof ConstantUnary) {
          return getReferenced(((ConstantUnary) rValue).getOperand());
       } else if(rValue instanceof ConstantRef) {
-         return Arrays.asList((SymbolRef) rValue);
+         return Arrays.asList((SymbolVariableRef) rValue);
       } else if(rValue instanceof ConstantString) {
          return new ArrayList<>();
       } else if(rValue instanceof ConstantInteger) {
@@ -89,14 +90,14 @@ public class PassNVariableReferenceInfos extends Pass2Base {
       } else if(rValue instanceof PointerDereferenceSimple) {
          return getReferenced(((PointerDereferenceSimple) rValue).getPointer());
       } else if(rValue instanceof PointerDereferenceIndexed) {
-         Collection<SymbolRef> used = new LinkedHashSet<>();
+         Collection<SymbolVariableRef> used = new LinkedHashSet<>();
          used.addAll(getReferenced(((PointerDereferenceIndexed) rValue).getPointer()));
          used.addAll(getReferenced(((PointerDereferenceIndexed) rValue).getIndex()));
          return used;
       } else if(rValue instanceof VariableRef) {
-         return Arrays.asList((SymbolRef) rValue);
+         return Arrays.asList((SymbolVariableRef) rValue);
       } else if(rValue instanceof ValueList) {
-         LinkedHashSet<SymbolRef> used = new LinkedHashSet<>();
+         LinkedHashSet<SymbolVariableRef> used = new LinkedHashSet<>();
          for(RValue value : ((ValueList) rValue).getList()) {
             used.addAll(getReferenced(value));
          }
@@ -108,7 +109,7 @@ public class PassNVariableReferenceInfos extends Pass2Base {
       } else if(rValue instanceof ConstantVarPointer) {
          return getReferenced(((ConstantVarPointer) rValue).getToVar());
       } else if(rValue instanceof RangeValue) {
-         Collection<SymbolRef> used = new LinkedHashSet<>();
+         Collection<SymbolVariableRef> used = new LinkedHashSet<>();
          used.addAll(getReferenced(((RangeValue) rValue).getRangeFirst()));
          used.addAll(getReferenced(((RangeValue) rValue).getRangeLast()));
          return used;
@@ -323,8 +324,8 @@ public class PassNVariableReferenceInfos extends Pass2Base {
     * @param statement The statement to examine
     * @return The referenced variables / constants (VariableRef / ConstantRef)
     */
-   private Collection<SymbolRef> getReferenced(Statement statement) {
-      LinkedHashSet<SymbolRef> referenced = new LinkedHashSet<>();
+   private Collection<SymbolVariableRef> getReferenced(Statement statement) {
+      LinkedHashSet<SymbolVariableRef> referenced = new LinkedHashSet<>();
       if(statement instanceof StatementPhiBlock) {
          StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
          for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {

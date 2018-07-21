@@ -5,7 +5,7 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 
 /** A reference to a named Constant (in the symbol table) */
-public class ConstantRef extends SymbolRef implements ConstantValue {
+public class ConstantRef extends SymbolVariableRef implements ConstantValue {
 
    public ConstantRef(ConstantVar constantVar) {
       super(constantVar.getFullName());

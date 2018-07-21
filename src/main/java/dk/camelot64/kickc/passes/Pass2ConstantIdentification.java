@@ -313,7 +313,6 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
     * @return true if the address-of operator is used on the variable
     */
    public static boolean isAddressOfUsed(VariableRef var, Program program) {
-
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {

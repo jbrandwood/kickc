@@ -12,5 +12,8 @@ main: {
     cpx #8
     bne b1
     rts
-    s5: .text "cam"+"e"+"l"+'o'+""+'t'+'!'
+    s: .text "e"+"l"
+    s4: .text ""+'t'+'!'
+    s3: .text "cam"+s+'o'
+    s5: .text s3+s4
 }

@@ -172,6 +172,8 @@ public class SymbolTypeInference {
          }
       } else if(rValue instanceof ConstantArrayList) {
          return new SymbolTypeArray(((ConstantArrayList) rValue).getElementType());
+      } else if(rValue instanceof ArrayFilled) {
+         return new SymbolTypeArray(((ArrayFilled) rValue).getElementType(), ((ArrayFilled) rValue).getSize());
       } else if(rValue instanceof ConstantArrayFilled) {
          return new SymbolTypeArray(((ConstantArrayFilled) rValue).getElementType(), ((ConstantArrayFilled) rValue).getSize());
       } else if(rValue instanceof ConstantVarPointer) {

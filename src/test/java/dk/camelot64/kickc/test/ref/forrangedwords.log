@@ -1,0 +1,696 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/forrangedwords.kc
+
+void main() {
+    byte* SCREEN = $0400;
+    for( word w: 0..$ffff) {
+        SCREEN[0] = <w;
+        SCREEN[1] = >w;
+    }
+    for( signed word sw: -$7fff..$7ffe) {
+        SCREEN[3] = <sw;
+        SCREEN[4] = >sw;
+    }
+}
+SYMBOLS
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(bool~) main::$2
+(signed word/signed dword~) main::$3
+(byte~) main::$4
+(byte~) main::$5
+(bool~) main::$6
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@return
+(byte*) main::SCREEN
+(signed word) main::sw
+(word) main::w
+
+Promoting word/signed word/dword/signed dword to byte* in main::SCREEN ← ((byte*)) 1024
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (byte*) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (word) main::w ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte~) main::$0 ← < (word) main::w
+  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0
+  (byte~) main::$1 ← > (word) main::w
+  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
+  (word) main::w ← (word) main::w + rangenext(0,65535)
+  (bool~) main::$2 ← (word) main::w != rangelast(0,65535)
+  if((bool~) main::$2) goto main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  (signed word/signed dword~) main::$3 ← - (word/signed word/dword/signed dword) 32767
+  (signed word) main::sw ← (signed word/signed dword~) main::$3
+  to:main::@2
+main::@2: scope:[main]  from main::@2 main::@3
+  (byte~) main::$4 ← < (signed word) main::sw
+  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4
+  (byte~) main::$5 ← > (signed word) main::sw
+  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte~) main::$5
+  (signed word) main::sw ← (signed word) main::sw + rangenext(main::$3,32766)
+  (bool~) main::$6 ← (signed word) main::sw != rangelast(main::$3,32766)
+  if((bool~) main::$6) goto main::@2
+  to:main::@4
+main::@4: scope:[main]  from main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+Removing empty block main::@4
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (word) main::w#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte*) main::SCREEN#1 ← phi( main/(byte*) main::SCREEN#0 main::@1/(byte*) main::SCREEN#1 )
+  (word) main::w#2 ← phi( main/(word) main::w#0 main::@1/(word) main::w#1 )
+  (byte~) main::$0 ← < (word) main::w#2
+  *((byte*) main::SCREEN#1 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0
+  (byte~) main::$1 ← > (word) main::w#2
+  *((byte*) main::SCREEN#1 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
+  (word) main::w#1 ← (word) main::w#2 + rangenext(0,65535)
+  (bool~) main::$2 ← (word) main::w#1 != rangelast(0,65535)
+  if((bool~) main::$2) goto main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  (byte*) main::SCREEN#3 ← phi( main::@1/(byte*) main::SCREEN#1 )
+  (signed word/signed dword~) main::$3 ← - (word/signed word/dword/signed dword) 32767
+  (signed word) main::sw#0 ← (signed word/signed dword~) main::$3
+  to:main::@2
+main::@2: scope:[main]  from main::@2 main::@3
+  (byte*) main::SCREEN#2 ← phi( main::@2/(byte*) main::SCREEN#2 main::@3/(byte*) main::SCREEN#3 )
+  (signed word) main::sw#2 ← phi( main::@2/(signed word) main::sw#1 main::@3/(signed word) main::sw#0 )
+  (byte~) main::$4 ← < (signed word) main::sw#2
+  *((byte*) main::SCREEN#2 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4
+  (byte~) main::$5 ← > (signed word) main::sw#2
+  *((byte*) main::SCREEN#2 + (byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte~) main::$5
+  (signed word) main::sw#1 ← (signed word) main::sw#2 + rangenext(main::$3,32766)
+  (bool~) main::$6 ← (signed word) main::sw#1 != rangelast(main::$3,32766)
+  if((bool~) main::$6) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(bool~) main::$2
+(signed word/signed dword~) main::$3
+(byte~) main::$4
+(byte~) main::$5
+(bool~) main::$6
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(byte*) main::SCREEN#1
+(byte*) main::SCREEN#2
+(byte*) main::SCREEN#3
+(signed word) main::sw
+(signed word) main::sw#0
+(signed word) main::sw#1
+(signed word) main::sw#2
+(word) main::w
+(word) main::w#0
+(word) main::w#1
+(word) main::w#2
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+Not aliassing identity: main::SCREEN#2 main::SCREEN#2
+Alias (byte*) main::SCREEN#1 = (byte*) main::SCREEN#3 
+Alias (signed word) main::sw#0 = (signed word/signed dword~) main::$3 
+Succesful SSA optimization Pass2AliasElimination
+Not aliassing identity: main::SCREEN#2 main::SCREEN#2
+Self Phi Eliminated (byte*) main::SCREEN#1
+Self Phi Eliminated (byte*) main::SCREEN#2
+Succesful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte*) main::SCREEN#1 (byte*) main::SCREEN#0
+Redundant Phi (byte*) main::SCREEN#2 (byte*) main::SCREEN#1
+Succesful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) main::$2 if((word) main::w#1!=rangelast(0,65535)) goto main::@1
+Simple Condition (bool~) main::$6 if((signed word) main::sw#1!=rangelast(main::sw#0,32766)) goto main::@2
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) main::SCREEN#0 = ((byte*))1024
+Constant (const word) main::w#0 = 0
+Constant (const signed word) main::sw#0 = -32767
+Succesful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(main::SCREEN#0+0)
+Consolidated array index constant in *(main::SCREEN#0+1)
+Consolidated array index constant in *(main::SCREEN#0+3)
+Consolidated array index constant in *(main::SCREEN#0+4)
+Succesful SSA optimization Pass2ConstantAdditionElimination
+Resolved ranged next value main::w#1 ← ++ main::w#2 to ++
+Resolved ranged comparison value if(main::w#1!=rangelast(0,65535)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 0
+Resolved ranged next value main::sw#1 ← ++ main::sw#2 to ++
+Resolved ranged comparison value if(main::sw#1!=rangelast(main::sw#0,32766)) goto main::@2 to (word/signed word/dword/signed dword) 32767
+Culled Empty Block (label) main::@3
+Succesful SSA optimization Pass2CullEmptyBlocks
+OPTIMIZING CONTROL FLOW GRAPH
+Inlining constant with var siblings (const word) main::w#0
+Inlining constant with var siblings (const word) main::w#0
+Inlining constant with var siblings (const signed word) main::sw#0
+Inlining constant with var siblings (const signed word) main::sw#0
+Constant inlined main::w#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::sw#0 = -(word/signed word/dword/signed dword) 32767
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@return 
+Added new block during phi lifting main::@5(between main::@1 and main::@1)
+Added new block during phi lifting main::@6(between main::@2 and main::@2)
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@return main::@6 main::@5 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+Created 2 initial phi equivalence classes
+Coalesced [20] main::sw#3 ← main::sw#1
+Coalesced [21] main::w#3 ← main::w#1
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@5
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Propagating live ranges...
+Propagating live ranges...
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main  [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [5] (word) main::w#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(word) main::w#1 ) [ main::w#2 ] ( main:2 [ main::w#2 ] )
+  [6] (byte~) main::$0 ← < (word) main::w#2 [ main::w#2 main::$0 ] ( main:2 [ main::w#2 main::$0 ] )
+  [7] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0 [ main::w#2 ] ( main:2 [ main::w#2 ] )
+  [8] (byte~) main::$1 ← > (word) main::w#2 [ main::w#2 main::$1 ] ( main:2 [ main::w#2 main::$1 ] )
+  [9] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 [ main::w#2 ] ( main:2 [ main::w#2 ] )
+  [10] (word) main::w#1 ← ++ (word) main::w#2 [ main::w#1 ] ( main:2 [ main::w#1 ] )
+  [11] if((word) main::w#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 [ main::w#1 ] ( main:2 [ main::w#1 ] )
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  [12] (signed word) main::sw#2 ← phi( main::@2/(signed word) main::sw#1 main::@1/-(word/signed word/dword/signed dword) 32767 ) [ main::sw#2 ] ( main:2 [ main::sw#2 ] )
+  [13] (byte~) main::$4 ← < (signed word) main::sw#2 [ main::sw#2 main::$4 ] ( main:2 [ main::sw#2 main::$4 ] )
+  [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 [ main::sw#2 ] ( main:2 [ main::sw#2 ] )
+  [15] (byte~) main::$5 ← > (signed word) main::sw#2 [ main::sw#2 main::$5 ] ( main:2 [ main::sw#2 main::$5 ] )
+  [16] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte~) main::$5 [ main::sw#2 ] ( main:2 [ main::sw#2 ] )
+  [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 [ main::sw#1 ] ( main:2 [ main::sw#1 ] )
+  [18] if((signed word) main::sw#1!=(word/signed word/dword/signed dword) 32767) goto main::@2 [ main::sw#1 ] ( main:2 [ main::sw#1 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [19] return  [ ] ( main:2 [ ] )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @begin @end 
+main dominated by  @1 @begin main 
+main::@1 dominated by  @1 @begin main::@1 main 
+main::@2 dominated by  @1 @begin main::@1 main::@2 main 
+main::@return dominated by  main::@return @1 @begin main::@1 main::@2 main 
+
+NATURAL LOOPS
+Found back edge: Loop head: main::@1 tails: main::@1 blocks: null
+Found back edge: Loop head: main::@2 tails: main::@2 blocks: null
+Populated: Loop head: main::@1 tails: main::@1 blocks: main::@1 
+Populated: Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Loop head: main::@1 tails: main::@1 blocks: main::@1 
+Loop head: main::@2 tails: main::@2 blocks: main::@2 
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 2 loops in scope [main]
+  Loop head: main::@1 tails: main::@1 blocks: main::@1 
+  Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Loop head: main::@1 tails: main::@1 blocks: main::@1  depth: 1
+Loop head: main::@2 tails: main::@2 blocks: main::@2  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte~) main::$0 22.0
+(byte~) main::$1 22.0
+(byte~) main::$4 22.0
+(byte~) main::$5 22.0
+(byte*) main::SCREEN
+(signed word) main::sw
+(signed word) main::sw#1 16.5
+(signed word) main::sw#2 8.8
+(word) main::w
+(word) main::w#1 16.5
+(word) main::w#2 8.8
+
+Initial phi equivalence classes
+[ main::w#2 main::w#1 ]
+[ main::sw#2 main::sw#1 ]
+Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable main::$1 to zero page equivalence class [ main::$1 ]
+Added variable main::$4 to zero page equivalence class [ main::$4 ]
+Added variable main::$5 to zero page equivalence class [ main::$5 ]
+Complete equivalence classes
+[ main::w#2 main::w#1 ]
+[ main::sw#2 main::sw#1 ]
+[ main::$0 ]
+[ main::$1 ]
+[ main::$4 ]
+[ main::$5 ]
+Allocated zp ZP_WORD:2 [ main::w#2 main::w#1 ]
+Allocated zp ZP_WORD:4 [ main::sw#2 main::sw#1 ]
+Allocated zp ZP_BYTE:6 [ main::$0 ]
+Allocated zp ZP_BYTE:7 [ main::$1 ]
+Allocated zp ZP_BYTE:8 [ main::$4 ]
+Allocated zp ZP_BYTE:9 [ main::$5 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    .label _0 = 6
+    .label _1 = 7
+    .label _4 = 8
+    .label _5 = 9
+    .label w = 2
+    .label sw = 4
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (word) main::w#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
+    lda #<0
+    sta w
+    lda #>0
+    sta w+1
+    jmp b1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG13 [5] phi (word) main::w#2 = (word) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] (byte~) main::$0 ← < (word) main::w#2 [ main::w#2 main::$0 ] ( main:2 [ main::w#2 main::$0 ] ) -- vbuz1=_lo_vwuz2 
+    lda w
+    sta _0
+  //SEG16 [7] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0 [ main::w#2 ] ( main:2 [ main::w#2 ] ) -- _deref_pbuc1=vbuz1 
+    lda _0
+    sta SCREEN+0
+  //SEG17 [8] (byte~) main::$1 ← > (word) main::w#2 [ main::w#2 main::$1 ] ( main:2 [ main::w#2 main::$1 ] ) -- vbuz1=_hi_vwuz2 
+    lda w+1
+    sta _1
+  //SEG18 [9] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 [ main::w#2 ] ( main:2 [ main::w#2 ] ) -- _deref_pbuc1=vbuz1 
+    lda _1
+    sta SCREEN+1
+  //SEG19 [10] (word) main::w#1 ← ++ (word) main::w#2 [ main::w#1 ] ( main:2 [ main::w#1 ] ) -- vwuz1=_inc_vwuz1 
+    inc w
+    bne !+
+    inc w+1
+  !:
+  //SEG20 [11] if((word) main::w#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 [ main::w#1 ] ( main:2 [ main::w#1 ] ) -- vwuz1_neq_0_then_la1 
+    lda w
+    bne b1_from_b1
+    lda w+1
+    bne b1_from_b1
+  //SEG21 [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+  //SEG22 [12] phi (signed word) main::sw#2 = -(word/signed word/dword/signed dword) 32767 [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 
+    lda #<-$7fff
+    sta sw
+    lda #>-$7fff
+    sta sw+1
+    jmp b2
+  //SEG23 [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+  //SEG24 [12] phi (signed word) main::sw#2 = (signed word) main::sw#1 [phi:main::@2->main::@2#0] -- register_copy 
+    jmp b2
+  //SEG25 main::@2
+  b2:
+  //SEG26 [13] (byte~) main::$4 ← < (signed word) main::sw#2 [ main::sw#2 main::$4 ] ( main:2 [ main::sw#2 main::$4 ] ) -- vbuz1=_lo_vwsz2 
+    lda sw
+    sta _4
+  //SEG27 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 [ main::sw#2 ] ( main:2 [ main::sw#2 ] ) -- _deref_pbuc1=vbuz1 
+    lda _4
+    sta SCREEN+3
+  //SEG28 [15] (byte~) main::$5 ← > (signed word) main::sw#2 [ main::sw#2 main::$5 ] ( main:2 [ main::sw#2 main::$5 ] ) -- vbuz1=_hi_vwsz2 
+    lda sw+1
+    sta _5
+  //SEG29 [16] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte~) main::$5 [ main::sw#2 ] ( main:2 [ main::sw#2 ] ) -- _deref_pbuc1=vbuz1 
+    lda _5
+    sta SCREEN+4
+  //SEG30 [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 [ main::sw#1 ] ( main:2 [ main::sw#1 ] ) -- vwsz1=_inc_vwsz1 
+    inc sw
+    bne !+
+    inc sw+1
+  !:
+  //SEG31 [18] if((signed word) main::sw#1!=(word/signed word/dword/signed dword) 32767) goto main::@2 [ main::sw#1 ] ( main:2 [ main::sw#1 ] ) -- vwsz1_neq_vwuc1_then_la1 
+    lda sw+1
+    cmp #>$7fff
+    bne b2_from_b2
+    lda sw
+    cmp #<$7fff
+    bne b2_from_b2
+    jmp breturn
+  //SEG32 main::@return
+  breturn:
+  //SEG33 [19] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [6] (byte~) main::$0 ← < (word) main::w#2 [ main::w#2 main::$0 ] ( main:2 [ main::w#2 main::$0 ] ) always clobbers reg byte a 
+Statement [8] (byte~) main::$1 ← > (word) main::w#2 [ main::w#2 main::$1 ] ( main:2 [ main::w#2 main::$1 ] ) always clobbers reg byte a 
+Statement [11] if((word) main::w#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 [ main::w#1 ] ( main:2 [ main::w#1 ] ) always clobbers reg byte a 
+Statement [13] (byte~) main::$4 ← < (signed word) main::sw#2 [ main::sw#2 main::$4 ] ( main:2 [ main::sw#2 main::$4 ] ) always clobbers reg byte a 
+Statement [15] (byte~) main::$5 ← > (signed word) main::sw#2 [ main::sw#2 main::$5 ] ( main:2 [ main::sw#2 main::$5 ] ) always clobbers reg byte a 
+Statement [18] if((signed word) main::sw#1!=(word/signed word/dword/signed dword) 32767) goto main::@2 [ main::sw#1 ] ( main:2 [ main::sw#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_WORD:2 [ main::w#2 main::w#1 ] : zp ZP_WORD:2 , 
+Potential registers zp ZP_WORD:4 [ main::sw#2 main::sw#1 ] : zp ZP_WORD:4 , 
+Potential registers zp ZP_BYTE:6 [ main::$0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:7 [ main::$1 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:8 [ main::$4 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:9 [ main::$5 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 25.3: zp ZP_WORD:2 [ main::w#2 main::w#1 ] 25.3: zp ZP_WORD:4 [ main::sw#2 main::sw#1 ] 22: zp ZP_BYTE:6 [ main::$0 ] 22: zp ZP_BYTE:7 [ main::$1 ] 22: zp ZP_BYTE:8 [ main::$4 ] 22: zp ZP_BYTE:9 [ main::$5 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 1158 combination zp ZP_WORD:2 [ main::w#2 main::w#1 ] zp ZP_WORD:4 [ main::sw#2 main::sw#1 ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$4 ] reg byte a [ main::$5 ] 
+Limited combination testing to 100 combinations of 256 possible.
+Uplifting [] best 1158 combination 
+Coalescing zero page register [ zp ZP_WORD:2 [ main::w#2 main::w#1 ] ] with [ zp ZP_WORD:4 [ main::sw#2 main::sw#1 ] ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    .label w = 2
+    .label sw = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (word) main::w#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
+    lda #<0
+    sta w
+    lda #>0
+    sta w+1
+    jmp b1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG13 [5] phi (word) main::w#2 = (word) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] (byte~) main::$0 ← < (word) main::w#2 [ main::w#2 main::$0 ] ( main:2 [ main::w#2 main::$0 ] ) -- vbuaa=_lo_vwuz1 
+    lda w
+  //SEG16 [7] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0 [ main::w#2 ] ( main:2 [ main::w#2 ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN+0
+  //SEG17 [8] (byte~) main::$1 ← > (word) main::w#2 [ main::w#2 main::$1 ] ( main:2 [ main::w#2 main::$1 ] ) -- vbuaa=_hi_vwuz1 
+    lda w+1
+  //SEG18 [9] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 [ main::w#2 ] ( main:2 [ main::w#2 ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN+1
+  //SEG19 [10] (word) main::w#1 ← ++ (word) main::w#2 [ main::w#1 ] ( main:2 [ main::w#1 ] ) -- vwuz1=_inc_vwuz1 
+    inc w
+    bne !+
+    inc w+1
+  !:
+  //SEG20 [11] if((word) main::w#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 [ main::w#1 ] ( main:2 [ main::w#1 ] ) -- vwuz1_neq_0_then_la1 
+    lda w
+    bne b1_from_b1
+    lda w+1
+    bne b1_from_b1
+  //SEG21 [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+  //SEG22 [12] phi (signed word) main::sw#2 = -(word/signed word/dword/signed dword) 32767 [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 
+    lda #<-$7fff
+    sta sw
+    lda #>-$7fff
+    sta sw+1
+    jmp b2
+  //SEG23 [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+  //SEG24 [12] phi (signed word) main::sw#2 = (signed word) main::sw#1 [phi:main::@2->main::@2#0] -- register_copy 
+    jmp b2
+  //SEG25 main::@2
+  b2:
+  //SEG26 [13] (byte~) main::$4 ← < (signed word) main::sw#2 [ main::sw#2 main::$4 ] ( main:2 [ main::sw#2 main::$4 ] ) -- vbuaa=_lo_vwsz1 
+    lda sw
+  //SEG27 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 [ main::sw#2 ] ( main:2 [ main::sw#2 ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN+3
+  //SEG28 [15] (byte~) main::$5 ← > (signed word) main::sw#2 [ main::sw#2 main::$5 ] ( main:2 [ main::sw#2 main::$5 ] ) -- vbuaa=_hi_vwsz1 
+    lda sw+1
+  //SEG29 [16] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte~) main::$5 [ main::sw#2 ] ( main:2 [ main::sw#2 ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN+4
+  //SEG30 [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 [ main::sw#1 ] ( main:2 [ main::sw#1 ] ) -- vwsz1=_inc_vwsz1 
+    inc sw
+    bne !+
+    inc sw+1
+  !:
+  //SEG31 [18] if((signed word) main::sw#1!=(word/signed word/dword/signed dword) 32767) goto main::@2 [ main::sw#1 ] ( main:2 [ main::sw#1 ] ) -- vwsz1_neq_vwuc1_then_la1 
+    lda sw+1
+    cmp #>$7fff
+    bne b2_from_b2
+    lda sw
+    cmp #<$7fff
+    bne b2_from_b2
+    jmp breturn
+  //SEG32 main::@return
+  breturn:
+  //SEG33 [19] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #>0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label b1_from_b1 with b1
+Replacing label b1_from_b1 with b1
+Replacing label b2_from_b2 with b2
+Replacing label b2_from_b2 with b2
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b1:
+Removing instruction b2_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b2_from_b1:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jmp b1
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(byte~) main::$0 reg byte a 22.0
+(byte~) main::$1 reg byte a 22.0
+(byte~) main::$4 reg byte a 22.0
+(byte~) main::$5 reg byte a 22.0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(signed word) main::sw
+(signed word) main::sw#1 sw zp ZP_WORD:2 16.5
+(signed word) main::sw#2 sw zp ZP_WORD:2 8.8
+(word) main::w
+(word) main::w#1 w zp ZP_WORD:2 16.5
+(word) main::w#2 w zp ZP_WORD:2 8.8
+
+zp ZP_WORD:2 [ main::w#2 main::w#1 main::sw#2 main::sw#1 ]
+reg byte a [ main::$0 ]
+reg byte a [ main::$1 ]
+reg byte a [ main::$4 ]
+reg byte a [ main::$5 ]
+
+
+FINAL ASSEMBLER
+Score: 982
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    .label w = 2
+    .label sw = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (word) main::w#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
+    lda #<0
+    sta w
+    sta w+1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi (word) main::w#2 = (word) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] (byte~) main::$0 ← < (word) main::w#2 [ main::w#2 main::$0 ] ( main:2 [ main::w#2 main::$0 ] ) -- vbuaa=_lo_vwuz1 
+    lda w
+  //SEG16 [7] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0 [ main::w#2 ] ( main:2 [ main::w#2 ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN+0
+  //SEG17 [8] (byte~) main::$1 ← > (word) main::w#2 [ main::w#2 main::$1 ] ( main:2 [ main::w#2 main::$1 ] ) -- vbuaa=_hi_vwuz1 
+    lda w+1
+  //SEG18 [9] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 [ main::w#2 ] ( main:2 [ main::w#2 ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN+1
+  //SEG19 [10] (word) main::w#1 ← ++ (word) main::w#2 [ main::w#1 ] ( main:2 [ main::w#1 ] ) -- vwuz1=_inc_vwuz1 
+    inc w
+    bne !+
+    inc w+1
+  !:
+  //SEG20 [11] if((word) main::w#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 [ main::w#1 ] ( main:2 [ main::w#1 ] ) -- vwuz1_neq_0_then_la1 
+    lda w
+    bne b1
+    lda w+1
+    bne b1
+  //SEG21 [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG22 [12] phi (signed word) main::sw#2 = -(word/signed word/dword/signed dword) 32767 [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 
+    lda #<-$7fff
+    sta sw
+    lda #>-$7fff
+    sta sw+1
+  //SEG23 [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  //SEG24 [12] phi (signed word) main::sw#2 = (signed word) main::sw#1 [phi:main::@2->main::@2#0] -- register_copy 
+  //SEG25 main::@2
+  b2:
+  //SEG26 [13] (byte~) main::$4 ← < (signed word) main::sw#2 [ main::sw#2 main::$4 ] ( main:2 [ main::sw#2 main::$4 ] ) -- vbuaa=_lo_vwsz1 
+    lda sw
+  //SEG27 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 [ main::sw#2 ] ( main:2 [ main::sw#2 ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN+3
+  //SEG28 [15] (byte~) main::$5 ← > (signed word) main::sw#2 [ main::sw#2 main::$5 ] ( main:2 [ main::sw#2 main::$5 ] ) -- vbuaa=_hi_vwsz1 
+    lda sw+1
+  //SEG29 [16] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte~) main::$5 [ main::sw#2 ] ( main:2 [ main::sw#2 ] ) -- _deref_pbuc1=vbuaa 
+    sta SCREEN+4
+  //SEG30 [17] (signed word) main::sw#1 ← ++ (signed word) main::sw#2 [ main::sw#1 ] ( main:2 [ main::sw#1 ] ) -- vwsz1=_inc_vwsz1 
+    inc sw
+    bne !+
+    inc sw+1
+  !:
+  //SEG31 [18] if((signed word) main::sw#1!=(word/signed word/dword/signed dword) 32767) goto main::@2 [ main::sw#1 ] ( main:2 [ main::sw#1 ] ) -- vwsz1_neq_vwuc1_then_la1 
+    lda sw+1
+    cmp #>$7fff
+    bne b2
+    lda sw
+    cmp #<$7fff
+    bne b2
+  //SEG32 main::@return
+  //SEG33 [19] return  [ ] ( main:2 [ ] )
+    rts
+}
+

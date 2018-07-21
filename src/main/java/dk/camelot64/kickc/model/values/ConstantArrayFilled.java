@@ -10,11 +10,11 @@ import dk.camelot64.kickc.model.types.SymbolTypeArray;
  */
 public class ConstantArrayFilled implements ConstantValue {
 
-   private int size;
+   private ConstantValue size;
 
    private SymbolType elementType;
 
-   public ConstantArrayFilled(SymbolType elementType, int size) {
+   public ConstantArrayFilled(SymbolType elementType, ConstantValue size) {
       this.size = size;
       this.elementType = elementType;
    }
@@ -28,8 +28,12 @@ public class ConstantArrayFilled implements ConstantValue {
       return elementType;
    }
 
-   public int getSize() {
+   public ConstantValue getSize() {
       return size;
+   }
+
+   public void setSize(ConstantValue size) {
+      this.size = size;
    }
 
    @Override
@@ -46,7 +50,7 @@ public class ConstantArrayFilled implements ConstantValue {
    public String toString(Program program) {
       StringBuilder out = new StringBuilder();
       out.append("{ fill( ");
-      out.append(size);
+      out.append(size.toString());
       out.append(", 0) }");
       return out.toString();
    }

@@ -73,7 +73,7 @@ main: {
     str: .text "  @"
     str1: .text " @"
     sintabb: .fill $c0, 0
-    sintabw: .fill $180, 0
+    sintabw: .fill 2*$c0, 0
 }
 print_str: {
     .label str = 2

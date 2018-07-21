@@ -497,8 +497,8 @@ bitmap_init: {
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
-  x_cur: .fill 8, 0
-  y_cur: .fill 8, 0
+  x_cur: .fill 2*4, 0
+  y_cur: .fill 2*4, 0
   x_add: .fill 4, 0
   y_add: .fill 4, 0
   delay: .fill 4, 0

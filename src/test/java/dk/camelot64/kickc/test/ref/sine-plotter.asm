@@ -781,4 +781,4 @@ fill: {
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
   .align $100
-  sin: .fill $400, 0
+  sin: .fill 2*$200, 0

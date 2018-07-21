@@ -1,20 +1,20 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.fragment.AsmFormat;
-
 /** A labelled numeric data directive. */
 public class AsmDataFill implements AsmLine {
 
    private String label;
    private AsmDataNumeric.Type type;
+   private String sizeAsm;
    private int size;
    private String fillValue;
    private int index;
 
 
-   public AsmDataFill(String label, AsmDataNumeric.Type type, int size, String fillValue) {
+   public AsmDataFill(String label, AsmDataNumeric.Type type, String sizeAsm, int size, String fillValue) {
       this.label = label;
       this.type = type;
+      this.sizeAsm = sizeAsm;
       this.size = size;
       this.fillValue = fillValue;
    }
@@ -38,7 +38,7 @@ public class AsmDataFill implements AsmLine {
       StringBuilder asm = new StringBuilder();
       asm.append(label + ": ");
       asm.append(".fill ");
-      asm.append(AsmFormat.getAsmNumber(size * type.bytes));
+      asm.append(sizeAsm);
       asm.append(", ");
       asm.append(fillValue);
       return asm.toString();

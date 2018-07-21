@@ -55,6 +55,8 @@ Adding pre/post-modifier (byte) flip::dstIdx ← -- (byte) flip::dstIdx
 Adding pre/post-modifier (byte) plot::i ← ++ (byte) plot::i
 Adding pre/post-modifier (byte) plot::x ← ++ (byte) plot::x
 SYMBOLS
+(word/signed word/dword/signed dword~) $0
+(word/signed word/dword/signed dword~) $1
 (label) @1
 (label) @2
 (label) @3
@@ -63,8 +65,8 @@ SYMBOLS
 (label) @end
 (byte*) RASTER
 (byte*) SCREEN
-(byte[256]) buffer1
-(byte[256]) buffer2
+(byte[$0]) buffer1
+(byte[$1]) buffer2
 (void()) flip()
 (byte/signed word/word/dword/signed dword~) flip::$0
 (bool~) flip::$1
@@ -126,8 +128,10 @@ Promoting word/dword/signed dword to byte* in RASTER ← ((byte*)) 53266
 Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte[256]) buffer1 ← { fill( 256, 0) }
-  (byte[256]) buffer2 ← { fill( 256, 0) }
+  (word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 16 * (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte[$0]) buffer1 ← { fill( $0, 0) }
+  (word/signed word/dword/signed dword~) $1 ← (byte/signed byte/word/signed word/dword/signed dword) 16 * (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte[$1]) buffer2 ← { fill( $1, 0) }
   (byte*) RASTER ← ((byte*)) (word/dword/signed dword) 53266
   (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@1
@@ -170,7 +174,7 @@ prepare: scope:[prepare]  from
   (byte) prepare::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:prepare::@1
 prepare::@1: scope:[prepare]  from prepare prepare::@1
-  *((byte[256]) buffer1 + (byte) prepare::i) ← (byte) prepare::i
+  *((byte[$0]) buffer1 + (byte) prepare::i) ← (byte) prepare::i
   (byte) prepare::i ← (byte) prepare::i + rangenext(0,255)
   (bool~) prepare::$0 ← (byte) prepare::i != rangelast(0,255)
   if((bool~) prepare::$0) goto prepare::@1
@@ -191,7 +195,7 @@ flip::@1: scope:[flip]  from flip flip::@4
   (byte) flip::c ← (byte/signed byte/word/signed word/dword/signed dword) 16
   to:flip::@2
 flip::@2: scope:[flip]  from flip::@1 flip::@2
-  *((byte[256]) buffer2 + (byte) flip::dstIdx) ← *((byte[256]) buffer1 + (byte) flip::srcIdx)
+  *((byte[$1]) buffer2 + (byte) flip::dstIdx) ← *((byte[$0]) buffer1 + (byte) flip::srcIdx)
   (byte) flip::srcIdx ← ++ (byte) flip::srcIdx
   (byte/signed word/word/dword/signed dword~) flip::$0 ← (byte) flip::dstIdx + (byte/signed byte/word/signed word/dword/signed dword) 16
   (byte) flip::dstIdx ← (byte/signed word/word/dword/signed dword~) flip::$0
@@ -209,7 +213,7 @@ flip::@5: scope:[flip]  from flip::@4
   (byte) flip::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:flip::@3
 flip::@3: scope:[flip]  from flip::@3 flip::@5
-  *((byte[256]) buffer1 + (byte) flip::i) ← *((byte[256]) buffer2 + (byte) flip::i)
+  *((byte[$0]) buffer1 + (byte) flip::i) ← *((byte[$1]) buffer2 + (byte) flip::i)
   (byte) flip::i ← (byte) flip::i + rangenext(0,255)
   (bool~) flip::$3 ← (byte) flip::i != rangelast(0,255)
   if((bool~) flip::$3) goto flip::@3
@@ -233,7 +237,7 @@ plot::@1: scope:[plot]  from plot plot::@3
   (byte) plot::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:plot::@2
 plot::@2: scope:[plot]  from plot::@1 plot::@2
-  *((byte*) plot::line + (byte) plot::x) ← *((byte[256]) buffer1 + (byte) plot::i)
+  *((byte*) plot::line + (byte) plot::x) ← *((byte[$0]) buffer1 + (byte) plot::i)
   (byte) plot::i ← ++ (byte) plot::i
   (byte) plot::x ← ++ (byte) plot::x
   (bool~) plot::$3 ← (byte) plot::x < (byte/signed byte/word/signed word/dword/signed dword) 16
@@ -282,8 +286,10 @@ Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (byte[256]) buffer1#0 ← { fill( 256, 0) }
-  (byte[256]) buffer2#0 ← { fill( 256, 0) }
+  (word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 16 * (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte[$0]) buffer1#0 ← { fill( $0, 0) }
+  (word/signed word/dword/signed dword~) $1 ← (byte/signed byte/word/signed word/dword/signed dword) 16 * (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte[$1]) buffer2#0 ← { fill( $1, 0) }
   (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) 53266
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@4
@@ -351,7 +357,7 @@ prepare: scope:[prepare]  from main
   to:prepare::@1
 prepare::@1: scope:[prepare]  from prepare prepare::@1
   (byte) prepare::i#2 ← phi( prepare/(byte) prepare::i#0 prepare::@1/(byte) prepare::i#1 )
-  *((byte[256]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2
+  *((byte[$0]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2
   (byte) prepare::i#1 ← (byte) prepare::i#2 + rangenext(0,255)
   (bool~) prepare::$0 ← (byte) prepare::i#1 != rangelast(0,255)
   if((bool~) prepare::$0) goto prepare::@1
@@ -375,7 +381,7 @@ flip::@2: scope:[flip]  from flip::@1 flip::@2
   (byte) flip::c#2 ← phi( flip::@1/(byte) flip::c#0 flip::@2/(byte) flip::c#1 )
   (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
   (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  *((byte[256]) buffer2#0 + (byte) flip::dstIdx#3) ← *((byte[256]) buffer1#0 + (byte) flip::srcIdx#2)
+  *((byte[$1]) buffer2#0 + (byte) flip::dstIdx#3) ← *((byte[$0]) buffer1#0 + (byte) flip::srcIdx#2)
   (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
   (byte/signed word/word/dword/signed dword~) flip::$0 ← (byte) flip::dstIdx#3 + (byte/signed byte/word/signed word/dword/signed dword) 16
   (byte) flip::dstIdx#1 ← (byte/signed word/word/dword/signed dword~) flip::$0
@@ -397,7 +403,7 @@ flip::@5: scope:[flip]  from flip::@4
   to:flip::@3
 flip::@3: scope:[flip]  from flip::@3 flip::@5
   (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@5/(byte) flip::i#0 )
-  *((byte[256]) buffer1#0 + (byte) flip::i#2) ← *((byte[256]) buffer2#0 + (byte) flip::i#2)
+  *((byte[$0]) buffer1#0 + (byte) flip::i#2) ← *((byte[$1]) buffer2#0 + (byte) flip::i#2)
   (byte) flip::i#1 ← (byte) flip::i#2 + rangenext(0,255)
   (bool~) flip::$3 ← (byte) flip::i#1 != rangelast(0,255)
   if((bool~) flip::$3) goto flip::@3
@@ -425,7 +431,7 @@ plot::@2: scope:[plot]  from plot::@1 plot::@2
   (byte) plot::x#2 ← phi( plot::@1/(byte) plot::x#0 plot::@2/(byte) plot::x#1 )
   (byte*) plot::line#2 ← phi( plot::@1/(byte*) plot::line#4 plot::@2/(byte*) plot::line#2 )
   (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 )
-  *((byte*) plot::line#2 + (byte) plot::x#2) ← *((byte[256]) buffer1#0 + (byte) plot::i#2)
+  *((byte*) plot::line#2 + (byte) plot::x#2) ← *((byte[$0]) buffer1#0 + (byte) plot::i#2)
   (byte) plot::i#1 ← ++ (byte) plot::i#2
   (byte) plot::x#1 ← ++ (byte) plot::x#2
   (bool~) plot::$3 ← (byte) plot::x#1 < (byte/signed byte/word/signed word/dword/signed dword) 16
@@ -454,6 +460,8 @@ plot::@return: scope:[plot]  from plot::@3
 @end: scope:[]  from @5
 
 SYMBOL TABLE SSA
+(word/signed word/dword/signed dword~) $0
+(word/signed word/dword/signed dword~) $1
 (label) @4
 (label) @5
 (label) @begin
@@ -485,10 +493,10 @@ SYMBOL TABLE SSA
 (byte*) SCREEN#7
 (byte*) SCREEN#8
 (byte*) SCREEN#9
-(byte[256]) buffer1
-(byte[256]) buffer1#0
-(byte[256]) buffer2
-(byte[256]) buffer2#0
+(byte[$0]) buffer1
+(byte[$0]) buffer1#0
+(byte[$1]) buffer2
+(byte[$1]) buffer2#0
 (void()) flip()
 (byte/signed word/word/dword/signed dword~) flip::$0
 (bool~) flip::$1
@@ -646,8 +654,8 @@ Simple Condition (bool~) flip::$3 if((byte) flip::i#1!=rangelast(0,255)) goto fl
 Simple Condition (bool~) plot::$3 if((byte) plot::x#1<(byte/signed byte/word/signed word/dword/signed dword) 16) goto plot::@2
 Simple Condition (bool~) plot::$5 if((byte) plot::y#1!=rangelast(16,1)) goto plot::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[256]) buffer1#0 = { fill( 256, 0) }
-Constant (const byte[256]) buffer2#0 = { fill( 256, 0) }
+Constant (const word/signed word/dword/signed dword) $0 = 16*16
+Constant (const word/signed word/dword/signed dword) $1 = 16*16
 Constant (const byte*) RASTER#0 = ((byte*))53266
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) main::c#0 = 25
@@ -661,6 +669,9 @@ Constant (const byte/word/signed word/dword/signed dword) plot::$0 = 5*40
 Constant (const byte) plot::i#0 = 0
 Constant (const byte) plot::y#0 = 16
 Constant (const byte) plot::x#0 = 0
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte[$0]) buffer1#0 = { fill( $0, 0) }
+Constant (const byte[$1]) buffer2#0 = { fill( $1, 0) }
 Succesful SSA optimization Pass2ConstantIdentification
 Consolidated constant in assignment plot::line#0
 Succesful SSA optimization Pass2ConstantAdditionElimination
@@ -739,6 +750,8 @@ Constant inlined plot::$0 = (byte/signed byte/word/signed word/dword/signed dwor
 Constant inlined plot::$1 = (const byte*) SCREEN#0
 Constant inlined plot::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined plot::y#0 = (byte/signed byte/word/signed word/dword/signed dword) 16
+Constant inlined $0 = (byte/signed byte/word/signed word/dword/signed dword) 16*(byte/signed byte/word/signed word/dword/signed dword) 16
+Constant inlined $1 = (byte/signed byte/word/signed word/dword/signed dword) 16*(byte/signed byte/word/signed word/dword/signed dword) 16
 Constant inlined flip::dstIdx#0 = (byte/signed byte/word/signed word/dword/signed dword) 15
 Constant inlined flip::r#0 = (byte/signed byte/word/signed word/dword/signed dword) 16
 Constant inlined main::c#0 = (byte/signed byte/word/signed word/dword/signed dword) 25
@@ -871,7 +884,7 @@ plot::@1: scope:[plot]  from plot plot::@3
 plot::@2: scope:[plot]  from plot::@1 plot::@2
   [17] (byte) plot::x#2 ← phi( plot::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 plot::@2/(byte) plot::x#1 ) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] )
   [17] (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#3 plot::@2/(byte) plot::i#1 ) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] )
-  [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[256]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] )
+  [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[16*16]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] )
   [19] (byte) plot::i#1 ← ++ (byte) plot::i#2 [ plot::line#4 plot::y#4 plot::i#1 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#1 plot::x#2 ] )
   [20] (byte) plot::x#1 ← ++ (byte) plot::x#2 [ plot::line#4 plot::y#4 plot::i#1 plot::x#1 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#1 plot::x#1 ] )
   [21] if((byte) plot::x#1<(byte/signed byte/word/signed word/dword/signed dword) 16) goto plot::@2 [ plot::line#4 plot::y#4 plot::i#1 plot::x#1 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#1 plot::x#1 ] )
@@ -896,7 +909,7 @@ flip::@2: scope:[flip]  from flip::@1 flip::@2
   [28] (byte) flip::c#2 ← phi( flip::@1/(byte/signed byte/word/signed word/dword/signed dword) 16 flip::@2/(byte) flip::c#1 ) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] )
   [28] (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 ) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] )
   [28] (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 ) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] )
-  [29] *((const byte[256]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[256]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] )
+  [29] *((const byte[16*16]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[16*16]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] )
   [30] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 [ flip::r#4 flip::srcIdx#1 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#1 flip::dstIdx#3 flip::c#2 ] )
   [31] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte/signed byte/word/signed word/dword/signed dword) 16 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] )
   [32] (byte) flip::c#1 ← -- (byte) flip::c#2 [ flip::r#4 flip::srcIdx#1 flip::dstIdx#1 flip::c#1 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#1 flip::dstIdx#1 flip::c#1 ] )
@@ -909,7 +922,7 @@ flip::@4: scope:[flip]  from flip::@2
   to:flip::@3
 flip::@3: scope:[flip]  from flip::@3 flip::@4
   [37] (byte) flip::i#2 ← phi( flip::@3/(byte) flip::i#1 flip::@4/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] )
-  [38] *((const byte[256]) buffer1#0 + (byte) flip::i#2) ← *((const byte[256]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] )
+  [38] *((const byte[16*16]) buffer1#0 + (byte) flip::i#2) ← *((const byte[16*16]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] )
   [39] (byte) flip::i#1 ← ++ (byte) flip::i#2 [ flip::i#1 ] ( main:2::flip:12 [ flip::i#1 ] )
   [40] if((byte) flip::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto flip::@3 [ flip::i#1 ] ( main:2::flip:12 [ flip::i#1 ] )
   to:flip::@return
@@ -921,7 +934,7 @@ prepare: scope:[prepare]  from main
   to:prepare::@1
 prepare::@1: scope:[prepare]  from prepare prepare::@1
   [43] (byte) prepare::i#2 ← phi( prepare/(byte/signed byte/word/signed word/dword/signed dword) 0 prepare::@1/(byte) prepare::i#1 ) [ prepare::i#2 ] ( main:2::prepare:5 [ prepare::i#2 ] )
-  [44] *((const byte[256]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ] ( main:2::prepare:5 [ prepare::i#2 ] )
+  [44] *((const byte[16*16]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ] ( main:2::prepare:5 [ prepare::i#2 ] )
   [45] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 [ prepare::i#1 ] ( main:2::prepare:5 [ prepare::i#1 ] )
   [46] if((byte) prepare::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto prepare::@1 [ prepare::i#1 ] ( main:2::prepare:5 [ prepare::i#1 ] )
   to:prepare::@return
@@ -1017,8 +1030,8 @@ Loop head: prepare::@1 tails: prepare::@1 blocks: prepare::@1  depth: 1
 VARIABLE REGISTER WEIGHTS
 (byte*) RASTER
 (byte*) SCREEN
-(byte[256]) buffer1
-(byte[256]) buffer2
+(byte[$0]) buffer1
+(byte[$1]) buffer2
 (void()) flip()
 (byte) flip::c
 (byte) flip::c#1 1501.5
@@ -1225,7 +1238,7 @@ plot: {
     jmp b2
   //SEG48 plot::@2
   b2:
-  //SEG49 [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[256]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuz3 
+  //SEG49 [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[16*16]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuz3 
     ldy i
     lda buffer1,y
     ldy x
@@ -1303,7 +1316,7 @@ flip: {
     jmp b2
   //SEG77 flip::@2
   b2:
-  //SEG78 [29] *((const byte[256]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[256]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+  //SEG78 [29] *((const byte[16*16]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[16*16]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy srcIdx
     lda buffer1,y
     ldy dstIdx
@@ -1342,7 +1355,7 @@ flip: {
     jmp b3
   //SEG91 flip::@3
   b3:
-  //SEG92 [38] *((const byte[256]) buffer1#0 + (byte) flip::i#2) ← *((const byte[256]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG92 [38] *((const byte[16*16]) buffer1#0 + (byte) flip::i#2) ← *((const byte[16*16]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda buffer2,y
     sta buffer1,y
@@ -1372,7 +1385,7 @@ prepare: {
     jmp b1
   //SEG102 prepare::@1
   b1:
-  //SEG103 [44] *((const byte[256]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ] ( main:2::prepare:5 [ prepare::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+  //SEG103 [44] *((const byte[16*16]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ] ( main:2::prepare:5 [ prepare::i#2 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy i
     tya
     sta buffer1,y
@@ -1387,33 +1400,33 @@ prepare: {
   //SEG107 [47] return  [ ] ( main:2::prepare:5 [ ] )
     rts
 }
-  buffer1: .fill $100, 0
-  buffer2: .fill $100, 0
+  buffer1: .fill $10*$10, 0
+  buffer2: .fill $10*$10, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 254) goto main::@3 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::c#4 main::c#1 ]
 Statement [8] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
-Statement [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[256]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) always clobbers reg byte a 
+Statement [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[16*16]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ plot::y#4 plot::y#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ plot::i#2 plot::i#3 plot::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:7 [ plot::x#2 plot::x#1 ]
 Statement [22] (byte*) plot::line#1 ← (byte*) plot::line#4 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ plot::y#4 plot::i#1 plot::line#1 ] ( main:2::plot:14 [ plot::y#4 plot::i#1 plot::line#1 ] ) always clobbers reg byte a 
-Statement [29] *((const byte[256]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[256]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) always clobbers reg byte a 
+Statement [29] *((const byte[16*16]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[16*16]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ flip::r#4 flip::r#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ flip::srcIdx#2 flip::srcIdx#3 flip::srcIdx#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ flip::dstIdx#3 flip::dstIdx#5 flip::dstIdx#2 flip::dstIdx#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:11 [ flip::c#2 flip::c#1 ]
 Statement [31] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte/signed byte/word/signed word/dword/signed dword) 16 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ) always clobbers reg byte a 
-Statement [38] *((const byte[256]) buffer1#0 + (byte) flip::i#2) ← *((const byte[256]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) always clobbers reg byte a 
+Statement [38] *((const byte[16*16]) buffer1#0 + (byte) flip::i#2) ← *((const byte[16*16]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:12 [ flip::i#2 flip::i#1 ]
 Statement [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 254) goto main::@3 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
 Statement [8] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 [ main::c#4 ] ( main:2 [ main::c#4 ] ) always clobbers reg byte a 
-Statement [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[256]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) always clobbers reg byte a 
+Statement [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[16*16]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) always clobbers reg byte a 
 Statement [22] (byte*) plot::line#1 ← (byte*) plot::line#4 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ plot::y#4 plot::i#1 plot::line#1 ] ( main:2::plot:14 [ plot::y#4 plot::i#1 plot::line#1 ] ) always clobbers reg byte a 
-Statement [29] *((const byte[256]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[256]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) always clobbers reg byte a 
+Statement [29] *((const byte[16*16]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[16*16]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) always clobbers reg byte a 
 Statement [31] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte/signed byte/word/signed word/dword/signed dword) 16 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ) always clobbers reg byte a 
-Statement [38] *((const byte[256]) buffer1#0 + (byte) flip::i#2) ← *((const byte[256]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) always clobbers reg byte a 
+Statement [38] *((const byte[16*16]) buffer1#0 + (byte) flip::i#2) ← *((const byte[16*16]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::c#4 main::c#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:3 [ plot::line#4 plot::line#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ plot::y#4 plot::y#1 ] : zp ZP_BYTE:5 , reg byte x , reg byte y , 
@@ -1572,7 +1585,7 @@ plot: {
     jmp b2
   //SEG48 plot::@2
   b2:
-  //SEG49 [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[256]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
+  //SEG49 [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[16*16]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda buffer1,x
     sta (line),y
   //SEG50 [19] (byte) plot::i#1 ← ++ (byte) plot::i#2 [ plot::line#4 plot::y#4 plot::i#1 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#1 plot::x#2 ] ) -- vbuxx=_inc_vbuxx 
@@ -1642,7 +1655,7 @@ flip: {
     jmp b2
   //SEG77 flip::@2
   b2:
-  //SEG78 [29] *((const byte[256]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[256]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
+  //SEG78 [29] *((const byte[16*16]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[16*16]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
     lda buffer1,y
     sta buffer2,x
   //SEG79 [30] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 [ flip::r#4 flip::srcIdx#1 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#1 flip::dstIdx#3 flip::c#2 ] ) -- vbuyy=_inc_vbuyy 
@@ -1678,7 +1691,7 @@ flip: {
     jmp b3
   //SEG91 flip::@3
   b3:
-  //SEG92 [38] *((const byte[256]) buffer1#0 + (byte) flip::i#2) ← *((const byte[256]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG92 [38] *((const byte[16*16]) buffer1#0 + (byte) flip::i#2) ← *((const byte[16*16]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda buffer2,x
     sta buffer1,x
   //SEG93 [39] (byte) flip::i#1 ← ++ (byte) flip::i#2 [ flip::i#1 ] ( main:2::flip:12 [ flip::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1705,7 +1718,7 @@ prepare: {
     jmp b1
   //SEG102 prepare::@1
   b1:
-  //SEG103 [44] *((const byte[256]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ] ( main:2::prepare:5 [ prepare::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+  //SEG103 [44] *((const byte[16*16]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ] ( main:2::prepare:5 [ prepare::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta buffer1,x
   //SEG104 [45] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 [ prepare::i#1 ] ( main:2::prepare:5 [ prepare::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -1719,8 +1732,8 @@ prepare: {
   //SEG107 [47] return  [ ] ( main:2::prepare:5 [ ] )
     rts
 }
-  buffer1: .fill $100, 0
-  buffer2: .fill $100, 0
+  buffer1: .fill $10*$10, 0
+  buffer2: .fill $10*$10, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b4
@@ -1810,10 +1823,10 @@ FINAL SYMBOL TABLE
 (const byte*) RASTER#0 RASTER = ((byte*))(word/dword/signed dword) 53266
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
-(byte[256]) buffer1
-(const byte[256]) buffer1#0 buffer1 = { fill( 256, 0) }
-(byte[256]) buffer2
-(const byte[256]) buffer2#0 buffer2 = { fill( 256, 0) }
+(byte[$0]) buffer1
+(const byte[16*16]) buffer1#0 buffer1 = { fill( 16*16, 0) }
+(byte[$1]) buffer2
+(const byte[16*16]) buffer2#0 buffer2 = { fill( 16*16, 0) }
 (void()) flip()
 (label) flip::@1
 (label) flip::@2
@@ -1974,7 +1987,7 @@ plot: {
   //SEG47 [17] phi (byte) plot::i#2 = (byte) plot::i#1 [phi:plot::@2->plot::@2#1] -- register_copy 
   //SEG48 plot::@2
   b2:
-  //SEG49 [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[256]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
+  //SEG49 [18] *((byte*) plot::line#4 + (byte) plot::x#2) ← *((const byte[16*16]) buffer1#0 + (byte) plot::i#2) [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#2 plot::x#2 ] ) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda buffer1,x
     sta (line),y
   //SEG50 [19] (byte) plot::i#1 ← ++ (byte) plot::i#2 [ plot::line#4 plot::y#4 plot::i#1 plot::x#2 ] ( main:2::plot:14 [ plot::line#4 plot::y#4 plot::i#1 plot::x#2 ] ) -- vbuxx=_inc_vbuxx 
@@ -2032,7 +2045,7 @@ flip: {
   //SEG76 [28] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#1 [phi:flip::@2->flip::@2#2] -- register_copy 
   //SEG77 flip::@2
   b2:
-  //SEG78 [29] *((const byte[256]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[256]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
+  //SEG78 [29] *((const byte[16*16]) buffer2#0 + (byte) flip::dstIdx#3) ← *((const byte[16*16]) buffer1#0 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
     lda buffer1,y
     sta buffer2,x
   //SEG79 [30] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 [ flip::r#4 flip::srcIdx#1 flip::dstIdx#3 flip::c#2 ] ( main:2::flip:12 [ flip::r#4 flip::srcIdx#1 flip::dstIdx#3 flip::c#2 ] ) -- vbuyy=_inc_vbuyy 
@@ -2062,7 +2075,7 @@ flip: {
   //SEG90 [37] phi (byte) flip::i#2 = (byte) flip::i#1 [phi:flip::@3->flip::@3#0] -- register_copy 
   //SEG91 flip::@3
   b3:
-  //SEG92 [38] *((const byte[256]) buffer1#0 + (byte) flip::i#2) ← *((const byte[256]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG92 [38] *((const byte[16*16]) buffer1#0 + (byte) flip::i#2) ← *((const byte[16*16]) buffer2#0 + (byte) flip::i#2) [ flip::i#2 ] ( main:2::flip:12 [ flip::i#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda buffer2,x
     sta buffer1,x
   //SEG93 [39] (byte) flip::i#1 ← ++ (byte) flip::i#2 [ flip::i#1 ] ( main:2::flip:12 [ flip::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -2083,7 +2096,7 @@ prepare: {
   //SEG101 [43] phi (byte) prepare::i#2 = (byte) prepare::i#1 [phi:prepare::@1->prepare::@1#0] -- register_copy 
   //SEG102 prepare::@1
   b1:
-  //SEG103 [44] *((const byte[256]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ] ( main:2::prepare:5 [ prepare::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+  //SEG103 [44] *((const byte[16*16]) buffer1#0 + (byte) prepare::i#2) ← (byte) prepare::i#2 [ prepare::i#2 ] ( main:2::prepare:5 [ prepare::i#2 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta buffer1,x
   //SEG104 [45] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 [ prepare::i#1 ] ( main:2::prepare:5 [ prepare::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -2095,6 +2108,6 @@ prepare: {
   //SEG107 [47] return  [ ] ( main:2::prepare:5 [ ] )
     rts
 }
-  buffer1: .fill $100, 0
-  buffer2: .fill $100, 0
+  buffer1: .fill $10*$10, 0
+  buffer2: .fill $10*$10, 0
 

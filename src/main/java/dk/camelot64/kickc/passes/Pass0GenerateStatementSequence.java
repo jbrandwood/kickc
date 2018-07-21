@@ -154,7 +154,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          String kickAsmCode = m.group(1).replaceAll("\r", "");
          sequence.addStatement(new StatementKickAsm(kickAsmCode, new StatementSource(ctx)));
       }
-      if(ctx.kasmParams()!=null) {
+      if(ctx.kasmParams() != null) {
          this.visitKasmParams(ctx.kasmParams());
       }
       return null;
@@ -167,7 +167,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          resourceName = resourceName.substring(1, resourceName.length() - 1);
          File resourceFile = Compiler.loadFile(resourceName, program);
          program.addAsmResourceFile(resourceFile.toPath());
-         program.getLog().append("Added resource "+resourceFile.getPath().replace('\\', '/'));
+         program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
       }
       return null;
    }
@@ -189,11 +189,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else if(type instanceof SymbolTypeArray) {
          // Add an zero-array initializer
          SymbolTypeArray typeArray = (SymbolTypeArray) type;
-         Integer size = typeArray.getSize();
-         if(size == null) {
-            throw new CompileError("Error! Cannot determine array size. " + lValue.toString(program), new StatementSource(ctx));
+         RValue size = typeArray.getSize();
+         if(size==null) {
+            throw new CompileError("Error! Array has no declared size. " + lValue.toString(program), new StatementSource(ctx));
          }
-         Statement stmt = new StatementAssignment(lValue.getRef(), new ConstantArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx));
+         Statement stmt = new StatementAssignment(lValue.getRef(), new ArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx));
          sequence.addStatement(stmt);
       }
       return null;
@@ -309,7 +309,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
 
-      if(elseStmt==null) {
+      if(elseStmt == null) {
          // If without else - skip the entire section if condition not met
          VariableRef notExprVar = getCurrentSymbols().addVariableIntermediate().getRef();
          sequence.addStatement(new StatementAssignment(notExprVar, null, Operators.LOGIC_NOT, rValue, new StatementSource(ctx)));
@@ -460,6 +460,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /**
     * Get the variable of a for-loop.
+    *
     * @param forDeclCtx The variable declaration
     * @return The variable of the for loop
     */
@@ -542,12 +543,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public SymbolType visitTypeArray(KickCParser.TypeArrayContext ctx) {
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
       if(ctx.expr() != null) {
-         ConstantValue size = ParseTreeConstantEvaluator.evaluate(ctx.expr());
-         if(size instanceof ConstantInteger) {
-            return new SymbolTypeArray(elementType, ((ConstantInteger) size).getValue().intValue());
-         } else {
-            throw new RuntimeException("Array size not a constant integer " + ctx.getText());
-         }
+         RValue sizeVal = (RValue) visit(ctx.expr());
+         return new SymbolTypeArray(elementType, sizeVal);
       } else {
          return new SymbolTypeArray(elementType);
       }

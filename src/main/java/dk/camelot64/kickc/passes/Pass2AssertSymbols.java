@@ -16,19 +16,19 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      SymbolFinder symbolFinder = new SymbolFinder(getSymbols());
+      SymbolFinder symbolFinder = new SymbolFinder(getScope());
       symbolFinder.visitGraph(getGraph());
       HashSet<Symbol> codeSymbols = symbolFinder.getSymbols();
       // Check that all symbols found in the code is also oin the symbol tabel
       for(Symbol codeSymbol : codeSymbols) {
          if(codeSymbol.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) continue;
-         Symbol tableSymbol = getSymbols().getSymbol(codeSymbol.getFullName());
+         Symbol tableSymbol = getScope().getSymbol(codeSymbol.getFullName());
          if(tableSymbol == null) {
             throw new AssertionFailed("Compile process error. Symbol found in code, but not in symbol table. " + codeSymbol.getFullName());
          }
       }
       // Check that all symbols in the symbol table is also in the code
-      HashSet<Symbol> tableSymbols = getAllSymbols(getSymbols());
+      HashSet<Symbol> tableSymbols = getAllSymbols(getScope());
       for(Symbol tableSymbol : tableSymbols) {
          if(tableSymbol instanceof VariableUnversioned) continue;
          if(tableSymbol instanceof ConstantVar) continue;

@@ -83,8 +83,6 @@ public class Pass2RangeResolving extends Pass2SsaOptimization {
                   replaceable.set(beyondLastVal);
                } else if(rangeValue instanceof RangeNext) {
                   StatementAssignment assignment = (StatementAssignment) currentStmt;
-
-                  ConstantValue nextVal;
                   if(firstInt <= lastInt) {
                      assignment.setrValue2(assignment.getrValue1());
                      assignment.setrValue1(null);

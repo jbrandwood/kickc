@@ -47,6 +47,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testForRangedWords() throws IOException, URISyntaxException {
+      compileAndCompare("forrangedwords");
+   }
+
+   @Test
+   public void testArrayLengthSymbolic() throws IOException, URISyntaxException {
+      compileAndCompare("array-length-symbolic");
+   }
+
+   @Test
    public void testForRangeSymbolic() throws IOException, URISyntaxException {
       compileAndCompare("forrangesymbolic");
    }
@@ -808,7 +818,7 @@ public class TestPrograms {
 
    @Test
    public void testArrayUninitialized() throws IOException, URISyntaxException {
-      assertError("array-uninitialized", "Cannot determine array size.");
+      assertError("array-uninitialized", "Array has no declared size.");
    }
 
    @Test

@@ -31,8 +31,8 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
 
    private void checkAssignment(StatementAssignment statement) {
       LValue lValue = statement.getlValue();
-      SymbolType lValueType = SymbolTypeInference.inferType(getSymbols(), lValue);
-      SymbolType rValueType = SymbolTypeInference.inferTypeRValue(getSymbols(), statement);
+      SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
+      SymbolType rValueType = SymbolTypeInference.inferTypeRValue(getScope(), statement);
       if(SymbolTypeInference.typeMatch(lValueType, rValueType)) {
          return;
       }

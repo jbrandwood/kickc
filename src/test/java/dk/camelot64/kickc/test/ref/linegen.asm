@@ -178,9 +178,9 @@ main: {
     str6: .text "   @"
     str7: .text " @"
     str8: .text " @"
-    lintab1: .fill $28, 0
-    lintab2: .fill $28, 0
-    lintab3: .fill $28, 0
+    lintab1: .fill 2*$14, 0
+    lintab2: .fill 2*$14, 0
+    lintab3: .fill 2*$14, 0
 }
 print_ln: {
   b1:

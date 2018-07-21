@@ -120,7 +120,6 @@ public class Compiler {
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1AddTypePromotions(program).execute();
-      new Pass1AssertArrayLengths(program).execute();
       new Pass1AssertNoRecursion(program).execute();
 
       getLog().append("INITIAL CONTROL FLOW GRAPH");
@@ -241,6 +240,7 @@ public class Compiler {
    private void pass3Analysis() {
 
       new Pass3AssertRValues(program).check();
+      new Pass3AssertArrayLengths(program).check();
       new Pass3AssertNoMulDivMod(program).check();
       new Pass3BlockSequencePlanner(program).plan();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes

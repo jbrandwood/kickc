@@ -57,10 +57,10 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          SymbolType constType = variableType;
 
          if(!valueType.equals(variableType)) {
-            if(SymbolTypeInference.typeMatch(valueType, variableType)) {
-               constType = valueType;
-            } else if(SymbolTypeInference.typeMatch(variableType, valueType)) {
+            if(SymbolTypeInference.typeMatch(variableType, valueType)) {
                constType = variableType;
+            } else if(SymbolTypeInference.typeMatch(valueType, variableType)) {
+               constType = valueType;
             } else {
                throw new CompileError(
                      "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
@@ -222,6 +222,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          ConstantValue castConstant = getConstant(castValue.getValue());
          if(castConstant !=null) {
             return new ConstantCastValue(castValue.getToType(), castConstant);
+         }
+      } else if(rValue instanceof ArrayFilled) {
+         ArrayFilled arrayFilled = (ArrayFilled) rValue;
+         if(arrayFilled.getSize() instanceof ConstantValue) {
+            return new ConstantArrayFilled(arrayFilled.getElementType(), (ConstantValue) arrayFilled.getSize());
          }
       }
       return null;

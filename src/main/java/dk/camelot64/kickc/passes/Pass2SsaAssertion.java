@@ -18,7 +18,7 @@ public abstract class Pass2SsaAssertion {
       return program.getGraph();
    }
 
-   public ProgramScope getSymbols() {
+   public ProgramScope getScope() {
       return program.getScope();
    }
 

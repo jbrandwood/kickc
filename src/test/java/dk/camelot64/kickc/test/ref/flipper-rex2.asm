@@ -98,5 +98,5 @@ prepare: {
     bne b1
     rts
 }
-  buffer1: .fill $100, 0
-  buffer2: .fill $100, 0
+  buffer1: .fill $10*$10, 0
+  buffer2: .fill $10*$10, 0

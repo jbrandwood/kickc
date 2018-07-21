@@ -32,7 +32,7 @@ public class ConstantVarPointer implements ConstantValue {
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      throw new CompileError("Cannot calculate literal var pointer");
+      throw new ConstantNotLiteral("Cannot calculate literal var pointer");
    }
 
    @Override

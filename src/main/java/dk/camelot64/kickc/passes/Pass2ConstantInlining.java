@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -62,13 +63,25 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
    }
 
    /**
-    * Replace any alias within the constant defimtions inside the symbol table
+    * Replace any alias within the constant defintions inside the symbol table
     *
     * @param inline The replacements to make
     */
    private void replaceInSymbolTable(Map<ConstantRef, ConstantValue> inline) {
       Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
       for(ConstantVar constantVar : allConstants) {
+
+         // First check if the type is an array - and replace inside the type if it is
+         SymbolType constantType = constantVar.getType();
+         if(constantType instanceof SymbolTypeArray) {
+            SymbolTypeArray arrayType = (SymbolTypeArray) constantType;
+            RValue arraySize = arrayType.getSize();
+            RValue sizeReplacement = AliasReplacer.getReplacement(arraySize, inline);
+            if(sizeReplacement != null) {
+               arrayType.setSize(sizeReplacement);
+            }
+         }
+
          ConstantValue constantValue = constantVar.getValue();
          RValue replacement = AliasReplacer.getReplacement(constantValue, inline);
          if(replacement != null) {

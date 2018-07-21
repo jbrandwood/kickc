@@ -68,8 +68,10 @@ public class PassNVariableReferenceInfos extends Pass2Base {
             used.addAll(getReferenced(elem));
          }
          return used;
+      } else if(rValue instanceof ArrayFilled) {
+         return getReferenced(((ArrayFilled) rValue).getSize());
       } else if(rValue instanceof ConstantArrayFilled) {
-         return new ArrayList<>();
+         return getReferenced(((ConstantArrayFilled) rValue).getSize());
       } else if(rValue instanceof ConstantUnary) {
          return getReferenced(((ConstantUnary) rValue).getOperand());
       } else if(rValue instanceof ConstantRef) {

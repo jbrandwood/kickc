@@ -172,29 +172,26 @@ Redundant Phi (byte*) main::SCREEN#1 (byte*) main::SCREEN#0
 Succesful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) main::$6 if((byte) main::i#1!=rangelast(0,7)) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const string) main::s#0 = "e"+"l"
+Constant (const byte[]) main::s#0 = "e"+"l"
 Constant (const byte) main::e#0 = '!'
 Constant (const string) main::$3 = ""+'t'
 Constant (const byte*) main::SCREEN#0 = ((byte*))1024
 Constant (const byte) main::i#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
-Constant (const string) main::s2#0 = "e"+"l"+'o'
-Constant (const string) main::s4#0 = ""+'t'+'!'
+Constant (const byte[]) main::s2#0 = main::s#0+'o'
+Constant (const byte[]) main::s4#0 = ""+'t'+'!'
 Succesful SSA optimization Pass2ConstantIdentification
-Constant (const string) main::s3#0 = "cam"+"e"+"l"+'o'
+Constant (const byte[]) main::s3#0 = "cam"+main::s#0+'o'
 Succesful SSA optimization Pass2ConstantIdentification
-Constant (const string) main::s5#0 = "cam"+"e"+"l"+'o'+""+'t'+'!'
+Constant (const byte[]) main::s5#0 = main::s3#0+main::s4#0
 Succesful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const string) main::$7
 Eliminating unused constant (const string) main::$8
 Eliminating unused constant (const string) main::$9
 Eliminating unused constant (const string) main::$10
-Eliminating unused constant (const string) main::s#0
 Eliminating unused constant (const byte) main::e#0
 Eliminating unused constant (const string) main::$3
-Eliminating unused constant (const string) main::s2#0
-Eliminating unused constant (const string) main::s4#0
-Eliminating unused constant (const string) main::s3#0
+Eliminating unused constant (const byte[]) main::s2#0
 Succesful SSA optimization PassNEliminateUnusedVars
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value if(main::i#1!=rangelast(0,7)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 8
@@ -242,7 +239,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) main::i#1 ) [ main::i#2 ] ( main:2 [ main::i#2 ] )
-  [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const string) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] )
+  [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const byte[]) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] )
   [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] )
   [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] )
   to:main::@return
@@ -327,7 +324,7 @@ main: {
     jmp b1
   //SEG14 main::@1
   b1:
-  //SEG15 [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const string) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG15 [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const byte[]) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda s5,y
     sta SCREEN,y
@@ -342,13 +339,16 @@ main: {
   breturn:
   //SEG19 [9] return  [ ] ( main:2 [ ] )
     rts
-    s5: .text "cam"+"e"+"l"+'o'+""+'t'+'!'
+    s: .text "e"+"l"
+    s4: .text ""+'t'+'!'
+    s3: .text "cam"+s+'o'
+    s5: .text s3+s4
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const string) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const byte[]) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const string) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const byte[]) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -394,7 +394,7 @@ main: {
     jmp b1
   //SEG14 main::@1
   b1:
-  //SEG15 [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const string) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG15 [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const byte[]) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda s5,x
     sta SCREEN,x
   //SEG16 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -407,7 +407,10 @@ main: {
   breturn:
   //SEG19 [9] return  [ ] ( main:2 [ ] )
     rts
-    s5: .text "cam"+"e"+"l"+'o'+""+'t'+'!'
+    s: .text "e"+"l"
+    s4: .text ""+'t'+'!'
+    s3: .text "cam"+s+'o'
+    s5: .text s3+s4
 }
 
 ASSEMBLER OPTIMIZATIONS
@@ -445,11 +448,14 @@ FINAL SYMBOL TABLE
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 22.0
 (byte[]) main::s
+(const byte[]) main::s#0 s = (string) "e"+(string) "l"
 (byte[]) main::s2
 (byte[]) main::s3
+(const byte[]) main::s3#0 s3 = (string) "cam"+(const byte[]) main::s#0+(byte) 'o'
 (byte[]) main::s4
+(const byte[]) main::s4#0 s4 = (string) ""+(byte) 't'+(byte) '!'
 (byte[]) main::s5
-(const string) main::s5#0 s5 = (string) "cam"+(string) "e"+(string) "l"+(byte) 'o'+(string) ""+(byte) 't'+(byte) '!'
+(const byte[]) main::s5#0 s5 = (const byte[]) main::s3#0+(const byte[]) main::s4#0
 
 reg byte x [ main::i#2 main::i#1 ]
 
@@ -480,7 +486,7 @@ main: {
   //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
   //SEG14 main::@1
   b1:
-  //SEG15 [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const string) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG15 [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← *((const byte[]) main::s5#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda s5,x
     sta SCREEN,x
   //SEG16 [7] (byte) main::i#1 ← ++ (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuxx=_inc_vbuxx 
@@ -491,6 +497,9 @@ main: {
   //SEG18 main::@return
   //SEG19 [9] return  [ ] ( main:2 [ ] )
     rts
-    s5: .text "cam"+"e"+"l"+'o'+""+'t'+'!'
+    s: .text "e"+"l"
+    s4: .text ""+'t'+'!'
+    s3: .text "cam"+s+'o'
+    s5: .text s3+s4
 }
 

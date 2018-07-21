@@ -51,6 +51,12 @@ public class AliasReplacer implements ValueReplacer.Replacer {
          if(alias != null) {
             return new ConstantCastValue(constantCastValue.getToType(), alias);
          }
+      } else if(rValue instanceof ConstantArrayFilled) {
+         ConstantArrayFilled arrayFilled = (ConstantArrayFilled) rValue;
+         ConstantValue alias = (ConstantValue) getReplacement(arrayFilled.getSize(), aliases);
+         if(alias != null) {
+            return new ConstantArrayFilled(arrayFilled.getElementType(), alias);
+         }
       } else if(rValue instanceof ConstantBinary) {
          ConstantBinary constantBinary = (ConstantBinary) rValue;
          ConstantValue aliasLeft = (ConstantValue) getReplacement(constantBinary.getLeft(), aliases);

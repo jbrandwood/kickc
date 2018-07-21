@@ -129,12 +129,15 @@ public class ValueReplacer {
             subValues.add(new ReplaceableConstantBinaryRight((ConstantBinary) value));
          } else if(value instanceof ConstantUnary) {
             subValues.add(new ReplaceableConstantUnaryValue((ConstantUnary) value));
+         } else if(value instanceof ArrayFilled) {
+            subValues.add(new ReplaceableArrayFilledSize((ArrayFilled) value));
+         } else if(value instanceof ConstantArrayFilled) {
+            subValues.add(new ReplaceableConstantArrayFilledSize((ConstantArrayFilled) value));
          } else if(
                value == null ||
                      value instanceof VariableRef ||
                      value instanceof ConstantLiteral ||
                      value instanceof ConstantRef ||
-                     value instanceof ConstantArrayFilled ||
                      value instanceof LvalueIntermediate
                ) {
             // No sub values
@@ -142,6 +145,46 @@ public class ValueReplacer {
             throw new RuntimeException("Unhandled value type " + value.getClass());
          }
          return subValues;
+      }
+
+   }
+
+   /** Replaceable value inside a array filled expression. */
+   public static class ReplaceableArrayFilledSize extends ReplaceableValue {
+      private final ArrayFilled array;
+
+      ReplaceableArrayFilledSize(ArrayFilled array) {
+         this.array = array;
+      }
+
+      @Override
+      public RValue get() {
+         return array.getSize();
+      }
+
+      @Override
+      public void set(RValue val) {
+         array.setSize(val);
+      }
+
+   }
+
+   /** Replaceable value inside a constant array filled expression. */
+   public static class ReplaceableConstantArrayFilledSize extends ReplaceableValue {
+      private final ConstantArrayFilled array;
+
+      ReplaceableConstantArrayFilledSize(ConstantArrayFilled array) {
+         this.array = array;
+      }
+
+      @Override
+      public RValue get() {
+         return array.getSize();
+      }
+
+      @Override
+      public void set(RValue val) {
+         array.setSize((ConstantValue) val);
       }
 
    }

@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
@@ -116,7 +117,8 @@ public class Pass4CodeGeneration {
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       for(ConstantVar constantVar : scopeConstants) {
-         if(!(constantVar.getValue() instanceof ConstantArrayList || constantVar.getValue() instanceof ConstantArrayFilled || constantVar.getType().equals(SymbolType.STRING))) {
+
+         if(!hasData(constantVar)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
                added.add(asmName);
@@ -140,6 +142,25 @@ public class Pass4CodeGeneration {
             }
          }
       }
+   }
+
+   private boolean hasData(ConstantVar constantVar) {
+      ConstantValue constantValue = constantVar.getValue();
+      if(constantValue instanceof ConstantArrayList) {
+         return true;
+      } else if(constantValue instanceof ConstantArrayFilled) {
+         return true;
+      } else {
+         try {
+            ConstantLiteral literal = constantValue.calculateLiteral(getScope());
+            if(literal instanceof ConstantString) {
+               return true;
+            }
+         } catch(ConstantNotLiteral e) {
+            // can't calculate literal value, so it is not data
+         }
+      }
+      return false;
    }
 
    /**
@@ -247,26 +268,43 @@ public class Pass4CodeGeneration {
          } else if(constantVar.getValue() instanceof ConstantArrayFilled) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantVar.getValue();
+            ConstantValue arraySize = constantArrayFilled.getSize();
+            ConstantLiteral arraySizeConst = arraySize.calculateLiteral(getScope());
+            if(!(arraySizeConst instanceof ConstantInteger)) {
+               throw new Pass2SsaAssertion.AssertionFailed("Error! Array size is not constant integer " + constantVar.toString(program));
+            }
+            Integer size = ((ConstantInteger) arraySizeConst).getInteger().intValue();
             if(SymbolType.isByte(constantArrayFilled.getElementType())) {
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, constantArrayFilled.getSize(), "0");
+               String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
+               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
                added.add(asmName);
             } else if(SymbolType.isSByte(constantArrayFilled.getElementType())) {
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, constantArrayFilled.getSize(), "0");
+               String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
+               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
                added.add(asmName);
             } else if(SymbolType.isWord(constantArrayFilled.getElementType())) {
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, constantArrayFilled.getSize(), "0");
+               String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                added.add(asmName);
             } else if(SymbolType.isSWord(constantArrayFilled.getElementType())) {
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, constantArrayFilled.getSize(), "0");
+               String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                added.add(asmName);
             } else {
                throw new RuntimeException("Unhandled constant array element type " + constantArrayFilled.toString(program));
             }
-         } else if(constantVar.getType().equals(SymbolType.STRING)) {
-            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-            String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
-            asm.addDataString(asmName.replace("#", "_").replace("$", "_"), asmConstant);
-            added.add(asmName);
+         } else {
+            try {
+               ConstantLiteral literal = constantVar.getValue().calculateLiteral(getScope());
+               if(literal instanceof ConstantString) {
+                  String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+                  String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
+                  asm.addDataString(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                  added.add(asmName);
+               }
+            } catch(ConstantNotLiteral e) {
+               // can't calculate literal value, so it is not data - just return
+            }
          }
       }
    }

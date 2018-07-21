@@ -74,8 +74,8 @@ main: {
     rts
     str: .text "   @"
     str1: .text " @"
-    sintab1: .fill $f0, 0
-    sintab2: .fill $f0, 0
+    sintab1: .fill 2*$78, 0
+    sintab2: .fill 2*$78, 0
 }
 print_str: {
     .label str = 6

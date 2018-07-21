@@ -1,16 +1,16 @@
 package dk.camelot64.kickc.model.types;
 
+import dk.camelot64.kickc.model.values.RValue;
+
 /**
  * A fixed size array of another type
  */
 public class SymbolTypeArray extends SymbolTypePointer {
 
-   /**
-    * The fixed size of the array. Can by null, if the type is not known yet. (It will be constant before the compilation is done)
-    */
-   private Integer size;
+   /** The fixed size of the array. Can be null, if the size is not bound. (It will be constant before the compilation is done) */
+   private RValue size;
 
-   public SymbolTypeArray(SymbolType elementType, Integer size) {
+   public SymbolTypeArray(SymbolType elementType, RValue size) {
       super(elementType);
       this.size = size;
    }
@@ -20,11 +20,11 @@ public class SymbolTypeArray extends SymbolTypePointer {
       this.size = null;
    }
 
-   public Integer getSize() {
+   public RValue getSize() {
       return size;
    }
 
-   public void setSize(Integer size) {
+   public void setSize(RValue size) {
       this.size = size;
    }
 
@@ -32,9 +32,9 @@ public class SymbolTypeArray extends SymbolTypePointer {
    public String getTypeName() {
       SymbolType elementType = getElementType();
       if(elementType instanceof SymbolTypeMulti) {
-         return "(" + elementType.getTypeName() + ")" + "[" + (size == null ? "" : size) + "]";
+         return "(" + elementType.getTypeName() + ")" + "[" + (size == null ? "" : size.toString()) + "]";
       } else {
-         return elementType.getTypeName() + "[" + (size == null ? "" : size) + "]";
+         return elementType.getTypeName() + "[" + (size == null ? "" : size.toString()) + "]";
       }
    }
 
@@ -43,9 +43,7 @@ public class SymbolTypeArray extends SymbolTypePointer {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
-
       SymbolTypeArray that = (SymbolTypeArray) o;
-
       return size != null ? size.equals(that.size) : that.size == null;
    }
 
@@ -60,4 +58,5 @@ public class SymbolTypeArray extends SymbolTypePointer {
    public String toString() {
       return getTypeName();
    }
+
 }

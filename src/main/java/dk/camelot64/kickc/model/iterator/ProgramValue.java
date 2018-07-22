@@ -6,16 +6,20 @@ import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
 
 /**
- * Interface representing an RValue that can be replaced.
- * The value may have sub-values that can also be replaced.
+ * An RValue in the program being iterated by {@link ProgramValueIterator}.
+ *
+ * The RValue can be inspected using get() and replaced inside the model using set(val).
+ *
+ * The context of the RValue can be determined from the sub-class containing it plus the parameters to the ProgramValueHandler.
+ *
  */
-public abstract class ReplaceableValue {
+public abstract class ProgramValue {
 
    public abstract RValue get();
 
    public abstract void set(RValue value);
 
-   public static class ConstantVariableValue extends ReplaceableValue {
+   public static class ConstantVariableValue extends ProgramValue {
       private final ConstantVar constantVar;
 
       public ConstantVariableValue(ConstantVar constantVar) {
@@ -34,8 +38,8 @@ public abstract class ReplaceableValue {
 
    }
 
-   /** Replaceable size inside a fixed size array. */
-   public static class TypeArraySize extends ReplaceableValue {
+   /** Size inside a fixed size array. */
+   public static class TypeArraySize extends ProgramValue {
       private final SymbolTypeArray array;
 
       public TypeArraySize(SymbolTypeArray array) {
@@ -54,8 +58,8 @@ public abstract class ReplaceableValue {
 
    }
 
-   /** Replaceable value inside a array filled expression. */
-   public static class ArrayFilledSize extends ReplaceableValue {
+   /** Value inside a array filled expression. */
+   public static class ArrayFilledSize extends ProgramValue {
       private final ArrayFilled array;
 
       ArrayFilledSize(ArrayFilled array) {
@@ -74,8 +78,8 @@ public abstract class ReplaceableValue {
 
    }
 
-   /** Replaceable value inside a constant array filled expression. */
-   public static class ConstantArrayFilledSize extends ReplaceableValue {
+   /** Value inside a constant array filled expression. */
+   public static class ConstantArrayFilledSize extends ProgramValue {
       private final ConstantArrayFilled array;
 
       ConstantArrayFilledSize(ConstantArrayFilled array) {
@@ -94,8 +98,8 @@ public abstract class ReplaceableValue {
 
    }
 
-   /** Replaceable value inside a constant unary expression. */
-   public static class ConstantUnaryValue extends ReplaceableValue {
+   /** Value inside a constant unary expression. */
+   public static class ConstantUnaryValue extends ProgramValue {
       private final ConstantUnary unary;
 
       ConstantUnaryValue(ConstantUnary unary) {
@@ -114,8 +118,8 @@ public abstract class ReplaceableValue {
 
    }
 
-   /** Replaceable left value inside a constant binary expression. */
-   public static class ConstantBinaryLeft extends ReplaceableValue {
+   /** Left value inside a constant binary expression. */
+   public static class ConstantBinaryLeft extends ProgramValue {
       private final ConstantBinary binary;
 
       ConstantBinaryLeft(ConstantBinary binary) {
@@ -134,8 +138,8 @@ public abstract class ReplaceableValue {
 
    }
 
-   /** Replaceable right value inside a constant binary expression. */
-   public static class ConstantBinaryRight extends ReplaceableValue {
+   /** Right value inside a constant binary expression. */
+   public static class ConstantBinaryRight extends ProgramValue {
       private final ConstantBinary binary;
 
       ConstantBinaryRight(ConstantBinary range) {
@@ -155,9 +159,9 @@ public abstract class ReplaceableValue {
    }
 
    /**
-    * Replaceable first value inside a ranged comparison value.
+    * First value inside a ranged comparison value.
     */
-   public static class RangeFirst extends ReplaceableValue {
+   public static class RangeFirst extends ProgramValue {
       private final RangeValue range;
 
       RangeFirst(RangeValue range) {
@@ -177,9 +181,9 @@ public abstract class ReplaceableValue {
    }
 
    /**
-    * Replaceable last value inside inside a ranged comparison value.
+    * Last value inside inside a ranged comparison value.
     */
-   public static class RangeLast extends ReplaceableValue {
+   public static class RangeLast extends ProgramValue {
       private final RangeValue range;
 
       RangeLast(RangeValue range) {
@@ -199,9 +203,9 @@ public abstract class ReplaceableValue {
    }
 
    /**
-    * Replaceable LValue as part of an assignment statement (or a call).
+    * LValue as part of an assignment statement (or a call).
     */
-   public static class LValue extends ReplaceableValue {
+   public static class LValue extends ProgramValue {
       private final StatementLValue statement;
 
       public LValue(StatementLValue statement) {
@@ -221,9 +225,9 @@ public abstract class ReplaceableValue {
    }
 
    /**
-    * Replaceable pointer inside a pointer dererence value.
+    * Pointer inside a pointer dererence value.
     */
-   public static class Pointer extends ReplaceableValue {
+   public static class Pointer extends ProgramValue {
       private final PointerDereference pointer;
 
       Pointer(PointerDereference pointer) {
@@ -243,9 +247,9 @@ public abstract class ReplaceableValue {
    }
 
    /**
-    * Replaceable value inside a noop cast.
+    * Value inside a noop cast.
     */
-   public static class CastValue extends ReplaceableValue {
+   public static class CastValue extends ProgramValue {
       private final dk.camelot64.kickc.model.values.CastValue castValue;
 
 
@@ -266,9 +270,9 @@ public abstract class ReplaceableValue {
    }
 
    /**
-    * Replaceable value inside a constant noop cast.
+    * Value inside a constant noop cast.
     */
-   public static class ConstantCastValue extends ReplaceableValue {
+   public static class ConstantCastValue extends ProgramValue {
       private final dk.camelot64.kickc.model.values.ConstantCastValue castValue;
 
 
@@ -289,9 +293,9 @@ public abstract class ReplaceableValue {
    }
 
    /**
-    * Replaceable pointer inside a variable pointer.
+    * Pointer inside a variable pointer.
     */
-   public static class VarPointer extends ReplaceableValue {
+   public static class VarPointer extends ProgramValue {
       private final ConstantVarPointer varPointer;
 
 
@@ -311,7 +315,7 @@ public abstract class ReplaceableValue {
 
    }
 
-   public static class ConstantArrayElement extends ReplaceableValue {
+   public static class ConstantArrayElement extends ProgramValue {
       private final ConstantArrayList arrayList;
       private final int idx;
 
@@ -331,7 +335,7 @@ public abstract class ReplaceableValue {
       }
    }
 
-   public static class ListElement extends ReplaceableValue {
+   public static class ListElement extends ProgramValue {
       private ValueList list;
       private int idx;
 
@@ -353,9 +357,9 @@ public abstract class ReplaceableValue {
    }
 
    /**
-    * Replaceable pointer index inside a indexed pointer dererence value.
+    * Pointer index inside a indexed pointer dererence value.
     */
-   public static class PointerIndex extends ReplaceableValue {
+   public static class PointerIndex extends ProgramValue {
       private final PointerDereferenceIndexed pointer;
 
       PointerIndex(PointerDereferenceIndexed pointer) {
@@ -374,7 +378,7 @@ public abstract class ReplaceableValue {
 
    }
 
-   public static class RValue1 extends ReplaceableValue {
+   public static class RValue1 extends ProgramValue {
       private final StatementAssignment statement;
 
       public RValue1(StatementAssignment statement) {
@@ -392,7 +396,7 @@ public abstract class ReplaceableValue {
       }
    }
 
-   public static class RValue2 extends ReplaceableValue {
+   public static class RValue2 extends ProgramValue {
       private final StatementAssignment statement;
 
       public RValue2(StatementAssignment statement) {
@@ -410,7 +414,7 @@ public abstract class ReplaceableValue {
       }
    }
 
-   public static class CallParameter extends ReplaceableValue {
+   public static class CallParameter extends ProgramValue {
       private final StatementCall call;
       private final int i;
 
@@ -430,7 +434,7 @@ public abstract class ReplaceableValue {
       }
    }
 
-   public static class CondRValue1 extends ReplaceableValue {
+   public static class CondRValue1 extends ProgramValue {
       private final StatementConditionalJump statement;
 
       public CondRValue1(StatementConditionalJump statement) {
@@ -448,7 +452,7 @@ public abstract class ReplaceableValue {
       }
    }
 
-   public static class CondRValue2 extends ReplaceableValue {
+   public static class CondRValue2 extends ProgramValue {
       private final StatementConditionalJump statement;
 
       public CondRValue2(StatementConditionalJump statement) {
@@ -466,7 +470,7 @@ public abstract class ReplaceableValue {
       }
    }
 
-   public static class Return extends ReplaceableValue {
+   public static class Return extends ProgramValue {
       private final StatementReturn statement;
 
       public Return(StatementReturn statement) {
@@ -484,7 +488,7 @@ public abstract class ReplaceableValue {
       }
    }
 
-   public static class PhiValue extends ReplaceableValue {
+   public static class PhiValue extends ProgramValue {
       private final StatementPhiBlock.PhiVariable phiVariable;
       private final int i;
 
@@ -505,9 +509,9 @@ public abstract class ReplaceableValue {
    }
 
    /**
-    * Replaceable LValue as part of an assignment statement (or a call).
+    * LValue as part of an assignment statement (or a call).
     */
-   public static class PhiVariable extends ReplaceableValue {
+   public static class PhiVariable extends ProgramValue {
       private final StatementPhiBlock.PhiVariable phiVariable;
 
       public PhiVariable(StatementPhiBlock.PhiVariable phiVariable) {
@@ -526,8 +530,8 @@ public abstract class ReplaceableValue {
 
    }
 
-   /** A generic replaceable value. */
-   public static class GenericValue extends ReplaceableValue {
+   /** A generic Value. */
+   public static class GenericValue extends ProgramValue {
       private ConstantValue constantValue;
 
       public GenericValue(ConstantValue constantValue) {

@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.iterator.ReplaceableValue;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.values.*;
@@ -46,13 +46,13 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                if(assignment.getlValue() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ReplaceableValue.LValue(assignment));
+                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.LValue(assignment));
                }
                if(assignment.getrValue1() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ReplaceableValue.RValue1(assignment));
+                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.RValue1(assignment));
                }
                if(assignment.getrValue2() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ReplaceableValue.RValue2(assignment));
+                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.RValue2(assignment));
                }
 
                Operator operator = assignment.getOperator();
@@ -69,10 +69,10 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             } else if(statement instanceof StatementConditionalJump) {
                StatementConditionalJump jump = (StatementConditionalJump) statement;
                if(jump.getrValue1() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ReplaceableValue.CondRValue1(jump));
+                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.CondRValue1(jump));
                }
                if(jump.getrValue2() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ReplaceableValue.CondRValue2(jump));
+                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.CondRValue2(jump));
                }
             }
          }
@@ -80,7 +80,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       return optimized;
    }
 
-   private boolean optimizePointerDereferenceIndexed(ReplaceableValue value) {
+   private boolean optimizePointerDereferenceIndexed(ProgramValue value) {
       PointerDereferenceIndexed pointerDereferenceIndexed = (PointerDereferenceIndexed) value.get();
       if(pointerDereferenceIndexed.getPointer() instanceof ConstantValue && pointerDereferenceIndexed.getIndex() instanceof ConstantValue) {
          ConstantValue ptrConstant = (ConstantValue) pointerDereferenceIndexed.getPointer();

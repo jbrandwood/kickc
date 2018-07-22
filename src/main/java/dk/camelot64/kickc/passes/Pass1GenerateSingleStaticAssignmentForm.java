@@ -3,8 +3,8 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.iterator.ReplaceableValue;
-import dk.camelot64.kickc.model.iterator.ValueReplacer;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
@@ -89,14 +89,14 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          Map<VariableUnversioned, VariableVersion> blockVersions = new LinkedHashMap<>();
          // New phi functions introduced in the block to create versions of variables.
          Map<VariableUnversioned, VariableVersion> blockNewPhis = new LinkedHashMap<>();
-         ValueReplacer.executeAll(block, (replaceable, currentStmt, stmtIt, currentBlock) -> {
-            RValue value = replaceable.get();
+         ProgramValueIterator.execute(block, (programValue, currentStmt, stmtIt, currentBlock) -> {
+            RValue value = programValue.get();
             VariableVersion version = findOrCreateVersion(value, blockVersions, blockNewPhis);
             if(version != null) {
-               replaceable.set(version.getRef());
+               programValue.set(version.getRef());
             }
             // Update map of versions encountered in the block
-            if(currentStmt instanceof StatementAssignment && replaceable instanceof ReplaceableValue.LValue) {
+            if(currentStmt instanceof StatementAssignment && programValue instanceof ProgramValue.LValue) {
                StatementAssignment assignment = (StatementAssignment) currentStmt;
                LValue lValue = assignment.getlValue();
                if(lValue instanceof VariableRef) {

@@ -1,8 +1,10 @@
 package dk.camelot64.kickc.model.symbols;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.Registers;
+import dk.camelot64.kickc.model.VariableRegisterWeights;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
@@ -185,33 +187,35 @@ public abstract class Scope implements Symbol {
       return getConstant(constantRef.getFullName());
    }
 
-   public Collection<Variable> getAllVariables(boolean includeSubScopes) {
-      Collection<Variable> vars = new ArrayList<>();
+   public Collection<SymbolVariable> getAllSymbolVariables(boolean includeSubScopes) {
+      Collection<SymbolVariable> vars = new ArrayList<>();
       for(Symbol symbol : symbols.values()) {
-         if(symbol instanceof Variable) {
-            vars.add((Variable) symbol);
+         if(symbol instanceof SymbolVariable) {
+            vars.add((SymbolVariable) symbol);
          }
          if(includeSubScopes && symbol instanceof Scope) {
             Scope subScope = (Scope) symbol;
-            vars.addAll(subScope.getAllVariables(true));
+            vars.addAll(subScope.getAllSymbolVariables(true));
          }
-
       }
       return vars;
    }
 
-   public Collection<ConstantVar> getAllConstants(boolean includeSubScopes) {
-      Collection<ConstantVar> vars = new ArrayList<>();
-      for(Symbol symbol : symbols.values()) {
-         if(symbol instanceof ConstantVar) {
-            vars.add((ConstantVar) symbol);
-         }
-         if(includeSubScopes && symbol instanceof Scope) {
-            Scope subScope = (Scope) symbol;
-            vars.addAll(subScope.getAllConstants(true));
-         }
+   public Collection<Variable> getAllVariables(boolean includeSubScopes) {
+      Collection<SymbolVariable> symbolVariables = getAllSymbolVariables(includeSubScopes);
+      Collection<Variable> vars = new ArrayList<>();
+      symbolVariables.stream().
+            filter(symbolVariable -> (symbolVariable instanceof Variable)).
+            forEach(symbolVariable -> vars.add((Variable) symbolVariable));
+      return vars;
+   }
 
-      }
+   public Collection<ConstantVar> getAllConstants(boolean includeSubScopes) {
+      Collection<SymbolVariable> symbolVariables = getAllSymbolVariables(includeSubScopes);
+      Collection<ConstantVar> vars = new ArrayList<>();
+      symbolVariables.stream().
+            filter(symbolVariable -> (symbolVariable instanceof ConstantVar)).
+            forEach(symbolVariable -> vars.add((ConstantVar) symbolVariable));
       return vars;
    }
 

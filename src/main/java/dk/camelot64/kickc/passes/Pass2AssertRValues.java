@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.iterator.ValueReplacer;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.values.ForwardVariableRef;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -16,8 +16,8 @@ public class Pass2AssertRValues extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      ValueReplacer.executeAll(getGraph(), (replaceable, currentStmt, stmtIt, currentBlock) -> {
-         RValue rValue = replaceable.get();
+      ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
+         RValue rValue = programValue.get();
          if(rValue instanceof ForwardVariableRef) {
             throw new CompileError("No forward references allowed "+currentStmt.toString(getProgram(), false), currentStmt.getSource());
          }

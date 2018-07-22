@@ -1,9 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.iterator.ReplaceableValue;
-import dk.camelot64.kickc.model.iterator.ValueReplacer;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -65,28 +64,6 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
    }
 
    /**
-    * Replace any alias within the constant defintions inside the symbol table
-    *
-    * @param inline The replacements to make
-    */
-   private void replaceInSymbolTable(Map<ConstantRef, ConstantValue> inline) {
-      Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
-      for(ConstantVar constantVar : allConstants) {
-
-         // First check if the type is an array - and replace inside the type if it is
-         SymbolType constantType = constantVar.getType();
-         if(constantType instanceof SymbolTypeArray) {
-            SymbolTypeArray arrayType = (SymbolTypeArray) constantType;
-            ReplaceableValue.TypeArraySize replaceableArrayType = new ReplaceableValue.TypeArraySize(arrayType);
-            ValueReplacer.executeAll(replaceableArrayType, new AliasReplacer(inline), null, null, null);
-         }
-
-         ReplaceableValue.ConstantVariableValue replaceableConstantVal = new ReplaceableValue.ConstantVariableValue(constantVar);
-         ValueReplacer.executeAll(replaceableConstantVal, new AliasReplacer(inline), null, null, null);
-      }
-   }
-
-   /**
     * Replace any aliases within the constant values themselves
     *
     * @param inline The replacements
@@ -97,14 +74,23 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
          replaced = false;
          for(ConstantRef constantRef : inline.keySet()) {
             ConstantValue constantValue = inline.get(constantRef);
-            ReplaceableValue.GenericValue replaceable = new ReplaceableValue.GenericValue(constantValue);
+            ProgramValue.GenericValue genericValue = new ProgramValue.GenericValue(constantValue);
             AliasReplacer replacer = new AliasReplacer(inline);
-            ValueReplacer.executeAll(replaceable, replacer, null, null, null);
+            ProgramValueIterator.execute(genericValue, replacer, null, null, null);
             if(replacer.isReplaced()) {
-               inline.put(constantRef, (ConstantValue) replaceable.get());
+               inline.put(constantRef, (ConstantValue) genericValue.get());
             }
          }
       }
+   }
+
+   /**
+    * Replace any alias within the constant defintions inside the symbol table
+    *
+    * @param inline The replacements to make
+    */
+   private void replaceInSymbolTable(Map<ConstantRef, ConstantValue> inline) {
+      ProgramValueIterator.execute(getScope(), new AliasReplacer(inline));
    }
 
    /**

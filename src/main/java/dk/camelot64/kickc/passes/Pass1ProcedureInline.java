@@ -3,9 +3,9 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.iterator.ReplaceableValue;
-import dk.camelot64.kickc.model.iterator.Replacer;
-import dk.camelot64.kickc.model.iterator.ValueReplacer;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -191,7 +191,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          throw new CompileError("Statement type of Inline function not handled " + procStatement, procStatement.getSource());
       }
       if(inlinedStatement!=null) {
-         ValueReplacer.executeAll(inlinedStatement, new RValueInliner(procedure, serial, callScope), null, null);
+         ProgramValueIterator.execute(inlinedStatement, new RValueInliner(procedure, serial, callScope), null, null);
       }
       return inlinedStatement;
    }
@@ -200,7 +200,7 @@ public class Pass1ProcedureInline extends Pass1Base {
     * Ensures that all VariableRefs pointing to variables in the procedure being inlined are converted to refs to the new inlined variables
     * Also copies all intermediate RValue objects to ensure they are not references to objects from the original statements in the procedure being inlined
     */
-   private class RValueInliner implements Replacer {
+   private class RValueInliner implements ProgramValueHandler {
 
       /** The scope where the precedure is being inlined into. */
       private final Scope callScope;
@@ -216,24 +216,24 @@ public class Pass1ProcedureInline extends Pass1Base {
       }
 
       @Override
-      public void execute(ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-         RValue rValue = replaceable.get();
+      public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+         RValue rValue = programValue.get();
          if(rValue instanceof VariableRef) {
             VariableRef procVarRef = (VariableRef) rValue;
             Variable procVar = Pass1ProcedureInline.this.getScope().getVariable(procVarRef);
             if(procVar.getScope().equals(procedure)) {
                String inlineSymbolName = Pass1ProcedureInline.this.getInlineSymbolName(procedure, procVar, serial);
                Variable inlineVar = callScope.getVariable(inlineSymbolName);
-               replaceable.set(inlineVar.getRef());
+               programValue.set(inlineVar.getRef());
             }
          } else if(rValue instanceof PointerDereferenceSimple) {
-            replaceable.set(new PointerDereferenceSimple(((PointerDereferenceSimple) rValue).getPointer()));
+            programValue.set(new PointerDereferenceSimple(((PointerDereferenceSimple) rValue).getPointer()));
          } else if(rValue instanceof PointerDereferenceIndexed) {
-            replaceable.set(new PointerDereferenceIndexed(((PointerDereferenceIndexed) rValue).getPointer(), ((PointerDereferenceIndexed) rValue).getIndex()));
+            programValue.set(new PointerDereferenceIndexed(((PointerDereferenceIndexed) rValue).getPointer(), ((PointerDereferenceIndexed) rValue).getIndex()));
          } else if(rValue instanceof CastValue) {
-            replaceable.set(new CastValue(((CastValue) rValue).getToType(), ((CastValue) rValue).getValue()));
+            programValue.set(new CastValue(((CastValue) rValue).getToType(), ((CastValue) rValue).getValue()));
          } else if(rValue instanceof ValueList) {
-            replaceable.set(new ValueList(new ArrayList<>(((ValueList) rValue).getList())));
+            programValue.set(new ValueList(new ArrayList<>(((ValueList) rValue).getList())));
          }
       }
    }

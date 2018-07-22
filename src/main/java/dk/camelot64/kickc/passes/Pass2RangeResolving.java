@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.iterator.ValueReplacer;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -29,8 +29,8 @@ public class Pass2RangeResolving extends Pass2SsaOptimization {
    public boolean step() {
       boolean modified = false;
 
-      ValueReplacer.executeAll(getProgram().getGraph(), (replaceable, currentStmt, stmtIt, currentBlock) -> {
-         RValue value = replaceable.get();
+      ProgramValueIterator.execute(getProgram().getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
+         RValue value = programValue.get();
          if(value instanceof RangeValue) {
             RangeValue rangeValue = (RangeValue) value;
             if(rangeValue.getRangeFirst() instanceof ConstantValue && rangeValue.getRangeLast() instanceof ConstantValue) {
@@ -81,7 +81,7 @@ public class Pass2RangeResolving extends Pass2SsaOptimization {
                      beyondLastVal = new ConstantCastValue(type, beyondLastVal );
                   }
                   getLog().append("Resolved ranged comparison value "+currentStmt+" to "+beyondLastVal.toString(getProgram()));
-                  replaceable.set(beyondLastVal);
+                  programValue.set(beyondLastVal);
                } else if(rangeValue instanceof RangeNext) {
                   StatementAssignment assignment = (StatementAssignment) currentStmt;
                   if(firstInt <= lastInt) {

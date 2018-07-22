@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.iterator.ValueReplacer;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Symbol;
@@ -46,8 +46,7 @@ public abstract class Pass2SsaOptimization extends Pass1Base {
     * @param aliases Variables that have alias values.
     */
    public void replaceVariables(final Map<? extends SymbolRef, ? extends RValue> aliases) {
-      AliasReplacer replacer = new AliasReplacer(aliases);
-      ValueReplacer.executeAll(getGraph(), replacer);
+      ProgramValueIterator.execute(getGraph(), new AliasReplacer(aliases));
    }
 
    /**

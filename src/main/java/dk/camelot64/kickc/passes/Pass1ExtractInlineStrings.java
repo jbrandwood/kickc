@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.iterator.ValueReplacer;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.values.ConstantString;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.statements.StatementCall;
@@ -23,15 +23,15 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
 
    @Override
    public boolean step() {
-      ValueReplacer.executeAll(getGraph(), (replaceable, currentStmt, stmtIt, currentBlock) -> {
+      ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          String nameHint = null;
          if(currentStmt instanceof StatementCall) {
             StatementCall call = (StatementCall) currentStmt;
             List<RValue> parameters = call.getParameters();
             for(int i = 0; i < parameters.size(); i++) {
                RValue parameter = parameters.get(i);
-               if(parameter.equals(replaceable.get())) {
-                  // The replaceable value is the parameter - use the parameter name as name hint
+               if(parameter.equals(programValue.get())) {
+                  // The programValue value is the parameter - use the parameter name as name hint
                   Procedure procedure = Pass1ExtractInlineStrings.this.getProgram().getScope().getProcedure(call.getProcedure());
                   nameHint = procedure.getParameterNames().get(i);
                   break;
@@ -39,10 +39,10 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             }
          }
          Scope blockScope = Pass1ExtractInlineStrings.this.getProgram().getScope().getScope(currentBlock.getScope());
-         RValue value = replaceable.get();
+         RValue value = programValue.get();
          if(value instanceof ConstantString) {
-            ConstantVar strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(blockScope, (ConstantString) replaceable.get(), nameHint);
-            replaceable.set(strConst.getRef());
+            ConstantVar strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(blockScope, (ConstantString) programValue.get(), nameHint);
+            programValue.set(strConst.getRef());
          }
       });
       return false;

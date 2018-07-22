@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.iterator.ReplaceableValue;
-import dk.camelot64.kickc.model.iterator.Replacer;
-import dk.camelot64.kickc.model.iterator.ValueReplacer;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.values.RValue;
@@ -32,9 +32,9 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       WordConstructor wordConstructor = new WordConstructor();
-      ValueReplacer.executeAll(getGraph(), wordConstructor);
+      ProgramValueIterator.execute(getGraph(), wordConstructor);
       DWordConstructor dwordConstructor = new DWordConstructor();
-      ValueReplacer.executeAll(getGraph(), dwordConstructor);
+      ProgramValueIterator.execute(getGraph(), dwordConstructor);
       return wordConstructor.isOptimized() || dwordConstructor.isOptimized();
    }
 
@@ -65,7 +65,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
    }
 
 
-   private abstract class InlineConstructor implements Replacer {
+   private abstract class InlineConstructor implements ProgramValueHandler {
       private SymbolTypeInteger constructType;
       private Operator constructOperator;
       private boolean optimized;
@@ -82,8 +82,8 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
       }
 
       @Override
-      public void execute(ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-         RValue rValue = replaceable.get();
+      public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+         RValue rValue = programValue.get();
          if(rValue instanceof ValueList) {
             ValueList list = (ValueList) rValue;
             if(list.getList().size() == 2) {
@@ -117,7 +117,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
                   // Move back before the current statement
                   stmtIt.next();
                   // Replace current value with the reference
-                  replaceable.set(tmpVar.getRef());
+                  programValue.set(tmpVar.getRef());
                   Pass2FixInlineConstructors.this.getLog().append("Fixing inline constructor with " + assignment.toString());
                   optimized = true;
                }

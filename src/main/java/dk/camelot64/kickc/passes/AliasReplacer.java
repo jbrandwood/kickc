@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.iterator.ReplaceableValue;
-import dk.camelot64.kickc.model.iterator.Replacer;
-import dk.camelot64.kickc.model.iterator.ValueReplacer;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -11,8 +11,8 @@ import dk.camelot64.kickc.model.values.SymbolRef;
 import java.util.ListIterator;
 import java.util.Map;
 
-/** A {@link ValueReplacer} that replaces symbols with their alias. */
-public class AliasReplacer implements Replacer {
+/** A {@link ProgramValueIterator} that replaces symbols with their alias. */
+public class AliasReplacer implements ProgramValueHandler {
 
 
    /** true if anything has ben replaced. */
@@ -31,16 +31,16 @@ public class AliasReplacer implements Replacer {
    }
 
    /**
-    * Execute alias replacement on a replaceable value
+    * Execute alias replacement on a value
     *
-    * @param replaceable The replaceable value
+    * @param programValue The value
     */
    @Override
-   public void execute(ReplaceableValue replaceable, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-      if(replaceable.get() != null) {
-         RValue replacement = getReplacement(replaceable.get(), aliases);
+   public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      if(programValue.get() != null) {
+         RValue replacement = getReplacement(programValue.get(), aliases);
          if(replacement != null) {
-            replaceable.set(replacement);
+            programValue.set(replacement);
             this.replaced = true;
          }
       }

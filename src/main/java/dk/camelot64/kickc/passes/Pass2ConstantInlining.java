@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.iterator.ReplaceableValue;
+import dk.camelot64.kickc.model.iterator.ValueReplacer;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
@@ -35,7 +37,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       inline.putAll(findUnnamedConstants());
       inline.putAll(findAliasConstants());
       inline.putAll(findConstVarVersions());
-      
+
       // Remove all string constants
       List<ConstantRef> refs = new ArrayList(inline.keySet());
       for(ConstantRef constantRef : refs) {
@@ -75,18 +77,12 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
          SymbolType constantType = constantVar.getType();
          if(constantType instanceof SymbolTypeArray) {
             SymbolTypeArray arrayType = (SymbolTypeArray) constantType;
-            RValue arraySize = arrayType.getSize();
-            RValue sizeReplacement = AliasReplacer.getReplacement(arraySize, inline);
-            if(sizeReplacement != null) {
-               arrayType.setSize(sizeReplacement);
-            }
+            ReplaceableValue.TypeArraySize replaceableArrayType = new ReplaceableValue.TypeArraySize(arrayType);
+            ValueReplacer.executeAll(replaceableArrayType, new AliasReplacer(inline), null, null, null);
          }
 
-         ConstantValue constantValue = constantVar.getValue();
-         RValue replacement = AliasReplacer.getReplacement(constantValue, inline);
-         if(replacement != null) {
-            constantVar.setValue((ConstantValue) replacement);
-         }
+         ReplaceableValue.ConstantVariableValue replaceableConstantVal = new ReplaceableValue.ConstantVariableValue(constantVar);
+         ValueReplacer.executeAll(replaceableConstantVal, new AliasReplacer(inline), null, null, null);
       }
    }
 
@@ -101,10 +97,11 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
          replaced = false;
          for(ConstantRef constantRef : inline.keySet()) {
             ConstantValue constantValue = inline.get(constantRef);
-            ConstantValue replacement = (ConstantValue) AliasReplacer.getReplacement(constantValue, inline);
-            if(replacement != null) {
-               replaced = true;
-               inline.put(constantRef, replacement);
+            ReplaceableValue.GenericValue replaceable = new ReplaceableValue.GenericValue(constantValue);
+            AliasReplacer replacer = new AliasReplacer(inline);
+            ValueReplacer.executeAll(replaceable, replacer, null, null, null);
+            if(replacer.isReplaced()) {
+               inline.put(constantRef, (ConstantValue) replaceable.get());
             }
          }
       }
@@ -189,6 +186,5 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       }
       return aliases;
    }
-
 
 }

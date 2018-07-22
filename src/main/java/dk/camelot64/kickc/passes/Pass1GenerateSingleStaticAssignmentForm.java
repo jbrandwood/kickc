@@ -1,16 +1,22 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ReplaceableValue;
 import dk.camelot64.kickc.model.iterator.ValueReplacer;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementLValue;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableUnversioned;
 import dk.camelot64.kickc.model.symbols.VariableVersion;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -75,27 +81,6 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    }
 
    /**
-    * Version all variable uses in the replaceable value
-    *
-    * @param replaceableValue The value to version variable usages in
-    * @param blockVersions Newest version of variables in the block.
-    * @param blockNewPhis New phi functions introduced in the block to create versions of variables.
-    */
-   private void execute(
-         ReplaceableValue replaceableValue,
-         Map<VariableUnversioned, VariableVersion> blockVersions,
-         Map<VariableUnversioned, VariableVersion> blockNewPhis) {
-      RValue value = replaceableValue.get();
-      VariableVersion version = findOrCreateVersion(value, blockVersions, blockNewPhis);
-      if(version != null) {
-         replaceableValue.set(version.getRef());
-      }
-      for(ReplaceableValue subValue : ValueReplacer.getSubValues(replaceableValue.get())) {
-         execute(subValue, blockVersions, blockNewPhis);
-      }
-   }
-
-   /**
     * Version all uses of non-versioned non-intermediary variables
     */
    private void versionAllUses() {
@@ -104,29 +89,26 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          Map<VariableUnversioned, VariableVersion> blockVersions = new LinkedHashMap<>();
          // New phi functions introduced in the block to create versions of variables.
          Map<VariableUnversioned, VariableVersion> blockNewPhis = new LinkedHashMap<>();
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementReturn) {
-               execute(new ReplaceableValue.Return((StatementReturn) statement), blockVersions, blockNewPhis);
-            } else if(statement instanceof StatementConditionalJump) {
-               execute(new ReplaceableValue.CondRValue2((StatementConditionalJump) statement), blockVersions, blockNewPhis);
-            } else if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               execute(new ReplaceableValue.RValue1(assignment), blockVersions, blockNewPhis);
-               execute(new ReplaceableValue.RValue2(assignment), blockVersions, blockNewPhis);
-               execute(new ReplaceableValue.LValue(assignment), blockVersions, blockNewPhis);
-
-               // Update map of versions encountered in the block
-               dk.camelot64.kickc.model.values.LValue lValue = assignment.getlValue();
+         ValueReplacer.executeAll(block, (replaceable, currentStmt, stmtIt, currentBlock) -> {
+            RValue value = replaceable.get();
+            VariableVersion version = findOrCreateVersion(value, blockVersions, blockNewPhis);
+            if(version != null) {
+               replaceable.set(version.getRef());
+            }
+            // Update map of versions encountered in the block
+            if(currentStmt instanceof StatementAssignment && replaceable instanceof ReplaceableValue.LValue) {
+               StatementAssignment assignment = (StatementAssignment) currentStmt;
+               LValue lValue = assignment.getlValue();
                if(lValue instanceof VariableRef) {
                   VariableRef lValueRef = (VariableRef) lValue;
-                  Variable variable = getScope().getVariable(lValueRef);
+                  Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValueRef);
                   if(variable instanceof VariableVersion) {
                      VariableVersion versioned = (VariableVersion) variable;
                      blockVersions.put(versioned.getVersionOf(), versioned);
                   }
                }
             }
-         }
+         });
          // Add new Phi functions to block
          for(VariableUnversioned symbol : blockNewPhis.keySet()) {
             block.getPhiBlock().addPhiVariable(blockNewPhis.get(symbol).getRef());

@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
-
-import java.util.Collection;
 
 /**
  * Interface representing an RValue that can be replaced.
@@ -14,6 +14,45 @@ public abstract class ReplaceableValue {
    public abstract RValue get();
 
    public abstract void set(RValue value);
+
+   public static class ConstantVariableValue extends ReplaceableValue {
+      private final ConstantVar constantVar;
+
+      public ConstantVariableValue(ConstantVar constantVar) {
+         this.constantVar = constantVar;
+      }
+
+      @Override
+      public RValue get() {
+         return constantVar.getValue();
+      }
+
+      @Override
+      public void set(RValue val) {
+         constantVar.setValue((ConstantValue) val);
+      }
+
+   }
+
+   /** Replaceable size inside a fixed size array. */
+   public static class TypeArraySize extends ReplaceableValue {
+      private final SymbolTypeArray array;
+
+      public TypeArraySize(SymbolTypeArray array) {
+         this.array = array;
+      }
+
+      @Override
+      public RValue get() {
+         return array.getSize();
+      }
+
+      @Override
+      public void set(RValue val) {
+         array.setSize(val);
+      }
+
+   }
 
    /** Replaceable value inside a array filled expression. */
    public static class ArrayFilledSize extends ReplaceableValue {
@@ -272,6 +311,26 @@ public abstract class ReplaceableValue {
 
    }
 
+   public static class ConstantArrayElement extends ReplaceableValue {
+      private final ConstantArrayList arrayList;
+      private final int idx;
+
+      public ConstantArrayElement(ConstantArrayList arrayList, int idx) {
+         this.arrayList = arrayList;
+         this.idx = idx;
+      }
+
+      @Override
+      public RValue get() {
+         return arrayList.getElements().get(idx);
+      }
+
+      @Override
+      public void set(RValue value) {
+         arrayList.getElements().set(idx, (ConstantValue) value);
+      }
+   }
+
    public static class ListElement extends ReplaceableValue {
       private ValueList list;
       private int idx;
@@ -465,5 +524,24 @@ public abstract class ReplaceableValue {
          phiVariable.setVariable((VariableRef) value);
       }
 
+   }
+
+   /** A generic replaceable value. */
+   public static class GenericValue extends ReplaceableValue {
+      private ConstantValue constantValue;
+
+      public GenericValue(ConstantValue constantValue) {
+         this.constantValue = constantValue;
+      }
+
+      @Override
+      public RValue get() {
+         return constantValue;
+      }
+
+      @Override
+      public void set(RValue value) {
+         this.constantValue = (ConstantValue) value;
+      }
    }
 }

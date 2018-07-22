@@ -74,9 +74,7 @@ public class PassNVariableReferenceInfos extends Pass2Base {
       LinkedHashMap<LabelRef, Collection<VariableRef>> blockUsedVars = new LinkedHashMap<>();
       LinkedHashMap<Integer, Collection<VariableRef>> stmtReferenced = new LinkedHashMap<>();
       LinkedHashMap<Integer, Collection<VariableRef>> stmtDefined = new LinkedHashMap<>();
-      LinkedHashMap<VariableRef, Integer> varDefineStmts = new LinkedHashMap<>();
-      LinkedHashMap<VariableRef, Collection<Integer>> varRefStmts = new LinkedHashMap<>();
-      LinkedHashMap<ConstantRef, Collection<Integer>> constStmts = new LinkedHashMap<>();
+      Map<SymbolVariableRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> symbolVarReferences = new LinkedHashMap<>();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          LabelRef blockLabel = block.getLabel();
          blockReferencedVars.put(blockLabel, getReferencedVars(blockLabel, new ArrayList<>()));
@@ -90,43 +88,37 @@ public class PassNVariableReferenceInfos extends Pass2Base {
             stmtReferenced.put(statement.getIndex(), referencedVars);
             // Identify statement defining variables
             for(VariableRef variableRef : defined) {
-               varDefineStmts.put(variableRef, statement.getIndex());
+               symbolVarReferences.putIfAbsent(variableRef, new ArrayList<>());
+               Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(variableRef);
+               references.add(new VariableReferenceInfos.ReferenceInStatement(statement.getIndex(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.DEFINE, variableRef));
             }
             // Gather statements referencing variables
             for(VariableRef variableRef : referencedVars) {
-               Collection<Integer> stmts = varRefStmts.get(variableRef);
-               if(stmts == null) {
-                  stmts = new LinkedHashSet<>();
-                  varRefStmts.put(variableRef, stmts);
+               if(!defined.contains(variableRef)) {
+                  symbolVarReferences.putIfAbsent(variableRef, new ArrayList<>());
+                  Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(variableRef);
+                  references.add(new VariableReferenceInfos.ReferenceInStatement(statement.getIndex(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE, variableRef));
                }
-               stmts.add(statement.getIndex());
             }
             // Gather statements referencing constants
             Collection<ConstantRef> referencedConsts = getReferencedConsts(statement);
             for(ConstantRef constantRef : referencedConsts) {
-               Collection<Integer> stmts = constStmts.get(constantRef);
-               if(stmts == null) {
-                  stmts = new LinkedHashSet<>();
-                  constStmts.put(constantRef, stmts);
-               }
-               stmts.add(statement.getIndex());
+               symbolVarReferences.putIfAbsent(constantRef, new ArrayList<>());
+               Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(constantRef);
+               references.add(new VariableReferenceInfos.ReferenceInStatement(statement.getIndex(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE, constantRef));
             }
          }
       }
       // Gather constants referencing other constants
-      LinkedHashMap<ConstantRef, Collection<ConstantRef>> constRefConsts = new LinkedHashMap<>();
       for(ConstantVar constantVar : getSymbols().getAllConstants(true)) {
          Collection<ConstantRef> referencedConsts = getReferencedConsts(constantVar.getValue());
          for(ConstantRef constantRef : referencedConsts) {
-            Collection<ConstantRef> consts = constRefConsts.get(constantRef);
-            if(consts == null) {
-               consts = new LinkedHashSet<>();
-               constRefConsts.put(constantRef, consts);
-            }
-            consts.add(constantVar.getRef());
+            symbolVarReferences.putIfAbsent(constantRef, new ArrayList<>());
+            Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(constantRef);
+            references.add(new VariableReferenceInfos.ReferenceInSymbol(constantVar.getRef(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE, constantRef));
          }
       }
-      getProgram().setVariableReferenceInfos(new VariableReferenceInfos(blockReferencedVars, blockUsedVars, stmtReferenced, stmtDefined, varDefineStmts, varRefStmts, constStmts, constRefConsts));
+      getProgram().setVariableReferenceInfos(new VariableReferenceInfos(blockReferencedVars, blockUsedVars, stmtReferenced, stmtDefined, symbolVarReferences));
    }
 
    /**

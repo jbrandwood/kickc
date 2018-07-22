@@ -39,7 +39,9 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   getLog().append("Eliminating unused variable " + lValue.toString(getProgram()) + " and assignment " + assignment.toString(getProgram(), false));
                   stmtIt.remove();
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  variable.getScope().remove(variable);
+                  if(variable!=null) {
+                     variable.getScope().remove(variable);
+                  }
                   modified = true;
                }
             } else if(statement instanceof StatementCall) {
@@ -48,7 +50,9 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
                   getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  variable.getScope().remove(variable);
+                  if(variable!=null) {
+                     variable.getScope().remove(variable);
+                  }
                   call.setlValue(null);
                   modified = true;
                }
@@ -61,7 +65,9 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   if(referenceInfos.isUnused(variableRef) && !Pass2ConstantIdentification.isAddressOfUsed(variableRef, getProgram())) {
                      getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
                      Variable variable = getScope().getVariable(variableRef);
-                     variable.getScope().remove(variable);
+                     if(variable!=null) {
+                        variable.getScope().remove(variable);
+                     }
                      phiVarIt.remove();
                      modified = true;
                   }

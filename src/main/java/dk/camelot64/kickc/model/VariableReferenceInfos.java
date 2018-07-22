@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.values.ConstantRef;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.passes.PassNVariableReferenceInfos;
 
@@ -11,12 +8,14 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-/** Cached information about which variables/constants are defined/referenced/used in which statements / blocks / symbols .
+/**
+ * Cached information about which variables/constants are defined/referenced/used in which statements / blocks / symbols .
  * <ul>
- *    <li><i>Defined</i> means the variable/constant receives its value in a specific statement (or symbol for named constants) </li>
- *    <li><i>Used</i> means the value of the variable/constant is used in a  specific statement (or symbol for named constants) </li>
- *    <li><i>Referenced</i> means the variable/constant is either defined or referenced in a  specific statement (or symbol for named constants) </li>
- * </ul>*/
+ * <li><i>Defined</i> means the variable/constant receives its value in a specific statement (or symbol for named constants) </li>
+ * <li><i>Used</i> means the value of the variable/constant is used in a  specific statement (or symbol for named constants) </li>
+ * <li><i>Referenced</i> means the variable/constant is either defined or referenced in a  specific statement (or symbol for named constants) </li>
+ * </ul>
+ */
 public class VariableReferenceInfos {
 
    /** Variables referenced in each block. */
@@ -31,37 +30,113 @@ public class VariableReferenceInfos {
    /** Variables defined in each statement. */
    private Map<Integer, Collection<VariableRef>> stmtDefinedVars;
 
-   /** The statement defining each variable. */
-   private Map<VariableRef, Integer> varDefineStmt;
+   /** All references to symbol variables (constants/variables). References can be either statements or symbols in the symbol table */
+   private Map<SymbolVariableRef, Collection<ReferenceToSymbolVar>> symbolVarReferences;
 
-   /** All statements referencing each variable . */
-   private Map<VariableRef, Collection<Integer>> varRefStmts;
+   /**
+    * A reference of a symbol variable (variable or const).
+    * The reference is either a specific statement or a symbol in the symbol table.
+    * The reference can either be defining the symbol variable or it can be using it.
+    */
+   public interface ReferenceToSymbolVar {
 
-   /** All statements referencing each constant. */
-   private Map<ConstantRef, Collection<Integer>> constRefStmts;
+      enum ReferenceType {USE, DEFINE}
 
-   /** All constants referencing another constant. (maps from a constant to all constants using it in their value) */
-   private Map<ConstantRef, Collection<ConstantRef>> constRefConsts;
+      /**
+       * Get the type of the reference
+       *
+       * @return The type of the reference (define or use)
+       */
+      ReferenceType getReferenceType();
+
+      /**
+       * Get the symbol being referenced
+       *
+       * @return The symbol being referenced
+       */
+      SymbolVariableRef getReferenced();
+
+   }
+
+   /** A reference to a variable/constant inside a statement. */
+   public static class ReferenceInStatement implements ReferenceToSymbolVar {
+
+      /** The index of the statement. */
+      private Integer statementIdx;
+
+      /** The type of reference. */
+      private ReferenceType referenceType;
+
+      /** The symbol being referenced. */
+      private SymbolVariableRef referencedSymbol;
+
+      public ReferenceInStatement(Integer statementIdx, ReferenceType referenceType, SymbolVariableRef referencedSymbol) {
+         this.statementIdx = statementIdx;
+         this.referenceType = referenceType;
+         this.referencedSymbol = referencedSymbol;
+      }
+
+      public Integer getStatementIdx() {
+         return statementIdx;
+      }
+
+      @Override
+      public ReferenceType getReferenceType() {
+         return referenceType;
+      }
+
+      @Override
+      public SymbolVariableRef getReferenced() {
+         return referencedSymbol;
+      }
+   }
+
+   /** A reference to a variable/constant inside a symbol i he symbol table. */
+   public static class ReferenceInSymbol implements ReferenceToSymbolVar {
+
+      /** The symbol in the symbol table that contains the reference. */
+      private SymbolVariableRef referencingSymbol;
+
+      /** The type of reference. */
+      private ReferenceType referenceType;
+
+      /** The symbol being referenced. */
+      private SymbolVariableRef referencedSymbol;
+
+      public ReferenceInSymbol(SymbolVariableRef referencingSymbol, ReferenceType referenceType, SymbolVariableRef referencedSymbol) {
+         this.referencingSymbol = referencingSymbol;
+         this.referenceType = referenceType;
+         this.referencedSymbol = referencedSymbol;
+      }
+
+      public SymbolVariableRef getReferencingSymbol() {
+         return referencingSymbol;
+      }
+
+      @Override
+      public ReferenceType getReferenceType() {
+         return referenceType;
+      }
+
+      @Override
+      public SymbolVariableRef getReferenced() {
+         return referencedSymbol;
+      }
+   }
 
    public VariableReferenceInfos(
          Map<LabelRef, Collection<VariableRef>> blockReferencedVars,
          Map<LabelRef, Collection<VariableRef>> blockUsedVars,
          Map<Integer, Collection<VariableRef>> stmtReferencedVars,
          Map<Integer, Collection<VariableRef>> stmtDefinedVars,
-         Map<VariableRef, Integer> varDefineStmt,
-         Map<VariableRef, Collection<Integer>> varRefStmts,
-         Map<ConstantRef, Collection<Integer>> constRefStmts,
-         Map<ConstantRef, Collection<ConstantRef>> constRefConsts
+         Map<SymbolVariableRef, Collection<ReferenceToSymbolVar>> symbolVarReferences
 
    ) {
       this.blockReferencedVars = blockReferencedVars;
       this.blockUsedVars = blockUsedVars;
       this.stmtDefinedVars = stmtDefinedVars;
       this.stmtReferencedVars = stmtReferencedVars;
-      this.varDefineStmt = varDefineStmt;
-      this.varRefStmts = varRefStmts;
-      this.constRefStmts = constRefStmts;
-      this.constRefConsts = constRefConsts;
+      this.symbolVarReferences = symbolVarReferences;
    }
 
    /**
@@ -132,41 +207,43 @@ public class VariableReferenceInfos {
     *
     * @return true if the variable is defined but never referenced
     */
-   public boolean isUnused(VariableRef variableRef) {
-      Collection<Integer> refs = new LinkedHashSet<>(varRefStmts.get(variableRef));
-      refs.remove(varDefineStmt.get(variableRef));
-      return refs.size() == 0;
-   }
-
-   /**
-    * Determines if a constant is unused
-    *
-    * @return true if the constant is never referenced
-    */
-   public boolean isUnused(ConstantRef constRef) {
-      Collection<Integer> constStmts = this.constRefStmts.get(constRef);
-      Collection<ConstantRef> constRefs = constRefConsts.get(constRef);
-      boolean unusedInStmts = constStmts == null || constStmts.size() == 0;
-      boolean unusedInConsts = constRefs == null || constRefs.size() == 0;
-      return unusedInStmts && unusedInConsts;
+   public boolean isUnused(SymbolVariableRef variableRef) {
+      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(variableRef);
+      if(refs==null) return true;
+      return !refs.stream()
+            .anyMatch(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType())
+      );
    }
 
    /**
     * Get all statements referencing constant
+    *
     * @param constRef The constant to look for
     * @return Index of all statements referencing the constant
     */
    public Collection<Integer> getConstRefStatements(ConstantRef constRef) {
-      return constRefStmts.get(constRef);
+      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(constRef);
+      LinkedHashSet<Integer> stmts = new LinkedHashSet<>();
+      refs.stream()
+            .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
+            .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).getStatementIdx()));
+      return stmts;
    }
 
    /**
     * Get all constatns referencing another constant
+    *
     * @param constRef The constant to look for
     * @return All constants that reference the constant in their value
     */
    public Collection<ConstantRef> getConstRefConsts(ConstantRef constRef) {
-      return constRefConsts.get(constRef);
+      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(constRef);
+      LinkedHashSet<ConstantRef> constRefs = new LinkedHashSet<>();
+      refs.stream()
+            .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()))
+            .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInSymbol)
+            .forEach(referenceToSymbolVar -> constRefs.add((ConstantRef) ((ReferenceInSymbol) referenceToSymbolVar).getReferencingSymbol()));
+      return constRefs;
    }
 
 }

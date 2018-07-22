@@ -51,6 +51,9 @@ public class SymbolRef implements Value {
       } else {
          try {
             Symbol symbol = program.getScope().getSymbol(fullName);
+            if(symbol==null) {
+               return fullName+"(null)";
+            }
             return symbol.toString(program);
          } catch(NullPointerException e) {
             throw e;

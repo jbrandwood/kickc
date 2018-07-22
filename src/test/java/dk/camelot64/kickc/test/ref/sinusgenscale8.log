@@ -2354,6 +2354,8 @@ Removing unused procedure divr8u
 Removing unused procedure mulu16_sel
 Removing unused procedure mul16u
 Eliminating unused variable (byte) rem8u and assignment [0] (byte) rem8u ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (word) rem16u and assignment [1] (word) rem16u ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable rem16u(null) and assignment [26] rem16u(null) ← (word) divr16u::rem
 Eliminating unused variable (signed byte) rem8s and assignment [34] (signed byte) rem8s ← (byte/signed byte/word/signed word/dword/signed dword) 0
 Eliminating unused variable (signed word) rem16s and assignment [35] (signed word) rem16s ← (byte/signed byte/word/signed word/dword/signed dword) 0
 Eliminating unused variable (byte~) mul8su::$5 and assignment [62] (byte~) mul8su::$5 ← > (word) mul8su::m
@@ -2401,6 +2403,7 @@ Creating constant string variable for inline (const string) sin8u_table::str6 " 
 Creating constant string variable for inline (const string) sin8u_table::str7 " scaled: @"
 Creating constant string variable for inline (const string) sin8u_table::str8 " trans: @"
 Removing empty block @1
+Removing empty block @2
 Removing empty block divr16u::@7
 Removing empty block @3
 Removing empty block div16u::@1
@@ -2446,8 +2449,6 @@ Removing empty block @34
 Removing empty block @35
 Removing empty block sin8u_table::@2
 PROCEDURE MODIFY VARIABLE ANALYSIS
-divr16u modifies rem16u
-div16u modifies rem16u
 print_str modifies print_char_cursor
 print_ln modifies print_line_cursor
 print_ln modifies print_char_cursor
@@ -2460,8 +2461,6 @@ print_cls modifies print_line_cursor
 print_cls modifies print_char_cursor
 main modifies print_line_cursor
 main modifies print_char_cursor
-main modifies rem16u
-sin8u_table modifies rem16u
 sin8u_table modifies print_char_cursor
 sin8u_table modifies print_line_cursor
 
@@ -2492,14 +2491,11 @@ Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  to:@2
-@2: scope:[]  from @begin
-  (word) rem16u#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:@13
 divr16u: scope:[divr16u]  from div16u
   (word) divr16u::divisor#5 ← phi( div16u/(word) divr16u::divisor#0 )
   (word) divr16u::dividend#4 ← phi( div16u/(word) divr16u::dividend#1 )
-  (word) divr16u::rem#9 ← phi( div16u/(word) divr16u::rem#3 )
+  (word) divr16u::rem#8 ← phi( div16u/(word) divr16u::rem#3 )
   (word) divr16u::quotient#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) divr16u::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:divr16u::@1
@@ -2508,7 +2504,7 @@ divr16u::@1: scope:[divr16u]  from divr16u divr16u::@3
   (word) divr16u::divisor#3 ← phi( divr16u/(word) divr16u::divisor#5 divr16u::@3/(word) divr16u::divisor#6 )
   (word) divr16u::quotient#6 ← phi( divr16u/(word) divr16u::quotient#0 divr16u::@3/(word) divr16u::quotient#8 )
   (word) divr16u::dividend#2 ← phi( divr16u/(word) divr16u::dividend#4 divr16u::@3/(word) divr16u::dividend#5 )
-  (word) divr16u::rem#4 ← phi( divr16u/(word) divr16u::rem#9 divr16u::@3/(word) divr16u::rem#10 )
+  (word) divr16u::rem#4 ← phi( divr16u/(word) divr16u::rem#8 divr16u::@3/(word) divr16u::rem#9 )
   (word~) divr16u::$0 ← (word) divr16u::rem#4 << (byte/signed byte/word/signed word/dword/signed dword) 1
   (word) divr16u::rem#0 ← (word~) divr16u::$0
   (byte~) divr16u::$1 ← > (word) divr16u::dividend#2
@@ -2544,7 +2540,7 @@ divr16u::@3: scope:[divr16u]  from divr16u::@2 divr16u::@5
   (word) divr16u::divisor#6 ← phi( divr16u::@2/(word) divr16u::divisor#1 divr16u::@5/(word) divr16u::divisor#2 )
   (word) divr16u::quotient#8 ← phi( divr16u::@2/(word) divr16u::quotient#1 divr16u::@5/(word) divr16u::quotient#2 )
   (word) divr16u::dividend#5 ← phi( divr16u::@2/(word) divr16u::dividend#0 divr16u::@5/(word) divr16u::dividend#7 )
-  (word) divr16u::rem#10 ← phi( divr16u::@2/(word) divr16u::rem#5 divr16u::@5/(word) divr16u::rem#2 )
+  (word) divr16u::rem#9 ← phi( divr16u::@2/(word) divr16u::rem#5 divr16u::@5/(word) divr16u::rem#2 )
   (byte) divr16u::i#2 ← phi( divr16u::@2/(byte) divr16u::i#3 divr16u::@5/(byte) divr16u::i#4 )
   (byte) divr16u::i#1 ← (byte) divr16u::i#2 + rangenext(0,15)
   (bool~) divr16u::$11 ← (byte) divr16u::i#1 != rangelast(0,15)
@@ -2562,19 +2558,14 @@ divr16u::@5: scope:[divr16u]  from divr16u::@2
   to:divr16u::@3
 divr16u::@6: scope:[divr16u]  from divr16u::@3
   (word) divr16u::quotient#5 ← phi( divr16u::@3/(word) divr16u::quotient#8 )
-  (word) divr16u::rem#8 ← phi( divr16u::@3/(word) divr16u::rem#10 )
-  (word) rem16u#1 ← (word) divr16u::rem#8
   (word) divr16u::return#0 ← (word) divr16u::quotient#5
   to:divr16u::@return
 divr16u::@return: scope:[divr16u]  from divr16u::@6
-  (word) rem16u#10 ← phi( divr16u::@6/(word) rem16u#1 )
   (word) divr16u::return#3 ← phi( divr16u::@6/(word) divr16u::return#0 )
   (word) divr16u::return#1 ← (word) divr16u::return#3
-  (word) rem16u#2 ← (word) rem16u#10
   return 
   to:@return
 div16u: scope:[div16u]  from sin8u_table
-  (word) rem16u#18 ← phi( sin8u_table/(word) rem16u#20 )
   (word) div16u::divisor#1 ← phi( sin8u_table/(word) div16u::divisor#0 )
   (word) div16u::dividend#1 ← phi( sin8u_table/(word) div16u::dividend#0 )
   (word) divr16u::dividend#1 ← (word) div16u::dividend#1
@@ -2584,17 +2575,13 @@ div16u: scope:[div16u]  from sin8u_table
   (word) divr16u::return#2 ← (word) divr16u::return#1
   to:div16u::@2
 div16u::@2: scope:[div16u]  from div16u
-  (word) rem16u#11 ← phi( div16u/(word) rem16u#2 )
   (word) divr16u::return#4 ← phi( div16u/(word) divr16u::return#2 )
   (word~) div16u::$0 ← (word) divr16u::return#4
-  (word) rem16u#3 ← (word) rem16u#11
   (word) div16u::return#0 ← (word~) div16u::$0
   to:div16u::@return
 div16u::@return: scope:[div16u]  from div16u::@2
-  (word) rem16u#12 ← phi( div16u::@2/(word) rem16u#3 )
   (word) div16u::return#3 ← phi( div16u::@2/(word) div16u::return#0 )
   (word) div16u::return#1 ← (word) div16u::return#3
-  (word) rem16u#4 ← (word) rem16u#12
   return 
   to:@return
 mul8u: scope:[mul8u]  from mul8su mulu8_sel
@@ -2683,8 +2670,7 @@ mul8su::@return: scope:[mul8su]  from mul8su::@1
   (signed word) mul8su::return#1 ← (signed word) mul8su::return#3
   return 
   to:@return
-@13: scope:[]  from @2
-  (word) rem16u#28 ← phi( @2/(word) rem16u#0 )
+@13: scope:[]  from @begin
   (word) PI2_u4f12#0 ← (word/signed word/dword/signed dword) 25736
   (word) PI_u4f12#0 ← (word/signed word/dword/signed dword) 12868
   (word) PI_HALF_u4f12#0 ← (word/signed word/dword/signed dword) 6434
@@ -2846,7 +2832,6 @@ mulu8_sel::@return: scope:[mulu8_sel]  from mulu8_sel::@2
   return 
   to:@return
 @20: scope:[]  from @13
-  (word) rem16u#26 ← phi( @13/(word) rem16u#28 )
   (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
@@ -2994,7 +2979,6 @@ print_word::@return: scope:[print_word]  from print_word::@2
   to:@return
 @30: scope:[]  from @20
   (byte*) print_screen#6 ← phi( @20/(byte*) print_screen#0 )
-  (word) rem16u#25 ← phi( @20/(word) rem16u#26 )
   (byte*) print_char_cursor#107 ← phi( @20/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#30 ← phi( @20/(byte*) print_line_cursor#0 )
   (byte[]) print_hextab#0 ← (const string) $0
@@ -3060,7 +3044,6 @@ print_cls::@return: scope:[print_cls]  from print_cls::@2
   return 
   to:@return
 main: scope:[main]  from @36
-  (word) rem16u#23 ← phi( @36/(word) rem16u#22 )
   (byte*) print_char_cursor#98 ← phi( @36/(byte*) print_char_cursor#101 )
   (byte*) print_line_cursor#24 ← phi( @36/(byte*) print_line_cursor#27 )
   (byte*) print_screen#4 ← phi( @36/(byte*) print_screen#5 )
@@ -3069,7 +3052,6 @@ main: scope:[main]  from @36
   call print_cls 
   to:main::@1
 main::@1: scope:[main]  from main
-  (word) rem16u#19 ← phi( main/(word) rem16u#23 )
   (word) main::tabsize#1 ← phi( main/(word) main::tabsize#0 )
   (byte*) print_char_cursor#65 ← phi( main/(byte*) print_char_cursor#20 )
   (byte*) print_line_cursor#16 ← phi( main/(byte*) print_line_cursor#4 )
@@ -3084,25 +3066,20 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte*) print_line_cursor#17 ← phi( main::@1/(byte*) print_line_cursor#10 )
   (byte*) print_char_cursor#66 ← phi( main::@1/(byte*) print_char_cursor#44 )
-  (word) rem16u#13 ← phi( main::@1/(word) rem16u#8 )
-  (word) rem16u#5 ← (word) rem16u#13
   (byte*) print_char_cursor#22 ← (byte*) print_char_cursor#66
   (byte*) print_line_cursor#6 ← (byte*) print_line_cursor#17
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  (word) rem16u#14 ← phi( main::@2/(word) rem16u#5 )
   (byte*) print_char_cursor#67 ← phi( main::@2/(byte*) print_char_cursor#22 )
   (byte*) print_line_cursor#18 ← phi( main::@2/(byte*) print_line_cursor#6 )
   (byte*) print_line_cursor#7 ← (byte*) print_line_cursor#18
   (byte*) print_char_cursor#23 ← (byte*) print_char_cursor#67
-  (word) rem16u#6 ← (word) rem16u#14
   return 
   to:@return
 sin8u_table: scope:[sin8u_table]  from main::@1
   (byte*) sin8u_table::sintab#26 ← phi( main::@1/(byte*) sin8u_table::sintab#0 )
   (byte*) print_line_cursor#49 ← phi( main::@1/(byte*) print_line_cursor#5 )
   (byte*) print_char_cursor#105 ← phi( main::@1/(byte*) print_char_cursor#21 )
-  (word) rem16u#20 ← phi( main::@1/(word) rem16u#19 )
   (word) sin8u_table::tabsize#1 ← phi( main::@1/(word) sin8u_table::tabsize#0 )
   (byte) sin8u_table::min#1 ← phi( main::@1/(byte) sin8u_table::min#0 )
   (byte) sin8u_table::max#1 ← phi( main::@1/(byte) sin8u_table::max#0 )
@@ -3129,16 +3106,13 @@ sin8u_table::@3: scope:[sin8u_table]  from sin8u_table
   (byte) sin8u_table::max#7 ← phi( sin8u_table/(byte) sin8u_table::max#1 )
   (byte) sin8u_table::min#5 ← phi( sin8u_table/(byte) sin8u_table::min#1 )
   (byte*) print_char_cursor#99 ← phi( sin8u_table/(byte*) print_char_cursor#105 )
-  (word) rem16u#15 ← phi( sin8u_table/(word) rem16u#4 )
   (word) div16u::return#4 ← phi( sin8u_table/(word) div16u::return#2 )
   (word~) sin8u_table::$6 ← (word) div16u::return#4
-  (word) rem16u#7 ← (word) rem16u#15
   (word) sin8u_table::step#0 ← (word~) sin8u_table::$6
   (byte*) print_str::str#1 ← (const string) sin8u_table::str
   call print_str 
   to:sin8u_table::@4
 sin8u_table::@4: scope:[sin8u_table]  from sin8u_table::@3
-  (word) rem16u#48 ← phi( sin8u_table::@3/(word) rem16u#7 )
   (word) sin8u_table::tabsize#24 ← phi( sin8u_table::@3/(word) sin8u_table::tabsize#25 )
   (byte*) sin8u_table::sintab#24 ← phi( sin8u_table::@3/(byte*) sin8u_table::sintab#25 )
   (byte*) print_line_cursor#45 ← phi( sin8u_table::@3/(byte*) print_line_cursor#47 )
@@ -3153,7 +3127,6 @@ sin8u_table::@4: scope:[sin8u_table]  from sin8u_table::@3
   call print_word 
   to:sin8u_table::@5
 sin8u_table::@5: scope:[sin8u_table]  from sin8u_table::@4
-  (word) rem16u#47 ← phi( sin8u_table::@4/(word) rem16u#48 )
   (word) sin8u_table::tabsize#23 ← phi( sin8u_table::@4/(word) sin8u_table::tabsize#24 )
   (word) sin8u_table::step#23 ← phi( sin8u_table::@4/(word) sin8u_table::step#1 )
   (byte*) sin8u_table::sintab#23 ← phi( sin8u_table::@4/(byte*) sin8u_table::sintab#24 )
@@ -3168,7 +3141,6 @@ sin8u_table::@5: scope:[sin8u_table]  from sin8u_table::@4
   call print_str 
   to:sin8u_table::@6
 sin8u_table::@6: scope:[sin8u_table]  from sin8u_table::@5
-  (word) rem16u#46 ← phi( sin8u_table::@5/(word) rem16u#47 )
   (word) sin8u_table::tabsize#22 ← phi( sin8u_table::@5/(word) sin8u_table::tabsize#23 )
   (word) sin8u_table::step#22 ← phi( sin8u_table::@5/(word) sin8u_table::step#23 )
   (byte*) sin8u_table::sintab#21 ← phi( sin8u_table::@5/(byte*) sin8u_table::sintab#23 )
@@ -3183,7 +3155,6 @@ sin8u_table::@6: scope:[sin8u_table]  from sin8u_table::@5
   call print_byte 
   to:sin8u_table::@7
 sin8u_table::@7: scope:[sin8u_table]  from sin8u_table::@6
-  (word) rem16u#45 ← phi( sin8u_table::@6/(word) rem16u#46 )
   (word) sin8u_table::tabsize#21 ← phi( sin8u_table::@6/(word) sin8u_table::tabsize#22 )
   (word) sin8u_table::step#21 ← phi( sin8u_table::@6/(word) sin8u_table::step#22 )
   (byte*) sin8u_table::sintab#19 ← phi( sin8u_table::@6/(byte*) sin8u_table::sintab#21 )
@@ -3197,7 +3168,6 @@ sin8u_table::@7: scope:[sin8u_table]  from sin8u_table::@6
   call print_str 
   to:sin8u_table::@8
 sin8u_table::@8: scope:[sin8u_table]  from sin8u_table::@7
-  (word) rem16u#44 ← phi( sin8u_table::@7/(word) rem16u#45 )
   (word) sin8u_table::tabsize#20 ← phi( sin8u_table::@7/(word) sin8u_table::tabsize#21 )
   (word) sin8u_table::step#20 ← phi( sin8u_table::@7/(word) sin8u_table::step#21 )
   (byte*) sin8u_table::sintab#17 ← phi( sin8u_table::@7/(byte*) sin8u_table::sintab#19 )
@@ -3211,7 +3181,6 @@ sin8u_table::@8: scope:[sin8u_table]  from sin8u_table::@7
   call print_byte 
   to:sin8u_table::@9
 sin8u_table::@9: scope:[sin8u_table]  from sin8u_table::@8
-  (word) rem16u#43 ← phi( sin8u_table::@8/(word) rem16u#44 )
   (word) sin8u_table::tabsize#19 ← phi( sin8u_table::@8/(word) sin8u_table::tabsize#20 )
   (word) sin8u_table::step#19 ← phi( sin8u_table::@8/(word) sin8u_table::step#20 )
   (byte*) sin8u_table::sintab#15 ← phi( sin8u_table::@8/(byte*) sin8u_table::sintab#17 )
@@ -3224,7 +3193,6 @@ sin8u_table::@9: scope:[sin8u_table]  from sin8u_table::@8
   call print_str 
   to:sin8u_table::@10
 sin8u_table::@10: scope:[sin8u_table]  from sin8u_table::@9
-  (word) rem16u#42 ← phi( sin8u_table::@9/(word) rem16u#43 )
   (word) sin8u_table::tabsize#18 ← phi( sin8u_table::@9/(word) sin8u_table::tabsize#19 )
   (word) sin8u_table::step#18 ← phi( sin8u_table::@9/(word) sin8u_table::step#19 )
   (byte*) sin8u_table::sintab#13 ← phi( sin8u_table::@9/(byte*) sin8u_table::sintab#15 )
@@ -3237,7 +3205,6 @@ sin8u_table::@10: scope:[sin8u_table]  from sin8u_table::@9
   call print_byte 
   to:sin8u_table::@11
 sin8u_table::@11: scope:[sin8u_table]  from sin8u_table::@10
-  (word) rem16u#41 ← phi( sin8u_table::@10/(word) rem16u#42 )
   (word) sin8u_table::tabsize#17 ← phi( sin8u_table::@10/(word) sin8u_table::tabsize#18 )
   (word) sin8u_table::step#17 ← phi( sin8u_table::@10/(word) sin8u_table::step#18 )
   (byte*) sin8u_table::sintab#11 ← phi( sin8u_table::@10/(byte*) sin8u_table::sintab#13 )
@@ -3250,7 +3217,6 @@ sin8u_table::@11: scope:[sin8u_table]  from sin8u_table::@10
   call print_str 
   to:sin8u_table::@12
 sin8u_table::@12: scope:[sin8u_table]  from sin8u_table::@11
-  (word) rem16u#40 ← phi( sin8u_table::@11/(word) rem16u#41 )
   (word) sin8u_table::tabsize#16 ← phi( sin8u_table::@11/(word) sin8u_table::tabsize#17 )
   (word) sin8u_table::step#16 ← phi( sin8u_table::@11/(word) sin8u_table::step#17 )
   (byte*) sin8u_table::sintab#9 ← phi( sin8u_table::@11/(byte*) sin8u_table::sintab#11 )
@@ -3263,7 +3229,6 @@ sin8u_table::@12: scope:[sin8u_table]  from sin8u_table::@11
   call print_byte 
   to:sin8u_table::@13
 sin8u_table::@13: scope:[sin8u_table]  from sin8u_table::@12
-  (word) rem16u#39 ← phi( sin8u_table::@12/(word) rem16u#40 )
   (word) sin8u_table::tabsize#15 ← phi( sin8u_table::@12/(word) sin8u_table::tabsize#16 )
   (word) sin8u_table::step#15 ← phi( sin8u_table::@12/(word) sin8u_table::step#16 )
   (byte*) sin8u_table::sintab#7 ← phi( sin8u_table::@12/(byte*) sin8u_table::sintab#9 )
@@ -3275,7 +3240,6 @@ sin8u_table::@13: scope:[sin8u_table]  from sin8u_table::@12
   call print_ln 
   to:sin8u_table::@14
 sin8u_table::@14: scope:[sin8u_table]  from sin8u_table::@13
-  (word) rem16u#38 ← phi( sin8u_table::@13/(word) rem16u#39 )
   (word) sin8u_table::tabsize#14 ← phi( sin8u_table::@13/(word) sin8u_table::tabsize#15 )
   (word) sin8u_table::step#14 ← phi( sin8u_table::@13/(word) sin8u_table::step#15 )
   (byte*) sin8u_table::sintab#5 ← phi( sin8u_table::@13/(byte*) sin8u_table::sintab#7 )
@@ -3289,7 +3253,6 @@ sin8u_table::@14: scope:[sin8u_table]  from sin8u_table::@13
   (word) sin8u_table::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:sin8u_table::@1
 sin8u_table::@1: scope:[sin8u_table]  from sin8u_table::@14 sin8u_table::@25
-  (word) rem16u#37 ← phi( sin8u_table::@14/(word) rem16u#38 sin8u_table::@25/(word) rem16u#21 )
   (word) sin8u_table::tabsize#13 ← phi( sin8u_table::@14/(word) sin8u_table::tabsize#14 sin8u_table::@25/(word) sin8u_table::tabsize#2 )
   (word) sin8u_table::i#13 ← phi( sin8u_table::@14/(word) sin8u_table::i#0 sin8u_table::@25/(word) sin8u_table::i#1 )
   (word) sin8u_table::step#13 ← phi( sin8u_table::@14/(word) sin8u_table::step#14 sin8u_table::@25/(word) sin8u_table::step#2 )
@@ -3304,7 +3267,6 @@ sin8u_table::@1: scope:[sin8u_table]  from sin8u_table::@14 sin8u_table::@25
   (signed byte) sin8s::return#2 ← (signed byte) sin8s::return#1
   to:sin8u_table::@15
 sin8u_table::@15: scope:[sin8u_table]  from sin8u_table::@1
-  (word) rem16u#36 ← phi( sin8u_table::@1/(word) rem16u#37 )
   (word) sin8u_table::tabsize#12 ← phi( sin8u_table::@1/(word) sin8u_table::tabsize#13 )
   (word) sin8u_table::i#12 ← phi( sin8u_table::@1/(word) sin8u_table::i#13 )
   (word) sin8u_table::step#12 ← phi( sin8u_table::@1/(word) sin8u_table::step#13 )
@@ -3325,7 +3287,6 @@ sin8u_table::@15: scope:[sin8u_table]  from sin8u_table::@1
   to:sin8u_table::@16
 sin8u_table::@16: scope:[sin8u_table]  from sin8u_table::@15
   (byte) sin8u_table::amplitude#24 ← phi( sin8u_table::@15/(byte) sin8u_table::amplitude#2 )
-  (word) rem16u#35 ← phi( sin8u_table::@15/(word) rem16u#36 )
   (word) sin8u_table::tabsize#11 ← phi( sin8u_table::@15/(word) sin8u_table::tabsize#12 )
   (word) sin8u_table::i#11 ← phi( sin8u_table::@15/(word) sin8u_table::i#12 )
   (word) sin8u_table::step#11 ← phi( sin8u_table::@15/(word) sin8u_table::step#12 )
@@ -3350,7 +3311,6 @@ sin8u_table::@17: scope:[sin8u_table]  from sin8u_table::@16
   (byte*) sin8u_table::sintab#22 ← phi( sin8u_table::@16/(byte*) sin8u_table::sintab#1 )
   (byte) sin8u_table::mid#24 ← phi( sin8u_table::@16/(byte) sin8u_table::mid#2 )
   (byte) sin8u_table::amplitude#23 ← phi( sin8u_table::@16/(byte) sin8u_table::amplitude#24 )
-  (word) rem16u#34 ← phi( sin8u_table::@16/(word) rem16u#35 )
   (word) sin8u_table::tabsize#10 ← phi( sin8u_table::@16/(word) sin8u_table::tabsize#11 )
   (word) sin8u_table::i#10 ← phi( sin8u_table::@16/(word) sin8u_table::i#11 )
   (word) sin8u_table::step#10 ← phi( sin8u_table::@16/(word) sin8u_table::step#11 )
@@ -3368,7 +3328,6 @@ sin8u_table::@18: scope:[sin8u_table]  from sin8u_table::@17
   (byte*) sin8u_table::sintab#20 ← phi( sin8u_table::@17/(byte*) sin8u_table::sintab#22 )
   (byte) sin8u_table::mid#23 ← phi( sin8u_table::@17/(byte) sin8u_table::mid#24 )
   (byte) sin8u_table::amplitude#22 ← phi( sin8u_table::@17/(byte) sin8u_table::amplitude#23 )
-  (word) rem16u#33 ← phi( sin8u_table::@17/(word) rem16u#34 )
   (word) sin8u_table::tabsize#9 ← phi( sin8u_table::@17/(word) sin8u_table::tabsize#10 )
   (word) sin8u_table::i#9 ← phi( sin8u_table::@17/(word) sin8u_table::i#10 )
   (word) sin8u_table::step#9 ← phi( sin8u_table::@17/(word) sin8u_table::step#10 )
@@ -3386,7 +3345,6 @@ sin8u_table::@19: scope:[sin8u_table]  from sin8u_table::@18
   (byte*) sin8u_table::sintab#18 ← phi( sin8u_table::@18/(byte*) sin8u_table::sintab#20 )
   (byte) sin8u_table::mid#22 ← phi( sin8u_table::@18/(byte) sin8u_table::mid#23 )
   (byte) sin8u_table::amplitude#21 ← phi( sin8u_table::@18/(byte) sin8u_table::amplitude#22 )
-  (word) rem16u#32 ← phi( sin8u_table::@18/(word) rem16u#33 )
   (word) sin8u_table::tabsize#8 ← phi( sin8u_table::@18/(word) sin8u_table::tabsize#9 )
   (word) sin8u_table::i#8 ← phi( sin8u_table::@18/(word) sin8u_table::i#9 )
   (word) sin8u_table::step#8 ← phi( sin8u_table::@18/(word) sin8u_table::step#9 )
@@ -3404,7 +3362,6 @@ sin8u_table::@20: scope:[sin8u_table]  from sin8u_table::@19
   (byte*) sin8u_table::sintab#16 ← phi( sin8u_table::@19/(byte*) sin8u_table::sintab#18 )
   (byte) sin8u_table::mid#20 ← phi( sin8u_table::@19/(byte) sin8u_table::mid#22 )
   (byte) sin8u_table::amplitude#20 ← phi( sin8u_table::@19/(byte) sin8u_table::amplitude#21 )
-  (word) rem16u#31 ← phi( sin8u_table::@19/(word) rem16u#32 )
   (word) sin8u_table::tabsize#7 ← phi( sin8u_table::@19/(word) sin8u_table::tabsize#8 )
   (word) sin8u_table::i#7 ← phi( sin8u_table::@19/(word) sin8u_table::i#8 )
   (word) sin8u_table::step#7 ← phi( sin8u_table::@19/(word) sin8u_table::step#8 )
@@ -3421,7 +3378,6 @@ sin8u_table::@21: scope:[sin8u_table]  from sin8u_table::@20
   (byte*) sin8u_table::sintab#14 ← phi( sin8u_table::@20/(byte*) sin8u_table::sintab#16 )
   (byte) sin8u_table::mid#18 ← phi( sin8u_table::@20/(byte) sin8u_table::mid#20 )
   (byte) sin8u_table::amplitude#18 ← phi( sin8u_table::@20/(byte) sin8u_table::amplitude#20 )
-  (word) rem16u#30 ← phi( sin8u_table::@20/(word) rem16u#31 )
   (word) sin8u_table::tabsize#6 ← phi( sin8u_table::@20/(word) sin8u_table::tabsize#7 )
   (word) sin8u_table::i#6 ← phi( sin8u_table::@20/(word) sin8u_table::i#7 )
   (word) sin8u_table::step#6 ← phi( sin8u_table::@20/(word) sin8u_table::step#7 )
@@ -3438,7 +3394,6 @@ sin8u_table::@22: scope:[sin8u_table]  from sin8u_table::@21
   (byte*) sin8u_table::sintab#12 ← phi( sin8u_table::@21/(byte*) sin8u_table::sintab#14 )
   (byte) sin8u_table::mid#16 ← phi( sin8u_table::@21/(byte) sin8u_table::mid#18 )
   (byte) sin8u_table::amplitude#16 ← phi( sin8u_table::@21/(byte) sin8u_table::amplitude#18 )
-  (word) rem16u#29 ← phi( sin8u_table::@21/(word) rem16u#30 )
   (word) sin8u_table::tabsize#5 ← phi( sin8u_table::@21/(word) sin8u_table::tabsize#6 )
   (word) sin8u_table::i#5 ← phi( sin8u_table::@21/(word) sin8u_table::i#6 )
   (word) sin8u_table::step#5 ← phi( sin8u_table::@21/(word) sin8u_table::step#6 )
@@ -3454,7 +3409,6 @@ sin8u_table::@23: scope:[sin8u_table]  from sin8u_table::@22
   (byte*) sin8u_table::sintab#10 ← phi( sin8u_table::@22/(byte*) sin8u_table::sintab#12 )
   (byte) sin8u_table::mid#14 ← phi( sin8u_table::@22/(byte) sin8u_table::mid#16 )
   (byte) sin8u_table::amplitude#13 ← phi( sin8u_table::@22/(byte) sin8u_table::amplitude#16 )
-  (word) rem16u#27 ← phi( sin8u_table::@22/(word) rem16u#29 )
   (word) sin8u_table::tabsize#4 ← phi( sin8u_table::@22/(word) sin8u_table::tabsize#5 )
   (word) sin8u_table::i#4 ← phi( sin8u_table::@22/(word) sin8u_table::i#5 )
   (word) sin8u_table::step#4 ← phi( sin8u_table::@22/(word) sin8u_table::step#5 )
@@ -3470,7 +3424,6 @@ sin8u_table::@24: scope:[sin8u_table]  from sin8u_table::@23
   (byte*) sin8u_table::sintab#8 ← phi( sin8u_table::@23/(byte*) sin8u_table::sintab#10 )
   (byte) sin8u_table::mid#12 ← phi( sin8u_table::@23/(byte) sin8u_table::mid#14 )
   (byte) sin8u_table::amplitude#10 ← phi( sin8u_table::@23/(byte) sin8u_table::amplitude#13 )
-  (word) rem16u#24 ← phi( sin8u_table::@23/(word) rem16u#27 )
   (word) sin8u_table::tabsize#3 ← phi( sin8u_table::@23/(word) sin8u_table::tabsize#4 )
   (word) sin8u_table::i#3 ← phi( sin8u_table::@23/(word) sin8u_table::i#4 )
   (word) sin8u_table::step#3 ← phi( sin8u_table::@23/(word) sin8u_table::step#4 )
@@ -3484,7 +3437,6 @@ sin8u_table::@25: scope:[sin8u_table]  from sin8u_table::@24
   (byte*) sin8u_table::sintab#6 ← phi( sin8u_table::@24/(byte*) sin8u_table::sintab#8 )
   (byte) sin8u_table::mid#9 ← phi( sin8u_table::@24/(byte) sin8u_table::mid#12 )
   (byte) sin8u_table::amplitude#7 ← phi( sin8u_table::@24/(byte) sin8u_table::amplitude#10 )
-  (word) rem16u#21 ← phi( sin8u_table::@24/(word) rem16u#24 )
   (word) sin8u_table::tabsize#2 ← phi( sin8u_table::@24/(word) sin8u_table::tabsize#3 )
   (word) sin8u_table::i#2 ← phi( sin8u_table::@24/(word) sin8u_table::i#3 )
   (word) sin8u_table::step#2 ← phi( sin8u_table::@24/(word) sin8u_table::step#3 )
@@ -3502,33 +3454,27 @@ sin8u_table::@25: scope:[sin8u_table]  from sin8u_table::@24
 sin8u_table::@return: scope:[sin8u_table]  from sin8u_table::@25
   (byte*) print_line_cursor#21 ← phi( sin8u_table::@25/(byte*) print_line_cursor#9 )
   (byte*) print_char_cursor#88 ← phi( sin8u_table::@25/(byte*) print_char_cursor#43 )
-  (word) rem16u#16 ← phi( sin8u_table::@25/(word) rem16u#21 )
-  (word) rem16u#8 ← (word) rem16u#16
   (byte*) print_char_cursor#44 ← (byte*) print_char_cursor#88
   (byte*) print_line_cursor#10 ← (byte*) print_line_cursor#21
   return 
   to:@return
 @36: scope:[]  from @30
   (byte*) print_screen#5 ← phi( @30/(byte*) print_screen#6 )
-  (word) rem16u#22 ← phi( @30/(word) rem16u#25 )
   (byte*) print_char_cursor#101 ← phi( @30/(byte*) print_char_cursor#107 )
   (byte*) print_line_cursor#27 ← phi( @30/(byte*) print_line_cursor#30 )
   call main 
   to:@37
 @37: scope:[]  from @36
-  (word) rem16u#17 ← phi( @36/(word) rem16u#6 )
   (byte*) print_char_cursor#89 ← phi( @36/(byte*) print_char_cursor#23 )
   (byte*) print_line_cursor#22 ← phi( @36/(byte*) print_line_cursor#7 )
   (byte*) print_line_cursor#11 ← (byte*) print_line_cursor#22
   (byte*) print_char_cursor#45 ← (byte*) print_char_cursor#89
-  (word) rem16u#9 ← (word) rem16u#17
   to:@end
 @end: scope:[]  from @37
 
 SYMBOL TABLE SSA
 (const string) $0 = (string) "0123456789abcdef"
 (label) @13
-(label) @2
 (label) @20
 (label) @30
 (label) @36
@@ -3615,7 +3561,6 @@ SYMBOL TABLE SSA
 (word) divr16u::rem
 (word) divr16u::rem#0
 (word) divr16u::rem#1
-(word) divr16u::rem#10
 (word) divr16u::rem#2
 (word) divr16u::rem#3
 (word) divr16u::rem#4
@@ -4043,56 +3988,6 @@ SYMBOL TABLE SSA
 (word) print_word::w#2
 (word) print_word::w#3
 (word) print_word::w#4
-(word) rem16u
-(word) rem16u#0
-(word) rem16u#1
-(word) rem16u#10
-(word) rem16u#11
-(word) rem16u#12
-(word) rem16u#13
-(word) rem16u#14
-(word) rem16u#15
-(word) rem16u#16
-(word) rem16u#17
-(word) rem16u#18
-(word) rem16u#19
-(word) rem16u#2
-(word) rem16u#20
-(word) rem16u#21
-(word) rem16u#22
-(word) rem16u#23
-(word) rem16u#24
-(word) rem16u#25
-(word) rem16u#26
-(word) rem16u#27
-(word) rem16u#28
-(word) rem16u#29
-(word) rem16u#3
-(word) rem16u#30
-(word) rem16u#31
-(word) rem16u#32
-(word) rem16u#33
-(word) rem16u#34
-(word) rem16u#35
-(word) rem16u#36
-(word) rem16u#37
-(word) rem16u#38
-(word) rem16u#39
-(word) rem16u#4
-(word) rem16u#40
-(word) rem16u#41
-(word) rem16u#42
-(word) rem16u#43
-(word) rem16u#44
-(word) rem16u#45
-(word) rem16u#46
-(word) rem16u#47
-(word) rem16u#48
-(word) rem16u#5
-(word) rem16u#6
-(word) rem16u#7
-(word) rem16u#8
-(word) rem16u#9
 (signed byte()) sin8s((word) sin8s::x)
 (bool~) sin8s::$0
 (bool~) sin8s::$1
@@ -4457,17 +4352,14 @@ Inversing boolean not (bool~) sin8s::$20 ← (byte) sin8s::isUpper#2 == (byte/si
 Inversing boolean not (bool~) print_sword::$1 ← (signed word) print_sword::w#2 >= (byte/signed byte/word/signed word/dword/signed dword) 0 from (bool~) print_sword::$0 ← (signed word) print_sword::w#2 < (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not (bool~) print_sbyte::$1 ← (signed byte) print_sbyte::b#2 >= (byte/signed byte/word/signed word/dword/signed dword) 0 from (bool~) print_sbyte::$0 ← (signed byte) print_sbyte::b#2 < (byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2UnaryNotSimplification
-Not aliassing across scopes: divr16u::rem#9 divr16u::rem#3
+Not aliassing across scopes: divr16u::rem#8 divr16u::rem#3
 Not aliassing across scopes: divr16u::dividend#4 divr16u::dividend#1
 Not aliassing across scopes: divr16u::divisor#5 divr16u::divisor#0
-Not aliassing across scopes: rem16u#1 divr16u::rem#8
 Not aliassing across scopes: div16u::dividend#1 div16u::dividend#0
 Not aliassing across scopes: div16u::divisor#1 div16u::divisor#0
-Not aliassing across scopes: rem16u#18 rem16u#20
 Not aliassing across scopes: divr16u::dividend#1 div16u::dividend#1
 Not aliassing across scopes: divr16u::divisor#0 div16u::divisor#1
 Not aliassing across scopes: divr16u::return#2 divr16u::return#1
-Not aliassing across scopes: rem16u#11 rem16u#2
 Not aliassing across scopes: div16u::$0 divr16u::return#4
 Not aliassing across scopes: mul8u::b#2 mul8u::b#0
 Not aliassing across scopes: mul8u::a#6 mul8u::a#1
@@ -4530,25 +4422,21 @@ Not aliassing across scopes: print_cls::sc#0 print_screen#1
 Not aliassing across scopes: print_screen#4 print_screen#5
 Not aliassing across scopes: print_line_cursor#24 print_line_cursor#27
 Not aliassing across scopes: print_char_cursor#98 print_char_cursor#101
-Not aliassing across scopes: rem16u#23 rem16u#22
 Not aliassing across scopes: print_line_cursor#16 print_line_cursor#4
 Not aliassing across scopes: print_char_cursor#65 print_char_cursor#20
 Not aliassing across scopes: sin8u_table::sintab#0 main::sintab#0
 Not aliassing across scopes: sin8u_table::tabsize#0 main::tabsize#1
-Not aliassing across scopes: rem16u#13 rem16u#8
 Not aliassing across scopes: print_char_cursor#66 print_char_cursor#44
 Not aliassing across scopes: print_line_cursor#17 print_line_cursor#10
 Not aliassing across scopes: sin8u_table::max#1 sin8u_table::max#0
 Not aliassing across scopes: sin8u_table::min#1 sin8u_table::min#0
 Not aliassing across scopes: sin8u_table::tabsize#1 sin8u_table::tabsize#0
-Not aliassing across scopes: rem16u#20 rem16u#19
 Not aliassing across scopes: print_char_cursor#105 print_char_cursor#21
 Not aliassing across scopes: print_line_cursor#49 print_line_cursor#5
 Not aliassing across scopes: sin8u_table::sintab#26 sin8u_table::sintab#0
 Not aliassing across scopes: div16u::dividend#0 PI2_u4f12#0
 Not aliassing across scopes: div16u::divisor#0 sin8u_table::tabsize#1
 Not aliassing across scopes: div16u::return#2 div16u::return#1
-Not aliassing across scopes: rem16u#15 rem16u#4
 Not aliassing across scopes: sin8u_table::$6 div16u::return#4
 Not aliassing across scopes: print_char_cursor#68 print_char_cursor#2
 Not aliassing across scopes: print_word::w#1 sin8u_table::step#1
@@ -4589,7 +4477,6 @@ Not aliassing across scopes: print_line_cursor#20 print_line_cursor#2
 Not aliassing across scopes: print_char_cursor#87 print_char_cursor#4
 Not aliassing across scopes: print_line_cursor#22 print_line_cursor#7
 Not aliassing across scopes: print_char_cursor#89 print_char_cursor#23
-Not aliassing across scopes: rem16u#17 rem16u#6
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#6 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#7 
 Alias (word) divr16u::quotient#1 = (word~) divr16u::$7 (word) divr16u::quotient#4 
@@ -4602,11 +4489,8 @@ Alias (word) divr16u::rem#5 = (word) divr16u::rem#7
 Alias (word) divr16u::divisor#1 = (word) divr16u::divisor#2 
 Alias (byte) divr16u::i#3 = (byte) divr16u::i#4 
 Alias (word) divr16u::rem#2 = (word~) divr16u::$10 
-Alias (word) divr16u::rem#10 = (word) divr16u::rem#8 
 Alias (word) divr16u::return#0 = (word) divr16u::quotient#5 (word) divr16u::quotient#8 (word) divr16u::return#3 (word) divr16u::return#1 
-Alias (word) rem16u#1 = (word) rem16u#10 (word) rem16u#2 
 Alias (word) divr16u::return#2 = (word) divr16u::return#4 
-Alias (word) rem16u#11 = (word) rem16u#3 (word) rem16u#12 (word) rem16u#4 
 Alias (word) div16u::return#0 = (word~) div16u::$0 (word) div16u::return#3 (word) div16u::return#1 
 Alias (byte) mul8u::a#3 = (byte) mul8u::a#4 (byte) mul8u::a#7 
 Alias (word) mul8u::mb#3 = (word) mul8u::mb#4 (word) mul8u::mb#5 
@@ -4622,7 +4506,6 @@ Alias (byte) mul8su::b#1 = (byte) mul8su::b#3 (byte) mul8su::b#2
 Alias (word) mul8su::m#0 = (word~) mul8su::$2 (word) mul8su::m#3 
 Alias (signed word) mul8su::return#0 = (signed word~) mul8su::$9 (signed word) mul8su::return#3 (signed word) mul8su::return#1 
 Alias (byte~) mul8su::$10 = (byte~) mul8su::$8 
-Alias (word) rem16u#0 = (word) rem16u#28 (word) rem16u#26 (word) rem16u#25 (word) rem16u#22 
 Alias (word) sin8s::x#3 = (word) sin8s::x#5 
 Alias (word) sin8s::x#0 = (word~) sin8s::$2 
 Alias (byte) sin8s::x1#0 = (byte~) sin8s::$7 (byte) sin8s::x1#1 (byte) sin8s::x1#4 (byte) sin8s::x1#2 (byte) sin8s::x1#3 
@@ -4677,10 +4560,8 @@ Alias (byte*) print_char_cursor#15 = (byte*) print_char_cursor#60 (byte*) print_
 Alias (byte*) print_char_cursor#17 = (byte*) print_char_cursor#63 (byte*) print_char_cursor#18 
 Alias (byte*) print_line_cursor#15 = (byte*) print_screen#3 (byte*) print_screen#2 (byte*) print_line_cursor#3 (byte*) print_char_cursor#19 (byte*) print_char_cursor#64 (byte*) print_line_cursor#4 (byte*) print_char_cursor#20 
 Alias (word) main::tabsize#0 = (word) main::tabsize#1 
-Alias (word) rem16u#19 = (word) rem16u#23 
 Alias (byte*) print_line_cursor#16 = (byte*) print_line_cursor#5 
 Alias (byte*) print_char_cursor#21 = (byte*) print_char_cursor#65 
-Alias (word) rem16u#13 = (word) rem16u#5 (word) rem16u#14 (word) rem16u#6 
 Alias (byte*) print_char_cursor#22 = (byte*) print_char_cursor#66 (byte*) print_char_cursor#67 (byte*) print_char_cursor#23 
 Alias (byte*) print_line_cursor#17 = (byte*) print_line_cursor#6 (byte*) print_line_cursor#18 (byte*) print_line_cursor#7 
 Alias (byte) sin8u_table::amplitude#0 = (byte~) sin8u_table::$0 (byte) sin8u_table::amplitude#19 (byte) sin8u_table::amplitude#17 (byte) sin8u_table::amplitude#14 (byte) sin8u_table::amplitude#11 (byte) sin8u_table::amplitude#8 (byte) sin8u_table::amplitude#5 (byte) sin8u_table::amplitude#3 (byte) sin8u_table::amplitude#1 (byte) sin8u_table::amplitude#15 (byte) sin8u_table::amplitude#12 (byte) sin8u_table::amplitude#9 (byte) sin8u_table::amplitude#6 
@@ -4693,7 +4574,6 @@ Alias (byte) sin8u_table::max#1 = (byte) sin8u_table::max#7 (byte) sin8u_table::
 Alias (byte*) print_line_cursor#25 = (byte*) print_line_cursor#47 (byte*) print_line_cursor#49 (byte*) print_line_cursor#45 (byte*) print_line_cursor#43 (byte*) print_line_cursor#41 (byte*) print_line_cursor#39 (byte*) print_line_cursor#37 (byte*) print_line_cursor#35 (byte*) print_line_cursor#33 (byte*) print_line_cursor#31 (byte*) print_line_cursor#28 
 Alias (byte*) sin8u_table::sintab#11 = (byte*) sin8u_table::sintab#25 (byte*) sin8u_table::sintab#26 (byte*) sin8u_table::sintab#24 (byte*) sin8u_table::sintab#23 (byte*) sin8u_table::sintab#21 (byte*) sin8u_table::sintab#19 (byte*) sin8u_table::sintab#17 (byte*) sin8u_table::sintab#15 (byte*) sin8u_table::sintab#13 (byte*) sin8u_table::sintab#9 (byte*) sin8u_table::sintab#7 (byte*) sin8u_table::sintab#5 
 Alias (word) sin8u_table::tabsize#1 = (word) sin8u_table::tabsize#25 (word) sin8u_table::tabsize#24 (word) sin8u_table::tabsize#23 (word) sin8u_table::tabsize#22 (word) sin8u_table::tabsize#21 (word) sin8u_table::tabsize#20 (word) sin8u_table::tabsize#19 (word) sin8u_table::tabsize#18 (word) sin8u_table::tabsize#17 (word) sin8u_table::tabsize#16 (word) sin8u_table::tabsize#15 (word) sin8u_table::tabsize#14 
-Alias (word) rem16u#15 = (word) rem16u#7 (word) rem16u#48 (word) rem16u#47 (word) rem16u#46 (word) rem16u#45 (word) rem16u#44 (word) rem16u#43 (word) rem16u#42 (word) rem16u#41 (word) rem16u#40 (word) rem16u#39 (word) rem16u#38 
 Alias (word) sin8u_table::step#0 = (word~) sin8u_table::$6 (word) sin8u_table::step#1 (word) sin8u_table::step#23 (word) sin8u_table::step#22 (word) sin8u_table::step#21 (word) sin8u_table::step#20 (word) sin8u_table::step#19 (word) sin8u_table::step#18 (word) sin8u_table::step#17 (word) sin8u_table::step#16 (word) sin8u_table::step#15 (word) sin8u_table::step#14 
 Alias (byte*) print_char_cursor#24 = (byte*) print_char_cursor#68 
 Alias (byte*) print_char_cursor#25 = (byte*) print_char_cursor#69 
@@ -4717,7 +4597,6 @@ Alias (byte*) print_line_cursor#26 = (byte*) print_line_cursor#46 (byte*) print_
 Alias (word) sin8u_table::step#10 = (word) sin8u_table::step#12 (word) sin8u_table::step#13 (word) sin8u_table::step#11 (word) sin8u_table::step#9 (word) sin8u_table::step#8 (word) sin8u_table::step#7 (word) sin8u_table::step#6 (word) sin8u_table::step#5 (word) sin8u_table::step#4 (word) sin8u_table::step#3 (word) sin8u_table::step#2 
 Alias (word) sin8u_table::i#10 = (word) sin8u_table::i#12 (word) sin8u_table::i#13 (word) sin8u_table::i#11 (word) sin8u_table::i#9 (word) sin8u_table::i#8 (word) sin8u_table::i#7 (word) sin8u_table::i#6 (word) sin8u_table::i#5 (word) sin8u_table::i#4 (word) sin8u_table::i#3 (word) sin8u_table::i#2 
 Alias (word) sin8u_table::tabsize#10 = (word) sin8u_table::tabsize#12 (word) sin8u_table::tabsize#13 (word) sin8u_table::tabsize#11 (word) sin8u_table::tabsize#9 (word) sin8u_table::tabsize#8 (word) sin8u_table::tabsize#7 (word) sin8u_table::tabsize#6 (word) sin8u_table::tabsize#5 (word) sin8u_table::tabsize#4 (word) sin8u_table::tabsize#3 (word) sin8u_table::tabsize#2 
-Alias (word) rem16u#16 = (word) rem16u#36 (word) rem16u#37 (word) rem16u#35 (word) rem16u#34 (word) rem16u#33 (word) rem16u#32 (word) rem16u#31 (word) rem16u#30 (word) rem16u#29 (word) rem16u#27 (word) rem16u#24 (word) rem16u#21 (word) rem16u#8 
 Alias (signed byte) sin8u_table::sinx#0 = (signed byte~) sin8u_table::$18 (signed byte) sin8u_table::sinx#4 (signed byte) sin8u_table::sinx#3 (signed byte) sin8u_table::sinx#2 (signed byte) sin8u_table::sinx#1 
 Alias (byte) mul8su::b#0 = (byte/signed word/word/dword/signed dword~) sin8u_table::$19 
 Alias (signed word) mul8su::return#2 = (signed word) mul8su::return#4 
@@ -4737,19 +4616,15 @@ Alias (byte*) print_char_cursor#43 = (byte*) print_char_cursor#87 (byte*) print_
 Alias (word) sin8u_table::x#1 = (word~) sin8u_table::$32 
 Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#22 
 Alias (byte*) print_char_cursor#45 = (byte*) print_char_cursor#89 
-Alias (word) rem16u#17 = (word) rem16u#9 
 Succesful SSA optimization Pass2AliasElimination
-Not aliassing across scopes: divr16u::rem#9 divr16u::rem#3
+Not aliassing across scopes: divr16u::rem#8 divr16u::rem#3
 Not aliassing across scopes: divr16u::dividend#4 divr16u::dividend#1
 Not aliassing across scopes: divr16u::divisor#5 divr16u::divisor#0
-Not aliassing across scopes: rem16u#1 divr16u::rem#10
 Not aliassing across scopes: div16u::dividend#1 div16u::dividend#0
 Not aliassing across scopes: div16u::divisor#1 div16u::divisor#0
-Not aliassing across scopes: rem16u#18 rem16u#20
 Not aliassing across scopes: divr16u::dividend#1 div16u::dividend#1
 Not aliassing across scopes: divr16u::divisor#0 div16u::divisor#1
 Not aliassing across scopes: divr16u::return#2 divr16u::return#0
-Not aliassing across scopes: rem16u#11 rem16u#1
 Not aliassing across scopes: div16u::return#0 divr16u::return#2
 Not aliassing across scopes: mul8u::b#2 mul8u::b#0
 Not aliassing across scopes: mul8u::a#6 mul8u::a#1
@@ -4812,25 +4687,21 @@ Not aliassing across scopes: print_cls::sc#0 print_screen#1
 Not aliassing across scopes: print_screen#4 print_line_cursor#0
 Not aliassing across scopes: print_line_cursor#24 print_line_cursor#0
 Not aliassing across scopes: print_char_cursor#98 print_line_cursor#0
-Not aliassing across scopes: rem16u#19 rem16u#0
 Not aliassing across scopes: print_line_cursor#16 print_line_cursor#15
 Not aliassing across scopes: print_char_cursor#21 print_line_cursor#15
 Not aliassing across scopes: sin8u_table::sintab#0 main::sintab#0
 Not aliassing across scopes: sin8u_table::tabsize#0 main::tabsize#0
-Not aliassing across scopes: rem16u#13 rem16u#16
 Not aliassing across scopes: print_char_cursor#22 print_char_cursor#43
 Not aliassing across scopes: print_line_cursor#17 print_line_cursor#10
 Not aliassing across scopes: sin8u_table::max#1 sin8u_table::max#0
 Not aliassing across scopes: sin8u_table::min#1 sin8u_table::min#0
 Not aliassing across scopes: sin8u_table::tabsize#1 sin8u_table::tabsize#0
-Not aliassing across scopes: rem16u#20 rem16u#19
 Not aliassing across scopes: print_char_cursor#105 print_char_cursor#21
 Not aliassing across scopes: print_line_cursor#25 print_line_cursor#16
 Not aliassing across scopes: sin8u_table::sintab#11 sin8u_table::sintab#0
 Not aliassing across scopes: div16u::dividend#0 PI2_u4f12#0
 Not aliassing across scopes: div16u::divisor#0 sin8u_table::tabsize#1
 Not aliassing across scopes: div16u::return#2 div16u::return#0
-Not aliassing across scopes: rem16u#15 rem16u#11
 Not aliassing across scopes: sin8u_table::step#0 div16u::return#2
 Not aliassing across scopes: print_char_cursor#24 print_char_cursor#2
 Not aliassing across scopes: print_word::w#1 sin8u_table::step#0
@@ -4871,7 +4742,6 @@ Not aliassing across scopes: print_line_cursor#10 print_line_cursor#1
 Not aliassing across scopes: print_char_cursor#43 print_line_cursor#1
 Not aliassing across scopes: print_line_cursor#11 print_line_cursor#17
 Not aliassing across scopes: print_char_cursor#45 print_char_cursor#22
-Not aliassing across scopes: rem16u#17 rem16u#13
 Alias (word) divr16u::dividend#2 = (word) divr16u::dividend#3 
 Alias (word) divr16u::quotient#3 = (word) divr16u::quotient#6 
 Alias (word) divr16u::divisor#1 = (word) divr16u::divisor#3 (word) divr16u::divisor#6 
@@ -4881,17 +4751,14 @@ Alias (byte) mul8u::a#3 = (byte) mul8u::a#5
 Alias (word) mul8u::mb#2 = (word) mul8u::mb#3 
 Alias (byte) sin8s::isUpper#10 = (byte) sin8s::isUpper#3 (byte) sin8s::isUpper#2 
 Succesful SSA optimization Pass2AliasElimination
-Not aliassing across scopes: divr16u::rem#9 divr16u::rem#3
+Not aliassing across scopes: divr16u::rem#8 divr16u::rem#3
 Not aliassing across scopes: divr16u::dividend#4 divr16u::dividend#1
 Not aliassing across scopes: divr16u::divisor#5 divr16u::divisor#0
-Not aliassing across scopes: rem16u#1 divr16u::rem#10
 Not aliassing across scopes: div16u::dividend#1 div16u::dividend#0
 Not aliassing across scopes: div16u::divisor#1 div16u::divisor#0
-Not aliassing across scopes: rem16u#18 rem16u#20
 Not aliassing across scopes: divr16u::dividend#1 div16u::dividend#1
 Not aliassing across scopes: divr16u::divisor#0 div16u::divisor#1
 Not aliassing across scopes: divr16u::return#2 divr16u::return#0
-Not aliassing across scopes: rem16u#11 rem16u#1
 Not aliassing across scopes: div16u::return#0 divr16u::return#2
 Not aliassing across scopes: mul8u::b#2 mul8u::b#0
 Not aliassing across scopes: mul8u::a#6 mul8u::a#1
@@ -4954,25 +4821,21 @@ Not aliassing across scopes: print_cls::sc#0 print_screen#1
 Not aliassing across scopes: print_screen#4 print_line_cursor#0
 Not aliassing across scopes: print_line_cursor#24 print_line_cursor#0
 Not aliassing across scopes: print_char_cursor#98 print_line_cursor#0
-Not aliassing across scopes: rem16u#19 rem16u#0
 Not aliassing across scopes: print_line_cursor#16 print_line_cursor#15
 Not aliassing across scopes: print_char_cursor#21 print_line_cursor#15
 Not aliassing across scopes: sin8u_table::sintab#0 main::sintab#0
 Not aliassing across scopes: sin8u_table::tabsize#0 main::tabsize#0
-Not aliassing across scopes: rem16u#13 rem16u#16
 Not aliassing across scopes: print_char_cursor#22 print_char_cursor#43
 Not aliassing across scopes: print_line_cursor#17 print_line_cursor#10
 Not aliassing across scopes: sin8u_table::max#1 sin8u_table::max#0
 Not aliassing across scopes: sin8u_table::min#1 sin8u_table::min#0
 Not aliassing across scopes: sin8u_table::tabsize#1 sin8u_table::tabsize#0
-Not aliassing across scopes: rem16u#20 rem16u#19
 Not aliassing across scopes: print_char_cursor#105 print_char_cursor#21
 Not aliassing across scopes: print_line_cursor#25 print_line_cursor#16
 Not aliassing across scopes: sin8u_table::sintab#11 sin8u_table::sintab#0
 Not aliassing across scopes: div16u::dividend#0 PI2_u4f12#0
 Not aliassing across scopes: div16u::divisor#0 sin8u_table::tabsize#1
 Not aliassing across scopes: div16u::return#2 div16u::return#0
-Not aliassing across scopes: rem16u#15 rem16u#11
 Not aliassing across scopes: sin8u_table::step#0 div16u::return#2
 Not aliassing across scopes: print_char_cursor#24 print_char_cursor#2
 Not aliassing across scopes: print_word::w#1 sin8u_table::step#0
@@ -5013,7 +4876,6 @@ Not aliassing across scopes: print_line_cursor#10 print_line_cursor#1
 Not aliassing across scopes: print_char_cursor#43 print_line_cursor#1
 Not aliassing across scopes: print_line_cursor#11 print_line_cursor#17
 Not aliassing across scopes: print_char_cursor#45 print_char_cursor#22
-Not aliassing across scopes: rem16u#17 rem16u#13
 Self Phi Eliminated (word) divr16u::divisor#1
 Self Phi Eliminated (byte*) print_char_cursor#48
 Self Phi Eliminated (byte*) print_line_cursor#15
@@ -5021,16 +4883,13 @@ Self Phi Eliminated (byte) sin8u_table::amplitude#10
 Self Phi Eliminated (byte) sin8u_table::mid#12
 Self Phi Eliminated (word) sin8u_table::step#10
 Self Phi Eliminated (word) sin8u_table::tabsize#10
-Self Phi Eliminated (word) rem16u#16
 Succesful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (word) divr16u::rem#9 (word) divr16u::rem#3
+Redundant Phi (word) divr16u::rem#8 (word) divr16u::rem#3
 Redundant Phi (word) divr16u::dividend#4 (word) divr16u::dividend#1
 Redundant Phi (word) divr16u::divisor#5 (word) divr16u::divisor#0
 Redundant Phi (word) divr16u::divisor#1 (word) divr16u::divisor#5
 Redundant Phi (word) div16u::dividend#1 (word) div16u::dividend#0
 Redundant Phi (word) div16u::divisor#1 (word) div16u::divisor#0
-Redundant Phi (word) rem16u#18 (word) rem16u#20
-Redundant Phi (word) rem16u#11 (word) rem16u#1
 Redundant Phi (signed byte) mul8su::a#1 (signed byte) mul8su::a#0
 Redundant Phi (byte) mul8su::b#1 (byte) mul8su::b#0
 Redundant Phi (word) sin8s::x#3 (word) sin8s::x#2
@@ -5052,20 +4911,16 @@ Redundant Phi (byte*) print_line_cursor#15 (byte*) print_screen#1
 Redundant Phi (byte*) print_screen#4 (byte*) print_line_cursor#0
 Redundant Phi (byte*) print_line_cursor#24 (byte*) print_line_cursor#0
 Redundant Phi (byte*) print_char_cursor#98 (byte*) print_line_cursor#0
-Redundant Phi (word) rem16u#19 (word) rem16u#0
 Redundant Phi (byte*) print_line_cursor#16 (byte*) print_line_cursor#15
 Redundant Phi (byte*) print_char_cursor#21 (byte*) print_line_cursor#15
-Redundant Phi (word) rem16u#13 (word) rem16u#16
 Redundant Phi (byte*) print_char_cursor#22 (byte*) print_char_cursor#43
 Redundant Phi (byte*) print_line_cursor#17 (byte*) print_line_cursor#10
 Redundant Phi (byte) sin8u_table::max#1 (byte) sin8u_table::max#0
 Redundant Phi (byte) sin8u_table::min#1 (byte) sin8u_table::min#0
 Redundant Phi (word) sin8u_table::tabsize#1 (word) sin8u_table::tabsize#0
-Redundant Phi (word) rem16u#20 (word) rem16u#19
 Redundant Phi (byte*) print_char_cursor#105 (byte*) print_char_cursor#21
 Redundant Phi (byte*) print_line_cursor#25 (byte*) print_line_cursor#16
 Redundant Phi (byte*) sin8u_table::sintab#11 (byte*) sin8u_table::sintab#0
-Redundant Phi (word) rem16u#15 (word) rem16u#11
 Redundant Phi (byte*) print_char_cursor#24 (byte*) print_char_cursor#2
 Redundant Phi (byte*) print_char_cursor#25 (byte*) print_char_cursor#12
 Redundant Phi (byte*) print_char_cursor#26 (byte*) print_char_cursor#2
@@ -5082,7 +4937,6 @@ Redundant Phi (byte) sin8u_table::amplitude#10 (byte) sin8u_table::amplitude#0
 Redundant Phi (byte) sin8u_table::mid#12 (byte) sin8u_table::mid#0
 Redundant Phi (word) sin8u_table::step#10 (word) sin8u_table::step#0
 Redundant Phi (word) sin8u_table::tabsize#10 (word) sin8u_table::tabsize#1
-Redundant Phi (word) rem16u#16 (word) rem16u#15
 Redundant Phi (byte*) print_char_cursor#35 (byte*) print_char_cursor#2
 Redundant Phi (byte*) print_char_cursor#36 (byte*) print_char_cursor#12
 Redundant Phi (byte*) print_char_cursor#37 (byte*) print_char_cursor#2
@@ -5095,7 +4949,6 @@ Redundant Phi (byte*) print_line_cursor#10 (byte*) print_line_cursor#1
 Redundant Phi (byte*) print_char_cursor#43 (byte*) print_line_cursor#1
 Redundant Phi (byte*) print_line_cursor#11 (byte*) print_line_cursor#17
 Redundant Phi (byte*) print_char_cursor#45 (byte*) print_char_cursor#22
-Redundant Phi (word) rem16u#17 (word) rem16u#13
 Succesful SSA optimization Pass2RedundantPhiElimination
 Redundant Phi (byte*) print_char_cursor#91 (byte*) print_char_cursor#17
 Redundant Phi (byte*) print_char_cursor#100 (byte*) print_line_cursor#1
@@ -5118,7 +4971,6 @@ Simple Condition (bool~) print_sbyte::$1 if((signed byte) print_sbyte::b#1>=(byt
 Simple Condition (bool~) print_cls::$1 if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
 Simple Condition (bool~) sin8u_table::$33 if((word) sin8u_table::i#1<(word) sin8u_table::tabsize#0) goto sin8u_table::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const word) divr16u::rem#3 = 0
@@ -5182,9 +5034,6 @@ Constant (const byte) sin8u_table::mid#0 = ((byte))sin8u_table::$4
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte) print_byte::b#6 = sin8u_table::mid#0
 Succesful SSA optimization Pass2ConstantIdentification
-Eliminating unused variable (word) rem16u#1 and assignment [15] (word) rem16u#1 ← (word) divr16u::rem#10
-Eliminating unused constant (const word) rem16u#0
-Succesful SSA optimization PassNEliminateUnusedVars
 Eliminating Noop Cast (byte) mul8u::a#1 ← ((byte)) (signed byte) mul8su::a#0
 Eliminating Noop Cast (signed word) mul8su::return#0 ← ((signed word)) (word) mul8su::m#2
 Eliminating Noop Cast (signed byte) sin8s::sinx#0 ← ((signed byte)) (byte) sin8s::usinx#4
@@ -5194,7 +5043,6 @@ Eliminating Noop Cast (byte) print_byte::b#0 ← ((byte)) (signed byte) print_sb
 Succesful SSA optimization Pass2NopCastElimination
 Resolved ranged next value divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value if(divr16u::i#1!=rangelast(0,15)) goto divr16u::@1 to (byte/signed byte/word/signed word/dword/signed dword) 16
-Culled Empty Block (label) @2
 Culled Empty Block (label) divr16u::@6
 Culled Empty Block (label) mul8u::@3
 Culled Empty Block (label) @13
@@ -5638,16 +5486,16 @@ Coalesced [235] sin8s::x#10 ← sin8s::x#4
 Coalesced [236] sin8s::x#8 ← sin8s::x#2
 Coalesced [240] mul8u::b#3 ← mul8u::b#1
 Coalesced [241] mul8u::a#9 ← mul8u::a#2
-Coalesced [260] divr16u::rem#13 ← divr16u::rem#1
-Coalesced [267] divr16u::rem#15 ← divr16u::rem#2
+Coalesced [260] divr16u::rem#12 ← divr16u::rem#1
+Coalesced [267] divr16u::rem#14 ← divr16u::rem#2
 Coalesced [268] divr16u::return#6 ← divr16u::quotient#2
-Coalesced [273] divr16u::rem#11 ← divr16u::rem#10
+Coalesced [273] divr16u::rem#10 ← divr16u::rem#9
 Coalesced [274] divr16u::dividend#8 ← divr16u::dividend#0
 Coalesced [275] divr16u::quotient#9 ← divr16u::return#0
 Coalesced [276] divr16u::i#7 ← divr16u::i#1
-Coalesced [277] divr16u::rem#14 ← divr16u::rem#5
+Coalesced [277] divr16u::rem#13 ← divr16u::rem#5
 Coalesced [278] divr16u::return#5 ← divr16u::quotient#1
-Coalesced [279] divr16u::rem#12 ← divr16u::rem#0
+Coalesced [279] divr16u::rem#11 ← divr16u::rem#0
 Coalesced [286] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 28 phi equivalence classes
 Culled Empty Block (label) sin8u_table::@26
@@ -6134,7 +5982,7 @@ divr16u::@1: scope:[divr16u]  from divr16u divr16u::@3
   [194] (byte) divr16u::i#2 ← phi( divr16u/(byte/signed byte/word/signed word/dword/signed dword) 0 divr16u::@3/(byte) divr16u::i#1 ) [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] )
   [194] (word) divr16u::quotient#3 ← phi( divr16u/(byte/signed byte/word/signed word/dword/signed dword) 0 divr16u::@3/(word) divr16u::return#0 ) [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] )
   [194] (word) divr16u::dividend#2 ← phi( divr16u/(const word) PI2_u4f12#0 divr16u::@3/(word) divr16u::dividend#0 ) [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] )
-  [194] (word) divr16u::rem#4 ← phi( divr16u/(byte/signed byte/word/signed word/dword/signed dword) 0 divr16u::@3/(word) divr16u::rem#10 ) [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] )
+  [194] (word) divr16u::rem#4 ← phi( divr16u/(byte/signed byte/word/signed word/dword/signed dword) 0 divr16u::@3/(word) divr16u::rem#9 ) [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::rem#4 divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 ] )
   [195] (word) divr16u::rem#0 ← (word) divr16u::rem#4 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 ] )
   [196] (byte~) divr16u::$1 ← > (word) divr16u::dividend#2 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] )
   [197] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte/word/signed word/dword/signed dword) 128 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$2 ] )
@@ -6154,10 +6002,10 @@ divr16u::@5: scope:[divr16u]  from divr16u::@2
   [205] (word) divr16u::rem#2 ← (word) divr16u::rem#5 - (const word) main::tabsize#0 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] )
   to:divr16u::@3
 divr16u::@3: scope:[divr16u]  from divr16u::@2 divr16u::@5
-  [206] (word) divr16u::return#0 ← phi( divr16u::@2/(word) divr16u::quotient#1 divr16u::@5/(word) divr16u::quotient#2 ) [ divr16u::return#0 divr16u::i#2 divr16u::rem#10 divr16u::dividend#0 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::i#2 divr16u::rem#10 divr16u::dividend#0 ] )
-  [206] (word) divr16u::rem#10 ← phi( divr16u::@2/(word) divr16u::rem#5 divr16u::@5/(word) divr16u::rem#2 ) [ divr16u::return#0 divr16u::i#2 divr16u::rem#10 divr16u::dividend#0 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::i#2 divr16u::rem#10 divr16u::dividend#0 ] )
-  [207] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] )
-  [208] if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] )
+  [206] (word) divr16u::return#0 ← phi( divr16u::@2/(word) divr16u::quotient#1 divr16u::@5/(word) divr16u::quotient#2 ) [ divr16u::return#0 divr16u::i#2 divr16u::rem#9 divr16u::dividend#0 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::i#2 divr16u::rem#9 divr16u::dividend#0 ] )
+  [206] (word) divr16u::rem#9 ← phi( divr16u::@2/(word) divr16u::rem#5 divr16u::@5/(word) divr16u::rem#2 ) [ divr16u::return#0 divr16u::i#2 divr16u::rem#9 divr16u::dividend#0 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::i#2 divr16u::rem#9 divr16u::dividend#0 ] )
+  [207] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] )
+  [208] if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] )
   to:divr16u::@return
 divr16u::@return: scope:[divr16u]  from divr16u::@3
   [209] return  [ divr16u::return#0 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 ] )
@@ -6355,10 +6203,10 @@ VARIABLE REGISTER WEIGHTS
 (word) divr16u::rem
 (word) divr16u::rem#0 8.25
 (word) divr16u::rem#1 22.0
-(word) divr16u::rem#10 11.0
 (word) divr16u::rem#2 22.0
 (word) divr16u::rem#4 22.0
 (word) divr16u::rem#5 11.0
+(word) divr16u::rem#9 11.0
 (word) divr16u::return
 (word) divr16u::return#0 7.000000000000001
 (word) divr16u::return#2 4.0
@@ -6481,7 +6329,6 @@ VARIABLE REGISTER WEIGHTS
 (word) print_word::w#2 22.0
 (word) print_word::w#3 6.333333333333334
 (word~) print_word::w#5 4.0
-(word) rem16u
 (signed byte()) sin8s((word) sin8s::x)
 (word~) sin8s::$6 4.0
 (byte) sin8s::DIV_6
@@ -6568,7 +6415,7 @@ Initial phi equivalence classes
 [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ]
 [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ]
 [ mulu8_sel::select#5 ]
-[ divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ]
+[ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ]
 [ divr16u::dividend#2 divr16u::dividend#0 ]
 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ]
 [ divr16u::i#2 divr16u::i#1 ]
@@ -6634,7 +6481,7 @@ Complete equivalence classes
 [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ]
 [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ]
 [ mulu8_sel::select#5 ]
-[ divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ]
+[ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ]
 [ divr16u::dividend#2 divr16u::dividend#0 ]
 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ]
 [ divr16u::i#2 divr16u::i#1 ]
@@ -6699,7 +6546,7 @@ Allocated zp ZP_BYTE:33 [ sin8s::return#0 sin8s::return#5 sin8s::sinx#1 ]
 Allocated zp ZP_BYTE:34 [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ]
 Allocated zp ZP_BYTE:35 [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ]
 Allocated zp ZP_BYTE:36 [ mulu8_sel::select#5 ]
-Allocated zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ]
+Allocated zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ]
 Allocated zp ZP_WORD:39 [ divr16u::dividend#2 divr16u::dividend#0 ]
 Allocated zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ]
 Allocated zp ZP_BYTE:43 [ divr16u::i#2 divr16u::i#1 ]
@@ -8022,7 +7869,7 @@ divr16u: {
   //SEG418 [194] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
   //SEG419 [194] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
   //SEG420 [194] phi (word) divr16u::dividend#2 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
-  //SEG421 [194] phi (word) divr16u::rem#4 = (word) divr16u::rem#10 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
+  //SEG421 [194] phi (word) divr16u::rem#4 = (word) divr16u::rem#9 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
     jmp b1
   //SEG422 divr16u::@1
   b1:
@@ -8088,13 +7935,13 @@ divr16u: {
   b3_from_b2:
   b3_from_b5:
   //SEG439 [206] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
-  //SEG440 [206] phi (word) divr16u::rem#10 = (word) divr16u::rem#5 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
+  //SEG440 [206] phi (word) divr16u::rem#9 = (word) divr16u::rem#5 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
     jmp b3
   //SEG441 divr16u::@3
   b3:
-  //SEG442 [207] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG442 [207] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG443 [208] if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+  //SEG443 [208] if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$10
     bne b1_from_b3
@@ -8297,7 +8144,7 @@ Potential registers zp ZP_BYTE:33 [ sin8s::return#0 sin8s::return#5 sin8s::sinx#
 Potential registers zp ZP_BYTE:34 [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ] : zp ZP_BYTE:34 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:35 [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ] : zp ZP_BYTE:35 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:36 [ mulu8_sel::select#5 ] : zp ZP_BYTE:36 , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] : zp ZP_WORD:37 , 
+Potential registers zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] : zp ZP_WORD:37 , 
 Potential registers zp ZP_WORD:39 [ divr16u::dividend#2 divr16u::dividend#0 ] : zp ZP_WORD:39 , 
 Potential registers zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] : zp ZP_WORD:41 , 
 Potential registers zp ZP_BYTE:43 [ divr16u::i#2 divr16u::i#1 ] : zp ZP_BYTE:43 , reg byte x , reg byte y , 
@@ -8344,7 +8191,7 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [mul8u] 346.86: zp ZP_WORD:25 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 249.57: zp ZP_WORD:27 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] 202: zp ZP_BYTE:65 [ mul8u::$1 ] 177.67: zp ZP_BYTE:24 [ mul8u::a#3 mul8u::a#6 mul8u::a#8 mul8u::a#2 mul8u::a#0 ] 8: zp ZP_BYTE:23 [ mul8u::b#2 mul8u::b#1 ] 4: zp ZP_WORD:61 [ mul8u::return#2 ] 4: zp ZP_WORD:81 [ mul8u::return#3 ] 
 Uplift Scope [] 225.55: zp ZP_WORD:8 [ print_line_cursor#12 print_line_cursor#23 print_line_cursor#1 ] 223.48: zp ZP_WORD:16 [ print_char_cursor#92 print_char_cursor#102 print_char_cursor#62 print_char_cursor#97 print_char_cursor#94 print_char_cursor#96 print_char_cursor#17 print_char_cursor#2 print_char_cursor#122 print_char_cursor#1 ] 
 Uplift Scope [print_str] 305.5: zp ZP_WORD:12 [ print_str::str#10 print_str::str#12 print_str::str#0 ] 
-Uplift Scope [divr16u] 96.25: zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] 37.25: zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] 22: zp ZP_BYTE:92 [ divr16u::$1 ] 22: zp ZP_BYTE:93 [ divr16u::$2 ] 18.19: zp ZP_BYTE:43 [ divr16u::i#2 divr16u::i#1 ] 7.46: zp ZP_WORD:39 [ divr16u::dividend#2 divr16u::dividend#0 ] 4: zp ZP_WORD:88 [ divr16u::return#2 ] 
+Uplift Scope [divr16u] 96.25: zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] 37.25: zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] 22: zp ZP_BYTE:92 [ divr16u::$1 ] 22: zp ZP_BYTE:93 [ divr16u::$2 ] 18.19: zp ZP_BYTE:43 [ divr16u::i#2 divr16u::i#1 ] 7.46: zp ZP_WORD:39 [ divr16u::dividend#2 divr16u::dividend#0 ] 4: zp ZP_WORD:88 [ divr16u::return#2 ] 
 Uplift Scope [sin8s] 27.5: zp ZP_WORD:30 [ sin8s::x#6 sin8s::x#4 sin8s::x#2 sin8s::x#0 sin8s::x#1 ] 22: zp ZP_BYTE:50 [ sin8s::return#2 ] 13: zp ZP_BYTE:33 [ sin8s::return#0 sin8s::return#5 sin8s::sinx#1 ] 10: zp ZP_BYTE:32 [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] 4: zp ZP_WORD:66 [ sin8s::$6 ] 4: zp ZP_BYTE:70 [ sin8s::x2#0 ] 4: zp ZP_BYTE:74 [ sin8s::x3_6#0 ] 4: zp ZP_BYTE:77 [ sin8s::x4#0 ] 4: zp ZP_BYTE:79 [ sin8s::x5#0 ] 4: zp ZP_BYTE:80 [ sin8s::x5_128#0 ] 1: zp ZP_BYTE:72 [ sin8s::x3#0 ] 0.64: zp ZP_BYTE:68 [ sin8s::x1#0 ] 0.33: zp ZP_BYTE:75 [ sin8s::usinx#0 ] 0.06: zp ZP_BYTE:29 [ sin8s::isUpper#10 ] 
 Uplift Scope [mulu8_sel] 24: zp ZP_BYTE:34 [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ] 21: zp ZP_BYTE:35 [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ] 4: zp ZP_BYTE:69 [ mulu8_sel::return#0 ] 4: zp ZP_BYTE:71 [ mulu8_sel::return#1 ] 4: zp ZP_BYTE:73 [ mulu8_sel::return#2 ] 4: zp ZP_BYTE:76 [ mulu8_sel::return#10 ] 4: zp ZP_BYTE:78 [ mulu8_sel::return#11 ] 4: zp ZP_WORD:83 [ mulu8_sel::$0 ] 4: zp ZP_WORD:85 [ mulu8_sel::$1 ] 1.71: zp ZP_BYTE:87 [ mulu8_sel::return#12 ] 0.33: zp ZP_BYTE:36 [ mulu8_sel::select#5 ] 
 Uplift Scope [sin8u_table] 22: zp ZP_BYTE:57 [ sin8u_table::$21 ] 17.19: zp ZP_WORD:6 [ sin8u_table::i#10 sin8u_table::i#1 ] 8.75: zp ZP_WORD:2 [ sin8u_table::x#10 sin8u_table::x#1 ] 3.75: zp ZP_WORD:4 [ sin8u_table::sintab#2 sin8u_table::sintab#1 ] 2.2: zp ZP_BYTE:51 [ sin8u_table::sinx#0 ] 2.2: zp ZP_WORD:55 [ sin8u_table::sinx_sc#0 ] 1.94: zp ZP_BYTE:58 [ sin8u_table::sinx_tr#0 ] 0.27: zp ZP_WORD:48 [ sin8u_table::step#0 ] 
@@ -8362,7 +8209,7 @@ Uplift Scope [main]
 Uplifting [mul8u] best 24241 combination zp ZP_WORD:25 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:27 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#8 mul8u::a#2 mul8u::a#0 ] reg byte a [ mul8u::b#2 mul8u::b#1 ] zp ZP_WORD:61 [ mul8u::return#2 ] zp ZP_WORD:81 [ mul8u::return#3 ] 
 Uplifting [] best 24241 combination zp ZP_WORD:8 [ print_line_cursor#12 print_line_cursor#23 print_line_cursor#1 ] zp ZP_WORD:16 [ print_char_cursor#92 print_char_cursor#102 print_char_cursor#62 print_char_cursor#97 print_char_cursor#94 print_char_cursor#96 print_char_cursor#17 print_char_cursor#2 print_char_cursor#122 print_char_cursor#1 ] 
 Uplifting [print_str] best 24241 combination zp ZP_WORD:12 [ print_str::str#10 print_str::str#12 print_str::str#0 ] 
-Uplifting [divr16u] best 24051 combination zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:39 [ divr16u::dividend#2 divr16u::dividend#0 ] zp ZP_WORD:88 [ divr16u::return#2 ] 
+Uplifting [divr16u] best 24051 combination zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:39 [ divr16u::dividend#2 divr16u::dividend#0 ] zp ZP_WORD:88 [ divr16u::return#2 ] 
 Uplifting [sin8s] best 23946 combination zp ZP_WORD:30 [ sin8s::x#6 sin8s::x#4 sin8s::x#2 sin8s::x#0 sin8s::x#1 ] reg byte a [ sin8s::return#2 ] reg byte a [ sin8s::return#0 sin8s::return#5 sin8s::sinx#1 ] reg byte x [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] zp ZP_WORD:66 [ sin8s::$6 ] zp ZP_BYTE:70 [ sin8s::x2#0 ] zp ZP_BYTE:74 [ sin8s::x3_6#0 ] zp ZP_BYTE:77 [ sin8s::x4#0 ] zp ZP_BYTE:79 [ sin8s::x5#0 ] zp ZP_BYTE:80 [ sin8s::x5_128#0 ] zp ZP_BYTE:72 [ sin8s::x3#0 ] zp ZP_BYTE:68 [ sin8s::x1#0 ] zp ZP_BYTE:75 [ sin8s::usinx#0 ] zp ZP_BYTE:29 [ sin8s::isUpper#10 ] 
 Limited combination testing to 100 combinations of 5308416 possible.
 Uplifting [mulu8_sel] best 23900 combination reg byte x [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ] reg byte y [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ] reg byte a [ mulu8_sel::return#0 ] reg byte a [ mulu8_sel::return#1 ] zp ZP_BYTE:73 [ mulu8_sel::return#2 ] zp ZP_BYTE:76 [ mulu8_sel::return#10 ] zp ZP_BYTE:78 [ mulu8_sel::return#11 ] zp ZP_WORD:83 [ mulu8_sel::$0 ] zp ZP_WORD:85 [ mulu8_sel::$1 ] zp ZP_BYTE:87 [ mulu8_sel::return#12 ] zp ZP_BYTE:36 [ mulu8_sel::select#5 ] 
@@ -8426,8 +8273,8 @@ Coalescing zero page register with common assignment [ zp ZP_WORD:21 [ mul8su::m
 Coalescing zero page register with common assignment [ zp ZP_WORD:21 [ mul8su::m#2 mul8su::m#1 mul8su::m#0 mul8su::return#2 mul8u::return#2 mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#3 ] ] with [ zp ZP_WORD:55 [ sin8u_table::sinx_sc#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 ] ] with [ zp ZP_WORD:46 [ div16u::return#2 sin8u_table::step#0 div16u::return#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:21 [ mul8su::m#2 mul8su::m#1 mul8su::m#0 mul8su::return#2 mul8u::return#2 mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#3 sin8u_table::sinx_sc#0 ] ] with [ zp ZP_WORD:83 [ mulu8_sel::$0 mulu8_sel::$1 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:2 [ sin8u_table::x#10 sin8u_table::x#1 ] ] with [ zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] ]
-Coalescing zero page register [ zp ZP_WORD:2 [ sin8u_table::x#10 sin8u_table::x#1 divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] ] with [ zp ZP_WORD:44 [ print_cls::sc#2 print_cls::sc#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:2 [ sin8u_table::x#10 sin8u_table::x#1 ] ] with [ zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] ]
+Coalescing zero page register [ zp ZP_WORD:2 [ sin8u_table::x#10 sin8u_table::x#1 divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] ] with [ zp ZP_WORD:44 [ print_cls::sc#2 print_cls::sc#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:4 [ sin8u_table::sintab#2 sin8u_table::sintab#1 ] ] with [ zp ZP_WORD:39 [ divr16u::dividend#2 divr16u::dividend#0 ] ]
 Coalescing zero page register [ zp ZP_BYTE:10 [ print_byte::b#8 print_byte::b#10 print_byte::b#1 print_byte::b#2 print_byte::b#7 print_sbyte::b#3 print_sbyte::b#1 print_sbyte::b#0 ] ] with [ zp ZP_BYTE:29 [ sin8s::isUpper#10 ] ]
 Coalescing zero page register [ zp ZP_WORD:12 [ print_str::str#10 print_str::str#12 print_str::str#0 ] ] with [ zp ZP_WORD:14 [ print_sword::w#3 print_sword::w#1 print_sword::w#0 print_word::w#3 print_word::w#5 print_word::w#2 print_word::w#1 ] ]
@@ -9596,7 +9443,7 @@ divr16u: {
   //SEG418 [194] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
   //SEG419 [194] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
   //SEG420 [194] phi (word) divr16u::dividend#2 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
-  //SEG421 [194] phi (word) divr16u::rem#4 = (word) divr16u::rem#10 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
+  //SEG421 [194] phi (word) divr16u::rem#4 = (word) divr16u::rem#9 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
     jmp b1
   //SEG422 divr16u::@1
   b1:
@@ -9659,13 +9506,13 @@ divr16u: {
   b3_from_b2:
   b3_from_b5:
   //SEG439 [206] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
-  //SEG440 [206] phi (word) divr16u::rem#10 = (word) divr16u::rem#5 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
+  //SEG440 [206] phi (word) divr16u::rem#9 = (word) divr16u::rem#5 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
     jmp b3
   //SEG441 divr16u::@3
   b3:
-  //SEG442 [207] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG442 [207] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG443 [208] if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG443 [208] if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne b1_from_b3
     jmp breturn
@@ -10033,10 +9880,10 @@ FINAL SYMBOL TABLE
 (word) divr16u::rem
 (word) divr16u::rem#0 rem zp ZP_WORD:2 8.25
 (word) divr16u::rem#1 rem zp ZP_WORD:2 22.0
-(word) divr16u::rem#10 rem zp ZP_WORD:2 11.0
 (word) divr16u::rem#2 rem zp ZP_WORD:2 22.0
 (word) divr16u::rem#4 rem zp ZP_WORD:2 22.0
 (word) divr16u::rem#5 rem zp ZP_WORD:2 11.0
+(word) divr16u::rem#9 rem zp ZP_WORD:2 11.0
 (word) divr16u::return
 (word) divr16u::return#0 return zp ZP_WORD:18 7.000000000000001
 (word) divr16u::return#2 return zp ZP_WORD:18 4.0
@@ -10196,7 +10043,6 @@ FINAL SYMBOL TABLE
 (word) print_word::w#2 w zp ZP_WORD:11 22.0
 (word) print_word::w#3 w zp ZP_WORD:11 6.333333333333334
 (word~) print_word::w#5 w zp ZP_WORD:11 4.0
-(word) rem16u
 (signed byte()) sin8s((word) sin8s::x)
 (word~) sin8s::$6 $6 zp ZP_WORD:11 4.0
 (label) sin8s::@1
@@ -10313,7 +10159,7 @@ FINAL SYMBOL TABLE
 (word) sin8u_table::x#1 x zp ZP_WORD:2 7.333333333333333
 (word) sin8u_table::x#10 x zp ZP_WORD:2 1.4193548387096775
 
-zp ZP_WORD:2 [ sin8u_table::x#10 sin8u_table::x#1 divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 print_cls::sc#2 print_cls::sc#1 ]
+zp ZP_WORD:2 [ sin8u_table::x#10 sin8u_table::x#1 divr16u::rem#4 divr16u::rem#9 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 print_cls::sc#2 print_cls::sc#1 ]
 zp ZP_WORD:4 [ sin8u_table::sintab#2 sin8u_table::sintab#1 divr16u::dividend#2 divr16u::dividend#0 ]
 zp ZP_WORD:6 [ sin8u_table::i#10 sin8u_table::i#1 ]
 zp ZP_WORD:8 [ print_line_cursor#12 print_line_cursor#23 print_line_cursor#1 ]
@@ -11296,7 +11142,7 @@ divr16u: {
   //SEG418 [194] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
   //SEG419 [194] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
   //SEG420 [194] phi (word) divr16u::dividend#2 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
-  //SEG421 [194] phi (word) divr16u::rem#4 = (word) divr16u::rem#10 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
+  //SEG421 [194] phi (word) divr16u::rem#4 = (word) divr16u::rem#9 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
   //SEG422 divr16u::@1
   b1:
   //SEG423 [195] (word) divr16u::rem#0 ← (word) divr16u::rem#4 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 ] ) -- vwuz1=vwuz1_rol_1 
@@ -11349,12 +11195,12 @@ divr16u: {
     sta rem+1
   //SEG438 [206] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
   //SEG439 [206] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
-  //SEG440 [206] phi (word) divr16u::rem#10 = (word) divr16u::rem#5 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
+  //SEG440 [206] phi (word) divr16u::rem#9 = (word) divr16u::rem#5 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
   //SEG441 divr16u::@3
   b3:
-  //SEG442 [207] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuxx=_inc_vbuxx 
+  //SEG442 [207] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuxx=_inc_vbuxx 
     inx
-  //SEG443 [208] if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#10 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+  //SEG443 [208] if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 16) goto divr16u::@1 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:189 [ divr16u::return#0 divr16u::rem#9 divr16u::dividend#0 divr16u::i#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne b1
   //SEG444 divr16u::@return

@@ -77,15 +77,18 @@ main::@return: scope:[main]  from main::@3
   to:@end
 @end: scope:[]  from @1
 
+Eliminating unused variable (byte) main::s and assignment [1] (byte) main::s ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable main::s(null) and assignment [7] main::s(null) ← ++ main::s(null)
+Eliminating unused variable main::s(null) and assignment [8] main::s(null) ← -- main::s(null)
 Removing empty block main::@6
 Removing empty block main::@3
 Removing empty block main::@7
+Removing empty block main::@8
 Removing empty block main::@5
 Removing empty block main::@9
 Removing empty block main::@10
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
-Completing Phi functions...
 Completing Phi functions...
 Completing Phi functions...
 
@@ -94,30 +97,20 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   to:@1
 main: scope:[main]  from @1
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 100
-  (byte) main::s#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@4 main::@8
-  (byte) main::s#6 ← phi( main/(byte) main::s#0 main::@4/(byte) main::s#1 main::@8/(byte) main::s#2 )
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#4 main::@8/(byte) main::i#5 )
+main::@1: scope:[main]  from main main::@2 main::@4
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#3 main::@4/(byte) main::i#4 )
   (byte) main::i#1 ← -- (byte) main::i#2
   (bool~) main::$0 ← (byte) main::i#1 > (byte/signed byte/word/signed word/dword/signed dword) 0
   if((bool~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::s#5 ← phi( main::@1/(byte) main::s#6 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#1 )
   (bool~) main::$1 ← (byte) main::i#3 > (byte/signed byte/word/signed word/dword/signed dword) 50
   if((bool~) main::$1) goto main::@4
-  to:main::@8
+  to:main::@1
 main::@4: scope:[main]  from main::@2
   (byte) main::i#4 ← phi( main::@2/(byte) main::i#3 )
-  (byte) main::s#3 ← phi( main::@2/(byte) main::s#5 )
-  (byte) main::s#1 ← ++ (byte) main::s#3
-  to:main::@1
-main::@8: scope:[main]  from main::@2
-  (byte) main::i#5 ← phi( main::@2/(byte) main::i#3 )
-  (byte) main::s#4 ← phi( main::@2/(byte) main::s#5 )
-  (byte) main::s#2 ← -- (byte) main::s#4
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -140,7 +133,6 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@4
-(label) main::@8
 (label) main::@return
 (byte) main::i
 (byte) main::i#0
@@ -148,39 +140,26 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 (byte) main::i#4
-(byte) main::i#5
-(byte) main::s
-(byte) main::s#0
-(byte) main::s#1
-(byte) main::s#2
-(byte) main::s#3
-(byte) main::s#4
-(byte) main::s#5
-(byte) main::s#6
 
 OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) @2
 Succesful SSA optimization Pass2CullEmptyBlocks
-Alias (byte) main::i#1 = (byte) main::i#3 (byte) main::i#4 (byte) main::i#5 
-Alias (byte) main::s#3 = (byte) main::s#5 (byte) main::s#6 (byte) main::s#4 
+Alias (byte) main::i#1 = (byte) main::i#3 (byte) main::i#4 
 Succesful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2
 Simple Condition (bool~) main::$1 if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@4
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 100
-Constant (const byte) main::s#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
+Not culling empty block because it shares successor with its predecessor. (label) main::@4
 OPTIMIZING CONTROL FLOW GRAPH
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#0
-Inlining constant with var siblings (const byte) main::s#0
-Inlining constant with var siblings (const byte) main::s#0
-Inlining constant with var siblings (const byte) main::s#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 100
-Constant inlined main::s#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 main::@8 main::@4 
-Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 main::@8 main::@4 
+Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 main::@4 
+Added new block during phi lifting main::@11(between main::@2 and main::@1)
+Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 main::@11 main::@4 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -190,23 +169,18 @@ Calls in [] to main:2
 
 Propagating live ranges...
 Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Created 2 initial phi equivalence classes
-Coalesced [11] main::i#7 ← main::i#1
-Coalesced [12] main::s#8 ← main::s#2
-Coalesced (already) [14] main::i#6 ← main::i#1
-Coalesced [15] main::s#7 ← main::s#1
-Coalesced down to 2 phi equivalence classes
-Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 main::@8 main::@4 
+Created 1 initial phi equivalence classes
+Coalesced [10] main::i#5 ← main::i#1
+Coalesced (already) [11] main::i#6 ← main::i#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) main::@11
+Not culling empty block because it shares successor with its predecessor. (label) main::@4
+Block Sequence Planned @begin @1 @end main main::@1 main::@return main::@2 main::@4 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
+Adding NOP phi() at start of main::@4
 Propagating live ranges...
 Propagating live ranges...
 
@@ -223,23 +197,19 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi() [ ] ( main:2 [ ] )
   to:main::@1
-main::@1: scope:[main]  from main main::@4 main::@8
-  [5] (byte) main::s#3 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(byte) main::s#1 main::@8/(byte) main::s#2 ) [ main::i#2 main::s#3 ] ( main:2 [ main::i#2 main::s#3 ] )
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 100 main::@4/(byte) main::i#1 main::@8/(byte) main::i#1 ) [ main::i#2 main::s#3 ] ( main:2 [ main::i#2 main::s#3 ] )
-  [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] )
-  [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] )
+main::@1: scope:[main]  from main main::@2 main::@4
+  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 100 main::@2/(byte) main::i#1 main::@4/(byte) main::i#1 ) [ main::i#2 ] ( main:2 [ main::i#2 ] )
+  [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] )
+  [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::i#1 ] ( main:2 [ main::i#1 ] )
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [8] return  [ ] ( main:2 [ ] )
   to:@return
 main::@2: scope:[main]  from main::@1
-  [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] )
-  to:main::@8
-main::@8: scope:[main]  from main::@2
-  [10] (byte) main::s#2 ← -- (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:2 [ main::i#1 main::s#2 ] )
+  [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@4 [ main::i#1 ] ( main:2 [ main::i#1 ] )
   to:main::@1
 main::@4: scope:[main]  from main::@2
-  [11] (byte) main::s#1 ← ++ (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:2 [ main::i#1 main::s#1 ] )
+  [10] phi() [ main::i#1 ] ( main:2 [ main::i#1 ] )
   to:main::@1
 
 DOMINATORS
@@ -250,42 +220,36 @@ main dominated by  @1 @begin main
 main::@1 dominated by  @1 @begin main::@1 main 
 main::@return dominated by  main::@return @1 @begin main::@1 main 
 main::@2 dominated by  @1 @begin main::@1 main::@2 main 
-main::@8 dominated by  @1 @begin main::@8 main::@1 main::@2 main 
 main::@4 dominated by  @1 @begin main::@1 main::@2 main main::@4 
 
 NATURAL LOOPS
-Found back edge: Loop head: main::@1 tails: main::@8 blocks: null
+Found back edge: Loop head: main::@1 tails: main::@2 blocks: null
 Found back edge: Loop head: main::@1 tails: main::@4 blocks: null
-Populated: Loop head: main::@1 tails: main::@8 blocks: main::@8 main::@2 main::@1 
+Populated: Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
 Populated: Loop head: main::@1 tails: main::@4 blocks: main::@4 main::@2 main::@1 
-Coalesced: Loop head: main::@1 tails: main::@8 main::@4 blocks: main::@8 main::@2 main::@1 main::@4 
-Loop head: main::@1 tails: main::@8 main::@4 blocks: main::@8 main::@2 main::@1 main::@4 
+Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
+Loop head: main::@1 tails: main::@4 blocks: main::@4 main::@2 main::@1 
 
 NATURAL LOOPS WITH DEPTH
 Found 0 loops in scope []
-Found 1 loops in scope [main]
-  Loop head: main::@1 tails: main::@8 main::@4 blocks: main::@8 main::@2 main::@1 main::@4 
-Loop head: main::@1 tails: main::@8 main::@4 blocks: main::@8 main::@2 main::@1 main::@4  depth: 1
+Found 2 loops in scope [main]
+  Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
+  Loop head: main::@1 tails: main::@4 blocks: main::@4 main::@2 main::@1 
+Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1  depth: 2
+Loop head: main::@1 tails: main::@4 blocks: main::@4 main::@2 main::@1  depth: 1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte) main::i
-(byte) main::i#1 11.0
-(byte) main::i#2 33.0
-(byte) main::s
-(byte) main::s#1 22.0
-(byte) main::s#2 22.0
-(byte) main::s#3 11.0
+(byte) main::i#1 103.75
+(byte) main::i#2 213.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-[ main::s#3 main::s#1 main::s#2 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-[ main::s#3 main::s#1 main::s#2 ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ main::s#3 main::s#1 main::s#2 ]
 
 INITIAL ASM
 //SEG0 Basic Upstart
@@ -312,64 +276,54 @@ bend:
 //SEG9 main
 main: {
     .label i = 2
-    .label s = 3
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::s#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta s
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 100 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 100 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #$64
     sta i
     jmp b1
-  //SEG13 main::@1
+  //SEG12 main::@1
   b1:
-  //SEG14 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] ) -- vbuz1=_dec_vbuz1 
+  //SEG13 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuz1=_dec_vbuz1 
     dec i
-  //SEG15 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] ) -- vbuz1_gt_0_then_la1 
+  //SEG14 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuz1_gt_0_then_la1 
     lda i
     bne b2
     jmp breturn
-  //SEG16 main::@return
+  //SEG15 main::@return
   breturn:
-  //SEG17 [8] return  [ ] ( main:2 [ ] )
+  //SEG16 [8] return  [ ] ( main:2 [ ] )
     rts
-  //SEG18 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG19 [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] ) -- vbuz1_gt_vbuc1_then_la1 
+  //SEG18 [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@4 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuz1_gt_vbuc1_then_la1 
     lda i
     cmp #$32
     beq !+
-    bcs b4
+    bcs b4_from_b2
   !:
-    jmp b8
-  //SEG20 main::@8
-  b8:
-  //SEG21 [10] (byte) main::s#2 ← -- (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:2 [ main::i#1 main::s#2 ] ) -- vbuz1=_dec_vbuz1 
-    dec s
-  //SEG22 [5] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
+  //SEG19 [5] phi from main::@2 main::@4 to main::@1 [phi:main::@2/main::@4->main::@1]
+  b1_from_b2:
   b1_from_b4:
-  b1_from_b8:
-  //SEG23 [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
-  //SEG24 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
+  //SEG20 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2/main::@4->main::@1#0] -- register_copy 
     jmp b1
-  //SEG25 main::@4
+  //SEG21 [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  b4_from_b2:
+    jmp b4
+  //SEG22 main::@4
   b4:
-  //SEG26 [11] (byte) main::s#1 ← ++ (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:2 [ main::i#1 main::s#1 ] ) -- vbuz1=_inc_vbuz1 
-    inc s
     jmp b1_from_b4
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::s#3 main::s#1 main::s#2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 55: zp ZP_BYTE:3 [ main::s#3 main::s#1 main::s#2 ] 44: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 316.75: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 403 combination reg byte x [ main::s#3 main::s#1 main::s#2 ] reg byte a [ main::i#2 main::i#1 ] 
-Uplifting [] best 403 combination 
+Uplifting [main] best 2728 combination reg byte a [ main::i#2 main::i#1 ] 
+Uplifting [] best 2728 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -397,46 +351,39 @@ bend:
 main: {
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::s#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 100 [phi:main->main::@1#1] -- vbuaa=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 100 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #$64
     jmp b1
-  //SEG13 main::@1
+  //SEG12 main::@1
   b1:
-  //SEG14 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] ) -- vbuaa=_dec_vbuaa 
+  //SEG13 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuaa=_dec_vbuaa 
     sec
     sbc #1
-  //SEG15 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] ) -- vbuaa_gt_0_then_la1 
+  //SEG14 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuaa_gt_0_then_la1 
     cmp #0
     bne b2
     jmp breturn
-  //SEG16 main::@return
+  //SEG15 main::@return
   breturn:
-  //SEG17 [8] return  [ ] ( main:2 [ ] )
+  //SEG16 [8] return  [ ] ( main:2 [ ] )
     rts
-  //SEG18 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG19 [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] ) -- vbuaa_gt_vbuc1_then_la1 
+  //SEG18 [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@4 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuaa_gt_vbuc1_then_la1 
     cmp #$32
     beq !+
-    bcs b4
+    bcs b4_from_b2
   !:
-    jmp b8
-  //SEG20 main::@8
-  b8:
-  //SEG21 [10] (byte) main::s#2 ← -- (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:2 [ main::i#1 main::s#2 ] ) -- vbuxx=_dec_vbuxx 
-    dex
-  //SEG22 [5] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
+  //SEG19 [5] phi from main::@2 main::@4 to main::@1 [phi:main::@2/main::@4->main::@1]
+  b1_from_b2:
   b1_from_b4:
-  b1_from_b8:
-  //SEG23 [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
-  //SEG24 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
+  //SEG20 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2/main::@4->main::@1#0] -- register_copy 
     jmp b1
-  //SEG25 main::@4
+  //SEG21 [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  b4_from_b2:
+    jmp b4
+  //SEG22 main::@4
   b4:
-  //SEG26 [11] (byte) main::s#1 ← ++ (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:2 [ main::i#1 main::s#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
     jmp b1_from_b4
 }
 
@@ -445,27 +392,33 @@ Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
-Removing instruction jmp b8
+Removing instruction jmp b4
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b4 with b1_from_b8
+Replacing label b4_from_b2 with b4
 Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
-Removing instruction b1_from_b4:
+Removing instruction b1_from_b2:
+Removing instruction b4_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction breturn:
-Removing instruction b8:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Skipping double jump to b1 in jmp b1_from_b8
+Skipping double jump to b1_from_b4 in bcs b4
+Skipping double jump to b1 in jmp b1_from_b4
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label b1_from_b8 to b3
+Relabelling long label b1_from_b4 to b3
 Succesful ASM optimization Pass5RelabelLongLabels
+Removing instruction bcs b3
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction b3:
+Removing instruction b4:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Removing unreachable instruction jmp b1
+Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -475,22 +428,16 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@4
-(label) main::@8
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte a 11.0
-(byte) main::i#2 reg byte a 33.0
-(byte) main::s
-(byte) main::s#1 reg byte x 22.0
-(byte) main::s#2 reg byte x 22.0
-(byte) main::s#3 reg byte x 11.0
+(byte) main::i#1 reg byte a 103.75
+(byte) main::i#2 reg byte a 213.0
 
 reg byte a [ main::i#2 main::i#1 ]
-reg byte x [ main::s#3 main::s#1 main::s#2 ]
 
 
 FINAL ASSEMBLER
-Score: 307
+Score: 1812
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -508,39 +455,29 @@ Score: 307
 //SEG9 main
 main: {
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::s#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 100 [phi:main->main::@1#1] -- vbuaa=vbuc1 
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 100 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #$64
-  //SEG13 main::@1
+  //SEG12 main::@1
   b1:
-  //SEG14 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] ) -- vbuaa=_dec_vbuaa 
+  //SEG13 [6] (byte) main::i#1 ← -- (byte) main::i#2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuaa=_dec_vbuaa 
     sec
     sbc #1
-  //SEG15 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] ) -- vbuaa_gt_0_then_la1 
+  //SEG14 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuaa_gt_0_then_la1 
     cmp #0
     bne b2
-  //SEG16 main::@return
-  //SEG17 [8] return  [ ] ( main:2 [ ] )
+  //SEG15 main::@return
+  //SEG16 [8] return  [ ] ( main:2 [ ] )
     rts
-  //SEG18 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG19 [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@4 [ main::s#3 main::i#1 ] ( main:2 [ main::s#3 main::i#1 ] ) -- vbuaa_gt_vbuc1_then_la1 
+  //SEG18 [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@4 [ main::i#1 ] ( main:2 [ main::i#1 ] ) -- vbuaa_gt_vbuc1_then_la1 
     cmp #$32
     beq !+
-    bcs b4
   !:
-  //SEG20 main::@8
-  //SEG21 [10] (byte) main::s#2 ← -- (byte) main::s#3 [ main::i#1 main::s#2 ] ( main:2 [ main::i#1 main::s#2 ] ) -- vbuxx=_dec_vbuxx 
-    dex
-  //SEG22 [5] phi from main::@4 main::@8 to main::@1 [phi:main::@4/main::@8->main::@1]
-  //SEG23 [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@4/main::@8->main::@1#0] -- register_copy 
-  //SEG24 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4/main::@8->main::@1#1] -- register_copy 
+  //SEG19 [5] phi from main::@2 main::@4 to main::@1 [phi:main::@2/main::@4->main::@1]
+  //SEG20 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2/main::@4->main::@1#0] -- register_copy 
     jmp b1
-  //SEG25 main::@4
-  b4:
-  //SEG26 [11] (byte) main::s#1 ← ++ (byte) main::s#3 [ main::i#1 main::s#1 ] ( main:2 [ main::i#1 main::s#1 ] ) -- vbuxx=_inc_vbuxx 
-    inx
-    jmp b1
+  //SEG21 [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+  //SEG22 main::@4
 }
 

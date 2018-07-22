@@ -11,7 +11,12 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-/** Cached information about which variables are defined/referenced/used in statements / blocks. */
+/** Cached information about which variables/constants are defined/referenced/used in which statements / blocks / symbols .
+ * <ul>
+ *    <li><i>Defined</i> means the variable/constant receives its value in a specific statement (or symbol for named constants) </li>
+ *    <li><i>Used</i> means the value of the variable/constant is used in a  specific statement (or symbol for named constants) </li>
+ *    <li><i>Referenced</i> means the variable/constant is either defined or referenced in a  specific statement (or symbol for named constants) </li>
+ * </ul>*/
 public class VariableReferenceInfos {
 
    /** Variables referenced in each block. */

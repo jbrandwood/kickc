@@ -532,20 +532,20 @@ public abstract class ProgramValue {
 
    /** A generic Value. */
    public static class GenericValue extends ProgramValue {
-      private ConstantValue constantValue;
+      private RValue rValue;
 
-      public GenericValue(ConstantValue constantValue) {
-         this.constantValue = constantValue;
+      public GenericValue(RValue rValue) {
+         this.rValue = rValue;
       }
 
       @Override
       public RValue get() {
-         return constantValue;
+         return rValue;
       }
 
       @Override
       public void set(RValue value) {
-         this.constantValue = (ConstantValue) value;
+         this.rValue = (ConstantValue) value;
       }
    }
 }

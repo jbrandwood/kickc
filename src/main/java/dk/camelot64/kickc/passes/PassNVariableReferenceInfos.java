@@ -1,10 +1,13 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableReferenceInfos;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
@@ -56,66 +59,13 @@ public class PassNVariableReferenceInfos extends Pass2Base {
     * @return All referenced variables / constants
     */
    private static Collection<SymbolVariableRef> getReferenced(RValue rValue) {
-      if(rValue == null) {
-         return new ArrayList<>();
-      } else if(rValue instanceof ConstantBinary) {
-         Collection<SymbolVariableRef> used = new LinkedHashSet<>();
-         used.addAll(getReferenced(((ConstantBinary) rValue).getLeft()));
-         used.addAll(getReferenced(((ConstantBinary) rValue).getRight()));
-         return used;
-      } else if(rValue instanceof ConstantArrayList) {
-         Collection<SymbolVariableRef> used = new LinkedHashSet<>();
-         for(ConstantValue elem : ((ConstantArrayList) rValue).getElements()) {
-            used.addAll(getReferenced(elem));
+      Collection<SymbolVariableRef> referenced = new LinkedHashSet<>();
+      ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue), (programValue, currentStmt, stmtIt, currentBlock) -> {
+         if(programValue.get() instanceof SymbolVariableRef) {
+            referenced.add((SymbolVariableRef) programValue.get());
          }
-         return used;
-      } else if(rValue instanceof ArrayFilled) {
-         return getReferenced(((ArrayFilled) rValue).getSize());
-      } else if(rValue instanceof ConstantArrayFilled) {
-         return getReferenced(((ConstantArrayFilled) rValue).getSize());
-      } else if(rValue instanceof ConstantUnary) {
-         return getReferenced(((ConstantUnary) rValue).getOperand());
-      } else if(rValue instanceof ConstantRef) {
-         return Arrays.asList((SymbolVariableRef) rValue);
-      } else if(rValue instanceof ConstantString) {
-         return new ArrayList<>();
-      } else if(rValue instanceof ConstantInteger) {
-         return new ArrayList<>();
-      } else if(rValue instanceof ConstantBool) {
-         return new ArrayList<>();
-      } else if(rValue instanceof ConstantChar) {
-         return new ArrayList<>();
-      } else if(rValue instanceof ConstantPointer) {
-         return new ArrayList<>();
-      } else if(rValue instanceof PointerDereferenceSimple) {
-         return getReferenced(((PointerDereferenceSimple) rValue).getPointer());
-      } else if(rValue instanceof PointerDereferenceIndexed) {
-         Collection<SymbolVariableRef> used = new LinkedHashSet<>();
-         used.addAll(getReferenced(((PointerDereferenceIndexed) rValue).getPointer()));
-         used.addAll(getReferenced(((PointerDereferenceIndexed) rValue).getIndex()));
-         return used;
-      } else if(rValue instanceof VariableRef) {
-         return Arrays.asList((SymbolVariableRef) rValue);
-      } else if(rValue instanceof ValueList) {
-         LinkedHashSet<SymbolVariableRef> used = new LinkedHashSet<>();
-         for(RValue value : ((ValueList) rValue).getList()) {
-            used.addAll(getReferenced(value));
-         }
-         return used;
-      } else if(rValue instanceof CastValue) {
-         return getReferenced(((CastValue) rValue).getValue());
-      } else if(rValue instanceof ConstantCastValue) {
-         return getReferenced(((ConstantCastValue) rValue).getValue());
-      } else if(rValue instanceof ConstantVarPointer) {
-         return getReferenced(((ConstantVarPointer) rValue).getToVar());
-      } else if(rValue instanceof RangeValue) {
-         Collection<SymbolVariableRef> used = new LinkedHashSet<>();
-         used.addAll(getReferenced(((RangeValue) rValue).getRangeFirst()));
-         used.addAll(getReferenced(((RangeValue) rValue).getRangeLast()));
-         return used;
-      } else {
-         throw new RuntimeException("Unhandled RValue type " + rValue);
-      }
+      }, null, null, null);
+      return referenced;
    }
 
    /** Create defined/referenced maps */

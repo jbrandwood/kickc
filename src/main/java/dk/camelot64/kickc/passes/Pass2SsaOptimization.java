@@ -41,12 +41,12 @@ public abstract class Pass2SsaOptimization extends Pass1Base {
    public abstract boolean step();
 
    /**
-    * Replace all usages of variables in statements with aliases.
+    * Replace all usages of variables in statements (or symbol table) with aliases.
     *
     * @param aliases Variables that have alias values.
     */
    public void replaceVariables(final Map<? extends SymbolRef, ? extends RValue> aliases) {
-      ProgramValueIterator.execute(getGraph(), new AliasReplacer(aliases));
+      ProgramValueIterator.execute(getProgram(), new AliasReplacer(aliases));
    }
 
    /**

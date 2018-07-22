@@ -48,12 +48,10 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
 
       // Perform alias replacement within the constant values inside the aliases
       replaceInValues(inline);
-      // Replace all usages of the constants in the control flow graph
+      // Replace all usages of the constants in the control flow graph or symbol table
       replaceVariables(inline);
       // Remove from symbol table
       deleteSymbols(inline.keySet());
-      // Replace all usages of the constants in constant definitions inside the symbol table
-      replaceInSymbolTable(inline);
 
       for(ConstantRef constantRef : inline.keySet()) {
          getLog().append("Constant inlined " + constantRef.toString() + " = " + inline.get(constantRef).toString(getProgram()));
@@ -82,15 +80,6 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
             }
          }
       }
-   }
-
-   /**
-    * Replace any alias within the constant defintions inside the symbol table
-    *
-    * @param inline The replacements to make
-    */
-   private void replaceInSymbolTable(Map<ConstantRef, ConstantValue> inline) {
-      ProgramValueIterator.execute(getScope(), new AliasReplacer(inline));
    }
 
    /**

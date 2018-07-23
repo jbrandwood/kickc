@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const ITEM_COUNT = 2
+  .const ITEM_COUNT = 3
   .const ITEM_SIZE = 5
   jsr main
 main: {
@@ -37,4 +37,4 @@ main: {
     bne b1
     rts
 }
-  items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

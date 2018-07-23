@@ -50,7 +50,7 @@ public class ProgramValueIterator {
     * @param symbolVariable The symbol variable
     * @param programValueHandler The programValueHandler to execute
     */
-   private static void execute(SymbolVariable symbolVariable, ProgramValueHandler programValueHandler) {
+   public static void execute(SymbolVariable symbolVariable, ProgramValueHandler programValueHandler) {
       if(symbolVariable.getType() instanceof SymbolTypeArray) {
          execute(new ProgramValue.TypeArraySize((SymbolTypeArray) symbolVariable.getType()), programValueHandler, null, null, null);
       }

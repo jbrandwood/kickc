@@ -5,8 +5,11 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -80,43 +83,49 @@ public class PassNVariableReferenceInfos extends Pass2Base {
          blockReferencedVars.put(blockLabel, getReferencedVars(blockLabel, new ArrayList<>()));
          blockUsedVars.put(blockLabel, getUsedVars(blockLabel, new ArrayList<>()));
          for(Statement statement : block.getStatements()) {
+            Collection<SymbolVariableRef> referenced = getReferenced(statement);
             Collection<VariableRef> defined = getDefinedVars(statement);
-            Collection<VariableRef> referencedVars = getReferencedVars(statement);
             // Add variable definitions to the statement
             stmtDefined.put(statement.getIndex(), defined);
-            // Add variable reference to the statement
-            stmtReferenced.put(statement.getIndex(), referencedVars);
             // Identify statement defining variables
             for(VariableRef variableRef : defined) {
                symbolVarReferences.putIfAbsent(variableRef, new ArrayList<>());
                Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(variableRef);
                references.add(new VariableReferenceInfos.ReferenceInStatement(statement.getIndex(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.DEFINE, variableRef));
             }
-            // Gather statements referencing variables
-            for(VariableRef variableRef : referencedVars) {
-               if(!defined.contains(variableRef)) {
-                  symbolVarReferences.putIfAbsent(variableRef, new ArrayList<>());
-                  Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(variableRef);
-                  references.add(new VariableReferenceInfos.ReferenceInStatement(statement.getIndex(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE, variableRef));
+            // Gather statements referencing variables/constants
+            Collection<VariableRef> varRefs = new ArrayList<>();
+            for(SymbolVariableRef referencedVarRef : referenced) {
+               if(referencedVarRef instanceof VariableRef) {
+                  varRefs.add((VariableRef) referencedVarRef);
+               }
+               if(!defined.contains(referencedVarRef)) {
+                  symbolVarReferences.putIfAbsent(referencedVarRef, new ArrayList<>());
+                  Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(referencedVarRef);
+                  references.add(
+                        new VariableReferenceInfos.ReferenceInStatement(
+                              statement.getIndex(),
+                              VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE,
+                              referencedVarRef));
                }
             }
-            // Gather statements referencing constants
-            Collection<ConstantRef> referencedConsts = getReferencedConsts(statement);
-            for(ConstantRef constantRef : referencedConsts) {
-               symbolVarReferences.putIfAbsent(constantRef, new ArrayList<>());
-               Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(constantRef);
-               references.add(new VariableReferenceInfos.ReferenceInStatement(statement.getIndex(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE, constantRef));
-            }
+            // Add variable reference to the statement
+            stmtReferenced.put(statement.getIndex(), varRefs);
          }
       }
-      // Gather constants referencing other constants
-      for(ConstantVar constantVar : getSymbols().getAllConstants(true)) {
-         Collection<ConstantRef> referencedConsts = getReferencedConsts(constantVar.getValue());
-         for(ConstantRef constantRef : referencedConsts) {
-            symbolVarReferences.putIfAbsent(constantRef, new ArrayList<>());
-            Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(constantRef);
-            references.add(new VariableReferenceInfos.ReferenceInSymbol(constantVar.getRef(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE, constantRef));
-         }
+      // Gather symbols in the symbol table referencing other variables/constants
+      Collection<SymbolVariable> allSymbolVariables = getProgram().getScope().getAllSymbolVariables(true);
+      for(SymbolVariable referencingVar : allSymbolVariables) {
+         ProgramValueIterator.execute(referencingVar,
+               (programValue, currentStmt, stmtIt, currentBlock) -> {
+                  RValue rValue = programValue.get();
+                  if(rValue instanceof SymbolVariableRef) {
+                     SymbolVariableRef referencedVar = (SymbolVariableRef) rValue;
+                     symbolVarReferences.putIfAbsent(referencedVar, new ArrayList<>());
+                     Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(referencedVar);
+                     references.add(new VariableReferenceInfos.ReferenceInSymbol((SymbolVariableRef) referencingVar.getRef(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE, referencedVar));
+                  }
+               });
       }
       getProgram().setVariableReferenceInfos(new VariableReferenceInfos(blockReferencedVars, blockUsedVars, stmtReferenced, stmtDefined, symbolVarReferences));
    }
@@ -236,28 +245,11 @@ public class PassNVariableReferenceInfos extends Pass2Base {
     */
    private Collection<VariableRef> getReferencedVars(Statement statement) {
       LinkedHashSet<VariableRef> referencedVars = new LinkedHashSet<>();
-      for(SymbolRef symbolRef : getReferenced(statement)) {
-         if(symbolRef instanceof VariableRef) {
-            referencedVars.add((VariableRef) symbolRef);
-         }
-      }
+      getReferenced(statement)
+            .stream()
+            .filter(symbolVariableRef -> symbolVariableRef instanceof VariableRef)
+            .forEach(symbolVariableRef -> referencedVars.add((VariableRef) symbolVariableRef));
       return referencedVars;
-   }
-
-   /**
-    * Get the constants referenced (used or defined) in a statement
-    *
-    * @param statement The statement to examine
-    * @return The referenced constants
-    */
-   private Collection<ConstantRef> getReferencedConsts(Statement statement) {
-      LinkedHashSet<ConstantRef> referencedConsts = new LinkedHashSet<>();
-      for(SymbolRef symbolRef : getReferenced(statement)) {
-         if(symbolRef instanceof ConstantRef) {
-            referencedConsts.add((ConstantRef) symbolRef);
-         }
-      }
-      return referencedConsts;
    }
 
    /**
@@ -268,41 +260,12 @@ public class PassNVariableReferenceInfos extends Pass2Base {
     */
    private Collection<SymbolVariableRef> getReferenced(Statement statement) {
       LinkedHashSet<SymbolVariableRef> referenced = new LinkedHashSet<>();
-      if(statement instanceof StatementPhiBlock) {
-         StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
-         for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
-            referenced.add(phiVariable.getVariable());
-            for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-               referenced.addAll(getReferenced(phiRValue.getrValue()));
+      ProgramValueIterator.execute(statement,
+            (programValue, currentStmt, stmtIt, currentBlock) -> {
+               if(programValue.get() instanceof SymbolVariableRef)
+                  referenced.add((SymbolVariableRef) programValue.get());
             }
-         }
-      } else if(statement instanceof StatementAssignment) {
-         StatementAssignment assignment = (StatementAssignment) statement;
-         referenced.addAll(getReferenced(assignment.getlValue()));
-         referenced.addAll(getReferenced(assignment.getrValue1()));
-         referenced.addAll(getReferenced(assignment.getrValue2()));
-      } else if(statement instanceof StatementConditionalJump) {
-         StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
-         referenced.addAll(getReferenced(conditionalJump.getrValue1()));
-         referenced.addAll(getReferenced(conditionalJump.getrValue2()));
-      } else if(statement instanceof StatementCall) {
-         StatementCall call = (StatementCall) statement;
-         referenced.addAll(getReferenced(call.getlValue()));
-         if(call.getParameters() != null) {
-            for(RValue param : call.getParameters()) {
-               referenced.addAll(getReferenced(param));
-            }
-         }
-      } else if(statement instanceof StatementReturn) {
-         StatementReturn statementReturn = (StatementReturn) statement;
-         referenced.addAll(getReferenced(statementReturn.getValue()));
-      } else if(statement instanceof StatementAsm) {
-         // No references in ASM atm.
-      } else if(statement instanceof StatementKickAsm) {
-         // No references in ASM atm.
-      } else {
-         throw new RuntimeException("Unknown statement type " + statement);
-      }
+            , null, null);
       return referenced;
    }
 

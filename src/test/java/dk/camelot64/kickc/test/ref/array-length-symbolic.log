@@ -1,10 +1,10 @@
 PARSING src/test/java/dk/camelot64/kickc/test/kc/array-length-symbolic.kc
 // Illustrates symbolic array lengths
 
-byte ITEM_COUNT = 2;
+byte ITEM_COUNT = 3;
 byte ITEM_SIZE = 5;
 
-byte[ITEM_COUNT*ITEM_SIZE] items = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+byte[ITEM_COUNT*ITEM_SIZE] items = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // Fills the array item by item with $is, where i is the item# and s is the sub#
 void main() {
@@ -42,10 +42,10 @@ SYMBOLS
 
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (byte) ITEM_COUNT ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) ITEM_COUNT ← (byte/signed byte/word/signed word/dword/signed dword) 3
   (byte) ITEM_SIZE ← (byte/signed byte/word/signed word/dword/signed dword) 5
   (byte~) $0 ← (byte) ITEM_COUNT * (byte) ITEM_SIZE
-  (byte[$0]) items ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
+  (byte[$0]) items ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   to:@1
 main: scope:[main]  from
   (byte*) main::cur_item ← (byte[$0]) items
@@ -80,7 +80,6 @@ main::@return: scope:[main]  from main::@4
   to:@end
 @end: scope:[]  from @1
 
-Eliminating unused variable (byte~) $0 and assignment [2] (byte~) $0 ← (byte) ITEM_COUNT * (byte) ITEM_SIZE
 Removing empty block main::@4
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
@@ -90,9 +89,10 @@ Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (byte) ITEM_COUNT#0 ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) ITEM_COUNT#0 ← (byte/signed byte/word/signed word/dword/signed dword) 3
   (byte) ITEM_SIZE#0 ← (byte/signed byte/word/signed word/dword/signed dword) 5
-  (byte[$0]) items#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
+  (byte~) $0 ← (byte) ITEM_COUNT#0 * (byte) ITEM_SIZE#0
+  (byte[$0]) items#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
   to:@1
 main: scope:[main]  from @1
   (byte) ITEM_SIZE#3 ← phi( @1/(byte) ITEM_SIZE#5 )
@@ -142,6 +142,7 @@ main::@return: scope:[main]  from main::@3
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(byte~) $0
 (label) @1
 (label) @2
 (label) @begin
@@ -215,13 +216,14 @@ Succesful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) main::$4 if((byte) main::sub#1!=rangelast(0,main::$1)) goto main::@2
 Simple Condition (bool~) main::$5 if((byte) main::item#1!=rangelast(0,main::$0)) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) ITEM_COUNT#0 = 2
+Constant (const byte) ITEM_COUNT#0 = 3
 Constant (const byte) ITEM_SIZE#0 = 5
-Constant (const byte[$0]) items#0 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+Constant (const byte[$0]) items#0 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 Constant (const byte) main::item#0 = 0
 Constant (const byte) main::sub#0 = 0
 Succesful SSA optimization Pass2ConstantIdentification
-Constant (const byte[$0]) main::cur_item#0 = items#0
+Constant (const byte) $0 = ITEM_COUNT#0*ITEM_SIZE#0
+Constant (const byte*) main::cur_item#0 = items#0
 Constant (const byte/signed word/word/dword/signed dword) main::$0 = ITEM_COUNT#0-1
 Succesful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value main::item#1 ← ++ main::item#4 to ++
@@ -239,11 +241,12 @@ Inlining constant with var siblings (const byte) main::item#0
 Inlining constant with var siblings (const byte) main::item#0
 Inlining constant with var siblings (const byte) main::sub#0
 Inlining constant with var siblings (const byte) main::sub#0
-Inlining constant with var siblings (const byte[$0]) main::cur_item#0
-Inlining constant with var siblings (const byte[$0]) main::cur_item#0
+Inlining constant with var siblings (const byte*) main::cur_item#0
+Inlining constant with var siblings (const byte*) main::cur_item#0
 Constant inlined main::sub#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::$1 = (const byte) ITEM_SIZE#0-(byte/signed byte/word/signed word/dword/signed dword) 1
-Constant inlined main::cur_item#0 = (const byte[$0]) items#0
+Constant inlined $0 = (const byte) ITEM_COUNT#0*(const byte) ITEM_SIZE#0
+Constant inlined main::cur_item#0 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0
 Constant inlined main::$0 = (const byte) ITEM_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined main::item#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
@@ -298,7 +301,7 @@ main: scope:[main]  from @1
   [4] phi() [ ] ( main:2 [ ] )
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] (byte*) main::cur_item#4 ← phi( main/(const byte[$0]) items#0 main::@3/(byte*) main::cur_item#1 ) [ main::item#4 main::cur_item#4 ] ( main:2 [ main::item#4 main::cur_item#4 ] )
+  [5] (byte*) main::cur_item#4 ← phi( main/(const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 main::@3/(byte*) main::cur_item#1 ) [ main::item#4 main::cur_item#4 ] ( main:2 [ main::item#4 main::cur_item#4 ] )
   [5] (byte) main::item#4 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::item#1 ) [ main::item#4 main::cur_item#4 ] ( main:2 [ main::item#4 main::cur_item#4 ] )
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
@@ -348,7 +351,7 @@ Loop head: main::@1 tails: main::@3 blocks: main::@3 main::@2 main::@1  depth: 1
 VARIABLE REGISTER WEIGHTS
 (byte) ITEM_COUNT
 (byte) ITEM_SIZE
-(byte[$0]) items
+(byte[ITEM_COUNT#0*ITEM_SIZE#0]) items
 (void()) main()
 (byte~) main::$2 202.0
 (byte~) main::$3 202.0
@@ -386,7 +389,7 @@ INITIAL ASM
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .const ITEM_COUNT = 2
+  .const ITEM_COUNT = 3
   .const ITEM_SIZE = 5
 //SEG2 @begin
 bbegin:
@@ -413,7 +416,7 @@ main: {
     .label item = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte*) main::cur_item#4 = (const byte[$0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG11 [5] phi (byte*) main::cur_item#4 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<items
     sta cur_item
     lda #>items
@@ -485,7 +488,7 @@ main: {
   //SEG32 [15] return  [ ] ( main:2 [ ] )
     rts
 }
-  items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] (byte~) main::$2 ← (byte) main::item#4 << (byte/signed byte/word/signed word/dword/signed dword) 4 [ main::item#4 main::cur_item#4 main::sub#2 main::$2 ] ( main:2 [ main::item#4 main::cur_item#4 main::sub#2 main::$2 ] ) always clobbers reg byte a 
@@ -515,7 +518,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .const ITEM_COUNT = 2
+  .const ITEM_COUNT = 3
   .const ITEM_SIZE = 5
 //SEG2 @begin
 bbegin:
@@ -538,7 +541,7 @@ main: {
     .label cur_item = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte*) main::cur_item#4 = (const byte[$0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG11 [5] phi (byte*) main::cur_item#4 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<items
     sta cur_item
     lda #>items
@@ -602,7 +605,7 @@ main: {
   //SEG32 [15] return  [ ] ( main:2 [ ] )
     rts
 }
-  items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -637,11 +640,11 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte) ITEM_COUNT
-(const byte) ITEM_COUNT#0 ITEM_COUNT = (byte/signed byte/word/signed word/dword/signed dword) 2
+(const byte) ITEM_COUNT#0 ITEM_COUNT = (byte/signed byte/word/signed word/dword/signed dword) 3
 (byte) ITEM_SIZE
 (const byte) ITEM_SIZE#0 ITEM_SIZE = (byte/signed byte/word/signed word/dword/signed dword) 5
-(byte[$0]) items
-(const byte[$0]) items#0 items = { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
+(byte[ITEM_COUNT#0*ITEM_SIZE#0]) items
+(const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 items = { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
 (void()) main()
 (byte~) main::$2 reg byte a 202.0
 (byte~) main::$3 reg byte a 202.0
@@ -674,7 +677,7 @@ Score: 3422
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .const ITEM_COUNT = 2
+  .const ITEM_COUNT = 3
   .const ITEM_SIZE = 5
 //SEG2 @begin
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -688,7 +691,7 @@ Score: 3422
 main: {
     .label cur_item = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte*) main::cur_item#4 = (const byte[$0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG11 [5] phi (byte*) main::cur_item#4 = (const byte[ITEM_COUNT#0*ITEM_SIZE#0]) items#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<items
     sta cur_item
     lda #>items
@@ -741,5 +744,5 @@ main: {
   //SEG32 [15] return  [ ] ( main:2 [ ] )
     rts
 }
-  items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 

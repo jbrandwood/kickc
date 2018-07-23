@@ -123,7 +123,6 @@ main::@return: scope:[main]  from main::@4
   to:@end
 @end: scope:[]  from @1
 
-Eliminating unused variable (word/signed word/dword/signed dword~) main::$0 and assignment [1] (word/signed word/dword/signed dword~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte/signed byte/word/signed word/dword/signed dword) 25
 Removing empty block main::@4
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
@@ -136,6 +135,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   to:@1
 main: scope:[main]  from @1
   (byte) main::STAR#0 ← (byte/signed byte/word/signed word/dword/signed dword) 81
+  (word/signed word/dword/signed dword~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte/signed byte/word/signed word/dword/signed dword) 25
   (byte[main::$0]) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte) main::x0#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) main::y0#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -218,6 +218,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
+(word/signed word/dword/signed dword~) main::$0
 (byte~) main::$1
 (bool~) main::$10
 (byte/signed word/word/dword/signed dword~) main::$11
@@ -335,7 +336,8 @@ Simple Condition (bool~) main::$10 if((byte) main::xd#0>=(byte) main::e#1) goto 
 Simple Condition (bool~) main::$15 if((byte) main::x#1<(byte/signed word/word/dword/signed dword~) main::$14) goto main::@1
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::STAR#0 = 81
-Constant (const byte*) main::screen#0 = ((byte*))1024
+Constant (const word/signed word/dword/signed dword) main::$0 = 40*25
+Constant (const byte[main::$0]) main::screen#0 = ((byte*))1024
 Constant (const byte) main::x#0 = 0
 Constant (const byte) main::y#0 = 0
 Constant (const byte) main::x1#0 = 39
@@ -364,6 +366,7 @@ Inlining constant with var siblings (const word) main::idx#0
 Inlining constant with var siblings (const word) main::idx#0
 Inlining constant with var siblings (const word) main::idx#0
 Constant inlined main::idx#0 = (byte/signed byte/word/signed word/dword/signed dword) 0+(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$0 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 25
 Constant inlined main::$14 = (const byte) main::x1#0+(byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined main::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::$4 = (byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
@@ -434,7 +437,7 @@ main::@1: scope:[main]  from main main::@2
   [5] (byte) main::e#3 ← phi( main/(const byte) main::yd#0/(byte/signed byte/word/signed word/dword/signed dword) 2 main::@2/(byte) main::e#5 ) [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] )
   [5] (byte) main::x#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::x#1 ) [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] )
   [5] (word) main::idx#3 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0+(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 main::@2/(word) main::idx#5 ) [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] )
-  [6] *((const byte*) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] )
+  [6] *((const byte[40*25]) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] )
   [7] (byte) main::x#1 ← (byte) main::x#2 + (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::idx#3 main::e#3 main::y#2 main::x#1 ] ( main:2 [ main::idx#3 main::e#3 main::y#2 main::x#1 ] )
   [8] (word) main::idx#1 ← (word) main::idx#3 + (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::e#3 main::y#2 main::x#1 main::idx#1 ] ( main:2 [ main::e#3 main::y#2 main::x#1 main::idx#1 ] )
   [9] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::idx#1 main::e#1 ] ( main:2 [ main::y#2 main::x#1 main::idx#1 main::e#1 ] )
@@ -490,7 +493,7 @@ VARIABLE REGISTER WEIGHTS
 (word) main::idx#2 11.0
 (word) main::idx#3 11.0
 (word) main::idx#5 16.5
-(byte[main::$0]) main::screen
+(byte[40*25]) main::screen
 (byte) main::x
 (byte) main::x#1 3.666666666666667
 (byte) main::x#2 11.0
@@ -580,7 +583,7 @@ main: {
     jmp b1
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((const byte*) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) -- pbuc1_derefidx_vwuz1=vbuc2 
+  //SEG21 [6] *((const byte[40*25]) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) -- pbuc1_derefidx_vwuz1=vbuc2 
     lda #<screen
     clc
     adc idx
@@ -646,14 +649,14 @@ main: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) always clobbers reg byte a 
+Statement [6] *((const byte[40*25]) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::x#2 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ main::e#3 main::e#5 main::e#1 main::e#2 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ main::y#2 main::y#4 main::y#1 ]
 Statement [9] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::idx#1 main::e#1 ] ( main:2 [ main::y#2 main::x#1 main::idx#1 main::e#1 ] ) always clobbers reg byte a 
 Statement [12] (word) main::idx#2 ← (word) main::idx#1 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ main::x#1 main::e#1 main::y#1 main::idx#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::idx#2 ] ) always clobbers reg byte a 
 Statement [13] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::idx#2 main::e#2 ] ( main:2 [ main::x#1 main::y#1 main::idx#2 main::e#2 ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) always clobbers reg byte a 
+Statement [6] *((const byte[40*25]) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) always clobbers reg byte a 
 Statement [9] (byte) main::e#1 ← (byte) main::e#3 + (const byte) main::yd#0 [ main::y#2 main::x#1 main::idx#1 main::e#1 ] ( main:2 [ main::y#2 main::x#1 main::idx#1 main::e#1 ] ) always clobbers reg byte a 
 Statement [12] (word) main::idx#2 ← (word) main::idx#1 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ main::x#1 main::e#1 main::y#1 main::idx#2 ] ( main:2 [ main::x#1 main::e#1 main::y#1 main::idx#2 ] ) always clobbers reg byte a 
 Statement [13] (byte) main::e#2 ← (byte) main::e#1 - (const byte) main::xd#0 [ main::x#1 main::y#1 main::idx#2 main::e#2 ] ( main:2 [ main::x#1 main::y#1 main::idx#2 main::e#2 ] ) always clobbers reg byte a 
@@ -728,7 +731,7 @@ main: {
     jmp b1
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((const byte*) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) -- pbuc1_derefidx_vwuz1=vbuc2 
+  //SEG21 [6] *((const byte[40*25]) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) -- pbuc1_derefidx_vwuz1=vbuc2 
     lda #<screen
     clc
     adc idx
@@ -842,8 +845,8 @@ FINAL SYMBOL TABLE
 (word) main::idx#2 idx zp ZP_WORD:2 11.0
 (word) main::idx#3 idx zp ZP_WORD:2 11.0
 (word) main::idx#5 idx zp ZP_WORD:2 16.5
-(byte[main::$0]) main::screen
-(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte[40*25]) main::screen
+(const byte[40*25]) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
 (byte) main::x
 (byte) main::x#1 reg byte x 3.666666666666667
 (byte) main::x#2 reg byte x 11.0
@@ -914,7 +917,7 @@ main: {
   //SEG19 [5] phi (word) main::idx#3 = (word) main::idx#5 [phi:main::@2->main::@1#3] -- register_copy 
   //SEG20 main::@1
   b1:
-  //SEG21 [6] *((const byte*) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) -- pbuc1_derefidx_vwuz1=vbuc2 
+  //SEG21 [6] *((const byte[40*25]) main::screen#0 + (word) main::idx#3) ← (const byte) main::STAR#0 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ( main:2 [ main::idx#3 main::x#2 main::e#3 main::y#2 ] ) -- pbuc1_derefidx_vwuz1=vbuc2 
     lda #<screen
     clc
     adc idx

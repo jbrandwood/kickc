@@ -13,6 +13,8 @@ import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableUnversioned;
 import dk.camelot64.kickc.model.symbols.VariableVersion;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
@@ -105,6 +107,22 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                   if(variable instanceof VariableVersion) {
                      VariableVersion versioned = (VariableVersion) variable;
                      blockVersions.put(versioned.getVersionOf(), versioned);
+                  }
+               }
+            }
+            // Examine if the assigned variable is an array with a fixed size
+            if(currentStmt instanceof StatementAssignment) {
+               LValue lValue = ((StatementAssignment) currentStmt).getlValue();
+               if(lValue instanceof VariableRef) {
+                  Variable assignedVar = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable((VariableRef) lValue);
+                  SymbolType assignedVarType = assignedVar.getType();
+                  if(assignedVarType instanceof SymbolTypeArray) {
+                     SymbolTypeArray assignedArrayType = (SymbolTypeArray) assignedVarType;
+                     RValue arraySize = assignedArrayType.getSize();
+                     VariableVersion vrs = findOrCreateVersion(arraySize, blockVersions, blockNewPhis);
+                     if(vrs != null) {
+                        assignedArrayType.setSize(vrs.getRef());
+                     }
                   }
                }
             }

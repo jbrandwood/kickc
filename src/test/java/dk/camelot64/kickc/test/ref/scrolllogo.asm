@@ -720,4 +720,4 @@ fill: {
     rts
 }
   .align $100
-  xsin: .fill 2*$200, 0
+  xsin: .fill 2*XSIN_SIZE, 0

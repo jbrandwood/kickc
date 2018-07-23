@@ -8,7 +8,7 @@ byte* LOGO = $2000;
 
 const word XSIN_SIZE = 512;
 
-signed word[512] align($100) xsin;
+signed word[XSIN_SIZE] align($100) xsin;
 
 void main() {
     asm { sei }
@@ -1377,7 +1377,7 @@ inline (void()) vicSelectGfxBank((byte*) vicSelectGfxBank::gfx)
 (byte~) vicSelectGfxBank::$0
 (label) vicSelectGfxBank::@return
 (byte*) vicSelectGfxBank::gfx
-(signed word[512]) xsin
+(signed word[XSIN_SIZE]) xsin
 (word) xsin_idx
 
 Fixing lo/hi-lvalue with new tmpVar mul8s::$16 mul8s::$16 ← mul8s::$8
@@ -2302,7 +2302,7 @@ fill::@return: scope:[fill]  from fill::@2
   (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) LOGO ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (word) XSIN_SIZE ← (word/signed word/dword/signed dword) 512
-  (signed word[512]) xsin ← { fill( 512, 0) }
+  (signed word[XSIN_SIZE]) xsin ← { fill( XSIN_SIZE, 0) }
   to:@25
 main: scope:[main]  from
   asm { sei  }
@@ -2326,7 +2326,7 @@ main::@1: scope:[main]  from main main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (signed word/signed dword~) main::$5 ← - (word/signed word/dword/signed dword) 320
-  (void~) main::$6 ← call sin16s_gen2 (signed word[512]) xsin (word) XSIN_SIZE (signed word/signed dword~) main::$5 (word/signed word/dword/signed dword) 320 
+  (void~) main::$6 ← call sin16s_gen2 (signed word[XSIN_SIZE]) xsin (word) XSIN_SIZE (signed word/signed dword~) main::$5 (word/signed word/dword/signed dword) 320 
   (void~) main::$7 ← call loop 
   to:main::@return
 main::@return: scope:[main]  from main::@2
@@ -2358,7 +2358,7 @@ loop::@10: scope:[loop]  from loop::@4
   to:loop::@6
 loop::@6: scope:[loop]  from loop::@10 loop::@12
   *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
-  (signed word*~) loop::$1 ← (signed word[512]) xsin + (word) xsin_idx
+  (signed word*~) loop::$1 ← (signed word[XSIN_SIZE]) xsin + (word) xsin_idx
   (signed word) loop::xpos ← *((signed word*~) loop::$1)
   (void~) loop::$2 ← call render_logo (signed word) loop::xpos 
   (word) xsin_idx ← (word) xsin_idx + (byte/signed byte/word/signed word/dword/signed dword) 2
@@ -3240,7 +3240,7 @@ fill::@return: scope:[fill]  from fill::@1
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) LOGO#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (word) XSIN_SIZE#0 ← (word/signed word/dword/signed dword) 512
-  (signed word[512]) xsin#0 ← { fill( 512, 0) }
+  (signed word[XSIN_SIZE#0]) xsin#0 ← { fill( XSIN_SIZE#0, 0) }
   to:@25
 main: scope:[main]  from @27
   (word) xsin_idx#28 ← phi( @27/(word) xsin_idx#16 )
@@ -3323,7 +3323,7 @@ main::@2: scope:[main]  from main::@1
   (word) xsin_idx#17 ← phi( main::@1/(word) xsin_idx#22 )
   (word) rem16u#23 ← phi( main::@1/(word) rem16u#27 )
   (signed word/signed dword~) main::$5 ← - (word/signed word/dword/signed dword) 320
-  (signed word*) sin16s_gen2::sintab#1 ← (signed word[512]) xsin#0
+  (signed word*) sin16s_gen2::sintab#1 ← (signed word[XSIN_SIZE#0]) xsin#0
   (word) sin16s_gen2::wavelength#0 ← (word) XSIN_SIZE#0
   (signed word) sin16s_gen2::min#0 ← (signed word/signed dword~) main::$5
   (signed word) sin16s_gen2::max#0 ← (word/signed word/dword/signed dword) 320
@@ -3381,7 +3381,7 @@ loop::@6: scope:[loop]  from loop::@4
   (byte*) SCREEN#22 ← phi( loop::@4/(byte*) SCREEN#23 )
   (word) xsin_idx#9 ← phi( loop::@4/(word) xsin_idx#14 )
   *((byte*) BORDERCOL#0) ← ++ *((byte*) BORDERCOL#0)
-  (signed word*~) loop::$1 ← (signed word[512]) xsin#0 + (word) xsin_idx#9
+  (signed word*~) loop::$1 ← (signed word[XSIN_SIZE#0]) xsin#0 + (word) xsin_idx#9
   (signed word) loop::xpos#0 ← *((signed word*~) loop::$1)
   (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0
   call render_logo 
@@ -4344,8 +4344,8 @@ SYMBOL TABLE SSA
 (dword) sin16s_gen2::x#2
 (dword) sin16s_gen2::x#3
 (dword) sin16s_gen2::x#4
-(signed word[512]) xsin
-(signed word[512]) xsin#0
+(signed word[XSIN_SIZE#0]) xsin
+(signed word[XSIN_SIZE#0]) xsin#0
 (word) xsin_idx
 (word) xsin_idx#0
 (word) xsin_idx#1
@@ -4924,7 +4924,6 @@ Constant (const byte) mulu16_sel::select#4 = 0
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte*) LOGO#0 = ((byte*))8192
 Constant (const word) XSIN_SIZE#0 = 512
-Constant (const signed word[512]) xsin#0 = { fill( 512, 0) }
 Constant (const word) fill::size#0 = 1000
 Constant (const word) fill::size#1 = 1000
 Constant (const byte) main::ch#0 = 0
@@ -4968,13 +4967,13 @@ Constant (const byte/word/signed word/dword/signed dword) render_logo::$71 = 40*
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const signed word) sin16s_gen2::ampl#0 = sin16s_gen2::max#0-sin16s_gen2::min#0
 Constant (const dword) div32u16u::dividend#0 = PI2_u4f28#0
+Constant (const signed word[XSIN_SIZE#0]) xsin#0 = { fill( XSIN_SIZE#0, 0) }
 Constant (const byte*) main::toD0181_screen#0 = SCREEN#0
 Constant (const byte*) main::toD0181_gfx#0 = LOGO#0
 Constant (const byte*) fill::start#0 = SCREEN#0
 Constant (const byte) fill::val#0 = BLACK#0
 Constant (const byte) fill::val#1 = WHITE#0|8
 Constant (const byte*) fill::start#1 = COLS#0
-Constant (const signed word*) sin16s_gen2::sintab#1 = xsin#0
 Constant (const word) sin16s_gen2::wavelength#0 = XSIN_SIZE#0
 Constant (const word/signed dword/dword) loop::$3 = XSIN_SIZE#0*2
 Succesful SSA optimization Pass2ConstantIdentification
@@ -4985,6 +4984,7 @@ Constant (const word) div32u16u::divisor#0 = sin16s_gen2::wavelength#0
 Constant (const signed word) mul16s::b#0 = sin16s_gen2::ampl#0
 Constant (const word) main::toD0181_$0#0 = ((word))main::toD0181_screen#0
 Constant (const word) main::toD0181_$4#0 = ((word))main::toD0181_gfx#0
+Constant (const signed word*) sin16s_gen2::sintab#1 = xsin#0
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
 Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
@@ -5318,7 +5318,7 @@ Constant inlined fill::size#0 = (word/signed word/dword/signed dword) 1000
 Constant inlined main::toD0181_$7#0 = >((word))(const byte*) LOGO#0>>(byte/signed byte/word/signed word/dword/signed dword) 2&(byte/signed byte/word/signed word/dword/signed dword) 15
 Constant inlined xsin_idx#16 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::toD0181_$3#0 = >((word))(const byte*) SCREEN#0&(word/signed word/dword/signed dword) 16383<<(byte/signed byte/word/signed word/dword/signed dword) 2
-Constant inlined sin16s_gen2::sintab#1 = (const signed word[512]) xsin#0
+Constant inlined sin16s_gen2::sintab#1 = (const signed word[XSIN_SIZE#0]) xsin#0
 Constant inlined render_logo::$44 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined render_logo::$47 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined render_logo::$46 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2
@@ -5657,7 +5657,7 @@ loop::@4: scope:[loop]  from loop::@1 loop::@4
   to:loop::@6
 loop::@6: scope:[loop]  from loop::@4
   [27] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) [ xsin_idx#11 ] ( main:2::loop:22 [ xsin_idx#11 ] )
-  [28] (signed word*~) loop::$1 ← (const signed word[512]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] )
+  [28] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] )
   [29] (signed word) loop::xpos#0 ← *((signed word*~) loop::$1) [ xsin_idx#11 loop::xpos#0 ] ( main:2::loop:22 [ xsin_idx#11 loop::xpos#0 ] )
   [30] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0 [ xsin_idx#11 render_logo::xpos#0 ] ( main:2::loop:22 [ xsin_idx#11 render_logo::xpos#0 ] )
   [31] call render_logo  [ xsin_idx#11 ] ( main:2::loop:22 [ xsin_idx#11 ] )
@@ -5765,7 +5765,7 @@ sin16s_gen2::@3: scope:[sin16s_gen2]  from sin16s_gen2
   to:sin16s_gen2::@1
 sin16s_gen2::@1: scope:[sin16s_gen2]  from sin16s_gen2::@3 sin16s_gen2::@5
   [99] (word) sin16s_gen2::i#2 ← phi( sin16s_gen2::@3/(byte/signed byte/word/signed word/dword/signed dword) 0 sin16s_gen2::@5/(word) sin16s_gen2::i#1 ) [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:2::sin16s_gen2:20 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] )
-  [99] (signed word*) sin16s_gen2::sintab#2 ← phi( sin16s_gen2::@3/(const signed word[512]) xsin#0 sin16s_gen2::@5/(signed word*) sin16s_gen2::sintab#0 ) [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:2::sin16s_gen2:20 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] )
+  [99] (signed word*) sin16s_gen2::sintab#2 ← phi( sin16s_gen2::@3/(const signed word[XSIN_SIZE#0]) xsin#0 sin16s_gen2::@5/(signed word*) sin16s_gen2::sintab#0 ) [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:2::sin16s_gen2:20 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] )
   [99] (dword) sin16s_gen2::x#2 ← phi( sin16s_gen2::@3/(byte/signed byte/word/signed word/dword/signed dword) 0 sin16s_gen2::@5/(dword) sin16s_gen2::x#1 ) [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:2::sin16s_gen2:20 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] )
   [100] (dword) sin16s::x#0 ← (dword) sin16s_gen2::x#2 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s::x#0 ] ( main:2::sin16s_gen2:20 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s::x#0 ] )
   [101] call sin16s  [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s::return#1 ] ( main:2::sin16s_gen2:20 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s::return#1 ] )
@@ -6389,7 +6389,7 @@ VARIABLE REGISTER WEIGHTS
 (dword) sin16s_gen2::x
 (dword) sin16s_gen2::x#1 7.333333333333333
 (dword) sin16s_gen2::x#2 2.75
-(signed word[512]) xsin
+(signed word[XSIN_SIZE#0]) xsin
 (word) xsin_idx
 (word) xsin_idx#11 4.714285714285714
 (word) xsin_idx#19 11.0
@@ -6838,7 +6838,7 @@ loop: {
   b6:
   //SEG54 [27] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) [ xsin_idx#11 ] ( main:2::loop:22 [ xsin_idx#11 ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  //SEG55 [28] (signed word*~) loop::$1 ← (const signed word[512]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) -- pwsz1=pwsc1_plus_vwuz2 
+  //SEG55 [28] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) -- pwsz1=pwsc1_plus_vwuz2 
     lda xsin_idx
     clc
     adc #<xsin
@@ -7261,7 +7261,7 @@ sin16s_gen2: {
     sta i
     lda #>0
     sta i+1
-  //SEG163 [99] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[512]) xsin#0 [phi:sin16s_gen2::@3->sin16s_gen2::@1#1] -- pwsz1=pwsc1 
+  //SEG163 [99] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[XSIN_SIZE#0]) xsin#0 [phi:sin16s_gen2::@3->sin16s_gen2::@1#1] -- pwsz1=pwsc1 
     lda #<xsin
     sta sintab
     lda #>xsin
@@ -8246,7 +8246,7 @@ fill: {
     rts
 }
   .align $100
-  xsin: .fill 2*$200, 0
+  xsin: .fill 2*XSIN_SIZE, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -8256,7 +8256,7 @@ Statement [8] *((const byte*) BGCOL3#0) ← (const byte) BLACK#0 [ ] ( main:2 [ 
 Statement [10] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [11] *((const byte*) D016#0) ← (const byte) VIC_MCM#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [26] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto loop::@4 [ xsin_idx#11 ] ( main:2::loop:22 [ xsin_idx#11 ] ) always clobbers reg byte a 
-Statement [28] (signed word*~) loop::$1 ← (const signed word[512]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) always clobbers reg byte a 
+Statement [28] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) always clobbers reg byte a 
 Statement [29] (signed word) loop::xpos#0 ← *((signed word*~) loop::$1) [ xsin_idx#11 loop::xpos#0 ] ( main:2::loop:22 [ xsin_idx#11 loop::xpos#0 ] ) always clobbers reg byte a reg byte y 
 Statement [30] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0 [ xsin_idx#11 render_logo::xpos#0 ] ( main:2::loop:22 [ xsin_idx#11 render_logo::xpos#0 ] ) always clobbers reg byte a 
 Statement [32] (word) xsin_idx#3 ← (word) xsin_idx#11 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ xsin_idx#3 ] ( main:2::loop:22 [ xsin_idx#3 ] ) always clobbers reg byte a 
@@ -8384,7 +8384,7 @@ Statement [8] *((const byte*) BGCOL3#0) ← (const byte) BLACK#0 [ ] ( main:2 [ 
 Statement [10] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [11] *((const byte*) D016#0) ← (const byte) VIC_MCM#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [26] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto loop::@4 [ xsin_idx#11 ] ( main:2::loop:22 [ xsin_idx#11 ] ) always clobbers reg byte a 
-Statement [28] (signed word*~) loop::$1 ← (const signed word[512]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) always clobbers reg byte a 
+Statement [28] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) always clobbers reg byte a 
 Statement [29] (signed word) loop::xpos#0 ← *((signed word*~) loop::$1) [ xsin_idx#11 loop::xpos#0 ] ( main:2::loop:22 [ xsin_idx#11 loop::xpos#0 ] ) always clobbers reg byte a reg byte y 
 Statement [30] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0 [ xsin_idx#11 render_logo::xpos#0 ] ( main:2::loop:22 [ xsin_idx#11 render_logo::xpos#0 ] ) always clobbers reg byte a 
 Statement [32] (word) xsin_idx#3 ← (word) xsin_idx#11 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ xsin_idx#3 ] ( main:2::loop:22 [ xsin_idx#3 ] ) always clobbers reg byte a 
@@ -8880,7 +8880,7 @@ loop: {
   b6:
   //SEG54 [27] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) [ xsin_idx#11 ] ( main:2::loop:22 [ xsin_idx#11 ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  //SEG55 [28] (signed word*~) loop::$1 ← (const signed word[512]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) -- pwsz1=pwsc1_plus_vwuz2 
+  //SEG55 [28] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) -- pwsz1=pwsc1_plus_vwuz2 
     lda xsin_idx
     clc
     adc #<xsin
@@ -9205,7 +9205,7 @@ sin16s_gen2: {
     sta i
     lda #>0
     sta i+1
-  //SEG163 [99] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[512]) xsin#0 [phi:sin16s_gen2::@3->sin16s_gen2::@1#1] -- pwsz1=pwsc1 
+  //SEG163 [99] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[XSIN_SIZE#0]) xsin#0 [phi:sin16s_gen2::@3->sin16s_gen2::@1#1] -- pwsz1=pwsc1 
     lda #<xsin
     sta sintab
     lda #>xsin
@@ -10032,7 +10032,7 @@ fill: {
     rts
 }
   .align $100
-  xsin: .fill 2*$200, 0
+  xsin: .fill 2*XSIN_SIZE, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b27
@@ -10584,8 +10584,8 @@ FINAL SYMBOL TABLE
 (dword) sin16s_gen2::x
 (dword) sin16s_gen2::x#1 x zp ZP_DWORD:4 7.333333333333333
 (dword) sin16s_gen2::x#2 x zp ZP_DWORD:4 2.75
-(signed word[512]) xsin
-(const signed word[512]) xsin#0 xsin = { fill( 512, 0) }
+(signed word[XSIN_SIZE#0]) xsin
+(const signed word[XSIN_SIZE#0]) xsin#0 xsin = { fill( XSIN_SIZE#0, 0) }
 (word) xsin_idx
 (word) xsin_idx#11 xsin_idx zp ZP_WORD:2 4.714285714285714
 (word) xsin_idx#19 xsin_idx zp ZP_WORD:2 11.0
@@ -10770,7 +10770,7 @@ loop: {
   //SEG53 loop::@6
   //SEG54 [27] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) [ xsin_idx#11 ] ( main:2::loop:22 [ xsin_idx#11 ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  //SEG55 [28] (signed word*~) loop::$1 ← (const signed word[512]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) -- pwsz1=pwsc1_plus_vwuz2 
+  //SEG55 [28] (signed word*~) loop::$1 ← (const signed word[XSIN_SIZE#0]) xsin#0 + (word) xsin_idx#11 [ xsin_idx#11 loop::$1 ] ( main:2::loop:22 [ xsin_idx#11 loop::$1 ] ) -- pwsz1=pwsc1_plus_vwuz2 
     lda xsin_idx
     clc
     adc #<xsin
@@ -11056,7 +11056,7 @@ sin16s_gen2: {
     lda #<0
     sta i
     sta i+1
-  //SEG163 [99] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[512]) xsin#0 [phi:sin16s_gen2::@3->sin16s_gen2::@1#1] -- pwsz1=pwsc1 
+  //SEG163 [99] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[XSIN_SIZE#0]) xsin#0 [phi:sin16s_gen2::@3->sin16s_gen2::@1#1] -- pwsz1=pwsc1 
     lda #<xsin
     sta sintab
     lda #>xsin
@@ -11778,5 +11778,5 @@ fill: {
     rts
 }
   .align $100
-  xsin: .fill 2*$200, 0
+  xsin: .fill 2*XSIN_SIZE, 0
 

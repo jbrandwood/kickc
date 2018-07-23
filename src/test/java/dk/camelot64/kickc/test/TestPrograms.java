@@ -52,6 +52,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testArrayLengthSymbolicMin() throws IOException, URISyntaxException {
+      compileAndCompare("array-length-symbolic-min");
+   }
+
+   @Test
    public void testArrayLengthSymbolic() throws IOException, URISyntaxException {
       compileAndCompare("array-length-symbolic");
    }

@@ -22,7 +22,7 @@ public abstract class ProgramValue {
    public static class ConstantVariableValue extends ProgramValue {
       private final ConstantVar constantVar;
 
-      public ConstantVariableValue(ConstantVar constantVar) {
+      ConstantVariableValue(ConstantVar constantVar) {
          this.constantVar = constantVar;
       }
 
@@ -42,7 +42,7 @@ public abstract class ProgramValue {
    public static class TypeArraySize extends ProgramValue {
       private final SymbolTypeArray array;
 
-      public TypeArraySize(SymbolTypeArray array) {
+      TypeArraySize(SymbolTypeArray array) {
          this.array = array;
       }
 
@@ -202,6 +202,29 @@ public abstract class ProgramValue {
 
    }
 
+   /** Location inside inline kickasm code. */
+   public static class KickAsmLocation extends ProgramValue {
+
+      private StatementKickAsm statementKickAsm;
+
+      KickAsmLocation(StatementKickAsm statementKickAsm) {
+         super();
+         this.statementKickAsm = statementKickAsm;
+      }
+
+      @Override
+      public RValue get() {
+         return statementKickAsm.getLocation();
+      }
+
+      @Override
+      public void set(RValue value) {
+         statementKickAsm.setLocation(value);
+      }
+
+   }
+
+
    /**
     * LValue as part of an assignment statement (or a call).
     */
@@ -276,7 +299,7 @@ public abstract class ProgramValue {
       private final dk.camelot64.kickc.model.values.ConstantCastValue castValue;
 
 
-      public ConstantCastValue(dk.camelot64.kickc.model.values.ConstantCastValue castValue) {
+      ConstantCastValue(dk.camelot64.kickc.model.values.ConstantCastValue castValue) {
          this.castValue = castValue;
       }
 
@@ -299,7 +322,7 @@ public abstract class ProgramValue {
       private final ConstantVarPointer varPointer;
 
 
-      public VarPointer(ConstantVarPointer varPointer) {
+      VarPointer(ConstantVarPointer varPointer) {
          this.varPointer = varPointer;
       }
 
@@ -319,7 +342,7 @@ public abstract class ProgramValue {
       private final ConstantArrayList arrayList;
       private final int idx;
 
-      public ConstantArrayElement(ConstantArrayList arrayList, int idx) {
+      ConstantArrayElement(ConstantArrayList arrayList, int idx) {
          this.arrayList = arrayList;
          this.idx = idx;
       }
@@ -339,7 +362,7 @@ public abstract class ProgramValue {
       private ValueList list;
       private int idx;
 
-      public ListElement(ValueList list, int idx) {
+      ListElement(ValueList list, int idx) {
          this.list = list;
          this.idx = idx;
       }
@@ -418,7 +441,7 @@ public abstract class ProgramValue {
       private final StatementCall call;
       private final int i;
 
-      public CallParameter(StatementCall call, int i) {
+      CallParameter(StatementCall call, int i) {
          this.call = call;
          this.i = i;
       }
@@ -492,7 +515,7 @@ public abstract class ProgramValue {
       private final StatementPhiBlock.PhiVariable phiVariable;
       private final int i;
 
-      public PhiValue(StatementPhiBlock.PhiVariable phiVariable, int i) {
+      PhiValue(StatementPhiBlock.PhiVariable phiVariable, int i) {
          this.phiVariable = phiVariable;
          this.i = i;
       }
@@ -545,7 +568,8 @@ public abstract class ProgramValue {
 
       @Override
       public void set(RValue value) {
-         this.rValue = (ConstantValue) value;
+         this.rValue = value;
       }
    }
+
 }

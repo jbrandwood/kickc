@@ -240,6 +240,7 @@ public class Compiler {
    private void pass3Analysis() {
 
       new Pass3AssertRValues(program).check();
+      new Pass3AssertConstants(program).check();
       new Pass3AssertArrayLengths(program).check();
       new Pass3AssertNoMulDivMod(program).check();
       new Pass3BlockSequencePlanner(program).plan();

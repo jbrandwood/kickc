@@ -65,65 +65,53 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclKasm(KickCParser.DeclKasmContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#kasmParams}.
+	 * Visit a parse tree produced by {@link KickCParser#kasmDirectives}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKasmParams(KickCParser.KasmParamsContext ctx);
+	T visitKasmDirectives(KickCParser.KasmDirectivesContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code kasmParamResources}
-	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * Visit a parse tree produced by the {@code kasmDirectiveResource}
+	 * labeled alternative in {@link KickCParser#kasmDirective}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKasmParamResources(KickCParser.KasmParamResourcesContext ctx);
+	T visitKasmDirectiveResource(KickCParser.KasmDirectiveResourceContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code kasmParamClobber}
-	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * Visit a parse tree produced by the {@code kasmDirectiveClobber}
+	 * labeled alternative in {@link KickCParser#kasmDirective}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKasmParamClobber(KickCParser.KasmParamClobberContext ctx);
+	T visitKasmDirectiveClobber(KickCParser.KasmDirectiveClobberContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code kasmParamTransfer}
-	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * Visit a parse tree produced by the {@code kasmDirectiveTransfer}
+	 * labeled alternative in {@link KickCParser#kasmDirective}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKasmParamTransfer(KickCParser.KasmParamTransferContext ctx);
+	T visitKasmDirectiveTransfer(KickCParser.KasmDirectiveTransferContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code kasmParamBytes}
-	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * Visit a parse tree produced by the {@code kasmDirectiveBytes}
+	 * labeled alternative in {@link KickCParser#kasmDirective}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKasmParamBytes(KickCParser.KasmParamBytesContext ctx);
+	T visitKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code kasmParamCycles}
-	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * Visit a parse tree produced by the {@code kasmDirectiveCycles}
+	 * labeled alternative in {@link KickCParser#kasmDirective}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKasmParamCycles(KickCParser.KasmParamCyclesContext ctx);
+	T visitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code kasmParamLocation}
-	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * Visit a parse tree produced by the {@code kasmDirectiveLocation}
+	 * labeled alternative in {@link KickCParser#kasmDirective}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKasmParamLocation(KickCParser.KasmParamLocationContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#kasmResourceList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitKasmResourceList(KickCParser.KasmResourceListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#kasmParamList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitKasmParamList(KickCParser.KasmParamListContext ctx);
+	T visitKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree

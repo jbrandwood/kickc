@@ -80,63 +80,49 @@ public class KickCBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitKasmParams(KickCParser.KasmParamsContext ctx) { return visitChildren(ctx); }
+	@Override public T visitKasmDirectives(KickCParser.KasmDirectivesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitKasmParamResources(KickCParser.KasmParamResourcesContext ctx) { return visitChildren(ctx); }
+	@Override public T visitKasmDirectiveResource(KickCParser.KasmDirectiveResourceContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitKasmParamClobber(KickCParser.KasmParamClobberContext ctx) { return visitChildren(ctx); }
+	@Override public T visitKasmDirectiveClobber(KickCParser.KasmDirectiveClobberContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitKasmParamTransfer(KickCParser.KasmParamTransferContext ctx) { return visitChildren(ctx); }
+	@Override public T visitKasmDirectiveTransfer(KickCParser.KasmDirectiveTransferContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitKasmParamBytes(KickCParser.KasmParamBytesContext ctx) { return visitChildren(ctx); }
+	@Override public T visitKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitKasmParamCycles(KickCParser.KasmParamCyclesContext ctx) { return visitChildren(ctx); }
+	@Override public T visitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitKasmParamLocation(KickCParser.KasmParamLocationContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitKasmResourceList(KickCParser.KasmResourceListContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitKasmParamList(KickCParser.KasmParamListContext ctx) { return visitChildren(ctx); }
+	@Override public T visitKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

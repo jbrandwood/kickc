@@ -711,7 +711,7 @@ fill: {
 }
   .align $100
   xsin: .fill 2*XSIN_SIZE, 0
-.pc = $2000 "Inline"
+.pc = LOGO "Inline"
   logo:
     .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)

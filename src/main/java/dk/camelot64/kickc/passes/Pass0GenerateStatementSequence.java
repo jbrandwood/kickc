@@ -155,8 +155,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          String kickAsmCode = m.group(1).replaceAll("\r", "");
          StatementKickAsm statementKickAsm = new StatementKickAsm(kickAsmCode, new StatementSource(ctx));
          sequence.addStatement(statementKickAsm);
-         if(ctx.kasmParams() != null) {
-            List<KasmDirective> kasmDirectives = this.visitKasmParams(ctx.kasmParams());
+         if(ctx.kasmDirectives() != null) {
+            List<KasmDirective> kasmDirectives = this.visitKasmDirectives(ctx.kasmDirectives());
             for(KasmDirective kasmDirective : kasmDirectives) {
                if(kasmDirective instanceof KasmDirectiveLocation) {
                   statementKickAsm.setLocation(((KasmDirectiveLocation) kasmDirective).getAddress());
@@ -170,10 +170,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    private interface KasmDirective {};
 
    @Override
-   public List<KasmDirective> visitKasmParams(KickCParser.KasmParamsContext ctx) {
+   public List<KasmDirective> visitKasmDirectives(KickCParser.KasmDirectivesContext ctx) {
       ArrayList<KasmDirective> kasmDirectives = new ArrayList<>();
-      List<KickCParser.KasmParamContext> params = ctx.kasmParam();
-      for(KickCParser.KasmParamContext param : params) {
+      List<KickCParser.KasmDirectiveContext> params = ctx.kasmDirective();
+      for(KickCParser.KasmDirectiveContext param : params) {
          KasmDirective directive = (KasmDirective) visit(param);
          if(directive!=null) {
             kasmDirectives.add(directive);
@@ -184,26 +184,26 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /** KickAssembler directive specifying an absolute address for the generated code/data. */
    public static class KasmDirectiveLocation implements KasmDirective {
-
       /** will contain the address to generate the KickAssembler-code to. */
-      private Long address;
+      private RValue address;
 
-      public KasmDirectiveLocation(Long address) {
+      public KasmDirectiveLocation(RValue address) {
          this.address = address;
       }
 
-      public Long getAddress() {
+      public RValue getAddress() {
          return address;
       }
 
    }
 
+
    @Override
-   public KasmDirective visitKasmParamLocation(KickCParser.KasmParamLocationContext ctx) {
+   public Object visitKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx) {
       ParseTree child = ctx.getChild(1);
-      if(ctx.NUMBER()!=null) {
-         Number location = NumberParser.parseLiteral(ctx.NUMBER().getText());
-         return new KasmDirectiveLocation(location.longValue());
+      if(ctx.expr()!=null) {
+         RValue expr = (RValue) visit(ctx.expr());
+         return new KasmDirectiveLocation(expr);
       } else  {
          // PLace inline
          return null;
@@ -211,14 +211,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitKasmResourceList(KickCParser.KasmResourceListContext ctx) {
-      for(TerminalNode resource : ctx.STRING()) {
-         String resourceName = resource.getText();
-         resourceName = resourceName.substring(1, resourceName.length() - 1);
-         File resourceFile = Compiler.loadFile(resourceName, program);
-         program.addAsmResourceFile(resourceFile.toPath());
-         program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
-      }
+   public Object visitKasmDirectiveResource(KickCParser.KasmDirectiveResourceContext ctx) {
+      TerminalNode resource = ctx.STRING();
+      String resourceName = resource.getText();
+      resourceName = resourceName.substring(1, resourceName.length() - 1);
+      File resourceFile = Compiler.loadFile(resourceName, program);
+      program.addAsmResourceFile(resourceFile.toPath());
+      program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
       return null;
    }
 

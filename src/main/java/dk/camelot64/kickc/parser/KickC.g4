@@ -36,28 +36,20 @@ declFunction
     ;
 
 declKasm
-    : 'kickasm' kasmParams? KICKASM
+    : 'kickasm' kasmDirectives? KICKASM
     ;
 
-kasmParams
-    : '(' kasmParam ( ';' kasmParam )* ')'
+kasmDirectives
+    : '(' kasmDirective ( ',' kasmDirective )* ')'
     ;
 
-kasmParam
-    : 'resources' kasmResourceList #kasmParamResources
-    | 'clobber' STRING #kasmParamClobber
-    | 'param' kasmParamList #kasmParamTransfer
-    | 'bytes' NUMBER #kasmParamBytes
-    | 'cycles' NUMBER #kasmParamCycles
-    | 'location' ( 'inline' | NUMBER ) #kasmParamLocation
-    ;
-
-kasmResourceList
-    : STRING ( ',' STRING )*
-    ;
-
-kasmParamList
-    : NAME ':' expr ( ',' NAME ':' expr )*
+kasmDirective
+    : 'resource' STRING #kasmDirectiveResource
+    | 'clobber' STRING #kasmDirectiveClobber
+    | 'param' NAME ':' expr #kasmDirectiveTransfer
+    | 'bytes' NUMBER #kasmDirectiveBytes
+    | 'cycles' NUMBER #kasmDirectiveCycles
+    | 'location' ( 'inline' | expr ) #kasmDirectiveLocation
     ;
 
 parameterListDecl

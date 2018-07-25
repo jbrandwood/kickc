@@ -124,109 +124,85 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKasmParams(KickCParser.KasmParamsContext ctx) { }
+	@Override public void enterKasmDirectives(KickCParser.KasmDirectivesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKasmParams(KickCParser.KasmParamsContext ctx) { }
+	@Override public void exitKasmDirectives(KickCParser.KasmDirectivesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKasmParamResources(KickCParser.KasmParamResourcesContext ctx) { }
+	@Override public void enterKasmDirectiveResource(KickCParser.KasmDirectiveResourceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKasmParamResources(KickCParser.KasmParamResourcesContext ctx) { }
+	@Override public void exitKasmDirectiveResource(KickCParser.KasmDirectiveResourceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKasmParamClobber(KickCParser.KasmParamClobberContext ctx) { }
+	@Override public void enterKasmDirectiveClobber(KickCParser.KasmDirectiveClobberContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKasmParamClobber(KickCParser.KasmParamClobberContext ctx) { }
+	@Override public void exitKasmDirectiveClobber(KickCParser.KasmDirectiveClobberContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKasmParamTransfer(KickCParser.KasmParamTransferContext ctx) { }
+	@Override public void enterKasmDirectiveTransfer(KickCParser.KasmDirectiveTransferContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKasmParamTransfer(KickCParser.KasmParamTransferContext ctx) { }
+	@Override public void exitKasmDirectiveTransfer(KickCParser.KasmDirectiveTransferContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKasmParamBytes(KickCParser.KasmParamBytesContext ctx) { }
+	@Override public void enterKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKasmParamBytes(KickCParser.KasmParamBytesContext ctx) { }
+	@Override public void exitKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKasmParamCycles(KickCParser.KasmParamCyclesContext ctx) { }
+	@Override public void enterKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKasmParamCycles(KickCParser.KasmParamCyclesContext ctx) { }
+	@Override public void exitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKasmParamLocation(KickCParser.KasmParamLocationContext ctx) { }
+	@Override public void enterKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKasmParamLocation(KickCParser.KasmParamLocationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterKasmResourceList(KickCParser.KasmResourceListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitKasmResourceList(KickCParser.KasmResourceListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterKasmParamList(KickCParser.KasmParamListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitKasmParamList(KickCParser.KasmParamListContext ctx) { }
+	@Override public void exitKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

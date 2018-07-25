@@ -119,6 +119,12 @@ public class ProgramValueIterator {
             }
             execute(new ProgramValue.PhiVariable(phiVariable), handler, statement, statementsIt, block);
          }
+      } else if(statement instanceof StatementKickAsm) {
+         StatementKickAsm statementKickAsm = (StatementKickAsm) statement;
+         RValue location = statementKickAsm.getLocation();
+         if(location!=null) {
+            execute(new ProgramValue.KickAsmLocation(statementKickAsm), handler, statement, statementsIt, block);
+         }
       }
    }
 

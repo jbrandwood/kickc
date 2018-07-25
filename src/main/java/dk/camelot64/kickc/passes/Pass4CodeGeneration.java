@@ -109,7 +109,7 @@ public class Pass4CodeGeneration {
             if(statement instanceof StatementKickAsm) {
                StatementKickAsm statementKasm = (StatementKickAsm) statement;
                if(statementKasm.getLocation() != null) {
-                  asm.addLine(new AsmSetPc("Inline", AsmFormat.getAsmNumber(statementKasm.getLocation())));
+                  asm.addLine(new AsmSetPc("Inline", AsmFormat.getAsmConstant(program, (ConstantValue) statementKasm.getLocation(), 99, ScopeRef.ROOT)));
                   asm.addInlinedKickAsm(statementKasm.getKickAsmCode());
 }
             }

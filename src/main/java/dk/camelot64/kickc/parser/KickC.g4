@@ -49,7 +49,7 @@ kasmDirective
     | 'param' NAME ':' expr #kasmDirectiveTransfer
     | 'bytes' NUMBER #kasmDirectiveBytes
     | 'cycles' NUMBER #kasmDirectiveCycles
-    | 'location' ( 'inline' | expr ) #kasmDirectiveLocation
+    | 'pc' ( 'inline' | expr ) #kasmDirectiveAddress
     ;
 
 parameterListDecl

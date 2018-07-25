@@ -50,12 +50,12 @@ public class KickCParser extends Parser {
 	private static final String[] _LITERAL_NAMES = {
 		null, "'import'", "'='", "';'", "'('", "')'", "'{'", "'}'", "'kickasm'", 
 		"','", "'resource'", "'clobber'", "'param'", "':'", "'bytes'", "'cycles'", 
-		"'location'", "'inline'", "'const'", "'extern'", "'align'", "'register'", 
-		"'if'", "'else'", "'while'", "'do'", "'for'", "'return'", "'asm'", "'..'", 
-		"'signed'", "'*'", "'['", "']'", "'--'", "'++'", "'+'", "'-'", "'!'", 
-		"'&'", "'~'", "'>>'", "'<<'", "'/'", "'%'", "'<'", "'>'", "'=='", "'!='", 
-		"'<='", "'>='", "'^'", "'|'", "'&&'", "'||'", "'+='", "'-='", "'*='", 
-		"'/='", "'%='", "'<<='", "'>>='", "'&='", "'|='", "'^='", "'.byte'", "'#'"
+		"'pc'", "'inline'", "'const'", "'extern'", "'align'", "'register'", "'if'", 
+		"'else'", "'while'", "'do'", "'for'", "'return'", "'asm'", "'..'", "'signed'", 
+		"'*'", "'['", "']'", "'--'", "'++'", "'+'", "'-'", "'!'", "'&'", "'~'", 
+		"'>>'", "'<<'", "'/'", "'%'", "'<'", "'>'", "'=='", "'!='", "'<='", "'>='", 
+		"'^'", "'|'", "'&&'", "'||'", "'+='", "'-='", "'*='", "'/='", "'%='", 
+		"'<<='", "'>>='", "'&='", "'|='", "'^='", "'.byte'", "'#'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
@@ -853,25 +853,6 @@ public class KickCParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class KasmDirectiveLocationContext extends KasmDirectiveContext {
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public KasmDirectiveLocationContext(KasmDirectiveContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof KickCListener ) ((KickCListener)listener).enterKasmDirectiveLocation(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof KickCListener ) ((KickCListener)listener).exitKasmDirectiveLocation(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof KickCVisitor ) return ((KickCVisitor<? extends T>)visitor).visitKasmDirectiveLocation(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class KasmDirectiveClobberContext extends KasmDirectiveContext {
 		public TerminalNode STRING() { return getToken(KickCParser.STRING, 0); }
 		public KasmDirectiveClobberContext(KasmDirectiveContext ctx) { copyFrom(ctx); }
@@ -886,6 +867,25 @@ public class KickCParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof KickCVisitor ) return ((KickCVisitor<? extends T>)visitor).visitKasmDirectiveClobber(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class KasmDirectiveAddressContext extends KasmDirectiveContext {
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public KasmDirectiveAddressContext(KasmDirectiveContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof KickCListener ) ((KickCListener)listener).enterKasmDirectiveAddress(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof KickCListener ) ((KickCListener)listener).exitKasmDirectiveAddress(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof KickCVisitor ) return ((KickCVisitor<? extends T>)visitor).visitKasmDirectiveAddress(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -972,7 +972,7 @@ public class KickCParser extends Parser {
 				}
 				break;
 			case T__15:
-				_localctx = new KasmDirectiveLocationContext(_localctx);
+				_localctx = new KasmDirectiveAddressContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(156);

@@ -135,8 +135,8 @@ public class AsmProgram {
     * Add inlines kick assembler code
     * @param kickAsmCode The kickassembler code
     */
-   public void addInlinedKickAsm(String kickAsmCode) {
-      addLine(new AsmInlineKickAsm(kickAsmCode));
+   public void addInlinedKickAsm(String kickAsmCode, Long bytes, Long cycles) {
+      addLine(new AsmInlineKickAsm(kickAsmCode, bytes, cycles));
    }
 
    /**

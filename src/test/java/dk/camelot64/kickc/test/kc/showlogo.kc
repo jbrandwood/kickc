@@ -3,6 +3,15 @@ import "c64.kc"
 byte* SCREEN = $400;
 byte* LOGO = $2000;
 
+kickasm(resource "logo.png", pc LOGO ) {{
+    logo:
+    .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+    .for (var y=0; y<6	; y++)
+        .for (var x=0;x<40; x++)
+            .for(var cp=0; cp<8; cp++)
+                .byte logoPic.getMulticolorByte(x,cp+y*8)
+}}
+
 void main() {
     *BORDERCOL = WHITE;
     *BGCOL = *BGCOL2 = DARK_GREY;
@@ -28,14 +37,3 @@ void fill(byte* start, word size, byte val) {
     }
 }
 
-kickasm(resources "logo.png" ) {{
-    .label pc_restore = *
-    .pc = $2000
-    logo:
-    .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
-    .for (var y=0; y<6	; y++)
-        .for (var x=0;x<40; x++)
-            .for(var cp=0; cp<8; cp++)
-                .byte logoPic.getMulticolorByte(x,cp+y*8)
-    .pc = pc_restore
-}}

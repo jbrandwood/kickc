@@ -196,13 +196,13 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx) { }
+	@Override public void enterKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx) { }
+	@Override public void exitKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

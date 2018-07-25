@@ -160,6 +160,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             for(KasmDirective kasmDirective : kasmDirectives) {
                if(kasmDirective instanceof KasmDirectiveLocation) {
                   statementKickAsm.setLocation(((KasmDirectiveLocation) kasmDirective).getAddress());
+               } else if(kasmDirective instanceof KasmDirectiveBytes) {
+                  statementKickAsm.setBytes(((KasmDirectiveBytes) kasmDirective).getBytes());
+               } else if(kasmDirective instanceof KasmDirectiveCycles) {
+                  statementKickAsm.setCycles(((KasmDirectiveCycles) kasmDirective).getCycles());
                }
             }
          }
@@ -197,10 +201,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    }
 
-
    @Override
-   public Object visitKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx) {
-      ParseTree child = ctx.getChild(1);
+   public Object visitKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx) {
       if(ctx.expr()!=null) {
          RValue expr = (RValue) visit(ctx.expr());
          return new KasmDirectiveLocation(expr);
@@ -208,6 +210,46 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          // PLace inline
          return null;
       }
+   }
+
+   /** KickAssembler directive specifying the number of bytes for generated code/data. */
+   public static class KasmDirectiveBytes implements KasmDirective {
+      /** bytes for the KickAssembler-code. */
+      private long bytes;
+
+      public KasmDirectiveBytes(long bytes) {
+         this.bytes= bytes;
+      }
+
+      public long getBytes() {
+         return bytes;
+      }
+   }
+
+   @Override
+   public KasmDirective visitKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx) {
+      Number bytes = NumberParser.parseLiteral(ctx.NUMBER().getText());
+      return new KasmDirectiveBytes(bytes.longValue());
+   }
+
+   /** KickAssembler directive specifying the number of cycles for generated code/data. */
+   public static class KasmDirectiveCycles implements KasmDirective {
+      /** cycles for the KickAssembler-code. */
+      private long cycles;
+
+      public KasmDirectiveCycles(long cycles) {
+         this.cycles= cycles;
+      }
+
+      public long getCycles() {
+         return cycles;
+      }
+   }
+
+   @Override
+   public KasmDirective visitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx) {
+      Number cycles = NumberParser.parseLiteral(ctx.NUMBER().getText());
+      return new KasmDirectiveCycles(cycles.longValue());
    }
 
    @Override

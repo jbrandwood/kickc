@@ -106,12 +106,12 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code kasmDirectiveLocation}
+	 * Visit a parse tree produced by the {@code kasmDirectiveAddress}
 	 * labeled alternative in {@link KickCParser#kasmDirective}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx);
+	T visitKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree

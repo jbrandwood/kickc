@@ -122,7 +122,7 @@ public class KickCBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx) { return visitChildren(ctx); }
+	@Override public T visitKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

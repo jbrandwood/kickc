@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.asm;
 
-/** Inlined KickAssembler code.
+/**
+ * Inlined KickAssembler code.
  * If no cycles/byte size is specified it defaults to 256/256.
  */
 public class AsmInlineKickAsm implements AsmLine {
@@ -9,12 +10,22 @@ public class AsmInlineKickAsm implements AsmLine {
 
    private int index;
 
-   private int bytes = 256;
+   private int bytes;
 
-   private double cycles = 256;
+   private double cycles;
 
-   public AsmInlineKickAsm(String kickAsmCode) {
-      this.kickAsmCode= kickAsmCode;
+   public AsmInlineKickAsm(String kickAsmCode, Long bytes, Long cycles) {
+      this.kickAsmCode = kickAsmCode;
+      if(bytes != null) {
+         this.bytes = bytes.intValue();
+      } else {
+         this.bytes = 256;
+      }
+      if(cycles != null) {
+         this.cycles = cycles;
+      } else {
+         this.cycles = 256;
+      }
    }
 
    public String getKickAsmCode() {
@@ -27,6 +38,7 @@ public class AsmInlineKickAsm implements AsmLine {
 
    /**
     * Get the number of source lines in the inline assembler code (for line indexing)
+    *
     * @return The number of source lines
     */
    public long getLineCount() {

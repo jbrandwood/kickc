@@ -168,17 +168,17 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code kasmDirectiveLocation}
+	 * Enter a parse tree produced by the {@code kasmDirectiveAddress}
 	 * labeled alternative in {@link KickCParser#kasmDirective}.
 	 * @param ctx the parse tree
 	 */
-	void enterKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx);
+	void enterKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code kasmDirectiveLocation}
+	 * Exit a parse tree produced by the {@code kasmDirectiveAddress}
 	 * labeled alternative in {@link KickCParser#kasmDirective}.
 	 * @param ctx the parse tree
 	 */
-	void exitKasmDirectiveLocation(KickCParser.KasmDirectiveLocationContext ctx);
+	void exitKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree

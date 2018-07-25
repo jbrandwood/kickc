@@ -110,7 +110,7 @@ public class Pass4CodeGeneration {
                StatementKickAsm statementKasm = (StatementKickAsm) statement;
                if(statementKasm.getLocation() != null) {
                   asm.addLine(new AsmSetPc("Inline", AsmFormat.getAsmConstant(program, (ConstantValue) statementKasm.getLocation(), 99, ScopeRef.ROOT)));
-                  asm.addInlinedKickAsm(statementKasm.getKickAsmCode());
+                  asm.addInlinedKickAsm(statementKasm.getKickAsmCode(), statementKasm.getBytes(), statementKasm.getCycles());
 }
             }
          }
@@ -440,7 +440,7 @@ public class Pass4CodeGeneration {
          } else if(statement instanceof StatementKickAsm) {
             StatementKickAsm statementKasm = (StatementKickAsm) statement;
             if(statementKasm.getLocation() == null) {
-               asm.addInlinedKickAsm(statementKasm.getKickAsmCode());
+               asm.addInlinedKickAsm(statementKasm.getKickAsmCode(), statementKasm.getBytes(), statementKasm.getCycles());
             }
          } else {
             throw new RuntimeException("Statement not supported " + statement);

@@ -49,9 +49,9 @@ public class Pass4CodeGeneration {
       ScopeRef currentScope = ScopeRef.ROOT;
 
       asm.startSegment(null, "Basic Upstart");
-      asm.addLine(new AsmSetPc("Basic", 0x0801));
+      asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
       asm.addLine(new AsmBasicUpstart("main"));
-      asm.addLine(new AsmSetPc("Program", 0x080d));
+      asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(0x080d)));
 
       // Generate global ZP labels
       asm.startSegment(null, "Global Constants & labels");
@@ -103,6 +103,19 @@ public class Pass4CodeGeneration {
          asm.addScopeEnd();
       }
       addData(asm, ScopeRef.ROOT);
+      // Add all absolutely placed inline KickAsm
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementKickAsm) {
+               StatementKickAsm statementKasm = (StatementKickAsm) statement;
+               if(statementKasm.getLocation() != null) {
+                  asm.addLine(new AsmSetPc("Inline", AsmFormat.getAsmNumber(statementKasm.getLocation())));
+                  asm.addInlinedKickAsm(statementKasm.getKickAsmCode());
+}
+            }
+         }
+      }
+
       program.setAsm(asm);
    }
 
@@ -426,7 +439,9 @@ public class Pass4CodeGeneration {
             asmFragmentInstance.generate(asm);
          } else if(statement instanceof StatementKickAsm) {
             StatementKickAsm statementKasm = (StatementKickAsm) statement;
-            asm.addInlinedKickAsm(statementKasm.getKickAsmCode());
+            if(statementKasm.getLocation() == null) {
+               asm.addInlinedKickAsm(statementKasm.getKickAsmCode());
+            }
          } else {
             throw new RuntimeException("Statement not supported " + statement);
          }

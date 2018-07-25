@@ -6,10 +6,10 @@ import dk.camelot64.kickc.fragment.AsmFormat;
 public class AsmSetPc implements AsmLine {
 
    private final String name;
-   private final int address;
+   private final String address;
    private int index;
 
-   public AsmSetPc(String name, int address) {
+   public AsmSetPc(String name, String address) {
       this.name = name;
       this.address = address;
    }
@@ -26,7 +26,7 @@ public class AsmSetPc implements AsmLine {
 
    @Override
    public String getAsm() {
-      return ".pc = " + AsmFormat.getAsmNumber(address) + " \"" + name + "\"";
+      return ".pc = " + address + " \"" + name + "\"";
    }
 
    @Override

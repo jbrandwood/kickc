@@ -21,16 +21,6 @@
   .const XSIN_SIZE = $200
   .label rem16u = 2
   .label xsin_idx = 2
-  .label pc_restore = *
-    .pc = $2000
-    logo:
-    .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
-    .for (var y=0; y<6	; y++)
-        .for (var x=0;x<40; x++)
-            .for(var cp=0; cp<8; cp++)
-                .byte logoPic.getMulticolorByte(x,cp+y*8)
-    .pc = pc_restore
-
   jsr main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>LOGO)>>2&$f
@@ -721,3 +711,11 @@ fill: {
 }
   .align $100
   xsin: .fill 2*XSIN_SIZE, 0
+.pc = $2000 "Inline"
+  logo:
+    .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+    .for (var y=0; y<6	; y++)
+        .for (var x=0;x<40; x++)
+            .for(var cp=0; cp<8; cp++)
+                .byte logoPic.getMulticolorByte(x,cp+y*8)
+

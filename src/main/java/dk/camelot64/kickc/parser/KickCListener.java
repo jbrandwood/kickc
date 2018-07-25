@@ -108,15 +108,77 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitKasmParams(KickCParser.KasmParamsContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#kasmParam}.
+	 * Enter a parse tree produced by the {@code kasmParamResources}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
 	 * @param ctx the parse tree
 	 */
-	void enterKasmParam(KickCParser.KasmParamContext ctx);
+	void enterKasmParamResources(KickCParser.KasmParamResourcesContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#kasmParam}.
+	 * Exit a parse tree produced by the {@code kasmParamResources}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
 	 * @param ctx the parse tree
 	 */
-	void exitKasmParam(KickCParser.KasmParamContext ctx);
+	void exitKasmParamResources(KickCParser.KasmParamResourcesContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code kasmParamClobber}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterKasmParamClobber(KickCParser.KasmParamClobberContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code kasmParamClobber}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitKasmParamClobber(KickCParser.KasmParamClobberContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code kasmParamTransfer}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterKasmParamTransfer(KickCParser.KasmParamTransferContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code kasmParamTransfer}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitKasmParamTransfer(KickCParser.KasmParamTransferContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code kasmParamBytes}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterKasmParamBytes(KickCParser.KasmParamBytesContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code kasmParamBytes}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitKasmParamBytes(KickCParser.KasmParamBytesContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code kasmParamCycles}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterKasmParamCycles(KickCParser.KasmParamCyclesContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code kasmParamCycles}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitKasmParamCycles(KickCParser.KasmParamCyclesContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code kasmParamLocation}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterKasmParamLocation(KickCParser.KasmParamLocationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code kasmParamLocation}
+	 * labeled alternative in {@link KickCParser#kasmParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitKasmParamLocation(KickCParser.KasmParamLocationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#kasmResourceList}.
 	 * @param ctx the parse tree

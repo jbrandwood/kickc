@@ -44,9 +44,12 @@ kasmParams
     ;
 
 kasmParam
-    : 'resources' kasmResourceList
-    | 'clobber' STRING
-    | 'param' kasmParamList
+    : 'resources' kasmResourceList #kasmParamResources
+    | 'clobber' STRING #kasmParamClobber
+    | 'param' kasmParamList #kasmParamTransfer
+    | 'bytes' NUMBER #kasmParamBytes
+    | 'cycles' NUMBER #kasmParamCycles
+    | 'location' ( 'inline' | NUMBER ) #kasmParamLocation
     ;
 
 kasmResourceList

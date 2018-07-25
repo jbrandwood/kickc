@@ -17,6 +17,7 @@ import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.File;
@@ -152,12 +153,61 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Matcher m = p.matcher(kasm);
       if(m.find()) {
          String kickAsmCode = m.group(1).replaceAll("\r", "");
-         sequence.addStatement(new StatementKickAsm(kickAsmCode, new StatementSource(ctx)));
-      }
-      if(ctx.kasmParams() != null) {
-         this.visitKasmParams(ctx.kasmParams());
+         StatementKickAsm statementKickAsm = new StatementKickAsm(kickAsmCode, new StatementSource(ctx));
+         sequence.addStatement(statementKickAsm);
+         if(ctx.kasmParams() != null) {
+            List<KasmDirective> kasmDirectives = this.visitKasmParams(ctx.kasmParams());
+            for(KasmDirective kasmDirective : kasmDirectives) {
+               if(kasmDirective instanceof KasmDirectiveLocation) {
+                  statementKickAsm.setLocation(((KasmDirectiveLocation) kasmDirective).getAddress());
+               }
+            }
+         }
       }
       return null;
+   }
+
+   private interface KasmDirective {};
+
+   @Override
+   public List<KasmDirective> visitKasmParams(KickCParser.KasmParamsContext ctx) {
+      ArrayList<KasmDirective> kasmDirectives = new ArrayList<>();
+      List<KickCParser.KasmParamContext> params = ctx.kasmParam();
+      for(KickCParser.KasmParamContext param : params) {
+         KasmDirective directive = (KasmDirective) visit(param);
+         if(directive!=null) {
+            kasmDirectives.add(directive);
+         }
+      }
+      return kasmDirectives;
+   }
+
+   /** KickAssembler directive specifying an absolute address for the generated code/data. */
+   public static class KasmDirectiveLocation implements KasmDirective {
+
+      /** will contain the address to generate the KickAssembler-code to. */
+      private Long address;
+
+      public KasmDirectiveLocation(Long address) {
+         this.address = address;
+      }
+
+      public Long getAddress() {
+         return address;
+      }
+
+   }
+
+   @Override
+   public KasmDirective visitKasmParamLocation(KickCParser.KasmParamLocationContext ctx) {
+      ParseTree child = ctx.getChild(1);
+      if(ctx.NUMBER()!=null) {
+         Number location = NumberParser.parseLiteral(ctx.NUMBER().getText());
+         return new KasmDirectiveLocation(location.longValue());
+      } else  {
+         // PLace inline
+         return null;
+      }
    }
 
    @Override

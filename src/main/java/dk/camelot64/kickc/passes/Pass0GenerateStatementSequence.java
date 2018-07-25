@@ -154,7 +154,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(m.find()) {
          String kickAsmCode = m.group(1).replaceAll("\r", "");
          StatementKickAsm statementKickAsm = new StatementKickAsm(kickAsmCode, new StatementSource(ctx));
-         sequence.addStatement(statementKickAsm);
          if(ctx.kasmDirectives() != null) {
             List<KasmDirective> kasmDirectives = this.visitKasmDirectives(ctx.kasmDirectives());
             for(KasmDirective kasmDirective : kasmDirectives) {
@@ -167,6 +166,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
                }
             }
          }
+         sequence.addStatement(statementKickAsm);
       }
       return null;
    }
@@ -215,41 +215,49 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    /** KickAssembler directive specifying the number of bytes for generated code/data. */
    public static class KasmDirectiveBytes implements KasmDirective {
       /** bytes for the KickAssembler-code. */
-      private long bytes;
+      private RValue  bytes;
 
-      public KasmDirectiveBytes(long bytes) {
+      public KasmDirectiveBytes(RValue bytes) {
          this.bytes= bytes;
       }
 
-      public long getBytes() {
+      public RValue getBytes() {
          return bytes;
       }
    }
 
    @Override
    public KasmDirective visitKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx) {
-      Number bytes = NumberParser.parseLiteral(ctx.NUMBER().getText());
-      return new KasmDirectiveBytes(bytes.longValue());
+      if(ctx.expr()!=null) {
+         RValue bytes = (RValue) this.visit(ctx.expr());
+         return new KasmDirectiveBytes(bytes);
+      } else {
+         return null;
+      }
    }
 
    /** KickAssembler directive specifying the number of cycles for generated code/data. */
    public static class KasmDirectiveCycles implements KasmDirective {
       /** cycles for the KickAssembler-code. */
-      private long cycles;
+      private RValue cycles;
 
-      public KasmDirectiveCycles(long cycles) {
+      public KasmDirectiveCycles(RValue cycles) {
          this.cycles= cycles;
       }
 
-      public long getCycles() {
+      public RValue getCycles() {
          return cycles;
       }
    }
 
    @Override
    public KasmDirective visitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx) {
-      Number cycles = NumberParser.parseLiteral(ctx.NUMBER().getText());
-      return new KasmDirectiveCycles(cycles.longValue());
+      if(ctx.expr()!=null) {
+         RValue cycles = (RValue) this.visit(ctx.expr());
+         return new KasmDirectiveCycles(cycles);
+      } else {
+         return null;
+      }
    }
 
    @Override

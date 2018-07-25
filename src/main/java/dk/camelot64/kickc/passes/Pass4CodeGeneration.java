@@ -4,7 +4,6 @@ import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -13,6 +12,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
@@ -109,9 +109,10 @@ public class Pass4CodeGeneration {
             if(statement instanceof StatementKickAsm) {
                StatementKickAsm statementKasm = (StatementKickAsm) statement;
                if(statementKasm.getLocation() != null) {
-                  asm.addLine(new AsmSetPc("Inline", AsmFormat.getAsmConstant(program, (ConstantValue) statementKasm.getLocation(), 99, ScopeRef.ROOT)));
-                  asm.addInlinedKickAsm(statementKasm.getKickAsmCode(), statementKasm.getBytes(), statementKasm.getCycles());
-}
+                  String asmLocation = AsmFormat.getAsmConstant(program, (ConstantValue) statementKasm.getLocation(), 99, ScopeRef.ROOT);
+                  asm.addLine(new AsmSetPc("Inline", asmLocation));
+                  addKickAsm(asm, statementKasm);
+               }
             }
          }
       }
@@ -440,12 +441,28 @@ public class Pass4CodeGeneration {
          } else if(statement instanceof StatementKickAsm) {
             StatementKickAsm statementKasm = (StatementKickAsm) statement;
             if(statementKasm.getLocation() == null) {
-               asm.addInlinedKickAsm(statementKasm.getKickAsmCode(), statementKasm.getBytes(), statementKasm.getCycles());
+               addKickAsm(asm, statementKasm);
             }
          } else {
             throw new RuntimeException("Statement not supported " + statement);
          }
       }
+   }
+
+   private void addKickAsm(AsmProgram asm, StatementKickAsm statementKasm) {
+      Long asmBytes = null;
+      if(statementKasm.getBytes() != null) {
+         ConstantValue kasmBytes = (ConstantValue) statementKasm.getBytes();
+         ConstantLiteral kasmBytesLiteral = kasmBytes.calculateLiteral(getScope());
+         asmBytes = ((ConstantInteger) kasmBytesLiteral).getInteger();
+      }
+      Long asmCycles = null;
+      if(statementKasm.getCycles() != null) {
+         ConstantValue kasmCycles = (ConstantValue) statementKasm.getCycles();
+         ConstantLiteral kasmCyclesLiteral = kasmCycles.calculateLiteral(getScope());
+         asmCycles = ((ConstantInteger) kasmCyclesLiteral).getInteger();
+      }
+      asm.addInlinedKickAsm(statementKasm.getKickAsmCode(), asmBytes, asmCycles);
    }
 
    /**

@@ -25,10 +25,16 @@ public class Pass3AssertConstants extends Pass2SsaAssertion {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementKickAsm) {
                RValue location = ((StatementKickAsm) statement).getLocation();
-               if(location != null) {
-                  if(!(location instanceof ConstantValue)) {
-                     throw new CompileError("Error! KickAssembler location is not constant " + location.toString(), statement);
-                  }
+               if(location != null && !(location instanceof ConstantValue)) {
+                  throw new CompileError("Error! KickAssembler location is not constant " + location.toString(), statement);
+               }
+               RValue bytes = ((StatementKickAsm) statement).getBytes();
+               if(bytes != null && !(bytes instanceof ConstantValue)) {
+                  throw new CompileError("Error! KickAssembler bytes is not constant " + bytes.toString(), statement);
+               }
+               RValue cycles = ((StatementKickAsm) statement).getCycles();
+               if(cycles!= null && !(cycles instanceof ConstantValue)) {
+                  throw new CompileError("Error! KickAssembler cycles is not constant " + cycles.toString(), statement);
                }
             }
          }

@@ -224,6 +224,50 @@ public abstract class ProgramValue {
 
    }
 
+   /** Bytes inside inline kickasm code. */
+   public static class KickAsmBytes extends ProgramValue {
+
+      private StatementKickAsm statementKickAsm;
+
+      KickAsmBytes(StatementKickAsm statementKickAsm) {
+         super();
+         this.statementKickAsm = statementKickAsm;
+      }
+
+      @Override
+      public RValue get() {
+         return statementKickAsm.getBytes();
+      }
+
+      @Override
+      public void set(RValue value) {
+         statementKickAsm.setBytes(value);
+      }
+
+   }
+
+   /** Cycles inside inline kickasm code. */
+   public static class KickAsmCycles extends ProgramValue {
+
+      private StatementKickAsm statementKickAsm;
+
+      KickAsmCycles(StatementKickAsm statementKickAsm) {
+         super();
+         this.statementKickAsm = statementKickAsm;
+      }
+
+      @Override
+      public RValue get() {
+         return statementKickAsm.getCycles();
+      }
+
+      @Override
+      public void set(RValue value) {
+         statementKickAsm.setCycles(value);
+      }
+
+   }
+
    /**
     * LValue as part of an assignment statement (or a call).
     */

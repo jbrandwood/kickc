@@ -5,7 +5,7 @@ import "memory.kc"
 
 byte* SCREEN = $400;
 byte* LOGO = $2000;
-kickasm(resource "logo.png", pc LOGO, bytes $780) {{
+kickasm(resource "logo.png", pc LOGO, bytes 6*40*8) {{
     logo:
     .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
@@ -629,6 +629,8 @@ Adding pre/post-modifier (byte) render_logo::screen_idx ← ++ (byte) render_log
 Adding pre/post-modifier (byte) render_logo::logo_idx ← ++ (byte) render_logo::logo_idx
 Adding pre/post-modifier (byte) render_logo::screen_idx ← ++ (byte) render_logo::screen_idx
 SYMBOLS
+(byte/word/signed word/dword/signed dword~) $0
+(byte/signed word/word/dword/signed dword~) $1
 (label) @1
 (label) @10
 (label) @11
@@ -2298,6 +2300,8 @@ fill::@return: scope:[fill]  from fill::@2
 @24: scope:[]  from @23
   (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) LOGO ← ((byte*)) (word/signed word/dword/signed dword) 8192
+  (byte/word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 6 * (byte/signed byte/word/signed word/dword/signed dword) 40
+  (byte/signed word/word/dword/signed dword~) $1 ← (byte/word/signed word/dword/signed dword~) $0 * (byte/signed byte/word/signed word/dword/signed dword) 8
   kickasm(location (byte*) LOGO) {{ logo:
     .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
@@ -3233,6 +3237,8 @@ fill::@return: scope:[fill]  from fill::@1
   (word) rem16u#31 ← phi( @16/(word) rem16u#32 )
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) LOGO#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
+  (byte/word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 6 * (byte/signed byte/word/signed word/dword/signed dword) 40
+  (byte/signed word/word/dword/signed dword~) $1 ← (byte/word/signed word/dword/signed dword~) $0 * (byte/signed byte/word/signed word/dword/signed dword) 8
   kickasm(location (byte*) LOGO#0) {{ logo:
     .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
@@ -3598,6 +3604,8 @@ render_logo::@return: scope:[render_logo]  from render_logo::@12 render_logo::@5
 @end: scope:[]  from @28
 
 SYMBOL TABLE SSA
+(byte/word/signed word/dword/signed dword~) $0
+(byte/signed word/word/dword/signed dword~) $1
 (label) @16
 (label) @24
 (label) @25
@@ -4914,6 +4922,7 @@ Constant (const byte) mulu16_sel::select#3 = 0
 Constant (const byte) mulu16_sel::select#4 = 0
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte*) LOGO#0 = ((byte*))8192
+Constant (const byte/word/signed word/dword/signed dword) $0 = 6*40
 Constant (const word) XSIN_SIZE#0 = 512
 Constant (const word) fill::size#0 = 1000
 Constant (const word) fill::size#1 = 1000
@@ -4958,6 +4967,7 @@ Constant (const byte/word/signed word/dword/signed dword) render_logo::$71 = 40*
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const signed word) sin16s_gen2::ampl#0 = sin16s_gen2::max#0-sin16s_gen2::min#0
 Constant (const dword) div32u16u::dividend#0 = PI2_u4f28#0
+Constant (const word/signed word/dword/signed dword) $1 = $0*8
 Constant (const signed word[XSIN_SIZE#0]) xsin#0 = { fill( XSIN_SIZE#0, 0) }
 Constant (const byte*) main::toD0181_screen#0 = SCREEN#0
 Constant (const byte*) main::toD0181_gfx#0 = LOGO#0
@@ -5346,6 +5356,8 @@ Constant inlined render_logo::$9 = (const byte*) SCREEN#0+(byte/signed byte/word
 Constant inlined render_logo::$72 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5
 Constant inlined render_logo::$71 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5
 Constant inlined sin16s_gen2::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined $0 = (byte/signed byte/word/signed word/dword/signed dword) 6*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined $1 = (byte/signed byte/word/signed word/dword/signed dword) 6*(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 8
 Constant inlined mul16u::b#0 = ((word))(const signed word) sin16s_gen2::ampl#0
 Constant inlined mul16s::b#0 = (const signed word) sin16s_gen2::ampl#0
 Constant inlined main::toD0181_$1#0 = ((word))(const byte*) SCREEN#0&(word/signed word/dword/signed dword) 16383

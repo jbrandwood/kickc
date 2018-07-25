@@ -47,8 +47,8 @@ kasmDirective
     : 'resource' STRING #kasmDirectiveResource
     | 'clobber' STRING #kasmDirectiveClobber
     | 'param' NAME ':' expr #kasmDirectiveTransfer
-    | 'bytes' NUMBER #kasmDirectiveBytes
-    | 'cycles' NUMBER #kasmDirectiveCycles
+    | 'bytes' expr #kasmDirectiveBytes
+    | 'cycles' expr #kasmDirectiveCycles
     | 'pc' ( 'inline' | expr ) #kasmDirectiveAddress
     ;
 

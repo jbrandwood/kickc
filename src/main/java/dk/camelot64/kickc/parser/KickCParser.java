@@ -803,7 +803,9 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class KasmDirectiveCyclesContext extends KasmDirectiveContext {
-		public TerminalNode NUMBER() { return getToken(KickCParser.NUMBER, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
 		public KasmDirectiveCyclesContext(KasmDirectiveContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -820,7 +822,9 @@ public class KickCParser extends Parser {
 		}
 	}
 	public static class KasmDirectiveBytesContext extends KasmDirectiveContext {
-		public TerminalNode NUMBER() { return getToken(KickCParser.NUMBER, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
 		public KasmDirectiveBytesContext(KasmDirectiveContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -958,7 +962,7 @@ public class KickCParser extends Parser {
 				setState(152);
 				match(T__13);
 				setState(153);
-				match(NUMBER);
+				expr(0);
 				}
 				break;
 			case T__14:
@@ -968,7 +972,7 @@ public class KickCParser extends Parser {
 				setState(154);
 				match(T__14);
 				setState(155);
-				match(NUMBER);
+				expr(0);
 				}
 				break;
 			case T__15:
@@ -4203,8 +4207,8 @@ public class KickCParser extends Parser {
 		"\3\2\2\2\u008e\u0090\3\2\2\2\u008f\u008d\3\2\2\2\u0090\u0091\7\7\2\2\u0091"+
 		"\25\3\2\2\2\u0092\u0093\7\f\2\2\u0093\u00a4\7H\2\2\u0094\u0095\7\r\2\2"+
 		"\u0095\u00a4\7H\2\2\u0096\u0097\7\16\2\2\u0097\u0098\7T\2\2\u0098\u0099"+
-		"\7\17\2\2\u0099\u00a4\5(\25\2\u009a\u009b\7\20\2\2\u009b\u00a4\7K\2\2"+
-		"\u009c\u009d\7\21\2\2\u009d\u00a4\7K\2\2\u009e\u00a1\7\22\2\2\u009f\u00a2"+
+		"\7\17\2\2\u0099\u00a4\5(\25\2\u009a\u009b\7\20\2\2\u009b\u00a4\5(\25\2"+
+		"\u009c\u009d\7\21\2\2\u009d\u00a4\5(\25\2\u009e\u00a1\7\22\2\2\u009f\u00a2"+
 		"\7\23\2\2\u00a0\u00a2\5(\25\2\u00a1\u009f\3\2\2\2\u00a1\u00a0\3\2\2\2"+
 		"\u00a2\u00a4\3\2\2\2\u00a3\u0092\3\2\2\2\u00a3\u0094\3\2\2\2\u00a3\u0096"+
 		"\3\2\2\2\u00a3\u009a\3\2\2\2\u00a3\u009c\3\2\2\2\u00a3\u009e\3\2\2\2\u00a4"+

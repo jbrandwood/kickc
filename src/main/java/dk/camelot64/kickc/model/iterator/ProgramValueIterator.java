@@ -125,6 +125,14 @@ public class ProgramValueIterator {
          if(location!=null) {
             execute(new ProgramValue.KickAsmLocation(statementKickAsm), handler, statement, statementsIt, block);
          }
+         RValue bytes = statementKickAsm.getLocation();
+         if(bytes!=null) {
+            execute(new ProgramValue.KickAsmBytes(statementKickAsm), handler, statement, statementsIt, block);
+         }
+         RValue cycles = statementKickAsm.getLocation();
+         if(cycles!=null) {
+            execute(new ProgramValue.KickAsmCycles(statementKickAsm), handler, statement, statementsIt, block);
+         }
       }
    }
 

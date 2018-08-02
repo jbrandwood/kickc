@@ -1,10 +1,19 @@
-// A flexible sprite multiplexer routine
+// A flexible sprite multiplexer routine for 24 sprites.
+// Usage:
+// - Once:
+// - plexInit(screen): Initialize the data structures and set the screen address
+// Each frame:
+// - Set x-pos, y-pos and pointer in PLEX_XPOS[id], PLEX_YPOS[id], PLEX_PTR[id]
+// - plexSort() Sorts the sprites according to y-positions and prepares for showing them. This uses an insertion sort that is quite fast when the relative order of the sprites does not change very much.
+// - plexShowNextYpos() Returns the Y-position of the next sprite to show.
+// - plexShowSprite() Shows the next sprite by copying values from PLEX_XXX[] to an actual sprite. Actual sprites are used round-robin. This should be called once for each of the 24 virtual sprites.
+//
+// In practice a good method is to wait until the raster is close to plexShowNextYpos() and then call plexShowSprite(). Repeat until all 24 sprites have been shown.
+
+import "c64"
 
 // TODO: Let the caller specify the number of sprites (PLEX_COUNT)
 // TODO: Optimize plexSort() - currently nxt_idx and nxt_y are stored in the outer loop.
-
-import "c64"
-import "sinus"
 
 // The number of sprites in the multiplexer
 const byte PLEX_COUNT = 24;

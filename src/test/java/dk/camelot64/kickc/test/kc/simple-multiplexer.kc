@@ -8,13 +8,12 @@ byte* SCREEN = $400;
 byte* YSIN = $2100;
 
 kickasm(pc YSIN) {{
-    .var min = 51
+    .var min = 50
     .var max = 250-21
     .var ampl = max-min;
     .for(var i=0;i<256;i++)
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
 }}
-
 
 kickasm(pc SPRITE, resource "balloon.png") {{
 .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
@@ -41,7 +40,6 @@ void init() {
         PLEX_XPOS[sx<<1] = xp;
         xp += 12;
     }
-
     // Enable & initialize sprites
     *SPRITES_ENABLE = $ff;
     for(byte ss: 0..7) {
@@ -66,13 +64,10 @@ void loop() {
         // Sort the sprites by y-position
         (*BORDERCOL)++;
         plexSort();
-        // Show the first 8 sprites
-        (*BORDERCOL)++;
-        for( byte ss: 0..7) {
-            plexShowSprite();
-        }
-        // Show the rest of the sprites
-        for( ss: 8..PLEX_COUNT-1) {
+        *BORDERCOL = BLACK;
+        while((*D011&$80)!=0) {}
+        // Show the sprites
+        for( byte ss: 0..PLEX_COUNT-1) {
             *BORDERCOL = BLACK;
             byte rasterY = plexShowNextYpos()-8;
             while(*RASTER<rasterY) {}

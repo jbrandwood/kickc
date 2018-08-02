@@ -19,8 +19,8 @@
   .label YSIN = $2100
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
   .label plex_sprite_idx = 4
-  .label plex_show_idx = 5
-  .label plex_sprite_msb = 6
+  .label plex_show_idx = 3
+  .label plex_sprite_msb = 5
   jsr main
 main: {
     sei
@@ -30,8 +30,8 @@ main: {
 }
 loop: {
     .label sin_idx = 2
-    .label ss = 3
     .label rasterY = 9
+    .label ss = 6
     lda #0
     sta sin_idx
   b4:
@@ -54,23 +54,21 @@ loop: {
     inc sin_idx
     inc BORDERCOL
     jsr plexSort
-    inc BORDERCOL
+    lda #BLACK
+    sta BORDERCOL
+  b8:
+    lda D011
+    and #$80
+    cmp #0
+    bne b8
     lda #0
     sta ss
     lda #1
     sta plex_sprite_msb
     lda #0
-    sta plex_show_idx
     sta plex_sprite_idx
-  b8:
-    jsr plexShowSprite
-    inc ss
-    lda ss
-    cmp #8
-    bne b8
-    lda #8
-    sta ss
-  b9:
+    sta plex_show_idx
+  b11:
     lda #BLACK
     sta BORDERCOL
     ldy plex_show_idx
@@ -80,16 +78,16 @@ loop: {
     sec
     sbc #8
     sta rasterY
-  b10:
+  b12:
     lda RASTER
     cmp rasterY
-    bcc b10
+    bcc b12
     inc BORDERCOL
     jsr plexShowSprite
     inc ss
     lda ss
     cmp #PLEX_COUNT-1+1
-    bne b9
+    bne b11
     lda #BLACK
     sta BORDERCOL
     jmp b4
@@ -238,7 +236,7 @@ plexInit: {
   PLEX_PTR: .fill PLEX_COUNT, 0
   PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
 .pc = YSIN "Inline"
-  .var min = 51
+  .var min = 50
     .var max = 250-21
     .var ampl = max-min;
     .for(var i=0;i<256;i++)

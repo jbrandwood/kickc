@@ -10,10 +10,7 @@ import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Compiler Pass rewriting conditional jumps that use && or || operators
@@ -91,13 +88,21 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       Label newBlockLabel = currentScope.addLabelIntermediate();
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
       getGraph().addBlock(newBlock);
-      newBlock.getStatements().add(new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination(), conditional.getSource()));
+      LabelRef destLabel = conditional.getDestination();
+      newBlock.getStatements().add(new StatementConditionalJump(conditionAssignment.getrValue2(), destLabel, conditional.getSource()));
       newBlock.setDefaultSuccessor(block.getDefaultSuccessor());
-      newBlock.setConditionalSuccessor(conditional.getDestination());
+      newBlock.setConditionalSuccessor(destLabel);
       // Rewrite the conditional to use only the first part of the && condition expression
       conditional.setDestination(newBlockLabel.getRef());
       block.setConditionalSuccessor(newBlockLabel.getRef());
       conditional.setrValue2(conditionAssignment.getrValue1());
+
+      // Replace the phi labels inside the destination block with the new block
+      ControlFlowBlock destBlock = getGraph().getBlock(destLabel);
+      LinkedHashMap<LabelRef, LabelRef> replacements = new LinkedHashMap<>();
+      replacements.put(block.getLabel(), newBlockLabel.getRef());
+      replaceLabels(destBlock, replacements);
+
    }
 
    /**
@@ -120,6 +125,19 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       // Rewrite the conditional to use only the first part of the && condition expression
       block.setDefaultSuccessor(newBlockLabel.getRef());
       conditional.setrValue2(conditionAssignment.getrValue1());
+
+
+      // TODO: Fix phi-values inside the destination phi-blocks to reflect the new control flow! Use replaceLabels(block, replacement)
+      ControlFlowBlock conditionalDestBlock = getGraph().getBlock(conditional.getDestination());
+      if(conditionalDestBlock.hasPhiBlock()) {
+         throw new RuntimeException("TODO: Fix phi-values inside the conditional destination phi-block!");
+      }
+      ControlFlowBlock defaultDestBlock = getGraph().getBlock(newBlock.getDefaultSuccessor());
+      if(defaultDestBlock.hasPhiBlock()) {
+         throw new RuntimeException("TODO: Fix phi-values inside the default destination phi-block!");
+      }
+
+
    }
 
    /**

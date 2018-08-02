@@ -59,7 +59,7 @@ public abstract class Pass2SsaOptimization extends Pass1Base {
       visitor.visitBlock(block);
    }
 
-   /** Creates a visitor that can getReplacement labels. */
+   /** Creates a visitor that can replace labels. */
    private ControlFlowGraphBaseVisitor<Void> getLabelReplaceVisitor(final Map<LabelRef, LabelRef> replacements) {
       return new ControlFlowGraphBaseVisitor<Void>() {
 

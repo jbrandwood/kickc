@@ -47,6 +47,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMultiplexer() throws IOException, URISyntaxException {
+      compileAndCompare("multiplexer");
+   }
+
+   @Test
    public void testForRangedWords() throws IOException, URISyntaxException {
       compileAndCompare("forrangedwords");
    }

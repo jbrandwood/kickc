@@ -1,0 +1,83 @@
+// A flexible sprite multiplexer routine
+import "print.kc"
+
+// The number of sprites in the multiplexer
+const byte PLEX_COUNT = 10;
+
+// The x-positions of the multiplexer sprites ($000-$1ff)
+word[PLEX_COUNT] PLEX_XPOS;
+
+// The y-positions of the multiplexer sprites
+byte[PLEX_COUNT] PLEX_YPOS = { $ff, $12, $11, $34, $2, $81, $77, $81, $ef, $11 };
+
+// The sprite pointers for the multiplexed sprites
+byte[PLEX_COUNT] PLEX_PTR;
+
+// The address of the sprite pointers on the current screen (screen+$3e8).
+byte* PLEX_SCREEN_PTR = $400+$3e8;
+
+// Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
+byte[PLEX_COUNT] PLEX_SORTED_IDX;
+
+// Set the address of the sprite pointers on the current screen (screen+$3e8)
+inline void plexSetScreenPtr(byte* plexScreenPtr) {
+    PLEX_SCREEN_PTR = plexScreenPtr;
+}
+
+// Initialize the multiplexer data structures
+void plexInit() {
+    for(byte i: 0..PLEX_COUNT-1) {
+        PLEX_SORTED_IDX[i] = i;
+    }
+}
+
+// Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions of the sprites
+// Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
+// Uses an insertion sort
+// 1. Moves a marker from the start to  end of the array. Every time the marker moves forward all elements before the marker are sorted correctly.
+// 2a. If the next element after the marker is larger that the current element
+//     the marker can be moved forwards (as the sorting is correct).
+// 2b. If the next element after the marker is smaller than the current element:
+//     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
+//      It is then inserted at the spot. Now the marker can move forward.
+void plexSort() {
+    for(byte m: 0..PLEX_COUNT-2) {
+        byte nxt_idx = PLEX_SORTED_IDX[m+1];
+        byte nxt_y = PLEX_YPOS[nxt_idx];
+        byte cur_idx = PLEX_SORTED_IDX[m];
+        if(nxt_y<PLEX_YPOS[cur_idx]) {
+            // Shift values until we encounter a value smaller than nxt_y
+            byte s = m;
+            do {
+                PLEX_SORTED_IDX[s+1] = PLEX_SORTED_IDX[s];
+                s--;
+            } while((s!=$ff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]));
+            // store the mark at the found position
+            s++;
+            PLEX_SORTED_IDX[s] = nxt_idx;
+        }
+    }
+}
+
+
+void main() {
+    plexInit();
+    print_cls();
+    print_plex();
+    plexSort();
+    print_plex();
+}
+
+
+void print_plex() {
+    for( byte i: 0..PLEX_COUNT-1) {
+        print_byte(PLEX_YPOS[PLEX_SORTED_IDX[i]]);
+        print_char(' ');
+    }
+    print_ln();
+}
+
+
+
+
+

@@ -33,7 +33,7 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
    }
 
    /**
-    * Examine all unary nots. If they are the only usage of a reversable unary not getReplacement the unary not with the reversed comparison - and eliminate the riginal variable.
+    * Examine all unary nots. If they are the only usage of a reversable unary not replace the unary not with the reversed comparison - and eliminate the riginal variable.
     *
     * @param assignments Assignments to examine
     * @param usages All variable usages

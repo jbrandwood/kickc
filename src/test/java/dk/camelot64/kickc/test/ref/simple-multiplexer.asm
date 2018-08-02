@@ -32,7 +32,6 @@ loop: {
     .label sin_idx = 2
     .label ss = 3
     .label rasterY = 9
-    .label ss2 = 3
     lda #0
     sta sin_idx
   b4:
@@ -70,7 +69,7 @@ loop: {
     cmp #8
     bne b8
     lda #8
-    sta ss2
+    sta ss
   b9:
     lda #BLACK
     sta BORDERCOL
@@ -87,8 +86,8 @@ loop: {
     bcc b10
     inc BORDERCOL
     jsr plexShowSprite
-    inc ss2
-    lda ss2
+    inc ss
+    lda ss
     cmp #PLEX_COUNT-1+1
     bne b9
     lda #BLACK

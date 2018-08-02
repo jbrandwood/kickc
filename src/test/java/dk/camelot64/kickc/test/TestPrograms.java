@@ -48,7 +48,7 @@ public class TestPrograms {
 
    @Test
    public void testMultiplexer() throws IOException, URISyntaxException {
-      compileAndCompare("multiplexer");
+      compileAndCompare("simple-multiplexer");
    }
 
    @Test

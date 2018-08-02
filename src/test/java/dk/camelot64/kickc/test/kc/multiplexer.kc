@@ -1,40 +1,55 @@
 // A flexible sprite multiplexer routine
-import "print.kc"
+
+// TODO: Let the caller specify the number of sprites (PLEX_COUNT)
+// TODO: Optimize plexSort() - currently nxt_idx and nxt_y are stored in the outer loop.
+
+import "c64"
+import "sinus"
 
 // The number of sprites in the multiplexer
-const byte PLEX_COUNT = 10;
+const byte PLEX_COUNT = 24;
 
 // The x-positions of the multiplexer sprites ($000-$1ff)
 word[PLEX_COUNT] PLEX_XPOS;
 
-// The y-positions of the multiplexer sprites
-byte[PLEX_COUNT] PLEX_YPOS = { $ff, $12, $11, $34, $2, $81, $77, $81, $ef, $11 };
+// The y-positions of the multiplexer sprites.
+byte[PLEX_COUNT] PLEX_YPOS;
 
 // The sprite pointers for the multiplexed sprites
 byte[PLEX_COUNT] PLEX_PTR;
 
-// The address of the sprite pointers on the current screen (screen+$3e8).
-byte* PLEX_SCREEN_PTR = $400+$3e8;
+// The address of the sprite pointers on the current screen (screen+$3f8).
+byte* PLEX_SCREEN_PTR = $400+$3f8;
 
 // Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
 byte[PLEX_COUNT] PLEX_SORTED_IDX;
 
-// Set the address of the sprite pointers on the current screen (screen+$3e8)
-inline void plexSetScreenPtr(byte* plexScreenPtr) {
-    PLEX_SCREEN_PTR = plexScreenPtr;
-}
+// Variables controlling the showing of sprites
+
+// The index in the PLEX tables of the next sprite to show
+byte plex_show_idx=0;
+// The index the next sprite to use for showing (sprites are used round-robin)
+byte plex_sprite_idx=0;
+// The MSB bit of the next sprite to use for showing
+byte plex_sprite_msb=1;
 
 // Initialize the multiplexer data structures
-void plexInit() {
+void plexInit(byte* screen) {
+    plexSetScreen(screen);
     for(byte i: 0..PLEX_COUNT-1) {
         PLEX_SORTED_IDX[i] = i;
     }
 }
 
-// Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions of the sprites
+// Set the address of the current screen used for setting sprite pointers (at screen+$3f8)
+inline void plexSetScreen(byte* screen) {
+    PLEX_SCREEN_PTR = screen+$3f8;
+}
+
+// Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
 // Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
-// Uses an insertion sort
-// 1. Moves a marker from the start to  end of the array. Every time the marker moves forward all elements before the marker are sorted correctly.
+// Uses an insertion sort:
+// 1. Moves a marker (m) from the start to  end of the array. Every time the marker moves forward all elements before the marker are sorted correctly.
 // 2a. If the next element after the marker is larger that the current element
 //     the marker can be moved forwards (as the sorting is correct).
 // 2b. If the next element after the marker is smaller than the current element:
@@ -44,8 +59,7 @@ void plexSort() {
     for(byte m: 0..PLEX_COUNT-2) {
         byte nxt_idx = PLEX_SORTED_IDX[m+1];
         byte nxt_y = PLEX_YPOS[nxt_idx];
-        byte cur_idx = PLEX_SORTED_IDX[m];
-        if(nxt_y<PLEX_YPOS[cur_idx]) {
+        if(nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[m]]) {
             // Shift values until we encounter a value smaller than nxt_y
             byte s = m;
             do {
@@ -57,27 +71,34 @@ void plexSort() {
             PLEX_SORTED_IDX[s] = nxt_idx;
         }
     }
+    // Prepare for showing the sprites
+    plex_show_idx = 0;
+    plex_sprite_idx = 0;
+    plex_sprite_msb = 1;
 }
 
-
-void main() {
-    plexInit();
-    print_cls();
-    print_plex();
-    plexSort();
-    print_plex();
-}
-
-
-void print_plex() {
-    for( byte i: 0..PLEX_COUNT-1) {
-        print_byte(PLEX_YPOS[PLEX_SORTED_IDX[i]]);
-        print_char(' ');
+// Show the next sprite.
+// plexSort() prepares showing the sprites
+void plexShowSprite() {
+    byte plex_sprite_idx2 = plex_sprite_idx<<1;
+    SPRITES_YPOS[plex_sprite_idx2] = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]];
+    PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]];
+    byte xpos_idx = PLEX_SORTED_IDX[plex_show_idx]<<1;
+    SPRITES_XPOS[plex_sprite_idx2] = <PLEX_XPOS[xpos_idx];
+    if(>PLEX_XPOS[xpos_idx]!=0) {
+        *SPRITES_XMSB |= plex_sprite_msb;
+    } else {
+        *SPRITES_XMSB &= ($ff^plex_sprite_msb);
     }
-    print_ln();
+    plex_sprite_idx = (plex_sprite_idx+1)&7;
+    plex_show_idx++;
+    plex_sprite_msb <<=1;
+    if(plex_sprite_msb==0) {
+        plex_sprite_msb = 1;
+    }
 }
 
-
-
-
-
+// Get the y-position of the next sprite to show
+inline byte plexShowNextYpos() {
+    return PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]];
+}

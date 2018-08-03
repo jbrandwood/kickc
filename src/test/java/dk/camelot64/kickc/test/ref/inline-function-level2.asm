@@ -46,7 +46,7 @@ main: {
     sta line1_pos
     lda #>line1_xpos*$100+0
     sta line1_pos+1
-  b2:
+  line1_b1:
     lda line1_pos+1
     clc
     adc cur_line
@@ -73,7 +73,7 @@ main: {
   !:
     inx
     cpx #line1_ysize
-    bcc b2
+    bcc line1_b1
     ldx #0
     lda #<$400
     sta cur_line
@@ -83,7 +83,7 @@ main: {
     sta line2_pos
     lda #>line2_xpos*$100+0
     sta line2_pos+1
-  b3:
+  line2_b1:
     lda line2_pos+1
     clc
     adc cur_line
@@ -110,6 +110,6 @@ main: {
   !:
     inx
     cpx #line2_ysize
-    bcc b3
+    bcc line2_b1
     rts
 }

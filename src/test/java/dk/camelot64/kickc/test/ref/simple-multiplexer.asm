@@ -9,17 +9,18 @@
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
   .label D011 = $d011
+  .const VIC_RST8 = $80
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .const BLACK = 0
   .const GREEN = 5
-  .const PLEX_COUNT = $18
+  .const PLEX_COUNT = $20
   .label SPRITE = $2000
   .label SCREEN = $400
   .label YSIN = $2100
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
-  .label plex_sprite_idx = 4
-  .label plex_show_idx = 3
+  .label plex_free_next = 3
+  .label plex_show_idx = 4
   .label plex_sprite_msb = 5
   jsr main
 main: {
@@ -30,7 +31,7 @@ main: {
 }
 loop: {
     .label sin_idx = 2
-    .label rasterY = 9
+    .label plexFreeNextYpos1_return = 9
     .label ss = 6
     lda #0
     sta sin_idx
@@ -46,7 +47,7 @@ loop: {
     sta PLEX_YPOS,y
     txa
     clc
-    adc #$a
+    adc #8
     tax
     iny
     cpy #PLEX_COUNT-1+1
@@ -58,7 +59,7 @@ loop: {
     sta BORDERCOL
   b8:
     lda D011
-    and #$80
+    and #VIC_RST8
     cmp #0
     bne b8
     lda #0
@@ -66,21 +67,18 @@ loop: {
     lda #1
     sta plex_sprite_msb
     lda #0
-    sta plex_sprite_idx
     sta plex_show_idx
+    tax
+    sta plex_free_next
   b11:
     lda #BLACK
     sta BORDERCOL
-    ldy plex_show_idx
-    lda PLEX_SORTED_IDX,y
-    tay
-    lda PLEX_YPOS,y
-    sec
-    sbc #8
-    sta rasterY
+    ldy plex_free_next
+    lda PLEX_FREE_YPOS,y
+    sta plexFreeNextYpos1_return
   b12:
     lda RASTER
-    cmp rasterY
+    cmp plexFreeNextYpos1_return
     bcc b12
     inc BORDERCOL
     jsr plexShowSprite
@@ -93,27 +91,41 @@ loop: {
     jmp b4
 }
 plexShowSprite: {
-    lda plex_sprite_idx
+    .label plex_sprite_idx2 = 9
+    .label xpos_idx = $a
+    txa
     asl
+    sta plex_sprite_idx2
+    ldy plex_show_idx
+    lda PLEX_SORTED_IDX,y
     tay
-    ldx plex_show_idx
-    lda PLEX_SORTED_IDX,x
-    tax
-    lda PLEX_YPOS,x
+    lda PLEX_YPOS,y
+    ldy plex_sprite_idx2
     sta SPRITES_YPOS,y
-    ldx plex_show_idx
-    lda PLEX_SORTED_IDX,x
-    tax
-    lda PLEX_PTR,x
-    ldx plex_sprite_idx
+    clc
+    adc #$15
+    ldy plex_free_next
+    sta PLEX_FREE_YPOS,y
+    tya
+    clc
+    adc #1
+    and #7
+    sta plex_free_next
+    ldy plex_show_idx
+    lda PLEX_SORTED_IDX,y
+    tay
+    lda PLEX_PTR,y
     sta PLEX_SCREEN_PTR,x
-    ldx plex_show_idx
-    lda PLEX_SORTED_IDX,x
+    ldy plex_show_idx
+    lda PLEX_SORTED_IDX,y
     asl
-    tax
-    lda PLEX_XPOS,x
+    sta xpos_idx
+    tay
+    lda PLEX_XPOS,y
+    ldy plex_sprite_idx2
     sta SPRITES_XPOS,y
-    lda PLEX_XPOS+1,x
+    ldy xpos_idx
+    lda PLEX_XPOS+1,y
     cmp #0
     bne b1
     lda plex_sprite_msb
@@ -121,11 +133,10 @@ plexShowSprite: {
     and SPRITES_XMSB
     sta SPRITES_XMSB
   b2:
-    lda plex_sprite_idx
-    clc
-    adc #1
+    inx
+    txa
     and #7
-    sta plex_sprite_idx
+    tax
     inc plex_show_idx
     asl plex_sprite_msb
     lda plex_sprite_msb
@@ -162,7 +173,7 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     dex
     cpx #$ff
-    bne b7
+    bne b8
   b5:
     inx
     lda nxt_idx
@@ -172,8 +183,15 @@ plexSort: {
     lda m
     cmp #PLEX_COUNT-2+1
     bne b1
+    ldx #0
+  plexFreePrepare1_b1:
+    lda #0
+    sta PLEX_FREE_YPOS,x
+    inx
+    cpx #8
+    bne plexFreePrepare1_b1
     rts
-  b7:
+  b8:
     lda nxt_y
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
@@ -202,10 +220,10 @@ init: {
     sta PLEX_XPOS+1,y
     clc
     lda xp
-    adc #<$c
+    adc #<9
     sta xp
     lda xp+1
-    adc #>$c
+    adc #>9
     sta xp+1
     inx
     cpx #PLEX_COUNT-1+1
@@ -231,6 +249,7 @@ plexInit: {
     bne b1
     rts
 }
+  PLEX_FREE_YPOS: .fill 8, 0
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   PLEX_YPOS: .fill PLEX_COUNT, 0
   PLEX_PTR: .fill PLEX_COUNT, 0

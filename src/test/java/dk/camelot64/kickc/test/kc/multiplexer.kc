@@ -5,18 +5,17 @@
 // Each frame:
 // - Set x-pos, y-pos and pointer in PLEX_XPOS[id], PLEX_YPOS[id], PLEX_PTR[id]
 // - plexSort() Sorts the sprites according to y-positions and prepares for showing them. This uses an insertion sort that is quite fast when the relative order of the sprites does not change very much.
-// - plexShowNextYpos() Returns the Y-position of the next sprite to show.
 // - plexShowSprite() Shows the next sprite by copying values from PLEX_XXX[] to an actual sprite. Actual sprites are used round-robin. This should be called once for each of the 24 virtual sprites.
+// - plexFreeNextYpos() Returns the Y-position where the next sprite is available to be shown (ie. the next pos where the next sprite is no longer in use showing something else).
+// - plexShowNextYpos() Returns the Y-position of the next sprite to show.
 //
-// In practice a good method is to wait until the raster is close to plexShowNextYpos() and then call plexShowSprite(). Repeat until all 24 sprites have been shown.
+// In practice a good method is to wait until the raster is beyond plexFreeNextYpos() and then call plexShowSprite(). Repeat until all 24 sprites have been shown.
+// TODO: Let the caller specify the number of sprites (PLEX_COUNT)
 
 import "c64"
 
-// TODO: Let the caller specify the number of sprites (PLEX_COUNT)
-// TODO: Optimize plexSort() - currently nxt_idx and nxt_y are stored in the outer loop.
-
 // The number of sprites in the multiplexer
-const byte PLEX_COUNT = 24;
+const byte PLEX_COUNT = 32;
 
 // The x-positions of the multiplexer sprites ($000-$1ff)
 word[PLEX_COUNT] PLEX_XPOS;
@@ -84,13 +83,16 @@ void plexSort() {
     plex_show_idx = 0;
     plex_sprite_idx = 0;
     plex_sprite_msb = 1;
+    plexFreePrepare();
 }
 
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 void plexShowSprite() {
     byte plex_sprite_idx2 = plex_sprite_idx<<1;
-    SPRITES_YPOS[plex_sprite_idx2] = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]];
+    byte ypos = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]];
+    SPRITES_YPOS[plex_sprite_idx2] = ypos;
+    plexFreeAdd(ypos);
     PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]];
     byte xpos_idx = PLEX_SORTED_IDX[plex_show_idx]<<1;
     SPRITES_XPOS[plex_sprite_idx2] = <PLEX_XPOS[xpos_idx];
@@ -110,4 +112,29 @@ void plexShowSprite() {
 // Get the y-position of the next sprite to show
 inline byte plexShowNextYpos() {
     return PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]];
+}
+
+// Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
+byte[8] PLEX_FREE_YPOS;
+
+// The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
+byte plex_free_next = 0;
+
+// Prepare for a new frame. Initialize free to zero for all sprites.
+inline void plexFreePrepare() {
+    for( byte s: 0..7) {
+        PLEX_FREE_YPOS[s] = 0;
+    }
+    plex_free_next = 0;
+}
+
+// Get the Y-position where the next sprite to be shown is free to use.
+inline byte plexFreeNextYpos() {
+    return PLEX_FREE_YPOS[plex_free_next];
+}
+
+// Update the data structure to reflect that a sprite has been shown. This sprite will be free again after 21 lines.
+inline void plexFreeAdd(byte ypos) {
+    PLEX_FREE_YPOS[plex_free_next] =  ypos+21;
+    plex_free_next = (plex_free_next+1)&7;
 }

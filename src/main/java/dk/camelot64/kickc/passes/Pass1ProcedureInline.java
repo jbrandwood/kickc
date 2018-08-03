@@ -109,6 +109,8 @@ public class Pass1ProcedureInline extends Pass1Base {
                   // Set default successor to the original block to the inlined procedure block
                   Label inlinedProcLabel = callScope.getLabel(procedure.getLocalName() + serial);
                   block.setDefaultSuccessor(inlinedProcLabel.getRef());
+                  // Set conditional successor of original block to null (as any condition has been moved to the rest block)
+                  block.setConditionalSuccessor(null);
                   // Log the inlining
                   getLog().append("Inlined call " + call.toString(getProgram(), false));
                   // Exit and restart

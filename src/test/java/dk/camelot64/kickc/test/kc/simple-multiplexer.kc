@@ -38,7 +38,7 @@ void init() {
     for(byte sx: 0..PLEX_COUNT-1) {
         PLEX_PTR[sx] = (byte)(SPRITE/$40);
         PLEX_XPOS[sx<<1] = xp;
-        xp += 12;
+        xp += 9;
     }
     // Enable & initialize sprites
     *SPRITES_ENABLE = $ff;
@@ -58,18 +58,18 @@ void loop() {
         byte y_idx = sin_idx;
         for(byte sy: 0..PLEX_COUNT-1) {
             PLEX_YPOS[sy] = YSIN[y_idx];
-            y_idx += 10;
+            y_idx += 8;
         }
         sin_idx +=1;
         // Sort the sprites by y-position
         (*BORDERCOL)++;
         plexSort();
         *BORDERCOL = BLACK;
-        while((*D011&$80)!=0) {}
+        while((*D011&VIC_RST8)!=0) {}
         // Show the sprites
         for( byte ss: 0..PLEX_COUNT-1) {
             *BORDERCOL = BLACK;
-            byte rasterY = plexShowNextYpos()-8;
+            byte rasterY = plexFreeNextYpos();
             while(*RASTER<rasterY) {}
             (*BORDERCOL)++;
             plexShowSprite();

@@ -1,5 +1,5 @@
 (label) @11
-(label) @8
+(label) @14
 (label) @begin
 (label) @end
 (byte) BLACK
@@ -11,7 +11,9 @@
 (byte) GREEN
 (const byte) GREEN#0 GREEN = (byte/signed byte/word/signed word/dword/signed dword) 5
 (byte) PLEX_COUNT
-(const byte) PLEX_COUNT#0 PLEX_COUNT = (byte/signed byte/word/signed word/dword/signed dword) 24
+(const byte) PLEX_COUNT#0 PLEX_COUNT = (byte/signed byte/word/signed word/dword/signed dword) 32
+(byte[8]) PLEX_FREE_YPOS
+(const byte[8]) PLEX_FREE_YPOS#0 PLEX_FREE_YPOS = { fill( 8, 0) }
 (byte[PLEX_COUNT#0]) PLEX_PTR
 (const byte[PLEX_COUNT#0]) PLEX_PTR#0 PLEX_PTR = { fill( PLEX_COUNT#0, 0) }
 (byte*) PLEX_SCREEN_PTR
@@ -42,6 +44,8 @@
 (const byte) VIC_DEN#0 VIC_DEN = (byte/signed byte/word/signed word/dword/signed dword) 16
 (byte) VIC_RSEL
 (const byte) VIC_RSEL#0 VIC_RSEL = (byte/signed byte/word/signed word/dword/signed dword) 8
+(byte) VIC_RST8
+(const byte) VIC_RST8#0 VIC_RST8 = (byte/word/signed word/dword/signed dword) 128
 (byte*) YSIN
 (const byte*) YSIN#0 YSIN = ((byte*))(word/signed word/dword/signed dword) 8448
 (void()) init()
@@ -67,24 +71,22 @@
 (label) loop::@14
 (label) loop::@20
 (label) loop::@27
-(label) loop::@29
 (label) loop::@30
 (label) loop::@31
 (label) loop::@4
 (label) loop::@6
 (label) loop::@7
 (label) loop::@8
-(label) loop::plexShowNextYpos1
-(byte) loop::plexShowNextYpos1_return
-(byte) loop::plexShowNextYpos1_return#0 reg byte a 202.0
+(label) loop::plexFreeNextYpos1
+(byte) loop::plexFreeNextYpos1_return
+(byte) loop::plexFreeNextYpos1_return#0 plexFreeNextYpos1_return zp ZP_BYTE:9 551.0
 (byte) loop::rasterY
-(byte) loop::rasterY#0 rasterY zp ZP_BYTE:9 551.0
 (byte) loop::sin_idx
-(byte) loop::sin_idx#1 sin_idx zp ZP_BYTE:2 1.375
+(byte) loop::sin_idx#1 sin_idx zp ZP_BYTE:2 1.4666666666666666
 (byte) loop::sin_idx#6 sin_idx zp ZP_BYTE:2 3.666666666666667
 (byte) loop::ss
 (byte) loop::ss#1 ss zp ZP_BYTE:6 151.5
-(byte) loop::ss#6 ss zp ZP_BYTE:6 28.857142857142858
+(byte) loop::ss#6 ss zp ZP_BYTE:6 33.666666666666664
 (byte) loop::sy
 (byte) loop::sy#1 reg byte y 151.5
 (byte) loop::sy#2 reg byte y 101.0
@@ -106,26 +108,36 @@
 (byte*) plexInit::plexSetScreen1_screen
 (byte*) plexInit::screen
 (void()) plexShowSprite()
-(byte~) plexShowSprite::$2 reg byte a 4.0
 (byte~) plexShowSprite::$3 reg byte a 4.0
-(byte/word/dword~) plexShowSprite::$5 reg byte a 4.0
-(byte/signed word/word/dword/signed dword~) plexShowSprite::$6 reg byte a 4.0
+(byte~) plexShowSprite::$4 reg byte a 4.0
+(byte/word/dword~) plexShowSprite::$6 reg byte a 4.0
+(byte/signed word/word/dword/signed dword~) plexShowSprite::$7 reg byte x 4.0
 (label) plexShowSprite::@1
 (label) plexShowSprite::@2
 (label) plexShowSprite::@4
 (label) plexShowSprite::@7
+(label) plexShowSprite::@8
 (label) plexShowSprite::@return
+(label) plexShowSprite::plexFreeAdd1
+(byte/signed word/word/dword/signed dword~) plexShowSprite::plexFreeAdd1_$0
+(byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$0#0 reg byte a 4.0
+(byte/signed word/word/dword/signed dword~) plexShowSprite::plexFreeAdd1_$1
+(byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 reg byte a 4.0
+(byte/word/dword~) plexShowSprite::plexFreeAdd1_$2
+(byte) plexShowSprite::plexFreeAdd1_ypos
+(byte) plexShowSprite::plexFreeAdd1_ypos#0 reg byte a 3.0
 (byte) plexShowSprite::plex_sprite_idx2
-(byte) plexShowSprite::plex_sprite_idx2#0 reg byte y 1.2000000000000002
+(byte) plexShowSprite::plex_sprite_idx2#0 plex_sprite_idx2 zp ZP_BYTE:9 0.6000000000000001
 (byte) plexShowSprite::xpos_idx
-(byte) plexShowSprite::xpos_idx#0 reg byte x 2.0
+(byte) plexShowSprite::xpos_idx#0 xpos_idx zp ZP_BYTE:10 2.0
+(byte) plexShowSprite::ypos
 (void()) plexSort()
 (label) plexSort::@1
-(label) plexSort::@10
+(label) plexSort::@11
 (label) plexSort::@2
 (label) plexSort::@3
 (label) plexSort::@5
-(label) plexSort::@7
+(label) plexSort::@8
 (label) plexSort::@return
 (byte) plexSort::m
 (byte) plexSort::m#1 m zp ZP_BYTE:3 151.5
@@ -134,42 +146,54 @@
 (byte) plexSort::nxt_idx#0 nxt_idx zp ZP_BYTE:4 30.299999999999997
 (byte) plexSort::nxt_y
 (byte) plexSort::nxt_y#0 nxt_y zp ZP_BYTE:5 150.375
+(label) plexSort::plexFreePrepare1
+(bool~) plexSort::plexFreePrepare1_$0
+(label) plexSort::plexFreePrepare1_@1
+(byte) plexSort::plexFreePrepare1_s
+(byte) plexSort::plexFreePrepare1_s#1 reg byte x 151.5
+(byte) plexSort::plexFreePrepare1_s#2 reg byte x 151.5
 (byte) plexSort::s
 (byte) plexSort::s#1 reg byte x 1368.3333333333335
 (byte) plexSort::s#2 reg byte x 202.0
 (byte) plexSort::s#3 reg byte x 2052.5
 (byte~) plexSort::s#6 reg byte x 202.0
+(byte) plex_free_next
+(byte) plex_free_next#13 plex_free_next zp ZP_BYTE:3 4.904761904761904
+(byte) plex_free_next#17 plex_free_next zp ZP_BYTE:3 20.599999999999998
 (byte) plex_show_idx
-(byte) plex_show_idx#14 plex_show_idx zp ZP_BYTE:3 11.444444444444443
-(byte) plex_show_idx#18 plex_show_idx zp ZP_BYTE:3 11.052631578947366
+(byte) plex_show_idx#15 plex_show_idx zp ZP_BYTE:4 11.444444444444443
+(byte) plex_show_idx#44 plex_show_idx zp ZP_BYTE:4 4.73913043478261
 (byte) plex_sprite_idx
-(byte) plex_sprite_idx#14 plex_sprite_idx zp ZP_BYTE:4 10.299999999999999
-(byte) plex_sprite_idx#38 plex_sprite_idx zp ZP_BYTE:4 6.2941176470588225
+(byte) plex_sprite_idx#15 reg byte x 10.299999999999999
+(byte) plex_sprite_idx#44 reg byte x 5.095238095238094
 (byte) plex_sprite_msb
 (byte) plex_sprite_msb#16 plex_sprite_msb zp ZP_BYTE:5 20.599999999999998
-(byte) plex_sprite_msb#24 plex_sprite_msb zp ZP_BYTE:5 2.0
-(byte) plex_sprite_msb#38 plex_sprite_msb zp ZP_BYTE:5 5.349999999999999
+(byte) plex_sprite_msb#25 plex_sprite_msb zp ZP_BYTE:5 2.0
+(byte) plex_sprite_msb#44 plex_sprite_msb zp ZP_BYTE:5 4.458333333333332
 
 zp ZP_BYTE:2 [ loop::sin_idx#6 loop::sin_idx#1 ]
 reg byte x [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ]
 reg byte y [ loop::sy#2 loop::sy#1 ]
-zp ZP_BYTE:3 [ plex_show_idx#18 plex_show_idx#14 plexSort::m#2 plexSort::m#1 ]
-zp ZP_BYTE:4 [ plex_sprite_idx#38 plex_sprite_idx#14 plexSort::nxt_idx#0 ]
-zp ZP_BYTE:5 [ plex_sprite_msb#38 plex_sprite_msb#16 plex_sprite_msb#24 plexSort::nxt_y#0 ]
+zp ZP_BYTE:3 [ plex_free_next#17 plex_free_next#13 plexSort::m#2 plexSort::m#1 ]
+reg byte x [ plex_sprite_idx#44 plex_sprite_idx#15 ]
+zp ZP_BYTE:4 [ plex_show_idx#44 plex_show_idx#15 plexSort::nxt_idx#0 ]
+zp ZP_BYTE:5 [ plex_sprite_msb#44 plex_sprite_msb#16 plex_sprite_msb#25 plexSort::nxt_y#0 ]
 zp ZP_BYTE:6 [ loop::ss#6 loop::ss#1 ]
 reg byte x [ plexSort::s#3 plexSort::s#1 plexSort::s#6 ]
+reg byte x [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ]
 reg byte x [ init::sx#2 init::sx#1 ]
 zp ZP_WORD:7 [ init::xp#2 init::xp#1 ]
 reg byte x [ init::ss#2 init::ss#1 ]
 reg byte x [ plexInit::i#2 plexInit::i#1 ]
 reg byte a [ loop::$4 ]
-reg byte a [ loop::plexShowNextYpos1_return#0 ]
-zp ZP_BYTE:9 [ loop::rasterY#0 ]
-reg byte y [ plexShowSprite::plex_sprite_idx2#0 ]
-reg byte x [ plexShowSprite::xpos_idx#0 ]
-reg byte a [ plexShowSprite::$2 ]
+zp ZP_BYTE:9 [ loop::plexFreeNextYpos1_return#0 plexShowSprite::plex_sprite_idx2#0 ]
+reg byte a [ plexShowSprite::plexFreeAdd1_ypos#0 ]
+reg byte a [ plexShowSprite::plexFreeAdd1_$0#0 ]
+reg byte a [ plexShowSprite::plexFreeAdd1_$1#0 ]
+zp ZP_BYTE:10 [ plexShowSprite::xpos_idx#0 ]
 reg byte a [ plexShowSprite::$3 ]
-reg byte a [ plexShowSprite::$5 ]
+reg byte a [ plexShowSprite::$4 ]
 reg byte a [ plexShowSprite::$6 ]
+reg byte x [ plexShowSprite::$7 ]
 reg byte x [ plexSort::s#2 ]
 reg byte a [ init::$6 ]

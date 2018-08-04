@@ -348,6 +348,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          StatementSource source = new StatementSource(directivesCtx.get(0));
          if(directive instanceof DirectiveInline) {
             procedure.setDeclaredInline(true);
+         } else if(directive instanceof DirectiveInterrupt) {
+            procedure.setDeclaredInterrupt(true);
          } else {
             throw new CompileError("Unsupported function directive " + directive, source);
          }
@@ -362,6 +364,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Object visitDirectiveInline(KickCParser.DirectiveInlineContext ctx) {
       return new DirectiveInline();
+   }
+
+   @Override
+   public Object visitDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx) {
+      return new DirectiveInterrupt();
    }
 
    @Override
@@ -829,6 +836,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /** Function declared inline. */
    private static class DirectiveInline implements Directive {
+   }
+
+   /** Function declared interrupt. */
+   private static class DirectiveInterrupt implements Directive {
    }
 
    /** Variable memory alignment. */

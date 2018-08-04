@@ -881,6 +881,15 @@ public class TestPrograms {
       assertError("no-mod-runtime", "Runtime modulo not supported");
    }
 
+   @Test
+   public void testNoInlineInterrupt() throws IOException, URISyntaxException {
+      assertError("no-inlineinterrupt", "Interrupts cannot be inlined");
+   }
+
+   @Test
+   public void testNoCalledInterrupt() throws IOException, URISyntaxException {
+      assertError("no-calledinterrupt", "Interrupts cannot be called.");
+   }
 
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {

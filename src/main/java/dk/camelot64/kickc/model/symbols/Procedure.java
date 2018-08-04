@@ -16,11 +16,13 @@ public class Procedure extends Scope {
    private final SymbolType returnType;
    private List<String> parameterNames;
    private boolean declaredInline;
+   private boolean declaredInterrupt;
 
    public Procedure(String name, SymbolType returnType, Scope parentScope) {
       super(name, parentScope);
       this.returnType = returnType;
       this.declaredInline = false;
+      this.declaredInterrupt = false;
    }
 
    public List<String> getParameterNames() {
@@ -73,6 +75,18 @@ public class Procedure extends Scope {
       return declaredInline;
    }
 
+   public void setDeclaredInline(boolean declaredInline) {
+      this.declaredInline = declaredInline;
+   }
+
+   public boolean isDeclaredInterrupt() {
+      return declaredInterrupt;
+   }
+
+   public void setDeclaredInterrupt(boolean declaredInterrupt) {
+      this.declaredInterrupt = declaredInterrupt;
+   }
+
    @Override
    public String toString() {
       return toString(null);
@@ -83,6 +97,9 @@ public class Procedure extends Scope {
       StringBuilder res = new StringBuilder();
       if(declaredInline) {
          res.append("inline ");
+      }
+      if(declaredInterrupt) {
+         res.append("interrupt ");
       }
       res.append("(" + getType().getTypeName() + ") ");
       res.append(getFullName());
@@ -121,10 +138,6 @@ public class Procedure extends Scope {
       result = 31 * result + (returnType != null ? returnType.hashCode() : 0);
       result = 31 * result + (parameterNames != null ? parameterNames.hashCode() : 0);
       return result;
-   }
-
-   public void setDeclaredInline(boolean declaredInline) {
-      this.declaredInline = declaredInline;
    }
 
 }

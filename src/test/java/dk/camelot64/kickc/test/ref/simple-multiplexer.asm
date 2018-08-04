@@ -15,8 +15,8 @@
   .const BLACK = 0
   .const GREEN = 5
   .const PLEX_COUNT = $20
-  .label SPRITE = $2000
   .label SCREEN = $400
+  .label SPRITE = $2000
   .label YSIN = $2100
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
   .label plex_free_next = 3

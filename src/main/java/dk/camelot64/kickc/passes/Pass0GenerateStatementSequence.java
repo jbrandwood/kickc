@@ -315,6 +315,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          StatementSource source = new StatementSource(directivesCtx.get(0));
          if(directive instanceof DirectiveConst) {
             lValue.setDeclaredConstant(true);
+         } else if(directive instanceof DirectiveVolatile) {
+            lValue.setDeclaredVolatile(true);
          } else if(directive instanceof DirectiveAlign) {
             if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
                lValue.setDeclaredAlignment(((DirectiveAlign) directive).getAlignment());
@@ -387,6 +389,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Directive visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx) {
       String name = ctx.NAME().getText();
       return new DirectiveRegister(name);
+   }
+
+   @Override
+   public Directive visitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx) {
+      return new DirectiveVolatile();
    }
 
    @Override
@@ -858,6 +865,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /** Function declared inline. */
    private static class DirectiveInline implements Directive {
+   }
+
+   /** Variable declared volatile. */
+   private static class DirectiveVolatile implements Directive {
    }
 
    /** Function declared interrupt. */

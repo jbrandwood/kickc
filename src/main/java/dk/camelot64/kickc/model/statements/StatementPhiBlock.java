@@ -21,14 +21,6 @@ public class StatementPhiBlock extends StatementBase {
     */
    private List<PhiVariable> phiVariables;
 
-   public StatementPhiBlock(
-         List<PhiVariable> phiVariables,
-         Integer index,
-         StatementSource source) {
-      super(index, source);
-      this.phiVariables = phiVariables;
-   }
-
    public StatementPhiBlock() {
       super(null, new StatementSource(RuleContext.EMPTY));
       this.phiVariables = new ArrayList<>();
@@ -48,21 +40,27 @@ public class StatementPhiBlock extends StatementBase {
 
    }
 
-   public PhiVariable getPhiVariable(VariableRef variable) {
-      for(PhiVariable phiVariable : phiVariables) {
-         if(phiVariable.getVariable().equals(variable)) {
-            return phiVariable;
-         }
-      }
-      return null;
+   public PhiVariable addPhiVariable(VariableRef variable) {
+      PhiVariable phiVariable = new PhiVariable(variable);
+      this.phiVariables.add(phiVariable);
+      return phiVariable;
+   }
+
+   public List<PhiVariable> getPhiVariables() {
+      return phiVariables;
    }
 
    public RValue getrValue(LabelRef predecessor, VariableRef variable) {
       return getPhiVariable(variable).getrValue(predecessor);
    }
 
-   public PhiRValue getPhirValue(LabelRef predecessor, VariableRef variable) {
-      return getPhiVariable(variable).getPhirValue(predecessor);
+   private PhiVariable getPhiVariable(VariableRef variable) {
+      for(PhiVariable phiVariable : phiVariables) {
+         if(phiVariable.getVariable().equals(variable)) {
+            return phiVariable;
+         }
+      }
+      return null;
    }
 
    @Override
@@ -101,17 +99,6 @@ public class StatementPhiBlock extends StatementBase {
          return s.toString();
       }
    }
-
-   public PhiVariable addPhiVariable(VariableRef variable) {
-      PhiVariable phiVariable = new PhiVariable(variable);
-      this.phiVariables.add(phiVariable);
-      return phiVariable;
-   }
-
-   public List<PhiVariable> getPhiVariables() {
-      return phiVariables;
-   }
-
 
    @Override
    public boolean equals(Object o) {
@@ -173,10 +160,6 @@ public class StatementPhiBlock extends StatementBase {
          return values;
       }
 
-      public void setValues(List<PhiRValue> values) {
-         this.values = values;
-      }
-
       public RValue getrValue(LabelRef predecessor) {
          for(PhiRValue phiRValue : values) {
             if(phiRValue.getPredecessor().equals(predecessor)) {
@@ -193,7 +176,7 @@ public class StatementPhiBlock extends StatementBase {
        * @param predecessor The predecessor block
        * @return The rValue assigned to the phi variable when entering from the passed block.
        */
-      public PhiRValue getPhirValue(LabelRef predecessor) {
+      PhiRValue getPhirValue(LabelRef predecessor) {
          for(PhiRValue phiRValue : values) {
             if(phiRValue.getPredecessor().equals(predecessor)) {
                return phiRValue;

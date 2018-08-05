@@ -43,4 +43,5 @@ public abstract class Variable extends SymbolVariable {
       result = 31 * result + (allocation != null ? allocation.hashCode() : 0);
       return result;
    }
+
 }

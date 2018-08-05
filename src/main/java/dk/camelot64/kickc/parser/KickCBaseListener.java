@@ -292,6 +292,18 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx) { }
 	/**
 	 * {@inheritDoc}

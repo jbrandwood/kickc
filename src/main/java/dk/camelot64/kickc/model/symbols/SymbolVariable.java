@@ -31,6 +31,9 @@ public abstract class SymbolVariable implements Symbol {
    /** Specifies the register the variable must be put into during execution. */
    private Registers.Register declaredRegister;
 
+   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). */
+   private boolean declaredVolatile;
+
    public SymbolVariable(String name, Scope scope, SymbolType type) {
       this.name = name;
       this.scope = scope;
@@ -124,6 +127,14 @@ public abstract class SymbolVariable implements Symbol {
 
    public void setDeclaredRegister(Registers.Register declaredRegister) {
       this.declaredRegister = declaredRegister;
+   }
+
+   public boolean isDeclaredVolatile() {
+      return declaredVolatile;
+   }
+
+   public void setDeclaredVolatile(boolean declaredVolatile) {
+      this.declaredVolatile = declaredVolatile;
    }
 
    @Override

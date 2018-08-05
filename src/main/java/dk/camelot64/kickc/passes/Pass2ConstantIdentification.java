@@ -118,6 +118,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
             if(getConstant(phiRValue.getrValue()) != null) {
                VariableRef variable = phiVariable.getVariable();
+               Variable var = getScope().getVariable(variable);
+               if(var.isDeclaredVolatile()) {
+                  // Volatile variables cannot be constant
+                  continue;
+               }
                ConstantValue constant = getConstant(phiRValue.getrValue());
                constants.put(variable, constant);
             }
@@ -129,6 +134,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       LValue lValue = assignment.getlValue();
       if(lValue instanceof VariableRef) {
          VariableRef variable = (VariableRef) lValue;
+         Variable var = getScope().getVariable(variable);
+         if(var.isDeclaredVolatile()) {
+            // Volatile variables cannot be constant
+            return;
+         }
          if(assignment.getrValue1() == null && getConstant(assignment.getrValue2()) != null) {
             if(assignment.getOperator() == null) {
                // Constant assignment
@@ -154,7 +164,6 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                   getConstant(assignment.getrValue2()),
                   getScope());
             if(constant != null) {
-
                constants.put(variable, constant);
             }
          } else if(assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {

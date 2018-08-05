@@ -47,6 +47,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInterruptVolatile() throws IOException, URISyntaxException {
+      compileAndCompare("test-interrupt-volatile");
+   }
+
+   @Test
    public void testInterrupt() throws IOException, URISyntaxException {
       compileAndCompare("test-interrupt");
    }

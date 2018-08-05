@@ -9,10 +9,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.symbols.VariableUnversioned;
-import dk.camelot64.kickc.model.symbols.VariableVersion;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.LValue;
@@ -22,6 +19,7 @@ import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -198,7 +196,8 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                      VariableRef phiLValVarRef = phiVariable.getVariable();
                      VariableVersion versioned = (VariableVersion) getScope().getVariable(phiLValVarRef);
                      VariableUnversioned unversioned = versioned.getVersionOf();
-                     for(ControlFlowBlock predecessor : getGraph().getPredecessors(block)) {
+                     List<ControlFlowBlock> predecessors = getPredecessors(block);
+                     for(ControlFlowBlock predecessor : predecessors) {
                         LabelRef predecessorLabel = predecessor.getLabel();
                         Map<VariableUnversioned, VariableVersion> predecessorMap = symbolMap.get(predecessorLabel);
                         VariableVersion previousSymbol = null;
@@ -237,6 +236,23 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          }
       }
       return (newPhis.size() == 0);
+   }
+
+   /**
+    * Get all predecessros for a control flow block.
+    * If the block is the start of an interrupt the @begin is included as a predecessor.
+    * @param block The block to examine
+    * @return All predecessor blocks
+    */
+   private List<ControlFlowBlock> getPredecessors(ControlFlowBlock block) {
+      List<ControlFlowBlock> predecessors = getGraph().getPredecessors(block);
+      Symbol symbol = getScope().getSymbol(block.getLabel());
+      if(symbol instanceof Procedure) {
+         if(((Procedure) symbol).getInterruptType()!=null) {
+            predecessors.add(getGraph().getFirstBlock());
+         }
+      }
+      return predecessors;
    }
 
    /**

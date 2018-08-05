@@ -64,6 +64,7 @@ directive
     | 'align' '(' NUMBER ')' #directiveAlign
     | 'register' '(' NAME ')' #directiveRegister
     | 'inline' #directiveInline
+    | 'volatile' #directiveVolatile
     | 'interrupt' ( '(' ('hardware'  | 'kernel' ) ')' )? #directiveInterrupt
     ;
 

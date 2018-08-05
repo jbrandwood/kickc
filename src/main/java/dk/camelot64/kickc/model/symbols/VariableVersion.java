@@ -11,6 +11,7 @@ public class VariableVersion extends Variable {
       super(versionOf.getLocalName() + "#" + version, versionOf.getScope(), versionOf.getType());
       this.setDeclaredAlignment(versionOf.getDeclaredAlignment());
       this.setDeclaredRegister(versionOf.getDeclaredRegister());
+      this.setDeclaredVolatile(versionOf.isDeclaredVolatile());
       this.versionOfName = versionOf.getLocalName();
    }
 

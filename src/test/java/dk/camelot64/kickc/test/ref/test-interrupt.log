@@ -1,7 +1,7 @@
 PARSING src/test/java/dk/camelot64/kickc/test/kc/test-interrupt.kc
-void()** KERNEL_IRQ = $0314;
+const void()** KERNEL_IRQ = $0314;
 const byte* BGCOL = $d020;
-byte* FGCOL = $d021;
+const byte* FGCOL = $d021;
 
 void main() {
     *KERNEL_IRQ = &irq;
@@ -92,9 +92,6 @@ Removing empty block @1
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
 Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
@@ -103,18 +100,14 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) FGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
   to:@2
 main: scope:[main]  from @2
-  (byte*) FGCOL#3 ← phi( @2/(byte*) FGCOL#4 )
-  (void()**) KERNEL_IRQ#1 ← phi( @2/(void()**) KERNEL_IRQ#2 )
   (void()*~) main::$0 ← & interrupt(KERNEL)(void()) irq()
-  *((void()**) KERNEL_IRQ#1) ← (void()*~) main::$0
+  *((void()**) KERNEL_IRQ#0) ← (void()*~) main::$0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) FGCOL#2 ← phi( main/(byte*) FGCOL#3 main::@2/(byte*) FGCOL#1 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*) FGCOL#1 ← phi( main::@1/(byte*) FGCOL#2 )
-  *((byte*) FGCOL#1) ← ++ *((byte*) FGCOL#1)
+  *((byte*) FGCOL#0) ← ++ *((byte*) FGCOL#0)
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -127,8 +120,6 @@ irq::@return: scope:[irq]  from irq
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) FGCOL#4 ← phi( @begin/(byte*) FGCOL#0 )
-  (void()**) KERNEL_IRQ#2 ← phi( @begin/(void()**) KERNEL_IRQ#0 )
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -144,14 +135,8 @@ SYMBOL TABLE SSA
 (byte*) BGCOL#0
 (byte*) FGCOL
 (byte*) FGCOL#0
-(byte*) FGCOL#1
-(byte*) FGCOL#2
-(byte*) FGCOL#3
-(byte*) FGCOL#4
 (void()**) KERNEL_IRQ
 (void()**) KERNEL_IRQ#0
-(void()**) KERNEL_IRQ#1
-(void()**) KERNEL_IRQ#2
 interrupt(KERNEL)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -163,20 +148,6 @@ interrupt(KERNEL)(void()) irq()
 OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) @3
 Succesful SSA optimization Pass2CullEmptyBlocks
-Not aliassing across scopes: KERNEL_IRQ#1 KERNEL_IRQ#2
-Not aliassing across scopes: FGCOL#3 FGCOL#4
-Alias (byte*) FGCOL#1 = (byte*) FGCOL#2 
-Alias (void()**) KERNEL_IRQ#0 = (void()**) KERNEL_IRQ#2 
-Alias (byte*) FGCOL#0 = (byte*) FGCOL#4 
-Succesful SSA optimization Pass2AliasElimination
-Not aliassing across scopes: KERNEL_IRQ#1 KERNEL_IRQ#0
-Not aliassing across scopes: FGCOL#3 FGCOL#0
-Self Phi Eliminated (byte*) FGCOL#1
-Succesful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (void()**) KERNEL_IRQ#1 (void()**) KERNEL_IRQ#0
-Redundant Phi (byte*) FGCOL#3 (byte*) FGCOL#0
-Redundant Phi (byte*) FGCOL#1 (byte*) FGCOL#3
-Succesful SSA optimization Pass2RedundantPhiElimination
 Constant (const void()**) KERNEL_IRQ#0 = ((void()**))788
 Constant (const byte*) BGCOL#0 = ((byte*))53280
 Constant (const byte*) FGCOL#0 = ((byte*))53281

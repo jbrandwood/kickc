@@ -49,7 +49,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
             Registers.RegisterType registerType = defaultRegister.getType();
             List<Registers.Register> potentials = new ArrayList<>();
             potentials.add(defaultRegister);
-            if(registerType.equals(Registers.RegisterType.ZP_BYTE) && !varRefExtracted(equivalenceClass)) {
+            if(registerType.equals(Registers.RegisterType.ZP_BYTE) && !varRefExtracted(equivalenceClass) &&!varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
                potentials.add(Registers.getRegisterX());
                potentials.add(Registers.getRegisterY());
@@ -61,6 +61,21 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
          }
       }
       getProgram().setRegisterPotentials(registerPotentials);
+   }
+
+   /**
+    * Determine if any variable is declared as volatile
+    * @param equivalenceClass The variable equivalence class
+    * @return true if any variable is volatile
+    */
+   private boolean varVolatile(LiveRangeEquivalenceClass equivalenceClass) {
+      for(VariableRef variableRef : equivalenceClass.getVariables()) {
+         Variable variable = getSymbols().getVariable(variableRef);
+         if(variable.isDeclaredVolatile()) {
+            return true;
+         }
+      }
+      return false;
    }
 
    /**

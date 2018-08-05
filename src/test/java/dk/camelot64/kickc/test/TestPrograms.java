@@ -47,6 +47,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIrqHyperscreen() throws IOException, URISyntaxException {
+      compileAndCompare("irq-hyperscreen");
+   }
+
+   @Test
+   public void testIrqRaster() throws IOException, URISyntaxException {
+      compileAndCompare("irq-raster");
+   }
+
+   @Test
    public void testInterruptVolatile() throws IOException, URISyntaxException {
       compileAndCompare("test-interrupt-volatile");
    }

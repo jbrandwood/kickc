@@ -1,37 +1,35 @@
 PARSING src/test/java/dk/camelot64/kickc/test/kc/test-interrupt.kc
 void()** KERNEL_IRQ = $0314;
-
+const byte* BGCOL = $d020;
+byte* FGCOL = $d021;
 
 void main() {
     *KERNEL_IRQ = &irq;
-    byte* FGCOL = $d021;
     while(true) {
         (*FGCOL)++;
     }
 }
 
 interrupt(kernel) void irq() {
-    byte* BGCOL = $d020;
     (*BGCOL)++;
     asm {
         lda $dc0d
     }
-    (*BGCOL)++;
 }
 
-Adding pre/post-modifier *((byte*) main::FGCOL) ← ++ *((byte*) main::FGCOL)
-Adding pre/post-modifier *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
-Adding pre/post-modifier *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
+Adding pre/post-modifier *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
+Adding pre/post-modifier *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
 Resolved forward reference irq to interrupt(KERNEL)(void()) irq()
 SYMBOLS
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
+(byte*) BGCOL
+(byte*) FGCOL
 (void()**) KERNEL_IRQ
 interrupt(KERNEL)(void()) irq()
 (label) irq::@return
-(byte*) irq::BGCOL
 (void()) main()
 (void()*~) main::$0
 (label) main::@1
@@ -41,25 +39,25 @@ interrupt(KERNEL)(void()) irq()
 (label) main::@5
 (label) main::@6
 (label) main::@return
-(byte*) main::FGCOL
 
 Promoting word/signed word/dword/signed dword to void()** in KERNEL_IRQ ← ((void()**)) 788
-Promoting word/dword/signed dword to byte* in main::FGCOL ← ((byte*)) 53281
-Promoting word/dword/signed dword to byte* in irq::BGCOL ← ((byte*)) 53280
+Promoting word/dword/signed dword to byte* in BGCOL ← ((byte*)) 53280
+Promoting word/dword/signed dword to byte* in FGCOL ← ((byte*)) 53281
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
+  (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53280
+  (byte*) FGCOL ← ((byte*)) (word/dword/signed dword) 53281
   to:@1
 main: scope:[main]  from
   (void()*~) main::$0 ← & interrupt(KERNEL)(void()) irq()
   *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
-  (byte*) main::FGCOL ← ((byte*)) (word/dword/signed dword) 53281
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@4
 main::@2: scope:[main]  from main::@1 main::@5
-  *((byte*) main::FGCOL) ← ++ *((byte*) main::FGCOL)
+  *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
   to:main::@1
 main::@4: scope:[main]  from main::@1
   to:main::@3
@@ -75,10 +73,8 @@ main::@return: scope:[main]  from main::@3
 @1: scope:[]  from @begin
   to:@2
 irq: scope:[irq]  from
-  (byte*) irq::BGCOL ← ((byte*)) (word/dword/signed dword) 53280
-  *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
+  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
   asm { lda$dc0d  }
-  *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
@@ -97,38 +93,41 @@ PROCEDURE MODIFY VARIABLE ANALYSIS
 
 Completing Phi functions...
 Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (void()**) KERNEL_IRQ#0 ← ((void()**)) (word/signed word/dword/signed dword) 788
+  (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
+  (byte*) FGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
   to:@2
 main: scope:[main]  from @2
+  (byte*) FGCOL#3 ← phi( @2/(byte*) FGCOL#4 )
   (void()**) KERNEL_IRQ#1 ← phi( @2/(void()**) KERNEL_IRQ#2 )
   (void()*~) main::$0 ← & interrupt(KERNEL)(void()) irq()
   *((void()**) KERNEL_IRQ#1) ← (void()*~) main::$0
-  (byte*) main::FGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) main::FGCOL#2 ← phi( main/(byte*) main::FGCOL#0 main::@2/(byte*) main::FGCOL#1 )
+  (byte*) FGCOL#2 ← phi( main/(byte*) FGCOL#3 main::@2/(byte*) FGCOL#1 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*) main::FGCOL#1 ← phi( main::@1/(byte*) main::FGCOL#2 )
-  *((byte*) main::FGCOL#1) ← ++ *((byte*) main::FGCOL#1)
+  (byte*) FGCOL#1 ← phi( main::@1/(byte*) FGCOL#2 )
+  *((byte*) FGCOL#1) ← ++ *((byte*) FGCOL#1)
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 irq: scope:[irq]  from
-  (byte*) irq::BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
-  *((byte*) irq::BGCOL#0) ← ++ *((byte*) irq::BGCOL#0)
+  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
   asm { lda$dc0d  }
-  *((byte*) irq::BGCOL#0) ← ++ *((byte*) irq::BGCOL#0)
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
   to:@return
 @2: scope:[]  from @begin
+  (byte*) FGCOL#4 ← phi( @begin/(byte*) FGCOL#0 )
   (void()**) KERNEL_IRQ#2 ← phi( @begin/(void()**) KERNEL_IRQ#0 )
   call main 
   to:@3
@@ -141,41 +140,47 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
+(byte*) BGCOL
+(byte*) BGCOL#0
+(byte*) FGCOL
+(byte*) FGCOL#0
+(byte*) FGCOL#1
+(byte*) FGCOL#2
+(byte*) FGCOL#3
+(byte*) FGCOL#4
 (void()**) KERNEL_IRQ
 (void()**) KERNEL_IRQ#0
 (void()**) KERNEL_IRQ#1
 (void()**) KERNEL_IRQ#2
 interrupt(KERNEL)(void()) irq()
 (label) irq::@return
-(byte*) irq::BGCOL
-(byte*) irq::BGCOL#0
 (void()) main()
 (void()*~) main::$0
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::FGCOL
-(byte*) main::FGCOL#0
-(byte*) main::FGCOL#1
-(byte*) main::FGCOL#2
 
 OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) @3
 Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: KERNEL_IRQ#1 KERNEL_IRQ#2
-Alias (byte*) main::FGCOL#1 = (byte*) main::FGCOL#2 
+Not aliassing across scopes: FGCOL#3 FGCOL#4
+Alias (byte*) FGCOL#1 = (byte*) FGCOL#2 
 Alias (void()**) KERNEL_IRQ#0 = (void()**) KERNEL_IRQ#2 
+Alias (byte*) FGCOL#0 = (byte*) FGCOL#4 
 Succesful SSA optimization Pass2AliasElimination
 Not aliassing across scopes: KERNEL_IRQ#1 KERNEL_IRQ#0
-Self Phi Eliminated (byte*) main::FGCOL#1
+Not aliassing across scopes: FGCOL#3 FGCOL#0
+Self Phi Eliminated (byte*) FGCOL#1
 Succesful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (void()**) KERNEL_IRQ#1 (void()**) KERNEL_IRQ#0
-Redundant Phi (byte*) main::FGCOL#1 (byte*) main::FGCOL#0
+Redundant Phi (byte*) FGCOL#3 (byte*) FGCOL#0
+Redundant Phi (byte*) FGCOL#1 (byte*) FGCOL#3
 Succesful SSA optimization Pass2RedundantPhiElimination
 Constant (const void()**) KERNEL_IRQ#0 = ((void()**))788
+Constant (const byte*) BGCOL#0 = ((byte*))53280
+Constant (const byte*) FGCOL#0 = ((byte*))53281
 Constant (const void()*) main::$0 = &irq
-Constant (const byte*) main::FGCOL#0 = ((byte*))53281
-Constant (const byte*) irq::BGCOL#0 = ((byte*))53280
 Succesful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination if(true) goto main::@2
 Succesful SSA optimization Pass2ConstantIfs
@@ -217,15 +222,14 @@ main: scope:[main]  from @2
   [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ ] ( main:2 [ ] )
   to:main::@2
 main::@2: scope:[main]  from main main::@2
-  [5] *((const byte*) main::FGCOL#0) ← ++ *((const byte*) main::FGCOL#0) [ ] ( main:2 [ ] )
+  [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] )
   to:main::@2
 irq: scope:[irq]  from
-  [6] *((const byte*) irq::BGCOL#0) ← ++ *((const byte*) irq::BGCOL#0) [ ] ( )
+  [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( )
   asm { lda$dc0d  }
-  [8] *((const byte*) irq::BGCOL#0) ← ++ *((const byte*) irq::BGCOL#0) [ ] ( )
   to:irq::@return
 irq::@return: scope:[irq]  from irq
-  [9] return  [ ] ( )
+  [8] return  [ ] ( )
   to:@return
 
 DOMINATORS
@@ -256,11 +260,11 @@ Loop head: irq::@return tails: irq blocks: irq  depth: 1
 
 
 VARIABLE REGISTER WEIGHTS
+(byte*) BGCOL
+(byte*) FGCOL
 (void()**) KERNEL_IRQ
 interrupt(KERNEL)(void()) irq()
-(byte*) irq::BGCOL
 (void()) main()
-(byte*) main::FGCOL
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -272,6 +276,8 @@ INITIAL ASM
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label KERNEL_IRQ = $314
+  .label BGCOL = $d020
+  .label FGCOL = $d021
 //SEG2 @begin
 bbegin:
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
@@ -288,7 +294,6 @@ bend_from_b2:
 bend:
 //SEG8 main
 main: {
-    .label FGCOL = $d021
   //SEG9 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
@@ -297,23 +302,20 @@ main: {
     jmp b2
   //SEG10 main::@2
   b2:
-  //SEG11 [5] *((const byte*) main::FGCOL#0) ← ++ *((const byte*) main::FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG11 [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b2
 }
 //SEG12 irq
 irq: {
-    .label BGCOL = $d020
-  //SEG13 [6] *((const byte*) irq::BGCOL#0) ← ++ *((const byte*) irq::BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG13 [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
   //SEG14 asm { lda$dc0d  }
     lda $dc0d
-  //SEG15 [8] *((const byte*) irq::BGCOL#0) ← ++ *((const byte*) irq::BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
     jmp breturn
-  //SEG16 irq::@return
+  //SEG15 irq::@return
   breturn:
-  //SEG17 [9] return  [ ] ( )
+  //SEG16 [8] return  [ ] ( )
     jmp $ea81
 }
 
@@ -326,9 +328,9 @@ Uplift Scope [main]
 Uplift Scope [irq] 
 Uplift Scope [] 
 
-Uplifting [main] best 310 combination 
-Uplifting [irq] best 310 combination 
-Uplifting [] best 310 combination 
+Uplifting [main] best 250 combination 
+Uplifting [irq] best 250 combination 
+Uplifting [] best 250 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -337,6 +339,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label KERNEL_IRQ = $314
+  .label BGCOL = $d020
+  .label FGCOL = $d021
 //SEG2 @begin
 bbegin:
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
@@ -353,7 +357,6 @@ bend_from_b2:
 bend:
 //SEG8 main
 main: {
-    .label FGCOL = $d021
   //SEG9 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
@@ -362,23 +365,20 @@ main: {
     jmp b2
   //SEG10 main::@2
   b2:
-  //SEG11 [5] *((const byte*) main::FGCOL#0) ← ++ *((const byte*) main::FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG11 [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b2
 }
 //SEG12 irq
 irq: {
-    .label BGCOL = $d020
-  //SEG13 [6] *((const byte*) irq::BGCOL#0) ← ++ *((const byte*) irq::BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG13 [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
   //SEG14 asm { lda$dc0d  }
     lda $dc0d
-  //SEG15 [8] *((const byte*) irq::BGCOL#0) ← ++ *((const byte*) irq::BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
     jmp breturn
-  //SEG16 irq::@return
+  //SEG15 irq::@return
   breturn:
-  //SEG17 [9] return  [ ] ( )
+  //SEG16 [8] return  [ ] ( )
     jmp $ea81
 }
 
@@ -401,21 +401,21 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
+(byte*) BGCOL
+(const byte*) BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) 53280
+(byte*) FGCOL
+(const byte*) FGCOL#0 FGCOL = ((byte*))(word/dword/signed dword) 53281
 (void()**) KERNEL_IRQ
 (const void()**) KERNEL_IRQ#0 KERNEL_IRQ = ((void()**))(word/signed word/dword/signed dword) 788
 interrupt(KERNEL)(void()) irq()
 (label) irq::@return
-(byte*) irq::BGCOL
-(const byte*) irq::BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) 53280
 (void()) main()
 (label) main::@2
-(byte*) main::FGCOL
-(const byte*) main::FGCOL#0 FGCOL = ((byte*))(word/dword/signed dword) 53281
 
 
 
 FINAL ASSEMBLER
-Score: 271
+Score: 211
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -423,6 +423,8 @@ Score: 271
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label KERNEL_IRQ = $314
+  .label BGCOL = $d020
+  .label FGCOL = $d021
 //SEG2 @begin
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
 //SEG4 @2
@@ -432,7 +434,6 @@ Score: 271
 //SEG7 @end
 //SEG8 main
 main: {
-    .label FGCOL = $d021
   //SEG9 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
@@ -440,21 +441,18 @@ main: {
     sta KERNEL_IRQ+1
   //SEG10 main::@2
   b2:
-  //SEG11 [5] *((const byte*) main::FGCOL#0) ← ++ *((const byte*) main::FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG11 [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b2
 }
 //SEG12 irq
 irq: {
-    .label BGCOL = $d020
-  //SEG13 [6] *((const byte*) irq::BGCOL#0) ← ++ *((const byte*) irq::BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG13 [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
   //SEG14 asm { lda$dc0d  }
     lda $dc0d
-  //SEG15 [8] *((const byte*) irq::BGCOL#0) ← ++ *((const byte*) irq::BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
-  //SEG16 irq::@return
-  //SEG17 [9] return  [ ] ( )
+  //SEG15 irq::@return
+  //SEG16 [8] return  [ ] ( )
     jmp $ea81
 }
 

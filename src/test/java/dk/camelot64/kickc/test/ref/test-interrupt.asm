@@ -2,9 +2,10 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
+  .label BGCOL = $d020
+  .label FGCOL = $d021
   jsr main
 main: {
-    .label FGCOL = $d021
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -14,9 +15,7 @@ main: {
     jmp b2
 }
 irq: {
-    .label BGCOL = $d020
     inc BGCOL
     lda $dc0d
-    inc BGCOL
     jmp $ea81
 }

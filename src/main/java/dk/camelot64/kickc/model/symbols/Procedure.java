@@ -1,12 +1,11 @@
 package dk.camelot64.kickc.model.symbols;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /** Symbol describing a procedure/function */
@@ -16,13 +15,15 @@ public class Procedure extends Scope {
    private final SymbolType returnType;
    private List<String> parameterNames;
    private boolean declaredInline;
-   private boolean declaredInterrupt;
+
+   /** The type of interrupt that the procedure serves. Null for all procedures not serving an interrupt. */
+   private InterruptType interruptType;
 
    public Procedure(String name, SymbolType returnType, Scope parentScope) {
       super(name, parentScope);
       this.returnType = returnType;
       this.declaredInline = false;
-      this.declaredInterrupt = false;
+      this.interruptType = null;
    }
 
    public List<String> getParameterNames() {
@@ -79,12 +80,32 @@ public class Procedure extends Scope {
       this.declaredInline = declaredInline;
    }
 
-   public boolean isDeclaredInterrupt() {
-      return declaredInterrupt;
+   public InterruptType getInterruptType() {
+      return interruptType;
    }
 
-   public void setDeclaredInterrupt(boolean declaredInterrupt) {
-      this.declaredInterrupt = declaredInterrupt;
+   public void setInterruptType(InterruptType interruptType) {
+      this.interruptType = interruptType;
+   }
+
+   /** The different types of supported interrupts. */
+   public enum InterruptType {
+      /** Interrupt served by the kernel called through $0314-5. Will exit through the kernel as well through $ea81. */
+      KERNEL,
+      /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save necessary registers based on clobber. */
+      HARDWARE;
+
+      public static InterruptType getType(String name) {
+         switch(name) {
+            case "kernel":
+               return KERNEL;
+            case "hardware":
+               return HARDWARE;
+            default:
+               return null;
+         }
+
+      }
    }
 
    @Override
@@ -98,8 +119,8 @@ public class Procedure extends Scope {
       if(declaredInline) {
          res.append("inline ");
       }
-      if(declaredInterrupt) {
-         res.append("interrupt ");
+      if(interruptType !=null) {
+         res.append("interrupt("+ interruptType +")");
       }
       res.append("(" + getType().getTypeName() + ") ");
       res.append(getFullName());

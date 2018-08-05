@@ -64,7 +64,7 @@ directive
     | 'align' '(' NUMBER ')' #directiveAlign
     | 'register' '(' NAME ')' #directiveRegister
     | 'inline' #directiveInline
-    | 'interrupt' #directiveInterrupt
+    | 'interrupt' ( '(' ('hardware'  | 'kernel' ) ')' )? #directiveInterrupt
     ;
 
 stmtSeq

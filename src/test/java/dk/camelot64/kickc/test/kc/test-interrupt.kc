@@ -1,20 +1,16 @@
-void()** VECTOR_IRQ = $0314;
+void()** KERNEL_IRQ = $0314;
 
-interrupt void irq() {
+interrupt(kernel) void irq() {
     byte* BGCOL = $d020;
     (*BGCOL)++;
     asm {
         lda $dc0d
-        pla
-        tay
-        pla
-        tax
-        pla
     }
+    (*BGCOL)++;
 }
 
 void main() {
-    *VECTOR_IRQ = &irq;
+    *KERNEL_IRQ = &irq;
     byte* FGCOL = $d021;
     while(true) {
         (*FGCOL)++;

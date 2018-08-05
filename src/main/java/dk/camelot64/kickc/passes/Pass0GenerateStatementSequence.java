@@ -18,7 +18,6 @@ import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.File;
@@ -172,7 +171,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return null;
    }
 
-   private interface KasmDirective {};
+   private interface KasmDirective {
+   }
 
    @Override
    public List<KasmDirective> visitKasmDirectives(KickCParser.KasmDirectivesContext ctx) {
@@ -180,7 +180,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       List<KickCParser.KasmDirectiveContext> params = ctx.kasmDirective();
       for(KickCParser.KasmDirectiveContext param : params) {
          KasmDirective directive = (KasmDirective) visit(param);
-         if(directive!=null) {
+         if(directive != null) {
             kasmDirectives.add(directive);
          }
       }
@@ -204,10 +204,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx) {
-      if(ctx.expr()!=null) {
+      if(ctx.expr() != null) {
          RValue expr = (RValue) visit(ctx.expr());
          return new KasmDirectiveLocation(expr);
-      } else  {
+      } else {
          // PLace inline
          return null;
       }
@@ -216,10 +216,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    /** KickAssembler directive specifying the number of bytes for generated code/data. */
    public static class KasmDirectiveBytes implements KasmDirective {
       /** bytes for the KickAssembler-code. */
-      private RValue  bytes;
+      private RValue bytes;
 
       public KasmDirectiveBytes(RValue bytes) {
-         this.bytes= bytes;
+         this.bytes = bytes;
       }
 
       public RValue getBytes() {
@@ -229,7 +229,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public KasmDirective visitKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx) {
-      if(ctx.expr()!=null) {
+      if(ctx.expr() != null) {
          RValue bytes = (RValue) this.visit(ctx.expr());
          return new KasmDirectiveBytes(bytes);
       } else {
@@ -243,7 +243,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       private RValue cycles;
 
       public KasmDirectiveCycles(RValue cycles) {
-         this.cycles= cycles;
+         this.cycles = cycles;
       }
 
       public RValue getCycles() {
@@ -253,7 +253,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public KasmDirective visitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx) {
-      if(ctx.expr()!=null) {
+      if(ctx.expr() != null) {
          RValue cycles = (RValue) this.visit(ctx.expr());
          return new KasmDirectiveCycles(cycles);
       } else {
@@ -290,7 +290,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          // Add an zero-array initializer
          SymbolTypeArray typeArray = (SymbolTypeArray) type;
          RValue size = typeArray.getSize();
-         if(size==null) {
+         if(size == null) {
             throw new CompileError("Error! Array has no declared size. " + lValue.toString(program), new StatementSource(ctx));
          }
          Statement stmt = new StatementAssignment(lValue.getRef(), new ArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx));
@@ -350,7 +350,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          if(directive instanceof DirectiveInline) {
             procedure.setDeclaredInline(true);
          } else if(directive instanceof DirectiveInterrupt) {
-            procedure.setDeclaredInterrupt(true);
+            procedure.setInterruptType(((DirectiveInterrupt) directive).interruptType);
          } else {
             throw new CompileError("Unsupported function directive " + directive, source);
          }
@@ -369,7 +369,12 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx) {
-      return new DirectiveInterrupt();
+      Procedure.InterruptType interruptType = Procedure.InterruptType.KERNEL;
+      if(ctx.getChildCount() > 1) {
+         String name = ctx.getChild(2).getText().toUpperCase();
+         interruptType = Procedure.InterruptType.valueOf(name);
+      }
+      return new DirectiveInterrupt(interruptType);
    }
 
    @Override
@@ -687,7 +692,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Assignment (rValue/lValue)
       Object value = visit(ctx.expr(0));
       if(!(value instanceof LValue)) {
-         throw new CompileError("Error! Illegal assigment Lvalue "+value.toString(), new StatementSource(ctx));
+         throw new CompileError("Error! Illegal assignment Lvalue " + value.toString(), new StatementSource(ctx));
       }
       LValue lValue = (LValue) value;
       if(lValue instanceof VariableRef && ((VariableRef) lValue).isIntermediate()) {
@@ -831,14 +836,12 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          return variable.getRef();
       } else if(symbol instanceof Procedure) {
          Procedure procedure = (Procedure) symbol;
-         if(procedure.isDeclaredInterrupt()) {
-            return procedure.getRef();
-         }
-      } else if(symbol==null){
+         return procedure.getRef();
+      } else if(symbol == null) {
          // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
          return new ForwardVariableRef(ctx.NAME().getText());
       }
-         throw new CompileError("Error! Unhandled symbol "+symbol.toString(program));
+      throw new CompileError("Error! Unhandled symbol " + symbol.toString(program));
    }
 
    public StatementSequence getSequence() {
@@ -859,6 +862,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /** Function declared interrupt. */
    private static class DirectiveInterrupt implements Directive {
+      public Procedure.InterruptType interruptType;
+
+      public DirectiveInterrupt(Procedure.InterruptType interruptType) {
+         this.interruptType = interruptType;
+      }
    }
 
    /** Variable memory alignment. */

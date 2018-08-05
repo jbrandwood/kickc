@@ -429,20 +429,23 @@ public class Pass4CodeGeneration {
             }
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if(statement instanceof StatementReturn) {
-            boolean isInterrupt = false;
+            Procedure.InterruptType interruptType = null;
             ScopeRef scope = block.getScope();
             if(!scope.equals(ScopeRef.ROOT)) {
                Procedure procedure = getScope().getProcedure(scope.getFullName());
                if(procedure!=null) {
-                  isInterrupt = procedure.isDeclaredInterrupt();
+                  interruptType = procedure.getInterruptType();
                }
             }
-            if(isInterrupt) {
+            if(interruptType==null) {
+               asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
+            } else if(interruptType.equals(Procedure.InterruptType.KERNEL)) {
+               asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea81", false);
+            } else if(interruptType.equals(Procedure.InterruptType.HARDWARE)) {
                asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
             } else {
-               asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
+               throw new RuntimeException("Interrupt Type not supported " + statement);
             }
-
          } else if(statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
             HashMap<String, Value> bindings = new HashMap<>();

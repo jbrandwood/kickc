@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -26,11 +27,10 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      Set<LabelRef> referencedBlocks = new LinkedHashSet<>();
-      findReferencedBlocks(getGraph().getFirstBlock(), referencedBlocks);
+      Set<LabelRef> referencedBlocks = getReferencedBlocks();
       Set<LabelRef> unusedBlocks = new LinkedHashSet<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         if(!referencedBlocks.contains(block.getLabel())) {
+         if(!referencedBlocks.contains(block.getLabel()) ) {
             unusedBlocks.add(block.getLabel());
             for(Statement stmt : block.getStatements()) {
                if(stmt instanceof StatementAssignment) {
@@ -53,6 +53,24 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
          getLog().append("Removing unused block "+unusedBlock);
       }
       return unusedBlocks.size()>0;
+   }
+
+   /**
+    * Get all referenced blocks en the entire program
+    * @return All blocks referenced
+    */
+   private Set<LabelRef> getReferencedBlocks() {
+      Set<LabelRef> referencedBlocks = new LinkedHashSet<>();
+      findReferencedBlocks(getGraph().getFirstBlock(), referencedBlocks);
+      for(Procedure procedure : getScope().getAllProcedures(true)) {
+         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
+            // Address-of is used on the procedure
+            Label procedureLabel = procedure.getLabel();
+            ControlFlowBlock procedureBlock = getGraph().getBlock(procedureLabel.getRef());
+            findReferencedBlocks(procedureBlock, referencedBlocks);
+         }
+      }
+      return referencedBlocks;
    }
 
    /**

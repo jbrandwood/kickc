@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.*;
@@ -27,7 +29,17 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
    public void findLoopDepths() {
       Deque<LabelRef> todo = new ArrayDeque<>();
       Set<LabelRef> done = new LinkedHashSet<>();
+      // Add the main block block
       todo.push(callGraph.getFirstCallBlock());
+      // Also add all address-of referenced blocks
+      for(Procedure procedure : getProgram().getScope().getAllProcedures(true)) {
+         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
+            // Address-of is used on the procedure
+            Label procedureLabel = procedure.getLabel();
+            todo.push(procedureLabel.getRef());
+         }
+      }
+
       while(!todo.isEmpty()) {
          LabelRef currentScope = todo.pop();
          done.add(currentScope);

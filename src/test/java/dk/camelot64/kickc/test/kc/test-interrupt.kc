@@ -1,0 +1,22 @@
+void()** VECTOR_IRQ = $0314;
+
+interrupt void irq() {
+    byte* BGCOL = $d020;
+    (*BGCOL)++;
+    asm {
+        lda $dc0d
+        pla
+        tay
+        pla
+        tax
+        pla
+    }
+}
+
+void main() {
+    *VECTOR_IRQ = &irq;
+    byte* FGCOL = $d021;
+    while(true) {
+        (*FGCOL)++;
+    }
+}

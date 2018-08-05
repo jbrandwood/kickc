@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
+import java.util.Objects;
+
 /** A function returning another type */
 public class SymbolTypeProcedure implements SymbolTypeSimple {
 
@@ -23,4 +25,17 @@ public class SymbolTypeProcedure implements SymbolTypeSimple {
       return getTypeName();
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      SymbolTypeProcedure that = (SymbolTypeProcedure) o;
+      return Objects.equals(returnType, that.returnType);
+   }
+
+   @Override
+   public int hashCode() {
+
+      return Objects.hash(returnType);
+   }
 }

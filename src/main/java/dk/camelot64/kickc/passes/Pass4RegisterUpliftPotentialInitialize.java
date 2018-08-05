@@ -1,7 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.ConstantVarPointer;
+import dk.camelot64.kickc.model.values.ConstantSymbolPointer;
+import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -70,9 +71,9 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
    private boolean varRefExtracted(LiveRangeEquivalenceClass equivalenceClass) {
       Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
       for(ConstantVar allConstant : allConstants) {
-         if(allConstant.getValue() instanceof ConstantVarPointer) {
-            VariableRef toVar = ((ConstantVarPointer) allConstant.getValue()).getToVar();
-            if(equivalenceClass.getVariables().contains(toVar)) {
+         if(allConstant.getValue() instanceof ConstantSymbolPointer) {
+            SymbolRef toSym = ((ConstantSymbolPointer) allConstant.getValue()).getToSymbol();
+            if(equivalenceClass.getVariables().contains(toSym)) {
                return true;
             }
          }

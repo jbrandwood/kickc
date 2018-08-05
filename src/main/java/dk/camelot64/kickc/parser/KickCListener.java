@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -437,6 +437,30 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForRange(KickCParser.ForRangeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code typePar}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypePar(KickCParser.TypeParContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typePar}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypePar(KickCParser.TypeParContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code typeProcedure}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeProcedure(KickCParser.TypeProcedureContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeProcedure}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeProcedure(KickCParser.TypeProcedureContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code typePtr}
 	 * labeled alternative in {@link KickCParser#typeDecl}.

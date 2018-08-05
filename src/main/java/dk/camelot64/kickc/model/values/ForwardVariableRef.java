@@ -22,6 +22,6 @@ public class ForwardVariableRef implements RValue {
 
    @Override
    public String toString(Program program) {
-      return null;
+      return name;
    }
 }

@@ -3,7 +3,9 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
+import dk.camelot64.kickc.model.operators.OperatorCastPtr;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -100,7 +102,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                findConstantsAssignment(constants, assignment);
-            } else if( statement instanceof StatementPhiBlock) {
+            } else if(statement instanceof StatementPhiBlock) {
                StatementPhiBlock phi = (StatementPhiBlock) statement;
                findConstantsPhi(constants, phi);
             }
@@ -131,7 +133,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             if(assignment.getOperator() == null) {
                // Constant assignment
                ConstantValue constant = getConstant(assignment.getrValue2());
-               if(constant!=null) {
+               if(constant != null) {
                   constants.put(variable, constant);
                }
             } else {
@@ -174,7 +176,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                      } else {
                         if(!SymbolTypeInference.typeMatch(listType, elmType)) {
                            SymbolType intersectType = SymbolTypeInference.intersectTypes(listType, elmType);
-                           if(intersectType==null) {
+                           if(intersectType == null) {
                               // No overlap between list type and element type
                               throw new RuntimeException("Array type " + listType + " does not match element type" + elmType + ". Array: " + valueList.toString(getProgram()));
                            } else {
@@ -195,11 +197,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                   constants.put(variable, constant);
                }
             }
-         } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1()==null) {
+         } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
             // Constant address-of variable
-            if(assignment.getrValue2() instanceof VariableRef) {
-               ConstantVarPointer constantVarPointer = new ConstantVarPointer((VariableRef) assignment.getrValue2());
-               constants.put(variable, constantVarPointer);
+            if(assignment.getrValue2() instanceof SymbolRef) {
+               ConstantSymbolPointer constantSymbolPointer = new ConstantSymbolPointer((SymbolRef) assignment.getrValue2());
+               constants.put(variable, constantSymbolPointer);
             }
          }
       }
@@ -220,7 +222,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       } else if(rValue instanceof CastValue) {
          CastValue castValue = (CastValue) rValue;
          ConstantValue castConstant = getConstant(castValue.getValue());
-         if(castConstant !=null) {
+         if(castConstant != null) {
             return new ConstantCastValue(castValue.getToType(), castConstant);
          }
       } else if(rValue instanceof ArrayFilled) {
@@ -233,6 +235,9 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    }
 
    static ConstantValue createUnary(OperatorUnary operator, ConstantValue c) {
+      if(operator instanceof OperatorCastPtr) {
+         return new ConstantUnary(operator, c);
+      }
       switch(operator.getOperator()) {
          case "-":
          case "+":
@@ -309,43 +314,37 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
 
    /**
     * Determines if the variable is ever operated on by the address-of operator
-    * @param var tHe variable to examine
+    *
+    * @param symbolRef tHe variable to examine
     * @return true if the address-of operator is used on the variable
     */
-   public static boolean isAddressOfUsed(VariableRef var, Program program) {
+   public static boolean isAddressOfUsed(SymbolRef symbolRef, Program program) {
+      final boolean[] found = {false};
+      ProgramValueIterator.execute(program, (programValue, currentStmt, stmtIt, currentBlock) -> {
+         RValue value = programValue.get();
+         if(value instanceof ConstantSymbolPointer) {
+            ConstantSymbolPointer constantSymbolPointer = (ConstantSymbolPointer) value;
+            if(constantSymbolPointer.getToSymbol().equals(symbolRef)) {
+               found[0] = true;
+            }
+         }
+      });
+      if(found[0]) {
+         return true;
+      }
+
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && var.equals(assignment.getrValue2())) {
+               if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && symbolRef.equals(assignment.getrValue2())) {
                   return true;
                }
-            } else if(statement instanceof StatementPhiBlock) {
-               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                  for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                     if(phiRValue.getrValue() instanceof ConstantVarPointer) {
-                        if(((ConstantVarPointer)phiRValue.getrValue()).getToVar().equals(var)) {
-                           return true;
-                        }
-
-                     }
-                  }
-               }
-            }
-         }
-      }
-      for(ConstantVar constVar : program.getScope().getAllConstants(true)) {
-         ConstantValue constantValue = constVar.getValue();
-         if(constantValue instanceof ConstantVarPointer) {
-            ConstantVarPointer constantVarPointer = (ConstantVarPointer) constantValue;
-            if(constantVarPointer.getToVar().equals(var)) {
-               return true;
             }
          }
       }
       return false;
    }
-
 
 
 }

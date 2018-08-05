@@ -178,8 +178,8 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.CastValue((CastValue) value));
       } else if(value instanceof ConstantCastValue) {
          subValues.add(new ProgramValue.ConstantCastValue((ConstantCastValue) value));
-      } else if(value instanceof ConstantVarPointer) {
-         subValues.add(new ProgramValue.VarPointer((ConstantVarPointer) value));
+      } else if(value instanceof ConstantSymbolPointer) {
+         subValues.add(new ProgramValue.ConstantSymbolPointerTo((ConstantSymbolPointer) value));
       } else if(value instanceof RangeValue) {
          subValues.add(new ProgramValue.RangeFirst((RangeValue) value));
          subValues.add(new ProgramValue.RangeLast((RangeValue) value));
@@ -194,6 +194,7 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ConstantArrayFilledSize((ConstantArrayFilled) value));
       } else if(value == null ||
             value instanceof VariableRef ||
+            value instanceof ProcedureRef ||
             value instanceof ConstantLiteral ||
             value instanceof ConstantRef ||
             value instanceof LvalueIntermediate

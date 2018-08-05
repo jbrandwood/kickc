@@ -94,10 +94,12 @@ forIteration
     ;
 
 typeDecl
-    : SIMPLETYPE  #typeSimple
+    : '(' typeDecl ')' #typePar
+    | SIMPLETYPE  #typeSimple
     | 'signed' SIMPLETYPE  #typeSignedSimple
     | typeDecl '*' #typePtr
     | typeDecl '[' (expr)? ']' #typeArray
+    | typeDecl '(' ')' #typeProcedure
     ;
 
 expr

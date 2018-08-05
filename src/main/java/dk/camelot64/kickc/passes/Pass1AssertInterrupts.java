@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 
 /** Asserts that interrupts are never called and are not declared inline */
@@ -28,8 +29,16 @@ public class Pass1AssertInterrupts extends Pass1Base {
             }
          }
          for(Procedure procedure : getScope().getAllProcedures(true)) {
-            if(procedure.isDeclaredInline() && procedure.isDeclaredInterrupt()) {
-               throw new CompileError("Error! Interrupts cannot be inlined. " + procedure.toString());
+            if(procedure.isDeclaredInterrupt()) {
+               if(procedure.isDeclaredInline()) {
+                  throw new CompileError("Error! Interrupts cannot be inlined. " + procedure.toString());
+               }
+               if(procedure.getParameters().size()>0) {
+                  throw new CompileError("Error! Interrupts cannot have parameters. " + procedure.toString());
+               }
+               if(!SymbolType.VOID.equals(procedure.getReturnType())) {
+                  throw new CompileError("Error! Interrupts cannot return anything. " + procedure.toString());
+               }
             }
          }
       }

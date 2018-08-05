@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -34,7 +35,7 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
       Set<ProcedureRef> unusedProcedures = new LinkedHashSet<>();
       Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);
       for(Procedure procedure : allProcedures) {
-         if(!calledProcedures.contains(procedure.getRef())) {
+         if(!calledProcedures.contains(procedure.getRef())  && !Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
             // The procedure is not used - mark for removal!
             unusedProcedures.add(procedure.getRef());
          }

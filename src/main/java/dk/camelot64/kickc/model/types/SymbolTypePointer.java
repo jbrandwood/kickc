@@ -31,9 +31,7 @@ public class SymbolTypePointer implements SymbolTypeSimple {
       if(o == null || getClass() != o.getClass()) {
          return false;
       }
-
       SymbolTypePointer that = (SymbolTypePointer) o;
-
       return elementType != null ? elementType.equals(that.elementType) : that.elementType == null;
    }
 

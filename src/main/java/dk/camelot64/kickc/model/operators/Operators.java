@@ -32,6 +32,7 @@ public class Operators {
    public static final OperatorUnary CAST_PTRDWO = new OperatorCastPtrDWord(2);
    public static final OperatorUnary CAST_PTRSDWO = new OperatorCastPtrSignedDWord(2);
    public static final OperatorUnary CAST_PTRBO = new OperatorCastPtrBool(2);
+   public static final OperatorUnary CAST_PTRPROC = new OperatorCastPtrProc(2);
    public static final OperatorUnary CAST_BOOL= new OperatorCastBool(2);
    public static final OperatorBinary MULTIPLY = new OperatorMultiply(3);
    public static final OperatorBinary DIVIDE = new OperatorDivide(3);
@@ -169,6 +170,8 @@ public class Operators {
          return CAST_PTRSDWO;
       } else if(castType instanceof SymbolTypePointer && SymbolType.BOOLEAN.equals(((SymbolTypePointer) castType).getElementType())) {
          return CAST_PTRBO;
+      } else if(castType instanceof SymbolTypePointer) {
+         return new OperatorCastPtr(CAST_BYTE.getPrecedence(), ((SymbolTypePointer) castType).getElementType());
       } else {
          throw new RuntimeException("Unknown cast type " + castType);
 

@@ -176,8 +176,8 @@ public class SymbolTypeInference {
          return new SymbolTypeArray(((ArrayFilled) rValue).getElementType(), ((ArrayFilled) rValue).getSize());
       } else if(rValue instanceof ConstantArrayFilled) {
          return new SymbolTypeArray(((ConstantArrayFilled) rValue).getElementType(), ((ConstantArrayFilled) rValue).getSize());
-      } else if(rValue instanceof ConstantVarPointer) {
-         return ((ConstantVarPointer) rValue).getType(symbols);
+      } else if(rValue instanceof ConstantSymbolPointer) {
+         return ((ConstantSymbolPointer) rValue).getType(symbols);
       } else if(rValue instanceof CastValue) {
          return ((CastValue) rValue).getToType();
       } else if(rValue instanceof ConstantCastValue) {
@@ -188,6 +188,9 @@ public class SymbolTypeInference {
          return ((RangeComparison) rValue).getType();
       } else if(rValue instanceof RangeNext) {
          return SymbolType.BYTE;
+      } else if(rValue instanceof ProcedureRef) {
+         Procedure procedure = symbols.getProcedure((ProcedureRef) rValue);
+         return procedure.getType();
       }
       if(type == null) {
          throw new RuntimeException("Cannot infer type for " + rValue.toString());
@@ -382,6 +385,7 @@ public class SymbolTypeInference {
    /**
     * Find the symbol type that is the intersection between the two passed types.
     * Handles SymbolTypeMulti by intersecting the sub type lists.
+    *
     * @param type1 The first type
     * @param type2 The second type
     * @return The intersection between the two types (handling multi-types)
@@ -417,12 +421,12 @@ public class SymbolTypeInference {
             }
          }
       }
-      if(newSubTypes.size()==0) {
-         return  null;
-      }  else if(newSubTypes.size()==1) {
+      if(newSubTypes.size() == 0) {
+         return null;
+      } else if(newSubTypes.size() == 1) {
          // A single type matching - use it
          return newSubTypes.get(0);
-      }  else {
+      } else {
          // Multiple matches was found - use them
          return new SymbolTypeMulti(newSubTypes);
       }

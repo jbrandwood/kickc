@@ -2,31 +2,31 @@ package dk.camelot64.kickc.model.values;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
-/** A pointer to a variable */
-public class ConstantVarPointer implements ConstantValue {
+/** A pointer to a symbol (variable or procedure) */
+public class ConstantSymbolPointer implements ConstantValue {
 
    /** The variable pointed to. */
-   private VariableRef toVar;
+   private SymbolRef toSymbol;
 
-   public ConstantVarPointer(VariableRef toVar) {
-      this.toVar = toVar;
+   public ConstantSymbolPointer(SymbolRef toSymbol) {
+      this.toSymbol = toSymbol;
    }
 
-   public VariableRef getToVar() {
-      return toVar;
+   public SymbolRef getToSymbol() {
+      return toSymbol;
    }
 
-   public void setToVar(VariableRef toVar) {
-      this.toVar = toVar;
+   public void setToSymbol(SymbolRef toSymbol) {
+      this.toSymbol = toSymbol;
    }
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      Variable to = scope.getVariable(toVar);
+      Symbol to = scope.getSymbol(toSymbol);
       return new SymbolTypePointer(to.getType());
    }
 
@@ -37,7 +37,7 @@ public class ConstantVarPointer implements ConstantValue {
 
    @Override
    public String toString(Program program) {
-      return "&" + toVar.toString(program);
+      return "&" + toSymbol.toString(program);
    }
 
    @Override

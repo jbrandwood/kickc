@@ -2,11 +2,10 @@ package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.operators.Operator;
-import dk.camelot64.kickc.model.operators.OperatorBinary;
-import dk.camelot64.kickc.model.operators.OperatorUnary;
-import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -54,10 +53,16 @@ public class AsmFormat {
                      (parenthesis ? ")" : "");
       } else if(value instanceof ConstantPointer) {
          return getAsmNumber(((ConstantPointer) value).getValue());
-      } else if(value instanceof ConstantVarPointer) {
-         VariableRef toVar = ((ConstantVarPointer) value).getToVar();
-         Variable variable = program.getScope().getVariable(toVar);
-         return getAsmParamName(variable, codeScope);
+      } else if(value instanceof ConstantSymbolPointer) {
+         SymbolRef toSym = ((ConstantSymbolPointer) value).getToSymbol();
+         Symbol symbol = program.getScope().getSymbol(toSym);
+         if(symbol instanceof Variable) {
+            return getAsmParamName((Variable) symbol, codeScope);
+         } else if(symbol instanceof Procedure) {
+            return getAsmParamName((Procedure) symbol, codeScope);
+         } else {
+            throw new RuntimeException("Unhandled symbol type "+symbol);
+         }
       } else if(value instanceof ConstantCastValue) {
          ConstantCastValue castValue = (ConstantCastValue) value;
          OperatorUnary castOperator = Operators.getCastUnary(castValue.getToType());
@@ -110,7 +115,7 @@ public class AsmFormat {
          } else {
             return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long)0xff), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
          }
-      } else if(Operators.CAST_WORD.equals(operator) || Operators.CAST_SWORD.equals(operator) || Operators.CAST_PTRBY.equals(operator)|| Operators.CAST_PTRSBY.equals(operator)|| Operators.CAST_PTRWO.equals(operator)|| Operators.CAST_PTRSWO.equals(operator)|| Operators.CAST_PTRDWO.equals(operator)|| Operators.CAST_PTRSDWO.equals(operator)|| Operators.CAST_PTRBO.equals(operator)) {
+      } else if(operator instanceof OperatorCastPtr || Operators.CAST_WORD.equals(operator) || Operators.CAST_SWORD.equals(operator) || Operators.CAST_PTRBY.equals(operator)|| Operators.CAST_PTRSBY.equals(operator)|| Operators.CAST_PTRWO.equals(operator)|| Operators.CAST_PTRSWO.equals(operator)|| Operators.CAST_PTRDWO.equals(operator)|| Operators.CAST_PTRSDWO.equals(operator)|| Operators.CAST_PTRBO.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || SymbolType.isByte(operandType) || SymbolType.isSByte(operandType) || operandType instanceof SymbolTypePointer) {
             // No cast needed
@@ -230,4 +235,17 @@ public class AsmFormat {
       String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
       return getAsmParamName(varScopeRef, asmName, codeScopeRef);
    }
+
+   /**
+    * Get the ASM parameter for a specific bound constant
+    *
+    * @param boundProc The constant
+    * @return The ASM parameter to use in the ASM code
+    */
+   private static String getAsmParamName(Procedure boundProc, ScopeRef codeScopeRef) {
+      ScopeRef procScopeRef = boundProc.getScope().getRef();
+      String asmName = boundProc.getLocalName();
+      return getAsmParamName(procScopeRef, asmName, codeScopeRef);
+   }
+
 }

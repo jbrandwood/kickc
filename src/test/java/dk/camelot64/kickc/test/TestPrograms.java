@@ -47,6 +47,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInterrupt() throws IOException, URISyntaxException {
+      compileAndCompare("test-interrupt");
+   }
+
+   @Test
    public void testMultiplexer() throws IOException, URISyntaxException {
       compileAndCompare("simple-multiplexer");
    }
@@ -889,6 +894,16 @@ public class TestPrograms {
    @Test
    public void testNoCalledInterrupt() throws IOException, URISyntaxException {
       assertError("no-calledinterrupt", "Interrupts cannot be called.");
+   }
+
+   @Test
+   public void testNoParamInterrupt() throws IOException, URISyntaxException {
+      assertError("no-paraminterrupt", "Interrupts cannot have parameters.");
+   }
+
+   @Test
+   public void testNoReturnInterrupt() throws IOException, URISyntaxException {
+      assertError("no-returninterrupt", "Interrupts cannot return anything.");
    }
 
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {

@@ -5,10 +5,7 @@ import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -432,7 +429,20 @@ public class Pass4CodeGeneration {
             }
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if(statement instanceof StatementReturn) {
-            asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
+            boolean isInterrupt = false;
+            ScopeRef scope = block.getScope();
+            if(!scope.equals(ScopeRef.ROOT)) {
+               Procedure procedure = getScope().getProcedure(scope.getFullName());
+               if(procedure!=null) {
+                  isInterrupt = procedure.isDeclaredInterrupt();
+               }
+            }
+            if(isInterrupt) {
+               asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
+            } else {
+               asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
+            }
+
          } else if(statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
             HashMap<String, Value> bindings = new HashMap<>();

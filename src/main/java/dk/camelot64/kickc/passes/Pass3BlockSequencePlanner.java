@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Scope;
@@ -18,11 +20,23 @@ public class Pass3BlockSequencePlanner extends Pass2Base {
    }
 
    public void plan() {
+
+      for(Procedure procedure : getProgram().getScope().getAllProcedures(true)) {
+         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
+            // Address-of is used on the procedure
+            Label procedureLabel = procedure.getLabel();
+            ControlFlowBlock procedureBlock = getGraph().getBlock(procedureLabel.getRef());
+            pushTodo(procedureBlock);
+         }
+      }
+
       ControlFlowBlock mainBlock = getGraph().getMainBlock();
       if(mainBlock != null) {
          pushTodo(mainBlock);
       }
       pushTodo(getGraph().getFirstBlock());
+
+
       List<LabelRef> sequence = new ArrayList<>();
       while(hasTodo()) {
          ControlFlowBlock block = popTodo();

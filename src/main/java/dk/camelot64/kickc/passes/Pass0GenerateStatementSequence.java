@@ -13,6 +13,7 @@ import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -640,6 +641,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public SymbolType visitTypePar(KickCParser.TypeParContext ctx) {
+      return (SymbolType) visit(ctx.typeDecl());
+   }
+
+   @Override
    public SymbolType visitTypePtr(KickCParser.TypePtrContext ctx) {
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
       return new SymbolTypePointer(elementType);
@@ -654,6 +660,12 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else {
          return new SymbolTypeArray(elementType);
       }
+   }
+
+   @Override
+   public Object visitTypeProcedure(KickCParser.TypeProcedureContext ctx) {
+      SymbolType returnType = (SymbolType) visit(ctx.typeDecl());
+      return new SymbolTypeProcedure(returnType);
    }
 
    @Override
@@ -813,13 +825,20 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
-      Variable variable = getCurrentSymbols().getVariable(ctx.NAME().getText());
-      if(variable != null) {
+      Symbol symbol = getCurrentSymbols().getSymbol(ctx.NAME().getText());
+      if(symbol instanceof Variable) {
+         Variable variable = (Variable) symbol;
          return variable.getRef();
-      } else {
+      } else if(symbol instanceof Procedure) {
+         Procedure procedure = (Procedure) symbol;
+         if(procedure.isDeclaredInterrupt()) {
+            return procedure.getRef();
+         }
+      } else if(symbol==null){
          // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
          return new ForwardVariableRef(ctx.NAME().getText());
       }
+         throw new CompileError("Error! Unhandled symbol "+symbol.toString(program));
    }
 
    public StatementSequence getSequence() {

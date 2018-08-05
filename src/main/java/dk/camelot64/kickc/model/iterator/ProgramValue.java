@@ -361,22 +361,22 @@ public abstract class ProgramValue {
    /**
     * Pointer inside a variable pointer.
     */
-   public static class VarPointer extends ProgramValue {
-      private final ConstantVarPointer varPointer;
+   public static class ConstantSymbolPointerTo extends ProgramValue {
+      private final ConstantSymbolPointer varPointer;
 
 
-      VarPointer(ConstantVarPointer varPointer) {
+      ConstantSymbolPointerTo(ConstantSymbolPointer varPointer) {
          this.varPointer = varPointer;
       }
 
       @Override
       public RValue get() {
-         return varPointer.getToVar();
+         return (RValue) varPointer.getToSymbol();
       }
 
       @Override
       public void set(RValue val) {
-         varPointer.setToVar((VariableRef) val);
+         varPointer.setToSymbol((VariableRef) val);
       }
 
    }

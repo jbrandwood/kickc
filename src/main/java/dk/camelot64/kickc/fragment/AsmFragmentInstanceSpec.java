@@ -15,6 +15,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.LinkedHashMap;
@@ -322,6 +323,10 @@ public class AsmFragmentInstanceSpec {
             return "pws";
          } else if(SymbolType.BOOLEAN.equals(elementType)) {
             return "pbo";
+         } else if(elementType instanceof SymbolTypeProcedure) {
+            return "ppr";
+         } else if(elementType instanceof SymbolTypePointer) {
+            return "ppt";
          } else {
             throw new RuntimeException("Not implemented " + type);
          }

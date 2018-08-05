@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ForwardVariableRef;
 import dk.camelot64.kickc.model.values.RValue;
@@ -22,10 +23,10 @@ public class Pass1ResolveForwardReferences extends Pass1Base {
          if(rValue instanceof ForwardVariableRef) {
             String varName = ((ForwardVariableRef) rValue).getName();
             Scope currentScope = getScope().getScope(currentBlock.getScope());
-            Variable variable = currentScope.getVariable(varName);
-            if(variable!=null) {
-               getLog().append("Resolved forward reference " + varName+" to "+variable.toString(getProgram()));
-               programValue.set(variable.getRef());
+            Symbol symbol = currentScope.getSymbol(varName);
+            if(symbol!=null) {
+               getLog().append("Resolved forward reference " + varName+" to "+symbol.toString(getProgram()));
+               programValue.set((RValue) symbol.getRef());
             }  else {
                getLog().append("ERROR! Unknown variable " + varName);
                throw new CompileError("ERROR! Unknown variable " + varName, currentStmt.getSource());

@@ -1,14 +1,6 @@
 PARSING src/test/java/dk/camelot64/kickc/test/kc/test-interrupt.kc
 void()** KERNEL_IRQ = $0314;
 
-interrupt(kernel) void irq() {
-    byte* BGCOL = $d020;
-    (*BGCOL)++;
-    asm {
-        lda $dc0d
-    }
-    (*BGCOL)++;
-}
 
 void main() {
     *KERNEL_IRQ = &irq;
@@ -18,9 +10,19 @@ void main() {
     }
 }
 
-Adding pre/post-modifier *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
-Adding pre/post-modifier *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
+interrupt(kernel) void irq() {
+    byte* BGCOL = $d020;
+    (*BGCOL)++;
+    asm {
+        lda $dc0d
+    }
+    (*BGCOL)++;
+}
+
 Adding pre/post-modifier *((byte*) main::FGCOL) ← ++ *((byte*) main::FGCOL)
+Adding pre/post-modifier *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
+Adding pre/post-modifier *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
+Resolved forward reference irq to interrupt(KERNEL)(void()) irq()
 SYMBOLS
 (label) @1
 (label) @2
@@ -42,23 +44,12 @@ interrupt(KERNEL)(void()) irq()
 (byte*) main::FGCOL
 
 Promoting word/signed word/dword/signed dword to void()** in KERNEL_IRQ ← ((void()**)) 788
-Promoting word/dword/signed dword to byte* in irq::BGCOL ← ((byte*)) 53280
 Promoting word/dword/signed dword to byte* in main::FGCOL ← ((byte*)) 53281
+Promoting word/dword/signed dword to byte* in irq::BGCOL ← ((byte*)) 53280
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
   to:@1
-irq: scope:[irq]  from
-  (byte*) irq::BGCOL ← ((byte*)) (word/dword/signed dword) 53280
-  *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
-  asm { lda$dc0d  }
-  *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
-  to:irq::@return
-irq::@return: scope:[irq]  from irq
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
 main: scope:[main]  from
   (void()*~) main::$0 ← & interrupt(KERNEL)(void()) irq()
   *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
@@ -81,16 +72,27 @@ main::@6: scope:[main]  from
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
+@1: scope:[]  from @begin
+  to:@2
+irq: scope:[irq]  from
+  (byte*) irq::BGCOL ← ((byte*)) (word/dword/signed dword) 53280
+  *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
+  asm { lda$dc0d  }
+  *((byte*) irq::BGCOL) ← ++ *((byte*) irq::BGCOL)
+  to:irq::@return
+irq::@return: scope:[irq]  from irq
+  return 
+  to:@return
 @2: scope:[]  from @1
   call main 
   to:@end
 @end: scope:[]  from @2
 
-Removing empty block @1
 Removing empty block main::@4
 Removing empty block main::@3
 Removing empty block main::@5
 Removing empty block main::@6
+Removing empty block @1
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
 Completing Phi functions...
@@ -100,15 +102,6 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
   (void()**) KERNEL_IRQ#0 ← ((void()**)) (word/signed word/dword/signed dword) 788
   to:@2
-irq: scope:[irq]  from
-  (byte*) irq::BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
-  *((byte*) irq::BGCOL#0) ← ++ *((byte*) irq::BGCOL#0)
-  asm { lda$dc0d  }
-  *((byte*) irq::BGCOL#0) ← ++ *((byte*) irq::BGCOL#0)
-  to:irq::@return
-irq::@return: scope:[irq]  from irq
-  return 
-  to:@return
 main: scope:[main]  from @2
   (void()**) KERNEL_IRQ#1 ← phi( @2/(void()**) KERNEL_IRQ#2 )
   (void()*~) main::$0 ← & interrupt(KERNEL)(void()) irq()
@@ -124,6 +117,15 @@ main::@2: scope:[main]  from main::@1
   *((byte*) main::FGCOL#1) ← ++ *((byte*) main::FGCOL#1)
   to:main::@1
 main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+irq: scope:[irq]  from
+  (byte*) irq::BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
+  *((byte*) irq::BGCOL#0) ← ++ *((byte*) irq::BGCOL#0)
+  asm { lda$dc0d  }
+  *((byte*) irq::BGCOL#0) ← ++ *((byte*) irq::BGCOL#0)
+  to:irq::@return
+irq::@return: scope:[irq]  from irq
   return 
   to:@return
 @2: scope:[]  from @begin
@@ -171,9 +173,9 @@ Redundant Phi (void()**) KERNEL_IRQ#1 (void()**) KERNEL_IRQ#0
 Redundant Phi (byte*) main::FGCOL#1 (byte*) main::FGCOL#0
 Succesful SSA optimization Pass2RedundantPhiElimination
 Constant (const void()**) KERNEL_IRQ#0 = ((void()**))788
-Constant (const byte*) irq::BGCOL#0 = ((byte*))53280
 Constant (const void()*) main::$0 = &irq
 Constant (const byte*) main::FGCOL#0 = ((byte*))53281
+Constant (const byte*) irq::BGCOL#0 = ((byte*))53280
 Succesful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination if(true) goto main::@2
 Succesful SSA optimization Pass2ConstantIfs
@@ -320,12 +322,12 @@ Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) ir
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [irq] 
 Uplift Scope [main] 
+Uplift Scope [irq] 
 Uplift Scope [] 
 
-Uplifting [irq] best 310 combination 
 Uplifting [main] best 310 combination 
+Uplifting [irq] best 310 combination 
 Uplifting [] best 310 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION

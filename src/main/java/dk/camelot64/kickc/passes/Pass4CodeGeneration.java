@@ -67,10 +67,18 @@ public class Pass4CodeGeneration {
             addConstants(asm, currentScope);
             addZpLabels(asm, currentScope);
          }
+
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
-         if(!block.isProcedureEntry(program)) {
-            // Generate label
+
+         if(block.isProcedureEntry(program)) {
+            // Generate interrupt entry if needed
+            Procedure procedure = block.getProcedure(program);
+            if(procedure!=null && procedure.getInterruptType()!=null) {
+               generateInterruptEntry(asm, procedure.getInterruptType());
+            }
+         } else {
+            // Generate label for block inside procedure
             asm.startSegment(null, block.getLabel().getFullName());
             asm.addLabel(block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
          }
@@ -439,12 +447,8 @@ public class Pass4CodeGeneration {
             }
             if(interruptType==null) {
                asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
-            } else if(interruptType.equals(Procedure.InterruptType.KERNEL)) {
-               asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea81", false);
-            } else if(interruptType.equals(Procedure.InterruptType.HARDWARE)) {
-               asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
             } else {
-               throw new RuntimeException("Interrupt Type not supported " + statement);
+               generateInterruptExit(asm, statement, interruptType);
             }
          } else if(statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
@@ -459,6 +463,57 @@ public class Pass4CodeGeneration {
          } else {
             throw new RuntimeException("Statement not supported " + statement);
          }
+      }
+   }
+
+   /**
+    * Generate exit-code for entering an interrupt procedure based on the interrupt type
+    * @param asm The assembler to generate code into
+    * @param interruptType The type of interrupt to generate
+    */
+   private void generateInterruptEntry(AsmProgram asm, Procedure.InterruptType interruptType) {
+      if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
+         // No entry ASM needed
+      } else if(Procedure.InterruptType.KERNEL_STD.equals(interruptType)) {
+         // No entry ASM needed
+      } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType)) {
+         asm.addInstruction("sta", AsmAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
+         asm.addInstruction("stx", AsmAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
+         asm.addInstruction("sty", AsmAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
+      } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
+         // No entry ASM needed
+      } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
+         throw new CompileError("Not implemented! "+interruptType.name());
+      } else {
+         throw new RuntimeException("Interrupt Type not supported " + interruptType.name());
+      }
+   }
+
+   /**
+    * Generate exit-code for ending an interrupt procedure based on the interrupt type
+    * @param asm The assembler to generate code into
+    * @param statement The return statement
+    * @param interruptType The type of interrupt to generate
+    */
+   private void generateInterruptExit(AsmProgram asm, Statement statement, Procedure.InterruptType interruptType) {
+      if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
+         asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea81", false);
+      } else if(Procedure.InterruptType.KERNEL_STD.equals(interruptType)) {
+         asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea31", false);
+      } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType)) {
+         asm.addLabel("rega").setDontOptimize(true);
+         asm.addInstruction("lda", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addLabel("regx").setDontOptimize(true);
+         asm.addInstruction("ldx", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addLabel("regy").setDontOptimize(true);
+         asm.addInstruction("ldy", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
+      } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
+         asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
+      } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
+         throw new CompileError("Not implemented! "+interruptType.name());
+      } else {
+         throw new RuntimeException("Interrupt Type not supported " + statement);
       }
    }
 

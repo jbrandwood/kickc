@@ -54,6 +54,9 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
                currentScope = "";
             } else if(line instanceof AsmLabel) {
                AsmLabel label = (AsmLabel) line;
+               if(label.isDontOptimize()) {
+                  continue;
+               }
                String labelStr = currentScope + "::" + label.getLabel();
                if(!labelStr.contains("!") && !usedLabels.contains(labelStr)) {
                   removeLines.add(label);

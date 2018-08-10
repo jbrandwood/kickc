@@ -65,7 +65,7 @@ directive
     | 'register' '(' NAME ')' #directiveRegister
     | 'inline' #directiveInline
     | 'volatile' #directiveVolatile
-    | 'interrupt' ( '(' ('hardware'  | 'kernel' ) ')' )? #directiveInterrupt
+    | 'interrupt' ( '(' ('hardware'  ( 'none' | 'clobber' | 'all' )? | 'kernel' ( 'min' | 'std' )? )  ')' )? #directiveInterrupt
     ;
 
 stmtSeq

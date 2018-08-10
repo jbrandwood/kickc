@@ -126,6 +126,20 @@ public class ControlFlowBlock {
       return getLabel().isProcExit();
    }
 
+   /**
+    * Get the procedure, that the block is part of. Null if the block is not part of a procedure.
+    *
+    * @return the procedure, that the block is part of
+    */
+   public Procedure getProcedure(Program program) {
+      Symbol symbol = program.getScope().getSymbol(getLabel());
+      if(symbol instanceof Procedure) {
+         return (Procedure) symbol;
+      } else {
+         return null;
+      }
+   }
+
 
    public String toString(Program program) {
       ControlFlowGraph graph = program.getGraph();

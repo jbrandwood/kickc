@@ -90,10 +90,16 @@ public class Procedure extends Scope {
 
    /** The different types of supported interrupts. */
    public enum InterruptType {
+      /** Interrupt served by the kernel called through $0314-5. Will exit through the kernel using $ea31. */
+      KERNEL_STD,
       /** Interrupt served by the kernel called through $0314-5. Will exit through the kernel using $ea81. */
-      KERNEL,
+      KERNEL_MIN,
+      /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save NO registers. */
+      HARDWARE_NONE,
+      /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save ALL registers. */
+      HARDWARE_ALL,
       /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save necessary registers based on clobber. */
-      HARDWARE
+      HARDWARE_CLOBBER
    }
 
    @Override

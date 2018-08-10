@@ -7,6 +7,8 @@ public class AsmLabel implements AsmLine {
 
    private int index;
 
+   private boolean dontOptimize;
+
    public AsmLabel(String label) {
       this.label = label;
    }
@@ -42,6 +44,14 @@ public class AsmLabel implements AsmLine {
    @Override
    public void setIndex(int index) {
       this.index = index;
+   }
+
+   public boolean isDontOptimize() {
+      return dontOptimize;
+   }
+
+   public void setDontOptimize(boolean dontOptimize) {
+      this.dontOptimize = dontOptimize;
    }
 
    @Override

@@ -18,7 +18,6 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
    @Override
    public boolean optimize() {
       AsmProgramStaticRegisterValues staticValues = new AsmProgramStaticRegisterValues(getAsmProgram());
-      //List<AsmLine> removes = new ArrayList<>();
       boolean modified = false;
 
       for(AsmSegment segment : getAsmProgram().getSegments()) {
@@ -28,6 +27,9 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
             AsmLine line = lineIt.next();
             if(line instanceof AsmInstruction) {
                AsmInstruction instruction = (AsmInstruction) line;
+               if(instruction.isDontOptimize()) {
+                  continue;
+               }
                AsmInstructionType instructionType = instruction.getType();
 
                if(instructionType.getMnemnonic().equals("lda") && instructionType.getAddressingMode().equals(AsmAddressingMode.IMM)) {

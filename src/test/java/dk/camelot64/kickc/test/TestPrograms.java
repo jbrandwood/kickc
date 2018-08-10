@@ -47,6 +47,17 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIrqHardware() throws IOException, URISyntaxException {
+      compileAndCompare("irq-hardware");
+   }
+
+   @Test
+   public void testIrqKernel() throws IOException, URISyntaxException {
+      compileAndCompare("irq-kernel");
+   }
+
+
+   @Test
    public void testIrqHyperscreen() throws IOException, URISyntaxException {
       compileAndCompare("irq-hyperscreen");
    }

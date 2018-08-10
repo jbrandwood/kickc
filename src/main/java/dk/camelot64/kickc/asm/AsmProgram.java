@@ -55,8 +55,10 @@ public class AsmProgram {
       addLine(new AsmComment(comment));
    }
 
-   public void addLabel(String label) {
-      addLine(new AsmLabel(label));
+   public AsmLabel addLabel(String label) {
+      AsmLabel asmLabel = new AsmLabel(label);
+      addLine(asmLabel);
+      return asmLabel;
    }
 
    public void addScopeBegin(String label) {
@@ -67,9 +69,11 @@ public class AsmProgram {
       addLine(new AsmScopeEnd());
    }
 
-   public void addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter, boolean zp) {
+   public AsmInstruction addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter, boolean zp) {
       AsmInstructionType instructionType = AsmInstructionSet.getInstructionType(mnemonic, addressingMode, zp);
-      addLine(new AsmInstruction(instructionType, parameter));
+      AsmInstruction instruction = new AsmInstruction(instructionType, parameter);
+      addLine(instruction);
+      return instruction;
    }
 
    public void addLabelDecl(String name, int address) {

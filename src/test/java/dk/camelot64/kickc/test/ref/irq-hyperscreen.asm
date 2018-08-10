@@ -51,7 +51,7 @@ irq_bottom_2: {
     sta KERNEL_IRQ+1
     lda #RED
     sta FGCOL
-    jmp $ea81
+    jmp $ea31
 }
 irq_bottom_1: {
     lda #WHITE

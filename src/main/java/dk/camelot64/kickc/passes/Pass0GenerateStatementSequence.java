@@ -371,25 +371,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx) {
-      String interruptType = "KERNEL";
+      String interruptType = "KERNEL_MIN";
       if(ctx.getChildCount() > 1) {
          interruptType = ctx.getChild(2).getText().toUpperCase();
       }
-      String interruptSubType;
-      if(interruptType.equals("KERNEL")) {
-         // KERNEL - default is STD
-         interruptSubType = "STD";
-      } else {
-         // HARDWARE - default is ALL
-         interruptSubType = "ALL";
-      }
-      if(ctx.getChildCount() > 3) {
-         String subTypeText = ctx.getChild(3).getText();
-         if(!")".equals(subTypeText)) {
-            interruptSubType = subTypeText.toUpperCase();
-         }
-      }
-      Procedure.InterruptType type = Procedure.InterruptType.valueOf(interruptType + "_" + interruptSubType);
+      Procedure.InterruptType type = Procedure.InterruptType.valueOf(interruptType);
       return new DirectiveInterrupt(type);
    }
 

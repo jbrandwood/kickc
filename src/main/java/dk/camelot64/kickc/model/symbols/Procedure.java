@@ -91,7 +91,7 @@ public class Procedure extends Scope {
    /** The different types of supported interrupts. */
    public enum InterruptType {
       /** Interrupt served by the kernel called through $0314-5. Will exit through the kernel using $ea31. */
-      KERNEL_STD,
+      KERNEL_KEYBOARD,
       /** Interrupt served by the kernel called through $0314-5. Will exit through the kernel using $ea81. */
       KERNEL_MIN,
       /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save NO registers. */

@@ -472,9 +472,11 @@ public class Pass4CodeGeneration {
     * @param interruptType The type of interrupt to generate
     */
    private void generateInterruptEntry(AsmProgram asm, Procedure.InterruptType interruptType) {
+      asm.startSegment(null, "interrupt "+interruptType.name());
+      //asm.getCurrentSegment().setXXX();
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
          // No entry ASM needed
-      } else if(Procedure.InterruptType.KERNEL_STD.equals(interruptType)) {
+      } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
          // No entry ASM needed
       } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType)) {
          asm.addInstruction("sta", AsmAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
@@ -498,7 +500,7 @@ public class Pass4CodeGeneration {
    private void generateInterruptExit(AsmProgram asm, Statement statement, Procedure.InterruptType interruptType) {
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
          asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea81", false);
-      } else if(Procedure.InterruptType.KERNEL_STD.equals(interruptType)) {
+      } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
          asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea31", false);
       } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType)) {
          asm.addLabel("rega").setDontOptimize(true);

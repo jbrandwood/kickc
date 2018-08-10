@@ -10,7 +10,7 @@ void main() {
     }
 }
 
-interrupt(kernel) void irq() {
+interrupt(kernel_min) void irq() {
     (*BGCOL)++;
     asm {
         lda $dc0d
@@ -19,7 +19,7 @@ interrupt(kernel) void irq() {
 
 Adding pre/post-modifier *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
 Adding pre/post-modifier *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-Resolved forward reference irq to interrupt(KERNEL)(void()) irq()
+Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
 SYMBOLS
 (label) @1
 (label) @2
@@ -28,7 +28,7 @@ SYMBOLS
 (byte*) BGCOL
 (byte*) FGCOL
 (void()**) KERNEL_IRQ
-interrupt(KERNEL)(void()) irq()
+interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
 (void()*~) main::$0
@@ -50,7 +50,7 @@ INITIAL CONTROL FLOW GRAPH
   (byte*) FGCOL ← ((byte*)) (word/dword/signed dword) 53281
   to:@1
 main: scope:[main]  from
-  (void()*~) main::$0 ← & interrupt(KERNEL)(void()) irq()
+  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
   *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -100,7 +100,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   (byte*) FGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
   to:@2
 main: scope:[main]  from @2
-  (void()*~) main::$0 ← & interrupt(KERNEL)(void()) irq()
+  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
   *((void()**) KERNEL_IRQ#0) ← (void()*~) main::$0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -137,7 +137,7 @@ SYMBOL TABLE SSA
 (byte*) FGCOL#0
 (void()**) KERNEL_IRQ
 (void()**) KERNEL_IRQ#0
-interrupt(KERNEL)(void()) irq()
+interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
 (void()*~) main::$0
@@ -160,7 +160,7 @@ Succesful SSA optimization Pass2EliminateUnusedBlocks
 Culled Empty Block (label) main::@1
 Succesful SSA optimization Pass2CullEmptyBlocks
 OPTIMIZING CONTROL FLOW GRAPH
-Constant inlined main::$0 = &interrupt(KERNEL)(void()) irq()
+Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
 Succesful SSA optimization Pass2ConstantInlining
 Block Sequence Planned @begin @2 @end main main::@2 irq irq::@return 
 Block Sequence Planned @begin @2 @end main main::@2 irq irq::@return 
@@ -190,7 +190,7 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @2
   [3] phi() [ ] ( )
 main: scope:[main]  from @2
-  [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ ] ( main:2 [ ] )
+  [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] )
   to:main::@2
 main::@2: scope:[main]  from main main::@2
   [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] )
@@ -234,7 +234,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) BGCOL
 (byte*) FGCOL
 (void()**) KERNEL_IRQ
-interrupt(KERNEL)(void()) irq()
+interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 
 Initial phi equivalence classes
@@ -265,7 +265,7 @@ bend_from_b2:
 bend:
 //SEG8 main
 main: {
-  //SEG9 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
+  //SEG9 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -279,19 +279,20 @@ main: {
 }
 //SEG12 irq
 irq: {
-  //SEG13 [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG13 interrupt KERNEL_MIN
+  //SEG14 [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG14 asm { lda$dc0d  }
+  //SEG15 asm { lda$dc0d  }
     lda $dc0d
     jmp breturn
-  //SEG15 irq::@return
+  //SEG16 irq::@return
   breturn:
-  //SEG16 [8] return  [ ] ( )
+  //SEG17 [8] return  [ ] ( )
     jmp $ea81
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -328,7 +329,7 @@ bend_from_b2:
 bend:
 //SEG8 main
 main: {
-  //SEG9 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
+  //SEG9 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -342,14 +343,15 @@ main: {
 }
 //SEG12 irq
 irq: {
-  //SEG13 [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG13 interrupt KERNEL_MIN
+  //SEG14 [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG14 asm { lda$dc0d  }
+  //SEG15 asm { lda$dc0d  }
     lda $dc0d
     jmp breturn
-  //SEG15 irq::@return
+  //SEG16 irq::@return
   breturn:
-  //SEG16 [8] return  [ ] ( )
+  //SEG17 [8] return  [ ] ( )
     jmp $ea81
 }
 
@@ -378,7 +380,7 @@ FINAL SYMBOL TABLE
 (const byte*) FGCOL#0 FGCOL = ((byte*))(word/dword/signed dword) 53281
 (void()**) KERNEL_IRQ
 (const void()**) KERNEL_IRQ#0 KERNEL_IRQ = ((void()**))(word/signed word/dword/signed dword) 788
-interrupt(KERNEL)(void()) irq()
+interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
 (label) main::@2
@@ -405,7 +407,7 @@ Score: 211
 //SEG7 @end
 //SEG8 main
 main: {
-  //SEG9 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
+  //SEG9 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -418,12 +420,13 @@ main: {
 }
 //SEG12 irq
 irq: {
-  //SEG13 [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG13 interrupt KERNEL_MIN
+  //SEG14 [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) [ ] ( ) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG14 asm { lda$dc0d  }
+  //SEG15 asm { lda$dc0d  }
     lda $dc0d
-  //SEG15 irq::@return
-  //SEG16 [8] return  [ ] ( )
+  //SEG16 irq::@return
+  //SEG17 [8] return  [ ] ( )
     jmp $ea81
 }
 

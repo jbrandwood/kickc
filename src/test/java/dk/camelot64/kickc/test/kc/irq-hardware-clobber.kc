@@ -1,6 +1,7 @@
-// A minimal working raster IRQ
+// A minimal working raster hardware IRQ with clobber-based register savings
 
 const void()** KERNEL_IRQ = $0314;
+const void()** HARDWARE_IRQ = $fffe;
 const byte* RASTER = $d012;
 const byte* VIC_CONTROL = $d011;
 const byte* IRQ_STATUS = $d019;
@@ -10,14 +11,29 @@ const byte IRQ_COLLISION_BG = %00000010;
 const byte IRQ_COLLISION_SPRITE = %00000100;
 const byte IRQ_LIGHTPEN = %00001000;
 const byte* BGCOL = $d020;
+const byte* FGCOL = $d021;
 const byte WHITE = 1;
 const byte BLACK = 0;
 
 const byte* CIA1_INTERRUPT = $dc0d;
 const byte CIA_INTERRUPT_CLEAR = $7f;
 
+// Processor port data direction register
+const byte* PROCPORT_DDR = $00;
+// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+const byte PROCPORT_DDR_MEMORY_MASK = %00000111;
+
+// Processor Port Register controlling RAM/ROM configuration and the datasette
+const byte* PROCPORT = $01;
+// RAM in $A000, $E000 I/O in $D000
+const byte PROCPORT_RAM_IO          = %00110101;
+// RAM in $A000, $E000 CHAR ROM in $D000
+
 void main() {
     asm { sei }
+    // Disable kernal & basic
+    *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+    *PROCPORT = PROCPORT_RAM_IO;
     // Disable CIA 1 Timer IRQ
     *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $100
@@ -26,12 +42,15 @@ void main() {
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;
     // Set the IRQ routine
-    *KERNEL_IRQ = &irq;
+    *HARDWARE_IRQ = &irq;
     asm { cli }
+    while(true) {
+        (*FGCOL)++;
+    }
 }
 
 // Interrupt Routine
-interrupt(kernel_keyboard) void irq() {
+interrupt(hardware_clobber) void irq() {
     *BGCOL = WHITE;
     *BGCOL = BLACK;
     // Acknowledge the IRQ

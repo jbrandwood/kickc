@@ -47,6 +47,11 @@ public class TestPrograms {
    }
 
    @Test
+   //public void testIrqHardwareClobber() throws IOException, URISyntaxException {
+   //   compileAndCompare("irq-hardware-clobber");
+   //}
+
+   @Test
    public void testIrqHardware() throws IOException, URISyntaxException {
       compileAndCompare("irq-hardware");
    }

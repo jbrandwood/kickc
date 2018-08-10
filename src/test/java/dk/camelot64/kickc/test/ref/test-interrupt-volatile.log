@@ -10,7 +10,7 @@ void main() {
     }
 }
 
-interrupt(kernel) void irq() {
+interrupt(kernel_min) void irq() {
     asm {
         lda $dc0d
     }
@@ -18,7 +18,7 @@ interrupt(kernel) void irq() {
 }
 
 Adding pre/post-modifier (byte) col ← ++ (byte) col
-Resolved forward reference irq to interrupt(KERNEL)(void()) irq()
+Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
 SYMBOLS
 (label) @1
 (label) @2
@@ -27,7 +27,7 @@ SYMBOLS
 (byte*) BGCOL
 (void()**) KERNEL_IRQ
 (byte) col
-interrupt(KERNEL)(void()) irq()
+interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
 (void()*~) main::$0
@@ -48,7 +48,7 @@ INITIAL CONTROL FLOW GRAPH
   (byte) col ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:@1
 main: scope:[main]  from
-  (void()*~) main::$0 ← & interrupt(KERNEL)(void()) irq()
+  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
   *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -102,7 +102,7 @@ CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
   to:@2
 main: scope:[main]  from @2
   (byte) col#10 ← phi( @2/(byte) col#9 )
-  (void()*~) main::$0 ← & interrupt(KERNEL)(void()) irq()
+  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
   *((void()**) KERNEL_IRQ#0) ← (void()*~) main::$0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -157,7 +157,7 @@ SYMBOL TABLE SSA
 (byte) col#7
 (byte) col#8
 (byte) col#9
-interrupt(KERNEL)(void()) irq()
+interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
 (void()*~) main::$0
@@ -193,7 +193,7 @@ Succesful SSA optimization Pass2CullEmptyBlocks
 Not aliassing across scopes: col#2 col#0
 Not aliassing across scopes: col#2 col#0
 OPTIMIZING CONTROL FLOW GRAPH
-Constant inlined main::$0 = &interrupt(KERNEL)(void()) irq()
+Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
 Succesful SSA optimization Pass2ConstantInlining
 Block Sequence Planned @begin @2 @end main main::@1 main::@2 irq irq::@return 
 Block Sequence Planned @begin @2 @end main main::@1 main::@2 irq irq::@return 
@@ -229,7 +229,7 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @2
   [3] phi() [ ] ( )
 main: scope:[main]  from @2
-  [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] )
+  [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] )
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) col#2 ← phi( main/(byte) col#0 main::@2/(byte) col#1 ) [ col#2 ] ( main:2 [ col#2 ] )
@@ -280,7 +280,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) col#0 3.75
 (byte) col#1 22.0
 (byte) col#2 24.0
-interrupt(KERNEL)(void()) irq()
+interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 
 Initial phi equivalence classes
@@ -317,7 +317,7 @@ bend_from_b2:
 bend:
 //SEG9 main
 main: {
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) -- _deref_pptc1=pprc2 
+  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -338,21 +338,22 @@ main: {
 }
 //SEG16 irq
 irq: {
-  //SEG17 asm { lda$dc0d  }
+  //SEG17 interrupt KERNEL_MIN
+  //SEG18 asm { lda$dc0d  }
     lda $dc0d
-  //SEG18 [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) -- _deref_pbuc1=vbuz1 
+  //SEG19 [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
     jmp breturn
-  //SEG19 irq::@return
+  //SEG20 irq::@return
   breturn:
-  //SEG20 [9] return  [ ] ( )
+  //SEG21 [9] return  [ ] ( )
     jmp $ea81
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ col#0 ] ( ) always clobbers reg byte a 
-Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) always clobbers reg byte a 
+Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 Statement [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ col#2 col#0 col#1 ] : zp ZP_BYTE:2 , 
@@ -396,7 +397,7 @@ bend_from_b2:
 bend:
 //SEG9 main
 main: {
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) -- _deref_pptc1=pprc2 
+  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -417,15 +418,16 @@ main: {
 }
 //SEG16 irq
 irq: {
-  //SEG17 asm { lda$dc0d  }
+  //SEG17 interrupt KERNEL_MIN
+  //SEG18 asm { lda$dc0d  }
     lda $dc0d
-  //SEG18 [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) -- _deref_pbuc1=vbuz1 
+  //SEG19 [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
     jmp breturn
-  //SEG19 irq::@return
+  //SEG20 irq::@return
   breturn:
-  //SEG20 [9] return  [ ] ( )
+  //SEG21 [9] return  [ ] ( )
     jmp $ea81
 }
 
@@ -461,7 +463,7 @@ FINAL SYMBOL TABLE
 (byte) col#0 col zp ZP_BYTE:2 3.75
 (byte) col#1 col zp ZP_BYTE:2 22.0
 (byte) col#2 col zp ZP_BYTE:2 24.0
-interrupt(KERNEL)(void()) irq()
+interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
 (label) main::@1
@@ -493,7 +495,7 @@ Score: 216
 //SEG8 @end
 //SEG9 main
 main: {
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) -- _deref_pptc1=pprc2 
+  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -509,13 +511,14 @@ main: {
 }
 //SEG16 irq
 irq: {
-  //SEG17 asm { lda$dc0d  }
+  //SEG17 interrupt KERNEL_MIN
+  //SEG18 asm { lda$dc0d  }
     lda $dc0d
-  //SEG18 [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) -- _deref_pbuc1=vbuz1 
+  //SEG19 [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG19 irq::@return
-  //SEG20 [9] return  [ ] ( )
+  //SEG20 irq::@return
+  //SEG21 [9] return  [ ] ( )
     jmp $ea81
 }
 

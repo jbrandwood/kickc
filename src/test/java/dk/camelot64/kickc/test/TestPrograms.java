@@ -46,7 +46,7 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
-   @Test
+   //@Test
    //public void testIrqHardwareClobber() throws IOException, URISyntaxException {
    //   compileAndCompare("irq-hardware-clobber");
    //}

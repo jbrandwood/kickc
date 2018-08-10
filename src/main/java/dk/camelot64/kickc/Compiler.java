@@ -357,6 +357,9 @@ public class Compiler {
       new Pass4CodeGeneration(program, true).generate();
       new Pass4AssertNoCpuClobber(program).check();
 
+      // Remove unnecessary register savings from interrupts {@link InterruptType#HARDWARE_NOCLOBBER}
+      new Pass4InterruptClobberFix(program).fix();
+
       getLog().append("\nASSEMBLER BEFORE OPTIMIZATION");
       getLog().append(program.getAsm().toString());
 

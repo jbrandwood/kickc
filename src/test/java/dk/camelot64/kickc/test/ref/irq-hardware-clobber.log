@@ -1,0 +1,789 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/irq-hardware-clobber.kc
+// A minimal working raster hardware IRQ with clobber-based register savings
+
+const void()** KERNEL_IRQ = $0314;
+const void()** HARDWARE_IRQ = $fffe;
+const byte* RASTER = $d012;
+const byte* VIC_CONTROL = $d011;
+const byte* IRQ_STATUS = $d019;
+const byte* IRQ_ENABLE = $d01a;
+const byte IRQ_RASTER = %00000001;
+const byte IRQ_COLLISION_BG = %00000010;
+const byte IRQ_COLLISION_SPRITE = %00000100;
+const byte IRQ_LIGHTPEN = %00001000;
+const byte* BGCOL = $d020;
+const byte* FGCOL = $d021;
+const byte WHITE = 1;
+const byte BLACK = 0;
+
+const byte* CIA1_INTERRUPT = $dc0d;
+const byte CIA_INTERRUPT_CLEAR = $7f;
+
+// Processor port data direction register
+const byte* PROCPORT_DDR = $00;
+// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+const byte PROCPORT_DDR_MEMORY_MASK = %00000111;
+
+// Processor Port Register controlling RAM/ROM configuration and the datasette
+const byte* PROCPORT = $01;
+// RAM in $A000, $E000 I/O in $D000
+const byte PROCPORT_RAM_IO          = %00110101;
+// RAM in $A000, $E000 CHAR ROM in $D000
+
+void main() {
+    asm { sei }
+    // Disable kernal & basic
+    *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+    *PROCPORT = PROCPORT_RAM_IO;
+    // Disable CIA 1 Timer IRQ
+    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    // Set raster line to $100
+    *VIC_CONTROL |=$80;
+    *RASTER = $00;
+    // Enable Raster Interrupt
+    *IRQ_ENABLE = IRQ_RASTER;
+    // Set the IRQ routine
+    *HARDWARE_IRQ = &irq;
+    asm { cli }
+    while(true) {
+        (*FGCOL)++;
+    }
+}
+
+// Interrupt Routine
+interrupt(hardware_clobber) void irq() {
+    *BGCOL = WHITE;
+    *BGCOL = BLACK;
+    // Acknowledge the IRQ
+    *IRQ_STATUS = IRQ_RASTER;
+}
+Adding pre/post-modifier *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
+Resolved forward reference irq to interrupt(HARDWARE_CLOBBER)(void()) irq()
+SYMBOLS
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(byte) BLACK
+(byte*) CIA1_INTERRUPT
+(byte) CIA_INTERRUPT_CLEAR
+(byte*) FGCOL
+(void()**) HARDWARE_IRQ
+(byte) IRQ_COLLISION_BG
+(byte) IRQ_COLLISION_SPRITE
+(byte*) IRQ_ENABLE
+(byte) IRQ_LIGHTPEN
+(byte) IRQ_RASTER
+(byte*) IRQ_STATUS
+(void()**) KERNEL_IRQ
+(byte*) PROCPORT
+(byte*) PROCPORT_DDR
+(byte) PROCPORT_DDR_MEMORY_MASK
+(byte) PROCPORT_RAM_IO
+(byte*) RASTER
+(byte*) VIC_CONTROL
+(byte) WHITE
+interrupt(HARDWARE_CLOBBER)(void()) irq()
+(label) irq::@return
+(void()) main()
+(void()*~) main::$0
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@return
+
+Promoting word/signed word/dword/signed dword to void()** in KERNEL_IRQ ← ((void()**)) 788
+Promoting word/dword/signed dword to void()** in HARDWARE_IRQ ← ((void()**)) 65534
+Promoting word/dword/signed dword to byte* in RASTER ← ((byte*)) 53266
+Promoting word/dword/signed dword to byte* in VIC_CONTROL ← ((byte*)) 53265
+Promoting word/dword/signed dword to byte* in IRQ_STATUS ← ((byte*)) 53273
+Promoting word/dword/signed dword to byte* in IRQ_ENABLE ← ((byte*)) 53274
+Promoting word/dword/signed dword to byte* in BGCOL ← ((byte*)) 53280
+Promoting word/dword/signed dword to byte* in FGCOL ← ((byte*)) 53281
+Promoting word/dword/signed dword to byte* in CIA1_INTERRUPT ← ((byte*)) 56333
+Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT_DDR ← ((byte*)) 0
+Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT ← ((byte*)) 1
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
+  (void()**) HARDWARE_IRQ ← ((void()**)) (word/dword/signed dword) 65534
+  (byte*) RASTER ← ((byte*)) (word/dword/signed dword) 53266
+  (byte*) VIC_CONTROL ← ((byte*)) (word/dword/signed dword) 53265
+  (byte*) IRQ_STATUS ← ((byte*)) (word/dword/signed dword) 53273
+  (byte*) IRQ_ENABLE ← ((byte*)) (word/dword/signed dword) 53274
+  (byte) IRQ_RASTER ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) IRQ_COLLISION_BG ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) IRQ_COLLISION_SPRITE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) IRQ_LIGHTPEN ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53280
+  (byte*) FGCOL ← ((byte*)) (word/dword/signed dword) 53281
+  (byte) WHITE ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) CIA1_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56333
+  (byte) CIA_INTERRUPT_CLEAR ← (byte/signed byte/word/signed word/dword/signed dword) 127
+  (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
+  (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) PROCPORT_RAM_IO ← (byte/signed byte/word/signed word/dword/signed dword) 53
+  to:@1
+main: scope:[main]  from
+  asm { sei  }
+  *((byte*) PROCPORT_DDR) ← (byte) PROCPORT_DDR_MEMORY_MASK
+  *((byte*) PROCPORT) ← (byte) PROCPORT_RAM_IO
+  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
+  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) | (byte/word/signed word/dword/signed dword) 128
+  *((byte*) RASTER) ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
+  (void()*~) main::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
+  *((void()**) HARDWARE_IRQ) ← (void()*~) main::$0
+  asm { cli  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  if(true) goto main::@2
+  to:main::@4
+main::@2: scope:[main]  from main::@1 main::@5
+  *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
+  to:main::@1
+main::@4: scope:[main]  from main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@4 main::@6
+  to:main::@return
+main::@5: scope:[main]  from
+  to:main::@2
+main::@6: scope:[main]  from
+  to:main::@3
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  to:@2
+irq: scope:[irq]  from
+  *((byte*) BGCOL) ← (byte) WHITE
+  *((byte*) BGCOL) ← (byte) BLACK
+  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
+  to:irq::@return
+irq::@return: scope:[irq]  from irq
+  return 
+  to:@return
+@2: scope:[]  from @1
+  call main 
+  to:@end
+@end: scope:[]  from @2
+
+Eliminating unused variable (void()**) KERNEL_IRQ and assignment [0] (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
+Eliminating unused variable (byte) IRQ_COLLISION_BG and assignment [7] (byte) IRQ_COLLISION_BG ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) IRQ_COLLISION_SPRITE and assignment [8] (byte) IRQ_COLLISION_SPRITE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) IRQ_LIGHTPEN and assignment [9] (byte) IRQ_LIGHTPEN ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Removing empty block main::@4
+Removing empty block main::@3
+Removing empty block main::@5
+Removing empty block main::@6
+Removing empty block @1
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  (void()**) HARDWARE_IRQ#0 ← ((void()**)) (word/dword/signed dword) 65534
+  (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) 53266
+  (byte*) VIC_CONTROL#0 ← ((byte*)) (word/dword/signed dword) 53265
+  (byte*) IRQ_STATUS#0 ← ((byte*)) (word/dword/signed dword) 53273
+  (byte*) IRQ_ENABLE#0 ← ((byte*)) (word/dword/signed dword) 53274
+  (byte) IRQ_RASTER#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
+  (byte*) FGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
+  (byte) WHITE#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) BLACK#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) CIA1_INTERRUPT#0 ← ((byte*)) (word/dword/signed dword) 56333
+  (byte) CIA_INTERRUPT_CLEAR#0 ← (byte/signed byte/word/signed word/dword/signed dword) 127
+  (byte*) PROCPORT_DDR#0 ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) PROCPORT_DDR_MEMORY_MASK#0 ← (byte/signed byte/word/signed word/dword/signed dword) 7
+  (byte*) PROCPORT#0 ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) PROCPORT_RAM_IO#0 ← (byte/signed byte/word/signed word/dword/signed dword) 53
+  to:@2
+main: scope:[main]  from @2
+  asm { sei  }
+  *((byte*) PROCPORT_DDR#0) ← (byte) PROCPORT_DDR_MEMORY_MASK#0
+  *((byte*) PROCPORT#0) ← (byte) PROCPORT_RAM_IO#0
+  *((byte*) CIA1_INTERRUPT#0) ← (byte) CIA_INTERRUPT_CLEAR#0
+  *((byte*) VIC_CONTROL#0) ← *((byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128
+  *((byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  *((byte*) IRQ_ENABLE#0) ← (byte) IRQ_RASTER#0
+  (void()*~) main::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
+  *((void()**) HARDWARE_IRQ#0) ← (void()*~) main::$0
+  asm { cli  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  if(true) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  *((byte*) FGCOL#0) ← ++ *((byte*) FGCOL#0)
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+irq: scope:[irq]  from
+  *((byte*) BGCOL#0) ← (byte) WHITE#0
+  *((byte*) BGCOL#0) ← (byte) BLACK#0
+  *((byte*) IRQ_STATUS#0) ← (byte) IRQ_RASTER#0
+  to:irq::@return
+irq::@return: scope:[irq]  from irq
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(byte*) BGCOL#0
+(byte) BLACK
+(byte) BLACK#0
+(byte*) CIA1_INTERRUPT
+(byte*) CIA1_INTERRUPT#0
+(byte) CIA_INTERRUPT_CLEAR
+(byte) CIA_INTERRUPT_CLEAR#0
+(byte*) FGCOL
+(byte*) FGCOL#0
+(void()**) HARDWARE_IRQ
+(void()**) HARDWARE_IRQ#0
+(byte*) IRQ_ENABLE
+(byte*) IRQ_ENABLE#0
+(byte) IRQ_RASTER
+(byte) IRQ_RASTER#0
+(byte*) IRQ_STATUS
+(byte*) IRQ_STATUS#0
+(byte*) PROCPORT
+(byte*) PROCPORT#0
+(byte*) PROCPORT_DDR
+(byte*) PROCPORT_DDR#0
+(byte) PROCPORT_DDR_MEMORY_MASK
+(byte) PROCPORT_DDR_MEMORY_MASK#0
+(byte) PROCPORT_RAM_IO
+(byte) PROCPORT_RAM_IO#0
+(byte*) RASTER
+(byte*) RASTER#0
+(byte*) VIC_CONTROL
+(byte*) VIC_CONTROL#0
+(byte) WHITE
+(byte) WHITE#0
+interrupt(HARDWARE_CLOBBER)(void()) irq()
+(label) irq::@return
+(void()) main()
+(void()*~) main::$0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) @3
+Succesful SSA optimization Pass2CullEmptyBlocks
+Constant (const void()**) HARDWARE_IRQ#0 = ((void()**))65534
+Constant (const byte*) RASTER#0 = ((byte*))53266
+Constant (const byte*) VIC_CONTROL#0 = ((byte*))53265
+Constant (const byte*) IRQ_STATUS#0 = ((byte*))53273
+Constant (const byte*) IRQ_ENABLE#0 = ((byte*))53274
+Constant (const byte) IRQ_RASTER#0 = 1
+Constant (const byte*) BGCOL#0 = ((byte*))53280
+Constant (const byte*) FGCOL#0 = ((byte*))53281
+Constant (const byte) WHITE#0 = 1
+Constant (const byte) BLACK#0 = 0
+Constant (const byte*) CIA1_INTERRUPT#0 = ((byte*))56333
+Constant (const byte) CIA_INTERRUPT_CLEAR#0 = 127
+Constant (const byte*) PROCPORT_DDR#0 = ((byte*))0
+Constant (const byte) PROCPORT_DDR_MEMORY_MASK#0 = 7
+Constant (const byte*) PROCPORT#0 = ((byte*))1
+Constant (const byte) PROCPORT_RAM_IO#0 = 53
+Constant (const void()*) main::$0 = &irq
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination if(true) goto main::@2
+Succesful SSA optimization Pass2ConstantIfs
+Removing unused block main::@return
+Succesful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) main::@1
+Succesful SSA optimization Pass2CullEmptyBlocks
+OPTIMIZING CONTROL FLOW GRAPH
+Constant inlined main::$0 = &interrupt(HARDWARE_CLOBBER)(void()) irq()
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @2 @end main main::@2 irq irq::@return 
+Block Sequence Planned @begin @2 @end main main::@2 irq irq::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Propagating live ranges...
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Block Sequence Planned @begin @2 @end main main::@2 irq irq::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@2
+@2: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main  [ ] ( )
+  to:@end
+@end: scope:[]  from @2
+  [3] phi() [ ] ( )
+main: scope:[main]  from @2
+  asm { sei  }
+  [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 [ ] ( main:2 [ ] )
+  [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 [ ] ( main:2 [ ] )
+  [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:2 [ ] )
+  [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 [ ] ( main:2 [ ] )
+  [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] )
+  [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:2 [ ] )
+  [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:2 [ ] )
+  asm { cli  }
+  to:main::@2
+main::@2: scope:[main]  from main main::@2
+  [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] )
+  to:main::@2
+irq: scope:[irq]  from
+  [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 [ ] ( )
+  [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 [ ] ( )
+  [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] ( )
+  to:irq::@return
+irq::@return: scope:[irq]  from irq
+  [17] return  [ ] ( )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@2 dominated by  @2 @begin 
+@end dominated by  @2 @begin @end 
+main dominated by  @2 @begin main 
+main::@2 dominated by  @2 @begin main::@2 main 
+irq dominated by  @2 @begin @end main::@2 irq irq::@return main 
+irq::@return dominated by  @2 @begin @end main::@2 irq irq::@return main 
+
+NATURAL LOOPS
+Found back edge: Loop head: main::@2 tails: main::@2 blocks: null
+Found back edge: Loop head: irq::@return tails: irq blocks: null
+Populated: Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Populated: Loop head: irq::@return tails: irq blocks: irq 
+Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Loop head: irq::@return tails: irq blocks: irq 
+
+NATURAL LOOPS WITH DEPTH
+Found 1 loops in scope [irq]
+  Loop head: irq::@return tails: irq blocks: irq 
+Found 0 loops in scope []
+Found 1 loops in scope [main]
+  Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Loop head: main::@2 tails: main::@2 blocks: main::@2  depth: 1
+Loop head: irq::@return tails: irq blocks: irq  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) BGCOL
+(byte) BLACK
+(byte*) CIA1_INTERRUPT
+(byte) CIA_INTERRUPT_CLEAR
+(byte*) FGCOL
+(void()**) HARDWARE_IRQ
+(byte*) IRQ_ENABLE
+(byte) IRQ_RASTER
+(byte*) IRQ_STATUS
+(byte*) PROCPORT
+(byte*) PROCPORT_DDR
+(byte) PROCPORT_DDR_MEMORY_MASK
+(byte) PROCPORT_RAM_IO
+(byte*) RASTER
+(byte*) VIC_CONTROL
+(byte) WHITE
+interrupt(HARDWARE_CLOBBER)(void()) irq()
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label HARDWARE_IRQ = $fffe
+  .label RASTER = $d012
+  .label VIC_CONTROL = $d011
+  .label IRQ_STATUS = $d019
+  .label IRQ_ENABLE = $d01a
+  .const IRQ_RASTER = 1
+  .label BGCOL = $d020
+  .label FGCOL = $d021
+  .const WHITE = 1
+  .const BLACK = 0
+  .label CIA1_INTERRUPT = $dc0d
+  .const CIA_INTERRUPT_CLEAR = $7f
+  .label PROCPORT_DDR = 0
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  .label PROCPORT = 1
+  .const PROCPORT_RAM_IO = $35
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main  [ ] ( )
+  jsr main
+//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+  //SEG9 asm { sei  }
+    sei
+  //SEG10 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+  //SEG11 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+  //SEG12 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1_INTERRUPT
+  //SEG13 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    lda VIC_CONTROL
+    ora #$80
+    sta VIC_CONTROL
+  //SEG14 [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta RASTER
+  //SEG15 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+  //SEG16 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
+    lda #<irq
+    sta HARDWARE_IRQ
+    lda #>irq
+    sta HARDWARE_IRQ+1
+  //SEG17 asm { cli  }
+    cli
+    jmp b2
+  //SEG18 main::@2
+  b2:
+  //SEG19 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc FGCOL
+    jmp b2
+}
+//SEG20 irq
+irq: {
+  //SEG21 entry interrupt(HARDWARE_CLOBBER)
+    sta rega+1
+    stx regx+1
+    sty regy+1
+  //SEG22 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 [ ] ( ) -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta BGCOL
+  //SEG23 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 [ ] ( ) -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BGCOL
+  //SEG24 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] ( ) -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    jmp breturn
+  //SEG25 irq::@return
+  breturn:
+  //SEG26 [17] return  [ ] ( ) - exit interrupt(HARDWARE_CLOBBER)
+  rega:
+    lda #00
+  regx:
+    ldx #00
+  regy:
+    ldy #00
+    rti
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 [ ] ( ) always clobbers reg byte a 
+Statement [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 [ ] ( ) always clobbers reg byte a 
+Statement [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] ( ) always clobbers reg byte a 
+Statement [17] return  [ ] ( ) always clobbers reg byte a reg byte x reg byte y 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [irq] 
+Uplift Scope [] 
+
+Uplifting [main] best 503 combination 
+Uplifting [irq] best 503 combination 
+Uplifting [] best 503 combination 
+Interrupt procedure irq clobbers ANZ
+Removing interrupt register storage stx regx+1 in SEG21 entry interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage sty regy+1 in SEG21 entry interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage regx: in SEG26 [17] return  [ ] ( ) - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage ldx #00 in SEG26 [17] return  [ ] ( ) - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage regy: in SEG26 [17] return  [ ] ( ) - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage ldy #00 in SEG26 [17] return  [ ] ( ) - exit interrupt(HARDWARE_CLOBBER)
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label HARDWARE_IRQ = $fffe
+  .label RASTER = $d012
+  .label VIC_CONTROL = $d011
+  .label IRQ_STATUS = $d019
+  .label IRQ_ENABLE = $d01a
+  .const IRQ_RASTER = 1
+  .label BGCOL = $d020
+  .label FGCOL = $d021
+  .const WHITE = 1
+  .const BLACK = 0
+  .label CIA1_INTERRUPT = $dc0d
+  .const CIA_INTERRUPT_CLEAR = $7f
+  .label PROCPORT_DDR = 0
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  .label PROCPORT = 1
+  .const PROCPORT_RAM_IO = $35
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main  [ ] ( )
+  jsr main
+//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+  //SEG9 asm { sei  }
+    sei
+  //SEG10 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+  //SEG11 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+  //SEG12 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1_INTERRUPT
+  //SEG13 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    lda VIC_CONTROL
+    ora #$80
+    sta VIC_CONTROL
+  //SEG14 [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta RASTER
+  //SEG15 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+  //SEG16 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
+    lda #<irq
+    sta HARDWARE_IRQ
+    lda #>irq
+    sta HARDWARE_IRQ+1
+  //SEG17 asm { cli  }
+    cli
+    jmp b2
+  //SEG18 main::@2
+  b2:
+  //SEG19 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc FGCOL
+    jmp b2
+}
+//SEG20 irq
+irq: {
+  //SEG21 entry interrupt(HARDWARE_CLOBBER)
+    sta rega+1
+  //SEG22 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 [ ] ( ) -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta BGCOL
+  //SEG23 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 [ ] ( ) -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BGCOL
+  //SEG24 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] ( ) -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    jmp breturn
+  //SEG25 irq::@return
+  breturn:
+  //SEG26 [17] return  [ ] ( ) - exit interrupt(HARDWARE_CLOBBER)
+  rega:
+    lda #00
+    rti
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Removing instruction b2_from_bbegin:
+Removing instruction bend_from_b2:
+Removing instruction breturn:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b2:
+Removing instruction bend:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(const byte*) BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) 53280
+(byte) BLACK
+(const byte) BLACK#0 BLACK = (byte/signed byte/word/signed word/dword/signed dword) 0
+(byte*) CIA1_INTERRUPT
+(const byte*) CIA1_INTERRUPT#0 CIA1_INTERRUPT = ((byte*))(word/dword/signed dword) 56333
+(byte) CIA_INTERRUPT_CLEAR
+(const byte) CIA_INTERRUPT_CLEAR#0 CIA_INTERRUPT_CLEAR = (byte/signed byte/word/signed word/dword/signed dword) 127
+(byte*) FGCOL
+(const byte*) FGCOL#0 FGCOL = ((byte*))(word/dword/signed dword) 53281
+(void()**) HARDWARE_IRQ
+(const void()**) HARDWARE_IRQ#0 HARDWARE_IRQ = ((void()**))(word/dword/signed dword) 65534
+(byte*) IRQ_ENABLE
+(const byte*) IRQ_ENABLE#0 IRQ_ENABLE = ((byte*))(word/dword/signed dword) 53274
+(byte) IRQ_RASTER
+(const byte) IRQ_RASTER#0 IRQ_RASTER = (byte/signed byte/word/signed word/dword/signed dword) 1
+(byte*) IRQ_STATUS
+(const byte*) IRQ_STATUS#0 IRQ_STATUS = ((byte*))(word/dword/signed dword) 53273
+(byte*) PROCPORT
+(const byte*) PROCPORT#0 PROCPORT = ((byte*))(byte/signed byte/word/signed word/dword/signed dword) 1
+(byte*) PROCPORT_DDR
+(const byte*) PROCPORT_DDR#0 PROCPORT_DDR = ((byte*))(byte/signed byte/word/signed word/dword/signed dword) 0
+(byte) PROCPORT_DDR_MEMORY_MASK
+(const byte) PROCPORT_DDR_MEMORY_MASK#0 PROCPORT_DDR_MEMORY_MASK = (byte/signed byte/word/signed word/dword/signed dword) 7
+(byte) PROCPORT_RAM_IO
+(const byte) PROCPORT_RAM_IO#0 PROCPORT_RAM_IO = (byte/signed byte/word/signed word/dword/signed dword) 53
+(byte*) RASTER
+(const byte*) RASTER#0 RASTER = ((byte*))(word/dword/signed dword) 53266
+(byte*) VIC_CONTROL
+(const byte*) VIC_CONTROL#0 VIC_CONTROL = ((byte*))(word/dword/signed dword) 53265
+(byte) WHITE
+(const byte) WHITE#0 WHITE = (byte/signed byte/word/signed word/dword/signed dword) 1
+interrupt(HARDWARE_CLOBBER)(void()) irq()
+(label) irq::@return
+(void()) main()
+(label) main::@2
+
+
+
+FINAL ASSEMBLER
+Score: 380
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label HARDWARE_IRQ = $fffe
+  .label RASTER = $d012
+  .label VIC_CONTROL = $d011
+  .label IRQ_STATUS = $d019
+  .label IRQ_ENABLE = $d01a
+  .const IRQ_RASTER = 1
+  .label BGCOL = $d020
+  .label FGCOL = $d021
+  .const WHITE = 1
+  .const BLACK = 0
+  .label CIA1_INTERRUPT = $dc0d
+  .const CIA_INTERRUPT_CLEAR = $7f
+  .label PROCPORT_DDR = 0
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  .label PROCPORT = 1
+  .const PROCPORT_RAM_IO = $35
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 @2
+//SEG5 [2] call main  [ ] ( )
+  jsr main
+//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+//SEG7 @end
+//SEG8 main
+main: {
+  //SEG9 asm { sei  }
+    sei
+  //SEG10 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+  //SEG11 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+  //SEG12 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1_INTERRUPT
+  //SEG13 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 [ ] ( main:2 [ ] ) -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    lda VIC_CONTROL
+    ora #$80
+    sta VIC_CONTROL
+  //SEG14 [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta RASTER
+  //SEG15 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:2 [ ] ) -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+  //SEG16 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:2 [ ] ) -- _deref_pptc1=pprc2 
+    lda #<irq
+    sta HARDWARE_IRQ
+    lda #>irq
+    sta HARDWARE_IRQ+1
+  //SEG17 asm { cli  }
+    cli
+  //SEG18 main::@2
+  b2:
+  //SEG19 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc FGCOL
+    jmp b2
+}
+//SEG20 irq
+irq: {
+  //SEG21 entry interrupt(HARDWARE_CLOBBER)
+    sta rega+1
+  //SEG22 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 [ ] ( ) -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta BGCOL
+  //SEG23 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 [ ] ( ) -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BGCOL
+  //SEG24 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] ( ) -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+  //SEG25 irq::@return
+  //SEG26 [17] return  [ ] ( ) - exit interrupt(HARDWARE_CLOBBER)
+  rega:
+    lda #00
+    rti
+}
+

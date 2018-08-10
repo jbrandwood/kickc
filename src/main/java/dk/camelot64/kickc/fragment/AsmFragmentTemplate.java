@@ -109,7 +109,7 @@ public class AsmFragmentTemplate {
       AsmFragmentInstance fragmentInstance =
             new AsmFragmentInstance(new Program(), signature, ScopeRef.ROOT, this, bindings);
       AsmProgram asm = new AsmProgram();
-      asm.startSegment(null, signature);
+      asm.startSegment( ScopeRef.ROOT, null, signature);
       fragmentInstance.generate(asm);
       AsmClobber asmClobber = asm.getClobber();
       this.clobber = new AsmFragmentClobber(asmClobber);

@@ -160,7 +160,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          combination.allocate(getProgram());
          // Generate ASM
          AsmProgram asm = new AsmProgram();
-         asm.startSegment(statement.getIndex(), statement.toString(getProgram(), true));
+         asm.startSegment(block.getScope(), statement.getIndex(), statement.toString(getProgram(), true));
          Pass4CodeGeneration.AsmCodegenAluState aluState = new Pass4CodeGeneration.AsmCodegenAluState();
          try {
             (new Pass4CodeGeneration(getProgram(), false)).generateStatementAsm(asm, block, statement, aluState, false);

@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.asm;
 
 import dk.camelot64.kickc.fragment.AsmFormat;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,8 +37,8 @@ public class AsmProgram {
       return segments;
    }
 
-   public AsmSegment startSegment(Integer statementIndex, String source) {
-      AsmSegment segment = new AsmSegment(nextSegmentIndex++, statementIndex, source);
+   public AsmSegment startSegment(ScopeRef scopeRef, Integer statementIndex, String source) {
+      AsmSegment segment = new AsmSegment(nextSegmentIndex++, scopeRef, statementIndex, source);
       segments.add(segment);
       return segment;
    }

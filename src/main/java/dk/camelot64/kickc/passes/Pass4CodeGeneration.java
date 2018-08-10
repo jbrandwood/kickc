@@ -45,13 +45,13 @@ public class Pass4CodeGeneration {
       AsmProgram asm = new AsmProgram();
       ScopeRef currentScope = ScopeRef.ROOT;
 
-      asm.startSegment(null, "Basic Upstart");
+      asm.startSegment( currentScope, null, "Basic Upstart");
       asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
       asm.addLine(new AsmBasicUpstart("main"));
       asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(0x080d)));
 
       // Generate global ZP labels
-      asm.startSegment(null, "Global Constants & labels");
+      asm.startSegment( currentScope, null, "Global Constants & labels");
       addConstants(asm, currentScope);
       addZpLabels(asm, currentScope);
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -61,7 +61,7 @@ public class Pass4CodeGeneration {
                asm.addScopeEnd();
             }
             currentScope = block.getScope();
-            asm.startSegment(null, block.getLabel().getFullName());
+            asm.startSegment(currentScope, null, block.getLabel().getFullName());
             asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
             // Add all ZP labels for the scope
             addConstants(asm, currentScope);
@@ -75,11 +75,11 @@ public class Pass4CodeGeneration {
             // Generate interrupt entry if needed
             Procedure procedure = block.getProcedure(program);
             if(procedure!=null && procedure.getInterruptType()!=null) {
-               generateInterruptEntry(asm, procedure.getInterruptType());
+               generateInterruptEntry(asm, procedure);
             }
          } else {
             // Generate label for block inside procedure
-            asm.startSegment(null, block.getLabel().getFullName());
+            asm.startSegment(currentScope, null, block.getLabel().getFullName());
             asm.addLabel(block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
          }
          // Generate statements
@@ -376,7 +376,7 @@ public class Pass4CodeGeneration {
     */
    public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState, boolean genCallPhiEntry) {
 
-      asm.startSegment(statement.getIndex(), statement.toString(program, verboseAliveInfo));
+      asm.startSegment(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
 
       // IF the previous statement was added to the ALU register - generate the composite ASM fragment
       if(aluState.hasAluAssignment()) {
@@ -469,10 +469,11 @@ public class Pass4CodeGeneration {
    /**
     * Generate exit-code for entering an interrupt procedure based on the interrupt type
     * @param asm The assembler to generate code into
-    * @param interruptType The type of interrupt to generate
+    * @param procedure The interrupt procedure
     */
-   private void generateInterruptEntry(AsmProgram asm, Procedure.InterruptType interruptType) {
-      asm.startSegment(null, "interrupt "+interruptType.name());
+   private void generateInterruptEntry(AsmProgram asm, Procedure procedure) {
+      Procedure.InterruptType interruptType = procedure.getInterruptType();
+      asm.startSegment( procedure.getRef(), null, "entry interrupt("+interruptType.name()+")");
       //asm.getCurrentSegment().setXXX();
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
          // No entry ASM needed
@@ -485,8 +486,9 @@ public class Pass4CodeGeneration {
       } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
          // No entry ASM needed
       } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
-         throw new CompileError("Not implemented! "+interruptType.name());
-      } else {
+         asm.addInstruction("sta", AsmAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
+         asm.addInstruction("stx", AsmAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
+         asm.addInstruction("sty", AsmAddressingMode.ABS, "regy+1", false).setDontOptimize(true);      } else {
          throw new RuntimeException("Interrupt Type not supported " + interruptType.name());
       }
    }
@@ -498,6 +500,7 @@ public class Pass4CodeGeneration {
     * @param interruptType The type of interrupt to generate
     */
    private void generateInterruptExit(AsmProgram asm, Statement statement, Procedure.InterruptType interruptType) {
+      asm.getCurrentSegment().setSource(asm.getCurrentSegment().getSource() + " - exit interrupt("+interruptType.name()+")");
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
          asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea81", false);
       } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
@@ -513,7 +516,13 @@ public class Pass4CodeGeneration {
       } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
          asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
       } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
-         throw new CompileError("Not implemented! "+interruptType.name());
+         asm.addLabel("rega").setDontOptimize(true);
+         asm.addInstruction("lda", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addLabel("regx").setDontOptimize(true);
+         asm.addInstruction("ldx", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addLabel("regy").setDontOptimize(true);
+         asm.addInstruction("ldy", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
       } else {
          throw new RuntimeException("Interrupt Type not supported " + statement);
       }
@@ -574,7 +583,7 @@ public class Pass4CodeGeneration {
             segmentSrc += fBlock.getLabel().getFullName() + " ";
          }
          segmentSrc += "to " + toBlock.getLabel().getFullName();
-         asm.startSegment(toFirstStatement.getIndex(), segmentSrc);
+         asm.startSegment( scope, toFirstStatement.getIndex(), segmentSrc);
          asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
          for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
             asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
@@ -585,7 +594,7 @@ public class Pass4CodeGeneration {
             RValue rValue = assignment.getrValue();
             Statement statement = assignment.getPhiBlock();
             // Generate an ASM move fragment
-            asm.startSegment(statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
+            asm.startSegment(scope, statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
             asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
             asm.getCurrentSegment().setPhiTransitionAssignmentIdx(assignment.getAssignmentIdx());
             if(isRegisterCopy(lValue, rValue)) {

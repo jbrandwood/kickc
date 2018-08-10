@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.asm;
 
 import dk.camelot64.kickc.model.PhiTransitions;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,12 @@ public class AsmSegment {
    /** If the segment is an assignment in a PHI transition this contains the index of the assignment within the transition. */
    private Integer phiTransitionAssignmentIdx;
 
-   public AsmSegment(int index, Integer statementIdx, String source) {
+   /** The full name of the containing scope (procedure). */
+   private String scopeLabel;
+
+   public AsmSegment(int index, ScopeRef scope, Integer statementIdx, String source) {
       this.lines = new ArrayList<>();
+      this.scopeLabel = scope.getFullName();
       this.index = index;
       this.statementIdx = statementIdx;
       this.source = source;
@@ -106,6 +111,10 @@ public class AsmSegment {
 
    public void setPhiTransitionAssignmentIdx(Integer phiTransitionAssignmentIdx) {
       this.phiTransitionAssignmentIdx = phiTransitionAssignmentIdx;
+   }
+
+   public String getScopeLabel() {
+      return scopeLabel;
    }
 
    /**
@@ -219,4 +228,7 @@ public class AsmSegment {
       return toString(new AsmProgram.AsmPrintState(true, false));
    }
 
+   public void setSource(String source) {
+      this.source = source;
+   }
 }

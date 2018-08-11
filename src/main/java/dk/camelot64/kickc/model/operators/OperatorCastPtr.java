@@ -31,4 +31,7 @@ public class OperatorCastPtr extends OperatorUnary {
       return new SymbolTypePointer(elementType);
    }
 
+   public SymbolType getElementType() {
+      return elementType;
+   }
 }

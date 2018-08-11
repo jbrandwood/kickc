@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.operators.OperatorCastPtr;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -57,18 +58,10 @@ public class Pass2NopCastElimination extends Pass2SsaOptimization {
                   } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRSBY.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = new SymbolTypePointer(SymbolType.SBYTE);
-                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRWO.equals(assignment.getOperator())) {
+                  } else if(SymbolType.isWord(rValType) && assignment.getOperator() instanceof OperatorCastPtr) {
                      isNopCast = true;
-                     toType = new SymbolTypePointer(SymbolType.WORD);
-                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRSWO.equals(assignment.getOperator())) {
-                     isNopCast = true;
-                     toType = new SymbolTypePointer(SymbolType.SWORD);
-                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRDWO.equals(assignment.getOperator())) {
-                     isNopCast = true;
-                     toType = new SymbolTypePointer(SymbolType.DWORD);
-                  } else if(SymbolType.isWord(rValType) && Operators.CAST_PTRSDWO.equals(assignment.getOperator())) {
-                     isNopCast = true;
-                     toType = new SymbolTypePointer(SymbolType.SDWORD);
+                     OperatorCastPtr castOperator = (OperatorCastPtr) (assignment.getOperator());
+                     toType = new SymbolTypePointer(castOperator.getElementType());
                   } else if(rValType instanceof SymbolTypePointer  && Operators.CAST_WORD.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.WORD;

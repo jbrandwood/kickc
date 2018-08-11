@@ -29,7 +29,7 @@ public class TestPrograms {
 
    String testPath;
 
-   public TestPrograms() throws IOException {
+   public TestPrograms() {
       testPath = "src/test/java/dk/camelot64/kickc/test/kc";
       helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }

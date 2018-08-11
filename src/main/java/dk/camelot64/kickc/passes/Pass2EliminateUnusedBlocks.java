@@ -7,7 +7,6 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -15,6 +14,7 @@ import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
@@ -56,19 +56,14 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
    }
 
    /**
-    * Get all referenced blocks en the entire program
+    * Get all referenced blocks in the entire program
     * @return All blocks referenced
     */
    private Set<LabelRef> getReferencedBlocks() {
       Set<LabelRef> referencedBlocks = new LinkedHashSet<>();
-      findReferencedBlocks(getGraph().getFirstBlock(), referencedBlocks);
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
-         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
-            // Address-of is used on the procedure
-            Label procedureLabel = procedure.getLabel();
-            ControlFlowBlock procedureBlock = getGraph().getBlock(procedureLabel.getRef());
-            findReferencedBlocks(procedureBlock, referencedBlocks);
-         }
+      List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
+      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
+         findReferencedBlocks(entryPointBlock, referencedBlocks);
       }
       return referencedBlocks;
    }

@@ -21,21 +21,11 @@ public class Pass3BlockSequencePlanner extends Pass2Base {
 
    public void plan() {
 
-      for(Procedure procedure : getProgram().getScope().getAllProcedures(true)) {
-         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
-            // Address-of is used on the procedure
-            Label procedureLabel = procedure.getLabel();
-            ControlFlowBlock procedureBlock = getGraph().getBlock(procedureLabel.getRef());
-            pushTodo(procedureBlock);
-         }
-      }
+      List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
 
-      ControlFlowBlock mainBlock = getGraph().getMainBlock();
-      if(mainBlock != null) {
-         pushTodo(mainBlock);
+      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
+         pushTodo(entryPointBlock);
       }
-      pushTodo(getGraph().getFirstBlock());
-
 
       List<LabelRef> sequence = new ArrayList<>();
       while(hasTodo()) {

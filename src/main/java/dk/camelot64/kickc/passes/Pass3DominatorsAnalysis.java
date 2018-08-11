@@ -26,15 +26,24 @@ public class Pass3DominatorsAnalysis extends Pass2Base {
       DominatorsGraph dominatorsGraph = new DominatorsGraph();
 
       // Initialize dominators: Dom[first]={first}, Dom[block]={all}
-      LabelRef firstBlock = getGraph().getFirstBlock().getLabel();
-      DominatorsBlock firstDominators = dominatorsGraph.addDominators(firstBlock);
-      firstDominators.add(firstBlock);
+
+      List<LabelRef> firstBlocks = new ArrayList<>();
+      List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
+      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
+         LabelRef firstBlock = entryPointBlock.getLabel();
+         // Skip main-block, as it will be called by @begin anyways
+         if(firstBlock.getFullName().equals("main")) continue;
+         DominatorsBlock firstDominators = dominatorsGraph.addDominators(firstBlock);
+         firstDominators.add(firstBlock);
+         firstBlocks.add(firstBlock);
+      }
+
       List<LabelRef> allBlocks = new ArrayList<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          allBlocks.add(block.getLabel());
       }
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         if(!block.getLabel().equals(firstBlock)) {
+         if(!firstBlocks.contains(block.getLabel())) {
             DominatorsBlock dominatorsBlock = dominatorsGraph.addDominators(block.getLabel());
             dominatorsBlock.addAll(allBlocks);
          }
@@ -47,7 +56,7 @@ public class Pass3DominatorsAnalysis extends Pass2Base {
       do {
          change = false;
          for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-            if(!block.getLabel().equals(firstBlock)) {
+            if(!firstBlocks.contains(block.getLabel())) {
                List<ControlFlowBlock> predecessors = getGraph().getPredecessors(block);
                DominatorsBlock newDominators = new DominatorsBlock();
                newDominators.addAll(allBlocks);

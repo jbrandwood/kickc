@@ -1,11 +1,14 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.ScopeRef;
-import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
 
 import java.util.*;
 
@@ -174,6 +177,32 @@ public class ControlFlowGraph {
       }
       return null;
    }
+
+
+   /**
+    * Get all blocks that are program entry points. This is the main-block and any blocks referenced by the address-off operator (&)
+    * @param program The program
+    * @return All entry-point blocks
+    */
+   public List<ControlFlowBlock> getEntryPointBlocks(Program program) {
+      List<ControlFlowBlock> entryPointBlocks = new ArrayList<>();
+      for(Procedure procedure : program.getScope().getAllProcedures(true)) {
+         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
+            // Address-of is used on the procedure
+            Label procedureLabel = procedure.getLabel();
+            ControlFlowBlock procedureBlock = getBlock(procedureLabel.getRef());
+            entryPointBlocks.add(procedureBlock);
+         }
+      }
+
+      ControlFlowBlock mainBlock = getMainBlock();
+      if(mainBlock != null) {
+         entryPointBlocks.add(mainBlock);
+      }
+      entryPointBlocks.add(getFirstBlock());
+      return entryPointBlocks;
+   }
+
 
    @Override
    public String toString() {

@@ -46,6 +46,11 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
+//   @Test
+//   public void testUnrollScreenFill() throws IOException, URISyntaxException {
+//      compileAndCompare("unroll-screenfill");
+//   }
+
    @Test
    public void testIrqHardwareClobberJsr() throws IOException, URISyntaxException {
       compileAndCompare("irq-hardware-clobber-jsr");

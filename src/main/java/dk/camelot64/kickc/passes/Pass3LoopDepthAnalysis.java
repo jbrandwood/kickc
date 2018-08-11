@@ -29,15 +29,14 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
    public void findLoopDepths() {
       Deque<LabelRef> todo = new ArrayDeque<>();
       Set<LabelRef> done = new LinkedHashSet<>();
-      // Add the main block block
-      todo.push(callGraph.getFirstCallBlock());
-      // Also add all address-of referenced blocks
-      for(Procedure procedure : getProgram().getScope().getAllProcedures(true)) {
-         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
-            // Address-of is used on the procedure
-            Label procedureLabel = procedure.getLabel();
-            todo.push(procedureLabel.getRef());
+
+      List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
+      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
+         LabelRef label = entryPointBlock.getLabel();
+         if(label.getFullName().equals(LabelRef.BEGIN_BLOCK_NAME)) {
+            label = callGraph.getFirstCallBlock();
          }
+         todo.push(label);
       }
 
       while(!todo.isEmpty()) {

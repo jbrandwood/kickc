@@ -274,6 +274,13 @@ const byte VIC_CSEL = %00001000;
 const byte* D018 = $d018;
 const byte* VIC_MEMORY = $d018;
 
+const byte* IRQ_STATUS = $d019;
+const byte* IRQ_ENABLE = $d01a;
+const byte IRQ_RASTER = %00000001;
+const byte IRQ_COLLISION_BG = %00000010;
+const byte IRQ_COLLISION_SPRITE = %00000100;
+const byte IRQ_LIGHTPEN = %00001000;
+
 const byte* COLS = $d800;
 
 // CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -284,6 +291,10 @@ const byte* CIA1_PORT_B = $dc01;
 const byte* CIA1_PORT_A_DDR = $dc02;
 // CIA #1 Port B data direction register.
 const byte* CIA1_PORT_B_DDR = $dc03;
+// CIA#1 Interrupt Status & Control Register
+const byte* CIA1_INTERRUPT = $dc0d;
+// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+const byte CIA_INTERRUPT_CLEAR = $7f;
 
 // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
 const byte* CIA2_PORT_A = $dd00;
@@ -293,6 +304,14 @@ const byte* CIA2_PORT_B = $dd01;
 const byte* CIA2_PORT_A_DDR = $dd02;
 // CIA #2 Port B data direction register.
 const byte* CIA2_PORT_B_DDR = $dd03;
+// CIA#2 Interrupt Status & Control Register
+const byte* CIA2_INTERRUPT = $dd0d;
+
+// The vector used when the KERNAL serves IRQ interrupts
+const void()** KERNEL_IRQ = $0314;
+
+// The vector used when the HARDWARE serves IRQ interrupts
+const void()** HARDWARE_IRQ = $fffe;
 
 const byte BLACK = $0;
 const byte WHITE = $1;
@@ -349,14 +368,17 @@ SYMBOLS
 (byte*) BORDERCOL
 (byte) BROWN
 (byte*) CHARGEN
+(byte*) CIA1_INTERRUPT
 (byte*) CIA1_PORT_A
 (byte*) CIA1_PORT_A_DDR
 (byte*) CIA1_PORT_B
 (byte*) CIA1_PORT_B_DDR
+(byte*) CIA2_INTERRUPT
 (byte*) CIA2_PORT_A
 (byte*) CIA2_PORT_A_DDR
 (byte*) CIA2_PORT_B
 (byte*) CIA2_PORT_B_DDR
+(byte) CIA_INTERRUPT_CLEAR
 (byte*) COLS
 (byte) CYAN
 (byte*) D011
@@ -460,6 +482,14 @@ SYMBOLS
 (byte*) DTV_SPRITE_BANK
 (byte) GREEN
 (byte) GREY
+(void()**) HARDWARE_IRQ
+(byte) IRQ_COLLISION_BG
+(byte) IRQ_COLLISION_SPRITE
+(byte*) IRQ_ENABLE
+(byte) IRQ_LIGHTPEN
+(byte) IRQ_RASTER
+(byte*) IRQ_STATUS
+(void()**) KERNEL_IRQ
 (byte) LIGHT_BLUE
 (byte) LIGHT_GREEN
 (byte) LIGHT_GREY
@@ -585,15 +615,21 @@ Promoting word/dword/signed dword to byte* in VIC_CONTROL2 ← ((byte*)) 53270
 Promoting word/dword/signed dword to byte* in D016 ← ((byte*)) 53270
 Promoting word/dword/signed dword to byte* in D018 ← ((byte*)) 53272
 Promoting word/dword/signed dword to byte* in VIC_MEMORY ← ((byte*)) 53272
+Promoting word/dword/signed dword to byte* in IRQ_STATUS ← ((byte*)) 53273
+Promoting word/dword/signed dword to byte* in IRQ_ENABLE ← ((byte*)) 53274
 Promoting word/dword/signed dword to byte* in COLS ← ((byte*)) 55296
 Promoting word/dword/signed dword to byte* in CIA1_PORT_A ← ((byte*)) 56320
 Promoting word/dword/signed dword to byte* in CIA1_PORT_B ← ((byte*)) 56321
 Promoting word/dword/signed dword to byte* in CIA1_PORT_A_DDR ← ((byte*)) 56322
 Promoting word/dword/signed dword to byte* in CIA1_PORT_B_DDR ← ((byte*)) 56323
+Promoting word/dword/signed dword to byte* in CIA1_INTERRUPT ← ((byte*)) 56333
 Promoting word/dword/signed dword to byte* in CIA2_PORT_A ← ((byte*)) 56576
 Promoting word/dword/signed dword to byte* in CIA2_PORT_B ← ((byte*)) 56577
 Promoting word/dword/signed dword to byte* in CIA2_PORT_A_DDR ← ((byte*)) 56578
 Promoting word/dword/signed dword to byte* in CIA2_PORT_B_DDR ← ((byte*)) 56579
+Promoting word/dword/signed dword to byte* in CIA2_INTERRUPT ← ((byte*)) 56589
+Promoting word/signed word/dword/signed dword to void()** in KERNEL_IRQ ← ((void()**)) 788
+Promoting word/dword/signed dword to void()** in HARDWARE_IRQ ← ((void()**)) 65534
 Promoting word/dword/signed dword to byte* in DTV_FEATURE ← ((byte*)) 53311
 Promoting word/dword/signed dword to byte* in DTV_CONTROL ← ((byte*)) 53308
 Promoting word/dword/signed dword to byte* in DTV_PALETTE ← ((byte*)) 53760
@@ -687,15 +723,26 @@ INITIAL CONTROL FLOW GRAPH
   (byte) VIC_CSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
   (byte*) D018 ← ((byte*)) (word/dword/signed dword) 53272
   (byte*) VIC_MEMORY ← ((byte*)) (word/dword/signed dword) 53272
+  (byte*) IRQ_STATUS ← ((byte*)) (word/dword/signed dword) 53273
+  (byte*) IRQ_ENABLE ← ((byte*)) (word/dword/signed dword) 53274
+  (byte) IRQ_RASTER ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) IRQ_COLLISION_BG ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) IRQ_COLLISION_SPRITE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) IRQ_LIGHTPEN ← (byte/signed byte/word/signed word/dword/signed dword) 8
   (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
   (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
   (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
   (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
   (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
+  (byte*) CIA1_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56333
+  (byte) CIA_INTERRUPT_CLEAR ← (byte/signed byte/word/signed word/dword/signed dword) 127
   (byte*) CIA2_PORT_A ← ((byte*)) (word/dword/signed dword) 56576
   (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
   (byte*) CIA2_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56578
   (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
+  (byte*) CIA2_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56589
+  (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
+  (void()**) HARDWARE_IRQ ← ((void()**)) (word/dword/signed dword) 65534
   (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) WHITE ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
@@ -970,119 +1017,130 @@ Eliminating unused variable (byte) VIC_MCM and assignment [36] (byte) VIC_MCM �
 Eliminating unused variable (byte) VIC_CSEL and assignment [37] (byte) VIC_CSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
 Eliminating unused variable (byte*) D018 and assignment [38] (byte*) D018 ← ((byte*)) (word/dword/signed dword) 53272
 Eliminating unused variable (byte*) VIC_MEMORY and assignment [39] (byte*) VIC_MEMORY ← ((byte*)) (word/dword/signed dword) 53272
-Eliminating unused variable (byte*) COLS and assignment [40] (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
-Eliminating unused variable (byte*) CIA1_PORT_A and assignment [41] (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
-Eliminating unused variable (byte*) CIA1_PORT_B and assignment [42] (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
-Eliminating unused variable (byte*) CIA1_PORT_A_DDR and assignment [43] (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
-Eliminating unused variable (byte*) CIA1_PORT_B_DDR and assignment [44] (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
-Eliminating unused variable (byte*) CIA2_PORT_A and assignment [45] (byte*) CIA2_PORT_A ← ((byte*)) (word/dword/signed dword) 56576
-Eliminating unused variable (byte*) CIA2_PORT_B and assignment [46] (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
-Eliminating unused variable (byte*) CIA2_PORT_A_DDR and assignment [47] (byte*) CIA2_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56578
-Eliminating unused variable (byte*) CIA2_PORT_B_DDR and assignment [48] (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
-Eliminating unused variable (byte) BLACK and assignment [49] (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (byte) WHITE and assignment [50] (byte) WHITE ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) RED and assignment [51] (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
-Eliminating unused variable (byte) CYAN and assignment [52] (byte) CYAN ← (byte/signed byte/word/signed word/dword/signed dword) 3
-Eliminating unused variable (byte) PURPLE and assignment [53] (byte) PURPLE ← (byte/signed byte/word/signed word/dword/signed dword) 4
-Eliminating unused variable (byte) GREEN and assignment [54] (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
-Eliminating unused variable (byte) BLUE and assignment [55] (byte) BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 6
-Eliminating unused variable (byte) YELLOW and assignment [56] (byte) YELLOW ← (byte/signed byte/word/signed word/dword/signed dword) 7
-Eliminating unused variable (byte) ORANGE and assignment [57] (byte) ORANGE ← (byte/signed byte/word/signed word/dword/signed dword) 8
-Eliminating unused variable (byte) BROWN and assignment [58] (byte) BROWN ← (byte/signed byte/word/signed word/dword/signed dword) 9
-Eliminating unused variable (byte) PINK and assignment [59] (byte) PINK ← (byte/signed byte/word/signed word/dword/signed dword) 10
-Eliminating unused variable (byte) DARK_GREY and assignment [60] (byte) DARK_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 11
-Eliminating unused variable (byte) GREY and assignment [61] (byte) GREY ← (byte/signed byte/word/signed word/dword/signed dword) 12
-Eliminating unused variable (byte) LIGHT_GREEN and assignment [62] (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
-Eliminating unused variable (byte) LIGHT_BLUE and assignment [63] (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
-Eliminating unused variable (byte) LIGHT_GREY and assignment [64] (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
-Eliminating unused variable (byte) DTV_FEATURE_DISABLE_TIL_RESET and assignment [67] (byte) DTV_FEATURE_DISABLE_TIL_RESET ← (byte/signed byte/word/signed word/dword/signed dword) 2
-Eliminating unused variable (byte) DTV_LINEAR and assignment [69] (byte) DTV_LINEAR ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) DTV_OVERSCAN and assignment [72] (byte) DTV_OVERSCAN ← (byte/signed byte/word/signed word/dword/signed dword) 8
-Eliminating unused variable (byte) DTV_COLORRAM_OFF and assignment [73] (byte) DTV_COLORRAM_OFF ← (byte/signed byte/word/signed word/dword/signed dword) 16
-Eliminating unused variable (byte) DTV_CHUNKY and assignment [75] (byte) DTV_CHUNKY ← (byte/signed byte/word/signed word/dword/signed dword) 64
-Eliminating unused variable (byte[16]) DTV_PALETTE_DEFAULT and assignment [77] (byte[16]) DTV_PALETTE_DEFAULT ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 54, (byte/word/signed word/dword/signed dword) 190, (byte/signed byte/word/signed word/dword/signed dword) 88, (byte/word/signed word/dword/signed dword) 219, (byte/word/signed word/dword/signed dword) 134, (byte/word/signed word/dword/signed dword) 255, (byte/signed byte/word/signed word/dword/signed dword) 41, (byte/signed byte/word/signed word/dword/signed dword) 38, (byte/signed byte/word/signed word/dword/signed dword) 59, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 154, (byte/signed byte/word/signed word/dword/signed dword) 10 }
-Eliminating unused variable (byte*) DTV_PLANEA_START_LO and assignment [78] (byte*) DTV_PLANEA_START_LO ← ((byte*)) (word/dword/signed dword) 53306
-Eliminating unused variable (byte*) DTV_PLANEA_START_MI and assignment [79] (byte*) DTV_PLANEA_START_MI ← ((byte*)) (word/dword/signed dword) 53307
-Eliminating unused variable (byte*) DTV_PLANEA_START_HI and assignment [80] (byte*) DTV_PLANEA_START_HI ← ((byte*)) (word/dword/signed dword) 53317
-Eliminating unused variable (byte*) DTV_PLANEA_STEP and assignment [81] (byte*) DTV_PLANEA_STEP ← ((byte*)) (word/dword/signed dword) 53318
-Eliminating unused variable (byte*) DTV_PLANEA_MODULO_LO and assignment [82] (byte*) DTV_PLANEA_MODULO_LO ← ((byte*)) (word/dword/signed dword) 53304
-Eliminating unused variable (byte*) DTV_PLANEA_MODULO_HI and assignment [83] (byte*) DTV_PLANEA_MODULO_HI ← ((byte*)) (word/dword/signed dword) 53305
-Eliminating unused variable (byte*) DTV_PLANEB_START_LO and assignment [84] (byte*) DTV_PLANEB_START_LO ← ((byte*)) (word/dword/signed dword) 53321
-Eliminating unused variable (byte*) DTV_PLANEB_START_MI and assignment [85] (byte*) DTV_PLANEB_START_MI ← ((byte*)) (word/dword/signed dword) 53322
-Eliminating unused variable (byte*) DTV_PLANEB_START_HI and assignment [86] (byte*) DTV_PLANEB_START_HI ← ((byte*)) (word/dword/signed dword) 53323
-Eliminating unused variable (byte*) DTV_PLANEB_STEP and assignment [87] (byte*) DTV_PLANEB_STEP ← ((byte*)) (word/dword/signed dword) 53324
-Eliminating unused variable (byte*) DTV_PLANEB_MODULO_LO and assignment [88] (byte*) DTV_PLANEB_MODULO_LO ← ((byte*)) (word/dword/signed dword) 53319
-Eliminating unused variable (byte*) DTV_PLANEB_MODULO_HI and assignment [89] (byte*) DTV_PLANEB_MODULO_HI ← ((byte*)) (word/dword/signed dword) 53320
-Eliminating unused variable (byte*) DTV_SPRITE_BANK and assignment [90] (byte*) DTV_SPRITE_BANK ← ((byte*)) (word/dword/signed dword) 53325
-Eliminating unused variable (byte*) DTV_COLOR_BANK_LO and assignment [91] (byte*) DTV_COLOR_BANK_LO ← ((byte*)) (word/dword/signed dword) 53302
-Eliminating unused variable (byte*) DTV_COLOR_BANK_HI and assignment [92] (byte*) DTV_COLOR_BANK_HI ← ((byte*)) (word/dword/signed dword) 53303
-Eliminating unused variable (dword) DTV_COLOR_BANK_DEFAULT and assignment [93] (dword) DTV_COLOR_BANK_DEFAULT ← (dword/signed dword) 120832
-Eliminating unused variable (byte*) DTV_GRAPHICS_VIC_BANK and assignment [94] (byte*) DTV_GRAPHICS_VIC_BANK ← ((byte*)) (word/dword/signed dword) 53309
-Eliminating unused variable (byte*) DTV_GRAPHICS_HICOL_BANK and assignment [95] (byte*) DTV_GRAPHICS_HICOL_BANK ← ((byte*)) (word/dword/signed dword) 53310
-Eliminating unused variable (byte*) DTV_BLITTER_SRCA_LO and assignment [96] (byte*) DTV_BLITTER_SRCA_LO ← ((byte*)) (word/dword/signed dword) 54048
-Eliminating unused variable (byte*) DTV_BLITTER_SRCA_MI and assignment [97] (byte*) DTV_BLITTER_SRCA_MI ← ((byte*)) (word/dword/signed dword) 54049
-Eliminating unused variable (byte*) DTV_BLITTER_SRCA_HI and assignment [98] (byte*) DTV_BLITTER_SRCA_HI ← ((byte*)) (word/dword/signed dword) 54050
-Eliminating unused variable (byte*) DTV_BLITTER_SRCA_MOD_LO and assignment [99] (byte*) DTV_BLITTER_SRCA_MOD_LO ← ((byte*)) (word/dword/signed dword) 54051
-Eliminating unused variable (byte*) DTV_BLITTER_SRCA_MOD_HI and assignment [100] (byte*) DTV_BLITTER_SRCA_MOD_HI ← ((byte*)) (word/dword/signed dword) 54052
-Eliminating unused variable (byte*) DTV_BLITTER_SRCA_LIN_LO and assignment [101] (byte*) DTV_BLITTER_SRCA_LIN_LO ← ((byte*)) (word/dword/signed dword) 54053
-Eliminating unused variable (byte*) DTV_BLITTER_SRCA_LIN_HI and assignment [102] (byte*) DTV_BLITTER_SRCA_LIN_HI ← ((byte*)) (word/dword/signed dword) 54054
-Eliminating unused variable (byte*) DTV_BLITTER_SRCA_STEP and assignment [103] (byte*) DTV_BLITTER_SRCA_STEP ← ((byte*)) (word/dword/signed dword) 54055
-Eliminating unused variable (byte*) DTV_BLITTER_SRCB_LO and assignment [104] (byte*) DTV_BLITTER_SRCB_LO ← ((byte*)) (word/dword/signed dword) 54056
-Eliminating unused variable (byte*) DTV_BLITTER_SRCB_MI and assignment [105] (byte*) DTV_BLITTER_SRCB_MI ← ((byte*)) (word/dword/signed dword) 54057
-Eliminating unused variable (byte*) DTV_BLITTER_SRCB_HI and assignment [106] (byte*) DTV_BLITTER_SRCB_HI ← ((byte*)) (word/dword/signed dword) 54058
-Eliminating unused variable (byte*) DTV_BLITTER_SRCB_MOD_LO and assignment [107] (byte*) DTV_BLITTER_SRCB_MOD_LO ← ((byte*)) (word/dword/signed dword) 54059
-Eliminating unused variable (byte*) DTV_BLITTER_SRCB_MOD_HI and assignment [108] (byte*) DTV_BLITTER_SRCB_MOD_HI ← ((byte*)) (word/dword/signed dword) 54060
-Eliminating unused variable (byte*) DTV_BLITTER_SRCB_LIN_LO and assignment [109] (byte*) DTV_BLITTER_SRCB_LIN_LO ← ((byte*)) (word/dword/signed dword) 54061
-Eliminating unused variable (byte*) DTV_BLITTER_SRCB_LIN_HI and assignment [110] (byte*) DTV_BLITTER_SRCB_LIN_HI ← ((byte*)) (word/dword/signed dword) 54062
-Eliminating unused variable (byte*) DTV_BLITTER_SRCB_STEP and assignment [111] (byte*) DTV_BLITTER_SRCB_STEP ← ((byte*)) (word/dword/signed dword) 54063
-Eliminating unused variable (byte*) DTV_BLITTER_DEST_LO and assignment [112] (byte*) DTV_BLITTER_DEST_LO ← ((byte*)) (word/dword/signed dword) 54064
-Eliminating unused variable (byte*) DTV_BLITTER_DEST_MI and assignment [113] (byte*) DTV_BLITTER_DEST_MI ← ((byte*)) (word/dword/signed dword) 54065
-Eliminating unused variable (byte*) DTV_BLITTER_DEST_HI and assignment [114] (byte*) DTV_BLITTER_DEST_HI ← ((byte*)) (word/dword/signed dword) 54066
-Eliminating unused variable (byte*) DTV_BLITTER_DEST_MOD_LO and assignment [115] (byte*) DTV_BLITTER_DEST_MOD_LO ← ((byte*)) (word/dword/signed dword) 54067
-Eliminating unused variable (byte*) DTV_BLITTER_DEST_MOD_HI and assignment [116] (byte*) DTV_BLITTER_DEST_MOD_HI ← ((byte*)) (word/dword/signed dword) 54068
-Eliminating unused variable (byte*) DTV_BLITTER_DEST_LIN_LO and assignment [117] (byte*) DTV_BLITTER_DEST_LIN_LO ← ((byte*)) (word/dword/signed dword) 54069
-Eliminating unused variable (byte*) DTV_BLITTER_DEST_LIN_HI and assignment [118] (byte*) DTV_BLITTER_DEST_LIN_HI ← ((byte*)) (word/dword/signed dword) 54070
-Eliminating unused variable (byte*) DTV_BLITTER_DEST_STEP and assignment [119] (byte*) DTV_BLITTER_DEST_STEP ← ((byte*)) (word/dword/signed dword) 54071
-Eliminating unused variable (byte*) DTV_BLITTER_LEN_LO and assignment [120] (byte*) DTV_BLITTER_LEN_LO ← ((byte*)) (word/dword/signed dword) 54072
-Eliminating unused variable (byte*) DTV_BLITTER_LEN_HI and assignment [121] (byte*) DTV_BLITTER_LEN_HI ← ((byte*)) (word/dword/signed dword) 54073
-Eliminating unused variable (byte*) DTV_BLITTER_CONTROL and assignment [122] (byte*) DTV_BLITTER_CONTROL ← ((byte*)) (word/dword/signed dword) 54074
-Eliminating unused variable (byte) DTV_BLIT_FORCE_START and assignment [123] (byte) DTV_BLIT_FORCE_START ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) DTV_BLIT_SRCA_FWD and assignment [124] (byte) DTV_BLIT_SRCA_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 2
-Eliminating unused variable (byte) DTV_BLIT_SRCB_FWD and assignment [125] (byte) DTV_BLIT_SRCB_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 4
-Eliminating unused variable (byte) DTV_BLIT_DEST_FWD and assignment [126] (byte) DTV_BLIT_DEST_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 8
-Eliminating unused variable (byte) DTV_BLIT_VIC_IRQ and assignment [127] (byte) DTV_BLIT_VIC_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 16
-Eliminating unused variable (byte) DTV_BLIT_CIA_IRQ and assignment [128] (byte) DTV_BLIT_CIA_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 32
-Eliminating unused variable (byte) DTV_BLIT_VBLANK and assignment [129] (byte) DTV_BLIT_VBLANK ← (byte/signed byte/word/signed word/dword/signed dword) 64
-Eliminating unused variable (byte) DTV_BLIT_IRQ_EN and assignment [130] (byte) DTV_BLIT_IRQ_EN ← (byte/word/signed word/dword/signed dword) 128
-Eliminating unused variable (byte*) DTV_BLITTER_TRANSPARANCY and assignment [131] (byte*) DTV_BLITTER_TRANSPARANCY ← ((byte*)) (word/dword/signed dword) 54075
-Eliminating unused variable (byte) DTV_BLIT_DISABLE_B and assignment [132] (byte) DTV_BLIT_DISABLE_B ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) DTV_BLIT_WRITE_TRANSPARENT and assignment [133] (byte) DTV_BLIT_WRITE_TRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 2
-Eliminating unused variable (byte) DTV_BLIT_WRITE_NONTRANSPARENT and assignment [134] (byte) DTV_BLIT_WRITE_NONTRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 4
-Eliminating unused variable (byte) DTV_BLIT_TRANSPARANCY_NONE and assignment [135] (byte) DTV_BLIT_TRANSPARANCY_NONE ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (byte*) DTV_BLITTER_ALU and assignment [136] (byte*) DTV_BLITTER_ALU ← ((byte*)) (word/dword/signed dword) 54078
-Eliminating unused variable (byte) DTV_BLIT_SHIFT0 and assignment [137] (byte) DTV_BLIT_SHIFT0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (byte) DTV_BLIT_SHIFT1 and assignment [138] (byte) DTV_BLIT_SHIFT1 ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) DTV_BLIT_SHIFT2 and assignment [139] (byte) DTV_BLIT_SHIFT2 ← (byte/signed byte/word/signed word/dword/signed dword) 2
-Eliminating unused variable (byte) DTV_BLIT_SHIFT3 and assignment [140] (byte) DTV_BLIT_SHIFT3 ← (byte/signed byte/word/signed word/dword/signed dword) 3
-Eliminating unused variable (byte) DTV_BLIT_SHIFT4 and assignment [141] (byte) DTV_BLIT_SHIFT4 ← (byte/signed byte/word/signed word/dword/signed dword) 4
-Eliminating unused variable (byte) DTV_BLIT_SHIFT5 and assignment [142] (byte) DTV_BLIT_SHIFT5 ← (byte/signed byte/word/signed word/dword/signed dword) 5
-Eliminating unused variable (byte) DTV_BLIT_SHIFT6 and assignment [143] (byte) DTV_BLIT_SHIFT6 ← (byte/signed byte/word/signed word/dword/signed dword) 6
-Eliminating unused variable (byte) DTV_BLIT_SHIFT7 and assignment [144] (byte) DTV_BLIT_SHIFT7 ← (byte/signed byte/word/signed word/dword/signed dword) 7
-Eliminating unused variable (byte) DTV_BLIT_AND and assignment [145] (byte) DTV_BLIT_AND ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (byte) DTV_BLIT_NAND and assignment [146] (byte) DTV_BLIT_NAND ← (byte/signed byte/word/signed word/dword/signed dword) 8
-Eliminating unused variable (byte) DTV_BLIT_NOR and assignment [147] (byte) DTV_BLIT_NOR ← (byte/signed byte/word/signed word/dword/signed dword) 16
-Eliminating unused variable (byte) DTV_BLIT_OR and assignment [148] (byte) DTV_BLIT_OR ← (byte/signed byte/word/signed word/dword/signed dword) 24
-Eliminating unused variable (byte) DTV_BLIT_XOR and assignment [149] (byte) DTV_BLIT_XOR ← (byte/signed byte/word/signed word/dword/signed dword) 32
-Eliminating unused variable (byte) DTV_BLIT_XNOR and assignment [150] (byte) DTV_BLIT_XNOR ← (byte/signed byte/word/signed word/dword/signed dword) 40
-Eliminating unused variable (byte) DTV_BLIT_ADD and assignment [151] (byte) DTV_BLIT_ADD ← (byte/signed byte/word/signed word/dword/signed dword) 48
-Eliminating unused variable (byte) DTV_BLIT_SUB and assignment [152] (byte) DTV_BLIT_SUB ← (byte/signed byte/word/signed word/dword/signed dword) 56
-Eliminating unused variable (byte*) DTV_BLITTER_CONTROL2 and assignment [153] (byte*) DTV_BLITTER_CONTROL2 ← ((byte*)) (word/dword/signed dword) 54079
-Eliminating unused variable (byte) DTV_BLIT_CLEAR_IRQ and assignment [154] (byte) DTV_BLIT_CLEAR_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) DTV_BLIT_SRCA_CONT and assignment [155] (byte) DTV_BLIT_SRCA_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 2
-Eliminating unused variable (byte) DTV_BLIT_SRCB_CONT and assignment [156] (byte) DTV_BLIT_SRCB_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 4
-Eliminating unused variable (byte) DTV_BLIT_DEST_CONT and assignment [157] (byte) DTV_BLIT_DEST_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 8
-Eliminating unused variable (byte) DTV_BLIT_STATUS_BUSY and assignment [158] (byte) DTV_BLIT_STATUS_BUSY ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) DTV_BLIT_STATUS_IRQ and assignment [159] (byte) DTV_BLIT_STATUS_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte*) IRQ_STATUS and assignment [40] (byte*) IRQ_STATUS ← ((byte*)) (word/dword/signed dword) 53273
+Eliminating unused variable (byte*) IRQ_ENABLE and assignment [41] (byte*) IRQ_ENABLE ← ((byte*)) (word/dword/signed dword) 53274
+Eliminating unused variable (byte) IRQ_RASTER and assignment [42] (byte) IRQ_RASTER ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) IRQ_COLLISION_BG and assignment [43] (byte) IRQ_COLLISION_BG ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) IRQ_COLLISION_SPRITE and assignment [44] (byte) IRQ_COLLISION_SPRITE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) IRQ_LIGHTPEN and assignment [45] (byte) IRQ_LIGHTPEN ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte*) COLS and assignment [46] (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
+Eliminating unused variable (byte*) CIA1_PORT_A and assignment [47] (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
+Eliminating unused variable (byte*) CIA1_PORT_B and assignment [48] (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
+Eliminating unused variable (byte*) CIA1_PORT_A_DDR and assignment [49] (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
+Eliminating unused variable (byte*) CIA1_PORT_B_DDR and assignment [50] (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
+Eliminating unused variable (byte*) CIA1_INTERRUPT and assignment [51] (byte*) CIA1_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56333
+Eliminating unused variable (byte) CIA_INTERRUPT_CLEAR and assignment [52] (byte) CIA_INTERRUPT_CLEAR ← (byte/signed byte/word/signed word/dword/signed dword) 127
+Eliminating unused variable (byte*) CIA2_PORT_A and assignment [53] (byte*) CIA2_PORT_A ← ((byte*)) (word/dword/signed dword) 56576
+Eliminating unused variable (byte*) CIA2_PORT_B and assignment [54] (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
+Eliminating unused variable (byte*) CIA2_PORT_A_DDR and assignment [55] (byte*) CIA2_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56578
+Eliminating unused variable (byte*) CIA2_PORT_B_DDR and assignment [56] (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
+Eliminating unused variable (byte*) CIA2_INTERRUPT and assignment [57] (byte*) CIA2_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56589
+Eliminating unused variable (void()**) KERNEL_IRQ and assignment [58] (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
+Eliminating unused variable (void()**) HARDWARE_IRQ and assignment [59] (void()**) HARDWARE_IRQ ← ((void()**)) (word/dword/signed dword) 65534
+Eliminating unused variable (byte) BLACK and assignment [60] (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte) WHITE and assignment [61] (byte) WHITE ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) RED and assignment [62] (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) CYAN and assignment [63] (byte) CYAN ← (byte/signed byte/word/signed word/dword/signed dword) 3
+Eliminating unused variable (byte) PURPLE and assignment [64] (byte) PURPLE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) GREEN and assignment [65] (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
+Eliminating unused variable (byte) BLUE and assignment [66] (byte) BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 6
+Eliminating unused variable (byte) YELLOW and assignment [67] (byte) YELLOW ← (byte/signed byte/word/signed word/dword/signed dword) 7
+Eliminating unused variable (byte) ORANGE and assignment [68] (byte) ORANGE ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) BROWN and assignment [69] (byte) BROWN ← (byte/signed byte/word/signed word/dword/signed dword) 9
+Eliminating unused variable (byte) PINK and assignment [70] (byte) PINK ← (byte/signed byte/word/signed word/dword/signed dword) 10
+Eliminating unused variable (byte) DARK_GREY and assignment [71] (byte) DARK_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 11
+Eliminating unused variable (byte) GREY and assignment [72] (byte) GREY ← (byte/signed byte/word/signed word/dword/signed dword) 12
+Eliminating unused variable (byte) LIGHT_GREEN and assignment [73] (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
+Eliminating unused variable (byte) LIGHT_BLUE and assignment [74] (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
+Eliminating unused variable (byte) LIGHT_GREY and assignment [75] (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
+Eliminating unused variable (byte) DTV_FEATURE_DISABLE_TIL_RESET and assignment [78] (byte) DTV_FEATURE_DISABLE_TIL_RESET ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) DTV_LINEAR and assignment [80] (byte) DTV_LINEAR ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_OVERSCAN and assignment [83] (byte) DTV_OVERSCAN ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) DTV_COLORRAM_OFF and assignment [84] (byte) DTV_COLORRAM_OFF ← (byte/signed byte/word/signed word/dword/signed dword) 16
+Eliminating unused variable (byte) DTV_CHUNKY and assignment [86] (byte) DTV_CHUNKY ← (byte/signed byte/word/signed word/dword/signed dword) 64
+Eliminating unused variable (byte[16]) DTV_PALETTE_DEFAULT and assignment [88] (byte[16]) DTV_PALETTE_DEFAULT ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 54, (byte/word/signed word/dword/signed dword) 190, (byte/signed byte/word/signed word/dword/signed dword) 88, (byte/word/signed word/dword/signed dword) 219, (byte/word/signed word/dword/signed dword) 134, (byte/word/signed word/dword/signed dword) 255, (byte/signed byte/word/signed word/dword/signed dword) 41, (byte/signed byte/word/signed word/dword/signed dword) 38, (byte/signed byte/word/signed word/dword/signed dword) 59, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/word/signed word/dword/signed dword) 223, (byte/word/signed word/dword/signed dword) 154, (byte/signed byte/word/signed word/dword/signed dword) 10 }
+Eliminating unused variable (byte*) DTV_PLANEA_START_LO and assignment [89] (byte*) DTV_PLANEA_START_LO ← ((byte*)) (word/dword/signed dword) 53306
+Eliminating unused variable (byte*) DTV_PLANEA_START_MI and assignment [90] (byte*) DTV_PLANEA_START_MI ← ((byte*)) (word/dword/signed dword) 53307
+Eliminating unused variable (byte*) DTV_PLANEA_START_HI and assignment [91] (byte*) DTV_PLANEA_START_HI ← ((byte*)) (word/dword/signed dword) 53317
+Eliminating unused variable (byte*) DTV_PLANEA_STEP and assignment [92] (byte*) DTV_PLANEA_STEP ← ((byte*)) (word/dword/signed dword) 53318
+Eliminating unused variable (byte*) DTV_PLANEA_MODULO_LO and assignment [93] (byte*) DTV_PLANEA_MODULO_LO ← ((byte*)) (word/dword/signed dword) 53304
+Eliminating unused variable (byte*) DTV_PLANEA_MODULO_HI and assignment [94] (byte*) DTV_PLANEA_MODULO_HI ← ((byte*)) (word/dword/signed dword) 53305
+Eliminating unused variable (byte*) DTV_PLANEB_START_LO and assignment [95] (byte*) DTV_PLANEB_START_LO ← ((byte*)) (word/dword/signed dword) 53321
+Eliminating unused variable (byte*) DTV_PLANEB_START_MI and assignment [96] (byte*) DTV_PLANEB_START_MI ← ((byte*)) (word/dword/signed dword) 53322
+Eliminating unused variable (byte*) DTV_PLANEB_START_HI and assignment [97] (byte*) DTV_PLANEB_START_HI ← ((byte*)) (word/dword/signed dword) 53323
+Eliminating unused variable (byte*) DTV_PLANEB_STEP and assignment [98] (byte*) DTV_PLANEB_STEP ← ((byte*)) (word/dword/signed dword) 53324
+Eliminating unused variable (byte*) DTV_PLANEB_MODULO_LO and assignment [99] (byte*) DTV_PLANEB_MODULO_LO ← ((byte*)) (word/dword/signed dword) 53319
+Eliminating unused variable (byte*) DTV_PLANEB_MODULO_HI and assignment [100] (byte*) DTV_PLANEB_MODULO_HI ← ((byte*)) (word/dword/signed dword) 53320
+Eliminating unused variable (byte*) DTV_SPRITE_BANK and assignment [101] (byte*) DTV_SPRITE_BANK ← ((byte*)) (word/dword/signed dword) 53325
+Eliminating unused variable (byte*) DTV_COLOR_BANK_LO and assignment [102] (byte*) DTV_COLOR_BANK_LO ← ((byte*)) (word/dword/signed dword) 53302
+Eliminating unused variable (byte*) DTV_COLOR_BANK_HI and assignment [103] (byte*) DTV_COLOR_BANK_HI ← ((byte*)) (word/dword/signed dword) 53303
+Eliminating unused variable (dword) DTV_COLOR_BANK_DEFAULT and assignment [104] (dword) DTV_COLOR_BANK_DEFAULT ← (dword/signed dword) 120832
+Eliminating unused variable (byte*) DTV_GRAPHICS_VIC_BANK and assignment [105] (byte*) DTV_GRAPHICS_VIC_BANK ← ((byte*)) (word/dword/signed dword) 53309
+Eliminating unused variable (byte*) DTV_GRAPHICS_HICOL_BANK and assignment [106] (byte*) DTV_GRAPHICS_HICOL_BANK ← ((byte*)) (word/dword/signed dword) 53310
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_LO and assignment [107] (byte*) DTV_BLITTER_SRCA_LO ← ((byte*)) (word/dword/signed dword) 54048
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_MI and assignment [108] (byte*) DTV_BLITTER_SRCA_MI ← ((byte*)) (word/dword/signed dword) 54049
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_HI and assignment [109] (byte*) DTV_BLITTER_SRCA_HI ← ((byte*)) (word/dword/signed dword) 54050
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_MOD_LO and assignment [110] (byte*) DTV_BLITTER_SRCA_MOD_LO ← ((byte*)) (word/dword/signed dword) 54051
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_MOD_HI and assignment [111] (byte*) DTV_BLITTER_SRCA_MOD_HI ← ((byte*)) (word/dword/signed dword) 54052
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_LIN_LO and assignment [112] (byte*) DTV_BLITTER_SRCA_LIN_LO ← ((byte*)) (word/dword/signed dword) 54053
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_LIN_HI and assignment [113] (byte*) DTV_BLITTER_SRCA_LIN_HI ← ((byte*)) (word/dword/signed dword) 54054
+Eliminating unused variable (byte*) DTV_BLITTER_SRCA_STEP and assignment [114] (byte*) DTV_BLITTER_SRCA_STEP ← ((byte*)) (word/dword/signed dword) 54055
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_LO and assignment [115] (byte*) DTV_BLITTER_SRCB_LO ← ((byte*)) (word/dword/signed dword) 54056
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_MI and assignment [116] (byte*) DTV_BLITTER_SRCB_MI ← ((byte*)) (word/dword/signed dword) 54057
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_HI and assignment [117] (byte*) DTV_BLITTER_SRCB_HI ← ((byte*)) (word/dword/signed dword) 54058
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_MOD_LO and assignment [118] (byte*) DTV_BLITTER_SRCB_MOD_LO ← ((byte*)) (word/dword/signed dword) 54059
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_MOD_HI and assignment [119] (byte*) DTV_BLITTER_SRCB_MOD_HI ← ((byte*)) (word/dword/signed dword) 54060
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_LIN_LO and assignment [120] (byte*) DTV_BLITTER_SRCB_LIN_LO ← ((byte*)) (word/dword/signed dword) 54061
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_LIN_HI and assignment [121] (byte*) DTV_BLITTER_SRCB_LIN_HI ← ((byte*)) (word/dword/signed dword) 54062
+Eliminating unused variable (byte*) DTV_BLITTER_SRCB_STEP and assignment [122] (byte*) DTV_BLITTER_SRCB_STEP ← ((byte*)) (word/dword/signed dword) 54063
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_LO and assignment [123] (byte*) DTV_BLITTER_DEST_LO ← ((byte*)) (word/dword/signed dword) 54064
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_MI and assignment [124] (byte*) DTV_BLITTER_DEST_MI ← ((byte*)) (word/dword/signed dword) 54065
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_HI and assignment [125] (byte*) DTV_BLITTER_DEST_HI ← ((byte*)) (word/dword/signed dword) 54066
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_MOD_LO and assignment [126] (byte*) DTV_BLITTER_DEST_MOD_LO ← ((byte*)) (word/dword/signed dword) 54067
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_MOD_HI and assignment [127] (byte*) DTV_BLITTER_DEST_MOD_HI ← ((byte*)) (word/dword/signed dword) 54068
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_LIN_LO and assignment [128] (byte*) DTV_BLITTER_DEST_LIN_LO ← ((byte*)) (word/dword/signed dword) 54069
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_LIN_HI and assignment [129] (byte*) DTV_BLITTER_DEST_LIN_HI ← ((byte*)) (word/dword/signed dword) 54070
+Eliminating unused variable (byte*) DTV_BLITTER_DEST_STEP and assignment [130] (byte*) DTV_BLITTER_DEST_STEP ← ((byte*)) (word/dword/signed dword) 54071
+Eliminating unused variable (byte*) DTV_BLITTER_LEN_LO and assignment [131] (byte*) DTV_BLITTER_LEN_LO ← ((byte*)) (word/dword/signed dword) 54072
+Eliminating unused variable (byte*) DTV_BLITTER_LEN_HI and assignment [132] (byte*) DTV_BLITTER_LEN_HI ← ((byte*)) (word/dword/signed dword) 54073
+Eliminating unused variable (byte*) DTV_BLITTER_CONTROL and assignment [133] (byte*) DTV_BLITTER_CONTROL ← ((byte*)) (word/dword/signed dword) 54074
+Eliminating unused variable (byte) DTV_BLIT_FORCE_START and assignment [134] (byte) DTV_BLIT_FORCE_START ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_SRCA_FWD and assignment [135] (byte) DTV_BLIT_SRCA_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) DTV_BLIT_SRCB_FWD and assignment [136] (byte) DTV_BLIT_SRCB_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) DTV_BLIT_DEST_FWD and assignment [137] (byte) DTV_BLIT_DEST_FWD ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) DTV_BLIT_VIC_IRQ and assignment [138] (byte) DTV_BLIT_VIC_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 16
+Eliminating unused variable (byte) DTV_BLIT_CIA_IRQ and assignment [139] (byte) DTV_BLIT_CIA_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 32
+Eliminating unused variable (byte) DTV_BLIT_VBLANK and assignment [140] (byte) DTV_BLIT_VBLANK ← (byte/signed byte/word/signed word/dword/signed dword) 64
+Eliminating unused variable (byte) DTV_BLIT_IRQ_EN and assignment [141] (byte) DTV_BLIT_IRQ_EN ← (byte/word/signed word/dword/signed dword) 128
+Eliminating unused variable (byte*) DTV_BLITTER_TRANSPARANCY and assignment [142] (byte*) DTV_BLITTER_TRANSPARANCY ← ((byte*)) (word/dword/signed dword) 54075
+Eliminating unused variable (byte) DTV_BLIT_DISABLE_B and assignment [143] (byte) DTV_BLIT_DISABLE_B ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_WRITE_TRANSPARENT and assignment [144] (byte) DTV_BLIT_WRITE_TRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) DTV_BLIT_WRITE_NONTRANSPARENT and assignment [145] (byte) DTV_BLIT_WRITE_NONTRANSPARENT ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) DTV_BLIT_TRANSPARANCY_NONE and assignment [146] (byte) DTV_BLIT_TRANSPARANCY_NONE ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte*) DTV_BLITTER_ALU and assignment [147] (byte*) DTV_BLITTER_ALU ← ((byte*)) (word/dword/signed dword) 54078
+Eliminating unused variable (byte) DTV_BLIT_SHIFT0 and assignment [148] (byte) DTV_BLIT_SHIFT0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte) DTV_BLIT_SHIFT1 and assignment [149] (byte) DTV_BLIT_SHIFT1 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_SHIFT2 and assignment [150] (byte) DTV_BLIT_SHIFT2 ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) DTV_BLIT_SHIFT3 and assignment [151] (byte) DTV_BLIT_SHIFT3 ← (byte/signed byte/word/signed word/dword/signed dword) 3
+Eliminating unused variable (byte) DTV_BLIT_SHIFT4 and assignment [152] (byte) DTV_BLIT_SHIFT4 ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) DTV_BLIT_SHIFT5 and assignment [153] (byte) DTV_BLIT_SHIFT5 ← (byte/signed byte/word/signed word/dword/signed dword) 5
+Eliminating unused variable (byte) DTV_BLIT_SHIFT6 and assignment [154] (byte) DTV_BLIT_SHIFT6 ← (byte/signed byte/word/signed word/dword/signed dword) 6
+Eliminating unused variable (byte) DTV_BLIT_SHIFT7 and assignment [155] (byte) DTV_BLIT_SHIFT7 ← (byte/signed byte/word/signed word/dword/signed dword) 7
+Eliminating unused variable (byte) DTV_BLIT_AND and assignment [156] (byte) DTV_BLIT_AND ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte) DTV_BLIT_NAND and assignment [157] (byte) DTV_BLIT_NAND ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) DTV_BLIT_NOR and assignment [158] (byte) DTV_BLIT_NOR ← (byte/signed byte/word/signed word/dword/signed dword) 16
+Eliminating unused variable (byte) DTV_BLIT_OR and assignment [159] (byte) DTV_BLIT_OR ← (byte/signed byte/word/signed word/dword/signed dword) 24
+Eliminating unused variable (byte) DTV_BLIT_XOR and assignment [160] (byte) DTV_BLIT_XOR ← (byte/signed byte/word/signed word/dword/signed dword) 32
+Eliminating unused variable (byte) DTV_BLIT_XNOR and assignment [161] (byte) DTV_BLIT_XNOR ← (byte/signed byte/word/signed word/dword/signed dword) 40
+Eliminating unused variable (byte) DTV_BLIT_ADD and assignment [162] (byte) DTV_BLIT_ADD ← (byte/signed byte/word/signed word/dword/signed dword) 48
+Eliminating unused variable (byte) DTV_BLIT_SUB and assignment [163] (byte) DTV_BLIT_SUB ← (byte/signed byte/word/signed word/dword/signed dword) 56
+Eliminating unused variable (byte*) DTV_BLITTER_CONTROL2 and assignment [164] (byte*) DTV_BLITTER_CONTROL2 ← ((byte*)) (word/dword/signed dword) 54079
+Eliminating unused variable (byte) DTV_BLIT_CLEAR_IRQ and assignment [165] (byte) DTV_BLIT_CLEAR_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_SRCA_CONT and assignment [166] (byte) DTV_BLIT_SRCA_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) DTV_BLIT_SRCB_CONT and assignment [167] (byte) DTV_BLIT_SRCB_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) DTV_BLIT_DEST_CONT and assignment [168] (byte) DTV_BLIT_DEST_CONT ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) DTV_BLIT_STATUS_BUSY and assignment [169] (byte) DTV_BLIT_STATUS_BUSY ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) DTV_BLIT_STATUS_IRQ and assignment [170] (byte) DTV_BLIT_STATUS_IRQ ← (byte/signed byte/word/signed word/dword/signed dword) 2
 Removing empty block @1
 Removing empty block @2
 Removing empty block @4

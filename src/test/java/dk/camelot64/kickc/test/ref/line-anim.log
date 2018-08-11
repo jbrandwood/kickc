@@ -194,6 +194,13 @@ const byte VIC_CSEL = %00001000;
 const byte* D018 = $d018;
 const byte* VIC_MEMORY = $d018;
 
+const byte* IRQ_STATUS = $d019;
+const byte* IRQ_ENABLE = $d01a;
+const byte IRQ_RASTER = %00000001;
+const byte IRQ_COLLISION_BG = %00000010;
+const byte IRQ_COLLISION_SPRITE = %00000100;
+const byte IRQ_LIGHTPEN = %00001000;
+
 const byte* COLS = $d800;
 
 // CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -204,6 +211,10 @@ const byte* CIA1_PORT_B = $dc01;
 const byte* CIA1_PORT_A_DDR = $dc02;
 // CIA #1 Port B data direction register.
 const byte* CIA1_PORT_B_DDR = $dc03;
+// CIA#1 Interrupt Status & Control Register
+const byte* CIA1_INTERRUPT = $dc0d;
+// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+const byte CIA_INTERRUPT_CLEAR = $7f;
 
 // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
 const byte* CIA2_PORT_A = $dd00;
@@ -213,6 +224,14 @@ const byte* CIA2_PORT_B = $dd01;
 const byte* CIA2_PORT_A_DDR = $dd02;
 // CIA #2 Port B data direction register.
 const byte* CIA2_PORT_B_DDR = $dd03;
+// CIA#2 Interrupt Status & Control Register
+const byte* CIA2_INTERRUPT = $dd0d;
+
+// The vector used when the KERNAL serves IRQ interrupts
+const void()** KERNEL_IRQ = $0314;
+
+// The vector used when the HARDWARE serves IRQ interrupts
+const void()** HARDWARE_IRQ = $fffe;
 
 const byte BLACK = $0;
 const byte WHITE = $1;
@@ -449,14 +468,17 @@ SYMBOLS
 (byte*) BORDERCOL
 (byte) BROWN
 (byte*) CHARGEN
+(byte*) CIA1_INTERRUPT
 (byte*) CIA1_PORT_A
 (byte*) CIA1_PORT_A_DDR
 (byte*) CIA1_PORT_B
 (byte*) CIA1_PORT_B_DDR
+(byte*) CIA2_INTERRUPT
 (byte*) CIA2_PORT_A
 (byte*) CIA2_PORT_A_DDR
 (byte*) CIA2_PORT_B
 (byte*) CIA2_PORT_B_DDR
+(byte) CIA_INTERRUPT_CLEAR
 (byte*) COLS
 (byte) CYAN
 (byte*) D011
@@ -466,6 +488,14 @@ SYMBOLS
 (byte) DELAY
 (byte) GREEN
 (byte) GREY
+(void()**) HARDWARE_IRQ
+(byte) IRQ_COLLISION_BG
+(byte) IRQ_COLLISION_SPRITE
+(byte*) IRQ_ENABLE
+(byte) IRQ_LIGHTPEN
+(byte) IRQ_RASTER
+(byte*) IRQ_STATUS
+(void()**) KERNEL_IRQ
 (byte) LIGHT_BLUE
 (byte) LIGHT_GREEN
 (byte) LIGHT_GREY
@@ -892,15 +922,21 @@ Promoting word/dword/signed dword to byte* in VIC_CONTROL2 ← ((byte*)) 53270
 Promoting word/dword/signed dword to byte* in D016 ← ((byte*)) 53270
 Promoting word/dword/signed dword to byte* in D018 ← ((byte*)) 53272
 Promoting word/dword/signed dword to byte* in VIC_MEMORY ← ((byte*)) 53272
+Promoting word/dword/signed dword to byte* in IRQ_STATUS ← ((byte*)) 53273
+Promoting word/dword/signed dword to byte* in IRQ_ENABLE ← ((byte*)) 53274
 Promoting word/dword/signed dword to byte* in COLS ← ((byte*)) 55296
 Promoting word/dword/signed dword to byte* in CIA1_PORT_A ← ((byte*)) 56320
 Promoting word/dword/signed dword to byte* in CIA1_PORT_B ← ((byte*)) 56321
 Promoting word/dword/signed dword to byte* in CIA1_PORT_A_DDR ← ((byte*)) 56322
 Promoting word/dword/signed dword to byte* in CIA1_PORT_B_DDR ← ((byte*)) 56323
+Promoting word/dword/signed dword to byte* in CIA1_INTERRUPT ← ((byte*)) 56333
 Promoting word/dword/signed dword to byte* in CIA2_PORT_A ← ((byte*)) 56576
 Promoting word/dword/signed dword to byte* in CIA2_PORT_B ← ((byte*)) 56577
 Promoting word/dword/signed dword to byte* in CIA2_PORT_A_DDR ← ((byte*)) 56578
 Promoting word/dword/signed dword to byte* in CIA2_PORT_B_DDR ← ((byte*)) 56579
+Promoting word/dword/signed dword to byte* in CIA2_INTERRUPT ← ((byte*)) 56589
+Promoting word/signed word/dword/signed dword to void()** in KERNEL_IRQ ← ((void()**)) 788
+Promoting word/dword/signed dword to void()** in HARDWARE_IRQ ← ((void()**)) 65534
 Promoting word/dword/signed dword to byte* in BITMAP ← ((byte*)) 40960
 Promoting word/dword/signed dword to byte* in SCREEN ← ((byte*)) 34816
 INITIAL CONTROL FLOW GRAPH
@@ -945,15 +981,26 @@ INITIAL CONTROL FLOW GRAPH
   (byte) VIC_CSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
   (byte*) D018 ← ((byte*)) (word/dword/signed dword) 53272
   (byte*) VIC_MEMORY ← ((byte*)) (word/dword/signed dword) 53272
+  (byte*) IRQ_STATUS ← ((byte*)) (word/dword/signed dword) 53273
+  (byte*) IRQ_ENABLE ← ((byte*)) (word/dword/signed dword) 53274
+  (byte) IRQ_RASTER ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) IRQ_COLLISION_BG ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) IRQ_COLLISION_SPRITE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) IRQ_LIGHTPEN ← (byte/signed byte/word/signed word/dword/signed dword) 8
   (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
   (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
   (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
   (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
   (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
+  (byte*) CIA1_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56333
+  (byte) CIA_INTERRUPT_CLEAR ← (byte/signed byte/word/signed word/dword/signed dword) 127
   (byte*) CIA2_PORT_A ← ((byte*)) (word/dword/signed dword) 56576
   (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
   (byte*) CIA2_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56578
   (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
+  (byte*) CIA2_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56589
+  (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
+  (void()**) HARDWARE_IRQ ← ((void()**)) (word/dword/signed dword) 65534
   (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) WHITE ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
@@ -1638,36 +1685,47 @@ Eliminating unused variable (byte*) D016 and assignment [35] (byte*) D016 ← ((
 Eliminating unused variable (byte) VIC_MCM and assignment [36] (byte) VIC_MCM ← (byte/signed byte/word/signed word/dword/signed dword) 16
 Eliminating unused variable (byte) VIC_CSEL and assignment [37] (byte) VIC_CSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
 Eliminating unused variable (byte*) VIC_MEMORY and assignment [39] (byte*) VIC_MEMORY ← ((byte*)) (word/dword/signed dword) 53272
-Eliminating unused variable (byte*) COLS and assignment [40] (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
-Eliminating unused variable (byte*) CIA1_PORT_A and assignment [41] (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
-Eliminating unused variable (byte*) CIA1_PORT_B and assignment [42] (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
-Eliminating unused variable (byte*) CIA1_PORT_A_DDR and assignment [43] (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
-Eliminating unused variable (byte*) CIA1_PORT_B_DDR and assignment [44] (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
-Eliminating unused variable (byte*) CIA2_PORT_B and assignment [46] (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
-Eliminating unused variable (byte*) CIA2_PORT_B_DDR and assignment [48] (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
-Eliminating unused variable (byte) BLACK and assignment [49] (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (byte) WHITE and assignment [50] (byte) WHITE ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) RED and assignment [51] (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
-Eliminating unused variable (byte) CYAN and assignment [52] (byte) CYAN ← (byte/signed byte/word/signed word/dword/signed dword) 3
-Eliminating unused variable (byte) PURPLE and assignment [53] (byte) PURPLE ← (byte/signed byte/word/signed word/dword/signed dword) 4
-Eliminating unused variable (byte) GREEN and assignment [54] (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
-Eliminating unused variable (byte) BLUE and assignment [55] (byte) BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 6
-Eliminating unused variable (byte) YELLOW and assignment [56] (byte) YELLOW ← (byte/signed byte/word/signed word/dword/signed dword) 7
-Eliminating unused variable (byte) ORANGE and assignment [57] (byte) ORANGE ← (byte/signed byte/word/signed word/dword/signed dword) 8
-Eliminating unused variable (byte) BROWN and assignment [58] (byte) BROWN ← (byte/signed byte/word/signed word/dword/signed dword) 9
-Eliminating unused variable (byte) PINK and assignment [59] (byte) PINK ← (byte/signed byte/word/signed word/dword/signed dword) 10
-Eliminating unused variable (byte) DARK_GREY and assignment [60] (byte) DARK_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 11
-Eliminating unused variable (byte) GREY and assignment [61] (byte) GREY ← (byte/signed byte/word/signed word/dword/signed dword) 12
-Eliminating unused variable (byte) LIGHT_GREEN and assignment [62] (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
-Eliminating unused variable (byte) LIGHT_BLUE and assignment [63] (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
-Eliminating unused variable (byte) LIGHT_GREY and assignment [64] (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
-Eliminating unused variable (byte) rem8u and assignment [65] (byte) rem8u ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (signed byte) rem8s and assignment [95] (signed byte) rem8s ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (signed word) rem16s and assignment [96] (signed word) rem16s ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable rem16s(null) and assignment [130] rem16s(null) ← (signed word~) divr16s::$20
-Eliminating unused variable rem16s(null) and assignment [135] rem16s(null) ← (signed word~) divr16s::$17
-Eliminating unused variable (byte) SIZE and assignment [143] (byte) SIZE ← (byte/signed byte/word/signed word/dword/signed dword) 4
-Eliminating unused variable (byte[4]) frame and assignment [154] (byte[4]) frame ← { fill( 4, 0) }
+Eliminating unused variable (byte*) IRQ_STATUS and assignment [40] (byte*) IRQ_STATUS ← ((byte*)) (word/dword/signed dword) 53273
+Eliminating unused variable (byte*) IRQ_ENABLE and assignment [41] (byte*) IRQ_ENABLE ← ((byte*)) (word/dword/signed dword) 53274
+Eliminating unused variable (byte) IRQ_RASTER and assignment [42] (byte) IRQ_RASTER ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) IRQ_COLLISION_BG and assignment [43] (byte) IRQ_COLLISION_BG ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) IRQ_COLLISION_SPRITE and assignment [44] (byte) IRQ_COLLISION_SPRITE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) IRQ_LIGHTPEN and assignment [45] (byte) IRQ_LIGHTPEN ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte*) COLS and assignment [46] (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
+Eliminating unused variable (byte*) CIA1_PORT_A and assignment [47] (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
+Eliminating unused variable (byte*) CIA1_PORT_B and assignment [48] (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
+Eliminating unused variable (byte*) CIA1_PORT_A_DDR and assignment [49] (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
+Eliminating unused variable (byte*) CIA1_PORT_B_DDR and assignment [50] (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
+Eliminating unused variable (byte*) CIA1_INTERRUPT and assignment [51] (byte*) CIA1_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56333
+Eliminating unused variable (byte) CIA_INTERRUPT_CLEAR and assignment [52] (byte) CIA_INTERRUPT_CLEAR ← (byte/signed byte/word/signed word/dword/signed dword) 127
+Eliminating unused variable (byte*) CIA2_PORT_B and assignment [54] (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
+Eliminating unused variable (byte*) CIA2_PORT_B_DDR and assignment [56] (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
+Eliminating unused variable (byte*) CIA2_INTERRUPT and assignment [57] (byte*) CIA2_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56589
+Eliminating unused variable (void()**) KERNEL_IRQ and assignment [58] (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
+Eliminating unused variable (void()**) HARDWARE_IRQ and assignment [59] (void()**) HARDWARE_IRQ ← ((void()**)) (word/dword/signed dword) 65534
+Eliminating unused variable (byte) BLACK and assignment [60] (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (byte) WHITE and assignment [61] (byte) WHITE ← (byte/signed byte/word/signed word/dword/signed dword) 1
+Eliminating unused variable (byte) RED and assignment [62] (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) CYAN and assignment [63] (byte) CYAN ← (byte/signed byte/word/signed word/dword/signed dword) 3
+Eliminating unused variable (byte) PURPLE and assignment [64] (byte) PURPLE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) GREEN and assignment [65] (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
+Eliminating unused variable (byte) BLUE and assignment [66] (byte) BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 6
+Eliminating unused variable (byte) YELLOW and assignment [67] (byte) YELLOW ← (byte/signed byte/word/signed word/dword/signed dword) 7
+Eliminating unused variable (byte) ORANGE and assignment [68] (byte) ORANGE ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) BROWN and assignment [69] (byte) BROWN ← (byte/signed byte/word/signed word/dword/signed dword) 9
+Eliminating unused variable (byte) PINK and assignment [70] (byte) PINK ← (byte/signed byte/word/signed word/dword/signed dword) 10
+Eliminating unused variable (byte) DARK_GREY and assignment [71] (byte) DARK_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 11
+Eliminating unused variable (byte) GREY and assignment [72] (byte) GREY ← (byte/signed byte/word/signed word/dword/signed dword) 12
+Eliminating unused variable (byte) LIGHT_GREEN and assignment [73] (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
+Eliminating unused variable (byte) LIGHT_BLUE and assignment [74] (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
+Eliminating unused variable (byte) LIGHT_GREY and assignment [75] (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
+Eliminating unused variable (byte) rem8u and assignment [76] (byte) rem8u ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (signed byte) rem8s and assignment [106] (signed byte) rem8s ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable (signed word) rem16s and assignment [107] (signed word) rem16s ← (byte/signed byte/word/signed word/dword/signed dword) 0
+Eliminating unused variable rem16s(null) and assignment [141] rem16s(null) ← (signed word~) divr16s::$20
+Eliminating unused variable rem16s(null) and assignment [146] rem16s(null) ← (signed word~) divr16s::$17
+Eliminating unused variable (byte) SIZE and assignment [154] (byte) SIZE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte[4]) frame and assignment [165] (byte[4]) frame ← { fill( 4, 0) }
 Eliminating unused variable - keeping the call (void~) main::$5
 Eliminating unused variable - keeping the call (void~) main::$6
 Eliminating unused variable - keeping the call (void~) main::$7

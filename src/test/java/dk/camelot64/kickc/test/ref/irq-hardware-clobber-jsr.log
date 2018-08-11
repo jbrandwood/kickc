@@ -1,34 +1,6 @@
 PARSING src/test/java/dk/camelot64/kickc/test/kc/irq-hardware-clobber-jsr.kc
 // A minimal working raster hardware IRQ with clobber-based register savings
-
-const void()** KERNEL_IRQ = $0314;
-const void()** HARDWARE_IRQ = $fffe;
-const byte* RASTER = $d012;
-const byte* VIC_CONTROL = $d011;
-const byte* IRQ_STATUS = $d019;
-const byte* IRQ_ENABLE = $d01a;
-const byte IRQ_RASTER = %00000001;
-const byte IRQ_COLLISION_BG = %00000010;
-const byte IRQ_COLLISION_SPRITE = %00000100;
-const byte IRQ_LIGHTPEN = %00001000;
-const byte* BGCOL = $d020;
-const byte* FGCOL = $d021;
-const byte WHITE = 1;
-const byte BLACK = 0;
-
-const byte* CIA1_INTERRUPT = $dc0d;
-const byte CIA_INTERRUPT_CLEAR = $7f;
-
-// Processor port data direction register
-const byte* PROCPORT_DDR = $00;
-// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
-const byte PROCPORT_DDR_MEMORY_MASK = %00000111;
-
-// Processor Port Register controlling RAM/ROM configuration and the datasette
-const byte* PROCPORT = $01;
-// RAM in $A000, $E000 I/O in $D000
-const byte PROCPORT_RAM_IO          = %00110101;
-// RAM in $A000, $E000 CHAR ROM in $D000
+import "c64"
 
 void main() {
     asm { sei }
@@ -46,7 +18,7 @@ void main() {
     *HARDWARE_IRQ = &irq;
     asm { cli }
     while(true) {
-        (*FGCOL)++;
+        (*BORDERCOL)++;
     }
 }
 
@@ -61,19 +33,179 @@ void do_irq() {
     // Acknowledge the IRQ
     *IRQ_STATUS = IRQ_RASTER;
 }
-Adding pre/post-modifier *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
+Importing c64
+PARSING src/test/java/dk/camelot64/kickc/test/kc/c64.kc
+// Commodore 64 Registers and Constants
+
+// Processor port data direction register
+const byte* PROCPORT_DDR = $00;
+// Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+const byte PROCPORT_DDR_MEMORY_MASK = %00000111;
+
+// Processor Port Register controlling RAM/ROM configuration and the datasette
+const byte* PROCPORT = $01;
+// RAM in all three areas $A000, $D000, $E000
+const byte PROCPORT_RAM_ALL         = %00110000;
+// RAM in $A000, $E000 I/O in $D000
+const byte PROCPORT_RAM_IO          = %00110101;
+// RAM in $A000, $E000 CHAR ROM in $D000
+const byte PROCPORT_RAM_CHARROM     = %00110001;
+// RAM in $A000, I/O in $D000, KERNEL in $E000
+const byte PROCPORT_KERNEL_IO       = %00110110;
+// BASIC in $A000, I/O in $D000, KERNEL in $E000
+const byte PROCPORT_BASIC_KERNEL_IO = %00110111;
+
+const byte* CHARGEN = $d000;
+
+const byte* SPRITES_XPOS = $d000;
+const byte* SPRITES_YPOS = $d001;
+const byte* SPRITES_XMSB = $d010;
+const byte* RASTER = $d012;
+const byte* SPRITES_ENABLE = $d015;
+const byte* SPRITES_EXPAND_Y = $d017;
+const byte* SPRITES_PRIORITY = $d01b;
+const byte* SPRITES_MC = $d01c;
+const byte* SPRITES_EXPAND_X = $d01d;
+const byte* BORDERCOL = $d020;
+const byte* BGCOL = $d021;
+const byte* BGCOL1 = $d021;
+const byte* BGCOL2 = $d022;
+const byte* BGCOL3 = $d023;
+const byte* BGCOL4 = $d024;
+const byte* SPRITES_MC1 = $d025;
+const byte* SPRITES_MC2 = $d026;
+const byte* SPRITES_COLS = $d027;
+
+const byte* VIC_CONTROL = $d011;
+const byte* D011 = $d011;
+const byte VIC_RST8 = %10000000;
+const byte VIC_ECM =  %01000000;
+const byte VIC_BMM =  %00100000;
+const byte VIC_DEN =  %00010000;
+const byte VIC_RSEL = %00001000;
+
+const byte* VIC_CONTROL2 = $d016;
+const byte* D016 = $d016;
+const byte VIC_MCM =  %00010000;
+const byte VIC_CSEL = %00001000;
+
+const byte* D018 = $d018;
+const byte* VIC_MEMORY = $d018;
+
+const byte* IRQ_STATUS = $d019;
+const byte* IRQ_ENABLE = $d01a;
+const byte IRQ_RASTER = %00000001;
+const byte IRQ_COLLISION_BG = %00000010;
+const byte IRQ_COLLISION_SPRITE = %00000100;
+const byte IRQ_LIGHTPEN = %00001000;
+
+const byte* COLS = $d800;
+
+// CIA#1 Port A: keyboard matrix columns and joystick #2
+const byte* CIA1_PORT_A = $dc00;
+// CIA#1 Port B: keyboard matrix rows and joystick #1.
+const byte* CIA1_PORT_B = $dc01;
+// CIA #1 Port A data direction register.
+const byte* CIA1_PORT_A_DDR = $dc02;
+// CIA #1 Port B data direction register.
+const byte* CIA1_PORT_B_DDR = $dc03;
+// CIA#1 Interrupt Status & Control Register
+const byte* CIA1_INTERRUPT = $dc0d;
+// Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+const byte CIA_INTERRUPT_CLEAR = $7f;
+
+// CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+const byte* CIA2_PORT_A = $dd00;
+// CIA#2 Port B: RS-232
+const byte* CIA2_PORT_B = $dd01;
+// CIA #2 Port A data direction register.
+const byte* CIA2_PORT_A_DDR = $dd02;
+// CIA #2 Port B data direction register.
+const byte* CIA2_PORT_B_DDR = $dd03;
+// CIA#2 Interrupt Status & Control Register
+const byte* CIA2_INTERRUPT = $dd0d;
+
+// The vector used when the KERNAL serves IRQ interrupts
+const void()** KERNEL_IRQ = $0314;
+
+// The vector used when the HARDWARE serves IRQ interrupts
+const void()** HARDWARE_IRQ = $fffe;
+
+const byte BLACK = $0;
+const byte WHITE = $1;
+const byte RED = $2;
+const byte CYAN = $3;
+const byte PURPLE = $4;
+const byte GREEN = $5;
+const byte BLUE = $6;
+const byte YELLOW = $7;
+const byte ORANGE = $8;
+const byte BROWN = $9;
+const byte PINK = $a;
+const byte DARK_GREY= $b;
+const byte GREY = $c;
+const byte LIGHT_GREEN = $d;
+const byte LIGHT_BLUE = $e;
+const byte LIGHT_GREY = $f;
+
+// Get the value to store into D018 to display a specific screen and charset/bitmap
+// Optimized for ASM from (byte)((((word)screen&$3fff)/$40)|(((word)charset&$3fff)/$400));
+inline byte toD018(byte* screen, byte* gfx) {
+    return (>((((word)screen&$3fff)<<2)))|(((>((word)gfx))>>2)&$f);
+}
+
+// Get the value to store into DD00 (CIA 2 port A) to choose a specific VIC bank
+// Optimized for ASM from %00000011 ^ (byte)((word)gfx/$4000)
+inline byte toDd00(byte* gfx) {
+    return %00000011 ^ (>((word)gfx))>>6;
+}
+
+// Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed
+inline void vicSelectGfxBank(byte* gfx) {
+    *CIA2_PORT_A_DDR = %00000011;
+    *CIA2_PORT_A = toDd00(gfx);
+}
+
+Adding pre/post-modifier *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
 Resolved forward reference irq to interrupt(HARDWARE_CLOBBER)(void()) irq()
 SYMBOLS
 (label) @1
 (label) @2
 (label) @3
+(label) @4
+(label) @5
+(label) @6
 (label) @begin
 (label) @end
 (byte*) BGCOL
+(byte*) BGCOL1
+(byte*) BGCOL2
+(byte*) BGCOL3
+(byte*) BGCOL4
 (byte) BLACK
+(byte) BLUE
+(byte*) BORDERCOL
+(byte) BROWN
+(byte*) CHARGEN
 (byte*) CIA1_INTERRUPT
+(byte*) CIA1_PORT_A
+(byte*) CIA1_PORT_A_DDR
+(byte*) CIA1_PORT_B
+(byte*) CIA1_PORT_B_DDR
+(byte*) CIA2_INTERRUPT
+(byte*) CIA2_PORT_A
+(byte*) CIA2_PORT_A_DDR
+(byte*) CIA2_PORT_B
+(byte*) CIA2_PORT_B_DDR
 (byte) CIA_INTERRUPT_CLEAR
-(byte*) FGCOL
+(byte*) COLS
+(byte) CYAN
+(byte*) D011
+(byte*) D016
+(byte*) D018
+(byte) DARK_GREY
+(byte) GREEN
+(byte) GREY
 (void()**) HARDWARE_IRQ
 (byte) IRQ_COLLISION_BG
 (byte) IRQ_COLLISION_SPRITE
@@ -82,13 +214,45 @@ SYMBOLS
 (byte) IRQ_RASTER
 (byte*) IRQ_STATUS
 (void()**) KERNEL_IRQ
+(byte) LIGHT_BLUE
+(byte) LIGHT_GREEN
+(byte) LIGHT_GREY
+(byte) ORANGE
+(byte) PINK
 (byte*) PROCPORT
+(byte) PROCPORT_BASIC_KERNEL_IO
 (byte*) PROCPORT_DDR
 (byte) PROCPORT_DDR_MEMORY_MASK
+(byte) PROCPORT_KERNEL_IO
+(byte) PROCPORT_RAM_ALL
+(byte) PROCPORT_RAM_CHARROM
 (byte) PROCPORT_RAM_IO
+(byte) PURPLE
 (byte*) RASTER
+(byte) RED
+(byte*) SPRITES_COLS
+(byte*) SPRITES_ENABLE
+(byte*) SPRITES_EXPAND_X
+(byte*) SPRITES_EXPAND_Y
+(byte*) SPRITES_MC
+(byte*) SPRITES_MC1
+(byte*) SPRITES_MC2
+(byte*) SPRITES_PRIORITY
+(byte*) SPRITES_XMSB
+(byte*) SPRITES_XPOS
+(byte*) SPRITES_YPOS
+(byte) VIC_BMM
 (byte*) VIC_CONTROL
+(byte*) VIC_CONTROL2
+(byte) VIC_CSEL
+(byte) VIC_DEN
+(byte) VIC_ECM
+(byte) VIC_MCM
+(byte*) VIC_MEMORY
+(byte) VIC_RSEL
+(byte) VIC_RST8
 (byte) WHITE
+(byte) YELLOW
 (void()) do_irq()
 (label) do_irq::@return
 interrupt(HARDWARE_CLOBBER)(void()) irq()
@@ -103,41 +267,201 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (label) main::@5
 (label) main::@6
 (label) main::@return
+inline (byte()) toD018((byte*) toD018::screen , (byte*) toD018::gfx)
+(word~) toD018::$0
+(word~) toD018::$1
+(word~) toD018::$2
+(byte~) toD018::$3
+(word~) toD018::$4
+(byte~) toD018::$5
+(byte~) toD018::$6
+(byte~) toD018::$7
+(byte~) toD018::$8
+(label) toD018::@1
+(label) toD018::@return
+(byte*) toD018::gfx
+(byte) toD018::return
+(byte*) toD018::screen
+inline (byte()) toDd00((byte*) toDd00::gfx)
+(word~) toDd00::$0
+(byte~) toDd00::$1
+(byte~) toDd00::$2
+(byte/word/dword~) toDd00::$3
+(label) toDd00::@1
+(label) toDd00::@return
+(byte*) toDd00::gfx
+(byte) toDd00::return
+inline (void()) vicSelectGfxBank((byte*) vicSelectGfxBank::gfx)
+(byte~) vicSelectGfxBank::$0
+(label) vicSelectGfxBank::@return
+(byte*) vicSelectGfxBank::gfx
 
-Promoting word/signed word/dword/signed dword to void()** in KERNEL_IRQ ← ((void()**)) 788
-Promoting word/dword/signed dword to void()** in HARDWARE_IRQ ← ((void()**)) 65534
-Promoting word/dword/signed dword to byte* in RASTER ← ((byte*)) 53266
-Promoting word/dword/signed dword to byte* in VIC_CONTROL ← ((byte*)) 53265
-Promoting word/dword/signed dword to byte* in IRQ_STATUS ← ((byte*)) 53273
-Promoting word/dword/signed dword to byte* in IRQ_ENABLE ← ((byte*)) 53274
-Promoting word/dword/signed dword to byte* in BGCOL ← ((byte*)) 53280
-Promoting word/dword/signed dword to byte* in FGCOL ← ((byte*)) 53281
-Promoting word/dword/signed dword to byte* in CIA1_INTERRUPT ← ((byte*)) 56333
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT_DDR ← ((byte*)) 0
 Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT ← ((byte*)) 1
+Promoting word/dword/signed dword to byte* in CHARGEN ← ((byte*)) 53248
+Promoting word/dword/signed dword to byte* in SPRITES_XPOS ← ((byte*)) 53248
+Promoting word/dword/signed dword to byte* in SPRITES_YPOS ← ((byte*)) 53249
+Promoting word/dword/signed dword to byte* in SPRITES_XMSB ← ((byte*)) 53264
+Promoting word/dword/signed dword to byte* in RASTER ← ((byte*)) 53266
+Promoting word/dword/signed dword to byte* in SPRITES_ENABLE ← ((byte*)) 53269
+Promoting word/dword/signed dword to byte* in SPRITES_EXPAND_Y ← ((byte*)) 53271
+Promoting word/dword/signed dword to byte* in SPRITES_PRIORITY ← ((byte*)) 53275
+Promoting word/dword/signed dword to byte* in SPRITES_MC ← ((byte*)) 53276
+Promoting word/dword/signed dword to byte* in SPRITES_EXPAND_X ← ((byte*)) 53277
+Promoting word/dword/signed dword to byte* in BORDERCOL ← ((byte*)) 53280
+Promoting word/dword/signed dword to byte* in BGCOL ← ((byte*)) 53281
+Promoting word/dword/signed dword to byte* in BGCOL1 ← ((byte*)) 53281
+Promoting word/dword/signed dword to byte* in BGCOL2 ← ((byte*)) 53282
+Promoting word/dword/signed dword to byte* in BGCOL3 ← ((byte*)) 53283
+Promoting word/dword/signed dword to byte* in BGCOL4 ← ((byte*)) 53284
+Promoting word/dword/signed dword to byte* in SPRITES_MC1 ← ((byte*)) 53285
+Promoting word/dword/signed dword to byte* in SPRITES_MC2 ← ((byte*)) 53286
+Promoting word/dword/signed dword to byte* in SPRITES_COLS ← ((byte*)) 53287
+Promoting word/dword/signed dword to byte* in VIC_CONTROL ← ((byte*)) 53265
+Promoting word/dword/signed dword to byte* in D011 ← ((byte*)) 53265
+Promoting word/dword/signed dword to byte* in VIC_CONTROL2 ← ((byte*)) 53270
+Promoting word/dword/signed dword to byte* in D016 ← ((byte*)) 53270
+Promoting word/dword/signed dword to byte* in D018 ← ((byte*)) 53272
+Promoting word/dword/signed dword to byte* in VIC_MEMORY ← ((byte*)) 53272
+Promoting word/dword/signed dword to byte* in IRQ_STATUS ← ((byte*)) 53273
+Promoting word/dword/signed dword to byte* in IRQ_ENABLE ← ((byte*)) 53274
+Promoting word/dword/signed dword to byte* in COLS ← ((byte*)) 55296
+Promoting word/dword/signed dword to byte* in CIA1_PORT_A ← ((byte*)) 56320
+Promoting word/dword/signed dword to byte* in CIA1_PORT_B ← ((byte*)) 56321
+Promoting word/dword/signed dword to byte* in CIA1_PORT_A_DDR ← ((byte*)) 56322
+Promoting word/dword/signed dword to byte* in CIA1_PORT_B_DDR ← ((byte*)) 56323
+Promoting word/dword/signed dword to byte* in CIA1_INTERRUPT ← ((byte*)) 56333
+Promoting word/dword/signed dword to byte* in CIA2_PORT_A ← ((byte*)) 56576
+Promoting word/dword/signed dword to byte* in CIA2_PORT_B ← ((byte*)) 56577
+Promoting word/dword/signed dword to byte* in CIA2_PORT_A_DDR ← ((byte*)) 56578
+Promoting word/dword/signed dword to byte* in CIA2_PORT_B_DDR ← ((byte*)) 56579
+Promoting word/dword/signed dword to byte* in CIA2_INTERRUPT ← ((byte*)) 56589
+Promoting word/signed word/dword/signed dword to void()** in KERNEL_IRQ ← ((void()**)) 788
+Promoting word/dword/signed dword to void()** in HARDWARE_IRQ ← ((void()**)) 65534
 INITIAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
-  (void()**) HARDWARE_IRQ ← ((void()**)) (word/dword/signed dword) 65534
+  (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
+  (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) PROCPORT_RAM_ALL ← (byte/signed byte/word/signed word/dword/signed dword) 48
+  (byte) PROCPORT_RAM_IO ← (byte/signed byte/word/signed word/dword/signed dword) 53
+  (byte) PROCPORT_RAM_CHARROM ← (byte/signed byte/word/signed word/dword/signed dword) 49
+  (byte) PROCPORT_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 54
+  (byte) PROCPORT_BASIC_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 55
+  (byte*) CHARGEN ← ((byte*)) (word/dword/signed dword) 53248
+  (byte*) SPRITES_XPOS ← ((byte*)) (word/dword/signed dword) 53248
+  (byte*) SPRITES_YPOS ← ((byte*)) (word/dword/signed dword) 53249
+  (byte*) SPRITES_XMSB ← ((byte*)) (word/dword/signed dword) 53264
   (byte*) RASTER ← ((byte*)) (word/dword/signed dword) 53266
+  (byte*) SPRITES_ENABLE ← ((byte*)) (word/dword/signed dword) 53269
+  (byte*) SPRITES_EXPAND_Y ← ((byte*)) (word/dword/signed dword) 53271
+  (byte*) SPRITES_PRIORITY ← ((byte*)) (word/dword/signed dword) 53275
+  (byte*) SPRITES_MC ← ((byte*)) (word/dword/signed dword) 53276
+  (byte*) SPRITES_EXPAND_X ← ((byte*)) (word/dword/signed dword) 53277
+  (byte*) BORDERCOL ← ((byte*)) (word/dword/signed dword) 53280
+  (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53281
+  (byte*) BGCOL1 ← ((byte*)) (word/dword/signed dword) 53281
+  (byte*) BGCOL2 ← ((byte*)) (word/dword/signed dword) 53282
+  (byte*) BGCOL3 ← ((byte*)) (word/dword/signed dword) 53283
+  (byte*) BGCOL4 ← ((byte*)) (word/dword/signed dword) 53284
+  (byte*) SPRITES_MC1 ← ((byte*)) (word/dword/signed dword) 53285
+  (byte*) SPRITES_MC2 ← ((byte*)) (word/dword/signed dword) 53286
+  (byte*) SPRITES_COLS ← ((byte*)) (word/dword/signed dword) 53287
   (byte*) VIC_CONTROL ← ((byte*)) (word/dword/signed dword) 53265
+  (byte*) D011 ← ((byte*)) (word/dword/signed dword) 53265
+  (byte) VIC_RST8 ← (byte/word/signed word/dword/signed dword) 128
+  (byte) VIC_ECM ← (byte/signed byte/word/signed word/dword/signed dword) 64
+  (byte) VIC_BMM ← (byte/signed byte/word/signed word/dword/signed dword) 32
+  (byte) VIC_DEN ← (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte) VIC_RSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte*) VIC_CONTROL2 ← ((byte*)) (word/dword/signed dword) 53270
+  (byte*) D016 ← ((byte*)) (word/dword/signed dword) 53270
+  (byte) VIC_MCM ← (byte/signed byte/word/signed word/dword/signed dword) 16
+  (byte) VIC_CSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte*) D018 ← ((byte*)) (word/dword/signed dword) 53272
+  (byte*) VIC_MEMORY ← ((byte*)) (word/dword/signed dword) 53272
   (byte*) IRQ_STATUS ← ((byte*)) (word/dword/signed dword) 53273
   (byte*) IRQ_ENABLE ← ((byte*)) (word/dword/signed dword) 53274
   (byte) IRQ_RASTER ← (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) IRQ_COLLISION_BG ← (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte) IRQ_COLLISION_SPRITE ← (byte/signed byte/word/signed word/dword/signed dword) 4
   (byte) IRQ_LIGHTPEN ← (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53280
-  (byte*) FGCOL ← ((byte*)) (word/dword/signed dword) 53281
-  (byte) WHITE ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
+  (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
+  (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
+  (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
+  (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
   (byte*) CIA1_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56333
   (byte) CIA_INTERRUPT_CLEAR ← (byte/signed byte/word/signed word/dword/signed dword) 127
-  (byte*) PROCPORT_DDR ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) PROCPORT_DDR_MEMORY_MASK ← (byte/signed byte/word/signed word/dword/signed dword) 7
-  (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) PROCPORT_RAM_IO ← (byte/signed byte/word/signed word/dword/signed dword) 53
+  (byte*) CIA2_PORT_A ← ((byte*)) (word/dword/signed dword) 56576
+  (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
+  (byte*) CIA2_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56578
+  (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
+  (byte*) CIA2_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56589
+  (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
+  (void()**) HARDWARE_IRQ ← ((void()**)) (word/dword/signed dword) 65534
+  (byte) BLACK ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) WHITE ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) CYAN ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte) PURPLE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
+  (byte) BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte) YELLOW ← (byte/signed byte/word/signed word/dword/signed dword) 7
+  (byte) ORANGE ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte) BROWN ← (byte/signed byte/word/signed word/dword/signed dword) 9
+  (byte) PINK ← (byte/signed byte/word/signed word/dword/signed dword) 10
+  (byte) DARK_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 11
+  (byte) GREY ← (byte/signed byte/word/signed word/dword/signed dword) 12
+  (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
+  (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
+  (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
   to:@1
+toD018: scope:[toD018]  from
+  (word~) toD018::$0 ← ((word)) (byte*) toD018::screen
+  (word~) toD018::$1 ← (word~) toD018::$0 & (word/signed word/dword/signed dword) 16383
+  (word~) toD018::$2 ← (word~) toD018::$1 << (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$3 ← > (word~) toD018::$2
+  (word~) toD018::$4 ← ((word)) (byte*) toD018::gfx
+  (byte~) toD018::$5 ← > (word~) toD018::$4
+  (byte~) toD018::$6 ← (byte~) toD018::$5 >> (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte~) toD018::$7 ← (byte~) toD018::$6 & (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte~) toD018::$8 ← (byte~) toD018::$3 | (byte~) toD018::$7
+  (byte) toD018::return ← (byte~) toD018::$8
+  to:toD018::@return
+toD018::@return: scope:[toD018]  from toD018 toD018::@1
+  (byte) toD018::return ← (byte) toD018::return
+  return (byte) toD018::return
+  to:@return
+toD018::@1: scope:[toD018]  from
+  to:toD018::@return
+@1: scope:[]  from @begin
+  to:@2
+toDd00: scope:[toDd00]  from
+  (word~) toDd00::$0 ← ((word)) (byte*) toDd00::gfx
+  (byte~) toDd00::$1 ← > (word~) toDd00::$0
+  (byte~) toDd00::$2 ← (byte~) toDd00::$1 >> (byte/signed byte/word/signed word/dword/signed dword) 6
+  (byte/word/dword~) toDd00::$3 ← (byte/signed byte/word/signed word/dword/signed dword) 3 ^ (byte~) toDd00::$2
+  (byte) toDd00::return ← (byte/word/dword~) toDd00::$3
+  to:toDd00::@return
+toDd00::@return: scope:[toDd00]  from toDd00 toDd00::@1
+  (byte) toDd00::return ← (byte) toDd00::return
+  return (byte) toDd00::return
+  to:@return
+toDd00::@1: scope:[toDd00]  from
+  to:toDd00::@return
+@2: scope:[]  from @1
+  to:@3
+vicSelectGfxBank: scope:[vicSelectGfxBank]  from
+  *((byte*) CIA2_PORT_A_DDR) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+  *((byte*) CIA2_PORT_A) ← (byte~) vicSelectGfxBank::$0
+  to:vicSelectGfxBank::@return
+vicSelectGfxBank::@return: scope:[vicSelectGfxBank]  from vicSelectGfxBank
+  return 
+  to:@return
+@3: scope:[]  from @2
+  to:@4
 main: scope:[main]  from
   asm { sei  }
   *((byte*) PROCPORT_DDR) ← (byte) PROCPORT_DDR_MEMORY_MASK
@@ -154,7 +478,7 @@ main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@4
 main::@2: scope:[main]  from main::@1 main::@5
-  *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
+  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
   to:main::@1
 main::@4: scope:[main]  from main::@1
   to:main::@3
@@ -167,16 +491,16 @@ main::@6: scope:[main]  from
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@1: scope:[]  from @begin
-  to:@2
+@4: scope:[]  from @3
+  to:@5
 irq: scope:[irq]  from
   (void~) irq::$0 ← call do_irq 
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
   to:@return
-@2: scope:[]  from @1
-  to:@3
+@5: scope:[]  from @4
+  to:@6
 do_irq: scope:[do_irq]  from
   *((byte*) BGCOL) ← (byte) WHITE
   *((byte*) BGCOL) ← (byte) BLACK
@@ -185,46 +509,109 @@ do_irq: scope:[do_irq]  from
 do_irq::@return: scope:[do_irq]  from do_irq
   return 
   to:@return
-@3: scope:[]  from @2
+@6: scope:[]  from @5
   call main 
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @6
 
-Eliminating unused variable (void()**) KERNEL_IRQ and assignment [0] (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
-Eliminating unused variable (byte) IRQ_COLLISION_BG and assignment [7] (byte) IRQ_COLLISION_BG ← (byte/signed byte/word/signed word/dword/signed dword) 2
-Eliminating unused variable (byte) IRQ_COLLISION_SPRITE and assignment [8] (byte) IRQ_COLLISION_SPRITE ← (byte/signed byte/word/signed word/dword/signed dword) 4
-Eliminating unused variable (byte) IRQ_LIGHTPEN and assignment [9] (byte) IRQ_LIGHTPEN ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Removing unused procedure toD018
+Removing unused procedure toDd00
+Removing unused procedure vicSelectGfxBank
+Eliminating unused variable (byte) PROCPORT_RAM_ALL and assignment [3] (byte) PROCPORT_RAM_ALL ← (byte/signed byte/word/signed word/dword/signed dword) 48
+Eliminating unused variable (byte) PROCPORT_RAM_CHARROM and assignment [5] (byte) PROCPORT_RAM_CHARROM ← (byte/signed byte/word/signed word/dword/signed dword) 49
+Eliminating unused variable (byte) PROCPORT_KERNEL_IO and assignment [6] (byte) PROCPORT_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 54
+Eliminating unused variable (byte) PROCPORT_BASIC_KERNEL_IO and assignment [7] (byte) PROCPORT_BASIC_KERNEL_IO ← (byte/signed byte/word/signed word/dword/signed dword) 55
+Eliminating unused variable (byte*) CHARGEN and assignment [8] (byte*) CHARGEN ← ((byte*)) (word/dword/signed dword) 53248
+Eliminating unused variable (byte*) SPRITES_XPOS and assignment [9] (byte*) SPRITES_XPOS ← ((byte*)) (word/dword/signed dword) 53248
+Eliminating unused variable (byte*) SPRITES_YPOS and assignment [10] (byte*) SPRITES_YPOS ← ((byte*)) (word/dword/signed dword) 53249
+Eliminating unused variable (byte*) SPRITES_XMSB and assignment [11] (byte*) SPRITES_XMSB ← ((byte*)) (word/dword/signed dword) 53264
+Eliminating unused variable (byte*) SPRITES_ENABLE and assignment [13] (byte*) SPRITES_ENABLE ← ((byte*)) (word/dword/signed dword) 53269
+Eliminating unused variable (byte*) SPRITES_EXPAND_Y and assignment [14] (byte*) SPRITES_EXPAND_Y ← ((byte*)) (word/dword/signed dword) 53271
+Eliminating unused variable (byte*) SPRITES_PRIORITY and assignment [15] (byte*) SPRITES_PRIORITY ← ((byte*)) (word/dword/signed dword) 53275
+Eliminating unused variable (byte*) SPRITES_MC and assignment [16] (byte*) SPRITES_MC ← ((byte*)) (word/dword/signed dword) 53276
+Eliminating unused variable (byte*) SPRITES_EXPAND_X and assignment [17] (byte*) SPRITES_EXPAND_X ← ((byte*)) (word/dword/signed dword) 53277
+Eliminating unused variable (byte*) BGCOL1 and assignment [20] (byte*) BGCOL1 ← ((byte*)) (word/dword/signed dword) 53281
+Eliminating unused variable (byte*) BGCOL2 and assignment [21] (byte*) BGCOL2 ← ((byte*)) (word/dword/signed dword) 53282
+Eliminating unused variable (byte*) BGCOL3 and assignment [22] (byte*) BGCOL3 ← ((byte*)) (word/dword/signed dword) 53283
+Eliminating unused variable (byte*) BGCOL4 and assignment [23] (byte*) BGCOL4 ← ((byte*)) (word/dword/signed dword) 53284
+Eliminating unused variable (byte*) SPRITES_MC1 and assignment [24] (byte*) SPRITES_MC1 ← ((byte*)) (word/dword/signed dword) 53285
+Eliminating unused variable (byte*) SPRITES_MC2 and assignment [25] (byte*) SPRITES_MC2 ← ((byte*)) (word/dword/signed dword) 53286
+Eliminating unused variable (byte*) SPRITES_COLS and assignment [26] (byte*) SPRITES_COLS ← ((byte*)) (word/dword/signed dword) 53287
+Eliminating unused variable (byte*) D011 and assignment [28] (byte*) D011 ← ((byte*)) (word/dword/signed dword) 53265
+Eliminating unused variable (byte) VIC_RST8 and assignment [29] (byte) VIC_RST8 ← (byte/word/signed word/dword/signed dword) 128
+Eliminating unused variable (byte) VIC_ECM and assignment [30] (byte) VIC_ECM ← (byte/signed byte/word/signed word/dword/signed dword) 64
+Eliminating unused variable (byte) VIC_BMM and assignment [31] (byte) VIC_BMM ← (byte/signed byte/word/signed word/dword/signed dword) 32
+Eliminating unused variable (byte) VIC_DEN and assignment [32] (byte) VIC_DEN ← (byte/signed byte/word/signed word/dword/signed dword) 16
+Eliminating unused variable (byte) VIC_RSEL and assignment [33] (byte) VIC_RSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte*) VIC_CONTROL2 and assignment [34] (byte*) VIC_CONTROL2 ← ((byte*)) (word/dword/signed dword) 53270
+Eliminating unused variable (byte*) D016 and assignment [35] (byte*) D016 ← ((byte*)) (word/dword/signed dword) 53270
+Eliminating unused variable (byte) VIC_MCM and assignment [36] (byte) VIC_MCM ← (byte/signed byte/word/signed word/dword/signed dword) 16
+Eliminating unused variable (byte) VIC_CSEL and assignment [37] (byte) VIC_CSEL ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte*) D018 and assignment [38] (byte*) D018 ← ((byte*)) (word/dword/signed dword) 53272
+Eliminating unused variable (byte*) VIC_MEMORY and assignment [39] (byte*) VIC_MEMORY ← ((byte*)) (word/dword/signed dword) 53272
+Eliminating unused variable (byte) IRQ_COLLISION_BG and assignment [43] (byte) IRQ_COLLISION_BG ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) IRQ_COLLISION_SPRITE and assignment [44] (byte) IRQ_COLLISION_SPRITE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) IRQ_LIGHTPEN and assignment [45] (byte) IRQ_LIGHTPEN ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte*) COLS and assignment [46] (byte*) COLS ← ((byte*)) (word/dword/signed dword) 55296
+Eliminating unused variable (byte*) CIA1_PORT_A and assignment [47] (byte*) CIA1_PORT_A ← ((byte*)) (word/dword/signed dword) 56320
+Eliminating unused variable (byte*) CIA1_PORT_B and assignment [48] (byte*) CIA1_PORT_B ← ((byte*)) (word/dword/signed dword) 56321
+Eliminating unused variable (byte*) CIA1_PORT_A_DDR and assignment [49] (byte*) CIA1_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56322
+Eliminating unused variable (byte*) CIA1_PORT_B_DDR and assignment [50] (byte*) CIA1_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56323
+Eliminating unused variable (byte*) CIA2_PORT_A and assignment [53] (byte*) CIA2_PORT_A ← ((byte*)) (word/dword/signed dword) 56576
+Eliminating unused variable (byte*) CIA2_PORT_B and assignment [54] (byte*) CIA2_PORT_B ← ((byte*)) (word/dword/signed dword) 56577
+Eliminating unused variable (byte*) CIA2_PORT_A_DDR and assignment [55] (byte*) CIA2_PORT_A_DDR ← ((byte*)) (word/dword/signed dword) 56578
+Eliminating unused variable (byte*) CIA2_PORT_B_DDR and assignment [56] (byte*) CIA2_PORT_B_DDR ← ((byte*)) (word/dword/signed dword) 56579
+Eliminating unused variable (byte*) CIA2_INTERRUPT and assignment [57] (byte*) CIA2_INTERRUPT ← ((byte*)) (word/dword/signed dword) 56589
+Eliminating unused variable (void()**) KERNEL_IRQ and assignment [58] (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
+Eliminating unused variable (byte) RED and assignment [62] (byte) RED ← (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte) CYAN and assignment [63] (byte) CYAN ← (byte/signed byte/word/signed word/dword/signed dword) 3
+Eliminating unused variable (byte) PURPLE and assignment [64] (byte) PURPLE ← (byte/signed byte/word/signed word/dword/signed dword) 4
+Eliminating unused variable (byte) GREEN and assignment [65] (byte) GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 5
+Eliminating unused variable (byte) BLUE and assignment [66] (byte) BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 6
+Eliminating unused variable (byte) YELLOW and assignment [67] (byte) YELLOW ← (byte/signed byte/word/signed word/dword/signed dword) 7
+Eliminating unused variable (byte) ORANGE and assignment [68] (byte) ORANGE ← (byte/signed byte/word/signed word/dword/signed dword) 8
+Eliminating unused variable (byte) BROWN and assignment [69] (byte) BROWN ← (byte/signed byte/word/signed word/dword/signed dword) 9
+Eliminating unused variable (byte) PINK and assignment [70] (byte) PINK ← (byte/signed byte/word/signed word/dword/signed dword) 10
+Eliminating unused variable (byte) DARK_GREY and assignment [71] (byte) DARK_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 11
+Eliminating unused variable (byte) GREY and assignment [72] (byte) GREY ← (byte/signed byte/word/signed word/dword/signed dword) 12
+Eliminating unused variable (byte) LIGHT_GREEN and assignment [73] (byte) LIGHT_GREEN ← (byte/signed byte/word/signed word/dword/signed dword) 13
+Eliminating unused variable (byte) LIGHT_BLUE and assignment [74] (byte) LIGHT_BLUE ← (byte/signed byte/word/signed word/dword/signed dword) 14
+Eliminating unused variable (byte) LIGHT_GREY and assignment [75] (byte) LIGHT_GREY ← (byte/signed byte/word/signed word/dword/signed dword) 15
 Eliminating unused variable - keeping the call (void~) irq::$0
+Removing empty block @1
+Removing empty block @2
+Removing empty block @3
 Removing empty block main::@4
 Removing empty block main::@3
 Removing empty block main::@5
 Removing empty block main::@6
-Removing empty block @1
-Removing empty block @2
+Removing empty block @4
+Removing empty block @5
 PROCEDURE MODIFY VARIABLE ANALYSIS
 
 Completing Phi functions...
 
 CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
 @begin: scope:[]  from
-  (void()**) HARDWARE_IRQ#0 ← ((void()**)) (word/dword/signed dword) 65534
-  (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) 53266
-  (byte*) VIC_CONTROL#0 ← ((byte*)) (word/dword/signed dword) 53265
-  (byte*) IRQ_STATUS#0 ← ((byte*)) (word/dword/signed dword) 53273
-  (byte*) IRQ_ENABLE#0 ← ((byte*)) (word/dword/signed dword) 53274
-  (byte) IRQ_RASTER#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
-  (byte*) FGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
-  (byte) WHITE#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) BLACK#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte*) CIA1_INTERRUPT#0 ← ((byte*)) (word/dword/signed dword) 56333
-  (byte) CIA_INTERRUPT_CLEAR#0 ← (byte/signed byte/word/signed word/dword/signed dword) 127
   (byte*) PROCPORT_DDR#0 ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) PROCPORT_DDR_MEMORY_MASK#0 ← (byte/signed byte/word/signed word/dword/signed dword) 7
   (byte*) PROCPORT#0 ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) PROCPORT_RAM_IO#0 ← (byte/signed byte/word/signed word/dword/signed dword) 53
-  to:@3
-main: scope:[main]  from @3
+  (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) 53266
+  (byte*) BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
+  (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
+  (byte*) VIC_CONTROL#0 ← ((byte*)) (word/dword/signed dword) 53265
+  (byte*) IRQ_STATUS#0 ← ((byte*)) (word/dword/signed dword) 53273
+  (byte*) IRQ_ENABLE#0 ← ((byte*)) (word/dword/signed dword) 53274
+  (byte) IRQ_RASTER#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte*) CIA1_INTERRUPT#0 ← ((byte*)) (word/dword/signed dword) 56333
+  (byte) CIA_INTERRUPT_CLEAR#0 ← (byte/signed byte/word/signed word/dword/signed dword) 127
+  (void()**) HARDWARE_IRQ#0 ← ((void()**)) (word/dword/signed dword) 65534
+  (byte) BLACK#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) WHITE#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  to:@6
+main: scope:[main]  from @6
   asm { sei  }
   *((byte*) PROCPORT_DDR#0) ← (byte) PROCPORT_DDR_MEMORY_MASK#0
   *((byte*) PROCPORT#0) ← (byte) PROCPORT_RAM_IO#0
@@ -240,7 +627,7 @@ main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  *((byte*) FGCOL#0) ← ++ *((byte*) FGCOL#0)
+  *((byte*) BORDERCOL#0) ← ++ *((byte*) BORDERCOL#0)
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -261,28 +648,28 @@ do_irq: scope:[do_irq]  from irq
 do_irq::@return: scope:[do_irq]  from do_irq
   return 
   to:@return
-@3: scope:[]  from @begin
+@6: scope:[]  from @begin
   call main 
-  to:@4
-@4: scope:[]  from @3
+  to:@7
+@7: scope:[]  from @6
   to:@end
-@end: scope:[]  from @4
+@end: scope:[]  from @7
 
 SYMBOL TABLE SSA
-(label) @3
-(label) @4
+(label) @6
+(label) @7
 (label) @begin
 (label) @end
 (byte*) BGCOL
 (byte*) BGCOL#0
 (byte) BLACK
 (byte) BLACK#0
+(byte*) BORDERCOL
+(byte*) BORDERCOL#0
 (byte*) CIA1_INTERRUPT
 (byte*) CIA1_INTERRUPT#0
 (byte) CIA_INTERRUPT_CLEAR
 (byte) CIA_INTERRUPT_CLEAR#0
-(byte*) FGCOL
-(byte*) FGCOL#0
 (void()**) HARDWARE_IRQ
 (void()**) HARDWARE_IRQ#0
 (byte*) IRQ_ENABLE
@@ -318,24 +705,24 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 
 OPTIMIZING CONTROL FLOW GRAPH
 Culled Empty Block (label) irq::@1
-Culled Empty Block (label) @4
+Culled Empty Block (label) @7
 Succesful SSA optimization Pass2CullEmptyBlocks
-Constant (const void()**) HARDWARE_IRQ#0 = ((void()**))65534
-Constant (const byte*) RASTER#0 = ((byte*))53266
-Constant (const byte*) VIC_CONTROL#0 = ((byte*))53265
-Constant (const byte*) IRQ_STATUS#0 = ((byte*))53273
-Constant (const byte*) IRQ_ENABLE#0 = ((byte*))53274
-Constant (const byte) IRQ_RASTER#0 = 1
-Constant (const byte*) BGCOL#0 = ((byte*))53280
-Constant (const byte*) FGCOL#0 = ((byte*))53281
-Constant (const byte) WHITE#0 = 1
-Constant (const byte) BLACK#0 = 0
-Constant (const byte*) CIA1_INTERRUPT#0 = ((byte*))56333
-Constant (const byte) CIA_INTERRUPT_CLEAR#0 = 127
 Constant (const byte*) PROCPORT_DDR#0 = ((byte*))0
 Constant (const byte) PROCPORT_DDR_MEMORY_MASK#0 = 7
 Constant (const byte*) PROCPORT#0 = ((byte*))1
 Constant (const byte) PROCPORT_RAM_IO#0 = 53
+Constant (const byte*) RASTER#0 = ((byte*))53266
+Constant (const byte*) BORDERCOL#0 = ((byte*))53280
+Constant (const byte*) BGCOL#0 = ((byte*))53281
+Constant (const byte*) VIC_CONTROL#0 = ((byte*))53265
+Constant (const byte*) IRQ_STATUS#0 = ((byte*))53273
+Constant (const byte*) IRQ_ENABLE#0 = ((byte*))53274
+Constant (const byte) IRQ_RASTER#0 = 1
+Constant (const byte*) CIA1_INTERRUPT#0 = ((byte*))56333
+Constant (const byte) CIA_INTERRUPT_CLEAR#0 = 127
+Constant (const void()**) HARDWARE_IRQ#0 = ((void()**))65534
+Constant (const byte) BLACK#0 = 0
+Constant (const byte) WHITE#0 = 1
 Constant (const void()*) main::$0 = &irq
 Succesful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination if(true) goto main::@2
@@ -347,10 +734,10 @@ Succesful SSA optimization Pass2CullEmptyBlocks
 OPTIMIZING CONTROL FLOW GRAPH
 Constant inlined main::$0 = &interrupt(HARDWARE_CLOBBER)(void()) irq()
 Succesful SSA optimization Pass2ConstantInlining
-Block Sequence Planned @begin @3 @end main main::@2 irq irq::@return do_irq do_irq::@return 
-Block Sequence Planned @begin @3 @end main main::@2 irq irq::@return do_irq do_irq::@return 
+Block Sequence Planned @begin @6 @end main main::@2 irq irq::@return do_irq do_irq::@return 
+Block Sequence Planned @begin @6 @end main main::@2 irq irq::@return do_irq do_irq::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
+Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of irq
 CALL GRAPH
@@ -360,9 +747,9 @@ Calls in [irq] to do_irq:15
 Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Block Sequence Planned @begin @3 @end main main::@2 irq irq::@return do_irq do_irq::@return 
+Block Sequence Planned @begin @6 @end main main::@2 irq irq::@return do_irq do_irq::@return 
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
+Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of irq
 Propagating live ranges...
@@ -370,14 +757,14 @@ Propagating live ranges...
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@3
-@3: scope:[]  from @begin
+  to:@6
+@6: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @6
   [3] phi() [ ] ( )
-main: scope:[main]  from @3
+main: scope:[main]  from @6
   asm { sei  }
   [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 [ ] ( main:2 [ ] )
   [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 [ ] ( main:2 [ ] )
@@ -389,7 +776,7 @@ main: scope:[main]  from @3
   asm { cli  }
   to:main::@2
 main::@2: scope:[main]  from main main::@2
-  [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] )
+  [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) [ ] ( main:2 [ ] )
   to:main::@2
 irq: scope:[irq]  from
   [14] phi() [ ] ( )
@@ -409,14 +796,14 @@ do_irq::@return: scope:[do_irq]  from do_irq
 
 DOMINATORS
 @begin dominated by  @begin 
-@3 dominated by  @begin @3 
-@end dominated by  @begin @3 @end 
-main dominated by  @begin @3 main 
-main::@2 dominated by  @begin @3 main::@2 main 
-irq dominated by  @begin @3 @end main::@2 irq irq::@return do_irq main do_irq::@return 
-irq::@return dominated by  @begin @3 @end main::@2 irq irq::@return do_irq main do_irq::@return 
-do_irq dominated by  @begin @3 @end main::@2 irq irq::@return do_irq main do_irq::@return 
-do_irq::@return dominated by  @begin @3 @end main::@2 irq irq::@return do_irq main do_irq::@return 
+@6 dominated by  @begin @6 
+@end dominated by  @begin @end @6 
+main dominated by  @begin @6 main 
+main::@2 dominated by  @begin @6 main::@2 main 
+irq dominated by  @begin @end @6 main::@2 irq irq::@return do_irq main do_irq::@return 
+irq::@return dominated by  @begin @end @6 main::@2 irq irq::@return do_irq main do_irq::@return 
+do_irq dominated by  @begin @end @6 main::@2 irq irq::@return do_irq main do_irq::@return 
+do_irq::@return dominated by  @begin @end @6 main::@2 irq irq::@return do_irq main do_irq::@return 
 
 NATURAL LOOPS
 Found back edge: Loop head: main::@2 tails: main::@2 blocks: null
@@ -452,9 +839,9 @@ Loop head: do_irq::@return tails: do_irq blocks: do_irq irq  depth: 2
 VARIABLE REGISTER WEIGHTS
 (byte*) BGCOL
 (byte) BLACK
+(byte*) BORDERCOL
 (byte*) CIA1_INTERRUPT
 (byte) CIA_INTERRUPT_CLEAR
-(byte*) FGCOL
 (void()**) HARDWARE_IRQ
 (byte*) IRQ_ENABLE
 (byte) IRQ_RASTER
@@ -479,33 +866,33 @@ INITIAL ASM
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .label HARDWARE_IRQ = $fffe
-  .label RASTER = $d012
-  .label VIC_CONTROL = $d011
-  .label IRQ_STATUS = $d019
-  .label IRQ_ENABLE = $d01a
-  .const IRQ_RASTER = 1
-  .label BGCOL = $d020
-  .label FGCOL = $d021
-  .const WHITE = 1
-  .const BLACK = 0
-  .label CIA1_INTERRUPT = $dc0d
-  .const CIA_INTERRUPT_CLEAR = $7f
   .label PROCPORT_DDR = 0
   .const PROCPORT_DDR_MEMORY_MASK = 7
   .label PROCPORT = 1
   .const PROCPORT_RAM_IO = $35
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
+  .label BGCOL = $d021
+  .label VIC_CONTROL = $d011
+  .label IRQ_STATUS = $d019
+  .label IRQ_ENABLE = $d01a
+  .const IRQ_RASTER = 1
+  .label CIA1_INTERRUPT = $dc0d
+  .const CIA_INTERRUPT_CLEAR = $7f
+  .label HARDWARE_IRQ = $fffe
+  .const BLACK = 0
+  .const WHITE = 1
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG4 @3
-b3:
+//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+b6_from_bbegin:
+  jmp b6
+//SEG4 @6
+b6:
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG6 [3] phi from @6 to @end [phi:@6->@end]
+bend_from_b6:
   jmp bend
 //SEG7 @end
 bend:
@@ -542,8 +929,8 @@ main: {
     jmp b2
   //SEG18 main::@2
   b2:
-  //SEG19 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc FGCOL
+  //SEG19 [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDERCOL
     jmp b2
 }
 //SEG20 irq
@@ -621,33 +1008,33 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .label HARDWARE_IRQ = $fffe
-  .label RASTER = $d012
-  .label VIC_CONTROL = $d011
-  .label IRQ_STATUS = $d019
-  .label IRQ_ENABLE = $d01a
-  .const IRQ_RASTER = 1
-  .label BGCOL = $d020
-  .label FGCOL = $d021
-  .const WHITE = 1
-  .const BLACK = 0
-  .label CIA1_INTERRUPT = $dc0d
-  .const CIA_INTERRUPT_CLEAR = $7f
   .label PROCPORT_DDR = 0
   .const PROCPORT_DDR_MEMORY_MASK = 7
   .label PROCPORT = 1
   .const PROCPORT_RAM_IO = $35
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
+  .label BGCOL = $d021
+  .label VIC_CONTROL = $d011
+  .label IRQ_STATUS = $d019
+  .label IRQ_ENABLE = $d01a
+  .const IRQ_RASTER = 1
+  .label CIA1_INTERRUPT = $dc0d
+  .const CIA_INTERRUPT_CLEAR = $7f
+  .label HARDWARE_IRQ = $fffe
+  .const BLACK = 0
+  .const WHITE = 1
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG4 @3
-b3:
+//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+b6_from_bbegin:
+  jmp b6
+//SEG4 @6
+b6:
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG6 [3] phi from @6 to @end [phi:@6->@end]
+bend_from_b6:
   jmp bend
 //SEG7 @end
 bend:
@@ -684,8 +1071,8 @@ main: {
     jmp b2
   //SEG18 main::@2
   b2:
-  //SEG19 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc FGCOL
+  //SEG19 [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDERCOL
     jmp b2
 }
 //SEG20 irq
@@ -721,36 +1108,36 @@ do_irq: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b3
+Removing instruction jmp b6
 Removing instruction jmp bend
 Removing instruction jmp b2
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
-Removing instruction b3_from_bbegin:
-Removing instruction bend_from_b3:
+Removing instruction b6_from_bbegin:
+Removing instruction bend_from_b6:
 Removing instruction breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b3:
+Removing instruction b6:
 Removing instruction bend:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @3
+(label) @6
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) 53280
+(const byte*) BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) 53281
 (byte) BLACK
 (const byte) BLACK#0 BLACK = (byte/signed byte/word/signed word/dword/signed dword) 0
+(byte*) BORDERCOL
+(const byte*) BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) 53280
 (byte*) CIA1_INTERRUPT
 (const byte*) CIA1_INTERRUPT#0 CIA1_INTERRUPT = ((byte*))(word/dword/signed dword) 56333
 (byte) CIA_INTERRUPT_CLEAR
 (const byte) CIA_INTERRUPT_CLEAR#0 CIA_INTERRUPT_CLEAR = (byte/signed byte/word/signed word/dword/signed dword) 127
-(byte*) FGCOL
-(const byte*) FGCOL#0 FGCOL = ((byte*))(word/dword/signed dword) 53281
 (void()**) HARDWARE_IRQ
 (const void()**) HARDWARE_IRQ#0 HARDWARE_IRQ = ((void()**))(word/dword/signed dword) 65534
 (byte*) IRQ_ENABLE
@@ -790,28 +1177,28 @@ Score: 8006
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
-  .label HARDWARE_IRQ = $fffe
-  .label RASTER = $d012
-  .label VIC_CONTROL = $d011
-  .label IRQ_STATUS = $d019
-  .label IRQ_ENABLE = $d01a
-  .const IRQ_RASTER = 1
-  .label BGCOL = $d020
-  .label FGCOL = $d021
-  .const WHITE = 1
-  .const BLACK = 0
-  .label CIA1_INTERRUPT = $dc0d
-  .const CIA_INTERRUPT_CLEAR = $7f
   .label PROCPORT_DDR = 0
   .const PROCPORT_DDR_MEMORY_MASK = 7
   .label PROCPORT = 1
   .const PROCPORT_RAM_IO = $35
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
+  .label BGCOL = $d021
+  .label VIC_CONTROL = $d011
+  .label IRQ_STATUS = $d019
+  .label IRQ_ENABLE = $d01a
+  .const IRQ_RASTER = 1
+  .label CIA1_INTERRUPT = $dc0d
+  .const CIA_INTERRUPT_CLEAR = $7f
+  .label HARDWARE_IRQ = $fffe
+  .const BLACK = 0
+  .const WHITE = 1
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @3 [phi:@begin->@3]
-//SEG4 @3
+//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+//SEG4 @6
 //SEG5 [2] call main  [ ] ( )
   jsr main
-//SEG6 [3] phi from @3 to @end [phi:@3->@end]
+//SEG6 [3] phi from @6 to @end [phi:@6->@end]
 //SEG7 @end
 //SEG8 main
 main: {
@@ -845,8 +1232,8 @@ main: {
     cli
   //SEG18 main::@2
   b2:
-  //SEG19 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc FGCOL
+  //SEG19 [13] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDERCOL
     jmp b2
 }
 //SEG20 irq

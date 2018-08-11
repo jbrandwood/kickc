@@ -4,16 +4,16 @@ import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmSegment;
+import dk.camelot64.kickc.model.CallGraph;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ProcedureRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
-
-import static dk.camelot64.kickc.passes.Pass4AssertNoCpuClobber.getClobberRegisters;
 
 /*** Ensure that all interrupt procedures with type {@link Procedure.InterruptType#HARDWARE_CLOBBER } only saves the necessary registers. */
 public class Pass4InterruptClobberFix extends Pass2Base {
@@ -30,13 +30,14 @@ public class Pass4InterruptClobberFix extends Pass2Base {
       for(Procedure procedure : procedures) {
          if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(procedure.getInterruptType())) {
 
+            // Find the interrupt routine clobber
+            AsmClobber procClobber = getProcedureClobber(procedure);
+            getLog().append("Interrupt procedure "+procedure.getFullName()+" clobbers "+procClobber.toString());
+
+            // Find the entry/exit blocks for the interrupt
             AsmSegment interruptEntry = null;
             AsmSegment interruptExit = null;
-
-            // Iterate all procedure segments to find the interrupt routine clobber
-            AsmClobber procClobber = new AsmClobber();
-            AsmProgram asm = getProgram().getAsm();
-            for(AsmSegment asmSegment : asm.getSegments()) {
+            for(AsmSegment asmSegment : getProgram().getAsm().getSegments()) {
                if(procedure.getFullName().equals(asmSegment.getScopeLabel())) {
                   if(asmSegment.getSource().contains(Procedure.InterruptType.HARDWARE_CLOBBER.name())) {
                      if(asmSegment.getSource().contains("entry interrupt")) {
@@ -48,11 +49,8 @@ public class Pass4InterruptClobberFix extends Pass2Base {
                      }
                      continue;
                   }
-                  AsmClobber asmSegmentClobber = asmSegment.getClobber();
-                  procClobber.add(asmSegmentClobber);
                }
             }
-            getLog().append("Interrupt procedure "+procedure.getFullName()+" clobbers "+procClobber.toString());
             if(interruptEntry==null || interruptExit==null) {
                throw new RuntimeException("Cannot find interrupt entry/exit for interrupt "+procedure.getFullName());
             }
@@ -68,6 +66,34 @@ public class Pass4InterruptClobberFix extends Pass2Base {
 
          }
       }
+   }
+
+   private AsmClobber getProcedureClobber(Procedure procedure) {
+      AsmProgram asm = getProgram().getAsm();
+      AsmClobber procClobber =new AsmClobber();
+      for(AsmSegment asmSegment : asm.getSegments()) {
+         if(procedure.getFullName().equals(asmSegment.getScopeLabel())) {
+            if(asmSegment.getSource().contains(Procedure.InterruptType.HARDWARE_CLOBBER.name())) {
+               // Do not count clobber in the entry/exit
+               continue;
+            }
+            AsmClobber asmSegmentClobber = asmSegment.getClobber();
+            procClobber.add(asmSegmentClobber);
+         }
+      }
+
+      CallGraph callGraph = getProgram().getCallGraph();
+      CallGraph.CallBlock callBlock = callGraph.getCallBlock(procedure.getLabel().getRef());
+      List<CallGraph.CallBlock.Call> calls = callBlock.getCalls();
+      for(CallGraph.CallBlock.Call call : calls) {
+         LabelRef calledProcLabel = call.getProcedure();
+         ProcedureRef calledProcRef = new ProcedureRef(calledProcLabel.getFullName());
+         Procedure calledProc = getProgram().getScope().getProcedure(calledProcRef);
+         AsmClobber calledClobber = getProcedureClobber(calledProc);
+         procClobber.add(calledClobber);
+      }
+
+      return procClobber;
    }
 
    private List<String> getNonClobberedRegisterNames(AsmClobber procClobber) {

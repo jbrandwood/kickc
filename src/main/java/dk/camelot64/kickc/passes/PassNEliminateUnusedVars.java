@@ -24,8 +24,8 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      new PassNStatementIndices(getProgram()).generateStatementIndices();
-      new PassNVariableReferenceInfos(getProgram()).generateVariableReferenceInfos();
+      new PassNStatementIndices(getProgram()).execute();
+      new PassNVariableReferenceInfos(getProgram()).execute();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
       boolean modified = false;
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {

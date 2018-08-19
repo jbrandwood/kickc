@@ -359,6 +359,28 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
    }
 
+   /**
+    * Add declared directives to a conditional jump (as part of a loop).
+    *
+    * @param conditional The loop conditional
+    * @param directivesCtx The directives to add
+    */
+   private void addDirectives(StatementConditionalJump conditional, List<KickCParser.DirectiveContext> directivesCtx) {
+      List<Directive> directives = new ArrayList<>();
+      for(KickCParser.DirectiveContext directiveContext : directivesCtx) {
+         directives.add((Directive) this.visit(directiveContext));
+      }
+      for(Directive directive : directives) {
+         StatementSource source = new StatementSource(directivesCtx.get(0));
+         if(directive instanceof DirectiveInline) {
+            conditional.setDeclaredUnroll(true);
+         } else {
+            throw new CompileError("Unsupported loop directive " + directive, source);
+         }
+      }
+   }
+
+
    @Override
    public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {
       return new DirectiveConst();
@@ -466,7 +488,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
-      Statement doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel.getRef(), new StatementSource(ctx));
+      StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(doJmpStmt);
       Statement endJmpStmt = new StatementJump(endJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(endJmpStmt);
@@ -477,6 +499,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       sequence.addStatement(beginJmpStmt);
       StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(endJumpTarget);
+
+      // Add directives
+      addDirectives(doJmpStmt, ctx.directive());
       return null;
    }
 
@@ -491,8 +516,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
-      Statement doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel.getRef(), new StatementSource(ctx));
+      StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(doJmpStmt);
+
+      addDirectives(doJmpStmt, ctx.directive());
+
       return null;
    }
 
@@ -536,8 +564,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue rValue = (RValue) this.visit(ctx.expr(0));
       PrePostModifierHandler.addPostModifiers(this, ctx.expr(0));
       // Add jump if condition was met
-      Statement doJmpStmt = new StatementConditionalJump(rValue, repeatLabel.getRef(), new StatementSource(ctx));
+      StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, repeatLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(doJmpStmt);
+      addDirectives(doJmpStmt, stmtForCtx.directive());
       return null;
    }
 
@@ -572,8 +601,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Statement stmtTmpVar = new StatementAssignment(tmpVarRef, lValue.getRef(), Operators.NEQ, beyondLastVal, new StatementSource(ctx));
       sequence.addStatement(stmtTmpVar);
       // Add jump if condition was met
-      Statement doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef(), new StatementSource(ctx));
+      StatementConditionalJump doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef(), new StatementSource(ctx));
       sequence.addStatement(doJmpStmt);
+      addDirectives(doJmpStmt, stmtForCtx.directive());
       return null;
    }
 

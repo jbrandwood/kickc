@@ -54,7 +54,7 @@ public class StatementPhiBlock extends StatementBase {
       return getPhiVariable(variable).getrValue(predecessor);
    }
 
-   private PhiVariable getPhiVariable(VariableRef variable) {
+   public PhiVariable getPhiVariable(VariableRef variable) {
       for(PhiVariable phiVariable : phiVariables) {
          if(phiVariable.getVariable().equals(variable)) {
             return phiVariable;

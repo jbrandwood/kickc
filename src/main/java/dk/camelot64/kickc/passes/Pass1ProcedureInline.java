@@ -40,82 +40,7 @@ public class Pass1ProcedureInline extends Pass1Base {
                   if(procedure.getInterruptType()!=null) {
                      throw new CompileError("Error! Interrupts cannot be inlined. "+procedure.getRef().toString());
                   }
-                  Scope callScope = getScope().getScope(block.getScope());
-                  // Remove call
-                  statementsIt.remove();
-                  // Find call serial number (handles when multiple calls to the same procedure is made in the call scope)
-                  int serial = nextSerial(procedure, callScope);
-                  // Copy all procedure symbols
-                  inlineSymbols(procedure, callScope, serial);
-                  // Generate parameter assignments
-                  inlineParameterAssignments(statementsIt, call, procedure, callScope, serial);
-                  // Create a new block label for the rest of the calling block
-                  Label restBlockLabel = callScope.addLabelIntermediate();
-                  // Copy all procedure blocks
-                  List<ControlFlowBlock> procedureBlocks = getGraph().getScopeBlocks(procedure.getRef());
-                  for(ControlFlowBlock procedureBlock : procedureBlocks) {
-                     LabelRef procBlockLabelRef = procedureBlock.getLabel();
-                     Symbol procBlockLabel = getScope().getSymbol(procBlockLabelRef);
-                     Label inlinedBlockLabel;
-                     if(procedure.equals(procBlockLabel)) {
-                        inlinedBlockLabel = callScope.getLabel(procedure.getLocalName() + serial);
-                     } else {
-                        String inlinedBlockLabelName = getInlineSymbolName(procedure, procBlockLabel, serial);
-                        inlinedBlockLabel = callScope.getLabel(inlinedBlockLabelName);
-                     }
-                     ControlFlowBlock inlineBlock = new ControlFlowBlock(inlinedBlockLabel.getRef(), callScope.getRef());
-                     blocksIt.add(inlineBlock);
-                     for(Statement procStatement : procedureBlock.getStatements()) {
-                        Statement inlinedStatement = inlineStatement(procStatement, procedure, callScope, serial);
-                        if(inlinedStatement != null) {
-                           inlineBlock.addStatement(inlinedStatement);
-                        }
-                     }
-                     // Set successors
-                     if(procedureBlock.getDefaultSuccessor() != null) {
-                        LabelRef procBlockSuccessorRef = procedureBlock.getDefaultSuccessor();
-                        LabelRef inlinedSuccessor = inlineSuccessor(procBlockSuccessorRef, procedure, callScope, serial, restBlockLabel);
-                        inlineBlock.setDefaultSuccessor(inlinedSuccessor);
-                     }
-                     if(procedureBlock.getConditionalSuccessor() != null) {
-                        LabelRef procBlockSuccessorRef = procedureBlock.getConditionalSuccessor();
-                        LabelRef inlinedSuccessor = inlineSuccessor(procBlockSuccessorRef, procedure, callScope, serial, restBlockLabel);
-                        inlineBlock.setConditionalSuccessor(inlinedSuccessor);
-                     }
-                  }
-                  // Create a new block for the rest of the calling block
-                  ControlFlowBlock restBlock = new ControlFlowBlock(restBlockLabel.getRef(), callScope.getRef());
-                  blocksIt.add(restBlock);
-                  // Generate return assignment
-                  if(!procedure.getReturnType().equals(SymbolType.VOID)) {
-                     Variable procReturnVar = procedure.getVariable("return");
-                     String inlinedReturnVarName = getInlineSymbolName(procedure, procReturnVar, serial);
-                     Variable inlinedReturnVar = callScope.getVariable(inlinedReturnVarName);
-                     restBlock.addStatement(new StatementAssignment(call.getlValue(), inlinedReturnVar.getRef(), call.getSource()));
-                  } else {
-                     // Remove the tmp var receiving the result
-                     LValue lValue = call.getlValue();
-                     if(lValue instanceof VariableRef) {
-                        callScope.remove(getScope().getVariable((VariableRef) lValue));
-                        call.setlValue(null);
-                     }
-                  }
-                  // Copy the rest of the calling block to the new block
-                  while(statementsIt.hasNext()) {
-                     Statement restStatement = statementsIt.next();
-                     statementsIt.remove();
-                     restBlock.addStatement(restStatement);
-                  }
-                  // Set the successors for the rest block
-                  restBlock.setDefaultSuccessor(block.getDefaultSuccessor());
-                  restBlock.setConditionalSuccessor(block.getConditionalSuccessor());
-                  // Set default successor to the original block to the inlined procedure block
-                  Label inlinedProcLabel = callScope.getLabel(procedure.getLocalName() + serial);
-                  block.setDefaultSuccessor(inlinedProcLabel.getRef());
-                  // Set conditional successor of original block to null (as any condition has been moved to the rest block)
-                  block.setConditionalSuccessor(null);
-                  // Log the inlining
-                  getLog().append("Inlined call " + call.toString(getProgram(), false));
+                  inlineProcedureCall(call, procedure, statementsIt, block, blocksIt);
                   // Exit and restart
                   return true;
                }
@@ -123,6 +48,94 @@ public class Pass1ProcedureInline extends Pass1Base {
          }
       }
       return false;
+   }
+
+   /**
+    * Inline a specific call to a procedure.
+    *
+    * @param call The call to inline
+    * @param procedure The procedure being called
+    * @param statementsIt The statement iterator pointing to the call statement
+    * @param block The block containing the call
+    * @param blocksIt The block iterator pointing to the block containing the call
+    */
+   private void inlineProcedureCall(StatementCall call, Procedure procedure, ListIterator<Statement> statementsIt, ControlFlowBlock block, ListIterator<ControlFlowBlock> blocksIt) {
+      Scope callScope = getScope().getScope(block.getScope());
+      // Remove call
+      statementsIt.remove();
+      // Find call serial number (handles when multiple calls to the same procedure is made in the call scope)
+      int serial = nextSerial(procedure, callScope);
+      // Copy all procedure symbols
+      inlineSymbols(procedure, callScope, serial);
+      // Generate parameter assignments
+      inlineParameterAssignments(statementsIt, call, procedure, callScope, serial);
+      // Create a new block label for the rest of the calling block
+      Label restBlockLabel = callScope.addLabelIntermediate();
+      // Copy all procedure blocks
+      List<ControlFlowBlock> procedureBlocks = getGraph().getScopeBlocks(procedure.getRef());
+      for(ControlFlowBlock procedureBlock : procedureBlocks) {
+         LabelRef procBlockLabelRef = procedureBlock.getLabel();
+         Symbol procBlockLabel = getScope().getSymbol(procBlockLabelRef);
+         Label inlinedBlockLabel;
+         if(procedure.equals(procBlockLabel)) {
+            inlinedBlockLabel = callScope.getLabel(procedure.getLocalName() + serial);
+         } else {
+            String inlinedBlockLabelName = getInlineSymbolName(procedure, procBlockLabel, serial);
+            inlinedBlockLabel = callScope.getLabel(inlinedBlockLabelName);
+         }
+         ControlFlowBlock inlineBlock = new ControlFlowBlock(inlinedBlockLabel.getRef(), callScope.getRef());
+         blocksIt.add(inlineBlock);
+         for(Statement procStatement : procedureBlock.getStatements()) {
+            Statement inlinedStatement = inlineStatement(procStatement, procedure, callScope, serial);
+            if(inlinedStatement != null) {
+               inlineBlock.addStatement(inlinedStatement);
+            }
+         }
+         // Set successors
+         if(procedureBlock.getDefaultSuccessor() != null) {
+            LabelRef procBlockSuccessorRef = procedureBlock.getDefaultSuccessor();
+            LabelRef inlinedSuccessor = inlineSuccessor(procBlockSuccessorRef, procedure, callScope, serial, restBlockLabel);
+            inlineBlock.setDefaultSuccessor(inlinedSuccessor);
+         }
+         if(procedureBlock.getConditionalSuccessor() != null) {
+            LabelRef procBlockSuccessorRef = procedureBlock.getConditionalSuccessor();
+            LabelRef inlinedSuccessor = inlineSuccessor(procBlockSuccessorRef, procedure, callScope, serial, restBlockLabel);
+            inlineBlock.setConditionalSuccessor(inlinedSuccessor);
+         }
+      }
+      // Create a new block for the rest of the calling block
+      ControlFlowBlock restBlock = new ControlFlowBlock(restBlockLabel.getRef(), callScope.getRef());
+      blocksIt.add(restBlock);
+      // Generate return assignment
+      if(!procedure.getReturnType().equals(SymbolType.VOID)) {
+         Variable procReturnVar = procedure.getVariable("return");
+         String inlinedReturnVarName = getInlineSymbolName(procedure, procReturnVar, serial);
+         Variable inlinedReturnVar = callScope.getVariable(inlinedReturnVarName);
+         restBlock.addStatement(new StatementAssignment(call.getlValue(), inlinedReturnVar.getRef(), call.getSource()));
+      } else {
+         // Remove the tmp var receiving the result
+         LValue lValue = call.getlValue();
+         if(lValue instanceof VariableRef) {
+            callScope.remove(getScope().getVariable((VariableRef) lValue));
+            call.setlValue(null);
+         }
+      }
+      // Copy the rest of the calling block to the new block
+      while(statementsIt.hasNext()) {
+         Statement restStatement = statementsIt.next();
+         statementsIt.remove();
+         restBlock.addStatement(restStatement);
+      }
+      // Set the successors for the rest block
+      restBlock.setDefaultSuccessor(block.getDefaultSuccessor());
+      restBlock.setConditionalSuccessor(block.getConditionalSuccessor());
+      // Set default successor to the original block to the inlined procedure block
+      Label inlinedProcLabel = callScope.getLabel(procedure.getLocalName() + serial);
+      block.setDefaultSuccessor(inlinedProcLabel.getRef());
+      // Set conditional successor of original block to null (as any condition has been moved to the rest block)
+      block.setConditionalSuccessor(null);
+      // Log the inlining
+      getLog().append("Inlined call " + call.toString(getProgram(), false));
    }
 
    private LabelRef inlineSuccessor(LabelRef procBlockSuccessorRef, Procedure procedure, Scope callScope, int serial, Label restBlockLabel) {
@@ -188,7 +201,9 @@ public class Pass1ProcedureInline extends Pass1Base {
             String inlineSymbolName = getInlineSymbolName(procedure, procDestination, serial);
             inlinedDest = callScope.getLabel(inlineSymbolName);
          }
-         inlinedStatement = new StatementConditionalJump(procConditional.getrValue1(), procConditional.getOperator(), procConditional.getrValue2(), inlinedDest.getRef(), procConditional.getSource());
+         StatementConditionalJump inlinedConditionalJump = new StatementConditionalJump(procConditional.getrValue1(), procConditional.getOperator(), procConditional.getrValue2(), inlinedDest.getRef(), procConditional.getSource());
+         inlinedConditionalJump.setDeclaredUnroll(procConditional.isDeclaredUnroll());
+         inlinedStatement = inlinedConditionalJump;
       } else if(procStatement instanceof StatementReturn) {
          // No statement needed
          return null;

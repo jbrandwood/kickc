@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Finds the dominators for the control flow graph. */
-public class Pass3DominatorsAnalysis extends Pass2Base {
+public class Pass2DominatorsAnalysis extends Pass2SsaOptimization {
 
-   public Pass3DominatorsAnalysis(Program program) {
+   public Pass2DominatorsAnalysis(Program program) {
       super(program);
    }
 
@@ -19,10 +19,9 @@ public class Pass3DominatorsAnalysis extends Pass2Base {
     * Definition: d dom i if all paths from entry to node i include d
     * <p>
     * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
-    *
-    * @return The graph dominators
     */
-   public void findDominators() {
+   @Override
+   public boolean step() {
       DominatorsGraph dominatorsGraph = new DominatorsGraph();
 
       // Initialize dominators: Dom[first]={first}, Dom[block]={all}
@@ -75,6 +74,7 @@ public class Pass3DominatorsAnalysis extends Pass2Base {
 
       } while(change);
       getProgram().setDominators(dominatorsGraph);
+      return false;
    }
 
 

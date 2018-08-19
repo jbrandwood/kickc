@@ -11,11 +11,12 @@ import java.util.*;
  * <p>
  * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
  */
-public class Pass3LoopAnalysis extends Pass2Base {
+public class Pass2LoopAnalysis extends Pass2SsaOptimization {
 
-   public Pass3LoopAnalysis(Program program) {
+   public Pass2LoopAnalysis(Program program) {
       super(program);
    }
+
 
    /**
     * Finds loops and nested loops in the control flow graph.
@@ -23,7 +24,8 @@ public class Pass3LoopAnalysis extends Pass2Base {
     * <p>
     * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
     */
-   public void findLoops() {
+   @Override
+   public boolean step() {
       DominatorsGraph dominators = getProgram().getDominators();
       Collection<ControlFlowBlock> blocks = getGraph().getAllBlocks();
 
@@ -35,7 +37,9 @@ public class Pass3LoopAnalysis extends Pass2Base {
             if(blockDominators.contains(successor)) {
                // Found a loop back edge!
                NaturalLoop loop = new NaturalLoop(successor, block.getLabel());
-               getLog().append("Found back edge: " + loop.toString());
+               if(getLog().isVerboseSSAOptimize()) {
+                  getLog().append("Found back edge: " + loop.toString());
+               }
                loopSet.addLoop(loop);
             }
          }
@@ -61,15 +65,17 @@ public class Pass3LoopAnalysis extends Pass2Base {
             }
          }
          loop.setBlocks(loopBlocks);
-         getLog().append("Populated: " + loop.toString());
+         if(getLog().isVerboseSSAOptimize()) {
+            getLog().append("Populated: " + loop.toString());
+         }
       }
 
       boolean coalesceMore = true;
       while(coalesceMore) {
          coalesceMore = coalesceLoops(loopSet);
       }
-
       getProgram().setLoopSet(loopSet);
+      return false;
    }
 
    /**

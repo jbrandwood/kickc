@@ -94,6 +94,8 @@ public class Compiler {
 
          pass1GenerateSSA();
          pass2OptimizeSSA();
+         pass2UnrollLoops();
+         pass2InlineConstants();
          pass3Analysis();
          pass4RegisterAllocation();
          pass5GenerateAndOptimizeAsm();
@@ -201,9 +203,30 @@ public class Compiler {
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));
-
       pass2OptimizeSSA(optimizations);
 
+   }
+
+   private void pass2UnrollLoops() {
+      getLog().append("CONTROL FLOW GRAPH BEFORE UNROLLING");
+      getLog().append(program.getGraph().toString(program));
+
+      new Pass2DominatorsAnalysis(program).step();
+      getLog().append("NATURAL LOOPS");
+      new Pass2LoopAnalysis(program).step();
+      getLog().append(program.getLoopSet().toString());
+
+      List<Pass2SsaOptimization> loopUnrolling = new ArrayList<>();
+      loopUnrolling.add(new PassNStatementIndices(program));
+      loopUnrolling.add(new PassNVariableReferenceInfos(program));
+      loopUnrolling.add(new Pass3StatementInfos(program));
+      loopUnrolling.add(new Pass2DominatorsAnalysis(program));
+      loopUnrolling.add(new Pass2LoopAnalysis(program));
+      loopUnrolling.add(new Pass2LoopUnroll(program));
+      pass2OptimizeSSA(loopUnrolling);
+   }
+
+   private void pass2InlineConstants() {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new Pass2ConstantInlining(program));
@@ -212,7 +235,6 @@ public class Compiler {
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantIfs(program));
       pass2OptimizeSSA(constantOptimizations);
-
    }
 
    private void pass2OptimizeSSA(List<Pass2SsaOptimization> optimizations) {
@@ -252,7 +274,7 @@ public class Compiler {
       //getLog().append(program.getGraph().toString(program));
       pass2AssertSSA();
       new Pass3AddNopBeforeCallOns(program).generate();
-      new PassNStatementIndices(program).generateStatementIndices();
+      new PassNStatementIndices(program).execute();
 
       getLog().append("CALL GRAPH");
       new Pass3CallGraphAnalysis(program).findCallGraph();
@@ -260,8 +282,8 @@ public class Compiler {
 
       //getLog().setVerboseLiveRanges(true);
 
-      new Pass3StatementInfos(program).generateStatementInfos();
-      new PassNVariableReferenceInfos(program).generateVariableReferenceInfos();
+      new Pass3StatementInfos(program).execute();
+      new PassNVariableReferenceInfos(program).execute();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       //getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
       //getLog().append(program.getGraph().toString(program));
@@ -274,10 +296,10 @@ public class Compiler {
       new Pass2CullEmptyBlocks(program).step();
       new Pass3BlockSequencePlanner(program).plan();
       new Pass3AddNopBeforeCallOns(program).generate();
-      new PassNStatementIndices(program).generateStatementIndices();
+      new PassNStatementIndices(program).execute();
       new Pass3CallGraphAnalysis(program).findCallGraph();
-      new Pass3StatementInfos(program).generateStatementInfos();
-      new PassNVariableReferenceInfos(program).generateVariableReferenceInfos();
+      new Pass3StatementInfos(program).execute();
+      new PassNVariableReferenceInfos(program).execute();
       new Pass3SymbolInfos(program).generateSymbolInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       //getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");
@@ -294,11 +316,11 @@ public class Compiler {
    private void pass4RegisterAllocation() {
 
       getLog().append("DOMINATORS");
-      new Pass3DominatorsAnalysis(program).findDominators();
+      new Pass2DominatorsAnalysis(program).step();
       getLog().append(program.getDominators().toString());
 
       getLog().append("NATURAL LOOPS");
-      new Pass3LoopAnalysis(program).findLoops();
+      new Pass2LoopAnalysis(program).step();
       getLog().append(program.getLoopSet().toString());
 
       getLog().append("NATURAL LOOPS WITH DEPTH");

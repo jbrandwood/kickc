@@ -231,6 +231,23 @@ public class VariableReferenceInfos {
    }
 
    /**
+    * Get all statements referencing a variable
+    *
+    * @param varRef The variable to look for
+    * @return Index of all statements referencing the constant
+    */
+   public Collection<Integer> getVarRefStatements(VariableRef varRef) {
+      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(varRef);
+      LinkedHashSet<Integer> stmts = new LinkedHashSet<>();
+      refs.stream()
+            .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
+            .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).getStatementIdx()));
+      return stmts;
+   }
+
+
+
+   /**
     * Get all constatns referencing another constant
     *
     * @param constRef The constant to look for

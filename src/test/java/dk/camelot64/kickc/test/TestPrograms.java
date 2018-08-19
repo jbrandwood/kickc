@@ -46,10 +46,20 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
-//   @Test
-//   public void testUnrollScreenFill() throws IOException, URISyntaxException {
-//      compileAndCompare("unroll-screenfill");
-//   }
+   @Test
+   public void testUnusedBlockProblem() throws IOException, URISyntaxException {
+      compileAndCompare("unusedblockproblem");
+   }
+
+   @Test
+   public void testUnrollScreenFill() throws IOException, URISyntaxException {
+      compileAndCompare("unroll-screenfill");
+   }
+
+   @Test
+   public void testLoop100() throws IOException, URISyntaxException {
+      compileAndCompare("loop100");
+   }
 
    @Test
    public void testIrqHardwareClobberJsr() throws IOException, URISyntaxException {

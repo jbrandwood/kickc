@@ -77,9 +77,9 @@ stmt
     | '{' stmtSeq? '}' #stmtBlock
     | expr  ';' #stmtExpr
     | 'if' '(' expr ')' stmt ( 'else' stmt )? #stmtIfElse
-    | directive? 'while' '(' expr ')' stmt  #stmtWhile
-    | directive? 'do' stmt 'while' '(' expr ')' ';' #stmtDoWhile
-    | directive? 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
+    | directive* 'while' '(' expr ')' stmt  #stmtWhile
+    | directive* 'do' stmt 'while' '(' expr ')' ';' #stmtDoWhile
+    | directive* 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
     | 'return' expr? ';' #stmtReturn
     | 'asm' '{' asmLines '}' #stmtAsm
     | declKasm #stmtDeclKasm

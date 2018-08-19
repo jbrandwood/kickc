@@ -8,22 +8,25 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 
-public class PassNStatementIndices extends Pass2Base {
+public class PassNStatementIndices extends Pass2SsaOptimization {
 
    public PassNStatementIndices(Program program) {
       super(program);
    }
 
+
    /**
     * Create index numbers for all statements in the control flow graph.
     */
-   public void generateStatementIndices() {
+   @Override
+   public boolean step() {
       int currentIdx = 0;
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             statement.setIndex(currentIdx++);
          }
       }
+      return false;
    }
 
    /**

@@ -89,7 +89,9 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
       getGraph().addBlock(newBlock);
       LabelRef destLabel = conditional.getDestination();
-      newBlock.getStatements().add(new StatementConditionalJump(conditionAssignment.getrValue2(), destLabel, conditional.getSource()));
+      StatementConditionalJump newConditional = new StatementConditionalJump(conditionAssignment.getrValue2(), destLabel, conditional.getSource());
+      newConditional.setDeclaredUnroll(conditional.isDeclaredUnroll());
+      newBlock.getStatements().add(newConditional);
       newBlock.setDefaultSuccessor(block.getDefaultSuccessor());
       newBlock.setConditionalSuccessor(destLabel);
       // Rewrite the conditional to use only the first part of the && condition expression
@@ -119,13 +121,17 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       Label newBlockLabel = currentScope.addLabelIntermediate();
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
       getGraph().addBlock(newBlock);
-      newBlock.getStatements().add(new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination(), conditional.getSource()));
+      StatementConditionalJump newConditional = new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination(), conditional.getSource());
+      // Copy unrolling to the new conditional
+      newConditional.setDeclaredUnroll(conditional.isDeclaredUnroll());
+      newBlock.getStatements().add(newConditional);
       newBlock.setConditionalSuccessor(conditional.getDestination());
       newBlock.setDefaultSuccessor(block.getDefaultSuccessor());
       // Rewrite the conditional to use only the first part of the && condition expression
       block.setDefaultSuccessor(newBlockLabel.getRef());
       conditional.setrValue2(conditionAssignment.getrValue1());
-
+      // Remove any unrolling from the original conditional as only the new one leaves the loop
+      conditional.setDeclaredUnroll(false);
 
       // TODO: Fix phi-values inside the destination phi-blocks to reflect the new control flow! Use replaceLabels(block, replacement)
       ControlFlowBlock conditionalDestBlock = getGraph().getBlock(conditional.getDestination());

@@ -17,62 +17,15 @@ import java.util.*;
 /**
  * Identify variables defined/referenced for each block & statement.
  */
-public class PassNVariableReferenceInfos extends Pass2Base {
+public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
 
    public PassNVariableReferenceInfos(Program program) {
       super(program);
    }
 
-   /**
-    * Get all variables referenced in an rValue
-    *
-    * @param rValue The rValue
-    * @return All referenced variables
-    */
-   public static Collection<VariableRef> getReferencedVars(RValue rValue) {
-      LinkedHashSet<VariableRef> referencedVars = new LinkedHashSet<>();
-      for(SymbolRef symbolRef : getReferenced(rValue)) {
-         if(symbolRef instanceof VariableRef) {
-            referencedVars.add((VariableRef) symbolRef);
-         }
-      }
-      return referencedVars;
-   }
-
-   /**
-    * Get all constants referenced in an rValue
-    *
-    * @param rValue The rValue
-    * @return All referenced constants
-    */
-   public static Collection<ConstantRef> getReferencedConsts(RValue rValue) {
-      LinkedHashSet<ConstantRef> referencedConsts = new LinkedHashSet<>();
-      for(SymbolRef symbolRef : getReferenced(rValue)) {
-         if(symbolRef instanceof ConstantRef) {
-            referencedConsts.add((ConstantRef) symbolRef);
-         }
-      }
-      return referencedConsts;
-   }
-
-   /**
-    * Get all variables /constants referenced in an rValue
-    *
-    * @param rValue The rValue
-    * @return All referenced variables / constants
-    */
-   private static Collection<SymbolVariableRef> getReferenced(RValue rValue) {
-      Collection<SymbolVariableRef> referenced = new LinkedHashSet<>();
-      ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue), (programValue, currentStmt, stmtIt, currentBlock) -> {
-         if(programValue.get() instanceof SymbolVariableRef) {
-            referenced.add((SymbolVariableRef) programValue.get());
-         }
-      }, null, null, null);
-      return referenced;
-   }
-
    /** Create defined/referenced maps */
-   public void generateVariableReferenceInfos() {
+   @Override
+   public boolean step() {
       LinkedHashMap<LabelRef, Collection<VariableRef>> blockReferencedVars = new LinkedHashMap<>();
       LinkedHashMap<LabelRef, Collection<VariableRef>> blockUsedVars = new LinkedHashMap<>();
       LinkedHashMap<Integer, Collection<VariableRef>> stmtReferenced = new LinkedHashMap<>();
@@ -128,6 +81,56 @@ public class PassNVariableReferenceInfos extends Pass2Base {
                });
       }
       getProgram().setVariableReferenceInfos(new VariableReferenceInfos(blockReferencedVars, blockUsedVars, stmtReferenced, stmtDefined, symbolVarReferences));
+      return false;
+   }
+
+
+   /**
+    * Get all variables referenced in an rValue
+    *
+    * @param rValue The rValue
+    * @return All referenced variables
+    */
+   public static Collection<VariableRef> getReferencedVars(RValue rValue) {
+      LinkedHashSet<VariableRef> referencedVars = new LinkedHashSet<>();
+      for(SymbolRef symbolRef : getReferenced(rValue)) {
+         if(symbolRef instanceof VariableRef) {
+            referencedVars.add((VariableRef) symbolRef);
+         }
+      }
+      return referencedVars;
+   }
+
+   /**
+    * Get all constants referenced in an rValue
+    *
+    * @param rValue The rValue
+    * @return All referenced constants
+    */
+   public static Collection<ConstantRef> getReferencedConsts(RValue rValue) {
+      LinkedHashSet<ConstantRef> referencedConsts = new LinkedHashSet<>();
+      for(SymbolRef symbolRef : getReferenced(rValue)) {
+         if(symbolRef instanceof ConstantRef) {
+            referencedConsts.add((ConstantRef) symbolRef);
+         }
+      }
+      return referencedConsts;
+   }
+
+   /**
+    * Get all variables /constants referenced in an rValue
+    *
+    * @param rValue The rValue
+    * @return All referenced variables / constants
+    */
+   private static Collection<SymbolVariableRef> getReferenced(RValue rValue) {
+      Collection<SymbolVariableRef> referenced = new LinkedHashSet<>();
+      ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue), (programValue, currentStmt, stmtIt, currentBlock) -> {
+         if(programValue.get() instanceof SymbolVariableRef) {
+            referenced.add((SymbolVariableRef) programValue.get());
+         }
+      }, null, null, null);
+      return referenced;
    }
 
    /**

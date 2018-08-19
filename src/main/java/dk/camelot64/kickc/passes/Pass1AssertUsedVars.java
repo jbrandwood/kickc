@@ -24,8 +24,8 @@ public class Pass1AssertUsedVars extends Pass1Base {
    @Override
    public boolean step() {
 
-      new PassNStatementIndices(getProgram()).generateStatementIndices();
-      new PassNVariableReferenceInfos(getProgram()).generateVariableReferenceInfos();
+      new PassNStatementIndices(getProgram()).execute();
+      new PassNVariableReferenceInfos(getProgram()).execute();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
       ControlFlowBlock beginBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));

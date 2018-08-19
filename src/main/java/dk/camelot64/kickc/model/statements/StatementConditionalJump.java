@@ -6,8 +6,7 @@ import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.values.RValue;
 
 /**
- * Intermediate Compiler Form Statement with a conditional jump.
- * Intermediate form used for compiler optimization.
+ * SSA form conditional jump. Intermediate form used for compiler optimization.
  * <br>
  * <i> if ( Y<sub>j</sub> ) goto XX </i>
  * <br>
@@ -19,6 +18,7 @@ public class StatementConditionalJump extends StatementBase {
    private Operator operator;
    private RValue rValue2;
    private LabelRef destination;
+   private boolean declaredUnroll;
 
    public StatementConditionalJump(RValue condition, LabelRef destination,StatementSource source) {
       super(null, source);
@@ -34,17 +34,7 @@ public class StatementConditionalJump extends StatementBase {
          RValue rValue2,
          LabelRef destination,
          StatementSource source) {
-      this(rValue1, operator, rValue2, destination, null, source);
-   }
-
-   public StatementConditionalJump(
-         RValue rValue1,
-         Operator operator,
-         RValue rValue2,
-         LabelRef destination,
-         Integer index,
-         StatementSource source) {
-      super(index, source);
+      super(null, source);
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;
@@ -83,10 +73,22 @@ public class StatementConditionalJump extends StatementBase {
       this.destination = destination;
    }
 
+   public boolean isDeclaredUnroll() {
+      return declaredUnroll;
+   }
+
+   public void setDeclaredUnroll(boolean declaredUnroll) {
+      this.declaredUnroll = declaredUnroll;
+   }
+
    @Override
    public String toString(Program program, boolean aliveInfo) {
       StringBuilder out = new StringBuilder();
       out.append(super.idxString());
+      if(declaredUnroll) {
+         out.append("unroll ");
+
+      }
       out.append("if(");
       if(rValue1 != null) {
          out.append(rValue1.toString(program));

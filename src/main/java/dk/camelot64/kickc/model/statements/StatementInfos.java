@@ -68,7 +68,7 @@ public class StatementInfos {
    /**
     * Get statement from index
     *
-    * @param Statement index
+    * @param index Statement index
     * @return The statement with the passed index
     */
    public Statement getStatement(int index) {

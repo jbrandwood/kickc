@@ -1,6 +1,8 @@
 package dk.camelot64.kickc;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StatementSequence;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -37,7 +39,7 @@ public class Compiler {
          }
          final CharStream fileStream = CharStreams.fromPath(file.toPath());
          imported.add(file.getAbsolutePath());
-         program.getLog().append("PARSING " + file.getPath().replace("\\","/"));
+         program.getLog().append("PARSING " + file.getPath().replace("\\", "/"));
          program.getLog().append(fileStream.toString());
          KickCLexer lexer = new KickCLexer(fileStream);
          KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
@@ -93,7 +95,7 @@ public class Compiler {
          program.setStatementSequence(sequence);
 
          pass1GenerateSSA();
-         pass2OptimizeSSA();
+         pass2Optimize();
          pass2UnrollLoops();
          pass2InlineConstants();
          pass3Analysis();
@@ -184,7 +186,7 @@ public class Compiler {
       }
    }
 
-   private void pass2OptimizeSSA() {
+   private void pass2Optimize() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
@@ -203,19 +205,10 @@ public class Compiler {
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));
-      pass2OptimizeSSA(optimizations);
-
+      pass2Execute(optimizations);
    }
 
    private void pass2UnrollLoops() {
-      getLog().append("CONTROL FLOW GRAPH BEFORE UNROLLING");
-      getLog().append(program.getGraph().toString(program));
-
-      new Pass2DominatorsAnalysis(program).step();
-      getLog().append("NATURAL LOOPS");
-      new Pass2LoopAnalysis(program).step();
-      getLog().append(program.getLoopSet().toString());
-
       List<Pass2SsaOptimization> loopUnrolling = new ArrayList<>();
       loopUnrolling.add(new PassNStatementIndices(program));
       loopUnrolling.add(new PassNVariableReferenceInfos(program));
@@ -224,7 +217,21 @@ public class Compiler {
       loopUnrolling.add(new Pass2LoopAnalysis(program));
       loopUnrolling.add(new Pass2LoopUnrollPhiPrepare(program));
       loopUnrolling.add(new Pass2LoopUnroll(program));
-      pass2OptimizeSSA(loopUnrolling);
+
+      boolean unrolled;
+      do {
+         unrolled = pass2ExecuteOnce(loopUnrolling);
+         if(unrolled) {
+
+            if(getLog().isVerboseLoopUnroll()) {
+               getLog().append("UNROLLED CONTROL FLOW GRAPH");
+               getLog().append(program.getGraph().toString(program));
+            }
+            pass2Optimize();
+            new Pass3BlockSequencePlanner(program).plan();
+         }
+      }  while(unrolled);
+
    }
 
    private void pass2InlineConstants() {
@@ -235,10 +242,15 @@ public class Compiler {
       constantOptimizations.add(new Pass2ConstantIdentification(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantIfs(program));
-      pass2OptimizeSSA(constantOptimizations);
+      pass2Execute(constantOptimizations);
    }
 
-   private void pass2OptimizeSSA(List<Pass2SsaOptimization> optimizations) {
+   /**
+    * Execute optimization steps repeatedly until none of them performs an optimization anymore
+    *
+    * @param optimizations The optimizations to repeat
+    */
+   private void pass2Execute(List<Pass2SsaOptimization> optimizations) {
       getLog().append("OPTIMIZING CONTROL FLOW GRAPH");
       boolean ssaOptimized = true;
       while(ssaOptimized) {
@@ -259,6 +271,29 @@ public class Compiler {
             }
          }
       }
+   }
+
+   /**
+    * Repeat a set of optimizations steps once each.
+    *
+    * @param optimizations The optimizations
+    * @return true if any step performed an optimization
+    */
+   private boolean pass2ExecuteOnce(List<Pass2SsaOptimization> optimizations) {
+      boolean ssaOptimized = false;
+      for(Pass2SsaOptimization optimization : optimizations) {
+         pass2AssertSSA();
+         boolean stepOptimized = optimization.step();
+         if(stepOptimized) {
+            getLog().append("Successful SSA optimization " + optimization.getClass().getSimpleName() + "");
+            ssaOptimized = true;
+            if(getLog().isVerboseSSAOptimize()) {
+               getLog().append("CONTROL FLOW GRAPH");
+               getLog().append(program.getGraph().toString(program));
+            }
+         }
+      }
+      return ssaOptimized;
    }
 
    private void pass3Analysis() {
@@ -321,7 +356,10 @@ public class Compiler {
       getLog().append(program.getDominators().toString());
 
       getLog().append("NATURAL LOOPS");
+      boolean wasVerbose = getLog().isVerboseSSAOptimize();
+      getLog().setVerboseSSAOptimize(true);
       new Pass2LoopAnalysis(program).step();
+      getLog().setVerboseSSAOptimize(wasVerbose);
       getLog().append(program.getLoopSet().toString());
 
       getLog().append("NATURAL LOOPS WITH DEPTH");

@@ -27,6 +27,11 @@ public abstract class StatementBase implements Statement {
    }
 
    @Override
+   public void setSource(StatementSource source) {
+      this.source = source;
+   }
+
+   @Override
    public Integer getIndex() {
       return index;
    }

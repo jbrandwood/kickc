@@ -18,8 +18,12 @@ public interface Statement {
    void setIndex(Integer idx);
 
    /**
-    * Get the source for the statement*
+    * Get the source for the statement
     */
     StatementSource getSource();
 
+   /**
+    * Set the source for the statement
+    */
+   void setSource(StatementSource source);
 }

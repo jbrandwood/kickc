@@ -99,7 +99,9 @@ public class Pass2LoopAnalysis extends Pass2SsaOptimization {
                loop.addTails(other.getTails());
                loop.addBlocks(other.getBlocks());
                loopSet.remove(other);
-               getLog().append("Coalesced: " + loop.toString());
+               if(getLog().isVerboseSSAOptimize()) {
+                  getLog().append("Coalesced: " + loop.toString());
+               }
                return true;
             }
          }

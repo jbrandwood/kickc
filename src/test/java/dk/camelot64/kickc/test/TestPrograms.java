@@ -52,8 +52,18 @@ public class TestPrograms {
    }
 
    @Test
-   public void testUnrollScreenFill() throws IOException, URISyntaxException {
-      compileAndCompare("unroll-screenfill");
+   public void testUnrollScreenFillFor() throws IOException, URISyntaxException {
+      compileAndCompare("unroll-screenfill-for");
+   }
+
+   @Test
+   public void testUnrollScreenFillWhile() throws IOException, URISyntaxException {
+      compileAndCompare("unroll-screenfill-while");
+   }
+
+   @Test
+   public void testUnrollModifyVar() throws IOException, URISyntaxException {
+      compileAndCompare("unroll-loop-modifyvar");
    }
 
    @Test

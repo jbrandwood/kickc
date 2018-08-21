@@ -1,0 +1,357 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/unusedblockproblem.kc
+// Problem with eliminating unused blocks/vars after the infinite loop (symbol line#2 not removed from symbol table)
+
+void main() {
+    byte* SCREEN = $400;
+    while(true) {
+        (*SCREEN)++;
+    }
+    for(byte line: 0..24) {
+        SCREEN[line] = line;
+    }
+}
+Adding pre/post-modifier *((byte*) main::SCREEN) ← ++ *((byte*) main::SCREEN)
+SYMBOLS
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(bool~) main::$0
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@7
+(label) main::@8
+(label) main::@return
+(byte*) main::SCREEN
+(byte) main::line
+
+Promoting word/signed word/dword/signed dword to byte* in main::SCREEN ← ((byte*)) 1024
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (byte*) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  if(true) goto main::@2
+  to:main::@5
+main::@2: scope:[main]  from main::@1 main::@6
+  *((byte*) main::SCREEN) ← ++ *((byte*) main::SCREEN)
+  to:main::@1
+main::@5: scope:[main]  from main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@5 main::@7
+  (byte) main::line ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@4
+main::@6: scope:[main]  from
+  to:main::@2
+main::@7: scope:[main]  from
+  to:main::@3
+main::@4: scope:[main]  from main::@3 main::@4
+  *((byte*) main::SCREEN + (byte) main::line) ← (byte) main::line
+  (byte) main::line ← (byte) main::line + rangenext(0,24)
+  (bool~) main::$0 ← (byte) main::line != rangelast(0,24)
+  if((bool~) main::$0) goto main::@4
+  to:main::@8
+main::@8: scope:[main]  from main::@4
+  to:main::@return
+main::@return: scope:[main]  from main::@8
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+Removing empty block main::@5
+Removing empty block main::@6
+Removing empty block main::@7
+Removing empty block main::@8
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte*) main::SCREEN#3 ← phi( main/(byte*) main::SCREEN#0 main::@2/(byte*) main::SCREEN#1 )
+  if(true) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1
+  (byte*) main::SCREEN#1 ← phi( main::@1/(byte*) main::SCREEN#3 )
+  *((byte*) main::SCREEN#1) ← ++ *((byte*) main::SCREEN#1)
+  to:main::@1
+main::@3: scope:[main]  from main::@1
+  (byte*) main::SCREEN#4 ← phi( main::@1/(byte*) main::SCREEN#3 )
+  (byte) main::line#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@4
+main::@4: scope:[main]  from main::@3 main::@4
+  (byte*) main::SCREEN#2 ← phi( main::@3/(byte*) main::SCREEN#4 main::@4/(byte*) main::SCREEN#2 )
+  (byte) main::line#2 ← phi( main::@3/(byte) main::line#0 main::@4/(byte) main::line#1 )
+  *((byte*) main::SCREEN#2 + (byte) main::line#2) ← (byte) main::line#2
+  (byte) main::line#1 ← (byte) main::line#2 + rangenext(0,24)
+  (bool~) main::$0 ← (byte) main::line#1 != rangelast(0,24)
+  if((bool~) main::$0) goto main::@4
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(bool~) main::$0
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@return
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(byte*) main::SCREEN#1
+(byte*) main::SCREEN#2
+(byte*) main::SCREEN#3
+(byte*) main::SCREEN#4
+(byte) main::line
+(byte) main::line#0
+(byte) main::line#1
+(byte) main::line#2
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+Alias (byte*) main::SCREEN#1 = (byte*) main::SCREEN#3 (byte*) main::SCREEN#4 
+Succesful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (byte*) main::SCREEN#1
+Self Phi Eliminated (byte*) main::SCREEN#2
+Succesful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte*) main::SCREEN#1 (byte*) main::SCREEN#0
+Redundant Phi (byte*) main::SCREEN#2 (byte*) main::SCREEN#1
+Succesful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) main::$0 if((byte) main::line#1!=rangelast(0,24)) goto main::@4
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) main::SCREEN#0 = ((byte*))1024
+Constant (const byte) main::line#0 = 0
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination if(true) goto main::@2
+Succesful SSA optimization Pass2ConstantIfs
+Eliminating variable (byte) main::line#2 from unused block main::@4
+Eliminating variable (byte) main::line#1 and from unused block main::@4
+Removing PHI-reference to removed block (main::@3) in block main::@4
+Removing unused block main::@3
+Removing unused block main::@4
+Removing unused block main::@return
+Succesful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) main::@1
+Succesful SSA optimization Pass2CullEmptyBlocks
+Eliminating unused constant (const byte) main::line#0
+Succesful SSA optimization PassNEliminateUnusedVars
+OPTIMIZING CONTROL FLOW GRAPH
+Block Sequence Planned @begin @1 @end main main::@2 
+Block Sequence Planned @begin @1 @end main main::@2 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Propagating live ranges...
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Block Sequence Planned @begin @1 @end main main::@2 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main  [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::@2
+main::@2: scope:[main]  from main main::@2
+  [5] *((const byte*) main::SCREEN#0) ← ++ *((const byte*) main::SCREEN#0) [ ] ( main:2 [ ] )
+  to:main::@2
+
+DOMINATORS
+@begin dominated by  @begin 
+@1 dominated by  @1 @begin 
+@end dominated by  @1 @begin @end 
+main dominated by  @1 @begin main 
+main::@2 dominated by  @1 @begin main::@2 main 
+
+NATURAL LOOPS
+Found back edge: Loop head: main::@2 tails: main::@2 blocks: null
+Populated: Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Loop head: main::@2 tails: main::@2 blocks: main::@2 
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 1 loops in scope [main]
+  Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Loop head: main::@2 tails: main::@2 blocks: main::@2  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::SCREEN
+(byte) main::line
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    jmp b2
+  //SEG10 main::@2
+  b2:
+  //SEG11 [5] *((const byte*) main::SCREEN#0) ← ++ *((const byte*) main::SCREEN#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc SCREEN
+    jmp b2
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 132 combination 
+Uplifting [] best 132 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    jmp b2
+  //SEG10 main::@2
+  b2:
+  //SEG11 [5] *((const byte*) main::SCREEN#0) ← ++ *((const byte*) main::SCREEN#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc SCREEN
+    jmp b2
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@2
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte) main::line
+
+
+
+FINAL ASSEMBLER
+Score: 96
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label SCREEN = $400
+  //SEG10 main::@2
+  b2:
+  //SEG11 [5] *((const byte*) main::SCREEN#0) ← ++ *((const byte*) main::SCREEN#0) [ ] ( main:2 [ ] ) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc SCREEN
+    jmp b2
+}
+

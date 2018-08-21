@@ -1,17 +1,14 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.*;
 
 /** Plan the optimal sequence for the blocks of the control flow graph */
 public class Pass3BlockSequencePlanner extends Pass2Base {
-
 
    Deque<ScopeTodo> todoScopes = new ArrayDeque<>();
 

@@ -263,7 +263,7 @@ public abstract class Scope implements Symbol {
    }
 
    public Label getLabel(String name) {
-      return (Label) symbols.get(name);
+      return (Label) getSymbol(name);
    }
 
    public Label getLabel(LabelRef labelRef) {

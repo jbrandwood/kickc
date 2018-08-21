@@ -1,0 +1,2061 @@
+PARSING src/test/java/dk/camelot64/kickc/test/kc/unroll-screenfill-for.kc
+// Fills the screen using an unrolled inner ranged for()-loop
+
+void main() {
+    byte* SCREEN = $400;
+
+    for(byte x: 0..39) {
+        inline for(byte line: 0..24) {
+            (SCREEN+line*40)[x] = x;
+        }
+
+    }
+
+}
+SYMBOLS
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(byte/signed word/word/dword/signed dword~) main::$0
+(byte*~) main::$1
+(bool~) main::$2
+(bool~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@return
+(byte*) main::SCREEN
+(byte) main::line
+(byte) main::x
+
+Promoting word/signed word/dword/signed dword to byte* in main::SCREEN ← ((byte*)) 1024
+INITIAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from
+  (byte*) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte) main::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  (byte) main::line ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  (byte/signed word/word/dword/signed dword~) main::$0 ← (byte) main::line * (byte/signed byte/word/signed word/dword/signed dword) 40
+  (byte*~) main::$1 ← (byte*) main::SCREEN + (byte/signed word/word/dword/signed dword~) main::$0
+  *((byte*~) main::$1 + (byte) main::x) ← (byte) main::x
+  (byte) main::line ← (byte) main::line + rangenext(0,24)
+  (bool~) main::$2 ← (byte) main::line != rangelast(0,24)
+  unroll if((bool~) main::$2) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  (byte) main::x ← (byte) main::x + rangenext(0,39)
+  (bool~) main::$3 ← (byte) main::x != rangelast(0,39)
+  if((bool~) main::$3) goto main::@1
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @1
+
+Removing empty block main::@4
+PROCEDURE MODIFY VARIABLE ANALYSIS
+
+Completing Phi functions...
+Completing Phi functions...
+Completing Phi functions...
+
+CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte) main::x#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  (byte) main::x#4 ← phi( main/(byte) main::x#0 main::@3/(byte) main::x#1 )
+  (byte*) main::SCREEN#2 ← phi( main/(byte*) main::SCREEN#0 main::@3/(byte*) main::SCREEN#3 )
+  (byte) main::line#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  (byte) main::x#2 ← phi( main::@1/(byte) main::x#4 main::@2/(byte) main::x#2 )
+  (byte*) main::SCREEN#1 ← phi( main::@1/(byte*) main::SCREEN#2 main::@2/(byte*) main::SCREEN#1 )
+  (byte) main::line#2 ← phi( main::@1/(byte) main::line#0 main::@2/(byte) main::line#1 )
+  (byte/signed word/word/dword/signed dword~) main::$0 ← (byte) main::line#2 * (byte/signed byte/word/signed word/dword/signed dword) 40
+  (byte*~) main::$1 ← (byte*) main::SCREEN#1 + (byte/signed word/word/dword/signed dword~) main::$0
+  *((byte*~) main::$1 + (byte) main::x#2) ← (byte) main::x#2
+  (byte) main::line#1 ← (byte) main::line#2 + rangenext(0,24)
+  (bool~) main::$2 ← (byte) main::line#1 != rangelast(0,24)
+  unroll if((bool~) main::$2) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  (byte*) main::SCREEN#3 ← phi( main::@2/(byte*) main::SCREEN#1 )
+  (byte) main::x#3 ← phi( main::@2/(byte) main::x#2 )
+  (byte) main::x#1 ← (byte) main::x#3 + rangenext(0,39)
+  (bool~) main::$3 ← (byte) main::x#1 != rangelast(0,39)
+  if((bool~) main::$3) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(byte/signed word/word/dword/signed dword~) main::$0
+(byte*~) main::$1
+(bool~) main::$2
+(bool~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(byte*) main::SCREEN#1
+(byte*) main::SCREEN#2
+(byte*) main::SCREEN#3
+(byte) main::line
+(byte) main::line#0
+(byte) main::line#1
+(byte) main::line#2
+(byte) main::x
+(byte) main::x#0
+(byte) main::x#1
+(byte) main::x#2
+(byte) main::x#3
+(byte) main::x#4
+
+OPTIMIZING CONTROL FLOW GRAPH
+Culled Empty Block (label) @2
+Succesful SSA optimization Pass2CullEmptyBlocks
+Alias (byte) main::x#2 = (byte) main::x#3 
+Alias (byte*) main::SCREEN#1 = (byte*) main::SCREEN#3 
+Succesful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (byte*) main::SCREEN#1
+Self Phi Eliminated (byte) main::x#2
+Succesful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte*) main::SCREEN#1 (byte*) main::SCREEN#2
+Redundant Phi (byte) main::x#2 (byte) main::x#4
+Succesful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) main::$2 unroll if((byte) main::line#1!=rangelast(0,24)) goto main::@2
+Simple Condition (bool~) main::$3 if((byte) main::x#1!=rangelast(0,39)) goto main::@1
+Succesful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) main::SCREEN#0 = ((byte*))1024
+Constant (const byte) main::x#0 = 0
+Constant (const byte) main::line#0 = 0
+Succesful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value main::line#1 ← ++ main::line#2 to ++
+Resolved ranged comparison value unroll if(main::line#1!=rangelast(0,24)) goto main::@2 to (byte/signed byte/word/signed word/dword/signed dword) 25
+Resolved ranged next value main::x#1 ← ++ main::x#4 to ++
+Resolved ranged comparison value if(main::x#1!=rangelast(0,39)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 40
+Self Phi Eliminated (byte*) main::SCREEN#2
+Succesful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte*) main::SCREEN#2 (const byte*) main::SCREEN#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+Unrolling loop Loop head: main::@2 tails: main::@2 blocks: main::@2 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#2 (const byte) main::line#0
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$0 = main::line#0*40
+Constant (const byte) main::line#1 = ++main::line#0
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$1 = main::SCREEN#0+main::$0
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [6] if((const byte) main::line#1!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_1
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_1 tails: main::@2_1 blocks: main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#3 (const byte) main::line#1
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$4 = main::line#1*40
+Constant (const byte) main::line#4 = ++main::line#1
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$5 = main::SCREEN#0+main::$4
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [8] if((const byte) main::line#4!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_2
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_2 tails: main::@2_2 blocks: main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#5 (const byte) main::line#4
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$6 = main::line#4*40
+Constant (const byte) main::line#6 = ++main::line#4
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$7 = main::SCREEN#0+main::$6
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [9] if((const byte) main::line#6!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_3
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_3 tails: main::@2_3 blocks: main::@2_3 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#7 (const byte) main::line#6
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$8 = main::line#6*40
+Constant (const byte) main::line#8 = ++main::line#6
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$9 = main::SCREEN#0+main::$8
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [10] if((const byte) main::line#8!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_4
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_4 tails: main::@2_4 blocks: main::@2_4 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#9 (const byte) main::line#8
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$10 = main::line#8*40
+Constant (const byte) main::line#10 = ++main::line#8
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$11 = main::SCREEN#0+main::$10
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [11] if((const byte) main::line#10!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_5
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_5 tails: main::@2_5 blocks: main::@2_5 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#11 (const byte) main::line#10
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$12 = main::line#10*40
+Constant (const byte) main::line#12 = ++main::line#10
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$13 = main::SCREEN#0+main::$12
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [12] if((const byte) main::line#12!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_6
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_6 tails: main::@2_6 blocks: main::@2_6 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#13 (const byte) main::line#12
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$14 = main::line#12*40
+Constant (const byte) main::line#14 = ++main::line#12
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$15 = main::SCREEN#0+main::$14
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [13] if((const byte) main::line#14!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_7
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_7 tails: main::@2_7 blocks: main::@2_7 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#15 (const byte) main::line#14
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$16 = main::line#14*40
+Constant (const byte) main::line#16 = ++main::line#14
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$17 = main::SCREEN#0+main::$16
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [14] if((const byte) main::line#16!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_8
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_8 tails: main::@2_8 blocks: main::@2_8 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#17 (const byte) main::line#16
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$18 = main::line#16*40
+Constant (const byte) main::line#18 = ++main::line#16
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$19 = main::SCREEN#0+main::$18
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [15] if((const byte) main::line#18!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_9
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_9 tails: main::@2_9 blocks: main::@2_9 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#19 (const byte) main::line#18
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$20 = main::line#18*40
+Constant (const byte) main::line#20 = ++main::line#18
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$21 = main::SCREEN#0+main::$20
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [16] if((const byte) main::line#20!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_10
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_10 tails: main::@2_10 blocks: main::@2_10 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#21 (const byte) main::line#20
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$22 = main::line#20*40
+Constant (const byte) main::line#22 = ++main::line#20
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$23 = main::SCREEN#0+main::$22
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [17] if((const byte) main::line#22!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_11
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_11 tails: main::@2_11 blocks: main::@2_11 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#23 (const byte) main::line#22
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$24 = main::line#22*40
+Constant (const byte) main::line#24 = ++main::line#22
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$25 = main::SCREEN#0+main::$24
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [18] if((const byte) main::line#24!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_12
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_12 tails: main::@2_12 blocks: main::@2_12 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#25 (const byte) main::line#24
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$26 = main::line#24*40
+Constant (const byte) main::line#26 = ++main::line#24
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$27 = main::SCREEN#0+main::$26
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [19] if((const byte) main::line#26!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_13
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_13 tails: main::@2_13 blocks: main::@2_13 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#27 (const byte) main::line#26
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$28 = main::line#26*40
+Constant (const byte) main::line#28 = ++main::line#26
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$29 = main::SCREEN#0+main::$28
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [20] if((const byte) main::line#28!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_14
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_14 tails: main::@2_14 blocks: main::@2_14 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#29 (const byte) main::line#28
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$30 = main::line#28*40
+Constant (const byte) main::line#30 = ++main::line#28
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$31 = main::SCREEN#0+main::$30
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [21] if((const byte) main::line#30!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_15
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_15 tails: main::@2_15 blocks: main::@2_15 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#31 (const byte) main::line#30
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$32 = main::line#30*40
+Constant (const byte) main::line#32 = ++main::line#30
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$33 = main::SCREEN#0+main::$32
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [22] if((const byte) main::line#32!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_16
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_16 tails: main::@2_16 blocks: main::@2_16 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#33 (const byte) main::line#32
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$34 = main::line#32*40
+Constant (const byte) main::line#34 = ++main::line#32
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$35 = main::SCREEN#0+main::$34
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [23] if((const byte) main::line#34!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_17
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_17 tails: main::@2_17 blocks: main::@2_17 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#35 (const byte) main::line#34
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$36 = main::line#34*40
+Constant (const byte) main::line#36 = ++main::line#34
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$37 = main::SCREEN#0+main::$36
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [24] if((const byte) main::line#36!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_18
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_18 tails: main::@2_18 blocks: main::@2_18 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#37 (const byte) main::line#36
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$38 = main::line#36*40
+Constant (const byte) main::line#38 = ++main::line#36
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$39 = main::SCREEN#0+main::$38
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [25] if((const byte) main::line#38!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_19
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_19 tails: main::@2_19 blocks: main::@2_19 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#39 (const byte) main::line#38
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$40 = main::line#38*40
+Constant (const byte) main::line#40 = ++main::line#38
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$41 = main::SCREEN#0+main::$40
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [26] if((const byte) main::line#40!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_20
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@2_20 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_20 tails: main::@2_20 blocks: main::@2_20 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#41 (const byte) main::line#40
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$42 = main::line#40*40
+Constant (const byte) main::line#42 = ++main::line#40
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$43 = main::SCREEN#0+main::$42
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [27] if((const byte) main::line#42!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_21
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@2_20 main::@2_21 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_21 tails: main::@2_21 blocks: main::@2_21 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#43 (const byte) main::line#42
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$44 = main::line#42*40
+Constant (const byte) main::line#44 = ++main::line#42
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$45 = main::SCREEN#0+main::$44
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [28] if((const byte) main::line#44!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_22
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@2_20 main::@2_21 main::@2_22 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_22 tails: main::@2_22 blocks: main::@2_22 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#45 (const byte) main::line#44
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$46 = main::line#44*40
+Constant (const byte) main::line#46 = ++main::line#44
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$47 = main::SCREEN#0+main::$46
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [29] if((const byte) main::line#46!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_23
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@2_20 main::@2_21 main::@2_22 main::@2_23 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_23 tails: main::@2_23 blocks: main::@2_23 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#47 (const byte) main::line#46
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$48 = main::line#46*40
+Constant (const byte) main::line#48 = ++main::line#46
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$49 = main::SCREEN#0+main::$48
+Succesful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [30] if((const byte) main::line#48!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_24
+Succesful SSA optimization Pass2ConstantIfs
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@2_20 main::@2_21 main::@2_22 main::@2_23 main::@2_24 main::@3 main::@return 
+Unrolling loop Loop head: main::@2_24 tails: main::@2_24 blocks: main::@2_24 
+Successful SSA optimization Pass2LoopUnroll
+OPTIMIZING CONTROL FLOW GRAPH
+Redundant Phi (byte) main::line#49 (const byte) main::line#48
+Succesful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$50 = main::line#48*40
+Constant (const byte) main::line#50 = ++main::line#48
+Succesful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$51 = main::SCREEN#0+main::$50
+Succesful SSA optimization Pass2ConstantIdentification
+Removing PHI-reference to removed block (main::@2_24) in block main::@2_25
+if() condition always false - eliminating [31] if((const byte) main::line#50!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@2_25
+Succesful SSA optimization Pass2ConstantIfs
+Eliminating unused constant (const byte) main::line#50
+Succesful SSA optimization PassNEliminateUnusedVars
+Eliminating variable (byte) main::line#51 from unused block main::@2_25
+Eliminating variable (byte/signed word/word/dword/signed dword~) main::$52 and from unused block main::@2_25
+Eliminating variable (byte*~) main::$53 and from unused block main::@2_25
+Eliminating variable (byte) main::line#52 and from unused block main::@2_25
+Removing unused block main::@2_25
+Succesful SSA optimization Pass2EliminateUnusedBlocks
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@2_20 main::@2_21 main::@2_22 main::@2_23 main::@2_24 main::@3 main::@return 
+OPTIMIZING CONTROL FLOW GRAPH
+Inlining constant with var siblings (const byte) main::x#0
+Inlining constant with var siblings (const byte) main::x#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#4
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#6
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#8
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#10
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#12
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#14
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#16
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#18
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#20
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#22
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#24
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#26
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#28
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#30
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#32
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#34
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#36
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#38
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#40
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#42
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#44
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#46
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Inlining constant with different constant siblings (const byte) main::line#48
+Constant inlined main::$50 = ++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$51 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$12 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$13 = (const byte*) main::SCREEN#0+++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$14 = ++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$15 = (const byte*) main::SCREEN#0+++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$10 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$11 = (const byte*) main::SCREEN#0+++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#42 = ++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#44 = ++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$16 = ++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$17 = (const byte*) main::SCREEN#0+++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$18 = ++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$19 = (const byte*) main::SCREEN#0+++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#40 = ++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#4 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#1 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#46 = ++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#48 = ++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$40 = ++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#8 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#6 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$45 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$46 = ++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$47 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$48 = ++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$41 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$42 = ++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$43 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$44 = ++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#10 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#12 = ++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$49 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#18 = ++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#14 = ++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#16 = ++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$34 = ++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$35 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$36 = ++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$37 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$30 = ++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$31 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$32 = ++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$33 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#20 = ++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#22 = ++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$38 = ++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$39 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#28 = ++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#24 = ++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#26 = ++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$23 = (const byte*) main::SCREEN#0+++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$24 = ++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$25 = (const byte*) main::SCREEN#0+++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$26 = ++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$20 = ++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$21 = (const byte*) main::SCREEN#0+++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$22 = ++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#32 = ++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#34 = ++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$1 = (const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$27 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$28 = ++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$29 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#30 = ++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$0 = (byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$5 = (const byte*) main::SCREEN#0+++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$6 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$4 = ++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$9 = (const byte*) main::SCREEN#0+++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#36 = ++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$7 = (const byte*) main::SCREEN#0+++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#38 = ++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$8 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Succesful SSA optimization Pass2ConstantInlining
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@2_20 main::@2_21 main::@2_22 main::@2_23 main::@2_24 main::@3 main::@return 
+Added new block during phi lifting main::@5(between main::@3 and main::@1)
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@2_20 main::@2_21 main::@2_22 main::@2_23 main::@2_24 main::@3 main::@return main::@5 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Propagating live ranges...
+Propagating live ranges...
+Created 1 initial phi equivalence classes
+Coalesced [34] main::x#5 ← main::x#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) main::@5
+Block Sequence Planned @begin @1 @end main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_8 main::@2_9 main::@2_10 main::@2_11 main::@2_12 main::@2_13 main::@2_14 main::@2_15 main::@2_16 main::@2_17 main::@2_18 main::@2_19 main::@2_20 main::@2_21 main::@2_22 main::@2_23 main::@2_24 main::@3 main::@return 
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Propagating live ranges...
+Propagating live ranges...
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main  [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  [5] (byte) main::x#4 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::x#1 ) [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [6] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_1
+main::@2_1: scope:[main]  from main::@2
+  [7] *((const byte*) main::SCREEN#0+++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_2
+main::@2_2: scope:[main]  from main::@2_1
+  [8] *((const byte*) main::SCREEN#0+++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_3
+main::@2_3: scope:[main]  from main::@2_2
+  [9] *((const byte*) main::SCREEN#0+++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_4
+main::@2_4: scope:[main]  from main::@2_3
+  [10] *((const byte*) main::SCREEN#0+++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_5
+main::@2_5: scope:[main]  from main::@2_4
+  [11] *((const byte*) main::SCREEN#0+++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_6
+main::@2_6: scope:[main]  from main::@2_5
+  [12] *((const byte*) main::SCREEN#0+++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_7
+main::@2_7: scope:[main]  from main::@2_6
+  [13] *((const byte*) main::SCREEN#0+++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_8
+main::@2_8: scope:[main]  from main::@2_7
+  [14] *((const byte*) main::SCREEN#0+++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_9
+main::@2_9: scope:[main]  from main::@2_8
+  [15] *((const byte*) main::SCREEN#0+++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_10
+main::@2_10: scope:[main]  from main::@2_9
+  [16] *((const byte*) main::SCREEN#0+++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_11
+main::@2_11: scope:[main]  from main::@2_10
+  [17] *((const byte*) main::SCREEN#0+++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_12
+main::@2_12: scope:[main]  from main::@2_11
+  [18] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_13
+main::@2_13: scope:[main]  from main::@2_12
+  [19] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_14
+main::@2_14: scope:[main]  from main::@2_13
+  [20] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_15
+main::@2_15: scope:[main]  from main::@2_14
+  [21] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_16
+main::@2_16: scope:[main]  from main::@2_15
+  [22] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_17
+main::@2_17: scope:[main]  from main::@2_16
+  [23] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_18
+main::@2_18: scope:[main]  from main::@2_17
+  [24] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_19
+main::@2_19: scope:[main]  from main::@2_18
+  [25] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_20
+main::@2_20: scope:[main]  from main::@2_19
+  [26] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_21
+main::@2_21: scope:[main]  from main::@2_20
+  [27] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_22
+main::@2_22: scope:[main]  from main::@2_21
+  [28] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_23
+main::@2_23: scope:[main]  from main::@2_22
+  [29] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@2_24
+main::@2_24: scope:[main]  from main::@2_23
+  [30] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] )
+  to:main::@3
+main::@3: scope:[main]  from main::@2_24
+  [31] (byte) main::x#1 ← ++ (byte) main::x#4 [ main::x#1 ] ( main:2 [ main::x#1 ] )
+  [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  [33] return  [ ] ( main:2 [ ] )
+  to:@return
+
+DOMINATORS
+@begin dominated by  @begin 
+@1 dominated by  @begin @1 
+@end dominated by  @end @begin @1 
+main dominated by  main @begin @1 
+main::@1 dominated by  main main::@1 @begin @1 
+main::@2 dominated by  main main::@1 main::@2 @begin @1 
+main::@2_1 dominated by  main main::@1 main::@2 main::@2_1 @begin @1 
+main::@2_2 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 @begin @1 
+main::@2_3 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 @begin @1 
+main::@2_4 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 @begin main::@2_4 @1 
+main::@2_5 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 @begin main::@2_4 main::@2_5 @1 
+main::@2_6 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 @begin main::@2_4 main::@2_5 main::@2_6 @1 
+main::@2_7 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 @1 
+main::@2_8 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 @1 
+main::@2_9 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 @1 
+main::@2_10 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 @1 main::@2_10 
+main::@2_11 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 @1 main::@2_11 main::@2_10 
+main::@2_12 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 @1 main::@2_12 main::@2_11 main::@2_10 
+main::@2_13 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 
+main::@2_14 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 
+main::@2_15 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_15 
+main::@2_16 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_16 main::@2_15 
+main::@2_17 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_17 main::@2_16 main::@2_15 
+main::@2_18 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_18 main::@2_17 main::@2_16 main::@2_15 
+main::@2_19 dominated by  main main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 
+main::@2_20 dominated by  main main::@2_20 main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 
+main::@2_21 dominated by  main main::@2_21 main::@2_20 main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 
+main::@2_22 dominated by  main main::@2_22 main::@2_21 main::@2_20 main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 
+main::@2_23 dominated by  main main::@2_23 main::@2_22 main::@2_21 main::@2_20 main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 
+main::@2_24 dominated by  main main::@2_24 main::@2_23 main::@2_22 main::@2_21 main::@2_20 main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 
+main::@3 dominated by  main main::@2_24 main::@2_23 main::@2_22 main::@2_21 main::@2_20 main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 
+main::@return dominated by  main::@return main main::@2_24 main::@2_23 main::@2_22 main::@2_21 main::@2_20 main::@1 main::@2 main::@2_1 main::@2_2 main::@2_3 main::@3 main::@2_8 main::@2_9 @begin main::@2_4 main::@2_5 main::@2_6 main::@2_7 main::@2_14 @1 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 
+
+NATURAL LOOPS
+Found back edge: Loop head: main::@1 tails: main::@3 blocks: null
+Populated: Loop head: main::@1 tails: main::@3 blocks: main::@3 main::@2_24 main::@2_23 main::@2_22 main::@2_21 main::@2_20 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 main::@2_14 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_9 main::@2_8 main::@2_7 main::@2_6 main::@2_5 main::@2_4 main::@2_3 main::@2_2 main::@2_1 main::@2 main::@1 
+Loop head: main::@1 tails: main::@3 blocks: main::@3 main::@2_24 main::@2_23 main::@2_22 main::@2_21 main::@2_20 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 main::@2_14 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_9 main::@2_8 main::@2_7 main::@2_6 main::@2_5 main::@2_4 main::@2_3 main::@2_2 main::@2_1 main::@2 main::@1 
+
+NATURAL LOOPS WITH DEPTH
+Found 0 loops in scope []
+Found 1 loops in scope [main]
+  Loop head: main::@1 tails: main::@3 blocks: main::@3 main::@2_24 main::@2_23 main::@2_22 main::@2_21 main::@2_20 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 main::@2_14 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_9 main::@2_8 main::@2_7 main::@2_6 main::@2_5 main::@2_4 main::@2_3 main::@2_2 main::@2_1 main::@2 main::@1 
+Loop head: main::@1 tails: main::@3 blocks: main::@3 main::@2_24 main::@2_23 main::@2_22 main::@2_21 main::@2_20 main::@2_19 main::@2_18 main::@2_17 main::@2_16 main::@2_15 main::@2_14 main::@2_13 main::@2_12 main::@2_11 main::@2_10 main::@2_9 main::@2_8 main::@2_7 main::@2_6 main::@2_5 main::@2_4 main::@2_3 main::@2_2 main::@2_1 main::@2 main::@1  depth: 1
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::SCREEN
+(byte) main::line
+(byte) main::x
+(byte) main::x#1 16.5
+(byte) main::x#4 22.00000000000001
+
+Initial phi equivalence classes
+[ main::x#4 main::x#1 ]
+Complete equivalence classes
+[ main::x#4 main::x#1 ]
+Allocated zp ZP_BYTE:2 [ main::x#4 main::x#1 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    .label x = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::x#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta x
+    jmp b1
+  //SEG12 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+  //SEG13 [5] phi (byte) main::x#4 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+    jmp b2
+  //SEG15 main::@2
+  b2:
+  //SEG16 [6] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+0*$28,y
+    jmp b2_1
+  //SEG17 main::@2_1
+  b2_1:
+  //SEG18 [7] *((const byte*) main::SCREEN#0+++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1)*$28,y
+    jmp b2_2
+  //SEG19 main::@2_2
+  b2_2:
+  //SEG20 [8] *((const byte*) main::SCREEN#0+++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1)*$28,y
+    jmp b2_3
+  //SEG21 main::@2_3
+  b2_3:
+  //SEG22 [9] *((const byte*) main::SCREEN#0+++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1)*$28,y
+    jmp b2_4
+  //SEG23 main::@2_4
+  b2_4:
+  //SEG24 [10] *((const byte*) main::SCREEN#0+++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1)*$28,y
+    jmp b2_5
+  //SEG25 main::@2_5
+  b2_5:
+  //SEG26 [11] *((const byte*) main::SCREEN#0+++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1)*$28,y
+    jmp b2_6
+  //SEG27 main::@2_6
+  b2_6:
+  //SEG28 [12] *((const byte*) main::SCREEN#0+++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1)*$28,y
+    jmp b2_7
+  //SEG29 main::@2_7
+  b2_7:
+  //SEG30 [13] *((const byte*) main::SCREEN#0+++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1)*$28,y
+    jmp b2_8
+  //SEG31 main::@2_8
+  b2_8:
+  //SEG32 [14] *((const byte*) main::SCREEN#0+++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_9
+  //SEG33 main::@2_9
+  b2_9:
+  //SEG34 [15] *((const byte*) main::SCREEN#0+++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_10
+  //SEG35 main::@2_10
+  b2_10:
+  //SEG36 [16] *((const byte*) main::SCREEN#0+++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_11
+  //SEG37 main::@2_11
+  b2_11:
+  //SEG38 [17] *((const byte*) main::SCREEN#0+++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_12
+  //SEG39 main::@2_12
+  b2_12:
+  //SEG40 [18] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_13
+  //SEG41 main::@2_13
+  b2_13:
+  //SEG42 [19] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_14
+  //SEG43 main::@2_14
+  b2_14:
+  //SEG44 [20] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_15
+  //SEG45 main::@2_15
+  b2_15:
+  //SEG46 [21] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_16
+  //SEG47 main::@2_16
+  b2_16:
+  //SEG48 [22] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_17
+  //SEG49 main::@2_17
+  b2_17:
+  //SEG50 [23] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_18
+  //SEG51 main::@2_18
+  b2_18:
+  //SEG52 [24] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_19
+  //SEG53 main::@2_19
+  b2_19:
+  //SEG54 [25] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_20
+  //SEG55 main::@2_20
+  b2_20:
+  //SEG56 [26] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_21
+  //SEG57 main::@2_21
+  b2_21:
+  //SEG58 [27] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_22
+  //SEG59 main::@2_22
+  b2_22:
+  //SEG60 [28] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_23
+  //SEG61 main::@2_23
+  b2_23:
+  //SEG62 [29] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b2_24
+  //SEG63 main::@2_24
+  b2_24:
+  //SEG64 [30] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,y
+    jmp b3
+  //SEG65 main::@3
+  b3:
+  //SEG66 [31] (byte) main::x#1 ← ++ (byte) main::x#4 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc x
+  //SEG67 [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda x
+    cmp #$28
+    bne b1_from_b3
+    jmp breturn
+  //SEG68 main::@return
+  breturn:
+  //SEG69 [33] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential registers zp ZP_BYTE:2 [ main::x#4 main::x#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 2723 combination reg byte x [ main::x#4 main::x#1 ] 
+Uplifting [] best 2723 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::x#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+  //SEG12 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+  //SEG13 [5] phi (byte) main::x#4 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+    jmp b2
+  //SEG15 main::@2
+  b2:
+  //SEG16 [6] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+0*$28,x
+    jmp b2_1
+  //SEG17 main::@2_1
+  b2_1:
+  //SEG18 [7] *((const byte*) main::SCREEN#0+++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1)*$28,x
+    jmp b2_2
+  //SEG19 main::@2_2
+  b2_2:
+  //SEG20 [8] *((const byte*) main::SCREEN#0+++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1)*$28,x
+    jmp b2_3
+  //SEG21 main::@2_3
+  b2_3:
+  //SEG22 [9] *((const byte*) main::SCREEN#0+++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1)*$28,x
+    jmp b2_4
+  //SEG23 main::@2_4
+  b2_4:
+  //SEG24 [10] *((const byte*) main::SCREEN#0+++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1)*$28,x
+    jmp b2_5
+  //SEG25 main::@2_5
+  b2_5:
+  //SEG26 [11] *((const byte*) main::SCREEN#0+++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1)*$28,x
+    jmp b2_6
+  //SEG27 main::@2_6
+  b2_6:
+  //SEG28 [12] *((const byte*) main::SCREEN#0+++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1)*$28,x
+    jmp b2_7
+  //SEG29 main::@2_7
+  b2_7:
+  //SEG30 [13] *((const byte*) main::SCREEN#0+++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1)*$28,x
+    jmp b2_8
+  //SEG31 main::@2_8
+  b2_8:
+  //SEG32 [14] *((const byte*) main::SCREEN#0+++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_9
+  //SEG33 main::@2_9
+  b2_9:
+  //SEG34 [15] *((const byte*) main::SCREEN#0+++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_10
+  //SEG35 main::@2_10
+  b2_10:
+  //SEG36 [16] *((const byte*) main::SCREEN#0+++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_11
+  //SEG37 main::@2_11
+  b2_11:
+  //SEG38 [17] *((const byte*) main::SCREEN#0+++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_12
+  //SEG39 main::@2_12
+  b2_12:
+  //SEG40 [18] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_13
+  //SEG41 main::@2_13
+  b2_13:
+  //SEG42 [19] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_14
+  //SEG43 main::@2_14
+  b2_14:
+  //SEG44 [20] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_15
+  //SEG45 main::@2_15
+  b2_15:
+  //SEG46 [21] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_16
+  //SEG47 main::@2_16
+  b2_16:
+  //SEG48 [22] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_17
+  //SEG49 main::@2_17
+  b2_17:
+  //SEG50 [23] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_18
+  //SEG51 main::@2_18
+  b2_18:
+  //SEG52 [24] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_19
+  //SEG53 main::@2_19
+  b2_19:
+  //SEG54 [25] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_20
+  //SEG55 main::@2_20
+  b2_20:
+  //SEG56 [26] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_21
+  //SEG57 main::@2_21
+  b2_21:
+  //SEG58 [27] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_22
+  //SEG59 main::@2_22
+  b2_22:
+  //SEG60 [28] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_23
+  //SEG61 main::@2_23
+  b2_23:
+  //SEG62 [29] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b2_24
+  //SEG63 main::@2_24
+  b2_24:
+  //SEG64 [30] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    jmp b3
+  //SEG65 main::@3
+  b3:
+  //SEG66 [31] (byte) main::x#1 ← ++ (byte) main::x#4 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG67 [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$28
+    bne b1_from_b3
+    jmp breturn
+  //SEG68 main::@return
+  breturn:
+  //SEG69 [33] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b2_1
+Removing instruction jmp b2_2
+Removing instruction jmp b2_3
+Removing instruction jmp b2_4
+Removing instruction jmp b2_5
+Removing instruction jmp b2_6
+Removing instruction jmp b2_7
+Removing instruction jmp b2_8
+Removing instruction jmp b2_9
+Removing instruction jmp b2_10
+Removing instruction jmp b2_11
+Removing instruction jmp b2_12
+Removing instruction jmp b2_13
+Removing instruction jmp b2_14
+Removing instruction jmp b2_15
+Removing instruction jmp b2_16
+Removing instruction jmp b2_17
+Removing instruction jmp b2_18
+Removing instruction jmp b2_19
+Removing instruction jmp b2_20
+Removing instruction jmp b2_21
+Removing instruction jmp b2_22
+Removing instruction jmp b2_23
+Removing instruction jmp b2_24
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1 with b2
+Replacing label b1_from_b3 with b2
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b3:
+Removing instruction b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b2_1:
+Removing instruction b2_2:
+Removing instruction b2_3:
+Removing instruction b2_4:
+Removing instruction b2_5:
+Removing instruction b2_6:
+Removing instruction b2_7:
+Removing instruction b2_8:
+Removing instruction b2_9:
+Removing instruction b2_10:
+Removing instruction b2_11:
+Removing instruction b2_12:
+Removing instruction b2_13:
+Removing instruction b2_14:
+Removing instruction b2_15:
+Removing instruction b2_16:
+Removing instruction b2_17:
+Removing instruction b2_18:
+Removing instruction b2_19:
+Removing instruction b2_20:
+Removing instruction b2_21:
+Removing instruction b2_22:
+Removing instruction b2_23:
+Removing instruction b2_24:
+Removing instruction b3:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@2_1
+(label) main::@2_10
+(label) main::@2_11
+(label) main::@2_12
+(label) main::@2_13
+(label) main::@2_14
+(label) main::@2_15
+(label) main::@2_16
+(label) main::@2_17
+(label) main::@2_18
+(label) main::@2_19
+(label) main::@2_2
+(label) main::@2_20
+(label) main::@2_21
+(label) main::@2_22
+(label) main::@2_23
+(label) main::@2_24
+(label) main::@2_3
+(label) main::@2_4
+(label) main::@2_5
+(label) main::@2_6
+(label) main::@2_7
+(label) main::@2_8
+(label) main::@2_9
+(label) main::@3
+(label) main::@return
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte) main::line
+(byte) main::x
+(byte) main::x#1 reg byte x 16.5
+(byte) main::x#4 reg byte x 22.00000000000001
+
+reg byte x [ main::x#4 main::x#1 ]
+
+
+FINAL ASSEMBLER
+Score: 1847
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label SCREEN = $400
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte) main::x#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+  //SEG12 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  //SEG13 [5] phi (byte) main::x#4 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
+  //SEG14 main::@1
+  //SEG15 main::@2
+  b2:
+  //SEG16 [6] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+0*$28,x
+  //SEG17 main::@2_1
+  //SEG18 [7] *((const byte*) main::SCREEN#0+++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1)*$28,x
+  //SEG19 main::@2_2
+  //SEG20 [8] *((const byte*) main::SCREEN#0+++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1)*$28,x
+  //SEG21 main::@2_3
+  //SEG22 [9] *((const byte*) main::SCREEN#0+++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1)*$28,x
+  //SEG23 main::@2_4
+  //SEG24 [10] *((const byte*) main::SCREEN#0+++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1)*$28,x
+  //SEG25 main::@2_5
+  //SEG26 [11] *((const byte*) main::SCREEN#0+++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1)*$28,x
+  //SEG27 main::@2_6
+  //SEG28 [12] *((const byte*) main::SCREEN#0+++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1)*$28,x
+  //SEG29 main::@2_7
+  //SEG30 [13] *((const byte*) main::SCREEN#0+++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1)*$28,x
+  //SEG31 main::@2_8
+  //SEG32 [14] *((const byte*) main::SCREEN#0+++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1)*$28,x
+  //SEG33 main::@2_9
+  //SEG34 [15] *((const byte*) main::SCREEN#0+++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG35 main::@2_10
+  //SEG36 [16] *((const byte*) main::SCREEN#0+++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG37 main::@2_11
+  //SEG38 [17] *((const byte*) main::SCREEN#0+++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG39 main::@2_12
+  //SEG40 [18] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG41 main::@2_13
+  //SEG42 [19] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG43 main::@2_14
+  //SEG44 [20] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG45 main::@2_15
+  //SEG46 [21] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG47 main::@2_16
+  //SEG48 [22] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG49 main::@2_17
+  //SEG50 [23] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG51 main::@2_18
+  //SEG52 [24] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG53 main::@2_19
+  //SEG54 [25] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG55 main::@2_20
+  //SEG56 [26] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG57 main::@2_21
+  //SEG58 [27] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG59 main::@2_22
+  //SEG60 [28] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG61 main::@2_23
+  //SEG62 [29] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG63 main::@2_24
+  //SEG64 [30] *((const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#4) ← (byte) main::x#4 [ main::x#4 ] ( main:2 [ main::x#4 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+  //SEG65 main::@3
+  //SEG66 [31] (byte) main::x#1 ← ++ (byte) main::x#4 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG67 [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$28
+    bne b2
+  //SEG68 main::@return
+  //SEG69 [33] return  [ ] ( main:2 [ ] )
+    rts
+}
+

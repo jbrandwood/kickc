@@ -1,15 +1,19 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableVersion;
 import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Prepare for unrolling loops declared as inline.
@@ -33,63 +37,20 @@ public class Pass2LoopUnrollPhiPrepare extends Pass2SsaOptimization {
          return false;
       }
 
-      VariableReferenceInfos variableReferenceInfos = getProgram().getVariableReferenceInfos();
 
       for(NaturalLoop unrollLoop : unrollLoopCandidates) {
 
-
-         List<ControlFlowBlock> unrollBlocks = new ArrayList<>();
-         for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-            if(unrollLoop.getBlocks().contains(block.getLabel())) {
-               unrollBlocks.add(block);
-            }
-         }
-
-         List<VariableRef> definedInLoop = new ArrayList<>();
-         for(ControlFlowBlock block : unrollBlocks) {
-            for(Statement statement : block.getStatements()) {
-               Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(statement);
-               for(VariableRef definedVarRef : definedVars) {
-                  definedInLoop.add(definedVarRef);
-                  getLog().append("Defined in loop: " + definedVarRef.getFullName());
-               }
-            }
-         }
-
+         List<VariableRef> definedInLoop = Pass2LoopUnroll.getVarsDefinedInLoop(getProgram(), unrollLoop);
          // - Ensure that all variables assigned inside the loop has a PHI in successor blocks to the loop
          //   - Find loop successor blocks
-         List<LabelRef> loopSuccessors = new ArrayList<>();
-         List<LabelRef> loopSuccessorPredecessors = new ArrayList<>();
-         for(ControlFlowBlock block : unrollBlocks) {
-            if(block.getDefaultSuccessor() != null && !unrollLoop.getBlocks().contains(block.getDefaultSuccessor())) {
-               // Default successor is outside
-               loopSuccessors.add(block.getDefaultSuccessor());
-               loopSuccessorPredecessors.add(block.getLabel());
-            }
-            if(block.getConditionalSuccessor() != null && !unrollLoop.getBlocks().contains(block.getConditionalSuccessor())) {
-               // Default successor is outside
-               loopSuccessors.add(block.getConditionalSuccessor());
-               loopSuccessorPredecessors.add(block.getLabel());
-            }
-         }
+         List<Pass2LoopUnroll.LoopSuccessorBlock> loopSuccessors = Pass2LoopUnroll.getLoopSuccessorBlocks(unrollLoop, getGraph());
          //   - Add any needed PHI-statements to the successors
-         StatementInfos statementInfos = getProgram().getStatementInfos();
          for(VariableRef definedVarRef : definedInLoop) {
-
             // Find out if the variable is ever referenced outside the loop
-            boolean referencedOutsideLoop = false;
-            Collection<Integer> varRefStatements = variableReferenceInfos.getVarRefStatements(definedVarRef);
-            for(Integer varRefStatement : varRefStatements) {
-               ControlFlowBlock refBlock = statementInfos.getBlock(varRefStatement);
-               if(!unrollLoop.getBlocks().contains(refBlock.getLabel())) {
-                  referencedOutsideLoop = true;
-                  break;
-               }
-            }
-            if(referencedOutsideLoop) {
-               for(int i = 0; i < loopSuccessors.size(); i++) {
-                  LabelRef successorBlockRef = loopSuccessors.get(i);
-                  LabelRef successorPredecessorRef = loopSuccessorPredecessors.get(i);
+            if(isReferencedOutsideLoop(definedVarRef, unrollLoop, getProgram())) {
+               for(Pass2LoopUnroll.LoopSuccessorBlock loopSuccessor : loopSuccessors) {
+                  LabelRef successorBlockRef = loopSuccessor.sucessor;
+                  LabelRef successorPredecessorRef = loopSuccessor.predecessor;
                   ControlFlowBlock successorBlock = getGraph().getBlock(successorBlockRef);
                   StatementPhiBlock phiBlock = successorBlock.getPhiBlock();
 
@@ -105,23 +66,46 @@ public class Pass2LoopUnrollPhiPrepare extends Pass2SsaOptimization {
                   if(!phiFound) {
                      Variable definedVar = getScope().getVariable(definedVarRef);
                      Variable newVar = ((VariableVersion) definedVar).getVersionOf().createVersion();
+
+                     // Replace all references to definedVarRef outside loop to newVar!
+                     LinkedHashMap<SymbolRef, RValue> aliases = new LinkedHashMap<>();
+                     aliases.put(definedVarRef, newVar.getRef());
+                     ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
+                        if(currentBlock != null) {
+                           if(!unrollLoop.getBlocks().contains(currentBlock.getLabel())) {
+                              new AliasReplacer(aliases).execute(programValue, currentStmt, stmtIt, currentBlock);
+                           }
+                        }
+                     });
+
+                     // Create the new phi-variable
                      StatementPhiBlock.PhiVariable newPhiVar = phiBlock.addPhiVariable(newVar.getRef());
                      newPhiVar.setrValue(successorPredecessorRef, definedVarRef);
-                     getLog().append("Missing PHI for " + definedVarRef.getFullName() + " in block " + successorBlock.getLabel() + " - " + phiBlock.toString(getProgram(), false));
-
-                     // TODO: Replace all references to definedVarRef outside loop to newVar!
+                     getLog().append("Creating PHI for " + definedVarRef.getFullName() + " in block " + successorBlock.getLabel() + " - " + phiBlock.toString(getProgram(), false));
 
                   }
                }
             }
          }
-
       }
-
       getLog().append(getGraph().toString(getProgram()));
-
       return false;
-
    }
+
+   private static boolean isReferencedOutsideLoop(VariableRef definedVarRef, NaturalLoop unrollLoop, Program program) {
+      boolean referencedOutsideLoop = false;
+      VariableReferenceInfos variableReferenceInfos = program.getVariableReferenceInfos();
+      Collection<Integer> varRefStatements = variableReferenceInfos.getVarRefStatements(definedVarRef);
+      for(Integer varRefStatement : varRefStatements) {
+         StatementInfos statementInfos = program.getStatementInfos();
+         ControlFlowBlock refBlock = statementInfos.getBlock(varRefStatement);
+         if(!unrollLoop.getBlocks().contains(refBlock.getLabel())) {
+            referencedOutsideLoop = true;
+            break;
+         }
+      }
+      return referencedOutsideLoop;
+   }
+
 
 }

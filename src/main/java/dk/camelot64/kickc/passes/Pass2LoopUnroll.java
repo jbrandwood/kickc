@@ -33,60 +33,30 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
       NaturalLoop unrollLoop = chooseUnrollLoop(unrollLoopCandidates);
       getLog().append("Unrolling loop " + unrollLoop);
 
-      List<ControlFlowBlock> unrollBlocks = new ArrayList<>();
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         if(unrollLoop.getBlocks().contains(block.getLabel())) {
-            unrollBlocks.add(block);
-         }
-      }
-
       // Unroll the first iteration of the loop
 
       // 0. Unroll Symbols
       // - Create new versions of all symbols assigned inside the loop
       Map<VariableRef, VariableRef> definedToNewVar = new LinkedHashMap<>();
-      VariableReferenceInfos variableReferenceInfos = getProgram().getVariableReferenceInfos();
-      for(ControlFlowBlock block : unrollBlocks) {
-         for(Statement statement : block.getStatements()) {
-            Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(statement);
-            for(VariableRef definedVarRef : definedVars) {
-               Variable definedVar = getScope().getVariable(definedVarRef);
-               Variable newVar;
-               if(definedVarRef.isIntermediate()) {
-                  newVar = definedVar.getScope().addVariableIntermediate();
-               } else if(definedVarRef.isVersion()) {
-                  newVar = ((VariableVersion) definedVar).getVersionOf().createVersion();
-               } else {
-                  throw new RuntimeException("Error! Variable is not versioned or intermediate " + definedVar.toString(getProgram()));
-               }
-               definedToNewVar.put(definedVarRef, newVar.getRef());
-               getLog().append("Defined in loop: " + definedVarRef.getFullName() + " -> " + newVar.getRef().getFullName());
-            }
+      for(VariableRef definedVarRef : getVarsDefinedInLoop(getProgram(), unrollLoop)) {
+         Variable definedVar = getScope().getVariable(definedVarRef);
+         Variable newVar;
+         if(definedVarRef.isIntermediate()) {
+            newVar = definedVar.getScope().addVariableIntermediate();
+         } else if(definedVarRef.isVersion()) {
+            newVar = ((VariableVersion) definedVar).getVersionOf().createVersion();
+         } else {
+            throw new RuntimeException("Error! Variable is not versioned or intermediate " + definedVar.toString(getProgram()));
          }
-      }
-
-      // - Ensure that all variables assigned inside the loop has a PHI in successor blocks to the loop
-      //   - Find loop successor blocks
-      List<LabelRef> loopSuccessors = new ArrayList<>();
-      List<LabelRef> loopSuccessorPredecessors = new ArrayList<>();
-      for(ControlFlowBlock block : unrollBlocks) {
-         if(block.getDefaultSuccessor() != null && !unrollLoop.getBlocks().contains(block.getDefaultSuccessor())) {
-            // Default successor is outside
-            loopSuccessors.add(block.getDefaultSuccessor());
-            loopSuccessorPredecessors.add(block.getLabel());
-         }
-         if(block.getConditionalSuccessor() != null && !unrollLoop.getBlocks().contains(block.getConditionalSuccessor())) {
-            // Default successor is outside
-            loopSuccessors.add(block.getConditionalSuccessor());
-            loopSuccessorPredecessors.add(block.getLabel());
-         }
+         definedToNewVar.put(definedVarRef, newVar.getRef());
+         getLog().append("Defined in loop: " + definedVarRef.getFullName() + " -> " + newVar.getRef().getFullName());
       }
 
       // 1. Copy all loop blocks to create the "rest of the loop" and modifying the existing loop to only be the first iteration)
       //  - Unroll Statements (copy all statements, replace symbols properly (with the new versions / the versions assigned in the existing loop)
       //    - Includes unrolling PHI-statements properly
       //  - Unroll Successors (loop-exit successors should point to the same exit, loop-internal successors should point to the new loop-internal block)
-      for(ControlFlowBlock block : unrollBlocks) {
+      for(ControlFlowBlock block : unrollLoop.getBlocks(getGraph())) {
          // Find the serial number
          int unrollSerial = 1;
          String unrollLabelName = block.getLabel() + "_" + unrollSerial;
@@ -151,6 +121,7 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
       return unrollLoop;
    }
 
+
    /**
     * Find all loops declared for unrolling. This is done by examining all conditional jumps, which hold the loop unroll declaration.
     *
@@ -181,4 +152,60 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
       }
       return unrollLoopCandidates;
    }
+
+   /**
+    * Get all variables defined inside a loop
+    * @param program The program
+    * @param loop The loop
+    * @return All variables defined inside the blocks of the loop
+    */
+   static List<VariableRef> getVarsDefinedInLoop(Program program, NaturalLoop loop) {
+      VariableReferenceInfos variableReferenceInfos = program.getVariableReferenceInfos();
+      List<VariableRef> definedInLoop = new ArrayList<>();
+      for(ControlFlowBlock block : loop.getBlocks(program.getGraph())) {
+         for(Statement statement : block.getStatements()) {
+            Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(statement);
+            for(VariableRef definedVarRef : definedVars) {
+               definedInLoop.add(definedVarRef);
+            }
+         }
+      }
+      return definedInLoop;
+   }
+
+   /** Information about a block successing a loop - ie. a place where the flow of control leaves a loop. */
+   public static class LoopSuccessorBlock {
+      /** A block that is the sucessor to a block inside the loop. */
+      LabelRef sucessor;
+      /** The block inside the loop that is the predecessor of the loop sucessor block. */
+      LabelRef predecessor;
+
+      public LoopSuccessorBlock(LabelRef sucessor, LabelRef predecessor) {
+         this.sucessor = sucessor;
+         this.predecessor = predecessor;
+      }
+   }
+
+   /**
+    * Find all transitions where the flow of control leaves a loop
+    * @param loop The loop to examine
+    * @param  graph The control flow graph
+    * @return
+    */
+   static List<LoopSuccessorBlock> getLoopSuccessorBlocks(NaturalLoop loop, ControlFlowGraph graph) {
+      List<LoopSuccessorBlock> loopSuccessors = new ArrayList<>();
+      for(ControlFlowBlock block : loop.getBlocks(graph)) {
+         if(block.getDefaultSuccessor() != null && !loop.getBlocks().contains(block.getDefaultSuccessor())) {
+            // Default successor is outside
+            loopSuccessors.add(new LoopSuccessorBlock(block.getDefaultSuccessor(), block.getLabel()));
+         }
+         if(block.getConditionalSuccessor() != null && !loop.getBlocks().contains(block.getConditionalSuccessor())) {
+            // Conditional successor is outside
+            loopSuccessors.add(new LoopSuccessorBlock(block.getConditionalSuccessor(), block.getLabel()));
+         }
+      }
+      return loopSuccessors;
+   }
+
+
 }

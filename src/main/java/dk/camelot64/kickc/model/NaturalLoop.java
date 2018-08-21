@@ -2,7 +2,9 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.LabelRef;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -59,6 +61,22 @@ public class NaturalLoop {
    public void setBlocks(Set<LabelRef> blocks) {
       this.blocks = blocks;
    }
+
+   /**
+    * Get the actual blocks (not refs)
+    * @param graph The control flow graph containing the blocks
+    * @return The blocks of the loop (in the same order as they appear in the control flow graph.)
+    */
+   public List<ControlFlowBlock> getBlocks(ControlFlowGraph graph) {
+      ArrayList<ControlFlowBlock> controlFlowBlocks = new ArrayList<>();
+      for(ControlFlowBlock block : graph.getAllBlocks()) {
+         if(getBlocks().contains(block.getLabel())) {
+            controlFlowBlocks.add(block);
+         }
+      }
+      return controlFlowBlocks;
+   }
+
 
    @Override
    public String toString() {

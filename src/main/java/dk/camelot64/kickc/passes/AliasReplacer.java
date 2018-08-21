@@ -14,7 +14,6 @@ import java.util.Map;
 /** A {@link ProgramValueIterator} that replaces symbols with their alias. */
 public class AliasReplacer implements ProgramValueHandler {
 
-
    /** true if anything has ben replaced. */
    private boolean replaced;
 
@@ -40,6 +39,7 @@ public class AliasReplacer implements ProgramValueHandler {
       if(programValue.get() != null) {
          RValue replacement = getReplacement(programValue.get(), aliases);
          if(replacement != null) {
+            // System.out.println("Replacing "+programValue.get() + " with " +replacement + " in " +currentStmt);
             programValue.set(replacement);
             this.replaced = true;
          }

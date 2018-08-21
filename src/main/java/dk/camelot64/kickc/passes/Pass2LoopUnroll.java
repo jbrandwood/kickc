@@ -3,7 +3,6 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -25,7 +24,7 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
    public boolean step() {
       // Look for loops to unroll
       NaturalLoopSet loops = getProgram().getLoopSet();
-      List<NaturalLoop> unrollLoopCandidates = findUnrollLoopCandidates(loops);
+      List<NaturalLoop> unrollLoopCandidates = findUnrollLoopCandidates(getProgram(), loops);
       // Is there any unrolling to do?
       if(unrollLoopCandidates.isEmpty()) {
          return false;
@@ -82,51 +81,6 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
             loopSuccessorPredecessors.add(block.getLabel());
          }
       }
-      //   - Add any needed PHI-statements to the successors
-      StatementInfos statementInfos = getProgram().getStatementInfos();
-      for(VariableRef definedVarRef : definedToNewVar.keySet()) {
-
-         // Find out if the variable is ever referenced outside the loop
-         boolean referencedOutsideLoop = false;
-         Collection<Integer> varRefStatements = variableReferenceInfos.getVarRefStatements(definedVarRef);
-         for(Integer varRefStatement : varRefStatements) {
-            ControlFlowBlock refBlock = statementInfos.getBlock(varRefStatement);
-            if(!unrollLoop.getBlocks().contains(refBlock.getLabel())) {
-               referencedOutsideLoop = true;
-               break;
-            }
-         }
-         if(referencedOutsideLoop) {
-            for(int i = 0; i < loopSuccessors.size(); i++) {
-               LabelRef successorBlockRef = loopSuccessors.get(i);
-               LabelRef successorPredecessorRef = loopSuccessorPredecessors.get(i);
-               ControlFlowBlock successorBlock = getGraph().getBlock(successorBlockRef);
-               StatementPhiBlock phiBlock = successorBlock.getPhiBlock();
-
-               // Look for a phi-variable
-               boolean phiFound = false;
-               for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
-                  if(phiVariable.getVariable().isVersion() && definedVarRef.isVersion()) {
-                     if(phiVariable.getVariable().getFullNameUnversioned().equals(definedVarRef.getFullNameUnversioned())) {
-                        phiFound = true;
-                     }
-                  }
-               }
-               if(!phiFound) {
-                  Variable definedVar = getScope().getVariable(definedVarRef);
-                  Variable newVar = ((VariableVersion) definedVar).getVersionOf().createVersion();
-                  StatementPhiBlock.PhiVariable newPhiVar = phiBlock.addPhiVariable(newVar.getRef());
-                  newPhiVar.setrValue(successorPredecessorRef, definedVarRef);
-                  getLog().append("Missing PHI for " + definedVarRef.getFullName() + " in block " + successorBlock.getLabel() + " - " + phiBlock.toString(getProgram(), false));
-
-                  // TODO: Replace all references to definedVarRef outside loop to newVar!
-
-               }
-            }
-         }
-      }
-
-      getLog().append(getGraph().toString(getProgram()));
 
       // 1. Copy all loop blocks to create the "rest of the loop" and modifying the existing loop to only be the first iteration)
       //  - Unroll Statements (copy all statements, replace symbols properly (with the new versions / the versions assigned in the existing loop)
@@ -203,9 +157,9 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
     * @param loops All loops identified in the program
     * @return All loops declared to be unrolled
     */
-   private List<NaturalLoop> findUnrollLoopCandidates(NaturalLoopSet loops) {
+   static List<NaturalLoop> findUnrollLoopCandidates(Program program, NaturalLoopSet loops) {
       List<NaturalLoop> unrollLoopCandidates = new ArrayList<>();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementConditionalJump) {
                if(((StatementConditionalJump) statement).isDeclaredUnroll()) {

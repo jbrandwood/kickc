@@ -222,6 +222,7 @@ public class Compiler {
       loopUnrolling.add(new Pass3StatementInfos(program));
       loopUnrolling.add(new Pass2DominatorsAnalysis(program));
       loopUnrolling.add(new Pass2LoopAnalysis(program));
+      loopUnrolling.add(new Pass2LoopUnrollPhiPrepare(program));
       loopUnrolling.add(new Pass2LoopUnroll(program));
       pass2OptimizeSSA(loopUnrolling);
    }

@@ -33,9 +33,20 @@ public class CompileLog {
    private boolean verboseSSAOptimize = false;
 
    /**
-    * Should SSA optimization be verbose.
+    * Should loop unrolling be verbose.
     */
    private boolean verboseLoopUnroll = false;
+
+   /**
+    * Should loop analysis be verbose.
+    */
+   private boolean verboseLoopAnalysis = false;
+
+   /**
+    * Should choices not to optimize be verbose.
+    */
+   private boolean verboseNonOptimization = false;
+
 
    /**
     * Should the log be output to System.out while being built
@@ -100,6 +111,14 @@ public class CompileLog {
 
    public boolean isVerboseLoopUnroll() {
       return verboseLoopUnroll;
+   }
+
+   public boolean isVerboseLoopAnalysis() {
+      return verboseLoopAnalysis;
+   }
+
+   public boolean isVerboseNonOptimization() {
+      return verboseNonOptimization;
    }
 
    public boolean isSysOut() {

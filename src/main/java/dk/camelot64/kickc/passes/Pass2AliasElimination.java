@@ -100,7 +100,9 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      ScopeRef aliasScope = aliasAssignmentBlock.getScope();
                      ScopeRef varScope = block.getScope();
                      if(!alias.isIntermediate() && (!varScope.equals(aliasScope) || !variable.getScopeNames().equals(alias.getScopeNames()))) {
-                        program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
+                        if(program.getLog().isVerboseNonOptimization()) {
+                           program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
+                        }
                      } else {
                         aliases.add(variable, alias);
                      }
@@ -121,7 +123,9 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                            ScopeRef aliasScope = aliasAssignmentBlock.getScope();
                            ScopeRef varScope = block.getScope();
                            if(!varScope.equals(aliasScope) || !variable.getScopeNames().equals(alias.getScopeNames())) {
-                              program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
+                              if(program.getLog().isVerboseNonOptimization()) {
+                                 program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
+                              }
                               alias = null;
                               break;
                            } else if(variable.equals(alias)) {

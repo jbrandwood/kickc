@@ -230,7 +230,7 @@ public class Compiler {
             pass2Optimize();
             new Pass3BlockSequencePlanner(program).plan();
          }
-      }  while(unrolled);
+      } while(unrolled);
 
    }
 
@@ -338,8 +338,6 @@ public class Compiler {
       new PassNVariableReferenceInfos(program).execute();
       new Pass3SymbolInfos(program).generateSymbolInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
-      //getLog().append("CONTROL FLOW GRAPH - BEFORE EFFECTIVE LIVE RANGES");
-      //getLog().append(program.getGraph().toString(program));
       new Pass3LiveRangesEffectiveAnalysis(program).findLiveRangesEffective();
       pass2AssertSSA();
 
@@ -351,20 +349,30 @@ public class Compiler {
 
    private void pass4RegisterAllocation() {
 
-      getLog().append("DOMINATORS");
+
+      if(getLog().isVerboseLoopAnalysis()) {
+         getLog().append("DOMINATORS");
+      }
       new Pass2DominatorsAnalysis(program).step();
-      getLog().append(program.getDominators().toString());
+      if(getLog().isVerboseLoopAnalysis()) {
+         getLog().append(program.getDominators().toString());
+      }
 
-      getLog().append("NATURAL LOOPS");
-      boolean wasVerbose = getLog().isVerboseSSAOptimize();
-      getLog().setVerboseSSAOptimize(true);
+      if(getLog().isVerboseLoopAnalysis()) {
+         getLog().append("NATURAL LOOPS");
+      }
       new Pass2LoopAnalysis(program).step();
-      getLog().setVerboseSSAOptimize(wasVerbose);
-      getLog().append(program.getLoopSet().toString());
+      if(getLog().isVerboseLoopAnalysis()) {
+         getLog().append(program.getLoopSet().toString());
+      }
 
-      getLog().append("NATURAL LOOPS WITH DEPTH");
+      if(getLog().isVerboseLoopAnalysis()) {
+         getLog().append("NATURAL LOOPS WITH DEPTH");
+      }
       new Pass3LoopDepthAnalysis(program).findLoopDepths();
-      getLog().append(program.getLoopSet().toString());
+      if(getLog().isVerboseLoopAnalysis()) {
+         getLog().append(program.getLoopSet().toString());
+      }
 
       getLog().append("\nVARIABLE REGISTER WEIGHTS");
       new Pass3VariableRegisterWeightAnalysis(program).findWeights();

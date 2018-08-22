@@ -37,7 +37,7 @@ public class Pass2LoopAnalysis extends Pass2SsaOptimization {
             if(blockDominators.contains(successor)) {
                // Found a loop back edge!
                NaturalLoop loop = new NaturalLoop(successor, block.getLabel());
-               if(getLog().isVerboseSSAOptimize()) {
+               if(getLog().isVerboseLoopAnalysis()) {
                   getLog().append("Found back edge: " + loop.toString());
                }
                loopSet.addLoop(loop);
@@ -65,7 +65,7 @@ public class Pass2LoopAnalysis extends Pass2SsaOptimization {
             }
          }
          loop.setBlocks(loopBlocks);
-         if(getLog().isVerboseSSAOptimize()) {
+         if(getLog().isVerboseLoopAnalysis()) {
             getLog().append("Populated: " + loop.toString());
          }
       }
@@ -99,7 +99,7 @@ public class Pass2LoopAnalysis extends Pass2SsaOptimization {
                loop.addTails(other.getTails());
                loop.addBlocks(other.getBlocks());
                loopSet.remove(other);
-               if(getLog().isVerboseSSAOptimize()) {
+               if(getLog().isVerboseLoopAnalysis()) {
                   getLog().append("Coalesced: " + loop.toString());
                }
                return true;

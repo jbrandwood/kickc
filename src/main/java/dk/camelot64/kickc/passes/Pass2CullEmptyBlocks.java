@@ -41,7 +41,9 @@ public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
          boolean dontCull = false;
          for(ControlFlowBlock predecessor : predecessors) {
             if(successorRef.equals(predecessor.getConditionalSuccessor()) || successorRef.equals(predecessor.getDefaultSuccessor())) {
-               getLog().append("Not culling empty block because it shares successor with its predecessor. " + removeBlock.getLabel().toString(getProgram()));
+               if(getLog().isVerboseNonOptimization()) {
+                  getLog().append("Not culling empty block because it shares successor with its predecessor. " + removeBlock.getLabel().toString(getProgram()));
+               }
                dontCull = true;
                dontRemove.add(removeBlock);
             }

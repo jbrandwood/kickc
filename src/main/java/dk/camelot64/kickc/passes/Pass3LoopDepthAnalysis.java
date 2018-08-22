@@ -102,9 +102,11 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
          }
       }
 
-      getLog().append("Found " + currentScopeLoops.size() + " loops in scope [" + currentScope.toString() + "]");
-      for(NaturalLoop loop : currentScopeLoops) {
-         getLog().append("  " + loop.toString());
+      if(getLog().isVerboseLoopAnalysis()) {
+         getLog().append("Found " + currentScopeLoops.size() + " loops in scope [" + currentScope.toString() + "]");
+         for(NaturalLoop loop : currentScopeLoops) {
+            getLog().append("  " + loop.toString());
+         }
       }
 
       // Find loop nesting depths in current scope loops

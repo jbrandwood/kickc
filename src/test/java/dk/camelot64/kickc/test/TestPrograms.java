@@ -46,6 +46,11 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
+   //@Test
+   //public void testUnrollInfinite() throws IOException, URISyntaxException {
+   //   compileAndCompare("unroll-infinite");
+   //}
+
    @Test
    public void testUnusedBlockProblem() throws IOException, URISyntaxException {
       compileAndCompare("unusedblockproblem");

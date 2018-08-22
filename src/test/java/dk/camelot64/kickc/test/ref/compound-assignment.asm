@@ -12,43 +12,43 @@ main: {
     lda #3
     sta test.a
     jsr test
-    ldx #0+1
+    ldx #1
     lda #3+1
     sta test.a
     jsr test
-    ldx #0+1+1
+    ldx #2
     lda #3+1-1
     sta test.a
     jsr test
-    ldx #0+1+1+1
+    ldx #3
     lda #(3+1-1)*6
     sta test.a
     jsr test
-    ldx #0+1+1+1+1
+    ldx #4
     lda #(3+1-1)*6/2
     sta test.a
     jsr test
-    ldx #0+1+1+1+1+1
+    ldx #5
     lda #mod((3+1-1)*6/2,2)
     sta test.a
     jsr test
-    ldx #0+1+1+1+1+1+1
+    ldx #6
     lda #mod((3+1-1)*6/2,2)<<2
     sta test.a
     jsr test
-    ldx #0+1+1+1+1+1+1+1
+    ldx #7
     lda #mod((3+1-1)*6/2,2)<<2>>1
     sta test.a
     jsr test
-    ldx #0+1+1+1+1+1+1+1+1
+    ldx #8
     lda #mod((3+1-1)*6/2,2)<<2>>1^6
     sta test.a
     jsr test
-    ldx #0+1+1+1+1+1+1+1+1+1
+    ldx #9
     lda #mod((3+1-1)*6/2,2)<<2>>1^6|1
     sta test.a
     jsr test
-    ldx #0+1+1+1+1+1+1+1+1+1+1
+    ldx #$a
     lda #(mod((3+1-1)*6/2,2)<<2>>1^6|1)&1
     sta test.a
     jsr test

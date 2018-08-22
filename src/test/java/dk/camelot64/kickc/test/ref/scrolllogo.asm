@@ -149,35 +149,35 @@ render_logo: {
     sta SCREEN+$28*0,x
     tya
     clc
-    adc #$28*(0+1)
-    sta SCREEN+$28*(0+1),x
+    adc #$28*1
+    sta SCREEN+$28*1,x
     tya
     clc
-    adc #$28*(0+1+1)
-    sta SCREEN+$28*(0+1+1),x
+    adc #$28*2
+    sta SCREEN+$28*2,x
     tya
     clc
-    adc #$28*(0+1+1+1)
-    sta SCREEN+$28*(0+1+1+1),x
+    adc #$28*3
+    sta SCREEN+$28*3,x
     tya
     clc
-    adc #$28*(0+1+1+1+1)
-    sta SCREEN+$28*(0+1+1+1+1),x
+    adc #$28*4
+    sta SCREEN+$28*4,x
     tya
     clc
-    adc #$28*(0+1+1+1+1+1)
-    sta SCREEN+$28*(0+1+1+1+1+1),x
+    adc #$28*5
+    sta SCREEN+$28*5,x
     inx
     iny
     jmp b6
   b5:
     lda #0
     sta SCREEN+$28*0,x
-    sta SCREEN+$28*(0+1),x
-    sta SCREEN+$28*(0+1+1),x
-    sta SCREEN+$28*(0+1+1+1),x
-    sta SCREEN+$28*(0+1+1+1+1),x
-    sta SCREEN+$28*(0+1+1+1+1+1),x
+    sta SCREEN+$28*1,x
+    sta SCREEN+$28*2,x
+    sta SCREEN+$28*3,x
+    sta SCREEN+$28*4,x
+    sta SCREEN+$28*5,x
     inx
     jmp b2
   b1:
@@ -197,11 +197,11 @@ render_logo: {
   b18:
     lda #0
     sta SCREEN+$28*0,x
-    sta SCREEN+$28*(0+1),x
-    sta SCREEN+$28*(0+1+1),x
-    sta SCREEN+$28*(0+1+1+1),x
-    sta SCREEN+$28*(0+1+1+1+1),x
-    sta SCREEN+$28*(0+1+1+1+1+1),x
+    sta SCREEN+$28*1,x
+    sta SCREEN+$28*2,x
+    sta SCREEN+$28*3,x
+    sta SCREEN+$28*4,x
+    sta SCREEN+$28*5,x
     inx
     jmp b15
   b14:
@@ -211,24 +211,24 @@ render_logo: {
     sta SCREEN+$28*0,x
     tya
     clc
-    adc #$28*(0+1)
-    sta SCREEN+$28*(0+1),x
+    adc #$28*1
+    sta SCREEN+$28*1,x
     tya
     clc
-    adc #$28*(0+1+1)
-    sta SCREEN+$28*(0+1+1),x
+    adc #$28*2
+    sta SCREEN+$28*2,x
     tya
     clc
-    adc #$28*(0+1+1+1)
-    sta SCREEN+$28*(0+1+1+1),x
+    adc #$28*3
+    sta SCREEN+$28*3,x
     tya
     clc
-    adc #$28*(0+1+1+1+1)
-    sta SCREEN+$28*(0+1+1+1+1),x
+    adc #$28*4
+    sta SCREEN+$28*4,x
     tya
     clc
-    adc #$28*(0+1+1+1+1+1)
-    sta SCREEN+$28*(0+1+1+1+1+1),x
+    adc #$28*5
+    sta SCREEN+$28*5,x
     inx
     iny
     jmp b11

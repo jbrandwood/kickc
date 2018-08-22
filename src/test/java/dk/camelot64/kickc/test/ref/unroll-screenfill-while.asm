@@ -9,53 +9,53 @@ main: {
     txa
     sta SCREEN+0*$28,x
     txa
-    sta SCREEN+(0+1)*$28,x
+    sta SCREEN+1*$28,x
     txa
-    sta SCREEN+(0+1+1)*$28,x
+    sta SCREEN+2*$28,x
     txa
-    sta SCREEN+(0+1+1+1)*$28,x
+    sta SCREEN+3*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1)*$28,x
+    sta SCREEN+4*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1)*$28,x
+    sta SCREEN+5*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1)*$28,x
+    sta SCREEN+6*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+7*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+8*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+9*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$a*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$b*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$c*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$d*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$e*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$f*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$10*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$11*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$12*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$13*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$14*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$15*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$16*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$17*$28,x
     txa
-    sta SCREEN+(0+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1+1)*$28,x
+    sta SCREEN+$18*$28,x
     inx
     cpx #$28
     bne b3

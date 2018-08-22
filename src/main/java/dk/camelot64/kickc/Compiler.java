@@ -222,7 +222,6 @@ public class Compiler {
       do {
          unrolled = pass2ExecuteOnce(loopUnrolling);
          if(unrolled) {
-
             if(getLog().isVerboseLoopUnroll()) {
                getLog().append("UNROLLED CONTROL FLOW GRAPH");
                getLog().append(program.getGraph().toString(program));
@@ -241,6 +240,7 @@ public class Compiler {
       constantOptimizations.add(new Pass2IdenticalPhiElimination(program));
       constantOptimizations.add(new Pass2ConstantIdentification(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
+      constantOptimizations.add(new Pass2ConstantIntIncrementConsolidation(program));
       constantOptimizations.add(new Pass2ConstantIfs(program));
       pass2Execute(constantOptimizations);
    }

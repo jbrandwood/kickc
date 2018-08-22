@@ -252,7 +252,6 @@ public class Compiler {
     * @param optimizations The optimizations to repeat
     */
    private void pass2Execute(List<Pass2SsaOptimization> optimizations) {
-      getLog().append("OPTIMIZING CONTROL FLOW GRAPH");
       boolean ssaOptimized = true;
       while(ssaOptimized) {
          pass2AssertSSA();

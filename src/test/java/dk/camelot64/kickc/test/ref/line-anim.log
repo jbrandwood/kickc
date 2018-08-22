@@ -3402,6 +3402,8 @@ Constant inlined screen_fill::y#0 = (byte/signed byte/word/signed word/dword/sig
 Constant inlined bitmap_init::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined bitmap_init::bitmap#0 = (const byte*) BITMAP#0
 Succesful SSA optimization Pass2ConstantInlining
+Simplifying constant plus zero bitmap_plot_yhi#0+0
+Simplifying constant plus zero bitmap_plot_ylo#0+0
 Block Sequence Planned @begin @18 @end main main::vicSelectGfxBank1 main::vicSelectGfxBank1_toDd001 main::vicSelectGfxBank1_@1 main::toD0181 main::@16 main::@17 main::@18 main::@1 main::@20 main::@21 main::@5 main::@7 bitmap_plot bitmap_plot::@return point_init point_init::abs16s1 point_init::abs16s1_@return point_init::abs16s2 point_init::abs16s2_@return point_init::@10 point_init::@2 point_init::@return point_init::@1 point_init::@7 point_init::@4 point_init::@11 point_init::@3 point_init::abs16s2_@1 point_init::abs16s1_@1 divr16s divr16s::@16 divr16s::@2 divr16s::@4 divr16s::@15 divr16s::@11 divr16s::@return divr16s::@3 divr16s::@1 divr16u divr16u::@1 divr16u::@4 divr16u::@2 divr16u::@5 divr16u::@3 divr16u::@return screen_fill screen_fill::@1 screen_fill::@2 screen_fill::@3 screen_fill::@return bitmap_clear bitmap_clear::@1 bitmap_clear::@2 bitmap_clear::@3 bitmap_clear::@return bitmap_init bitmap_init::@1 bitmap_init::@5 bitmap_init::@2 bitmap_init::@3 bitmap_init::@7 bitmap_init::@4 bitmap_init::@return 
 Added new block during phi lifting main::@22(between main::@21 and main::@1)
 Added new block during phi lifting point_init::@12(between point_init::abs16s1 and point_init::abs16s1_@return)
@@ -3778,7 +3780,7 @@ screen_fill::@return: scope:[screen_fill]  from screen_fill::@3
   [118] return  [ ] ( main:2::screen_fill:17 [ ] )
   to:@return
 bitmap_clear: scope:[bitmap_clear]  from main::@17
-  [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0+(byte/signed byte/word/signed word/dword/signed dword) 0) w= *((const byte[256]) bitmap_plot_ylo#0+(byte/signed byte/word/signed word/dword/signed dword) 0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] )
+  [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0) w= *((const byte[256]) bitmap_plot_ylo#0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] )
   [120] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#5 ] )
   to:bitmap_clear::@1
 bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear bitmap_clear::@3
@@ -5062,10 +5064,10 @@ bitmap_clear: {
     .label x = $1e
     .label y = $1b
     .label _3 = $59
-  //SEG218 [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0+(byte/signed byte/word/signed word/dword/signed dword) 0) w= *((const byte[256]) bitmap_plot_ylo#0+(byte/signed byte/word/signed word/dword/signed dword) 0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
-    lda bitmap_plot_ylo+0
+  //SEG218 [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0) w= *((const byte[256]) bitmap_plot_ylo#0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    lda bitmap_plot_ylo
     sta _3
-    lda bitmap_plot_yhi+0
+    lda bitmap_plot_yhi
     sta _3+1
   //SEG219 [120] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#5 ] ) -- pbuz1=pbuz2 
     lda _3
@@ -5356,7 +5358,7 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:23 [ s
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:23 [ screen_fill::y#4 screen_fill::y#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:26 [ screen_fill::x#2 screen_fill::x#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:26 [ screen_fill::x#2 screen_fill::x#1 ]
-Statement [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0+(byte/signed byte/word/signed word/dword/signed dword) 0) w= *((const byte[256]) bitmap_plot_ylo#0+(byte/signed byte/word/signed word/dword/signed dword) 0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) always clobbers reg byte a 
+Statement [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0) w= *((const byte[256]) bitmap_plot_ylo#0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) always clobbers reg byte a 
 Statement [120] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#5 ] ) always clobbers reg byte a 
 Statement [123] *((byte*) bitmap_clear::bitmap#2) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ( main:2::bitmap_clear:15 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:27 [ bitmap_clear::y#4 bitmap_clear::y#1 ]
@@ -5432,7 +5434,7 @@ Statement [98] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte/signed by
 Statement [102] if((word) divr16u::rem#5<(word) divr16u::divisor#0) goto divr16u::@3 [ divr16u::divisor#0 divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ( main:2::point_init:20::divr16s:58::divr16u:79 [ main::i#2 point_init::point_idx#0 point_init::point_idx1#0 divr16s::neg#4 divr16u::divisor#0 divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ) always clobbers reg byte a 
 Statement [104] (word) divr16u::rem#2 ← (word) divr16u::rem#5 - (word) divr16u::divisor#0 [ divr16u::divisor#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::point_init:20::divr16s:58::divr16u:79 [ main::i#2 point_init::point_idx#0 point_init::point_idx1#0 divr16s::neg#4 divr16u::divisor#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
 Statement [112] *((byte*) screen_fill::screen#2) ← (const byte) screen_fill::ch#0 [ screen_fill::y#4 screen_fill::screen#2 screen_fill::x#2 ] ( main:2::screen_fill:17 [ screen_fill::y#4 screen_fill::screen#2 screen_fill::x#2 ] ) always clobbers reg byte a reg byte y 
-Statement [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0+(byte/signed byte/word/signed word/dword/signed dword) 0) w= *((const byte[256]) bitmap_plot_ylo#0+(byte/signed byte/word/signed word/dword/signed dword) 0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) always clobbers reg byte a 
+Statement [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0) w= *((const byte[256]) bitmap_plot_ylo#0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) always clobbers reg byte a 
 Statement [120] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#5 ] ) always clobbers reg byte a 
 Statement [123] *((byte*) bitmap_clear::bitmap#2) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ( main:2::bitmap_clear:15 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ) always clobbers reg byte a reg byte y 
 Statement [139] (byte~) bitmap_init::$3 ← (byte) bitmap_init::y#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$3 ] ( main:2::bitmap_init:13 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$3 ] ) always clobbers reg byte a 
@@ -6328,10 +6330,10 @@ bitmap_clear: {
     .label bitmap = 3
     .label y = 2
     .label _3 = 3
-  //SEG218 [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0+(byte/signed byte/word/signed word/dword/signed dword) 0) w= *((const byte[256]) bitmap_plot_ylo#0+(byte/signed byte/word/signed word/dword/signed dword) 0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
-    lda bitmap_plot_ylo+0
+  //SEG218 [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0) w= *((const byte[256]) bitmap_plot_ylo#0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    lda bitmap_plot_ylo
     sta _3
-    lda bitmap_plot_yhi+0
+    lda bitmap_plot_yhi
     sta _3+1
   //SEG219 [120] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#5 ] )
     // (byte*~) bitmap_clear::bitmap#5 = (byte*)(word~) bitmap_clear::$3  // register copy zp ZP_WORD:3
@@ -7667,10 +7669,10 @@ bitmap_clear: {
     .label bitmap = 3
     .label y = 2
     .label _3 = 3
-  //SEG218 [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0+(byte/signed byte/word/signed word/dword/signed dword) 0) w= *((const byte[256]) bitmap_plot_ylo#0+(byte/signed byte/word/signed word/dword/signed dword) 0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
-    lda bitmap_plot_ylo+0
+  //SEG218 [119] (word~) bitmap_clear::$3 ← *((const byte[256]) bitmap_plot_yhi#0) w= *((const byte[256]) bitmap_plot_ylo#0) [ bitmap_clear::$3 ] ( main:2::bitmap_clear:15 [ bitmap_clear::$3 ] ) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    lda bitmap_plot_ylo
     sta _3
-    lda bitmap_plot_yhi+0
+    lda bitmap_plot_yhi
     sta _3+1
   //SEG219 [120] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#5 ] )
     // (byte*~) bitmap_clear::bitmap#5 = (byte*)(word~) bitmap_clear::$3  // register copy zp ZP_WORD:3

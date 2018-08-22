@@ -5,7 +5,7 @@
   jsr main
 main: {
     lda #'c'
-    sta b+0
+    sta b
     sta SCREEN
     lda c+1
     sta SCREEN+1

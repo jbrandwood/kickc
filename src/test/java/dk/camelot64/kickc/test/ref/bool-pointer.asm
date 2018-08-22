@@ -4,7 +4,7 @@
   jsr main
 main: {
     lda #1
-    sta $400+0
+    sta $400
     lda #0
     sta $400+1
     lda #1

@@ -12,10 +12,10 @@ main: {
     .const midb = (sumb>>1)+1
     .const midw = (sumw>>1)+1
     lda #midw
-    sta SCREEN+0
+    sta SCREEN
     lda #midb
     sta SCREEN+1
-    lda SCREEN+0
+    lda SCREEN
     cmp SCREEN+1
     beq b1
     lda #2

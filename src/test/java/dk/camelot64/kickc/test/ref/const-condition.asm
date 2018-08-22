@@ -5,6 +5,6 @@
 main: {
     .label SCREEN = $400
     lda #'!'
-    sta SCREEN+0
+    sta SCREEN
     rts
 }

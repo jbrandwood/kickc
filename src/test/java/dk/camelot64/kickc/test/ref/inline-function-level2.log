@@ -515,6 +515,8 @@ Constant inlined main::sc#0 = ((byte*))(word/signed word/dword/signed dword) 102
 Constant inlined cur_line#2 = ((byte*))(word/signed word/dword/signed dword) 1024
 Constant inlined main::line1_pos#0 = (const byte) main::line1_xpos#0*(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
+Simplifying constant plus zero main::line1_xpos#0*256+0
+Simplifying constant plus zero main::line2_xpos#0*256+0
 Block Sequence Planned @begin @3 @end main main::@1 main::line1 main::line1_@1 main::plot1 main::@4 main::line2 main::line2_@1 main::plot2 main::@6 main::@return 
 Added new block during phi lifting main::@7(between main::@1 and main::@1)
 Added new block during phi lifting main::@8(between main::@4 and main::line1_@1)
@@ -588,7 +590,7 @@ main::line1: scope:[main]  from main::@1
 main::line1_@1: scope:[main]  from main::@4 main::line1
   [10] (byte) main::line1_i#2 ← phi( main::@4/(byte) main::line1_i#1 main::line1/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ main::line1_pos#2 cur_line#13 main::line1_i#2 ] ( main:2 [ main::line1_pos#2 cur_line#13 main::line1_i#2 ] )
   [10] (byte*) cur_line#13 ← phi( main::@4/(byte*) cur_line#1 main::line1/((byte*))(word/signed word/dword/signed dword) 1024 ) [ main::line1_pos#2 cur_line#13 main::line1_i#2 ] ( main:2 [ main::line1_pos#2 cur_line#13 main::line1_i#2 ] )
-  [10] (word) main::line1_pos#2 ← phi( main::@4/(word) main::line1_pos#1 main::line1/(const byte) main::line1_xpos#0*(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ main::line1_pos#2 cur_line#13 main::line1_i#2 ] ( main:2 [ main::line1_pos#2 cur_line#13 main::line1_i#2 ] )
+  [10] (word) main::line1_pos#2 ← phi( main::@4/(word) main::line1_pos#1 main::line1/(const byte) main::line1_xpos#0*(word/signed word/dword/signed dword) 256 ) [ main::line1_pos#2 cur_line#13 main::line1_i#2 ] ( main:2 [ main::line1_pos#2 cur_line#13 main::line1_i#2 ] )
   [11] (byte) main::plot1_xpos#0 ← > (word) main::line1_pos#2 [ main::line1_pos#2 cur_line#13 main::line1_i#2 main::plot1_xpos#0 ] ( main:2 [ main::line1_pos#2 cur_line#13 main::line1_i#2 main::plot1_xpos#0 ] )
   to:main::plot1
 main::plot1: scope:[main]  from main::line1_@1
@@ -607,7 +609,7 @@ main::line2: scope:[main]  from main::@4
 main::line2_@1: scope:[main]  from main::@6 main::line2
   [19] (byte) main::line2_i#2 ← phi( main::@6/(byte) main::line2_i#1 main::line2/(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ main::line2_pos#2 cur_line#10 main::line2_i#2 ] ( main:2 [ main::line2_pos#2 cur_line#10 main::line2_i#2 ] )
   [19] (byte*) cur_line#10 ← phi( main::@6/(byte*) cur_line#11 main::line2/((byte*))(word/signed word/dword/signed dword) 1024 ) [ main::line2_pos#2 cur_line#10 main::line2_i#2 ] ( main:2 [ main::line2_pos#2 cur_line#10 main::line2_i#2 ] )
-  [19] (word) main::line2_pos#2 ← phi( main::@6/(word) main::line2_pos#1 main::line2/(const byte) main::line2_xpos#0*(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 0 ) [ main::line2_pos#2 cur_line#10 main::line2_i#2 ] ( main:2 [ main::line2_pos#2 cur_line#10 main::line2_i#2 ] )
+  [19] (word) main::line2_pos#2 ← phi( main::@6/(word) main::line2_pos#1 main::line2/(const byte) main::line2_xpos#0*(word/signed word/dword/signed dword) 256 ) [ main::line2_pos#2 cur_line#10 main::line2_i#2 ] ( main:2 [ main::line2_pos#2 cur_line#10 main::line2_i#2 ] )
   [20] (byte) main::plot2_xpos#0 ← > (word) main::line2_pos#2 [ main::line2_pos#2 cur_line#10 main::line2_i#2 main::plot2_xpos#0 ] ( main:2 [ main::line2_pos#2 cur_line#10 main::line2_i#2 main::plot2_xpos#0 ] )
   to:main::plot2
 main::plot2: scope:[main]  from main::line2_@1
@@ -797,10 +799,10 @@ main: {
     sta cur_line
     lda #>$400
     sta cur_line+1
-  //SEG23 [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
-    lda #<line1_xpos*$100+0
+  //SEG23 [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word/signed word/dword/signed dword) 256 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
+    lda #<line1_xpos*$100
     sta line1_pos
-    lda #>line1_xpos*$100+0
+    lda #>line1_xpos*$100
     sta line1_pos+1
     jmp line1_b1
   //SEG24 [10] phi from main::@4 to main::line1_@1 [phi:main::@4->main::line1_@1]
@@ -869,10 +871,10 @@ main: {
     sta cur_line_10
     lda #>$400
     sta cur_line_10+1
-  //SEG43 [19] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
-    lda #<line2_xpos*$100+0
+  //SEG43 [19] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word/signed word/dword/signed dword) 256 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
+    lda #<line2_xpos*$100
     sta line2_pos
-    lda #>line2_xpos*$100+0
+    lda #>line2_xpos*$100
     sta line2_pos+1
     jmp line2_b1
   //SEG44 [19] phi from main::@6 to main::line2_@1 [phi:main::@6->main::line2_@1]
@@ -1071,10 +1073,10 @@ main: {
     sta cur_line
     lda #>$400
     sta cur_line+1
-  //SEG23 [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
-    lda #<line1_xpos*$100+0
+  //SEG23 [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word/signed word/dword/signed dword) 256 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
+    lda #<line1_xpos*$100
     sta line1_pos
-    lda #>line1_xpos*$100+0
+    lda #>line1_xpos*$100
     sta line1_pos+1
     jmp line1_b1
   //SEG24 [10] phi from main::@4 to main::line1_@1 [phi:main::@4->main::line1_@1]
@@ -1139,10 +1141,10 @@ main: {
     sta cur_line
     lda #>$400
     sta cur_line+1
-  //SEG43 [19] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
-    lda #<line2_xpos*$100+0
+  //SEG43 [19] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word/signed word/dword/signed dword) 256 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
+    lda #<line2_xpos*$100
     sta line2_pos
-    lda #>line2_xpos*$100+0
+    lda #>line2_xpos*$100
     sta line2_pos+1
     jmp line2_b1
   //SEG44 [19] phi from main::@6 to main::line2_@1 [phi:main::@6->main::line2_@1]
@@ -1391,10 +1393,10 @@ main: {
     sta cur_line
     lda #>$400
     sta cur_line+1
-  //SEG23 [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
-    lda #<line1_xpos*$100+0
+  //SEG23 [10] phi (word) main::line1_pos#2 = (const byte) main::line1_xpos#0*(word/signed word/dword/signed dword) 256 [phi:main::line1->main::line1_@1#2] -- vwuz1=vwuc1 
+    lda #<line1_xpos*$100
     sta line1_pos
-    lda #>line1_xpos*$100+0
+    lda #>line1_xpos*$100
     sta line1_pos+1
   //SEG24 [10] phi from main::@4 to main::line1_@1 [phi:main::@4->main::line1_@1]
   //SEG25 [10] phi (byte) main::line1_i#2 = (byte) main::line1_i#1 [phi:main::@4->main::line1_@1#0] -- register_copy 
@@ -1448,10 +1450,10 @@ main: {
     sta cur_line
     lda #>$400
     sta cur_line+1
-  //SEG43 [19] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
-    lda #<line2_xpos*$100+0
+  //SEG43 [19] phi (word) main::line2_pos#2 = (const byte) main::line2_xpos#0*(word/signed word/dword/signed dword) 256 [phi:main::line2->main::line2_@1#2] -- vwuz1=vwuc1 
+    lda #<line2_xpos*$100
     sta line2_pos
-    lda #>line2_xpos*$100+0
+    lda #>line2_xpos*$100
     sta line2_pos+1
   //SEG44 [19] phi from main::@6 to main::line2_@1 [phi:main::@6->main::line2_@1]
   //SEG45 [19] phi (byte) main::line2_i#2 = (byte) main::line2_i#1 [phi:main::@6->main::line2_@1#0] -- register_copy 

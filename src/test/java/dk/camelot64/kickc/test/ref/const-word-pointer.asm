@@ -11,7 +11,7 @@ main: {
     lda #>$d03
     sta w+1
     lda wp
-    sta screen+0
+    sta screen
     lda wp+1
     sta screen+1
     lda #<$210c

@@ -682,9 +682,9 @@ bitmap_clear: {
     .label bitmap = 2
     .label y = $16
     .label _3 = 2
-    lda bitmap_plot_ylo+0
+    lda bitmap_plot_ylo
     sta _3
-    lda bitmap_plot_yhi+0
+    lda bitmap_plot_yhi
     sta _3+1
     lda #0
     sta y

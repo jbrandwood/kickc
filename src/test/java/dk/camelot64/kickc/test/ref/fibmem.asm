@@ -5,7 +5,7 @@
   jsr main
 main: {
     lda #0
-    sta fibs+0
+    sta fibs
     lda #1
     sta fibs+1
     ldx #0

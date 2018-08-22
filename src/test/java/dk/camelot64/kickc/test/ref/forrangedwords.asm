@@ -11,7 +11,7 @@ main: {
     sta w+1
   b1:
     lda w
-    sta SCREEN+0
+    sta SCREEN
     lda w+1
     sta SCREEN+1
     inc w

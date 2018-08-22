@@ -144,9 +144,7 @@ render_logo: {
     rts
   b9:
     tya
-    clc
-    adc #$28*0
-    sta SCREEN+$28*0,x
+    sta SCREEN,x
     tya
     clc
     adc #$28*1
@@ -172,7 +170,7 @@ render_logo: {
     jmp b6
   b5:
     lda #0
-    sta SCREEN+$28*0,x
+    sta SCREEN,x
     sta SCREEN+$28*1,x
     sta SCREEN+$28*2,x
     sta SCREEN+$28*3,x
@@ -196,7 +194,7 @@ render_logo: {
     jmp breturn
   b18:
     lda #0
-    sta SCREEN+$28*0,x
+    sta SCREEN,x
     sta SCREEN+$28*1,x
     sta SCREEN+$28*2,x
     sta SCREEN+$28*3,x
@@ -206,9 +204,7 @@ render_logo: {
     jmp b15
   b14:
     tya
-    clc
-    adc #$28*0
-    sta SCREEN+$28*0,x
+    sta SCREEN,x
     tya
     clc
     adc #$28*1

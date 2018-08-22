@@ -14,7 +14,7 @@ main: {
     .const sum2_return = sum2_a+sum2_b
     .const sum3_return = sum3_a+sum3_b
     lda #sum1_return
-    sta screen+0
+    sta screen
     lda #sum2_return
     sta screen+1
     lda #sum3_return

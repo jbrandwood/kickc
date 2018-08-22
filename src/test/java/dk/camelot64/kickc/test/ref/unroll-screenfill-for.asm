@@ -7,7 +7,7 @@ main: {
     ldx #0
   b2:
     txa
-    sta SCREEN+0*$28,x
+    sta SCREEN,x
     txa
     sta SCREEN+1*$28,x
     txa

@@ -7,7 +7,7 @@
   jsr main
 main: {
     lda #char
-    sta SCREEN+0
+    sta SCREEN
     lda #num
     sta SCREEN+2
     ldx #0

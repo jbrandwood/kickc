@@ -14,23 +14,23 @@ main: {
     jmp b1
 }
 animate: {
-    ldx XPOS+0
+    ldx XPOS
     inx
-    stx XPOS+0
+    stx XPOS
     txa
     cmp #$28
     bne b1
     lda #0
-    sta XPOS+0
+    sta XPOS
   b1:
-    ldx YPOS+0
+    ldx YPOS
     inx
-    stx YPOS+0
+    stx YPOS
     txa
     cmp #$19
     bne b2
     lda #0
-    sta YPOS+0
+    sta YPOS
   b2:
     lda XPOS+1
     sec

@@ -240,7 +240,7 @@ public class Compiler {
       constantOptimizations.add(new Pass2IdenticalPhiElimination(program));
       constantOptimizations.add(new Pass2ConstantIdentification(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
-      constantOptimizations.add(new Pass2ConstantIntIncrementConsolidation(program));
+      constantOptimizations.add(new Pass2ConstantSimplification(program));
       constantOptimizations.add(new Pass2ConstantIfs(program));
       pass2Execute(constantOptimizations);
    }

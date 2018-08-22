@@ -42,9 +42,9 @@ main: {
     sta cur_line
     lda #>$400
     sta cur_line+1
-    lda #<line1_xpos*$100+0
+    lda #<line1_xpos*$100
     sta line1_pos
-    lda #>line1_xpos*$100+0
+    lda #>line1_xpos*$100
     sta line1_pos+1
   line1_b1:
     lda line1_pos+1
@@ -79,9 +79,9 @@ main: {
     sta cur_line
     lda #>$400
     sta cur_line+1
-    lda #<line2_xpos*$100+0
+    lda #<line2_xpos*$100
     sta line2_pos
-    lda #>line2_xpos*$100+0
+    lda #>line2_xpos*$100
     sta line2_pos+1
   line2_b1:
     lda line2_pos+1

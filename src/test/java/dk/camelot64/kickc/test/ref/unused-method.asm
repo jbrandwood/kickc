@@ -5,6 +5,6 @@
 main: {
     .label screen = $400
     lda #1
-    sta screen+0
+    sta screen
     rts
 }

@@ -6,7 +6,7 @@
 main: {
     .label SCREEN = $400
     lda #>PI_u4f28>>$10
-    sta SCREEN+0
+    sta SCREEN
     lda #<PI_u4f28>>$10
     sta SCREEN+1
     lda #>PI_u4f28&$ffff

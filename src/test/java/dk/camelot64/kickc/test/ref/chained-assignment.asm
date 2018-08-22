@@ -5,7 +5,7 @@
 main: {
     .label screen = $400
     lda #'c'
-    sta screen+0
+    sta screen
     sta screen+$28
     lda #'m'
     sta screen+1

@@ -38,7 +38,7 @@ raster: {
     nop
     nop
     nop
-    lda rastercols+0
+    lda rastercols
     ldx #0
   b1:
     sta BGCOL

@@ -6,7 +6,7 @@ main: {
     .label screen = $400
     .const a = $c
     lda #a
-    sta screen+0
+    sta screen
     sta screen+1
     rts
 }

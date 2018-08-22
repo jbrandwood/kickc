@@ -8,7 +8,7 @@ main: {
     .const toUpper2_ch = 'm'
     .const toUpper1_res = toUpper1_ch+$40
     lda #toUpper1_res
-    sta screen+0
+    sta screen
     lda #toUpper2_ch
     sta screen+1
     rts

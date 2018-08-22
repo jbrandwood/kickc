@@ -21,6 +21,6 @@ bool_const_vars: {
 }
 bool_const_if: {
     lda #'t'
-    sta SCREEN+0
+    sta SCREEN
     rts
 }

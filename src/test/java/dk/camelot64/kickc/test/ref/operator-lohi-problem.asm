@@ -6,7 +6,7 @@
   jsr main
 main: {
     lda #DVAL/$400
-    sta SCREEN+0
+    sta SCREEN
     lda #0
     sta SCREEN+1
     rts

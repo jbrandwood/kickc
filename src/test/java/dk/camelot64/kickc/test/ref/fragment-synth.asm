@@ -14,7 +14,7 @@ main: {
     sta fct.z+1
     ldx #$aa
     jsr fct
-    sta screen+0
+    sta screen
     lda #<$450+1
     sta fct.z
     lda #>$450+1

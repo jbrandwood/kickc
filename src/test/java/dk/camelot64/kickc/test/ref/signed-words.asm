@@ -164,9 +164,9 @@ anim: {
     sbc sprite_y+1
     sta sprite_y+1
     lda sprite_x
-    sta SPRITES_XPOS+0
+    sta SPRITES_XPOS
     lda sprite_y
-    sta SPRITES_YPOS+0
+    sta SPRITES_YPOS
     lda sprite_x+1
     sta SPRITES_XMSB
     rts
@@ -179,12 +179,12 @@ init: {
     sta SPRITES_EXPAND_X
     sta SPRITES_EXPAND_Y
     lda #$64
-    sta SPRITES_XPOS+0
-    sta SPRITES_YPOS+0
+    sta SPRITES_XPOS
+    sta SPRITES_YPOS
     lda #WHITE
-    sta SPRITES_COLS+0
+    sta SPRITES_COLS
     lda #$ff&SPRITE/$40
-    sta SPRITES_PTR+0
+    sta SPRITES_PTR
     lda #<SCREEN
     sta sc
     lda #>SCREEN

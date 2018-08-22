@@ -7,7 +7,7 @@ main: {
     .label reverse = $80
     lda #'c'
     jsr sum
-    sta screen+0
+    sta screen
     lda #'m'
     jsr sum
     sta screen+1

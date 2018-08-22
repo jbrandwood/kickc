@@ -15,9 +15,7 @@ main: {
     sta y
     ldy #yd/2
     tax
-    lda #<0+0*$28
     sta idx
-    lda #>0+0*$28
     sta idx+1
   b1:
     lda #<screen

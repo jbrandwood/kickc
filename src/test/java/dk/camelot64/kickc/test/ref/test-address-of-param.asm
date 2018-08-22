@@ -30,7 +30,7 @@ main: {
     ldx #'l'
     jsr setByte
     lda b1
-    sta SCREEN+0
+    sta SCREEN
     lda b2
     sta SCREEN+1
     lda b3

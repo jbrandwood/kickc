@@ -115,8 +115,8 @@ scroll_bit: {
 scroll_hard: {
     ldx #0
   b1:
-    lda SCREEN+$28*0+1,x
-    sta SCREEN+$28*0,x
+    lda SCREEN+1,x
+    sta SCREEN,x
     lda SCREEN+$28*1+1,x
     sta SCREEN+$28*1,x
     lda SCREEN+$28*2+1,x

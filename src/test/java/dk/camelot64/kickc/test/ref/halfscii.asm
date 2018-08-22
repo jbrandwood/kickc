@@ -50,7 +50,7 @@ main: {
     lda bits_count,y
     cmp #2
     bcc b7
-    lda #0+1
+    lda #1
     jmp b2
   b7:
     lda #0

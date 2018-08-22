@@ -87,7 +87,6 @@
   .const form_fields_cnt = $24
   .const FORM_CURSOR_BLINK = $28
   .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
-  .label form_preset = form_fields_val+0
   .label form_ctrl_bmm = form_fields_val+1
   .label form_ctrl_mcm = form_fields_val+2
   .label form_ctrl_ecm = form_fields_val+3
@@ -892,7 +891,7 @@ form_mode: {
     jsr print_str_lines
     jsr form_set_screen
     jsr form_render_values
-    lda form_preset
+    lda form_fields_val
     jsr render_preset_name
     lda #($ffffffff&FORM_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
@@ -928,7 +927,7 @@ form_mode: {
     lda #0
     sta BGCOL
     sta BORDERCOL
-    lda form_preset
+    lda form_fields_val
     sta preset_current
   b5:
     lda RASTER
@@ -940,14 +939,14 @@ form_mode: {
     beq b8
     rts
   b8:
-    lda form_preset
+    lda form_fields_val
     cmp preset_current
     beq b5
     jsr apply_preset
-    lda form_preset
+    lda form_fields_val
     sta preset_current
     jsr form_render_values
-    lda form_preset
+    lda form_fields_val
     jsr render_preset_name
     jmp b5
 }
@@ -2117,9 +2116,9 @@ bitmap_clear: {
     .label bitmap = 3
     .label y = 2
     .label _3 = 3
-    lda bitmap_plot_xlo+0
+    lda bitmap_plot_xlo
     sta _3
-    lda bitmap_plot_xhi+0
+    lda bitmap_plot_xhi
     sta _3+1
     lda #0
     sta y

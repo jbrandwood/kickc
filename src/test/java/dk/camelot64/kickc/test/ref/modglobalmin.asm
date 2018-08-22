@@ -6,7 +6,7 @@
 main: {
     ldx #0
     jsr inccnt
-    stx SCREEN+0
+    stx SCREEN
     inx
     jsr inccnt
     inx

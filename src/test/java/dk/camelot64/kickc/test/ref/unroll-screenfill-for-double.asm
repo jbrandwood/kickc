@@ -5,19 +5,19 @@
 main: {
     .label SCREEN = $400
     lda #0
-    sta SCREEN+0*$28+0
-    sta SCREEN+1*$28+0
-    sta SCREEN+2*$28+0
-    sta SCREEN+3*$28+0
-    sta SCREEN+4*$28+0
-    sta SCREEN+5*$28+0
-    sta SCREEN+6*$28+0
-    sta SCREEN+7*$28+0
-    sta SCREEN+8*$28+0
-    sta SCREEN+9*$28+0
-    sta SCREEN+$a*$28+0
+    sta SCREEN
+    sta SCREEN+1*$28
+    sta SCREEN+2*$28
+    sta SCREEN+3*$28
+    sta SCREEN+4*$28
+    sta SCREEN+5*$28
+    sta SCREEN+6*$28
+    sta SCREEN+7*$28
+    sta SCREEN+8*$28
+    sta SCREEN+9*$28
+    sta SCREEN+$a*$28
     lda #1
-    sta SCREEN+0*$28+1
+    sta SCREEN+1
     sta SCREEN+1*$28+1
     sta SCREEN+2*$28+1
     sta SCREEN+3*$28+1
@@ -29,7 +29,7 @@ main: {
     sta SCREEN+9*$28+1
     sta SCREEN+$a*$28+1
     lda #2
-    sta SCREEN+0*$28+2
+    sta SCREEN+2
     sta SCREEN+1*$28+2
     sta SCREEN+2*$28+2
     sta SCREEN+3*$28+2
@@ -41,7 +41,7 @@ main: {
     sta SCREEN+9*$28+2
     sta SCREEN+$a*$28+2
     lda #3
-    sta SCREEN+0*$28+3
+    sta SCREEN+3
     sta SCREEN+1*$28+3
     sta SCREEN+2*$28+3
     sta SCREEN+3*$28+3
@@ -53,7 +53,7 @@ main: {
     sta SCREEN+9*$28+3
     sta SCREEN+$a*$28+3
     lda #4
-    sta SCREEN+0*$28+4
+    sta SCREEN+4
     sta SCREEN+1*$28+4
     sta SCREEN+2*$28+4
     sta SCREEN+3*$28+4
@@ -65,7 +65,7 @@ main: {
     sta SCREEN+9*$28+4
     sta SCREEN+$a*$28+4
     lda #5
-    sta SCREEN+0*$28+5
+    sta SCREEN+5
     sta SCREEN+1*$28+5
     sta SCREEN+2*$28+5
     sta SCREEN+3*$28+5
@@ -77,7 +77,7 @@ main: {
     sta SCREEN+9*$28+5
     sta SCREEN+$a*$28+5
     lda #6
-    sta SCREEN+0*$28+6
+    sta SCREEN+6
     sta SCREEN+1*$28+6
     sta SCREEN+2*$28+6
     sta SCREEN+3*$28+6
@@ -89,7 +89,7 @@ main: {
     sta SCREEN+9*$28+6
     sta SCREEN+$a*$28+6
     lda #7
-    sta SCREEN+0*$28+7
+    sta SCREEN+7
     sta SCREEN+1*$28+7
     sta SCREEN+2*$28+7
     sta SCREEN+3*$28+7
@@ -101,7 +101,7 @@ main: {
     sta SCREEN+9*$28+7
     sta SCREEN+$a*$28+7
     lda #8
-    sta SCREEN+0*$28+8
+    sta SCREEN+8
     sta SCREEN+1*$28+8
     sta SCREEN+2*$28+8
     sta SCREEN+3*$28+8
@@ -113,7 +113,7 @@ main: {
     sta SCREEN+9*$28+8
     sta SCREEN+$a*$28+8
     lda #9
-    sta SCREEN+0*$28+9
+    sta SCREEN+9
     sta SCREEN+1*$28+9
     sta SCREEN+2*$28+9
     sta SCREEN+3*$28+9
@@ -125,7 +125,7 @@ main: {
     sta SCREEN+9*$28+9
     sta SCREEN+$a*$28+9
     lda #$a
-    sta SCREEN+0*$28+$a
+    sta SCREEN+$a
     sta SCREEN+1*$28+$a
     sta SCREEN+2*$28+$a
     sta SCREEN+3*$28+$a

@@ -39,7 +39,9 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       versionAllUses();
       boolean done;
       do {
-         getLog().append("Completing Phi functions...");
+         if(getLog().isVerbosePass1CreateSsa()) {
+            getLog().append("Completing Phi functions...");
+         }
          done = completePhiFunctions();
          //log.append(this.controlFlowGraph.toString(symbols));
       } while(!done);

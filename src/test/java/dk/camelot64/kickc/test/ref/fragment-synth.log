@@ -1,99 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/fragment-synth.kc
-// Tests a sub-optimal fragment synthesis
-// vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 < vbuaa=pbuz1_derefidx_vbuc1_band_vbuxx < vbuaa=pbuz1_derefidx_vbuaa_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuaa < vbuaa=vbuaa_band_pbuz1_derefidx_vbuyy - clobber:A Y  cycles:11.5
 
-
-void main() {
-    byte* screen = $400;
-    byte* z = $450;
-    z[2] = $f0;
-    z[3] = $0f;
-    byte x = $aa;
-    byte a1 = fct(x, z);
-    screen[0] = a1;
-    z++;
-    x = $55;
-    byte a2 = fct(x, z);
-    screen[1] = a2;
-}
-
-byte fct(byte register(X) x, byte* z) {
-    byte register(A) a = x & z[2];
-    return a;
-}
-
-Adding pre/post-modifier (byte*) main::z ← ++ (byte*) main::z
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte()) fct((byte) fct::x , (byte*) fct::z)
-(byte~) fct::$0
-(label) fct::@1
-(label) fct::@return
-(byte) fct::a !reg byte a
-(byte) fct::return
-(byte) fct::x !reg byte x
-(byte*) fct::z
-(void()) main()
-(byte~) main::$0
-(byte~) main::$1
-(label) main::@return
-(byte) main::a1
-(byte) main::a2
-(byte*) main::screen
-(byte) main::x
-(byte*) main::z
-
-Promoting word/signed word/dword/signed dword to byte* in main::screen ← ((byte*)) 1024
-Promoting word/signed word/dword/signed dword to byte* in main::z ← ((byte*)) 1104
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte*) main::screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte*) main::z ← ((byte*)) (word/signed word/dword/signed dword) 1104
-  *((byte*) main::z + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte/word/signed word/dword/signed dword) 240
-  *((byte*) main::z + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte/signed byte/word/signed word/dword/signed dword) 15
-  (byte) main::x ← (byte/word/signed word/dword/signed dword) 170
-  (byte~) main::$0 ← call fct (byte) main::x (byte*) main::z 
-  (byte) main::a1 ← (byte~) main::$0
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::a1
-  (byte*) main::z ← ++ (byte*) main::z
-  (byte) main::x ← (byte/signed byte/word/signed word/dword/signed dword) 85
-  (byte~) main::$1 ← call fct (byte) main::x (byte*) main::z 
-  (byte) main::a2 ← (byte~) main::$1
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a2
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-fct: scope:[fct]  from
-  (byte~) fct::$0 ← (byte) fct::x & *((byte*) fct::z + (byte/signed byte/word/signed word/dword/signed dword) 2)
-  (byte) fct::a ← (byte~) fct::$0
-  (byte) fct::return ← (byte) fct::a
-  to:fct::@return
-fct::@return: scope:[fct]  from fct fct::@1
-  (byte) fct::return ← (byte) fct::return
-  return (byte) fct::return
-  to:@return
-fct::@1: scope:[fct]  from
-  to:fct::@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Removing empty block @1
-Removing empty block fct::@1
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @2
@@ -250,17 +156,11 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to fct:6 fct:10 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 2 initial phi equivalence classes
 Coalesced down to 2 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

@@ -1,56 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/incd020.kc
-// Incrementing / decrementing pointer content should result in code modifying the memory location - eg. inc $d020.
-// Currently it does not but instead leads to just reading the value a few times.
 
-byte* BGCOL = $d020;
-void main() {
-    do {
-        ++*BGCOL;
-        (*BGCOL)--;
-    } while (true);
-}
-Adding pre/post-modifier *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-Adding pre/post-modifier *((byte*) BGCOL) ← -- *((byte*) BGCOL)
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(byte*) BGCOL
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-
-Promoting word/dword/signed dword to byte* in BGCOL ← ((byte*)) 53280
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53280
-  to:@1
-main: scope:[main]  from
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
-  if(true) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
   to:@1
@@ -110,14 +59,12 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

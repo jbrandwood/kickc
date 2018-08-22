@@ -1,56 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/chained-assignment.kc
-// Tests that chained assignments work as intended
 
-void main() {
-    byte* screen = $400;
-    byte a;
-    screen[0] = a = 'c';
-    screen[40] = a;
-    a = screen[1] = 'm';
-    screen[41] = a;
-    screen[2] = 1 + (a = 'l'); // Chained assignment with a modification of the result
-    screen[42] = a;
-}
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(byte/signed word/word/dword/signed dword~) main::$0
-(label) main::@return
-(byte) main::a
-(byte*) main::screen
-
-Promoting word/signed word/dword/signed dword to byte* in main::screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte*) main::screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte) main::a ← (byte) 'c'
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::a
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 40) ← (byte) main::a
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'm'
-  (byte) main::a ← *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 1)
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 41) ← (byte) main::a
-  (byte) main::a ← (byte) 'l'
-  (byte/signed word/word/dword/signed dword~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) main::a
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte/signed word/word/dword/signed dword~) main::$0
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 42) ← (byte) main::a
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -120,15 +69,11 @@ Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

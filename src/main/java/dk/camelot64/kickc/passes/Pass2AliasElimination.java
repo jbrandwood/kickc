@@ -129,7 +129,9 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                               alias = null;
                               break;
                            } else if(variable.equals(alias)) {
-                              program.getLog().append("Not aliassing identity: " + variable + " " + alias);
+                              if(program.getLog().isVerboseNonOptimization()) {
+                                 program.getLog().append("Not aliassing identity: " + variable + " " + alias);
+                              }
                               alias = null;
                               break;
                            }

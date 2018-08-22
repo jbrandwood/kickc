@@ -60,7 +60,9 @@ public class Pass1AddTypePromotions extends Pass1Base {
          if(assignment.getOperator() == null) {
             // No operator - add cast directly!
             assignment.setOperator(Operators.getCastUnary(lValueType));
-            getProgram().getLog().append("Promoting " + rValueType + " to " + lValueType + " in " + assignment);
+            if(getLog().isVerbosePass1CreateSsa()) {
+               getLog().append("Promoting " + rValueType + " to " + lValueType + " in " + assignment);
+            }
          } else {
             throw new RuntimeException("Tmp-var promotions not implemented yet " + assignment);
          }

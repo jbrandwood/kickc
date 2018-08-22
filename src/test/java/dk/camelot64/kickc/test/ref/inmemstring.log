@@ -1,83 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/inmemstring.kc
 
-byte* SCREEN = $0400;
-byte[] TEXT = "camelot ";
-
-void main() {
-    byte* cursor = SCREEN;
-    byte i=0;
-    do {
-        *cursor = TEXT[i];
-        if(++i==8) {
-            i = 0;
-        }
-    } while(++cursor<SCREEN+1000);
-}
-Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
-Adding pre/post-modifier (byte*) main::cursor ← ++ (byte*) main::cursor
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(byte[]) TEXT
-(void()) main()
-(bool~) main::$0
-(bool~) main::$1
-(byte*~) main::$2
-(bool~) main::$3
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte*) main::cursor
-(byte) main::i
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte[]) TEXT ← (string) "camelot "
-  to:@1
-main: scope:[main]  from
-  (byte*) main::cursor ← (byte*) SCREEN
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  *((byte*) main::cursor) ← *((byte[]) TEXT + (byte) main::i)
-  (byte) main::i ← ++ (byte) main::i
-  (bool~) main::$0 ← (byte) main::i == (byte/signed byte/word/signed word/dword/signed dword) 8
-  (bool~) main::$1 ← ! (bool~) main::$0
-  if((bool~) main::$1) goto main::@2
-  to:main::@3
-main::@2: scope:[main]  from main::@1 main::@3
-  (byte*) main::cursor ← ++ (byte*) main::cursor
-  (byte*~) main::$2 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1000
-  (bool~) main::$3 ← (byte*) main::cursor < (byte*~) main::$2
-  if((bool~) main::$3) goto main::@1
-  to:main::@4
-main::@3: scope:[main]  from main::@1
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@2
-main::@4: scope:[main]  from main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Creating constant string variable for inline (const string) $0 "camelot "
-Removing empty block main::@4
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte[]) TEXT#0 ← (const string) $0
@@ -205,11 +127,6 @@ Adding NOP phi() at start of main::@3
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 3 initial phi equivalence classes
 Coalesced [14] main::i#5 ← main::i#4
 Coalesced [15] main::cursor#5 ← main::cursor#1
@@ -222,11 +139,6 @@ Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@6
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

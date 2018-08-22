@@ -79,8 +79,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitImportDecl(KickCParser.ImportDeclContext ctx) {
       String importName = ctx.STRING().getText();
       String importFileName = importName.substring(1, importName.length() - 1);
-      program.getLog().append("Importing " + importFileName);
-      Compiler.loadAndParseFile(importFileName, program, this);
+      if(program.getLog().isVerboseParse()) {
+         program.getLog().append("Importing " + importFileName);
+      }
+      Compiler.loadAndParseFile(importFileName, program, this, true);
       return null;
    }
 
@@ -268,7 +270,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       resourceName = resourceName.substring(1, resourceName.length() - 1);
       File resourceFile = Compiler.loadFile(resourceName, program);
       program.addAsmResourceFile(resourceFile.toPath());
-      program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
+      if(program.getLog().isVerboseParse()) {
+         program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
+      }
       return null;
    }
 
@@ -974,7 +978,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          for(PrePostModifier mod : modifiers) {
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child, source);
             parser.sequence.addStatement(stmt);
-            parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, true));
+            if(parser.program.getLog().isVerboseParse()) {
+               parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, true));
+            }
          }
       }
 

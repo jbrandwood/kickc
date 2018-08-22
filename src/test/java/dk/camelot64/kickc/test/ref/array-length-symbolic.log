@@ -1,93 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/array-length-symbolic.kc
-// Illustrates symbolic array lengths
 
-byte ITEM_COUNT = 3;
-byte ITEM_SIZE = 5;
-
-byte[ITEM_COUNT*ITEM_SIZE] items = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-// Fills the array item by item with $is, where i is the item# and s is the sub#
-void main() {
-    byte* cur_item = items;
-    for( byte item: 0..ITEM_COUNT-1) {
-        for( byte sub: 0..ITEM_SIZE-1) {
-            cur_item[sub] = item<<4|sub;
-        }
-        cur_item += ITEM_SIZE;
-    }
-}
-SYMBOLS
-(byte~) $0
-(label) @1
-(label) @begin
-(label) @end
-(byte) ITEM_COUNT
-(byte) ITEM_SIZE
-(byte[$0]) items
-(void()) main()
-(byte/signed word/word/dword/signed dword~) main::$0
-(byte/signed word/word/dword/signed dword~) main::$1
-(byte~) main::$2
-(byte~) main::$3
-(bool~) main::$4
-(bool~) main::$5
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte*) main::cur_item
-(byte) main::item
-(byte) main::sub
-
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte) ITEM_COUNT ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  (byte) ITEM_SIZE ← (byte/signed byte/word/signed word/dword/signed dword) 5
-  (byte~) $0 ← (byte) ITEM_COUNT * (byte) ITEM_SIZE
-  (byte[$0]) items ← { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
-  to:@1
-main: scope:[main]  from
-  (byte*) main::cur_item ← (byte[$0]) items
-  (byte/signed word/word/dword/signed dword~) main::$0 ← (byte) ITEM_COUNT - (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) main::item ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@3
-  (byte/signed word/word/dword/signed dword~) main::$1 ← (byte) ITEM_SIZE - (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) main::sub ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@2
-  (byte~) main::$2 ← (byte) main::item << (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte~) main::$3 ← (byte~) main::$2 | (byte) main::sub
-  *((byte*) main::cur_item + (byte) main::sub) ← (byte~) main::$3
-  (byte) main::sub ← (byte) main::sub + rangenext(0,main::$1)
-  (bool~) main::$4 ← (byte) main::sub != rangelast(0,main::$1)
-  if((bool~) main::$4) goto main::@2
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  (byte*) main::cur_item ← (byte*) main::cur_item + (byte) ITEM_SIZE
-  (byte) main::item ← (byte) main::item + rangenext(0,main::$0)
-  (bool~) main::$5 ← (byte) main::item != rangelast(0,main::$0)
-  if((bool~) main::$5) goto main::@1
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@4
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) ITEM_COUNT#0 ← (byte/signed byte/word/signed word/dword/signed dword) 3
   (byte) ITEM_SIZE#0 ← (byte/signed byte/word/signed word/dword/signed dword) 5
@@ -248,13 +160,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 3 initial phi equivalence classes
 Coalesced [16] main::item#5 ← main::item#1
 Coalesced [17] main::cur_item#5 ← main::cur_item#1
@@ -266,12 +171,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

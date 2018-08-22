@@ -1,90 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/true-inline-words.kc
 
-void main() {
-    byte[] bs = { 'c', 'm' };           // constant byte array
-    byte b = 4;                         // constant byte
-    word w = { b, 0 };                  // constant inline word
-    word w2 = { 1, 1 } + w + { 0, 0 };  // constant inline words inside expression
-    byte* sc = w2;                      // implicit cast to (byte*)
-    *sc = bs[1];                        // In the end $501 is set to 'c'
-
-    // Test the result
-    byte* pos = $501;
-    byte* bgcol = $d021;
-    if(*pos=='m') {
-        *bgcol = 5;
-    } else {
-        *bgcol = 2;
-    }
-}
-
-
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(byte/signed byte/word/signed word/dword/signed dword*/word~) main::$0
-(byte/signed byte/word/signed word/dword/signed dword*/word~) main::$1
-(bool~) main::$2
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte) main::b
-(byte*) main::bgcol
-(byte[]) main::bs
-(byte*) main::pos
-(byte*) main::sc
-(word) main::w
-(word) main::w2
-
-Promoting word to byte* in main::sc ← ((byte*)) main::w2
-Promoting word/signed word/dword/signed dword to byte* in main::pos ← ((byte*)) 1281
-Promoting word/dword/signed dword to byte* in main::bgcol ← ((byte*)) 53281
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte[]) main::bs ← { (byte) 'c', (byte) 'm' }
-  (byte) main::b ← (byte/signed byte/word/signed word/dword/signed dword) 4
-  (word) main::w ← { (byte) main::b, (byte/signed byte/word/signed word/dword/signed dword) 0 }
-  (byte/signed byte/word/signed word/dword/signed dword*/word~) main::$0 ← { (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 1 } + (word) main::w
-  (byte/signed byte/word/signed word/dword/signed dword*/word~) main::$1 ← (byte/signed byte/word/signed word/dword/signed dword*/word~) main::$0 + { (byte/signed byte/word/signed word/dword/signed dword) 0, (byte/signed byte/word/signed word/dword/signed dword) 0 }
-  (word) main::w2 ← (byte/signed byte/word/signed word/dword/signed dword*/word~) main::$1
-  (byte*) main::sc ← ((byte*)) (word) main::w2
-  *((byte*) main::sc) ← *((byte[]) main::bs + (byte/signed byte/word/signed word/dword/signed dword) 1)
-  (byte*) main::pos ← ((byte*)) (word/signed word/dword/signed dword) 1281
-  (byte*) main::bgcol ← ((byte*)) (word/dword/signed dword) 53281
-  (bool~) main::$2 ← *((byte*) main::pos) == (byte) 'm'
-  if((bool~) main::$2) goto main::@1
-  to:main::@3
-main::@1: scope:[main]  from main main::@4
-  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word/dword/signed dword) 5
-  to:main::@2
-main::@3: scope:[main]  from main
-  *((byte*) main::bgcol) ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@3
-  to:main::@return
-main::@4: scope:[main]  from
-  to:main::@1
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@2
-Removing empty block main::@4
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -195,13 +110,11 @@ Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

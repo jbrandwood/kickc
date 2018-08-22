@@ -1,69 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/test-kasm.kc
-// Test inline KickAssembler code
 
-void main() {
-    while(true) {
-        kickasm {{
-            inc $d020
-        }}
-    }
-}
-
-kickasm {{
-    .byte 1, 2, 3
-}}
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@return
-
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  if(true) goto main::@2
-  to:main::@4
-main::@2: scope:[main]  from main::@1 main::@5
-  kickasm {{ inc $d020
-         }}
-  to:main::@1
-main::@4: scope:[main]  from main::@1
-  to:main::@3
-main::@3: scope:[main]  from main::@4 main::@6
-  to:main::@return
-main::@5: scope:[main]  from
-  to:main::@2
-main::@6: scope:[main]  from
-  to:main::@3
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  kickasm {{ .byte 1, 2, 3
- }}
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@4
-Removing empty block main::@3
-Removing empty block main::@5
-Removing empty block main::@6
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -111,13 +47,11 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

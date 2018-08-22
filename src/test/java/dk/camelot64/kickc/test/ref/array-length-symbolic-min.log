@@ -1,63 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/array-length-symbolic-min.kc
-// Illustrates symbolic array lengths
 
-byte SZ = 15;
-byte[SZ] items;
-
-// Fills the array item by item with $is, where i is the item# and s is the sub#
-void main() {
-    byte* cur_item = items;
-    for( byte sub: 0..SZ) {
-        cur_item[sub] = sub;
-    }
-}
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(byte) SZ
-(byte[SZ]) items
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte*) main::cur_item
-(byte) main::sub
-
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte) SZ ← (byte/signed byte/word/signed word/dword/signed dword) 15
-  (byte[SZ]) items ← { fill( SZ, 0) }
-  to:@1
-main: scope:[main]  from
-  (byte*) main::cur_item ← (byte[SZ]) items
-  (byte) main::sub ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) main::cur_item + (byte) main::sub) ← (byte) main::sub
-  (byte) main::sub ← (byte) main::sub + rangenext(0,SZ)
-  (bool~) main::$0 ← (byte) main::sub != rangelast(0,SZ)
-  if((bool~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) SZ#0 ← (byte/signed byte/word/signed word/dword/signed dword) 15
   (byte[SZ#0]) items#0 ← { fill( SZ#0, 0) }
@@ -145,8 +87,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [10] main::sub#3 ← main::sub#1
 Coalesced down to 1 phi equivalence classes
@@ -155,8 +95,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

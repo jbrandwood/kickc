@@ -1,63 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/concat-char.kc
-// Concatenate a char to a string
 
-void main() {
-    byte* screen = $400;
-    byte l = 'l';
-    byte[] msg = "cm"+l;
-    for( byte i: 0..2 ) {
-        screen[i] = msg[i];
-    }
-}
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(string~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-(byte) main::l
-(byte[]) main::msg
-(byte*) main::screen
-
-Promoting word/signed word/dword/signed dword to byte* in main::screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte*) main::screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte) main::l ← (byte) 'l'
-  (string~) main::$0 ← (string) "cm" + (byte) main::l
-  (byte[]) main::msg ← (string~) main::$0
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) main::screen + (byte) main::i) ← *((byte[]) main::msg + (byte) main::i)
-  (byte) main::i ← (byte) main::i + rangenext(0,2)
-  (bool~) main::$1 ← (byte) main::i != rangelast(0,2)
-  if((bool~) main::$1) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Creating constant string variable for inline (const string) main::$2 "cm"
-Removing empty block main::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -140,8 +82,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [10] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -150,8 +90,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

@@ -1,99 +1,6 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/test-interrupt.kc
-const void()** KERNEL_IRQ = $0314;
-const byte* BGCOL = $d020;
-const byte* FGCOL = $d021;
-
-void main() {
-    *KERNEL_IRQ = &irq;
-    while(true) {
-        (*FGCOL)++;
-    }
-}
-
-interrupt(kernel_min) void irq() {
-    (*BGCOL)++;
-    asm {
-        lda $dc0d
-    }
-}
-
-Adding pre/post-modifier *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
-Adding pre/post-modifier *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
 Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte*) BGCOL
-(byte*) FGCOL
-(void()**) KERNEL_IRQ
-interrupt(KERNEL_MIN)(void()) irq()
-(label) irq::@return
-(void()) main()
-(void()*~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@return
 
-Promoting word/signed word/dword/signed dword to void()** in KERNEL_IRQ ← ((void()**)) 788
-Promoting word/dword/signed dword to byte* in BGCOL ← ((byte*)) 53280
-Promoting word/dword/signed dword to byte* in FGCOL ← ((byte*)) 53281
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (void()**) KERNEL_IRQ ← ((void()**)) (word/signed word/dword/signed dword) 788
-  (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53280
-  (byte*) FGCOL ← ((byte*)) (word/dword/signed dword) 53281
-  to:@1
-main: scope:[main]  from
-  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  if(true) goto main::@2
-  to:main::@4
-main::@2: scope:[main]  from main::@1 main::@5
-  *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
-  to:main::@1
-main::@4: scope:[main]  from main::@1
-  to:main::@3
-main::@3: scope:[main]  from main::@4 main::@6
-  to:main::@return
-main::@5: scope:[main]  from
-  to:main::@2
-main::@6: scope:[main]  from
-  to:main::@3
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-irq: scope:[irq]  from
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  asm { lda$dc0d  }
-  to:irq::@return
-irq::@return: scope:[irq]  from irq
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Removing empty block main::@4
-Removing empty block main::@3
-Removing empty block main::@5
-Removing empty block main::@6
-Removing empty block @1
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (void()**) KERNEL_IRQ#0 ← ((void()**)) (word/signed word/dword/signed dword) 788
   (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
@@ -166,13 +73,11 @@ Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

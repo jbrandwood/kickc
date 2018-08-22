@@ -1,95 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/loopnest.kc
-byte* SCREEN = $0400;
 
-void main() {
-  byte i=100;
-  do {
-    nest();
-  } while (--i>0);
-}
-
-void nest() {
-  byte j=100;
-  do {
-    *SCREEN = j;
-  } while (--j>0);
-}
-
-Adding pre/post-modifier (byte) main::i ← -- (byte) main::i
-Adding pre/post-modifier (byte) nest::j ← -- (byte) nest::j
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(void()) main()
-(void~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-(void()) nest()
-(bool~) nest::$0
-(label) nest::@1
-(label) nest::@2
-(label) nest::@return
-(byte) nest::j
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 100
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (void~) main::$0 ← call nest 
-  (byte) main::i ← -- (byte) main::i
-  (bool~) main::$1 ← (byte) main::i > (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((bool~) main::$1) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-nest: scope:[nest]  from
-  (byte) nest::j ← (byte/signed byte/word/signed word/dword/signed dword) 100
-  to:nest::@1
-nest::@1: scope:[nest]  from nest nest::@1
-  *((byte*) SCREEN) ← (byte) nest::j
-  (byte) nest::j ← -- (byte) nest::j
-  (bool~) nest::$0 ← (byte) nest::j > (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((bool~) nest::$0) goto nest::@1
-  to:nest::@2
-nest::@2: scope:[nest]  from nest::@1
-  to:nest::@return
-nest::@return: scope:[nest]  from nest::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Removing empty block main::@2
-Removing empty block @1
-Removing empty block nest::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@2
@@ -204,9 +114,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to nest:6 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 2 initial phi equivalence classes
 Coalesced [10] main::i#4 ← main::i#1
 Coalesced [17] nest::j#3 ← nest::j#1
@@ -218,9 +125,6 @@ Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of nest
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

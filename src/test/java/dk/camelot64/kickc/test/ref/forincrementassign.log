@@ -1,59 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/forincrementassign.kc
-// Classic for() does not allow assignment as increment, eg. for(byte i=0;i<40;i=i+2) {}
-// The following should give a program rendering a char on every second char of the first line - but results in a syntax error
 
-byte* SCREEN = $0400;
-void main() {
-    for(byte i=0;i<40;i=i+2) {
-       SCREEN[i] = i;
-    }
-}
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(void()) main()
-(byte/signed word/word/dword/signed dword~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) SCREEN + (byte) main::i) ← (byte) main::i
-  (byte/signed word/word/dword/signed dword~) main::$0 ← (byte) main::i + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) main::i ← (byte/signed word/word/dword/signed dword~) main::$0
-  (bool~) main::$1 ← (byte) main::i < (byte/signed byte/word/signed word/dword/signed dword) 40
-  if((bool~) main::$1) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@1
@@ -127,8 +73,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [10] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -137,8 +81,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

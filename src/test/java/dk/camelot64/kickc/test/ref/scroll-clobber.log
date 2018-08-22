@@ -1,92 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/scroll-clobber.kc
-byte* SCREEN = $0400;
-byte* SCROLL = $d016;
-byte[] TEXT = "01234567@";
 
-void main() {
-    byte* nxt = TEXT;
-    byte i=0;
-    do {
-        byte c = *nxt;
-        if(c=='@') {
-           nxt = TEXT;
-           c = *nxt;
-        }
-        SCREEN[++i] = c;
-        nxt++;
-    } while (true);
-}
-
-Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
-Adding pre/post-modifier (byte*) main::nxt ← ++ (byte*) main::nxt
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(byte*) SCROLL
-(byte[]) TEXT
-(void()) main()
-(bool~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte) main::c
-(byte) main::i
-(byte*) main::nxt
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-Promoting word/dword/signed dword to byte* in SCROLL ← ((byte*)) 53270
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte*) SCROLL ← ((byte*)) (word/dword/signed dword) 53270
-  (byte[]) TEXT ← (string) "01234567@"
-  to:@1
-main: scope:[main]  from
-  (byte*) main::nxt ← (byte[]) TEXT
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::c ← *((byte*) main::nxt)
-  (bool~) main::$0 ← (byte) main::c == (byte) '@'
-  (bool~) main::$1 ← ! (bool~) main::$0
-  if((bool~) main::$1) goto main::@2
-  to:main::@3
-main::@2: scope:[main]  from main::@1 main::@3
-  (byte) main::i ← ++ (byte) main::i
-  *((byte*) SCREEN + (byte) main::i) ← (byte) main::c
-  (byte*) main::nxt ← ++ (byte*) main::nxt
-  if(true) goto main::@1
-  to:main::@4
-main::@3: scope:[main]  from main::@1
-  (byte*) main::nxt ← (byte[]) TEXT
-  (byte) main::c ← *((byte*) main::nxt)
-  to:main::@2
-main::@4: scope:[main]  from main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Eliminating unused variable (byte*) SCROLL and assignment [1] (byte*) SCROLL ← ((byte*)) (word/dword/signed dword) 53270
-Creating constant string variable for inline (const string) $0 "01234567@"
-Removing empty block main::@4
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte[]) TEXT#0 ← (const string) $0
@@ -216,12 +129,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 4 initial phi equivalence classes
 Coalesced [9] main::c#4 ← main::c#1
 Coalesced [14] main::nxt#5 ← main::nxt#1
@@ -234,11 +141,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

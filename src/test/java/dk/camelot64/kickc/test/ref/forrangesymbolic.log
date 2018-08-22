@@ -1,57 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/forrangesymbolic.kc
-// Range-based for does not recognize symbolic constants.
-// The following should work but gives a not-constant exception
 
-void main() {
-    const byte* BITMAP = $2000;
-    for(byte* b : BITMAP+$1fff..BITMAP) {
-       *b = $5a;
-    }
-}
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(byte*~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte*) main::BITMAP
-(byte*) main::b
-
-Promoting word/signed word/dword/signed dword to byte* in main::BITMAP ← ((byte*)) 8192
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte*) main::BITMAP ← ((byte*)) (word/signed word/dword/signed dword) 8192
-  (byte*~) main::$0 ← (byte*) main::BITMAP + (word/signed word/dword/signed dword) 8191
-  (byte*) main::b ← (byte*~) main::$0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) main::b) ← (byte/signed byte/word/signed word/dword/signed dword) 90
-  (byte*) main::b ← (byte*) main::b + rangenext(main::$0,main::BITMAP)
-  (bool~) main::$1 ← (byte*) main::b != rangelast(main::$0,main::BITMAP)
-  if((bool~) main::$1) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -116,8 +64,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [10] main::b#3 ← main::b#1
 Coalesced down to 1 phi equivalence classes
@@ -126,8 +72,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

@@ -1,114 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/overlap-allocation.kc
-// Allocates ZP to j/k-variables even though all of i, j, k could be allocates to x and be more efficient.
-// Reason: Pass4RegisterUpliftCombinations.isAllocationOverlapping() believes i/j/k variables overlaps insode plot()
-byte* SCREEN = $0400;
 
-void main() {
-    for(byte i : 0..10) {
-       plot(i);
-    }
-   for(byte j : 0..10) {
-       plot(j);
-    }
-   for(byte k : 0..10) {
-       plot(k);
-    }
-}
-
-void plot(byte x) {
-    SCREEN[x] = '*';
-}
-
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(void()) main()
-(void~) main::$0
-(bool~) main::$1
-(void~) main::$2
-(bool~) main::$3
-(void~) main::$4
-(bool~) main::$5
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@return
-(byte) main::i
-(byte) main::j
-(byte) main::k
-(void()) plot((byte) plot::x)
-(label) plot::@return
-(byte) plot::x
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (void~) main::$0 ← call plot (byte) main::i 
-  (byte) main::i ← (byte) main::i + rangenext(0,10)
-  (bool~) main::$1 ← (byte) main::i != rangelast(0,10)
-  if((bool~) main::$1) goto main::@1
-  to:main::@4
-main::@4: scope:[main]  from main::@1
-  (byte) main::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@2
-main::@2: scope:[main]  from main::@2 main::@4
-  (void~) main::$2 ← call plot (byte) main::j 
-  (byte) main::j ← (byte) main::j + rangenext(0,10)
-  (bool~) main::$3 ← (byte) main::j != rangelast(0,10)
-  if((bool~) main::$3) goto main::@2
-  to:main::@5
-main::@5: scope:[main]  from main::@2
-  (byte) main::k ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@3
-main::@3: scope:[main]  from main::@3 main::@5
-  (void~) main::$4 ← call plot (byte) main::k 
-  (byte) main::k ← (byte) main::k + rangenext(0,10)
-  (bool~) main::$5 ← (byte) main::k != rangelast(0,10)
-  if((bool~) main::$5) goto main::@3
-  to:main::@6
-main::@6: scope:[main]  from main::@3
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-plot: scope:[plot]  from
-  *((byte*) SCREEN + (byte) plot::x) ← (byte) '*'
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) main::$2
-Eliminating unused variable - keeping the call (void~) main::$4
-Removing empty block main::@6
-Removing empty block @1
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@2
@@ -293,10 +184,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to plot:8 plot:14 plot:20 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 4 initial phi equivalence classes
 Coalesced [7] plot::x#4 ← plot::x#0
 Coalesced [13] plot::x#5 ← plot::x#1
@@ -312,9 +199,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

@@ -1,103 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/cast-precedence-problem.kc
-// Tests that casting inside constants in the output handles precedence between cast and + correctly - should generate the following KA-expression ($ff & sumw>>1)+1
 
-void main() {
-    byte* SCREEN = $400;
-    byte min = 10;
-    byte max = 200;
-    word sumw = min+max;
-    byte midw = (byte)(sumw>>1)+1;
-    SCREEN[0] = midw;
-    byte sumb = min+max;
-    byte midb = (sumb>>1)+1;
-    SCREEN[1] = midb;
-    byte* BGCOL = $d021;
-    if(SCREEN[0]==SCREEN[1]) {
-        *BGCOL = 5;
-    } else {
-        *BGCOL = 2;
-    }
-}
-
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(byte~) main::$0
-(word~) main::$1
-(byte~) main::$2
-(byte/signed word/word/dword/signed dword~) main::$3
-(byte~) main::$4
-(byte~) main::$5
-(byte/signed word/word/dword/signed dword~) main::$6
-(bool~) main::$7
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte*) main::BGCOL
-(byte*) main::SCREEN
-(byte) main::max
-(byte) main::midb
-(byte) main::midw
-(byte) main::min
-(byte) main::sumb
-(word) main::sumw
-
-Promoting word/signed word/dword/signed dword to byte* in main::SCREEN ← ((byte*)) 1024
-Promoting byte to word in main::sumw ← ((word)) main::$0
-Promoting word/dword/signed dword to byte* in main::BGCOL ← ((byte*)) 53281
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte*) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte) main::min ← (byte/signed byte/word/signed word/dword/signed dword) 10
-  (byte) main::max ← (byte/word/signed word/dword/signed dword) 200
-  (byte~) main::$0 ← (byte) main::min + (byte) main::max
-  (word) main::sumw ← ((word)) (byte~) main::$0
-  (word~) main::$1 ← (word) main::sumw >> (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte~) main::$2 ← ((byte)) (word~) main::$1
-  (byte/signed word/word/dword/signed dword~) main::$3 ← (byte~) main::$2 + (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) main::midw ← (byte/signed word/word/dword/signed dword~) main::$3
-  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::midw
-  (byte~) main::$4 ← (byte) main::min + (byte) main::max
-  (byte) main::sumb ← (byte~) main::$4
-  (byte~) main::$5 ← (byte) main::sumb >> (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte/signed word/word/dword/signed dword~) main::$6 ← (byte~) main::$5 + (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) main::midb ← (byte/signed word/word/dword/signed dword~) main::$6
-  *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::midb
-  (byte*) main::BGCOL ← ((byte*)) (word/dword/signed dword) 53281
-  (bool~) main::$7 ← *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) == *((byte*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1)
-  if((bool~) main::$7) goto main::@1
-  to:main::@3
-main::@1: scope:[main]  from main main::@4
-  *((byte*) main::BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 5
-  to:main::@2
-main::@3: scope:[main]  from main
-  *((byte*) main::BGCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@3
-  to:main::@return
-main::@4: scope:[main]  from
-  to:main::@1
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@2
-Removing empty block main::@4
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -220,13 +122,11 @@ Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

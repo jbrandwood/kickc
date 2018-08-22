@@ -1,89 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/callconstparam.kc
-// Multiple calls with different (constant?) parameters should yield different values at runtime
-// Currently the same constant parameter is passed on every call.
-// Reason: Multiple versioned parameter constants x0#0, x0#1 are only output as a single constant in the ASM .const x0 = 0
 
-byte* screen = $0400;
-
-void main() {
-    line(1,2);
-    line(3,5);
-}
-
-void line(byte x0, byte x1) {
-  for(byte x  = x0; x<x1; x++) {
-     *screen = x;
-     screen++;
-  }
-
-}
-Adding pre/post-modifier (byte*) screen ← ++ (byte*) screen
-Adding pre/post-modifier (byte) line::x ← ++ (byte) line::x
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(void()) line((byte) line::x0 , (byte) line::x1)
-(bool~) line::$0
-(label) line::@1
-(label) line::@2
-(label) line::@return
-(byte) line::x
-(byte) line::x0
-(byte) line::x1
-(void()) main()
-(void~) main::$0
-(void~) main::$1
-(label) main::@return
-(byte*) screen
-
-Promoting word/signed word/dword/signed dword to byte* in screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (void~) main::$0 ← call line (byte/signed byte/word/signed word/dword/signed dword) 1 (byte/signed byte/word/signed word/dword/signed dword) 2 
-  (void~) main::$1 ← call line (byte/signed byte/word/signed word/dword/signed dword) 3 (byte/signed byte/word/signed word/dword/signed dword) 5 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-line: scope:[line]  from
-  (byte) line::x ← (byte) line::x0
-  to:line::@1
-line::@1: scope:[line]  from line line::@1
-  *((byte*) screen) ← (byte) line::x
-  (byte*) screen ← ++ (byte*) screen
-  (byte) line::x ← ++ (byte) line::x
-  (bool~) line::$0 ← (byte) line::x < (byte) line::x1
-  if((bool~) line::$0) goto line::@1
-  to:line::@2
-line::@2: scope:[line]  from line::@1
-  to:line::@return
-line::@return: scope:[line]  from line::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) main::$1
-Removing empty block @1
-Removing empty block line::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-main modifies screen
-line modifies screen
-
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@2
@@ -230,14 +146,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to line:5 line:7 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 5 initial phi equivalence classes
 Coalesced [6] screen#16 ← screen#11
 Coalesced [10] line::x#3 ← line::x#0
@@ -251,12 +159,6 @@ Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

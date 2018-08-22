@@ -1,45 +1,7 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/var-forward-problem.kc
-// Illustrates the problem with variable forward references not working
-
-void main() {
-    *screen = b;
-}
-
-const byte* screen = $400;
-const byte b = 'a';
 Resolved forward reference b to (byte) b
 Resolved forward reference screen to (byte*) screen
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(byte) b
-(void()) main()
-(label) main::@return
-(byte*) screen
 
-Promoting word/signed word/dword/signed dword to byte* in screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  *((byte*) screen) ← (byte) b
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte) b ← (byte) 'a'
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -80,13 +42,11 @@ Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

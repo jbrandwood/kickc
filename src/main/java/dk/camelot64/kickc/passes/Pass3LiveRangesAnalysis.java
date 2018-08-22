@@ -30,8 +30,8 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
       do {
          propagating = calculateLiveRanges(liveRanges);
          getProgram().setLiveRangeVariables(liveRanges);
-         getLog().append("Propagating live ranges...");
          if(getLog().isVerboseLiveRanges()) {
+            getLog().append("Propagating live ranges...");
             getLog().append("CONTROL FLOW GRAPH - LIVE RANGES IN PROGRESS");
             getLog().append(getProgram().getGraph().toString(getProgram()));
          }

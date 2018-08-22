@@ -1,145 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/inline-string-2.kc
-// Inline Strings in assignments
 
-void main() {
-    print_msg(1);
-    print_msg(2);
-}
-
-void print_msg(byte idx) {
-    byte* msg;
-    if(idx==1) {
-        msg = "Hello @";
-    } else {
-        msg = "World!@";
-    }
-    print(msg);
-}
-
-byte* screen = $0400;
-void print(byte* msg) {
-    while(*msg!='@') {
-        *(screen++) = *(msg++);
-    }
-}
-
-Adding pre/post-modifier (byte*) screen ← ++ (byte*) screen
-Adding pre/post-modifier (byte*) print::msg ← ++ (byte*) print::msg
-SYMBOLS
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
-(void()) main()
-(void~) main::$0
-(void~) main::$1
-(label) main::@return
-(void()) print((byte*) print::msg)
-(bool~) print::$0
-(label) print::@1
-(label) print::@2
-(label) print::@3
-(label) print::@4
-(label) print::@5
-(label) print::@6
-(label) print::@return
-(byte*) print::msg
-(void()) print_msg((byte) print_msg::idx)
-(bool~) print_msg::$0
-(void~) print_msg::$1
-(label) print_msg::@1
-(label) print_msg::@2
-(label) print_msg::@3
-(label) print_msg::@4
-(label) print_msg::@return
-(byte) print_msg::idx
-(byte*) print_msg::msg
-(byte*) screen
-
-Promoting word/signed word/dword/signed dword to byte* in screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (void~) main::$0 ← call print_msg (byte/signed byte/word/signed word/dword/signed dword) 1 
-  (void~) main::$1 ← call print_msg (byte/signed byte/word/signed word/dword/signed dword) 2 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-print_msg: scope:[print_msg]  from
-  (bool~) print_msg::$0 ← (byte) print_msg::idx == (byte/signed byte/word/signed word/dword/signed dword) 1
-  if((bool~) print_msg::$0) goto print_msg::@1
-  to:print_msg::@3
-print_msg::@1: scope:[print_msg]  from print_msg print_msg::@4
-  (byte*) print_msg::msg ← (string) "Hello @"
-  to:print_msg::@2
-print_msg::@3: scope:[print_msg]  from print_msg
-  (byte*) print_msg::msg ← (string) "World!@"
-  to:print_msg::@2
-print_msg::@2: scope:[print_msg]  from print_msg::@1 print_msg::@3
-  (void~) print_msg::$1 ← call print (byte*) print_msg::msg 
-  to:print_msg::@return
-print_msg::@4: scope:[print_msg]  from
-  to:print_msg::@1
-print_msg::@return: scope:[print_msg]  from print_msg::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  (byte*) screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@3
-print: scope:[print]  from
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (bool~) print::$0 ← *((byte*) print::msg) != (byte) '@'
-  if((bool~) print::$0) goto print::@2
-  to:print::@4
-print::@2: scope:[print]  from print::@1 print::@5
-  *((byte*) screen) ← *((byte*) print::msg)
-  (byte*) screen ← ++ (byte*) screen
-  (byte*) print::msg ← ++ (byte*) print::msg
-  to:print::@1
-print::@4: scope:[print]  from print::@1
-  to:print::@3
-print::@3: scope:[print]  from print::@4 print::@6
-  to:print::@return
-print::@5: scope:[print]  from
-  to:print::@2
-print::@6: scope:[print]  from
-  to:print::@3
-print::@return: scope:[print]  from print::@3
-  return 
-  to:@return
-@3: scope:[]  from @2
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) main::$1
-Eliminating unused variable - keeping the call (void~) print_msg::$1
-Creating constant string variable for inline (const string) print_msg::$2 "Hello @"
-Creating constant string variable for inline (const string) print_msg::$3 "World!@"
-Removing empty block @1
-Removing empty block print_msg::@4
-Removing empty block print::@4
-Removing empty block print::@3
-Removing empty block print::@5
-Removing empty block print::@6
-PROCEDURE MODIFY VARIABLE ANALYSIS
-main modifies screen
-print_msg modifies screen
-print modifies screen
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @3
@@ -350,12 +210,6 @@ Calls in [] to main:2
 Calls in [main] to print_msg:5 print_msg:7 
 Calls in [print_msg] to print:14 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 5 initial phi equivalence classes
 Coalesced [6] screen#25 ← screen#14
 Coalesced [16] print::msg#5 ← print::msg#0
@@ -370,12 +224,6 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of print_msg::@3
 Adding NOP phi() at start of print
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

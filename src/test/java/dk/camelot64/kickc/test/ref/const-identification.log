@@ -1,158 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/const-identification.kc
-const byte* plots = $1000;
-const byte* SCREEN = $0400;
 
-void main() {
-    for(byte i : 0..39) {
-       plots[i] = i;
-       SCREEN[i] = 0;
-    }
-    do {
-        line(0, 10);
-    } while (true);
-}
-
-void line(byte x0, byte x1) {
-    if(x0<x1) {
-        for(byte x = x0; x<=x1; x++) {
-            plot(x);
-        }
-    } else {
-        plot(x0);
-    }
-}
-
-void plot(byte x) {
-    byte idx = plots[x];
-    SCREEN[idx] = SCREEN[idx]+1;
-}
-
-Adding pre/post-modifier (byte) line::x ← ++ (byte) line::x
-SYMBOLS
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(void()) line((byte) line::x0 , (byte) line::x1)
-(bool~) line::$0
-(void~) line::$1
-(void~) line::$2
-(bool~) line::$3
-(label) line::@1
-(label) line::@2
-(label) line::@3
-(label) line::@4
-(label) line::@5
-(label) line::@6
-(label) line::@return
-(byte) line::x
-(byte) line::x0
-(byte) line::x1
-(void()) main()
-(bool~) main::$0
-(void~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte) main::i
-(void()) plot((byte) plot::x)
-(byte/signed word/word/dword/signed dword~) plot::$0
-(label) plot::@return
-(byte) plot::idx
-(byte) plot::x
-(byte*) plots
-
-Promoting word/signed word/dword/signed dword to byte* in plots ← ((byte*)) 4096
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) plots ← ((byte*)) (word/signed word/dword/signed dword) 4096
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) plots + (byte) main::i) ← (byte) main::i
-  *((byte*) SCREEN + (byte) main::i) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) main::i ← (byte) main::i + rangenext(0,39)
-  (bool~) main::$0 ← (byte) main::i != rangelast(0,39)
-  if((bool~) main::$0) goto main::@1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@2 main::@3
-  (void~) main::$1 ← call line (byte/signed byte/word/signed word/dword/signed dword) 0 (byte/signed byte/word/signed word/dword/signed dword) 10 
-  if(true) goto main::@2
-  to:main::@4
-main::@4: scope:[main]  from main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-line: scope:[line]  from
-  (bool~) line::$0 ← (byte) line::x0 < (byte) line::x1
-  if((bool~) line::$0) goto line::@1
-  to:line::@4
-line::@1: scope:[line]  from line line::@5
-  (byte) line::x ← (byte) line::x0
-  to:line::@3
-line::@4: scope:[line]  from line
-  (void~) line::$1 ← call plot (byte) line::x0 
-  to:line::@2
-line::@2: scope:[line]  from line::@4 line::@6
-  to:line::@return
-line::@5: scope:[line]  from
-  to:line::@1
-line::@3: scope:[line]  from line::@1 line::@3
-  (void~) line::$2 ← call plot (byte) line::x 
-  (byte) line::x ← ++ (byte) line::x
-  (bool~) line::$3 ← (byte) line::x <= (byte) line::x1
-  if((bool~) line::$3) goto line::@3
-  to:line::@6
-line::@6: scope:[line]  from line::@3
-  to:line::@2
-line::@return: scope:[line]  from line::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  to:@3
-plot: scope:[plot]  from
-  (byte) plot::idx ← *((byte*) plots + (byte) plot::x)
-  (byte/signed word/word/dword/signed dword~) plot::$0 ← *((byte*) SCREEN + (byte) plot::idx) + (byte/signed byte/word/signed word/dword/signed dword) 1
-  *((byte*) SCREEN + (byte) plot::idx) ← (byte/signed word/word/dword/signed dword~) plot::$0
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @2
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
-Eliminating unused variable - keeping the call (void~) main::$1
-Eliminating unused variable - keeping the call (void~) line::$1
-Eliminating unused variable - keeping the call (void~) line::$2
-Removing empty block main::@3
-Removing empty block main::@4
-Removing empty block @1
-Removing empty block line::@2
-Removing empty block line::@5
-Removing empty block line::@6
-Removing empty block @2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) plots#0 ← ((byte*)) (word/signed word/dword/signed dword) 4096
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
@@ -341,9 +188,6 @@ Calls in [] to main:2
 Calls in [main] to line:11 
 Calls in [line] to plot:16 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 2 initial phi equivalence classes
 Coalesced [12] main::i#3 ← main::i#1
 Coalesced [20] line::x#4 ← line::x#1
@@ -356,9 +200,6 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of line
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

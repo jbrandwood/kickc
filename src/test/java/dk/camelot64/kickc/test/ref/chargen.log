@@ -1,129 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/chargen.kc
-byte* PROCPORT = $01;
-byte* CHARGEN = $d000;
-byte* SCREEN = $0400;
 
-void main() {
-    asm { sei }
-    byte* CHAR_A = CHARGEN+8;
-    *PROCPORT = $32;
-    byte* sc = SCREEN;
-    for(byte y:0..7) {
-      byte bits = CHAR_A[y];
-      for(byte x:0..7) {
-        byte c = '.';
-        if((bits & $80) != 0) {
-           c = '*';
-        }
-        *sc = c;
-        sc++;
-        bits = bits<<1;
-      }
-      sc = sc+32;
-    }
-    *PROCPORT = $37;
-    asm { cli }
-}
-
-Adding pre/post-modifier (byte*) main::sc ← ++ (byte*) main::sc
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(byte*) CHARGEN
-(byte*) PROCPORT
-(byte*) SCREEN
-(void()) main()
-(byte*~) main::$0
-(byte~) main::$1
-(bool~) main::$2
-(bool~) main::$3
-(byte~) main::$4
-(bool~) main::$5
-(byte*~) main::$6
-(bool~) main::$7
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@return
-(byte*) main::CHAR_A
-(byte) main::bits
-(byte) main::c
-(byte*) main::sc
-(byte) main::x
-(byte) main::y
-
-Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in PROCPORT ← ((byte*)) 1
-Promoting word/dword/signed dword to byte* in CHARGEN ← ((byte*)) 53248
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) PROCPORT ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte*) CHARGEN ← ((byte*)) (word/dword/signed dword) 53248
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  asm { sei  }
-  (byte*~) main::$0 ← (byte*) CHARGEN + (byte/signed byte/word/signed word/dword/signed dword) 8
-  (byte*) main::CHAR_A ← (byte*~) main::$0
-  *((byte*) PROCPORT) ← (byte/signed byte/word/signed word/dword/signed dword) 50
-  (byte*) main::sc ← (byte*) SCREEN
-  (byte) main::y ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@5
-  (byte) main::bits ← *((byte*) main::CHAR_A + (byte) main::y)
-  (byte) main::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@3
-  (byte) main::c ← (byte) '.'
-  (byte~) main::$1 ← (byte) main::bits & (byte/word/signed word/dword/signed dword) 128
-  (bool~) main::$2 ← (byte~) main::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (bool~) main::$3 ← ! (bool~) main::$2
-  if((bool~) main::$3) goto main::@3
-  to:main::@4
-main::@3: scope:[main]  from main::@2 main::@4
-  *((byte*) main::sc) ← (byte) main::c
-  (byte*) main::sc ← ++ (byte*) main::sc
-  (byte~) main::$4 ← (byte) main::bits << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) main::bits ← (byte~) main::$4
-  (byte) main::x ← (byte) main::x + rangenext(0,7)
-  (bool~) main::$5 ← (byte) main::x != rangelast(0,7)
-  if((bool~) main::$5) goto main::@2
-  to:main::@5
-main::@4: scope:[main]  from main::@2
-  (byte) main::c ← (byte) '*'
-  to:main::@3
-main::@5: scope:[main]  from main::@3
-  (byte*~) main::$6 ← (byte*) main::sc + (byte/signed byte/word/signed word/dword/signed dword) 32
-  (byte*) main::sc ← (byte*~) main::$6
-  (byte) main::y ← (byte) main::y + rangenext(0,7)
-  (bool~) main::$7 ← (byte) main::y != rangelast(0,7)
-  if((bool~) main::$7) goto main::@1
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  *((byte*) PROCPORT) ← (byte/signed byte/word/signed word/dword/signed dword) 55
-  asm { cli  }
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) PROCPORT#0 ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte*) CHARGEN#0 ← ((byte*)) (word/dword/signed dword) 53248
@@ -379,20 +255,6 @@ Adding NOP phi() at start of main::@4
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 6 initial phi equivalence classes
 Coalesced [8] main::bits#5 ← main::bits#0
 Coalesced [9] main::sc#9 ← main::sc#7
@@ -408,18 +270,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@4
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

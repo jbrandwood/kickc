@@ -1,102 +1,7 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/inline-function-print.kc
-// TEst inlining a slightly complex print function (containing a loop)
-
-byte* screen = $400;
-
-void main() {
-    byte* hello = "hello world!@";
-    print(screen, hello);
-    print(screen+2*40, hello);
-}
-
-inline void print(byte* at, byte* msg) {
-    byte j=0;
-    for(byte i=0; msg[i]!='@'; i++) {
-        at[j] = msg[i];
-        j += 2;
-    }
-}
-
-
-Adding pre/post-modifier (byte) print::i ← ++ (byte) print::i
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(void()) main()
-(void~) main::$0
-(byte/signed byte/word/signed word/dword/signed dword~) main::$1
-(byte*~) main::$2
-(void~) main::$3
-(label) main::@return
-(byte*) main::hello
-inline (void()) print((byte*) print::at , (byte*) print::msg)
-(bool~) print::$0
-(label) print::@1
-(label) print::@2
-(label) print::@return
-(byte*) print::at
-(byte) print::i
-(byte) print::j
-(byte*) print::msg
-(byte*) screen
-
-Promoting word/signed word/dword/signed dword to byte* in screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte*) main::hello ← (string) "hello world!@"
-  (void~) main::$0 ← call print (byte*) screen (byte*) main::hello 
-  (byte/signed byte/word/signed word/dword/signed dword~) main::$1 ← (byte/signed byte/word/signed word/dword/signed dword) 2 * (byte/signed byte/word/signed word/dword/signed dword) 40
-  (byte*~) main::$2 ← (byte*) screen + (byte/signed byte/word/signed word/dword/signed dword~) main::$1
-  (void~) main::$3 ← call print (byte*~) main::$2 (byte*) main::hello 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-print: scope:[print]  from
-  (byte) print::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) print::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:print::@1
-print::@1: scope:[print]  from print print::@1
-  *((byte*) print::at + (byte) print::j) ← *((byte*) print::msg + (byte) print::i)
-  (byte) print::j ← (byte) print::j + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) print::i ← ++ (byte) print::i
-  (bool~) print::$0 ← *((byte*) print::msg + (byte) print::i) != (byte) '@'
-  if((bool~) print::$0) goto print::@1
-  to:print::@2
-print::@2: scope:[print]  from print::@1
-  to:print::@return
-print::@return: scope:[print]  from print::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
 Inlined call call print (byte*) screen (byte*) main::hello 
 Inlined call call print (byte*~) main::$2 (byte*) main::hello 
-Removing unused procedure print
-Creating constant string variable for inline (const string) main::$4 "hello world!@"
-Removing empty block main::print1_@2
-Removing empty block main::print1_@return
-Removing empty block main::print2_@2
-Removing empty block main::print2_@return
-Removing empty block main::@2
-Removing empty block @1
-PROCEDURE MODIFY VARIABLE ANALYSIS
 
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@2
@@ -291,11 +196,6 @@ Adding NOP phi() at start of main::print2
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 4 initial phi equivalence classes
 Coalesced [18] main::print2_i#3 ← main::print2_i#1
 Coalesced [19] main::print2_j#3 ← main::print2_j#1
@@ -310,9 +210,6 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::print1
 Adding NOP phi() at start of main::print2
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

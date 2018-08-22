@@ -42,7 +42,9 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
       }
 
       for(ProcedureRef unusedProcedure : unusedProcedures) {
-         getLog().append("Removing unused procedure " + unusedProcedure);
+         if(getLog().isVerbosePass1CreateSsa()) {
+            getLog().append("Removing unused procedure " + unusedProcedure);
+         }
          Procedure procedure = getProgram().getScope().getProcedure(unusedProcedure);
          List<ControlFlowBlock> procedureBlocks = getProgram().getGraph().getScopeBlocks(unusedProcedure);
          for(ControlFlowBlock procedureBlock : procedureBlocks) {

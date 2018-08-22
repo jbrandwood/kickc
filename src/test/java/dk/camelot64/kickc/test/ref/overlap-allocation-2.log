@@ -1,121 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/overlap-allocation-2.kc
-// Two levels of functions to test that register allocation handles live ranges and call-ranges optimally to allocate the fewest possible ZP-variables
-byte* SCREEN = $0400;
 
-void main() {
-    for(byte i : 0..8) {
-       line(i);
-    }
-   for(byte j : 10..18) {
-       line(j);
-    }
-}
-
-void line(byte l) {
-    plot(l);
-    plot(l+20);
-}
-
-void plot(byte x) {
-    SCREEN[x] = '*';
-}
-
-SYMBOLS
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(void()) line((byte) line::l)
-(void~) line::$0
-(byte/signed word/word/dword/signed dword~) line::$1
-(void~) line::$2
-(label) line::@return
-(byte) line::l
-(void()) main()
-(void~) main::$0
-(bool~) main::$1
-(void~) main::$2
-(bool~) main::$3
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte) main::i
-(byte) main::j
-(void()) plot((byte) plot::x)
-(label) plot::@return
-(byte) plot::x
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (void~) main::$0 ← call line (byte) main::i 
-  (byte) main::i ← (byte) main::i + rangenext(0,8)
-  (bool~) main::$1 ← (byte) main::i != rangelast(0,8)
-  if((bool~) main::$1) goto main::@1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
-  (byte) main::j ← (byte/signed byte/word/signed word/dword/signed dword) 10
-  to:main::@2
-main::@2: scope:[main]  from main::@2 main::@3
-  (void~) main::$2 ← call line (byte) main::j 
-  (byte) main::j ← (byte) main::j + rangenext(10,18)
-  (bool~) main::$3 ← (byte) main::j != rangelast(10,18)
-  if((bool~) main::$3) goto main::@2
-  to:main::@4
-main::@4: scope:[main]  from main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-line: scope:[line]  from
-  (void~) line::$0 ← call plot (byte) line::l 
-  (byte/signed word/word/dword/signed dword~) line::$1 ← (byte) line::l + (byte/signed byte/word/signed word/dword/signed dword) 20
-  (void~) line::$2 ← call plot (byte/signed word/word/dword/signed dword~) line::$1 
-  to:line::@return
-line::@return: scope:[line]  from line
-  return 
-  to:@return
-@2: scope:[]  from @1
-  to:@3
-plot: scope:[plot]  from
-  *((byte*) SCREEN + (byte) plot::x) ← (byte) '*'
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @2
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) main::$2
-Eliminating unused variable - keeping the call (void~) line::$0
-Eliminating unused variable - keeping the call (void~) line::$2
-Removing empty block main::@4
-Removing empty block @1
-Removing empty block @2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@3
@@ -294,10 +178,6 @@ Calls in [] to main:2
 Calls in [main] to line:8 line:14 
 Calls in [line] to plot:23 plot:26 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 4 initial phi equivalence classes
 Coalesced [7] line::l#4 ← line::l#0
 Coalesced [13] line::l#5 ← line::l#1
@@ -312,9 +192,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

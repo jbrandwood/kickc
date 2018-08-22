@@ -1,58 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/wordexpr.kc
-// Expressions based on bytes but resulting in words are as words - eg. b = b + 40*8;
-void main() {
-    word b = 0;
-    for(byte i : 0..10) {
-        b = b + 40*8;
-    }
-}
 
-
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(word/signed word/dword/signed dword~) main::$0
-(word/signed dword/dword~) main::$1
-(bool~) main::$2
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(word) main::b
-(byte) main::i
-
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (word) main::b ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (word/signed word/dword/signed dword~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte/signed byte/word/signed word/dword/signed dword) 8
-  (word/signed dword/dword~) main::$1 ← (word) main::b + (word/signed word/dword/signed dword~) main::$0
-  (word) main::b ← (word/signed dword/dword~) main::$1
-  (byte) main::i ← (byte) main::i + rangenext(0,10)
-  (bool~) main::$2 ← (byte) main::i != rangelast(0,10)
-  if((bool~) main::$2) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -125,10 +72,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 2 initial phi equivalence classes
 Coalesced [10] main::b#3 ← main::b#1
 Coalesced [11] main::i#3 ← main::i#1
@@ -138,9 +81,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

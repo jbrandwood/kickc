@@ -27,7 +27,7 @@ public class Compiler {
       this.program = new Program();
    }
 
-   public static void loadAndParseFile(String fileName, Program program, Pass0GenerateStatementSequence pass0GenerateStatementSequence) {
+   public static void loadAndParseFile(String fileName, Program program, Pass0GenerateStatementSequence pass0GenerateStatementSequence, boolean isImport) {
       try {
          if(!fileName.endsWith(".kc")) {
             fileName += ".kc";
@@ -39,8 +39,10 @@ public class Compiler {
          }
          final CharStream fileStream = CharStreams.fromPath(file.toPath());
          imported.add(file.getAbsolutePath());
-         program.getLog().append("PARSING " + file.getPath().replace("\\", "/"));
-         program.getLog().append(fileStream.toString());
+         if(program.getLog().isVerboseParse()) {
+            program.getLog().append("PARSING " + file.getPath().replace("\\", "/"));
+            program.getLog().append(fileStream.toString());
+         }
          KickCLexer lexer = new KickCLexer(fileStream);
          KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
          parser.setBuildParseTree(true);
@@ -89,7 +91,7 @@ public class Compiler {
       program.setFileName(fileName);
       try {
          Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(program);
-         loadAndParseFile(fileName, program, pass0GenerateStatementSequence);
+         loadAndParseFile(fileName, program, pass0GenerateStatementSequence, false);
          StatementSequence sequence = pass0GenerateStatementSequence.getSequence();
          sequence.addStatement(new StatementCall(null, "main", new ArrayList<>(), new StatementSource(RuleContext.EMPTY)));
          program.setStatementSequence(sequence);
@@ -118,8 +120,10 @@ public class Compiler {
       new Pass1ResolveForwardReferences(program).execute();
       new Pass1TypeInference(program).execute();
 
-      getLog().append("SYMBOLS");
-      getLog().append(program.getScope().getSymbolTableContents(program));
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("SYMBOLS");
+         getLog().append(program.getScope().getSymbolTableContents(program));
+      }
 
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
@@ -127,27 +131,26 @@ public class Compiler {
       new Pass1AssertNoRecursion(program).execute();
       new Pass1AssertInterrupts(program).execute();
 
-      getLog().append("INITIAL CONTROL FLOW GRAPH");
-      getLog().append(program.getGraph().toString(program));
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("INITIAL CONTROL FLOW GRAPH");
+         getLog().append(program.getGraph().toString(program));
+      }
 
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
 
       new Pass1ProcedureInline(program).execute();
-      //getLog().append("INLINED CONTROL FLOW GRAPH");
-      //getLog().append(program.getGraph().toString(program));
 
       new Pass1EliminateUncalledProcedures(program).execute();
       new PassNEliminateUnusedVars(program).execute();
       new Pass1ExtractInlineStrings(program).execute();
       new Pass1EliminateEmptyBlocks(program).execute();
 
-      //getLog().append("CONTROL FLOW GRAPH");
-      //getLog().append(program.getGraph().toString(program));
-
-      getLog().append("PROCEDURE MODIFY VARIABLE ANALYSIS");
       new Pass1ModifiedVarsAnalysis(program).execute();
-      getLog().append(program.getProcedureModifiedVars().toString(program));
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("PROCEDURE MODIFY VARIABLE ANALYSIS");
+         getLog().append(program.getProcedureModifiedVars().toString(program));
+      }
 
       new Pass1ProcedureCallParameters(program).generate();
       //getLog().append("CONTROL FLOW GRAPH WITH ASSIGNMENT CALL");
@@ -160,7 +163,7 @@ public class Compiler {
 
       program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
 
-      getLog().append("\nCONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN");
+      getLog().append("\nCONTROL FLOW GRAPH SSA");
       getLog().append(program.getGraph().toString(program));
 
       getLog().append("SYMBOL TABLE SSA");

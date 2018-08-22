@@ -1,151 +1,10 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/inline-function-level2.kc
-// Inline functions in two levels
-
-void main() {
-    for(byte* sc = $400;sc<$400+1000;sc++) *sc = ' ';
-    line(2, $40, 10, '*');
-    line(4, $80, 15, '.');
-}
-
-byte* cur_line = $400;
-
-inline void line(byte xpos, byte xadd, byte ysize, byte ch) {
-    cur_line = $400;
-    word pos = {xpos, 0};
-    for( byte i=0;i<ysize; i++) {
-        plot(>pos, ch);
-        pos += xadd;
-        cur_line += 40;
-    }
-}
-
-inline void plot(byte xpos, byte ch) {
-    *(cur_line+xpos) = ch;
-}
-
-
-
-
-Adding pre/post-modifier (byte*) main::sc ← ++ (byte*) main::sc
-Adding pre/post-modifier (byte) line::i ← ++ (byte) line::i
-SYMBOLS
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
-(byte*) cur_line
-inline (void()) line((byte) line::xpos , (byte) line::xadd , (byte) line::ysize , (byte) line::ch)
-(byte~) line::$0
-(void~) line::$1
-(bool~) line::$2
-(label) line::@1
-(label) line::@2
-(label) line::@return
-(byte) line::ch
-(byte) line::i
-(word) line::pos
-(byte) line::xadd
-(byte) line::xpos
-(byte) line::ysize
-(void()) main()
-(word/signed word/dword/signed dword~) main::$0
-(bool~) main::$1
-(void~) main::$2
-(void~) main::$3
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte*) main::sc
-inline (void()) plot((byte) plot::xpos , (byte) plot::ch)
-(byte*~) plot::$0
-(label) plot::@return
-(byte) plot::ch
-(byte) plot::xpos
-
-Promoting word/signed word/dword/signed dword to byte* in main::sc ← ((byte*)) 1024
-Promoting word/signed word/dword/signed dword to byte* in cur_line ← ((byte*)) 1024
-Promoting word/signed word/dword/signed dword to byte* in cur_line ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte*) main::sc ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) main::sc) ← (byte) ' '
-  (byte*) main::sc ← ++ (byte*) main::sc
-  (word/signed word/dword/signed dword~) main::$0 ← (word/signed word/dword/signed dword) 1024 + (word/signed word/dword/signed dword) 1000
-  (bool~) main::$1 ← (byte*) main::sc < (word/signed word/dword/signed dword~) main::$0
-  if((bool~) main::$1) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (void~) main::$2 ← call line (byte/signed byte/word/signed word/dword/signed dword) 2 (byte/signed byte/word/signed word/dword/signed dword) 64 (byte/signed byte/word/signed word/dword/signed dword) 10 (byte) '*' 
-  (void~) main::$3 ← call line (byte/signed byte/word/signed word/dword/signed dword) 4 (byte/word/signed word/dword/signed dword) 128 (byte/signed byte/word/signed word/dword/signed dword) 15 (byte) '.' 
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) cur_line ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@2
-line: scope:[line]  from
-  (byte*) cur_line ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (word) line::pos ← { (byte) line::xpos, (byte/signed byte/word/signed word/dword/signed dword) 0 }
-  (byte) line::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:line::@1
-line::@1: scope:[line]  from line line::@1
-  (byte~) line::$0 ← > (word) line::pos
-  (void~) line::$1 ← call plot (byte~) line::$0 (byte) line::ch 
-  (word) line::pos ← (word) line::pos + (byte) line::xadd
-  (byte*) cur_line ← (byte*) cur_line + (byte/signed byte/word/signed word/dword/signed dword) 40
-  (byte) line::i ← ++ (byte) line::i
-  (bool~) line::$2 ← (byte) line::i < (byte) line::ysize
-  if((bool~) line::$2) goto line::@1
-  to:line::@2
-line::@2: scope:[line]  from line::@1
-  to:line::@return
-line::@return: scope:[line]  from line::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  to:@3
-plot: scope:[plot]  from
-  (byte*~) plot::$0 ← (byte*) cur_line + (byte) plot::xpos
-  *((byte*~) plot::$0) ← (byte) plot::ch
-  to:plot::@return
-plot::@return: scope:[plot]  from plot
-  return 
-  to:@return
-@3: scope:[]  from @2
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
 Inlined call call line (byte/signed byte/word/signed word/dword/signed dword) 2 (byte/signed byte/word/signed word/dword/signed dword) 64 (byte/signed byte/word/signed word/dword/signed dword) 10 (byte) '*' 
 Inlined call call plot (byte~) main::line1_$0 (byte) main::line1_ch 
 Inlined call call line (byte/signed byte/word/signed word/dword/signed dword) 4 (byte/word/signed word/dword/signed dword) 128 (byte/signed byte/word/signed word/dword/signed dword) 15 (byte) '.' 
 Inlined call call plot (byte~) main::line2_$0 (byte) main::line2_ch 
 Inlined call call plot (byte~) line::$0 (byte) line::ch 
-Removing unused procedure line
-Removing unused procedure plot
-Removing empty block main::plot1_@return
-Removing empty block main::line1_@2
-Removing empty block main::line1_@return
-Removing empty block main::plot2_@return
-Removing empty block main::line2_@2
-Removing empty block main::line2_@return
-Removing empty block main::@5
-Removing empty block @2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-main modifies cur_line
 
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @3
@@ -438,12 +297,6 @@ Alias (byte*) cur_line#11 = (byte*) cur_line#3 (byte*) cur_line#4
 Alias (byte*) cur_line#15 = (byte*) cur_line#5 
 Alias (byte*) cur_line#12 = (byte*) cur_line#6 
 Successful SSA optimization Pass2AliasElimination
-Not aliassing identity: main::line1_ch#1 main::line1_ch#1
-Not aliassing identity: main::line1_xadd#1 main::line1_xadd#1
-Not aliassing identity: main::line1_ysize#1 main::line1_ysize#1
-Not aliassing identity: main::line2_ch#1 main::line2_ch#1
-Not aliassing identity: main::line2_xadd#1 main::line2_xadd#1
-Not aliassing identity: main::line2_ysize#1 main::line2_ysize#1
 Self Phi Eliminated (byte) main::line1_ch#1
 Self Phi Eliminated (byte) main::line1_xadd#1
 Self Phi Eliminated (byte) main::line1_ysize#1
@@ -527,13 +380,6 @@ Adding NOP phi() at start of main::line2
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 7 initial phi equivalence classes
 Coalesced [28] main::line2_pos#5 ← main::line2_pos#1
 Coalesced [29] cur_line#17 ← cur_line#11
@@ -552,13 +398,6 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::line1
 Adding NOP phi() at start of main::line2
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

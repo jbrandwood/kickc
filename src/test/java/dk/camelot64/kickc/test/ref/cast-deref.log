@@ -1,67 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/cast-deref.kc
-// Example of NOP-casting a dereferenced signed byte to a byte
 
-void main() {
-    signed byte[] sbs = { -1, -2, -3, -4};
-    byte* SCREEN = $0400;
-    for(byte i : 0..3) {
-        SCREEN[i] = (byte) sbs[i];
-    }
-}
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(signed byte/signed word/signed dword~) main::$0
-(signed byte/signed word/signed dword~) main::$1
-(signed byte/signed word/signed dword~) main::$2
-(signed byte/signed word/signed dword~) main::$3
-(byte~) main::$4
-(bool~) main::$5
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte*) main::SCREEN
-(byte) main::i
-(signed byte[]) main::sbs
-
-Promoting word/signed word/dword/signed dword to byte* in main::SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (signed byte/signed word/signed dword~) main::$0 ← - (byte/signed byte/word/signed word/dword/signed dword) 1
-  (signed byte/signed word/signed dword~) main::$1 ← - (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed byte/signed word/signed dword~) main::$2 ← - (byte/signed byte/word/signed word/dword/signed dword) 3
-  (signed byte/signed word/signed dword~) main::$3 ← - (byte/signed byte/word/signed word/dword/signed dword) 4
-  (signed byte[]) main::sbs ← { (signed byte/signed word/signed dword~) main::$0, (signed byte/signed word/signed dword~) main::$1, (signed byte/signed word/signed dword~) main::$2, (signed byte/signed word/signed dword~) main::$3 }
-  (byte*) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte~) main::$4 ← ((byte)) *((signed byte[]) main::sbs + (byte) main::i)
-  *((byte*) main::SCREEN + (byte) main::i) ← (byte~) main::$4
-  (byte) main::i ← (byte) main::i + rangenext(0,3)
-  (bool~) main::$5 ← (byte) main::i != rangelast(0,3)
-  if((bool~) main::$5) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -152,8 +90,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [10] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -162,8 +98,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

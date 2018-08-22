@@ -71,7 +71,9 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
       // Insert an extra "set low" assignment statement
       Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, statementLValue.getSource());
       statementsIt.add(setLoHiAssignment);
-      getLog().append("Fixing lo/hi-lvalue with new tmpVar " + tmpVarRef + " " + statementLValue.toString());
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("Fixing lo/hi-lvalue with new tmpVar " + tmpVarRef + " " + statementLValue.toString());
+      }
    }
 
 }

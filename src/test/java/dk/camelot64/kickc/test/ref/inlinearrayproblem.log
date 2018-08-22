@@ -1,72 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/inlinearrayproblem.kc
-// Arrays / strings allocated inline destroy functions (because they are allocated where the call enters.
-// The following places the text at the start of the main-function - and JSR's straight into the text - not the code.
 
-byte* SCREEN = $0400;
-byte* SCREEN2 = $0400+$28;
-void main() {
-    byte[] txt = "qwe";
-    byte[] data = { 1, 2, 3 };
-    for( byte i : 0..3) {
-        SCREEN[i] = txt[i];
-        SCREEN2[i] = data[i];
-    }
-}
-SYMBOLS
-(word/signed word/dword/signed dword~) $0
-(label) @1
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(byte*) SCREEN2
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte[]) main::data
-(byte) main::i
-(byte[]) main::txt
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-Promoting word/signed word/dword/signed dword to byte* in SCREEN2 ← ((byte*)) $0
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (word/signed word/dword/signed dword~) $0 ← (word/signed word/dword/signed dword) 1024 + (byte/signed byte/word/signed word/dword/signed dword) 40
-  (byte*) SCREEN2 ← ((byte*)) (word/signed word/dword/signed dword~) $0
-  to:@1
-main: scope:[main]  from
-  (byte[]) main::txt ← (string) "qwe"
-  (byte[]) main::data ← { (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 2, (byte/signed byte/word/signed word/dword/signed dword) 3 }
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  *((byte*) SCREEN + (byte) main::i) ← *((byte[]) main::txt + (byte) main::i)
-  *((byte*) SCREEN2 + (byte) main::i) ← *((byte[]) main::data + (byte) main::i)
-  (byte) main::i ← (byte) main::i + rangenext(0,3)
-  (bool~) main::$0 ← (byte) main::i != rangelast(0,3)
-  if((bool~) main::$0) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Creating constant string variable for inline (const string) main::$1 "qwe"
-Removing empty block main::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (word/signed word/dword/signed dword~) $0 ← (word/signed word/dword/signed dword) 1024 + (byte/signed byte/word/signed word/dword/signed dword) 40
@@ -169,8 +102,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [11] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -179,8 +110,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

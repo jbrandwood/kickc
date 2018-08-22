@@ -52,6 +52,16 @@ public class CompileLog {
     */
    private boolean verboseSequencePlan = false;
 
+   /**
+    * Should the parsing be verbose.
+    */
+   private boolean verboseParse = false;
+
+   /**
+    * Should the creation of the SSA be verbose.
+    */
+   private boolean verboseCreateSsa = false;
+
 
    /**
     * Should the log be output to System.out while being built
@@ -128,6 +138,14 @@ public class CompileLog {
 
    public boolean isVerboseSequencePlan() {
       return verboseSequencePlan;
+   }
+
+   public boolean isVerboseParse() {
+      return verboseParse;
+   }
+
+   public boolean isVerbosePass1CreateSsa() {
+      return verboseCreateSsa;
    }
 
    public boolean isSysOut() {

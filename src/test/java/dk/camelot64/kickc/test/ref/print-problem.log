@@ -1,96 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/print-problem.kc
-byte* SCREEN= $400;
-byte line = $40;
-byte char = line;
 
-void main() {
-    ln();
-    char++;
-    ln();
-    char++;
-    ln();
-    *SCREEN = char;
-}
-
-void ln() {
-    line = line + $2;
-    char = line;
-}
-
-
-
-
-
-
-Adding pre/post-modifier (byte) char ← ++ (byte) char
-Adding pre/post-modifier (byte) char ← ++ (byte) char
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(byte) char
-(byte) line
-(void()) ln()
-(byte/signed word/word/dword/signed dword~) ln::$0
-(label) ln::@return
-(void()) main()
-(void~) main::$0
-(void~) main::$1
-(void~) main::$2
-(label) main::@return
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte) line ← (byte/signed byte/word/signed word/dword/signed dword) 64
-  (byte) char ← (byte) line
-  to:@1
-main: scope:[main]  from
-  (void~) main::$0 ← call ln 
-  (byte) char ← ++ (byte) char
-  (void~) main::$1 ← call ln 
-  (byte) char ← ++ (byte) char
-  (void~) main::$2 ← call ln 
-  *((byte*) SCREEN) ← (byte) char
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-ln: scope:[ln]  from
-  (byte/signed word/word/dword/signed dword~) ln::$0 ← (byte) line + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) line ← (byte/signed word/word/dword/signed dword~) ln::$0
-  (byte) char ← (byte) line
-  to:ln::@return
-ln::@return: scope:[ln]  from ln
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) main::$1
-Eliminating unused variable - keeping the call (void~) main::$2
-Removing empty block @1
-PROCEDURE MODIFY VARIABLE ANALYSIS
-main modifies line
-main modifies char
-ln modifies line
-ln modifies char
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte) line#0 ← (byte/signed byte/word/signed word/dword/signed dword) 64
@@ -248,8 +157,6 @@ Successful SSA optimization Pass2RedundantPhiElimination
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) line#0 = 64
 Successful SSA optimization Pass2ConstantIdentification
-Eliminating unused variable (byte) char#2 and assignment [1] (byte) char#2 ← ++ (byte) line#13
-Eliminating unused variable (byte) char#4 and assignment [3] (byte) char#4 ← ++ (byte) line#13
 Successful SSA optimization PassNEliminateUnusedVars
 Culled Empty Block (label) @3
 Successful SSA optimization Pass2CullEmptyBlocks
@@ -264,9 +171,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to ln:5 ln:7 ln:9 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [6] line#17 ← line#13
 Coalesced (already) [8] line#18 ← line#13
@@ -277,9 +181,6 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

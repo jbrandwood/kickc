@@ -1,97 +1,7 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/inline-function-if.kc
-// Test inlining a slightly complex print function (containing an if)
-
-byte* screen = $400;
-
-void main() {
-    screen[0] = toUpper('c',true);
-    screen[1] = toUpper('m',false);
-}
-
-inline byte toUpper(byte ch, bool bo) {
-    byte res = ch;
-    if(bo) {
-        res += $40;
-    }
-    return res;
-}
-
-
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(void()) main()
-(byte~) main::$0
-(byte~) main::$1
-(label) main::@return
-(byte*) screen
-inline (byte()) toUpper((byte) toUpper::ch , (bool) toUpper::bo)
-(bool~) toUpper::$0
-(label) toUpper::@1
-(label) toUpper::@2
-(label) toUpper::@3
-(label) toUpper::@return
-(bool) toUpper::bo
-(byte) toUpper::ch
-(byte) toUpper::res
-(byte) toUpper::return
-
-Promoting word/signed word/dword/signed dword to byte* in screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte~) main::$0 ← call toUpper (byte) 'c' true 
-  *((byte*) screen + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0
-  (byte~) main::$1 ← call toUpper (byte) 'm' false 
-  *((byte*) screen + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-toUpper: scope:[toUpper]  from
-  (byte) toUpper::res ← (byte) toUpper::ch
-  (bool~) toUpper::$0 ← ! (bool) toUpper::bo
-  if((bool~) toUpper::$0) goto toUpper::@1
-  to:toUpper::@2
-toUpper::@1: scope:[toUpper]  from toUpper toUpper::@2
-  (byte) toUpper::return ← (byte) toUpper::res
-  to:toUpper::@return
-toUpper::@2: scope:[toUpper]  from toUpper
-  (byte) toUpper::res ← (byte) toUpper::res + (byte/signed byte/word/signed word/dword/signed dword) 64
-  to:toUpper::@1
-toUpper::@return: scope:[toUpper]  from toUpper::@1 toUpper::@3
-  (byte) toUpper::return ← (byte) toUpper::return
-  return (byte) toUpper::return
-  to:@return
-toUpper::@3: scope:[toUpper]  from
-  to:toUpper::@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
 Inlined call (byte~) main::$0 ← call toUpper (byte) 'c' true 
 Inlined call (byte~) main::$1 ← call toUpper (byte) 'm' false 
-Removing unused procedure toUpper
-Removing empty block main::toUpper1_@3
-Removing empty block main::toUpper2_@3
-Removing empty block @1
-PROCEDURE MODIFY VARIABLE ANALYSIS
 
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@2
@@ -306,7 +216,6 @@ Adding NOP phi() at start of main::toUpper2
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
@@ -315,7 +224,6 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::toUpper1
 Adding NOP phi() at start of main::toUpper2
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

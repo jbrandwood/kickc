@@ -1,99 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/fillscreen.kc
-byte *SCREEN = $0400;
 
-void main() {
-    byte c = (*SCREEN);
-    fillscreen(c);
-}
-
-void fillscreen(byte c) {
-    for(byte j : 0..255) {
-        byte* SCREEN2 = SCREEN+$100;
-        byte* SCREEN3 = SCREEN+$200;
-        byte* SCREEN4 = SCREEN+$3e8;
-        SCREEN[j] = c;
-        SCREEN2[j] = c;
-        SCREEN3[j] = c;
-        SCREEN4[j] = c;
-    }
-}
-
-
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(void()) fillscreen((byte) fillscreen::c)
-(byte*~) fillscreen::$0
-(byte*~) fillscreen::$1
-(byte*~) fillscreen::$2
-(bool~) fillscreen::$3
-(label) fillscreen::@1
-(label) fillscreen::@2
-(label) fillscreen::@return
-(byte*) fillscreen::SCREEN2
-(byte*) fillscreen::SCREEN3
-(byte*) fillscreen::SCREEN4
-(byte) fillscreen::c
-(byte) fillscreen::j
-(void()) main()
-(void~) main::$0
-(label) main::@return
-(byte) main::c
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte) main::c ← *((byte*) SCREEN)
-  (void~) main::$0 ← call fillscreen (byte) main::c 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-fillscreen: scope:[fillscreen]  from
-  (byte) fillscreen::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:fillscreen::@1
-fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
-  (byte*~) fillscreen::$0 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 256
-  (byte*) fillscreen::SCREEN2 ← (byte*~) fillscreen::$0
-  (byte*~) fillscreen::$1 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 512
-  (byte*) fillscreen::SCREEN3 ← (byte*~) fillscreen::$1
-  (byte*~) fillscreen::$2 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1000
-  (byte*) fillscreen::SCREEN4 ← (byte*~) fillscreen::$2
-  *((byte*) SCREEN + (byte) fillscreen::j) ← (byte) fillscreen::c
-  *((byte*) fillscreen::SCREEN2 + (byte) fillscreen::j) ← (byte) fillscreen::c
-  *((byte*) fillscreen::SCREEN3 + (byte) fillscreen::j) ← (byte) fillscreen::c
-  *((byte*) fillscreen::SCREEN4 + (byte) fillscreen::j) ← (byte) fillscreen::c
-  (byte) fillscreen::j ← (byte) fillscreen::j + rangenext(0,255)
-  (bool~) fillscreen::$3 ← (byte) fillscreen::j != rangelast(0,255)
-  if((bool~) fillscreen::$3) goto fillscreen::@1
-  to:fillscreen::@2
-fillscreen::@2: scope:[fillscreen]  from fillscreen::@1
-  to:fillscreen::@return
-fillscreen::@return: scope:[fillscreen]  from fillscreen::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Removing empty block @1
-Removing empty block fillscreen::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@2
@@ -220,11 +126,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to fillscreen:6 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [17] fillscreen::j#3 ← fillscreen::j#1
 Coalesced down to 1 phi equivalence classes
@@ -233,10 +134,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of fillscreen
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

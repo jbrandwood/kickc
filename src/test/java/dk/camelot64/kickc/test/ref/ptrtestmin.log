@@ -1,82 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/ptrtestmin.kc
-// Test all types of pointers
 
-void main() {
-
-  // A constant pointer
-  byte[1024] SCREEN = $0400;
-
-  byte b;
-
-  // RValue constant array variable index
-  byte i=2;
-  while(i<10) {
-    b = SCREEN[i++];
-  }
-
-}
-
-Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@return
-(byte[1024]) main::SCREEN
-(byte) main::b
-(byte) main::i
-
-Promoting word/signed word/dword/signed dword to byte[1024] in main::SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte[1024]) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (bool~) main::$0 ← (byte) main::i < (byte/signed byte/word/signed word/dword/signed dword) 10
-  if((bool~) main::$0) goto main::@2
-  to:main::@4
-main::@2: scope:[main]  from main::@1 main::@5
-  (byte) main::b ← *((byte[1024]) main::SCREEN + (byte) main::i)
-  (byte) main::i ← ++ (byte) main::i
-  to:main::@1
-main::@4: scope:[main]  from main::@1
-  to:main::@3
-main::@3: scope:[main]  from main::@4 main::@6
-  to:main::@return
-main::@5: scope:[main]  from
-  to:main::@2
-main::@6: scope:[main]  from
-  to:main::@3
-main::@return: scope:[main]  from main::@3
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Eliminating unused variable (byte) main::b and assignment [4] (byte) main::b ← *((byte[1024]) main::SCREEN + (byte) main::i)
-Eliminating unused variable (byte[1024]) main::SCREEN and assignment [0] (byte[1024]) main::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-Removing empty block main::@4
-Removing empty block main::@3
-Removing empty block main::@5
-Removing empty block main::@6
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -135,8 +58,6 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [9] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -144,8 +65,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

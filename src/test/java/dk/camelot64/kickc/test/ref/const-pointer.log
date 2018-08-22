@@ -1,70 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/const-pointer.kc
-//Test that constant pointers are detected correctly
 
-void main() {
-    byte* screen = $400;
-    byte* NULL = $0;
-    byte* rem = $ff;
-
-    if(rem!=NULL) {
-        screen[0] = '*';
-    } else {
-        screen[0] = '.';
-    }
-}
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte*) main::NULL
-(byte*) main::rem
-(byte*) main::screen
-
-Promoting word/signed word/dword/signed dword to byte* in main::screen ← ((byte*)) 1024
-Promoting byte/signed byte/word/signed word/dword/signed dword to byte* in main::NULL ← ((byte*)) 0
-Promoting byte/word/signed word/dword/signed dword to byte* in main::rem ← ((byte*)) 255
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte*) main::screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte*) main::NULL ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte*) main::rem ← ((byte*)) (byte/word/signed word/dword/signed dword) 255
-  (bool~) main::$0 ← (byte*) main::rem != (byte*) main::NULL
-  if((bool~) main::$0) goto main::@1
-  to:main::@3
-main::@1: scope:[main]  from main main::@4
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) '*'
-  to:main::@2
-main::@3: scope:[main]  from main
-  *((byte*) main::screen + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) '.'
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@3
-  to:main::@return
-main::@4: scope:[main]  from
-  to:main::@1
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@2
-Removing empty block main::@4
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
@@ -139,14 +74,12 @@ Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

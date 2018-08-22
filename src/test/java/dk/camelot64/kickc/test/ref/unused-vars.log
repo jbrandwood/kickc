@@ -1,173 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/unused-vars.kc
-// used vars
-const byte* SCREEN = $0400;
-byte b=2>>1;
 
-// unused vars
-const byte* BGCOL = $d021;
-byte[] msg = "hello world@";
-byte[] arr = { 7, 8, 9};
-byte c=1;
-const byte c2=1;
-word d=1000;
-
-void main() {
-    // used vars
-    byte col=2;
-    byte* COLS=$d800;
-    // unused vars
-    byte e=3+3+3+s(); // The call to s() should survive even when e is eliminated
-    word f=2000+2000+d+b++; // b++ should survive even when f is eliminated.
-    byte[] g = {4, 5, 6};
-    byte[] h = "goodbye sky ";
-    for(byte i : 0..100) {
-        // the last unused var
-        signed byte x = -13;
-        COLS[i] = col;
-        SCREEN[i] = b;
-    }
-}
-
-byte s() {
-    b++;
-    return 2;
-}
-
-Adding pre/post-modifier (byte) b ← ++ (byte) b
-Adding pre/post-modifier (byte) b ← ++ (byte) b
-SYMBOLS
-(byte/signed byte/word/signed word/dword/signed dword~) $0
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte*) BGCOL
-(byte*) SCREEN
-(byte[]) arr
-(byte) b
-(byte) c
-(byte) c2
-(word) d
-(void()) main()
-(byte/signed byte/word/signed word/dword/signed dword~) main::$0
-(byte/signed word/word/dword/signed dword/signed byte~) main::$1
-(byte~) main::$2
-(byte/signed word/word/dword/signed dword~) main::$3
-(word/signed word/dword/signed dword~) main::$4
-(word/signed dword/dword~) main::$5
-(word/signed dword/dword~) main::$6
-(signed byte/signed word/signed dword~) main::$7
-(bool~) main::$8
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte*) main::COLS
-(byte) main::col
-(byte) main::e
-(word) main::f
-(byte[]) main::g
-(byte[]) main::h
-(byte) main::i
-(signed byte) main::x
-(byte[]) msg
-(byte()) s()
-(label) s::@1
-(label) s::@return
-(byte) s::return
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-Promoting word/dword/signed dword to byte* in BGCOL ← ((byte*)) 53281
-Promoting word/dword/signed dword to byte* in main::COLS ← ((byte*)) 55296
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte/signed byte/word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 2 >> (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) b ← (byte/signed byte/word/signed word/dword/signed dword~) $0
-  (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53281
-  (byte[]) msg ← (string) "hello world@"
-  (byte[]) arr ← { (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/signed byte/word/signed word/dword/signed dword) 8, (byte/signed byte/word/signed word/dword/signed dword) 9 }
-  (byte) c ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) c2 ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  (word) d ← (word/signed word/dword/signed dword) 1000
-  to:@1
-main: scope:[main]  from
-  (byte) main::col ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte*) main::COLS ← ((byte*)) (word/dword/signed dword) 55296
-  (byte/signed byte/word/signed word/dword/signed dword~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 3 + (byte/signed byte/word/signed word/dword/signed dword) 3
-  (byte/signed word/word/dword/signed dword/signed byte~) main::$1 ← (byte/signed byte/word/signed word/dword/signed dword~) main::$0 + (byte/signed byte/word/signed word/dword/signed dword) 3
-  (byte~) main::$2 ← call s 
-  (byte/signed word/word/dword/signed dword~) main::$3 ← (byte/signed word/word/dword/signed dword/signed byte~) main::$1 + (byte~) main::$2
-  (byte) main::e ← (byte/signed word/word/dword/signed dword~) main::$3
-  (word/signed word/dword/signed dword~) main::$4 ← (word/signed word/dword/signed dword) 2000 + (word/signed word/dword/signed dword) 2000
-  (word/signed dword/dword~) main::$5 ← (word/signed word/dword/signed dword~) main::$4 + (word) d
-  (word/signed dword/dword~) main::$6 ← (word/signed dword/dword~) main::$5 + (byte) b
-  (word) main::f ← (word/signed dword/dword~) main::$6
-  (byte) b ← ++ (byte) b
-  (byte[]) main::g ← { (byte/signed byte/word/signed word/dword/signed dword) 4, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 6 }
-  (byte[]) main::h ← (string) "goodbye sky "
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (signed byte/signed word/signed dword~) main::$7 ← - (byte/signed byte/word/signed word/dword/signed dword) 13
-  (signed byte) main::x ← (signed byte/signed word/signed dword~) main::$7
-  *((byte*) main::COLS + (byte) main::i) ← (byte) main::col
-  *((byte*) SCREEN + (byte) main::i) ← (byte) b
-  (byte) main::i ← (byte) main::i + rangenext(0,100)
-  (bool~) main::$8 ← (byte) main::i != rangelast(0,100)
-  if((bool~) main::$8) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-s: scope:[s]  from
-  (byte) b ← ++ (byte) b
-  (byte) s::return ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  to:s::@return
-s::@return: scope:[s]  from s s::@1
-  (byte) s::return ← (byte) s::return
-  return (byte) s::return
-  to:@return
-s::@1: scope:[s]  from
-  to:s::@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable (byte*) BGCOL and assignment [3] (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53281
-Eliminating unused variable (byte[]) msg and assignment [4] (byte[]) msg ← (string) "hello world@"
-Eliminating unused variable (byte[]) arr and assignment [5] (byte[]) arr ← { (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/signed byte/word/signed word/dword/signed dword) 8, (byte/signed byte/word/signed word/dword/signed dword) 9 }
-Eliminating unused variable (byte) c and assignment [6] (byte) c ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) c2 and assignment [7] (byte) c2 ← (byte/signed byte/word/signed word/dword/signed dword) 1
-Eliminating unused variable (byte) main::e and assignment [15] (byte) main::e ← (byte/signed word/word/dword/signed dword~) main::$3
-Eliminating unused variable (word) main::f and assignment [19] (word) main::f ← (word/signed dword/dword~) main::$6
-Eliminating unused variable (byte[]) main::g and assignment [21] (byte[]) main::g ← { (byte/signed byte/word/signed word/dword/signed dword) 4, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 6 }
-Eliminating unused variable (byte[]) main::h and assignment [22] (byte[]) main::h ← (string) "goodbye sky "
-Eliminating unused variable (signed byte) main::x and assignment [25] (signed byte) main::x ← (signed byte/signed word/signed dword~) main::$7
-Eliminating unused variable (byte/signed word/word/dword/signed dword~) main::$3 and assignment [9] (byte/signed word/word/dword/signed dword~) main::$3 ← (byte/signed word/word/dword/signed dword/signed byte~) main::$1 + (byte~) main::$2
-Eliminating unused variable (word/signed dword/dword~) main::$6 and assignment [12] (word/signed dword/dword~) main::$6 ← (word/signed dword/dword~) main::$5 + (byte) b
-Eliminating unused variable (signed byte/signed word/signed dword~) main::$7 and assignment [15] (signed byte/signed word/signed dword~) main::$7 ← - (byte/signed byte/word/signed word/dword/signed dword) 13
-Eliminating unused variable (byte/signed word/word/dword/signed dword/signed byte~) main::$1 and assignment [7] (byte/signed word/word/dword/signed dword/signed byte~) main::$1 ← (byte/signed byte/word/signed word/dword/signed dword~) main::$0 + (byte/signed byte/word/signed word/dword/signed dword) 3
-Eliminating unused variable - keeping the call (byte~) main::$2
-Eliminating unused variable (word/signed dword/dword~) main::$5 and assignment [10] (word/signed dword/dword~) main::$5 ← (word/signed word/dword/signed dword~) main::$4 + (word) d
-Eliminating unused variable (word) d and assignment [3] (word) d ← (word/signed word/dword/signed dword) 1000
-Eliminating unused variable (byte/signed byte/word/signed word/dword/signed dword~) main::$0 and assignment [6] (byte/signed byte/word/signed word/dword/signed dword~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 3 + (byte/signed byte/word/signed word/dword/signed dword) 3
-Eliminating unused variable (word/signed word/dword/signed dword~) main::$4 and assignment [8] (word/signed word/dword/signed dword~) main::$4 ← (word/signed word/dword/signed dword) 2000 + (word/signed word/dword/signed dword) 2000
-Removing empty block main::@2
-Removing empty block @1
-Removing empty block s::@1
-PROCEDURE MODIFY VARIABLE ANALYSIS
-main modifies b
-s modifies b
-
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte/signed byte/word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 2 >> (byte/signed byte/word/signed word/dword/signed dword) 1
@@ -275,9 +107,6 @@ SYMBOL TABLE SSA
 (byte) s::return#2
 (byte) s::return#3
 
-Not aliassing identity: main::col#1 main::col#1
-Not aliassing identity: main::COLS#1 main::COLS#1
-Not aliassing identity: b#8 b#8
 Alias (byte) b#0 = (byte/signed byte/word/signed word/dword/signed dword~) $0 (byte) b#14 
 Alias (byte) main::col#0 = (byte) main::col#2 
 Alias (byte*) main::COLS#0 = (byte*) main::COLS#2 
@@ -287,9 +116,6 @@ Alias (byte) s::return#1 = (byte) s::return#3 (byte) s::return#2
 Alias (byte) b#11 = (byte) b#4 (byte) b#5 
 Alias (byte) b#12 = (byte) b#6 
 Successful SSA optimization Pass2AliasElimination
-Not aliassing identity: main::col#1 main::col#1
-Not aliassing identity: main::COLS#1 main::COLS#1
-Not aliassing identity: b#3 b#3
 Self Phi Eliminated (byte) main::col#1
 Self Phi Eliminated (byte*) main::COLS#1
 Self Phi Eliminated (byte) b#3
@@ -344,8 +170,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to s:5 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [12] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -355,8 +179,6 @@ Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of s
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

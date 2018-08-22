@@ -1,150 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/loop-problem2.kc
-const byte* BORDERCOL = $d020;
-const byte* SCREEN = $0400;
 
-void main() {
-    print_cls();
-    mode_ctrl();
-}
-
-void print_cls() {
-    for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++) {
-        *sc = ' ';
-    }
-}
-
-void mode_ctrl() {
-    while(true) {
-        byte before = *BORDERCOL;
-        if(before==$ff) {
-            *BORDERCOL = 2;
-        } else {
-            *BORDERCOL = 3;
-        }
-    }
-}
-
-
-Adding pre/post-modifier (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-SYMBOLS
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
-(byte*) BORDERCOL
-(byte*) SCREEN
-(void()) main()
-(void~) main::$0
-(void~) main::$1
-(label) main::@return
-(void()) mode_ctrl()
-(bool~) mode_ctrl::$0
-(label) mode_ctrl::@1
-(label) mode_ctrl::@10
-(label) mode_ctrl::@2
-(label) mode_ctrl::@3
-(label) mode_ctrl::@4
-(label) mode_ctrl::@5
-(label) mode_ctrl::@6
-(label) mode_ctrl::@7
-(label) mode_ctrl::@8
-(label) mode_ctrl::@9
-(label) mode_ctrl::@return
-(byte) mode_ctrl::before
-(void()) print_cls()
-(byte*~) print_cls::$0
-(bool~) print_cls::$1
-(label) print_cls::@1
-(label) print_cls::@2
-(label) print_cls::@return
-(byte*) print_cls::sc
-
-Promoting word/dword/signed dword to byte* in BORDERCOL ← ((byte*)) 53280
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (word/dword/signed dword) 53280
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (void~) main::$0 ← call print_cls 
-  (void~) main::$1 ← call mode_ctrl 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-print_cls: scope:[print_cls]  from
-  (byte*) print_cls::sc ← (byte*) SCREEN
-  to:print_cls::@1
-print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  *((byte*) print_cls::sc) ← (byte) ' '
-  (byte*) print_cls::sc ← ++ (byte*) print_cls::sc
-  (byte*~) print_cls::$0 ← (byte*) SCREEN + (word/signed word/dword/signed dword) 1000
-  (bool~) print_cls::$1 ← (byte*) print_cls::sc != (byte*~) print_cls::$0
-  if((bool~) print_cls::$1) goto print_cls::@1
-  to:print_cls::@2
-print_cls::@2: scope:[print_cls]  from print_cls::@1
-  to:print_cls::@return
-print_cls::@return: scope:[print_cls]  from print_cls::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  to:@3
-mode_ctrl: scope:[mode_ctrl]  from
-  to:mode_ctrl::@1
-mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@5
-  if(true) goto mode_ctrl::@2
-  to:mode_ctrl::@6
-mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1 mode_ctrl::@7
-  (byte) mode_ctrl::before ← *((byte*) BORDERCOL)
-  (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before == (byte/word/signed word/dword/signed dword) 255
-  if((bool~) mode_ctrl::$0) goto mode_ctrl::@4
-  to:mode_ctrl::@8
-mode_ctrl::@6: scope:[mode_ctrl]  from mode_ctrl::@1
-  to:mode_ctrl::@3
-mode_ctrl::@3: scope:[mode_ctrl]  from mode_ctrl::@10 mode_ctrl::@6
-  to:mode_ctrl::@return
-mode_ctrl::@7: scope:[mode_ctrl]  from
-  to:mode_ctrl::@2
-mode_ctrl::@4: scope:[mode_ctrl]  from mode_ctrl::@2 mode_ctrl::@9
-  *((byte*) BORDERCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  to:mode_ctrl::@5
-mode_ctrl::@8: scope:[mode_ctrl]  from mode_ctrl::@2
-  *((byte*) BORDERCOL) ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  to:mode_ctrl::@5
-mode_ctrl::@5: scope:[mode_ctrl]  from mode_ctrl::@4 mode_ctrl::@8
-  to:mode_ctrl::@1
-mode_ctrl::@9: scope:[mode_ctrl]  from
-  to:mode_ctrl::@4
-mode_ctrl::@10: scope:[mode_ctrl]  from
-  to:mode_ctrl::@3
-mode_ctrl::@return: scope:[mode_ctrl]  from mode_ctrl::@3
-  return 
-  to:@return
-@3: scope:[]  from @2
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) main::$1
-Removing empty block @1
-Removing empty block print_cls::@2
-Removing empty block @2
-Removing empty block mode_ctrl::@6
-Removing empty block mode_ctrl::@3
-Removing empty block mode_ctrl::@7
-Removing empty block mode_ctrl::@5
-Removing empty block mode_ctrl::@9
-Removing empty block mode_ctrl::@10
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
@@ -266,8 +121,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to print_cls:5 mode_ctrl:7 
 
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [20] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 1 phi equivalence classes
@@ -279,8 +132,6 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of mode_ctrl
 Adding NOP phi() at start of print_cls
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

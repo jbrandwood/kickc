@@ -1,96 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/liverange-call-problem.kc
-// Live ranges were not functioning properly, when multiple method calls were chained - each modifying different vars.
-// w1 and w2 ended up having the same zero-page register as their live range was not propagated properly
 
-word w1 = 0;
-word w2 = 0;
-
-void main() {
-    incw1();
-    incw2();
-    incw1();
-    incw2();
-}
-
-void incw1() {
-    w1++;
-}
-
-void incw2() {
-    w2++;
-}
-
-Adding pre/post-modifier (word) w1 ← ++ (word) w1
-Adding pre/post-modifier (word) w2 ← ++ (word) w2
-SYMBOLS
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
-(void()) incw1()
-(label) incw1::@return
-(void()) incw2()
-(label) incw2::@return
-(void()) main()
-(void~) main::$0
-(void~) main::$1
-(void~) main::$2
-(void~) main::$3
-(label) main::@return
-(word) w1
-(word) w2
-
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (word) w1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (word) w2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@1
-main: scope:[main]  from
-  (void~) main::$0 ← call incw1 
-  (void~) main::$1 ← call incw2 
-  (void~) main::$2 ← call incw1 
-  (void~) main::$3 ← call incw2 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-incw1: scope:[incw1]  from
-  (word) w1 ← ++ (word) w1
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
-  return 
-  to:@return
-@2: scope:[]  from @1
-  to:@3
-incw2: scope:[incw2]  from
-  (word) w2 ← ++ (word) w2
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
-  return 
-  to:@return
-@3: scope:[]  from @2
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
-Eliminating unused variable (word) w1 and assignment [0] (word) w1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (word) w2 and assignment [1] (word) w2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) main::$1
-Eliminating unused variable - keeping the call (void~) main::$2
-Eliminating unused variable - keeping the call (void~) main::$3
-Eliminating unused variable w1(null) and assignment [7] w1(null) ← ++ w1(null)
-Eliminating unused variable w2(null) and assignment [9] w2(null) ← ++ w2(null)
-Removing empty block @1
-Removing empty block @2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@3
 main: scope:[main]  from @3
@@ -159,7 +68,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to incw1:5 incw2:7 incw1:9 incw2:11 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
@@ -171,7 +79,6 @@ Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of incw2
 Adding NOP phi() at start of incw1
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

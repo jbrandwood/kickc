@@ -1,109 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/var-register.kc
 
-
-void main() {
-    for( register(Y) byte x: 0..100 ) {
-        for( byte y: 0..100 ) {
-            for( byte a: 0..100 ) {
-                register(A) byte val1 = a+x;
-                print(y, val1);
-            }
-        }
-    }
-}
-
-void print(register(X) byte idx, byte val) {
-    byte* SCREEN  = $0400;
-    SCREEN[idx] = val;
-}
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(void()) main()
-(byte~) main::$0
-(void~) main::$1
-(bool~) main::$2
-(bool~) main::$3
-(bool~) main::$4
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@return
-(byte) main::a
-(byte) main::val1 !reg byte a
-(byte) main::x !reg byte y
-(byte) main::y
-(void()) print((byte) print::idx , (byte) print::val)
-(label) print::@return
-(byte*) print::SCREEN
-(byte) print::idx !reg byte x
-(byte) print::val
-
-Promoting word/signed word/dword/signed dword to byte* in print::SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte) main::x ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@5
-  (byte) main::y ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@4
-  (byte) main::a ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@3
-main::@3: scope:[main]  from main::@2 main::@3
-  (byte~) main::$0 ← (byte) main::a + (byte) main::x
-  (byte) main::val1 ← (byte~) main::$0
-  (void~) main::$1 ← call print (byte) main::y (byte) main::val1 
-  (byte) main::a ← (byte) main::a + rangenext(0,100)
-  (bool~) main::$2 ← (byte) main::a != rangelast(0,100)
-  if((bool~) main::$2) goto main::@3
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte) main::y ← (byte) main::y + rangenext(0,100)
-  (bool~) main::$3 ← (byte) main::y != rangelast(0,100)
-  if((bool~) main::$3) goto main::@2
-  to:main::@5
-main::@5: scope:[main]  from main::@4
-  (byte) main::x ← (byte) main::x + rangenext(0,100)
-  (bool~) main::$4 ← (byte) main::x != rangelast(0,100)
-  if((bool~) main::$4) goto main::@1
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-print: scope:[print]  from
-  (byte*) print::SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  *((byte*) print::SCREEN + (byte) print::idx) ← (byte) print::val
-  to:print::@return
-print::@return: scope:[print]  from print
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$1
-Removing empty block main::@6
-Removing empty block @1
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @2
@@ -271,14 +167,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to print:11 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 3 initial phi equivalence classes
 Coalesced [19] main::x#8 ← main::x#1
 Coalesced [20] main::y#6 ← main::y#1
@@ -291,13 +179,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

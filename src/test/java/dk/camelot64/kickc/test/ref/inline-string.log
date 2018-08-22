@@ -1,110 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/inline-string.kc
-// Inline Strings in method calls are automatically converted to local constant variables byte[] st = "..."; - generating an ASM .text).
 
-byte[] msg1 = "message 1 @";
-void main() {
-    byte[] msg2 = "message 2 @";
-    print(msg1);
-    print(msg2);
-    print("message 3 @");
-}
-
-byte* screen = $0400;
-void print(byte* msg) {
-    while(*msg!='@') {
-        *(screen++) = *(msg++);
-    }
-}
-
-Adding pre/post-modifier (byte*) screen ← ++ (byte*) screen
-Adding pre/post-modifier (byte*) print::msg ← ++ (byte*) print::msg
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(void()) main()
-(void~) main::$0
-(void~) main::$1
-(void~) main::$2
-(label) main::@return
-(byte[]) main::msg2
-(byte[]) msg1
-(void()) print((byte*) print::msg)
-(bool~) print::$0
-(label) print::@1
-(label) print::@2
-(label) print::@3
-(label) print::@4
-(label) print::@5
-(label) print::@6
-(label) print::@return
-(byte*) print::msg
-(byte*) screen
-
-Promoting word/signed word/dword/signed dword to byte* in screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte[]) msg1 ← (string) "message 1 @"
-  to:@1
-main: scope:[main]  from
-  (byte[]) main::msg2 ← (string) "message 2 @"
-  (void~) main::$0 ← call print (byte[]) msg1 
-  (void~) main::$1 ← call print (byte[]) main::msg2 
-  (void~) main::$2 ← call print (string) "message 3 @" 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  (byte*) screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@2
-print: scope:[print]  from
-  to:print::@1
-print::@1: scope:[print]  from print print::@2
-  (bool~) print::$0 ← *((byte*) print::msg) != (byte) '@'
-  if((bool~) print::$0) goto print::@2
-  to:print::@4
-print::@2: scope:[print]  from print::@1 print::@5
-  *((byte*) screen) ← *((byte*) print::msg)
-  (byte*) screen ← ++ (byte*) screen
-  (byte*) print::msg ← ++ (byte*) print::msg
-  to:print::@1
-print::@4: scope:[print]  from print::@1
-  to:print::@3
-print::@3: scope:[print]  from print::@4 print::@6
-  to:print::@return
-print::@5: scope:[print]  from
-  to:print::@2
-print::@6: scope:[print]  from
-  to:print::@3
-print::@return: scope:[print]  from print::@3
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) main::$1
-Eliminating unused variable - keeping the call (void~) main::$2
-Creating constant string variable for inline (const string) $0 "message 1 @"
-Creating constant string variable for inline (const string) main::$3 "message 2 @"
-Creating constant string variable for inline (const string) main::msg "message 3 @"
-Removing empty block print::@4
-Removing empty block print::@3
-Removing empty block print::@5
-Removing empty block print::@6
-PROCEDURE MODIFY VARIABLE ANALYSIS
-main modifies screen
-print modifies screen
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte[]) msg1#0 ← (const string) $0
   to:@1
@@ -269,10 +164,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to print:5 print:7 print:9 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 4 initial phi equivalence classes
 Coalesced [6] screen#19 ← screen#12
 Coalesced (already) [8] screen#20 ← screen#12
@@ -287,10 +178,6 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

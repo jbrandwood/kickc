@@ -1,61 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/operator-lohi-problem.kc
-// Illustrates problem with constant evaluation of lo/hi-operator
-// $20000 /$400 results in a byte value - confusing the lo/hi-evaluation
-// which currently relies on getting the type from the literal value.
-// A fix could be adding support for "declared" types for constant literal values
-// - enabling the lo/hi to know that their operand is a word (from the cast).
 
-const dword DVAL = $20000;
-const byte* SCREEN = $400;
-
-void main() {
-     SCREEN[0] = <(word)(DVAL/$400);
-     SCREEN[1] = >(word)(DVAL/$400);
-}
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(dword) DVAL
-(byte*) SCREEN
-(void()) main()
-(dword~) main::$0
-(word~) main::$1
-(byte~) main::$2
-(dword~) main::$3
-(word~) main::$4
-(byte~) main::$5
-(label) main::@return
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (dword) DVAL ← (dword/signed dword) 131072
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (dword~) main::$0 ← (dword) DVAL / (word/signed word/dword/signed dword) 1024
-  (word~) main::$1 ← ((word)) (dword~) main::$0
-  (byte~) main::$2 ← < (word~) main::$1
-  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$2
-  (dword~) main::$3 ← (dword) DVAL / (word/signed word/dword/signed dword) 1024
-  (word~) main::$4 ← ((word)) (dword~) main::$3
-  (byte~) main::$5 ← > (word~) main::$4
-  *((byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$5
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (dword) DVAL#0 ← (dword/signed dword) 131072
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
@@ -129,13 +73,11 @@ Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

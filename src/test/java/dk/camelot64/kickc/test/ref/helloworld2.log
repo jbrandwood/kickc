@@ -1,90 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/helloworld2.kc
-byte* screen = $400;
-void main() {
-    byte* hello = "hello world!@";
-    print2(screen, hello);
-    print2(screen+80, hello);
-}
 
-void print2(byte* at, byte* msg) {
-    byte j=0;
-    for(byte i=0; msg[i]!='@'; i++) {
-        at[j] = msg[i];
-        j += 2;
-    }
-}
-
-Adding pre/post-modifier (byte) print2::i ← ++ (byte) print2::i
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(void()) main()
-(void~) main::$0
-(byte*~) main::$1
-(void~) main::$2
-(label) main::@return
-(byte*) main::hello
-(void()) print2((byte*) print2::at , (byte*) print2::msg)
-(bool~) print2::$0
-(label) print2::@1
-(label) print2::@2
-(label) print2::@return
-(byte*) print2::at
-(byte) print2::i
-(byte) print2::j
-(byte*) print2::msg
-(byte*) screen
-
-Promoting word/signed word/dword/signed dword to byte* in screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte*) main::hello ← (string) "hello world!@"
-  (void~) main::$0 ← call print2 (byte*) screen (byte*) main::hello 
-  (byte*~) main::$1 ← (byte*) screen + (byte/signed byte/word/signed word/dword/signed dword) 80
-  (void~) main::$2 ← call print2 (byte*~) main::$1 (byte*) main::hello 
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-print2: scope:[print2]  from
-  (byte) print2::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) print2::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:print2::@1
-print2::@1: scope:[print2]  from print2 print2::@1
-  *((byte*) print2::at + (byte) print2::j) ← *((byte*) print2::msg + (byte) print2::i)
-  (byte) print2::j ← (byte) print2::j + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) print2::i ← ++ (byte) print2::i
-  (bool~) print2::$0 ← *((byte*) print2::msg + (byte) print2::i) != (byte) '@'
-  if((bool~) print2::$0) goto print2::@1
-  to:print2::@2
-print2::@2: scope:[print2]  from print2::@1
-  to:print2::@return
-print2::@return: scope:[print2]  from print2::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) main::$2
-Creating constant string variable for inline (const string) main::$3 "hello world!@"
-Removing empty block @1
-Removing empty block print2::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   to:@2
@@ -231,13 +146,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to print2:5 print2:7 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 3 initial phi equivalence classes
 Coalesced [16] print2::i#3 ← print2::i#1
 Coalesced [17] print2::j#3 ← print2::j#1
@@ -248,11 +156,6 @@ Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

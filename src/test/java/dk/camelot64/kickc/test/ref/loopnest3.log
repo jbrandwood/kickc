@@ -1,107 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/loopnest3.kc
 
-void main() {
-    for(byte i:0..100) {
-        b(i);
-    }
-}
-
-void b(byte i) {
-    c(i);
-}
-
-const byte* SCREEN = $400;
-
-void c(byte i) {
-    for( byte j: 0..100) {
-        SCREEN[j] = i;
-    }
-}
-SYMBOLS
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(void()) b((byte) b::i)
-(void~) b::$0
-(label) b::@return
-(byte) b::i
-(void()) c((byte) c::i)
-(bool~) c::$0
-(label) c::@1
-(label) c::@2
-(label) c::@return
-(byte) c::i
-(byte) c::j
-(void()) main()
-(void~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (void~) main::$0 ← call b (byte) main::i 
-  (byte) main::i ← (byte) main::i + rangenext(0,100)
-  (bool~) main::$1 ← (byte) main::i != rangelast(0,100)
-  if((bool~) main::$1) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-b: scope:[b]  from
-  (void~) b::$0 ← call c (byte) b::i 
-  to:b::@return
-b::@return: scope:[b]  from b
-  return 
-  to:@return
-@2: scope:[]  from @1
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@3
-c: scope:[c]  from
-  (byte) c::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:c::@1
-c::@1: scope:[c]  from c c::@1
-  *((byte*) SCREEN + (byte) c::j) ← (byte) c::i
-  (byte) c::j ← (byte) c::j + rangenext(0,100)
-  (bool~) c::$0 ← (byte) c::j != rangelast(0,100)
-  if((bool~) c::$0) goto c::@1
-  to:c::@2
-c::@2: scope:[c]  from c::@1
-  to:c::@return
-c::@return: scope:[c]  from c::@2
-  return 
-  to:@return
-@3: scope:[]  from @2
-  call main 
-  to:@end
-@end: scope:[]  from @3
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Eliminating unused variable - keeping the call (void~) b::$0
-Removing empty block main::@2
-Removing empty block @1
-Removing empty block c::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @3
@@ -234,11 +132,6 @@ Calls in [] to main:2
 Calls in [main] to b:7 
 Calls in [b] to c:13 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 2 initial phi equivalence classes
 Coalesced [11] main::i#4 ← main::i#1
 Coalesced [21] c::j#3 ← c::j#1
@@ -250,10 +143,6 @@ Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of c
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

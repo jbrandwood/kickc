@@ -1,114 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/bool-function.kc
-// Test a function taking boolean parameter and returning boolean result
 
-void main() {
-    byte* screen = $400;
-    for(byte i: 0..100) {
-        if( isSet(i, (i&1)==0)) {
-            screen[i] = '*';
-        } else {
-            screen[i] = ' ';
-        }
-    }
-}
-
-// Determine whether to set a char to '*.
-// Returns true if i&8!=0 or b=true
-bool isSet(byte i, bool b) {
-    return b || ((i&8)!=0);
-}
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(bool()) isSet((byte) isSet::i , (bool) isSet::b)
-(byte~) isSet::$0
-(bool~) isSet::$1
-(bool~) isSet::$2
-(label) isSet::@1
-(label) isSet::@return
-(bool) isSet::b
-(byte) isSet::i
-(bool) isSet::return
-(void()) main()
-(byte~) main::$0
-(bool~) main::$1
-(bool~) main::$2
-(bool~) main::$3
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@return
-(byte) main::i
-(byte*) main::screen
-
-Promoting word/signed word/dword/signed dword to byte* in main::screen ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  to:@1
-main: scope:[main]  from
-  (byte*) main::screen ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@3
-  (byte~) main::$0 ← (byte) main::i & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (bool~) main::$1 ← (byte~) main::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
-  (bool~) main::$2 ← call isSet (byte) main::i (bool~) main::$1 
-  if((bool~) main::$2) goto main::@2
-  to:main::@4
-main::@2: scope:[main]  from main::@1 main::@5
-  *((byte*) main::screen + (byte) main::i) ← (byte) '*'
-  to:main::@3
-main::@4: scope:[main]  from main::@1
-  *((byte*) main::screen + (byte) main::i) ← (byte) ' '
-  to:main::@3
-main::@3: scope:[main]  from main::@2 main::@4
-  (byte) main::i ← (byte) main::i + rangenext(0,100)
-  (bool~) main::$3 ← (byte) main::i != rangelast(0,100)
-  if((bool~) main::$3) goto main::@1
-  to:main::@6
-main::@5: scope:[main]  from
-  to:main::@2
-main::@6: scope:[main]  from main::@3
-  to:main::@return
-main::@return: scope:[main]  from main::@6
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-isSet: scope:[isSet]  from
-  (byte~) isSet::$0 ← (byte) isSet::i & (byte/signed byte/word/signed word/dword/signed dword) 8
-  (bool~) isSet::$1 ← (byte~) isSet::$0 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  (bool~) isSet::$2 ← (bool) isSet::b || (bool~) isSet::$1
-  (bool) isSet::return ← (bool~) isSet::$2
-  to:isSet::@return
-isSet::@return: scope:[isSet]  from isSet isSet::@1
-  (bool) isSet::return ← (bool) isSet::return
-  return (bool) isSet::return
-  to:@return
-isSet::@1: scope:[isSet]  from
-  to:isSet::@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Removing empty block main::@5
-Removing empty block main::@6
-Removing empty block @1
-Removing empty block isSet::@1
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @2
@@ -257,12 +148,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to isSet:9 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [17] main::i#7 ← main::i#1
 Coalesced down to 1 phi equivalence classes
@@ -271,12 +156,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

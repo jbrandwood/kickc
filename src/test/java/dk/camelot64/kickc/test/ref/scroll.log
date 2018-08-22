@@ -1,216 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/scroll.kc
-byte* SCREEN = $0400;
-byte* RASTER = $d012;
-byte* BGCOL = $d020;
-byte* SCROLL = $d016;
-byte* TEXT = "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @";
 
-void main() {
-    fillscreen(SCREEN, $20);
-    byte scroll = 7;
-    byte* nxt = TEXT;
-    byte[] line = SCREEN+40;
-    do {
-        // Wait for raster
-        do {} while(*RASTER!=$fe);
-        do {} while(*RASTER!=$ff);
-        ++*BGCOL;
-        // Soft scroll
-        if(--scroll==$ff) {
-            scroll = 7;
-            // Hard scroll
-            for(byte i=0;i!=39;i++) {
-                line[i]=line[i+1];
-            }
-            // Render next char
-            byte c = *nxt;
-            if(c=='@') {
-               nxt = TEXT;
-               c = *nxt;
-            }
-            line[39] = c;
-            nxt++;
-        }
-        *SCROLL = scroll;
-        --*BGCOL;
-    } while(true);
-}
-
-void fillscreen(byte* screen, byte fill) {
-    for( byte* cursor = screen; cursor < screen+1000; cursor++) {
-        *cursor = fill;
-    }
-}
-Adding pre/post-modifier *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-Adding pre/post-modifier (byte) main::scroll ← -- (byte) main::scroll
-Adding pre/post-modifier (byte) main::i ← ++ (byte) main::i
-Adding pre/post-modifier (byte*) main::nxt ← ++ (byte*) main::nxt
-Adding pre/post-modifier *((byte*) BGCOL) ← -- *((byte*) BGCOL)
-Adding pre/post-modifier (byte*) fillscreen::cursor ← ++ (byte*) fillscreen::cursor
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte*) BGCOL
-(byte*) RASTER
-(byte*) SCREEN
-(byte*) SCROLL
-(byte*) TEXT
-(void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
-(byte*~) fillscreen::$0
-(bool~) fillscreen::$1
-(label) fillscreen::@1
-(label) fillscreen::@2
-(label) fillscreen::@return
-(byte*) fillscreen::cursor
-(byte) fillscreen::fill
-(byte*) fillscreen::screen
-(void()) main()
-(void~) main::$0
-(byte*~) main::$1
-(bool~) main::$2
-(bool~) main::$3
-(bool~) main::$4
-(bool~) main::$5
-(byte/signed word/word/dword/signed dword~) main::$6
-(bool~) main::$7
-(bool~) main::$8
-(bool~) main::$9
-(label) main::@1
-(label) main::@10
-(label) main::@11
-(label) main::@12
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@7
-(label) main::@8
-(label) main::@9
-(label) main::@return
-(byte) main::c
-(byte) main::i
-(byte[]) main::line
-(byte*) main::nxt
-(byte) main::scroll
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-Promoting word/dword/signed dword to byte* in RASTER ← ((byte*)) 53266
-Promoting word/dword/signed dword to byte* in BGCOL ← ((byte*)) 53280
-Promoting word/dword/signed dword to byte* in SCROLL ← ((byte*)) 53270
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte*) RASTER ← ((byte*)) (word/dword/signed dword) 53266
-  (byte*) BGCOL ← ((byte*)) (word/dword/signed dword) 53280
-  (byte*) SCROLL ← ((byte*)) (word/dword/signed dword) 53270
-  (byte*) TEXT ← (string) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
-  to:@1
-main: scope:[main]  from
-  (void~) main::$0 ← call fillscreen (byte*) SCREEN (byte/signed byte/word/signed word/dword/signed dword) 32 
-  (byte) main::scroll ← (byte/signed byte/word/signed word/dword/signed dword) 7
-  (byte*) main::nxt ← (byte*) TEXT
-  (byte*~) main::$1 ← (byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 40
-  (byte[]) main::line ← (byte*~) main::$1
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@2
-  (bool~) main::$2 ← *((byte*) RASTER) != (byte/word/signed word/dword/signed dword) 254
-  if((bool~) main::$2) goto main::@2
-  to:main::@7
-main::@7: scope:[main]  from main::@2
-  to:main::@3
-main::@3: scope:[main]  from main::@3 main::@7
-  (bool~) main::$3 ← *((byte*) RASTER) != (byte/word/signed word/dword/signed dword) 255
-  if((bool~) main::$3) goto main::@3
-  to:main::@8
-main::@8: scope:[main]  from main::@3
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  (byte) main::scroll ← -- (byte) main::scroll
-  (bool~) main::$4 ← (byte) main::scroll == (byte/word/signed word/dword/signed dword) 255
-  (bool~) main::$5 ← ! (bool~) main::$4
-  if((bool~) main::$5) goto main::@4
-  to:main::@9
-main::@4: scope:[main]  from main::@6 main::@8
-  *((byte*) SCROLL) ← (byte) main::scroll
-  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
-  if(true) goto main::@1
-  to:main::@12
-main::@9: scope:[main]  from main::@8
-  (byte) main::scroll ← (byte/signed byte/word/signed word/dword/signed dword) 7
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@5
-main::@5: scope:[main]  from main::@5 main::@9
-  (byte/signed word/word/dword/signed dword~) main::$6 ← (byte) main::i + (byte/signed byte/word/signed word/dword/signed dword) 1
-  *((byte[]) main::line + (byte) main::i) ← *((byte[]) main::line + (byte/signed word/word/dword/signed dword~) main::$6)
-  (byte) main::i ← ++ (byte) main::i
-  (bool~) main::$7 ← (byte) main::i != (byte/signed byte/word/signed word/dword/signed dword) 39
-  if((bool~) main::$7) goto main::@5
-  to:main::@10
-main::@10: scope:[main]  from main::@5
-  (byte) main::c ← *((byte*) main::nxt)
-  (bool~) main::$8 ← (byte) main::c == (byte) '@'
-  (bool~) main::$9 ← ! (bool~) main::$8
-  if((bool~) main::$9) goto main::@6
-  to:main::@11
-main::@6: scope:[main]  from main::@10 main::@11
-  *((byte[]) main::line + (byte/signed byte/word/signed word/dword/signed dword) 39) ← (byte) main::c
-  (byte*) main::nxt ← ++ (byte*) main::nxt
-  to:main::@4
-main::@11: scope:[main]  from main::@10
-  (byte*) main::nxt ← (byte*) TEXT
-  (byte) main::c ← *((byte*) main::nxt)
-  to:main::@6
-main::@12: scope:[main]  from main::@4
-  to:main::@return
-main::@return: scope:[main]  from main::@12
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-fillscreen: scope:[fillscreen]  from
-  (byte*) fillscreen::cursor ← (byte*) fillscreen::screen
-  to:fillscreen::@1
-fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
-  *((byte*) fillscreen::cursor) ← (byte) fillscreen::fill
-  (byte*) fillscreen::cursor ← ++ (byte*) fillscreen::cursor
-  (byte*~) fillscreen::$0 ← (byte*) fillscreen::screen + (word/signed word/dword/signed dword) 1000
-  (bool~) fillscreen::$1 ← (byte*) fillscreen::cursor < (byte*~) fillscreen::$0
-  if((bool~) fillscreen::$1) goto fillscreen::@1
-  to:fillscreen::@2
-fillscreen::@2: scope:[fillscreen]  from fillscreen::@1
-  to:fillscreen::@return
-fillscreen::@return: scope:[fillscreen]  from fillscreen::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$0
-Creating constant string variable for inline (const string) $0 "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
-Removing empty block main::@7
-Removing empty block main::@12
-Removing empty block @1
-Removing empty block fillscreen::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) 53266
@@ -531,12 +320,6 @@ Successful SSA optimization Pass2CullEmptyBlocks
 Inversing boolean not (bool~) main::$5 ← (byte) main::scroll#1 != (byte/word/signed word/dword/signed dword) 255 from (bool~) main::$4 ← (byte) main::scroll#1 == (byte/word/signed word/dword/signed dword) 255
 Inversing boolean not (bool~) main::$9 ← (byte) main::c#0 != (byte) '@' from (bool~) main::$8 ← (byte) main::c#0 == (byte) '@'
 Successful SSA optimization Pass2UnaryNotSimplification
-Not aliassing identity: main::nxt#5 main::nxt#5
-Not aliassing identity: TEXT#6 TEXT#6
-Not aliassing identity: main::scroll#11 main::scroll#11
-Not aliassing identity: SCROLL#8 SCROLL#8
-Not aliassing identity: BGCOL#10 BGCOL#10
-Not aliassing identity: RASTER#12 RASTER#12
 Alias (byte*) TEXT#1 = (byte*) TEXT#3 
 Alias (byte*) SCREEN#1 = (byte*) SCREEN#2 
 Alias (byte*) RASTER#4 = (byte*) RASTER#5 
@@ -568,24 +351,12 @@ Alias (byte*) RASTER#0 = (byte*) RASTER#7
 Alias (byte*) BGCOL#0 = (byte*) BGCOL#13 
 Alias (byte*) SCROLL#0 = (byte*) SCROLL#13 
 Successful SSA optimization Pass2AliasElimination
-Not aliassing identity: main::nxt#3 main::nxt#3
-Not aliassing identity: TEXT#2 TEXT#2
-Not aliassing identity: main::scroll#11 main::scroll#11
-Not aliassing identity: SCROLL#5 SCROLL#5
-Not aliassing identity: BGCOL#10 BGCOL#10
-Not aliassing identity: RASTER#10 RASTER#10
 Alias (byte) main::scroll#11 = (byte) main::scroll#6 
 Alias (byte*) SCROLL#2 = (byte*) SCROLL#5 
 Alias (byte*) BGCOL#10 = (byte*) BGCOL#4 
 Alias (byte*) RASTER#10 = (byte*) RASTER#8 
 Alias (byte*) TEXT#13 = (byte*) TEXT#2 
 Successful SSA optimization Pass2AliasElimination
-Not aliassing identity: main::nxt#3 main::nxt#3
-Not aliassing identity: TEXT#13 TEXT#13
-Not aliassing identity: main::scroll#11 main::scroll#11
-Not aliassing identity: SCROLL#2 SCROLL#2
-Not aliassing identity: BGCOL#10 BGCOL#10
-Not aliassing identity: RASTER#10 RASTER#10
 Self Phi Eliminated (byte*) RASTER#1
 Self Phi Eliminated (byte*) BGCOL#5
 Self Phi Eliminated (byte) main::scroll#7
@@ -669,16 +440,8 @@ Culled Empty Block (label) main::@13
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@9
 Successful SSA optimization Pass2CullEmptyBlocks
-Not aliassing identity: RASTER#1 RASTER#1
-Not aliassing identity: BGCOL#5 BGCOL#5
-Not aliassing identity: SCROLL#7 SCROLL#7
-Not aliassing identity: TEXT#10 TEXT#10
 Alias (byte) main::i#2 = (byte~) main::$6 
 Successful SSA optimization Pass2AliasElimination
-Not aliassing identity: RASTER#1 RASTER#1
-Not aliassing identity: BGCOL#5 BGCOL#5
-Not aliassing identity: SCROLL#7 SCROLL#7
-Not aliassing identity: TEXT#10 TEXT#10
 Self Phi Eliminated (byte*) RASTER#1
 Self Phi Eliminated (byte*) BGCOL#5
 Self Phi Eliminated (byte*) SCROLL#7
@@ -718,14 +481,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to fillscreen:5 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 8 initial phi equivalence classes
 Coalesced [19] main::c#4 ← main::c#1
 Coalesced [23] main::nxt#14 ← main::nxt#1
@@ -747,13 +502,6 @@ Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of fillscreen
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

@@ -1,98 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/modglobal.kc
-byte cnt = 0;
-byte cnt2 = 0;
-byte cnt3 = 0;
-byte[256] SCREEN=$0400;
 
-void main() {
-  SCREEN[0]=inccnt();
-  cnt++;
-  SCREEN[1]=inccnt();
-}
-
-byte inccnt() {
-    ++cnt;
-    ++cnt2;
-    ++cnt3;
-    return cnt;
-}
-
-
-
-
-Adding pre/post-modifier (byte) cnt ← ++ (byte) cnt
-Adding pre/post-modifier (byte) cnt ← ++ (byte) cnt
-Adding pre/post-modifier (byte) cnt2 ← ++ (byte) cnt2
-Adding pre/post-modifier (byte) cnt3 ← ++ (byte) cnt3
-SYMBOLS
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte[256]) SCREEN
-(byte) cnt
-(byte) cnt2
-(byte) cnt3
-(byte()) inccnt()
-(label) inccnt::@1
-(label) inccnt::@return
-(byte) inccnt::return
-(void()) main()
-(byte~) main::$0
-(byte~) main::$1
-(label) main::@return
-
-Promoting word/signed word/dword/signed dword to byte[256] in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte) cnt ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) cnt2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) cnt3 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte[256]) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  to:@1
-main: scope:[main]  from
-  (byte~) main::$0 ← call inccnt 
-  *((byte[256]) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0
-  (byte) cnt ← ++ (byte) cnt
-  (byte~) main::$1 ← call inccnt 
-  *((byte[256]) SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
-  to:main::@return
-main::@return: scope:[main]  from main
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-inccnt: scope:[inccnt]  from
-  (byte) cnt ← ++ (byte) cnt
-  (byte) cnt2 ← ++ (byte) cnt2
-  (byte) cnt3 ← ++ (byte) cnt3
-  (byte) inccnt::return ← (byte) cnt
-  to:inccnt::@return
-inccnt::@return: scope:[inccnt]  from inccnt inccnt::@1
-  (byte) inccnt::return ← (byte) inccnt::return
-  return (byte) inccnt::return
-  to:@return
-inccnt::@1: scope:[inccnt]  from
-  to:inccnt::@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable (byte) cnt2 and assignment [1] (byte) cnt2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable (byte) cnt3 and assignment [2] (byte) cnt3 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-Eliminating unused variable cnt2(null) and assignment [11] cnt2(null) ← ++ cnt2(null)
-Eliminating unused variable cnt3(null) and assignment [12] cnt3(null) ← ++ cnt3(null)
-Removing empty block @1
-Removing empty block inccnt::@1
-PROCEDURE MODIFY VARIABLE ANALYSIS
-main modifies cnt
-inccnt modifies cnt
-
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte[256]) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
@@ -221,12 +128,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to inccnt:5 inccnt:11 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 1 initial phi equivalence classes
 Coalesced [10] cnt#16 ← cnt#2
 Coalesced down to 1 phi equivalence classes
@@ -234,12 +135,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

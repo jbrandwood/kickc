@@ -1,155 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/casting.kc
-byte* SCREEN = $0400;
-byte* SCREEN2 = SCREEN+40*3;
-byte* SCREEN3 = SCREEN+40*6;
-byte* SCREEN4 = SCREEN+40*9;
 
-void main() {
-    for( byte b: 0..100) {
-        //Subtract unsigned byte from unsigned byte
-        byte b2 = 200-b;
-        SCREEN[b] = b2;
-        // Cast unsigned byte to signed byte & negate
-        signed byte sb = - (signed byte)b;
-        SCREEN2[b] = (byte)sb;
-    }
-    w();
-}
-
-
-void w() {
-    for(byte i : 0..10) {
-        word w1 = 1300;
-        word w2 = 1250;
-        byte b = (byte)(w1-w2);
-        byte b2 = 1400-1350+i;
-        SCREEN3[i] = b;
-        SCREEN4[i] = b2;
-    }
-}
-
-SYMBOLS
-(byte/signed byte/word/signed word/dword/signed dword~) $0
-(byte*~) $1
-(byte/word/signed word/dword/signed dword~) $2
-(byte*~) $3
-(word/signed word/dword/signed dword~) $4
-(byte*~) $5
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(byte*) SCREEN2
-(byte*) SCREEN3
-(byte*) SCREEN4
-(void()) main()
-(byte/word/signed word/dword/signed dword~) main::$0
-(signed byte~) main::$1
-(signed byte~) main::$2
-(byte~) main::$3
-(bool~) main::$4
-(void~) main::$5
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::b
-(byte) main::b2
-(signed byte) main::sb
-(void()) w()
-(word~) w::$0
-(byte~) w::$1
-(byte/signed byte/word/signed word/dword/signed dword~) w::$2
-(byte/signed word/word/dword/signed dword~) w::$3
-(bool~) w::$4
-(label) w::@1
-(label) w::@2
-(label) w::@return
-(byte) w::b
-(byte) w::b2
-(byte) w::i
-(word) w::w1
-(word) w::w2
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte/signed byte/word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte/signed byte/word/signed word/dword/signed dword) 3
-  (byte*~) $1 ← (byte*) SCREEN + (byte/signed byte/word/signed word/dword/signed dword~) $0
-  (byte*) SCREEN2 ← (byte*~) $1
-  (byte/word/signed word/dword/signed dword~) $2 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte/signed byte/word/signed word/dword/signed dword) 6
-  (byte*~) $3 ← (byte*) SCREEN + (byte/word/signed word/dword/signed dword~) $2
-  (byte*) SCREEN3 ← (byte*~) $3
-  (word/signed word/dword/signed dword~) $4 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte/signed byte/word/signed word/dword/signed dword) 9
-  (byte*~) $5 ← (byte*) SCREEN + (word/signed word/dword/signed dword~) $4
-  (byte*) SCREEN4 ← (byte*~) $5
-  to:@1
-main: scope:[main]  from
-  (byte) main::b ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  (byte/word/signed word/dword/signed dword~) main::$0 ← (byte/word/signed word/dword/signed dword) 200 - (byte) main::b
-  (byte) main::b2 ← (byte/word/signed word/dword/signed dword~) main::$0
-  *((byte*) SCREEN + (byte) main::b) ← (byte) main::b2
-  (signed byte~) main::$1 ← ((signed byte)) (byte) main::b
-  (signed byte~) main::$2 ← - (signed byte~) main::$1
-  (signed byte) main::sb ← (signed byte~) main::$2
-  (byte~) main::$3 ← ((byte)) (signed byte) main::sb
-  *((byte*) SCREEN2 + (byte) main::b) ← (byte~) main::$3
-  (byte) main::b ← (byte) main::b + rangenext(0,100)
-  (bool~) main::$4 ← (byte) main::b != rangelast(0,100)
-  if((bool~) main::$4) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  (void~) main::$5 ← call w 
-  to:main::@return
-main::@return: scope:[main]  from main::@2
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  to:@2
-w: scope:[w]  from
-  (byte) w::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:w::@1
-w::@1: scope:[w]  from w w::@1
-  (word) w::w1 ← (word/signed word/dword/signed dword) 1300
-  (word) w::w2 ← (word/signed word/dword/signed dword) 1250
-  (word~) w::$0 ← (word) w::w1 - (word) w::w2
-  (byte~) w::$1 ← ((byte)) (word~) w::$0
-  (byte) w::b ← (byte~) w::$1
-  (byte/signed byte/word/signed word/dword/signed dword~) w::$2 ← (word/signed word/dword/signed dword) 1400 - (word/signed word/dword/signed dword) 1350
-  (byte/signed word/word/dword/signed dword~) w::$3 ← (byte/signed byte/word/signed word/dword/signed dword~) w::$2 + (byte) w::i
-  (byte) w::b2 ← (byte/signed word/word/dword/signed dword~) w::$3
-  *((byte*) SCREEN3 + (byte) w::i) ← (byte) w::b
-  *((byte*) SCREEN4 + (byte) w::i) ← (byte) w::b2
-  (byte) w::i ← (byte) w::i + rangenext(0,10)
-  (bool~) w::$4 ← (byte) w::i != rangelast(0,10)
-  if((bool~) w::$4) goto w::@1
-  to:w::@2
-w::@2: scope:[w]  from w::@1
-  to:w::@return
-w::@return: scope:[w]  from w::@2
-  return 
-  to:@return
-@2: scope:[]  from @1
-  call main 
-  to:@end
-@end: scope:[]  from @2
-
-Eliminating unused variable - keeping the call (void~) main::$5
-Removing empty block @1
-Removing empty block w::@2
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte/signed byte/word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte/signed byte/word/signed word/dword/signed dword) 3
@@ -393,9 +243,6 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to w:13 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 2 initial phi equivalence classes
 Coalesced [15] main::b#3 ← main::b#1
 Coalesced [24] w::i#3 ← w::i#1
@@ -408,9 +255,6 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of w
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

@@ -54,7 +54,9 @@ public class Pass1EliminateEmptyBlocks extends Pass1Base {
             Label label = (Label) removeSymbol;
             graph.remove(labelRef);
             label.getScope().remove(label);
-            log.append("Removing empty block " + labelRef);
+            if(log.isVerbosePass1CreateSsa()) {
+               log.append("Removing empty block " + labelRef);
+            }
             modified = true;
          }
       }

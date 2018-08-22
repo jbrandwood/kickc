@@ -1,79 +1,5 @@
-PARSING src/test/java/dk/camelot64/kickc/test/kc/inmemarray.kc
 
-byte* SCREEN = $0400;
-byte[] TXT = { 3, 1, 13, 5, 12, 15, 20, 32};
-
-void main() {
-   byte j = 0;
-   for(byte i : 0..100) {
-      SCREEN[i] = TXT[j];
-      if(++j==8) {
-         j = 0;
-      }
-   }
-}
-Adding pre/post-modifier (byte) main::j ← ++ (byte) main::j
-SYMBOLS
-(label) @1
-(label) @begin
-(label) @end
-(byte*) SCREEN
-(byte[]) TXT
-(void()) main()
-(bool~) main::$0
-(bool~) main::$1
-(bool~) main::$2
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte) main::i
-(byte) main::j
-
-Promoting word/signed word/dword/signed dword to byte* in SCREEN ← ((byte*)) 1024
-INITIAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte[]) TXT ← { (byte/signed byte/word/signed word/dword/signed dword) 3, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 13, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 20, (byte/signed byte/word/signed word/dword/signed dword) 32 }
-  to:@1
-main: scope:[main]  from
-  (byte) main::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) main::i ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  *((byte*) SCREEN + (byte) main::i) ← *((byte[]) TXT + (byte) main::j)
-  (byte) main::j ← ++ (byte) main::j
-  (bool~) main::$0 ← (byte) main::j == (byte/signed byte/word/signed word/dword/signed dword) 8
-  (bool~) main::$1 ← ! (bool~) main::$0
-  if((bool~) main::$1) goto main::@2
-  to:main::@3
-main::@2: scope:[main]  from main::@1 main::@3
-  (byte) main::i ← (byte) main::i + rangenext(0,100)
-  (bool~) main::$2 ← (byte) main::i != rangelast(0,100)
-  if((bool~) main::$2) goto main::@1
-  to:main::@4
-main::@3: scope:[main]  from main::@1
-  (byte) main::j ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@2
-main::@4: scope:[main]  from main::@2
-  to:main::@return
-main::@return: scope:[main]  from main::@4
-  return 
-  to:@return
-@1: scope:[]  from @begin
-  call main 
-  to:@end
-@end: scope:[]  from @1
-
-Removing empty block main::@4
-PROCEDURE MODIFY VARIABLE ANALYSIS
-
-Completing Phi functions...
-Completing Phi functions...
-Completing Phi functions...
-
-CONTROL FLOW GRAPH SSA WITH ASSIGNMENT CALL & RETURN
+CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte[]) TXT#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 3, (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 13, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 12, (byte/signed byte/word/signed word/dword/signed dword) 15, (byte/signed byte/word/signed word/dword/signed dword) 20, (byte/signed byte/word/signed word/dword/signed dword) 32 }
@@ -196,11 +122,6 @@ Adding NOP phi() at start of main::@3
 CALL GRAPH
 Calls in [] to main:2 
 
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 Created 3 initial phi equivalence classes
 Coalesced [14] main::j#5 ← main::j#4
 Coalesced [15] main::i#5 ← main::i#1
@@ -213,11 +134,6 @@ Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@6
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
-Propagating live ranges...
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from

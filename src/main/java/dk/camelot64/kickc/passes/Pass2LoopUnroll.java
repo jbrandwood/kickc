@@ -82,9 +82,14 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
                }
             } else if(statement instanceof StatementConditionalJump) {
                //  - Remove the "unroll" directive on the condition in the old loop (as it is already unrolled).
-               // TODO: Only remove "unroll" from the conditional that represents the loop we are unrolling
+               // MAYBE: Only remove "unroll" from the conditional that represents the loop we are unrolling
                StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
-               conditionalJump.setDeclaredUnroll(false);
+               if(conditionalJump.isDeclaredUnroll()) {
+                  // Mark is unrolled - to ensure it is removed before unrolling more
+                  conditionalJump.setWasUnrolled(true);
+                  // Remove unroll declaration - now only the "rest" of the loop needs unrolling
+                  conditionalJump.setDeclaredUnroll(false);
+               }
                // Fix the destination (if needed)!
                LabelRef fixedDestination = fixSuccessor(conditionalJump.getDestination(), blockToNewBlock, unrollLoop);
                conditionalJump.setDestination(fixedDestination);

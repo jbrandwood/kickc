@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Finds the dominators for the control flow graph. */
-public class Pass2DominatorsAnalysis extends Pass2SsaOptimization {
+public class PassNDominatorsAnalysis extends Pass2SsaOptimization {
 
-   public Pass2DominatorsAnalysis(Program program) {
+   public PassNDominatorsAnalysis(Program program) {
       super(program);
    }
 

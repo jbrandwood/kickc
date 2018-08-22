@@ -8,15 +8,16 @@ import dk.camelot64.kickc.model.values.LabelRef;
 import java.util.*;
 
 /** Plan the optimal sequence for the blocks of the control flow graph */
-public class Pass3BlockSequencePlanner extends Pass2Base {
+public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
    Deque<ScopeTodo> todoScopes = new ArrayDeque<>();
 
-   public Pass3BlockSequencePlanner(Program program) {
+   public PassNBlockSequencePlanner(Program program) {
       super(program);
    }
 
-   public void plan() {
+   @Override
+   public boolean step() {
 
       List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
 
@@ -48,18 +49,23 @@ public class Pass3BlockSequencePlanner extends Pass2Base {
       }
       getGraph().setSequence(sequence);
 
-      StringBuilder entry = new StringBuilder();
-      entry.append("Block Sequence Planned ");
-      for(LabelRef labelRef : sequence) {
-         entry.append(labelRef.getFullName() + " ");
+      if(getLog().isVerboseSequencePlan()) {
+         StringBuilder entry = new StringBuilder();
+         entry.append("Block Sequence Planned ");
+         for(LabelRef labelRef : sequence) {
+            entry.append(labelRef.getFullName() + " ");
 
+         }
+         getLog().append(entry.toString());
       }
-      getLog().append(entry.toString());
+
+      return false;
+
    }
 
    void pushTodo(ControlFlowBlock block) {
       LabelRef blockRef = block.getLabel();
-      Scope blockScope = getSymbols().getSymbol(blockRef).getScope();
+      Scope blockScope = getScope().getSymbol(blockRef).getScope();
       for(ScopeTodo todoScope : todoScopes) {
          if(todoScope.scope.equals(blockScope)) {
             todoScope.addTodo(block);

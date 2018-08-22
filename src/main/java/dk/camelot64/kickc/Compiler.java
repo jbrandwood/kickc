@@ -212,9 +212,9 @@ public class Compiler {
       List<Pass2SsaOptimization> loopUnrolling = new ArrayList<>();
       loopUnrolling.add(new PassNStatementIndices(program));
       loopUnrolling.add(new PassNVariableReferenceInfos(program));
-      loopUnrolling.add(new Pass3StatementInfos(program));
-      loopUnrolling.add(new Pass2DominatorsAnalysis(program));
-      loopUnrolling.add(new Pass2LoopAnalysis(program));
+      loopUnrolling.add(new PassNStatementInfos(program));
+      loopUnrolling.add(new PassNDominatorsAnalysis(program));
+      loopUnrolling.add(new PassNLoopAnalysis(program));
       loopUnrolling.add(new Pass2LoopUnrollPhiPrepare(program));
       loopUnrolling.add(new Pass2LoopUnroll(program));
 
@@ -227,7 +227,8 @@ public class Compiler {
                getLog().append(program.getGraph().toString(program));
             }
             pass2Optimize();
-            new Pass3BlockSequencePlanner(program).plan();
+            new Pass2LoopUnrollAssertComplete(program).step();
+            new PassNBlockSequencePlanner(program).step();
          }
       } while(unrolled);
 
@@ -261,7 +262,7 @@ public class Compiler {
             while(stepOptimized) {
                stepOptimized = optimization.step();
                if(stepOptimized) {
-                  getLog().append("Succesful SSA optimization " + optimization.getClass().getSimpleName() + "");
+                  getLog().append("Successful SSA optimization " + optimization.getClass().getSimpleName() + "");
                   ssaOptimized = true;
                   if(getLog().isVerboseSSAOptimize()) {
                      getLog().append("CONTROL FLOW GRAPH");
@@ -302,10 +303,10 @@ public class Compiler {
       new Pass3AssertConstants(program).check();
       new Pass3AssertArrayLengths(program).check();
       new Pass3AssertNoMulDivMod(program).check();
-      new Pass3BlockSequencePlanner(program).plan();
+      new PassNBlockSequencePlanner(program).step();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();
-      new Pass3BlockSequencePlanner(program).plan();
+      new PassNBlockSequencePlanner(program).step();
       //getLog().append("CONTROL FLOW GRAPH - PHI LIFTED");
       //getLog().append(program.getGraph().toString(program));
       pass2AssertSSA();
@@ -318,7 +319,7 @@ public class Compiler {
 
       //getLog().setVerboseLiveRanges(true);
 
-      new Pass3StatementInfos(program).execute();
+      new PassNStatementInfos(program).execute();
       new PassNVariableReferenceInfos(program).execute();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
       //getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
@@ -330,11 +331,11 @@ public class Compiler {
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program).step();
       new Pass2CullEmptyBlocks(program).step();
-      new Pass3BlockSequencePlanner(program).plan();
+      new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).execute();
       new Pass3CallGraphAnalysis(program).findCallGraph();
-      new Pass3StatementInfos(program).execute();
+      new PassNStatementInfos(program).execute();
       new PassNVariableReferenceInfos(program).execute();
       new Pass3SymbolInfos(program).generateSymbolInfos();
       new Pass3LiveRangesAnalysis(program).findLiveRanges();
@@ -353,7 +354,7 @@ public class Compiler {
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append("DOMINATORS");
       }
-      new Pass2DominatorsAnalysis(program).step();
+      new PassNDominatorsAnalysis(program).step();
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append(program.getDominators().toString());
       }
@@ -361,7 +362,7 @@ public class Compiler {
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append("NATURAL LOOPS");
       }
-      new Pass2LoopAnalysis(program).step();
+      new PassNLoopAnalysis(program).step();
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append(program.getLoopSet().toString());
       }

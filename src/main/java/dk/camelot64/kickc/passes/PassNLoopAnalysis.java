@@ -11,9 +11,9 @@ import java.util.*;
  * <p>
  * See http://www.cs.colostate.edu/~cs553/ClassNotes/lecture09-control-dominators.ppt.pdf
  */
-public class Pass2LoopAnalysis extends Pass2SsaOptimization {
+public class PassNLoopAnalysis extends Pass2SsaOptimization {
 
-   public Pass2LoopAnalysis(Program program) {
+   public PassNLoopAnalysis(Program program) {
       super(program);
    }
 

@@ -18,7 +18,10 @@ public class StatementConditionalJump extends StatementBase {
    private Operator operator;
    private RValue rValue2;
    private LabelRef destination;
+   /** This conditional is the primary back edge in a loop declared to be unrolled. */
    private boolean declaredUnroll;
+   /** This conditional has been unrolled. Constant propagation must ensure the conditional is deleted - or the compilation will fail. */
+   private boolean wasUnrolled;
 
    public StatementConditionalJump(RValue condition, LabelRef destination,StatementSource source) {
       super(null, source);
@@ -79,6 +82,14 @@ public class StatementConditionalJump extends StatementBase {
 
    public void setDeclaredUnroll(boolean declaredUnroll) {
       this.declaredUnroll = declaredUnroll;
+   }
+
+   public boolean isWasUnrolled() {
+      return wasUnrolled;
+   }
+
+   public void setWasUnrolled(boolean wasUnrolled) {
+      this.wasUnrolled = wasUnrolled;
    }
 
    @Override

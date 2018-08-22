@@ -47,6 +47,11 @@ public class CompileLog {
     */
    private boolean verboseNonOptimization = false;
 
+   /**
+    * Should sequence planning be verbose.
+    */
+   private boolean verboseSequencePlan = false;
+
 
    /**
     * Should the log be output to System.out while being built
@@ -119,6 +124,10 @@ public class CompileLog {
 
    public boolean isVerboseNonOptimization() {
       return verboseNonOptimization;
+   }
+
+   public boolean isVerboseSequencePlan() {
+      return verboseSequencePlan;
    }
 
    public boolean isSysOut() {

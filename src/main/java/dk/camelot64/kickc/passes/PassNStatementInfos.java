@@ -12,9 +12,9 @@ import java.util.LinkedHashMap;
 /**
  * Identify the block for each statement.
  */
-public class Pass3StatementInfos extends Pass2SsaOptimization {
+public class PassNStatementInfos extends Pass2SsaOptimization {
 
-   public Pass3StatementInfos(Program program) {
+   public PassNStatementInfos(Program program) {
       super(program);
    }
 

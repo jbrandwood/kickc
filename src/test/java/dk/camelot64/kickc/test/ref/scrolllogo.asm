@@ -132,102 +132,106 @@ render_logo: {
     sta x_char
     lda xpos+1
     bmi b1
-    ldy #0
-  b2:
-    cpy x_char
-    bne b3
     ldx #0
-  b5:
-    cpy #$28
-    bne b6
+  b2:
+    cpx x_char
+    bne b5
+    ldy #0
+  b6:
+    cpx #$28
+    bne b9
   breturn:
     rts
-  b6:
-    txa
-    sta SCREEN,y
-    txa
+  b9:
+    tya
     clc
-    adc #$28*1
-    sta SCREEN+$28*1,y
-    txa
+    adc #$28*0
+    sta SCREEN+$28*0,x
+    tya
     clc
-    adc #$28*2
-    sta SCREEN+$28*2,y
-    txa
+    adc #$28*(0+1)
+    sta SCREEN+$28*(0+1),x
+    tya
     clc
-    adc #$28*3
-    sta SCREEN+$28*3,y
-    txa
+    adc #$28*(0+1+1)
+    sta SCREEN+$28*(0+1+1),x
+    tya
     clc
-    adc #$28*4
-    sta SCREEN+$28*4,y
-    txa
+    adc #$28*(0+1+1+1)
+    sta SCREEN+$28*(0+1+1+1),x
+    tya
     clc
-    adc #$28*5
-    sta SCREEN+$28*5,y
-    iny
+    adc #$28*(0+1+1+1+1)
+    sta SCREEN+$28*(0+1+1+1+1),x
+    tya
+    clc
+    adc #$28*(0+1+1+1+1+1)
+    sta SCREEN+$28*(0+1+1+1+1+1),x
     inx
-    jmp b5
-  b3:
-    lda #0
-    sta SCREEN,y
-    sta SCREEN+$28*1,y
-    sta SCREEN+$28*2,y
-    sta SCREEN+$28*3,y
-    sta SCREEN+$28*4,y
-    sta SCREEN+$28*5,y
     iny
+    jmp b6
+  b5:
+    lda #0
+    sta SCREEN+$28*0,x
+    sta SCREEN+$28*(0+1),x
+    sta SCREEN+$28*(0+1+1),x
+    sta SCREEN+$28*(0+1+1+1),x
+    sta SCREEN+$28*(0+1+1+1+1),x
+    sta SCREEN+$28*(0+1+1+1+1+1),x
+    inx
     jmp b2
   b1:
     lda x_char
     eor #$ff
     clc
     adc #1
-    tax
-    ldy #0
-  b9:
-    cpx #$28
-    bne b10
-  b12:
+    tay
+    ldx #0
+  b11:
     cpy #$28
-    bne b13
+    bne b14
+  b15:
+    cpx #$28
+    bne b18
     jmp breturn
-  b13:
+  b18:
     lda #0
-    sta SCREEN,y
-    sta SCREEN+$28*1,y
-    sta SCREEN+$28*2,y
-    sta SCREEN+$28*3,y
-    sta SCREEN+$28*4,y
-    sta SCREEN+$28*5,y
-    iny
-    jmp b12
-  b10:
-    txa
-    sta SCREEN,y
-    txa
-    clc
-    adc #$28*1
-    sta SCREEN+$28*1,y
-    txa
-    clc
-    adc #$28*2
-    sta SCREEN+$28*2,y
-    txa
-    clc
-    adc #$28*3
-    sta SCREEN+$28*3,y
-    txa
-    clc
-    adc #$28*4
-    sta SCREEN+$28*4,y
-    txa
-    clc
-    adc #$28*5
-    sta SCREEN+$28*5,y
-    iny
+    sta SCREEN+$28*0,x
+    sta SCREEN+$28*(0+1),x
+    sta SCREEN+$28*(0+1+1),x
+    sta SCREEN+$28*(0+1+1+1),x
+    sta SCREEN+$28*(0+1+1+1+1),x
+    sta SCREEN+$28*(0+1+1+1+1+1),x
     inx
-    jmp b9
+    jmp b15
+  b14:
+    tya
+    clc
+    adc #$28*0
+    sta SCREEN+$28*0,x
+    tya
+    clc
+    adc #$28*(0+1)
+    sta SCREEN+$28*(0+1),x
+    tya
+    clc
+    adc #$28*(0+1+1)
+    sta SCREEN+$28*(0+1+1),x
+    tya
+    clc
+    adc #$28*(0+1+1+1)
+    sta SCREEN+$28*(0+1+1+1),x
+    tya
+    clc
+    adc #$28*(0+1+1+1+1)
+    sta SCREEN+$28*(0+1+1+1+1),x
+    tya
+    clc
+    adc #$28*(0+1+1+1+1+1)
+    sta SCREEN+$28*(0+1+1+1+1+1),x
+    inx
+    iny
+    jmp b11
 }
 sin16s_gen2: {
     .const min = -$140

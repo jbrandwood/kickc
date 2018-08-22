@@ -35,12 +35,12 @@ public class CompileLog {
    /**
     * Should SSA optimization be verbose.
     */
-   private boolean verboseLoopUnroll = true;
+   private boolean verboseLoopUnroll = false;
 
    /**
     * Should the log be output to System.out while being built
     */
-   private boolean sysOut = true;
+   private boolean sysOut = false;
 
    public CompileLog() {
       this.log = new StringBuilder();

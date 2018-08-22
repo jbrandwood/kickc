@@ -56,20 +56,21 @@ void render_logo(signed word xpos) {
     byte screen_idx;
     *D016 = VIC_MCM|((byte)xpos&7);
     signed byte x_char = (signed byte)(xpos>>3);
+    byte line = 0;
     if(xpos<0) {
         // Render right side of the logo and some spaces
         logo_idx = (byte)(-x_char);
         screen_idx = 0;
         while(logo_idx!=40) {
-            inline for(byte line1: 0..5) {
-                (SCREEN+40*line1)[screen_idx] = logo_idx+40*line1;
+            inline for(line: 0..5) {
+                (SCREEN+40*line)[screen_idx] = logo_idx+40*line;
             }
             screen_idx++;
             logo_idx++;
         }
         while(screen_idx!=40) {
-            inline for(byte line2: 0..5) {
-                (SCREEN+40*line2)[screen_idx] = $00;
+            inline for(line: 0..5) {
+                (SCREEN+40*line)[screen_idx] = $00;
             }
             screen_idx++;
         }
@@ -78,15 +79,15 @@ void render_logo(signed word xpos) {
         byte logo_start = (byte)x_char;
         screen_idx = 0;
         while(screen_idx!=logo_start) {
-            inline for(byte line3: 0..5) {
-                (SCREEN+40*line3)[screen_idx] = $00;
+            inline for(line: 0..5) {
+                (SCREEN+40*line)[screen_idx] = $00;
             }
             screen_idx++;
         }
         logo_idx = 0;
         while(screen_idx!=40) {
-            inline for(byte line4: 0..5) {
-                (SCREEN+40*line4)[screen_idx] = logo_idx+40*line4;
+            inline for(line: 0..5) {
+                (SCREEN+40*line)[screen_idx] = logo_idx+40*line;
             }
             screen_idx++;
             logo_idx++;
@@ -1180,10 +1181,7 @@ SYMBOLS
 (label) render_logo::@8
 (label) render_logo::@9
 (label) render_logo::@return
-(byte) render_logo::line1
-(byte) render_logo::line2
-(byte) render_logo::line3
-(byte) render_logo::line4
+(byte) render_logo::line
 (byte) render_logo::logo_idx
 (byte) render_logo::logo_start
 (byte) render_logo::screen_idx
@@ -2400,6 +2398,7 @@ render_logo: scope:[render_logo]  from
   (signed word~) render_logo::$3 ← (signed word) render_logo::xpos >> (byte/signed byte/word/signed word/dword/signed dword) 3
   (signed byte~) render_logo::$4 ← ((signed byte)) (signed word~) render_logo::$3
   (signed byte) render_logo::x_char ← (signed byte~) render_logo::$4
+  (byte) render_logo::line ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) render_logo::$5 ← (signed word) render_logo::xpos < (byte/signed byte/word/signed word/dword/signed dword) 0
   if((bool~) render_logo::$5) goto render_logo::@1
   to:render_logo::@19
@@ -2419,7 +2418,7 @@ render_logo::@2: scope:[render_logo]  from render_logo::@19 render_logo::@22
   if((bool~) render_logo::$7) goto render_logo::@3
   to:render_logo::@20
 render_logo::@3: scope:[render_logo]  from render_logo::@2 render_logo::@21
-  (byte) render_logo::line3 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) render_logo::line ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:render_logo::@5
 render_logo::@20: scope:[render_logo]  from render_logo::@2
   to:render_logo::@4
@@ -2429,11 +2428,11 @@ render_logo::@4: scope:[render_logo]  from render_logo::@20 render_logo::@23
 render_logo::@21: scope:[render_logo]  from
   to:render_logo::@3
 render_logo::@5: scope:[render_logo]  from render_logo::@3 render_logo::@5
-  (byte/signed word/word/dword/signed dword~) render_logo::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line3
+  (byte/signed word/word/dword/signed dword~) render_logo::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line
   (byte*~) render_logo::$9 ← (byte*) SCREEN + (byte/signed word/word/dword/signed dword~) render_logo::$8
   *((byte*~) render_logo::$9 + (byte) render_logo::screen_idx) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) render_logo::line3 ← (byte) render_logo::line3 + rangenext(0,5)
-  (bool~) render_logo::$10 ← (byte) render_logo::line3 != rangelast(0,5)
+  (byte) render_logo::line ← (byte) render_logo::line + rangenext(0,5)
+  (bool~) render_logo::$10 ← (byte) render_logo::line != rangelast(0,5)
   unroll if((bool~) render_logo::$10) goto render_logo::@5
   to:render_logo::@22
 render_logo::@22: scope:[render_logo]  from render_logo::@5
@@ -2446,7 +2445,7 @@ render_logo::@6: scope:[render_logo]  from render_logo::@26 render_logo::@4
   if((bool~) render_logo::$11) goto render_logo::@7
   to:render_logo::@24
 render_logo::@7: scope:[render_logo]  from render_logo::@25 render_logo::@6
-  (byte) render_logo::line4 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) render_logo::line ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:render_logo::@9
 render_logo::@24: scope:[render_logo]  from render_logo::@6
   to:render_logo::@8
@@ -2455,13 +2454,13 @@ render_logo::@8: scope:[render_logo]  from render_logo::@24 render_logo::@27
 render_logo::@25: scope:[render_logo]  from
   to:render_logo::@7
 render_logo::@9: scope:[render_logo]  from render_logo::@7 render_logo::@9
-  (byte/signed word/word/dword/signed dword~) render_logo::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line4
+  (byte/signed word/word/dword/signed dword~) render_logo::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line
   (byte*~) render_logo::$13 ← (byte*) SCREEN + (byte/signed word/word/dword/signed dword~) render_logo::$12
-  (byte/signed word/word/dword/signed dword~) render_logo::$14 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line4
+  (byte/signed word/word/dword/signed dword~) render_logo::$14 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line
   (byte/signed word/word/dword/signed dword~) render_logo::$15 ← (byte) render_logo::logo_idx + (byte/signed word/word/dword/signed dword~) render_logo::$14
   *((byte*~) render_logo::$13 + (byte) render_logo::screen_idx) ← (byte/signed word/word/dword/signed dword~) render_logo::$15
-  (byte) render_logo::line4 ← (byte) render_logo::line4 + rangenext(0,5)
-  (bool~) render_logo::$16 ← (byte) render_logo::line4 != rangelast(0,5)
+  (byte) render_logo::line ← (byte) render_logo::line + rangenext(0,5)
+  (bool~) render_logo::$16 ← (byte) render_logo::line != rangelast(0,5)
   unroll if((bool~) render_logo::$16) goto render_logo::@9
   to:render_logo::@26
 render_logo::@26: scope:[render_logo]  from render_logo::@9
@@ -2479,7 +2478,7 @@ render_logo::@11: scope:[render_logo]  from render_logo::@1 render_logo::@31
   if((bool~) render_logo::$19) goto render_logo::@12
   to:render_logo::@29
 render_logo::@12: scope:[render_logo]  from render_logo::@11 render_logo::@30
-  (byte) render_logo::line1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) render_logo::line ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:render_logo::@14
 render_logo::@29: scope:[render_logo]  from render_logo::@11
   to:render_logo::@13
@@ -2488,13 +2487,13 @@ render_logo::@13: scope:[render_logo]  from render_logo::@29 render_logo::@32
 render_logo::@30: scope:[render_logo]  from
   to:render_logo::@12
 render_logo::@14: scope:[render_logo]  from render_logo::@12 render_logo::@14
-  (byte/signed word/word/dword/signed dword~) render_logo::$20 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line1
+  (byte/signed word/word/dword/signed dword~) render_logo::$20 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line
   (byte*~) render_logo::$21 ← (byte*) SCREEN + (byte/signed word/word/dword/signed dword~) render_logo::$20
-  (byte/signed word/word/dword/signed dword~) render_logo::$22 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line1
+  (byte/signed word/word/dword/signed dword~) render_logo::$22 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line
   (byte/signed word/word/dword/signed dword~) render_logo::$23 ← (byte) render_logo::logo_idx + (byte/signed word/word/dword/signed dword~) render_logo::$22
   *((byte*~) render_logo::$21 + (byte) render_logo::screen_idx) ← (byte/signed word/word/dword/signed dword~) render_logo::$23
-  (byte) render_logo::line1 ← (byte) render_logo::line1 + rangenext(0,5)
-  (bool~) render_logo::$24 ← (byte) render_logo::line1 != rangelast(0,5)
+  (byte) render_logo::line ← (byte) render_logo::line + rangenext(0,5)
+  (bool~) render_logo::$24 ← (byte) render_logo::line != rangelast(0,5)
   unroll if((bool~) render_logo::$24) goto render_logo::@14
   to:render_logo::@31
 render_logo::@31: scope:[render_logo]  from render_logo::@14
@@ -2508,7 +2507,7 @@ render_logo::@15: scope:[render_logo]  from render_logo::@13 render_logo::@35
   if((bool~) render_logo::$25) goto render_logo::@16
   to:render_logo::@33
 render_logo::@16: scope:[render_logo]  from render_logo::@15 render_logo::@34
-  (byte) render_logo::line2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) render_logo::line ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:render_logo::@18
 render_logo::@33: scope:[render_logo]  from render_logo::@15
   to:render_logo::@17
@@ -2517,11 +2516,11 @@ render_logo::@17: scope:[render_logo]  from render_logo::@33 render_logo::@36
 render_logo::@34: scope:[render_logo]  from
   to:render_logo::@16
 render_logo::@18: scope:[render_logo]  from render_logo::@16 render_logo::@18
-  (byte/signed word/word/dword/signed dword~) render_logo::$26 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line2
+  (byte/signed word/word/dword/signed dword~) render_logo::$26 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line
   (byte*~) render_logo::$27 ← (byte*) SCREEN + (byte/signed word/word/dword/signed dword~) render_logo::$26
   *((byte*~) render_logo::$27 + (byte) render_logo::screen_idx) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) render_logo::line2 ← (byte) render_logo::line2 + rangenext(0,5)
-  (bool~) render_logo::$28 ← (byte) render_logo::line2 != rangelast(0,5)
+  (byte) render_logo::line ← (byte) render_logo::line + rangenext(0,5)
+  (bool~) render_logo::$28 ← (byte) render_logo::line != rangelast(0,5)
   unroll if((bool~) render_logo::$28) goto render_logo::@18
   to:render_logo::@35
 render_logo::@35: scope:[render_logo]  from render_logo::@18
@@ -3402,6 +3401,7 @@ render_logo: scope:[render_logo]  from loop::@6
   (signed word~) render_logo::$3 ← (signed word) render_logo::xpos#1 >> (byte/signed byte/word/signed word/dword/signed dword) 3
   (signed byte~) render_logo::$4 ← ((signed byte)) (signed word~) render_logo::$3
   (signed byte) render_logo::x_char#0 ← (signed byte~) render_logo::$4
+  (byte) render_logo::line#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) render_logo::$5 ← (signed word) render_logo::xpos#1 < (byte/signed byte/word/signed word/dword/signed dword) 0
   if((bool~) render_logo::$5) goto render_logo::@1
   to:render_logo::@19
@@ -3431,7 +3431,7 @@ render_logo::@3: scope:[render_logo]  from render_logo::@2
   (byte) render_logo::logo_start#4 ← phi( render_logo::@2/(byte) render_logo::logo_start#1 )
   (byte) render_logo::screen_idx#17 ← phi( render_logo::@2/(byte) render_logo::screen_idx#6 )
   (byte*) SCREEN#11 ← phi( render_logo::@2/(byte*) SCREEN#17 )
-  (byte) render_logo::line3#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) render_logo::line#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:render_logo::@5
 render_logo::@4: scope:[render_logo]  from render_logo::@2
   (byte*) SCREEN#25 ← phi( render_logo::@2/(byte*) SCREEN#17 )
@@ -3442,12 +3442,12 @@ render_logo::@5: scope:[render_logo]  from render_logo::@3 render_logo::@5
   (byte) render_logo::logo_start#3 ← phi( render_logo::@3/(byte) render_logo::logo_start#4 render_logo::@5/(byte) render_logo::logo_start#3 )
   (byte) render_logo::screen_idx#7 ← phi( render_logo::@3/(byte) render_logo::screen_idx#17 render_logo::@5/(byte) render_logo::screen_idx#7 )
   (byte*) SCREEN#4 ← phi( render_logo::@3/(byte*) SCREEN#11 render_logo::@5/(byte*) SCREEN#4 )
-  (byte) render_logo::line3#2 ← phi( render_logo::@3/(byte) render_logo::line3#0 render_logo::@5/(byte) render_logo::line3#1 )
-  (byte/signed word/word/dword/signed dword~) render_logo::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line3#2
+  (byte) render_logo::line#9 ← phi( render_logo::@3/(byte) render_logo::line#1 render_logo::@5/(byte) render_logo::line#2 )
+  (byte/signed word/word/dword/signed dword~) render_logo::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line#9
   (byte*~) render_logo::$9 ← (byte*) SCREEN#4 + (byte/signed word/word/dword/signed dword~) render_logo::$8
   *((byte*~) render_logo::$9 + (byte) render_logo::screen_idx#7) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) render_logo::line3#1 ← (byte) render_logo::line3#2 + rangenext(0,5)
-  (bool~) render_logo::$10 ← (byte) render_logo::line3#1 != rangelast(0,5)
+  (byte) render_logo::line#2 ← (byte) render_logo::line#9 + rangenext(0,5)
+  (bool~) render_logo::$10 ← (byte) render_logo::line#2 != rangelast(0,5)
   unroll if((bool~) render_logo::$10) goto render_logo::@5
   to:render_logo::@22
 render_logo::@22: scope:[render_logo]  from render_logo::@5
@@ -3467,20 +3467,20 @@ render_logo::@7: scope:[render_logo]  from render_logo::@6
   (byte) render_logo::screen_idx#19 ← phi( render_logo::@6/(byte) render_logo::screen_idx#9 )
   (byte) render_logo::logo_idx#9 ← phi( render_logo::@6/(byte) render_logo::logo_idx#11 )
   (byte*) SCREEN#12 ← phi( render_logo::@6/(byte*) SCREEN#18 )
-  (byte) render_logo::line4#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) render_logo::line#3 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:render_logo::@9
 render_logo::@9: scope:[render_logo]  from render_logo::@7 render_logo::@9
   (byte) render_logo::screen_idx#10 ← phi( render_logo::@7/(byte) render_logo::screen_idx#19 render_logo::@9/(byte) render_logo::screen_idx#10 )
   (byte) render_logo::logo_idx#4 ← phi( render_logo::@7/(byte) render_logo::logo_idx#9 render_logo::@9/(byte) render_logo::logo_idx#4 )
   (byte*) SCREEN#5 ← phi( render_logo::@7/(byte*) SCREEN#12 render_logo::@9/(byte*) SCREEN#5 )
-  (byte) render_logo::line4#2 ← phi( render_logo::@7/(byte) render_logo::line4#0 render_logo::@9/(byte) render_logo::line4#1 )
-  (byte/signed word/word/dword/signed dword~) render_logo::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line4#2
+  (byte) render_logo::line#10 ← phi( render_logo::@7/(byte) render_logo::line#3 render_logo::@9/(byte) render_logo::line#4 )
+  (byte/signed word/word/dword/signed dword~) render_logo::$12 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line#10
   (byte*~) render_logo::$13 ← (byte*) SCREEN#5 + (byte/signed word/word/dword/signed dword~) render_logo::$12
-  (byte/signed word/word/dword/signed dword~) render_logo::$14 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line4#2
+  (byte/signed word/word/dword/signed dword~) render_logo::$14 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line#10
   (byte/signed word/word/dword/signed dword~) render_logo::$15 ← (byte) render_logo::logo_idx#4 + (byte/signed word/word/dword/signed dword~) render_logo::$14
   *((byte*~) render_logo::$13 + (byte) render_logo::screen_idx#10) ← (byte/signed word/word/dword/signed dword~) render_logo::$15
-  (byte) render_logo::line4#1 ← (byte) render_logo::line4#2 + rangenext(0,5)
-  (bool~) render_logo::$16 ← (byte) render_logo::line4#1 != rangelast(0,5)
+  (byte) render_logo::line#4 ← (byte) render_logo::line#10 + rangenext(0,5)
+  (bool~) render_logo::$16 ← (byte) render_logo::line#4 != rangelast(0,5)
   unroll if((bool~) render_logo::$16) goto render_logo::@9
   to:render_logo::@26
 render_logo::@26: scope:[render_logo]  from render_logo::@9
@@ -3501,20 +3501,20 @@ render_logo::@12: scope:[render_logo]  from render_logo::@11
   (byte) render_logo::screen_idx#20 ← phi( render_logo::@11/(byte) render_logo::screen_idx#21 )
   (byte) render_logo::logo_idx#10 ← phi( render_logo::@11/(byte) render_logo::logo_idx#6 )
   (byte*) SCREEN#13 ← phi( render_logo::@11/(byte*) SCREEN#19 )
-  (byte) render_logo::line1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) render_logo::line#5 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:render_logo::@14
 render_logo::@14: scope:[render_logo]  from render_logo::@12 render_logo::@14
   (byte) render_logo::screen_idx#12 ← phi( render_logo::@12/(byte) render_logo::screen_idx#20 render_logo::@14/(byte) render_logo::screen_idx#12 )
   (byte) render_logo::logo_idx#7 ← phi( render_logo::@12/(byte) render_logo::logo_idx#10 render_logo::@14/(byte) render_logo::logo_idx#7 )
   (byte*) SCREEN#6 ← phi( render_logo::@12/(byte*) SCREEN#13 render_logo::@14/(byte*) SCREEN#6 )
-  (byte) render_logo::line1#2 ← phi( render_logo::@12/(byte) render_logo::line1#0 render_logo::@14/(byte) render_logo::line1#1 )
-  (byte/signed word/word/dword/signed dword~) render_logo::$20 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line1#2
+  (byte) render_logo::line#11 ← phi( render_logo::@12/(byte) render_logo::line#5 render_logo::@14/(byte) render_logo::line#6 )
+  (byte/signed word/word/dword/signed dword~) render_logo::$20 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line#11
   (byte*~) render_logo::$21 ← (byte*) SCREEN#6 + (byte/signed word/word/dword/signed dword~) render_logo::$20
-  (byte/signed word/word/dword/signed dword~) render_logo::$22 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line1#2
+  (byte/signed word/word/dword/signed dword~) render_logo::$22 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line#11
   (byte/signed word/word/dword/signed dword~) render_logo::$23 ← (byte) render_logo::logo_idx#7 + (byte/signed word/word/dword/signed dword~) render_logo::$22
   *((byte*~) render_logo::$21 + (byte) render_logo::screen_idx#12) ← (byte/signed word/word/dword/signed dword~) render_logo::$23
-  (byte) render_logo::line1#1 ← (byte) render_logo::line1#2 + rangenext(0,5)
-  (bool~) render_logo::$24 ← (byte) render_logo::line1#1 != rangelast(0,5)
+  (byte) render_logo::line#6 ← (byte) render_logo::line#11 + rangenext(0,5)
+  (bool~) render_logo::$24 ← (byte) render_logo::line#6 != rangelast(0,5)
   unroll if((bool~) render_logo::$24) goto render_logo::@14
   to:render_logo::@31
 render_logo::@31: scope:[render_logo]  from render_logo::@14
@@ -3533,17 +3533,17 @@ render_logo::@15: scope:[render_logo]  from render_logo::@11 render_logo::@35
 render_logo::@16: scope:[render_logo]  from render_logo::@15
   (byte) render_logo::screen_idx#22 ← phi( render_logo::@15/(byte) render_logo::screen_idx#14 )
   (byte*) SCREEN#14 ← phi( render_logo::@15/(byte*) SCREEN#20 )
-  (byte) render_logo::line2#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) render_logo::line#7 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:render_logo::@18
 render_logo::@18: scope:[render_logo]  from render_logo::@16 render_logo::@18
   (byte) render_logo::screen_idx#15 ← phi( render_logo::@16/(byte) render_logo::screen_idx#22 render_logo::@18/(byte) render_logo::screen_idx#15 )
   (byte*) SCREEN#7 ← phi( render_logo::@16/(byte*) SCREEN#14 render_logo::@18/(byte*) SCREEN#7 )
-  (byte) render_logo::line2#2 ← phi( render_logo::@16/(byte) render_logo::line2#0 render_logo::@18/(byte) render_logo::line2#1 )
-  (byte/signed word/word/dword/signed dword~) render_logo::$26 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line2#2
+  (byte) render_logo::line#12 ← phi( render_logo::@16/(byte) render_logo::line#7 render_logo::@18/(byte) render_logo::line#8 )
+  (byte/signed word/word/dword/signed dword~) render_logo::$26 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte) render_logo::line#12
   (byte*~) render_logo::$27 ← (byte*) SCREEN#7 + (byte/signed word/word/dword/signed dword~) render_logo::$26
   *((byte*~) render_logo::$27 + (byte) render_logo::screen_idx#15) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) render_logo::line2#1 ← (byte) render_logo::line2#2 + rangenext(0,5)
-  (bool~) render_logo::$28 ← (byte) render_logo::line2#1 != rangelast(0,5)
+  (byte) render_logo::line#8 ← (byte) render_logo::line#12 + rangenext(0,5)
+  (bool~) render_logo::$28 ← (byte) render_logo::line#8 != rangelast(0,5)
   unroll if((bool~) render_logo::$28) goto render_logo::@18
   to:render_logo::@35
 render_logo::@35: scope:[render_logo]  from render_logo::@18
@@ -4087,22 +4087,20 @@ SYMBOL TABLE SSA
 (label) render_logo::@7
 (label) render_logo::@9
 (label) render_logo::@return
-(byte) render_logo::line1
-(byte) render_logo::line1#0
-(byte) render_logo::line1#1
-(byte) render_logo::line1#2
-(byte) render_logo::line2
-(byte) render_logo::line2#0
-(byte) render_logo::line2#1
-(byte) render_logo::line2#2
-(byte) render_logo::line3
-(byte) render_logo::line3#0
-(byte) render_logo::line3#1
-(byte) render_logo::line3#2
-(byte) render_logo::line4
-(byte) render_logo::line4#0
-(byte) render_logo::line4#1
-(byte) render_logo::line4#2
+(byte) render_logo::line
+(byte) render_logo::line#0
+(byte) render_logo::line#1
+(byte) render_logo::line#10
+(byte) render_logo::line#11
+(byte) render_logo::line#12
+(byte) render_logo::line#2
+(byte) render_logo::line#3
+(byte) render_logo::line#4
+(byte) render_logo::line#5
+(byte) render_logo::line#6
+(byte) render_logo::line#7
+(byte) render_logo::line#8
+(byte) render_logo::line#9
 (byte) render_logo::logo_idx
 (byte) render_logo::logo_idx#0
 (byte) render_logo::logo_idx#1
@@ -4875,13 +4873,13 @@ Simple Condition (bool~) loop::$0 if(*((byte*) RASTER#0)!=(byte/word/signed word
 Simple Condition (bool~) loop::$5 if((word) xsin_idx#3!=(word/signed dword/dword~) loop::$3) goto loop::@7
 Simple Condition (bool~) render_logo::$5 if((signed word) render_logo::xpos#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto render_logo::@1
 Simple Condition (bool~) render_logo::$7 if((byte) render_logo::screen_idx#17!=(byte) render_logo::logo_start#1) goto render_logo::@3
-Simple Condition (bool~) render_logo::$10 unroll if((byte) render_logo::line3#1!=rangelast(0,5)) goto render_logo::@5
+Simple Condition (bool~) render_logo::$10 unroll if((byte) render_logo::line#2!=rangelast(0,5)) goto render_logo::@5
 Simple Condition (bool~) render_logo::$11 if((byte) render_logo::screen_idx#19!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto render_logo::@7
-Simple Condition (bool~) render_logo::$16 unroll if((byte) render_logo::line4#1!=rangelast(0,5)) goto render_logo::@9
+Simple Condition (bool~) render_logo::$16 unroll if((byte) render_logo::line#4!=rangelast(0,5)) goto render_logo::@9
 Simple Condition (bool~) render_logo::$19 if((byte) render_logo::logo_idx#10!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto render_logo::@12
-Simple Condition (bool~) render_logo::$24 unroll if((byte) render_logo::line1#1!=rangelast(0,5)) goto render_logo::@14
+Simple Condition (bool~) render_logo::$24 unroll if((byte) render_logo::line#6!=rangelast(0,5)) goto render_logo::@14
 Simple Condition (bool~) render_logo::$25 if((byte) render_logo::screen_idx#14!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto render_logo::@16
-Simple Condition (bool~) render_logo::$28 unroll if((byte) render_logo::line2#1!=rangelast(0,5)) goto render_logo::@18
+Simple Condition (bool~) render_logo::$28 unroll if((byte) render_logo::line#8!=rangelast(0,5)) goto render_logo::@18
 Succesful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) RASTER#0 = ((byte*))53266
 Constant (const byte*) BORDERCOL#0 = ((byte*))53280
@@ -4924,13 +4922,14 @@ Constant (const signed word) sin16s_gen2::min#0 = -320
 Constant (const signed word) sin16s_gen2::max#0 = 320
 Constant (const word) xsin_idx#16 = 0
 Constant (const word) xsin_idx#4 = 0
+Constant (const byte) render_logo::line#0 = 0
 Constant (const byte) render_logo::screen_idx#0 = 0
 Constant (const byte) render_logo::screen_idx#1 = 0
-Constant (const byte) render_logo::line3#0 = 0
+Constant (const byte) render_logo::line#1 = 0
 Constant (const byte) render_logo::logo_idx#1 = 0
-Constant (const byte) render_logo::line4#0 = 0
-Constant (const byte) render_logo::line1#0 = 0
-Constant (const byte) render_logo::line2#0 = 0
+Constant (const byte) render_logo::line#3 = 0
+Constant (const byte) render_logo::line#5 = 0
+Constant (const byte) render_logo::line#7 = 0
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const signed word) sin16s_gen2::ampl#0 = sin16s_gen2::max#0-sin16s_gen2::min#0
 Constant (const dword) div32u16u::dividend#0 = PI2_u4f28#0
@@ -4975,6 +4974,7 @@ if() condition always true - replacing block destination if(true) goto loop::@2
 Succesful SSA optimization Pass2ConstantIfs
 Fixing inline constructor with div32u16u::$4 ← div32u16u::quotient_hi#0 dw= div32u16u::quotient_lo#0
 Succesful SSA optimization Pass2FixInlineConstructors
+Eliminating unused constant (const byte) render_logo::line#0
 Eliminating unused constant (const word) rem16u#0
 Succesful SSA optimization PassNEliminateUnusedVars
 Eliminating Noop Cast (word) mul16u::a#1 ← ((word)) (signed word) mul16s::a#0
@@ -4996,14 +4996,14 @@ Resolved ranged next value divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value if(divr16u::i#1!=rangelast(0,15)) goto divr16u::@1 to (byte/signed byte/word/signed word/dword/signed dword) 16
 Resolved ranged next value main::ch#1 ← ++ main::ch#2 to ++
 Resolved ranged comparison value if(main::ch#1!=rangelast(0,239)) goto main::@1 to (byte/word/signed word/dword/signed dword) 240
-Resolved ranged next value render_logo::line3#1 ← ++ render_logo::line3#2 to ++
-Resolved ranged comparison value unroll if(render_logo::line3#1!=rangelast(0,5)) goto render_logo::@5 to (byte/signed byte/word/signed word/dword/signed dword) 6
-Resolved ranged next value render_logo::line4#1 ← ++ render_logo::line4#2 to ++
-Resolved ranged comparison value unroll if(render_logo::line4#1!=rangelast(0,5)) goto render_logo::@9 to (byte/signed byte/word/signed word/dword/signed dword) 6
-Resolved ranged next value render_logo::line1#1 ← ++ render_logo::line1#2 to ++
-Resolved ranged comparison value unroll if(render_logo::line1#1!=rangelast(0,5)) goto render_logo::@14 to (byte/signed byte/word/signed word/dword/signed dword) 6
-Resolved ranged next value render_logo::line2#1 ← ++ render_logo::line2#2 to ++
-Resolved ranged comparison value unroll if(render_logo::line2#1!=rangelast(0,5)) goto render_logo::@18 to (byte/signed byte/word/signed word/dword/signed dword) 6
+Resolved ranged next value render_logo::line#2 ← ++ render_logo::line#9 to ++
+Resolved ranged comparison value unroll if(render_logo::line#2!=rangelast(0,5)) goto render_logo::@5 to (byte/signed byte/word/signed word/dword/signed dword) 6
+Resolved ranged next value render_logo::line#4 ← ++ render_logo::line#10 to ++
+Resolved ranged comparison value unroll if(render_logo::line#4!=rangelast(0,5)) goto render_logo::@9 to (byte/signed byte/word/signed word/dword/signed dword) 6
+Resolved ranged next value render_logo::line#6 ← ++ render_logo::line#11 to ++
+Resolved ranged comparison value unroll if(render_logo::line#6!=rangelast(0,5)) goto render_logo::@14 to (byte/signed byte/word/signed word/dword/signed dword) 6
+Resolved ranged next value render_logo::line#8 ← ++ render_logo::line#12 to ++
+Resolved ranged comparison value unroll if(render_logo::line#8!=rangelast(0,5)) goto render_logo::@18 to (byte/signed byte/word/signed word/dword/signed dword) 6
 Culled Empty Block (label) @5
 Culled Empty Block (label) mul16u::@3
 Culled Empty Block (label) @16
@@ -5219,14 +5219,14 @@ Not aliassing across scopes: mul16u::b#1 mulu16_sel::v2#5
 Not aliassing across scopes: mul16u::return#3 mul16u::res#2
 Not aliassing across scopes: mulu16_sel::$0 mul16u::return#3
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
-Redundant Phi (byte) render_logo::line3#2 (const byte) render_logo::line3#0
+Redundant Phi (byte) render_logo::line#9 (const byte) render_logo::line#1
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$8 = 40*render_logo::line3#0
-Constant (const byte) render_logo::line3#1 = ++render_logo::line3#0
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$8 = 40*render_logo::line#1
+Constant (const byte) render_logo::line#2 = ++render_logo::line#1
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$9 = SCREEN#0+render_logo::$8
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [165] if((const byte) render_logo::line3#1!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_1
+if() condition always true - replacing block destination [165] if((const byte) render_logo::line#2!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_1
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
@@ -5318,15 +5318,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line4#2 (const byte) render_logo::line4#0
+Redundant Phi (byte) render_logo::line#10 (const byte) render_logo::line#3
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$12 = 40*render_logo::line4#0
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$14 = 40*render_logo::line4#0
-Constant (const byte) render_logo::line4#1 = ++render_logo::line4#0
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$12 = 40*render_logo::line#3
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$14 = 40*render_logo::line#3
+Constant (const byte) render_logo::line#4 = ++render_logo::line#3
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$13 = SCREEN#0+render_logo::$12
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [48] if((const byte) render_logo::line4#1!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_1
+if() condition always true - replacing block destination [48] if((const byte) render_logo::line#4!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_1
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -5418,15 +5418,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line4#3 (const byte) render_logo::line4#1
+Redundant Phi (byte) render_logo::line#15 (const byte) render_logo::line#4
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$31 = 40*render_logo::line4#1
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$33 = 40*render_logo::line4#1
-Constant (const byte) render_logo::line4#4 = ++render_logo::line4#1
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$31 = 40*render_logo::line#4
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$33 = 40*render_logo::line#4
+Constant (const byte) render_logo::line#16 = ++render_logo::line#4
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$32 = SCREEN#0+render_logo::$31
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [50] if((const byte) render_logo::line4#4!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_2
+if() condition always true - replacing block destination [50] if((const byte) render_logo::line#16!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_2
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -5518,15 +5518,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line4#5 (const byte) render_logo::line4#4
+Redundant Phi (byte) render_logo::line#17 (const byte) render_logo::line#16
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$35 = 40*render_logo::line4#4
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$37 = 40*render_logo::line4#4
-Constant (const byte) render_logo::line4#6 = ++render_logo::line4#4
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$35 = 40*render_logo::line#16
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$37 = 40*render_logo::line#16
+Constant (const byte) render_logo::line#18 = ++render_logo::line#16
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$36 = SCREEN#0+render_logo::$35
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [52] if((const byte) render_logo::line4#6!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_3
+if() condition always true - replacing block destination [52] if((const byte) render_logo::line#18!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_3
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -5618,15 +5618,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line4#7 (const byte) render_logo::line4#6
+Redundant Phi (byte) render_logo::line#19 (const byte) render_logo::line#18
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$39 = 40*render_logo::line4#6
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$41 = 40*render_logo::line4#6
-Constant (const byte) render_logo::line4#8 = ++render_logo::line4#6
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$39 = 40*render_logo::line#18
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$41 = 40*render_logo::line#18
+Constant (const byte) render_logo::line#20 = ++render_logo::line#18
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$40 = SCREEN#0+render_logo::$39
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [54] if((const byte) render_logo::line4#8!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_4
+if() condition always true - replacing block destination [54] if((const byte) render_logo::line#20!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_4
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -5718,15 +5718,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line4#9 (const byte) render_logo::line4#8
+Redundant Phi (byte) render_logo::line#21 (const byte) render_logo::line#20
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$43 = 40*render_logo::line4#8
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$45 = 40*render_logo::line4#8
-Constant (const byte) render_logo::line4#10 = ++render_logo::line4#8
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$43 = 40*render_logo::line#20
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$45 = 40*render_logo::line#20
+Constant (const byte) render_logo::line#22 = ++render_logo::line#20
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$44 = SCREEN#0+render_logo::$43
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [56] if((const byte) render_logo::line4#10!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_5
+if() condition always true - replacing block destination [56] if((const byte) render_logo::line#22!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_5
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -5818,25 +5818,25 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line4#11 (const byte) render_logo::line4#10
+Redundant Phi (byte) render_logo::line#23 (const byte) render_logo::line#22
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$47 = 40*render_logo::line4#10
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$49 = 40*render_logo::line4#10
-Constant (const byte) render_logo::line4#12 = ++render_logo::line4#10
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$47 = 40*render_logo::line#22
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$49 = 40*render_logo::line#22
+Constant (const byte) render_logo::line#24 = ++render_logo::line#22
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$48 = SCREEN#0+render_logo::$47
 Succesful SSA optimization Pass2ConstantIdentification
 Removing PHI-reference to removed block (render_logo::@9_5) in block render_logo::@9_6
-if() condition always false - eliminating [58] if((const byte) render_logo::line4#12!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_6
+if() condition always false - eliminating [58] if((const byte) render_logo::line#24!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@9_6
 Succesful SSA optimization Pass2ConstantIfs
-Eliminating unused constant (const byte) render_logo::line4#12
+Eliminating unused constant (const byte) render_logo::line#24
 Succesful SSA optimization PassNEliminateUnusedVars
-Eliminating variable (byte) render_logo::line4#13 from unused block render_logo::@9_6
+Eliminating variable (byte) render_logo::line#25 from unused block render_logo::@9_6
 Eliminating variable (byte/signed word/word/dword/signed dword~) render_logo::$51 and from unused block render_logo::@9_6
 Eliminating variable (byte*~) render_logo::$52 and from unused block render_logo::@9_6
 Eliminating variable (byte/signed word/word/dword/signed dword~) render_logo::$53 and from unused block render_logo::@9_6
 Eliminating variable (byte/signed word/word/dword/signed dword~) render_logo::$54 and from unused block render_logo::@9_6
-Eliminating variable (byte) render_logo::line4#14 and from unused block render_logo::@9_6
+Eliminating variable (byte) render_logo::line#26 and from unused block render_logo::@9_6
 Removing unused block render_logo::@9_6
 Succesful SSA optimization Pass2EliminateUnusedBlocks
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
@@ -5929,14 +5929,14 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line3#3 (const byte) render_logo::line3#1
+Redundant Phi (byte) render_logo::line#13 (const byte) render_logo::line#2
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$29 = 40*render_logo::line3#1
-Constant (const byte) render_logo::line3#4 = ++render_logo::line3#1
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$29 = 40*render_logo::line#2
+Constant (const byte) render_logo::line#14 = ++render_logo::line#2
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$30 = SCREEN#0+render_logo::$29
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [61] if((const byte) render_logo::line3#4!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_2
+if() condition always true - replacing block destination [61] if((const byte) render_logo::line#14!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_2
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -6028,14 +6028,14 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line3#5 (const byte) render_logo::line3#4
+Redundant Phi (byte) render_logo::line#27 (const byte) render_logo::line#14
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$55 = 40*render_logo::line3#4
-Constant (const byte) render_logo::line3#6 = ++render_logo::line3#4
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$55 = 40*render_logo::line#14
+Constant (const byte) render_logo::line#28 = ++render_logo::line#14
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$56 = SCREEN#0+render_logo::$55
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [62] if((const byte) render_logo::line3#6!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_3
+if() condition always true - replacing block destination [62] if((const byte) render_logo::line#28!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_3
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -6127,14 +6127,14 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line3#7 (const byte) render_logo::line3#6
+Redundant Phi (byte) render_logo::line#29 (const byte) render_logo::line#28
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$57 = 40*render_logo::line3#6
-Constant (const byte) render_logo::line3#8 = ++render_logo::line3#6
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$57 = 40*render_logo::line#28
+Constant (const byte) render_logo::line#30 = ++render_logo::line#28
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$58 = SCREEN#0+render_logo::$57
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [63] if((const byte) render_logo::line3#8!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_4
+if() condition always true - replacing block destination [63] if((const byte) render_logo::line#30!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_4
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -6226,14 +6226,14 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line3#9 (const byte) render_logo::line3#8
+Redundant Phi (byte) render_logo::line#31 (const byte) render_logo::line#30
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$59 = 40*render_logo::line3#8
-Constant (const byte) render_logo::line3#10 = ++render_logo::line3#8
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$59 = 40*render_logo::line#30
+Constant (const byte) render_logo::line#32 = ++render_logo::line#30
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$60 = SCREEN#0+render_logo::$59
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [64] if((const byte) render_logo::line3#10!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_5
+if() condition always true - replacing block destination [64] if((const byte) render_logo::line#32!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_5
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -6325,22 +6325,22 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line3#11 (const byte) render_logo::line3#10
+Redundant Phi (byte) render_logo::line#33 (const byte) render_logo::line#32
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$61 = 40*render_logo::line3#10
-Constant (const byte) render_logo::line3#12 = ++render_logo::line3#10
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$61 = 40*render_logo::line#32
+Constant (const byte) render_logo::line#34 = ++render_logo::line#32
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$62 = SCREEN#0+render_logo::$61
 Succesful SSA optimization Pass2ConstantIdentification
 Removing PHI-reference to removed block (render_logo::@5_5) in block render_logo::@5_6
-if() condition always false - eliminating [65] if((const byte) render_logo::line3#12!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_6
+if() condition always false - eliminating [65] if((const byte) render_logo::line#34!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@5_6
 Succesful SSA optimization Pass2ConstantIfs
-Eliminating unused constant (const byte) render_logo::line3#12
+Eliminating unused constant (const byte) render_logo::line#34
 Succesful SSA optimization PassNEliminateUnusedVars
-Eliminating variable (byte) render_logo::line3#13 from unused block render_logo::@5_6
+Eliminating variable (byte) render_logo::line#35 from unused block render_logo::@5_6
 Eliminating variable (byte/signed word/word/dword/signed dword~) render_logo::$63 and from unused block render_logo::@5_6
 Eliminating variable (byte*~) render_logo::$64 and from unused block render_logo::@5_6
-Eliminating variable (byte) render_logo::line3#14 and from unused block render_logo::@5_6
+Eliminating variable (byte) render_logo::line#36 and from unused block render_logo::@5_6
 Removing unused block render_logo::@5_6
 Succesful SSA optimization Pass2EliminateUnusedBlocks
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
@@ -6433,14 +6433,14 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line2#2 (const byte) render_logo::line2#0
+Redundant Phi (byte) render_logo::line#12 (const byte) render_logo::line#7
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$26 = 40*render_logo::line2#0
-Constant (const byte) render_logo::line2#1 = ++render_logo::line2#0
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$26 = 40*render_logo::line#7
+Constant (const byte) render_logo::line#8 = ++render_logo::line#7
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$27 = SCREEN#0+render_logo::$26
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [72] if((const byte) render_logo::line2#1!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_1
+if() condition always true - replacing block destination [72] if((const byte) render_logo::line#8!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_1
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -6532,14 +6532,14 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line2#3 (const byte) render_logo::line2#1
+Redundant Phi (byte) render_logo::line#37 (const byte) render_logo::line#8
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$65 = 40*render_logo::line2#1
-Constant (const byte) render_logo::line2#4 = ++render_logo::line2#1
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$65 = 40*render_logo::line#8
+Constant (const byte) render_logo::line#38 = ++render_logo::line#8
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$66 = SCREEN#0+render_logo::$65
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [73] if((const byte) render_logo::line2#4!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_2
+if() condition always true - replacing block destination [73] if((const byte) render_logo::line#38!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_2
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -6631,14 +6631,14 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line2#5 (const byte) render_logo::line2#4
+Redundant Phi (byte) render_logo::line#39 (const byte) render_logo::line#38
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$67 = 40*render_logo::line2#4
-Constant (const byte) render_logo::line2#6 = ++render_logo::line2#4
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$67 = 40*render_logo::line#38
+Constant (const byte) render_logo::line#40 = ++render_logo::line#38
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$68 = SCREEN#0+render_logo::$67
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [74] if((const byte) render_logo::line2#6!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_3
+if() condition always true - replacing block destination [74] if((const byte) render_logo::line#40!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_3
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -6730,14 +6730,14 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line2#7 (const byte) render_logo::line2#6
+Redundant Phi (byte) render_logo::line#41 (const byte) render_logo::line#40
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$69 = 40*render_logo::line2#6
-Constant (const byte) render_logo::line2#8 = ++render_logo::line2#6
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$69 = 40*render_logo::line#40
+Constant (const byte) render_logo::line#42 = ++render_logo::line#40
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$70 = SCREEN#0+render_logo::$69
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [75] if((const byte) render_logo::line2#8!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_4
+if() condition always true - replacing block destination [75] if((const byte) render_logo::line#42!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_4
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -6829,14 +6829,14 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line2#9 (const byte) render_logo::line2#8
+Redundant Phi (byte) render_logo::line#43 (const byte) render_logo::line#42
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$71 = 40*render_logo::line2#8
-Constant (const byte) render_logo::line2#10 = ++render_logo::line2#8
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$71 = 40*render_logo::line#42
+Constant (const byte) render_logo::line#44 = ++render_logo::line#42
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$72 = SCREEN#0+render_logo::$71
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [76] if((const byte) render_logo::line2#10!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_5
+if() condition always true - replacing block destination [76] if((const byte) render_logo::line#44!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_5
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -6928,22 +6928,22 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line2#11 (const byte) render_logo::line2#10
+Redundant Phi (byte) render_logo::line#45 (const byte) render_logo::line#44
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$73 = 40*render_logo::line2#10
-Constant (const byte) render_logo::line2#12 = ++render_logo::line2#10
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$73 = 40*render_logo::line#44
+Constant (const byte) render_logo::line#46 = ++render_logo::line#44
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$74 = SCREEN#0+render_logo::$73
 Succesful SSA optimization Pass2ConstantIdentification
 Removing PHI-reference to removed block (render_logo::@18_5) in block render_logo::@18_6
-if() condition always false - eliminating [77] if((const byte) render_logo::line2#12!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_6
+if() condition always false - eliminating [77] if((const byte) render_logo::line#46!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@18_6
 Succesful SSA optimization Pass2ConstantIfs
-Eliminating unused constant (const byte) render_logo::line2#12
+Eliminating unused constant (const byte) render_logo::line#46
 Succesful SSA optimization PassNEliminateUnusedVars
-Eliminating variable (byte) render_logo::line2#13 from unused block render_logo::@18_6
+Eliminating variable (byte) render_logo::line#47 from unused block render_logo::@18_6
 Eliminating variable (byte/signed word/word/dword/signed dword~) render_logo::$75 and from unused block render_logo::@18_6
 Eliminating variable (byte*~) render_logo::$76 and from unused block render_logo::@18_6
-Eliminating variable (byte) render_logo::line2#14 and from unused block render_logo::@18_6
+Eliminating variable (byte) render_logo::line#48 and from unused block render_logo::@18_6
 Removing unused block render_logo::@18_6
 Succesful SSA optimization Pass2EliminateUnusedBlocks
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
@@ -7036,15 +7036,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line1#2 (const byte) render_logo::line1#0
+Redundant Phi (byte) render_logo::line#11 (const byte) render_logo::line#5
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$20 = 40*render_logo::line1#0
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$22 = 40*render_logo::line1#0
-Constant (const byte) render_logo::line1#1 = ++render_logo::line1#0
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$20 = 40*render_logo::line#5
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$22 = 40*render_logo::line#5
+Constant (const byte) render_logo::line#6 = ++render_logo::line#5
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$21 = SCREEN#0+render_logo::$20
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [81] if((const byte) render_logo::line1#1!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_1
+if() condition always true - replacing block destination [81] if((const byte) render_logo::line#6!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_1
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -7136,15 +7136,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line1#3 (const byte) render_logo::line1#1
+Redundant Phi (byte) render_logo::line#49 (const byte) render_logo::line#6
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$77 = 40*render_logo::line1#1
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$79 = 40*render_logo::line1#1
-Constant (const byte) render_logo::line1#4 = ++render_logo::line1#1
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$77 = 40*render_logo::line#6
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$79 = 40*render_logo::line#6
+Constant (const byte) render_logo::line#50 = ++render_logo::line#6
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$78 = SCREEN#0+render_logo::$77
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [83] if((const byte) render_logo::line1#4!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_2
+if() condition always true - replacing block destination [83] if((const byte) render_logo::line#50!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_2
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -7236,15 +7236,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line1#5 (const byte) render_logo::line1#4
+Redundant Phi (byte) render_logo::line#51 (const byte) render_logo::line#50
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$81 = 40*render_logo::line1#4
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$83 = 40*render_logo::line1#4
-Constant (const byte) render_logo::line1#6 = ++render_logo::line1#4
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$81 = 40*render_logo::line#50
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$83 = 40*render_logo::line#50
+Constant (const byte) render_logo::line#52 = ++render_logo::line#50
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$82 = SCREEN#0+render_logo::$81
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [85] if((const byte) render_logo::line1#6!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_3
+if() condition always true - replacing block destination [85] if((const byte) render_logo::line#52!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_3
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -7336,15 +7336,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line1#7 (const byte) render_logo::line1#6
+Redundant Phi (byte) render_logo::line#53 (const byte) render_logo::line#52
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$85 = 40*render_logo::line1#6
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$87 = 40*render_logo::line1#6
-Constant (const byte) render_logo::line1#8 = ++render_logo::line1#6
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$85 = 40*render_logo::line#52
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$87 = 40*render_logo::line#52
+Constant (const byte) render_logo::line#54 = ++render_logo::line#52
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$86 = SCREEN#0+render_logo::$85
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [87] if((const byte) render_logo::line1#8!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_4
+if() condition always true - replacing block destination [87] if((const byte) render_logo::line#54!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_4
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -7436,15 +7436,15 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line1#9 (const byte) render_logo::line1#8
+Redundant Phi (byte) render_logo::line#55 (const byte) render_logo::line#54
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$89 = 40*render_logo::line1#8
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$91 = 40*render_logo::line1#8
-Constant (const byte) render_logo::line1#10 = ++render_logo::line1#8
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$89 = 40*render_logo::line#54
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$91 = 40*render_logo::line#54
+Constant (const byte) render_logo::line#56 = ++render_logo::line#54
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$90 = SCREEN#0+render_logo::$89
 Succesful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [89] if((const byte) render_logo::line1#10!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_5
+if() condition always true - replacing block destination [89] if((const byte) render_logo::line#56!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_5
 Succesful SSA optimization Pass2ConstantIfs
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
 Not aliassing across scopes: render_logo::xpos#0 loop::xpos#0
@@ -7536,25 +7536,25 @@ Not aliassing across scopes: divr16u::rem#4 rem16u#1
 Not aliassing across scopes: divr16u::return#3 divr16u::return#0
 Not aliassing across scopes: div32u16u::quotient_lo#0 divr16u::return#3
 Not aliassing across scopes: rem16u#1 divr16u::rem#11
-Redundant Phi (byte) render_logo::line1#11 (const byte) render_logo::line1#10
+Redundant Phi (byte) render_logo::line#57 (const byte) render_logo::line#56
 Succesful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$93 = 40*render_logo::line1#10
-Constant (const byte/signed word/word/dword/signed dword) render_logo::$95 = 40*render_logo::line1#10
-Constant (const byte) render_logo::line1#12 = ++render_logo::line1#10
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$93 = 40*render_logo::line#56
+Constant (const byte/signed word/word/dword/signed dword) render_logo::$95 = 40*render_logo::line#56
+Constant (const byte) render_logo::line#58 = ++render_logo::line#56
 Succesful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) render_logo::$94 = SCREEN#0+render_logo::$93
 Succesful SSA optimization Pass2ConstantIdentification
 Removing PHI-reference to removed block (render_logo::@14_5) in block render_logo::@14_6
-if() condition always false - eliminating [91] if((const byte) render_logo::line1#12!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_6
+if() condition always false - eliminating [91] if((const byte) render_logo::line#58!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto render_logo::@14_6
 Succesful SSA optimization Pass2ConstantIfs
-Eliminating unused constant (const byte) render_logo::line1#12
+Eliminating unused constant (const byte) render_logo::line#58
 Succesful SSA optimization PassNEliminateUnusedVars
-Eliminating variable (byte) render_logo::line1#13 from unused block render_logo::@14_6
+Eliminating variable (byte) render_logo::line#59 from unused block render_logo::@14_6
 Eliminating variable (byte/signed word/word/dword/signed dword~) render_logo::$97 and from unused block render_logo::@14_6
 Eliminating variable (byte*~) render_logo::$98 and from unused block render_logo::@14_6
 Eliminating variable (byte/signed word/word/dword/signed dword~) render_logo::$99 and from unused block render_logo::@14_6
 Eliminating variable (byte/signed word/word/dword/signed dword~) render_logo::$100 and from unused block render_logo::@14_6
-Eliminating variable (byte) render_logo::line1#14 and from unused block render_logo::@14_6
+Eliminating variable (byte) render_logo::line#60 and from unused block render_logo::@14_6
 Removing unused block render_logo::@14_6
 Succesful SSA optimization Pass2EliminateUnusedBlocks
 Not culling empty block because it shares successor with its predecessor. (label) loop::@13
@@ -7685,141 +7685,565 @@ Inlining constant with var siblings (const byte) render_logo::screen_idx#1
 Inlining constant with var siblings (const byte) render_logo::screen_idx#1
 Inlining constant with var siblings (const byte) render_logo::screen_idx#1
 Inlining constant with var siblings (const byte) render_logo::screen_idx#1
-Inlining constant with different constant siblings (const byte) render_logo::line3#0
-Inlining constant with different constant siblings (const byte) render_logo::line3#0
-Inlining constant with different constant siblings (const byte) render_logo::line3#0
-Inlining constant with different constant siblings (const byte) render_logo::line3#0
-Inlining constant with different constant siblings (const byte) render_logo::line3#0
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
+Inlining constant with different constant siblings (const byte) render_logo::line#1
 Inlining constant with var siblings (const byte) render_logo::logo_idx#1
 Inlining constant with var siblings (const byte) render_logo::logo_idx#1
 Inlining constant with var siblings (const byte) render_logo::logo_idx#1
 Inlining constant with var siblings (const byte) render_logo::logo_idx#1
-Inlining constant with different constant siblings (const byte) render_logo::line4#0
-Inlining constant with different constant siblings (const byte) render_logo::line4#0
-Inlining constant with different constant siblings (const byte) render_logo::line4#0
-Inlining constant with different constant siblings (const byte) render_logo::line4#0
-Inlining constant with different constant siblings (const byte) render_logo::line4#0
-Inlining constant with different constant siblings (const byte) render_logo::line1#0
-Inlining constant with different constant siblings (const byte) render_logo::line1#0
-Inlining constant with different constant siblings (const byte) render_logo::line1#0
-Inlining constant with different constant siblings (const byte) render_logo::line1#0
-Inlining constant with different constant siblings (const byte) render_logo::line1#0
-Inlining constant with different constant siblings (const byte) render_logo::line2#0
-Inlining constant with different constant siblings (const byte) render_logo::line2#0
-Inlining constant with different constant siblings (const byte) render_logo::line2#0
-Inlining constant with different constant siblings (const byte) render_logo::line2#0
-Inlining constant with different constant siblings (const byte) render_logo::line2#0
-Inlining constant with different constant siblings (const byte) render_logo::line3#1
-Inlining constant with different constant siblings (const byte) render_logo::line3#1
-Inlining constant with different constant siblings (const byte) render_logo::line3#1
-Inlining constant with different constant siblings (const byte) render_logo::line3#1
-Inlining constant with different constant siblings (const byte) render_logo::line3#1
-Inlining constant with different constant siblings (const byte) render_logo::line4#1
-Inlining constant with different constant siblings (const byte) render_logo::line4#1
-Inlining constant with different constant siblings (const byte) render_logo::line4#1
-Inlining constant with different constant siblings (const byte) render_logo::line4#1
-Inlining constant with different constant siblings (const byte) render_logo::line4#1
-Inlining constant with different constant siblings (const byte) render_logo::line4#4
-Inlining constant with different constant siblings (const byte) render_logo::line4#4
-Inlining constant with different constant siblings (const byte) render_logo::line4#4
-Inlining constant with different constant siblings (const byte) render_logo::line4#4
-Inlining constant with different constant siblings (const byte) render_logo::line4#4
-Inlining constant with different constant siblings (const byte) render_logo::line4#6
-Inlining constant with different constant siblings (const byte) render_logo::line4#6
-Inlining constant with different constant siblings (const byte) render_logo::line4#6
-Inlining constant with different constant siblings (const byte) render_logo::line4#6
-Inlining constant with different constant siblings (const byte) render_logo::line4#6
-Inlining constant with different constant siblings (const byte) render_logo::line4#8
-Inlining constant with different constant siblings (const byte) render_logo::line4#8
-Inlining constant with different constant siblings (const byte) render_logo::line4#8
-Inlining constant with different constant siblings (const byte) render_logo::line4#8
-Inlining constant with different constant siblings (const byte) render_logo::line4#8
-Inlining constant with different constant siblings (const byte) render_logo::line4#10
-Inlining constant with different constant siblings (const byte) render_logo::line4#10
-Inlining constant with different constant siblings (const byte) render_logo::line4#10
-Inlining constant with different constant siblings (const byte) render_logo::line4#10
-Inlining constant with different constant siblings (const byte) render_logo::line4#10
-Inlining constant with different constant siblings (const byte) render_logo::line3#4
-Inlining constant with different constant siblings (const byte) render_logo::line3#4
-Inlining constant with different constant siblings (const byte) render_logo::line3#4
-Inlining constant with different constant siblings (const byte) render_logo::line3#4
-Inlining constant with different constant siblings (const byte) render_logo::line3#4
-Inlining constant with different constant siblings (const byte) render_logo::line3#6
-Inlining constant with different constant siblings (const byte) render_logo::line3#6
-Inlining constant with different constant siblings (const byte) render_logo::line3#6
-Inlining constant with different constant siblings (const byte) render_logo::line3#6
-Inlining constant with different constant siblings (const byte) render_logo::line3#6
-Inlining constant with different constant siblings (const byte) render_logo::line3#8
-Inlining constant with different constant siblings (const byte) render_logo::line3#8
-Inlining constant with different constant siblings (const byte) render_logo::line3#8
-Inlining constant with different constant siblings (const byte) render_logo::line3#8
-Inlining constant with different constant siblings (const byte) render_logo::line3#8
-Inlining constant with different constant siblings (const byte) render_logo::line3#10
-Inlining constant with different constant siblings (const byte) render_logo::line3#10
-Inlining constant with different constant siblings (const byte) render_logo::line3#10
-Inlining constant with different constant siblings (const byte) render_logo::line3#10
-Inlining constant with different constant siblings (const byte) render_logo::line3#10
-Inlining constant with different constant siblings (const byte) render_logo::line2#1
-Inlining constant with different constant siblings (const byte) render_logo::line2#1
-Inlining constant with different constant siblings (const byte) render_logo::line2#1
-Inlining constant with different constant siblings (const byte) render_logo::line2#1
-Inlining constant with different constant siblings (const byte) render_logo::line2#1
-Inlining constant with different constant siblings (const byte) render_logo::line2#4
-Inlining constant with different constant siblings (const byte) render_logo::line2#4
-Inlining constant with different constant siblings (const byte) render_logo::line2#4
-Inlining constant with different constant siblings (const byte) render_logo::line2#4
-Inlining constant with different constant siblings (const byte) render_logo::line2#4
-Inlining constant with different constant siblings (const byte) render_logo::line2#6
-Inlining constant with different constant siblings (const byte) render_logo::line2#6
-Inlining constant with different constant siblings (const byte) render_logo::line2#6
-Inlining constant with different constant siblings (const byte) render_logo::line2#6
-Inlining constant with different constant siblings (const byte) render_logo::line2#6
-Inlining constant with different constant siblings (const byte) render_logo::line2#8
-Inlining constant with different constant siblings (const byte) render_logo::line2#8
-Inlining constant with different constant siblings (const byte) render_logo::line2#8
-Inlining constant with different constant siblings (const byte) render_logo::line2#8
-Inlining constant with different constant siblings (const byte) render_logo::line2#8
-Inlining constant with different constant siblings (const byte) render_logo::line2#10
-Inlining constant with different constant siblings (const byte) render_logo::line2#10
-Inlining constant with different constant siblings (const byte) render_logo::line2#10
-Inlining constant with different constant siblings (const byte) render_logo::line2#10
-Inlining constant with different constant siblings (const byte) render_logo::line2#10
-Inlining constant with different constant siblings (const byte) render_logo::line1#1
-Inlining constant with different constant siblings (const byte) render_logo::line1#1
-Inlining constant with different constant siblings (const byte) render_logo::line1#1
-Inlining constant with different constant siblings (const byte) render_logo::line1#1
-Inlining constant with different constant siblings (const byte) render_logo::line1#1
-Inlining constant with different constant siblings (const byte) render_logo::line1#4
-Inlining constant with different constant siblings (const byte) render_logo::line1#4
-Inlining constant with different constant siblings (const byte) render_logo::line1#4
-Inlining constant with different constant siblings (const byte) render_logo::line1#4
-Inlining constant with different constant siblings (const byte) render_logo::line1#4
-Inlining constant with different constant siblings (const byte) render_logo::line1#6
-Inlining constant with different constant siblings (const byte) render_logo::line1#6
-Inlining constant with different constant siblings (const byte) render_logo::line1#6
-Inlining constant with different constant siblings (const byte) render_logo::line1#6
-Inlining constant with different constant siblings (const byte) render_logo::line1#6
-Inlining constant with different constant siblings (const byte) render_logo::line1#8
-Inlining constant with different constant siblings (const byte) render_logo::line1#8
-Inlining constant with different constant siblings (const byte) render_logo::line1#8
-Inlining constant with different constant siblings (const byte) render_logo::line1#8
-Inlining constant with different constant siblings (const byte) render_logo::line1#8
-Inlining constant with different constant siblings (const byte) render_logo::line1#10
-Inlining constant with different constant siblings (const byte) render_logo::line1#10
-Inlining constant with different constant siblings (const byte) render_logo::line1#10
-Inlining constant with different constant siblings (const byte) render_logo::line1#10
-Inlining constant with different constant siblings (const byte) render_logo::line1#10
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#3
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#5
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#7
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#2
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#4
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#16
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#18
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#20
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#22
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#14
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#28
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#30
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#32
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#8
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#38
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#40
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#42
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#44
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#6
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#50
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#52
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#54
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
+Inlining constant with different constant siblings (const byte) render_logo::line#56
 Inlining constant with var siblings (const word) xsin_idx#16
 Inlining constant with var siblings (const word) xsin_idx#16
 Inlining constant with var siblings (const word) xsin_idx#16
 Inlining constant with var siblings (const word) xsin_idx#4
 Inlining constant with var siblings (const word) xsin_idx#4
 Inlining constant with var siblings (const word) xsin_idx#4
+Constant inlined render_logo::line#56 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined divr16u::rem#3 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$30 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#52 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$32 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#54 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$31 = (byte/signed byte/word/signed word/dword/signed dword) 40*++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined sin16s::isUpper#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#50 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mulu16_sel::select#4 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mulu16_sel::select#2 = (byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined mulu16_sel::select#3 = (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -7829,28 +8253,20 @@ Constant inlined fill::start#0 = (const byte*) SCREEN#0
 Constant inlined sin16s::isUpper#1 = (byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined mulu16_sel::select#1 = (byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined render_logo::$33 = (byte/signed byte/word/signed word/dword/signed dword) 40*++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line1#10 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$36 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$35 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line3#8 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$37 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::ch#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$39 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line2#6 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line2#8 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$41 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line2#1 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$40 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$43 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line2#4 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined sin16s_gen2::wavelength#0 = (const word) XSIN_SIZE#0
 Constant inlined fill::size#1 = (word/signed word/dword/signed dword) 1000
 Constant inlined fill::size#0 = (word/signed word/dword/signed dword) 1000
-Constant inlined render_logo::line2#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::toD0181_$7#0 = >((word))(const byte*) LOGO#0>>(byte/signed byte/word/signed word/dword/signed dword) 2&(byte/signed byte/word/signed word/dword/signed dword) 15
 Constant inlined xsin_idx#16 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::toD0181_$3#0 = >((word))(const byte*) SCREEN#0&(word/signed word/dword/signed dword) 16383<<(byte/signed byte/word/signed word/dword/signed dword) 2
-Constant inlined render_logo::line4#10 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$45 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined sin16s_gen2::sintab#1 = (const signed word[XSIN_SIZE#0]) xsin#0
 Constant inlined render_logo::$44 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
@@ -7868,29 +8284,32 @@ Constant inlined render_logo::$57 = (byte/signed byte/word/signed word/dword/sig
 Constant inlined render_logo::screen_idx#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::screen_idx#1 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$59 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line1#6 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$61 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line1#8 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$60 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$62 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$65 = (byte/signed byte/word/signed word/dword/signed dword) 40*++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line1#4 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::toD0181_$0#0 = ((word))(const byte*) SCREEN#0
-Constant inlined render_logo::line1#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line1#1 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined divr16u::dividend#1 = >(const dword) PI2_u4f28#0
 Constant inlined divr16u::dividend#2 = <(const dword) PI2_u4f28#0
 Constant inlined main::toD0181_$4#0 = ((word))(const byte*) LOGO#0
+Constant inlined render_logo::line#2 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mulu16_sel::v2#2 = (dword/signed dword) 65536/(byte/signed byte/word/signed word/dword/signed dword) 6
+Constant inlined render_logo::line#1 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$67 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line2#10 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#4 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$66 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#3 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$69 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#6 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$68 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#5 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#8 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#7 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$8 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$70 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$9 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$72 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#14 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$71 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined sin16s_gen2::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$74 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
@@ -7903,25 +8322,27 @@ Constant inlined render_logo::$77 = (byte/signed byte/word/signed word/dword/sig
 Constant inlined render_logo::$79 = (byte/signed byte/word/signed word/dword/signed dword) 40*++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$81 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mul16s::b#0 = (const signed word) sin16s_gen2::ampl#0
-Constant inlined render_logo::line4#4 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$83 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$82 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line4#6 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$85 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line4#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#20 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$87 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line4#1 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$86 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#22 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::toD0181_$1#0 = ((word))(const byte*) SCREEN#0&(word/signed word/dword/signed dword) 16383
 Constant inlined main::toD0181_$5#0 = >((word))(const byte*) LOGO#0
 Constant inlined render_logo::$89 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::logo_idx#1 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#16 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#18 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined fill::val#0 = (const byte) BLACK#0
 Constant inlined render_logo::$91 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::toD0181_gfx#0 = (const byte*) LOGO#0
 Constant inlined render_logo::$94 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$93 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#30 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$95 = (byte/signed byte/word/signed word/dword/signed dword) 40*++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#32 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined fill::val#1 = (const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8
 Constant inlined xsin_idx#4 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined div32u16u::dividend#0 = (const dword) PI2_u4f28#0
@@ -7929,25 +8350,24 @@ Constant inlined sin16s_gen2::$1 = (const signed word) sin16s_gen2::ampl#0>>(byt
 Constant inlined render_logo::$90 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined divr16u::quotient#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mul16u::res#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line3#10 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$12 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$14 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$13 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined divr16u::divisor#1 = (const word) XSIN_SIZE#0
 Constant inlined divr16u::divisor#0 = (const word) XSIN_SIZE#0
-Constant inlined render_logo::line4#8 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line3#4 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line3#6 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line3#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined render_logo::line3#1 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#28 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#42 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$21 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$20 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#44 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#40 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::toD0181_$6#0 = >((word))(const byte*) LOGO#0>>(byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined loop::$3 = (const word) XSIN_SIZE#0*(byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined main::toD0181_$2#0 = ((word))(const byte*) SCREEN#0&(word/signed word/dword/signed dword) 16383<<(byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined render_logo::$22 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined div32u16u::divisor#0 = (const word) XSIN_SIZE#0
 Constant inlined render_logo::$27 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined render_logo::line#38 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$26 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined render_logo::$29 = (byte/signed byte/word/signed word/dword/signed dword) 40*++(byte/signed byte/word/signed word/dword/signed dword) 0
 Succesful SSA optimization Pass2ConstantInlining
@@ -8953,10 +9373,7 @@ VARIABLE REGISTER WEIGHTS
 (byte/signed word/word/dword/signed dword~) render_logo::$88 202.0
 (byte/signed word/word/dword/signed dword~) render_logo::$92 202.0
 (byte/signed word/word/dword/signed dword~) render_logo::$96 202.0
-(byte) render_logo::line1
-(byte) render_logo::line2
-(byte) render_logo::line3
-(byte) render_logo::line4
+(byte) render_logo::line
 (byte) render_logo::logo_idx
 (byte) render_logo::logo_idx#10 60.73333333333334
 (byte) render_logo::logo_idx#11 53.86666666666667
@@ -13396,10 +13813,7 @@ FINAL SYMBOL TABLE
 (label) render_logo::@9_4
 (label) render_logo::@9_5
 (label) render_logo::@return
-(byte) render_logo::line1
-(byte) render_logo::line2
-(byte) render_logo::line3
-(byte) render_logo::line4
+(byte) render_logo::line
 (byte) render_logo::logo_idx
 (byte) render_logo::logo_idx#10 reg byte y 60.73333333333334
 (byte) render_logo::logo_idx#11 reg byte y 53.86666666666667

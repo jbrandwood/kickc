@@ -52,6 +52,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testUnrollScreenFillForDouble() throws IOException, URISyntaxException {
+      compileAndCompare("unroll-screenfill-for-double");
+   }
+
+   @Test
    public void testUnrollScreenFillFor() throws IOException, URISyntaxException {
       compileAndCompare("unroll-screenfill-for");
    }

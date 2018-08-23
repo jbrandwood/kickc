@@ -46,6 +46,11 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
+   //@Test
+   //public void testUnrollCall() throws IOException, URISyntaxException {
+   //   compileAndCompare("unroll-call");
+   //}
+
    @Test
    public void testUnrollInfinite() throws IOException, URISyntaxException {
       assertError("unroll-infinite", "Loop cannot be unrolled.");

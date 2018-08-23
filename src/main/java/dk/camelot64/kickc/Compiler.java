@@ -347,7 +347,6 @@ public class Compiler {
       getLog().append("\nFINAL CONTROL FLOW GRAPH");
       getLog().append(program.getGraph().toString(program));
 
-
    }
 
    private void pass4RegisterAllocation() {

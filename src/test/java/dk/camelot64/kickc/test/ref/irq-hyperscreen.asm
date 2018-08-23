@@ -1,18 +1,18 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label KERNEL_IRQ = $314
   .label RASTER = $d012
+  .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
   .const VIC_RSEL = 8
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .const IRQ_RASTER = 1
-  .label FGCOL = $d021
-  .const WHITE = 1
-  .const RED = 2
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
+  .label KERNEL_IRQ = $314
+  .const WHITE = 1
+  .const RED = 2
   .label GHOST_BYTE = $3fff
   jsr main
 main: {
@@ -37,7 +37,7 @@ main: {
 }
 irq_bottom_2: {
     lda #WHITE
-    sta FGCOL
+    sta BORDERCOL
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
@@ -50,12 +50,12 @@ irq_bottom_2: {
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
     lda #RED
-    sta FGCOL
+    sta BORDERCOL
     jmp $ea31
 }
 irq_bottom_1: {
     lda #WHITE
-    sta FGCOL
+    sta BORDERCOL
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
@@ -68,6 +68,6 @@ irq_bottom_1: {
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
     lda #RED
-    sta FGCOL
+    sta BORDERCOL
     jmp $ea81
 }

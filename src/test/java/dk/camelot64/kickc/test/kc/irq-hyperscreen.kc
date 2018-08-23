@@ -1,22 +1,5 @@
 // A raster IRQ that opens the top/bottom border.
-
-const void()** KERNEL_IRQ = $0314;
-const byte* RASTER = $d012;
-const byte* VIC_CONTROL = $d011;
-const byte VIC_RSEL = $8;
-const byte* IRQ_STATUS = $d019;
-const byte* IRQ_ENABLE = $d01a;
-const byte IRQ_RASTER = %00000001;
-const byte IRQ_COLLISION_BG = %00000010;
-const byte IRQ_COLLISION_SPRITE = %00000100;
-const byte IRQ_LIGHTPEN = %00001000;
-const byte* BGCOL = $d020;
-const byte* FGCOL = $d021;
-const byte WHITE = 1;
-const byte RED = 2;
-
-const byte* CIA1_INTERRUPT = $dc0d;
-const byte CIA_INTERRUPT_CLEAR = $7f;
+import "c64.kc"
 
 const byte* GHOST_BYTE = $3fff;
 
@@ -37,7 +20,7 @@ void main() {
 
 // Interrupt Routine 1
 interrupt(kernel_min) void irq_bottom_1() {
-    *FGCOL = WHITE;
+    *BORDERCOL = WHITE;
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     *VIC_CONTROL &= ($ff^VIC_RSEL);
     // Acknowledge the IRQ
@@ -45,12 +28,12 @@ interrupt(kernel_min) void irq_bottom_1() {
     // Trigger IRQ 2 at line $fd
     *RASTER = $fd;
     *KERNEL_IRQ = &irq_bottom_2;
-    *FGCOL = RED;
+    *BORDERCOL = RED;
 }
 
 // Interrupt Routine 2
 interrupt(kernel_keyboard) void irq_bottom_2() {
-    *FGCOL = WHITE;
+    *BORDERCOL = WHITE;
     // Set screen height back to 25 lines (preparing for the next screen)
     *VIC_CONTROL |= VIC_RSEL;
     // Acknowledge the IRQ
@@ -58,5 +41,5 @@ interrupt(kernel_keyboard) void irq_bottom_2() {
     // Trigger IRQ 1 at line $fa
     *RASTER = $fa;
     *KERNEL_IRQ = &irq_bottom_1;
-    *FGCOL = RED;
+    *BORDERCOL = RED;
 }

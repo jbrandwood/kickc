@@ -54,6 +54,8 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
             newBlock.addStatement(newStatement);
             if(newStatement instanceof StatementConditionalJump) {
                newBlock.setConditionalSuccessor(((StatementConditionalJump) newStatement).getDestination());
+            } else if(newStatement instanceof StatementCall) {
+               newBlock.setCallSuccessor(block.getCallSuccessor());
             }
          }
          newBlock.setDefaultSuccessor(unrollLabel(block.getDefaultSuccessor(), blockToNewBlock));
@@ -106,7 +108,7 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
          for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
             for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                if(unrollLoop.getBlocks().contains(phiRValue.getPredecessor())) {
-                  // Found a phi variable with values from the poriginal loop in a loop successor block
+                  // Found a phi variable with values from the original loop in a loop successor block
                   // Add another value when entering from the unrolled loop
                   phiVariable.setrValue(unrollLabel(phiRValue.getPredecessor(), blockToNewBlock), unrollValue(phiRValue.getrValue(), definedToNewVar));
                   break;
@@ -190,8 +192,13 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
                unrollLabel(labelRef, blockToNewBlock),
                conditional.getSource()
          );
-            newConditional.setDeclaredUnroll(conditional.isDeclaredUnroll());
+         newConditional.setDeclaredUnroll(conditional.isDeclaredUnroll());
          return newConditional;
+      } else if(statement instanceof StatementCall) {
+         StatementCall call = (StatementCall) statement;
+         StatementCall newCall = new StatementCall(null, call.getProcedureName(), null, call.getSource());
+         newCall.setProcedure(call.getProcedure());
+         return newCall;
       } else {
          throw new RuntimeException("Statement not handled by unroll " + statement);
       }

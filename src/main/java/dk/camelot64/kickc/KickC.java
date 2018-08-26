@@ -1,12 +1,13 @@
 package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.model.Program;
+import kickass.KickAssembler;
 import picocli.CommandLine;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.concurrent.Callable;
+
+import static junit.framework.TestCase.fail;
 
 /** KickC Commandline */
 @CommandLine.Command(description = "Compiles KickC source files to KickAssembler.",
@@ -14,13 +15,16 @@ import java.util.concurrent.Callable;
 public class KickC implements Callable<Void> {
 
    @CommandLine.Parameters(index = "0", description = "The KickC file to compile.")
-   private File file = null;
+   private File kcFile = null;
 
    @CommandLine.Option(names = {"-libdir", "-I"}, description = "Path to a library folder, where the compiler looks for included files.")
    private File libdir = null;
 
    @CommandLine.Option(names = {"-o"}, description = "Name of the output file. By default it is the same as the input file with extension .asm")
-   private String outname = null;
+   private String asmFileName = null;
+
+   @CommandLine.Option(names = {"-a"}, description = "Assemble the output file using KickAssembler. Produces a .prg file.")
+   private boolean assemble = false;
 
    public static void main(String[] args) throws Exception {
       CommandLine.call(new KickC(), args);
@@ -35,18 +39,38 @@ public class KickC implements Callable<Void> {
       if(libdir != null) {
          compiler.addImportPath(libdir.getPath());
       }
-      if(outname == null) {
-         outname = getFileBaseName(file) + ".asm";
+
+      String outDirName = kcFile.getParent();
+      File outDir = new File(".");
+
+      if(asmFileName == null) {
+         asmFileName = getFileBaseName(kcFile) + ".asm";
       }
-      System.out.println("Compiling "+file.getPath());
-      Program program = compiler.compile(file.getName());
-      System.out.println("Writing asm file "+outname);
-      FileOutputStream outputStream = new FileOutputStream(outname);
+      File asmFile = new File(asmFileName);
+      System.out.println("Compiling "+ kcFile.getPath());
+      Program program = compiler.compile(kcFile.getName());
+      System.out.println("Writing asm file "+ asmFileName);
+      FileOutputStream outputStream = new FileOutputStream(asmFileName);
       OutputStreamWriter writer = new OutputStreamWriter(outputStream);
       String assembler = program.getAsm().toString(false);
       writer.write(assembler);
       writer.close();
       outputStream.close();
+
+      // Copy Resource Files (if out-dir is different from current dir)
+
+      if(assemble) {
+         File asmPrgFile = new File(getFileBaseName(kcFile)+ ".prg");
+         File asmLogFile = new File(getFileBaseName(kcFile)+ ".klog");
+         System.out.println("Assembling to "+ asmPrgFile.getPath());
+         ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
+         System.setOut(new PrintStream(kickAssOut));
+         int asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem"});
+         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+         if(asmRes != 0) {
+            fail("KickAssembling file failed! " + kickAssOut.toString());
+         }
+      }
 
       return null;
    }

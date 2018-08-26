@@ -6,8 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import kickass.KickAssembler;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -177,12 +176,13 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       writer.write(outputString);
       writer.close();
       outputStream.close();
-      //System.out.println("ASM generated to " + file.getAbsolutePath());
+      //System.out.println("Long Branch ASM generated to " + file.getAbsolutePath());
       return file;
    }
 
    public File getTmpFile(String fileName, String extension) {
-      return new File(tmpDir.toFile(), fileName + extension);
+      Path kcPath = FileSystems.getDefault().getPath(fileName);
+      return new File(tmpDir.toFile(), kcPath.getFileName().toString() + extension);
    }
 
    public File getTmpFile(String fileName) {

@@ -248,6 +248,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testHelloWorld2Inline() throws IOException, URISyntaxException {
+      compileAndCompare("helloworld2-inline");
+   }
+
+   @Test
    public void testChessboard() throws IOException, URISyntaxException {
       compileAndCompare("chessboard");
    }

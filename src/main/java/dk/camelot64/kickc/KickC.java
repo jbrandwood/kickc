@@ -12,15 +12,26 @@ import java.util.concurrent.Callable;
 import static junit.framework.TestCase.fail;
 
 /** KickC Commandline */
-@CommandLine.Command(description = "Compiles KickC source files to KickAssembler.",
-      name = "kickc", mixinStandardHelpOptions = true, version = "KickC 0.5 SNAPSHOT")
+@CommandLine.Command(
+      description = "Compiles a KickC source file, creating a KickAssembler source file. " +
+            "KickC is a compiler for a C-family language creating optimized and readable 6502 assembler code.%n%n" +
+            "See https://gitlab.com/camelot/kickc for detailed information about KickC.",
+      name = "kickc",
+      mixinStandardHelpOptions = true,
+      headerHeading = "Usage:%n%n",
+      synopsisHeading = "  ",
+      descriptionHeading = "%nDescription:%n%n",
+      parameterListHeading = "%nParameters:%n",
+      optionListHeading = "%nOptions:%n",
+      version = "KickC 0.5 SNAPSHOT"
+)
 public class KickC implements Callable<Void> {
 
-   @CommandLine.Parameters(index = "0", description = "The KickC file to compile.")
+   @CommandLine.Parameters(index = "0", description = "The KickC source file to compile.")
    private Path kcFile = null;
 
-   @CommandLine.Option(names = {"-I", "-libdir" }, description = "Path to a library folder, where the compiler looks for included files.")
-   private List<Path> libDirs = null;
+   @CommandLine.Option(names = {"-I", "-libdir" }, description = "Path to a library folder, where the compiler looks for included files. This option can be repeated to add multiple library folders.")
+   private List<Path> libDir = null;
 
    @CommandLine.Option(names = {"-o"}, description = "Name of the output file. By default it is the same as the input file with extension .asm")
    private String asmFileName = null;
@@ -40,16 +51,16 @@ public class KickC implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      System.out.println("//-------------------------------------");
+      System.out.println("//-------------------------------------------");
       System.out.println("//   " + getVersion() + " by Jesper Gravgaard   ");
-      System.out.println("//-------------------------------------");
+      System.out.println("//-------------------------------------------");
 
       Compiler compiler = new Compiler();
 
       compiler.addImportPath(".");
-      if(libDirs != null) {
-         for(Path libDir : libDirs) {
-            compiler.addImportPath(libDir.toString());
+      if(libDir != null) {
+         for(Path libPath : libDir) {
+            compiler.addImportPath(libPath.toString());
          }
       }
 

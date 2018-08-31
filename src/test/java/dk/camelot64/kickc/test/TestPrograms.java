@@ -25,13 +25,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestPrograms {
 
-   ReferenceHelper helper;
+   String stdlibPath = "src/main/kc/stdlib";
+   String testPath = "src/test/java/dk/camelot64/kickc/test/kc";
 
-   String testPath;
+   ReferenceHelper helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
+
 
    public TestPrograms() {
-      testPath = "src/test/java/dk/camelot64/kickc/test/kc";
-      helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
    }
 
    @BeforeClass
@@ -1003,6 +1003,7 @@ public class TestPrograms {
    private void testFile(String fileName) throws IOException, URISyntaxException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
+      compiler.addImportPath(stdlibPath);
       compiler.addImportPath(testPath);
       Program program = compiler.compile(fileName);
 

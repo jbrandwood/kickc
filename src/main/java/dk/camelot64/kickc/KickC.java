@@ -6,6 +6,7 @@ import picocli.CommandLine;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static junit.framework.TestCase.fail;
@@ -19,7 +20,7 @@ public class KickC implements Callable<Void> {
    private Path kcFile = null;
 
    @CommandLine.Option(names = {"-I", "-libdir" }, description = "Path to a library folder, where the compiler looks for included files.")
-   private Path libDir = null;
+   private List<Path> libDirs = null;
 
    @CommandLine.Option(names = {"-o"}, description = "Name of the output file. By default it is the same as the input file with extension .asm")
    private String asmFileName = null;
@@ -46,8 +47,10 @@ public class KickC implements Callable<Void> {
       Compiler compiler = new Compiler();
 
       compiler.addImportPath(".");
-      if(libDir != null) {
-         compiler.addImportPath(libDir.toString());
+      if(libDirs != null) {
+         for(Path libDir : libDirs) {
+            compiler.addImportPath(libDir.toString());
+         }
       }
 
       String fileBaseName = getFileBaseName(kcFile);

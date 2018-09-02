@@ -33,7 +33,7 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-I", "-libdir" }, description = "Path to a library folder, where the compiler looks for included files. This option can be repeated to add multiple library folders.")
    private List<Path> libDir = null;
 
-   @CommandLine.Option(names = {"-o"}, description = "Name of the output file. By default it is the same as the input file with extension .asm")
+   @CommandLine.Option(names = {"-o"}, description = "Name of the output assembler file. By default it is the same as the input file with extension .asm")
    private String asmFileName = null;
 
    @CommandLine.Option(names = {"-odir" }, description = "Path to the output folder, where the compiler places all generated files. By default the folder of the output file is used.")

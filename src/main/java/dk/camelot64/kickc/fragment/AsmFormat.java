@@ -157,6 +157,17 @@ public class AsmFormat {
          return getAsmConstant(program, new ConstantBinary(operand, Operators.PLUS, new ConstantInteger((long)1)), outerPrecedence, codeScope);
       } else if(Operators.DECREMENT.equals(operator)) {
          return getAsmConstant(program, new ConstantBinary(operand, Operators.MINUS, new ConstantInteger((long)1)), outerPrecedence, codeScope);
+      } else if(Operators.BOOL_NOT.equals(operator)) {
+         SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
+         if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
+            return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long)0xff)), outerPrecedence, codeScope);
+         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+            return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long)0xffff)), outerPrecedence, codeScope);
+         } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
+            return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long)0xffffffff)), outerPrecedence, codeScope);
+         } else {
+            throw new CompileError("Unhandled type "+operand);
+         }
       } else {
          return operator.getOperator() +
                getAsmConstant(program, operand, operator.getPrecedence(), codeScope);

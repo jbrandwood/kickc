@@ -16,7 +16,7 @@ public class OperatorBitwiseNot extends OperatorUnary {
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral left) {
       if(left instanceof ConstantInteger) {
-         return new ConstantInteger(~((ConstantInteger) left).getInteger());
+         return new ConstantInteger(Math.abs(~((ConstantInteger) left).getInteger()));
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + left );
    }

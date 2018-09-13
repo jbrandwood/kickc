@@ -46,6 +46,11 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
+   @Test
+   public void testBitwiseNot() throws IOException, URISyntaxException {
+      compileAndCompare("bitwise-not");
+   }
+
    //@Test
    //public void testUnrollCall() throws IOException, URISyntaxException {
    //   compileAndCompare("unroll-call");

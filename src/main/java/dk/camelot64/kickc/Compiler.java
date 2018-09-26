@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +28,12 @@ public class Compiler {
       this.program = new Program();
    }
 
-   public static void loadAndParseFile(String fileName, Program program, Pass0GenerateStatementSequence pass0GenerateStatementSequence, boolean isImport) {
+   public static void loadAndParseFile(String fileName, Program program, Path currentPath) {
       try {
          if(!fileName.endsWith(".kc")) {
             fileName += ".kc";
          }
-         File file = loadFile(fileName, program);
+         File file = loadFile(fileName, currentPath, program);
          List<String> imported = program.getImported();
          if(imported.contains(file.getAbsolutePath())) {
             return;
@@ -58,15 +59,18 @@ public class Compiler {
                throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
             }
          });
-         pass0GenerateStatementSequence.generate(parser.file());
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(file, parser.file(), program);
+         pass0GenerateStatementSequence.generate();
       } catch(IOException e) {
          throw new CompileError("Error loading file " + fileName, e);
       }
    }
 
-   public static File loadFile(String fileName, Program program) {
-      List<String> importPaths = program.getImportPaths();
-      for(String importPath : importPaths) {
+   public static File loadFile(String fileName, Path currentPath, Program program) {
+      List<String> searchPaths = new ArrayList<>();
+      searchPaths.add(currentPath.toString());
+      searchPaths.addAll(program.getImportPaths());
+      for(String importPath : searchPaths) {
          if(!importPath.endsWith("/")) {
             importPath += "/";
          }
@@ -87,12 +91,14 @@ public class Compiler {
       program.getImportPaths().add(path);
    }
 
-   public Program compile(String fileName) throws IOException {
+   public Program compile(String fileName) {
       program.setFileName(fileName);
+      program.setStatementSequence(new StatementSequence());
       try {
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(program);
-         loadAndParseFile(fileName, program, pass0GenerateStatementSequence, false);
-         StatementSequence sequence = pass0GenerateStatementSequence.getSequence();
+         File currentPath = new File(".");
+         loadAndParseFile(fileName, program, currentPath.toPath());
+
+         StatementSequence sequence = program.getStatementSequence();
          sequence.addStatement(new StatementCall(null, "main", new ArrayList<>(), new StatementSource(RuleContext.EMPTY)));
          program.setStatementSequence(sequence);
 

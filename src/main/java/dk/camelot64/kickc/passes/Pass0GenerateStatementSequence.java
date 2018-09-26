@@ -21,6 +21,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -32,15 +33,25 @@ import java.util.regex.Pattern;
  */
 public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
-   private Program program;
-   private Stack<Scope> scopeStack;
-   private StatementSequence sequence;
+   /** The source file currently being parsed. */
+   private File file;
+   /** The source ANTLR parse tree of the source file. */
+   private KickCParser.FileContext fileCtx;
 
-   public Pass0GenerateStatementSequence(Program program) {
+   /** The program containing all compile structures. */
+   private Program program;
+   /** Used to build the statements of the source file. */
+   private StatementSequence sequence;
+   /** Used to build the scopes of the source file. */
+   private Stack<Scope> scopeStack;
+
+   public Pass0GenerateStatementSequence(File file, KickCParser.FileContext fileCtx, Program program) {
+      this.file = file;
+      this.fileCtx = fileCtx;
       this.program = program;
+      this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
       scopeStack.push(program.getScope());
-      this.sequence = new StatementSequence();
    }
 
    private Scope getCurrentSymbols() {
@@ -56,8 +67,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return null;
    }
 
-   public void generate(KickCParser.FileContext file) {
-      this.visit(file);
+   public void generate() {
+      this.visit(fileCtx);
    }
 
    @Override
@@ -82,7 +93,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Importing " + importFileName);
       }
-      Compiler.loadAndParseFile(importFileName, program, this, true);
+      Path currentPath = file.toPath().getParent();
+      Compiler.loadAndParseFile(importFileName, program, currentPath);
       return null;
    }
 
@@ -268,7 +280,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       TerminalNode resource = ctx.STRING();
       String resourceName = resource.getText();
       resourceName = resourceName.substring(1, resourceName.length() - 1);
-      File resourceFile = Compiler.loadFile(resourceName, program);
+      Path currentPath = file.toPath().getParent();
+      File resourceFile = Compiler.loadFile(resourceName, currentPath, program);
       program.addAsmResourceFile(resourceFile.toPath());
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
@@ -883,10 +896,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          return new ForwardVariableRef(ctx.NAME().getText());
       }
       throw new CompileError("Error! Unhandled symbol " + symbol.toString(program));
-   }
-
-   public StatementSequence getSequence() {
-      return sequence;
    }
 
    /** A declaration directive. */

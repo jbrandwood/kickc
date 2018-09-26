@@ -1,5 +1,6 @@
 package dk.camelot64.kickc;
 
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import kickass.KickAssembler;
 import picocli.CommandLine;
@@ -8,8 +9,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.List;
 import java.util.concurrent.Callable;
-
-import static junit.framework.TestCase.fail;
 
 /** KickC Commandline */
 @CommandLine.Command(
@@ -117,7 +116,7 @@ public class KickC implements Callable<Void> {
          int kasmResult = KickAssembler.main2(new String[]{asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem"});
          System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
          if(kasmResult != 0) {
-            fail("KickAssembling file failed! " + kasmLogOutputStream.toString());
+            throw new CompileError("KickAssembling file failed! " + kasmLogOutputStream.toString());
          }
       }
 

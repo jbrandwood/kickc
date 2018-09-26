@@ -100,7 +100,13 @@ public class Procedure extends Scope {
       HARDWARE_ALL,
       /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save necessary registers based on clobber. */
       HARDWARE_CLOBBER
+      ;
+
+      /** The default interrupt type if none is explicitly declared (KERNEL_MIN). */
+      public static InterruptType DEFAULT = InterruptType.KERNEL_MIN;
+
    }
+
 
    @Override
    public String toString() {

@@ -133,6 +133,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInterruptNoType() throws IOException, URISyntaxException {
+      compileAndCompare("test-interrupt-notype");
+   }
+
+   @Test
    public void testMultiplexer() throws IOException, URISyntaxException {
       compileAndCompare("simple-multiplexer", 10);
    }

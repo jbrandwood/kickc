@@ -44,7 +44,10 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-e"}, description = "Execute the assembled prg file using VICE. Implicitly assembles the output.")
    private boolean execute = false;
 
-   public static void main(String[] args) throws Exception {
+   @CommandLine.Option(names = {"-Ouplift" }, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
+   private Integer optimizeUpliftCombinations = null;
+
+   public static void main(String[] args) {
       CommandLine.call(new KickC(), args);
    }
 
@@ -56,7 +59,6 @@ public class KickC implements Callable<Void> {
 
       Compiler compiler = new Compiler();
 
-      compiler.addImportPath(".");
       if(libDir != null) {
          for(Path libPath : libDir) {
             compiler.addImportPath(libPath.toString());
@@ -79,6 +81,10 @@ public class KickC implements Callable<Void> {
 
       if(asmFileName == null) {
          asmFileName = fileBaseName + ".asm";
+      }
+
+      if(optimizeUpliftCombinations!=null) {
+         compiler.setUpliftCombinations(optimizeUpliftCombinations);
       }
 
       System.out.println("Compiling " + kcFile);

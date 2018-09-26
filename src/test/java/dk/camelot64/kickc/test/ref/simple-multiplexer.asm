@@ -40,17 +40,17 @@ loop: {
     cmp #$ff
     bne b4
     inc BORDERCOL
-    ldx sin_idx
-    ldy #0
+    ldy sin_idx
+    ldx #0
   b7:
-    lda YSIN,x
-    sta PLEX_YPOS,y
-    txa
+    lda YSIN,y
+    sta PLEX_YPOS,x
+    tya
     clc
     adc #8
-    tax
-    iny
-    cpy #PLEX_COUNT-1+1
+    tay
+    inx
+    cpx #PLEX_COUNT-1+1
     bne b7
     inc sin_idx
     inc BORDERCOL

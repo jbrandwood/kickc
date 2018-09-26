@@ -134,7 +134,7 @@ public class TestPrograms {
 
    @Test
    public void testMultiplexer() throws IOException, URISyntaxException {
-      compileAndCompare("simple-multiplexer");
+      compileAndCompare("simple-multiplexer", 10);
    }
 
    @Test
@@ -334,7 +334,7 @@ public class TestPrograms {
 
    @Test
    public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
-      compileAndCompare("c64dtv-gfxexplorer");
+      compileAndCompare("c64dtv-gfxexplorer", 10);
    }
 
    @Test
@@ -359,7 +359,7 @@ public class TestPrograms {
 
    @Test
    public void testC64DtvGfxModes() throws IOException, URISyntaxException {
-      compileAndCompare("c64dtv-gfxmodes");
+      compileAndCompare("c64dtv-gfxmodes", 10);
    }
 
    @Test
@@ -484,7 +484,7 @@ public class TestPrograms {
 
    @Test
    public void testComparisons() throws IOException, URISyntaxException {
-      compileAndCompare("test-comparisons");
+      compileAndCompare("test-comparisons", 10);
    }
 
    @Test
@@ -1004,17 +1004,24 @@ public class TestPrograms {
       fail("Expected compile error.");
    }
 
-
    private void compileAndCompare(String filename) throws IOException, URISyntaxException {
       TestPrograms tester = new TestPrograms();
-      tester.testFile(filename);
+      tester.testFile(filename, null);
    }
 
-   private void testFile(String fileName) throws IOException, URISyntaxException {
+   private void compileAndCompare(String filename, int upliftCombinations) throws IOException, URISyntaxException {
+      TestPrograms tester = new TestPrograms();
+      tester.testFile(filename, upliftCombinations);
+   }
+
+   private void testFile(String fileName, Integer upliftCombinations) throws IOException, URISyntaxException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
       compiler.addImportPath(stdlibPath);
       compiler.addImportPath(testPath);
+      if(upliftCombinations!=null) {
+         compiler.setUpliftCombinations(upliftCombinations);
+      }
       Program program = compiler.compile(fileName);
 
       compileAsm(fileName, program);

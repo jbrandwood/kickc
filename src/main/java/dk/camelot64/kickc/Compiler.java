@@ -24,8 +24,15 @@ public class Compiler {
 
    private Program program;
 
+   /** The number of combinations to test when uplifting variables into registers. */
+   private int upliftCombinations = 100;
+
    public Compiler() {
       this.program = new Program();
+   }
+
+   public void setUpliftCombinations(int upliftCombinations) {
+      this.upliftCombinations = upliftCombinations;
    }
 
    public static void loadAndParseFile(String fileName, Program program, Path currentPath) {
@@ -412,14 +419,14 @@ public class Compiler {
 
       // Attempt uplifting registers through a lot of combinations
       //getLog().setVerboseUplift(true);
-      new Pass4RegisterUpliftCombinations(program).performUplift(100);
+      new Pass4RegisterUpliftCombinations(program).performUplift(upliftCombinations);
 
       //getLog().setVerboseUplift(true);
       //new Pass4RegisterUpliftStatic(program).performUplift();
       //getLog().setVerboseUplift(false);
 
       // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
-      new Pass4RegisterUpliftRemains(program).performUplift(100);
+      new Pass4RegisterUpliftRemains(program).performUplift(upliftCombinations);
 
       // Final register coalesce and finalization
       new Pass4ZeroPageCoalesceAssignment(program).coalesce();

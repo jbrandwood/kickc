@@ -491,7 +491,7 @@ keyboard_event_scan: {
     sta keycode
     sta row
   b1:
-    ldy row
+    lda row
     jsr keyboard_matrix_read
     sta row_scan
     ldy row
@@ -604,6 +604,7 @@ keyboard_event_pressed: {
     rts
 }
 keyboard_matrix_read: {
+    tay
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
     lda CIA1_PORT_B
@@ -1861,7 +1862,7 @@ bitmap_line: {
     .label yd = 7
     .label x0 = 9
     .label x1 = $12
-    .label y0 = $e
+    .label y0 = $f
     lda x0
     cmp x1
     bcc b1
@@ -1886,7 +1887,8 @@ bitmap_line: {
   breturn:
     rts
   b3:
-    ldx x1
+    lda x1
+    sta bitmap_line_xdyi.x
     sty bitmap_line_xdyi.y
     jsr bitmap_line_xdyi
     jmp breturn
@@ -1904,7 +1906,8 @@ bitmap_line: {
     jsr bitmap_line_ydxd
     jmp breturn
   b6:
-    ldx x1
+    lda x1
+    sta bitmap_line_xdyd.x
     sty bitmap_line_xdyd.y
     lda x0
     sta bitmap_line_xdyd.x1
@@ -1932,7 +1935,8 @@ bitmap_line: {
     jsr bitmap_line_ydxd
     jmp breturn
   b10:
-    ldx x0
+    lda x0
+    sta bitmap_line_xdyd.x
     jsr bitmap_line_xdyd
     jmp breturn
   b9:
@@ -1949,26 +1953,28 @@ bitmap_line: {
     jsr bitmap_line_ydxi
     jmp breturn
   b13:
-    ldx x0
+    lda x0
+    sta bitmap_line_xdyi.x
     lda x1
     sta bitmap_line_xdyi.x1
     jsr bitmap_line_xdyi
     jmp breturn
 }
 bitmap_line_xdyi: {
-    .label _6 = $12
-    .label y = $e
+    .label x = $e
+    .label y = $f
     .label x1 = 9
     .label xd = 8
     .label yd = 7
-    .label e = $f
+    .label e = $12
     lda yd
     lsr
     sta e
   b1:
+    ldx x
     ldy y
     jsr bitmap_plot
-    inx
+    inc x
     lda e
     clc
     adc yd
@@ -1982,10 +1988,9 @@ bitmap_line_xdyi: {
     sbc xd
     sta e
   b2:
-    ldy x1
-    iny
-    sty _6
-    cpx _6
+    ldx x1
+    inx
+    cpx x
     bne b1
     rts
 }
@@ -2015,8 +2020,8 @@ bitmap_plot: {
     rts
 }
 bitmap_line_ydxi: {
-    .label y = $f
-    .label y1 = $e
+    .label y = $e
+    .label y1 = $f
     .label yd = 7
     .label xd = 8
     .label e = 9
@@ -2040,15 +2045,16 @@ bitmap_line_ydxi: {
     sbc yd
     sta e
   b2:
-    ldy y1
-    iny
-    cpy y
+    lda y1
+    clc
+    adc #1
+    cmp y
     bne b1
     rts
 }
 bitmap_line_xdyd: {
-    .label _6 = $f
-    .label y = $e
+    .label x = $e
+    .label y = $f
     .label x1 = $12
     .label xd = 8
     .label yd = 7
@@ -2057,9 +2063,10 @@ bitmap_line_xdyd: {
     lsr
     sta e
   b1:
+    ldx x
     ldy y
     jsr bitmap_plot
-    inx
+    inc x
     lda e
     clc
     adc yd
@@ -2073,16 +2080,15 @@ bitmap_line_xdyd: {
     sbc xd
     sta e
   b2:
-    ldy x1
-    iny
-    sty _6
-    cpx _6
+    ldx x1
+    inx
+    cpx x
     bne b1
     rts
 }
 bitmap_line_ydxd: {
-    .label y = $f
-    .label y1 = $e
+    .label y = $e
+    .label y1 = $f
     .label yd = 7
     .label xd = 8
     .label e = 9
@@ -2106,9 +2112,10 @@ bitmap_line_ydxd: {
     sbc yd
     sta e
   b2:
-    ldy y1
-    iny
-    cpy y
+    lda y1
+    clc
+    adc #1
+    cmp y
     bne b1
     rts
 }

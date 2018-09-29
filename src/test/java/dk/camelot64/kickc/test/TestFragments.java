@@ -30,6 +30,8 @@ public class TestFragments {
       AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
    }
 
+   /*
+
    @Test
    public void testAssignmentsBu() throws IOException, URISyntaxException {
       testFragments("fragments-assignment-copy", assignmentsBu());
@@ -278,6 +280,8 @@ public class TestFragments {
       return false;
    }
 
+   */
+
    /** A signature that is part of a fragment signature. The signature may have sub-values (eg. if. it is a _derefidx_ signature */
    public static class Value {
 
@@ -313,6 +317,5 @@ public class TestFragments {
       }
 
    }
-
 
 }

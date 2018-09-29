@@ -1,11 +1,16 @@
 image: maven:3-jdk-8
 
-kickc:
+compile:
   stage: build
   script:
   - "mvn package"
   - "cat target/site/jacoco/index.html"
+
+release:
+  stage: deploy
+  script:
+  - "unzip -d target/release target/kickc-release.zip"
   artifacts:
-    name: KickC_${CI_BUILD_REF_NAME}
+    name: kickc_${CI_BUILD_REF_NAME}
     paths:
-    - ./target/kickc*.zip
+    - ./target/release/*

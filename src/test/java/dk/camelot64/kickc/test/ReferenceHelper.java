@@ -106,7 +106,23 @@ public class ReferenceHelper {
    }
 
    public File getTmpFile(String fileName, String extension) {
-      return new File(tempDir.toFile(), fileName + extension);
+      File file = new File(tempDir.toFile(), fileName + extension);
+      mkPath(file);
+      return file;
    }
+
+   /**
+    * Ensures that the path to the passed file is created.
+    * @param file The file to create a path for
+    */
+   private void mkPath(File file) {
+      Path parent = file.toPath().getParent();
+      File dir = parent.toFile();
+      if(!dir.exists()) {
+         mkPath(dir);
+         dir.mkdir();
+      }
+   }
+
 
 }

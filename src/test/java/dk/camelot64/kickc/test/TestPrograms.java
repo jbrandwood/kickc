@@ -115,7 +115,7 @@ public class TestPrograms {
 
    @Test
    public void testIrqHyperscreen() throws IOException, URISyntaxException {
-      compileAndCompare("irq-hyperscreen");
+      compileAndCompare("examples/irq/irq-hyperscreen");
    }
 
    @Test
@@ -140,7 +140,7 @@ public class TestPrograms {
 
    @Test
    public void testMultiplexer() throws IOException, URISyntaxException {
-      compileAndCompare("simple-multiplexer", 10);
+      compileAndCompare("examples/multiplexer/simple-multiplexer", 10);
    }
 
    @Test
@@ -165,17 +165,17 @@ public class TestPrograms {
 
    @Test
    public void testSinePlotter() throws IOException, URISyntaxException {
-      compileAndCompare("sine-plotter");
+      compileAndCompare("examples/sinplotter/sine-plotter");
    }
 
    @Test
    public void testScrollLogo() throws IOException, URISyntaxException {
-      compileAndCompare("scrolllogo");
+      compileAndCompare("examples/scrolllogo/scrolllogo");
    }
 
    @Test
    public void testShowLogo() throws IOException, URISyntaxException {
-      compileAndCompare("showlogo");
+      compileAndCompare("examples/showlogo/showlogo");
    }
 
    @Test
@@ -250,7 +250,7 @@ public class TestPrograms {
 
    @Test
    public void testHelloWorld() throws IOException, URISyntaxException {
-      compileAndCompare("helloworld");
+      compileAndCompare("examples/helloworld/helloworld");
    }
 
    @Test
@@ -280,7 +280,7 @@ public class TestPrograms {
 
    @Test
    public void testVarForwardProblem() throws IOException, URISyntaxException {
-         compileAndCompare("var-forward-problem");
+      compileAndCompare("var-forward-problem");
    }
 
    @Test
@@ -375,7 +375,7 @@ public class TestPrograms {
 
    @Test
    public void testChargenAnalysis() throws IOException, URISyntaxException {
-      compileAndCompare("chargen-analysis");
+      compileAndCompare("examples/chargen/chargen-analysis");
    }
 
    @Test
@@ -485,7 +485,7 @@ public class TestPrograms {
 
    @Test
    public void testRasterBars() throws IOException, URISyntaxException {
-      compileAndCompare("raster-bars");
+      compileAndCompare("examples/rasterbars/raster-bars");
    }
 
    @Test
@@ -555,7 +555,7 @@ public class TestPrograms {
 
    @Test
    public void testSinusSprites() throws IOException, URISyntaxException {
-      compileAndCompare("sinus-sprites");
+      compileAndCompare("examples/sinsprites/sinus-sprites");
    }
 
    @Test
@@ -650,7 +650,7 @@ public class TestPrograms {
 
    @Test
    public void testScrollBig() throws IOException, URISyntaxException {
-      compileAndCompare("scrollbig");
+      compileAndCompare("examples/scrollbig/scrollbig");
    }
 
    @Test
@@ -675,7 +675,7 @@ public class TestPrograms {
 
    @Test
    public void testBitmapBresenham() throws IOException, URISyntaxException {
-      compileAndCompare("bitmap-bresenham");
+      compileAndCompare("examples/bresenham/bitmap-bresenham");
    }
 
    @Test
@@ -725,7 +725,7 @@ public class TestPrograms {
 
    @Test
    public void testScroll() throws IOException, URISyntaxException {
-      compileAndCompare("scroll");
+      compileAndCompare("examples/scroll/scroll");
    }
 
    @Test
@@ -1025,7 +1025,7 @@ public class TestPrograms {
       Compiler compiler = new Compiler();
       compiler.addImportPath(stdlibPath);
       compiler.addImportPath(testPath);
-      if(upliftCombinations!=null) {
+      if(upliftCombinations != null) {
          compiler.setUpliftCombinations(upliftCombinations);
       }
       Program program = compiler.compile(fileName);
@@ -1047,9 +1047,12 @@ public class TestPrograms {
    private void compileAsm(String fileName, Program program) throws IOException {
       writeBinFile(fileName, ".asm", program.getAsm().toString(false));
       for(Path asmResourceFile : program.getAsmResourceFiles()) {
-         File binFile = getBinFile(asmResourceFile.getFileName().toString());
+         File asmFile = getBinFile(fileName, ".asm");
+         String asmFolder = asmFile.getParent();
+         File resFile = new File(asmFolder, asmResourceFile.getFileName().toString());
+         mkPath(resFile);
          try {
-            Files.copy(asmResourceFile, binFile.toPath());
+            Files.copy(asmResourceFile, resFile.toPath());
          } catch(FileAlreadyExistsException e) {
             // Ignore this
          }
@@ -1080,11 +1083,23 @@ public class TestPrograms {
    }
 
    public File getBinFile(String fileName, String extension) {
-      return new File(getBinDir(), fileName + extension);
+      File binFile = new File(getBinDir(), fileName + extension);
+      mkPath(binFile);
+      return binFile;
    }
 
-   public File getBinFile(String fileName) {
-      return new File(getBinDir(), fileName);
+*/
+   /**
+    * Ensures that the path to the passed file is created.
+    * @param file The file to create a path for
+    */
+   private void mkPath(File file) {
+      Path parent = file.toPath().getParent();
+      File dir = parent.toFile();
+      if(!dir.exists()) {
+         mkPath(dir);
+         dir.mkdir();
+      }
    }
 
    public File getBinDir() {
@@ -1092,10 +1107,8 @@ public class TestPrograms {
       File binDir = new File(tempDir.toFile(), "bin");
       if(!binDir.exists()) {
          binDir.mkdir();
-
       }
       return binDir;
    }
 
-*/
 }

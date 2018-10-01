@@ -8,6 +8,9 @@ set KICKCLIB_HOME=%KICKC_HOME%\stdlib
 echo KICKCLIB_HOME=%KICKCLIB_HOME%
 REM KICKASSEMBLER HOME
 REM VICE HOME
+REM KICKC_JAR
+for %%I in ( %KICKC_HOME%\lib\kickc-*.jar ) do set KICKC_JAR=%%I
+echo KICKC_JAR=%KICKC_JAR%
 
-echo java -jar %KICKC_HOME%\lib\kickc-0.5-SNAPSHOT.jar -I %KICKCLIB_HOME% %*
-java -jar %KICKC_HOME%\lib\kickc-0.5-SNAPSHOT.jar -I %KICKCLIB_HOME% %*
+echo java -jar %KICKC_JAR% -I %KICKCLIB_HOME% %*
+java -jar %KICKC_JAR% -I %KICKCLIB_HOME% %*

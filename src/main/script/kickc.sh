@@ -7,6 +7,8 @@ export KICKC_HOME="$(dirname $0)/.."
 export KICKCLIB_HOME="$KICKC_HOME/stdlib"
 # KICKASSEMBLER HOME
 # VICE HOME
+# KICKC_JAR
+export KICKC_JAR=$KICKC_HOME/lib/kickc-*.jar
 
-echo java -jar lib/kickc-0.5-SNAPSHOT.jar -I $KICKCLIB_HOME $*
-java -jar lib/kickc-0.5-SNAPSHOT.jar -I $KICKCLIB_HOME $*
+echo java -jar $KICKC_JAR -I $KICKCLIB_HOME $*
+java -jar $KICKC_JAR -I $KICKCLIB_HOME $*

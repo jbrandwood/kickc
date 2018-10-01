@@ -12,4 +12,4 @@ The KickC language is classic C with some limitations, some modifications and so
 
 * [Follow](https://gitlab.com/camelot/kickc/issues) the open/closed features being developed
 
-* [Discuss](http://www.facebook.com/groups/RetroAssembler/) the compiler on facebook
+* [Discuss](http://www.facebook.com/groups/RetroAssembler/) the compiler and receive news on facebook

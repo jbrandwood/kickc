@@ -22,7 +22,7 @@ import java.util.concurrent.Callable;
       descriptionHeading = "%nDescription:%n%n",
       parameterListHeading = "%nParameters:%n",
       optionListHeading = "%nOptions:%n",
-      version = "KickC 0.5 SNAPSHOT"
+      version = "KickC 0.5"
 )
 public class KickC implements Callable<Void> {
 

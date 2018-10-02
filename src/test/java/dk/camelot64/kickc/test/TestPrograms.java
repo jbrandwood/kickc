@@ -46,7 +46,6 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
-   /*
    @Test
    public void testBitwiseNot() throws IOException, URISyntaxException {
       compileAndCompare("bitwise-not");
@@ -1088,7 +1087,6 @@ public class TestPrograms {
       return binFile;
    }
 
-*/
    /**
     * Ensures that the path to the passed file is created.
     * @param file The file to create a path for

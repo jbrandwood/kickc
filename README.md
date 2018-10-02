@@ -6,7 +6,7 @@ The KickC language is classic C with some limitations, some modifications and so
 
 ## BETA
 
-KickC is currently in beta, and crashes quite often resulting in some cryptic errors. Also it will some times create ASM code that does not work properly. 
+KickC is currently in beta, and crashes quite often resulting in cryptic errors. Also it will some times create ASM code that does not work properly. 
 Feel free to test it and report any problems or errors you encounter, but do not expect it to produce production quality code.
 Also, be prepared that major breaking changes (to syntax, to semantics, etc.) may be implemented in the next versions.
 

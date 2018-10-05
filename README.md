@@ -1,4 +1,4 @@
-# KickC - 6502 C-family Language Compiler 
+# KickC - Optimizing 6502 C-family Language Compiler 
 
 KickC is a compiler for a C-family language creating optimized and readable 6502 assembler code.
 

@@ -18,4 +18,4 @@ Also, be prepared that major breaking changes (to syntax, to semantics, etc.) ma
 
 * [Follow](https://gitlab.com/camelot/kickc/issues) the open/closed features being developed
 
-* [Discuss](http://www.facebook.com/groups/RetroAssembler/) the compiler and receive news on facebook
+* [Discuss](https://www.facebook.com/groups/302286200587943/) the compiler and receive news on facebook

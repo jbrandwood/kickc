@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.VariableVersion;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.ProgramScopeRef;
 import dk.camelot64.kickc.model.values.Value;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -107,9 +107,9 @@ public class AsmFragmentTemplate {
       if(signature.contains("c4")) bindings.put("c4", new ConstantInteger(40L));
       if(signature.contains("la1")) bindings.put("la1", new Label("@1", scope, true));
       AsmFragmentInstance fragmentInstance =
-            new AsmFragmentInstance(new Program(), signature, ScopeRef.ROOT, this, bindings);
+            new AsmFragmentInstance(new Program(), signature, ProgramScopeRef.ROOT, this, bindings);
       AsmProgram asm = new AsmProgram();
-      asm.startSegment( ScopeRef.ROOT, null, signature);
+      asm.startSegment( ProgramScopeRef.ROOT, null, signature);
       fragmentInstance.generate(asm);
       AsmClobber asmClobber = asm.getClobber();
       this.clobber = new AsmFragmentClobber(asmClobber);

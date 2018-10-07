@@ -63,6 +63,9 @@ public class SymbolRef implements Value {
 
    public int getScopeDepth() {
       int depth = 0;
+      if(fullName.length()>0) {
+         depth += 2;
+      }
       char[] chars = fullName.toCharArray();
       for(char c : chars) {
          if(c == ':') depth++;

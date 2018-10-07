@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.ProgramScopeRef;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -75,7 +75,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
          // Try out the coalesce to test if it works
          RegisterCombination combination = new RegisterCombination();
          combination.setRegister(ec2, register1);
-         return Pass4RegisterUpliftCombinations.generateCombinationAsm(combination, program, unknownFragments, ScopeRef.ROOT);
+         return Pass4RegisterUpliftCombinations.generateCombinationAsm(combination, program, unknownFragments, ProgramScopeRef.ROOT);
       }
       return false;
    }

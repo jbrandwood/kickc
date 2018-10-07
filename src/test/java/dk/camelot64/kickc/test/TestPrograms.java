@@ -55,6 +55,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testLocalScope() throws IOException, URISyntaxException {
+      compileAndCompare("local-scope");
+   }
+
+   @Test
    public void testUnrollInfinite() throws IOException, URISyntaxException {
       assertError("unroll-infinite", "Loop cannot be unrolled.");
    }

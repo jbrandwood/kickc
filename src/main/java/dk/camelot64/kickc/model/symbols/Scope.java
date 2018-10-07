@@ -25,20 +25,6 @@ public abstract class Scope implements Symbol {
       this.symbols = new LinkedHashMap<>();
    }
 
-   public Scope(
-         String name,
-         HashMap<String, Symbol> symbols,
-         int intermediateVarCount,
-         int intermediateLabelCount) {
-      this.name = name;
-      this.symbols = symbols;
-      this.intermediateVarCount = intermediateVarCount;
-      this.intermediateLabelCount = intermediateLabelCount;
-      for(Symbol symbol : symbols.values()) {
-         symbol.setScope(this);
-      }
-   }
-
    public Scope() {
       this.name = "";
       this.parentScope = null;
@@ -69,9 +55,7 @@ public abstract class Scope implements Symbol {
       return getFullName(this);
    }
 
-   public ScopeRef getRef() {
-      return new ScopeRef(this);
-   }
+   public abstract ScopeRef getRef();
 
    @Override
    public Scope getScope() {
@@ -262,6 +246,13 @@ public abstract class Scope implements Symbol {
       return symbol;
    }
 
+   public BlockScope addBlockScope() {
+      String name = "@" + intermediateLabelCount++;
+      BlockScope scope = new BlockScope(name, this);
+      add(scope);
+      return scope;
+   }
+
    public Label getLabel(String name) {
       return (Label) getSymbol(name);
    }
@@ -304,6 +295,10 @@ public abstract class Scope implements Symbol {
 
    public Procedure getProcedure(ProcedureRef ref) {
       return (Procedure) getSymbol(ref);
+   }
+
+   public BlockScope getBlockScope(BlockScopeRef ref) {
+      return (BlockScope) getSymbol(ref);
    }
 
    public String toString(Program program, Class symbolClass) {

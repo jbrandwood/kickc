@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Symbol describing a procedure/function */
-public class Procedure extends Scope {
+public class Procedure extends CallingScope {
 
    public static final ProcedureRef ROOT = new ProcedureRef("");
    private final SymbolType returnType;

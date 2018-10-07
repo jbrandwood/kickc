@@ -40,7 +40,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
                break;
             }
          }
-         if(codeSymbol == null) {
+         if(codeSymbol == null ) {
             throw new AssertionFailed("Compile process error. Symbol found in symbol table, but not in code. " + codeSymbolFullName);
          }
       }
@@ -90,6 +90,9 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
          addSymbol(block.getDefaultSuccessor());
          addSymbol(block.getConditionalSuccessor());
          addSymbol(block.getCallSuccessor());
+         if(block.getScope() instanceof BlockScopeRef) {
+            addSymbol(block.getScope());
+         }
          return super.visitBlock(block);
       }
 

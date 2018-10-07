@@ -43,24 +43,31 @@ public class Pass4CodeGeneration {
 
    public void generate() {
       AsmProgram asm = new AsmProgram();
-      ScopeRef currentScope = ScopeRef.ROOT;
 
-      asm.startSegment( currentScope, null, "Basic Upstart");
+      asm.startSegment( ProgramScopeRef.ROOT, null, "Basic Upstart");
       asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
       asm.addLine(new AsmBasicUpstart("main"));
       asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(0x080d)));
 
       // Generate global ZP labels
-      asm.startSegment( currentScope, null, "Global Constants & labels");
-      addConstants(asm, currentScope);
-      addZpLabels(asm, currentScope);
+      asm.startSegment( ProgramScopeRef.ROOT, null, "Global Constants & labels");
+      addConstants(asm, ProgramScopeRef.ROOT);
+      addZpLabels(asm, ProgramScopeRef.ROOT);
+
+      ScopeRef currentScope = ProgramScopeRef.ROOT;
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         if(!block.getScope().equals(currentScope)) {
-            if(!ScopeRef.ROOT.equals(currentScope)) {
-               addData(asm, currentScope);
-               asm.addScopeEnd();
-            }
-            currentScope = block.getScope();
+         ScopeRef newScope = block.getScope();
+
+         // End scopes until the new scope is a sub-scope of the current scope
+         while(!newScope.equals(currentScope) && !newScope.isSubScope(currentScope)) {
+            addData(asm, currentScope);
+            asm.addScopeEnd();
+            currentScope = currentScope.getParentScope();
+         }
+
+         // Start scopes until the new scope is the current scope
+         while(!currentScope.equals(newScope)) {
+            currentScope = newScope.getParentScope(currentScope.getScopeDepth()+1);
             asm.startSegment(currentScope, null, block.getLabel().getFullName());
             asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
             // Add all ZP labels for the scope
@@ -84,7 +91,7 @@ public class Pass4CodeGeneration {
          }
          // Generate statements
          genStatements(asm, block);
-         // Generate exit
+         // Generate block exit
          ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
          if(defaultSuccessor != null) {
             if(defaultSuccessor.hasPhiBlock()) {
@@ -103,18 +110,21 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      if(!ScopeRef.ROOT.equals(currentScope)) {
+      // End scopes until we reach the ROOT
+      while(!ProgramScopeRef.ROOT.equals(currentScope)) {
          addData(asm, currentScope);
          asm.addScopeEnd();
+         currentScope = currentScope.getParentScope();
       }
-      addData(asm, ScopeRef.ROOT);
+      // Add the ROOT scope data
+      addData(asm, ProgramScopeRef.ROOT);
       // Add all absolutely placed inline KickAsm
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementKickAsm) {
                StatementKickAsm statementKasm = (StatementKickAsm) statement;
                if(statementKasm.getLocation() != null) {
-                  String asmLocation = AsmFormat.getAsmConstant(program, (ConstantValue) statementKasm.getLocation(), 99, ScopeRef.ROOT);
+                  String asmLocation = AsmFormat.getAsmConstant(program, (ConstantValue) statementKasm.getLocation(), 99, ProgramScopeRef.ROOT);
                   asm.addLine(new AsmSetPc("Inline", asmLocation));
                   addKickAsm(asm, statementKasm);
                }
@@ -439,7 +449,7 @@ public class Pass4CodeGeneration {
          } else if(statement instanceof StatementReturn) {
             Procedure.InterruptType interruptType = null;
             ScopeRef scope = block.getScope();
-            if(!scope.equals(ScopeRef.ROOT)) {
+            if(!scope.equals(ProgramScopeRef.ROOT)) {
                Procedure procedure = getScope().getProcedure(scope.getFullName());
                if(procedure!=null) {
                   interruptType = procedure.getInterruptType();

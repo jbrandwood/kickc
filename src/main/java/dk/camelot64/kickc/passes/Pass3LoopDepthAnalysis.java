@@ -1,9 +1,10 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.values.CallingScopeRef;
 import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.*;
 
@@ -27,39 +28,46 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
     * Uses the call graph and natural loops of the control flow graph.
     */
    public void findLoopDepths() {
-      Deque<LabelRef> todo = new ArrayDeque<>();
-      Set<LabelRef> done = new LinkedHashSet<>();
+      Deque<CallingScopeRef> todo = new ArrayDeque<>();
+      Set<CallingScopeRef> done = new LinkedHashSet<>();
 
       List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
       for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
-         LabelRef label = entryPointBlock.getLabel();
-         if(label.getFullName().equals(LabelRef.BEGIN_BLOCK_NAME)) {
-            label = callGraph.getFirstCallBlock();
-         }
-         todo.push(label);
+         //LabelRef label = entryPointBlock.getLabel();
+         //if(label.getFullName().equals(LabelRef.BEGIN_BLOCK_NAME)) {
+         //   label = callGraph.getFirstCallBlock();
+         //}
+         ScopeRef entryPointScope = entryPointBlock.getScope();
+         todo.push((CallingScopeRef) entryPointScope);
       }
 
       while(!todo.isEmpty()) {
-         LabelRef currentScope = todo.pop();
+         CallingScopeRef currentScope = todo.pop();
          done.add(currentScope);
          CallGraph.CallBlock currentCallBlock = callGraph.getOrCreateCallBlock(currentScope);
          // Add called sub blocks for later processing
-         Collection<LabelRef> subBlocks = currentCallBlock.getCalledBlocks();
-         for(LabelRef subBlock : subBlocks) {
+         Collection<ProcedureRef> subBlocks = currentCallBlock.getCalledBlocks();
+         for(ProcedureRef subBlock : subBlocks) {
             if(!done.contains(subBlock) && !todo.contains(subBlock)) {
                todo.add(subBlock);
             }
          }
          // Find the scope blocks calling the current scope block - and the loop depth of the blocks where the call statement is
          int callingDepth = getCallingDepth(currentScope);
+         // Find the depth of all loops in the current calling scope
          findLoopDepth(currentScope, callingDepth);
       }
    }
 
-   private int getCallingDepth(LabelRef currentScope) {
+   /**
+    * Find the initial loop depth of a calling scope by examining all calls to the scope
+    * @param currentScope The calling scope to examine
+    * @return The initial loop depth of the calling scope - ie. max( loop depth of any call to calling scope) + 1
+    */
+   private int getCallingDepth(CallingScopeRef currentScope) {
       int callingDepth = 1;
-      Collection<LabelRef> callingScopes = callGraph.getCallingBlocks(currentScope);
-      for(LabelRef callingScope : callingScopes) {
+      Collection<CallingScopeRef> callingScopes = callGraph.getCallingBlocks(currentScope);
+      for(CallingScopeRef callingScope : callingScopes) {
          CallGraph.CallBlock callingBlock = callGraph.getCallBlock(callingScope);
          Collection<CallGraph.CallBlock.Call> calls = callingBlock.getCalls(currentScope);
          for(CallGraph.CallBlock.Call call : calls) {
@@ -88,15 +96,15 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
       return callingDepth;
    }
 
-   private void findLoopDepth(LabelRef currentScope, int initialDepth) {
+   private void findLoopDepth(CallingScopeRef currentScope, int initialDepth) {
       NaturalLoopSet loopSet = getProgram().getLoopSet();
-      // Find loops in the current scope block
+      // Find all loops in the current calling scope
       List<NaturalLoop> currentScopeLoops = new ArrayList<>();
       for(NaturalLoop loop : loopSet.getLoops()) {
          LabelRef loopHead = loop.getHead();
          ControlFlowBlock loopHeadBlock = getGraph().getBlock(loopHead);
-         LabelRef scopeRef = Pass3CallGraphAnalysis.getScopeRef(loopHeadBlock, getProgram());
-         if(scopeRef.equals(currentScope)) {
+         CallingScopeRef loopCallingScope = Pass3CallGraphAnalysis.getCallingScopeRef(loopHeadBlock, getProgram());
+         if(loopCallingScope.equals(currentScope)) {
             // Loop is inside current scope block!
             currentScopeLoops.add(loop);
          }
@@ -110,9 +118,8 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
       }
 
       // Find loop nesting depths in current scope loops
-      Deque<NaturalLoop> todo = new ArrayDeque<>();
       Set<NaturalLoop> done = new LinkedHashSet<>();
-      todo.addAll(currentScopeLoops);
+      Deque<NaturalLoop> todo = new ArrayDeque<>(currentScopeLoops);
       while(!todo.isEmpty()) {
          NaturalLoop loop = todo.getFirst();
          todo.removeFirst();

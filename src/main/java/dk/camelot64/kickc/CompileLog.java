@@ -40,7 +40,7 @@ public class CompileLog {
    /**
     * Should loop analysis be verbose.
     */
-   private boolean verboseLoopAnalysis = false;
+   private boolean verboseLoopAnalysis = true;
 
    /**
     * Should choices not to optimize be verbose.
@@ -55,18 +55,18 @@ public class CompileLog {
    /**
     * Should the parsing be verbose.
     */
-   private boolean verboseParse = false;
+   private boolean verboseParse = true;
 
    /**
     * Should the creation of the SSA be verbose.
     */
-   private boolean verboseCreateSsa = false;
+   private boolean verboseCreateSsa = true;
 
 
    /**
     * Should the log be output to System.out while being built
     */
-   private boolean sysOut = false;
+   private boolean sysOut = true;
 
    public CompileLog() {
       this.log = new StringBuilder();

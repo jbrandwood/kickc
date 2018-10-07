@@ -346,11 +346,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                score = 100;
             } else if(var.isVersion()) {
                name = var.getFullNameUnversioned();
-               score = 4 - var.getScopeDepth();
+               score = 5 - var.getScopeDepth();
             } else {
                // must be intermediate
                name = var.getFullName();
-               score = 2 - var.getScopeDepth();
+               score = 3 - var.getScopeDepth();
             }
             Integer nameScore = varNameScore.get(name);
             if(nameScore == null) {

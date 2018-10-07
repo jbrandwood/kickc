@@ -229,7 +229,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          ControlFlowBlock block = getProgram().getStatementInfos().getBlock(statement);
          if(block.isProcedureEntry(getProgram())) {
             // Current is first statement of a call - add the statement preceding the call.
-            Collection<CallGraph.CallBlock.Call> callers = getProgram().getCallGraph().getCallers(block.getLabel());
+            Collection<CallGraph.CallBlock.Call> callers = getProgram().getCallGraph().getCallers((ProcedureRef) block.getScope());
             for(CallGraph.CallBlock.Call call : callers) {
                Statement callStmt = getProgram().getStatementInfos().getStatement(call.getCallStatementIdx());
                Collection<Statement> precedingCallStmt = getPrecedingStatement(callStmt);

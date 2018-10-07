@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model.values;
 
 /** A reference to a procedure */
-public class ProcedureRef extends ScopeRef implements RValue {
+public class ProcedureRef extends CallingScopeRef implements RValue {
 
    public ProcedureRef(String fullName) {
       super(fullName);

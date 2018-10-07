@@ -506,7 +506,7 @@ public class AsmFragmentTemplateSynthesizer {
             body = "";
          } else {
             CharStream fragmentCharStream = CharStreams.fromStream(fragmentStream);
-            body = removeTrailingNewlines(fragmentCharStream.toString());
+            body = fixNewlines(fragmentCharStream.toString());
 
          }
          return new AsmFragmentTemplate(signature, body);
@@ -518,21 +518,17 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    /**
-    * Remove any trailing newlines in the body
+    * Fix all newlines in the body.
+    * - Removes all '\r'
+    * - Removes all trailing newlines
+    *
     * @param body The body
-    * @return The body without trailing newlines
+    * @return The body with fixed newlines
     */
-   private String removeTrailingNewlines(String body) {
-      boolean done = false;
-      while(!done) {
-         done  = true;
-         if(body.length() > 0) {
-            char lastChar = body.charAt(body.length() - 1);
-            if(lastChar == '\n' || lastChar == '\r') {
-               body = body.substring(0, body.length() - 1);
-               done = false;
-            }
-         }
+   private String fixNewlines(String body) {
+      body = body.replace("\r", "");
+      while(body.length() > 0 && body.charAt(body.length() - 1) == '\n') {
+         body = body.substring(0, body.length() - 1);
       }
       return body;
    }

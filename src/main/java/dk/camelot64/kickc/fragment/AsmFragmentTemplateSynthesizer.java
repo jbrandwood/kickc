@@ -6,8 +6,10 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
@@ -24,18 +26,24 @@ import java.util.*;
  */
 public class AsmFragmentTemplateSynthesizer {
 
-   /** Resource Folder containing the fragment files. */
-   public static final String FRAGMENT_RESOURCE_FOLDER = "dk/camelot64/kickc/fragment/asm/";
-
    /** The static instance. */
-   static AsmFragmentTemplateSynthesizer SYNTHESIZER = new AsmFragmentTemplateSynthesizer();
+   static AsmFragmentTemplateSynthesizer SYNTHESIZER = null;
+
+   /** Initialize the fragment template synthesizer. */
+   public static void initialize(String folder) {
+      SYNTHESIZER = new AsmFragmentTemplateSynthesizer(folder);
+   }
 
    /** Create synthesizer. */
-   private AsmFragmentTemplateSynthesizer() {
+   private AsmFragmentTemplateSynthesizer(String fragmentFolder) {
+      this.fragmentFolder = fragmentFolder;
       this.bestFragmentCache = new LinkedHashMap<>();
       this.synthesisGraph = new LinkedHashMap<>();
       this.bestTemplateUpdate = new ArrayDeque<>();
    }
+
+   /** The folder containing fragment files. */
+   private String fragmentFolder;
 
    /** Cache for the best fragment templates. Maps signature to the best fragment template for the signature. */
    private Map<String, AsmFragmentTemplate> bestFragmentCache;
@@ -43,10 +51,14 @@ public class AsmFragmentTemplateSynthesizer {
    /** Special singleton representing that the fragment can not be synthesized or loaded. */
    private AsmFragmentTemplate UNKNOWN = new AsmFragmentTemplate("UNKNOWN", null);
 
-   public static void clearCaches() {
-      SYNTHESIZER = new AsmFragmentTemplateSynthesizer();
-   }
-
+   /**
+    * Contains the synthesis for each fragment template signature.
+    * The synthesis is capable of loading the fragment from disk or synthesizing it from other fragments using synthesis rules.
+    * The synthesis caches the best fragments for each clobber profile (loaded or synthesized).
+    * This map is effectively a full-graph where the nodes are synthesis for signatures and edges are the
+    * synthesis rules capable of synthesizing one fragment temple from another.
+    */
+   private Map<String, AsmFragmentSynthesis> synthesisGraph;
 
    public static AsmFragmentInstance getFragmentInstance(AsmFragmentInstanceSpec instanceSpec, CompileLog log) {
       String signature = instanceSpec.getSignature();
@@ -126,15 +138,6 @@ public class AsmFragmentTemplateSynthesizer {
       }
       return synthesis.getBestTemplates();
    }
-
-   /**
-    * Contains the synthesis for each fragment template signature.
-    * The synthesis is capable of loading the fragment from disk or synthesizing it from other fragments using synthesis rules.
-    * The synthesis caches the best fragments for each clobber profile (loaded or synthesized).
-    * This map is effectively a full-graph where the nodes are synthesis for signatures and edges are the
-    * synthesis rules capable of synthesizing one fragment temple from another.
-    */
-   private Map<String, AsmFragmentSynthesis> synthesisGraph;
 
    /**
     * The synthesis is capable of loading the fragment from disk or synthesizing it from other fragments using synthesis rules.
@@ -494,10 +497,13 @@ public class AsmFragmentTemplateSynthesizer {
     */
    private AsmFragmentTemplate loadFragmentTemplate(String signature, CompileLog log) {
       try {
-         ClassLoader classLoader = AsmFragmentTemplateSynthesizer.class.getClassLoader();
-         URL fragmentUrl = classLoader.getResource(FRAGMENT_RESOURCE_FOLDER + signature + ".asm");
-         if(fragmentUrl == null) return null;
-         InputStream fragmentStream = fragmentUrl.openStream();
+         File fragmentFile = new File(fragmentFolder + signature + ".asm");
+         //System.out.println("looking for "+fragmentFile);
+         if(!fragmentFile.exists()) {
+            return null;
+         }
+         //System.out.println("found "+fragmentFile);
+         InputStream fragmentStream = new FileInputStream(fragmentFile);
          String body;
          if(fragmentStream.available() == 0) {
             body = "";
@@ -518,9 +524,7 @@ public class AsmFragmentTemplateSynthesizer {
    }
 
    File[] allFragmentFiles() {
-      ClassLoader classLoader = AsmFragmentTemplateSynthesizer.class.getClassLoader();
-      String path = classLoader.getResource("dk/camelot64/kickc/fragment/asm/").getPath();
-      return new File(path).listFiles((dir, name) -> name.endsWith(".asm"));
+      return new File(fragmentFolder).listFiles((dir, name) -> name.endsWith(".asm"));
 
    }
 

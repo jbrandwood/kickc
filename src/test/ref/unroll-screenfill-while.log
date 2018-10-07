@@ -1,0 +1,1438 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte) main::x#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  (byte) main::x#5 ← phi( main/(byte) main::x#0 main::@4/(byte) main::x#1 )
+  (byte*) main::SCREEN#3 ← phi( main/(byte*) main::SCREEN#0 main::@4/(byte*) main::SCREEN#4 )
+  (byte) main::line#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3
+  (byte) main::x#4 ← phi( main::@1/(byte) main::x#5 main::@3/(byte) main::x#2 )
+  (byte*) main::SCREEN#2 ← phi( main::@1/(byte*) main::SCREEN#3 main::@3/(byte*) main::SCREEN#1 )
+  (byte) main::line#2 ← phi( main::@1/(byte) main::line#0 main::@3/(byte) main::line#1 )
+  (bool~) main::$0 ← (byte) main::line#2 != (byte/signed byte/word/signed word/dword/signed dword) 25
+  unroll if((bool~) main::$0) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2
+  (byte) main::x#2 ← phi( main::@2/(byte) main::x#4 )
+  (byte*) main::SCREEN#1 ← phi( main::@2/(byte*) main::SCREEN#2 )
+  (byte) main::line#3 ← phi( main::@2/(byte) main::line#2 )
+  (byte/signed word/word/dword/signed dword~) main::$1 ← (byte) main::line#3 * (byte/signed byte/word/signed word/dword/signed dword) 40
+  (byte*~) main::$2 ← (byte*) main::SCREEN#1 + (byte/signed word/word/dword/signed dword~) main::$1
+  *((byte*~) main::$2 + (byte) main::x#2) ← (byte) main::x#2
+  (byte) main::line#1 ← ++ (byte) main::line#3
+  to:main::@2
+main::@4: scope:[main]  from main::@2
+  (byte*) main::SCREEN#4 ← phi( main::@2/(byte*) main::SCREEN#2 )
+  (byte) main::x#3 ← phi( main::@2/(byte) main::x#4 )
+  (byte) main::x#1 ← (byte) main::x#3 + rangenext(0,39)
+  (bool~) main::$3 ← (byte) main::x#1 != rangelast(0,39)
+  if((bool~) main::$3) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(bool~) main::$0
+(byte/signed word/word/dword/signed dword~) main::$1
+(byte*~) main::$2
+(bool~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@return
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(byte*) main::SCREEN#1
+(byte*) main::SCREEN#2
+(byte*) main::SCREEN#3
+(byte*) main::SCREEN#4
+(byte) main::line
+(byte) main::line#0
+(byte) main::line#1
+(byte) main::line#2
+(byte) main::line#3
+(byte) main::x
+(byte) main::x#0
+(byte) main::x#1
+(byte) main::x#2
+(byte) main::x#3
+(byte) main::x#4
+(byte) main::x#5
+
+Culled Empty Block (label) @2
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (byte) main::line#2 = (byte) main::line#3 
+Alias (byte*) main::SCREEN#1 = (byte*) main::SCREEN#2 (byte*) main::SCREEN#4 
+Alias (byte) main::x#2 = (byte) main::x#4 (byte) main::x#3 
+Successful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (byte*) main::SCREEN#1
+Self Phi Eliminated (byte) main::x#2
+Successful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte*) main::SCREEN#1 (byte*) main::SCREEN#3
+Redundant Phi (byte) main::x#2 (byte) main::x#5
+Successful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) main::$0 unroll if((byte) main::line#2!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3
+Simple Condition (bool~) main::$3 if((byte) main::x#1!=rangelast(0,39)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) main::SCREEN#0 = ((byte*))1024
+Constant (const byte) main::x#0 = 0
+Constant (const byte) main::line#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value main::x#1 ← ++ main::x#5 to ++
+Resolved ranged comparison value if(main::x#1!=rangelast(0,39)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 40
+Self Phi Eliminated (byte*) main::SCREEN#3
+Successful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte*) main::SCREEN#3 (const byte*) main::SCREEN#0
+Successful SSA optimization Pass2RedundantPhiElimination
+Unrolling loop Loop head: main::@2 tails: main::@3 blocks: main::@3 main::@2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#2 (const byte) main::line#0
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$1 = main::line#0*40
+Constant (const byte) main::line#1 = ++main::line#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$2 = main::SCREEN#0+main::$1
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [2] if((const byte) main::line#0!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_1 blocks: main::@3_1 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#4 (const byte) main::line#1
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$4 = main::line#1*40
+Constant (const byte) main::line#5 = ++main::line#1
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$5 = main::SCREEN#0+main::$4
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [4] if((const byte) main::line#1!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_1
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_2 blocks: main::@3_2 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#6 (const byte) main::line#5
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$6 = main::line#5*40
+Constant (const byte) main::line#7 = ++main::line#5
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$7 = main::SCREEN#0+main::$6
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [5] if((const byte) main::line#5!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_2
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_3 blocks: main::@3_3 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#8 (const byte) main::line#7
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$8 = main::line#7*40
+Constant (const byte) main::line#9 = ++main::line#7
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$9 = main::SCREEN#0+main::$8
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [6] if((const byte) main::line#7!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_3
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_4 blocks: main::@3_4 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#10 (const byte) main::line#9
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$10 = main::line#9*40
+Constant (const byte) main::line#11 = ++main::line#9
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$11 = main::SCREEN#0+main::$10
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [7] if((const byte) main::line#9!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_4
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_5 blocks: main::@3_5 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#12 (const byte) main::line#11
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$12 = main::line#11*40
+Constant (const byte) main::line#13 = ++main::line#11
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$13 = main::SCREEN#0+main::$12
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [8] if((const byte) main::line#11!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_5
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_6 blocks: main::@3_6 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#14 (const byte) main::line#13
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte/signed word/word/dword/signed dword) main::$14 = main::line#13*40
+Constant (const byte) main::line#15 = ++main::line#13
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$15 = main::SCREEN#0+main::$14
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [9] if((const byte) main::line#13!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_6
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_7 blocks: main::@3_7 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#16 (const byte) main::line#15
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$16 = main::line#15*40
+Constant (const byte) main::line#17 = ++main::line#15
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$17 = main::SCREEN#0+main::$16
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [10] if((const byte) main::line#15!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_7
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_8 blocks: main::@3_8 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#18 (const byte) main::line#17
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$18 = main::line#17*40
+Constant (const byte) main::line#19 = ++main::line#17
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$19 = main::SCREEN#0+main::$18
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [11] if((const byte) main::line#17!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_8
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_9 blocks: main::@3_9 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#20 (const byte) main::line#19
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$20 = main::line#19*40
+Constant (const byte) main::line#21 = ++main::line#19
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$21 = main::SCREEN#0+main::$20
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [12] if((const byte) main::line#19!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_9
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_10 blocks: main::@3_10 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#22 (const byte) main::line#21
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$22 = main::line#21*40
+Constant (const byte) main::line#23 = ++main::line#21
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$23 = main::SCREEN#0+main::$22
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [13] if((const byte) main::line#21!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_10
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_11 blocks: main::@3_11 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#24 (const byte) main::line#23
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$24 = main::line#23*40
+Constant (const byte) main::line#25 = ++main::line#23
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$25 = main::SCREEN#0+main::$24
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [14] if((const byte) main::line#23!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_11
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_12 blocks: main::@3_12 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#26 (const byte) main::line#25
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$26 = main::line#25*40
+Constant (const byte) main::line#27 = ++main::line#25
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$27 = main::SCREEN#0+main::$26
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [15] if((const byte) main::line#25!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_12
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_13 blocks: main::@3_13 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#28 (const byte) main::line#27
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$28 = main::line#27*40
+Constant (const byte) main::line#29 = ++main::line#27
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$29 = main::SCREEN#0+main::$28
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [16] if((const byte) main::line#27!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_13
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_14 blocks: main::@3_14 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#30 (const byte) main::line#29
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$30 = main::line#29*40
+Constant (const byte) main::line#31 = ++main::line#29
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$31 = main::SCREEN#0+main::$30
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [17] if((const byte) main::line#29!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_14
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_15 blocks: main::@3_15 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#32 (const byte) main::line#31
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$32 = main::line#31*40
+Constant (const byte) main::line#33 = ++main::line#31
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$33 = main::SCREEN#0+main::$32
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [18] if((const byte) main::line#31!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_15
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_16 blocks: main::@3_16 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#34 (const byte) main::line#33
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$34 = main::line#33*40
+Constant (const byte) main::line#35 = ++main::line#33
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$35 = main::SCREEN#0+main::$34
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [19] if((const byte) main::line#33!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_16
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_17 blocks: main::@3_17 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#36 (const byte) main::line#35
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$36 = main::line#35*40
+Constant (const byte) main::line#37 = ++main::line#35
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$37 = main::SCREEN#0+main::$36
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [20] if((const byte) main::line#35!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_17
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_18 blocks: main::@3_18 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#38 (const byte) main::line#37
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$38 = main::line#37*40
+Constant (const byte) main::line#39 = ++main::line#37
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$39 = main::SCREEN#0+main::$38
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [21] if((const byte) main::line#37!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_18
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_19 blocks: main::@3_19 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#40 (const byte) main::line#39
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$40 = main::line#39*40
+Constant (const byte) main::line#41 = ++main::line#39
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$41 = main::SCREEN#0+main::$40
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [22] if((const byte) main::line#39!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_19
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_20 blocks: main::@3_20 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#42 (const byte) main::line#41
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$42 = main::line#41*40
+Constant (const byte) main::line#43 = ++main::line#41
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$43 = main::SCREEN#0+main::$42
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [23] if((const byte) main::line#41!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_20
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_21 blocks: main::@3_21 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#44 (const byte) main::line#43
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$44 = main::line#43*40
+Constant (const byte) main::line#45 = ++main::line#43
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$45 = main::SCREEN#0+main::$44
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [24] if((const byte) main::line#43!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_21
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_22 blocks: main::@3_22 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#46 (const byte) main::line#45
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$46 = main::line#45*40
+Constant (const byte) main::line#47 = ++main::line#45
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$47 = main::SCREEN#0+main::$46
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [25] if((const byte) main::line#45!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_22
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_23 blocks: main::@3_23 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#48 (const byte) main::line#47
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$48 = main::line#47*40
+Constant (const byte) main::line#49 = ++main::line#47
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$49 = main::SCREEN#0+main::$48
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [26] if((const byte) main::line#47!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_23
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_2 tails: main::@3_24 blocks: main::@3_24 main::@2_2 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#50 (const byte) main::line#49
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$50 = main::line#49*40
+Constant (const byte) main::line#51 = ++main::line#49
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$51 = main::SCREEN#0+main::$50
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [27] if((const byte) main::line#49!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_24
+Successful SSA optimization Pass2ConstantIfs
+Culled Empty Block (label) main::@2_2
+Successful SSA optimization Pass2CullEmptyBlocks
+Unrolling loop Loop head: main::@2_1 tails: main::@3_25 blocks: main::@3_25 main::@2_1 
+Successful SSA optimization Pass2LoopUnroll
+Redundant Phi (byte) main::line#52 (const byte) main::line#51
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const word/signed word/dword/signed dword) main::$52 = main::line#51*40
+Constant (const byte) main::line#53 = ++main::line#51
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::$53 = main::SCREEN#0+main::$52
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always false - eliminating [28] if((const byte) main::line#51!=(byte/signed byte/word/signed word/dword/signed dword) 25) goto main::@3_25
+Successful SSA optimization Pass2ConstantIfs
+Eliminating variable (byte) main::line#54 from unused block main::@2_2
+Eliminating variable (byte/signed word/word/dword/signed dword~) main::$54 from unused block main::@3_26
+Eliminating variable (byte*~) main::$55 from unused block main::@3_26
+Eliminating variable (byte) main::line#55 from unused block main::@3_26
+Removing PHI-reference to removed block (main::@3_25) in block main::@2_2
+Removing unused block main::@3_25
+Removing unused block main::@2_2
+Removing unused block main::@3_26
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) main::@2_1
+Successful SSA optimization Pass2CullEmptyBlocks
+Eliminating unused constant (const byte) main::line#53
+Eliminating unused constant (const byte*) main::$53
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant (const word/signed word/dword/signed dword) main::$52
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant (const byte) main::line#51
+Successful SSA optimization PassNEliminateUnusedVars
+Inlining constant with var siblings (const byte) main::x#0
+Inlining constant with different constant siblings (const byte) main::line#0
+Inlining constant with different constant siblings (const byte) main::line#1
+Inlining constant with different constant siblings (const byte) main::line#5
+Inlining constant with different constant siblings (const byte) main::line#7
+Inlining constant with different constant siblings (const byte) main::line#9
+Inlining constant with different constant siblings (const byte) main::line#11
+Inlining constant with different constant siblings (const byte) main::line#13
+Inlining constant with different constant siblings (const byte) main::line#15
+Inlining constant with different constant siblings (const byte) main::line#17
+Inlining constant with different constant siblings (const byte) main::line#19
+Inlining constant with different constant siblings (const byte) main::line#21
+Inlining constant with different constant siblings (const byte) main::line#23
+Inlining constant with different constant siblings (const byte) main::line#25
+Inlining constant with different constant siblings (const byte) main::line#27
+Inlining constant with different constant siblings (const byte) main::line#29
+Inlining constant with different constant siblings (const byte) main::line#31
+Inlining constant with different constant siblings (const byte) main::line#33
+Inlining constant with different constant siblings (const byte) main::line#35
+Inlining constant with different constant siblings (const byte) main::line#37
+Inlining constant with different constant siblings (const byte) main::line#39
+Inlining constant with different constant siblings (const byte) main::line#41
+Inlining constant with different constant siblings (const byte) main::line#43
+Inlining constant with different constant siblings (const byte) main::line#45
+Inlining constant with different constant siblings (const byte) main::line#47
+Inlining constant with different constant siblings (const byte) main::line#49
+Constant inlined main::$50 = ++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$51 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$12 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$13 = (const byte*) main::SCREEN#0+++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$14 = ++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$15 = (const byte*) main::SCREEN#0+++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$10 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$11 = (const byte*) main::SCREEN#0+++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#43 = ++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#45 = ++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$16 = ++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$17 = (const byte*) main::SCREEN#0+++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$18 = ++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#41 = ++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$19 = (const byte*) main::SCREEN#0+++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#5 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#47 = ++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#1 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#49 = ++++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$40 = ++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#9 = ++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#7 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$45 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$46 = ++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$47 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$48 = ++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$41 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$42 = ++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$43 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$44 = ++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#11 = ++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$49 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#17 = ++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#19 = ++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#13 = ++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#15 = ++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$34 = ++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$35 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$36 = ++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$37 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$30 = ++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$31 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$32 = ++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$33 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#21 = ++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#23 = ++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$38 = ++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$39 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#29 = ++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#25 = ++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#27 = ++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$23 = (const byte*) main::SCREEN#0+++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$24 = ++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$25 = (const byte*) main::SCREEN#0+++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$26 = ++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$20 = ++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$21 = (const byte*) main::SCREEN#0+++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$22 = ++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#31 = ++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#33 = ++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$1 = (byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$27 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$2 = (const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$28 = ++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$29 = (const byte*) main::SCREEN#0+++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$5 = (const byte*) main::SCREEN#0+++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$6 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#39 = ++++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$4 = ++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$9 = (const byte*) main::SCREEN#0+++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#35 = ++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$7 = (const byte*) main::SCREEN#0+++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::$8 = ++++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) 40
+Constant inlined main::line#37 = ++++++++++++++++++++++++++++++++++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Successful SSA optimization Pass2ConstantInlining
+Simplifying constant multiply by zero 0*40
+Simplifying constant integer increment ++0
+Simplifying constant integer increment ++0
+Simplifying constant integer increment ++1
+Simplifying constant integer increment ++2
+Simplifying constant integer increment ++3
+Simplifying constant integer increment ++4
+Simplifying constant integer increment ++5
+Simplifying constant integer increment ++6
+Simplifying constant integer increment ++7
+Simplifying constant integer increment ++8
+Simplifying constant integer increment ++9
+Simplifying constant integer increment ++10
+Simplifying constant integer increment ++11
+Simplifying constant integer increment ++12
+Simplifying constant integer increment ++13
+Simplifying constant integer increment ++14
+Simplifying constant integer increment ++15
+Simplifying constant integer increment ++16
+Simplifying constant integer increment ++17
+Simplifying constant integer increment ++18
+Simplifying constant integer increment ++19
+Simplifying constant integer increment ++20
+Simplifying constant integer increment ++21
+Simplifying constant integer increment ++22
+Successful SSA optimization Pass2ConstantSimplification
+Simplifying constant plus zero main::SCREEN#0+0
+Simplifying constant integer increment ++1
+Simplifying constant integer increment ++2
+Simplifying constant integer increment ++3
+Simplifying constant integer increment ++4
+Simplifying constant integer increment ++5
+Simplifying constant integer increment ++6
+Simplifying constant integer increment ++7
+Simplifying constant integer increment ++8
+Simplifying constant integer increment ++9
+Simplifying constant integer increment ++10
+Simplifying constant integer increment ++11
+Simplifying constant integer increment ++12
+Simplifying constant integer increment ++13
+Simplifying constant integer increment ++14
+Simplifying constant integer increment ++15
+Simplifying constant integer increment ++16
+Simplifying constant integer increment ++17
+Simplifying constant integer increment ++18
+Simplifying constant integer increment ++19
+Simplifying constant integer increment ++20
+Simplifying constant integer increment ++21
+Simplifying constant integer increment ++22
+Simplifying constant integer increment ++23
+Successful SSA optimization Pass2ConstantSimplification
+Added new block during phi lifting main::@9(between main::@4 and main::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 1 initial phi equivalence classes
+Coalesced [34] main::x#6 ← main::x#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) main::@9
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main  [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  [5] (byte) main::x#5 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(byte) main::x#1 ) [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  [6] *((const byte*) main::SCREEN#0 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_1
+main::@3_1: scope:[main]  from main::@3
+  [7] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_2
+main::@3_2: scope:[main]  from main::@3_1
+  [8] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_3
+main::@3_3: scope:[main]  from main::@3_2
+  [9] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_4
+main::@3_4: scope:[main]  from main::@3_3
+  [10] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_5
+main::@3_5: scope:[main]  from main::@3_4
+  [11] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_6
+main::@3_6: scope:[main]  from main::@3_5
+  [12] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 6*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_7
+main::@3_7: scope:[main]  from main::@3_6
+  [13] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 7*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_8
+main::@3_8: scope:[main]  from main::@3_7
+  [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 8*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_9
+main::@3_9: scope:[main]  from main::@3_8
+  [15] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 9*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_10
+main::@3_10: scope:[main]  from main::@3_9
+  [16] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 10*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_11
+main::@3_11: scope:[main]  from main::@3_10
+  [17] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 11*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_12
+main::@3_12: scope:[main]  from main::@3_11
+  [18] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 12*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_13
+main::@3_13: scope:[main]  from main::@3_12
+  [19] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 13*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_14
+main::@3_14: scope:[main]  from main::@3_13
+  [20] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 14*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_15
+main::@3_15: scope:[main]  from main::@3_14
+  [21] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 15*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_16
+main::@3_16: scope:[main]  from main::@3_15
+  [22] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 16*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_17
+main::@3_17: scope:[main]  from main::@3_16
+  [23] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 17*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_18
+main::@3_18: scope:[main]  from main::@3_17
+  [24] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 18*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_19
+main::@3_19: scope:[main]  from main::@3_18
+  [25] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 19*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_20
+main::@3_20: scope:[main]  from main::@3_19
+  [26] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 20*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_21
+main::@3_21: scope:[main]  from main::@3_20
+  [27] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 21*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_22
+main::@3_22: scope:[main]  from main::@3_21
+  [28] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 22*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_23
+main::@3_23: scope:[main]  from main::@3_22
+  [29] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 23*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@3_24
+main::@3_24: scope:[main]  from main::@3_23
+  [30] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 24*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] )
+  to:main::@4
+main::@4: scope:[main]  from main::@3_24
+  [31] (byte) main::x#1 ← ++ (byte) main::x#5 [ main::x#1 ] ( main:2 [ main::x#1 ] )
+  [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  [33] return  [ ] ( main:2 [ ] )
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::SCREEN
+(byte) main::line
+(byte) main::x
+(byte) main::x#1 16.5
+(byte) main::x#5 22.00000000000001
+
+Initial phi equivalence classes
+[ main::x#5 main::x#1 ]
+Complete equivalence classes
+[ main::x#5 main::x#1 ]
+Allocated zp ZP_BYTE:2 [ main::x#5 main::x#1 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    .label x = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::x#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta x
+    jmp b1
+  //SEG12 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  b1_from_b4:
+  //SEG13 [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+    jmp b3
+  //SEG15 main::@3
+  b3:
+  //SEG16 [6] *((const byte*) main::SCREEN#0 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN,y
+    jmp b3_1
+  //SEG17 main::@3_1
+  b3_1:
+  //SEG18 [7] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+1*$28,y
+    jmp b3_2
+  //SEG19 main::@3_2
+  b3_2:
+  //SEG20 [8] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+2*$28,y
+    jmp b3_3
+  //SEG21 main::@3_3
+  b3_3:
+  //SEG22 [9] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+3*$28,y
+    jmp b3_4
+  //SEG23 main::@3_4
+  b3_4:
+  //SEG24 [10] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+4*$28,y
+    jmp b3_5
+  //SEG25 main::@3_5
+  b3_5:
+  //SEG26 [11] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+5*$28,y
+    jmp b3_6
+  //SEG27 main::@3_6
+  b3_6:
+  //SEG28 [12] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 6*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+6*$28,y
+    jmp b3_7
+  //SEG29 main::@3_7
+  b3_7:
+  //SEG30 [13] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 7*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+7*$28,y
+    jmp b3_8
+  //SEG31 main::@3_8
+  b3_8:
+  //SEG32 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 8*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+8*$28,y
+    jmp b3_9
+  //SEG33 main::@3_9
+  b3_9:
+  //SEG34 [15] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 9*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+9*$28,y
+    jmp b3_10
+  //SEG35 main::@3_10
+  b3_10:
+  //SEG36 [16] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 10*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$a*$28,y
+    jmp b3_11
+  //SEG37 main::@3_11
+  b3_11:
+  //SEG38 [17] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 11*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$b*$28,y
+    jmp b3_12
+  //SEG39 main::@3_12
+  b3_12:
+  //SEG40 [18] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 12*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$c*$28,y
+    jmp b3_13
+  //SEG41 main::@3_13
+  b3_13:
+  //SEG42 [19] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 13*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$d*$28,y
+    jmp b3_14
+  //SEG43 main::@3_14
+  b3_14:
+  //SEG44 [20] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 14*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$e*$28,y
+    jmp b3_15
+  //SEG45 main::@3_15
+  b3_15:
+  //SEG46 [21] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 15*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$f*$28,y
+    jmp b3_16
+  //SEG47 main::@3_16
+  b3_16:
+  //SEG48 [22] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 16*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$10*$28,y
+    jmp b3_17
+  //SEG49 main::@3_17
+  b3_17:
+  //SEG50 [23] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 17*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$11*$28,y
+    jmp b3_18
+  //SEG51 main::@3_18
+  b3_18:
+  //SEG52 [24] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 18*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$12*$28,y
+    jmp b3_19
+  //SEG53 main::@3_19
+  b3_19:
+  //SEG54 [25] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 19*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$13*$28,y
+    jmp b3_20
+  //SEG55 main::@3_20
+  b3_20:
+  //SEG56 [26] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 20*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$14*$28,y
+    jmp b3_21
+  //SEG57 main::@3_21
+  b3_21:
+  //SEG58 [27] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 21*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$15*$28,y
+    jmp b3_22
+  //SEG59 main::@3_22
+  b3_22:
+  //SEG60 [28] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 22*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$16*$28,y
+    jmp b3_23
+  //SEG61 main::@3_23
+  b3_23:
+  //SEG62 [29] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 23*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$17*$28,y
+    jmp b3_24
+  //SEG63 main::@3_24
+  b3_24:
+  //SEG64 [30] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 24*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy x
+    tya
+    sta SCREEN+$18*$28,y
+    jmp b4
+  //SEG65 main::@4
+  b4:
+  //SEG66 [31] (byte) main::x#1 ← ++ (byte) main::x#5 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc x
+  //SEG67 [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda x
+    cmp #$28
+    bne b1_from_b4
+    jmp breturn
+  //SEG68 main::@return
+  breturn:
+  //SEG69 [33] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential registers zp ZP_BYTE:2 [ main::x#5 main::x#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::x#5 main::x#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 2723 combination reg byte x [ main::x#5 main::x#1 ] 
+Uplifting [] best 2723 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::x#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+  //SEG12 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  b1_from_b4:
+  //SEG13 [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+    jmp b3
+  //SEG15 main::@3
+  b3:
+  //SEG16 [6] *((const byte*) main::SCREEN#0 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN,x
+    jmp b3_1
+  //SEG17 main::@3_1
+  b3_1:
+  //SEG18 [7] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+1*$28,x
+    jmp b3_2
+  //SEG19 main::@3_2
+  b3_2:
+  //SEG20 [8] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+2*$28,x
+    jmp b3_3
+  //SEG21 main::@3_3
+  b3_3:
+  //SEG22 [9] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+3*$28,x
+    jmp b3_4
+  //SEG23 main::@3_4
+  b3_4:
+  //SEG24 [10] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+4*$28,x
+    jmp b3_5
+  //SEG25 main::@3_5
+  b3_5:
+  //SEG26 [11] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+5*$28,x
+    jmp b3_6
+  //SEG27 main::@3_6
+  b3_6:
+  //SEG28 [12] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 6*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+6*$28,x
+    jmp b3_7
+  //SEG29 main::@3_7
+  b3_7:
+  //SEG30 [13] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 7*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+7*$28,x
+    jmp b3_8
+  //SEG31 main::@3_8
+  b3_8:
+  //SEG32 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 8*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+8*$28,x
+    jmp b3_9
+  //SEG33 main::@3_9
+  b3_9:
+  //SEG34 [15] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 9*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+9*$28,x
+    jmp b3_10
+  //SEG35 main::@3_10
+  b3_10:
+  //SEG36 [16] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 10*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$a*$28,x
+    jmp b3_11
+  //SEG37 main::@3_11
+  b3_11:
+  //SEG38 [17] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 11*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$b*$28,x
+    jmp b3_12
+  //SEG39 main::@3_12
+  b3_12:
+  //SEG40 [18] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 12*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$c*$28,x
+    jmp b3_13
+  //SEG41 main::@3_13
+  b3_13:
+  //SEG42 [19] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 13*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$d*$28,x
+    jmp b3_14
+  //SEG43 main::@3_14
+  b3_14:
+  //SEG44 [20] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 14*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$e*$28,x
+    jmp b3_15
+  //SEG45 main::@3_15
+  b3_15:
+  //SEG46 [21] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 15*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$f*$28,x
+    jmp b3_16
+  //SEG47 main::@3_16
+  b3_16:
+  //SEG48 [22] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 16*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$10*$28,x
+    jmp b3_17
+  //SEG49 main::@3_17
+  b3_17:
+  //SEG50 [23] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 17*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$11*$28,x
+    jmp b3_18
+  //SEG51 main::@3_18
+  b3_18:
+  //SEG52 [24] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 18*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$12*$28,x
+    jmp b3_19
+  //SEG53 main::@3_19
+  b3_19:
+  //SEG54 [25] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 19*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$13*$28,x
+    jmp b3_20
+  //SEG55 main::@3_20
+  b3_20:
+  //SEG56 [26] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 20*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$14*$28,x
+    jmp b3_21
+  //SEG57 main::@3_21
+  b3_21:
+  //SEG58 [27] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 21*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$15*$28,x
+    jmp b3_22
+  //SEG59 main::@3_22
+  b3_22:
+  //SEG60 [28] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 22*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$16*$28,x
+    jmp b3_23
+  //SEG61 main::@3_23
+  b3_23:
+  //SEG62 [29] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 23*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$17*$28,x
+    jmp b3_24
+  //SEG63 main::@3_24
+  b3_24:
+  //SEG64 [30] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 24*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$18*$28,x
+    jmp b4
+  //SEG65 main::@4
+  b4:
+  //SEG66 [31] (byte) main::x#1 ← ++ (byte) main::x#5 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG67 [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$28
+    bne b1_from_b4
+    jmp breturn
+  //SEG68 main::@return
+  breturn:
+  //SEG69 [33] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b3
+Removing instruction jmp b3_1
+Removing instruction jmp b3_2
+Removing instruction jmp b3_3
+Removing instruction jmp b3_4
+Removing instruction jmp b3_5
+Removing instruction jmp b3_6
+Removing instruction jmp b3_7
+Removing instruction jmp b3_8
+Removing instruction jmp b3_9
+Removing instruction jmp b3_10
+Removing instruction jmp b3_11
+Removing instruction jmp b3_12
+Removing instruction jmp b3_13
+Removing instruction jmp b3_14
+Removing instruction jmp b3_15
+Removing instruction jmp b3_16
+Removing instruction jmp b3_17
+Removing instruction jmp b3_18
+Removing instruction jmp b3_19
+Removing instruction jmp b3_20
+Removing instruction jmp b3_21
+Removing instruction jmp b3_22
+Removing instruction jmp b3_23
+Removing instruction jmp b3_24
+Removing instruction jmp b4
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1 with b3
+Replacing label b1_from_b4 with b3
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b4:
+Removing instruction b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b3_1:
+Removing instruction b3_2:
+Removing instruction b3_3:
+Removing instruction b3_4:
+Removing instruction b3_5:
+Removing instruction b3_6:
+Removing instruction b3_7:
+Removing instruction b3_8:
+Removing instruction b3_9:
+Removing instruction b3_10:
+Removing instruction b3_11:
+Removing instruction b3_12:
+Removing instruction b3_13:
+Removing instruction b3_14:
+Removing instruction b3_15:
+Removing instruction b3_16:
+Removing instruction b3_17:
+Removing instruction b3_18:
+Removing instruction b3_19:
+Removing instruction b3_20:
+Removing instruction b3_21:
+Removing instruction b3_22:
+Removing instruction b3_23:
+Removing instruction b3_24:
+Removing instruction b4:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jmp b3
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@3
+(label) main::@3_1
+(label) main::@3_10
+(label) main::@3_11
+(label) main::@3_12
+(label) main::@3_13
+(label) main::@3_14
+(label) main::@3_15
+(label) main::@3_16
+(label) main::@3_17
+(label) main::@3_18
+(label) main::@3_19
+(label) main::@3_2
+(label) main::@3_20
+(label) main::@3_21
+(label) main::@3_22
+(label) main::@3_23
+(label) main::@3_24
+(label) main::@3_3
+(label) main::@3_4
+(label) main::@3_5
+(label) main::@3_6
+(label) main::@3_7
+(label) main::@3_8
+(label) main::@3_9
+(label) main::@4
+(label) main::@return
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte) main::line
+(byte) main::x
+(byte) main::x#1 reg byte x 16.5
+(byte) main::x#5 reg byte x 22.00000000000001
+
+reg byte x [ main::x#5 main::x#1 ]
+
+
+FINAL ASSEMBLER
+Score: 1847
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label SCREEN = $400
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte) main::x#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+  //SEG12 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  //SEG13 [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG14 main::@1
+  //SEG15 main::@3
+  b3:
+  //SEG16 [6] *((const byte*) main::SCREEN#0 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN,x
+  //SEG17 main::@3_1
+  //SEG18 [7] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+1*$28,x
+  //SEG19 main::@3_2
+  //SEG20 [8] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+2*$28,x
+  //SEG21 main::@3_3
+  //SEG22 [9] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+3*$28,x
+  //SEG23 main::@3_4
+  //SEG24 [10] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+4*$28,x
+  //SEG25 main::@3_5
+  //SEG26 [11] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+5*$28,x
+  //SEG27 main::@3_6
+  //SEG28 [12] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 6*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+6*$28,x
+  //SEG29 main::@3_7
+  //SEG30 [13] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 7*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+7*$28,x
+  //SEG31 main::@3_8
+  //SEG32 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 8*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+8*$28,x
+  //SEG33 main::@3_9
+  //SEG34 [15] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 9*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+9*$28,x
+  //SEG35 main::@3_10
+  //SEG36 [16] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 10*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$a*$28,x
+  //SEG37 main::@3_11
+  //SEG38 [17] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 11*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$b*$28,x
+  //SEG39 main::@3_12
+  //SEG40 [18] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 12*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$c*$28,x
+  //SEG41 main::@3_13
+  //SEG42 [19] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 13*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$d*$28,x
+  //SEG43 main::@3_14
+  //SEG44 [20] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 14*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$e*$28,x
+  //SEG45 main::@3_15
+  //SEG46 [21] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 15*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$f*$28,x
+  //SEG47 main::@3_16
+  //SEG48 [22] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 16*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$10*$28,x
+  //SEG49 main::@3_17
+  //SEG50 [23] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 17*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$11*$28,x
+  //SEG51 main::@3_18
+  //SEG52 [24] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 18*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$12*$28,x
+  //SEG53 main::@3_19
+  //SEG54 [25] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 19*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$13*$28,x
+  //SEG55 main::@3_20
+  //SEG56 [26] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 20*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$14*$28,x
+  //SEG57 main::@3_21
+  //SEG58 [27] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 21*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$15*$28,x
+  //SEG59 main::@3_22
+  //SEG60 [28] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 22*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$16*$28,x
+  //SEG61 main::@3_23
+  //SEG62 [29] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 23*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$17*$28,x
+  //SEG63 main::@3_24
+  //SEG64 [30] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 24*(byte/signed byte/word/signed word/dword/signed dword) 40 + (byte) main::x#5) ← (byte) main::x#5 [ main::x#5 ] ( main:2 [ main::x#5 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta SCREEN+$18*$28,x
+  //SEG65 main::@4
+  //SEG66 [31] (byte) main::x#1 ← ++ (byte) main::x#5 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG67 [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 [ main::x#1 ] ( main:2 [ main::x#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$28
+    bne b3
+  //SEG68 main::@return
+  //SEG69 [33] return  [ ] ( main:2 [ ] )
+    rts
+}
+

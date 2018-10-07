@@ -1,0 +1,93 @@
+// Allows analysis of the CHARGEN ROM font
+import "c64.kc"
+import "multiply.kc"
+import "keyboard.kc"
+
+byte* SCREEN = $400;
+
+void main() {
+    // Clear screen
+    for( byte* sc=SCREEN;sc<SCREEN+1000;sc++) *sc = ' ';
+
+    // Plot 4 initial analysis chars
+    print_str_at("f1@", SCREEN+1);
+    print_str_at("f3@", SCREEN+1+10);
+    print_str_at("f5@", SCREEN+1+20);
+    print_str_at("f7@", SCREEN+1+30);
+    for(byte i : 0..3 ) {
+        plot_chargen(i, $20, 0);
+    }
+
+    // Which char canvas to use
+    byte cur_pos = 0;
+
+    // Is shift pressed
+    byte shift = 0;
+
+    do{
+        // Set current char canvas #pos based on F-keys pressed
+        if(keyboard_key_pressed(KEY_F1)!=0) {
+            cur_pos = 0;
+        }
+        if(keyboard_key_pressed(KEY_F3)!=0) {
+            cur_pos = 1;
+        }
+        if(keyboard_key_pressed(KEY_F5)!=0) {
+            cur_pos = 2;
+        }
+        if(keyboard_key_pressed(KEY_F7)!=0) {
+            cur_pos = 3;
+        }
+
+        if(keyboard_key_pressed(KEY_LSHIFT)!=0) {
+            shift = 1;
+        } else {
+            shift = 0;
+        }
+
+        // Check for key presses - and plot char if found
+        for( byte ch : 0..$3f) {
+            byte pressed = 0;
+            byte key = keyboard_get_keycode(ch);
+            if(key!=$3f) {
+                pressed = keyboard_key_pressed(key);
+            }
+            if(pressed!=0) {
+                plot_chargen(cur_pos, ch, shift);
+            }
+        }
+    } while(true);
+}
+
+// Print a string at a specific screen position
+void print_str_at(byte* str, byte* at) {
+    while(*str!='@') {
+        *(at++) = *(str++);
+    }
+}
+
+// Render 8x8 char (ch) as pixels on char canvas #pos
+void plot_chargen(byte pos, byte ch, byte shift) {
+    asm { sei }
+    byte* chargen = CHARGEN+(word)ch<<3;
+    if(shift!=0) {
+        chargen = chargen + $0800;
+    }
+    *PROCPORT = $32;
+    byte* sc = SCREEN+40+1+mul8u(pos, 10);
+    for(byte y:0..7) {
+      byte bits = chargen[y];
+      for(byte x:0..7) {
+        byte c = '.';
+        if((bits & $80) != 0) {
+           c = '*';
+        }
+        *sc = c;
+        sc++;
+        bits = bits<<1;
+      }
+      sc = sc+32;
+    }
+    *PROCPORT = $37;
+    asm { cli }
+}

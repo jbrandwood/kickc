@@ -1,0 +1,659 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte[]) msg1#0 ← (const string) $0
+  to:@1
+main: scope:[main]  from @2
+  (byte*) screen#15 ← phi( @2/(byte*) screen#17 )
+  (byte[]) main::msg2#0 ← (const string) main::$3
+  (byte*) print::msg#0 ← (byte[]) msg1#0
+  call print 
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte*) screen#8 ← phi( main/(byte*) screen#6 )
+  (byte*) screen#0 ← (byte*) screen#8
+  (byte*) print::msg#1 ← (byte[]) main::msg2#0
+  call print 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte*) screen#9 ← phi( main::@1/(byte*) screen#6 )
+  (byte*) screen#1 ← (byte*) screen#9
+  (byte*) print::msg#2 ← (const string) main::msg
+  call print 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  (byte*) screen#10 ← phi( main::@2/(byte*) screen#6 )
+  (byte*) screen#2 ← (byte*) screen#10
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  (byte*) screen#11 ← phi( main::@3/(byte*) screen#2 )
+  (byte*) screen#3 ← (byte*) screen#11
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) screen#4 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:@2
+print: scope:[print]  from main main::@1 main::@2
+  (byte*) screen#18 ← phi( main/(byte*) screen#15 main::@1/(byte*) screen#0 main::@2/(byte*) screen#1 )
+  (byte*) print::msg#6 ← phi( main/(byte*) print::msg#0 main::@1/(byte*) print::msg#1 main::@2/(byte*) print::msg#2 )
+  to:print::@1
+print::@1: scope:[print]  from print print::@2
+  (byte*) screen#16 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
+  (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 )
+  (bool~) print::$0 ← *((byte*) print::msg#4) != (byte) '@'
+  if((bool~) print::$0) goto print::@2
+  to:print::@return
+print::@2: scope:[print]  from print::@1
+  (byte*) screen#12 ← phi( print::@1/(byte*) screen#16 )
+  (byte*) print::msg#5 ← phi( print::@1/(byte*) print::msg#4 )
+  *((byte*) screen#12) ← *((byte*) print::msg#5)
+  (byte*) screen#5 ← ++ (byte*) screen#12
+  (byte*) print::msg#3 ← ++ (byte*) print::msg#5
+  to:print::@1
+print::@return: scope:[print]  from print::@1
+  (byte*) screen#13 ← phi( print::@1/(byte*) screen#16 )
+  (byte*) screen#6 ← (byte*) screen#13
+  return 
+  to:@return
+@2: scope:[]  from @1
+  (byte*) screen#17 ← phi( @1/(byte*) screen#4 )
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  (byte*) screen#14 ← phi( @2/(byte*) screen#3 )
+  (byte*) screen#7 ← (byte*) screen#14
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(const string) $0 = (string) "message 1 @"
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(void()) main()
+(const string) main::$3 = (string) "message 2 @"
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(const string) main::msg = (string) "message 3 @"
+(byte[]) main::msg2
+(byte[]) main::msg2#0
+(byte[]) msg1
+(byte[]) msg1#0
+(void()) print((byte*) print::msg)
+(bool~) print::$0
+(label) print::@1
+(label) print::@2
+(label) print::@return
+(byte*) print::msg
+(byte*) print::msg#0
+(byte*) print::msg#1
+(byte*) print::msg#2
+(byte*) print::msg#3
+(byte*) print::msg#4
+(byte*) print::msg#5
+(byte*) print::msg#6
+(byte*) screen
+(byte*) screen#0
+(byte*) screen#1
+(byte*) screen#10
+(byte*) screen#11
+(byte*) screen#12
+(byte*) screen#13
+(byte*) screen#14
+(byte*) screen#15
+(byte*) screen#16
+(byte*) screen#17
+(byte*) screen#18
+(byte*) screen#2
+(byte*) screen#3
+(byte*) screen#4
+(byte*) screen#5
+(byte*) screen#6
+(byte*) screen#7
+(byte*) screen#8
+(byte*) screen#9
+
+Alias (byte*) screen#0 = (byte*) screen#8 
+Alias (byte*) screen#1 = (byte*) screen#9 
+Alias (byte*) screen#10 = (byte*) screen#2 (byte*) screen#11 (byte*) screen#3 
+Alias (byte*) print::msg#4 = (byte*) print::msg#5 
+Alias (byte*) screen#12 = (byte*) screen#16 (byte*) screen#13 (byte*) screen#6 
+Alias (byte*) screen#17 = (byte*) screen#4 
+Alias (byte*) screen#14 = (byte*) screen#7 
+Successful SSA optimization Pass2AliasElimination
+Redundant Phi (byte*) screen#15 (byte*) screen#17
+Redundant Phi (byte*) screen#0 (byte*) screen#12
+Redundant Phi (byte*) screen#1 (byte*) screen#12
+Redundant Phi (byte*) screen#10 (byte*) screen#12
+Redundant Phi (byte*) screen#14 (byte*) screen#10
+Successful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) print::$0 if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte[]) msg1#0 = $0
+Constant (const byte[]) main::msg2#0 = main::$3
+Constant (const byte*) print::msg#2 = main::msg
+Constant (const byte*) screen#17 = ((byte*))1024
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) print::msg#0 = msg1#0
+Constant (const byte*) print::msg#1 = main::msg2#0
+Successful SSA optimization Pass2ConstantIdentification
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Successful SSA optimization Pass2CullEmptyBlocks
+Inlining constant with var siblings (const byte*) print::msg#2
+Inlining constant with var siblings (const byte*) print::msg#0
+Inlining constant with var siblings (const byte*) print::msg#1
+Inlining constant with var siblings (const byte*) screen#17
+Constant inlined main::$3 = (const byte[]) main::msg2#0
+Constant inlined print::msg#2 = (const string) main::msg
+Constant inlined $0 = (const byte[]) msg1#0
+Constant inlined print::msg#1 = (const byte[]) main::msg2#0
+Constant inlined print::msg#0 = (const byte[]) msg1#0
+Constant inlined screen#17 = ((byte*))(word/signed word/dword/signed dword) 1024
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to print:5 print:7 print:9 
+
+Created 4 initial phi equivalence classes
+Coalesced [6] screen#19 ← screen#12
+Coalesced (already) [8] screen#20 ← screen#12
+Coalesced [12] print::msg#7 ← print::msg#6
+Coalesced (already) [13] screen#21 ← screen#18
+Coalesced [20] print::msg#8 ← print::msg#3
+Coalesced [21] screen#22 ← screen#5
+Coalesced down to 2 phi equivalence classes
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@2
+@2: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main  [ ] ( )
+  to:@end
+@end: scope:[]  from @2
+  [3] phi() [ ] ( )
+main: scope:[main]  from @2
+  [4] phi() [ ] ( main:2 [ ] )
+  [5] call print  [ screen#12 ] ( main:2 [ screen#12 ] )
+  to:main::@1
+main::@1: scope:[main]  from main
+  [6] phi() [ screen#12 ] ( main:2 [ screen#12 ] )
+  [7] call print  [ screen#12 ] ( main:2 [ screen#12 ] )
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [8] phi() [ screen#12 ] ( main:2 [ screen#12 ] )
+  [9] call print  [ ] ( main:2 [ ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [10] return  [ ] ( main:2 [ ] )
+  to:@return
+print: scope:[print]  from main main::@1 main::@2
+  [11] (byte*) screen#18 ← phi( main/((byte*))(word/signed word/dword/signed dword) 1024 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 ) [ print::msg#6 screen#18 ] ( main:2::print:5 [ print::msg#6 screen#18 ] main:2::print:7 [ print::msg#6 screen#18 ] main:2::print:9 [ print::msg#6 screen#18 ] )
+  [11] (byte*) print::msg#6 ← phi( main/(const byte[]) msg1#0 main::@1/(const byte[]) main::msg2#0 main::@2/(const string) main::msg ) [ print::msg#6 screen#18 ] ( main:2::print:5 [ print::msg#6 screen#18 ] main:2::print:7 [ print::msg#6 screen#18 ] main:2::print:9 [ print::msg#6 screen#18 ] )
+  to:print::@1
+print::@1: scope:[print]  from print print::@2
+  [12] (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 ) [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] )
+  [12] (byte*) print::msg#4 ← phi( print/(byte*) print::msg#6 print::@2/(byte*) print::msg#3 ) [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] )
+  [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] )
+  to:print::@return
+print::@return: scope:[print]  from print::@1
+  [14] return  [ screen#12 ] ( main:2::print:5 [ screen#12 ] main:2::print:7 [ screen#12 ] main:2::print:9 [ screen#12 ] )
+  to:@return
+print::@2: scope:[print]  from print::@1
+  [15] *((byte*) screen#12) ← *((byte*) print::msg#4) [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] )
+  [16] (byte*) screen#5 ← ++ (byte*) screen#12 [ print::msg#4 screen#5 ] ( main:2::print:5 [ print::msg#4 screen#5 ] main:2::print:7 [ print::msg#4 screen#5 ] main:2::print:9 [ print::msg#4 screen#5 ] )
+  [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 [ print::msg#3 screen#5 ] ( main:2::print:5 [ print::msg#3 screen#5 ] main:2::print:7 [ print::msg#3 screen#5 ] main:2::print:9 [ print::msg#3 screen#5 ] )
+  to:print::@1
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte[]) main::msg2
+(byte[]) msg1
+(void()) print((byte*) print::msg)
+(byte*) print::msg
+(byte*) print::msg#3 22.0
+(byte*) print::msg#4 11.5
+(byte*) print::msg#6 2.0
+(byte*) screen
+(byte*) screen#12 4.875
+(byte*) screen#18 6.0
+(byte*) screen#5 11.0
+
+Initial phi equivalence classes
+[ screen#18 screen#12 screen#5 ]
+[ print::msg#4 print::msg#6 print::msg#3 ]
+Complete equivalence classes
+[ screen#18 screen#12 screen#5 ]
+[ print::msg#4 print::msg#6 print::msg#3 ]
+Allocated zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ]
+Allocated zp ZP_WORD:4 [ print::msg#4 print::msg#6 print::msg#3 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label screen = 2
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
+main_from_b2:
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] call print  [ screen#12 ] ( main:2 [ screen#12 ] )
+  //SEG11 [11] phi from main to print [phi:main->print]
+  print_from_main:
+  //SEG12 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+  //SEG13 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+    lda #<msg1
+    sta print.msg
+    lda #>msg1
+    sta print.msg+1
+    jsr print
+  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+  //SEG15 main::@1
+  b1:
+  //SEG16 [7] call print  [ screen#12 ] ( main:2 [ screen#12 ] )
+  //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
+  print_from_b1:
+  //SEG18 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
+  //SEG19 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    lda #<msg2
+    sta print.msg
+    lda #>msg2
+    sta print.msg+1
+    jsr print
+  //SEG20 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    jmp b2
+  //SEG21 main::@2
+  b2:
+  //SEG22 [9] call print  [ ] ( main:2 [ ] )
+  //SEG23 [11] phi from main::@2 to print [phi:main::@2->print]
+  print_from_b2:
+  //SEG24 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
+  //SEG25 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
+    lda #<msg
+    sta print.msg
+    lda #>msg
+    sta print.msg+1
+    jsr print
+    jmp breturn
+  //SEG26 main::@return
+  breturn:
+  //SEG27 [10] return  [ ] ( main:2 [ ] )
+    rts
+    msg: .text "message 3 @"
+    msg2: .text "message 2 @"
+}
+//SEG28 print
+print: {
+    .label msg = 4
+  //SEG29 [12] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
+  b1_from_print:
+  b1_from_b2:
+  //SEG30 [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
+  //SEG31 [12] phi (byte*) print::msg#4 = (byte*) print::msg#6 [phi:print/print::@2->print::@1#1] -- register_copy 
+    jmp b1
+  //SEG32 print::@1
+  b1:
+  //SEG33 [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] ) -- _deref_pbuz1_neq_vbuc1_then_la1 
+    ldy #0
+    lda (msg),y
+    cmp #'@'
+    bne b2
+    jmp breturn
+  //SEG34 print::@return
+  breturn:
+  //SEG35 [14] return  [ screen#12 ] ( main:2::print:5 [ screen#12 ] main:2::print:7 [ screen#12 ] main:2::print:9 [ screen#12 ] )
+    rts
+  //SEG36 print::@2
+  b2:
+  //SEG37 [15] *((byte*) screen#12) ← *((byte*) print::msg#4) [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] ) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (msg),y
+    ldy #0
+    sta (screen),y
+  //SEG38 [16] (byte*) screen#5 ← ++ (byte*) screen#12 [ print::msg#4 screen#5 ] ( main:2::print:5 [ print::msg#4 screen#5 ] main:2::print:7 [ print::msg#4 screen#5 ] main:2::print:9 [ print::msg#4 screen#5 ] ) -- pbuz1=_inc_pbuz1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+  //SEG39 [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 [ print::msg#3 screen#5 ] ( main:2::print:5 [ print::msg#3 screen#5 ] main:2::print:7 [ print::msg#3 screen#5 ] main:2::print:9 [ print::msg#3 screen#5 ] ) -- pbuz1=_inc_pbuz1 
+    inc msg
+    bne !+
+    inc msg+1
+  !:
+    jmp b1_from_b2
+}
+  msg1: .text "message 1 @"
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] ) always clobbers reg byte a reg byte y 
+Statement [15] *((byte*) screen#12) ← *((byte*) print::msg#4) [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] ) always clobbers reg byte a reg byte y 
+Potential registers zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ] : zp ZP_WORD:2 , 
+Potential registers zp ZP_WORD:4 [ print::msg#4 print::msg#6 print::msg#3 ] : zp ZP_WORD:4 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [print] 35.5: zp ZP_WORD:4 [ print::msg#4 print::msg#6 print::msg#3 ] 
+Uplift Scope [] 21.88: zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ] 
+Uplift Scope [main] 
+
+Uplifting [print] best 706 combination zp ZP_WORD:4 [ print::msg#4 print::msg#6 print::msg#3 ] 
+Uplifting [] best 706 combination zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ] 
+Uplifting [main] best 706 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label screen = 2
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
+main_from_b2:
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] call print  [ screen#12 ] ( main:2 [ screen#12 ] )
+  //SEG11 [11] phi from main to print [phi:main->print]
+  print_from_main:
+  //SEG12 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+  //SEG13 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+    lda #<msg1
+    sta print.msg
+    lda #>msg1
+    sta print.msg+1
+    jsr print
+  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+    jmp b1
+  //SEG15 main::@1
+  b1:
+  //SEG16 [7] call print  [ screen#12 ] ( main:2 [ screen#12 ] )
+  //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
+  print_from_b1:
+  //SEG18 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
+  //SEG19 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    lda #<msg2
+    sta print.msg
+    lda #>msg2
+    sta print.msg+1
+    jsr print
+  //SEG20 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  b2_from_b1:
+    jmp b2
+  //SEG21 main::@2
+  b2:
+  //SEG22 [9] call print  [ ] ( main:2 [ ] )
+  //SEG23 [11] phi from main::@2 to print [phi:main::@2->print]
+  print_from_b2:
+  //SEG24 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
+  //SEG25 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
+    lda #<msg
+    sta print.msg
+    lda #>msg
+    sta print.msg+1
+    jsr print
+    jmp breturn
+  //SEG26 main::@return
+  breturn:
+  //SEG27 [10] return  [ ] ( main:2 [ ] )
+    rts
+    msg: .text "message 3 @"
+    msg2: .text "message 2 @"
+}
+//SEG28 print
+print: {
+    .label msg = 4
+  //SEG29 [12] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
+  b1_from_print:
+  b1_from_b2:
+  //SEG30 [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
+  //SEG31 [12] phi (byte*) print::msg#4 = (byte*) print::msg#6 [phi:print/print::@2->print::@1#1] -- register_copy 
+    jmp b1
+  //SEG32 print::@1
+  b1:
+  //SEG33 [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] ) -- _deref_pbuz1_neq_vbuc1_then_la1 
+    ldy #0
+    lda (msg),y
+    cmp #'@'
+    bne b2
+    jmp breturn
+  //SEG34 print::@return
+  breturn:
+  //SEG35 [14] return  [ screen#12 ] ( main:2::print:5 [ screen#12 ] main:2::print:7 [ screen#12 ] main:2::print:9 [ screen#12 ] )
+    rts
+  //SEG36 print::@2
+  b2:
+  //SEG37 [15] *((byte*) screen#12) ← *((byte*) print::msg#4) [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] ) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (msg),y
+    ldy #0
+    sta (screen),y
+  //SEG38 [16] (byte*) screen#5 ← ++ (byte*) screen#12 [ print::msg#4 screen#5 ] ( main:2::print:5 [ print::msg#4 screen#5 ] main:2::print:7 [ print::msg#4 screen#5 ] main:2::print:9 [ print::msg#4 screen#5 ] ) -- pbuz1=_inc_pbuz1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+  //SEG39 [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 [ print::msg#3 screen#5 ] ( main:2::print:5 [ print::msg#3 screen#5 ] main:2::print:7 [ print::msg#3 screen#5 ] main:2::print:9 [ print::msg#3 screen#5 ] ) -- pbuz1=_inc_pbuz1 
+    inc msg
+    bne !+
+    inc msg+1
+  !:
+    jmp b1_from_b2
+}
+  msg1: .text "message 1 @"
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction ldy #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label b1_from_b2 with b1
+Removing instruction bbegin:
+Removing instruction b2_from_bbegin:
+Removing instruction main_from_b2:
+Removing instruction bend_from_b2:
+Removing instruction b1_from_main:
+Removing instruction print_from_b1:
+Removing instruction b2_from_b1:
+Removing instruction print_from_b2:
+Removing instruction b1_from_print:
+Removing instruction b1_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b2:
+Removing instruction bend:
+Removing instruction print_from_main:
+Removing instruction b1:
+Removing instruction b2:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(const string) main::msg msg = (string) "message 3 @"
+(byte[]) main::msg2
+(const byte[]) main::msg2#0 msg2 = (string) "message 2 @"
+(byte[]) msg1
+(const byte[]) msg1#0 msg1 = (string) "message 1 @"
+(void()) print((byte*) print::msg)
+(label) print::@1
+(label) print::@2
+(label) print::@return
+(byte*) print::msg
+(byte*) print::msg#3 msg zp ZP_WORD:4 22.0
+(byte*) print::msg#4 msg zp ZP_WORD:4 11.5
+(byte*) print::msg#6 msg zp ZP_WORD:4 2.0
+(byte*) screen
+(byte*) screen#12 screen zp ZP_WORD:2 4.875
+(byte*) screen#18 screen zp ZP_WORD:2 6.0
+(byte*) screen#5 screen zp ZP_WORD:2 11.0
+
+zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ]
+zp ZP_WORD:4 [ print::msg#4 print::msg#6 print::msg#3 ]
+
+
+FINAL ASSEMBLER
+Score: 611
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label screen = 2
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 @2
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @2 to main [phi:@2->main]
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 [5] call print  [ screen#12 ] ( main:2 [ screen#12 ] )
+  //SEG11 [11] phi from main to print [phi:main->print]
+  //SEG12 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+  //SEG13 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+    lda #<msg1
+    sta print.msg
+    lda #>msg1
+    sta print.msg+1
+    jsr print
+  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG15 main::@1
+  //SEG16 [7] call print  [ screen#12 ] ( main:2 [ screen#12 ] )
+  //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
+  //SEG18 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
+  //SEG19 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    lda #<msg2
+    sta print.msg
+    lda #>msg2
+    sta print.msg+1
+    jsr print
+  //SEG20 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG21 main::@2
+  //SEG22 [9] call print  [ ] ( main:2 [ ] )
+  //SEG23 [11] phi from main::@2 to print [phi:main::@2->print]
+  //SEG24 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
+  //SEG25 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
+    lda #<msg
+    sta print.msg
+    lda #>msg
+    sta print.msg+1
+    jsr print
+  //SEG26 main::@return
+  //SEG27 [10] return  [ ] ( main:2 [ ] )
+    rts
+    msg: .text "message 3 @"
+    msg2: .text "message 2 @"
+}
+//SEG28 print
+print: {
+    .label msg = 4
+  //SEG29 [12] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
+  //SEG30 [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
+  //SEG31 [12] phi (byte*) print::msg#4 = (byte*) print::msg#6 [phi:print/print::@2->print::@1#1] -- register_copy 
+  //SEG32 print::@1
+  b1:
+  //SEG33 [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] ) -- _deref_pbuz1_neq_vbuc1_then_la1 
+    ldy #0
+    lda (msg),y
+    cmp #'@'
+    bne b2
+  //SEG34 print::@return
+  //SEG35 [14] return  [ screen#12 ] ( main:2::print:5 [ screen#12 ] main:2::print:7 [ screen#12 ] main:2::print:9 [ screen#12 ] )
+    rts
+  //SEG36 print::@2
+  b2:
+  //SEG37 [15] *((byte*) screen#12) ← *((byte*) print::msg#4) [ screen#12 print::msg#4 ] ( main:2::print:5 [ screen#12 print::msg#4 ] main:2::print:7 [ screen#12 print::msg#4 ] main:2::print:9 [ screen#12 print::msg#4 ] ) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (msg),y
+    sta (screen),y
+  //SEG38 [16] (byte*) screen#5 ← ++ (byte*) screen#12 [ print::msg#4 screen#5 ] ( main:2::print:5 [ print::msg#4 screen#5 ] main:2::print:7 [ print::msg#4 screen#5 ] main:2::print:9 [ print::msg#4 screen#5 ] ) -- pbuz1=_inc_pbuz1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+  //SEG39 [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 [ print::msg#3 screen#5 ] ( main:2::print:5 [ print::msg#3 screen#5 ] main:2::print:7 [ print::msg#3 screen#5 ] main:2::print:9 [ print::msg#3 screen#5 ] ) -- pbuz1=_inc_pbuz1 
+    inc msg
+    bne !+
+    inc msg+1
+  !:
+    jmp b1
+}
+  msg1: .text "message 1 @"
+

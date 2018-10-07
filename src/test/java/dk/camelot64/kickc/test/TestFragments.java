@@ -20,11 +20,11 @@ public class TestFragments {
 
    @BeforeClass
    public static void setUp() {
-      AsmFragmentTemplateSynthesizer.clearCaches();
+      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
    }
 
    @AfterClass
-   public static void tearDown() throws Exception {
+   public static void tearDown() {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
       AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
@@ -62,7 +62,7 @@ public class TestFragments {
             log.append("  " + template.getBody().replace("\n", "\n  "));
          }
       }
-      ReferenceHelper helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
+      ReferenceHelper helper = new ReferenceHelperFolder("src/test/ref/");
       boolean success = helper.testOutput(fileName, ".log", log.toString());
       if(!success) {
          fail("Output does not match reference!");

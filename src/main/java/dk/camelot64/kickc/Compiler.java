@@ -82,8 +82,10 @@ public class Compiler {
             importPath += "/";
          }
          String filePath = importPath + fileName;
+         //System.out.println("Looking for file "+filePath);
          File file = new File(filePath);
          if(file.exists()) {
+            //System.out.println("Found file "+file.getAbsolutePath()+" in import path "+importPath);
             return file;
          }
       }

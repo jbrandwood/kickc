@@ -1,0 +1,335 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte) SZ#0 ← (byte/signed byte/word/signed word/dword/signed dword) 15
+  (byte[SZ#0]) items#0 ← { fill( SZ#0, 0) }
+  to:@1
+main: scope:[main]  from @1
+  (byte) SZ#2 ← phi( @1/(byte) SZ#3 )
+  (byte*) main::cur_item#0 ← (byte[SZ#0]) items#0
+  (byte) main::sub#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte) SZ#1 ← phi( main/(byte) SZ#2 main::@1/(byte) SZ#1 )
+  (byte*) main::cur_item#1 ← phi( main/(byte*) main::cur_item#0 main::@1/(byte*) main::cur_item#1 )
+  (byte) main::sub#2 ← phi( main/(byte) main::sub#0 main::@1/(byte) main::sub#1 )
+  *((byte*) main::cur_item#1 + (byte) main::sub#2) ← (byte) main::sub#2
+  (byte) main::sub#1 ← (byte) main::sub#2 + rangenext(0,SZ#1)
+  (bool~) main::$0 ← (byte) main::sub#1 != rangelast(0,SZ#1)
+  if((bool~) main::$0) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte) SZ#3 ← phi( @begin/(byte) SZ#0 )
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte) SZ
+(byte) SZ#0
+(byte) SZ#1
+(byte) SZ#2
+(byte) SZ#3
+(byte[SZ#0]) items
+(byte[SZ#0]) items#0
+(void()) main()
+(bool~) main::$0
+(label) main::@1
+(label) main::@return
+(byte*) main::cur_item
+(byte*) main::cur_item#0
+(byte*) main::cur_item#1
+(byte) main::sub
+(byte) main::sub#0
+(byte) main::sub#1
+(byte) main::sub#2
+
+Culled Empty Block (label) @2
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (byte) SZ#0 = (byte) SZ#3 
+Successful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (byte*) main::cur_item#1
+Self Phi Eliminated (byte) SZ#1
+Successful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte) SZ#2 (byte) SZ#0
+Redundant Phi (byte*) main::cur_item#1 (byte*) main::cur_item#0
+Redundant Phi (byte) SZ#1 (byte) SZ#2
+Successful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) main::$0 if((byte) main::sub#1!=rangelast(0,SZ#0)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte) SZ#0 = 15
+Constant (const byte) main::sub#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte[SZ#0]) items#0 = { fill( SZ#0, 0) }
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::cur_item#0 = items#0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value main::sub#1 ← ++ main::sub#2 to ++
+Resolved ranged comparison value if(main::sub#1!=rangelast(0,SZ#0)) goto main::@1 to (const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1
+Inlining constant with var siblings (const byte) main::sub#0
+Constant inlined main::sub#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::cur_item#0 = (const byte[SZ#0]) items#0
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@3(between main::@1 and main::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 1 initial phi equivalence classes
+Coalesced [10] main::sub#3 ← main::sub#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) main::@3
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main  [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [5] (byte) main::sub#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) main::sub#1 ) [ main::sub#2 ] ( main:2 [ main::sub#2 ] )
+  [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 [ main::sub#2 ] ( main:2 [ main::sub#2 ] )
+  [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 [ main::sub#1 ] ( main:2 [ main::sub#1 ] )
+  [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ main::sub#1 ] ( main:2 [ main::sub#1 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [9] return  [ ] ( main:2 [ ] )
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) SZ
+(byte[SZ#0]) items
+(void()) main()
+(byte*) main::cur_item
+(byte) main::sub
+(byte) main::sub#1 16.5
+(byte) main::sub#2 22.0
+
+Initial phi equivalence classes
+[ main::sub#2 main::sub#1 ]
+Complete equivalence classes
+[ main::sub#2 main::sub#1 ]
+Allocated zp ZP_BYTE:2 [ main::sub#2 main::sub#1 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const SZ = $f
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label sub = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::sub#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta sub
+    jmp b1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG13 [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 [ main::sub#2 ] ( main:2 [ main::sub#2 ] ) -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy sub
+    tya
+    sta items,y
+  //SEG16 [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 [ main::sub#1 ] ( main:2 [ main::sub#1 ] ) -- vbuz1=_inc_vbuz1 
+    inc sub
+  //SEG17 [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ main::sub#1 ] ( main:2 [ main::sub#1 ] ) -- vbuz1_neq_vbuc1_then_la1 
+    lda sub
+    cmp #SZ+1
+    bne b1_from_b1
+    jmp breturn
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [9] return  [ ] ( main:2 [ ] )
+    rts
+}
+  items: .fill SZ, 0
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential registers zp ZP_BYTE:2 [ main::sub#2 main::sub#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::sub#2 main::sub#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 263 combination reg byte x [ main::sub#2 main::sub#1 ] 
+Uplifting [] best 263 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const SZ = $f
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::sub#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG13 [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 [ main::sub#2 ] ( main:2 [ main::sub#2 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta items,x
+  //SEG16 [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 [ main::sub#1 ] ( main:2 [ main::sub#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG17 [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ main::sub#1 ] ( main:2 [ main::sub#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #SZ+1
+    bne b1_from_b1
+    jmp breturn
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [9] return  [ ] ( main:2 [ ] )
+    rts
+}
+  items: .fill SZ, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b1 with b1
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte) SZ
+(const byte) SZ#0 SZ = (byte/signed byte/word/signed word/dword/signed dword) 15
+(byte[SZ#0]) items
+(const byte[SZ#0]) items#0 items = { fill( SZ#0, 0) }
+(void()) main()
+(label) main::@1
+(label) main::@return
+(byte*) main::cur_item
+(byte) main::sub
+(byte) main::sub#1 reg byte x 16.5
+(byte) main::sub#2 reg byte x 22.0
+
+reg byte x [ main::sub#2 main::sub#1 ]
+
+
+FINAL ASSEMBLER
+Score: 167
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .const SZ = $f
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte) main::sub#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 [ main::sub#2 ] ( main:2 [ main::sub#2 ] ) -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta items,x
+  //SEG16 [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 [ main::sub#1 ] ( main:2 [ main::sub#1 ] ) -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG17 [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ main::sub#1 ] ( main:2 [ main::sub#1 ] ) -- vbuxx_neq_vbuc1_then_la1 
+    cpx #SZ+1
+    bne b1
+  //SEG18 main::@return
+  //SEG19 [9] return  [ ] ( main:2 [ ] )
+    rts
+}
+  items: .fill SZ, 0
+

@@ -1,0 +1,42 @@
+byte* SCREEN = $0400;
+byte* RASTER = $d012;
+byte* BGCOL = $d020;
+byte* SCROLL = $d016;
+byte* TEXT = "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @";
+
+void main() {
+    fillscreen(SCREEN, $20);
+    byte scroll = 7;
+    byte* nxt = TEXT;
+    byte[] line = SCREEN+40;
+    do {
+        // Wait for raster
+        do {} while(*RASTER!=$fe);
+        do {} while(*RASTER!=$ff);
+        ++*BGCOL;
+        // Soft scroll
+        if(--scroll==$ff) {
+            scroll = 7;
+            // Hard scroll
+            for(byte i=0;i!=39;i++) {
+                line[i]=line[i+1];
+            }
+            // Render next char
+            byte c = *nxt;
+            if(c=='@') {
+               nxt = TEXT;
+               c = *nxt;
+            }
+            line[39] = c;
+            nxt++;
+        }
+        *SCROLL = scroll;
+        --*BGCOL;
+    } while(true);
+}
+
+void fillscreen(byte* screen, byte fill) {
+    for( byte* cursor = screen; cursor < screen+1000; cursor++) {
+        *cursor = fill;
+    }
+}

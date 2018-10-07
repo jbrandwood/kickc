@@ -1,0 +1,72 @@
+// Generate a big sinus and plot it on a bitmap
+
+import "c64.kc"
+import "sinus.kc"
+import "memory.kc"
+import "bitmap2.kc"
+
+byte* SCREEN = $400;
+byte* BITMAP = $2000;
+
+const word SIN_SIZE = 512;
+
+signed word[512] align($100) sin;
+
+signed word* sin2 = $1400;
+
+kickasm {{
+    .label pc_restore = *
+    .pc = $1400
+    .for(var i=0; i<512; i++) {
+  	  .word sin(toRadians([i*360]/512))*320
+    }
+    .pc = pc_restore
+}}
+
+void main() {
+    asm { sei }  // Disable normal interrupt
+    // Disable kernal & basic
+    *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+    *PROCPORT = PROCPORT_RAM_IO;
+    *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
+    vicSelectGfxBank(SCREEN);
+    *D016 = VIC_CSEL;
+    *D018 = toD018(SCREEN, BITMAP);
+
+    fill(SCREEN, 1000, WHITE);
+    bitmap_init(BITMAP);
+    bitmap_clear();
+    sin16s_gen2(sin, SIN_SIZE, -320, 320);
+    render_sine();
+    while(true) {
+        (*BGCOL)++;
+    }
+}
+
+void render_sine() {
+    word xpos = 0;
+    for(word sin_idx=0; sin_idx<SIN_SIZE; sin_idx++) {
+        signed word sin_val = *(sin+sin_idx<<1);
+        byte ypos = wrap_y(sin_val);
+        bitmap_plot(xpos,ypos);
+
+        signed word sin2_val = *(sin2+sin_idx<<1);
+        byte ypos2 = wrap_y(sin2_val+10);
+        bitmap_plot(xpos,ypos2);
+
+        xpos++;
+        if(xpos==320) {
+            xpos = 0;
+        }
+    }
+}
+
+byte wrap_y(signed word y) {
+    while(y>=200) {
+        y -= 200;
+    }
+    while(y<0) {
+        y += 200;
+    }
+    return (byte)y;
+}

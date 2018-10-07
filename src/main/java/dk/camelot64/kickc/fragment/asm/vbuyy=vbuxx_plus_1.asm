@@ -1,3 +1,0 @@
-txa
-tay
-iny

@@ -1,5 +1,6 @@
 package dk.camelot64.kickc;
 
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import kickass.KickAssembler;
@@ -32,6 +33,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-I", "-libdir" }, description = "Path to a library folder, where the compiler looks for included files. This option can be repeated to add multiple library folders.")
    private List<Path> libDir = null;
 
+   @CommandLine.Option(names = {"-F", "-fragmentdir" }, description = "Path to the ASM fragment folder, where the compiler looks for ASM fragments.")
+   private Path fragmentDir = null;
+
    @CommandLine.Option(names = {"-o"}, description = "Name of the output assembler file. By default it is the same as the input file with extension .asm")
    private String asmFileName = null;
 
@@ -63,6 +67,12 @@ public class KickC implements Callable<Void> {
          for(Path libPath : libDir) {
             compiler.addImportPath(libPath.toString());
          }
+      }
+
+      if(fragmentDir!= null) {
+         AsmFragmentTemplateSynthesizer.initialize(fragmentDir.toString()+"/");
+      } else {
+         AsmFragmentTemplateSynthesizer.initialize("fragment/");
       }
 
       String fileBaseName = getFileBaseName(kcFile);

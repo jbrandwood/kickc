@@ -3,16 +3,16 @@ package dk.camelot64.kickc.test;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
 /** Helper for handling reference files and output files in tests. */
-public class ReferenceHelper {
+abstract class ReferenceHelper {
 
    private static Path tempDir;
 
@@ -24,27 +24,21 @@ public class ReferenceHelper {
       }
    }
 
-   private String refPath;
-
-   public ReferenceHelper(String refPath) {
-      this.refPath = refPath;
-   }
-
-   public static Path getTempDir() {
+   static Path getTempDir() {
       return tempDir;
    }
 
-   public boolean testOutput(
+   boolean testOutput(
          String fileName,
          String extension,
-         String outputString) throws IOException, URISyntaxException {
+         String outputString) throws IOException {
       // Read reference file
-      List<String> refLines = null;
+      List<String> refLines;
       try {
          refLines = loadReferenceLines(fileName, extension);
       } catch (Exception e) {
          writeOutputFile(fileName, extension, outputString);
-         System.out.println("Reference file not found "+refPath+fileName+extension);
+         System.out.println("Reference file not found "+fileName+extension);
          return false;
       }
       // Split output into outLines
@@ -86,14 +80,18 @@ public class ReferenceHelper {
    }
 
    private List<String> loadReferenceLines(String fileName, String extension) throws URISyntaxException, IOException {
-      String refFile = refPath+fileName+extension;
-      ClassLoader classLoader = this.getClass().getClassLoader();
-      URL refResource = classLoader.getResource(refFile);
-      URI refURI = refResource.toURI();
-      return Files.readAllLines(Paths.get(refURI), Charset.defaultCharset());
+      URI refURI = loadReferenceFile(fileName, extension);
+      //System.out.println("Reference URI "+refURI.toString());
+      Path path = Paths.get(refURI);
+      //System.out.println("Reference URI path "+path.toString());
+      List<String> allLines = Files.readAllLines(path);
+      //System.out.println("Read ref lines "+allLines.size());
+      return allLines;
    }
 
-   public File writeOutputFile(String fileName, String extension, String outputString) throws IOException {
+   abstract URI loadReferenceFile(String fileName, String extension) throws IOException, URISyntaxException ;
+
+   File writeOutputFile(String fileName, String extension, String outputString) throws IOException {
       // Write output file
       File file = getTmpFile(fileName, extension);
       FileOutputStream outputStream = new FileOutputStream(file);
@@ -105,7 +103,7 @@ public class ReferenceHelper {
       return file;
    }
 
-   public File getTmpFile(String fileName, String extension) {
+   File getTmpFile(String fileName, String extension) {
       File file = new File(tempDir.toFile(), fileName + extension);
       mkPath(file);
       return file;

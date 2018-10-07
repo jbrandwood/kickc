@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.test;
+ package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
@@ -25,22 +25,20 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestPrograms {
 
-   String stdlibPath = "src/main/kc/stdlib";
-   String testPath = "src/test/java/dk/camelot64/kickc/test/kc";
-
-   ReferenceHelper helper = new ReferenceHelper("dk/camelot64/kickc/test/ref/");
-
+   final String stdlibPath = "src/main/kc/stdlib";
+   final String testPath = "src/test/kc";
+   final String refPath = "src/test/ref/";
 
    public TestPrograms() {
    }
 
    @BeforeClass
    public static void setUp() {
-      AsmFragmentTemplateSynthesizer.clearCaches();
+      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
    }
 
    @AfterClass
-   public static void tearDown() throws Exception {
+   public static void tearDown() {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
@@ -1032,6 +1030,7 @@ public class TestPrograms {
       compileAsm(fileName, program);
 
       boolean success = true;
+      ReferenceHelper helper = new ReferenceHelperFolder(refPath);
       success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(false));
       success &= helper.testOutput(fileName, ".sym", program.getScope().getSymbolTableContents(program));
       success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
@@ -1101,7 +1100,7 @@ public class TestPrograms {
    }
 
    public File getBinDir() {
-      Path tempDir = helper.getTempDir();
+      Path tempDir = ReferenceHelper.getTempDir();
       File binDir = new File(tempDir.toFile(), "bin");
       if(!binDir.exists()) {
          binDir.mkdir();

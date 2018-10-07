@@ -1,0 +1,343 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::BITMAP#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
+  (byte*~) main::$0 ← (byte*) main::BITMAP#0 + (word/signed word/dword/signed dword) 8191
+  (byte*) main::b#0 ← (byte*~) main::$0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte*) main::b#2 ← phi( main/(byte*) main::b#0 main::@1/(byte*) main::b#1 )
+  *((byte*) main::b#2) ← (byte/signed byte/word/signed word/dword/signed dword) 90
+  (byte*) main::b#1 ← (byte*) main::b#2 + rangenext(main::$0,main::BITMAP#0)
+  (bool~) main::$1 ← (byte*) main::b#1 != rangelast(main::$0,main::BITMAP#0)
+  if((bool~) main::$1) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(byte*~) main::$0
+(bool~) main::$1
+(label) main::@1
+(label) main::@return
+(byte*) main::BITMAP
+(byte*) main::BITMAP#0
+(byte*) main::b
+(byte*) main::b#0
+(byte*) main::b#1
+(byte*) main::b#2
+
+Culled Empty Block (label) @2
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (byte*) main::b#0 = (byte*~) main::$0 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition (bool~) main::$1 if((byte*) main::b#1!=rangelast(main::b#0,main::BITMAP#0)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) main::BITMAP#0 = ((byte*))8192
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) main::b#0 = main::BITMAP#0+8191
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value main::b#1 ← -- main::b#2 to --
+Resolved ranged comparison value if(main::b#1!=rangelast(main::b#0,main::BITMAP#0)) goto main::@1 to (byte*)(const byte*) main::BITMAP#0-(byte/signed byte/word/signed word/dword/signed dword) 1
+Inlining constant with var siblings (const byte*) main::b#0
+Constant inlined main::b#0 = (const byte*) main::BITMAP#0+(word/signed word/dword/signed dword) 8191
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@3(between main::@1 and main::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 1 initial phi equivalence classes
+Coalesced [10] main::b#3 ← main::b#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) main::@3
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi() [ ] ( )
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi() [ ] ( )
+  [2] call main  [ ] ( )
+  to:@end
+@end: scope:[]  from @1
+  [3] phi() [ ] ( )
+main: scope:[main]  from @1
+  [4] phi() [ ] ( main:2 [ ] )
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [5] (byte*) main::b#2 ← phi( main/(const byte*) main::BITMAP#0+(word/signed word/dword/signed dword) 8191 main::@1/(byte*) main::b#1 ) [ main::b#2 ] ( main:2 [ main::b#2 ] )
+  [6] *((byte*) main::b#2) ← (byte/signed byte/word/signed word/dword/signed dword) 90 [ main::b#2 ] ( main:2 [ main::b#2 ] )
+  [7] (byte*) main::b#1 ← -- (byte*) main::b#2 [ main::b#1 ] ( main:2 [ main::b#1 ] )
+  [8] if((byte*) main::b#1!=(byte*)(const byte*) main::BITMAP#0-(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] )
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [9] return  [ ] ( main:2 [ ] )
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::BITMAP
+(byte*) main::b
+(byte*) main::b#1 16.5
+(byte*) main::b#2 16.5
+
+Initial phi equivalence classes
+[ main::b#2 main::b#1 ]
+Complete equivalence classes
+[ main::b#2 main::b#1 ]
+Allocated zp ZP_WORD:2 [ main::b#2 main::b#1 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label BITMAP = $2000
+    .label b = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte*) main::b#2 = (const byte*) main::BITMAP#0+(word/signed word/dword/signed dword) 8191 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<BITMAP+$1fff
+    sta b
+    lda #>BITMAP+$1fff
+    sta b+1
+    jmp b1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG13 [5] phi (byte*) main::b#2 = (byte*) main::b#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] *((byte*) main::b#2) ← (byte/signed byte/word/signed word/dword/signed dword) 90 [ main::b#2 ] ( main:2 [ main::b#2 ] ) -- _deref_pbuz1=vbuc1 
+    lda #$5a
+    ldy #0
+    sta (b),y
+  //SEG16 [7] (byte*) main::b#1 ← -- (byte*) main::b#2 [ main::b#1 ] ( main:2 [ main::b#1 ] ) -- pbuz1=_dec_pbuz1 
+    lda b
+    bne !+
+    dec b+1
+  !:
+    dec b
+  //SEG17 [8] if((byte*) main::b#1!=(byte*)(const byte*) main::BITMAP#0-(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] ) -- pbuz1_neq_pbuc1_then_la1 
+    lda b+1
+    cmp #>BITMAP-1
+    bne b1_from_b1
+    lda b
+    cmp #<BITMAP-1
+    bne b1_from_b1
+    jmp breturn
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [9] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [6] *((byte*) main::b#2) ← (byte/signed byte/word/signed word/dword/signed dword) 90 [ main::b#2 ] ( main:2 [ main::b#2 ] ) always clobbers reg byte a reg byte y 
+Statement [7] (byte*) main::b#1 ← -- (byte*) main::b#2 [ main::b#1 ] ( main:2 [ main::b#1 ] ) always clobbers reg byte a 
+Statement [8] if((byte*) main::b#1!=(byte*)(const byte*) main::BITMAP#0-(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_WORD:2 [ main::b#2 main::b#1 ] : zp ZP_WORD:2 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 33: zp ZP_WORD:2 [ main::b#2 main::b#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 613 combination zp ZP_WORD:2 [ main::b#2 main::b#1 ] 
+Uplifting [] best 613 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label BITMAP = $2000
+    .label b = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte*) main::b#2 = (const byte*) main::BITMAP#0+(word/signed word/dword/signed dword) 8191 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<BITMAP+$1fff
+    sta b
+    lda #>BITMAP+$1fff
+    sta b+1
+    jmp b1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG13 [5] phi (byte*) main::b#2 = (byte*) main::b#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] *((byte*) main::b#2) ← (byte/signed byte/word/signed word/dword/signed dword) 90 [ main::b#2 ] ( main:2 [ main::b#2 ] ) -- _deref_pbuz1=vbuc1 
+    lda #$5a
+    ldy #0
+    sta (b),y
+  //SEG16 [7] (byte*) main::b#1 ← -- (byte*) main::b#2 [ main::b#1 ] ( main:2 [ main::b#1 ] ) -- pbuz1=_dec_pbuz1 
+    lda b
+    bne !+
+    dec b+1
+  !:
+    dec b
+  //SEG17 [8] if((byte*) main::b#1!=(byte*)(const byte*) main::BITMAP#0-(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] ) -- pbuz1_neq_pbuc1_then_la1 
+    lda b+1
+    cmp #>BITMAP-1
+    bne b1_from_b1
+    lda b
+    cmp #<BITMAP-1
+    bne b1_from_b1
+    jmp breturn
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [9] return  [ ] ( main:2 [ ] )
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b1 with b1
+Replacing label b1_from_b1 with b1
+Removing instruction bbegin:
+Removing instruction b1_from_bbegin:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@return
+(byte*) main::BITMAP
+(const byte*) main::BITMAP#0 BITMAP = ((byte*))(word/signed word/dword/signed dword) 8192
+(byte*) main::b
+(byte*) main::b#1 b zp ZP_WORD:2 16.5
+(byte*) main::b#2 b zp ZP_WORD:2 16.5
+
+zp ZP_WORD:2 [ main::b#2 main::b#1 ]
+
+
+FINAL ASSEMBLER
+Score: 517
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 @1
+//SEG5 [2] call main  [ ] ( )
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label BITMAP = $2000
+    .label b = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte*) main::b#2 = (const byte*) main::BITMAP#0+(word/signed word/dword/signed dword) 8191 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<BITMAP+$1fff
+    sta b
+    lda #>BITMAP+$1fff
+    sta b+1
+  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi (byte*) main::b#2 = (byte*) main::b#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 main::@1
+  b1:
+  //SEG15 [6] *((byte*) main::b#2) ← (byte/signed byte/word/signed word/dword/signed dword) 90 [ main::b#2 ] ( main:2 [ main::b#2 ] ) -- _deref_pbuz1=vbuc1 
+    lda #$5a
+    ldy #0
+    sta (b),y
+  //SEG16 [7] (byte*) main::b#1 ← -- (byte*) main::b#2 [ main::b#1 ] ( main:2 [ main::b#1 ] ) -- pbuz1=_dec_pbuz1 
+    lda b
+    bne !+
+    dec b+1
+  !:
+    dec b
+  //SEG17 [8] if((byte*) main::b#1!=(byte*)(const byte*) main::BITMAP#0-(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] ) -- pbuz1_neq_pbuc1_then_la1 
+    lda b+1
+    cmp #>BITMAP-1
+    bne b1
+    lda b
+    cmp #<BITMAP-1
+    bne b1
+  //SEG18 main::@return
+  //SEG19 [9] return  [ ] ( main:2 [ ] )
+    rts
+}
+

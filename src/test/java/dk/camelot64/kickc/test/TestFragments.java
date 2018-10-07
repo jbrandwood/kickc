@@ -18,7 +18,6 @@ import static junit.framework.TestCase.fail;
 /** Test the ASM fragment sub-system by loading/synthesizing a lot of different fragments and comparing with reference fragments. */
 public class TestFragments {
 
-   /*
    @BeforeClass
    public static void setUp() {
       AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
@@ -278,8 +277,6 @@ public class TestFragments {
       }
       return false;
    }
-
-   */
 
    /** A signature that is part of a fragment signature. The signature may have sub-values (eg. if. it is a _derefidx_ signature */
    public static class Value {

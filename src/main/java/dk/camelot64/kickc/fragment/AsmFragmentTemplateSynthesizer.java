@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.asm.AsmProgram;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
@@ -9,8 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -509,10 +506,7 @@ public class AsmFragmentTemplateSynthesizer {
             body = "";
          } else {
             CharStream fragmentCharStream = CharStreams.fromStream(fragmentStream);
-            body = fragmentCharStream.toString();
-            if(body.length() > 0 && body.charAt(body.length() - 1) == '\n') {
-               body = body.substring(0, body.length() - 1);
-            }
+            body = removeTrailingNewlines(fragmentCharStream.toString());
 
          }
          return new AsmFragmentTemplate(signature, body);
@@ -521,6 +515,26 @@ public class AsmFragmentTemplateSynthesizer {
       } catch(StringIndexOutOfBoundsException e) {
          throw new RuntimeException("Problem reading fragment file " + signature, e);
       }
+   }
+
+   /**
+    * Remove any trailing newlines in the body
+    * @param body The body
+    * @return The body without trailing newlines
+    */
+   private String removeTrailingNewlines(String body) {
+      boolean done = false;
+      while(!done) {
+         done  = true;
+         if(body.length() > 0) {
+            char lastChar = body.charAt(body.length() - 1);
+            if(lastChar == '\n' || lastChar == '\r') {
+               body = body.substring(0, body.length() - 1);
+               done = false;
+            }
+         }
+      }
+      return body;
    }
 
    File[] allFragmentFiles() {

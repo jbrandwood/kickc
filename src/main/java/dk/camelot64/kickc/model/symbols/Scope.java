@@ -15,8 +15,6 @@ public abstract class Scope implements Symbol {
 
    private String name;
    private HashMap<String, Symbol> symbols;
-   private int intermediateVarCount = 0;
-   private int intermediateLabelCount = 1;
    private Scope parentScope;
 
    public Scope(String name, Scope parentScope) {
@@ -97,13 +95,6 @@ public abstract class Scope implements Symbol {
       return symbol;
    }
 
-   public VariableIntermediate addVariableIntermediate() {
-      String name = allocateIntermediateVariableName();
-      VariableIntermediate symbol = new VariableIntermediate(name, this, SymbolType.VAR);
-      add(symbol);
-      return symbol;
-   }
-
    /**
     * Get all versions of an unversioned variable
     *
@@ -122,10 +113,6 @@ public abstract class Scope implements Symbol {
          }
       }
       return versions;
-   }
-
-   public String allocateIntermediateVariableName() {
-      return "$" + intermediateVarCount++;
    }
 
    public Symbol getSymbol(SymbolRef symbolRef) {
@@ -153,6 +140,21 @@ public abstract class Scope implements Symbol {
          }
          return symbol;
       }
+   }
+
+   public abstract VariableIntermediate addVariableIntermediate();
+
+   public abstract Label addLabelIntermediate();
+
+   public abstract String allocateIntermediateLabelName();
+
+   public abstract String allocateIntermediateVariableName();
+
+   public BlockScope addBlockScope() {
+      String name = allocateIntermediateLabelName();
+      BlockScope scope = new BlockScope(name, this);
+      add(scope);
+      return scope;
    }
 
    public Variable getVariable(String name) {
@@ -239,19 +241,6 @@ public abstract class Scope implements Symbol {
       return symbol;
    }
 
-   public Label addLabelIntermediate() {
-      String name = "@" + intermediateLabelCount++;
-      Label symbol = new Label(name, this, true);
-      add(symbol);
-      return symbol;
-   }
-
-   public BlockScope addBlockScope() {
-      String name = "@" + intermediateLabelCount++;
-      BlockScope scope = new BlockScope(name, this);
-      add(scope);
-      return scope;
-   }
 
    public Label getLabel(String name) {
       return (Label) getSymbol(name);
@@ -356,36 +345,15 @@ public abstract class Scope implements Symbol {
 
    @Override
    public boolean equals(Object o) {
-      if(this == o) {
-         return true;
-      }
-      if(o == null || getClass() != o.getClass()) {
-         return false;
-      }
-
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
       Scope scope = (Scope) o;
-
-      if(intermediateVarCount != scope.intermediateVarCount) {
-         return false;
-      }
-      if(intermediateLabelCount != scope.intermediateLabelCount) {
-         return false;
-      }
-      if(!name.equals(scope.name)) {
-         return false;
-      }
-      if(!symbols.equals(scope.symbols)) {
-         return false;
-      }
-      return true;
+      return Objects.equals(name, scope.name) &&
+            Objects.equals(parentScope, scope.parentScope);
    }
 
    @Override
    public int hashCode() {
-      int result = name.hashCode();
-      result = 31 * result + intermediateVarCount;
-      result = 31 * result + intermediateLabelCount;
-      return result;
+      return Objects.hash(name, parentScope);
    }
-
 }

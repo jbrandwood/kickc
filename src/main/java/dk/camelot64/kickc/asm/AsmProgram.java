@@ -70,7 +70,7 @@ public class AsmProgram {
       addLine(new AsmScopeEnd());
    }
 
-   public AsmInstruction addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter, boolean zp) {
+   public AsmInstruction addInstruction(String mnemonic, AsmAddressingMode addressingMode, AsmParameter parameter, boolean zp) {
       AsmInstructionType instructionType = AsmInstructionSet.getInstructionType(mnemonic, addressingMode, zp);
       AsmInstruction instruction = new AsmInstruction(instructionType, parameter);
       addLine(instruction);
@@ -237,31 +237,31 @@ public class AsmProgram {
       boolean lineIdx;
       String indent;
 
-      public AsmPrintState(boolean comments, boolean lineIdx) {
+      AsmPrintState(boolean comments, boolean lineIdx) {
          this.comments = comments;
          this.lineIdx = lineIdx;
          this.indent = "";
       }
 
-      public boolean isComments() {
+      boolean isComments() {
          return comments;
       }
 
-      public void incIndent() {
+      void incIndent() {
          this.indent = this.indent + "  ";
       }
 
-      public void decIndent() {
+      void decIndent() {
          if(this.indent.length() >= 2) {
             this.indent = this.indent.substring(0, this.indent.length() - 2);
          }
       }
 
-      public String getIndent() {
+      String getIndent() {
          return indent;
       }
 
-      public boolean getLineIdx() {
+      boolean getLineIdx() {
          return lineIdx;
       }
    }

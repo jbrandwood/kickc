@@ -66,10 +66,11 @@ public class Pass4CodeGeneration {
          }
 
          // Start scopes until the new scope is the current scope
+         LabelRef blockLabel = block.getLabel();
          while(!currentScope.equals(newScope)) {
             currentScope = newScope.getParentScope(currentScope.getScopeDepth()+1);
-            asm.startSegment(currentScope, null, block.getLabel().getFullName());
-            asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
+            asm.startSegment(currentScope, null, blockLabel.getFullName());
+            asm.addScopeBegin(currentScope.getLocalName().replace('@', 'b').replace(':', '_'));
             // Add all ZP labels for the scope
             addConstants(asm, currentScope);
             addZpLabels(asm, currentScope);
@@ -86,27 +87,25 @@ public class Pass4CodeGeneration {
             }
          } else {
             // Generate label for block inside procedure
-            asm.startSegment(currentScope, null, block.getLabel().getFullName());
-            asm.addLabel(block.getLabel().getLocalName().replace('@', 'b').replace(':', '_'));
+            asm.startSegment(currentScope, null, blockLabel.getFullName());
+            asm.addLabel(blockLabel.getLocalName().replace('@', 'b').replace(':', '_'));
          }
          // Generate statements
          genStatements(asm, block);
          // Generate block exit
          ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
          if(defaultSuccessor != null) {
+            LabelRef defaultSuccessorLabel = defaultSuccessor.getLabel();
             if(defaultSuccessor.hasPhiBlock()) {
                PhiTransitions.PhiTransition transition = getTransitions(defaultSuccessor).getTransition(block);
                if(!transition.isGenerated()) {
                   genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getScope());
-                  String label = defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_');
-                  asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
+                  asm.addInstruction("JMP", AsmAddressingMode.ABS, new AsmParameterLabel(defaultSuccessorLabel), false);
                } else {
-                  String label = (defaultSuccessor.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName()).replace('@', 'b').replace(':', '_');
-                  asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
+                  asm.addInstruction("JMP", AsmAddressingMode.ABS, new AsmParameterLabelTransition(blockLabel, defaultSuccessorLabel), false);
                }
             } else {
-               String label = defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_');
-               asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
+               asm.addInstruction("JMP", AsmAddressingMode.ABS, new AsmParameterLabel(defaultSuccessorLabel), false);
             }
          }
       }
@@ -445,7 +444,7 @@ public class Pass4CodeGeneration {
                   genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
                }
             }
-            asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
+            asm.addInstruction("jsr", AsmAddressingMode.ABS, new AsmParameterProcedure(call.getProcedure()), false);
          } else if(statement instanceof StatementReturn) {
             Procedure.InterruptType interruptType = null;
             ScopeRef scope = block.getScope();
@@ -566,7 +565,7 @@ public class Pass4CodeGeneration {
          PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
          if(!transition.isGenerated() && toBlock.getLabel().equals(fromBlock.getConditionalSuccessor())) {
             genBlockPhiTransition(asm, fromBlock, toBlock, toBlock.getScope());
-            asm.addInstruction("JMP", AsmAddressingMode.ABS, toBlock.getLabel().getLocalName().replace('@', 'b').replace(':', '_'), false);
+            asm.addInstruction("JMP", AsmAddressingMode.ABS, new AsmParameterLabel(toBlock.getLabel()), false);
          }
       }
    }

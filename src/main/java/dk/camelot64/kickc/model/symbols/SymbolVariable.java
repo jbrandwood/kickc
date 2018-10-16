@@ -34,7 +34,7 @@ public abstract class SymbolVariable implements Symbol {
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). */
    private boolean declaredVolatile;
 
-   public SymbolVariable(String name, Scope scope, SymbolType type) {
+   SymbolVariable(String name, Scope scope, SymbolType type) {
       this.name = name;
       this.scope = scope;
       this.type = type;

@@ -58,7 +58,7 @@ public class AsmFragmentInstance {
     * @param name The name of the bound value in the fragment
     * @return The bound value to use in the generated ASM code
     */
-   public AsmParameter getBoundValue(String name) {
+   public AsmFragmentParameter getBoundValue(String name) {
       Value boundValue = null;
       if(name.length() == 2) {
          // Short name!
@@ -80,7 +80,7 @@ public class AsmFragmentInstance {
          Variable boundVar = (Variable) boundValue;
          Registers.Register register = boundVar.getAllocation();
          if(register != null && register instanceof Registers.RegisterZp) {
-            return new AsmParameter(AsmFormat.getAsmParamName(boundVar, codeScopeRef), true);
+            return new AsmFragmentParameter(AsmFormat.getAsmParamName(boundVar, codeScopeRef), true);
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
@@ -88,15 +88,15 @@ public class AsmFragmentInstance {
          ConstantVar constantVar = (ConstantVar) boundValue;
          String constantValueAsm = AsmFormat.getAsmConstant(program, constantVar.getRef(), 99, codeScopeRef);
          boolean constantValueZp = SymbolType.BYTE.equals(constantVar.getType());
-         return new AsmParameter(constantValueAsm, constantValueZp);
+         return new AsmFragmentParameter(constantValueAsm, constantValueZp);
       } else if(boundValue instanceof ConstantValue) {
          ConstantValue boundConst = (ConstantValue) boundValue;
          String constantValueAsm = AsmFormat.getAsmConstant(program, boundConst, 99, codeScopeRef);
          boolean constantValueZp = SymbolType.BYTE.equals(boundConst.getType(program.getScope()));
-         return new AsmParameter(constantValueAsm, constantValueZp);
+         return new AsmFragmentParameter(constantValueAsm, constantValueZp);
       } else if(boundValue instanceof Label) {
          String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
-         return new AsmParameter(param, false);
+         return new AsmFragmentParameter(param, false);
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }
@@ -119,12 +119,12 @@ public class AsmFragmentInstance {
    /**
     * A parameter of an ASM instruction from a bound value.
     */
-   public static class AsmParameter {
+   public static class AsmFragmentParameter {
 
       private String param;
       private boolean zp;
 
-      public AsmParameter(String param, boolean zp) {
+      public AsmFragmentParameter(String param, boolean zp) {
          this.param = param;
          this.zp = zp;
       }
@@ -258,7 +258,7 @@ public class AsmFragmentInstance {
             AsmAddressingMode addressingMode) {
          KickCParser.AsmInstructionContext instructionCtx = (KickCParser.AsmInstructionContext) ctx.getParent();
          String mnemonic = instructionCtx.MNEMONIC().getSymbol().getText();
-         AsmParameter parameter = (AsmParameter) this.visit(exprCtx);
+         AsmFragmentParameter parameter = (AsmFragmentParameter) this.visit(exprCtx);
          AsmInstructionType type = AsmInstructionSet.getInstructionType(
                mnemonic,
                addressingMode,
@@ -270,61 +270,61 @@ public class AsmFragmentInstance {
       }
 
       @Override
-      public AsmParameter visitAsmExprBinary(KickCParser.AsmExprBinaryContext ctx) {
-         AsmParameter left = (AsmParameter) this.visit(ctx.asmExpr(0));
-         AsmParameter right = (AsmParameter) this.visit(ctx.asmExpr(1));
+      public AsmFragmentParameter visitAsmExprBinary(KickCParser.AsmExprBinaryContext ctx) {
+         AsmFragmentParameter left = (AsmFragmentParameter) this.visit(ctx.asmExpr(0));
+         AsmFragmentParameter right = (AsmFragmentParameter) this.visit(ctx.asmExpr(1));
          String param = "" + left.getParam() + ctx.getChild(1).getText() + right.getParam();
          boolean zp = left.isZp() && right.isZp();
-         return new AsmParameter(param, zp);
+         return new AsmFragmentParameter(param, zp);
       }
 
       @Override
-      public AsmParameter visitAsmExprUnary(KickCParser.AsmExprUnaryContext ctx) {
-         AsmParameter sub = (AsmParameter) this.visit(ctx.asmExpr());
+      public AsmFragmentParameter visitAsmExprUnary(KickCParser.AsmExprUnaryContext ctx) {
+         AsmFragmentParameter sub = (AsmFragmentParameter) this.visit(ctx.asmExpr());
          String operator = ctx.getChild(0).getText();
          String param = operator + sub.getParam();
          boolean isZp = sub.isZp();
          if(operator.equals("<") || operator.equals(">")) {
             isZp = true;
          }
-         return new AsmParameter(param, isZp);
+         return new AsmFragmentParameter(param, isZp);
       }
 
       @Override
       public Object visitAsmExprPar(KickCParser.AsmExprParContext ctx) {
-         AsmParameter sub = (AsmParameter) this.visit(ctx.asmExpr());
+         AsmFragmentParameter sub = (AsmFragmentParameter) this.visit(ctx.asmExpr());
          String param = "[" + sub.getParam() + "]";
-         return new AsmParameter(param, sub.isZp());
+         return new AsmFragmentParameter(param, sub.isZp());
       }
 
       @Override
-      public AsmParameter visitAsmExprInt(KickCParser.AsmExprIntContext ctx) {
+      public AsmFragmentParameter visitAsmExprInt(KickCParser.AsmExprIntContext ctx) {
          Number number = NumberParser.parseLiteral(ctx.NUMBER().getText());
          ConstantInteger intVal = new ConstantInteger(number.longValue());
          boolean isZp = SymbolType.isByte(intVal.getType()) || SymbolType.isSByte(intVal.getType());
          String param = AsmFormat.getAsmNumber(number);
-         return new AsmParameter(param, isZp);
+         return new AsmFragmentParameter(param, isZp);
       }
 
       @Override
       public Object visitAsmExprChar(KickCParser.AsmExprCharContext ctx) {
-         return new AsmParameter(ctx.getText(), true);
+         return new AsmFragmentParameter(ctx.getText(), true);
       }
 
       @Override
-      public AsmParameter visitAsmExprLabel(KickCParser.AsmExprLabelContext ctx) {
+      public AsmFragmentParameter visitAsmExprLabel(KickCParser.AsmExprLabelContext ctx) {
          String param = ctx.NAME().getSymbol().getText();
-         return new AsmParameter(param, false);
+         return new AsmFragmentParameter(param, false);
       }
 
       @Override
       public Object visitAsmExprLabelRel(KickCParser.AsmExprLabelRelContext ctx) {
          String param = ctx.ASMREL().getSymbol().getText();
-         return new AsmParameter(param, false);
+         return new AsmFragmentParameter(param, false);
       }
 
       @Override
-      public AsmParameter visitAsmExprReplace(KickCParser.AsmExprReplaceContext ctx) {
+      public AsmFragmentParameter visitAsmExprReplace(KickCParser.AsmExprReplaceContext ctx) {
          String replaceName = ctx.NAME().getSymbol().getText();
          return bindings.getBoundValue(replaceName);
       }

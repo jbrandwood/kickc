@@ -32,7 +32,7 @@ public class Pass5RedundantLabelElimination extends Pass5AsmOptimization {
             } else if(line instanceof AsmInstruction) {
                AsmInstruction instruction = (AsmInstruction) line;
                if(instruction.getType().isJump()) {
-                  String labelStr = instruction.getParameter();
+                  String labelStr = instruction.getParameter().getAsm();
                   if(!labelStr.contains("!")) {
                      // If redundant - Replace with the shortest
                      for(RedundantLabels redundantLabels : redundantLabelSet) {

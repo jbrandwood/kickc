@@ -21,7 +21,7 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
       // Find all labels immediately followed by a a jump
       String currentScope = "";
       String currentLabel = null;
-      Map<String, String> immediateJumps = new LinkedHashMap<>();
+      Map<String, AsmParameter> immediateJumps = new LinkedHashMap<>();
       for(AsmSegment segment : getAsmProgram().getSegments()) {
          for(AsmLine line : segment.getLines()) {
             if(line instanceof AsmScopeBegin) {
@@ -61,7 +61,7 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
             } else if(line instanceof AsmInstruction) {
                AsmInstruction asmInstruction = (AsmInstruction) line;
                if(asmInstruction.getType().isJump()) {
-                  String immediateJmpTarget = immediateJumps.get(currentScope + "::" + asmInstruction.getParameter());
+                  AsmParameter immediateJmpTarget = immediateJumps.get(currentScope + "::" + asmInstruction.getParameter());
                   if(immediateJmpTarget != null && !immediateJmpTarget.equals(asmInstruction.getParameter())) {
                      getLog().append("Skipping double jump to " + immediateJmpTarget + " in " + asmInstruction.toString());
                      asmInstruction.setParameter(immediateJmpTarget);

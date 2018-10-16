@@ -46,7 +46,7 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
 
       // Find relabels for all long labels
       // Scope->(Label->NewLabel)
-      Map<String, Map<String, String>> relabels = new LinkedHashMap<>();
+      Map<String, Map<String, AsmParameter>> relabels = new LinkedHashMap<>();
       for(AsmSegment asmSegment : getAsmProgram().getSegments()) {
          for(AsmLine asmLine : asmSegment.getLines()) {
             if(asmLine instanceof AsmScopeBegin) {
@@ -58,7 +58,7 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
                if(asmLabel.getLabel().contains("_from_")) {
                   // Found a long label
                   Set<String> scopeLabels = allLabels.get(currentScope);
-                  Map<String, String> scopeRelabels = relabels.get(currentScope);
+                  Map<String, AsmParameter> scopeRelabels = relabels.get(currentScope);
                   if(scopeRelabels == null) {
                      scopeRelabels = new LinkedHashMap<>();
                      relabels.put(currentScope, scopeRelabels);
@@ -86,9 +86,9 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
                currentScope = "";
             } else if(asmLine instanceof AsmLabel) {
                AsmLabel asmLabel = (AsmLabel) asmLine;
-               Map<String, String> scopeRelabels = relabels.get(currentScope);
+               Map<String, AsmParameter> scopeRelabels = relabels.get(currentScope);
                if(scopeRelabels != null) {
-                  String newLabel = scopeRelabels.get(asmLabel.getLabel());
+                  AsmParameter newLabel = scopeRelabels.get(asmLabel.getLabel());
                   if(newLabel != null) {
                      asmLabel.setLabel(newLabel);
                   }
@@ -96,10 +96,10 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
             } else if(asmLine instanceof AsmInstruction) {
                AsmInstruction asmInstruction = (AsmInstruction) asmLine;
                if(asmInstruction.getType().isJump()) {
-                  String parameter = asmInstruction.getParameter();
-                  Map<String, String> scopeRelabels = relabels.get(currentScope);
+                  AsmParameter parameter = asmInstruction.getParameter();
+                  Map<String, AsmParameter> scopeRelabels = relabels.get(currentScope);
                   if(scopeRelabels != null) {
-                     String newLabel = scopeRelabels.get(parameter);
+                     AsmParameter newLabel = scopeRelabels.get(parameter);
                      if(newLabel != null) {
                         asmInstruction.setParameter(newLabel);
                      }

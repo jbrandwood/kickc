@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.kickc.model.Program;
+
 /** 6502 Assembler Instruction Addressing Modes. */
 public enum AsmAddressingMode {
    NON("", "%i", 1),
@@ -36,10 +38,10 @@ public enum AsmAddressingMode {
       return name;
    }
 
-   public String getAsm(String mnemnonic, String parameter) {
+   public String getAsm(String mnemnonic, AsmParameter parameter) {
       String replaced = template.replace("%i", mnemnonic);
       if(parameter != null) {
-         replaced = replaced.replace("%p", parameter);
+         replaced = replaced.replace("%p", parameter.getAsm());
       }
       return replaced;
    }

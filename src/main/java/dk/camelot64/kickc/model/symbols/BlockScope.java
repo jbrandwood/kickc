@@ -29,4 +29,24 @@ public class BlockScope extends Scope {
    public String toString(Program program) {
       return "scope "+getFullName();
    }
+
+   @Override
+   public VariableIntermediate addVariableIntermediate() {
+      return getScope().addVariableIntermediate();
+   }
+
+   @Override
+   public Label addLabelIntermediate() {
+      return getScope().addLabelIntermediate();
+   }
+
+   @Override
+   public String allocateIntermediateLabelName() {
+      return getScope().allocateIntermediateLabelName();
+   }
+
+   @Override
+   public String allocateIntermediateVariableName() {
+      return getScope().allocateIntermediateVariableName();
+   }
 }

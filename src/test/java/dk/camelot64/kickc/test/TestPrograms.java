@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLocalScope() throws IOException, URISyntaxException {
+      compileAndCompare("local-scope");
+   }
+
+   @Test
    public void testBitwiseNot() throws IOException, URISyntaxException {
       compileAndCompare("bitwise-not");
    }
@@ -53,11 +58,6 @@ public class TestPrograms {
    //public void testUnrollCall() throws IOException, URISyntaxException {
    //   compileAndCompare("unroll-call");
    //}
-
-   @Test
-   public void testLocalScope() throws IOException, URISyntaxException {
-      compileAndCompare("local-scope");
-   }
 
    @Test
    public void testUnrollInfinite() throws IOException, URISyntaxException {

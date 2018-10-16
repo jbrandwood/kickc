@@ -5,22 +5,22 @@ public class AsmInstruction implements AsmLine {
 
    private AsmInstructionType type;
 
-   private String parameter;
+   private AsmParameter parameter;
 
    private int index;
 
    private boolean dontOptimize;
 
-   public AsmInstruction(AsmInstructionType type, String parameter) {
+   public AsmInstruction(AsmInstructionType type, AsmParameter parameter) {
       this.type = type;
       this.parameter = parameter;
    }
 
-   public String getParameter() {
+   public AsmParameter getParameter() {
       return parameter;
    }
 
-   public void setParameter(String parameter) {
+   public void setParameter(AsmParameter parameter) {
       this.parameter = parameter;
    }
 

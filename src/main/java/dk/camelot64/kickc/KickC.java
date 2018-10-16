@@ -54,8 +54,38 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-v" }, description = "Verbose output describing the compilation process")
    private boolean verbose= false;
 
-   @CommandLine.Option(names = {"-vfragment" }, description = "Verbosity Option. Synthesis of ASM fragments is printed during compilation.")
+   @CommandLine.Option(names = {"-vparse" }, description = "Verbosity Option. File Parsing.")
+   private boolean verboseParse = false;
+
+   @CommandLine.Option(names = {"-vcreate" }, description = "Verbosity Option. Creation of the Single Static Assignment Control Flow Graph.")
+   private boolean verboseCreateSsa = false;
+
+   @CommandLine.Option(names = {"-voptimize" }, description = "Verbosity Option. Control Flow Graph Optimization.")
+   private boolean verboseSSAOptimize = false;
+
+   @CommandLine.Option(names = {"-vnonoptimize" }, description = "Verbosity Option. Choices not to optimize.")
+   private boolean verboseNonOptimization = false;
+
+   @CommandLine.Option(names = {"-vsequence" }, description = "Verbosity Option. Sequence Plan.")
+   private boolean verboseSequencePlan = false;
+
+   @CommandLine.Option(names = {"-vloop" }, description = "Verbosity Option. Loop Analysis.")
+   private boolean verboseLoopAnalysis = false;
+
+   @CommandLine.Option(names = {"-vliverange" }, description = "Verbosity Option. Variable Live Range Analysis.")
+   private boolean verboseLiveRanges = false;
+
+   @CommandLine.Option(names = {"-vuplift" }, description = "Verbosity Option. Variable Register Uplift Combination Optimization.")
+   private boolean verboseUplift = false;
+
+   @CommandLine.Option(names = {"-vunroll" }, description = "Verbosity Option. Loop Unrolling.")
+   private boolean verboseLoopUnroll = false;
+
+   @CommandLine.Option(names = {"-vfragment" }, description = "Verbosity Option. Synthesis of Assembler fragments.")
    private boolean verboseFragments= false;
+
+   @CommandLine.Option(names = {"-vasmoptimize" }, description = "Verbosity Option. Assembler optimization.")
+   private boolean verboseAsmOptimize = false;
 
    public static void main(String[] args) {
       CommandLine.call(new KickC(), args);
@@ -107,8 +137,48 @@ public class KickC implements Callable<Void> {
          compiler.getLog().setSysOut(true);
       }
 
+      if(verboseParse) {
+         compiler.getLog().setVerboseParse(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseCreateSsa) {
+         compiler.getLog().setVerboseCreateSsa(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseSSAOptimize) {
+         compiler.getLog().setVerboseSSAOptimize(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseNonOptimization) {
+         compiler.getLog().setVerboseNonOptimization(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseSequencePlan) {
+         compiler.getLog().setVerboseSequencePlan(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseLoopAnalysis) {
+         compiler.getLog().setVerboseLoopAnalysis(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseLoopUnroll) {
+         compiler.getLog().setVerboseLoopUnroll(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseLiveRanges) {
+         compiler.getLog().setVerboseLiveRanges(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseUplift) {
+         compiler.getLog().setVerboseUplift(true);
+         compiler.getLog().setSysOut(true);
+      }
       if(verboseFragments) {
          compiler.getLog().setVerboseFragmentLog(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseAsmOptimize) {
+         compiler.getLog().setVerboseAsmOptimize(true);
          compiler.getLog().setSysOut(true);
       }
 

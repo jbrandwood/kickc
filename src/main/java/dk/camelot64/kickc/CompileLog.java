@@ -84,6 +84,30 @@ public class CompileLog {
       return log;
    }
 
+   public void setVerboseLoopUnroll(boolean verboseLoopUnroll) {
+      this.verboseLoopUnroll = verboseLoopUnroll;
+   }
+
+   public void setVerboseLoopAnalysis(boolean verboseLoopAnalysis) {
+      this.verboseLoopAnalysis = verboseLoopAnalysis;
+   }
+
+   public void setVerboseNonOptimization(boolean verboseNonOptimization) {
+      this.verboseNonOptimization = verboseNonOptimization;
+   }
+
+   public void setVerboseSequencePlan(boolean verboseSequencePlan) {
+      this.verboseSequencePlan = verboseSequencePlan;
+   }
+
+   public void setVerboseParse(boolean verboseParse) {
+      this.verboseParse = verboseParse;
+   }
+
+   public void setVerboseCreateSsa(boolean verboseCreateSsa) {
+      this.verboseCreateSsa = verboseCreateSsa;
+   }
+
    public boolean isVerboseUplift() {
       return verboseUplift;
    }

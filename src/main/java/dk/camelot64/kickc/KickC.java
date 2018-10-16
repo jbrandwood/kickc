@@ -23,7 +23,7 @@ import java.util.concurrent.Callable;
       descriptionHeading = "%nDescription:%n%n",
       parameterListHeading = "%nParameters:%n",
       optionListHeading = "%nOptions:%n",
-      version = "KickC 0.5"
+      version = "KickC 0.5 (master)"
 )
 public class KickC implements Callable<Void> {
 
@@ -50,6 +50,12 @@ public class KickC implements Callable<Void> {
 
    @CommandLine.Option(names = {"-Ouplift" }, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
    private Integer optimizeUpliftCombinations = null;
+
+   @CommandLine.Option(names = {"-v" }, description = "Verbose output describing the compilation process")
+   private boolean verbose= false;
+
+   @CommandLine.Option(names = {"-vfragment" }, description = "Verbosity Option. Synthesis of ASM fragments is printed during compilation.")
+   private boolean verboseFragments= false;
 
    public static void main(String[] args) {
       CommandLine.call(new KickC(), args);
@@ -95,6 +101,15 @@ public class KickC implements Callable<Void> {
 
       if(optimizeUpliftCombinations!=null) {
          compiler.setUpliftCombinations(optimizeUpliftCombinations);
+      }
+
+      if(verbose) {
+         compiler.getLog().setSysOut(true);
+      }
+
+      if(verboseFragments) {
+         compiler.getLog().setVerboseFragmentLog(true);
+         compiler.getLog().setSysOut(true);
       }
 
       System.out.println("Compiling " + kcFile);

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMinFastMul16() throws IOException, URISyntaxException {
+      compileAndCompare("min-fmul-16");
+   }
+
+   @Test
    public void testBitwiseNot() throws IOException, URISyntaxException {
       compileAndCompare("bitwise-not");
    }

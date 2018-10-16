@@ -321,6 +321,10 @@ public class AsmFragmentInstanceSpec {
             return "pwu";
          } else if(SymbolType.isSWord(elementType)) {
             return "pws";
+         } else if(SymbolType.isDWord(elementType)) {
+            return "pdu";
+         } else if(SymbolType.isSDWord(elementType)) {
+            return "pds";
          } else if(SymbolType.BOOLEAN.equals(elementType)) {
             return "pbo";
          } else if(elementType instanceof SymbolTypeProcedure) {

@@ -1,3 +1,24 @@
+import "print"
+
+byte* RASTER = $d012;
+byte* BORDERCOL = $d020;
+byte* SCREEN = $400;
+
+void main() {
+	mulf_init();
+	word a = 1234;
+	word b = 2345;
+    asm { sei }
+	while(true) {
+	    while(*RASTER!=$ff) {}
+	    (*BORDERCOL)++;
+	    dword r = mulf16u(a, b);
+	    (*BORDERCOL)--;
+	    print_dword(r);
+	    print_set_screen(SCREEN);
+	}
+}
+
 // Library Implementation of the Seriously Fast Multiplication
 // See http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 // Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
@@ -44,49 +65,6 @@ void mulf_init() {
   // Set the very last value g(511) = f(256)
   *(mulf_sqr2_lo+511) = *(mulf_sqr1_lo+256);
   *(mulf_sqr2_hi+511) = *(mulf_sqr1_hi+256);
-}
-
-// Fast multiply two unsigned bytes to a word result
-// Done in assembler to utilize fast addition A+X
-word mulf8u(byte a, byte b) {
-    const byte* memA = $fe;
-    const byte* memB = $ff;
-    *memA = a;
-    *memB = b;
-    asm {
-        lda memA
-        sta sm1+1
-        sta sm3+1
-        eor #$ff
-        sta sm2+1
-        sta sm4+1
-        ldx memB
-        sec
-    sm1:
-        lda mulf_sqr1_lo,x
-    sm2:
-        sbc mulf_sqr2_lo,x
-        sta memA
-    sm3:
-        lda mulf_sqr1_hi,x
-    sm4:
-        sbc mulf_sqr2_hi,x
-        sta memB
-    }
-    return { *memB, *memA };
-}
-
-// Fast multiply of two signed bytes to a signed word
-// Fixes offsets introduced by using unsigned multiplication
-signed word mulf8s(signed byte a, signed byte b) {
-    word m = mulf8u((byte)a, (byte) b);
-    if(a<0) {
-        >m = (>m)-(byte)b;
-    }
-    if(b<0) {
-        >m = (>m)-(byte)a;
-    }
-    return (signed word)m;
 }
 
 // Fast multiply two unsigned words to a double word result

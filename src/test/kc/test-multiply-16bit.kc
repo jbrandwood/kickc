@@ -46,28 +46,34 @@ void mul16u_compare() {
     word a = 0;
     word b = 0;
     for(byte i: 0..15) {
+        print_str(".@");
         for(byte j: 0..15) {
             a=a+3371;
             b=b+4093;
             dword ms = muls16u(a, b);
             dword mn = mul16u(a,b);
+            dword mf = mulf16u(a,b);
             byte ok = 1;
+            if(ms!=mf) {
+                ok = 0;
+            }
             if(ms!=mn) {
                 ok = 0;
             }
             if(ok==0) {
                 *BGCOL = 2;
-                mul16u_error(a,b, ms, mn);
+                mul16u_error(a,b, ms, mn, mf);
                 return;
             }
         }
     }
+    print_ln();
     print_str("word multiply results match!@");
     print_ln();
 }
 
-void mul16u_error(word a, word b, dword ms, dword mn) {
-  print_str("word multiply mismatch @");
+void mul16u_error(word a, word b, dword ms, dword mn, dword mf) {
+  print_str("multiply mismatch @");
   print_word(a);
   print_str("*@");
   print_word(b);
@@ -75,6 +81,8 @@ void mul16u_error(word a, word b, dword ms, dword mn) {
   print_dword(ms);
   print_str(" / normal:@");
   print_dword(mn);
+  print_str(" / fast:@");
+  print_dword(mf);
   print_ln();
 }
 
@@ -83,6 +91,7 @@ void mul16s_compare() {
     signed word a = -$7fff;
     signed word b = -$7fff;
     for(byte i: 0..15) {
+        print_str(".@");
         for(byte j: 0..15) {
             a=a+3371;
             b=b+4093;
@@ -99,6 +108,7 @@ void mul16s_compare() {
             }
         }
     }
+    print_ln();
     print_str("signed word multiply results match!@");
     print_ln();
 }

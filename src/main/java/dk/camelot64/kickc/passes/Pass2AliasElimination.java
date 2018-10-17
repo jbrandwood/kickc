@@ -1,12 +1,13 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
@@ -28,13 +29,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       removeAliasAssignments(aliases);
       replaceVariables(aliases.getReplacements(getScope()));
       for(AliasSet aliasSet : aliases.getAliasSets()) {
-         StringBuilder str = new StringBuilder();
-         str.append(aliasSet.getKeepVar(getScope()).toString(getProgram()));
-         str.append(" = ");
-         for(VariableRef var : aliasSet.getEliminateVars(getScope())) {
-            str.append(var.toString(getProgram()) + " ");
-         }
-         getLog().append("Alias " + str);
+         getLog().append("Alias " + aliasSet.toString(getProgram()));
       }
       deleteSymbols(aliases.getSymbolsToRemove(getScope()));
       return (aliases.size() > 0);
@@ -75,6 +70,14 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   }
                }
             }
+         }
+      }
+      ListIterator<AliasSet> aliasSetListIterator = candidates.getAliasSets().listIterator();
+      while(aliasSetListIterator.hasNext()) {
+         AliasSet aliasSet = aliasSetListIterator.next();
+         if(aliasSet.getVars().size() <= 1) {
+            program.getLog().append("Alias candidate removed " + aliasSet.toString(program));
+            aliasSetListIterator.remove();
          }
       }
    }
@@ -322,6 +325,16 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          } else {
             return false;
          }
+      }
+
+      public String toString(Program program) {
+         StringBuilder str = new StringBuilder();
+         str.append(getKeepVar(program.getScope()).toString(program));
+         str.append(" = ");
+         for(VariableRef var : getEliminateVars(program.getScope())) {
+            str.append(var.toString(program)).append(" ");
+         }
+         return str.toString();
       }
 
       public List<VariableRef> getVars() {

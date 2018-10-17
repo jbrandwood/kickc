@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInfLoopError() throws IOException, URISyntaxException {
+      compileAndCompare("infloop-error");
+   }
+
+   @Test
    public void testMinFastMul16() throws IOException, URISyntaxException {
       compileAndCompare("min-fmul-16");
    }

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testRotate() throws IOException, URISyntaxException {
+      compileAndCompare("examples/rotate/rotate");
+   }
+
+   @Test
    public void testInfLoopError() throws IOException, URISyntaxException {
       compileAndCompare("infloop-error");
    }

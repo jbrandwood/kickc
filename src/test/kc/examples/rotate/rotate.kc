@@ -8,10 +8,8 @@ import "fastmultiply"
 byte* SCREEN = $0400;
 byte* SPRITE = $3000;
 
-byte* COS_LO = $2000;
-byte* COS_HI = $2200;
-byte* SIN_LO = COS_LO+$40; // sin(x) = cos(x+PI/2)
-byte* SIN_HI = COS_HI+$40; // sin(x) = cos(x+PI/2)
+byte* COS = $2000;
+byte* SIN = COS+$40; // sin(x) = cos(x+PI/2)
 
 void main() {
 	asm { sei }
@@ -46,10 +44,17 @@ void anim() {
 	while(true) {
 		while(*RASTER!=$ff) {}
 		(*BORDERCOL)++;	
-		signed byte sin_a = (signed byte) SIN_HI[angle]; // signed fixed[0.7]
-		signed byte cos_a = (signed byte) COS_HI[angle]; // signed fixed[0.7]
-		signed word xr = mulf8s(cos_a, x)<<1 - mulf8s(sin_a, y)<<1; // signed fixed[8.8] 
-		signed word yr = mulf8s(cos_a, y)<<1 + mulf8s(sin_a, x)<<1; // signed fixed[8.8] 
+
+		signed byte cos_a = (signed byte) COS[angle]; // signed fixed[0.7]
+        mulf8s_prepare(cos_a);
+        signed word xr = mulf8s_prepared(x)<<1; // signed fixed[8.8] 
+        signed word yr = mulf8s_prepared(y)<<1; // signed fixed[8.8] 
+
+        signed byte sin_a = (signed byte) SIN[angle]; // signed fixed[0.7]
+        mulf8s_prepare(sin_a);
+		xr -= mulf8s_prepared(y)<<1; // signed fixed[8.8] 
+		yr += mulf8s_prepared(x)<<1; // signed fixed[8.8] 
+
 		signed word xpos = ((signed byte) >xr) + 89 + 24 + 60;
 		signed word ypos = ((signed byte) >yr) + 89 + 51;
        	SPRITES_XPOS[0] = <xpos;
@@ -60,19 +65,7 @@ void anim() {
 	}
 }
 
-kickasm(pc COS_LO) {{
-	{
-    .var min = -$7fff
-    .var max = $7fff
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-    	.var rad = i*2*PI/256;
-        .byte <round(min+(ampl/2)+(ampl/2)*cos(rad))
-    }
-    }
-}}
-
-kickasm(pc COS_HI) {{
+kickasm(pc COS) {{
 	{
     .var min = -$7fff
     .var max = $7fff

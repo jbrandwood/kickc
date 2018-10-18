@@ -30,7 +30,8 @@ mul8s_compare: {
   b2:
     ldx b
     jsr muls8s
-    ldy a
+    lda a
+    ldx b
     jsr mulf8s
     ldy b
     jsr mul8s
@@ -309,13 +310,21 @@ mul8u: {
     jmp b1
 }
 mulf8s: {
+    .label return = $e
+    jsr mulf8u_prepare
+    stx mulf8s_prepared.b
+    jsr mulf8s_prepared
+    rts
+}
+mulf8s_prepared: {
+    .label memA = $fd
     .label m = $e
     .label b = 3
     .label return = $e
-    tya
     ldx b
-    jsr mulf8u
-    cpy #0
+    jsr mulf8u_prepared
+    lda memA
+    cmp #0
     bpl b1
     lda m+1
     sec
@@ -326,39 +335,42 @@ mulf8s: {
     cmp #0
     bpl b2
     lda m+1
-    sty $ff
     sec
-    sbc $ff
+    sbc memA
     sta m+1
   b2:
     rts
 }
-mulf8u: {
-    .label memA = $fe
+mulf8u_prepared: {
+    .label resL = $fe
     .label memB = $ff
     .label return = $e
-    sta memA
     stx memB
-    sta sm1+1
-    sta sm3+1
-    eor #$ff
-    sta sm2+1
-    sta sm4+1
     sec
   sm1:
     lda mulf_sqr1_lo,x
   sm2:
     sbc mulf_sqr2_lo,x
-    sta memA
+    sta resL
   sm3:
     lda mulf_sqr1_hi,x
   sm4:
     sbc mulf_sqr2_hi,x
     sta memB
-    lda memA
+    lda resL
     sta return
     lda memB
     sta return+1
+    rts
+}
+mulf8u_prepare: {
+    .label memA = $fd
+    sta memA
+    sta mulf8u_prepared.sm1+1
+    sta mulf8u_prepared.sm3+1
+    eor #$ff
+    sta mulf8u_prepared.sm2+1
+    sta mulf8u_prepared.sm4+1
     rts
 }
 muls8s: {
@@ -539,6 +551,12 @@ mul8u_error: {
     str2: .text " slow:@"
     str3: .text " / normal:@"
     str4: .text " / fast:@"
+}
+mulf8u: {
+    .label return = $e
+    jsr mulf8u_prepare
+    jsr mulf8u_prepared
+    rts
 }
 muls8u: {
     .label return = 8

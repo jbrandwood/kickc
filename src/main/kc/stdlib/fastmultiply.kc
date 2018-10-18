@@ -48,7 +48,7 @@ void mulf_init() {
 
 // Fast multiply two unsigned bytes to a word result
 // Done in assembler to utilize fast addition A+X
-word mulf8u(byte a, byte b) {
+word mulf8u_old(byte a, byte b) {
     const byte* memA = $fe;
     const byte* memB = $ff;
     *memA = a;
@@ -76,9 +76,77 @@ word mulf8u(byte a, byte b) {
     return { *memB, *memA };
 }
 
+// Prepare for fast multiply with an unsigned byte to a word result
+void mulf8u_prepare(byte a) {
+    const byte* memA = $fd;
+    *memA = a;
+    asm {
+        lda memA
+        sta mulf8u_prepared.sm1+1
+        sta mulf8u_prepared.sm3+1
+        eor #$ff
+        sta mulf8u_prepared.sm2+1
+        sta mulf8u_prepared.sm4+1
+    }
+}
+
+// Calculate fast multiply with a prepared unsigned byte to a word result
+// The prepared number is set by calling mulf8u_prepare(byte a)
+word mulf8u_prepared(byte b) {
+    const byte* resL = $fe;
+    const byte* memB = $ff;
+    *memB = b;
+    asm {
+        ldx memB
+        sec
+    sm1:
+        lda mulf_sqr1_lo,x
+    sm2:
+        sbc mulf_sqr2_lo,x
+        sta resL
+    sm3:
+        lda mulf_sqr1_hi,x
+    sm4:
+        sbc mulf_sqr2_hi,x
+        sta memB
+    }
+    return { *memB, *resL };
+}
+
+// Fast multiply two unsigned bytes to a word result
+word mulf8u(byte a, byte b) {
+    mulf8u_prepare(a);
+    return mulf8u_prepared(b);
+}
+
+// Prepare for fast multiply with an signed byte to a word result
+inline void mulf8s_prepare(signed byte a) {
+    mulf8u_prepare((byte)a);
+}
+
+// Calculate fast multiply with a prepared unsigned byte to a word result
+// The prepared number is set by calling mulf8s_prepare(byte a)
+signed word mulf8s_prepared(signed byte b) {
+    const signed byte* memA = $fd; 
+    word m = mulf8u_prepared((byte) b);
+    if(*memA<0) {
+        >m = (>m)-(byte)b;
+    }
+    if(b<0) {
+        >m = (>m)-(byte)*memA;
+    }
+    return (signed word)m;
+}
+
+// Fast multiply two signed bytes to a word result
+signed word mulf8s(signed byte a, signed byte b) {
+    mulf8s_prepare(a);
+    return mulf8s_prepared(b);
+}
+
 // Fast multiply of two signed bytes to a signed word
 // Fixes offsets introduced by using unsigned multiplication
-signed word mulf8s(signed byte a, signed byte b) {
+signed word mulf8s_old(signed byte a, signed byte b) {
     word m = mulf8u((byte)a, (byte) b);
     if(a<0) {
         >m = (>m)-(byte)b;

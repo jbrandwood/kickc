@@ -4,11 +4,13 @@
 # KICKC HOME
 export KICKC_HOME="$(dirname $0)/.."
 # KCLIB HOME
-export KICKCLIB_HOME="$KICKC_HOME/stdlib"
+export KICKC_STDLIB_HOME="$KICKC_HOME/stdlib"
+# FRAGMENTS HOME
+export KICKC_FRAGMENT_HOME="$KICKC_HOME/fragment"
 # KICKASSEMBLER HOME
 # VICE HOME
 # KICKC_JAR
 export KICKC_JAR=$KICKC_HOME/lib/kickc-*.jar
 
-echo java -jar $KICKC_JAR -I $KICKCLIB_HOME $*
-java -jar $KICKC_JAR -I $KICKCLIB_HOME $*
+echo java -jar $KICKC_JAR -I $KICKC_STDLIB_HOME $*
+java -jar $KICKC_JAR -I $KICKC_STDLIB_HOME -F $KICKC_FRAGMENT_HOME $*

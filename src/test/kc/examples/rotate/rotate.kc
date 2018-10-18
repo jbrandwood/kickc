@@ -1,0 +1,92 @@
+
+// Angles: sf[0.8] : $80=PI, $100 = 2*PI
+// Values: sin(x) in [-1;1]  sf[0.16] : -1.0: -$7fff 1.0:$7fff
+
+import "c64"
+import "fastmultiply"
+
+byte* SCREEN = $0400;
+byte* SPRITE = $3000;
+
+byte* COS_LO = $2000;
+byte* COS_HI = $2200;
+byte* SIN_LO = COS_LO+$40; // sin(x) = cos(x+PI/2)
+byte* SIN_HI = COS_HI+$40; // sin(x) = cos(x+PI/2)
+
+void main() {
+	asm { sei }
+	init();
+	anim();
+}
+
+void init() {
+    mulf_init();	
+    *SPRITES_ENABLE = %11111111;	
+    byte* sprites_ptr = SCREEN+$3f8;
+    byte spr_x = 60;
+    for(byte i: 0..7) {
+    	byte i2 = i<<1;
+    	sprites_ptr[i] = (byte)(SPRITE/$40);
+        SPRITES_XPOS[i2] = spr_x;
+        SPRITES_YPOS[i2] = spr_x;
+        SPRITES_COLS[i] = GREEN;
+        spr_x += 24;
+    }
+
+}
+
+void anim() {
+	signed word min = 1000;
+	signed word max = -1000;
+
+	byte angle = 0;
+	signed word x = 89; // signed fixed[15.0]
+	signed word y = 0;
+
+	while(true) {
+		while(*RASTER!=$ff) {}
+		(*BORDERCOL)++;	
+		signed word sin_a = (signed word) { SIN_HI[angle], SIN_LO[angle] }; // signed fixed[0.15]
+		signed word cos_a = (signed word)  { COS_HI[angle], COS_LO[angle] }; // signed fixed[0.15]
+		signed dword xr = mulf16s(cos_a, x)<<1 - mulf16s(sin_a, y)<<1; // signed fixed[16.16] 
+		signed dword yr = mulf16s(cos_a, y)<<1 + mulf16s(sin_a, x)<<1; // signed fixed[16.16] 
+		signed word xpos = ((signed word) >xr) + 89 + 24 + 60;
+		signed word ypos = ((signed word) >yr) + 89 + 51;
+       	SPRITES_XPOS[0] = <xpos;
+        *SPRITES_XMSB = >xpos;
+       	SPRITES_YPOS[0] = <ypos;
+		angle++;
+		(*BORDERCOL)--;	
+	}
+}
+
+kickasm(pc COS_LO) {{
+	{
+    .var min = -$7fff
+    .var max = $7fff
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+    	.var rad = i*2*PI/256;
+        .byte <round(min+(ampl/2)+(ampl/2)*cos(rad))
+    }
+    }
+}}
+
+kickasm(pc COS_HI) {{
+	{
+    .var min = -$7fff
+    .var max = $7fff
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+    	.var rad = i*2*PI/256;
+        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
+    }
+    }
+}}
+
+kickasm(pc SPRITE, resource "balloon.png") {{
+    .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+}}

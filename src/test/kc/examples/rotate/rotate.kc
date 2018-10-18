@@ -40,18 +40,18 @@ void anim() {
 	signed word max = -1000;
 
 	byte angle = 0;
-	signed word x = 89; // signed fixed[15.0]
-	signed word y = 0;
+	signed byte x = 89; // signed fixed[7.0]
+	signed byte y = 0;
 
 	while(true) {
 		while(*RASTER!=$ff) {}
 		(*BORDERCOL)++;	
-		signed word sin_a = (signed word) { SIN_HI[angle], SIN_LO[angle] }; // signed fixed[0.15]
-		signed word cos_a = (signed word)  { COS_HI[angle], COS_LO[angle] }; // signed fixed[0.15]
-		signed dword xr = mulf16s(cos_a, x)<<1 - mulf16s(sin_a, y)<<1; // signed fixed[16.16] 
-		signed dword yr = mulf16s(cos_a, y)<<1 + mulf16s(sin_a, x)<<1; // signed fixed[16.16] 
-		signed word xpos = ((signed word) >xr) + 89 + 24 + 60;
-		signed word ypos = ((signed word) >yr) + 89 + 51;
+		signed byte sin_a = (signed byte) SIN_HI[angle]; // signed fixed[0.7]
+		signed byte cos_a = (signed byte) COS_HI[angle]; // signed fixed[0.7]
+		signed word xr = mulf8s(cos_a, x)<<1 - mulf8s(sin_a, y)<<1; // signed fixed[8.8] 
+		signed word yr = mulf8s(cos_a, y)<<1 + mulf8s(sin_a, x)<<1; // signed fixed[8.8] 
+		signed word xpos = ((signed byte) >xr) + 89 + 24 + 60;
+		signed word ypos = ((signed byte) >yr) + 89 + 51;
        	SPRITES_XPOS[0] = <xpos;
         *SPRITES_XMSB = >xpos;
        	SPRITES_YPOS[0] = <ypos;

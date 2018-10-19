@@ -32,7 +32,6 @@ anim: {
     .label xr = 5
     .label yr = 7
     .label xpos = 3
-    .label ypos = 5
     ldy #0
   b4:
     lda RASTER
@@ -99,25 +98,13 @@ anim: {
     lda xpos+1
     adc #0
     sta xpos+1
-    lda yr+1
-    sta ypos
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta ypos+1
-    lda ypos
-    clc
-    adc #$59+$33
-    sta ypos
-    lda ypos+1
-    adc #0
-    sta ypos+1
     lda xpos
     sta SPRITES_XPOS
     lda xpos+1
     sta SPRITES_XMSB
-    lda ypos
+    lda yr+1
+    clc
+    adc #$59+$33
     sta SPRITES_YPOS
     iny
     dec BORDERCOL

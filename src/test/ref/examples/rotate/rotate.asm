@@ -105,7 +105,7 @@ anim: {
     sta xpos+1
     lda xpos
     clc
-    adc #$59+$18+$3c
+    adc #$18+$95
     sta xpos
     lda xpos+1
     adc #0

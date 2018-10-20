@@ -1,4 +1,3 @@
-
 // Angles: sf[0.8] : $80=PI, $100 = 2*PI
 // Values: sin(x) in [-1;1]  sf[0.16] : -1.0: -$7fff 1.0:$7fff
 
@@ -8,6 +7,7 @@ import "fastmultiply"
 byte* SCREEN = $0400;
 byte* SPRITE = $3000;
 
+// Sine and Cosine tables - // signed fixed [-$7f,$7f]
 byte* COS = $2000;
 byte* SIN = COS+$40; // sin(x) = cos(x+PI/2)
 
@@ -21,48 +21,47 @@ void init() {
     mulf_init();	
     *SPRITES_ENABLE = %11111111;	
     byte* sprites_ptr = SCREEN+$3f8;
-    byte spr_x = 60;
     for(byte i: 0..7) {
-    	byte i2 = i<<1;
     	sprites_ptr[i] = (byte)(SPRITE/$40);
-        SPRITES_XPOS[i2] = spr_x;
-        SPRITES_YPOS[i2] = spr_x;
         SPRITES_COLS[i] = GREEN;
-        spr_x += 24;
     }
-
 }
 
+// Positions to rotate
+signed byte[8] xs = { -70, -70, -70,   0,   0,  70,  70,  70};
+signed byte[8] ys = { -70,   0,  70, -70,  70, -70,   0,  70};
+
 void anim() {
-	signed word min = 1000;
-	signed word max = -1000;
-
 	byte angle = 0;
-	signed byte x = 89; // signed fixed[7.0]
-	signed byte y = 0;
-
 	while(true) {
 		while(*RASTER!=$ff) {}
-		(*BORDERCOL)++;	
-
-		signed byte cos_a = (signed byte) COS[angle]; // signed fixed[0.7]
-        mulf8s_prepare(cos_a);
-        signed word xr = mulf8s_prepared(x)<<1; // signed fixed[8.8] 
-        signed word yr = mulf8s_prepared(y)<<1; // signed fixed[8.8] 
-
+        (*BORDERCOL)++; 
+        signed byte cos_a = (signed byte) COS[angle]; // signed fixed[0.7]
         signed byte sin_a = (signed byte) SIN[angle]; // signed fixed[0.7]
-        mulf8s_prepare(sin_a);
-		xr -= mulf8s_prepared(y)<<1; // signed fixed[8.8] 
-		yr += mulf8s_prepared(x)<<1; // signed fixed[8.8] 
-
-		signed word xpos = ((signed byte) >xr) + 89 + 24 + 60;
-       	SPRITES_XPOS[0] = <xpos;
-        *SPRITES_XMSB = >xpos;
-        //signed word ypos = ((signed byte) >yr) + 89 + 51;
-        byte ypos = (>yr) + 89 + 51;
-       	SPRITES_YPOS[0] = ypos;
+        byte sprite_msb = 0;
+        for(byte i: 0..7) {             
+            signed byte x = xs[i]; // signed fixed[7.0]
+            signed byte y = ys[i]; // signed fixed[7.0]
+            mulf8s_prepare(cos_a);
+            signed word xr = mulf8s_prepared(x)<<1; // signed fixed[8.8] 
+            signed word yr = mulf8s_prepared(y)<<1; // signed fixed[8.8] 
+            mulf8s_prepare(sin_a);
+	        xr -= mulf8s_prepared(y)<<1; // signed fixed[8.8] 
+		    yr += mulf8s_prepared(x)<<1; // signed fixed[8.8] 
+		    signed word xpos = ((signed byte) >xr) + 89 + 24 + 60;
+            sprite_msb = sprite_msb>>1;
+            if(>xpos!=0) {
+                sprite_msb |= $80;
+            }
+            //signed word ypos = ((signed byte) >yr) + 89 + 51;
+            byte ypos = (>yr) + 89 + 51; // Effectively the same as   <(((signed byte) >yr) + 89 + 51;)
+            byte i2 = i<<1;
+       	    SPRITES_XPOS[i2] = <xpos;
+       	    SPRITES_YPOS[i2] = ypos;
+        }
+        *SPRITES_XMSB = sprite_msb;
 		angle++;
-		(*BORDERCOL)--;	
+		*BORDERCOL = LIGHT_BLUE;	
 	}
 }
 

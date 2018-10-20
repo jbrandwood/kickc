@@ -9,6 +9,7 @@
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
   .const GREEN = 5
+  .const LIGHT_BLUE = $e
   .label SCREEN = $400
   .label SPRITE = $3000
   .label COS = $2000
@@ -21,27 +22,40 @@ main: {
     rts
 }
 anim: {
-    .const x = $59
-    .const y = 0
-    .label _4 = 5
-    .label _6 = 7
-    .label _10 = 3
-    .label _11 = 3
-    .label _12 = 3
-    .label _13 = 3
-    .label xr = 5
-    .label yr = 7
-    .label xpos = 3
-    ldy #0
+    .label _4 = 7
+    .label _6 = 9
+    .label _9 = 5
+    .label _10 = 5
+    .label _11 = 5
+    .label _12 = 5
+    .label x = $b
+    .label y = $c
+    .label xr = 7
+    .label yr = 9
+    .label xpos = 5
+    .label sprite_msb = 4
+    .label i = 3
+    .label angle = 2
+    lda #0
+    sta angle
   b4:
     lda RASTER
     cmp #$ff
     bne b4
     inc BORDERCOL
+    lda #0
+    sta sprite_msb
+    sta i
+  b7:
+    ldy i
+    lda xs,y
+    sta x
+    lda ys,y
+    sta y
+    ldy angle
     lda COS,y
     jsr mulf8u_prepare
-    lda #x
-    sta mulf8s_prepared.b
+    ldy x
     jsr mulf8s_prepared
     lda mulf8s_prepared.return
     sta _4
@@ -49,8 +63,7 @@ anim: {
     sta _4+1
     asl xr
     rol xr+1
-    lda #y
-    sta mulf8s_prepared.b
+    ldy y
     jsr mulf8s_prepared
     lda mulf8s_prepared.return
     sta _6
@@ -58,31 +71,30 @@ anim: {
     sta _6+1
     asl yr
     rol yr+1
+    ldy angle
     lda SIN,y
     jsr mulf8u_prepare
-    lda #y
-    sta mulf8s_prepared.b
+    ldy y
     jsr mulf8s_prepared
-    asl _11
-    rol _11+1
+    asl _10
+    rol _10+1
     lda xr
     sec
-    sbc _11
+    sbc _10
     sta xr
     lda xr+1
-    sbc _11+1
+    sbc _10+1
     sta xr+1
-    lda #x
-    sta mulf8s_prepared.b
+    ldy x
     jsr mulf8s_prepared
-    asl _13
-    rol _13+1
+    asl _12
+    rol _12+1
     lda yr
     clc
-    adc _13
+    adc _12
     sta yr
     lda yr+1
-    adc _13+1
+    adc _12+1
     sta yr+1
     lda xr+1
     sta xpos
@@ -98,34 +110,52 @@ anim: {
     lda xpos+1
     adc #0
     sta xpos+1
-    lda xpos
-    sta SPRITES_XPOS
-    lda xpos+1
-    sta SPRITES_XMSB
+    lsr sprite_msb
+    cmp #0
+    beq b8
+    lda #$80
+    ora sprite_msb
+    sta sprite_msb
+  b8:
     lda yr+1
     clc
     adc #$59+$33
-    sta SPRITES_YPOS
-    iny
-    dec BORDERCOL
+    tay
+    lda i
+    asl
+    tax
+    lda xpos
+    sta SPRITES_XPOS,x
+    tya
+    sta SPRITES_YPOS,x
+    inc i
+    lda i
+    cmp #8
+    beq !b7+
+    jmp b7
+  !b7:
+    lda sprite_msb
+    sta SPRITES_XMSB
+    inc angle
+    lda #LIGHT_BLUE
+    sta BORDERCOL
     jmp b4
 }
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = 3
-    .label return = 3
-    .label b = 2
+    .label m = 5
+    .label return = 5
     jsr mulf8u_prepared
     lda memA
     cmp #0
     bpl b1
     lda m+1
+    sty $ff
     sec
-    sbc b
+    sbc $ff
     sta m+1
   b1:
-    lda b
-    cmp #0
+    cpy #0
     bpl b2
     lda m+1
     sec
@@ -137,10 +167,9 @@ mulf8s_prepared: {
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = 3
-    lda mulf8s_prepared.b
-    sta memB
-    tax
+    .label return = 5
+    sty memB
+    ldx memB
     sec
   sm1:
     lda mulf_sqr1_lo,x
@@ -170,40 +199,27 @@ mulf8u_prepare: {
 }
 init: {
     .label sprites_ptr = SCREEN+$3f8
-    .label spr_x = 2
     jsr mulf_init
     lda #$ff
     sta SPRITES_ENABLE
-    lda #$3c
-    sta spr_x
-    ldy #0
+    ldx #0
   b1:
-    tya
-    asl
-    tax
     lda #$ff&SPRITE/$40
-    sta sprites_ptr,y
-    lda spr_x
-    sta SPRITES_XPOS,x
-    sta SPRITES_YPOS,x
+    sta sprites_ptr,x
     lda #GREEN
-    sta SPRITES_COLS,y
-    lda #$18
-    clc
-    adc spr_x
-    sta spr_x
-    iny
-    cpy #8
+    sta SPRITES_COLS,x
+    inx
+    cpx #8
     bne b1
     rts
 }
 mulf_init: {
-    .label sqr1_hi = 5
-    .label sqr = 7
-    .label sqr1_lo = 3
+    .label sqr1_hi = 7
+    .label sqr = 9
+    .label sqr1_lo = 5
     .label x_2 = 2
-    .label sqr2_hi = 5
-    .label sqr2_lo = 3
+    .label sqr2_hi = 7
+    .label sqr2_lo = 5
     .label dir = 2
     lda #0
     sta x_2
@@ -311,6 +327,8 @@ mulf_init: {
   mulf_sqr2_lo: .fill $200, 0
   .align $100
   mulf_sqr2_hi: .fill $200, 0
+  xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
+  ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
 .pc = COS "Inline"
   {
     .var min = -$7fff

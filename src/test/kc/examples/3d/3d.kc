@@ -2,59 +2,13 @@
 // Based on: 
 // - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 // - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
-
 import "c64"
 
-byte* SCREEN = $400;
-
-// A single sprite
-byte* SPRITE = $3000;
-kickasm(pc SPRITE, resource "balloon.png") {{
-    .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
-    .for (var y=0; y<21; y++)
-        .for (var x=0;x<3; x++)
-            .byte pic.getSinglecolorByte(x,y)
-}}
-
-// Sine and Cosine Tables   
-// Angles: $00=0, $80=PI,$100=2*PI
-// Half Sine/Cosine: signed fixed [-$1f,$1f]
-signed byte* COSH = $2000;
-signed byte* SINH = COSH+$40; // sin(x) = cos(x+PI/2)
-// Quarter Sine/Cosine: signed fixed [-$0f,$0f]
-signed byte* COSQ = $2200;
-signed byte* SINQ = COSQ+$40; // sin(x) = cos(x+PI/2)
-kickasm(pc COSH) {{
-    {
-    .var min = -$1fff
-    .var max = $1fff
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
-    }
-    }
-}}
-kickasm(pc COSQ) {{
-    {
-    .var min = -$0fff
-    .var max = $0fff
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-        .var rad = i*2*PI/256;
-        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
-    }
-    }
-}}
-
-// Initialize sprites
-void sprites_init() {
-    *SPRITES_ENABLE = %11111111;
-    byte* sprites_ptr = SCREEN+$3f8;
-    for(byte i: 0..7) {
-    	sprites_ptr[i] = (byte)(SPRITE/$40);
-        SPRITES_COLS[i] = GREEN;
-    }
+void main() {
+	asm { sei }
+	sprites_init();
+	mulf_init();
+	anim();
 }
 
 // Positions to rotate (a cube)
@@ -62,24 +16,15 @@ signed byte[8] xs = { -63, -63, -63, -63,  63,  63,  63,  63};
 signed byte[8] ys = { -63, -63,  63,  63, -63, -63,  63,  63};
 signed byte[8] zs = { -63,  63, -63,  63, -63,  63, -63,  63};
 
-// The rotated point - updated by calling rotate()
-signed byte* xr = $f0;
-signed byte* yr = $f1;
-signed byte* zr = $f2;
-
-void main() {
-	asm { sei }
-	sprites_init();
-	mulf_init();
+void anim() {
 	signed byte sx = 0;
 	signed byte sy = 0;
 	signed byte sz = 0;
 	while(true) {
 		while(*RASTER!=$ff) {}
         (*BORDERCOL)++; 
-    	calculate_matrix(sx,sy--,sz++);
+    	calculate_matrix(sx,sy,sz);
     	store_matrix();
-    	if((sy&1)==0) sx++;
         for(byte i: 0..7) {
             (*BORDERCOL)++;
             rotate_matrix(xs[i], ys[i], zs[i]);
@@ -87,8 +32,23 @@ void main() {
        	    SPRITES_XPOS[i2] = $80+(byte)(*xr>>1);
        	    SPRITES_YPOS[i2] = $80+(byte)(*yr>>1);
         }
+        // Increment angles
+    	sz++;
+    	sy--;
+    	if((sy&1)==0) sx++;
         *BORDERCOL = LIGHT_BLUE;
 	}	
+}
+
+// Initialize sprites
+void sprites_init() {
+	byte* SCREEN = $400;
+    *SPRITES_ENABLE = %11111111;
+    byte* sprites_ptr = SCREEN+$3f8;
+    for(byte i: 0..7) {
+    	sprites_ptr[i] = (byte)(SPRITE/$40);
+        SPRITES_COLS[i] = GREEN;
+    }
 }
 
 // The rotation matrix
@@ -162,6 +122,11 @@ void store_matrix() {
 		sta rotate_matrix.I2+1
 	}	
 }
+
+// The rotated point - updated by calling rotate()
+signed byte* xr = $f0;
+signed byte* yr = $f1;
+signed byte* zr = $f2;
 
 // Rotate a 3D point (x,y,z) using the rotation matrix
 // The rotation matrix is prepared by calling prepare_matrix() 
@@ -242,5 +207,46 @@ void mulf_init() {
 		add +=2;
 	}
 }
+
+
+// A single sprite
+byte* SPRITE = $3000;
+kickasm(pc SPRITE, resource "balloon.png") {{
+    .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+}}
+
+// Sine and Cosine Tables   
+// Angles: $00=0, $80=PI,$100=2*PI
+// Half Sine/Cosine: signed fixed [-$1f,$1f]
+signed byte* COSH = $2000;
+signed byte* SINH = COSH+$40; // sin(x) = cos(x+PI/2)
+// Quarter Sine/Cosine: signed fixed [-$0f,$0f]
+signed byte* COSQ = $2200;
+signed byte* SINQ = COSQ+$40; // sin(x) = cos(x+PI/2)
+kickasm(pc COSH) {{
+    {
+    .var min = -$1fff
+    .var max = $1fff
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+        .var rad = i*2*PI/256;
+        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
+    }
+    }
+}}
+kickasm(pc COSQ) {{
+    {
+    .var min = -$0fff
+    .var max = $0fff
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+        .var rad = i*2*PI/256;
+        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
+    }
+    }
+}}
 
 

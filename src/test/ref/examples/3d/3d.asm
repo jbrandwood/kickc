@@ -9,24 +9,27 @@
   .label SPRITES_COLS = $d027
   .const GREEN = 5
   .const LIGHT_BLUE = $e
-  .label SCREEN = $400
-  .label SPRITE = $3000
-  .label COSH = $2000
-  .label COSQ = $2200
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
+  .label SPRITE = $3000
+  .label COSH = $2000
+  .label COSQ = $2200
   .label SINH = COSH+$40
   .label SINQ = COSQ+$40
   jsr main
 main: {
-    .label sy = 3
-    .label sz = 4
-    .label sx = 2
-    .label i = 5
     sei
     jsr sprites_init
     jsr mulf_init
+    jsr anim
+    rts
+}
+anim: {
+    .label i = 5
+    .label sz = 4
+    .label sy = 3
+    .label sx = 2
     lda #0
     sta sz
     sta sy
@@ -39,18 +42,10 @@ main: {
     ldy sx
     ldx sz
     jsr calculate_matrix
-    dec sy
-    inc sz
     jsr store_matrix
-    lda sy
-    and #1
-    cmp #0
-    bne b7
-    inc sx
-  b7:
     lda #0
     sta i
-  b8:
+  b7:
     inc BORDERCOL
     ldy i
     lda xs,y
@@ -78,7 +73,15 @@ main: {
     inc i
     lda i
     cmp #8
+    bne b7
+    inc sz
+    dec sy
+    lda sy
+    and #1
+    cmp #0
     bne b8
+    inc sx
+  b8:
     lda #LIGHT_BLUE
     sta BORDERCOL
     jmp b4
@@ -407,6 +410,7 @@ mulf_init: {
     rts
 }
 sprites_init: {
+    .label SCREEN = $400
     .label sprites_ptr = SCREEN+$3f8
     lda #$ff
     sta SPRITES_ENABLE

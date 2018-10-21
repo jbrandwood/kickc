@@ -200,11 +200,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          }
       }
       if(assignment != null && assignment.getOperator() != null && "-".equals(assignment.getOperator().getOperator())) {
-         if(assignment.getrValue1() instanceof ConstantValue) {
-            ConstantValue constant = (ConstantValue) assignment.getrValue1();
-            assignment.setrValue1(null);
-            return constant;
-         } else if(assignment.getrValue2() instanceof ConstantValue) {
+         if(assignment.getrValue2() instanceof ConstantValue) {
             ConstantValue constant = (ConstantValue) assignment.getrValue2();
             assignment.setrValue2(assignment.getrValue1());
             assignment.setOperator(null);

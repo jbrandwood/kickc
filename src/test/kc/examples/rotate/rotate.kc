@@ -4,13 +4,23 @@ import "c64"
 import "fastmultiply"
 
 byte* SCREEN = $0400;
-byte* SPRITE = $3000;
 
 // Sine and Cosine tables  
 // Angles: $00=0, $80=PI,$100=2*PI
 // Sine/Cosine: signed fixed [-$7f,$7f]
 byte* COS = $2000;
 byte* SIN = COS+$40; // sin(x) = cos(x+PI/2)
+kickasm(pc COS) {{
+    {
+    .var min = -$7fff
+    .var max = $7fff
+    .var ampl = max-min;
+    .for(var i=0;i<$140;i++) {
+        .var rad = i*2*PI/256;
+        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
+    }
+    }
+}}
 
 void main() {
 	asm { sei }
@@ -65,18 +75,8 @@ void anim() {
 	}
 }
 
-kickasm(pc COS) {{
-	{
-    .var min = -$7fff
-    .var max = $7fff
-    .var ampl = max-min;
-    .for(var i=0;i<$140;i++) {
-    	.var rad = i*2*PI/256;
-        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
-    }
-    }
-}}
-
+// A single sprite
+byte* SPRITE = $3000;
 kickasm(pc SPRITE, resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)

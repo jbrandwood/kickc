@@ -11,8 +11,8 @@
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .label SCREEN = $400
-  .label SPRITE = $3000
   .label COS = $2000
+  .label SPRITE = $3000
   .label SIN = COS+$40
   jsr main
 main: {
@@ -335,7 +335,7 @@ mulf_init: {
     .var max = $7fff
     .var ampl = max-min;
     .for(var i=0;i<$140;i++) {
-    	.var rad = i*2*PI/256;
+        .var rad = i*2*PI/256;
         .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
     }
     }

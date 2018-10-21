@@ -45,6 +45,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void test3D() throws IOException, URISyntaxException {
+      compileAndCompare("examples/3d/3d");
+   }
+
+   @Test
+   public void testTypeInferenceProblem() throws IOException, URISyntaxException {
+      compileAndCompare("typeinference-problem");
+   }
+
+   @Test
    public void testRotate() throws IOException, URISyntaxException {
       compileAndCompare("examples/rotate/rotate");
    }

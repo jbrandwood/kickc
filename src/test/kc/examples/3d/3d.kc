@@ -47,30 +47,6 @@ kickasm(pc COSQ) {{
     }
 }}
 
-// mulf_sqr tables will contain f(x)=int(x*x/2) and g(x) = f(1-x).
-// f(x) = >(( x * x )/2)
-byte[512] align($100) mulf_sqr1;
-// g(x) =  >((( 1 - x ) * ( 1 - x ))/2)
-byte[512] align($100) mulf_sqr2;
-
-// Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/2) and g(x) = f(1-x) 
-void mulf_init() {
-	signed word sqr1 = 0;	
-	signed word add = 1;
-	for( byte i:0..128) {
-		mulf_sqr1[i] = >sqr1;
-		(mulf_sqr1+$100)[i] = >sqr1;
-		mulf_sqr1[-i] = >sqr1;
-		(mulf_sqr1+$100)[-i] = >sqr1;
-		mulf_sqr2[i+1] = >sqr1;
-		(mulf_sqr2+$100)[i+1] = >sqr1;
-		mulf_sqr2[1-i] = >sqr1;
-		(mulf_sqr2+$100)[1-i] = >sqr1;
-		sqr1 += add;
-		add +=2;
-	}
-}
-
 // Initialize sprites
 void sprites_init() {
     *SPRITES_ENABLE = %11111111;
@@ -101,11 +77,12 @@ void main() {
 	while(true) {
 		while(*RASTER!=$ff) {}
         (*BORDERCOL)++; 
-    	prepare_matrix(sx,sy--,sz++);
+    	calculate_matrix(sx,sy--,sz++);
+    	store_matrix();
     	if((sy&1)==0) sx++;
         for(byte i: 0..7) {
             (*BORDERCOL)++;
-            rotate(xs[i], ys[i], zs[i]);
+            rotate_matrix(xs[i], ys[i], zs[i]);
             byte i2 = i<<1;
        	    SPRITES_XPOS[i2] = $80+(byte)(*xr>>1);
        	    SPRITES_YPOS[i2] = $80+(byte)(*yr>>1);
@@ -117,10 +94,10 @@ void main() {
 // The rotation matrix
 signed byte[9] rotation_matrix;
 
-// Prepare the rotation matrix [ [A,B,C],[D,E,F],[G,H,I]]
+// Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-void prepare_matrix(signed byte sx, signed byte sy, signed byte sz) {
+void calculate_matrix(signed byte sx, signed byte sy, signed byte sz) {
 	signed byte t1 = sy-sz;
 	signed byte t2 = sy+sz;
 	signed byte t3 = sx+sz;
@@ -140,52 +117,57 @@ void prepare_matrix(signed byte sx, signed byte sy, signed byte sz) {
 	rotation_matrix[6] = COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]-SINQ[t8]-SINQ[t7];
 	rotation_matrix[7] = SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t7]-COSQ[t8];
 	rotation_matrix[8] = COSH[t9]+COSH[t10];
-	asm {
-		lda rotation_matrix+0
-		sta rotate.A1+1
-		eor #$ff
-		sta rotate.A2+1
-		lda rotation_matrix+1
-		sta rotate.B1+1
-		eor #$ff
-		sta rotate.B2+1
-		lda rotation_matrix+2
-		sta rotate.C1+1
-		eor #$ff
-		sta rotate.C2+1
-		lda rotation_matrix+3
-		sta rotate.D1+1
-		eor #$ff
-		sta rotate.D2+1
-		lda rotation_matrix+4
-		sta rotate.E1+1
-		eor #$ff
-		sta rotate.E2+1
-		lda rotation_matrix+5
-		sta rotate.F1+1
-		eor #$ff
-		sta rotate.F2+1
-		lda rotation_matrix+6
-		sta rotate.G1+1
-		eor #$ff
-		sta rotate.G2+1
-		lda rotation_matrix+7
-		sta rotate.H1+1
-		eor #$ff
-		sta rotate.H2+1
-		lda rotation_matrix+8
-		sta rotate.I1+1
-		eor #$ff
-		sta rotate.I2+1
-	}
 }
 
+// Store the rotation matrix into the rotation routine rotate()
+// After this each call to rotate() will rotate a point with the matrix
+// Implemented in assembler to utilize seriously fast multiplication 
+void store_matrix() {
+	asm {
+		lda rotation_matrix+0
+		sta rotate_matrix.A1+1
+		eor #$ff
+		sta rotate_matrix.A2+1
+		lda rotation_matrix+1
+		sta rotate_matrix.B1+1
+		eor #$ff
+		sta rotate_matrix.B2+1
+		lda rotation_matrix+2
+		sta rotate_matrix.C1+1
+		eor #$ff
+		sta rotate_matrix.C2+1
+		lda rotation_matrix+3
+		sta rotate_matrix.D1+1
+		eor #$ff
+		sta rotate_matrix.D2+1
+		lda rotation_matrix+4
+		sta rotate_matrix.E1+1
+		eor #$ff
+		sta rotate_matrix.E2+1
+		lda rotation_matrix+5
+		sta rotate_matrix.F1+1
+		eor #$ff
+		sta rotate_matrix.F2+1
+		lda rotation_matrix+6
+		sta rotate_matrix.G1+1
+		eor #$ff
+		sta rotate_matrix.G2+1
+		lda rotation_matrix+7
+		sta rotate_matrix.H1+1
+		eor #$ff
+		sta rotate_matrix.H2+1
+		lda rotation_matrix+8
+		sta rotate_matrix.I1+1
+		eor #$ff
+		sta rotate_matrix.I2+1
+	}	
+}
 
 // Rotate a 3D point (x,y,z) using the rotation matrix
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-void rotate(signed byte x, signed byte y, signed byte z) {
+void rotate_matrix(signed byte x, signed byte y, signed byte z) {
 	*xr = x;
 	*yr = y;
 	*zr = z;
@@ -193,18 +175,15 @@ void rotate(signed byte x, signed byte y, signed byte z) {
 			clc
 			ldx zr //z
 			// C*z 
-			lda #$0
-		C1:	adc mulf_sqr1,x
+		C1:	lda mulf_sqr1,x
 		C2: sbc mulf_sqr2,x
 			sta C3+1
 			// F*z 
-			lda #0
-		F1:	adc mulf_sqr1,x
+		F1:	lda mulf_sqr1,x
 		F2: sbc mulf_sqr2,x
 			sta F3+1
 			// I*z 
-			lda #0
-		I1:	adc mulf_sqr1,x
+		I1:	lda mulf_sqr1,x
 		I2: sbc mulf_sqr2,x
 			sta I3+1
 			ldx xr //x
@@ -229,4 +208,39 @@ void rotate(signed byte x, signed byte y, signed byte z) {
 			sta zr
 	}
 }
+
+
+// Multiplication tables for seriously fast multiplication. 
+// This version is optimized for speed over accuracy
+// - It can multiply signed numbers with no extra code - but only for numbers in [-$3f;$3f]  
+// - It throws away the low part of the 32-bit result
+// - It return >a*b*4 to maximize precision (when passed maximal input values $3f*$3f the result is $3e) 
+// See the following for information about the method
+// - http://codebase64.org/doku.php?id=base:seriously_fast_multiplication 
+// - http://codebase64.org/doku.php?id=magazines:chacking16
+// mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+// f(x) = >(( x * x ))
+byte[512] align($100) mulf_sqr1;
+// g(x) =  >((( 1 - x ) * ( 1 - x )))
+byte[512] align($100) mulf_sqr2;
+
+// Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
+void mulf_init() {
+	signed word sqr = 0;	
+	signed word add = 1;
+	for( byte i:0..128) {
+		byte val = >sqr;
+		mulf_sqr1[i] = val;
+		(mulf_sqr1+$100)[i] = val;
+		mulf_sqr1[-i] = val;
+		(mulf_sqr1+$100)[-i] = val;
+		mulf_sqr2[i+1] = val;
+		(mulf_sqr2+$100)[i+1] = val;
+		mulf_sqr2[1-i] = val;
+		(mulf_sqr2+$100)[1-i] = val;
+		sqr += add;
+		add +=2;
+	}
+}
+
 

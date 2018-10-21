@@ -38,9 +38,10 @@ main: {
     inc BORDERCOL
     ldy sx
     ldx sz
-    jsr prepare_matrix
+    jsr calculate_matrix
     dec sy
     inc sz
+    jsr store_matrix
     lda sy
     and #1
     cmp #0
@@ -53,12 +54,12 @@ main: {
     inc BORDERCOL
     ldy i
     lda xs,y
-    sta rotate.x
+    sta rotate_matrix.x
     ldx i
     ldy ys,x
     lda zs,x
     tax
-    jsr rotate
+    jsr rotate_matrix
     lda i
     asl
     tax
@@ -82,7 +83,7 @@ main: {
     sta BORDERCOL
     jmp b4
 }
-rotate: {
+rotate_matrix: {
     .label x = $a
     lda x
     sta xr
@@ -92,21 +93,18 @@ rotate: {
     sta zr
     clc
     tax
-    lda #0
   C1:
-    adc mulf_sqr1,x
+    lda mulf_sqr1,x
   C2:
     sbc mulf_sqr2,x
     sta C3+1
-    lda #0
   F1:
-    adc mulf_sqr1,x
+    lda mulf_sqr1,x
   F2:
     sbc mulf_sqr2,x
     sta F3+1
-    lda #0
   I1:
-    adc mulf_sqr1,x
+    lda mulf_sqr1,x
   I2:
     sbc mulf_sqr2,x
     sta I3+1
@@ -147,7 +145,46 @@ rotate: {
     sta zr
     rts
 }
-prepare_matrix: {
+store_matrix: {
+    lda rotation_matrix+0
+    sta rotate_matrix.A1+1
+    eor #$ff
+    sta rotate_matrix.A2+1
+    lda rotation_matrix+1
+    sta rotate_matrix.B1+1
+    eor #$ff
+    sta rotate_matrix.B2+1
+    lda rotation_matrix+2
+    sta rotate_matrix.C1+1
+    eor #$ff
+    sta rotate_matrix.C2+1
+    lda rotation_matrix+3
+    sta rotate_matrix.D1+1
+    eor #$ff
+    sta rotate_matrix.D2+1
+    lda rotation_matrix+4
+    sta rotate_matrix.E1+1
+    eor #$ff
+    sta rotate_matrix.E2+1
+    lda rotation_matrix+5
+    sta rotate_matrix.F1+1
+    eor #$ff
+    sta rotate_matrix.F2+1
+    lda rotation_matrix+6
+    sta rotate_matrix.G1+1
+    eor #$ff
+    sta rotate_matrix.G2+1
+    lda rotation_matrix+7
+    sta rotate_matrix.H1+1
+    eor #$ff
+    sta rotate_matrix.H2+1
+    lda rotation_matrix+8
+    sta rotate_matrix.I1+1
+    eor #$ff
+    sta rotate_matrix.I2+1
+    rts
+}
+calculate_matrix: {
     .label sy = 3
     .label t1 = 5
     .label t2 = $a
@@ -302,56 +339,22 @@ prepare_matrix: {
     lda COSH,x
     adc COSH,y
     sta rotation_matrix+8
-    lda rotation_matrix+0
-    sta rotate.A1+1
-    eor #$ff
-    sta rotate.A2+1
-    lda rotation_matrix+1
-    sta rotate.B1+1
-    eor #$ff
-    sta rotate.B2+1
-    lda rotation_matrix+2
-    sta rotate.C1+1
-    eor #$ff
-    sta rotate.C2+1
-    lda rotation_matrix+3
-    sta rotate.D1+1
-    eor #$ff
-    sta rotate.D2+1
-    lda rotation_matrix+4
-    sta rotate.E1+1
-    eor #$ff
-    sta rotate.E2+1
-    lda rotation_matrix+5
-    sta rotate.F1+1
-    eor #$ff
-    sta rotate.F2+1
-    lda rotation_matrix+6
-    sta rotate.G1+1
-    eor #$ff
-    sta rotate.G2+1
-    lda rotation_matrix+7
-    sta rotate.H1+1
-    eor #$ff
-    sta rotate.H2+1
-    lda rotation_matrix+8
-    sta rotate.I1+1
-    eor #$ff
-    sta rotate.I2+1
     rts
 }
 mulf_init: {
-    .label sqr1 = 6
+    .label val = 2
+    .label sqr = 6
     .label add = 8
     lda #<1
     sta add
     lda #>1
     sta add+1
     tax
-    sta sqr1
-    sta sqr1+1
+    sta sqr
+    sta sqr+1
   b1:
-    lda sqr1+1
+    lda sqr+1
+    sta val
     sta mulf_sqr1,x
     sta mulf_sqr1+$100,x
     txa
@@ -359,14 +362,14 @@ mulf_init: {
     clc
     adc #1
     tay
-    lda sqr1+1
+    lda val
     sta mulf_sqr1,y
     txa
     eor #$ff
     clc
     adc #1
     tay
-    lda sqr1+1
+    lda val
     sta mulf_sqr1+$100,y
     sta mulf_sqr2+1,x
     sta mulf_sqr2+$100+1,x
@@ -375,22 +378,22 @@ mulf_init: {
     clc
     adc #1+1
     tay
-    lda sqr1+1
+    lda val
     sta mulf_sqr2,y
     txa
     eor #$ff
     clc
     adc #1+1
     tay
-    lda sqr1+1
+    lda val
     sta mulf_sqr2+$100,y
-    lda sqr1
+    lda sqr
     clc
     adc add
-    sta sqr1
-    lda sqr1+1
+    sta sqr
+    lda sqr+1
     adc add+1
-    sta sqr1+1
+    sta sqr+1
     lda add
     clc
     adc #2
@@ -418,11 +421,11 @@ sprites_init: {
     bne b1
     rts
 }
+  rotation_matrix: .fill 9, 0
   .align $100
   mulf_sqr1: .fill $200, 0
   .align $100
   mulf_sqr2: .fill $200, 0
-  rotation_matrix: .fill 9, 0
   xs: .byte -$3f, -$3f, -$3f, -$3f, $3f, $3f, $3f, $3f
   ys: .byte -$3f, -$3f, $3f, $3f, -$3f, -$3f, $3f, $3f
   zs: .byte -$3f, $3f, -$3f, $3f, -$3f, $3f, -$3f, $3f

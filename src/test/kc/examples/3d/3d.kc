@@ -5,6 +5,17 @@
 
 import "c64"
 
+byte* SCREEN = $400;
+
+// A single sprite
+byte* SPRITE = $3000;
+kickasm(pc SPRITE, resource "balloon.png") {{
+    .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+}}
+
 // Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$1f,$1f]
@@ -48,13 +59,32 @@ void mulf_init() {
 	signed word add = 1;
 	for( byte i:0..128) {
 		mulf_sqr1[i] = >sqr1;
+		(mulf_sqr1+$100)[i] = >sqr1;
 		mulf_sqr1[-i] = >sqr1;
+		(mulf_sqr1+$100)[-i] = >sqr1;
 		mulf_sqr2[i+1] = >sqr1;
+		(mulf_sqr2+$100)[i+1] = >sqr1;
 		mulf_sqr2[1-i] = >sqr1;
+		(mulf_sqr2+$100)[1-i] = >sqr1;
 		sqr1 += add;
 		add +=2;
 	}
 }
+
+// Initialize sprites
+void sprites_init() {
+    *SPRITES_ENABLE = %11111111;
+    byte* sprites_ptr = SCREEN+$3f8;
+    for(byte i: 0..7) {
+    	sprites_ptr[i] = (byte)(SPRITE/$40);
+        SPRITES_COLS[i] = GREEN;
+    }
+}
+
+// Positions to rotate (a cube)
+signed byte[8] xs = { -63, -63, -63, -63,  63,  63,  63,  63};
+signed byte[8] ys = { -63, -63,  63,  63, -63, -63,  63,  63};
+signed byte[8] zs = { -63,  63, -63,  63, -63,  63, -63,  63};
 
 // The rotated point - updated by calling rotate()
 signed byte* xr = $f0;
@@ -62,28 +92,25 @@ signed byte* yr = $f1;
 signed byte* zr = $f2;
 
 void main() {
-	byte* SCREEN = $400;
 	asm { sei }
+	sprites_init();
 	mulf_init();
-	prepare_matrix(0,0,0);
+	signed byte sx = 0;
+	signed byte sy = 0;
+	signed byte sz = 0;
 	while(true) {
 		while(*RASTER!=$ff) {}
         (*BORDERCOL)++; 
-		rotate(0,0,$3f);
-		SCREEN[0] = (byte)*xr;
-		SCREEN[1] = (byte)*yr;
-		SCREEN[2] = (byte)*zr;
-        (*BORDERCOL)++;
-		rotate(0,$3f,0);
-		SCREEN[40] = (byte)*xr;
-		SCREEN[41] = (byte)*yr;
-		SCREEN[42] = (byte)*zr;
-        (*BORDERCOL)++;
-		rotate($3f,0,0);
-		SCREEN[80] = (byte)*xr;
-		SCREEN[81] = (byte)*yr;
-		SCREEN[82] = (byte)*zr;
-        *BORDERCOL = LIGHT_BLUE; 
+    	prepare_matrix(sx,sy--,sz++);
+    	if((sy&1)==0) sx++;
+        for(byte i: 0..7) {
+            (*BORDERCOL)++;
+            rotate(xs[i], ys[i], zs[i]);
+            byte i2 = i<<1;
+       	    SPRITES_XPOS[i2] = $80+(byte)(*xr>>1);
+       	    SPRITES_YPOS[i2] = $80+(byte)(*yr>>1);
+        }
+        *BORDERCOL = LIGHT_BLUE;
 	}	
 }
 
@@ -104,7 +131,6 @@ void prepare_matrix(signed byte sx, signed byte sy, signed byte sz) {
 	signed byte t8 = t2-sx; //  = sy+sz-sx
 	signed byte t9 = sy-sx;
 	signed byte t10 = sy+sx;
-
 	rotation_matrix[0] = COSH[t1]+COSH[t2];
 	rotation_matrix[1] = SINH[t1]-SINH[t2];
 	rotation_matrix[2] = SINH[sy]+SINH[sy];
@@ -113,8 +139,7 @@ void prepare_matrix(signed byte sx, signed byte sy, signed byte sz) {
 	rotation_matrix[5] = SINH[t9]-SINH[t10];
 	rotation_matrix[6] = COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]-SINQ[t8]-SINQ[t7];
 	rotation_matrix[7] = SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t7]-COSQ[t8];
-	rotation_matrix[8] = COSH[t9]+COSH[t10];	
-
+	rotation_matrix[8] = COSH[t9]+COSH[t10];
 	asm {
 		lda rotation_matrix+0
 		sta rotate.A1+1
@@ -153,7 +178,6 @@ void prepare_matrix(signed byte sx, signed byte sy, signed byte sz) {
 		eor #$ff
 		sta rotate.I2+1
 	}
-
 }
 
 
@@ -162,47 +186,41 @@ void prepare_matrix(signed byte sx, signed byte sy, signed byte sz) {
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
 void rotate(signed byte x, signed byte y, signed byte z) {
-
 	*xr = x;
 	*yr = y;
 	*zr = z;
-
 	asm {
 			clc
 			ldx zr //z
 			// C*z 
-			lda #$80
+			lda #$0
 		C1:	adc mulf_sqr1,x
 		C2: sbc mulf_sqr2,x
 			sta C3+1
 			// F*z 
-			lda #$80
+			lda #0
 		F1:	adc mulf_sqr1,x
 		F2: sbc mulf_sqr2,x
 			sta F3+1
 			// I*z 
-			lda #$80
+			lda #0
 		I1:	adc mulf_sqr1,x
 		I2: sbc mulf_sqr2,x
 			sta I3+1
-
 			ldx xr //x
 			ldy yr //y
-
 		C3: lda #0 // C*z
 		A1:	adc mulf_sqr1,x
 		A2: sbc mulf_sqr2,x
 		B1:	adc mulf_sqr1,y
 		B2: sbc mulf_sqr2,y
 			sta xr
-
 		F3: lda #0 // F*z
 		D1:	adc mulf_sqr1,x
 		D2: sbc mulf_sqr2,x
 		E1:	adc mulf_sqr1,y
 		E2: sbc mulf_sqr2,y
 			sta yr
-
 		I3: lda #0 // I*z
 		G1:	adc mulf_sqr1,x
 		G2: sbc mulf_sqr2,x
@@ -210,5 +228,5 @@ void rotate(signed byte x, signed byte y, signed byte z) {
 		H2: sbc mulf_sqr2,y		
 			sta zr
 	}
-
 }
+

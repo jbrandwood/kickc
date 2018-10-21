@@ -1,9 +1,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
   .label RASTER = $d012
+  .label SPRITES_ENABLE = $d015
   .label BORDERCOL = $d020
+  .label SPRITES_COLS = $d027
+  .const GREEN = 5
   .const LIGHT_BLUE = $e
+  .label SCREEN = $400
+  .label SPRITE = $3000
   .label COSH = $2000
   .label COSQ = $2200
   .label xr = $f0
@@ -13,81 +20,91 @@
   .label SINQ = COSQ+$40
   jsr main
 main: {
-    .label SCREEN = $400
+    .label sy = 3
+    .label sz = 4
+    .label sx = 2
+    .label i = 5
     sei
+    jsr sprites_init
     jsr mulf_init
-    jsr prepare_matrix
+    lda #0
+    sta sz
+    sta sy
+    sta sx
   b4:
     lda RASTER
     cmp #$ff
     bne b4
     inc BORDERCOL
-    lda #$3f
-    sta rotate.z
+    ldy sx
+    ldx sz
+    jsr prepare_matrix
+    dec sy
+    inc sz
+    lda sy
+    and #1
+    cmp #0
+    bne b7
+    inc sx
+  b7:
     lda #0
-    tax
-    tay
-    jsr rotate
-    lda xr
-    sta SCREEN
-    lda yr
-    sta SCREEN+1
-    lda zr
-    sta SCREEN+2
+    sta i
+  b8:
     inc BORDERCOL
-    lda #0
-    sta rotate.z
-    lda #$3f
+    ldy i
+    lda xs,y
+    sta rotate.x
+    ldx i
+    ldy ys,x
+    lda zs,x
     tax
-    lda #0
-    tay
     jsr rotate
-    lda xr
-    sta SCREEN+$28
-    lda yr
-    sta SCREEN+$29
-    lda zr
-    sta SCREEN+$2a
-    inc BORDERCOL
-    lda #0
-    sta rotate.z
+    lda i
+    asl
     tax
-    lda #$3f
-    tay
-    jsr rotate
     lda xr
-    sta SCREEN+$50
+    cmp #$80
+    ror
+    clc
+    adc #$80
+    sta SPRITES_XPOS,x
     lda yr
-    sta SCREEN+$51
-    lda zr
-    sta SCREEN+$52
+    cmp #$80
+    ror
+    clc
+    adc #$80
+    sta SPRITES_YPOS,x
+    inc i
+    lda i
+    cmp #8
+    bne b8
     lda #LIGHT_BLUE
     sta BORDERCOL
     jmp b4
 }
 rotate: {
-    .label z = 2
-    tya
+    .label x = $a
+    lda x
     sta xr
-    txa
+    tya
     sta yr
-    lda z
+    txa
     sta zr
     clc
     tax
-    lda #$80
+    lda #0
   C1:
     adc mulf_sqr1,x
   C2:
     sbc mulf_sqr2,x
     sta C3+1
-    lda #$80
+    lda #0
   F1:
     adc mulf_sqr1,x
   F2:
     sbc mulf_sqr2,x
     sta F3+1
-    lda #$80
+    lda #0
   I1:
     adc mulf_sqr1,x
   I2:
@@ -131,142 +148,159 @@ rotate: {
     rts
 }
 prepare_matrix: {
-    .const sx = 0
-    .const sy = 0
-    .const sz = 0
-    .const t1 = sy-sz
-    .const t2 = sy+sz
-    .const t3 = sx+sz
-    .const t4 = sx-sz
-    .const t9 = sy-sx
-    .const t10 = sy+sx
-    .const t5 = sx+t2
-    .const t6 = sx-t1
-    .const t7 = sx+t1
-    .const t8 = t2-sx
-    .label _13 = 2
-    .label _15 = 2
-    .label _18 = 2
-    .label _24 = 2
-    .label _29 = 2
-    .label _31 = 2
-    lda COSH+t1
-    ldy COSH+t2
+    .label sy = 3
+    .label t1 = 5
+    .label t2 = $a
+    .label t3 = $b
+    .label t4 = $c
+    .label t5 = $d
+    .label t6 = $e
+    .label t7 = $f
+    .label t8 = $10
+    .label t9 = $11
+    .label t10 = $12
+    txa
+    eor #$ff
+    sec
+    adc sy
+    sta t1
+    txa
+    clc
+    adc sy
+    sta t2
+    txa
     sty $ff
     clc
     adc $ff
+    sta t3
+    tya
+    stx $ff
+    sec
+    sbc $ff
+    sta t4
+    tya
+    clc
+    adc t2
+    sta t5
+    tya
+    sec
+    sbc t1
+    sta t6
+    tya
+    clc
+    adc t1
+    sta t7
+    tya
+    eor #$ff
+    sec
+    adc t2
+    sta t8
+    tya
+    eor #$ff
+    sec
+    adc sy
+    sta t9
+    tya
+    clc
+    adc sy
+    sta t10
+    ldx t1
+    ldy t2
+    clc
+    lda COSH,x
+    adc COSH,y
     sta rotation_matrix
-    lda SINH+t1
-    ldy SINH+t2
-    sty $ff
     sec
-    sbc $ff
+    lda SINH,x
+    sbc SINH,y
     sta rotation_matrix+1
-    lda SINH+sy
-    tay
-    sty $ff
+    ldy sy
     clc
-    adc $ff
+    lda SINH,y
+    adc SINH,y
     sta rotation_matrix+2
-    lda SINH+t3
-    ldy SINH+t4
-    sty $ff
+    ldx t3
+    ldy t4
     sec
-    sbc $ff
-    sta _13
-    lda COSQ+t6
+    lda SINH,x
+    sbc SINH,y
+    ldy t6
     clc
-    adc _13
-    ldy COSQ+t5
-    sty $ff
+    adc COSQ,y
+    ldy t5
     sec
-    sbc $ff
-    sta _15
-    lda COSQ+t8
+    sbc COSQ,y
+    ldy t8
     clc
-    adc _15
-    ldy COSQ+t7
-    sty $ff
+    adc COSQ,y
+    ldy t7
     sec
-    sbc $ff
+    sbc COSQ,y
     sta rotation_matrix+3
-    lda COSH+t3
-    ldy COSH+t4
-    sty $ff
+    ldy t4
     clc
-    adc $ff
-    sta _18
-    lda SINQ+t5
+    lda COSH,x
+    adc COSH,y
+    ldy t5
     clc
-    adc _18
-    ldy SINQ+t6
-    sty $ff
+    adc SINQ,y
+    ldy t6
     sec
-    sbc $ff
-    ldy SINQ+t7
-    sty $ff
+    sbc SINQ,y
+    ldy t7
     sec
-    sbc $ff
-    ldy SINQ+t8
-    sty $ff
+    sbc SINQ,y
+    ldy t8
     sec
-    sbc $ff
+    sbc SINQ,y
     sta rotation_matrix+4
-    lda SINH+t9
-    ldy SINH+t10
-    sty $ff
+    ldx t9
+    ldy t10
     sec
-    sbc $ff
+    lda SINH,x
+    sbc SINH,y
     sta rotation_matrix+5
-    lda COSH+t4
-    ldy COSH+t3
-    sty $ff
+    ldx t4
+    ldy t3
     sec
-    sbc $ff
-    sta _24
-    lda SINQ+t6
+    lda COSH,x
+    sbc COSH,y
+    ldy t6
     clc
-    adc _24
-    ldy SINQ+t5
-    sty $ff
+    adc SINQ,y
+    ldy t5
     sec
-    sbc $ff
-    ldy SINQ+t8
-    sty $ff
+    sbc SINQ,y
+    ldy t8
     sec
-    sbc $ff
-    ldy SINQ+t7
-    sty $ff
+    sbc SINQ,y
+    ldy t7
     sec
-    sbc $ff
+    sbc SINQ,y
     sta rotation_matrix+6
-    lda SINH+t3
-    ldy SINH+t4
-    sty $ff
+    ldx t3
+    ldy t4
     clc
-    adc $ff
-    sta _29
-    lda COSQ+t6
+    lda SINH,x
+    adc SINH,y
+    ldy t6
     clc
-    adc _29
-    ldy COSQ+t5
-    sty $ff
+    adc COSQ,y
+    ldy t5
     sec
-    sbc $ff
-    sta _31
-    lda COSQ+t7
+    sbc COSQ,y
+    ldy t7
     clc
-    adc _31
-    ldy COSQ+t8
-    sty $ff
+    adc COSQ,y
+    ldy t8
     sec
-    sbc $ff
+    sbc COSQ,y
     sta rotation_matrix+7
-    lda COSH+t9
-    ldy COSH+t10
-    sty $ff
+    ldx t9
+    ldy t10
     clc
-    adc $ff
+    lda COSH,x
+    adc COSH,y
     sta rotation_matrix+8
     lda rotation_matrix+0
     sta rotate.A1+1
@@ -307,8 +341,8 @@ prepare_matrix: {
     rts
 }
 mulf_init: {
-    .label sqr1 = 3
-    .label add = 5
+    .label sqr1 = 6
+    .label add = 8
     lda #<1
     sta add
     lda #>1
@@ -319,6 +353,7 @@ mulf_init: {
   b1:
     lda sqr1+1
     sta mulf_sqr1,x
+    sta mulf_sqr1+$100,x
     txa
     eor #$ff
     clc
@@ -326,7 +361,15 @@ mulf_init: {
     tay
     lda sqr1+1
     sta mulf_sqr1,y
+    txa
+    eor #$ff
+    clc
+    adc #1
+    tay
+    lda sqr1+1
+    sta mulf_sqr1+$100,y
     sta mulf_sqr2+1,x
+    sta mulf_sqr2+$100+1,x
     txa
     eor #$ff
     clc
@@ -334,6 +377,13 @@ mulf_init: {
     tay
     lda sqr1+1
     sta mulf_sqr2,y
+    txa
+    eor #$ff
+    clc
+    adc #1+1
+    tay
+    lda sqr1+1
+    sta mulf_sqr2+$100,y
     lda sqr1
     clc
     adc add
@@ -353,11 +403,35 @@ mulf_init: {
     bne b1
     rts
 }
+sprites_init: {
+    .label sprites_ptr = SCREEN+$3f8
+    lda #$ff
+    sta SPRITES_ENABLE
+    ldx #0
+  b1:
+    lda #$ff&SPRITE/$40
+    sta sprites_ptr,x
+    lda #GREEN
+    sta SPRITES_COLS,x
+    inx
+    cpx #8
+    bne b1
+    rts
+}
   .align $100
   mulf_sqr1: .fill $200, 0
   .align $100
   mulf_sqr2: .fill $200, 0
   rotation_matrix: .fill 9, 0
+  xs: .byte -$3f, -$3f, -$3f, -$3f, $3f, $3f, $3f, $3f
+  ys: .byte -$3f, -$3f, $3f, $3f, -$3f, -$3f, $3f, $3f
+  zs: .byte -$3f, $3f, -$3f, $3f, -$3f, $3f, -$3f, $3f
+.pc = SPRITE "Inline"
+  .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+
 .pc = COSH "Inline"
   {
     .var min = -$1fff

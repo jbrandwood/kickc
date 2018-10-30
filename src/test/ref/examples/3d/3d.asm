@@ -12,7 +12,12 @@
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
+  .label xp = $f3
+  .label yp = $f4
+  .label psp1 = $f5
+  .label psp2 = $f7
   .label SPRITE = $3000
+  .label PERSP_Z = $2400
   .label COSH = $2000
   .label COSQ = $2200
   .label SINH = COSH+$40
@@ -22,6 +27,14 @@ main: {
     sei
     jsr sprites_init
     jsr mulf_init
+    lda #<mulf_sqr1
+    sta psp1
+    lda #>mulf_sqr1
+    sta psp1+1
+    lda #<mulf_sqr2
+    sta psp2
+    lda #>mulf_sqr2
+    sta psp2+1
     jsr anim
     rts
 }
@@ -58,17 +71,13 @@ anim: {
     lda i
     asl
     tax
-    lda xr
-    cmp #$80
-    ror
+    lda #$80
     clc
-    adc #$80
+    adc xp
     sta SPRITES_XPOS,x
-    lda yr
-    cmp #$80
-    ror
+    lda #$80
     clc
-    adc #$80
+    adc yp
     sta SPRITES_YPOS,x
     inc i
     lda i
@@ -113,28 +122,6 @@ rotate_matrix: {
     sta I3+1
     ldx xr
     ldy yr
-  C3:
-    lda #0
-  A1:
-    adc mulf_sqr1,x
-  A2:
-    sbc mulf_sqr2,x
-  B1:
-    adc mulf_sqr1,y
-  B2:
-    sbc mulf_sqr2,y
-    sta xr
-  F3:
-    lda #0
-  D1:
-    adc mulf_sqr1,x
-  D2:
-    sbc mulf_sqr2,x
-  E1:
-    adc mulf_sqr1,y
-  E2:
-    sbc mulf_sqr2,y
-    sta yr
   I3:
     lda #0
   G1:
@@ -146,6 +133,50 @@ rotate_matrix: {
   H2:
     sbc mulf_sqr2,y
     sta zr
+    sta PP+1
+  PP:
+    lda PERSP_Z
+    sta psp1
+    eor #$ff
+    sta psp2
+  C3:
+    lda #0
+  A1:
+    adc mulf_sqr1,x
+  A2:
+    sbc mulf_sqr2,x
+  B1:
+    adc mulf_sqr1,y
+  B2:
+    sbc mulf_sqr2,y
+    sta xr
+    cmp #$80
+    ror
+    sta XX+1
+    clc
+  F3:
+    lda #0
+  D1:
+    adc mulf_sqr1,x
+  D2:
+    sbc mulf_sqr2,x
+  E1:
+    adc mulf_sqr1,y
+  E2:
+    sbc mulf_sqr2,y
+    sta yr
+    cmp #$80
+    ror
+    clc
+    tay
+    lda (psp1),y
+    sbc (psp2),y
+    sta yp
+  XX:
+    ldy #0
+    lda (psp1),y
+    sbc (psp2),y
+    sta xp
     rts
 }
 store_matrix: {
@@ -438,6 +469,20 @@ sprites_init: {
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
+
+.pc = PERSP_Z "Inline"
+  {
+    .var d = 256.0	
+    .var z0 = 6.0	
+    // These values of d/z0 result in table values from $20 to $40 (effectively max is $3f)
+    .for(var z=0;z<$100;z++) {
+    	.if(z>127) {
+    		.byte round(d / (z0 - ((z - 256) / 64.0)));
+    	} else {
+    		.byte round(d / (z0 - (z / 64.0)));
+    	}
+    }
+	}
 
 .pc = COSH "Inline"
   {

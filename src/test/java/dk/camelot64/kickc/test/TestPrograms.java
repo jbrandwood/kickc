@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void test3DPerspective() throws IOException, URISyntaxException {
+      compileAndCompare("examples/3d/perspective");
+   }
+
+   @Test
    public void test3D() throws IOException, URISyntaxException {
       compileAndCompare("examples/3d/3d");
    }

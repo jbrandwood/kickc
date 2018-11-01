@@ -88,7 +88,7 @@ public class Pass4CodeGeneration {
          } else {
             // Generate label for block inside procedure
             asm.startSegment(currentScope, null, blockLabel.getFullName());
-            asm.addLabel(blockLabel.getLocalName().replace('@', 'b').replace(':', '_'));
+            asm.addLabel(new AsmParameterLabel(blockLabel));
          }
          // Generate statements
          genStatements(asm, block);
@@ -497,7 +497,8 @@ public class Pass4CodeGeneration {
       } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
          asm.addInstruction("sta", AsmAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
          asm.addInstruction("stx", AsmAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
-         asm.addInstruction("sty", AsmAddressingMode.ABS, "regy+1", false).setDontOptimize(true);      } else {
+         asm.addInstruction("sty", AsmAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
+      } else {
          throw new RuntimeException("Interrupt Type not supported " + interruptType.name());
       }
    }
@@ -514,23 +515,16 @@ public class Pass4CodeGeneration {
          asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea81", false);
       } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
          asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea31", false);
-      } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType)) {
-         asm.addLabel("rega").setDontOptimize(true);
-         asm.addInstruction("lda", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addLabel("regx").setDontOptimize(true);
-         asm.addInstruction("ldx", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addLabel("regy").setDontOptimize(true);
-         asm.addInstruction("ldy", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+      } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType) || Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
+         // Any non-clobbered registers load is later removed by {@link Pass4InterruptClobberFix}
+         asm.addLabel(new AsmParameterLabel(new LabelRef("rega"))).setDontOptimize(true);
+         asm.addInstruction("lda", AsmAddressingMode.IMM, new AsmParameterConstant(new ConstantInteger( 0l), ProgramScopeRef.ROOT, program), false).setDontOptimize(true);
+         asm.addLabel(new AsmParameterLabel(new LabelRef("regx"))).setDontOptimize(true);
+         asm.addInstruction("ldx", AsmAddressingMode.IMM, new AsmParameterConstant(new ConstantInteger( 0l), ProgramScopeRef.ROOT, program), false).setDontOptimize(true);
+         asm.addLabel(new AsmParameterLabel(new LabelRef("regy"))).setDontOptimize(true);
+         asm.addInstruction("ldy", AsmAddressingMode.IMM, new AsmParameterConstant(new ConstantInteger( 0l), ProgramScopeRef.ROOT, program), false).setDontOptimize(true);
          asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
       } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
-         asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
-      } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
-         asm.addLabel("rega").setDontOptimize(true);
-         asm.addInstruction("lda", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addLabel("regx").setDontOptimize(true);
-         asm.addInstruction("ldx", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addLabel("regy").setDontOptimize(true);
-         asm.addInstruction("ldy", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
          asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
       } else {
          throw new RuntimeException("Interrupt Type not supported " + statement);
@@ -595,7 +589,7 @@ public class Pass4CodeGeneration {
          asm.startSegment( scope, toFirstStatement.getIndex(), segmentSrc);
          asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
          for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
-            asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));
+            asm.addLabel(new AsmParameterLabelTransition(fBlock.getLabel(), toBlock.getLabel()));
          }
          List<PhiTransitions.PhiTransition.PhiAssignment> assignments = transition.getAssignments();
          for(PhiTransitions.PhiTransition.PhiAssignment assignment : assignments) {

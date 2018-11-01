@@ -3,21 +3,21 @@ package dk.camelot64.kickc.asm;
 /** A label / jump target */
 public class AsmLabel implements AsmLine {
 
-   private String label;
+   private AsmParameter label;
 
    private int index;
 
    private boolean dontOptimize;
 
-   public AsmLabel(String label) {
+   public AsmLabel(AsmParameter label) {
       this.label = label;
    }
 
-   public String getLabel() {
+   public AsmParameter getLabel() {
       return label;
    }
 
-   public void setLabel(String label) {
+   public void setLabel(AsmParameter label) {
       this.label = label;
    }
 

@@ -56,7 +56,7 @@ public class AsmProgram {
       addLine(new AsmComment(comment));
    }
 
-   public AsmLabel addLabel(String label) {
+   public AsmLabel addLabel(AsmParameter label) {
       AsmLabel asmLabel = new AsmLabel(label);
       addLine(asmLabel);
       return asmLabel;

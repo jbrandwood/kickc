@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFastMultiply8() throws IOException, URISyntaxException {
+      compileAndCompare("examples/fastmultiply/fastmultiply8.kc");
+   }
+
+   @Test
    public void test3DPerspective() throws IOException, URISyntaxException {
       compileAndCompare("examples/3d/perspective");
    }

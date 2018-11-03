@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
   (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@15
+  to:@18
 print_str: scope:[print_str]  from main
   (byte*) print_char_cursor#21 ← phi( main/(byte*) print_char_cursor#19 )
   (byte*) print_str::str#4 ← phi( main/(byte*) print_str::str#1 )
@@ -50,9 +50,9 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   (byte*) print_char_cursor#4 ← (byte*) print_char_cursor#12
   return 
   to:@return
-main: scope:[main]  from @15
-  (byte*) print_line_cursor#15 ← phi( @15/(byte*) print_line_cursor#14 )
-  (byte*) print_char_cursor#19 ← phi( @15/(byte*) print_char_cursor#20 )
+main: scope:[main]  from @18
+  (byte*) print_line_cursor#15 ← phi( @18/(byte*) print_line_cursor#14 )
+  (byte*) print_char_cursor#19 ← phi( @18/(byte*) print_char_cursor#20 )
   (byte*) print_str::str#1 ← (const string) main::str
   call print_str 
   to:main::@1
@@ -75,22 +75,22 @@ main::@return: scope:[main]  from main::@2
   (byte*) print_line_cursor#4 ← (byte*) print_line_cursor#10
   return 
   to:@return
-@15: scope:[]  from @begin
+@18: scope:[]  from @begin
   (byte*) print_line_cursor#14 ← phi( @begin/(byte*) print_line_cursor#0 )
   (byte*) print_char_cursor#20 ← phi( @begin/(byte*) print_char_cursor#0 )
   call main 
-  to:@16
-@16: scope:[]  from @15
-  (byte*) print_line_cursor#11 ← phi( @15/(byte*) print_line_cursor#4 )
-  (byte*) print_char_cursor#16 ← phi( @15/(byte*) print_char_cursor#7 )
+  to:@19
+@19: scope:[]  from @18
+  (byte*) print_line_cursor#11 ← phi( @18/(byte*) print_line_cursor#4 )
+  (byte*) print_char_cursor#16 ← phi( @18/(byte*) print_char_cursor#7 )
   (byte*) print_char_cursor#8 ← (byte*) print_char_cursor#16
   (byte*) print_line_cursor#5 ← (byte*) print_line_cursor#11
   to:@end
-@end: scope:[]  from @16
+@end: scope:[]  from @19
 
 SYMBOL TABLE SSA
-(label) @15
-(label) @16
+(label) @18
+(label) @19
 (label) @begin
 (label) @end
 (void()) main()
@@ -192,7 +192,7 @@ Constant (const byte*) print_str::str#1 = main::str
 Successful SSA optimization Pass2ConstantIdentification
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) main::@2
-Culled Empty Block (label) @16
+Culled Empty Block (label) @19
 Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte*) print_str::str#1
 Inlining constant with var siblings (const byte*) print_char_cursor#0
@@ -201,7 +201,7 @@ Constant inlined print_str::str#1 = (const string) main::str
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @15
+Adding NOP phi() at start of @18
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -218,7 +218,7 @@ Coalesced [23] print_char_cursor#22 ← print_char_cursor#1
 Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) print_ln::@3
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @15
+Adding NOP phi() at start of @18
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -228,14 +228,14 @@ Adding NOP phi() at start of print_str
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi() [ ] ( )
-  to:@15
-@15: scope:[]  from @begin
+  to:@18
+@18: scope:[]  from @begin
   [1] phi() [ ] ( )
   [2] call main  [ ] ( )
   to:@end
-@end: scope:[]  from @15
+@end: scope:[]  from @18
   [3] phi() [ ] ( )
-main: scope:[main]  from @15
+main: scope:[main]  from @18
   [4] phi() [ ] ( main:2 [ ] )
   [5] call print_str  [ print_char_cursor#10 ] ( main:2 [ print_char_cursor#10 ] )
   to:main::@1
@@ -312,17 +312,17 @@ INITIAL ASM
   .label print_line_cursor = 2
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @15 [phi:@begin->@15]
-b15_from_bbegin:
-  jmp b15
-//SEG4 @15
-b15:
+//SEG3 [1] phi from @begin to @18 [phi:@begin->@18]
+b18_from_bbegin:
+  jmp b18
+//SEG4 @18
+b18:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @15 to main [phi:@15->main]
-main_from_b15:
+//SEG6 [4] phi from @18 to main [phi:@18->main]
+main_from_b18:
   jsr main
-//SEG7 [3] phi from @15 to @end [phi:@15->@end]
-bend_from_b15:
+//SEG7 [3] phi from @18 to @end [phi:@18->@end]
+bend_from_b18:
   jmp bend
 //SEG8 @end
 bend:
@@ -471,17 +471,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_line_cursor = 2
 //SEG2 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @15 [phi:@begin->@15]
-b15_from_bbegin:
-  jmp b15
-//SEG4 @15
-b15:
+//SEG3 [1] phi from @begin to @18 [phi:@begin->@18]
+b18_from_bbegin:
+  jmp b18
+//SEG4 @18
+b18:
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @15 to main [phi:@15->main]
-main_from_b15:
+//SEG6 [4] phi from @18 to main [phi:@18->main]
+main_from_b18:
   jsr main
-//SEG7 [3] phi from @15 to @end [phi:@15->@end]
-bend_from_b15:
+//SEG7 [3] phi from @18 to @end [phi:@18->@end]
+bend_from_b18:
   jmp bend
 //SEG8 @end
 bend:
@@ -599,7 +599,7 @@ print_str: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b15
+Removing instruction jmp b18
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
@@ -613,14 +613,14 @@ Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction bbegin:
-Removing instruction b15_from_bbegin:
-Removing instruction main_from_b15:
-Removing instruction bend_from_b15:
+Removing instruction b18_from_bbegin:
+Removing instruction main_from_b18:
+Removing instruction bend_from_b18:
 Removing instruction b1_from_main:
 Removing instruction print_ln_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b15:
+Removing instruction b18:
 Removing instruction bend:
 Removing instruction print_str_from_main:
 Removing instruction b1:
@@ -635,7 +635,7 @@ Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @15
+(label) @18
 (label) @begin
 (label) @end
 (void()) main()
@@ -675,12 +675,12 @@ Score: 1241
   .label print_char_cursor = 4
   .label print_line_cursor = 2
 //SEG2 @begin
-//SEG3 [1] phi from @begin to @15 [phi:@begin->@15]
-//SEG4 @15
+//SEG3 [1] phi from @begin to @18 [phi:@begin->@18]
+//SEG4 @18
 //SEG5 [2] call main  [ ] ( )
-//SEG6 [4] phi from @15 to main [phi:@15->main]
+//SEG6 [4] phi from @18 to main [phi:@18->main]
   jsr main
-//SEG7 [3] phi from @15 to @end [phi:@15->@end]
+//SEG7 [3] phi from @18 to @end [phi:@18->@end]
 //SEG8 @end
 //SEG9 main
 main: {

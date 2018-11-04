@@ -8,21 +8,21 @@
 
 import "print.kc"
 
-signed byte[] vals = {-95, -64, 0, 64, 95};
+signed byte[] vals = {-95, -64, -32, -16, 0, 16, 32, 64, 95};
 
 void main() {
-	print_cls();
+	init_screen();
 	byte* at_line = $400;
 	byte* at = at_line+4;
-	for(byte k: 0..4) {
+	for(byte k: 0..8) {
 		print_sbyte_at(vals[k], at);
 		at += 4;
 	}
-	for(byte i: 0..4) {
+	for(byte i: 0..8) {
 		at_line +=40;
 		at = at_line;
 		print_sbyte_at(vals[i], at);
-		for(byte j: 0..4) {
+		for(byte j: 0..8) {
 			at += 4;		
 			signed byte r = fmul8(vals[i], vals[j]);
 			print_sbyte_at(r, at);			
@@ -30,6 +30,22 @@ void main() {
 	}
 }
 
+void init_screen() {
+	print_cls();
+	byte* COLS = $d800;
+	byte WHITE = 1;
+	for(byte l: 0..39) {
+		COLS[l] = WHITE;
+	}
+	for(byte m: 0..24) {
+		COLS[0] = WHITE;
+		COLS[1] = WHITE;
+		COLS[2] = WHITE;
+		COLS[3] = WHITE;
+		COLS += 40;
+	}
+
+}
 
 // Pointers to a, b and c=a*b
 signed byte* ap = $fd;
@@ -53,8 +69,6 @@ signed byte fmul8(signed byte a, signed byte b) {
 	return *cp;
 }
 
-
-
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
 byte* mulf_sqr1 = $2000;
@@ -76,4 +90,3 @@ kickasm(pc mulf_sqr2) {{
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
     }
 }}
-

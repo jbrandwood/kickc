@@ -20,7 +20,7 @@ word* psp2 = $f7;
 void main() {
 	asm { sei }
 	sprites_init();
-	mulf_init();
+	//mulf_init();
 	*psp1 = (word)mulf_sqr1;
 	*psp2 = (word)mulf_sqr2;
 	anim();
@@ -48,8 +48,8 @@ void anim() {
             //if(*xr<xmin) xmin = *xr;
             //if(*xr>xmax) xmax = *xr;
             byte i2 = i<<1;
-       	    SPRITES_XPOS[i2] = $80+(byte)(*xp);
-       	    SPRITES_YPOS[i2] = $80+(byte)(*yp);
+       	    SPRITES_XPOS[i2] = ($80+(byte)(*xp))>>1;
+       	    SPRITES_YPOS[i2] = ($80+(byte)(*yp))>>1;
     	}
         // Increment angles
     	sz++;
@@ -189,8 +189,8 @@ void rotate_matrix(signed byte x, signed byte y, signed byte z) {
 		B2: sbc mulf_sqr2,y
 			sta xr
 			// divide x by 2 to get x below $3f for multiplication
-			cmp #$80
-			ror
+			//cmp #$80
+			//ror
 			sta XX+1
 			clc
 
@@ -204,8 +204,8 @@ void rotate_matrix(signed byte x, signed byte y, signed byte z) {
 
 			// Calculate perspective for Y-position
 			// divide y by 2 to get x below $3f for multiplication
-			cmp #$80
-			ror
+			//cmp #$80
+			//ror
 			clc
 			tay
 			lda (psp1),y
@@ -220,6 +220,29 @@ void rotate_matrix(signed byte x, signed byte y, signed byte z) {
 	}
 }
 
+// mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+// f(x) = >(( x * x ))
+byte* mulf_sqr1 = $2400;
+// g(x) =  >((( 1 - x ) * ( 1 - x )))
+byte* mulf_sqr2 = $2600;
+
+kickasm(pc mulf_sqr1) {{	
+    .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((i*i)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
+    	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
+    }
+}}
+
+kickasm(pc mulf_sqr2) {{	
+    .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
+    	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
+    }
+}}
+
+/*
 // Multiplication tables for seriously fast multiplication. 
 // This version is optimized for speed over accuracy
 // - It can multiply signed numbers with no extra code - but only for numbers in [-$3f;$3f]  
@@ -252,7 +275,7 @@ void mulf_init() {
 		add +=2;
 	}
 }
-
+*/
 
 // A single sprite
 byte* SPRITE = $3000;
@@ -264,7 +287,7 @@ kickasm(pc SPRITE, resource "balloon.png") {{
 }}
 
 // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-signed byte* PERSP_Z = $2400;
+signed byte* PERSP_Z = $2800;
 
 kickasm(pc PERSP_Z) {{
     {
@@ -291,8 +314,8 @@ signed byte* COSQ = $2200;
 signed byte* SINQ = COSQ+$40; // sin(x) = cos(x+PI/2)
 kickasm(pc COSH) {{
     {
-    .var min = -$1fff
-    .var max = $1fff
+    .var min = -$2000
+    .var max = $2000
     .var ampl = max-min;
     .for(var i=0;i<$140;i++) {
         .var rad = i*2*PI/256;
@@ -302,8 +325,8 @@ kickasm(pc COSH) {{
 }}
 kickasm(pc COSQ) {{
     {
-    .var min = -$0fff
-    .var max = $0fff
+    .var min = -$1000
+    .var max = $1000
     .var ampl = max-min;
     .for(var i=0;i<$140;i++) {
         .var rad = i*2*PI/256;

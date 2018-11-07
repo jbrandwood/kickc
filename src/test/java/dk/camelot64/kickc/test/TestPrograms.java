@@ -45,12 +45,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testTest() {
-      return;
-   }
-
-   /*
-   @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
       compileAndCompare("examples/fastmultiply/fastmultiply8.kc");
    }
@@ -1126,8 +1120,6 @@ public class TestPrograms {
       mkPath(binFile);
       return binFile;
    }
-
-   */
 
    /**
     * Ensures that the path to the passed file is created.

@@ -3,6 +3,7 @@
 // - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 // - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
 import "c64"
+import "print"
 
 // The rotated point - updated by calling rotate_matrix()
 signed byte* xr = $f0;
@@ -10,12 +11,15 @@ signed byte* yr = $f1;
 signed byte* zr = $f2;
 
 // The rotated point with perspective
-signed byte* xp = $f3;
-signed byte* yp = $f4;
+signed byte* pp = $f3;
+signed byte* xp = $f4;
+signed byte* yp = $f5;
 
 // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
-word* psp1 = $f5;
-word* psp2 = $f7;
+word* psp1 = $f6;
+word* psp2 = $f8;
+
+byte* SCREEN = $400;
 
 void main() {
 	asm { sei }
@@ -23,18 +27,33 @@ void main() {
 	//mulf_init();
 	*psp1 = (word)mulf_sqr1;
 	*psp2 = (word)mulf_sqr2;
+
+	debug_print_init();
+
+ 	//calculate_matrix(1,1,1);
+
 	anim();
 }
 
-// Positions to rotate (a cube)
-signed byte[8] xs = { -63, -63, -63, -63,  63,  63,  63,  63};
-signed byte[8] ys = { -63, -63,  63,  63, -63, -63,  63,  63};
-signed byte[8] zs = { -63,  63, -63,  63, -63,  63, -63,  63};
+// Positions to rotate
+signed byte[8] xs = { -94,  94,  00,  00,  00,  00,  00,  63};
+signed byte[8] ys = {  00,  00, -94,  94,  00,  00,  00,  00};
+signed byte[8] zs = {  00,  00,  00,  00, -94,  94, -00,  00};
+// Rotated positions
+signed byte[8] xrs;
+signed byte[8] yrs;
+signed byte[8] zrs;
+// Persepctive factors (from zrs)
+signed byte[8] pps;
+// Rotated positions with persepctive
+signed byte[8] xps;
+signed byte[8] yps;
+
+signed byte sx = 0;
+signed byte sy = 0;
+signed byte sz = 0;
 
 void anim() {
-	signed byte sx = 0;
-	signed byte sy = 0;
-	signed byte sz = 0;
 	//signed byte xmin = 0;
 	//signed byte xmax = 0;
 	while(true) {
@@ -47,16 +66,94 @@ void anim() {
             rotate_matrix(xs[i], ys[i], zs[i]);
             //if(*xr<xmin) xmin = *xr;
             //if(*xr>xmax) xmax = *xr;
+            xrs[i] = *xr;
+            yrs[i] = *yr;
+            zrs[i] = *zr;
+            pps[i] = *pp;
+            xps[i] = *xp;
+            yps[i] = *yp;
             byte i2 = i<<1;
-       	    SPRITES_XPOS[i2] = ($80+(byte)(*xp))>>1;
-       	    SPRITES_YPOS[i2] = ($80+(byte)(*yp))>>1;
+       	    SPRITES_XPOS[i2] = $80+(byte)((*xp));
+       	    SPRITES_YPOS[i2] = $80+(byte)((*yp));
     	}
-        // Increment angles
-    	sz++;
-    	sy--;
-    	if((sy&1)==0) sx++;
+        *BORDERCOL = LIGHT_GREY;
+        debug_print();
         *BORDERCOL = LIGHT_BLUE;
+        // Increment angles        
+    	sx -=1;
+    	sy +=1;
+    	sz -=1;
 	}	
+}
+
+void debug_print_init() {
+	print_cls();
+	print_str_at("sx@", SCREEN+40*0+34);
+	print_str_at("sy@", SCREEN+40*1+34);
+	print_str_at("sz@", SCREEN+40*2+34);
+	print_str_at("x@", SCREEN+40*16);
+	print_str_at("y@", SCREEN+40*17);
+	print_str_at("z@", SCREEN+40*18);
+	print_str_at("xr@", SCREEN+40*19);
+	print_str_at("yr@", SCREEN+40*20);
+	print_str_at("zr@", SCREEN+40*21);
+	print_str_at("pp@", SCREEN+40*22);
+	print_str_at("xp@", SCREEN+40*23);
+	print_str_at("yp@", SCREEN+40*24);
+
+    byte* at_line = SCREEN+16*40;
+ 	byte c = 4;
+ 	byte* COLS = $d800;
+ 	byte* at_cols = COLS+16*40;
+    for( byte i: 0..7) {
+    	print_sbyte_at(xs[i], at_line+40*0+c);
+    	print_sbyte_at(ys[i], at_line+40*1+c);
+    	print_sbyte_at(zs[i], at_line+40*2+c);
+    	for( byte j: 0..3) {
+    		byte col = 8+i;
+    		*(at_cols+40*0+c+j) = col;
+    		*(at_cols+40*1+c+j) = col;
+    		*(at_cols+40*2+c+j) = col;
+    		*(at_cols+40*3+c+j) = col;
+    		*(at_cols+40*4+c+j) = col;
+    		*(at_cols+40*5+c+j) = col;
+    		*(at_cols+40*6+c+j) = col;
+    		*(at_cols+40*7+c+j) = col;
+    		*(at_cols+40*8+c+j) = col;
+    	}
+    	c += 4;
+    }
+
+
+}
+
+void debug_print() {
+	// angles
+    print_sbyte_at(sx, SCREEN+40*0+37);
+    print_sbyte_at(sy, SCREEN+40*1+37);
+    print_sbyte_at(sz, SCREEN+40*2+37);
+    // rotation matrix
+    print_sbyte_at(rotation_matrix[0], SCREEN+40*4+29);    	
+    print_sbyte_at(rotation_matrix[1], SCREEN+40*4+33);    	
+    print_sbyte_at(rotation_matrix[2], SCREEN+40*4+37);    	
+    print_sbyte_at(rotation_matrix[3], SCREEN+40*5+29);    	
+    print_sbyte_at(rotation_matrix[4], SCREEN+40*5+33);    	
+    print_sbyte_at(rotation_matrix[5], SCREEN+40*5+37);    	
+    print_sbyte_at(rotation_matrix[6], SCREEN+40*6+29);    	
+    print_sbyte_at(rotation_matrix[7], SCREEN+40*6+33);    	
+    print_sbyte_at(rotation_matrix[8], SCREEN+40*6+37);    	
+
+    byte* at_line = SCREEN+19*40;
+ 	byte c = 4;
+    for( byte i: 0..7) {
+    	print_sbyte_at(xrs[i], at_line+40*0+c);
+    	print_sbyte_at(yrs[i], at_line+40*1+c);
+    	print_sbyte_at(zrs[i], at_line+40*2+c);
+    	print_sbyte_at(pps[i], at_line+40*3+c);
+    	print_sbyte_at(xps[i], at_line+40*4+c);
+    	print_sbyte_at(yps[i], at_line+40*5+c);
+    	c += 4;
+    }
 }
 
 // Initialize sprites
@@ -66,7 +163,7 @@ void sprites_init() {
     byte* sprites_ptr = SCREEN+$3f8;
     for(byte i: 0..7) {
     	sprites_ptr[i] = (byte)(SPRITE/$40);
-        SPRITES_COLS[i] = GREEN;
+        SPRITES_COLS[i] = 8+i;
     }
 }
 
@@ -84,7 +181,7 @@ void calculate_matrix(signed byte sx, signed byte sy, signed byte sz) {
 	signed byte t5 = sx+t2; // = sx+sy+sz
 	signed byte t6 = sx-t1; // = sx-sy+sz
 	signed byte t7 = sx+t1; // = sx+sy-sz
-	signed byte t8 = t2-sx; //  = sy+sz-sx
+	signed byte t8 = t2-sx; // = sy+sz-sx
 	signed byte t9 = sy-sx;
 	signed byte t10 = sy+sx;
 	rotation_matrix[0] = COSH[t1]+COSH[t2];
@@ -151,18 +248,20 @@ void rotate_matrix(signed byte x, signed byte y, signed byte z) {
 	*yr = y;
 	*zr = z;
 	asm {
-			clc
 			ldx zr //z
 			// C*z 
 		C1:	lda mulf_sqr1,x
+			sec
 		C2: sbc mulf_sqr2,x
 			sta C3+1
 			// F*z 
 		F1:	lda mulf_sqr1,x
+			sec
 		F2: sbc mulf_sqr2,x
 			sta F3+1
 			// I*z 
 		I1:	lda mulf_sqr1,x
+			sec
 		I2: sbc mulf_sqr2,x
 			sta I3+1
 
@@ -170,22 +269,31 @@ void rotate_matrix(signed byte x, signed byte y, signed byte z) {
 			ldy yr //y
 
 		I3: lda #0 // I*z
+			clc
 		G1:	adc mulf_sqr1,x
+			sec
 		G2: sbc mulf_sqr2,x
+			clc
 		H1:	adc mulf_sqr1,y
+			sec
 		H2: sbc mulf_sqr2,y
 			sta zr
 
 			sta PP+1
 		PP: lda PERSP_Z
+			sta pp
 			sta psp1
 			eor #$ff
 			sta psp2 			
 
 		C3: lda #0 // C*z
+			clc
 		A1:	adc mulf_sqr1,x
+			sec
 		A2: sbc mulf_sqr2,x
+			clc
 		B1:	adc mulf_sqr1,y
+			sec
 		B2: sbc mulf_sqr2,y
 			sta xr
 			// divide x by 2 to get x below $3f for multiplication
@@ -195,26 +303,30 @@ void rotate_matrix(signed byte x, signed byte y, signed byte z) {
 			clc
 
 		F3: lda #0 // F*z
+			clc
 		D1:	adc mulf_sqr1,x
+			sec
 		D2: sbc mulf_sqr2,x
+			clc
 		E1:	adc mulf_sqr1,y
+			sec
 		E2: sbc mulf_sqr2,y
 			sta yr
-
 
 			// Calculate perspective for Y-position
 			// divide y by 2 to get x below $3f for multiplication
 			//cmp #$80
 			//ror
-			clc
 			tay
 			lda (psp1),y
+			sec
 			sbc (psp2),y
 			sta yp
 
 			// Calculate perspective for X-position
 		XX:	ldy #0
 			lda (psp1),y
+			sec
 			sbc (psp2),y
 			sta xp
 	}
@@ -307,30 +419,30 @@ kickasm(pc PERSP_Z) {{
 // Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$1f,$1f]
-signed byte* COSH = $2000;
-signed byte* SINH = COSH+$40; // sin(x) = cos(x+PI/2)
+signed byte* SINH = $2000;
+signed byte* COSH = SINH+$40; // sin(x) = cos(x+PI/2)
 // Quarter Sine/Cosine: signed fixed [-$0f,$0f]
-signed byte* COSQ = $2200;
-signed byte* SINQ = COSQ+$40; // sin(x) = cos(x+PI/2)
-kickasm(pc COSH) {{
+signed byte* SINQ = $2200;
+signed byte* COSQ = SINQ+$40; // sin(x) = cos(x+PI/2)
+kickasm(pc SINH) {{
     {
     .var min = -$2000
     .var max = $2000
     .var ampl = max-min;
     .for(var i=0;i<$140;i++) {
         .var rad = i*2*PI/256;
-        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
+        .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)
     }
     }
 }}
-kickasm(pc COSQ) {{
+kickasm(pc SINQ) {{
     {
     .var min = -$1000
     .var max = $1000
     .var ampl = max-min;
     .for(var i=0;i<$140;i++) {
         .var rad = i*2*PI/256;
-        .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
+        .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)
     }
     }
 }}

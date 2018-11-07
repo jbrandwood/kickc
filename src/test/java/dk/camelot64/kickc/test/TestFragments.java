@@ -30,6 +30,8 @@ public class TestFragments {
       AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
    }
 
+   /*
+
    @Test
    public void testAssignmentsBu() throws IOException, URISyntaxException {
       testFragments("fragments-assignment-copy", assignmentsBu());
@@ -44,6 +46,8 @@ public class TestFragments {
    public void testAssignmentsBinaryBu() throws IOException, URISyntaxException {
       testFragments("fragments-assignment-binary", assignmentsBinaryBu());
    }
+
+   */
 
    private void testFragments(String fileName, Collection<String> signatures) throws IOException, URISyntaxException {
       CompileLog log = new CompileLog();

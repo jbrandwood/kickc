@@ -44,6 +44,7 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
+   @Test
    public void testTest() {
       return;
    }

@@ -10,11 +10,13 @@
   jsr main
 main: {
     .label at = 2
-    .label at_2 = 4
+    .label at_3 = 5
     .label j = 7
-    .label i = 6
-    .label at_line = 4
-    jsr print_cls
+    .label i = 4
+    .label at_line = 2
+    .label at_6 = 5
+    .label at_12 = 5
+    jsr init_screen
     lda #<$400+4
     sta at
     lda #>$400+4
@@ -23,6 +25,10 @@ main: {
   b1:
     lda vals,x
     sta print_sbyte_at.b
+    lda at
+    sta print_sbyte_at.at
+    lda at+1
+    sta print_sbyte_at.at+1
     jsr print_sbyte_at
     lda at
     clc
@@ -32,7 +38,7 @@ main: {
     inc at+1
   !:
     inx
-    cpx #5
+    cpx #9
     bne b1
     lda #0
     sta i
@@ -41,34 +47,34 @@ main: {
     lda #>$400
     sta at_line+1
   b2:
-    lda at_2
+    lda at
     clc
     adc #$28
-    sta at_2
+    sta at
     bcc !+
-    inc at_2+1
+    inc at+1
   !:
     ldy i
     lda vals,y
     sta print_sbyte_at.b
-    lda at_2
+    lda at
     sta print_sbyte_at.at
-    lda at_2+1
+    lda at+1
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
-    lda at_2
-    sta at
-    lda at_2+1
-    sta at+1
+    lda at
+    sta at_12
+    lda at+1
+    sta at_12+1
     lda #0
     sta j
   b3:
-    lda at
+    lda at_3
     clc
     adc #4
-    sta at
+    sta at_3
     bcc !+
-    inc at+1
+    inc at_3+1
   !:
     ldy i
     lda vals,y
@@ -76,27 +82,37 @@ main: {
     ldy vals,x
     jsr fmul8
     sta print_sbyte_at.b
+    lda at_3
+    sta print_sbyte_at.at
+    lda at_3+1
+    sta print_sbyte_at.at+1
     jsr print_sbyte_at
     inc j
     lda j
-    cmp #5
+    cmp #9
     bne b3
     inc i
     lda i
-    cmp #5
+    cmp #9
     bne b2
     rts
 }
 print_sbyte_at: {
-    .label b = 8
-    .label at = 2
+    .label b = $a
+    .label at = 8
     lda b
-    cmp #0
-    bpl b1
-    lda at
-    sta print_char_at.at
-    lda at+1
-    sta print_char_at.at+1
+    bmi b1
+    lda #' '
+    sta print_char_at.ch
+    jsr print_char_at
+  b2:
+    inc print_byte_at.at
+    bne !+
+    inc print_byte_at.at+1
+  !:
+    jsr print_byte_at
+    rts
+  b1:
     lda #'-'
     sta print_char_at.ch
     jsr print_char_at
@@ -105,19 +121,18 @@ print_sbyte_at: {
     clc
     adc #1
     sta b
-  b1:
-    lda at
-    clc
-    adc #1
-    sta print_byte_at.at
-    lda at+1
-    adc #0
-    sta print_byte_at.at+1
-    jsr print_byte_at
+    jmp b2
+}
+print_char_at: {
+    .label at = 8
+    .label ch = $b
+    lda ch
+    ldy #0
+    sta (at),y
     rts
 }
 print_byte_at: {
-    .label at = $a
+    .label at = 8
     lda print_sbyte_at.b
     lsr
     lsr
@@ -139,14 +154,6 @@ print_byte_at: {
     jsr print_char_at
     rts
 }
-print_char_at: {
-    .label at = $a
-    .label ch = 9
-    lda ch
-    ldy #0
-    sta (at),y
-    rts
-}
 fmul8: {
     sta ap
     tya
@@ -162,6 +169,44 @@ fmul8: {
   A2:
     sbc mulf_sqr2,x
     sta cp
+    rts
+}
+init_screen: {
+    .const WHITE = 1
+    .label COLS = 2
+    jsr print_cls
+    ldx #0
+  b1:
+    lda #WHITE
+    sta $d800,x
+    inx
+    cpx #$28
+    bne b1
+    ldx #0
+    lda #<$d800
+    sta COLS
+    lda #>$d800
+    sta COLS+1
+  b2:
+    lda #WHITE
+    ldy #0
+    sta (COLS),y
+    ldy #1
+    sta (COLS),y
+    ldy #2
+    sta (COLS),y
+    ldy #3
+    sta (COLS),y
+    lda COLS
+    clc
+    adc #$28
+    sta COLS
+    bcc !+
+    inc COLS+1
+  !:
+    inx
+    cpx #$19
+    bne b2
     rts
 }
 print_cls: {
@@ -187,7 +232,7 @@ print_cls: {
     rts
 }
   print_hextab: .text "0123456789abcdef"
-  vals: .byte -$5f, -$40, 0, $40, $5f
+  vals: .byte -$5f, -$40, -$20, -$10, 0, $10, $20, $40, $5f
 .pc = mulf_sqr1 "Inline"
   .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }

@@ -69,8 +69,13 @@ print_str: {
 print_sbyte: {
     .label b = 4
     lda b
-    cmp #0
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_byte
+    rts
+  b1:
     lda #'-'
     jsr print_char
     lda b
@@ -78,8 +83,15 @@ print_sbyte: {
     clc
     adc #1
     sta b
-  b1:
-    jsr print_byte
+    jmp b2
+}
+print_char: {
+    ldy #0
+    sta (print_char_cursor),y
+    inc print_char_cursor
+    bne !+
+    inc print_char_cursor+1
+  !:
     rts
 }
 print_byte: {
@@ -96,15 +108,6 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    rts
-}
-print_char: {
-    ldy #0
-    sta (print_char_cursor),y
-    inc print_char_cursor
-    bne !+
-    inc print_char_cursor+1
-  !:
     rts
 }
 print_cls: {

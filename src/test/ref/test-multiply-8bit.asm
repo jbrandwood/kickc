@@ -239,7 +239,13 @@ print_char: {
 }
 print_sbyte: {
     cpx #0
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_byte
+    rts
+  b1:
     lda #'-'
     jsr print_char
     txa
@@ -247,9 +253,7 @@ print_sbyte: {
     clc
     adc #1
     tax
-  b1:
-    jsr print_byte
-    rts
+    jmp b2
 }
 mul8s: {
     .label m = $c

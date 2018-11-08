@@ -281,8 +281,13 @@ print_word: {
 print_sbyte: {
     .label b = $a
     lda b
-    cmp #0
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_byte
+    rts
+  b1:
     lda #'-'
     jsr print_char
     lda b
@@ -290,9 +295,7 @@ print_sbyte: {
     clc
     adc #1
     sta b
-  b1:
-    jsr print_byte
-    rts
+    jmp b2
 }
 mul8su: {
     .const b = sin8u_table.amplitude+1

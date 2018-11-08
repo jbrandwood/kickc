@@ -1,8 +1,7 @@
 lda {z2}
-clc
-adc {z3}
+asl
 sta {z1}
 lda {z2}+1
-adc {z3}+1
+rol
 sta {z1}+1
 

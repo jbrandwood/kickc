@@ -60,7 +60,7 @@ public abstract class StatementBase implements Statement {
 
    @Override
    public String toString() {
-      return toString(null, true);
+      return toString(null, false);
    }
 
    public String aliveString(Program program) {

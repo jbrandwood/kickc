@@ -399,7 +399,7 @@ public class Compiler {
       new Pass4RegistersFinalize(program).allocate(true);
 
       // Initial Code generation
-      new Pass4CodeGeneration(program, true).generate();
+      new Pass4CodeGeneration(program, false).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
       getLog().append(program.getAsm().toString());
@@ -440,7 +440,7 @@ public class Compiler {
    private void pass5GenerateAndOptimizeAsm() {
 
       // Final ASM code generation before optimization
-      new Pass4CodeGeneration(program, true).generate();
+      new Pass4CodeGeneration(program, false).generate();
       new Pass4AssertNoCpuClobber(program).check();
 
       // Remove unnecessary register savings from interrupts {@link InterruptType#HARDWARE_NOCLOBBER}

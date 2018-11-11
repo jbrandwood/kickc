@@ -58,7 +58,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                            conditionalJump.setOperator(conditionAssignment.getOperator());
                            conditionalJump.setrValue2(conditionAssignment.getrValue2());
                            simpleConditionVars.add(conditionVar);
-                           getLog().append("Simple Condition " + conditionVar.toString(getProgram()) + " " + conditionalJump.toString(getProgram(), true));
+                           getLog().append("Simple Condition " + conditionVar.toString(getProgram()) + " " + conditionalJump.toString(getProgram(), false));
                            break;
                         default:
                      }

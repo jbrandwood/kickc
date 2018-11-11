@@ -991,7 +991,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, mod.child, source);
             parser.sequence.addStatement(stmt);
             if(parser.program.getLog().isVerboseParse()) {
-               parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, true));
+               parser.program.getLog().append("Adding pre/post-modifier " + stmt.toString(parser.program, false));
             }
          }
       }

@@ -95,11 +95,11 @@ anim: {
     tax
     lda #$80
     clc
-    adc xp
+    adc xr
     sta SPRITES_XPOS,x
     lda #$80
     clc
-    adc yp
+    adc yr
     sta SPRITES_YPOS,x
     inc i
     lda i
@@ -1271,9 +1271,9 @@ sprites_init: {
   xps: .fill 8, 0
   yps: .fill 8, 0
   rotation_matrix: .fill 9, 0
-  xs: .byte -$5e, $5e, 0, 0, 0, 0, 0, $3f
-  ys: .byte 0, 0, -$5e, $5e, 0, 0, 0, 0
-  zs: .byte 0, 0, 0, 0, -$5e, $5e, -0, 0
+  xs: .byte -$5f, $5f, 0, 0, 0, 0, 0, $3f
+  ys: .byte 0, 0, -$5f, $5f, 0, 0, 0, 0
+  zs: .byte 0, 0, 0, 0, -$5f, $5f, -0, 0
 .pc = mulf_sqr1 "Inline"
   .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }

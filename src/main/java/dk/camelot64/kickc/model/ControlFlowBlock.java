@@ -159,7 +159,7 @@ public class ControlFlowBlock {
       }
       out.append("\n");
       for(Statement statement : statements) {
-         out.append("  " + statement.toString(program, true) + "\n");
+         out.append("  " + statement.toString(program, program.getLog().isVerboseLiveRanges()) + "\n");
       }
       if(defaultSuccessor != null) {
          out.append("  to:");

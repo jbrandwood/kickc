@@ -105,29 +105,29 @@ Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ col#0 ] ( )
+  [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:@2
 @2: scope:[]  from @begin
-  [1] phi() [ col#0 ] ( )
-  [2] call main  [ ] ( )
+  [1] phi()
+  [2] call main 
   to:@end
 @end: scope:[]  from @2
-  [3] phi() [ ] ( )
+  [3] phi()
 main: scope:[main]  from @2
-  [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] )
+  [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) col#2 ← phi( main/(byte) col#0 main::@2/(byte) col#1 ) [ col#2 ] ( main:2 [ col#2 ] )
+  [5] (byte) col#2 ← phi( main/(byte) col#0 main::@2/(byte) col#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] (byte) col#1 ← ++ (byte) col#2 [ col#1 ] ( main:2 [ col#1 ] )
+  [6] (byte) col#1 ← ++ (byte) col#2
   to:main::@1
 irq: scope:[irq]  from
   asm { lda$dc0d  }
-  [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( )
+  [8] *((const byte*) BGCOL#0) ← (byte) col#0
   to:irq::@return
 irq::@return: scope:[irq]  from irq
-  [9] return  [ ] ( )
+  [9] return 
   to:@return
 
 
@@ -158,7 +158,7 @@ INITIAL ASM
   .label col = 2
 //SEG2 @begin
 bbegin:
-//SEG3 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ col#0 ] ( ) -- vbuz1=vbuc1 
+//SEG3 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
 //SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
@@ -166,7 +166,7 @@ b2_from_bbegin:
   jmp b2
 //SEG5 @2
 b2:
-//SEG6 [2] call main  [ ] ( )
+//SEG6 [2] call main 
   jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
@@ -175,7 +175,7 @@ bend_from_b2:
 bend:
 //SEG9 main
 main: {
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) -- _deref_pptc1=pprc2 
+  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -190,7 +190,7 @@ main: {
     jmp b2
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) col#1 ← ++ (byte) col#2 [ col#1 ] ( main:2 [ col#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG15 [6] (byte) col#1 ← ++ (byte) col#2 -- vbuz1=_inc_vbuz1 
     inc col
     jmp b1_from_b2
 }
@@ -199,13 +199,13 @@ irq: {
   //SEG17 entry interrupt(KERNEL_MIN)
   //SEG18 asm { lda$dc0d  }
     lda $dc0d
-  //SEG19 [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) -- _deref_pbuc1=vbuz1 
+  //SEG19 [8] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
     jmp breturn
   //SEG20 irq::@return
   breturn:
-  //SEG21 [9] return  [ ] ( ) - exit interrupt(KERNEL_MIN)
+  //SEG21 [9] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -238,7 +238,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label col = 2
 //SEG2 @begin
 bbegin:
-//SEG3 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ col#0 ] ( ) -- vbuz1=vbuc1 
+//SEG3 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
 //SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
@@ -246,7 +246,7 @@ b2_from_bbegin:
   jmp b2
 //SEG5 @2
 b2:
-//SEG6 [2] call main  [ ] ( )
+//SEG6 [2] call main 
   jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
@@ -255,7 +255,7 @@ bend_from_b2:
 bend:
 //SEG9 main
 main: {
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) -- _deref_pptc1=pprc2 
+  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -270,7 +270,7 @@ main: {
     jmp b2
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) col#1 ← ++ (byte) col#2 [ col#1 ] ( main:2 [ col#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG15 [6] (byte) col#1 ← ++ (byte) col#2 -- vbuz1=_inc_vbuz1 
     inc col
     jmp b1_from_b2
 }
@@ -279,13 +279,13 @@ irq: {
   //SEG17 entry interrupt(KERNEL_MIN)
   //SEG18 asm { lda$dc0d  }
     lda $dc0d
-  //SEG19 [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) -- _deref_pbuc1=vbuz1 
+  //SEG19 [8] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
     jmp breturn
   //SEG20 irq::@return
   breturn:
-  //SEG21 [9] return  [ ] ( ) - exit interrupt(KERNEL_MIN)
+  //SEG21 [9] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -342,18 +342,18 @@ Score: 117
   .label BGCOL = $d020
   .label col = 2
 //SEG2 @begin
-//SEG3 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ col#0 ] ( ) -- vbuz1=vbuc1 
+//SEG3 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
 //SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
 //SEG5 @2
-//SEG6 [2] call main  [ ] ( )
+//SEG6 [2] call main 
   jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 //SEG8 @end
 //SEG9 main
 main: {
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) -- _deref_pptc1=pprc2 
+  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -363,7 +363,7 @@ main: {
   //SEG13 main::@1
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) col#1 ← ++ (byte) col#2 [ col#1 ] ( main:2 [ col#1 ] ) -- vbuz1=_inc_vbuz1 
+  //SEG15 [6] (byte) col#1 ← ++ (byte) col#2 -- vbuz1=_inc_vbuz1 
     inc col
     jmp b2
 }
@@ -372,11 +372,11 @@ irq: {
   //SEG17 entry interrupt(KERNEL_MIN)
   //SEG18 asm { lda$dc0d  }
     lda $dc0d
-  //SEG19 [8] *((const byte*) BGCOL#0) ← (byte) col#0 [ ] ( ) -- _deref_pbuc1=vbuz1 
+  //SEG19 [8] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
   //SEG20 irq::@return
-  //SEG21 [9] return  [ ] ( ) - exit interrupt(KERNEL_MIN)
+  //SEG21 [9] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 

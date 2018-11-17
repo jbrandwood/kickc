@@ -28,7 +28,7 @@ void main() {
 	*psp1 = (word)mulf_sqr1;
 	*psp2 = (word)mulf_sqr2;
 
-	debug_print_init();
+	//debug_print_init();
 
  	//calculate_matrix(1,1,1);
 
@@ -36,9 +36,9 @@ void main() {
 }
 
 // Positions to rotate
-signed byte[8] xs = { -95,  95,  00,  00,  00,  00,  00,  63};
-signed byte[8] ys = {  00,  00, -95,  95,  00,  00,  00,  00};
-signed byte[8] zs = {  00,  00,  00,  00, -95,  95, -00,  00};
+signed byte[8] xs = { -52, -52, -52,   0,  0,   52,  52,  52};
+signed byte[8] ys = { -52,   0,  52, -52,  52, -52,   0,  52};
+signed byte[8] zs = {  52,  52,  52,  52,  52,  52,  52,  52};
 // Rotated positions
 signed byte[8] xrs;
 signed byte[8] yrs;
@@ -58,8 +58,11 @@ void anim() {
 	//signed byte xmax = 0;
 	while(true) {
 		while(*RASTER!=$ff) {}
+		//while(*RASTER!=$fe) {}
+		//while(*RASTER!=$fd) {}		
         (*BORDERCOL)++; 
-    	calculate_matrix_16(sx,sy,sz);
+    	//calculate_matrix_16(sx,sy,sz);
+    	calculate_matrix(sx,sy,sz);
     	store_matrix();
         for(byte i: 0..7) {
             (*BORDERCOL)++;
@@ -73,16 +76,16 @@ void anim() {
             xps[i] = *xp;
             yps[i] = *yp;
             byte i2 = i<<1;
-       	    SPRITES_XPOS[i2] = $80+(byte)((*xr));
-       	    SPRITES_YPOS[i2] = $80+(byte)((*yr));
+       	    SPRITES_XPOS[i2] = $80+(byte)((*xp));
+       	    SPRITES_YPOS[i2] = $80+(byte)((*yp));
     	}
         *BORDERCOL = LIGHT_GREY;
-        debug_print();
+        //debug_print();
         *BORDERCOL = LIGHT_BLUE;
         // Increment angles        
-    	sx -=1;
-    	sy +=1;
-    	sz -=1;
+    	sx +=2;
+	  	sy -=3;
+    	//sz +=1;
 	}	
 }
 
@@ -163,7 +166,7 @@ void sprites_init() {
     byte* sprites_ptr = SCREEN+$3f8;
     for(byte i: 0..7) {
     	sprites_ptr[i] = (byte)(SPRITE/$40);
-        SPRITES_COLS[i] = 8+i;
+        SPRITES_COLS[i] = GREEN; //8+i;
     }
 }
 
@@ -201,15 +204,14 @@ void calculate_matrix(signed byte sx, signed byte sy, signed byte sz) {
 void calculate_matrix_16(signed byte sx, signed byte sy, signed byte sz) {
 	signed byte t1 = sy-sz;
 	signed byte t2 = sy+sz;
-
 	signed word cosh_t1 = (signed word){ COSH_HI[t1], COSH_LO[t1] };
 	signed word cosh_t2 = (signed word){ COSH_HI[t2], COSH_LO[t2] };
-	rotation_matrix[0] = (signed byte)>(cosh_t1 + cosh_t2);
+	rotation_matrix[0] = round_hi(cosh_t1 + cosh_t2);
 	signed word sinh_t1 = (signed word){ SINH_HI[t1], SINH_LO[t1] };
 	signed word sinh_t2 = (signed word){ SINH_HI[t2], SINH_LO[t2] };	
-	rotation_matrix[1] = (signed byte)>(sinh_t1 - sinh_t2);
+	rotation_matrix[1] = round_hi(sinh_t1 - sinh_t2);
 	signed word sinh_sy = (signed word){ SINH_HI[sy], SINH_LO[sy] };	
-	rotation_matrix[2] = (signed byte)>(sinh_sy+sinh_sy);
+	rotation_matrix[2] = round_hi(sinh_sy+sinh_sy);
 	signed byte t3 = sx+sz;
 	signed byte t4 = sx-sz;
 	signed byte t5 = sx+t2; // = sx+sy+sz
@@ -222,24 +224,30 @@ void calculate_matrix_16(signed byte sx, signed byte sy, signed byte sz) {
 	signed word cosq_t6 = (signed word){ COSQ_HI[t6], COSH_LO[t6] };
 	signed word cosq_t7 = (signed word){ COSQ_HI[t7], COSH_LO[t7] };
 	signed word cosq_t8 = (signed word){ COSQ_HI[t8], COSH_LO[t8] };
-	rotation_matrix[3] = (signed byte)>(sinh_t3 - sinh_t4 + cosq_t6 - cosq_t5 + cosq_t8 - cosq_t7);
-	rotation_matrix[7] = (signed byte)>(sinh_t3 + sinh_t4 + cosq_t6 - cosq_t5 + cosq_t7 - cosq_t8);
+	rotation_matrix[3] = round_hi(sinh_t3 - sinh_t4 + cosq_t6 - cosq_t5 + cosq_t8 - cosq_t7);
+	rotation_matrix[7] = round_hi(sinh_t3 + sinh_t4 + cosq_t6 - cosq_t5 + cosq_t7 - cosq_t8);
 	signed word cosh_t3 = (signed word){ COSH_HI[t3], COSH_LO[t3] };
 	signed word cosh_t4 = (signed word){ COSH_HI[t4], COSH_LO[t4] };	
 	signed word sinq_t5 = (signed word){ SINQ_HI[t5], SINH_LO[t5] };
 	signed word sinq_t6 = (signed word){ SINQ_HI[t6], SINH_LO[t6] };
 	signed word sinq_t7 = (signed word){ SINQ_HI[t7], SINH_LO[t7] };
 	signed word sinq_t8 = (signed word){ SINQ_HI[t8], SINH_LO[t8] };
-	rotation_matrix[4] = (signed byte)>( cosh_t3 + cosh_t4 + sinq_t5 - sinq_t6 - sinq_t7 - sinq_t8);
-	rotation_matrix[6] = (signed byte)>( cosh_t4 - cosh_t3 + sinq_t6 - sinq_t5 - sinq_t7 - sinq_t8);
+	rotation_matrix[4] = round_hi( cosh_t3 + cosh_t4 + sinq_t5 - sinq_t6 - sinq_t7 - sinq_t8);
+	rotation_matrix[6] = round_hi( cosh_t4 - cosh_t3 + sinq_t6 - sinq_t5 - sinq_t7 - sinq_t8);
 	signed byte t9 = sy-sx;
 	signed byte t10 = sy+sx;
 	signed word sinh_t9 = (signed word){ SINH_HI[t9], SINH_LO[t9] };
 	signed word sinh_t10 = (signed word){ SINH_HI[t10], SINH_LO[t10] };	
-	rotation_matrix[5] = (signed byte)>( sinh_t9 - sinh_t10);
+	rotation_matrix[5] = round_hi( sinh_t9 - sinh_t10);
 	signed word cosh_t9 = (signed word){ COSH_HI[t9], COSH_LO[t9] };
 	signed word cosh_t10 = (signed word){ COSH_HI[t10], COSH_LO[t10] };
-	rotation_matrix[8] = (signed byte)>( cosh_t9 + cosh_t10 );
+	rotation_matrix[8] = round_hi( cosh_t9 + cosh_t10 );
+}
+
+// Returns the rounded high byte of the passed signed word.
+// Examines the lower byte to determine whether to round up or down
+signed byte round_hi(signed word val) {
+	return (signed byte)>(val+$80);
 }
 
 

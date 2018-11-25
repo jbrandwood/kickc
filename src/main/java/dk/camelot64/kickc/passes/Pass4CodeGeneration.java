@@ -309,6 +309,10 @@ public class Pass4CodeGeneration {
                String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
                asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                added.add(asmName);
+            } else if(constantArrayFilled.getElementType() instanceof SymbolTypePointer) {
+               String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+               added.add(asmName);
             } else {
                throw new RuntimeException("Unhandled constant array element type " + constantArrayFilled.toString(program));
             }

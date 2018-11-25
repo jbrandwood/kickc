@@ -45,6 +45,12 @@ public class TestPrograms {
    }
 
    @Test
+   public void testTetris() throws IOException, URISyntaxException {
+      compileAndCompare("examples/tetris/tetris");
+   }
+
+
+   @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
       compileAndCompare("examples/fastmultiply/fastmultiply8.kc");
    }

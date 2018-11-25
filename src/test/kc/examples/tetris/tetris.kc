@@ -1,0 +1,75 @@
+// Tetris Game Implementation
+import "c64"
+import "memory"
+
+byte* SCREEN = $400;	
+
+byte*[20] screen_lines;
+
+// Playfield 20 lines x 10 blocks. 0 is empty non-zero is color.
+byte[20*10] playfield;
+
+// The current piece
+byte[4*4] current_piece;
+
+byte current_xpos = 3;
+byte current_ypos = 0;
+
+void main() {
+	init();
+	render_playfield();
+	render_current_piece();
+	while(true) { 
+		(*BORDERCOL)++;
+	}
+}
+
+void init() {
+
+	// Initialize a piece
+	current_piece[0] = GREEN;
+	current_piece[1] = GREEN;
+	current_piece[2] = GREEN;
+	current_piece[4] = GREEN;
+
+	// Clear the screen
+	fill(SCREEN,1000,$a0);
+	fill(COLS,1000,BLACK);
+
+	// Initialize the screen lines pointers;
+	byte* li = COLS + 40 + 15;
+	for(byte i:0..19) {
+		screen_lines[i<<1] = li;
+		li +=40;
+	}
+
+	// Prepare the playfield frame
+	byte* line = COLS + 14;
+	for(byte l:0..21) {
+		for(byte c:0..11) {
+			*(line+c) = DARK_GREY;
+		}
+		line +=40;
+	}
+
+}
+
+// Render the static playfield on the screen
+void render_playfield() {
+	byte i = 0;
+	for(byte l:0..19) {		
+		byte* line = screen_lines[l<<1];
+		for(byte c:0..9) {
+			*(line+c) = playfield[i++];
+		}
+	}	
+}
+
+
+// Render the current piece 
+void render_current_piece() {
+
+
+}
+
+

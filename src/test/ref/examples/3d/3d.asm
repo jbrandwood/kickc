@@ -10,6 +10,7 @@
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .const LIGHT_GREY = $f
+  .label print_screen = $400
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
@@ -18,6 +19,7 @@
   .label yp = $f5
   .label psp1 = $f6
   .label psp2 = $f8
+  .label SCREEN = $400
   .const sz = 0
   .label mulf_sqr1 = $2400
   .label mulf_sqr2 = $2600
@@ -45,6 +47,7 @@ main: {
     sta psp2
     lda #>mulf_sqr2
     sta psp2+1
+    jsr debug_print_init
     jsr anim
     rts
 }
@@ -57,13 +60,21 @@ anim: {
     lda RASTER
     cmp #$ff
     bne b4
+  b7:
+    lda RASTER
+    cmp #$fe
+    bne b7
+  b10:
+    lda RASTER
+    cmp #$fd
+    bne b10
     inc BORDERCOL
     ldx sx
     jsr calculate_matrix
     jsr store_matrix
     lda #0
     sta i
-  b7:
+  b13:
     inc BORDERCOL
     ldy i
     lda xs,y
@@ -100,9 +111,10 @@ anim: {
     inc i
     lda i
     cmp #8
-    bne b7
+    bne b13
     lda #LIGHT_GREY
     sta BORDERCOL
+    jsr debug_print
     lda #LIGHT_BLUE
     sta BORDERCOL
     inc sx
@@ -112,6 +124,247 @@ anim: {
     sbc #3
     sta sy
     jmp b4
+}
+debug_print: {
+    .const print_sbyte_pos1_row = 0
+    .const print_sbyte_pos1_col = $25
+    .const print_sbyte_pos2_row = 1
+    .const print_sbyte_pos2_col = $25
+    .const print_sbyte_pos3_row = 2
+    .const print_sbyte_pos3_col = $25
+    .const print_sbyte_pos4_row = 4
+    .const print_sbyte_pos4_col = $1d
+    .const print_sbyte_pos5_row = 4
+    .const print_sbyte_pos5_col = $21
+    .const print_sbyte_pos6_row = 4
+    .const print_sbyte_pos6_col = $25
+    .const print_sbyte_pos7_row = 5
+    .const print_sbyte_pos7_col = $1d
+    .const print_sbyte_pos8_row = 5
+    .const print_sbyte_pos8_col = $21
+    .const print_sbyte_pos9_row = 5
+    .const print_sbyte_pos9_col = $25
+    .const print_sbyte_pos10_row = 6
+    .const print_sbyte_pos10_col = $1d
+    .const print_sbyte_pos11_row = 6
+    .const print_sbyte_pos11_col = $21
+    .const print_sbyte_pos12_row = 6
+    .const print_sbyte_pos12_col = $25
+    .label at_line = SCREEN+$13*$28
+    .label c = 4
+    .label i = 5
+    ldx sx
+    lda #<print_screen+print_sbyte_pos1_row*$28+print_sbyte_pos1_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos1_row*$28+print_sbyte_pos1_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    lda sy
+    tax
+    lda #<print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    lda #<print_screen+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
+    sta print_sbyte_at.at+1
+    ldx #sz
+    jsr print_sbyte_at
+    lda rotation_matrix
+    tax
+    lda #<print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    ldx rotation_matrix+1
+    lda #<print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    ldx rotation_matrix+2
+    lda #<print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    ldx rotation_matrix+3
+    lda #<print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    ldx rotation_matrix+4
+    lda #<print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    ldx rotation_matrix+5
+    lda #<print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    ldx rotation_matrix+6
+    lda #<print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    ldx rotation_matrix+7
+    lda #<print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    ldx rotation_matrix+8
+    lda #<print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
+    sta print_sbyte_at.at
+    lda #>print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
+    sta print_sbyte_at.at+1
+    jsr print_sbyte_at
+    lda #0
+    sta i
+    lda #4
+    sta c
+  b1:
+    lda c
+    clc
+    adc #<at_line
+    sta print_sbyte_at.at
+    lda #>at_line
+    adc #0
+    sta print_sbyte_at.at+1
+    ldx i
+    lda xrs,x
+    tax
+    jsr print_sbyte_at
+    lda c
+    clc
+    adc #<at_line+$28*1
+    sta print_sbyte_at.at
+    lda #>at_line+$28*1
+    adc #0
+    sta print_sbyte_at.at+1
+    ldx i
+    lda yrs,x
+    tax
+    jsr print_sbyte_at
+    lda c
+    clc
+    adc #<at_line+$28*2
+    sta print_sbyte_at.at
+    lda #>at_line+$28*2
+    adc #0
+    sta print_sbyte_at.at+1
+    ldx i
+    lda zrs,x
+    tax
+    jsr print_sbyte_at
+    lda c
+    clc
+    adc #<at_line+$28*3
+    sta print_sbyte_at.at
+    lda #>at_line+$28*3
+    adc #0
+    sta print_sbyte_at.at+1
+    ldx i
+    lda pps,x
+    tax
+    jsr print_sbyte_at
+    lda c
+    clc
+    adc #<at_line+$28*4
+    sta print_sbyte_at.at
+    lda #>at_line+$28*4
+    adc #0
+    sta print_sbyte_at.at+1
+    ldx i
+    lda xps,x
+    tax
+    jsr print_sbyte_at
+    lda c
+    clc
+    adc #<at_line+$28*5
+    sta print_sbyte_at.at
+    lda #>at_line+$28*5
+    adc #0
+    sta print_sbyte_at.at+1
+    ldx i
+    lda yps,x
+    tax
+    jsr print_sbyte_at
+    lda #4
+    clc
+    adc c
+    sta c
+    inc i
+    lda i
+    cmp #8
+    beq !b1+
+    jmp b1
+  !b1:
+    rts
+}
+print_sbyte_at: {
+    .label at = 6
+    cpx #0
+    bmi b1
+    lda #' '
+    sta print_char_at.ch
+    jsr print_char_at
+  b2:
+    inc print_byte_at.at
+    bne !+
+    inc print_byte_at.at+1
+  !:
+    jsr print_byte_at
+    rts
+  b1:
+    lda #'-'
+    sta print_char_at.ch
+    jsr print_char_at
+    txa
+    eor #$ff
+    clc
+    adc #1
+    tax
+    jmp b2
+}
+print_char_at: {
+    .label at = 6
+    .label ch = 8
+    lda ch
+    ldy #0
+    sta (at),y
+    rts
+}
+print_byte_at: {
+    .label at = 6
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda print_hextab,y
+    sta print_char_at.ch
+    jsr print_char_at
+    txa
+    and #$f
+    tax
+    inc print_char_at.at
+    bne !+
+    inc print_char_at.at+1
+  !:
+    lda print_hextab,x
+    sta print_char_at.ch
+    jsr print_char_at
+    rts
 }
 rotate_matrix: {
     .label x = 5
@@ -252,13 +505,13 @@ calculate_matrix: {
     .label sy = 3
     .label t1 = 4
     .label t3 = 5
-    .label t4 = 6
-    .label t5 = 7
-    .label t6 = 8
-    .label t7 = 9
-    .label t8 = $a
-    .label t9 = $b
-    .label t10 = $c
+    .label t4 = 8
+    .label t5 = $b
+    .label t6 = $c
+    .label t7 = $d
+    .label t8 = $e
+    .label t9 = $f
+    .label t10 = $10
     lda sy
     sec
     sbc #sz
@@ -395,6 +648,403 @@ calculate_matrix: {
     sta rotation_matrix+8
     rts
 }
+debug_print_init: {
+    .label COLS = $d800
+    .label at_line = SCREEN+$10*$28
+    .label at_cols = COLS+$10*$28
+    .label _59 = 6
+    .label _60 = 6
+    .label _63 = 6
+    .label _64 = 6
+    .label _67 = 6
+    .label _68 = 6
+    .label _71 = 6
+    .label _72 = 6
+    .label _75 = 6
+    .label _76 = 6
+    .label _79 = 6
+    .label _80 = 6
+    .label _83 = 6
+    .label _84 = 6
+    .label _87 = 6
+    .label _88 = 6
+    .label _91 = 6
+    .label _92 = 6
+    .label col = 4
+    .label c = 2
+    .label i = 3
+    jsr print_cls
+    lda #<SCREEN+$22
+    sta print_str_at.at
+    lda #>SCREEN+$22
+    sta print_str_at.at+1
+    lda #<str
+    sta print_str_at.str
+    lda #>str
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*1+$22
+    sta print_str_at.at
+    lda #>SCREEN+$28*1+$22
+    sta print_str_at.at+1
+    lda #<str1
+    sta print_str_at.str
+    lda #>str1
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*2+$22
+    sta print_str_at.at
+    lda #>SCREEN+$28*2+$22
+    sta print_str_at.at+1
+    lda #<str2
+    sta print_str_at.str
+    lda #>str2
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*$10
+    sta print_str_at.at
+    lda #>SCREEN+$28*$10
+    sta print_str_at.at+1
+    lda #<str3
+    sta print_str_at.str
+    lda #>str3
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*$11
+    sta print_str_at.at
+    lda #>SCREEN+$28*$11
+    sta print_str_at.at+1
+    lda #<str4
+    sta print_str_at.str
+    lda #>str4
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*$12
+    sta print_str_at.at
+    lda #>SCREEN+$28*$12
+    sta print_str_at.at+1
+    lda #<str5
+    sta print_str_at.str
+    lda #>str5
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*$13
+    sta print_str_at.at
+    lda #>SCREEN+$28*$13
+    sta print_str_at.at+1
+    lda #<str6
+    sta print_str_at.str
+    lda #>str6
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*$14
+    sta print_str_at.at
+    lda #>SCREEN+$28*$14
+    sta print_str_at.at+1
+    lda #<str7
+    sta print_str_at.str
+    lda #>str7
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*$15
+    sta print_str_at.at
+    lda #>SCREEN+$28*$15
+    sta print_str_at.at+1
+    lda #<str8
+    sta print_str_at.str
+    lda #>str8
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*$16
+    sta print_str_at.at
+    lda #>SCREEN+$28*$16
+    sta print_str_at.at+1
+    lda #<str9
+    sta print_str_at.str
+    lda #>str9
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*$17
+    sta print_str_at.at
+    lda #>SCREEN+$28*$17
+    sta print_str_at.at+1
+    lda #<str10
+    sta print_str_at.str
+    lda #>str10
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #<SCREEN+$28*$18
+    sta print_str_at.at
+    lda #>SCREEN+$28*$18
+    sta print_str_at.at+1
+    lda #<str11
+    sta print_str_at.str
+    lda #>str11
+    sta print_str_at.str+1
+    jsr print_str_at
+    lda #0
+    sta i
+    lda #4
+    sta c
+  b1:
+    lda c
+    clc
+    adc #<at_line
+    sta print_sbyte_at.at
+    lda #>at_line
+    adc #0
+    sta print_sbyte_at.at+1
+    ldx i
+    lda xs,x
+    tax
+    jsr print_sbyte_at
+    lda c
+    clc
+    adc #<at_line+$28*1
+    sta print_sbyte_at.at
+    lda #>at_line+$28*1
+    adc #0
+    sta print_sbyte_at.at+1
+    ldx i
+    lda ys,x
+    tax
+    jsr print_sbyte_at
+    lda c
+    clc
+    adc #<at_line+$28*2
+    sta print_sbyte_at.at
+    lda #>at_line+$28*2
+    adc #0
+    sta print_sbyte_at.at+1
+    ldx i
+    lda zs,x
+    tax
+    jsr print_sbyte_at
+    ldx #0
+  b2:
+    lda #8
+    clc
+    adc i
+    sta col
+    lda c
+    clc
+    adc #<at_cols
+    sta _59
+    lda #>at_cols
+    adc #0
+    sta _59+1
+    txa
+    clc
+    adc _60
+    sta _60
+    lda #0
+    adc _60+1
+    sta _60+1
+    lda col
+    ldy #0
+    sta (_60),y
+    lda c
+    clc
+    adc #<at_cols+$28*1
+    sta _63
+    lda #>at_cols+$28*1
+    adc #0
+    sta _63+1
+    txa
+    clc
+    adc _64
+    sta _64
+    tya
+    adc _64+1
+    sta _64+1
+    lda col
+    sta (_64),y
+    lda c
+    clc
+    adc #<at_cols+$28*2
+    sta _67
+    lda #>at_cols+$28*2
+    adc #0
+    sta _67+1
+    txa
+    clc
+    adc _68
+    sta _68
+    tya
+    adc _68+1
+    sta _68+1
+    lda col
+    sta (_68),y
+    lda c
+    clc
+    adc #<at_cols+$28*3
+    sta _71
+    lda #>at_cols+$28*3
+    adc #0
+    sta _71+1
+    txa
+    clc
+    adc _72
+    sta _72
+    tya
+    adc _72+1
+    sta _72+1
+    lda col
+    sta (_72),y
+    lda c
+    clc
+    adc #<at_cols+$28*4
+    sta _75
+    lda #>at_cols+$28*4
+    adc #0
+    sta _75+1
+    txa
+    clc
+    adc _76
+    sta _76
+    tya
+    adc _76+1
+    sta _76+1
+    lda col
+    sta (_76),y
+    lda c
+    clc
+    adc #<at_cols+$28*5
+    sta _79
+    lda #>at_cols+$28*5
+    adc #0
+    sta _79+1
+    txa
+    clc
+    adc _80
+    sta _80
+    tya
+    adc _80+1
+    sta _80+1
+    lda col
+    sta (_80),y
+    lda c
+    clc
+    adc #<at_cols+$28*6
+    sta _83
+    lda #>at_cols+$28*6
+    adc #0
+    sta _83+1
+    txa
+    clc
+    adc _84
+    sta _84
+    tya
+    adc _84+1
+    sta _84+1
+    lda col
+    sta (_84),y
+    lda c
+    clc
+    adc #<at_cols+$28*7
+    sta _87
+    lda #>at_cols+$28*7
+    adc #0
+    sta _87+1
+    txa
+    clc
+    adc _88
+    sta _88
+    tya
+    adc _88+1
+    sta _88+1
+    lda col
+    sta (_88),y
+    lda c
+    clc
+    adc #<at_cols+$28*8
+    sta _91
+    lda #>at_cols+$28*8
+    adc #0
+    sta _91+1
+    txa
+    clc
+    adc _92
+    sta _92
+    tya
+    adc _92+1
+    sta _92+1
+    lda col
+    sta (_92),y
+    inx
+    cpx #4
+    beq !b2+
+    jmp b2
+  !b2:
+    lda #4
+    clc
+    adc c
+    sta c
+    inc i
+    lda i
+    cmp #8
+    beq !b1+
+    jmp b1
+  !b1:
+    rts
+    str: .text "sx@"
+    str1: .text "sy@"
+    str2: .text "sz@"
+    str3: .text "x@"
+    str4: .text "y@"
+    str5: .text "z@"
+    str6: .text "xr@"
+    str7: .text "yr@"
+    str8: .text "zr@"
+    str9: .text "pp@"
+    str10: .text "xp@"
+    str11: .text "yp@"
+}
+print_str_at: {
+    .label at = 9
+    .label str = 6
+  b1:
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b2
+    rts
+  b2:
+    ldy #0
+    lda (str),y
+    sta (at),y
+    inc at
+    bne !+
+    inc at+1
+  !:
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1
+}
+print_cls: {
+    .label sc = 6
+    lda #<print_screen
+    sta sc
+    lda #>print_screen
+    sta sc+1
+  b1:
+    lda #' '
+    ldy #0
+    sta (sc),y
+    inc sc
+    bne !+
+    inc sc+1
+  !:
+    lda sc+1
+    cmp #>print_screen+$3e8
+    bne b1
+    lda sc
+    cmp #<print_screen+$3e8
+    bne b1
+    rts
+}
 sprites_init: {
     .label SCREEN = $400
     .label sprites_ptr = SCREEN+$3f8
@@ -411,6 +1061,7 @@ sprites_init: {
     bne b1
     rts
 }
+  print_hextab: .text "0123456789abcdef"
   zs: .byte $34, $34, $34, $34, $34, $34, $34, $34
   xrs: .fill 8, 0
   yrs: .fill 8, 0

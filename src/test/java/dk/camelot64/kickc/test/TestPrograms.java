@@ -49,6 +49,11 @@ public class TestPrograms {
       compileAndCompare("examples/tetris/tetris");
    }
 
+   //@Test
+   //public void testTetrisNullPointer() throws IOException, URISyntaxException {
+   //   compileAndCompare("tetris-npe");
+   //}
+
 
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {

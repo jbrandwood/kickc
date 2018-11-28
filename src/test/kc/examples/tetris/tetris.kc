@@ -1,6 +1,7 @@
 // Tetris Game Implementation
 import "c64"
 import "memory"
+import "keyboard"
 
 byte* SCREEN = $400;	
 
@@ -9,28 +10,92 @@ byte*[20] screen_lines;
 // Playfield 20 lines x 10 blocks. 0 is empty non-zero is color.
 byte[20*10] playfield;
 
-// The current piece
-byte[4*4] current_piece;
 
+// The current moving piece
+byte* current_piece = 0;
+
+// The curent piece orientation - each piece have 4 orientations (00/$10/$20/$30). The orientation chooses one of the 4 sub-graphics of the piece.
+byte current_piece_orientation = 0; 
+
+// Position of top left corner of current moving piece on the playfield
 byte current_xpos = 3;
 byte current_ypos = 0;
+
+// The rate of moving down the current piece (number of frames between moves if movedown is not not forced)
+const byte current_movedown_rate = 50;
+
+// The rate of moving down the current piece fast (number of frames between moves if movedown is not not forced)
+const byte current_movedown_rate_fast = 5;
+
+// Counts down til next movedown of current piece
+byte current_movedown_counter = 0;
 
 void main() {
 	init();
 	render_playfield();
-	render_current_piece();
+	render_current();
 	while(true) { 
-		(*BORDERCOL)++;
+		// Wait for a frame to pass
+		while(*RASTER!=$ff) {}
+		while(*RASTER!=$fe) {}
+		// Scan keyboard events
+		keyboard_event_scan();
+		byte render = 0;
+		byte key_event = keyboard_event_get();
+		// Handle moving down current piece	
+		++current_movedown_counter;
+		byte movedown = 0;
+		if(key_event==KEY_SPACE) {
+			movedown++;
+		} 
+		if(keyboard_event_pressed(KEY_SPACE)!=0) {
+			if(current_movedown_counter>=current_movedown_rate_fast) {
+				movedown++;
+			}
+		} 
+		if(current_movedown_counter>=current_movedown_rate) {
+			movedown++;
+		}
+		if(movedown!=0) {
+				current_movedown();
+				current_movedown_counter = 0;
+				render++;			
+		}
+		// Handle other keyboard events
+		if((key_event&$80)==0) {
+			// New keyboard event
+			if(key_event==KEY_COMMA) {
+				current_xpos--;
+				render++;
+			}
+			if(key_event==KEY_DOT) {
+				current_xpos++;
+				render++;
+			}
+			if(key_event==KEY_Z) {
+				current_piece_orientation = (current_piece_orientation-$10)&$3f;
+				render++;
+			}
+			if(key_event==KEY_X) {
+				current_piece_orientation = (current_piece_orientation+$10)&$3f;
+				render++;
+			}
+		}
+
+		if(render!=0) {
+			(*BORDERCOL)++;
+			render_playfield();
+			render_current();
+			(*BORDERCOL)--;			
+		}
 	}
 }
 
 void init() {
 
-	// Initialize a piece
-	current_piece[0] = GREEN;
-	current_piece[1] = GREEN;
-	current_piece[2] = GREEN;
-	current_piece[4] = GREEN;
+	// Initialize a current piece
+	current_piece = piece_t;
+	current_piece_orientation = 0;
 
 	// Clear the screen
 	fill(SCREEN,1000,$a0);
@@ -66,10 +131,195 @@ void render_playfield() {
 }
 
 
-// Render the current piece 
-void render_current_piece() {
-
-
+// Render the current moving piece at position (current_xpos, current_ypos)
+void render_current() {
+	byte i = 0;
+	byte* current_piece_gfx = current_piece + current_piece_orientation;
+	for(byte l:0..3) {		
+		byte* screen_line = screen_lines[(current_ypos+l)<<1];
+		for(byte c:0..3) {
+			byte current_cell = current_piece_gfx[i++];
+			if(current_cell!=0) {
+				byte xpos = current_xpos+c;
+				if(xpos<10) {
+					screen_line[xpos] = current_cell;
+				}
+			}
+		}
+	}
 }
 
+// Move the current piece down one position
+void current_movedown() {
+	current_ypos++;
+}
+
+
+
+// The T-piece
+align($40) byte[4*4*4] piece_t = { 
+	1, 1, 1, 0,  
+	0, 1, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+
+	0, 0, 1, 0,
+	0, 1, 1, 0,
+	0, 0, 1, 0,
+	0, 0, 0, 0,
+
+	0, 0, 0, 0,
+	0, 1, 0, 0,
+	1, 1, 1, 0,
+	0, 0, 0, 0,
+
+	1, 0, 0, 0,
+	1, 1, 0, 0,
+	1, 0, 0, 0,
+	0, 0, 0, 0
+};
+
+// The S-piece
+align($40) byte[4*4*4] piece_s = { 
+	0, 0, 0, 0,  
+	0, 1, 1, 0,
+	1, 1, 0, 0,
+	0, 0, 0, 0,
+
+	1, 0, 0, 0,
+	1, 1, 0, 0,
+	0, 1, 0, 0,
+	0, 0, 0, 0,
+
+	0, 0, 0, 0,
+	0, 1, 1, 0,
+	1, 1, 0, 0,
+	0, 0, 0, 0,
+
+	1, 0, 0, 0,
+	1, 1, 0, 0,
+	0, 1, 0, 0,
+	0, 0, 0, 0
+
+};
+
+// The Z-piece
+align($40) byte[4*4*4] piece_z = { 
+	0, 0, 0, 0,  
+	1, 1, 0, 0,
+	0, 1, 1, 0,
+	0, 0, 0, 0,
+
+	0, 1, 0, 0,
+	1, 1, 0, 0,
+	1, 0, 0, 0,
+	0, 0, 0, 0,
+
+	0, 0, 0, 0,  
+	1, 1, 0, 0,
+	0, 1, 1, 0,
+	0, 0, 0, 0,
+
+	0, 1, 0, 0,
+	1, 1, 0, 0,
+	1, 0, 0, 0,
+	0, 0, 0, 0
+
+};
+
+// The L-piece
+align($40) byte[4*4*4] piece_l = { 
+	0, 0, 0, 0,  
+	1, 1, 1, 0,
+	1, 0, 0, 0,
+	0, 0, 0, 0,
+
+	1, 1, 0, 0,
+	0, 1, 0, 0,
+	0, 1, 0, 0,
+	0, 0, 0, 0,
+
+	0, 0, 1, 0,  
+	1, 1, 1, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+
+	0, 1, 0, 0,
+	0, 1, 0, 0,
+	0, 1, 1, 0,
+	0, 0, 0, 0
+
+};
+
+// The J-piece
+align($40) byte[4*4*4] piece_j = { 
+	1, 0, 0, 0,  
+	1, 1, 1, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+
+	0, 1, 1, 0,
+	0, 1, 0, 0,
+	0, 1, 0, 0,
+	0, 0, 0, 0,
+
+	0, 0, 0, 0,  
+	1, 1, 1, 0,
+	0, 0, 1, 0,
+	0, 0, 0, 0,
+
+	0, 1, 0, 0,
+	0, 1, 0, 0,
+	1, 1, 0, 0,
+	0, 0, 0, 0
+
+};
+
+// The O-piece
+align($40) byte[4*4*4] piece_o = { 
+	1, 1, 0, 0,  
+	1, 1, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+
+	1, 1, 0, 0,  
+	1, 1, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+
+	1, 1, 0, 0,  
+	1, 1, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0,
+
+	1, 1, 0, 0,  
+	1, 1, 0, 0,
+	0, 0, 0, 0,
+	0, 0, 0, 0
+
+};
+
+// The I-piece
+align($40) byte[4*4*4] piece_i = { 
+	0, 0, 0, 0,  
+	0, 0, 0, 0,
+	1, 1, 1, 1,
+	0, 0, 0, 0,
+
+	0, 1, 0, 0,  
+	0, 1, 0, 0,
+	0, 1, 0, 0,
+	0, 1, 0, 0,
+
+	0, 0, 0, 0,  
+	0, 0, 0, 0,
+	1, 1, 1, 1,
+	0, 0, 0, 0,
+
+	0, 1, 0, 0,  
+	0, 1, 0, 0,
+	0, 1, 0, 0,
+	0, 1, 0, 0
+
+};
 

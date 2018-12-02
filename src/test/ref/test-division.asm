@@ -408,6 +408,7 @@ div8s: {
     jsr div8u
     tay
     lda neg
+    cmp #0
     beq b18
     txa
     eor #$ff

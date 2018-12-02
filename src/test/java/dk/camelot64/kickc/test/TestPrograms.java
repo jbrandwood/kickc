@@ -49,11 +49,22 @@ public class TestPrograms {
       compileAndCompare("examples/tetris/tetris");
    }
 
-   //@Test
-   //public void testTetrisNullPointer() throws IOException, URISyntaxException {
-   //   compileAndCompare("tetris-npe");
-   //}
+   /*
+   @Test
+   public void testVarInitProblem() throws IOException, URISyntaxException {
+      compileAndCompare("var-init-problem");
+   }
 
+   @Test
+   public void testConstIfProblem() throws IOException, URISyntaxException {
+      compileAndCompare("const-if-problem");
+   }
+
+   @Test
+   public void testTetrisNullPointer() throws IOException, URISyntaxException {
+      compileAndCompare("tetris-npe");
+   }
+   */
 
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {

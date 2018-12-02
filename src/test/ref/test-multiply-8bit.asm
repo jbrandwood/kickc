@@ -567,6 +567,7 @@ muls8u: {
     .label m = 8
     .label a = 2
     lda a
+    cmp #0
     beq b3
     ldy #0
     tya

@@ -387,6 +387,7 @@ sin16s: {
     adc x5_128+1
     sta usinx+1
     lda isUpper
+    cmp #0
     beq b3
     sec
     lda sinx

@@ -472,6 +472,7 @@ gfx_mode: {
 }
 keyboard_event_get: {
     lda keyboard_events_size
+    cmp #0
     beq b1
     dec keyboard_events_size
     ldy keyboard_events_size

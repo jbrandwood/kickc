@@ -443,6 +443,7 @@ sin8s: {
     dex
   b3:
     lda isUpper
+    cmp #0
     beq b18
     txa
     eor #$ff

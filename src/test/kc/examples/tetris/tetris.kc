@@ -60,8 +60,9 @@ void main() {
 		keyboard_event_scan();
 		byte key_event = keyboard_event_get();
 		byte render = 0;
-		render += play_movedown(key_event);
-		render += play_moveother(key_event);
+		render += play_move_down(key_event);
+		render += play_move_leftright(key_event);
+		render += play_move_rotate(key_event);
 		if(render!=0) {
 			(*BORDERCOL)++;
 			render_playfield();
@@ -74,7 +75,7 @@ void main() {
 
 // Move down the current piece 
 // Return non-zero if a render is needed 
-byte play_movedown(byte key_event) {
+byte play_move_down(byte key_event) {
 		// Handle moving down current piece	
 		++current_movedown_counter;
 		byte movedown = 0;
@@ -94,7 +95,7 @@ byte play_movedown(byte key_event) {
 		}
 		// Attempt movedown 
 		if(movedown!=0) {
-			if(collision(current_ypos+1, current_xpos)==COLLISION_NONE) {
+			if(collision(current_xpos,current_ypos+1,current_piece_orientation)==COLLISION_NONE) {
 				// Move current piece down
 				current_ypos++;
 			} else {
@@ -107,6 +108,44 @@ byte play_movedown(byte key_event) {
 			return 1;								
 		}
 		return 0;			
+}
+
+// Move left/right or rotate the current piece
+// Return non-zero if a render is needed 
+byte play_move_leftright(byte key_event) {
+		// Handle keyboard events 
+		if(key_event==KEY_COMMA) {
+			if(collision(current_xpos-1,current_ypos,current_piece_orientation)==COLLISION_NONE) {				
+				current_xpos--;
+				return 1;
+			}
+		} else if(key_event==KEY_DOT) {
+			if(collision(current_xpos+1,current_ypos,current_piece_orientation)==COLLISION_NONE) {				
+				current_xpos++;
+				return 1;
+			}
+		} 
+		return 0;
+}
+
+// Rotate the current piece  based on key-presses
+// Return non-zero if a render is needed 
+byte play_move_rotate(byte key_event) {
+	// Handle keyboard events 
+	byte orientation = $80;
+	if(key_event==KEY_Z) {
+		orientation = (current_piece_orientation-$10)&$3f;
+	} else if(key_event==KEY_X) {
+		orientation = (current_piece_orientation+$10)&$3f;
+	} else {
+		return 0;
+	}
+	if((collision(current_xpos, current_ypos, orientation) & (COLLISION_LEFT|COLLISION_RIGHT)) == 0) {
+		current_piece_orientation = orientation;
+		current_piece_gfx = current_piece + current_piece_orientation;
+		return 1;
+	}
+	return 0;
 }
 
 // No collision
@@ -122,18 +161,19 @@ const byte COLLISION_RIGHT = 8;
 
 // Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
 // Returns information about the type of the collision detected 
-byte collision(byte ypos, byte xpos) {
+byte collision(byte xpos, byte ypos, byte orientation) {
+	byte* piece_gfx = current_piece + orientation;
 	byte i = 0;
-	for(byte l:0..3) {		
-		byte line = ypos + l;
-		byte* playfield_line = playfield_lines[line<<1];
+	byte ypos2 = ypos<<1;
+	for(byte l:0..3) {
+		byte* playfield_line = playfield_lines[ypos2];
+		byte col = xpos;
 		for(byte c:0..3) {
-			if(current_piece_gfx[i++]!=0) {
-				if(line>=PLAYFIELD_LINES) {
+			if(piece_gfx[i++]!=0) {
+				if(ypos2>=2*PLAYFIELD_LINES) {
 					// Below the playfield bottom
 					return COLLISION_BOTTOM;
 				}
-				byte col = xpos+c;
 				if((col&$80)!=0) {
 					// Beyond left side of the playfield
 					return COLLISION_LEFT;					
@@ -147,7 +187,9 @@ byte collision(byte ypos, byte xpos) {
 					return COLLISION_PLAYFIELD;
 				}
 			}
+			col++;
 		}
+		ypos2 += 2;		
 	}
 	return COLLISION_NONE;
 }
@@ -176,36 +218,6 @@ void spawn_current() {
 	current_piece_color = GREEN;
 	current_xpos = 3;
 	current_ypos = 0;
-}
-
-// Move left/right or rotate the current piece
-// Return non-zero if a render is needed 
-byte play_moveother(byte key_event) {
-		byte render = 0;
-		// Handle other keyboard events
-		if((key_event&$80)==0) {
-			// New keyboard event
-			if(key_event==KEY_COMMA) {
-				if(collision(current_ypos,current_xpos-1)==COLLISION_NONE) {				
-					current_xpos--;
-					render++;
-				}
-			} else if(key_event==KEY_DOT) {
-				if(collision(current_ypos,current_xpos+1)==COLLISION_NONE) {				
-					current_xpos++;
-					render++;
-				}
-			} else if(key_event==KEY_Z) {
-				current_piece_orientation = (current_piece_orientation-$10)&$3f;
-				current_piece_gfx = current_piece + current_piece_orientation;
-				render++;
-			} else if(key_event==KEY_X) {
-				current_piece_orientation = (current_piece_orientation+$10)&$3f;
-				current_piece_gfx = current_piece + current_piece_orientation;
-				render++;
-			}
-		}
-		return render;
 }
 
 // Initialize the screen and data tables 
@@ -242,32 +254,32 @@ void render_playfield() {
 	for(byte l:0..PLAYFIELD_LINES-1) {		
 		byte* line = screen_lines[l<<1];
 		for(byte c:0..PLAYFIELD_COLS-1) {
-			*(line+c) = playfield[i++];
+			*(line++) = playfield[i++];
 		}
 	}	
 }
 
-
 // Render the current moving piece at position (current_xpos, current_ypos)
 void render_current() {
 	byte i = 0;
+	byte ypos2 = current_ypos<<1;
 	for(byte l:0..3) {		
-		byte line = current_ypos + l;
-		if(line<PLAYFIELD_LINES) {
-			byte* screen_line = screen_lines[line<<1];
+		if(ypos2<2*PLAYFIELD_LINES) {
+			byte* screen_line = screen_lines[ypos2];
+			byte xpos = current_xpos;
 			for(byte c:0..3) {
 				byte current_cell = current_piece_gfx[i++];
 				if(current_cell!=0) {
-					byte xpos = current_xpos+c;
 					if(xpos<PLAYFIELD_COLS) {
 						screen_line[xpos] = current_piece_color;
 					}
 				}
+				xpos++;
 			}
 		}
+		ypos2 += 2;
 	}
 }
-
 
 // The T-piece
 align($40) byte[4*4*4] piece_t = { 

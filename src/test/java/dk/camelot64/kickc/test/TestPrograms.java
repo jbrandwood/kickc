@@ -49,7 +49,7 @@ public class TestPrograms {
       compileAndCompare("examples/tetris/tetris");
    }
 
-   /*
+/*
    @Test
    public void testVarInitProblem() throws IOException, URISyntaxException {
       compileAndCompare("var-init-problem");
@@ -64,8 +64,8 @@ public class TestPrograms {
    public void testTetrisNullPointer() throws IOException, URISyntaxException {
       compileAndCompare("tetris-npe");
    }
-   */
 
+*/
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
       compileAndCompare("examples/fastmultiply/fastmultiply8.kc");

@@ -2,8 +2,8 @@
 import "c64"
 import "memory"
 import "keyboard"
-
-byte* SCREEN = $400;	
+import "sid"
+import "pieces"
 
 // The size of the playfield
 const byte PLAYFIELD_LINES = 22;
@@ -13,9 +13,6 @@ const byte PLAYFIELD_COLS = 10;
 // The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth, 
 byte[PLAYFIELD_LINES*PLAYFIELD_COLS] playfield;
 
-// Pointers to the screen address for rendering each playfield line
-byte*[PLAYFIELD_LINES+3] screen_lines;
-
 // Pointers to the playfield address for each playfield line
 byte*[PLAYFIELD_LINES] playfield_lines;
 
@@ -24,9 +21,9 @@ byte* current_piece = 0;
 
 // The curent piece orientation - each piece have 4 orientations (00/$10/$20/$30). 
 // The orientation chooses one of the 4 sub-graphics of the piece.
-byte current_piece_orientation = 0; 
+byte current_orientation = 0; 
 
-// Pointer to the current piece in the current orientation. Updated each time current_piece_orientation is updated.
+// Pointer to the current piece in the current orientation. Updated each time current_orientation is updated.
 byte* current_piece_gfx = 0;
 
 // The color of the current piece
@@ -37,15 +34,22 @@ byte current_xpos = 3;
 byte current_ypos = 0;
 
 // The rate of moving down the current piece (number of frames between moves if movedown is not not forced)
-const byte current_movedown_rate = 50;
+const byte current_movedown_slow = 50;
 
 // The rate of moving down the current piece fast (number of frames between moves if movedown is not not forced)
-const byte current_movedown_rate_fast = 5;
+const byte current_movedown_fast = 5;
 
 // Counts down til next movedown of current piece
 byte current_movedown_counter = 0;
 
+// The screen
+byte* SCREEN = $400;	
+
+// Pointers to the screen address for rendering each playfield line
+byte*[PLAYFIELD_LINES+3] screen_lines;
+
 void main() {
+	sid_rnd_init();
 	asm { sei }
 	init();
 	spawn_current();
@@ -85,17 +89,17 @@ byte play_move_down(byte key_event) {
 		} 
 		// While space is held down move down faster
 		if(keyboard_event_pressed(KEY_SPACE)!=0) {
-			if(current_movedown_counter>=current_movedown_rate_fast) {
+			if(current_movedown_counter>=current_movedown_fast) {
 				movedown++;
 			}
 		} 
 		// Move down slowly otherwise
-		if(current_movedown_counter>=current_movedown_rate) {
+		if(current_movedown_counter>=current_movedown_slow) {
 			movedown++;
 		}
 		// Attempt movedown 
 		if(movedown!=0) {
-			if(collision(current_xpos,current_ypos+1,current_piece_orientation)==COLLISION_NONE) {
+			if(collision(current_xpos,current_ypos+1,current_orientation)==COLLISION_NONE) {
 				// Move current piece down
 				current_ypos++;
 			} else {
@@ -115,12 +119,12 @@ byte play_move_down(byte key_event) {
 byte play_move_leftright(byte key_event) {
 		// Handle keyboard events 
 		if(key_event==KEY_COMMA) {
-			if(collision(current_xpos-1,current_ypos,current_piece_orientation)==COLLISION_NONE) {				
+			if(collision(current_xpos-1,current_ypos,current_orientation)==COLLISION_NONE) {				
 				current_xpos--;
 				return 1;
 			}
 		} else if(key_event==KEY_DOT) {
-			if(collision(current_xpos+1,current_ypos,current_piece_orientation)==COLLISION_NONE) {				
+			if(collision(current_xpos+1,current_ypos,current_orientation)==COLLISION_NONE) {				
 				current_xpos++;
 				return 1;
 			}
@@ -134,15 +138,15 @@ byte play_move_rotate(byte key_event) {
 	// Handle keyboard events 
 	byte orientation = $80;
 	if(key_event==KEY_Z) {
-		orientation = (current_piece_orientation-$10)&$3f;
+		orientation = (current_orientation-$10)&$3f;
 	} else if(key_event==KEY_X) {
-		orientation = (current_piece_orientation+$10)&$3f;
+		orientation = (current_orientation+$10)&$3f;
 	} else {
 		return 0;
 	}
-	if((collision(current_xpos, current_ypos, orientation) & (COLLISION_LEFT|COLLISION_RIGHT)) == 0) {
-		current_piece_orientation = orientation;
-		current_piece_gfx = current_piece + current_piece_orientation;
+	if(collision(current_xpos, current_ypos, orientation) == 0) {
+		current_orientation = orientation;
+		current_piece_gfx = current_piece + current_orientation;
 		return 1;
 	}
 	return 0;
@@ -197,27 +201,35 @@ byte collision(byte xpos, byte ypos, byte orientation) {
 // Lock the current piece onto the playfield
 void lock_current() {
 	byte i = 0;
+	byte ypos2 = current_ypos<<1;
 	for(byte l:0..3) {		
-		byte line = current_ypos + l;
-		byte* playfield_line = playfield_lines[line<<1];
+		byte* playfield_line = playfield_lines[ypos2];
+		byte col = current_xpos;
 		for(byte c:0..3) {
-			byte cell = current_piece_gfx[i++];
-			if(cell!=0) {
-				byte col = current_xpos + c;
+			if(current_piece_gfx[i++]!=0) {
 				playfield_line[col] = current_piece_color;
 			}
+			col++;
 		}
+		ypos2 += 2;
 	}
 }
 
 // Spawn a new piece
 void spawn_current() {
-	current_piece = piece_t;
-	current_piece_orientation = 0;
-	current_piece_gfx = current_piece + current_piece_orientation;
-	current_piece_color = GREEN;
+	// Pick a random piece
+	(*BORDERCOL)++;
+	byte piece_idx = 7;
+	while(piece_idx==7) {
+		piece_idx = sid_rnd()&7;
+	}
+	(*BORDERCOL)--;
+	current_piece = PIECES[piece_idx<<1];
+	current_orientation = 0;
+	current_piece_gfx = current_piece + current_orientation;
 	current_xpos = 3;
 	current_ypos = 0;
+	current_piece_color = PIECES_COLORS[piece_idx];
 }
 
 // Initialize the screen and data tables 
@@ -280,170 +292,3 @@ void render_current() {
 		ypos2 += 2;
 	}
 }
-
-// The T-piece
-align($40) byte[4*4*4] piece_t = { 
-	1, 1, 1, 0,  
-	0, 1, 0, 0,
-	0, 0, 0, 0,
-	0, 0, 0, 0,
-
-	0, 0, 1, 0,
-	0, 1, 1, 0,
-	0, 0, 1, 0,
-	0, 0, 0, 0,
-
-	0, 0, 0, 0,
-	0, 1, 0, 0,
-	1, 1, 1, 0,
-	0, 0, 0, 0,
-
-	1, 0, 0, 0,
-	1, 1, 0, 0,
-	1, 0, 0, 0,
-	0, 0, 0, 0
-};
-
-// The S-piece
-align($40) byte[4*4*4] piece_s = { 
-	0, 0, 0, 0,  
-	0, 1, 1, 0,
-	1, 1, 0, 0,
-	0, 0, 0, 0,
-
-	1, 0, 0, 0,
-	1, 1, 0, 0,
-	0, 1, 0, 0,
-	0, 0, 0, 0,
-
-	0, 0, 0, 0,
-	0, 1, 1, 0,
-	1, 1, 0, 0,
-	0, 0, 0, 0,
-
-	1, 0, 0, 0,
-	1, 1, 0, 0,
-	0, 1, 0, 0,
-	0, 0, 0, 0
-
-};
-
-// The Z-piece
-align($40) byte[4*4*4] piece_z = { 
-	0, 0, 0, 0,  
-	1, 1, 0, 0,
-	0, 1, 1, 0,
-	0, 0, 0, 0,
-
-	0, 1, 0, 0,
-	1, 1, 0, 0,
-	1, 0, 0, 0,
-	0, 0, 0, 0,
-
-	0, 0, 0, 0,  
-	1, 1, 0, 0,
-	0, 1, 1, 0,
-	0, 0, 0, 0,
-
-	0, 1, 0, 0,
-	1, 1, 0, 0,
-	1, 0, 0, 0,
-	0, 0, 0, 0
-
-};
-
-// The L-piece
-align($40) byte[4*4*4] piece_l = { 
-	0, 0, 0, 0,  
-	1, 1, 1, 0,
-	1, 0, 0, 0,
-	0, 0, 0, 0,
-
-	1, 1, 0, 0,
-	0, 1, 0, 0,
-	0, 1, 0, 0,
-	0, 0, 0, 0,
-
-	0, 0, 1, 0,  
-	1, 1, 1, 0,
-	0, 0, 0, 0,
-	0, 0, 0, 0,
-
-	0, 1, 0, 0,
-	0, 1, 0, 0,
-	0, 1, 1, 0,
-	0, 0, 0, 0
-
-};
-
-// The J-piece
-align($40) byte[4*4*4] piece_j = { 
-	1, 0, 0, 0,  
-	1, 1, 1, 0,
-	0, 0, 0, 0,
-	0, 0, 0, 0,
-
-	0, 1, 1, 0,
-	0, 1, 0, 0,
-	0, 1, 0, 0,
-	0, 0, 0, 0,
-
-	0, 0, 0, 0,  
-	1, 1, 1, 0,
-	0, 0, 1, 0,
-	0, 0, 0, 0,
-
-	0, 1, 0, 0,
-	0, 1, 0, 0,
-	1, 1, 0, 0,
-	0, 0, 0, 0
-
-};
-
-// The O-piece
-align($40) byte[4*4*4] piece_o = { 
-	1, 1, 0, 0,  
-	1, 1, 0, 0,
-	0, 0, 0, 0,
-	0, 0, 0, 0,
-
-	1, 1, 0, 0,  
-	1, 1, 0, 0,
-	0, 0, 0, 0,
-	0, 0, 0, 0,
-
-	1, 1, 0, 0,  
-	1, 1, 0, 0,
-	0, 0, 0, 0,
-	0, 0, 0, 0,
-
-	1, 1, 0, 0,  
-	1, 1, 0, 0,
-	0, 0, 0, 0,
-	0, 0, 0, 0
-
-};
-
-// The I-piece
-align($40) byte[4*4*4] piece_i = { 
-	0, 0, 0, 0,  
-	0, 0, 0, 0,
-	1, 1, 1, 1,
-	0, 0, 0, 0,
-
-	0, 1, 0, 0,  
-	0, 1, 0, 0,
-	0, 1, 0, 0,
-	0, 1, 0, 0,
-
-	0, 0, 0, 0,  
-	0, 0, 0, 0,
-	1, 1, 1, 1,
-	0, 0, 0, 0,
-
-	0, 1, 0, 0,  
-	0, 1, 0, 0,
-	0, 1, 0, 0,
-	0, 1, 0, 0
-
-};

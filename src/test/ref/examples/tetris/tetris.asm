@@ -7,8 +7,10 @@
   .label CIA1_PORT_A = $dc00
   .label CIA1_PORT_B = $dc01
   .const BLACK = 0
+  .const WHITE = 1
   .const GREEN = 5
   .const DARK_GREY = $b
+  .const LIGHT_GREY = $f
   .const KEY_Z = $c
   .const KEY_LSHIFT = $f
   .const KEY_X = $17
@@ -18,11 +20,15 @@
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
-  .label SCREEN = $400
+  .label SID_VOICE3_FREQ = $d40e
+  .label SID_VOICE3_CONTROL = $d412
+  .const SID_CONTROL_NOISE = $80
+  .label SID_VOICE3_OSC = $d41b
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
-  .const current_movedown_rate = $32
-  .const current_movedown_rate_fast = 5
+  .const current_movedown_slow = $32
+  .const current_movedown_fast = 5
+  .label SCREEN = $400
   .const COLLISION_NONE = 0
   .const COLLISION_PLAYFIELD = 1
   .const COLLISION_BOTTOM = 2
@@ -30,59 +36,57 @@
   .const COLLISION_RIGHT = 8
   .label keyboard_events_size = $13
   .label current_ypos = 2
-  .label current_xpos = $12
-  .label current_piece_orientation = $e
+  .label current_xpos = $11
+  .label current_orientation = $e
   .label current_piece_gfx = $f
   .label current_piece = $c
-  .label current_piece_color = $11
+  .label current_piece_color = $12
   .label current_movedown_counter = 3
   .label current_piece_15 = 5
   .label current_xpos_62 = 4
-  .label current_piece_gfx_61 = 5
-  .label current_piece_color_63 = 7
-  .label current_xpos_92 = 4
-  .label current_piece_gfx_82 = 5
-  .label current_piece_color_70 = 7
-  .label current_piece_67 = 5
-  .label current_piece_68 = 5
+  .label current_piece_gfx_62 = 5
+  .label current_piece_color_64 = 7
+  .label current_xpos_93 = 4
+  .label current_piece_gfx_84 = 5
+  .label current_piece_gfx_85 = 5
+  .label current_piece_color_72 = 7
+  .label current_piece_color_73 = 7
   .label current_piece_69 = 5
   .label current_piece_70 = 5
+  .label current_piece_71 = 5
+  .label current_piece_72 = 5
   jsr main
 main: {
     .label key_event = $14
     .label render = $15
+    jsr sid_rnd_init
     sei
     jsr init
     jsr spawn_current
     jsr render_playfield
-    lda #GREEN
-    sta current_piece_color_63
-    lda #<piece_t
-    sta current_piece_gfx_61
-    lda #>piece_t
-    sta current_piece_gfx_61+1
+    lda current_piece_gfx
+    sta current_piece_gfx_84
+    lda current_piece_gfx+1
+    sta current_piece_gfx_84+1
+    lda current_piece_color
+    sta current_piece_color_72
     lda #3
     sta current_xpos_62
     ldx #0
     jsr render_current
+    ldy spawn_current._3
+    lda PIECES,y
+    sta current_piece
+    lda PIECES+1,y
+    sta current_piece+1
     lda #0
     sta current_movedown_counter
     sta keyboard_events_size
     sta current_ypos
     lda #3
     sta current_xpos
-    lda #GREEN
-    sta current_piece_color
-    lda #<piece_t
-    sta current_piece_gfx
-    lda #>piece_t
-    sta current_piece_gfx+1
     lda #0
-    sta current_piece_orientation
-    lda #<piece_t
-    sta current_piece
-    lda #>piece_t
-    sta current_piece+1
+    sta current_orientation
   b4:
     lda RASTER
     cmp #$ff
@@ -115,13 +119,13 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
-    sta current_xpos_92
+    sta current_xpos_93
     lda current_piece_gfx
-    sta current_piece_gfx_82
+    sta current_piece_gfx_85
     lda current_piece_gfx+1
-    sta current_piece_gfx_82+1
+    sta current_piece_gfx_85+1
     lda current_piece_color
-    sta current_piece_color_70
+    sta current_piece_color_73
     jsr render_current
     dec BORDERCOL
   b10:
@@ -154,14 +158,14 @@ render_current: {
     ldx #0
   b3:
     ldy i
-    lda (current_piece_gfx_61),y
+    lda (current_piece_gfx_62),y
     inc i
     cmp #0
     beq b4
     lda xpos
     cmp #PLAYFIELD_COLS
     bcs b4
-    lda current_piece_color_63
+    lda current_piece_color_64
     ldy xpos
     sta (screen_line),y
   b4:
@@ -228,7 +232,7 @@ play_move_rotate: {
   b2:
     lda #$10
     clc
-    adc current_piece_orientation
+    adc current_orientation
     and #$3f
     sta orientation
   b4:
@@ -237,15 +241,14 @@ play_move_rotate: {
     ldy current_ypos
     ldx orientation
     lda current_piece
-    sta current_piece_70
+    sta current_piece_72
     lda current_piece+1
-    sta current_piece_70+1
+    sta current_piece_72+1
     jsr collision
-    and #COLLISION_LEFT|COLLISION_RIGHT
     cmp #0
     bne b3
     lda orientation
-    sta current_piece_orientation
+    sta current_orientation
     clc
     adc current_piece
     sta current_piece_gfx
@@ -255,7 +258,7 @@ play_move_rotate: {
     lda #1
     jmp breturn
   b1:
-    lda current_piece_orientation
+    lda current_orientation
     sec
     sbc #$10
     and #$3f
@@ -363,11 +366,11 @@ play_move_leftright: {
     iny
     sty collision.xpos
     ldy current_ypos
-    ldx current_piece_orientation
+    ldx current_orientation
     lda current_piece
-    sta current_piece_69
+    sta current_piece_71
     lda current_piece+1
-    sta current_piece_69+1
+    sta current_piece_71+1
     jsr collision
     cmp #COLLISION_NONE
     bne b3
@@ -384,11 +387,11 @@ play_move_leftright: {
     dex
     stx collision.xpos
     ldy current_ypos
-    ldx current_piece_orientation
+    ldx current_orientation
     lda current_piece
-    sta current_piece_68
+    sta current_piece_70
     lda current_piece+1
-    sta current_piece_68+1
+    sta current_piece_70+1
     jsr collision
     cmp #COLLISION_NONE
     bne b3
@@ -410,12 +413,12 @@ play_move_down: {
     cmp #0
     beq b2
     lda current_movedown_counter
-    cmp #current_movedown_rate_fast
+    cmp #current_movedown_fast
     bcc b2
     inx
   b2:
     lda current_movedown_counter
-    cmp #current_movedown_rate
+    cmp #current_movedown_slow
     bcc b4
     inx
   b4:
@@ -425,31 +428,25 @@ play_move_down: {
     iny
     lda current_xpos
     sta collision.xpos
-    ldx current_piece_orientation
+    ldx current_orientation
     lda current_piece
-    sta current_piece_67
+    sta current_piece_69
     lda current_piece+1
-    sta current_piece_67+1
+    sta current_piece_69+1
     jsr collision
     cmp #COLLISION_NONE
     beq b6
     jsr lock_current
     jsr spawn_current
+    ldy spawn_current._3
+    lda PIECES,y
+    sta current_piece
+    lda PIECES+1,y
+    sta current_piece+1
     lda #3
     sta current_xpos
-    lda #GREEN
-    sta current_piece_color
-    lda #<piece_t
-    sta current_piece_gfx
-    lda #>piece_t
-    sta current_piece_gfx+1
     lda #0
-    sta current_piece_orientation
-    lda #<piece_t
-    sta current_piece
-    lda #>piece_t
-    sta current_piece+1
-    lda #0
+    sta current_orientation
     sta current_ypos
   b7:
     lda #0
@@ -465,47 +462,90 @@ play_move_down: {
     jmp b7
 }
 spawn_current: {
+    .label _3 = 2
+    inc BORDERCOL
+    ldx #7
+  b1:
+    cpx #7
+    beq b2
+    dec BORDERCOL
+    txa
+    asl
+    sta _3
+    tay
+    lda PIECES,y
+    sta current_piece_gfx
+    lda PIECES+1,y
+    sta current_piece_gfx+1
+    lda PIECES_COLORS,x
+    sta current_piece_color
+    rts
+  b2:
+    jsr sid_rnd
+    and #7
+    tax
+    jmp b1
+}
+sid_rnd: {
+    lda SID_VOICE3_OSC
     rts
 }
 lock_current: {
+    .label ypos2 = 2
     .label playfield_line = 5
-    .label i = 4
+    .label col = 7
+    .label i = 8
     .label l = 3
+    .label i_2 = 4
+    .label i_3 = 4
+    .label i_7 = 4
+    .label i_9 = 4
+    asl ypos2
     lda #0
-    sta i
     sta l
+    sta i_3
   b1:
-    lda current_ypos
-    clc
-    adc l
-    asl
-    tay
+    ldy ypos2
     lda playfield_lines,y
     sta playfield_line
     lda playfield_lines+1,y
     sta playfield_line+1
+    lda current_xpos
+    sta col
     ldx #0
   b2:
-    ldy i
+    ldy i_2
+    iny
+    sty i
+    ldy i_2
     lda (current_piece_gfx),y
-    inc i
     cmp #0
     beq b3
-    txa
-    clc
-    adc current_xpos
-    tay
     lda current_piece_color
+    ldy col
     sta (playfield_line),y
   b3:
+    inc col
     inx
     cpx #4
-    bne b2
+    bne b8
+    lda ypos2
+    clc
+    adc #2
+    sta ypos2
     inc l
     lda l
     cmp #4
-    bne b1
+    bne b7
     rts
+  b7:
+    lda i
+    sta i_7
+    jmp b1
+  b8:
+    lda i
+    sta i_9
+    jmp b2
 }
 keyboard_event_pressed: {
     .label row_bits = 7
@@ -746,12 +786,35 @@ fill: {
     bne b1
     rts
 }
+sid_rnd_init: {
+    lda #<$ffff
+    sta SID_VOICE3_FREQ
+    lda #>$ffff
+    sta SID_VOICE3_FREQ+1
+    lda #SID_CONTROL_NOISE
+    sta SID_VOICE3_CONTROL
+    rts
+}
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
   keyboard_events: .fill 8, 0
   keyboard_scan_values: .fill 8, 0
   .align $40
-  piece_t: .byte 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+  PIECE_T: .byte 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+  .align $40
+  PIECE_S: .byte 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  .align $40
+  PIECE_Z: .byte 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+  .align $40
+  PIECE_L: .byte 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0
+  .align $40
+  PIECE_J: .byte 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0
+  .align $40
+  PIECE_O: .byte 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  .align $40
+  PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
+  PIECES_COLORS: .byte WHITE, LIGHT_GREY, GREEN, LIGHT_GREY, WHITE, WHITE, GREEN
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
+  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
   screen_lines: .fill 2*(PLAYFIELD_LINES+3), 0

@@ -65,6 +65,13 @@ public class TestPrograms {
       compileAndCompare("tetris-npe");
    }
 
+   //@Test
+   //public void testUnrollCall() throws IOException, URISyntaxException {
+   //   compileAndCompare("unroll-call");
+   //}
+
+
+
 */
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
@@ -105,11 +112,6 @@ public class TestPrograms {
    public void testBitwiseNot() throws IOException, URISyntaxException {
       compileAndCompare("bitwise-not");
    }
-
-   //@Test
-   //public void testUnrollCall() throws IOException, URISyntaxException {
-   //   compileAndCompare("unroll-call");
-   //}
 
    @Test
    public void testUnrollInfinite() throws IOException, URISyntaxException {

@@ -41,7 +41,7 @@ public class TestPrograms {
    public static void tearDown() {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, true, true);
+      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
    @Test

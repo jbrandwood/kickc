@@ -43,18 +43,18 @@
   .label current_piece_color = $12
   .label current_movedown_counter = 3
   .label current_piece_15 = 5
-  .label current_xpos_62 = 4
-  .label current_piece_gfx_62 = 5
-  .label current_piece_color_64 = 7
-  .label current_xpos_93 = 4
-  .label current_piece_gfx_84 = 5
+  .label current_xpos_63 = 4
+  .label current_piece_gfx_63 = 5
+  .label current_piece_color_65 = 7
+  .label current_xpos_94 = 4
   .label current_piece_gfx_85 = 5
-  .label current_piece_color_72 = 7
+  .label current_piece_gfx_86 = 5
   .label current_piece_color_73 = 7
-  .label current_piece_69 = 5
+  .label current_piece_color_74 = 7
   .label current_piece_70 = 5
   .label current_piece_71 = 5
   .label current_piece_72 = 5
+  .label current_piece_73 = 5
   jsr main
 main: {
     .label key_event = $14
@@ -65,13 +65,13 @@ main: {
     jsr spawn_current
     jsr render_playfield
     lda current_piece_gfx
-    sta current_piece_gfx_84
+    sta current_piece_gfx_85
     lda current_piece_gfx+1
-    sta current_piece_gfx_84+1
+    sta current_piece_gfx_85+1
     lda current_piece_color
-    sta current_piece_color_72
+    sta current_piece_color_73
     lda #3
-    sta current_xpos_62
+    sta current_xpos_63
     ldx #0
     jsr render_current
     ldy spawn_current._3
@@ -119,13 +119,13 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
-    sta current_xpos_93
+    sta current_xpos_94
     lda current_piece_gfx
-    sta current_piece_gfx_85
+    sta current_piece_gfx_86
     lda current_piece_gfx+1
-    sta current_piece_gfx_85+1
+    sta current_piece_gfx_86+1
     lda current_piece_color
-    sta current_piece_color_73
+    sta current_piece_color_74
     jsr render_current
     dec BORDERCOL
   b10:
@@ -153,19 +153,19 @@ render_current: {
     sta screen_line
     lda screen_lines+1,y
     sta screen_line+1
-    lda current_xpos_62
+    lda current_xpos_63
     sta xpos
     ldx #0
   b3:
     ldy i
-    lda (current_piece_gfx_62),y
+    lda (current_piece_gfx_63),y
     inc i
     cmp #0
     beq b4
     lda xpos
     cmp #PLAYFIELD_COLS
     bcs b4
-    lda current_piece_color_64
+    lda current_piece_color_65
     ldy xpos
     sta (screen_line),y
   b4:
@@ -241,9 +241,9 @@ play_move_rotate: {
     ldy current_ypos
     ldx orientation
     lda current_piece
-    sta current_piece_72
+    sta current_piece_73
     lda current_piece+1
-    sta current_piece_72+1
+    sta current_piece_73+1
     jsr collision
     cmp #0
     bne b3
@@ -368,9 +368,9 @@ play_move_leftright: {
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_71
+    sta current_piece_72
     lda current_piece+1
-    sta current_piece_71+1
+    sta current_piece_72+1
     jsr collision
     cmp #COLLISION_NONE
     bne b3
@@ -389,9 +389,9 @@ play_move_leftright: {
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_70
+    sta current_piece_71
     lda current_piece+1
-    sta current_piece_70+1
+    sta current_piece_71+1
     jsr collision
     cmp #COLLISION_NONE
     bne b3
@@ -430,13 +430,14 @@ play_move_down: {
     sta collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_69
+    sta current_piece_70
     lda current_piece+1
-    sta current_piece_69+1
+    sta current_piece_70+1
     jsr collision
     cmp #COLLISION_NONE
     beq b6
     jsr lock_current
+    jsr remove_lines
     jsr spawn_current
     ldy spawn_current._3
     lda PIECES,y
@@ -489,6 +490,110 @@ spawn_current: {
 sid_rnd: {
     lda SID_VOICE3_OSC
     rts
+}
+remove_lines: {
+    .label done = 2
+    lda #0
+    sta done
+  b1:
+    jsr find_line
+    lda find_line.return
+    cmp #$ff
+    bne b2
+    lda #1
+    sta done
+  b3:
+    lda done
+    cmp #0
+    beq b1
+    rts
+  b2:
+    sta remove_line.ypos
+    jsr remove_line
+    jmp b3
+}
+remove_line: {
+    .label ypos = 3
+    .label x = 4
+    .label y = 3
+    lda ypos
+    tay
+    lda playfield_lines_idx+1,y
+    tay
+    dey
+    ldx ypos
+    lda playfield_lines_idx,x
+    tax
+    dex
+  b1:
+    lda #0
+    sta x
+  b2:
+    lda playfield,x
+    sta playfield,y
+    dey
+    dex
+    inc x
+    lda x
+    cmp #PLAYFIELD_COLS-1+1
+    bne b2
+    dec y
+    lda y
+    cmp #1
+    bne b1
+    rts
+}
+find_line: {
+    .label i = 8
+    .label y = 7
+    .label return = 7
+    .label i_2 = 3
+    .label filled = 4
+    .label i_3 = 3
+    .label i_8 = 3
+    .label i_10 = 3
+    lda #0
+    sta y
+    sta i_3
+  b1:
+    lda #1
+    sta filled
+    ldx #0
+  b2:
+    ldy i_2
+    iny
+    sty i
+    ldy i_2
+    lda playfield,y
+    cmp #0
+    bne b3
+    lda #0
+    sta filled
+  b3:
+    inx
+    cpx #PLAYFIELD_COLS-1+1
+    bne b12
+    lda filled
+    cmp #1
+    bne b4
+  breturn:
+    rts
+  b4:
+    inc y
+    lda y
+    cmp #PLAYFIELD_LINES-1+1
+    bne b11
+    lda #$ff
+    sta return
+    jmp breturn
+  b11:
+    lda i
+    sta i_8
+    jmp b1
+  b12:
+    lda i
+    sta i_10
+    jmp b2
 }
 lock_current: {
     .label ypos2 = 2
@@ -662,9 +767,10 @@ keyboard_matrix_read: {
     rts
 }
 init: {
-    .label _13 = $c
+    .label _14 = $c
     .label li = 5
     .label pli = 5
+    .label idx = 2
     .label line = 5
     .label l = 2
     ldx #$a0
@@ -702,6 +808,8 @@ init: {
     inx
     cpx #PLAYFIELD_LINES+2+1
     bne b1
+    lda #0
+    sta idx
     lda #<playfield
     sta pli
     lda #>playfield
@@ -715,16 +823,24 @@ init: {
     sta playfield_lines,y
     lda pli+1
     sta playfield_lines+1,y
+    lda idx
+    sta playfield_lines_idx,x
     lda pli
     clc
-    adc #$a
+    adc #PLAYFIELD_COLS
     sta pli
     bcc !+
     inc pli+1
   !:
+    lda #PLAYFIELD_COLS
+    clc
+    adc idx
+    sta idx
     inx
     cpx #PLAYFIELD_LINES-1+1
     bne b2
+    lda #PLAYFIELD_COLS*PLAYFIELD_LINES
+    sta playfield_lines_idx+PLAYFIELD_LINES
     lda #0
     sta l
     lda #<COLS+$e
@@ -737,13 +853,13 @@ init: {
     txa
     clc
     adc line
-    sta _13
+    sta _14
     lda #0
     adc line+1
-    sta _13+1
+    sta _14+1
     lda #DARK_GREY
     ldy #0
-    sta (_13),y
+    sta (_14),y
     inx
     cpx #PLAYFIELD_COLS+1+1
     bne b4
@@ -817,4 +933,5 @@ sid_rnd_init: {
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
   PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
+  playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
   screen_lines: .fill 2*(PLAYFIELD_LINES+3), 0

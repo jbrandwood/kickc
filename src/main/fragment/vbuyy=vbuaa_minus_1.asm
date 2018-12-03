@@ -1,2 +1,2 @@
-tya
+tay
 dey

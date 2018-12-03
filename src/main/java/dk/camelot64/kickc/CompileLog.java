@@ -20,7 +20,7 @@ public class CompileLog {
    /**
     * Should fragment synthesis be verbose.
     */
-   private boolean verboseFragmentLog = false;
+   private boolean verboseFragmentLog = true;
 
    /**
     * Should ASM optimization be verbose.
@@ -66,7 +66,7 @@ public class CompileLog {
    /**
     * Should the log be output to System.out while being built
     */
-   private boolean sysOut = false;
+   private boolean sysOut = true;
 
    public CompileLog() {
       this.log = new StringBuilder();

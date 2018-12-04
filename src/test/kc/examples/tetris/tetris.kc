@@ -36,13 +36,13 @@ byte current_piece_color = 0;
 byte current_xpos = 3;
 byte current_ypos = 0;
 
-// The rate of moving down the current piece (number of frames between moves if movedown is not not forced)
+// The rate of moving down the current piece (number of frames between moves if movedown is  not forced)
 const byte current_movedown_slow = 50;
 
-// The rate of moving down the current piece fast (number of frames between moves if movedown is not not forced)
+// The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
 const byte current_movedown_fast = 5;
 
-// Counts down til next movedown of current piece
+// Counts up to the next movedown of current piece
 byte current_movedown_counter = 0;
 
 // The screen
@@ -54,7 +54,8 @@ byte*[PLAYFIELD_LINES+3] screen_lines;
 void main() {
 	sid_rnd_init();
 	asm { sei }
-	init();
+	render_init();
+	tables_init();
 	spawn_current();
 	render_playfield();
 	render_current();
@@ -71,10 +72,8 @@ void main() {
 		render += play_move_leftright(key_event);
 		render += play_move_rotate(key_event);
 		if(render!=0) {
-			(*BORDERCOL)++;
 			render_playfield();
 			render_current();
-			(*BORDERCOL)--;			
 		}
 		(*BORDERCOL)--;			
 	}
@@ -149,7 +148,7 @@ byte play_move_rotate(byte key_event) {
 	} else {
 		return 0;
 	}
-	if(collision(current_xpos, current_ypos, orientation) == 0) {
+	if(collision(current_xpos, current_ypos, orientation) == COLLISION_NONE) {
 		current_orientation = orientation;
 		current_piece_gfx = current_piece + current_orientation;
 		return 1;
@@ -223,12 +222,10 @@ void lock_current() {
 // Spawn a new piece
 void spawn_current() {
 	// Pick a random piece
-	(*BORDERCOL)++;
 	byte piece_idx = 7;
 	while(piece_idx==7) {
 		piece_idx = sid_rnd()&7;
 	}
-	(*BORDERCOL)--;
 	current_piece = PIECES[piece_idx<<1];
 	current_orientation = 0;
 	current_piece_gfx = current_piece + current_orientation;
@@ -279,17 +276,8 @@ void remove_line(byte ypos) {
 	}
 }
 
-// Initialize the screen and data tables 
-void init() {
-	// Clear the screen
-	fill(SCREEN,1000,$a0);
-	fill(COLS,1000,BLACK);
-	// Initialize the screen line pointers;
-	byte* li = COLS + 40 + 15;
-	for(byte i:0..PLAYFIELD_LINES+2) {
-		screen_lines[i<<1] = li;
-		li += 40;
-	}
+// Initialize data tables 
+void tables_init() {
 	// Initialize the playfield line pointers;
 	byte idx = 0;
 	byte* pli = playfield;
@@ -300,6 +288,20 @@ void init() {
 		idx += PLAYFIELD_COLS;
 	}
 	playfield_lines_idx[PLAYFIELD_LINES] = PLAYFIELD_COLS*PLAYFIELD_LINES;
+
+}
+
+// Initialize rendering
+void render_init() {
+	// Clear the screen
+	fill(SCREEN,1000,$a0);
+	fill(COLS,1000,BLACK);
+	// Initialize the screen line pointers;
+	byte* li = COLS + 40 + 15;
+	for(byte i:0..PLAYFIELD_LINES+2) {
+		screen_lines[i<<1] = li;
+		li += 40;
+	}
 	// Prepare the playfield frame
 	byte* line = COLS + 14;
 	for(byte l:0..PLAYFIELD_LINES+1) {

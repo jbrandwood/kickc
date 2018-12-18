@@ -28,12 +28,12 @@
   .const PLAYFIELD_COLS = $a
   .const current_movedown_slow = $32
   .const current_movedown_fast = 5
-  .label SCREEN = $400
   .const COLLISION_NONE = 0
   .const COLLISION_PLAYFIELD = 1
   .const COLLISION_BOTTOM = 2
   .const COLLISION_LEFT = 4
   .const COLLISION_RIGHT = 8
+  .label SCREEN = $400
   .label keyboard_events_size = $13
   .label current_ypos = 2
   .label current_xpos = $11
@@ -44,17 +44,17 @@
   .label current_movedown_counter = 3
   .label current_piece_15 = 5
   .label current_xpos_63 = 4
-  .label current_piece_gfx_63 = 5
-  .label current_piece_color_66 = 7
-  .label current_xpos_95 = 4
-  .label current_piece_gfx_86 = 5
+  .label current_piece_gfx_64 = 5
+  .label current_piece_color_67 = 7
+  .label current_xpos_96 = 4
   .label current_piece_gfx_87 = 5
-  .label current_piece_color_74 = 7
+  .label current_piece_gfx_88 = 5
   .label current_piece_color_75 = 7
-  .label current_piece_71 = 5
+  .label current_piece_color_76 = 7
   .label current_piece_72 = 5
   .label current_piece_73 = 5
   .label current_piece_74 = 5
+  .label current_piece_75 = 5
   jsr main
 main: {
     .label key_event = $14
@@ -66,11 +66,11 @@ main: {
     jsr spawn_current
     jsr render_playfield
     lda current_piece_gfx
-    sta current_piece_gfx_86
+    sta current_piece_gfx_87
     lda current_piece_gfx+1
-    sta current_piece_gfx_86+1
+    sta current_piece_gfx_87+1
     lda current_piece_color
-    sta current_piece_color_74
+    sta current_piece_color_75
     lda #3
     sta current_xpos_63
     ldx #0
@@ -119,13 +119,13 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
-    sta current_xpos_95
+    sta current_xpos_96
     lda current_piece_gfx
-    sta current_piece_gfx_87
+    sta current_piece_gfx_88
     lda current_piece_gfx+1
-    sta current_piece_gfx_87+1
+    sta current_piece_gfx_88+1
     lda current_piece_color
-    sta current_piece_color_75
+    sta current_piece_color_76
     jsr render_current
   b10:
     dec BORDERCOL
@@ -157,14 +157,14 @@ render_current: {
     ldx #0
   b3:
     ldy i
-    lda (current_piece_gfx_63),y
+    lda (current_piece_gfx_64),y
     inc i
     cmp #0
     beq b4
     lda xpos
     cmp #PLAYFIELD_COLS
     bcs b4
-    lda current_piece_color_66
+    lda current_piece_color_67
     ldy xpos
     sta (screen_line),y
   b4:
@@ -240,9 +240,9 @@ play_move_rotate: {
     ldy current_ypos
     ldx orientation
     lda current_piece
-    sta current_piece_74
+    sta current_piece_75
     lda current_piece+1
-    sta current_piece_74+1
+    sta current_piece_75+1
     jsr collision
     cmp #COLLISION_NONE
     bne b3
@@ -367,9 +367,9 @@ play_move_leftright: {
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_73
+    sta current_piece_74
     lda current_piece+1
-    sta current_piece_73+1
+    sta current_piece_74+1
     jsr collision
     cmp #COLLISION_NONE
     bne b3
@@ -388,9 +388,9 @@ play_move_leftright: {
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_72
+    sta current_piece_73
     lda current_piece+1
-    sta current_piece_72+1
+    sta current_piece_73+1
     jsr collision
     cmp #COLLISION_NONE
     bne b3
@@ -429,9 +429,9 @@ play_move_down: {
     sta collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_71
+    sta current_piece_72
     lda current_piece+1
-    sta current_piece_71+1
+    sta current_piece_72+1
     jsr collision
     cmp #COLLISION_NONE
     beq b6
@@ -489,108 +489,56 @@ sid_rnd: {
     rts
 }
 remove_lines: {
-    .label done = 2
+    .label c = 7
+    .label x = 3
+    .label y = 2
+    .label full = 4
     lda #0
-    sta done
+    sta y
+    ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
+    ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
   b1:
-    jsr find_line
-    lda find_line.return
-    cmp #$ff
-    bne b2
     lda #1
-    sta done
-  b3:
-    lda done
-    cmp #0
-    beq b1
-    rts
-  b2:
-    sta remove_line.ypos
-    jsr remove_line
-    jmp b3
-}
-remove_line: {
-    .label ypos = 3
-    .label x = 4
-    .label y = 3
-    lda ypos
-    tay
-    lda playfield_lines_idx+1,y
-    tay
-    dey
-    ldx ypos
-    lda playfield_lines_idx,x
-    tax
-    dex
-  b1:
+    sta full
     lda #0
     sta x
   b2:
-    lda playfield,x
-    sta playfield,y
+    lda playfield,y
+    sta c
     dey
+    cmp #0
+    bne b3
+    lda #0
+    sta full
+  b3:
+    lda c
+    sta playfield,x
     dex
     inc x
     lda x
     cmp #PLAYFIELD_COLS-1+1
     bne b2
-    dec y
-    lda y
-    cmp #1
-    bne b1
-    rts
-}
-find_line: {
-    .label i = 8
-    .label y = 7
-    .label return = 7
-    .label i_2 = 3
-    .label filled = 4
-    .label i_3 = 3
-    .label i_8 = 3
-    .label i_10 = 3
-    lda #0
-    sta y
-    sta i_3
-  b1:
-    lda #1
-    sta filled
-    ldx #0
-  b2:
-    ldy i_2
-    iny
-    sty i
-    ldy i_2
-    lda playfield,y
-    cmp #0
-    bne b3
-    lda #0
-    sta filled
-  b3:
-    inx
-    cpx #PLAYFIELD_COLS-1+1
-    bne b12
-    lda filled
+    lda full
     cmp #1
     bne b4
-  breturn:
-    rts
+    txa
+    clc
+    adc #PLAYFIELD_COLS
+    tax
   b4:
     inc y
     lda y
     cmp #PLAYFIELD_LINES-1+1
-    bne b11
-    lda #$ff
-    sta return
-    jmp breturn
-  b11:
-    lda i
-    sta i_8
-    jmp b1
-  b12:
-    lda i
-    sta i_10
-    jmp b2
+    bne b1
+  b5:
+    cpx #$ff
+    bne b6
+    rts
+  b6:
+    lda #0
+    sta playfield,x
+    dex
+    jmp b5
 }
 lock_current: {
     .label ypos2 = 2

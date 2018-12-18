@@ -215,7 +215,7 @@ void lock_current() {
 
 // Spawn a new piece
 void spawn_current() {
-	// Pick a random piece
+	// Pick a random piece (0-6)
 	byte piece_idx = 7;
 	while(piece_idx==7) {
 		piece_idx = sid_rnd()&7;
@@ -275,6 +275,15 @@ void tables_init() {
 
 // The screen
 byte* SCREEN = $400;	
+
+// The charset
+byte* CHARSET = $2000;
+kickasm(pc CHARSET, resource "charset.png") {{
+  .var charset = LoadPicture("charset.png", List().add($000000, $ffffff, $523fa0, $77c1c9))
+    .for (var c=0; c<16; c++)
+        .for (var y=0;y<8; y++)
+            .byte charset.getMulticolorByte(c,y)
+}}
 
 // Pointers to the screen address for rendering each playfield line
 byte*[PLAYFIELD_LINES+3] screen_lines;

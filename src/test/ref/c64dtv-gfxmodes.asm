@@ -558,6 +558,7 @@ mode_8bpppixelcell: {
     bne b5
     inc ch
     lda ch
+    cmp #0
     bne b4
     lda #PROCPORT_RAM_IO
     sta PROCPORT

@@ -53,6 +53,7 @@ scroll_bit: {
     .label sc = 5
     lsr current_bit
     lda current_bit
+    cmp #0
     bne b1
     jsr next_char
     sta c

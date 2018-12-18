@@ -491,9 +491,11 @@ mul8u_compare: {
   b5:
     inc b
     lda b
+    cmp #0
     bne b2
     inc a
     lda a
+    cmp #0
     bne b1
     lda #<str
     sta print_str.str

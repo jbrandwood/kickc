@@ -140,6 +140,7 @@ plexShowSprite: {
     inc plex_show_idx
     asl plex_sprite_msb
     lda plex_sprite_msb
+    cmp #0
     bne breturn
     lda #1
     sta plex_sprite_msb

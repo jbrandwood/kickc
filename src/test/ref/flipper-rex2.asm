@@ -51,6 +51,7 @@ plot: {
   !:
     dec y
     lda y
+    cmp #0
     bne b1
     rts
 }
@@ -74,10 +75,12 @@ flip: {
     tax
     dec c
     lda c
+    cmp #0
     bne b2
     dex
     dec r
     lda r
+    cmp #0
     bne b1
     ldx #0
   b3:

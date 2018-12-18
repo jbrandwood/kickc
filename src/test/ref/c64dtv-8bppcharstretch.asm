@@ -251,6 +251,7 @@ gfx_init_plane_charset8: {
     bne b2
     inc ch
     lda ch
+    cmp #0
     bne b1
     lda #PROCPORT_RAM_IO
     sta PROCPORT

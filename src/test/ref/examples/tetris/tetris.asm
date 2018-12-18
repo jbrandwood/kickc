@@ -34,6 +34,7 @@
   .const COLLISION_LEFT = 4
   .const COLLISION_RIGHT = 8
   .label SCREEN = $400
+  .label CHARSET = $2000
   .label keyboard_events_size = $13
   .label current_ypos = 2
   .label current_xpos = $11
@@ -883,3 +884,9 @@ sid_rnd_init: {
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
   playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
   screen_lines: .fill 2*(PLAYFIELD_LINES+3), 0
+.pc = CHARSET "Inline"
+  .var charset = LoadPicture("charset.png", List().add($000000, $ffffff, $523fa0, $77c1c9))
+    .for (var c=0; c<16; c++)
+        .for (var y=0;y<8; y++)
+            .byte charset.getMulticolorByte(c,y)
+

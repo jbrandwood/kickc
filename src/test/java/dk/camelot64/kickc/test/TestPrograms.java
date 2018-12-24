@@ -45,6 +45,17 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInterruptVolatileReuseProblem() throws IOException, URISyntaxException {
+      compileAndCompare("interrupt-volatile-reuse-problem");
+   }
+
+
+   @Test
+   public void testInitVolatiles() throws IOException, URISyntaxException {
+      compileAndCompare("init-volatiles");
+   }
+
+   @Test
    public void testInterruptVolatileWrite() throws IOException, URISyntaxException {
       compileAndCompare("test-interrupt-volatile-write");
    }

@@ -10,7 +10,6 @@
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
   .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label SPRITES_COLS = $d027
   .label VIC_CONTROL = $d011
   .label D018 = $d018
@@ -23,28 +22,43 @@
   .label CIA2_PORT_A_DDR = $dd02
   .label KERNEL_IRQ = $314
   .const BLACK = 0
-  .const WHITE = 1
-  .const BLUE = 6
+  .const DARK_GREY = $b
   .label PLAYFIELD_SPRITES = $2000
   .label PLAYFIELD_CHARSET = $1000
   .label PLAYFIELD_SCREEN = $400
   .const IRQ_RASTER_FIRST = $30
+  .label PLAYFIELD_SPRITE_PTRS = PLAYFIELD_SCREEN+SPRITE_PTRS
+  .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label irq_raster_next = 2
-  .label irq_cnt = 2
   .label irq_sprite_ypos = 2
+  .label irq_sprite_ptr = 2
+  .label irq_cnt = 2
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
-  lda #0
-  sta irq_cnt
   lda #$32
   sta irq_sprite_ypos
+  lda #toSpritePtr1_return
+  sta irq_sprite_ptr
+  lda #0
+  sta irq_cnt
   jsr main
 main: {
     jsr init_sprites
     jsr init_irq
-    rts
+  b2:
+    inc PLAYFIELD_SCREEN
+    jmp b2
 }
 init_irq: {
+    .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
+    lda #IRQ_RASTER_FIRST
+    sta irq_raster_next
+    lda #$32
+    sta irq_sprite_ypos
+    lda #toSpritePtr2_return
+    sta irq_sprite_ptr
+    lda #0
+    sta irq_cnt
     sei
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
@@ -63,13 +77,9 @@ init_irq: {
     rts
 }
 init_sprites: {
-    .const ypos = $32
-    .label sprites_ptr = PLAYFIELD_SCREEN+SPRITE_PTRS
-    .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN)>>6
     .const toD0181_return = (>(PLAYFIELD_SCREEN&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
     .label xpos = 2
-    .label ptr = 3
     lda #3
     sta CIA2_PORT_A_DDR
     lda #vicSelectGfxBank1_toDd001_return
@@ -82,36 +92,29 @@ init_sprites: {
     sta SPRITES_MC
     sta SPRITES_EXPAND_Y
     sta SPRITES_EXPAND_X
-    lda #toSpritePtr1_return
-    sta ptr
     lda #$18+$e*8
     sta xpos
-    ldy #0
+    ldx #0
   b1:
-    tya
+    txa
     asl
-    tax
+    tay
     lda xpos
-    sta SPRITES_XPOS,x
-    lda #ypos
-    sta SPRITES_YPOS,x
+    sta SPRITES_XPOS,y
     lda #BLACK
-    sta SPRITES_COLS,y
-    lda ptr
-    sta sprites_ptr,y
+    sta SPRITES_COLS,x
     lda #$18
     clc
     adc xpos
     sta xpos
-    inc ptr
-    iny
-    cpy #4
+    inx
+    cpx #4
     bne b1
     rts
 }
 irq: {
-    lda #WHITE
-    sta BGCOL
+    .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
+    lda #DARK_GREY
     sta BORDERCOL
     lda irq_sprite_ypos
     sta SPRITES_YPOS
@@ -121,10 +124,21 @@ irq: {
     sta SPRITES_YPOS+4
     lda irq_sprite_ypos
     sta SPRITES_YPOS+6
+  b1:
+    lda RASTER
+    cmp irq_sprite_ypos
+    bne b1
+    ldx irq_sprite_ptr
+    stx PLAYFIELD_SPRITE_PTRS
+    inx
+    stx PLAYFIELD_SPRITE_PTRS+1
+    stx PLAYFIELD_SPRITE_PTRS+2
+    inx
+    stx PLAYFIELD_SPRITE_PTRS+3
     inc irq_cnt
     lda irq_cnt
     cmp #$a
-    beq b1
+    beq b2
     lda #$15
     clc
     adc irq_raster_next
@@ -133,24 +147,28 @@ irq: {
     clc
     adc irq_sprite_ypos
     sta irq_sprite_ypos
-  b2:
+    lda #3
+    clc
+    adc irq_sprite_ptr
+    sta irq_sprite_ptr
+  b3:
     lda irq_raster_next
     sta RASTER
     lda #IRQ_RASTER
     sta IRQ_STATUS
     lda #BLACK
     sta BORDERCOL
-    lda #BLUE
-    sta BGCOL
     jmp $ea81
-  b1:
+  b2:
     lda #0
     sta irq_cnt
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next
     lda #$32
     sta irq_sprite_ypos
-    jmp b2
+    lda #toSpritePtr2_return
+    sta irq_sprite_ptr
+    jmp b3
 }
 .pc = PLAYFIELD_SPRITES "Inline"
   .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))

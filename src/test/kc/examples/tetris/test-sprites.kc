@@ -1,12 +1,21 @@
 import "c64"
 
-byte* PLAYFIELD_SPRITES = $2000;
-byte* PLAYFIELD_CHARSET = $1000;
-byte* PLAYFIELD_SCREEN = $0400;
+// Address of the sprites covering the playfield
+const byte* PLAYFIELD_SPRITES = $2000;
+// Address for the charset
+const byte* PLAYFIELD_CHARSET = $1000;
+// Address of the screen
+const byte* PLAYFIELD_SCREEN = $0400;
+
+// Screen Sprite pointers
+const byte* PLAYFIELD_SPRITE_PTRS = (PLAYFIELD_SCREEN+SPRITE_PTRS);
 
 void main() {
 	init_sprites();
     init_irq();
+    while(true) {
+    	(*PLAYFIELD_SCREEN)++;
+    }
 }
 
 // Setup the sprites
@@ -15,33 +24,34 @@ void init_sprites() {
 	*D018 = toD018(PLAYFIELD_SCREEN, PLAYFIELD_CHARSET);
     *SPRITES_ENABLE = %00001111;
     *SPRITES_EXPAND_X = *SPRITES_EXPAND_Y = *SPRITES_MC = 0;
-    byte* sprites_ptr = PLAYFIELD_SCREEN+SPRITE_PTRS;
-
     byte xpos = 24+14*8;
-    byte ypos = 50;
-    byte ptr = toSpritePtr(PLAYFIELD_SPRITES);
     for(byte s:0..3) {
     	byte s2 = s<<1;
 		SPRITES_XPOS[s2] = xpos;
-		SPRITES_YPOS[s2] = ypos;
 		SPRITES_COLS[s] = BLACK;
-		sprites_ptr[s] = ptr;
 		xpos = xpos+24;     
-		ptr++;	
     }	
 }
 
-// The line of the first IRQ - $30 is 2 lines before the start of the screen
-const byte IRQ_RASTER_FIRST = $30;
+// The line of the first IRQ - 48 is 2 lines before the start of the screen
+const byte IRQ_RASTER_FIRST = 48;
 // The raster line of the next IRQ
 volatile byte irq_raster_next = IRQ_RASTER_FIRST;
-// Counting the 10 IRQs
-volatile byte irq_cnt = 0;
 // Y-pos of the sprites on the next IRQ
 volatile byte irq_sprite_ypos = 50;
+// Y-pos of the sprites on the next IRQ
+volatile byte irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES);
+// Counting the 10 IRQs
+volatile byte irq_cnt = 0;
 
 // Setup the IRQ
 void init_irq() {
+    // Stup the first IRQ position
+    irq_raster_next = IRQ_RASTER_FIRST;
+    irq_sprite_ypos = 50;
+    irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES);
+    irq_cnt = 0;
+    
     asm { sei }
     // Disable CIA 1 Timer IRQ
     *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
@@ -60,7 +70,7 @@ void init_irq() {
 // Repeats 10 timers every 21 lines from line IRQ_RASTER_FIRST
 interrupt(kernel_min) void irq() {
 
-    *BORDERCOL = *BGCOL = WHITE;
+    *BORDERCOL = DARK_GREY;
 
     // Place the sprites
 	SPRITES_YPOS[0] = irq_sprite_ypos;
@@ -68,14 +78,27 @@ interrupt(kernel_min) void irq() {
 	SPRITES_YPOS[4] = irq_sprite_ypos;
 	SPRITES_YPOS[6] = irq_sprite_ypos;
 
+	// Wait for the y-position before changing sprite pointers
+	do {
+	} while(*RASTER!=irq_sprite_ypos);
+
+	byte ptr = irq_sprite_ptr;
+	PLAYFIELD_SPRITE_PTRS[0] = ptr++;
+	PLAYFIELD_SPRITE_PTRS[1] = ptr;
+	PLAYFIELD_SPRITE_PTRS[2] = ptr++;
+	PLAYFIELD_SPRITE_PTRS[3] = ptr;
+
     // Find next raster line / sprite positions 
     if(++irq_cnt==10) {
     	irq_cnt = 0;
     	irq_raster_next = IRQ_RASTER_FIRST;
     	irq_sprite_ypos = 50;
+    	irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES);
+
     } else {
     	irq_raster_next += 21;
-    	irq_sprite_ypos += 21;    	
+    	irq_sprite_ypos += 21;  
+    	irq_sprite_ptr += 3;  
     }
 
     // Acknowledge the IRQ and setup the next one
@@ -83,7 +106,6 @@ interrupt(kernel_min) void irq() {
     *IRQ_STATUS = IRQ_RASTER;
 
     *BORDERCOL = BLACK;
-    *BGCOL = BLUE;
 
 }
 

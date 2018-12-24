@@ -4,10 +4,10 @@
   jsr main
 main: {
     .label w = 2
-    ldx #0
-    txa
+    lda #<0
     sta w
     sta w+1
+    tax
   b1:
     txa
     clc

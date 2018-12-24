@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_screen = $400
+  .label print_line_cursor = $400
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
@@ -211,9 +211,9 @@ init_screen: {
 }
 print_cls: {
     .label sc = 2
-    lda #<print_screen
+    lda #<print_line_cursor
     sta sc
-    lda #>print_screen
+    lda #>print_line_cursor
     sta sc+1
   b1:
     lda #' '
@@ -224,10 +224,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>print_screen+$3e8
+    cmp #>print_line_cursor+$3e8
     bne b1
     lda sc
-    cmp #<print_screen+$3e8
+    cmp #<print_line_cursor+$3e8
     bne b1
     rts
 }

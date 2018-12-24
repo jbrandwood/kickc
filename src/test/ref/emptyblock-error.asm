@@ -4,6 +4,7 @@
   .label B = $1000
   jsr main
 main: {
+    lda #0
   b2:
     jsr menu
     jmp b2

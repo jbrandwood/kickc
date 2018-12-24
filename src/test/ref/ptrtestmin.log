@@ -3,6 +3,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
+  (byte[1024]) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 2
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -12,6 +13,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
+  (byte) main::b#0 ← *((byte[1024]) main::SCREEN#0 + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -34,6 +36,10 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
+(byte[1024]) main::SCREEN
+(byte[1024]) main::SCREEN#0
+(byte) main::b
+(byte) main::b#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -46,6 +52,7 @@ Alias (byte) main::i#2 = (byte) main::i#3
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte[1024]) main::SCREEN#0 = ((byte*))1024
 Constant (const byte) main::i#0 = 2
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
@@ -59,7 +66,7 @@ CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [9] main::i#4 ← main::i#1
+Coalesced [10] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -87,21 +94,28 @@ main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] (byte) main::i#1 ← ++ (byte) main::i#2
+  [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2)
+  [9] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
+(byte[1024]) main::SCREEN
+(byte) main::b
+(byte) main::b#0 110.0
 (byte) main::i
 (byte) main::i#1 22.0
-(byte) main::i#2 16.5
+(byte) main::i#2 14.666666666666666
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
+Added variable main::b#0 to zero page equivalence class [ main::b#0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
+[ main::b#0 ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:3 [ main::b#0 ]
 
 INITIAL ASM
 //SEG0 Basic Upstart
@@ -127,6 +141,8 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
+    .label SCREEN = $400
+    .label b = 3
     .label i = 2
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -147,23 +163,28 @@ main: {
     rts
   //SEG16 main::@2
   b2:
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  //SEG17 [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    ldy i
+    lda SCREEN,y
+    sta b
+  //SEG18 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG18 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG19 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG19 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG20 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ main::b#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 110: zp ZP_BYTE:3 [ main::b#0 ] 36.67: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 193 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 193 combination 
+Uplifting [main] best 238 combination reg byte a [ main::b#0 ] reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 238 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -189,6 +210,7 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
+    .label SCREEN = $400
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
   //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
@@ -206,11 +228,13 @@ main: {
     rts
   //SEG16 main::@2
   b2:
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG17 [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    lda SCREEN,x
+  //SEG18 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG18 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG19 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG19 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG20 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1
 }
 
@@ -240,15 +264,20 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
+(byte[1024]) main::SCREEN
+(const byte[1024]) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte) main::b
+(byte) main::b#0 reg byte a 110.0
 (byte) main::i
 (byte) main::i#1 reg byte x 22.0
-(byte) main::i#2 reg byte x 16.5
+(byte) main::i#2 reg byte x 14.666666666666666
 
 reg byte x [ main::i#2 main::i#1 ]
+reg byte a [ main::b#0 ]
 
 
 FINAL ASSEMBLER
-Score: 127
+Score: 172
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -265,6 +294,7 @@ Score: 127
 //SEG8 @end
 //SEG9 main
 main: {
+    .label SCREEN = $400
   //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
   //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #2
@@ -278,10 +308,12 @@ main: {
     rts
   //SEG16 main::@2
   b2:
-  //SEG17 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG17 [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    lda SCREEN,x
+  //SEG18 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG18 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG19 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG19 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG20 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1
 }
 

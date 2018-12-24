@@ -157,7 +157,6 @@ Successful SSA optimization Pass2RedundantPhiElimination
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) line#0 = 64
 Successful SSA optimization Pass2ConstantIdentification
-Successful SSA optimization PassNEliminateUnusedVars
 Culled Empty Block (label) @3
 Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte) line#0
@@ -169,18 +168,16 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to ln:5 ln:7 ln:9 
+Calls in [main] to ln:5 ln:8 ln:11 
 
 Created 1 initial phi equivalence classes
-Coalesced [6] line#17 ← line#13
-Coalesced (already) [8] line#18 ← line#13
+Coalesced [7] line#17 ← line#13
+Coalesced (already) [10] line#18 ← line#13
 Coalesced down to 1 phi equivalence classes
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@1
-Adding NOP phi() at start of main::@2
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -197,11 +194,11 @@ main: scope:[main]  from @2
   [5] call ln 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] phi()
+  [6] (byte) char#2 ← ++ (byte) line#13
   [7] call ln 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] phi()
+  [8] (byte) char#4 ← ++ (byte) line#13
   [9] call ln 
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -222,17 +219,25 @@ ln::@return: scope:[ln]  from ln
 VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
 (byte) char
+(byte) char#2 20.0
+(byte) char#4 20.0
 (byte) line
 (byte) line#12 6.0
-(byte) line#13 1.1428571428571428
+(byte) line#13 1.714285714285714
 (void()) ln()
 (void()) main()
 
 Initial phi equivalence classes
 [ line#12 line#13 ]
+Added variable char#2 to zero page equivalence class [ char#2 ]
+Added variable char#4 to zero page equivalence class [ char#4 ]
 Complete equivalence classes
 [ line#12 line#13 ]
+[ char#2 ]
+[ char#4 ]
 Allocated zp ZP_BYTE:2 [ line#12 line#13 ]
+Allocated zp ZP_BYTE:3 [ char#2 ]
+Allocated zp ZP_BYTE:4 [ char#4 ]
 
 INITIAL ASM
 //SEG0 Basic Upstart
@@ -241,6 +246,8 @@ INITIAL ASM
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label SCREEN = $400
+  .label char = 3
+  .label char_4 = 4
   .label line = 2
 //SEG2 @begin
 bbegin:
@@ -267,21 +274,25 @@ main: {
     lda #$40
     sta line
     jsr ln
-  //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
     jmp b1
-  //SEG14 main::@1
+  //SEG13 main::@1
   b1:
+  //SEG14 [6] (byte) char#2 ← ++ (byte) line#13 -- vbuz1=_inc_vbuz2 
+    ldy line
+    iny
+    sty char
   //SEG15 [7] call ln 
   //SEG16 [12] phi from main::@1 to ln [phi:main::@1->ln]
   ln_from_b1:
   //SEG17 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
     jsr ln
-  //SEG18 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
     jmp b2
-  //SEG19 main::@2
+  //SEG18 main::@2
   b2:
+  //SEG19 [8] (byte) char#4 ← ++ (byte) line#13 -- vbuz1=_inc_vbuz2 
+    ldy line
+    iny
+    sty char_4
   //SEG20 [9] call ln 
   //SEG21 [12] phi from main::@2 to ln [phi:main::@2->ln]
   ln_from_b2:
@@ -315,15 +326,17 @@ ln: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ line#12 line#13 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ char#2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ char#4 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 7.14: zp ZP_BYTE:2 [ line#12 line#13 ] 
+Uplift Scope [] 20: zp ZP_BYTE:3 [ char#2 ] 20: zp ZP_BYTE:4 [ char#4 ] 7.71: zp ZP_BYTE:2 [ line#12 line#13 ] 
 Uplift Scope [main] 
 Uplift Scope [ln] 
 
-Uplifting [] best 67 combination reg byte a [ line#12 line#13 ] 
-Uplifting [main] best 67 combination 
-Uplifting [ln] best 67 combination 
+Uplifting [] best 75 combination reg byte x [ char#2 ] reg byte x [ char#4 ] reg byte a [ line#12 line#13 ] 
+Uplifting [main] best 75 combination 
+Uplifting [ln] best 75 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -356,21 +369,23 @@ main: {
   //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word/dword/signed dword) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
     lda #$40
     jsr ln
-  //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
     jmp b1
-  //SEG14 main::@1
+  //SEG13 main::@1
   b1:
+  //SEG14 [6] (byte) char#2 ← ++ (byte) line#13 -- vbuxx=_inc_vbuaa 
+    tax
+    inx
   //SEG15 [7] call ln 
   //SEG16 [12] phi from main::@1 to ln [phi:main::@1->ln]
   ln_from_b1:
   //SEG17 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
     jsr ln
-  //SEG18 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
     jmp b2
-  //SEG19 main::@2
+  //SEG18 main::@2
   b2:
+  //SEG19 [8] (byte) char#4 ← ++ (byte) line#13 -- vbuxx=_inc_vbuaa 
+    tax
+    inx
   //SEG20 [9] call ln 
   //SEG21 [12] phi from main::@2 to ln [phi:main::@2->ln]
   ln_from_b2:
@@ -412,16 +427,14 @@ Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
 Removing instruction main_from_b2:
 Removing instruction bend_from_b2:
-Removing instruction b1_from_main:
-Removing instruction ln_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction ln_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b2:
 Removing instruction bend:
 Removing instruction ln_from_main:
 Removing instruction b1:
+Removing instruction ln_from_b1:
 Removing instruction b2:
+Removing instruction ln_from_b2:
 Removing instruction b3:
 Removing instruction breturn:
 Removing instruction breturn:
@@ -434,9 +447,11 @@ FINAL SYMBOL TABLE
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
 (byte) char
+(byte) char#2 reg byte x 20.0
+(byte) char#4 reg byte x 20.0
 (byte) line
 (byte) line#12 reg byte a 6.0
-(byte) line#13 reg byte a 1.1428571428571428
+(byte) line#13 reg byte a 1.714285714285714
 (void()) ln()
 (label) ln::@return
 (void()) main()
@@ -446,10 +461,12 @@ FINAL SYMBOL TABLE
 (label) main::@return
 
 reg byte a [ line#12 line#13 ]
+reg byte x [ char#2 ]
+reg byte x [ char#4 ]
 
 
 FINAL ASSEMBLER
-Score: 46
+Score: 54
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -472,14 +489,18 @@ main: {
   //SEG12 [12] phi (byte) line#12 = (byte/signed byte/word/signed word/dword/signed dword) 64 [phi:main->ln#0] -- vbuaa=vbuc1 
     lda #$40
     jsr ln
-  //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG14 main::@1
+  //SEG13 main::@1
+  //SEG14 [6] (byte) char#2 ← ++ (byte) line#13 -- vbuxx=_inc_vbuaa 
+    tax
+    inx
   //SEG15 [7] call ln 
   //SEG16 [12] phi from main::@1 to ln [phi:main::@1->ln]
   //SEG17 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@1->ln#0] -- register_copy 
     jsr ln
-  //SEG18 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG19 main::@2
+  //SEG18 main::@2
+  //SEG19 [8] (byte) char#4 ← ++ (byte) line#13 -- vbuxx=_inc_vbuaa 
+    tax
+    inx
   //SEG20 [9] call ln 
   //SEG21 [12] phi from main::@2 to ln [phi:main::@2->ln]
   //SEG22 [12] phi (byte) line#12 = (byte) line#13 [phi:main::@2->ln#0] -- register_copy 

@@ -2,6 +2,7 @@
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) SCROLL#0 ← ((byte*)) (word/dword/signed dword) 53270
   (byte[]) TEXT#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @1
@@ -58,6 +59,8 @@ SYMBOL TABLE SSA
 (byte*) SCREEN#3
 (byte*) SCREEN#4
 (byte*) SCREEN#5
+(byte*) SCROLL
+(byte*) SCROLL#0
 (byte[]) TEXT
 (byte[]) TEXT#0
 (void()) main()
@@ -103,6 +106,7 @@ Successful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) main::$1 if((byte) main::c#0!=(byte) '@') goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = ((byte*))1024
+Constant (const byte*) SCROLL#0 = ((byte*))53270
 Constant (const byte[]) TEXT#0 = $0
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
@@ -111,6 +115,7 @@ Constant (const byte*) main::nxt#2 = TEXT#0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
+Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Inlining constant with var siblings (const byte) main::i#0
@@ -175,6 +180,7 @@ main::@2: scope:[main]  from main::@1 main::@3
 
 VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
+(byte*) SCROLL
 (byte[]) TEXT
 (void()) main()
 (byte) main::c
@@ -422,6 +428,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte*) SCROLL
 (byte[]) TEXT
 (const byte[]) TEXT#0 TEXT = (string) "01234567@"
 (void()) main()

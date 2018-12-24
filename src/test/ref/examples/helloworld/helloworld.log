@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
   (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@20
+  to:@12
 print_str: scope:[print_str]  from main
   (byte*) print_char_cursor#21 ← phi( main/(byte*) print_char_cursor#19 )
   (byte*) print_str::str#4 ← phi( main/(byte*) print_str::str#1 )
@@ -50,6 +50,11 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   (byte*) print_char_cursor#4 ← (byte*) print_char_cursor#12
   return 
   to:@return
+@12: scope:[]  from @begin
+  (byte*) print_line_cursor#16 ← phi( @begin/(byte*) print_line_cursor#0 )
+  (byte*) print_char_cursor#22 ← phi( @begin/(byte*) print_char_cursor#0 )
+  (byte[]) print_hextab#0 ← (const string) $0
+  to:@20
 main: scope:[main]  from @20
   (byte*) print_line_cursor#15 ← phi( @20/(byte*) print_line_cursor#14 )
   (byte*) print_char_cursor#19 ← phi( @20/(byte*) print_char_cursor#20 )
@@ -75,9 +80,9 @@ main::@return: scope:[main]  from main::@2
   (byte*) print_line_cursor#4 ← (byte*) print_line_cursor#10
   return 
   to:@return
-@20: scope:[]  from @begin
-  (byte*) print_line_cursor#14 ← phi( @begin/(byte*) print_line_cursor#0 )
-  (byte*) print_char_cursor#20 ← phi( @begin/(byte*) print_char_cursor#0 )
+@20: scope:[]  from @12
+  (byte*) print_line_cursor#14 ← phi( @12/(byte*) print_line_cursor#16 )
+  (byte*) print_char_cursor#20 ← phi( @12/(byte*) print_char_cursor#22 )
   call main 
   to:@21
 @21: scope:[]  from @20
@@ -89,6 +94,8 @@ main::@return: scope:[main]  from main::@2
 @end: scope:[]  from @21
 
 SYMBOL TABLE SSA
+(const string) $0 = (string) "0123456789abcdef"
+(label) @12
 (label) @20
 (label) @21
 (label) @begin
@@ -114,6 +121,7 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#2
 (byte*) print_char_cursor#20
 (byte*) print_char_cursor#21
+(byte*) print_char_cursor#22
 (byte*) print_char_cursor#3
 (byte*) print_char_cursor#4
 (byte*) print_char_cursor#5
@@ -121,6 +129,8 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
+(byte[]) print_hextab
+(byte[]) print_hextab#0
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -130,6 +140,7 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#13
 (byte*) print_line_cursor#14
 (byte*) print_line_cursor#15
+(byte*) print_line_cursor#16
 (byte*) print_line_cursor#2
 (byte*) print_line_cursor#3
 (byte*) print_line_cursor#4
@@ -158,7 +169,7 @@ SYMBOL TABLE SSA
 (byte*) print_str::str#3
 (byte*) print_str::str#4
 
-Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#20 (byte*) print_line_cursor#14 
+Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#22 (byte*) print_line_cursor#16 (byte*) print_char_cursor#20 (byte*) print_line_cursor#14 
 Alias (byte*) print_str::str#2 = (byte*) print_str::str#3 
 Alias (byte*) print_char_cursor#10 = (byte*) print_char_cursor#9 (byte*) print_char_cursor#17 (byte*) print_char_cursor#2 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#7 (byte*) print_char_cursor#3 (byte*) print_line_cursor#8 (byte*) print_char_cursor#12 (byte*) print_line_cursor#2 (byte*) print_char_cursor#4 
@@ -188,9 +199,13 @@ Simple Condition (bool~) print_str::$0 if(*((byte*) print_str::str#2)!=(byte) '@
 Simple Condition (bool~) print_ln::$1 if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_char_cursor#0 = ((byte*))1024
+Constant (const byte[]) print_hextab#0 = $0
 Constant (const byte*) print_str::str#1 = main::str
 Successful SSA optimization Pass2ConstantIdentification
+Successful SSA optimization PassNEliminateUnusedVars
+Successful SSA optimization PassNEliminateUnusedVars
 Culled Empty Block (label) print_ln::@2
+Culled Empty Block (label) @12
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @21
 Successful SSA optimization Pass2CullEmptyBlocks
@@ -212,9 +227,9 @@ Calls in [] to main:2
 Calls in [main] to print_str:5 print_ln:7 
 
 Created 3 initial phi equivalence classes
-Coalesced [14] print_line_cursor#16 ← print_line_cursor#1
+Coalesced [14] print_line_cursor#17 ← print_line_cursor#1
 Coalesced [22] print_str::str#5 ← print_str::str#0
-Coalesced [23] print_char_cursor#22 ← print_char_cursor#1
+Coalesced [23] print_char_cursor#23 ← print_char_cursor#1
 Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) print_ln::@3
 Adding NOP phi() at start of @begin
@@ -280,6 +295,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor
 (byte*) print_char_cursor#1 11.0
 (byte*) print_char_cursor#10 4.4
+(byte[]) print_hextab
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 16.5
 (byte*) print_line_cursor#6 22.0
@@ -645,6 +661,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor
 (byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:4 11.0
 (byte*) print_char_cursor#10 print_char_cursor zp ZP_WORD:4 4.4
+(byte[]) print_hextab
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:2 16.5
 (byte*) print_line_cursor#6 print_line_cursor zp ZP_WORD:2 22.0

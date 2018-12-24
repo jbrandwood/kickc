@@ -1,0 +1,102 @@
+import "c64"
+
+byte* PLAYFIELD_SPRITES = $2000;
+byte* PLAYFIELD_CHARSET = $1000;
+byte* PLAYFIELD_SCREEN = $0400;
+
+void main() {
+	init_sprites();
+    init_irq();
+}
+
+// Setup the sprites
+void init_sprites() {
+	vicSelectGfxBank(PLAYFIELD_SCREEN);
+	*D018 = toD018(PLAYFIELD_SCREEN, PLAYFIELD_CHARSET);
+    *SPRITES_ENABLE = %00001111;
+    *SPRITES_EXPAND_X = *SPRITES_EXPAND_Y = *SPRITES_MC = 0;
+    byte* sprites_ptr = PLAYFIELD_SCREEN+SPRITE_PTRS;
+
+    byte xpos = 24+14*8;
+    byte ypos = 50;
+    byte ptr = toSpritePtr(PLAYFIELD_SPRITES);
+    for(byte s:0..3) {
+    	byte s2 = s<<1;
+		SPRITES_XPOS[s2] = xpos;
+		SPRITES_YPOS[s2] = ypos;
+		SPRITES_COLS[s] = BLACK;
+		sprites_ptr[s] = ptr;
+		xpos = xpos+24;     
+		ptr++;	
+    }	
+}
+
+// The line of the first IRQ - $30 is 2 lines before the start of the screen
+const byte IRQ_RASTER_FIRST = $30;
+// The raster line of the next IRQ
+volatile byte irq_raster_next = IRQ_RASTER_FIRST;
+// Counting the 10 IRQs
+volatile byte irq_cnt = 0;
+// Y-pos of the sprites on the next IRQ
+volatile byte irq_sprite_ypos = 50;
+
+// Setup the IRQ
+void init_irq() {
+    asm { sei }
+    // Disable CIA 1 Timer IRQ
+    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    // Set raster line 
+    *VIC_CONTROL &=$7f;
+    *RASTER = IRQ_RASTER_FIRST;
+    // Enable Raster Interrupt
+    *IRQ_ENABLE = IRQ_RASTER;
+    // Set the IRQ routine
+    *KERNEL_IRQ = &irq;
+    asm { cli }
+}
+
+
+// Raster Interrupt Routine - sets up the sprites covering the playfield
+// Repeats 10 timers every 21 lines from line IRQ_RASTER_FIRST
+interrupt(kernel_min) void irq() {
+
+    *BORDERCOL = *BGCOL = WHITE;
+
+    // Place the sprites
+	SPRITES_YPOS[0] = irq_sprite_ypos;
+	SPRITES_YPOS[2] = irq_sprite_ypos;
+	SPRITES_YPOS[4] = irq_sprite_ypos;
+	SPRITES_YPOS[6] = irq_sprite_ypos;
+
+    // Find next raster line / sprite positions 
+    if(++irq_cnt==10) {
+    	irq_cnt = 0;
+    	irq_raster_next = IRQ_RASTER_FIRST;
+    	irq_sprite_ypos = 50;
+    } else {
+    	irq_raster_next += 21;
+    	irq_sprite_ypos += 21;    	
+    }
+
+    // Acknowledge the IRQ and setup the next one
+    *RASTER = irq_raster_next;
+    *IRQ_STATUS = IRQ_RASTER;
+
+    *BORDERCOL = BLACK;
+    *BGCOL = BLUE;
+
+}
+
+kickasm(pc PLAYFIELD_SPRITES, resource "nes-playfield.png") {{
+	.var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))
+	.for(var sy=0;sy<10;sy++) {
+		.for(var sx=0;sx<3;sx++) {
+	    	.for (var y=0;y<21; y++) {
+		    	.for (var c=0; c<3; c++) {	    			
+	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y)
+	            }
+	        }
+	    	.byte 0
+	  	}
+	}
+}}

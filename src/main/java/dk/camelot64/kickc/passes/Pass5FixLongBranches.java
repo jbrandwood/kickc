@@ -133,11 +133,12 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseType.getMnemnonic());
                String branchDest = asmInstruction.getParameter();
                asmInstruction.setType(inverseType);
-               asmInstruction.setParameter("!" + branchDest + "+");
+               String newLabel = ("!" + branchDest).replace("$","_");
+               asmInstruction.setParameter(newLabel+"+");
                AsmInstructionType jmpType = AsmInstructionSet.getInstructionType("jmp", AsmAddressingMode.ABS, false);
                AsmInstruction jmpInstruction = new AsmInstruction(jmpType, branchDest);
                asmSegment.addLineAfter(asmInstruction, jmpInstruction);
-               asmSegment.addLineAfter(jmpInstruction, new AsmLabel("!" + branchDest));
+               asmSegment.addLineAfter(jmpInstruction, new AsmLabel(newLabel));
                return true;
             }
          }

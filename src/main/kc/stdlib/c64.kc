@@ -18,7 +18,11 @@ const byte PROCPORT_KERNEL_IO       = %00110110;
 // BASIC in $A000, I/O in $D000, KERNEL in $E000
 const byte PROCPORT_BASIC_KERNEL_IO = %00110111;
 
+// The address of the CHARGEN character set
 const byte* CHARGEN = $d000;
+
+// The offset of the sprite pointers from the screen start address
+const word SPRITE_PTRS = $3f8;
 
 const byte* SPRITES_XPOS = $d000;
 const byte* SPRITES_YPOS = $d001;
@@ -101,6 +105,7 @@ const void()** KERNEL_IRQ = $0314;
 // The vector used when the HARDWARE serves IRQ interrupts
 const void()** HARDWARE_IRQ = $fffe;
 
+// The colors of the C64
 const byte BLACK = $0;
 const byte WHITE = $1;
 const byte RED = $2;
@@ -128,6 +133,13 @@ inline byte toD018(byte* screen, byte* gfx) {
 // Optimized for ASM from %00000011 ^ (byte)((word)gfx/$4000)
 inline byte toDd00(byte* gfx) {
     return %00000011 ^ (>((word)gfx))>>6;
+}
+
+// Get the sprite pointer for a sprite.
+// The sprite pointer is the index of the sprite within the graphics bank and equal to the sprite (byte)(sprite_addr/64)
+// The sprite pointers are stored SCREEN+$3f8+sprite_id to set the pointer of each sprite
+inline byte toSpritePtr(byte* sprite) {
+	return (byte)(((word)sprite)>>6);
 }
 
 // Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed

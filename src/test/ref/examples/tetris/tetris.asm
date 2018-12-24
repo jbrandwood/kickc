@@ -3,6 +3,7 @@
 .pc = $80d "Program"
   .label RASTER = $d012
   .label BORDERCOL = $d020
+  .label BGCOL = $d021
   .label COLS = $d800
   .label CIA1_PORT_A = $dc00
   .label CIA1_PORT_B = $dc01
@@ -20,6 +21,10 @@
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
+  .const KEY_MODIFIER_LSHIFT = 1
+  .const KEY_MODIFIER_RSHIFT = 2
+  .const KEY_MODIFIER_CTRL = 4
+  .const KEY_MODIFIER_COMMODORE = 8
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
   .const SID_CONTROL_NOISE = $80
@@ -641,7 +646,7 @@ keyboard_event_scan: {
     sta row_scan
     ldy row
     cmp keyboard_scan_values,y
-    bne b2
+    bne b6
     lda #8
     clc
     adc keycode
@@ -655,20 +660,40 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
+    beq b2
+    ldx #0|KEY_MODIFIER_LSHIFT
+    jmp b9
+  b2:
+    ldx #0
+  b9:
     lda #KEY_RSHIFT
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
+    beq b10
+    txa
+    ora #KEY_MODIFIER_RSHIFT
+    tax
+  b10:
     lda #KEY_CTRL
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
+    beq b11
+    txa
+    ora #KEY_MODIFIER_CTRL
+    tax
+  b11:
     lda #KEY_COMMODORE
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
+    beq breturn
+    txa
+    ora #KEY_MODIFIER_COMMODORE
+  breturn:
     rts
-  b2:
+  b6:
     ldx #0
   b4:
     lda row_scan
@@ -755,7 +780,9 @@ render_init: {
     .label li = 5
     .label line = 5
     .label l = 2
-    ldx #$a0
+    lda #BLACK
+    sta BGCOL
+    ldx #$d0
     lda #<SCREEN
     sta fill.addr
     lda #>SCREEN

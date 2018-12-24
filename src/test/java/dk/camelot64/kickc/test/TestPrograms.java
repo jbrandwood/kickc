@@ -45,34 +45,49 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInterruptVolatileWrite() throws IOException, URISyntaxException {
+      compileAndCompare("test-interrupt-volatile-write");
+   }
+
+   @Test
+   public void testLongbranchInterruptProblem() throws IOException, URISyntaxException {
+      compileAndCompare("longbranch-interrupt-problem");
+   }
+
+   @Test
+   public void testTetrisSprites() throws IOException, URISyntaxException {
+      compileAndCompare("examples/tetris/test-sprites");
+   }
+
+   @Test
    public void testTetris() throws IOException, URISyntaxException {
       compileAndCompare("examples/tetris/tetris");
    }
 
-/*
-   @Test
-   public void testVarInitProblem() throws IOException, URISyntaxException {
-      compileAndCompare("var-init-problem");
-   }
+   /*
+      @Test
+      public void testVarInitProblem() throws IOException, URISyntaxException {
+         compileAndCompare("var-init-problem");
+      }
 
-   @Test
-   public void testConstIfProblem() throws IOException, URISyntaxException {
-      compileAndCompare("const-if-problem");
-   }
+      @Test
+      public void testConstIfProblem() throws IOException, URISyntaxException {
+         compileAndCompare("const-if-problem");
+      }
 
-   @Test
-   public void testTetrisNullPointer() throws IOException, URISyntaxException {
-      compileAndCompare("tetris-npe");
-   }
+      @Test
+      public void testTetrisNullPointer() throws IOException, URISyntaxException {
+         compileAndCompare("tetris-npe");
+      }
 
-   //@Test
-   //public void testUnrollCall() throws IOException, URISyntaxException {
-   //   compileAndCompare("unroll-call");
-   //}
+      //@Test
+      //public void testUnrollCall() throws IOException, URISyntaxException {
+      //   compileAndCompare("unroll-call");
+      //}
 
 
 
-*/
+   */
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
       compileAndCompare("examples/fastmultiply/fastmultiply8.kc");

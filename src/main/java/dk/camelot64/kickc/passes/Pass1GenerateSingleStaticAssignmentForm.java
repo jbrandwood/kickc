@@ -12,10 +12,7 @@ import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
-import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -241,7 +238,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    }
 
    /**
-    * Get all predecessros for a control flow block.
+    * Get all predecessors for a control flow block.
     * If the block is the start of an interrupt the @begin is included as a predecessor.
     * @param block The block to examine
     * @return All predecessor blocks
@@ -251,7 +248,14 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       Symbol symbol = getScope().getSymbol(block.getLabel());
       if(symbol instanceof Procedure) {
          if(((Procedure) symbol).getInterruptType()!=null) {
-            predecessors.add(getGraph().getFirstBlock());
+            // Find all root-level predecessors to the main block
+            ControlFlowBlock mainBlock = getGraph().getBlock(new LabelRef("main"));
+            List<ControlFlowBlock> mainPredecessors = getGraph().getPredecessors(mainBlock);
+            for(ControlFlowBlock mainPredecessor : mainPredecessors) {
+               if(mainPredecessor.getScope().equals(ScopeRef.ROOT)) {
+                  predecessors.add(mainPredecessor);
+               }
+            }
          }
       }
       return predecessors;

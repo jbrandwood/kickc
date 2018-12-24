@@ -6,7 +6,11 @@
 main: {
     lda #$40
     jsr ln
+    tax
+    inx
     jsr ln
+    tax
+    inx
     jsr ln
     sta SCREEN
     rts

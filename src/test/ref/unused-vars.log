@@ -4,20 +4,40 @@ CONTROL FLOW GRAPH SSA
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (byte/signed byte/word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 2 >> (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) b#0 ← (byte/signed byte/word/signed word/dword/signed dword~) $0
+  (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) 53281
+  (byte[]) msg#0 ← (const string) $1
+  (byte[]) arr#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 7, (byte/signed byte/word/signed word/dword/signed dword) 8, (byte/signed byte/word/signed word/dword/signed dword) 9 }
+  (byte) c#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) c2#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (word) d#0 ← (word/signed word/dword/signed dword) 1000
   to:@2
 main: scope:[main]  from @2
+  (word) d#2 ← phi( @2/(word) d#3 )
   (byte) b#13 ← phi( @2/(byte) b#14 )
   (byte) main::col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte*) main::COLS#0 ← ((byte*)) (word/dword/signed dword) 55296
+  (byte/signed byte/word/signed word/dword/signed dword~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 3 + (byte/signed byte/word/signed word/dword/signed dword) 3
+  (byte/signed word/word/dword/signed dword/signed byte~) main::$1 ← (byte/signed byte/word/signed word/dword/signed dword~) main::$0 + (byte/signed byte/word/signed word/dword/signed dword) 3
   call s 
   (byte) s::return#0 ← (byte) s::return#2
   to:main::@3
 main::@3: scope:[main]  from main
   (byte*) main::COLS#2 ← phi( main/(byte*) main::COLS#0 )
   (byte) main::col#2 ← phi( main/(byte) main::col#0 )
+  (word) d#1 ← phi( main/(word) d#2 )
   (byte) b#7 ← phi( main/(byte) b#5 )
+  (byte) s::return#3 ← phi( main/(byte) s::return#0 )
+  (byte~) main::$2 ← (byte) s::return#3
   (byte) b#1 ← (byte) b#7
+  (byte/signed word/word/dword/signed dword~) main::$3 ← (byte/signed word/word/dword/signed dword/signed byte~) main::$1 + (byte~) main::$2
+  (byte) main::e#0 ← (byte/signed word/word/dword/signed dword~) main::$3
+  (word/signed word/dword/signed dword~) main::$4 ← (word/signed word/dword/signed dword) 2000 + (word/signed word/dword/signed dword) 2000
+  (word/signed dword/dword~) main::$5 ← (word/signed word/dword/signed dword~) main::$4 + (word) d#1
+  (word/signed dword/dword~) main::$6 ← (word/signed dword/dword~) main::$5 + (byte) b#1
+  (word) main::f#0 ← (word/signed dword/dword~) main::$6
   (byte) b#2 ← ++ (byte) b#1
+  (byte[]) main::g#0 ← { (byte/signed byte/word/signed word/dword/signed dword) 4, (byte/signed byte/word/signed word/dword/signed dword) 5, (byte/signed byte/word/signed word/dword/signed dword) 6 }
+  (byte[]) main::h#0 ← (const string) main::$9
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@3
@@ -25,6 +45,8 @@ main::@1: scope:[main]  from main::@1 main::@3
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#0 )
   (byte*) main::COLS#1 ← phi( main::@1/(byte*) main::COLS#1 main::@3/(byte*) main::COLS#2 )
   (byte) main::col#1 ← phi( main::@1/(byte) main::col#1 main::@3/(byte) main::col#2 )
+  (signed byte/signed word/signed dword~) main::$7 ← - (byte/signed byte/word/signed word/dword/signed dword) 13
+  (signed byte) main::x#0 ← (signed byte/signed word/signed dword~) main::$7
   *((byte*) main::COLS#1 + (byte) main::i#2) ← (byte) main::col#1
   *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte) b#8
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,100)
@@ -43,12 +65,13 @@ s: scope:[s]  from main
   to:s::@return
 s::@return: scope:[s]  from s
   (byte) b#11 ← phi( s/(byte) b#4 )
-  (byte) s::return#3 ← phi( s/(byte) s::return#1 )
-  (byte) s::return#2 ← (byte) s::return#3
+  (byte) s::return#4 ← phi( s/(byte) s::return#1 )
+  (byte) s::return#2 ← (byte) s::return#4
   (byte) b#5 ← (byte) b#11
   return 
   to:@return
 @2: scope:[]  from @begin
+  (word) d#3 ← phi( @begin/(word) d#0 )
   (byte) b#14 ← phi( @begin/(byte) b#0 )
   call main 
   to:@3
@@ -60,12 +83,17 @@ s::@return: scope:[s]  from s
 
 SYMBOL TABLE SSA
 (byte/signed byte/word/signed word/dword/signed dword~) $0
+(const string) $1 = (string) "hello world@"
 (label) @2
 (label) @3
 (label) @begin
 (label) @end
+(byte*) BGCOL
+(byte*) BGCOL#0
 (byte*) SCREEN
 (byte*) SCREEN#0
+(byte[]) arr
+(byte[]) arr#0
 (byte) b
 (byte) b#0
 (byte) b#1
@@ -82,8 +110,26 @@ SYMBOL TABLE SSA
 (byte) b#7
 (byte) b#8
 (byte) b#9
+(byte) c
+(byte) c#0
+(byte) c2
+(byte) c2#0
+(word) d
+(word) d#0
+(word) d#1
+(word) d#2
+(word) d#3
 (void()) main()
+(byte/signed byte/word/signed word/dword/signed dword~) main::$0
+(byte/signed word/word/dword/signed dword/signed byte~) main::$1
+(byte~) main::$2
+(byte/signed word/word/dword/signed dword~) main::$3
+(word/signed word/dword/signed dword~) main::$4
+(word/signed dword/dword~) main::$5
+(word/signed dword/dword~) main::$6
+(signed byte/signed word/signed dword~) main::$7
 (bool~) main::$8
+(const string) main::$9 = (string) "goodbye sky "
 (label) main::@1
 (label) main::@3
 (label) main::@return
@@ -95,10 +141,22 @@ SYMBOL TABLE SSA
 (byte) main::col#0
 (byte) main::col#1
 (byte) main::col#2
+(byte) main::e
+(byte) main::e#0
+(word) main::f
+(word) main::f#0
+(byte[]) main::g
+(byte[]) main::g#0
+(byte[]) main::h
+(byte[]) main::h#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
+(signed byte) main::x
+(signed byte) main::x#0
+(byte[]) msg
+(byte[]) msg#0
 (byte()) s()
 (label) s::@return
 (byte) s::return
@@ -106,14 +164,21 @@ SYMBOL TABLE SSA
 (byte) s::return#1
 (byte) s::return#2
 (byte) s::return#3
+(byte) s::return#4
 
 Alias (byte) b#0 = (byte/signed byte/word/signed word/dword/signed dword~) $0 (byte) b#14 
+Alias (byte) s::return#0 = (byte) s::return#3 
+Alias (word) d#1 = (word) d#2 
 Alias (byte) main::col#0 = (byte) main::col#2 
 Alias (byte*) main::COLS#0 = (byte*) main::COLS#2 
 Alias (byte) b#1 = (byte) b#7 
+Alias (byte) main::e#0 = (byte/signed word/word/dword/signed dword~) main::$3 
+Alias (word) main::f#0 = (word/signed dword/dword~) main::$6 
+Alias (signed byte) main::x#0 = (signed byte/signed word/signed dword~) main::$7 
 Alias (byte) b#3 = (byte) b#9 (byte) b#8 
-Alias (byte) s::return#1 = (byte) s::return#3 (byte) s::return#2 
+Alias (byte) s::return#1 = (byte) s::return#4 (byte) s::return#2 
 Alias (byte) b#11 = (byte) b#4 (byte) b#5 
+Alias (word) d#0 = (word) d#3 
 Alias (byte) b#12 = (byte) b#6 
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (byte) main::col#1
@@ -121,6 +186,7 @@ Self Phi Eliminated (byte*) main::COLS#1
 Self Phi Eliminated (byte) b#3
 Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte) b#13 (byte) b#0
+Redundant Phi (word) d#1 (word) d#0
 Redundant Phi (byte) b#1 (byte) b#11
 Redundant Phi (byte) main::col#1 (byte) main::col#0
 Redundant Phi (byte*) main::COLS#1 (byte*) main::COLS#0
@@ -132,16 +198,35 @@ Simple Condition (bool~) main::$8 if((byte) main::i#1!=rangelast(0,100)) goto ma
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = ((byte*))1024
 Constant (const byte) b#0 = 2>>1
+Constant (const byte*) BGCOL#0 = ((byte*))53281
+Constant (const byte[]) msg#0 = $1
+Constant (const byte[]) arr#0 = { 7, 8, 9 }
+Constant (const byte) c#0 = 1
+Constant (const byte) c2#0 = 1
+Constant (const word) d#0 = 1000
 Constant (const byte) main::col#0 = 2
 Constant (const byte*) main::COLS#0 = ((byte*))55296
+Constant (const byte/signed byte/word/signed word/dword/signed dword) main::$0 = 3+3
+Constant (const word/signed word/dword/signed dword) main::$4 = 2000+2000
+Constant (const byte[]) main::g#0 = { 4, 5, 6 }
+Constant (const byte[]) main::h#0 = main::$9
 Constant (const byte) main::i#0 = 0
+Constant (const signed byte) main::x#0 = -13
 Constant (const byte) s::return#1 = 2
 Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte/signed word/word/dword/signed dword/signed byte) main::$1 = main::$0+3
 Constant (const byte) s::return#0 = s::return#1
+Constant (const word/signed dword/dword) main::$5 = main::$4+d#0
 Constant (const byte) b#11 = ++b#0
 Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte) main::$2 = s::return#0
+Constant (const word) main::f#0 = main::$5+b#11
 Constant (const byte) b#2 = ++b#11
 Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte) main::e#0 = main::$1+main::$2
+Successful SSA optimization Pass2ConstantIdentification
+Successful SSA optimization PassNEliminateUnusedVars
+Successful SSA optimization PassNEliminateUnusedVars
 Successful SSA optimization PassNEliminateUnusedVars
 Successful SSA optimization PassNEliminateUnusedVars
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
@@ -211,14 +296,25 @@ s::@return: scope:[s]  from s
 
 
 VARIABLE REGISTER WEIGHTS
+(byte*) BGCOL
 (byte*) SCREEN
+(byte[]) arr
 (byte) b
+(byte) c
+(byte) c2
+(word) d
 (void()) main()
 (byte*) main::COLS
 (byte) main::col
+(byte) main::e
+(word) main::f
+(byte[]) main::g
+(byte[]) main::h
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 14.666666666666666
+(signed byte) main::x
+(byte[]) msg
 (byte()) s()
 (byte) s::return
 
@@ -414,9 +510,14 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
+(byte*) BGCOL
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte[]) arr
 (byte) b
+(byte) c
+(byte) c2
+(word) d
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -424,9 +525,15 @@ FINAL SYMBOL TABLE
 (const byte*) main::COLS#0 COLS = ((byte*))(word/dword/signed dword) 55296
 (byte) main::col
 (const byte) main::col#0 col = (byte/signed byte/word/signed word/dword/signed dword) 2
+(byte) main::e
+(word) main::f
+(byte[]) main::g
+(byte[]) main::h
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 14.666666666666666
+(signed byte) main::x
+(byte[]) msg
 (byte()) s()
 (label) s::@return
 (byte) s::return

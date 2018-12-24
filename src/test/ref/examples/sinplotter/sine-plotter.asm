@@ -312,6 +312,7 @@ sin16s_gen2: {
     rts
 }
 mul16s: {
+    .label _5 = 2
     .label _6 = 6
     .label _16 = 6
     .label m = $c
@@ -328,6 +329,10 @@ mul16s: {
     jsr mul16u
     lda a+1
     bpl b2
+    lda m+2
+    sta _5
+    lda m+3
+    sta _5+1
     lda m+2
     sta _6
     lda m+3

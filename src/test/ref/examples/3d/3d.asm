@@ -10,7 +10,7 @@
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .const LIGHT_GREY = $f
-  .label print_screen = $400
+  .label print_line_cursor = $400
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
@@ -154,77 +154,77 @@ debug_print: {
     .label c = 4
     .label i = 5
     ldx sx
-    lda #<print_screen+print_sbyte_pos1_row*$28+print_sbyte_pos1_col
+    lda #<print_line_cursor+print_sbyte_pos1_row*$28+print_sbyte_pos1_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos1_row*$28+print_sbyte_pos1_col
+    lda #>print_line_cursor+print_sbyte_pos1_row*$28+print_sbyte_pos1_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     lda sy
     tax
-    lda #<print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
+    lda #<print_line_cursor+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
+    lda #>print_line_cursor+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
-    lda #<print_screen+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
+    lda #<print_line_cursor+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
+    lda #>print_line_cursor+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
     sta print_sbyte_at.at+1
     ldx #sz
     jsr print_sbyte_at
     lda rotation_matrix
     tax
-    lda #<print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
+    lda #<print_line_cursor+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
+    lda #>print_line_cursor+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+1
-    lda #<print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
+    lda #<print_line_cursor+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
+    lda #>print_line_cursor+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+2
-    lda #<print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
+    lda #<print_line_cursor+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
+    lda #>print_line_cursor+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+3
-    lda #<print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
+    lda #<print_line_cursor+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
+    lda #>print_line_cursor+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+4
-    lda #<print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
+    lda #<print_line_cursor+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
+    lda #>print_line_cursor+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+5
-    lda #<print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
+    lda #<print_line_cursor+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
+    lda #>print_line_cursor+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+6
-    lda #<print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
+    lda #<print_line_cursor+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
+    lda #>print_line_cursor+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+7
-    lda #<print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
+    lda #<print_line_cursor+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
+    lda #>print_line_cursor+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx rotation_matrix+8
-    lda #<print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
+    lda #<print_line_cursor+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
     sta print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
+    lda #>print_line_cursor+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     lda #0
@@ -1025,9 +1025,9 @@ print_str_at: {
 }
 print_cls: {
     .label sc = 6
-    lda #<print_screen
+    lda #<print_line_cursor
     sta sc
-    lda #>print_screen
+    lda #>print_line_cursor
     sta sc+1
   b1:
     lda #' '
@@ -1038,10 +1038,10 @@ print_cls: {
     inc sc+1
   !:
     lda sc+1
-    cmp #>print_screen+$3e8
+    cmp #>print_line_cursor+$3e8
     bne b1
     lda sc
-    cmp #<print_screen+$3e8
+    cmp #<print_line_cursor+$3e8
     bne b1
     rts
 }

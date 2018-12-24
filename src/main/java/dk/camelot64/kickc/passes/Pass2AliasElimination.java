@@ -39,6 +39,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
    public static Aliases findAliases(Program program) {
       Aliases candidates = findAliasesCandidates(program);
       cleanupCandidates(candidates, program);
+      cleanupCandidateVolatiles(candidates, program);
       return candidates;
    }
 
@@ -58,7 +59,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                         RValue rValue = phiRValue.getrValue();
                         if(aliasSet.contains(rValue)) {
-                           program.getLog().append("Alias candidate removed " + rValue.toString(program));
+                           program.getLog().append("Alias candidate removed (phi-usage) " + rValue.toString(program));
                            aliasSet.remove(rValue);
                            break;
                         }
@@ -76,11 +77,40 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       while(aliasSetListIterator.hasNext()) {
          AliasSet aliasSet = aliasSetListIterator.next();
          if(aliasSet.getVars().size() <= 1) {
-            program.getLog().append("Alias candidate removed " + aliasSet.toString(program));
+            program.getLog().append("Alias candidate removed (solo) " + aliasSet.toString(program));
             aliasSetListIterator.remove();
          }
       }
    }
+
+   // Remove all candidates that are volatile and not assigned to the same variable
+   private static void cleanupCandidateVolatiles(Aliases candidates, Program program) {
+      ListIterator<AliasSet> aliasSetListIterator = candidates.getAliasSets().listIterator();
+      while(aliasSetListIterator.hasNext()) {
+         AliasSet aliasSet = aliasSetListIterator.next();
+         ProgramScope programScope = program.getScope();
+         // Examine if any volatile variables are in the alias
+         boolean anyVolatile = false;
+         boolean sameBaseVar = true;
+         String unversionedFullName = null;
+         for(VariableRef variableRef : aliasSet.getVars()) {
+            Variable variable = programScope.getVariable(variableRef);
+            if(variable.isDeclaredVolatile()) {
+               anyVolatile = true;
+            }
+            if(unversionedFullName == null) {
+               unversionedFullName = variableRef.getFullNameUnversioned();
+            } else if(!unversionedFullName.equals(variableRef.getFullNameUnversioned())) {
+                 sameBaseVar = false;
+            }
+         }
+         if(anyVolatile & !sameBaseVar) {
+            program.getLog().append("Alias candidate removed (volatile)" + aliasSet.toString(program));
+            aliasSetListIterator.remove();
+         }
+      }
+   }
+
 
    /**
     * Find variables which are aliases of other variables.

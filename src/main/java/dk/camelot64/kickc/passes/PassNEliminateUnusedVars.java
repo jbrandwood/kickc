@@ -1,14 +1,16 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.Collection;
 import java.util.ListIterator;
@@ -35,26 +37,28 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                LValue lValue = assignment.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
-                  if(getLog().isVerbosePass1CreateSsa()||getLog().isVerboseSSAOptimize()) {
-                     getLog().append("Eliminating unused variable " + lValue.toString(getProgram()) + " and assignment " + assignment.toString(getProgram(), false));
-                  }
-                  stmtIt.remove();
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(variable!=null) {
-                     variable.getScope().remove(variable);
+                  if(variable==null || !variable.isDeclaredVolatile()) {
+                     if(getLog().isVerbosePass1CreateSsa() || getLog().isVerboseSSAOptimize()) {
+                        getLog().append("Eliminating unused variable " + lValue.toString(getProgram()) + " and assignment " + assignment.toString(getProgram(), false));
+                     }
+                     stmtIt.remove();
+                     if(variable != null) {
+                        variable.getScope().remove(variable);
+                     }
+                     modified = true;
                   }
-                  modified = true;
                }
             } else if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                LValue lValue = call.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
-                  if(getLog().isVerbosePass1CreateSsa()||getLog().isVerboseSSAOptimize()) {
+                  if(getLog().isVerbosePass1CreateSsa() || getLog().isVerboseSSAOptimize()) {
                      getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                   }
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(variable!=null) {
+                  if(variable != null) {
                      variable.getScope().remove(variable);
                   }
                   call.setlValue(null);
@@ -67,11 +71,11 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   StatementPhiBlock.PhiVariable phiVariable = phiVarIt.next();
                   VariableRef variableRef = phiVariable.getVariable();
                   if(referenceInfos.isUnused(variableRef) && !Pass2ConstantIdentification.isAddressOfUsed(variableRef, getProgram())) {
-                     if(getLog().isVerbosePass1CreateSsa()||getLog().isVerboseSSAOptimize()) {
+                     if(getLog().isVerbosePass1CreateSsa() || getLog().isVerboseSSAOptimize()) {
                         getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
                      }
                      Variable variable = getScope().getVariable(variableRef);
-                     if(variable!=null) {
+                     if(variable != null) {
                         variable.getScope().remove(variable);
                      }
                      phiVarIt.remove();
@@ -85,7 +89,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       Collection<ConstantVar> allConstants = getScope().getAllConstants(true);
       for(ConstantVar constant : allConstants) {
          if(referenceInfos.isUnused(constant.getRef())) {
-            if(getLog().isVerbosePass1CreateSsa()||getLog().isVerboseSSAOptimize()) {
+            if(getLog().isVerbosePass1CreateSsa() || getLog().isVerboseSSAOptimize()) {
                getLog().append("Eliminating unused constant " + constant.toString(getProgram()));
             }
             constant.getScope().remove(constant);

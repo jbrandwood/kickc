@@ -9,6 +9,7 @@ main: {
     .label _2 = 2
     .label _9 = 2
     .label _11 = 4
+    lda screen+$50
     ldx #0
   b1:
     txa

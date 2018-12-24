@@ -4,7 +4,7 @@
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
   .label col1 = 2
-  .label col2 = 2
+  .label col2 = 3
   lda #0
   sta col1
   lda #8

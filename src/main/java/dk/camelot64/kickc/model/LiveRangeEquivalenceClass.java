@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
@@ -115,4 +116,35 @@ public class LiveRangeEquivalenceClass {
       return s.toString();
    }
 
+   /**
+    * If all the variables in the equivalence class is versions of the same variable this method returns it.
+    */
+   public Variable getSingleVariableBase(Program program) {
+      String fullNameUnversioned = null;
+      for(VariableRef variable : variables) {
+         if(fullNameUnversioned ==null) {
+            fullNameUnversioned = variable.getFullNameUnversioned();
+         } else {
+            if(!variable.getFullNameUnversioned().equals(fullNameUnversioned)) {
+               return null;
+            }
+         }
+      }
+      // All variables had the same full name
+      return program.getScope().getVariable(new VariableRef(fullNameUnversioned));
+   }
+
+   /**
+    * Returns whether any variable in the equivalence class is declared as volatile
+    * @return true if there is a volatile variable
+    */
+   public boolean hasVolatile(Program program) {
+      for(VariableRef varRef : variables) {
+         Variable variable = program.getScope().getVariable(varRef);
+         if(variable.isDeclaredVolatile()) {
+            return true;
+         }
+      }
+      return false;
+   }
 }

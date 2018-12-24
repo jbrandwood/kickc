@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.VariableUnversioned;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.LinkedHashSet;
@@ -59,7 +61,6 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
 
    /**
     * Determines if two live range equivalence classes can be coalesced.
-    * This is possible if they are both allocated to zero page, have the same size and the resulting ASM has no live range overlaps or clobber issues.
     *
     * @param ec1 One equivalence class
     * @param ec2 Another equivalence class
@@ -68,6 +69,20 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
     * @return True if the two equivalence classes can be coalesced into one without problems.
     */
    public static boolean canCoalesce(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Set<String> unknownFragments, Program program) {
+      return canCoalesceVolatile(ec1, ec2, program) && canCoalesceClobber(ec1, ec2, unknownFragments, program);
+   }
+
+   /**
+    * Determines if two live range equivalence classes can be coalesced without clobber.
+    * This is possible if they are both allocated to zero page, have the same size and the resulting ASM has no live range overlaps or clobber issues.
+    *
+    * @param ec1 One equivalence class
+    * @param ec2 Another equivalence class
+    * @param unknownFragments Receives information about any unknown fragments encountered during ASM generation
+    * @param program The program
+    * @return True if the two equivalence classes can be coalesced into one without problems.
+    */
+   private static boolean canCoalesceClobber(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Set<String> unknownFragments, Program program) {
       Registers.Register register1 = ec1.getRegister();
       Registers.Register register2 = ec2.getRegister();
       if(register1.isZp() && register2.isZp() && register1.getType().equals(register2.getType())) {
@@ -78,6 +93,30 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
          return Pass4RegisterUpliftCombinations.generateCombinationAsm(combination, program, unknownFragments, ScopeRef.ROOT);
       }
       return false;
+   }
+
+   /**
+    * Determines if any volatile varialbes prevents coalescing two equivalence classes
+    * @param ec1 One equivalence class
+    * @param ec2 Another equivalence class
+    * @param program The program
+    * @return True if the two equivalence classes can be coalesced into one without problems with volatility.
+    */
+   private static boolean canCoalesceVolatile(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Program program) {
+      // If any variable inside is volatile only allow coalesceing with itself
+      if(ec1.hasVolatile(program) || ec2.hasVolatile(program)) {
+         Variable baseVar1 = ec1.getSingleVariableBase(program);
+         Variable baseVar2 = ec2.getSingleVariableBase(program);
+         if(baseVar1==null || baseVar2==null) {
+            // One of the equivalence classes have different base variables inside
+            return false;
+         }
+         if(!baseVar1.equals(baseVar2)) {
+            // The two equivalence classes have different base variables
+            return false;
+         }
+      }
+      return true;
    }
 
 }

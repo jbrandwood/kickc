@@ -29,10 +29,10 @@
   .const IRQ_RASTER_FIRST = $30
   .label PLAYFIELD_SPRITE_PTRS = PLAYFIELD_SCREEN+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
-  .label irq_raster_next = 2
-  .label irq_sprite_ypos = 2
-  .label irq_sprite_ptr = 2
-  .label irq_cnt = 2
+  .label irq_raster_next = 3
+  .label irq_sprite_ypos = 4
+  .label irq_sprite_ptr = 5
+  .label irq_cnt = 6
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
   lda #$32

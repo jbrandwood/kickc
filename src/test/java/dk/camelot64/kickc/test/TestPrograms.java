@@ -45,10 +45,14 @@ public class TestPrograms {
    }
 
    @Test
-   public void testInterruptVolatileReuseProblem() throws IOException, URISyntaxException {
-      compileAndCompare("interrupt-volatile-reuse-problem");
+   public void testInterruptVolatileReuseProblem2() throws IOException, URISyntaxException {
+      compileAndCompare("interrupt-volatile-reuse-problem2");
    }
 
+   @Test
+   public void testInterruptVolatileReuseProblem1() throws IOException, URISyntaxException {
+      compileAndCompare("interrupt-volatile-reuse-problem1");
+   }
 
    @Test
    public void testInitVolatiles() throws IOException, URISyntaxException {

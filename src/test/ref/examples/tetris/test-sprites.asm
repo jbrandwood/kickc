@@ -123,11 +123,8 @@ irq: {
     sta BORDERCOL
     lda irq_sprite_ypos
     sta SPRITES_YPOS
-    lda irq_sprite_ypos
     sta SPRITES_YPOS+2
-    lda irq_sprite_ypos
     sta SPRITES_YPOS+4
-    lda irq_sprite_ypos
     sta SPRITES_YPOS+6
   b1:
     lda RASTER

@@ -73,10 +73,11 @@ interrupt(hardware_clobber) void irq() {
 
     *BORDERCOL = DARK_GREY;
     // Place the sprites
-	SPRITES_YPOS[0] = irq_sprite_ypos;
-	SPRITES_YPOS[2] = irq_sprite_ypos;
-	SPRITES_YPOS[4] = irq_sprite_ypos;
-	SPRITES_YPOS[6] = irq_sprite_ypos;
+    byte ypos = irq_sprite_ypos;
+	SPRITES_YPOS[0] = ypos;
+	SPRITES_YPOS[2] = ypos;
+	SPRITES_YPOS[4] = ypos;
+	SPRITES_YPOS[6] = ypos;
 
 	// Wait for the y-position before changing sprite pointers
 	do {
@@ -100,7 +101,7 @@ interrupt(hardware_clobber) void irq() {
     	irq_sprite_ptr += 3;  
     }
 
-    // Setup next interrupt
+    // Setup next interrupt - start 1 line earlier when overlapping a badline 
     byte raster_next = irq_raster_next;
     if((raster_next&7)==3) {
     	raster_next -=1;

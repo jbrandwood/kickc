@@ -1,7 +1,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  jsr main
 main: {
     lda #0
     ldx #$a

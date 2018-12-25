@@ -10,7 +10,6 @@
   .label current_bit = 2
   .label current_chargen = 3
   .label nxt = 7
-  jsr main
 main: {
     jsr fillscreen
     lda #<CHARGEN

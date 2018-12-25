@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label screen = $400
-  jsr main
 main: {
     .const toUpper1_ch = 'c'
     .const toUpper2_ch = 'm'

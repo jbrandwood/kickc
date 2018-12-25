@@ -47,7 +47,7 @@ public class Pass4CodeGeneration {
 
       asm.startSegment( currentScope, null, "Basic Upstart");
       asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
-      asm.addLine(new AsmBasicUpstart("main"));
+      asm.addLine(new AsmBasicUpstart("bbegin"));
       asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(0x080d)));
 
       // Generate global ZP labels

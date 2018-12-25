@@ -10,7 +10,6 @@
   .const DTV_HIGHCOLOR = 4
   .const DTV_BADLINE_OFF = $20
   .label DTV_PALETTE = $d200
-  jsr main
 main: {
     sei
     lda #DTV_FEATURE_ENABLE

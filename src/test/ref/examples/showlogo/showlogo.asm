@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
   .label BORDERCOL = $d020
   .label BGCOL = $d021
@@ -15,6 +15,7 @@
   .const DARK_GREY = $b
   .label SCREEN = $400
   .label LOGO = $2000
+bbegin:
   jsr main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>LOGO)>>2&$f

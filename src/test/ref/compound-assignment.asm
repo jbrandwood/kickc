@@ -6,7 +6,6 @@
   .const GREEN = 5
   .const RED = 2
   .label screen2 = screen1+$28
-  jsr main
 main: {
     ldx #0
     lda #3

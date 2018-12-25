@@ -288,7 +288,7 @@ Allocated zp ZP_BYTE:5 [ main::print22_j#2 main::print22_j#1 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label screen = $400
@@ -427,7 +427,7 @@ Uplifting [] best 744 combination
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label screen = $400
@@ -531,8 +531,8 @@ Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label print21_b1_from_print21_b1 with print21_b1
 Replacing label print22_b1_from_print22_b1 with print22_b1
-Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
+Removing instruction b2:
 Removing instruction main_from_b2:
 Removing instruction bend_from_b2:
 Removing instruction print21_from_main:
@@ -542,15 +542,19 @@ Removing instruction print22_from_print21_b1:
 Removing instruction print22_b1_from_print22:
 Removing instruction print22_b1_from_print22_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
 Removing instruction bend:
 Removing instruction print21:
 Removing instruction print22:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp print21_b1
 Removing instruction jmp print22_b1
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @2
@@ -593,7 +597,7 @@ reg byte x [ main::print22_j#2 main::print22_j#1 ]
 
 
 FINAL ASSEMBLER
-Score: 582
+Score: 576
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -606,7 +610,6 @@ Score: 582
 //SEG4 @2
 //SEG5 [2] call main 
 //SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 //SEG8 @end
 //SEG9 main

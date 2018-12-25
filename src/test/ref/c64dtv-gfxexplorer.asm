@@ -127,7 +127,6 @@
   .label keyboard_events_size = 9
   .label keyboard_modifiers = 2
   .label form_cursor_count = $e
-  jsr main
 main: {
     sei
     lda #PROCPORT_DDR_MEMORY_MASK

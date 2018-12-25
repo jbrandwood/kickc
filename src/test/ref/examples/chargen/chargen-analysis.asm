@@ -61,7 +61,6 @@
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
   .label SCREEN = $400
-  jsr main
 main: {
     .label sc = 2
     .label i = 4

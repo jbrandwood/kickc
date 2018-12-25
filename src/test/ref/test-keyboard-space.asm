@@ -10,7 +10,6 @@
   .const GREEN = 5
   .const BLUE = 6
   .const KEY_SPACE = $3c
-  jsr main
 main: {
     jsr keyboard_init
   b4:

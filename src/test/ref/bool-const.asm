@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
-  jsr main
 main: {
     jsr bool_const_if
     jsr bool_const_vars

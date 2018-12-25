@@ -12,7 +12,6 @@
   .const BLACK = 0
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
-  jsr main
 main: {
     sei
     lda #CIA_INTERRUPT_CLEAR

@@ -6,7 +6,6 @@
   .label PROCPORT = 1
   .label D018 = $d018
   .label CHARSET4 = $2800
-  jsr main
 main: {
     .label _1 = 8
     .label _11 = 8

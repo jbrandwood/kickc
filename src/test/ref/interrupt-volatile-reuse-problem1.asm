@@ -1,10 +1,11 @@
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
   .label col1 = 2
   .label col2 = 3
+bbegin:
   lda #0
   sta col1
   lda #8

@@ -7,7 +7,6 @@
   .label screen = $400
   .label charset1 = $1000
   .label charset2 = $1800
-  jsr main
 main: {
     .const toD0181_return = screen/$40|charset1/$400
     .const toD0182_return = screen/$40|charset2/$400

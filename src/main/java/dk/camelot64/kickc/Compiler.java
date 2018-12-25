@@ -455,6 +455,7 @@ public class Compiler {
       pass5Optimizations.add(new Pass5UnnecesaryLoadElimination(program));
       pass5Optimizations.add(new Pass5RedundantLabelElimination(program));
       pass5Optimizations.add(new Pass5UnusedLabelElimination(program));
+      pass5Optimizations.add(new Pass5SkipBegin(program));
       pass5Optimizations.add(new Pass5DoubleJumpElimination(program));
       pass5Optimizations.add(new Pass5UnreachableCodeElimination(program));
       pass5Optimizations.add(new Pass5RelabelLongLabels(program));

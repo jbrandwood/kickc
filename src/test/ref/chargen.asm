@@ -4,7 +4,6 @@
   .label PROCPORT = 1
   .label CHARGEN = $d000
   .label SCREEN = $400
-  jsr main
 main: {
     .label CHAR_A = CHARGEN+8
     .label bits = 3

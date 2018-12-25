@@ -1,7 +1,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  jsr main
 main: {
     .const STAR = $51
     .label screen = $400

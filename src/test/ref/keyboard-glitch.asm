@@ -12,7 +12,6 @@
   .const KEY_I = $21
   .const KEY_SPACE = $3c
   .label SCREEN = $400
-  jsr main
 main: {
     lda #GREEN
     sta BORDERCOL

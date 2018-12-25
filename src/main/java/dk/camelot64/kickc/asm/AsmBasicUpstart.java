@@ -3,11 +3,19 @@ package dk.camelot64.kickc.asm;
 /** Set the program counter */
 public class AsmBasicUpstart implements AsmLine {
 
-   private final String function;
+   private String label;
    private int index;
 
-   public AsmBasicUpstart(String function) {
-      this.function = function;
+   public AsmBasicUpstart(String label) {
+      this.label = label;
+   }
+
+   public String getLabel() {
+      return label;
+   }
+
+   public void setLabel(String label) {
+      this.label = label;
    }
 
    @Override
@@ -22,7 +30,7 @@ public class AsmBasicUpstart implements AsmLine {
 
    @Override
    public String getAsm() {
-      return ":BasicUpstart(" + function + ")";
+      return ":BasicUpstart(" + label + ")";
    }
 
    @Override

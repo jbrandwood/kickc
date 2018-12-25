@@ -28,6 +28,9 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
                currentScope = ((AsmScopeBegin) line).getLabel();
             } else if(line instanceof AsmScopeEnd) {
                currentScope = "";
+            } else if(line instanceof AsmBasicUpstart) {
+               String labelStr = currentScope + "::" + ((AsmBasicUpstart) line).getLabel();
+               usedLabels.add(labelStr);
             } else if(line instanceof AsmInstruction) {
                AsmInstruction instruction = (AsmInstruction) line;
                if(instruction.getType().isJump()) {

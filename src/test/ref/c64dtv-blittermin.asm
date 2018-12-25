@@ -44,7 +44,6 @@
   .const DTV_BLIT_STATUS_BUSY = 1
   .label SCREEN = $400
   .const SRCA_LEN = 9
-  jsr main
 main: {
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE

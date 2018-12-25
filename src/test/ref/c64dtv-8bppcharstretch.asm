@@ -41,7 +41,6 @@
   .label DTV_PLANEB_MODULO_HI = $d048
   .label SCREEN = $7c00
   .label CHARSET8 = $8000
-  jsr main
 main: {
     sei
     lda #PROCPORT_DDR_MEMORY_MASK

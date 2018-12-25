@@ -243,7 +243,7 @@ Allocated zp ZP_WORD:4 [ w1#10 w1#11 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label w1 = 4
@@ -360,7 +360,7 @@ Uplifting [incw2] best 116 combination
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label w1 = 4
@@ -472,8 +472,8 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction bbegin:
 Removing instruction b3_from_bbegin:
+Removing instruction b3:
 Removing instruction main_from_b3:
 Removing instruction bend_from_b3:
 Removing instruction b1_from_main:
@@ -483,7 +483,6 @@ Removing instruction incw1_from_b2:
 Removing instruction b3_from_b2:
 Removing instruction incw2_from_b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b3:
 Removing instruction bend:
 Removing instruction incw1_from_main:
 Removing instruction b1:
@@ -492,6 +491,11 @@ Removing instruction b3:
 Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -519,7 +523,7 @@ zp ZP_WORD:4 [ w1#10 w1#11 ]
 
 
 FINAL ASSEMBLER
-Score: 88
+Score: 82
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -533,7 +537,6 @@ Score: 88
 //SEG4 @3
 //SEG5 [2] call main 
 //SEG6 [4] phi from @3 to main [phi:@3->main]
-  jsr main
 //SEG7 [3] phi from @3 to @end [phi:@3->@end]
 //SEG8 @end
 //SEG9 main

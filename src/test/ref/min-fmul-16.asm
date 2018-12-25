@@ -5,7 +5,6 @@
   .label BORDERCOL = $d020
   .label SCREEN = $400
   .label print_char_cursor = 4
-  jsr main
 main: {
     .label a = $4d2
     .label b = $929

@@ -221,7 +221,7 @@ Complete equivalence classes
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label HARDWARE_IRQ = $fffe
@@ -351,7 +351,7 @@ Removing interrupt register storage ldy #00 in SEG26 [17] return  - exit interru
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label HARDWARE_IRQ = $fffe
@@ -449,13 +449,17 @@ Removing instruction jmp bend
 Removing instruction jmp b2
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
+Removing instruction b2:
 Removing instruction bend_from_b2:
 Removing instruction breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
 Removing instruction bend:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -506,7 +510,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 
 
 FINAL ASSEMBLER
-Score: 218
+Score: 212
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -533,7 +537,6 @@ Score: 218
 //SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
 //SEG4 @2
 //SEG5 [2] call main 
-  jsr main
 //SEG6 [3] phi from @2 to @end [phi:@2->@end]
 //SEG7 @end
 //SEG8 main

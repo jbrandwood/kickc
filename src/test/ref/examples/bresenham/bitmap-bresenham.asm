@@ -11,7 +11,6 @@
   .label SCREEN = $400
   .label BITMAP = $2000
   .const lines_cnt = 8
-  jsr main
 main: {
     lda #0
     sta BORDERCOL

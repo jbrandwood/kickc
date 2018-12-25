@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
+bbegin:
   .byte 1, 2, 3
 
   jsr main

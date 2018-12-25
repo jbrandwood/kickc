@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .const ITEM_COUNT = 3
   .const ITEM_SIZE = 5
-  jsr main
 main: {
     .label cur_item = 2
     lda #<items

@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label fibs = $1100
-  jsr main
 main: {
     lda #0
     sta fibs

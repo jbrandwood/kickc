@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
@@ -33,6 +33,7 @@
   .label irq_sprite_ypos = 4
   .label irq_sprite_ptr = 5
   .label irq_cnt = 6
+bbegin:
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
   lda #$32
@@ -50,15 +51,6 @@ main: {
     jmp b2
 }
 init_irq: {
-    .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
-    lda #IRQ_RASTER_FIRST
-    sta irq_raster_next
-    lda #$32
-    sta irq_sprite_ypos
-    lda #toSpritePtr2_return
-    sta irq_sprite_ptr
-    lda #0
-    sta irq_cnt
     sei
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT

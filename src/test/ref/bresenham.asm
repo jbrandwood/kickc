@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .const STAR = $51
   .label SCREEN = $400
-  jsr main
 main: {
     .const x1 = $27
     .const y1 = $18

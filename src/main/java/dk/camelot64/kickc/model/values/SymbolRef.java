@@ -9,6 +9,7 @@ public class SymbolRef implements Value {
    public static final String BEGIN_BLOCK_NAME = "@begin";
    public static final String END_BLOCK_NAME = "@end";
    public static final String PROCEXIT_BLOCK_NAME = "@return";
+   public static final String MAIN_PROC_NAME = "main";
 
    /** The full name of the variable. Allowing lookup in the symbol table. */
    private String fullName;

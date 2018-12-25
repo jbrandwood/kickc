@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
-  jsr main
 main: {
     .label j = 3
     .label i = 2

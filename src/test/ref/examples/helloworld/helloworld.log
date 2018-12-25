@@ -321,7 +321,7 @@ Allocated zp ZP_WORD:6 [ print_char_cursor#10 print_char_cursor#1 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label print_char_cursor = 6
@@ -480,7 +480,7 @@ Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ print_char_cursor#10 print_char_curs
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label print_char_cursor = 4
@@ -628,15 +628,14 @@ Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
-Removing instruction bbegin:
 Removing instruction b20_from_bbegin:
+Removing instruction b20:
 Removing instruction main_from_b20:
 Removing instruction bend_from_b20:
 Removing instruction b1_from_main:
 Removing instruction print_ln_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b20:
 Removing instruction bend:
 Removing instruction print_str_from_main:
 Removing instruction b1:
@@ -647,8 +646,13 @@ Removing instruction b1_from_print_str:
 Removing instruction breturn:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @20
@@ -682,7 +686,7 @@ zp ZP_WORD:4 [ print_char_cursor#10 print_char_cursor#1 ]
 
 
 FINAL ASSEMBLER
-Score: 1241
+Score: 1235
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -696,7 +700,6 @@ Score: 1241
 //SEG4 @20
 //SEG5 [2] call main 
 //SEG6 [4] phi from @20 to main [phi:@20->main]
-  jsr main
 //SEG7 [3] phi from @20 to @end [phi:@20->@end]
 //SEG8 @end
 //SEG9 main

@@ -5,7 +5,6 @@
   .label RASTER = $d012
   .label BGCOL = $d020
   .label SCROLL = $d016
-  jsr main
 main: {
     .label line = SCREEN+$28
     .label nxt = 2

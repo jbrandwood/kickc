@@ -78,7 +78,6 @@
   .label print_char_cursor = 5
   .label dtv_control = 4
   .label print_line_cursor = $d
-  jsr main
 main: {
     sei
     lda #PROCPORT_DDR_MEMORY_MASK

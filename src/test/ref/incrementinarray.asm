@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .label print_char_cursor = 6
   .label print_line_cursor = 2
-  jsr main
 main: {
     jsr print_cls
     ldx #0

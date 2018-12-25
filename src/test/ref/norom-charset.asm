@@ -4,7 +4,6 @@
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label CHARSET = $3000
-  jsr main
 main: {
     .label charset = 2
     .label c = 4

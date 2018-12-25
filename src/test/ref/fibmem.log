@@ -128,7 +128,7 @@ Allocated zp ZP_BYTE:3 [ main::$2 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label fibs = $1100
@@ -212,7 +212,7 @@ Uplifting [] best 365 combination
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label fibs = $1100
@@ -274,18 +274,22 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
-Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
+Removing instruction b1:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -306,7 +310,7 @@ reg byte a [ main::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 269
+Score: 263
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -318,7 +322,6 @@ Score: 269
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG4 @1
 //SEG5 [2] call main 
-  jsr main
 //SEG6 [3] phi from @1 to @end [phi:@1->@end]
 //SEG7 @end
 //SEG8 main

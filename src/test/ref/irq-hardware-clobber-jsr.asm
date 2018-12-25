@@ -17,7 +17,6 @@
   .label HARDWARE_IRQ = $fffe
   .const BLACK = 0
   .const WHITE = 1
-  jsr main
 main: {
     sei
     lda #PROCPORT_DDR_MEMORY_MASK

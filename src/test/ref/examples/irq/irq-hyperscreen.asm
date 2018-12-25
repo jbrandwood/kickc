@@ -14,7 +14,6 @@
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
-  jsr main
 main: {
     lda #0
     sta GHOST_BYTE

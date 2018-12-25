@@ -5,7 +5,6 @@
   .label print_line_cursor = 3
   .label rem16u = $a
   .label rem16s = $a
-  jsr main
 main: {
     jsr print_cls
     jsr test_8u

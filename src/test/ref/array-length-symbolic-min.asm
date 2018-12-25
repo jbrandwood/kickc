@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SZ = $f
-  jsr main
 main: {
     ldx #0
   b1:

@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .label w1 = 4
   .label w2 = 2
-  jsr main
 main: {
     lda #<0
     sta w1

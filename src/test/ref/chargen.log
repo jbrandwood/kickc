@@ -371,7 +371,7 @@ Allocated zp ZP_BYTE:8 [ main::$1 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label PROCPORT = 1
@@ -559,7 +559,7 @@ Uplifting [main] best 7232 combination zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label PROCPORT = 1
@@ -710,15 +710,14 @@ Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b2_from_b3 with b2
 Replacing label b1_from_b5 with b1
-Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
+Removing instruction b1:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_b5:
 Removing instruction b2_from_b3:
 Removing instruction b4_from_b2:
 Removing instruction b3_from_b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b2_from_b1:
@@ -727,11 +726,16 @@ Removing instruction b5:
 Removing instruction b6:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Relabelling long label b3_from_b2 to b4
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b1
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -781,7 +785,7 @@ reg byte a [ main::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 5633
+Score: 5627
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -795,7 +799,6 @@ Score: 5633
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG4 @1
 //SEG5 [2] call main 
-  jsr main
 //SEG6 [3] phi from @1 to @end [phi:@1->@end]
 //SEG7 @end
 //SEG8 main

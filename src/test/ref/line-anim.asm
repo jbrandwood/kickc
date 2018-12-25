@@ -19,7 +19,6 @@
   .const DELAY = 8
   .label rem16s = 3
   .label rem16u = 9
-  jsr main
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)>>6
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>BITMAP)>>2&$f

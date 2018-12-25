@@ -1,7 +1,8 @@
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
   .label x = 2
+bbegin:
   lda #$c
   sta x
   jsr main

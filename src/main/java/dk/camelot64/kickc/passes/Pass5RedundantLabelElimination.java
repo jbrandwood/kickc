@@ -29,20 +29,25 @@ public class Pass5RedundantLabelElimination extends Pass5AsmOptimization {
                currentScope = ((AsmScopeBegin) line).getLabel();
             } else if(line instanceof AsmScopeEnd) {
                currentScope = "";
+            } else if(line instanceof AsmBasicUpstart) {
+               String labelStr = ((AsmBasicUpstart) line).getLabel();
+               String labelReplacementStr = getLabelReplacement(redundantLabelSet, currentScope, labelStr);
+               if(labelReplacementStr!=null) {
+                  getLog().append("Replacing label " + labelStr + " with " + labelReplacementStr);
+                  ((AsmBasicUpstart) line).setLabel(labelReplacementStr);
+               }
             } else if(line instanceof AsmInstruction) {
                AsmInstruction instruction = (AsmInstruction) line;
                if(instruction.getType().isJump()) {
                   String labelStr = instruction.getParameter();
-                  if(!labelStr.contains("!")) {
-                     // If redundant - Replace with the shortest
-                     for(RedundantLabels redundantLabels : redundantLabelSet) {
-                        if(redundantLabels.getScope().equals(currentScope) && redundantLabels.isRedundant(labelStr)) {
-                           getLog().append("Replacing label " + labelStr + " with " + redundantLabels.getKeep());
-                           instruction.setParameter(redundantLabels.getKeep());
-                        }
-                     }
+                  String labelReplacementStr = getLabelReplacement(redundantLabelSet, currentScope, labelStr);
+                  if(labelReplacementStr!=null) {
+                     getLog().append("Replacing label " + labelStr + " with " + labelReplacementStr);
+                     instruction.setParameter(labelReplacementStr);
                   }
+
                }
+
             } else if(line instanceof AsmLabel) {
                AsmLabel label = (AsmLabel) line;
                String labelStr = label.getLabel();
@@ -59,6 +64,26 @@ public class Pass5RedundantLabelElimination extends Pass5AsmOptimization {
 
       remove(removeLines);
       return removeLines.size() > 0;
+   }
+
+   /**
+    * Look for a replacement for a label. Return the replacement if found.
+    * @param redundantLabelSet The set of all redundant labels.
+    * @param currentScope The current scope
+    * @param labelStr The label string to replace
+    * @return The replacement for the passed label. Null if it should not be replaced.
+    */
+   private String getLabelReplacement(List<RedundantLabels> redundantLabelSet, String currentScope, String labelStr) {
+      String labelReplacementStr = null;
+      if(!labelStr.contains("!")) {
+         // If redundant - Replace with the shortest
+         for(RedundantLabels redundantLabels : redundantLabelSet) {
+            if(redundantLabels.getScope().equals(currentScope) && redundantLabels.isRedundant(labelStr)) {
+               labelReplacementStr = redundantLabels.getKeep();
+            }
+         }
+      }
+      return labelReplacementStr;
    }
 
    /**
@@ -116,7 +141,12 @@ public class Pass5RedundantLabelElimination extends Pass5AsmOptimization {
       }
 
       public void add(String label) {
-         if(keep.length() < label.length()) {
+         if("bbegin".equals(label)) {
+            redundant.add(label);
+            keep = label;
+         } else if("bbegin".equals(keep)) {
+            redundant.add(label);
+         } else if(keep.length() < label.length()) {
             redundant.add(label);
          } else {
             redundant.add(keep);

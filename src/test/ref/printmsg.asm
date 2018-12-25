@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .label print_char_cursor = 6
   .label print_line_cursor = 2
-  jsr main
 main: {
     lda #<$400
     sta print_char_cursor

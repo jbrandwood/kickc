@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .label SCREEN1 = $400
   .label SCREEN2 = $500
-  jsr main
 main: {
     ldx #0
   b1:

@@ -5,7 +5,6 @@
   .label COLORS = $d800
   .const FILL = $e6
   .const numpoints = 6
-  jsr main
 main: {
     jsr initscreen
   b1:

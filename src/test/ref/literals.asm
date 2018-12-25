@@ -4,7 +4,6 @@
   .label SCREEN = $400
   .const char = 'a'
   .const num = 1
-  jsr main
 main: {
     lda #char
     sta SCREEN

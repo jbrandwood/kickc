@@ -5,7 +5,6 @@
   .label memHi = $ff
   .label print_line_cursor = 3
   .label print_char_cursor = 5
-  jsr main
 main: {
     .label f_2pi = $e2e5
     .label i = 2

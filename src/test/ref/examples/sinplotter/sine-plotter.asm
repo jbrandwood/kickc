@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
   .label PROCPORT_DDR = 0
   .const PROCPORT_DDR_MEMORY_MASK = 7
@@ -24,6 +24,7 @@
   .const SIN_SIZE = $200
   .label sin2 = $1400
   .label rem16u = 2
+bbegin:
   .label pc_restore = *
     .pc = $1400
     .for(var i=0; i<512; i++) {

@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label screen = $400
-  jsr main
 main: {
     .const sum1_a = 2
     .const sum1_b = 1

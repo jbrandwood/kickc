@@ -5,7 +5,6 @@
   .label SCREEN2 = SCREEN+$28*3
   .label SCREEN3 = SCREEN+$28*6
   .label SCREEN4 = SCREEN+$28*9
-  jsr main
 main: {
     ldx #0
   b1:

@@ -4,7 +4,6 @@
   .label rem16u = $f
   .label print_char_cursor = 7
   .label print_line_cursor = 3
-  jsr main
 main: {
     .label i = 2
     lda #<lintab1

@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .label BORDERCOL = $d020
   .label SCREEN = $400
-  jsr main
 main: {
     jsr print_cls
     jsr mode_ctrl

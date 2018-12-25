@@ -270,7 +270,7 @@ Allocated zp ZP_BYTE:4 [ print::val#0 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
 //SEG2 @begin
@@ -413,7 +413,7 @@ Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ main::a#2 main::a#1 ]
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
 //SEG2 @begin
@@ -537,8 +537,8 @@ Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b3_from_b7 with b3
 Replacing label b2_from_b4 with b2
 Replacing label b1_from_b5 with b1
-Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
+Removing instruction b2:
 Removing instruction main_from_b2:
 Removing instruction bend_from_b2:
 Removing instruction b1_from_b5:
@@ -547,7 +547,6 @@ Removing instruction b2_from_b4:
 Removing instruction b3_from_b2:
 Removing instruction b3_from_b7:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b7:
@@ -556,10 +555,15 @@ Removing instruction b5:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b1
 Removing instruction jmp b2
 Removing instruction jmp b3
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @2
@@ -602,7 +606,7 @@ reg byte a [ print::val#0 ]
 
 
 FINAL ASSEMBLER
-Score: 31458
+Score: 31452
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -614,7 +618,6 @@ Score: 31458
 //SEG4 @2
 //SEG5 [2] call main 
 //SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 //SEG8 @end
 //SEG9 main

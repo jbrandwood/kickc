@@ -321,7 +321,7 @@ Allocated zp ZP_BYTE:10 [ inccnt::return#2 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label SCREEN = $400
@@ -453,7 +453,7 @@ Allocated (was zp ZP_BYTE:9) zp ZP_BYTE:2 [ cnt#12 ]
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label SCREEN = $400
@@ -551,12 +551,11 @@ Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction lda #0 with TXA
 Removing instruction lda cnt
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
+Removing instruction b2:
 Removing instruction main_from_b2:
 Removing instruction bend_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
 Removing instruction bend:
 Removing instruction inccnt_from_main:
 Removing instruction b1:
@@ -564,6 +563,11 @@ Removing instruction inccnt_from_b1:
 Removing instruction b2:
 Removing instruction breturn:
 Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -607,7 +611,7 @@ reg byte a [ inccnt::return#2 ]
 
 
 FINAL ASSEMBLER
-Score: 62
+Score: 56
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -621,7 +625,6 @@ Score: 62
 //SEG4 @2
 //SEG5 [2] call main 
 //SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 //SEG8 @end
 //SEG9 main

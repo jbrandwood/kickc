@@ -1,10 +1,11 @@
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label IRQ_STATUS = $d019
   .label SCREEN = $400
   .label col1 = 3
+bbegin:
   lda #0
   sta col1
   jsr main

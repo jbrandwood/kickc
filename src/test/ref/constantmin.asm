@@ -6,7 +6,6 @@
   .label VIC = $d000
   .const RED = 2
   .label BGCOL = VIC+$10*2+1
-  jsr main
 main: {
     lda #STAR
     sta SCREEN

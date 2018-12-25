@@ -544,7 +544,7 @@ Allocated zp ZP_WORD:18 [ main::plot2_$0#0 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label cur_line = 6
@@ -825,7 +825,7 @@ Allocated (was zp ZP_WORD:15) zp ZP_WORD:6 [ main::plot1_$0#0 main::plot2_$0#0 ]
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label cur_line = 4
@@ -1053,8 +1053,8 @@ Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label line1_b1_from_b4 with line1_b1
 Replacing label line2_b1_from_b6 with line2_b1
-Removing instruction bbegin:
 Removing instruction b3_from_bbegin:
+Removing instruction b3:
 Removing instruction main_from_b3:
 Removing instruction bend_from_b3:
 Removing instruction b1_from_b1:
@@ -1065,7 +1065,6 @@ Removing instruction line2_from_b4:
 Removing instruction line2_b1_from_line2:
 Removing instruction line2_b1_from_b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b3:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction line1:
@@ -1076,10 +1075,15 @@ Removing instruction plot2:
 Removing instruction b6:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b1
 Removing instruction jmp line1_b1
 Removing instruction jmp line2_b1
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @3
@@ -1157,7 +1161,7 @@ reg byte a [ main::plot2_xpos#0 ]
 
 
 FINAL ASSEMBLER
-Score: 2372
+Score: 2366
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1170,7 +1174,6 @@ Score: 2372
 //SEG4 @3
 //SEG5 [2] call main 
 //SEG6 [4] phi from @3 to main [phi:@3->main]
-  jsr main
 //SEG7 [3] phi from @3 to @end [phi:@3->@end]
 //SEG8 @end
 //SEG9 main

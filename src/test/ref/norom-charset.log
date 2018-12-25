@@ -497,7 +497,7 @@ Allocated zp ZP_BYTE:13 [ gen_char3::$1 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label VIC_MEMORY = $d018
@@ -735,7 +735,7 @@ Coalescing zero page register with common assignment [ zp ZP_WORD:2 [ main::char
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label VIC_MEMORY = $d018
@@ -932,8 +932,8 @@ Replacing label b1_from_b3 with b1
 Replacing label b3_from_b2 with b3
 Replacing label b2_from_b3 with b2
 Replacing label b1_from_b5 with b1
-Removing instruction bbegin:
 Removing instruction b2_from_bbegin:
+Removing instruction b2:
 Removing instruction main_from_b2:
 Removing instruction bend_from_b2:
 Removing instruction b1_from_b3:
@@ -943,7 +943,6 @@ Removing instruction b2_from_b3:
 Removing instruction b3_from_b2:
 Removing instruction b3_from_b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction gen_char3_from_b1:
@@ -955,10 +954,15 @@ Removing instruction b4:
 Removing instruction b5:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b1
 Removing instruction jmp b1
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @2
@@ -1022,7 +1026,7 @@ reg byte a [ gen_char3::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 45530
+Score: 45524
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1037,7 +1041,6 @@ Score: 45530
 //SEG4 @2
 //SEG5 [2] call main 
 //SEG6 [4] phi from @2 to main [phi:@2->main]
-  jsr main
 //SEG7 [3] phi from @2 to @end [phi:@2->@end]
 //SEG8 @end
 //SEG9 main

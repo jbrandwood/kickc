@@ -4,7 +4,6 @@
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
-  jsr main
 main: {
     sei
   b2:

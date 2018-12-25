@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .label RASTER = $d012
   .label SCREEN = $400
-  jsr main
 main: {
     jsr prepare
   b1:

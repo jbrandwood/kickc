@@ -17,7 +17,6 @@
   .const PROCPORT_DDR_MEMORY_MASK = 7
   .label PROCPORT = 1
   .const PROCPORT_RAM_IO = $35
-  jsr main
 main: {
     sei
     lda #PROCPORT_DDR_MEMORY_MASK

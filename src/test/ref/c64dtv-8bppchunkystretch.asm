@@ -33,7 +33,6 @@
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
   .label CHUNKY = $8000
-  jsr main
 main: {
     sei
     lda #PROCPORT_DDR_MEMORY_MASK

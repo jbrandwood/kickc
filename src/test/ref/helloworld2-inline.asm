@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label screen = $400
-  jsr main
 main: {
     .label print22_at = screen+$50
     ldx #0

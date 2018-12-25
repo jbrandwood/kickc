@@ -23,7 +23,6 @@
   .label xvel = 2
   .label yvel_12 = 6
   .label yvel_22 = 6
-  jsr main
 main: {
     jsr init
     lda #<$64

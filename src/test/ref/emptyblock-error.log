@@ -305,7 +305,7 @@ Allocated zp ZP_BYTE:2 [ a#1 a#12 a#5 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label B = $1000
@@ -413,7 +413,7 @@ Uplifting [mode] best 18376 combination
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label B = $1000
@@ -514,8 +514,8 @@ Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1 with b2
 Replacing label b1 with b2
 Replacing label b1_from_b2 with b2
-Removing instruction bbegin:
 Removing instruction b3_from_bbegin:
+Removing instruction b3:
 Removing instruction main_from_b3:
 Removing instruction bend_from_b3:
 Removing instruction b1:
@@ -527,7 +527,6 @@ Removing instruction b1_from_mode:
 Removing instruction b1_from_b2:
 Removing instruction b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b3:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b1_from_b2:
@@ -535,6 +534,9 @@ Removing instruction b2:
 Removing instruction breturn:
 Removing instruction b7:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Skipping double jump to b2 in jmp b1_from_b7
 Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label b1_from_b7 to b1
@@ -545,6 +547,8 @@ Removing instruction lda B
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @3
@@ -571,7 +575,7 @@ reg byte a [ a#1 a#12 a#5 ]
 
 
 FINAL ASSEMBLER
-Score: 8874
+Score: 8868
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -584,7 +588,6 @@ Score: 8874
 //SEG4 @3
 //SEG5 [2] call main 
 //SEG6 [4] phi from @3 to main [phi:@3->main]
-  jsr main
 //SEG7 [3] phi from @3 to @end [phi:@3->@end]
 //SEG8 @end
 //SEG9 main

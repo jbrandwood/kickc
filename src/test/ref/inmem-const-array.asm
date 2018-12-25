@@ -4,7 +4,6 @@
   .const WHITE = 1
   .const RED = 2
   .const GREEN = 5
-  jsr main
 main: {
     .label screen = $400
     .label cols = $d800

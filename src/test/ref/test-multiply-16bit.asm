@@ -4,7 +4,6 @@
   .label BGCOL = $d021
   .label print_char_cursor = $f
   .label print_line_cursor = 7
-  jsr main
 main: {
     lda #5
     sta BGCOL

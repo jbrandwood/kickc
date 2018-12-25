@@ -802,7 +802,7 @@ Allocated zp ZP_BYTE:37 [ main::bits_gen#7 ]
 INITIAL ASM
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label SCREEN = $400
@@ -1338,7 +1338,7 @@ Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:8 [ main::$1 main::$11 main::$21 main::
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label SCREEN = $400
@@ -1651,8 +1651,8 @@ Replacing label b5_from_b4 with b5
 Replacing label b1_from_b5 with b1
 Replacing label b1_from_b5 with b1
 Replacing label b6_from_b6 with b6
-Removing instruction bbegin:
 Removing instruction b1_from_bbegin:
+Removing instruction b1:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_b5:
 Removing instruction b7_from_b1:
@@ -1665,7 +1665,6 @@ Removing instruction b5_from_b10:
 Removing instruction b5_from_b4:
 Removing instruction b6_from_b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b1:
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b7:
@@ -1677,13 +1676,18 @@ Removing instruction b6_from_b11:
 Removing instruction b12:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Relabelling long label b2_from_b1 to b7
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b1
 Removing instruction jmp b6
 Succesful ASM optimization Pass5NextJumpElimination
-Fixing long branch [128] bcc b1 to bcs
-Fixing long branch [134] bcc b1 to bcs
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Fixing long branch [127] bcc b1 to bcs
+Fixing long branch [133] bcc b1 to bcs
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -1798,7 +1802,7 @@ reg byte a [ main::bits_gen#7 ]
 
 
 FINAL ASSEMBLER
-Score: 3114
+Score: 3108
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -1814,7 +1818,6 @@ Score: 3114
 //SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG4 @1
 //SEG5 [2] call main 
-  jsr main
 //SEG6 [3] phi from @1 to @end [phi:@1->@end]
 //SEG7 @end
 //SEG8 main

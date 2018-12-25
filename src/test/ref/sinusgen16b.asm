@@ -9,7 +9,6 @@
   .label print_line_cursor = $400
   .label rem16u = 2
   .label print_char_cursor = $b
-  jsr main
 main: {
     .label wavelength = $78
     .label sw = 8

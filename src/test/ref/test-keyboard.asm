@@ -56,7 +56,6 @@
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
-  jsr main
 main: {
     .label sc = 2
     .label screen = 2

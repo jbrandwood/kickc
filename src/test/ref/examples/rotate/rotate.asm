@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -14,6 +14,7 @@
   .label COS = $2000
   .label SPRITE = $3000
   .label SIN = COS+$40
+bbegin:
   jsr main
 main: {
     sei

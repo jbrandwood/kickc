@@ -2,7 +2,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label screen = 2
-  jsr main
 main: {
     lda #<$400
     sta screen

@@ -6,7 +6,6 @@
   .const RED = 2
   .label print_char_cursor = 5
   .label print_line_cursor = 7
-  jsr main
 main: {
     jsr print_cls
     lda #GREEN

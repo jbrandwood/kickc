@@ -3,7 +3,6 @@
 .pc = $80d "Program"
   .label print_line_cursor = 6
   .label print_char_cursor = 8
-  jsr main
 main: {
     .label _1 = 6
     .label _2 = $a

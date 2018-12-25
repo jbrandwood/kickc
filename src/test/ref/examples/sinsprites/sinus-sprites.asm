@@ -23,7 +23,6 @@
   .label progress_cursor = $a
   .label sin_idx_x = 2
   .label sin_idx_y = 3
-  jsr main
 main: {
     jsr init
     lda #0

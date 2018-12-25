@@ -1,0 +1,11 @@
+al C:314 .KERNEL_IRQ
+al C:844 .regx
+al C:d012 .RASTER
+al C:d020 .BORDERCOL
+al C:80d .bbegin
+al C:842 .rega
+al C:81f .irq
+al C:80b .upstartEnd
+al C:814 .main
+al C:2 .irq_raster_next
+al C:83a .b1

@@ -41,6 +41,7 @@
 (byte) GREEN
 (byte) GREY
 (void()**) HARDWARE_IRQ
+(const void()**) HARDWARE_IRQ#0 HARDWARE_IRQ = ((void()**))(word/dword/signed dword) 65534
 (byte) IRQ_COLLISION_BG
 (byte) IRQ_COLLISION_SPRITE
 (byte*) IRQ_ENABLE
@@ -49,11 +50,10 @@
 (byte) IRQ_RASTER
 (const byte) IRQ_RASTER#0 IRQ_RASTER = (byte/signed byte/word/signed word/dword/signed dword) 1
 (byte) IRQ_RASTER_FIRST
-(const byte) IRQ_RASTER_FIRST#0 IRQ_RASTER_FIRST = (byte/signed byte/word/signed word/dword/signed dword) 48
+(const byte) IRQ_RASTER_FIRST#0 IRQ_RASTER_FIRST = (byte/signed byte/word/signed word/dword/signed dword) 49
 (byte*) IRQ_STATUS
 (const byte*) IRQ_STATUS#0 IRQ_STATUS = ((byte*))(word/dword/signed dword) 53273
 (void()**) KERNEL_IRQ
-(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = ((void()**))(word/signed word/dword/signed dword) 788
 (byte*) LIGHTPEN_X
 (byte*) LIGHTPEN_Y
 (byte) LIGHT_BLUE
@@ -70,13 +70,17 @@
 (byte*) PLAYFIELD_SPRITE_PTRS
 (const byte*) PLAYFIELD_SPRITE_PTRS#0 PLAYFIELD_SPRITE_PTRS = (const byte*) PLAYFIELD_SCREEN#0+(const word) SPRITE_PTRS#0
 (byte*) PROCPORT
+(const byte*) PROCPORT#0 PROCPORT = ((byte*))(byte/signed byte/word/signed word/dword/signed dword) 1
 (byte) PROCPORT_BASIC_KERNEL_IO
 (byte*) PROCPORT_DDR
+(const byte*) PROCPORT_DDR#0 PROCPORT_DDR = ((byte*))(byte/signed byte/word/signed word/dword/signed dword) 0
 (byte) PROCPORT_DDR_MEMORY_MASK
+(const byte) PROCPORT_DDR_MEMORY_MASK#0 PROCPORT_DDR_MEMORY_MASK = (byte/signed byte/word/signed word/dword/signed dword) 7
 (byte) PROCPORT_KERNEL_IO
 (byte) PROCPORT_RAM_ALL
 (byte) PROCPORT_RAM_CHARROM
 (byte) PROCPORT_RAM_IO
+(const byte) PROCPORT_RAM_IO#0 PROCPORT_RAM_IO = (byte/signed byte/word/signed word/dword/signed dword) 53
 (byte) PURPLE
 (byte*) RASTER
 (const byte*) RASTER#0 RASTER = ((byte*))(word/dword/signed dword) 53266
@@ -154,18 +158,25 @@
 (byte) init_sprites::xpos
 (byte) init_sprites::xpos#1 xpos zp ZP_BYTE:2 7.333333333333333
 (byte) init_sprites::xpos#2 xpos zp ZP_BYTE:2 8.25
-interrupt(KERNEL_MIN)(void()) irq()
+interrupt(HARDWARE_CLOBBER)(void()) irq()
+(byte~) irq::$3 reg byte a 4.0
 (label) irq::@1
 (label) irq::@2
 (label) irq::@3
 (label) irq::@4
 (label) irq::@5
-(label) irq::@7
+(label) irq::@6
+(label) irq::@8
+(label) irq::@9
 (label) irq::@return
 (byte) irq::ptr
-(byte) irq::ptr#0 reg byte x 3.0
+(byte) irq::ptr#0 reg byte a 3.0
 (byte) irq::ptr#1 reg byte x 2.6666666666666665
 (byte) irq::ptr#2 reg byte x 4.0
+(byte) irq::raster_next
+(byte) irq::raster_next#0 reg byte x 2.6666666666666665
+(byte) irq::raster_next#1 reg byte x 4.0
+(byte) irq::raster_next#2 reg byte x 6.0
 (label) irq::toSpritePtr2
 (word~) irq::toSpritePtr2_$0
 (word~) irq::toSpritePtr2_$1
@@ -176,12 +187,12 @@ interrupt(KERNEL_MIN)(void()) irq()
 (byte) irq_cnt
 (byte) irq_cnt#0 irq_cnt zp ZP_BYTE:6 0.3076923076923077
 (byte) irq_cnt#1 irq_cnt zp ZP_BYTE:6 4.0
-(byte) irq_cnt#10 irq_cnt zp ZP_BYTE:6 20.0
+(byte) irq_cnt#13 irq_cnt zp ZP_BYTE:6 20.0
 (byte) irq_raster_next
 (byte) irq_raster_next#0 irq_raster_next zp ZP_BYTE:3 0.26666666666666666
 (byte) irq_raster_next#1 irq_raster_next zp ZP_BYTE:3 1.0
+(byte) irq_raster_next#12 irq_raster_next zp ZP_BYTE:3 6.0
 (byte) irq_raster_next#2 irq_raster_next zp ZP_BYTE:3 1.3333333333333333
-(byte) irq_raster_next#3 irq_raster_next zp ZP_BYTE:3 6.0
 (byte) irq_sprite_ptr
 (byte) irq_sprite_ptr#0 irq_sprite_ptr zp ZP_BYTE:5 0.3529411764705882
 (byte) irq_sprite_ptr#1 irq_sprite_ptr zp ZP_BYTE:5 20.0
@@ -203,11 +214,13 @@ interrupt(KERNEL_MIN)(void()) irq()
 
 reg byte x [ init_sprites::s#2 init_sprites::s#1 ]
 zp ZP_BYTE:2 [ init_sprites::xpos#2 init_sprites::xpos#1 ]
-zp ZP_BYTE:3 [ irq_raster_next#3 irq_raster_next#2 irq_raster_next#1 irq_raster_next#0 ]
+zp ZP_BYTE:3 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 irq_raster_next#0 ]
+reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ]
 zp ZP_BYTE:4 [ irq_sprite_ypos#0 irq_sprite_ypos#2 irq_sprite_ypos#1 ]
 zp ZP_BYTE:5 [ irq_sprite_ptr#0 irq_sprite_ptr#2 irq_sprite_ptr#1 ]
-zp ZP_BYTE:6 [ irq_cnt#0 irq_cnt#1 irq_cnt#10 ]
+zp ZP_BYTE:6 [ irq_cnt#0 irq_cnt#1 irq_cnt#13 ]
 reg byte a [ init_sprites::s2#0 ]
-reg byte x [ irq::ptr#0 ]
+reg byte a [ irq::ptr#0 ]
 reg byte x [ irq::ptr#1 ]
 reg byte x [ irq::ptr#2 ]
+reg byte a [ irq::$3 ]

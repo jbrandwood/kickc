@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testClobberAProblem() throws IOException, URISyntaxException {
+      compileAndCompare("clobber-a-problem");
+   }
+
+   @Test
    public void testInterruptVolatileReuseProblem2() throws IOException, URISyntaxException {
       compileAndCompare("interrupt-volatile-reuse-problem2");
    }

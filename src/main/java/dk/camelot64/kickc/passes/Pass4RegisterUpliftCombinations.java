@@ -96,7 +96,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       new Pass4RegistersFinalize(program).allocate(false);
       // Apply the uplift combination
       combination.allocate(program);
-      // Check the register allocation for whether a is register being allocated to two variables with overlapping live ranges
+      // Check the register allocation for whether any register is being allocated to two variables with overlapping live ranges
       if(isAllocationOverlapping(program)) {
          if(program.getLog().isVerboseUplift()) {
             StringBuilder msg = new StringBuilder();
@@ -198,7 +198,6 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * @return true if there is an overlapping register allocation
     */
    private static boolean isStatementAllocationOverlapping(Program program, Statement statement) {
-      ProgramScope programScope = program.getScope();
       LiveRangeVariablesEffective.AliveCombinations aliveCombinations = program.getLiveRangeVariablesEffective().getAliveCombinations(statement);
       for(LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
          LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters = new LinkedHashMap<>();

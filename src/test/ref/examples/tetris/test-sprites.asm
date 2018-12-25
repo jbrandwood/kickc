@@ -1,6 +1,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
+  .label PROCPORT_DDR = 0
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  .label PROCPORT = 1
+  .const PROCPORT_RAM_IO = $35
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -20,13 +24,13 @@
   .const CIA_INTERRUPT_CLEAR = $7f
   .label CIA2_PORT_A = $dd00
   .label CIA2_PORT_A_DDR = $dd02
-  .label KERNEL_IRQ = $314
+  .label HARDWARE_IRQ = $fffe
   .const BLACK = 0
   .const DARK_GREY = $b
   .label PLAYFIELD_SPRITES = $2000
   .label PLAYFIELD_CHARSET = $1000
   .label PLAYFIELD_SCREEN = $400
-  .const IRQ_RASTER_FIRST = $30
+  .const IRQ_RASTER_FIRST = $31
   .label PLAYFIELD_SPRITE_PTRS = PLAYFIELD_SCREEN+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label irq_raster_next = 3
@@ -52,6 +56,13 @@ main: {
 }
 init_irq: {
     sei
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    lda CIA1_INTERRUPT
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
     lda VIC_CONTROL
@@ -62,9 +73,9 @@ init_irq: {
     lda #IRQ_RASTER
     sta IRQ_ENABLE
     lda #<irq
-    sta KERNEL_IRQ
+    sta HARDWARE_IRQ
     lda #>irq
-    sta KERNEL_IRQ+1
+    sta HARDWARE_IRQ+1
     cli
     rts
 }
@@ -106,6 +117,8 @@ init_sprites: {
 }
 irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
+    sta rega+1
+    stx regx+1
     lda #DARK_GREY
     sta BORDERCOL
     lda irq_sprite_ypos
@@ -120,8 +133,9 @@ irq: {
     lda RASTER
     cmp irq_sprite_ypos
     bne b1
-    ldx irq_sprite_ptr
-    stx PLAYFIELD_SPRITE_PTRS
+    lda irq_sprite_ptr
+    sta PLAYFIELD_SPRITE_PTRS
+    tax
     inx
     stx PLAYFIELD_SPRITE_PTRS+1
     stx PLAYFIELD_SPRITE_PTRS+2
@@ -144,13 +158,23 @@ irq: {
     adc irq_sprite_ptr
     sta irq_sprite_ptr
   b3:
-    lda irq_raster_next
-    sta RASTER
+    ldx irq_raster_next
+    txa
+    and #7
+    cmp #3
+    bne b4
+    dex
+  b4:
+    stx RASTER
     lda #IRQ_RASTER
     sta IRQ_STATUS
     lda #BLACK
     sta BORDERCOL
-    jmp $ea81
+  rega:
+    lda #00
+  regx:
+    ldx #00
+    rti
   b2:
     lda #0
     sta irq_cnt

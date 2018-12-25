@@ -60,6 +60,17 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
       LiveRangeVariablesEffective.CallPaths callPaths = procedureCallPaths.get(procedureRef);
       if(callPaths == null) {
          callPaths = new LiveRangeVariablesEffective.CallPaths(procedureRef);
+
+         if(procedure.getInterruptType()!=null) {
+            // Interrupt is called outside procedure scope - create initial call-path.
+            ArrayList<CallGraph.CallBlock.Call> rootPath = new ArrayList<>();
+            ArrayList<VariableRef> rootAlive = new ArrayList<>();
+            // Initialize with global cross-scope aliases (assumed empty)
+            Pass2AliasElimination.Aliases rootAliases = new Pass2AliasElimination.Aliases();
+            LiveRangeVariablesEffective.CallPath rootCallPath = new LiveRangeVariablesEffective.CallPath(rootPath, rootAlive, rootAliases, rootAliases);
+            callPaths.add(rootCallPath);
+         }
+
          Collection<CallGraph.CallBlock.Call> callers =
                getProgram().getCallGraph().getCallers(procedure.getLabel().getRef());
          for(CallGraph.CallBlock.Call caller : callers) {

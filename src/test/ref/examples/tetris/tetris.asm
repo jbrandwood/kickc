@@ -39,7 +39,7 @@
   .const COLLISION_LEFT = 4
   .const COLLISION_RIGHT = 8
   .label SCREEN = $400
-  .label CHARSET = $2000
+  .label CHARSET = $2800
   .label keyboard_events_size = $13
   .label current_ypos = 2
   .label current_xpos = $11

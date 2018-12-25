@@ -100,14 +100,12 @@ public class TestPrograms {
       compileAndCompare("tetris-npe");
    }
 
-   //@Test
-   //public void testUnrollCall() throws IOException, URISyntaxException {
-   //   compileAndCompare("unroll-call");
-   //}
+   @Test
+   public void testUnrollCall() throws IOException, URISyntaxException {
+      compileAndCompare("unroll-call");
+   }
+   */
 
-
-
-*/
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
       compileAndCompare("examples/fastmultiply/fastmultiply8.kc");

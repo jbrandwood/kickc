@@ -1,0 +1,123 @@
+// A sprite multiplexer covering the playfield with a black layer to give the pixel perfect 3-single-color NES playfield
+import "c64"
+
+// Address of the sprites covering the playfield
+const byte* PLAYFIELD_SPRITES = $2000;
+// Address for the charset
+const byte* PLAYFIELD_CHARSET = $1000;
+// Address of the screen
+const byte* PLAYFIELD_SCREEN = $0400;
+
+// Screen Sprite pointers
+const byte* PLAYFIELD_SPRITE_PTRS = (PLAYFIELD_SCREEN+SPRITE_PTRS);
+
+// Setup the sprites
+void init_sprites() {
+	vicSelectGfxBank(PLAYFIELD_SCREEN);
+	*D018 = toD018(PLAYFIELD_SCREEN, PLAYFIELD_CHARSET);
+    *SPRITES_ENABLE = %00001111;
+    *SPRITES_EXPAND_X = *SPRITES_EXPAND_Y = *SPRITES_MC = 0;
+    byte xpos = 24+14*8;
+    for(byte s:0..3) {
+    	byte s2 = s<<1;
+		SPRITES_XPOS[s2] = xpos;
+		SPRITES_COLS[s] = BLACK;
+		xpos = xpos+24;
+    }
+}
+
+// The line of the first IRQ - 48 is 2 lines before the start of the screen
+const byte IRQ_RASTER_FIRST = 49;
+// The raster line of the next IRQ
+volatile byte irq_raster_next = IRQ_RASTER_FIRST;
+// Y-pos of the sprites on the next IRQ
+volatile byte irq_sprite_ypos = 50;
+// Index of the sprites to show on the next IRQ
+volatile byte irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES);
+// Counting the 10 IRQs
+volatile byte irq_cnt = 0;
+
+// Setup the IRQ
+void init_irq() {
+    asm { sei }
+    // Acknowledge any IRQ and setup the next one
+    *IRQ_STATUS = IRQ_RASTER;
+    asm { lda CIA1_INTERRUPT }
+
+    // Disable kernal & basic
+    *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+    *PROCPORT = PROCPORT_RAM_IO;
+    // Disable CIA 1 Timer IRQ
+    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    // Set raster line
+    *VIC_CONTROL &=$7f;
+    *RASTER = IRQ_RASTER_FIRST;
+    // Enable Raster Interrupt
+    *IRQ_ENABLE = IRQ_RASTER;
+    // Set the IRQ routine
+    *HARDWARE_IRQ = &irq;
+    asm { cli }
+}
+
+
+// Raster Interrupt Routine - sets up the sprites covering the playfield
+// Repeats 10 timers every 21 lines from line IRQ_RASTER_FIRST
+interrupt(hardware_clobber) void irq() {
+
+    *BORDERCOL = DARK_GREY;
+    // Place the sprites
+    byte ypos = irq_sprite_ypos;
+	SPRITES_YPOS[0] = ypos;
+	SPRITES_YPOS[2] = ypos;
+	SPRITES_YPOS[4] = ypos;
+	SPRITES_YPOS[6] = ypos;
+
+	// Wait for the y-position before changing sprite pointers
+	do {
+	} while(*RASTER!=irq_sprite_ypos);
+
+	byte ptr = irq_sprite_ptr;
+	PLAYFIELD_SPRITE_PTRS[0] = ptr++;
+	PLAYFIELD_SPRITE_PTRS[1] = ptr;
+	PLAYFIELD_SPRITE_PTRS[2] = ptr++;
+	PLAYFIELD_SPRITE_PTRS[3] = ptr;
+
+    // Find next raster line / sprite positions
+    if(++irq_cnt==10) {
+    	irq_cnt = 0;
+    	irq_raster_next = IRQ_RASTER_FIRST;
+    	irq_sprite_ypos = 50;
+    	irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES);
+    } else {
+    	irq_raster_next += 21;
+    	irq_sprite_ypos += 21;
+    	irq_sprite_ptr += 3;
+    }
+
+    // Setup next interrupt - start 1 line earlier when overlapping a badline
+    byte raster_next = irq_raster_next;
+    if((raster_next&7)==3) {
+    	raster_next -=1;
+    }
+    *RASTER = raster_next;
+    // Acknowledge the IRQ and setup the next one
+    *IRQ_STATUS = IRQ_RASTER;
+
+    *BORDERCOL = BLACK;
+
+}
+
+kickasm(pc PLAYFIELD_SPRITES, resource "nes-playfield.png") {{
+	.var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))
+	.for(var sy=0;sy<10;sy++) {
+		.for(var sx=0;sx<3;sx++) {
+	    	.for (var y=0;y<21; y++) {
+		    	.for (var c=0; c<3; c++) {
+	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y)
+	            }
+	        }
+	    	.byte 0
+	  	}
+	}
+}}
+

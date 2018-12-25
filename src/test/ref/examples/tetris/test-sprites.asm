@@ -188,7 +188,7 @@ irq: {
 	.for(var sy=0;sy<10;sy++) {
 		.for(var sx=0;sx<3;sx++) {
 	    	.for (var y=0;y<21; y++) {
-		    	.for (var c=0; c<3; c++) {	    			
+		    	.for (var c=0; c<3; c++) {
 	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y)
 	            }
 	        }

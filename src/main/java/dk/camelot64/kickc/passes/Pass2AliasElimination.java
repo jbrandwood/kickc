@@ -212,12 +212,13 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   }
                }
             } else if(statement instanceof StatementPhiBlock) {
+               boolean modified = false;
                StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
                Iterator<StatementPhiBlock.PhiVariable> variableIterator = phiBlock.getPhiVariables().iterator();
                while(variableIterator.hasNext()) {
                   StatementPhiBlock.PhiVariable phiVariable = variableIterator.next();
                   AliasSet aliasSet = aliases.findAliasSet(phiVariable.getVariable());
-                  if(aliasSet != null) {
+                  if(aliasSet != null && phiVariable.getValues().size()>0) {
                      boolean remove = true;
                      for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                         if(!aliasSet.contains(phiRValue.getrValue())) {
@@ -227,10 +228,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      }
                      if(remove) {
                         variableIterator.remove();
+                        modified = true;
                      }
                   }
                }
-               if(phiBlock.getPhiVariables().size() == 0) {
+               if(modified && phiBlock.getPhiVariables().size() == 0) {
                   iterator.remove();
                }
             }

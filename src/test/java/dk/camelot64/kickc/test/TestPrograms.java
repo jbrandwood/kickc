@@ -84,30 +84,30 @@ public class TestPrograms {
       compileAndCompare("examples/tetris/tetris");
    }
 
+   @Test
+   public void testVarInitProblem() throws IOException, URISyntaxException {
+      compileAndCompare("var-init-problem");
+   }
+
    /*
-      @Test
-      public void testVarInitProblem() throws IOException, URISyntaxException {
-         compileAndCompare("var-init-problem");
-      }
+   @Test
+   public void testConstIfProblem() throws IOException, URISyntaxException {
+      compileAndCompare("const-if-problem");
+   }
 
-      @Test
-      public void testConstIfProblem() throws IOException, URISyntaxException {
-         compileAndCompare("const-if-problem");
-      }
+   @Test
+   public void testTetrisNullPointer() throws IOException, URISyntaxException {
+      compileAndCompare("tetris-npe");
+   }
 
-      @Test
-      public void testTetrisNullPointer() throws IOException, URISyntaxException {
-         compileAndCompare("tetris-npe");
-      }
-
-      //@Test
-      //public void testUnrollCall() throws IOException, URISyntaxException {
-      //   compileAndCompare("unroll-call");
-      //}
+   //@Test
+   //public void testUnrollCall() throws IOException, URISyntaxException {
+   //   compileAndCompare("unroll-call");
+   //}
 
 
 
-   */
+*/
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
       compileAndCompare("examples/fastmultiply/fastmultiply8.kc");
@@ -1182,6 +1182,7 @@ public class TestPrograms {
 
    /**
     * Ensures that the path to the passed file is created.
+    *
     * @param file The file to create a path for
     */
    private void mkPath(File file) {
@@ -1201,7 +1202,6 @@ public class TestPrograms {
       }
       return binDir;
    }
-
 
 
 }

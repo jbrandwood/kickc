@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -22,8 +22,6 @@
   .label plex_free_next = 3
   .label plex_show_idx = 4
   .label plex_sprite_msb = 5
-bbegin:
-  jsr main
 main: {
     sei
     jsr init

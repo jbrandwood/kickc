@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   .label PROCPORT_DDR = 0
   .const PROCPORT_DDR_MEMORY_MASK = 7
@@ -24,15 +24,6 @@
   .const SIN_SIZE = $200
   .label sin2 = $1400
   .label rem16u = 2
-bbegin:
-  .label pc_restore = *
-    .pc = $1400
-    .for(var i=0; i<512; i++) {
-  	  .word sin(toRadians([i*360]/512))*320
-    }
-    .pc = pc_restore
-
-  jsr main
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)>>6
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>BITMAP)>>2&$f
@@ -789,3 +780,8 @@ fill: {
   bitmap_plot_bit: .fill $100, 0
   .align $100
   sin: .fill 2*$200, 0
+.pc = sin2 "Inline"
+  .for(var i=0; i<512; i++) {
+  	  .word sin(toRadians([i*360]/512))*320
+    }
+

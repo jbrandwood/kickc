@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   .label xr = $f0
   .label yr = $f1
@@ -9,8 +9,6 @@
   .label PERSP_Z = $2400
   .label print_char_cursor = 4
   .label print_line_cursor = 2
-bbegin:
-  jsr main
 main: {
     sei
     jsr mulf_init

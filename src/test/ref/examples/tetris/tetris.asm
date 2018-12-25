@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -61,8 +61,6 @@
   .label current_piece_73 = 5
   .label current_piece_74 = 5
   .label current_piece_75 = 5
-bbegin:
-  jsr main
 main: {
     .label key_event = $14
     .label render = $15

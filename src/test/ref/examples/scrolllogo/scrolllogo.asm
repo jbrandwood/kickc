@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -21,8 +21,6 @@
   .const XSIN_SIZE = $200
   .label rem16u = 2
   .label xsin_idx = 2
-bbegin:
-  jsr main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>LOGO)>>2&$f
     sei

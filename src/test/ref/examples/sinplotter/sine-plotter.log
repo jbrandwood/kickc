@@ -703,12 +703,9 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   (word) SIN_SIZE#0 ← (word/signed word/dword/signed dword) 512
   (signed word[512]) sin#0 ← { fill( 512, 0) }
   (signed word*) sin2#0 ← ((signed word*)) (word/signed word/dword/signed dword) 5120
-  kickasm {{ .label pc_restore = *
-    .pc = $1400
-    .for(var i=0; i<512; i++) {
+  kickasm(location (signed word*) sin2#0) {{ .for(var i=0; i<512; i++) {
   	  .word sin(toRadians([i*360]/512))*320
     }
-    .pc = pc_restore
  }}
   to:@32
 main: scope:[main]  from @32
@@ -2641,12 +2638,9 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@29
 @29: scope:[]  from @begin
-  kickasm {{ .label pc_restore = *
-    .pc = $1400
-    .for(var i=0; i<512; i++) {
+  kickasm(location (const signed word*) sin2#0) {{ .for(var i=0; i<512; i++) {
   	  .word sin(toRadians([i*360]/512))*320
     }
-    .pc = pc_restore
  }}
   to:@32
 @32: scope:[]  from @29
@@ -3766,14 +3760,7 @@ bbegin:
   jmp b29
 //SEG3 @29
 b29:
-//SEG4 kickasm {{ .label pc_restore = *     .pc = $1400     .for(var i=0; i<512; i++) {   	  .word sin(toRadians([i*360]/512))*320     }     .pc = pc_restore  }}
-  .label pc_restore = *
-    .pc = $1400
-    .for(var i=0; i<512; i++) {
-  	  .word sin(toRadians([i*360]/512))*320
-    }
-    .pc = pc_restore
-
+//SEG4 kickasm(location (const signed word*) sin2#0) {{ .for(var i=0; i<512; i++) {   	  .word sin(toRadians([i*360]/512))*320     }  }}
 //SEG5 [2] phi from @29 to @32 [phi:@29->@32]
 b32_from_b29:
   jmp b32
@@ -5447,6 +5434,11 @@ fill: {
   bitmap_plot_bit: .fill $100, 0
   .align $100
   sin: .fill 2*$200, 0
+.pc = sin2 "Inline"
+  .for(var i=0; i<512; i++) {
+  	  .word sin(toRadians([i*360]/512))*320
+    }
+
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Equivalence Class zp ZP_BYTE:193 [ bitmap_init::$4 ] has ALU potential.
@@ -5928,14 +5920,7 @@ bbegin:
   jmp b29
 //SEG3 @29
 b29:
-//SEG4 kickasm {{ .label pc_restore = *     .pc = $1400     .for(var i=0; i<512; i++) {   	  .word sin(toRadians([i*360]/512))*320     }     .pc = pc_restore  }}
-  .label pc_restore = *
-    .pc = $1400
-    .for(var i=0; i<512; i++) {
-  	  .word sin(toRadians([i*360]/512))*320
-    }
-    .pc = pc_restore
-
+//SEG4 kickasm(location (const signed word*) sin2#0) {{ .for(var i=0; i<512; i++) {   	  .word sin(toRadians([i*360]/512))*320     }  }}
 //SEG5 [2] phi from @29 to @32 [phi:@29->@32]
 b32_from_b29:
   jmp b32
@@ -7381,6 +7366,11 @@ fill: {
   bitmap_plot_bit: .fill $100, 0
   .align $100
   sin: .fill 2*$200, 0
+.pc = sin2 "Inline"
+  .for(var i=0; i<512; i++) {
+  	  .word sin(toRadians([i*360]/512))*320
+    }
+
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b29
@@ -7504,6 +7494,7 @@ Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction b29:
 Removing instruction b32_from_b29:
+Removing instruction b32:
 Removing instruction bend_from_b32:
 Removing instruction vicSelectGfxBank1_toDd001_from_vicSelectGfxBank1:
 Removing instruction vicSelectGfxBank1_toDd001:
@@ -7551,7 +7542,6 @@ Removing instruction b10_from_b1:
 Removing instruction b2_from_b10:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b32:
 Removing instruction bend:
 Removing instruction vicSelectGfxBank1:
 Removing instruction vicSelectGfxBank1_b1:
@@ -7627,6 +7617,9 @@ Removing instruction breturn:
 Removing instruction b1_from_fill:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Skipping double jump to b2 in bne b10
 Skipping double jump to b2 in bne b10
 Skipping double jump to b3 in beq b15
@@ -7645,6 +7638,7 @@ Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction bbegin:
 Removing instruction b10:
 Removing instruction b15:
 Removing instruction b10:
@@ -7653,8 +7647,8 @@ Removing unreachable instruction jmp b2
 Removing unreachable instruction jmp b3
 Removing unreachable instruction jmp b2
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [150] bcc b1 to bcs
-Fixing long branch [156] bcc b1 to bcs
+Fixing long branch [141] bcc b1 to bcs
+Fixing long branch [147] bcc b1 to bcs
 
 FINAL SYMBOL TABLE
 (label) @29
@@ -8171,11 +8165,11 @@ reg byte a [ bitmap_init::$7 ]
 
 
 FINAL ASSEMBLER
-Score: 28381
+Score: 28375
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
   .label PROCPORT_DDR = 0
@@ -8202,20 +8196,11 @@ Score: 28381
   .label sin2 = $1400
   .label rem16u = 2
 //SEG2 @begin
-bbegin:
 //SEG3 @29
-//SEG4 kickasm {{ .label pc_restore = *     .pc = $1400     .for(var i=0; i<512; i++) {   	  .word sin(toRadians([i*360]/512))*320     }     .pc = pc_restore  }}
-  .label pc_restore = *
-    .pc = $1400
-    .for(var i=0; i<512; i++) {
-  	  .word sin(toRadians([i*360]/512))*320
-    }
-    .pc = pc_restore
-
+//SEG4 kickasm(location (const signed word*) sin2#0) {{ .for(var i=0; i<512; i++) {   	  .word sin(toRadians([i*360]/512))*320     }  }}
 //SEG5 [2] phi from @29 to @32 [phi:@29->@32]
 //SEG6 @32
 //SEG7 [3] call main 
-  jsr main
 //SEG8 [4] phi from @32 to @end [phi:@32->@end]
 //SEG9 @end
 //SEG10 main
@@ -9437,4 +9422,9 @@ fill: {
   bitmap_plot_bit: .fill $100, 0
   .align $100
   sin: .fill 2*$200, 0
+.pc = sin2 "Inline"
+  .for(var i=0; i<512; i++) {
+  	  .word sin(toRadians([i*360]/512))*320
+    }
+
 

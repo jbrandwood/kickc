@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -35,8 +35,6 @@
   .label COSQ = SINQ+$40
   .label sx = 2
   .label sy = 3
-bbegin:
-  jsr main
 main: {
     sei
     jsr sprites_init

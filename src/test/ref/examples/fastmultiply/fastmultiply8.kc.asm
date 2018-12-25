@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   .label print_line_cursor = $400
   .label ap = $fd
@@ -7,8 +7,6 @@
   .label cp = $ff
   .label mulf_sqr1 = $2000
   .label mulf_sqr2 = $2200
-bbegin:
-  jsr main
 main: {
     .label at = 2
     .label at_3 = 5

@@ -27,9 +27,11 @@
   .label HARDWARE_IRQ = $fffe
   .const BLACK = 0
   .const DARK_GREY = $b
-  .label PLAYFIELD_SPRITES = $2000
-  .label PLAYFIELD_CHARSET = $1000
   .label PLAYFIELD_SCREEN = $400
+  .label PLAYFIELD_SPRITES = $2000
+  .label PLAYFIELD_CHARSET = $2800
+  .const PLAYFIELD_LINES = $16
+  .const PLAYFIELD_COLS = $a
   .const IRQ_RASTER_FIRST = $31
   .label PLAYFIELD_SPRITE_PTRS = PLAYFIELD_SCREEN+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6

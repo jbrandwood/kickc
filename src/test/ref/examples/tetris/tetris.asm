@@ -29,6 +29,8 @@
   .label SID_VOICE3_CONTROL = $d412
   .const SID_CONTROL_NOISE = $80
   .label SID_VOICE3_OSC = $d41b
+  .label PLAYFIELD_SCREEN = $400
+  .label PLAYFIELD_CHARSET = $2800
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
   .const current_movedown_slow = $32
@@ -38,37 +40,35 @@
   .const COLLISION_BOTTOM = 2
   .const COLLISION_LEFT = 4
   .const COLLISION_RIGHT = 8
-  .label SCREEN = $400
-  .label CHARSET = $2800
   .label keyboard_events_size = $13
+  .label current_movedown_counter = 3
   .label current_ypos = 2
   .label current_xpos = $11
   .label current_orientation = $e
   .label current_piece_gfx = $f
   .label current_piece = $c
   .label current_piece_color = $12
-  .label current_movedown_counter = 3
-  .label current_piece_15 = 5
-  .label current_xpos_63 = 4
-  .label current_piece_gfx_64 = 5
-  .label current_piece_color_67 = 7
+  .label current_piece_12 = 5
+  .label current_xpos_48 = 4
+  .label current_piece_gfx_53 = 5
+  .label current_piece_color_62 = 7
   .label current_xpos_96 = 4
   .label current_piece_gfx_87 = 5
   .label current_piece_gfx_88 = 5
   .label current_piece_color_75 = 7
   .label current_piece_color_76 = 7
+  .label current_piece_71 = 5
   .label current_piece_72 = 5
   .label current_piece_73 = 5
   .label current_piece_74 = 5
-  .label current_piece_75 = 5
 main: {
     .label key_event = $14
     .label render = $15
     jsr sid_rnd_init
     sei
     jsr render_init
-    jsr tables_init
-    jsr spawn_current
+    jsr play_init
+    jsr play_spawn_current
     jsr render_playfield
     lda current_piece_gfx
     sta current_piece_gfx_87
@@ -77,10 +77,10 @@ main: {
     lda current_piece_color
     sta current_piece_color_75
     lda #3
-    sta current_xpos_63
+    sta current_xpos_48
     ldx #0
     jsr render_current
-    ldy spawn_current._3
+    ldy play_spawn_current._3
     lda PIECES,y
     sta current_piece
     lda PIECES+1,y
@@ -157,19 +157,19 @@ render_current: {
     sta screen_line
     lda screen_lines+1,y
     sta screen_line+1
-    lda current_xpos_63
+    lda current_xpos_48
     sta xpos
     ldx #0
   b3:
     ldy i
-    lda (current_piece_gfx_64),y
+    lda (current_piece_gfx_53),y
     inc i
     cmp #0
     beq b4
     lda xpos
     cmp #PLAYFIELD_COLS
     bcs b4
-    lda current_piece_color_67
+    lda current_piece_color_62
     ldy xpos
     sta (screen_line),y
   b4:
@@ -241,14 +241,14 @@ play_move_rotate: {
     sta orientation
   b4:
     lda current_xpos
-    sta collision.xpos
+    sta play_collision.xpos
     ldy current_ypos
     ldx orientation
     lda current_piece
-    sta current_piece_75
+    sta current_piece_74
     lda current_piece+1
-    sta current_piece_75+1
-    jsr collision
+    sta current_piece_74+1
+    jsr play_collision
     cmp #COLLISION_NONE
     bne b3
     lda orientation
@@ -269,7 +269,7 @@ play_move_rotate: {
     sta orientation
     jmp b4
 }
-collision: {
+play_collision: {
     .label xpos = 7
     .label piece_gfx = 5
     .label ypos2 = 8
@@ -368,14 +368,14 @@ play_move_leftright: {
     bne b3
     ldy current_xpos
     iny
-    sty collision.xpos
+    sty play_collision.xpos
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_74
+    sta current_piece_73
     lda current_piece+1
-    sta current_piece_74+1
-    jsr collision
+    sta current_piece_73+1
+    jsr play_collision
     cmp #COLLISION_NONE
     bne b3
     inc current_xpos
@@ -389,14 +389,14 @@ play_move_leftright: {
   b1:
     ldx current_xpos
     dex
-    stx collision.xpos
+    stx play_collision.xpos
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_73
+    sta current_piece_72
     lda current_piece+1
-    sta current_piece_73+1
-    jsr collision
+    sta current_piece_72+1
+    jsr play_collision
     cmp #COLLISION_NONE
     bne b3
     dec current_xpos
@@ -431,19 +431,19 @@ play_move_down: {
     ldy current_ypos
     iny
     lda current_xpos
-    sta collision.xpos
+    sta play_collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_72
+    sta current_piece_71
     lda current_piece+1
-    sta current_piece_72+1
-    jsr collision
+    sta current_piece_71+1
+    jsr play_collision
     cmp #COLLISION_NONE
     beq b6
-    jsr lock_current
-    jsr remove_lines
-    jsr spawn_current
-    ldy spawn_current._3
+    jsr play_lock_current
+    jsr play_remove_lines
+    jsr play_spawn_current
+    ldy play_spawn_current._3
     lda PIECES,y
     sta current_piece
     lda PIECES+1,y
@@ -466,7 +466,7 @@ play_move_down: {
     inc current_ypos
     jmp b7
 }
-spawn_current: {
+play_spawn_current: {
     .label _3 = 2
     ldx #7
   b1:
@@ -493,7 +493,7 @@ sid_rnd: {
     lda SID_VOICE3_OSC
     rts
 }
-remove_lines: {
+play_remove_lines: {
     .label c = 7
     .label x = 3
     .label y = 2
@@ -545,7 +545,7 @@ remove_lines: {
     dex
     jmp b5
 }
-lock_current: {
+play_lock_current: {
     .label ypos2 = 2
     .label playfield_line = 5
     .label col = 7
@@ -736,7 +736,7 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
-tables_init: {
+play_init: {
     .label pli = 5
     .label idx = 2
     lda #0
@@ -782,9 +782,9 @@ render_init: {
     lda #BLACK
     sta BGCOL
     ldx #$d0
-    lda #<SCREEN
+    lda #<PLAYFIELD_SCREEN
     sta fill.addr
-    lda #>SCREEN
+    lda #>PLAYFIELD_SCREEN
     sta fill.addr+1
     jsr fill
     ldx #BLACK
@@ -906,13 +906,13 @@ sid_rnd_init: {
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
   PIECES_COLORS: .byte WHITE, LIGHT_GREY, GREEN, LIGHT_GREY, WHITE, WHITE, GREEN
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
-  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
-  playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
   screen_lines: .fill 2*(PLAYFIELD_LINES+3), 0
-.pc = CHARSET "Inline"
-  .var charset = LoadPicture("charset.png", List().add($000000, $ffffff, $523fa0, $77c1c9))
-    .for (var c=0; c<16; c++)
+  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
+  playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
+.pc = PLAYFIELD_CHARSET "Inline"
+  .var charset = LoadPicture("nes-charset.png", List().add($000000, $ffffff))
+    .for (var c=0; c<32; c++)
         .for (var y=0;y<8; y++)
-            .byte charset.getMulticolorByte(c,y)
+            .byte charset.getSinglecolorByte(c,y)
 

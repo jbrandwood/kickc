@@ -1,10 +1,15 @@
 import "tetris-data"
 
-kickasm(pc PLAYFIELD_CHARSET, resource "nes-charset.png") {{
-  .var charset = LoadPicture("nes-charset.png", List().add($000000, $ffffff))
-    .for (var c=0; c<32; c++)
-        .for (var y=0;y<8; y++)
-            .byte charset.getSinglecolorByte(c,y)
+kickasm(pc PLAYFIELD_CHARSET, resource "nes-screen.imap") {{
+    .fill 8,$00 // Place a filled char at the start of the charset
+    .import binary "nes-screen.imap"
+}}
+
+const byte PLAYFIELD_SCREEN_ORIGINAL_WIDTH=32;
+const byte* PLAYFIELD_SCREEN_ORIGINAL = $2c00;
+// Address of the screen data original
+kickasm(pc PLAYFIELD_SCREEN_ORIGINAL, resource "nes-screen.iscr") {{
+  .import binary "nes-screen.iscr"
 }}
 
 // Pointers to the screen address for rendering each playfield line
@@ -12,25 +17,50 @@ byte*[PLAYFIELD_LINES+3] screen_lines;
 
 // Initialize rendering
 void render_init() {
-	*BGCOL = BLACK;
-	// Clear the screen
-	fill(PLAYFIELD_SCREEN,1000,$d0);
-	fill(COLS,1000,BLACK);
+	vicSelectGfxBank(PLAYFIELD_SCREEN);
+	*D018 = toD018(PLAYFIELD_SCREEN, PLAYFIELD_CHARSET);
+	// Enable Extended Background Color Mode
+	*D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3;
+	*BGCOL1 = BLACK;
+	*BGCOL2 = BLUE;
+	*BGCOL3 = CYAN;
+	*BGCOL4 = GREY;
+	fill(COLS,1000,DARK_GREY);
+	render_screen_original(PLAYFIELD_SCREEN);
+
 	// Initialize the screen line pointers;
-	byte* li = COLS + 40 + 15;
+	byte* li = PLAYFIELD_SCREEN + 40 + 16;
 	for(byte i:0..PLAYFIELD_LINES+2) {
 		screen_lines[i<<1] = li;
 		li += 40;
 	}
 	// Prepare the playfield frame
-	byte* line = COLS + 14;
+	byte* line = COLS + 15;
 	for(byte l:0..PLAYFIELD_LINES+1) {
 		for(byte c:0..PLAYFIELD_COLS+1) {
-			*(line+c) = DARK_GREY;
+			*(line+c) = WHITE;
 		}
 		line +=40;
 	}
 
+}
+
+// Copy the original screen data to the passed screen
+void render_screen_original(byte* screen) {
+    byte SPACE = 0;
+	byte* orig = PLAYFIELD_SCREEN_ORIGINAL+32*2;
+	for(byte y:0..24) {
+	    byte x=0;
+	    do {
+	        *screen++ = SPACE;
+	    } while(++x!=4);
+	    do {
+	        *screen++ = (*orig++)+1; // +$c0 to get grey background, +1 because the charset is loaded to PLAYFIELD_CHARSET+8
+	    } while(++x!=36);
+	    do {
+	        *screen++ = SPACE;
+	    } while(++x!=40);
+	}
 }
 
 // Render the static playfield on the screen
@@ -56,7 +86,7 @@ void render_current() {
 				byte current_cell = current_piece_gfx[i++];
 				if(current_cell!=0) {
 					if(xpos<PLAYFIELD_COLS) {
-						screen_line[xpos] = current_piece_color;
+						screen_line[xpos] = current_piece_char;
 					}
 				}
 				xpos++;

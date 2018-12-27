@@ -3,15 +3,26 @@
 .pc = $80d "Program"
   .label RASTER = $d012
   .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BGCOL1 = $d021
+  .label BGCOL2 = $d022
+  .label BGCOL3 = $d023
+  .label BGCOL4 = $d024
+  .label D011 = $d011
+  .const VIC_ECM = $40
+  .const VIC_DEN = $10
+  .const VIC_RSEL = 8
+  .label D018 = $d018
   .label COLS = $d800
   .label CIA1_PORT_A = $dc00
   .label CIA1_PORT_B = $dc01
+  .label CIA2_PORT_A = $dd00
+  .label CIA2_PORT_A_DDR = $dd02
   .const BLACK = 0
   .const WHITE = 1
-  .const GREEN = 5
+  .const CYAN = 3
+  .const BLUE = 6
   .const DARK_GREY = $b
-  .const LIGHT_GREY = $f
+  .const GREY = $c
   .const KEY_Z = $c
   .const KEY_LSHIFT = $f
   .const KEY_X = $17
@@ -33,6 +44,7 @@
   .label PLAYFIELD_CHARSET = $2800
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
+  .label PLAYFIELD_SCREEN_ORIGINAL = $2c00
   .const current_movedown_slow = $32
   .const current_movedown_fast = 5
   .const COLLISION_NONE = 0
@@ -47,16 +59,16 @@
   .label current_orientation = $e
   .label current_piece_gfx = $f
   .label current_piece = $c
-  .label current_piece_color = $12
+  .label current_piece_char = $12
   .label current_piece_12 = 5
   .label current_xpos_48 = 4
   .label current_piece_gfx_53 = 5
-  .label current_piece_color_62 = 7
+  .label current_piece_char_62 = 7
   .label current_xpos_96 = 4
   .label current_piece_gfx_87 = 5
   .label current_piece_gfx_88 = 5
-  .label current_piece_color_75 = 7
-  .label current_piece_color_76 = 7
+  .label current_piece_char_75 = 7
+  .label current_piece_char_76 = 7
   .label current_piece_71 = 5
   .label current_piece_72 = 5
   .label current_piece_73 = 5
@@ -74,8 +86,8 @@ main: {
     sta current_piece_gfx_87
     lda current_piece_gfx+1
     sta current_piece_gfx_87+1
-    lda current_piece_color
-    sta current_piece_color_75
+    lda current_piece_char
+    sta current_piece_char_75
     lda #3
     sta current_xpos_48
     ldx #0
@@ -129,8 +141,8 @@ main: {
     sta current_piece_gfx_88
     lda current_piece_gfx+1
     sta current_piece_gfx_88+1
-    lda current_piece_color
-    sta current_piece_color_76
+    lda current_piece_char
+    sta current_piece_char_76
     jsr render_current
   b10:
     dec BORDERCOL
@@ -169,7 +181,7 @@ render_current: {
     lda xpos
     cmp #PLAYFIELD_COLS
     bcs b4
-    lda current_piece_color_62
+    lda current_piece_char_62
     ldy xpos
     sta (screen_line),y
   b4:
@@ -480,8 +492,8 @@ play_spawn_current: {
     sta current_piece_gfx
     lda PIECES+1,y
     sta current_piece_gfx+1
-    lda PIECES_COLORS,x
-    sta current_piece_color
+    lda PIECES_CHARS,x
+    sta current_piece_char
     rts
   b2:
     jsr sid_rnd
@@ -576,7 +588,7 @@ play_lock_current: {
     lda (current_piece_gfx),y
     cmp #0
     beq b3
-    lda current_piece_color
+    lda current_piece_char
     ldy col
     sta (playfield_line),y
   b3:
@@ -775,27 +787,33 @@ play_init: {
     rts
 }
 render_init: {
-    .label _10 = $c
+    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN)>>6
+    .const toD0181_return = (>(PLAYFIELD_SCREEN&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+    .label _15 = $c
     .label li = 5
     .label line = 5
     .label l = 2
+    lda #3
+    sta CIA2_PORT_A_DDR
+    lda #vicSelectGfxBank1_toDd001_return
+    sta CIA2_PORT_A
+    lda #toD0181_return
+    sta D018
+    lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
+    sta D011
     lda #BLACK
-    sta BGCOL
-    ldx #$d0
-    lda #<PLAYFIELD_SCREEN
-    sta fill.addr
-    lda #>PLAYFIELD_SCREEN
-    sta fill.addr+1
+    sta BGCOL1
+    lda #BLUE
+    sta BGCOL2
+    lda #CYAN
+    sta BGCOL3
+    lda #GREY
+    sta BGCOL4
     jsr fill
-    ldx #BLACK
-    lda #<COLS
-    sta fill.addr
-    lda #>COLS
-    sta fill.addr+1
-    jsr fill
-    lda #<COLS+$28+$f
+    jsr render_screen_original
+    lda #<PLAYFIELD_SCREEN+$28+$10
     sta li
-    lda #>COLS+$28+$f
+    lda #>PLAYFIELD_SCREEN+$28+$10
     sta li+1
     ldx #0
   b1:
@@ -818,9 +836,9 @@ render_init: {
     bne b1
     lda #0
     sta l
-    lda #<COLS+$e
+    lda #<COLS+$f
     sta line
-    lda #>COLS+$e
+    lda #>COLS+$f
     sta line+1
   b2:
     ldx #0
@@ -828,13 +846,13 @@ render_init: {
     txa
     clc
     adc line
-    sta _10
+    sta _15
     lda #0
     adc line+1
-    sta _10+1
-    lda #DARK_GREY
+    sta _15+1
+    lda #WHITE
     ldy #0
-    sta (_10),y
+    sta (_15),y
     inx
     cpx #PLAYFIELD_COLS+1+1
     bne b3
@@ -851,18 +869,78 @@ render_init: {
     bne b2
     rts
 }
-fill: {
-    .label end = $c
-    .label addr = 5
-    lda addr
-    clc
-    adc #<$3e8
-    sta end
-    lda addr+1
-    adc #>$3e8
-    sta end+1
+render_screen_original: {
+    .const SPACE = 0
+    .label screen = $c
+    .label orig = 5
+    .label y = 2
+    lda #0
+    sta y
+    lda #<PLAYFIELD_SCREEN_ORIGINAL+$20*2
+    sta orig
+    lda #>PLAYFIELD_SCREEN_ORIGINAL+$20*2
+    sta orig+1
+    lda #<PLAYFIELD_SCREEN
+    sta screen
+    lda #>PLAYFIELD_SCREEN
+    sta screen+1
   b1:
-    txa
+    ldx #0
+  b2:
+    lda #SPACE
+    ldy #0
+    sta (screen),y
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    inx
+    cpx #4
+    bne b2
+  b3:
+    ldy #0
+    lda (orig),y
+    clc
+    adc #1
+    sta (screen),y
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    inc orig
+    bne !+
+    inc orig+1
+  !:
+    inx
+    cpx #$24
+    bne b3
+  b4:
+    lda #SPACE
+    ldy #0
+    sta (screen),y
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    inx
+    cpx #$28
+    bne b4
+    inc y
+    lda y
+    cmp #$19
+    bne b1
+    rts
+}
+fill: {
+    .const size = $3e8
+    .label end = COLS+size
+    .label addr = 5
+    lda #<COLS
+    sta addr
+    lda #>COLS
+    sta addr+1
+  b1:
+    lda #DARK_GREY
     ldy #0
     sta (addr),y
     inc addr
@@ -870,10 +948,10 @@ fill: {
     inc addr+1
   !:
     lda addr+1
-    cmp end+1
+    cmp #>end
     bne b1
     lda addr
-    cmp end
+    cmp #<end
     bne b1
     rts
 }
@@ -904,15 +982,16 @@ sid_rnd_init: {
   PIECE_O: .byte 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
-  PIECES_COLORS: .byte WHITE, LIGHT_GREY, GREEN, LIGHT_GREY, WHITE, WHITE, GREEN
+  PIECES_CHARS: .byte $57, $58, $98, $58, $57, $57, $98
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
   screen_lines: .fill 2*(PLAYFIELD_LINES+3), 0
   PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
   playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
 .pc = PLAYFIELD_CHARSET "Inline"
-  .var charset = LoadPicture("nes-charset.png", List().add($000000, $ffffff))
-    .for (var c=0; c<32; c++)
-        .for (var y=0;y<8; y++)
-            .byte charset.getSinglecolorByte(c,y)
+  .fill 8,$00 // Place a filled char at the start of the charset
+    .import binary "nes-screen.imap"
+
+.pc = PLAYFIELD_SCREEN_ORIGINAL "Inline"
+  .import binary "nes-screen.iscr"
 

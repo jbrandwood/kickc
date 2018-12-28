@@ -80,26 +80,27 @@
   .label irq_sprite_ypos = $15
   .label irq_sprite_ptr = $16
   .label irq_cnt = $17
-  .label current_movedown_counter = 3
-  .label current_ypos = 2
+  .label current_movedown_counter = 2
+  .label current_ypos = $b
   .label current_xpos = $11
   .label current_orientation = $e
   .label current_piece_gfx = $f
   .label current_piece = $c
   .label current_piece_char = $12
-  .label current_piece_12 = 5
-  .label current_xpos_48 = 4
-  .label current_piece_gfx_53 = 5
-  .label current_piece_char_63 = 7
-  .label current_xpos_104 = 4
-  .label current_piece_gfx_95 = 5
-  .label current_piece_gfx_96 = 5
-  .label current_piece_char_83 = 7
-  .label current_piece_char_84 = 7
-  .label current_piece_73 = 5
-  .label current_piece_74 = 5
-  .label current_piece_75 = 5
-  .label current_piece_76 = 5
+  .label current_piece_12 = 4
+  .label current_xpos_48 = 3
+  .label current_piece_gfx_53 = 4
+  .label current_piece_char_63 = 6
+  .label current_xpos_105 = 3
+  .label current_xpos_106 = 3
+  .label current_piece_gfx_95 = 4
+  .label current_piece_gfx_96 = 4
+  .label current_piece_char_83 = 6
+  .label current_piece_char_84 = 6
+  .label current_piece_73 = 4
+  .label current_piece_74 = 4
+  .label current_piece_75 = 4
+  .label current_piece_76 = 4
 bbegin:
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
@@ -121,15 +122,15 @@ main: {
     jsr play_init
     jsr play_spawn_current
     jsr render_playfield
+    ldx current_ypos
+    lda current_xpos
+    sta current_xpos_105
     lda current_piece_gfx
     sta current_piece_gfx_95
     lda current_piece_gfx+1
     sta current_piece_gfx_95+1
     lda current_piece_char
     sta current_piece_char_83
-    lda #3
-    sta current_xpos_48
-    ldx #0
     jsr render_current
     ldy play_spawn_current._3
     lda PIECES,y
@@ -139,10 +140,6 @@ main: {
     lda #0
     sta current_movedown_counter
     sta keyboard_events_size
-    sta current_ypos
-    lda #3
-    sta current_xpos
-    lda #0
     sta current_orientation
   b4:
     lda RASTER
@@ -175,7 +172,7 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
-    sta current_xpos_104
+    sta current_xpos_106
     lda current_piece_gfx
     sta current_piece_gfx_96
     lda current_piece_gfx+1
@@ -188,11 +185,11 @@ main: {
     jmp b4
 }
 render_current: {
-    .label ypos2 = 8
+    .label ypos2 = 7
     .label screen_line = $1a
-    .label xpos = $b
-    .label i = $a
-    .label l = 9
+    .label xpos = $a
+    .label i = 9
+    .label l = 8
     txa
     asl
     sta ypos2
@@ -254,9 +251,9 @@ render_current: {
     jmp b3
 }
 render_playfield: {
-    .label screen_line = 5
-    .label i = 7
-    .label l = 4
+    .label screen_line = 4
+    .label i = 6
+    .label l = 3
     lda #PLAYFIELD_COLS*2
     sta i
     lda #2
@@ -290,7 +287,7 @@ render_playfield: {
     rts
 }
 play_move_rotate: {
-    .label orientation = 4
+    .label orientation = 3
     cmp #KEY_Z
     beq b1
     cmp #KEY_X
@@ -336,17 +333,17 @@ play_move_rotate: {
     jmp b4
 }
 play_collision: {
-    .label xpos = 7
-    .label piece_gfx = 5
-    .label ypos2 = 8
+    .label xpos = 6
+    .label piece_gfx = 4
+    .label ypos2 = 7
     .label playfield_line = $1a
     .label i = $1c
-    .label col = $b
-    .label l = 9
-    .label i_2 = $a
-    .label i_3 = $a
-    .label i_11 = $a
-    .label i_13 = $a
+    .label col = $a
+    .label l = 8
+    .label i_2 = 9
+    .label i_3 = 9
+    .label i_11 = 9
+    .label i_13 = 9
     txa
     clc
     adc piece_gfx
@@ -514,11 +511,8 @@ play_move_down: {
     sta current_piece
     lda PIECES+1,y
     sta current_piece+1
-    lda #3
-    sta current_xpos
     lda #0
     sta current_orientation
-    sta current_ypos
   b7:
     lda #0
     sta current_movedown_counter
@@ -546,6 +540,10 @@ play_spawn_current: {
     sta current_piece_gfx
     lda PIECES+1,y
     sta current_piece_gfx+1
+    lda PIECES_START_X,x
+    sta current_xpos
+    lda PIECES_START_Y,x
+    sta current_ypos
     lda PIECES_CHARS,x
     sta current_piece_char
     rts
@@ -563,7 +561,7 @@ play_remove_lines: {
     .label c = 7
     .label x = 3
     .label y = 2
-    .label full = 4
+    .label full = 6
     lda #0
     sta y
     ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
@@ -612,15 +610,15 @@ play_remove_lines: {
     jmp b5
 }
 play_lock_current: {
-    .label ypos2 = 2
-    .label playfield_line = 5
-    .label col = 7
-    .label i = 8
-    .label l = 3
-    .label i_2 = 4
-    .label i_3 = 4
-    .label i_7 = 4
-    .label i_9 = 4
+    .label ypos2 = $b
+    .label playfield_line = 4
+    .label col = 6
+    .label i = 7
+    .label l = 2
+    .label i_2 = 3
+    .label i_3 = 3
+    .label i_7 = 3
+    .label i_9 = 3
     asl ypos2
     lda #0
     sta l
@@ -669,8 +667,8 @@ play_lock_current: {
     jmp b2
 }
 keyboard_event_pressed: {
-    .label row_bits = 7
-    .label keycode = 4
+    .label row_bits = 6
+    .label keycode = 3
     lda keycode
     lsr
     lsr
@@ -699,9 +697,9 @@ keyboard_event_get: {
     rts
 }
 keyboard_event_scan: {
-    .label row_scan = 8
-    .label keycode = 7
-    .label row = 4
+    .label row_scan = 7
+    .label keycode = 6
+    .label row = 3
     lda #0
     sta keycode
     sta row
@@ -803,7 +801,7 @@ keyboard_matrix_read: {
     rts
 }
 play_init: {
-    .label pli = 5
+    .label pli = 4
     .label idx = 2
     lda #0
     sta idx
@@ -897,8 +895,8 @@ render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN)>>6
     .const toD0181_return = (>(PLAYFIELD_SCREEN&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
     .label _18 = $c
-    .label li = 5
-    .label line = 5
+    .label li = 4
+    .label line = 4
     .label l = 2
     lda #3
     sta CIA2_PORT_A_DDR
@@ -979,7 +977,7 @@ render_init: {
 render_screen_original: {
     .const SPACE = 0
     .label screen = $c
-    .label orig = 5
+    .label orig = 4
     .label y = 2
     lda #0
     sta y
@@ -1041,7 +1039,7 @@ render_screen_original: {
 fill: {
     .const size = $3e8
     .label end = COLS+size
-    .label addr = 5
+    .label addr = 4
     lda #<COLS
     sta addr
     lda #>COLS
@@ -1152,12 +1150,14 @@ irq: {
   .align $40
   PIECE_L: .byte 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0
   .align $40
-  PIECE_J: .byte 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0
+  PIECE_J: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
   .align $40
   PIECE_O: .byte 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
   PIECES_CHARS: .byte $57, $58, $98, $58, $57, $57, $98
+  PIECES_START_X: .byte 4, 4, 4, 4, 4, 3, 4
+  PIECES_START_Y: .byte 2, 1, 1, 1, 2, 0, 1
   screen_lines: .fill 2*PLAYFIELD_LINES, 0
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0

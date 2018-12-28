@@ -185,7 +185,7 @@ irq: {
     sta irq_sprite_ptr
     jmp b3
 }
-.pc = PLAYFIELD_SPRITES "Inline"
+.pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
   .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))
 	.for(var sy=0;sy<10;sy++) {
 		.for(var sx=0;sx<3;sx++) {

@@ -1071,27 +1071,27 @@ sprites_init: {
   rotation_matrix: .fill 9, 0
   xs: .byte -$34, -$34, -$34, 0, 0, $34, $34, $34
   ys: .byte -$34, 0, $34, -$34, $34, -$34, 0, $34
-.pc = mulf_sqr1 "Inline"
+.pc = mulf_sqr1 "mulf_sqr1"
   .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
 
-.pc = mulf_sqr2 "Inline"
+.pc = mulf_sqr2 "mulf_sqr2"
   .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
     }
 
-.pc = SPRITE "Inline"
+.pc = SPRITE "SPRITE"
   .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
 
-.pc = PERSP_Z "Inline"
+.pc = PERSP_Z "PERSP_Z"
   {
     .var d = 256.0	
     .var z0 = 6.0	
@@ -1105,7 +1105,7 @@ sprites_init: {
     }
 	}
 
-.pc = SINH "Inline"
+.pc = SINH "SINH"
   {
     .var min = -$2000
     .var max = $2000
@@ -1116,7 +1116,7 @@ sprites_init: {
     }
     }
 
-.pc = SINQ "Inline"
+.pc = SINQ "SINQ"
   {
     .var min = -$1000
     .var max = $1000
@@ -1127,7 +1127,7 @@ sprites_init: {
     }
     }
 
-.pc = SINH_LO "Inline"
+.pc = SINH_LO "SINH_LO"
   {
     .var min = -$2000
     .var max = $2000
@@ -1138,7 +1138,7 @@ sprites_init: {
     }
     }
 
-.pc = SINH_HI "Inline"
+.pc = SINH_HI "SINH_HI"
   {
     .var min = -$2000
     .var max = $2000
@@ -1149,7 +1149,7 @@ sprites_init: {
     }
     }
 
-.pc = SINQ_LO "Inline"
+.pc = SINQ_LO "SINQ_LO"
   {
     .var min = -$1000
     .var max = $1000
@@ -1160,7 +1160,7 @@ sprites_init: {
     }
     }
 
-.pc = SINQ_HI "Inline"
+.pc = SINQ_HI "SINQ_HI"
   {
     .var min = -$1000
     .var max = $1000

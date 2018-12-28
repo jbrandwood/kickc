@@ -254,14 +254,14 @@ plexInit: {
   PLEX_YPOS: .fill PLEX_COUNT, 0
   PLEX_PTR: .fill PLEX_COUNT, 0
   PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
-.pc = YSIN "Inline"
+.pc = YSIN "YSIN"
   .var min = 50
     .var max = 250-21
     .var ampl = max-min;
     .for(var i=0;i<256;i++)
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
 
-.pc = SPRITE "Inline"
+.pc = SPRITE "SPRITE"
   .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)

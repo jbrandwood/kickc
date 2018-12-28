@@ -780,7 +780,7 @@ fill: {
   bitmap_plot_bit: .fill $100, 0
   .align $100
   sin: .fill 2*$200, 0
-.pc = sin2 "Inline"
+.pc = sin2 "sin2"
   .for(var i=0; i<512; i++) {
   	  .word sin(toRadians([i*360]/512))*320
     }

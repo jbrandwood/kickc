@@ -328,7 +328,7 @@ mulf_init: {
   mulf_sqr2_hi: .fill $200, 0
   xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
   ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
-.pc = COS "Inline"
+.pc = COS "COS"
   {
     .var min = -$7fff
     .var max = $7fff
@@ -339,7 +339,7 @@ mulf_init: {
     }
     }
 
-.pc = SPRITE "Inline"
+.pc = SPRITE "SPRITE"
   .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)

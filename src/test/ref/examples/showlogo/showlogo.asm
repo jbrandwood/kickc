@@ -87,7 +87,7 @@ fill: {
     bne b1
     rts
 }
-.pc = LOGO "Inline"
+.pc = LOGO "LOGO"
   .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)

@@ -268,6 +268,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testKasmPc() throws IOException, URISyntaxException {
+      compileAndCompare("test-kasm-pc");
+   }
+
+   @Test
    public void testKasm() throws IOException, URISyntaxException {
       compileAndCompare("test-kasm");
    }

@@ -1,0 +1,328 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) TABLE#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
+  to:@1
+main: scope:[main]  from @1
+  (byte*) TABLE#4 ← phi( @1/(byte*) TABLE#2 )
+  (byte*) main::BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
+  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte*) main::BORDERCOL#2 ← phi( main/(byte*) main::BORDERCOL#0 main::@2/(byte*) main::BORDERCOL#1 )
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (byte*) TABLE#3 ← phi( main/(byte*) TABLE#4 main::@2/(byte*) TABLE#1 )
+  if(true) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte*) main::BORDERCOL#1 ← phi( main::@1/(byte*) main::BORDERCOL#2 )
+  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
+  (byte*) TABLE#1 ← phi( main::@1/(byte*) TABLE#3 )
+  *((byte*) main::BORDERCOL#1) ← *((byte*) TABLE#1 + (byte) main::i#2)
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) TABLE#2 ← phi( @begin/(byte*) TABLE#0 )
+  kickasm(location (byte*) TABLE#2) {{ .byte 1, 2, 3
+ }}
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) TABLE
+(byte*) TABLE#0
+(byte*) TABLE#1
+(byte*) TABLE#2
+(byte*) TABLE#3
+(byte*) TABLE#4
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte*) main::BORDERCOL
+(byte*) main::BORDERCOL#0
+(byte*) main::BORDERCOL#1
+(byte*) main::BORDERCOL#2
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+(byte) main::i#3
+
+Culled Empty Block (label) @2
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (byte*) TABLE#1 = (byte*) TABLE#3 
+Alias (byte) main::i#2 = (byte) main::i#3 
+Alias (byte*) main::BORDERCOL#1 = (byte*) main::BORDERCOL#2 
+Alias (byte*) TABLE#0 = (byte*) TABLE#2 
+Successful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (byte*) TABLE#1
+Self Phi Eliminated (byte*) main::BORDERCOL#1
+Successful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte*) TABLE#4 (byte*) TABLE#0
+Redundant Phi (byte*) TABLE#1 (byte*) TABLE#4
+Redundant Phi (byte*) main::BORDERCOL#1 (byte*) main::BORDERCOL#0
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte*) TABLE#0 = ((byte*))8192
+Constant (const byte*) main::BORDERCOL#0 = ((byte*))53280
+Constant (const byte) main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination if(true) goto main::@2
+Successful SSA optimization Pass2ConstantIfs
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Inlining constant with var siblings (const byte) main::i#0
+Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 1 initial phi equivalence classes
+Coalesced [8] main::i#4 ← main::i#1
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3
+ }}
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::i#1 )
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2)
+  [7] (byte) main::i#1 ← ++ (byte) main::i#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) TABLE
+(void()) main()
+(byte*) main::BORDERCOL
+(byte) main::i
+(byte) main::i#1 22.0
+(byte) main::i#2 16.5
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label TABLE = $2000
+//SEG2 @begin
+bbegin:
+  jmp b1
+//SEG3 @1
+b1:
+//SEG4 kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3  }}
+//SEG5 [2] call main 
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label BORDERCOL = $d020
+    .label i = 2
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG12 main::@1
+  b1:
+    jmp b2
+  //SEG13 main::@2
+  b2:
+  //SEG14 [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+    ldy i
+    lda TABLE,y
+    sta BORDERCOL
+  //SEG15 [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG17 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
+}
+.pc = TABLE "TABLE"
+  .byte 1, 2, 3
+
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 2814 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 2814 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label TABLE = $2000
+//SEG2 @begin
+bbegin:
+  jmp b1
+//SEG3 @1
+b1:
+//SEG4 kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3  }}
+//SEG5 [2] call main 
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label BORDERCOL = $d020
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+  //SEG12 main::@1
+  b1:
+    jmp b2
+  //SEG13 main::@2
+  b2:
+  //SEG14 [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    lda TABLE,x
+    sta BORDERCOL
+  //SEG15 [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG16 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG17 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b1
+}
+.pc = TABLE "TABLE"
+  .byte 1, 2, 3
+
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1 with b2
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b1_from_b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) TABLE
+(const byte*) TABLE#0 TABLE = ((byte*))(word/signed word/dword/signed dword) 8192
+(void()) main()
+(label) main::@1
+(label) main::@2
+(byte*) main::BORDERCOL
+(const byte*) main::BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) 53280
+(byte) main::i
+(byte) main::i#1 reg byte x 22.0
+(byte) main::i#2 reg byte x 16.5
+
+reg byte x [ main::i#2 main::i#1 ]
+
+
+FINAL ASSEMBLER
+Score: 2715
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label TABLE = $2000
+//SEG2 @begin
+//SEG3 @1
+//SEG4 kickasm(location (const byte*) TABLE#0) {{ .byte 1, 2, 3  }}
+//SEG5 [2] call main 
+//SEG6 [4] phi from @1 to main [phi:@1->main]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label BORDERCOL = $d020
+  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+  //SEG12 main::@1
+  //SEG13 main::@2
+  b2:
+  //SEG14 [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    lda TABLE,x
+    sta BORDERCOL
+  //SEG15 [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG16 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG17 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp b2
+}
+.pc = TABLE "TABLE"
+  .byte 1, 2, 3
+
+

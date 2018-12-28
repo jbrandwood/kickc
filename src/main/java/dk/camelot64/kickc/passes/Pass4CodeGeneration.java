@@ -115,7 +115,11 @@ public class Pass4CodeGeneration {
                StatementKickAsm statementKasm = (StatementKickAsm) statement;
                if(statementKasm.getLocation() != null) {
                   String asmLocation = AsmFormat.getAsmConstant(program, (ConstantValue) statementKasm.getLocation(), 99, ScopeRef.ROOT);
-                  asm.addLine(new AsmSetPc("Inline", asmLocation));
+                  String segmentName = "Inline";
+                  if(asmLocation.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+                     segmentName = asmLocation;
+                  }
+                  asm.addLine(new AsmSetPc(segmentName, asmLocation));
                   addKickAsm(asm, statementKasm);
                }
             }

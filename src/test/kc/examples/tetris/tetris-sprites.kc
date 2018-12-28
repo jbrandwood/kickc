@@ -17,12 +17,10 @@ kickasm(pc PLAYFIELD_SPRITES, resource "nes-playfield.png") {{
 }}
 
 // Setup the sprites
-void init_sprites() {
-	vicSelectGfxBank(PLAYFIELD_SCREEN);
-	*D018 = toD018(PLAYFIELD_SCREEN, PLAYFIELD_CHARSET);
+void sprites_init() {
     *SPRITES_ENABLE = %00001111;
     *SPRITES_EXPAND_X = *SPRITES_EXPAND_Y = *SPRITES_MC = 0;
-    byte xpos = 24+14*8;
+    byte xpos = 24+15*8;
     for(byte s:0..3) {
     	byte s2 = s<<1;
 		SPRITES_XPOS[s2] = xpos;
@@ -43,7 +41,7 @@ volatile byte irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES);
 volatile byte irq_cnt = 0;
 
 // Setup the IRQ
-void init_irq() {
+void sprites_irq_init() {
     asm { sei }
     // Acknowledge any IRQ and setup the next one
     *IRQ_STATUS = IRQ_RASTER;

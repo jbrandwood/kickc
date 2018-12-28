@@ -50,13 +50,21 @@ bbegin:
   sta irq_cnt
   jsr main
 main: {
-    jsr init_sprites
-    jsr init_irq
+    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN)>>6
+    .const toD0181_return = (>(PLAYFIELD_SCREEN&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+    lda #3
+    sta CIA2_PORT_A_DDR
+    lda #vicSelectGfxBank1_toDd001_return
+    sta CIA2_PORT_A
+    lda #toD0181_return
+    sta D018
+    jsr sprites_init
+    jsr sprites_irq_init
   b2:
     inc PLAYFIELD_SCREEN
     jmp b2
 }
-init_irq: {
+sprites_irq_init: {
     sei
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -81,23 +89,15 @@ init_irq: {
     cli
     rts
 }
-init_sprites: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN)>>6
-    .const toD0181_return = (>(PLAYFIELD_SCREEN&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+sprites_init: {
     .label xpos = 2
-    lda #3
-    sta CIA2_PORT_A_DDR
-    lda #vicSelectGfxBank1_toDd001_return
-    sta CIA2_PORT_A
-    lda #toD0181_return
-    sta D018
     lda #$f
     sta SPRITES_ENABLE
     lda #0
     sta SPRITES_MC
     sta SPRITES_EXPAND_Y
     sta SPRITES_EXPAND_X
-    lda #$18+$e*8
+    lda #$18+$f*8
     sta xpos
     ldx #0
   b1:

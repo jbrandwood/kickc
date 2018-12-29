@@ -82,21 +82,21 @@
   .label irq_cnt = $17
   .label current_movedown_counter = 2
   .label current_ypos = $b
-  .label current_xpos = $11
-  .label current_orientation = $e
   .label current_piece_gfx = $f
-  .label current_piece = $c
+  .label current_xpos = $11
   .label current_piece_char = $12
+  .label current_orientation = $e
+  .label current_piece = $c
   .label current_piece_12 = 4
-  .label current_xpos_48 = 3
-  .label current_piece_gfx_53 = 4
-  .label current_piece_char_63 = 6
-  .label current_xpos_105 = 3
-  .label current_xpos_106 = 3
-  .label current_piece_gfx_95 = 4
-  .label current_piece_gfx_96 = 4
-  .label current_piece_char_83 = 6
-  .label current_piece_char_84 = 6
+  .label current_xpos_47 = 3
+  .label current_piece_gfx_52 = 4
+  .label current_piece_char_62 = 6
+  .label current_xpos_109 = 3
+  .label current_xpos_110 = 3
+  .label current_piece_gfx_99 = 4
+  .label current_piece_gfx_100 = 4
+  .label current_piece_char_87 = 6
+  .label current_piece_char_88 = 6
   .label current_piece_73 = 4
   .label current_piece_74 = 4
   .label current_piece_75 = 4
@@ -124,13 +124,13 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
-    sta current_xpos_105
+    sta current_xpos_109
     lda current_piece_gfx
-    sta current_piece_gfx_95
+    sta current_piece_gfx_99
     lda current_piece_gfx+1
-    sta current_piece_gfx_95+1
+    sta current_piece_gfx_99+1
     lda current_piece_char
-    sta current_piece_char_83
+    sta current_piece_char_87
     jsr render_current
     ldy play_spawn_current._3
     lda PIECES,y
@@ -172,13 +172,13 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
-    sta current_xpos_106
+    sta current_xpos_110
     lda current_piece_gfx
-    sta current_piece_gfx_96
+    sta current_piece_gfx_100
     lda current_piece_gfx+1
-    sta current_piece_gfx_96+1
+    sta current_piece_gfx_100+1
     lda current_piece_char
-    sta current_piece_char_84
+    sta current_piece_char_88
     jsr render_current
   b10:
     dec BORDERCOL
@@ -228,19 +228,19 @@ render_current: {
     sta screen_line
     lda screen_lines+1,y
     sta screen_line+1
-    lda current_xpos_48
+    lda current_xpos_47
     sta xpos
     ldx #0
   b4:
     ldy i
-    lda (current_piece_gfx_53),y
+    lda (current_piece_gfx_52),y
     inc i
     cmp #0
     beq b5
     lda xpos
     cmp #PLAYFIELD_COLS
     bcs b5
-    lda current_piece_char_63
+    lda current_piece_char_62
     ldy xpos
     sta (screen_line),y
   b5:
@@ -1172,7 +1172,7 @@ irq: {
   PIECE_O: .byte 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
-  PIECES_CHARS: .byte $57, $58, $98, $58, $57, $57, $98
+  PIECES_CHARS: .byte $58, $59, $99, $59, $58, $58, $99
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 3, 4
   PIECES_START_Y: .byte 2, 1, 1, 1, 2, 0, 1
   screen_lines: .fill 2*PLAYFIELD_LINES, 0

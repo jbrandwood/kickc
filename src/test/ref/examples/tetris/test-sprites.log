@@ -95,6 +95,8 @@ CONTROL FLOW GRAPH SSA
   (byte*~) $1 ← (byte*) PLAYFIELD_SCREEN_2#0 + (word) SPRITE_PTRS#0
   (byte*) PLAYFIELD_SPRITE_PTRS_2#0 ← (byte*~) $1
   (byte*) PLAYFIELD_SCREEN_ORIGINAL#0 ← ((byte*)) (word/signed word/dword/signed dword) 6144
+  (byte*) PLAYFIELD_COLORS_ORIGINAL#0 ← ((byte*)) (word/signed word/dword/signed dword) 7168
+  (byte*) PLAYFIELD_EXTENDED_ORIGINAL#0 ← ((byte*)) (word/signed word/dword/signed dword) 5120
   (byte*) PLAYFIELD_SPRITES#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (byte*) PLAYFIELD_CHARSET#0 ← ((byte*)) (word/signed word/dword/signed dword) 10240
   (byte) PLAYFIELD_LINES#0 ← (byte/signed byte/word/signed word/dword/signed dword) 22
@@ -104,7 +106,7 @@ CONTROL FLOW GRAPH SSA
   (byte) render_screen_render#0 ← (byte/signed byte/word/signed word/dword/signed dword) 64
   (byte) render_screen_show#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  kickasm(location (byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))
+  kickasm(location (byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
 	.for(var sy=0;sy<10;sy++) {
 		.for(var sx=0;sx<3;sx++) {
 	    	.for (var y=0;y<21; y++) {
@@ -521,8 +523,12 @@ SYMBOL TABLE SSA
 (byte) PINK#0
 (byte*) PLAYFIELD_CHARSET
 (byte*) PLAYFIELD_CHARSET#0
+(byte*) PLAYFIELD_COLORS_ORIGINAL
+(byte*) PLAYFIELD_COLORS_ORIGINAL#0
 (byte) PLAYFIELD_COLS
 (byte) PLAYFIELD_COLS#0
+(byte*) PLAYFIELD_EXTENDED_ORIGINAL
+(byte*) PLAYFIELD_EXTENDED_ORIGINAL#0
 (byte) PLAYFIELD_LINES
 (byte) PLAYFIELD_LINES#0
 (byte*) PLAYFIELD_SCREEN_1
@@ -1039,6 +1045,8 @@ Constant (const byte) LIGHT_GREY#0 = 15
 Constant (const byte*) PLAYFIELD_SCREEN_1#0 = ((byte*))1024
 Constant (const byte*) PLAYFIELD_SCREEN_2#0 = ((byte*))11264
 Constant (const byte*) PLAYFIELD_SCREEN_ORIGINAL#0 = ((byte*))6144
+Constant (const byte*) PLAYFIELD_COLORS_ORIGINAL#0 = ((byte*))7168
+Constant (const byte*) PLAYFIELD_EXTENDED_ORIGINAL#0 = ((byte*))5120
 Constant (const byte*) PLAYFIELD_SPRITES#0 = ((byte*))8192
 Constant (const byte*) PLAYFIELD_CHARSET#0 = ((byte*))10240
 Constant (const byte) PLAYFIELD_LINES#0 = 22
@@ -1197,7 +1205,7 @@ FINAL CONTROL FLOW GRAPH
   to:@4
 @4: scope:[]  from @begin
   [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))
+  kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
 	.for(var sy=0;sy<10;sy++) {
 		.for(var sx=0;sx<3;sx++) {
 	    	.for (var y=0;y<21; y++) {
@@ -1404,7 +1412,9 @@ VARIABLE REGISTER WEIGHTS
 (byte) ORANGE
 (byte) PINK
 (byte*) PLAYFIELD_CHARSET
+(byte*) PLAYFIELD_COLORS_ORIGINAL
 (byte) PLAYFIELD_COLS
+(byte*) PLAYFIELD_EXTENDED_ORIGINAL
 (byte) PLAYFIELD_LINES
 (byte*) PLAYFIELD_SCREEN_1
 (byte*) PLAYFIELD_SCREEN_2
@@ -1663,7 +1673,7 @@ b4:
 //SEG4 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta render_screen_showing
-//SEG5 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000)) 	.for(var sy=0;sy<10;sy++) { 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
+//SEG5 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	.for(var sy=0;sy<10;sy++) { 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
   jmp b5
 //SEG6 @5
 b5:
@@ -2046,7 +2056,7 @@ sprites_irq: {
     jmp b3
 }
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
-  .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))
+  .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
 	.for(var sy=0;sy<10;sy++) {
 		.for(var sx=0;sx<3;sx++) {
 	    	.for (var y=0;y<21; y++) {
@@ -2284,7 +2294,7 @@ b4:
 //SEG4 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta render_screen_showing
-//SEG5 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000)) 	.for(var sy=0;sy<10;sy++) { 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
+//SEG5 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	.for(var sy=0;sy<10;sy++) { 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
   jmp b5
 //SEG6 @5
 b5:
@@ -2625,7 +2635,7 @@ sprites_irq: {
     jmp b3
 }
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
-  .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))
+  .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
 	.for(var sy=0;sy<10;sy++) {
 		.for(var sx=0;sx<3;sx++) {
 	    	.for (var y=0;y<21; y++) {
@@ -2778,8 +2788,10 @@ FINAL SYMBOL TABLE
 (byte) PINK
 (byte*) PLAYFIELD_CHARSET
 (const byte*) PLAYFIELD_CHARSET#0 PLAYFIELD_CHARSET = ((byte*))(word/signed word/dword/signed dword) 10240
+(byte*) PLAYFIELD_COLORS_ORIGINAL
 (byte) PLAYFIELD_COLS
 (const byte) PLAYFIELD_COLS#0 PLAYFIELD_COLS = (byte/signed byte/word/signed word/dword/signed dword) 10
+(byte*) PLAYFIELD_EXTENDED_ORIGINAL
 (byte) PLAYFIELD_LINES
 (const byte) PLAYFIELD_LINES#0 PLAYFIELD_LINES = (byte/signed byte/word/signed word/dword/signed dword) 22
 (byte*) PLAYFIELD_SCREEN_1
@@ -3023,7 +3035,7 @@ bbegin:
 //SEG4 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta render_screen_showing
-//SEG5 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000)) 	.for(var sy=0;sy<10;sy++) { 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
+//SEG5 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	.for(var sy=0;sy<10;sy++) { 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
 //SEG6 @5
 //SEG7 [3] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
   lda #IRQ_RASTER_FIRST
@@ -3301,7 +3313,7 @@ sprites_irq: {
     jmp b3
 }
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
-  .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))
+  .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
 	.for(var sy=0;sy<10;sy++) {
 		.for(var sx=0;sx<3;sx++) {
 	    	.for (var y=0;y<21; y++) {

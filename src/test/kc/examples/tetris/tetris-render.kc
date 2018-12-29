@@ -1,14 +1,22 @@
 import "tetris-data"
 
-kickasm(pc PLAYFIELD_CHARSET, resource "nes-screen.imap") {{
+kickasm(pc PLAYFIELD_CHARSET, resource "playfield-screen.imap") {{
     .fill 8,$00 // Place a filled char at the start of the charset
-    .import binary "nes-screen.imap"
+    .import binary "playfield-screen.imap"
 }}
 
 const byte PLAYFIELD_SCREEN_ORIGINAL_WIDTH=32;
-// Address of the screen data original
-kickasm(pc PLAYFIELD_SCREEN_ORIGINAL, resource "nes-screen.iscr") {{
-  .import binary "nes-screen.iscr"
+kickasm(pc PLAYFIELD_SCREEN_ORIGINAL, resource "playfield-screen.iscr") {{
+  .import binary "playfield-screen.iscr"
+}}
+
+// Original Color Data
+kickasm(pc PLAYFIELD_COLORS_ORIGINAL, resource "playfield-screen.col") {{
+  .import binary "playfield-screen.col"
+}}
+// Original Extended Color Data
+kickasm(pc PLAYFIELD_EXTENDED_ORIGINAL, resource "playfield-extended.col") {{
+  .import binary "playfield-extended.col"
 }}
 
 // Pointers to the screen address for rendering each playfield line
@@ -30,16 +38,6 @@ void render_init() {
     // Setup chars on the screens
 	render_screen_original(PLAYFIELD_SCREEN_1);
 	render_screen_original(PLAYFIELD_SCREEN_2);
-	fill(COLS,1000,DARK_GREY);
-
-	// Fill the playfield frame with the white background color
-	byte* line = COLS + 4*40 + 16;
-	for(byte l:2..PLAYFIELD_LINES-1) {
-		for(byte c:0..PLAYFIELD_COLS-1) {
-			*(line+c) = WHITE;
-		}
-		line +=40;
-	}
 
 	// Initialize the screen line pointers;
 	byte* li_1 = PLAYFIELD_SCREEN_1 + 2*40 + 16;
@@ -75,24 +73,28 @@ void render_screen_swap() {
 }
 
 // Copy the original screen data to the passed screen
+// Also copies colors to $d800
 void render_screen_original(byte* screen) {
     byte SPACE = 0;
-	byte* orig = PLAYFIELD_SCREEN_ORIGINAL+32*2;
+	byte* oscr = PLAYFIELD_SCREEN_ORIGINAL+32*2;
+	byte* oext = PLAYFIELD_EXTENDED_ORIGINAL+32*2;
+	byte* ocols = PLAYFIELD_COLORS_ORIGINAL+32*2;
+	byte* cols = COLS;
 	for(byte y:0..24) {
 	    byte x=0;
 	    do {
 	        *screen++ = SPACE;
+	        *cols++ = BLACK;
 	    } while(++x!=4);
 	    do {
-	        byte c = (*orig++)+1;
-	        if((x>$e)&&(x<$1b)) {
-	            // Fill the frame around the playfield - char|=$c0 (bgcol 4)
-	            c |= $c0;
-	        }
-	        *screen++ = c; // +1 because the charset is loaded to PLAYFIELD_CHARSET+8
+	        byte c = (*oscr++)+1; // +1 because the charset is loaded to PLAYFIELD_CHARSET+8
+	        byte ext = ((*oext++)-1)<<6; // -1 because the extended colors are saved off-by-one
+	        *screen++ = c|ext;
+	        *cols++ = *ocols++;
 	    } while(++x!=36);
 	    do {
 	        *screen++ = SPACE;
+	        *cols++ = BLACK;
 	    } while(++x!=40);
 	}
 }

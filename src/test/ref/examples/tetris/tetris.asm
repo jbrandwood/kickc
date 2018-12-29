@@ -61,7 +61,6 @@
   .label PLAYFIELD_SCREEN_2 = $2c00
   .label PLAYFIELD_SCREEN_ORIGINAL = $1800
   .label PLAYFIELD_COLORS_ORIGINAL = $1c00
-  .label PLAYFIELD_EXTENDED_ORIGINAL = $1400
   .label PLAYFIELD_SPRITES = $2000
   .label PLAYFIELD_CHARSET = $2800
   .const PLAYFIELD_LINES = $16
@@ -78,11 +77,11 @@
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $16
-  .label render_screen_showing = $1c
-  .label irq_raster_next = $1b
-  .label irq_sprite_ypos = $1d
-  .label irq_sprite_ptr = $1e
-  .label irq_cnt = $1f
+  .label render_screen_showing = $1a
+  .label irq_raster_next = $19
+  .label irq_sprite_ypos = $1b
+  .label irq_sprite_ptr = $1c
+  .label irq_cnt = $1d
   .label current_movedown_counter = 4
   .label current_ypos = $e
   .label current_piece_gfx = $12
@@ -119,7 +118,7 @@ bbegin:
   jsr main
 main: {
     .label key_event = $d
-    .label render = $20
+    .label render = $1e
     jsr sid_rnd_init
     sei
     jsr render_init
@@ -367,7 +366,7 @@ play_collision: {
     .label piece_gfx = 7
     .label ypos2 = 9
     .label playfield_line = $17
-    .label i = $21
+    .label i = $1f
     .label col = $c
     .label l = $a
     .label i_2 = $b
@@ -1011,12 +1010,10 @@ render_init: {
 }
 render_screen_original: {
     .const SPACE = 0
-    .label screen = $17
-    .label cols = $19
-    .label c = 3
+    .label screen = $12
+    .label cols = $17
     .label oscr = 7
-    .label oext = $f
-    .label ocols = $12
+    .label ocols = $f
     .label y = 2
     lda #0
     sta y
@@ -1024,10 +1021,6 @@ render_screen_original: {
     sta ocols
     lda #>PLAYFIELD_COLORS_ORIGINAL+$20*2
     sta ocols+1
-    lda #<PLAYFIELD_EXTENDED_ORIGINAL+$20*2
-    sta oext
-    lda #>PLAYFIELD_EXTENDED_ORIGINAL+$20*2
-    sta oext+1
     lda #<PLAYFIELD_SCREEN_ORIGINAL+$20*2
     sta oscr
     lda #>PLAYFIELD_SCREEN_ORIGINAL+$20*2
@@ -1059,33 +1052,14 @@ render_screen_original: {
   b3:
     ldy #0
     lda (oscr),y
-    clc
-    adc #1
-    sta c
-    inc oscr
-    bne !+
-    inc oscr+1
-  !:
-    ldy #0
-    lda (oext),y
-    sec
-    sbc #1
-    asl
-    asl
-    asl
-    asl
-    asl
-    asl
-    inc oext
-    bne !+
-    inc oext+1
-  !:
-    ora c
-    ldy #0
     sta (screen),y
     inc screen
     bne !+
     inc screen+1
+  !:
+    inc oscr
+    bne !+
+    inc oscr+1
   !:
     ldy #0
     lda (ocols),y
@@ -1122,9 +1096,7 @@ render_screen_original: {
     inc y
     lda y
     cmp #$19
-    beq !b1+
-    jmp b1
-  !b1:
+    bne b1
     rts
 }
 sid_rnd_init: {
@@ -1248,13 +1220,17 @@ sprites_irq: {
     .import binary "playfield-screen.imap"
 
 .pc = PLAYFIELD_SCREEN_ORIGINAL "PLAYFIELD_SCREEN_ORIGINAL"
-  .import binary "playfield-screen.iscr"
+  // Load chars for the screen
+  .var screen = LoadBinary("playfield-screen.iscr")
+   // Load extended colors for the screen
+  .var extended = LoadBinary("playfield-extended.col")
+  // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8
+  // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)
+  // <<6 to move extended colors to the upper 2 bits
+  .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )
 
 .pc = PLAYFIELD_COLORS_ORIGINAL "PLAYFIELD_COLORS_ORIGINAL"
   .import binary "playfield-screen.col"
-
-.pc = PLAYFIELD_EXTENDED_ORIGINAL "PLAYFIELD_EXTENDED_ORIGINAL"
-  .import binary "playfield-extended.col"
 
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
   .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))

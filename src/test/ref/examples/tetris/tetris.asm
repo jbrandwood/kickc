@@ -76,34 +76,35 @@
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
-  .label keyboard_events_size = $16
-  .label render_screen_showing = $1a
-  .label irq_raster_next = $19
-  .label irq_sprite_ypos = $1b
-  .label irq_sprite_ptr = $1c
-  .label irq_cnt = $1d
+  .label keyboard_events_size = $1a
+  .label render_screen_showing = $1e
+  .label irq_raster_next = $1d
+  .label irq_sprite_ypos = $1f
+  .label irq_sprite_ptr = $20
+  .label irq_cnt = $21
   .label current_movedown_counter = 4
   .label current_ypos = $e
-  .label current_piece_gfx = $12
-  .label current_xpos = $14
-  .label current_piece_char = $15
-  .label current_orientation = $11
+  .label score_bcd = $f
+  .label current_piece_gfx = $16
+  .label current_xpos = $18
+  .label current_piece_char = $19
+  .label current_orientation = $15
   .label render_screen_render = 3
   .label render_screen_show = 2
-  .label current_piece = $f
+  .label current_piece = $13
   .label current_piece_12 = 7
   .label render_screen_render_28 = 5
   .label current_xpos_47 = 6
   .label current_piece_gfx_53 = 7
   .label render_screen_render_62 = 5
-  .label current_xpos_110 = 6
   .label current_xpos_111 = 6
-  .label current_piece_gfx_100 = 7
+  .label current_xpos_112 = 6
   .label current_piece_gfx_101 = 7
-  .label current_piece_74 = 7
+  .label current_piece_gfx_102 = 7
   .label current_piece_75 = 7
   .label current_piece_76 = 7
   .label current_piece_77 = 7
+  .label current_piece_78 = 7
 bbegin:
   lda #0
   sta render_screen_showing
@@ -118,7 +119,7 @@ bbegin:
   jsr main
 main: {
     .label key_event = $d
-    .label render = $1e
+    .label render = $22
     jsr sid_rnd_init
     sei
     jsr render_init
@@ -130,11 +131,11 @@ main: {
     jsr render_playfield
     ldy current_ypos
     lda current_xpos
-    sta current_xpos_110
+    sta current_xpos_111
     lda current_piece_gfx
-    sta current_piece_gfx_100
+    sta current_piece_gfx_101
     lda current_piece_gfx+1
-    sta current_piece_gfx_100+1
+    sta current_piece_gfx_101+1
     ldx current_piece_char
     lda #$40
     sta render_screen_render_28
@@ -145,6 +146,10 @@ main: {
     lda PIECES+1,y
     sta current_piece+1
     lda #0
+    sta score_bcd
+    sta score_bcd+1
+    sta score_bcd+2
+    sta score_bcd+3
     sta current_movedown_counter
     sta keyboard_events_size
     sta current_orientation
@@ -182,11 +187,11 @@ main: {
     lda render_screen_render
     sta render_screen_render_62
     lda current_xpos
-    sta current_xpos_111
+    sta current_xpos_112
     lda current_piece_gfx
-    sta current_piece_gfx_101
+    sta current_piece_gfx_102
     lda current_piece_gfx+1
-    sta current_piece_gfx_101+1
+    sta current_piece_gfx_102+1
     ldx current_piece_char
     jsr render_current
     jsr render_screen_swap
@@ -203,7 +208,7 @@ render_screen_swap: {
 }
 render_current: {
     .label ypos2 = 9
-    .label screen_line = $17
+    .label screen_line = $1b
     .label xpos = $c
     .label i = $b
     .label l = $a
@@ -337,9 +342,9 @@ play_move_rotate: {
     ldy current_ypos
     ldx orientation
     lda current_piece
-    sta current_piece_77
+    sta current_piece_78
     lda current_piece+1
-    sta current_piece_77+1
+    sta current_piece_78+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -365,8 +370,8 @@ play_collision: {
     .label xpos = 6
     .label piece_gfx = 7
     .label ypos2 = 9
-    .label playfield_line = $17
-    .label i = $1f
+    .label playfield_line = $1b
+    .label i = $23
     .label col = $c
     .label l = $a
     .label i_2 = $b
@@ -464,9 +469,9 @@ play_move_leftright: {
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_76
+    sta current_piece_77
     lda current_piece+1
-    sta current_piece_76+1
+    sta current_piece_77+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -485,9 +490,9 @@ play_move_leftright: {
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_75
+    sta current_piece_76
     lda current_piece+1
-    sta current_piece_75+1
+    sta current_piece_76+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -526,14 +531,16 @@ play_move_down: {
     sta play_collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_74
+    sta current_piece_75
     lda current_piece+1
-    sta current_piece_74+1
+    sta current_piece_75+1
     jsr play_collision
     cmp #COLLISION_NONE
     beq b6
     jsr play_lock_current
     jsr play_remove_lines
+    lda play_remove_lines.removed
+    jsr play_update_score
     jsr play_spawn_current
     ldy play_spawn_current._3
     lda PIECES,y
@@ -586,12 +593,47 @@ sid_rnd: {
     lda SID_VOICE3_OSC
     rts
 }
+play_update_score: {
+    .label add_bcd = $24
+    cmp #0
+    beq breturn
+    asl
+    asl
+    tay
+    lda score_add_bcd,y
+    sta add_bcd
+    lda score_add_bcd+1,y
+    sta add_bcd+1
+    lda score_add_bcd+2,y
+    sta add_bcd+2
+    lda score_add_bcd+3,y
+    sta add_bcd+3
+    sed
+    lda score_bcd
+    clc
+    adc add_bcd
+    sta score_bcd
+    lda score_bcd+1
+    adc add_bcd+1
+    sta score_bcd+1
+    lda score_bcd+2
+    adc add_bcd+2
+    sta score_bcd+2
+    lda score_bcd+3
+    adc add_bcd+3
+    sta score_bcd+3
+    cld
+  breturn:
+    rts
+}
 play_remove_lines: {
-    .label c = 9
-    .label x = 5
+    .label c = $a
+    .label x = 6
     .label y = 4
-    .label full = 6
+    .label removed = 5
+    .label full = 9
     lda #0
+    sta removed
     sta y
     ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
     ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
@@ -623,6 +665,7 @@ play_remove_lines: {
     clc
     adc #PLAYFIELD_COLS
     tax
+    inc removed
   b4:
     inc y
     lda y
@@ -939,7 +982,7 @@ sprites_init: {
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)>>6
     .label li_1 = 7
-    .label li_2 = $f
+    .label li_2 = $13
     lda #3
     sta CIA2_PORT_A_DDR
     lda #vicSelectGfxBank1_toDd001_return
@@ -1010,10 +1053,10 @@ render_init: {
 }
 render_screen_original: {
     .const SPACE = 0
-    .label screen = $12
-    .label cols = $17
+    .label screen = $16
+    .label cols = $1b
     .label oscr = 7
-    .label ocols = $f
+    .label ocols = $13
     .label y = 2
     lda #0
     sta y
@@ -1112,6 +1155,7 @@ sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     sta rega+1
     stx regx+1
+    cld
     lda irq_sprite_ypos
     sta SPRITES_YPOS
     sta SPRITES_YPOS+2
@@ -1207,6 +1251,7 @@ sprites_irq: {
   PIECES_CHARS: .byte $64, $65, $a5, $65, $64, $64, $a5
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 3, 4
   PIECES_START_Y: .byte 2, 1, 1, 1, 2, 0, 1
+  score_add_bcd: .dword 0, $40, $100, $300, $1200
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40

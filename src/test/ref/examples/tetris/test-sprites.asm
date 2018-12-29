@@ -124,6 +124,7 @@ sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     sta rega+1
     stx regx+1
+    cld
     lda irq_sprite_ypos
     sta SPRITES_YPOS
     sta SPRITES_YPOS+2

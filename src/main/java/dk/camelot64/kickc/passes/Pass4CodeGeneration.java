@@ -284,6 +284,9 @@ public class Pass4CodeGeneration {
                } else if(SymbolType.isWord(elementType) || SymbolType.isSWord(elementType)) {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmElements);
                   added.add(asmName);
+               } else if(SymbolType.isDWord(elementType) || SymbolType.isSDWord(elementType)) {
+                  asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmElements);
+                  added.add(asmName);
                } else {
                   throw new RuntimeException("Unhandled constant array element type " + constantArrayList.toString(program));
                }

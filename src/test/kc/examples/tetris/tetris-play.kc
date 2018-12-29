@@ -25,6 +25,23 @@ const byte current_movedown_fast = 5;
 // Counts up to the next movedown of current piece
 byte current_movedown_counter = 0;
 
+// Score values for removing 0-4 lines (in BCD)
+dword[] score_add_bcd = { $0000, $0040, $0100, $0300, $1200 };
+
+// Initialize play data tables
+void play_init() {
+	// Initialize the playfield line pointers;
+	byte idx = 0;
+	byte* pli = playfield;
+	for(byte j:0..PLAYFIELD_LINES-1) {
+		playfield_lines[j<<1] = pli;
+		playfield_lines_idx[j] = idx;
+		pli += PLAYFIELD_COLS;
+		idx += PLAYFIELD_COLS;
+	}
+	playfield_lines_idx[PLAYFIELD_LINES] = PLAYFIELD_COLS*PLAYFIELD_LINES;
+}
+
 // Move down the current piece
 // Return non-zero if a render is needed
 byte play_move_down(byte key_event) {
@@ -54,7 +71,9 @@ byte play_move_down(byte key_event) {
 				// Lock current piece
 				play_lock_current();
 				// Check for any lines and remove them
-				play_remove_lines();
+				byte removed = play_remove_lines();
+				// Tally up the score
+				play_update_score(removed);
 				// Spawn a new piece
 				play_spawn_current();
 			}
@@ -183,11 +202,13 @@ void play_spawn_current() {
 // Look through the playfield for lines - and remove any lines found
 // Utilizes two cursors on the playfield - one reading cells and one writing cells
 // Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
-void play_remove_lines() {
+// Returns the number of lines removed
+byte play_remove_lines() {
 	// Start both cursors at the end of the playfield
 	byte r = PLAYFIELD_LINES*PLAYFIELD_COLS-1;
 	byte w = PLAYFIELD_LINES*PLAYFIELD_COLS-1;
 
+    byte removed = 0;
 	// Read all lines and rewrite them
 	for(byte y:0..PLAYFIELD_LINES-1) {
 		byte full = 1;
@@ -198,9 +219,10 @@ void play_remove_lines() {
 			}
 			playfield[w--] = c;
 		}
-		// If the line is full then re-write it.
+		// If a line is full then re-write it.
 		if(full==1) {
 			w = w + PLAYFIELD_COLS;
+			removed++;
 		}
 	}
 
@@ -208,18 +230,17 @@ void play_remove_lines() {
 	while(w!=$ff) {
 		playfield[w--] = 0;
 	}
+	// Return the number of removed lines
+	return removed;
 }
 
-// Initialize data tables
-void play_init() {
-	// Initialize the playfield line pointers;
-	byte idx = 0;
-	byte* pli = playfield;
-	for(byte j:0..PLAYFIELD_LINES-1) {
-		playfield_lines[j<<1] = pli;
-		playfield_lines_idx[j] = idx;
-		pli += PLAYFIELD_COLS;
-		idx += PLAYFIELD_COLS;
-	}
-	playfield_lines_idx[PLAYFIELD_LINES] = PLAYFIELD_COLS*PLAYFIELD_LINES;
+// Update the score based on the number of lines removed
+void play_update_score(byte removed) {
+    if(removed!=0){
+        dword add_bcd = score_add_bcd[removed<<2];
+        asm { sed }
+        score_bcd +=  add_bcd;
+        asm { cld }
+    }
 }
+

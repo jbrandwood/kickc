@@ -1005,21 +1005,29 @@ render_screen_original: {
   b3:
     ldy #0
     lda (orig),y
-    clc
-    adc #1
+    tay
+    iny
+    inc orig
+    bne !+
+    inc orig+1
+  !:
+    txa
+    cmp #$e
+    beq !+
+    bcs b11
+  !:
+  b4:
+    tya
+    ldy #0
     sta (screen),y
     inc screen
     bne !+
     inc screen+1
   !:
-    inc orig
-    bne !+
-    inc orig+1
-  !:
     inx
     cpx #$24
     bne b3
-  b4:
+  b5:
     lda #SPACE
     ldy #0
     sta (screen),y
@@ -1029,12 +1037,21 @@ render_screen_original: {
   !:
     inx
     cpx #$28
-    bne b4
+    bne b5
     inc y
     lda y
     cmp #$19
     bne b1
     rts
+  b11:
+    cpx #$1b
+    bcc b7
+    jmp b4
+  b7:
+    tya
+    ora #$c0
+    tay
+    jmp b4
 }
 fill: {
     .const size = $3e8

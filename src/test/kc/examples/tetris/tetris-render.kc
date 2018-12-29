@@ -30,12 +30,12 @@ void render_init() {
 	render_screen_original(PLAYFIELD_SCREEN);
 
 	// Initialize the screen line pointers;
-
 	byte* li = PLAYFIELD_SCREEN + 2*40 + 16;
 	for(byte i:0..PLAYFIELD_LINES-1) {
 		screen_lines[i<<1] = li;
 		li += 40;
 	}
+
 	// Fill the playfield frame with the white background color
 	byte* line = COLS + 4*40 + 16;
 	for(byte l:2..PLAYFIELD_LINES-1) {
@@ -57,7 +57,12 @@ void render_screen_original(byte* screen) {
 	        *screen++ = SPACE;
 	    } while(++x!=4);
 	    do {
-	        *screen++ = (*orig++)+1; // +$c0 to get grey background, +1 because the charset is loaded to PLAYFIELD_CHARSET+8
+	        byte c = (*orig++)+1;
+	        if((x>$e)&&(x<$1b)) {
+	            // Fill the frame around the playfield - char|=$c0 (bgcol 4)
+	            c |= $c0;
+	        }
+	        *screen++ = c; // +1 because the charset is loaded to PLAYFIELD_CHARSET+8
 	    } while(++x!=36);
 	    do {
 	        *screen++ = SPACE;

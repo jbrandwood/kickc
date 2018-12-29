@@ -78,10 +78,11 @@
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $16
+  .label render_screen_showing = $18
   .label irq_raster_next = $17
-  .label irq_sprite_ypos = $18
-  .label irq_sprite_ptr = $19
-  .label irq_cnt = $1a
+  .label irq_sprite_ypos = $19
+  .label irq_sprite_ptr = $1a
+  .label irq_cnt = $1b
   .label current_movedown_counter = 4
   .label current_ypos = $e
   .label current_piece_gfx = $12
@@ -92,22 +93,21 @@
   .label render_screen_show = 2
   .label current_piece = $f
   .label current_piece_12 = 7
-  .label render_screen_render_27 = 5
+  .label render_screen_render_28 = 5
   .label current_xpos_47 = 6
-  .label current_piece_gfx_52 = 7
-  .label current_piece_char_62 = 9
-  .label render_screen_render_68 = 5
-  .label current_xpos_109 = 6
+  .label current_piece_gfx_53 = 7
+  .label render_screen_render_62 = 5
   .label current_xpos_110 = 6
-  .label current_piece_gfx_99 = 7
+  .label current_xpos_111 = 6
   .label current_piece_gfx_100 = 7
-  .label current_piece_char_87 = 9
-  .label current_piece_char_88 = 9
-  .label current_piece_73 = 7
+  .label current_piece_gfx_101 = 7
   .label current_piece_74 = 7
   .label current_piece_75 = 7
   .label current_piece_76 = 7
+  .label current_piece_77 = 7
 bbegin:
+  lda #0
+  sta render_screen_showing
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
   lda #$32
@@ -119,7 +119,7 @@ bbegin:
   jsr main
 main: {
     .label key_event = $d
-    .label render = $1b
+    .label render = $1c
     jsr sid_rnd_init
     sei
     jsr render_init
@@ -129,17 +129,16 @@ main: {
     jsr play_spawn_current
     ldx #$40
     jsr render_playfield
-    ldx current_ypos
+    ldy current_ypos
     lda current_xpos
-    sta current_xpos_109
+    sta current_xpos_110
     lda current_piece_gfx
-    sta current_piece_gfx_99
+    sta current_piece_gfx_100
     lda current_piece_gfx+1
-    sta current_piece_gfx_99+1
-    lda current_piece_char
-    sta current_piece_char_87
+    sta current_piece_gfx_100+1
+    ldx current_piece_char
     lda #$40
-    sta render_screen_render_27
+    sta render_screen_render_28
     jsr render_current
     ldy play_spawn_current._3
     lda PIECES,y
@@ -158,12 +157,6 @@ main: {
     lda RASTER
     cmp #$ff
     bne b4
-    lda render_screen_show
-    lsr
-    lsr
-    lsr
-    lsr
-    sta BORDERCOL
     jsr render_show
     jsr keyboard_event_scan
     jsr keyboard_event_get
@@ -183,25 +176,21 @@ main: {
     clc
     adc render
     cmp #0
-    beq b7
+    beq b4
     ldx render_screen_render
     jsr render_playfield
-    ldx current_ypos
+    ldy current_ypos
     lda render_screen_render
-    sta render_screen_render_68
+    sta render_screen_render_62
     lda current_xpos
-    sta current_xpos_110
+    sta current_xpos_111
     lda current_piece_gfx
-    sta current_piece_gfx_100
+    sta current_piece_gfx_101
     lda current_piece_gfx+1
-    sta current_piece_gfx_100+1
-    lda current_piece_char
-    sta current_piece_char_88
+    sta current_piece_gfx_101+1
+    ldx current_piece_char
     jsr render_current
     jsr render_screen_swap
-  b7:
-    lda #0
-    sta BORDERCOL
     jmp b4
 }
 render_screen_swap: {
@@ -214,12 +203,13 @@ render_screen_swap: {
     rts
 }
 render_current: {
-    .label ypos2 = $a
-    .label screen_line = $1c
-    .label xpos = $d
-    .label i = $c
-    .label l = $b
-    txa
+    .label ypos2 = 9
+    .label screen_line = $1d
+    .label xpos = $c
+    .label i = $b
+    .label l = $a
+    .label c = $d
+    tya
     asl
     sta ypos2
     lda #0
@@ -252,7 +242,7 @@ render_current: {
     bcc b2
     jmp b7
   b2:
-    lda render_screen_render_27
+    lda render_screen_render_28
     clc
     adc ypos2
     tay
@@ -262,23 +252,25 @@ render_current: {
     sta screen_line+1
     lda current_xpos_47
     sta xpos
-    ldx #0
+    lda #0
+    sta c
   b4:
     ldy i
-    lda (current_piece_gfx_52),y
+    lda (current_piece_gfx_53),y
     inc i
     cmp #0
     beq b5
     lda xpos
     cmp #PLAYFIELD_COLS
     bcs b5
-    lda current_piece_char_62
-    ldy xpos
+    tay
+    txa
     sta (screen_line),y
   b5:
     inc xpos
-    inx
-    cpx #4
+    inc c
+    lda c
+    cmp #4
     bne b4
     jmp b3
 }
@@ -346,9 +338,9 @@ play_move_rotate: {
     ldy current_ypos
     ldx orientation
     lda current_piece
-    sta current_piece_76
+    sta current_piece_77
     lda current_piece+1
-    sta current_piece_76+1
+    sta current_piece_77+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -374,8 +366,8 @@ play_collision: {
     .label xpos = 6
     .label piece_gfx = 7
     .label ypos2 = 9
-    .label playfield_line = $1c
-    .label i = $1e
+    .label playfield_line = $1d
+    .label i = $1f
     .label col = $c
     .label l = $a
     .label i_2 = $b
@@ -473,9 +465,9 @@ play_move_leftright: {
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_75
+    sta current_piece_76
     lda current_piece+1
-    sta current_piece_75+1
+    sta current_piece_76+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -494,9 +486,9 @@ play_move_leftright: {
     ldy current_ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_74
+    sta current_piece_75
     lda current_piece+1
-    sta current_piece_74+1
+    sta current_piece_75+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -535,9 +527,9 @@ play_move_down: {
     sta play_collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_73
+    sta current_piece_74
     lda current_piece+1
-    sta current_piece_73+1
+    sta current_piece_74+1
     jsr play_collision
     cmp #COLLISION_NONE
     beq b6
@@ -847,6 +839,8 @@ render_show: {
     lda #toD0182_return
   b2:
     sta D018
+    lda render_screen_show
+    sta render_screen_showing
     rts
   toD0181:
     lda #toD0181_return
@@ -908,9 +902,9 @@ sprites_irq_init: {
     sta RASTER
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    lda #<irq
+    lda #<sprites_irq
     sta HARDWARE_IRQ
-    lda #>irq
+    lda #>sprites_irq
     sta HARDWARE_IRQ+1
     cli
     rts
@@ -957,6 +951,7 @@ render_init: {
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta D011
     lda #BLACK
+    sta BORDERCOL
     sta BGCOL1
     lda #BLUE
     sta BGCOL2
@@ -1159,12 +1154,10 @@ sid_rnd_init: {
     sta SID_VOICE3_CONTROL
     rts
 }
-irq: {
+sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     sta rega+1
     stx regx+1
-    lda #DARK_GREY
-    sta BORDERCOL
     lda irq_sprite_ypos
     sta SPRITES_YPOS
     sta SPRITES_YPOS+2
@@ -1173,23 +1166,22 @@ irq: {
   b1:
     lda RASTER
     cmp irq_sprite_ypos
-    bne b1
-    lda irq_sprite_ptr
-    sta PLAYFIELD_SPRITE_PTRS_1
-    sta PLAYFIELD_SPRITE_PTRS_2
-    tax
+    bcc b1
+    ldx irq_sprite_ptr
+    lda render_screen_showing
+    cmp #0
+    beq b2
+    stx PLAYFIELD_SPRITE_PTRS_2
     inx
-    stx PLAYFIELD_SPRITE_PTRS_1+1
     stx PLAYFIELD_SPRITE_PTRS_2+1
-    stx PLAYFIELD_SPRITE_PTRS_1+2
     stx PLAYFIELD_SPRITE_PTRS_2+2
     inx
-    stx PLAYFIELD_SPRITE_PTRS_1+3
     stx PLAYFIELD_SPRITE_PTRS_2+3
+  b3:
     inc irq_cnt
     lda irq_cnt
     cmp #$a
-    beq b2
+    beq b4
     lda #$15
     clc
     adc irq_raster_next
@@ -1202,25 +1194,23 @@ irq: {
     clc
     adc irq_sprite_ptr
     sta irq_sprite_ptr
-  b3:
+  b5:
     ldx irq_raster_next
     txa
     and #7
     cmp #3
-    bne b4
+    bne b6
     dex
-  b4:
+  b6:
     stx RASTER
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    lda #BLACK
-    sta BORDERCOL
   rega:
     lda #00
   regx:
     ldx #00
     rti
-  b2:
+  b4:
     lda #0
     sta irq_cnt
     lda #IRQ_RASTER_FIRST
@@ -1229,6 +1219,17 @@ irq: {
     sta irq_sprite_ypos
     lda #toSpritePtr2_return
     sta irq_sprite_ptr
+    jmp b5
+  b2:
+    stx PLAYFIELD_SPRITE_PTRS_1
+    txa
+    clc
+    adc #1
+    sta PLAYFIELD_SPRITE_PTRS_1+1
+    sta PLAYFIELD_SPRITE_PTRS_1+2
+    clc
+    adc #1
+    sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f

@@ -45,6 +45,17 @@ public class TestPrograms {
    }
 
    @Test
+   public void testTetrisSprites() throws IOException, URISyntaxException {
+      compileAndCompare("examples/tetris/test-sprites");
+   }
+
+   @Test
+   public void testTetris() throws IOException, URISyntaxException {
+      compileAndCompare("examples/tetris/tetris");
+   }
+
+
+   @Test
    public void testClobberAProblem() throws IOException, URISyntaxException {
       compileAndCompare("clobber-a-problem");
    }
@@ -72,16 +83,6 @@ public class TestPrograms {
    @Test
    public void testLongbranchInterruptProblem() throws IOException, URISyntaxException {
       compileAndCompare("longbranch-interrupt-problem");
-   }
-
-   @Test
-   public void testTetrisSprites() throws IOException, URISyntaxException {
-      compileAndCompare("examples/tetris/test-sprites");
-   }
-
-   @Test
-   public void testTetris() throws IOException, URISyntaxException {
-      compileAndCompare("examples/tetris/tetris");
    }
 
    @Test

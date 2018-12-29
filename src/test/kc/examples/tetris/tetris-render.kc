@@ -16,16 +16,12 @@ kickasm(pc PLAYFIELD_SCREEN_ORIGINAL, resource "nes-screen.iscr") {{
 align($80) byte*[PLAYFIELD_LINES] screen_lines_1;
 align($40) byte*[PLAYFIELD_LINES] screen_lines_2;
 
-// The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
-byte render_screen_show;
-// The screen currently being rendered to. $00 for screen 1 / $40 for screen 2.
-byte render_screen_render;
-
 // Initialize rendering
 void render_init() {
 	vicSelectGfxBank(PLAYFIELD_CHARSET);
 	// Enable Extended Background Color Mode
 	*D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3;
+	*BORDERCOL = BLACK;
 	*BGCOL1 = BLACK;
 	*BGCOL2 = BLUE;
 	*BGCOL3 = CYAN;
@@ -69,6 +65,7 @@ void render_show() {
         d018val = toD018(PLAYFIELD_SCREEN_2, PLAYFIELD_CHARSET);
     }
 	*D018 = d018val;
+	render_screen_showing = render_screen_show;
 }
 
 // Swap rendering to the other screen (used for double buffering)

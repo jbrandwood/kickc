@@ -13,7 +13,6 @@
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
   .label VIC_CONTROL = $d011
   .label D018 = $d018
@@ -26,7 +25,6 @@
   .label CIA2_PORT_A_DDR = $dd02
   .label HARDWARE_IRQ = $fffe
   .const BLACK = 0
-  .const DARK_GREY = $b
   .label PLAYFIELD_SCREEN_1 = $400
   .label PLAYFIELD_SCREEN_2 = $2c00
   .label PLAYFIELD_SPRITES = $2000
@@ -37,11 +35,14 @@
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
+  .label render_screen_showing = 4
   .label irq_raster_next = 3
-  .label irq_sprite_ypos = 4
-  .label irq_sprite_ptr = 5
-  .label irq_cnt = 6
+  .label irq_sprite_ypos = 5
+  .label irq_sprite_ptr = 6
+  .label irq_cnt = 7
 bbegin:
+  lda #0
+  sta render_screen_showing
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
   lda #$32
@@ -84,9 +85,9 @@ sprites_irq_init: {
     sta RASTER
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    lda #<irq
+    lda #<sprites_irq
     sta HARDWARE_IRQ
-    lda #>irq
+    lda #>sprites_irq
     sta HARDWARE_IRQ+1
     cli
     rts
@@ -119,12 +120,10 @@ sprites_init: {
     bne b1
     rts
 }
-irq: {
+sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     sta rega+1
     stx regx+1
-    lda #DARK_GREY
-    sta BORDERCOL
     lda irq_sprite_ypos
     sta SPRITES_YPOS
     sta SPRITES_YPOS+2
@@ -133,23 +132,22 @@ irq: {
   b1:
     lda RASTER
     cmp irq_sprite_ypos
-    bne b1
-    lda irq_sprite_ptr
-    sta PLAYFIELD_SPRITE_PTRS_1
-    sta PLAYFIELD_SPRITE_PTRS_2
-    tax
+    bcc b1
+    ldx irq_sprite_ptr
+    lda render_screen_showing
+    cmp #0
+    beq b2
+    stx PLAYFIELD_SPRITE_PTRS_2
     inx
-    stx PLAYFIELD_SPRITE_PTRS_1+1
     stx PLAYFIELD_SPRITE_PTRS_2+1
-    stx PLAYFIELD_SPRITE_PTRS_1+2
     stx PLAYFIELD_SPRITE_PTRS_2+2
     inx
-    stx PLAYFIELD_SPRITE_PTRS_1+3
     stx PLAYFIELD_SPRITE_PTRS_2+3
+  b3:
     inc irq_cnt
     lda irq_cnt
     cmp #$a
-    beq b2
+    beq b4
     lda #$15
     clc
     adc irq_raster_next
@@ -162,25 +160,23 @@ irq: {
     clc
     adc irq_sprite_ptr
     sta irq_sprite_ptr
-  b3:
+  b5:
     ldx irq_raster_next
     txa
     and #7
     cmp #3
-    bne b4
+    bne b6
     dex
-  b4:
+  b6:
     stx RASTER
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    lda #BLACK
-    sta BORDERCOL
   rega:
     lda #00
   regx:
     ldx #00
     rti
-  b2:
+  b4:
     lda #0
     sta irq_cnt
     lda #IRQ_RASTER_FIRST
@@ -189,6 +185,17 @@ irq: {
     sta irq_sprite_ypos
     lda #toSpritePtr2_return
     sta irq_sprite_ptr
+    jmp b5
+  b2:
+    stx PLAYFIELD_SPRITE_PTRS_1
+    txa
+    clc
+    adc #1
+    sta PLAYFIELD_SPRITE_PTRS_1+1
+    sta PLAYFIELD_SPRITE_PTRS_1+2
+    clc
+    adc #1
+    sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"

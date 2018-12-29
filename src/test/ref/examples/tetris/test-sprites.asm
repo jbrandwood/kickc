@@ -27,13 +27,15 @@
   .label HARDWARE_IRQ = $fffe
   .const BLACK = 0
   .const DARK_GREY = $b
-  .label PLAYFIELD_SCREEN = $400
+  .label PLAYFIELD_SCREEN_1 = $400
+  .label PLAYFIELD_SCREEN_2 = $2c00
   .label PLAYFIELD_SPRITES = $2000
   .label PLAYFIELD_CHARSET = $2800
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
   .const IRQ_RASTER_FIRST = $31
-  .label PLAYFIELD_SPRITE_PTRS = PLAYFIELD_SCREEN+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label irq_raster_next = 3
   .label irq_sprite_ypos = 4
@@ -50,8 +52,8 @@ bbegin:
   sta irq_cnt
   jsr main
 main: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN)>>6
-    .const toD0181_return = (>(PLAYFIELD_SCREEN&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)>>6
+    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
     lda #3
     sta CIA2_PORT_A_DDR
     lda #vicSelectGfxBank1_toDd001_return
@@ -61,7 +63,7 @@ main: {
     jsr sprites_init
     jsr sprites_irq_init
   b2:
-    inc PLAYFIELD_SCREEN
+    inc PLAYFIELD_SCREEN_1
     jmp b2
 }
 sprites_irq_init: {
@@ -133,13 +135,17 @@ irq: {
     cmp irq_sprite_ypos
     bne b1
     lda irq_sprite_ptr
-    sta PLAYFIELD_SPRITE_PTRS
+    sta PLAYFIELD_SPRITE_PTRS_1
+    sta PLAYFIELD_SPRITE_PTRS_2
     tax
     inx
-    stx PLAYFIELD_SPRITE_PTRS+1
-    stx PLAYFIELD_SPRITE_PTRS+2
+    stx PLAYFIELD_SPRITE_PTRS_1+1
+    stx PLAYFIELD_SPRITE_PTRS_2+1
+    stx PLAYFIELD_SPRITE_PTRS_1+2
+    stx PLAYFIELD_SPRITE_PTRS_2+2
     inx
-    stx PLAYFIELD_SPRITE_PTRS+3
+    stx PLAYFIELD_SPRITE_PTRS_1+3
+    stx PLAYFIELD_SPRITE_PTRS_2+3
     inc irq_cnt
     lda irq_cnt
     cmp #$a

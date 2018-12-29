@@ -21,8 +21,9 @@ void main() {
 	while(true) { 
 		// Wait for a frame to pass
 		while(*RASTER!=$ff) {}
-		while(*RASTER!=$fe) {}
-		(*BORDERCOL)++;
+		*BORDERCOL = render_screen_show>>4;
+		// Update D018 to show the selected screen
+        render_show();
 		// Scan keyboard events
 		keyboard_event_scan();
 		byte key_event = keyboard_event_get();
@@ -33,7 +34,8 @@ void main() {
 		if(render!=0) {
 			render_playfield();
 			render_current();
+			render_screen_swap();
 		}
-		(*BORDERCOL)--;			
+		*BORDERCOL = 0;
 	}
 }

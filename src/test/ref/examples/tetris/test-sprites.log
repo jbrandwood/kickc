@@ -1,9 +1,9 @@
 Resolved forward reference irq to interrupt(HARDWARE_CLOBBER)(void()) irq()
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) $2 ← call toSpritePtr (byte*) PLAYFIELD_SPRITES 
+Inlined call (byte~) $3 ← call toSpritePtr (byte*) PLAYFIELD_SPRITES 
 Inlined call (byte~) irq::$2 ← call toSpritePtr (byte*) PLAYFIELD_SPRITES 
-Inlined call call vicSelectGfxBank (byte*) PLAYFIELD_SCREEN 
-Inlined call (byte~) main::$1 ← call toD018 (byte*) PLAYFIELD_SCREEN (byte*) PLAYFIELD_CHARSET 
+Inlined call call vicSelectGfxBank (byte*) PLAYFIELD_SCREEN_1 
+Inlined call (byte~) main::$1 ← call toD018 (byte*) PLAYFIELD_SCREEN_1 (byte*) PLAYFIELD_CHARSET 
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -88,19 +88,19 @@ CONTROL FLOW GRAPH SSA
   (byte) LIGHT_GREY#0 ← (byte/signed byte/word/signed word/dword/signed dword) 15
   to:@4
 @4: scope:[]  from @begin
-  (byte*) PLAYFIELD_SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte*~) $0 ← (byte*) PLAYFIELD_SCREEN#0 + (word) SPRITE_PTRS#0
-  (byte*) PLAYFIELD_SPRITE_PTRS#0 ← (byte*~) $0
+  (byte*) PLAYFIELD_SCREEN_1#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) PLAYFIELD_SCREEN_2#0 ← ((byte*)) (word/signed word/dword/signed dword) 11264
+  (byte*~) $0 ← (byte*) PLAYFIELD_SCREEN_1#0 + (word) SPRITE_PTRS#0
+  (byte*) PLAYFIELD_SPRITE_PTRS_1#0 ← (byte*~) $0
+  (byte*~) $1 ← (byte*) PLAYFIELD_SCREEN_2#0 + (word) SPRITE_PTRS#0
+  (byte*) PLAYFIELD_SPRITE_PTRS_2#0 ← (byte*~) $1
+  (byte*) PLAYFIELD_SCREEN_ORIGINAL#0 ← ((byte*)) (word/signed word/dword/signed dword) 6144
   (byte*) PLAYFIELD_SPRITES#0 ← ((byte*)) (word/signed word/dword/signed dword) 8192
   (byte*) PLAYFIELD_CHARSET#0 ← ((byte*)) (word/signed word/dword/signed dword) 10240
   (byte) PLAYFIELD_LINES#0 ← (byte/signed byte/word/signed word/dword/signed dword) 22
   (byte) PLAYFIELD_COLS#0 ← (byte/signed byte/word/signed word/dword/signed dword) 10
-  (byte~) $1 ← (byte) PLAYFIELD_LINES#0 * (byte) PLAYFIELD_COLS#0
-  (byte[$1]) playfield#0 ← { fill( $1, 0) }
-  (byte*) current_piece_gfx#0 ← ((byte*)) (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) current_piece_char#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) current_xpos#0 ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  (byte) current_ypos#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte~) $2 ← (byte) PLAYFIELD_LINES#0 * (byte) PLAYFIELD_COLS#0
+  (byte[$2]) playfield#0 ← { fill( $2, 0) }
   kickasm(location (byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("nes-playfield.png", List().add($010101, $000000))
 	.for(var sy=0;sy<10;sy++) {
 		.for(var sx=0;sx<3;sx++) {
@@ -165,8 +165,8 @@ toSpritePtr1_@return: scope:[]  from toSpritePtr1
   (byte) irq_raster_next#16 ← phi( toSpritePtr1_@return/(byte) irq_raster_next#17 )
   (byte) irq_sprite_ypos#13 ← phi( toSpritePtr1_@return/(byte) irq_sprite_ypos#14 )
   (byte) toSpritePtr1_return#3 ← phi( toSpritePtr1_@return/(byte) toSpritePtr1_return#1 )
-  (byte~) $2 ← (byte) toSpritePtr1_return#3
-  (byte) irq_sprite_ptr#0 ← (byte~) $2
+  (byte~) $3 ← (byte) toSpritePtr1_return#3
+  (byte) irq_sprite_ptr#0 ← (byte~) $3
   (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:@8
 sprites_irq_init: scope:[sprites_irq_init]  from main::@9
@@ -212,12 +212,16 @@ irq::@5: scope:[irq]  from irq::@1
   (byte) irq_cnt#4 ← phi( irq::@1/(byte) irq_cnt#6 )
   (byte) irq_sprite_ptr#4 ← phi( irq::@1/(byte) irq_sprite_ptr#7 )
   (byte) irq::ptr#0 ← (byte) irq_sprite_ptr#4
-  *((byte*) PLAYFIELD_SPRITE_PTRS#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) irq::ptr#0
+  *((byte*) PLAYFIELD_SPRITE_PTRS_1#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) irq::ptr#0
+  *((byte*) PLAYFIELD_SPRITE_PTRS_2#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) irq::ptr#0
   (byte) irq::ptr#1 ← ++ (byte) irq::ptr#0
-  *((byte*) PLAYFIELD_SPRITE_PTRS#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1
-  *((byte*) PLAYFIELD_SPRITE_PTRS#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1
+  *((byte*) PLAYFIELD_SPRITE_PTRS_1#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1
+  *((byte*) PLAYFIELD_SPRITE_PTRS_2#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1
+  *((byte*) PLAYFIELD_SPRITE_PTRS_1#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1
+  *((byte*) PLAYFIELD_SPRITE_PTRS_2#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1
   (byte) irq::ptr#2 ← ++ (byte) irq::ptr#1
-  *((byte*) PLAYFIELD_SPRITE_PTRS#0 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2
+  *((byte*) PLAYFIELD_SPRITE_PTRS_1#0 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2
+  *((byte*) PLAYFIELD_SPRITE_PTRS_2#0 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2
   (byte) irq_cnt#1 ← ++ (byte) irq_cnt#4
   (bool~) irq::$1 ← (byte) irq_cnt#1 == (byte/signed byte/word/signed word/dword/signed dword) 10
   if((bool~) irq::$1) goto irq::@2
@@ -303,7 +307,7 @@ irq::@return: scope:[irq]  from irq::@4
   return 
   to:@return
 main: scope:[main]  from @8
-  (byte*) main::vicSelectGfxBank1_gfx#0 ← (byte*) PLAYFIELD_SCREEN#0
+  (byte*) main::vicSelectGfxBank1_gfx#0 ← (byte*) PLAYFIELD_SCREEN_1#0
   to:main::vicSelectGfxBank1
 main::vicSelectGfxBank1: scope:[main]  from main
   (byte*) main::vicSelectGfxBank1_gfx#1 ← phi( main/(byte*) main::vicSelectGfxBank1_gfx#0 )
@@ -328,7 +332,7 @@ main::vicSelectGfxBank1_@1: scope:[main]  from main::vicSelectGfxBank1_toDd001_@
   *((byte*) CIA2_PORT_A#0) ← (byte) main::vicSelectGfxBank1_$0#0
   to:main::@7
 main::@7: scope:[main]  from main::vicSelectGfxBank1_@1
-  (byte*) main::toD0181_screen#0 ← (byte*) PLAYFIELD_SCREEN#0
+  (byte*) main::toD0181_screen#0 ← (byte*) PLAYFIELD_SCREEN_1#0
   (byte*) main::toD0181_gfx#0 ← (byte*) PLAYFIELD_CHARSET#0
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@7
@@ -364,7 +368,7 @@ main::@1: scope:[main]  from main::@10 main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  *((byte*) PLAYFIELD_SCREEN#0) ← ++ *((byte*) PLAYFIELD_SCREEN#0)
+  *((byte*) PLAYFIELD_SCREEN_1#0) ← ++ *((byte*) PLAYFIELD_SCREEN_1#0)
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -382,8 +386,9 @@ main::@return: scope:[main]  from main::@1
 
 SYMBOL TABLE SSA
 (byte*~) $0
-(byte~) $1
+(byte*~) $1
 (byte~) $2
+(byte~) $3
 (label) @10
 (label) @4
 (label) @5
@@ -487,12 +492,18 @@ SYMBOL TABLE SSA
 (byte) PLAYFIELD_COLS#0
 (byte) PLAYFIELD_LINES
 (byte) PLAYFIELD_LINES#0
-(byte*) PLAYFIELD_SCREEN
-(byte*) PLAYFIELD_SCREEN#0
+(byte*) PLAYFIELD_SCREEN_1
+(byte*) PLAYFIELD_SCREEN_1#0
+(byte*) PLAYFIELD_SCREEN_2
+(byte*) PLAYFIELD_SCREEN_2#0
+(byte*) PLAYFIELD_SCREEN_ORIGINAL
+(byte*) PLAYFIELD_SCREEN_ORIGINAL#0
 (byte*) PLAYFIELD_SPRITES
 (byte*) PLAYFIELD_SPRITES#0
-(byte*) PLAYFIELD_SPRITE_PTRS
-(byte*) PLAYFIELD_SPRITE_PTRS#0
+(byte*) PLAYFIELD_SPRITE_PTRS_1
+(byte*) PLAYFIELD_SPRITE_PTRS_1#0
+(byte*) PLAYFIELD_SPRITE_PTRS_2
+(byte*) PLAYFIELD_SPRITE_PTRS_2#0
 (byte*) PROCPORT
 (byte*) PROCPORT#0
 (byte) PROCPORT_BASIC_KERNEL_IO
@@ -564,13 +575,9 @@ SYMBOL TABLE SSA
 (byte) YELLOW
 (byte) YELLOW#0
 (byte) current_piece_char
-(byte) current_piece_char#0
 (byte*) current_piece_gfx
-(byte*) current_piece_gfx#0
 (byte) current_xpos
-(byte) current_xpos#0
 (byte) current_ypos
-(byte) current_ypos#0
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (bool~) irq::$0
 (bool~) irq::$1
@@ -750,8 +757,8 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte) main::vicSelectGfxBank1_toDd001_return#1
 (byte) main::vicSelectGfxBank1_toDd001_return#2
 (byte) main::vicSelectGfxBank1_toDd001_return#3
-(byte[$1]) playfield
-(byte[$1]) playfield#0
+(byte[$2]) playfield
+(byte[$2]) playfield#0
 (void()) sprites_init()
 (byte/signed byte/word/signed word/dword/signed dword~) sprites_init::$0
 (byte/signed word/word/dword/signed dword/signed byte~) sprites_init::$1
@@ -796,9 +803,10 @@ Successful SSA optimization Pass2CullEmptyBlocks
 Inversing boolean not (bool~) irq::$5 ← (byte~) irq::$3 != (byte/signed byte/word/signed word/dword/signed dword) 3 from (bool~) irq::$4 ← (byte~) irq::$3 == (byte/signed byte/word/signed word/dword/signed dword) 3
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)(byte) IRQ_RASTER_FIRST#0 = (byte) irq_raster_next#0 (byte) irq_raster_next#18 (byte) irq_raster_next#17 (byte) irq_raster_next#16 (byte) irq_raster_next#15 
-Alias candidate removed (volatile)(byte) toSpritePtr1_return#0 = (byte) toSpritePtr1_$2#0 (byte) toSpritePtr1_return#2 (byte) toSpritePtr1_return#1 (byte) toSpritePtr1_return#3 (byte~) $2 (byte) irq_sprite_ptr#0 (byte) irq_sprite_ptr#12 
+Alias candidate removed (volatile)(byte) toSpritePtr1_return#0 = (byte) toSpritePtr1_$2#0 (byte) toSpritePtr1_return#2 (byte) toSpritePtr1_return#1 (byte) toSpritePtr1_return#3 (byte~) $3 (byte) irq_sprite_ptr#0 (byte) irq_sprite_ptr#12 
 Alias candidate removed (volatile)(byte) irq::toSpritePtr2_return#0 = (byte) irq::toSpritePtr2_$2#0 (byte) irq::toSpritePtr2_return#2 (byte) irq::toSpritePtr2_return#1 (byte) irq::toSpritePtr2_return#3 (byte~) irq::$2 (byte) irq_sprite_ptr#1 
-Alias (byte*) PLAYFIELD_SPRITE_PTRS#0 = (byte*~) $0 
+Alias (byte*) PLAYFIELD_SPRITE_PTRS_1#0 = (byte*~) $0 
+Alias (byte*) PLAYFIELD_SPRITE_PTRS_2#0 = (byte*~) $1 
 Alias (byte) sprites_init::xpos#0 = (byte/signed word/word/dword/signed dword/signed byte~) sprites_init::$1 
 Alias (byte) sprites_init::s2#0 = (byte~) sprites_init::$2 
 Alias (byte) sprites_init::xpos#1 = (byte/signed word/word/dword/signed dword~) sprites_init::$3 
@@ -830,7 +838,7 @@ Alias (byte) main::toD0181_return#0 = (byte) main::toD0181_$8#0 (byte) main::toD
 Alias (byte) irq_cnt#0 = (byte) irq_cnt#11 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)(byte) IRQ_RASTER_FIRST#0 = (byte) irq_raster_next#0 (byte) irq_raster_next#18 (byte) irq_raster_next#17 (byte) irq_raster_next#16 (byte) irq_raster_next#15 
-Alias candidate removed (volatile)(byte) toSpritePtr1_return#0 = (byte) toSpritePtr1_$2#0 (byte) toSpritePtr1_return#2 (byte) toSpritePtr1_return#1 (byte) toSpritePtr1_return#3 (byte~) $2 (byte) irq_sprite_ptr#0 (byte) irq_sprite_ptr#12 
+Alias candidate removed (volatile)(byte) toSpritePtr1_return#0 = (byte) toSpritePtr1_$2#0 (byte) toSpritePtr1_return#2 (byte) toSpritePtr1_return#1 (byte) toSpritePtr1_return#3 (byte~) $3 (byte) irq_sprite_ptr#0 (byte) irq_sprite_ptr#12 
 Alias candidate removed (volatile)(byte) irq::toSpritePtr2_return#0 = (byte) irq::toSpritePtr2_$2#0 (byte) irq::toSpritePtr2_return#2 (byte) irq::toSpritePtr2_return#1 (byte) irq::toSpritePtr2_return#3 (byte~) irq::$2 (byte) irq_sprite_ptr#1 
 Alias (byte) irq_cnt#10 = (byte) irq_cnt#3 
 Alias (byte) irq_raster_next#12 = (byte) irq_raster_next#3 
@@ -838,7 +846,7 @@ Alias (byte) irq_sprite_ypos#10 = (byte) irq_sprite_ypos#11
 Alias (byte) irq_sprite_ptr#10 = (byte) irq_sprite_ptr#3 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)(byte) IRQ_RASTER_FIRST#0 = (byte) irq_raster_next#0 (byte) irq_raster_next#18 (byte) irq_raster_next#17 (byte) irq_raster_next#16 (byte) irq_raster_next#15 
-Alias candidate removed (volatile)(byte) toSpritePtr1_return#0 = (byte) toSpritePtr1_$2#0 (byte) toSpritePtr1_return#2 (byte) toSpritePtr1_return#1 (byte) toSpritePtr1_return#3 (byte~) $2 (byte) irq_sprite_ptr#0 (byte) irq_sprite_ptr#12 
+Alias candidate removed (volatile)(byte) toSpritePtr1_return#0 = (byte) toSpritePtr1_$2#0 (byte) toSpritePtr1_return#2 (byte) toSpritePtr1_return#1 (byte) toSpritePtr1_return#3 (byte~) $3 (byte) irq_sprite_ptr#0 (byte) irq_sprite_ptr#12 
 Alias candidate removed (volatile)(byte) irq::toSpritePtr2_return#0 = (byte) irq::toSpritePtr2_$2#0 (byte) irq::toSpritePtr2_return#2 (byte) irq::toSpritePtr2_return#1 (byte) irq::toSpritePtr2_return#3 (byte~) irq::$2 (byte) irq_sprite_ptr#1 
 Self Phi Eliminated (byte) irq_sprite_ypos#5
 Self Phi Eliminated (byte) irq_sprite_ptr#4
@@ -947,30 +955,29 @@ Constant (const byte) GREY#0 = 12
 Constant (const byte) LIGHT_GREEN#0 = 13
 Constant (const byte) LIGHT_BLUE#0 = 14
 Constant (const byte) LIGHT_GREY#0 = 15
-Constant (const byte*) PLAYFIELD_SCREEN#0 = ((byte*))1024
+Constant (const byte*) PLAYFIELD_SCREEN_1#0 = ((byte*))1024
+Constant (const byte*) PLAYFIELD_SCREEN_2#0 = ((byte*))11264
+Constant (const byte*) PLAYFIELD_SCREEN_ORIGINAL#0 = ((byte*))6144
 Constant (const byte*) PLAYFIELD_SPRITES#0 = ((byte*))8192
 Constant (const byte*) PLAYFIELD_CHARSET#0 = ((byte*))10240
 Constant (const byte) PLAYFIELD_LINES#0 = 22
 Constant (const byte) PLAYFIELD_COLS#0 = 10
-Constant (const byte*) current_piece_gfx#0 = ((byte*))0
-Constant (const byte) current_piece_char#0 = 0
-Constant (const byte) current_xpos#0 = 3
-Constant (const byte) current_ypos#0 = 0
 Constant (const byte/signed byte/word/signed word/dword/signed dword) sprites_init::$0 = 15*8
 Constant (const byte) sprites_init::s#0 = 0
 Constant (const byte) IRQ_RASTER_FIRST#0 = 49
 Constant (const void()*) sprites_irq_init::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) PLAYFIELD_SPRITE_PTRS#0 = PLAYFIELD_SCREEN#0+SPRITE_PTRS#0
-Constant (const byte) $1 = PLAYFIELD_LINES#0*PLAYFIELD_COLS#0
+Constant (const byte*) PLAYFIELD_SPRITE_PTRS_1#0 = PLAYFIELD_SCREEN_1#0+SPRITE_PTRS#0
+Constant (const byte*) PLAYFIELD_SPRITE_PTRS_2#0 = PLAYFIELD_SCREEN_2#0+SPRITE_PTRS#0
+Constant (const byte) $2 = PLAYFIELD_LINES#0*PLAYFIELD_COLS#0
 Constant (const byte) sprites_init::xpos#0 = 24+sprites_init::$0
 Constant (const word) toSpritePtr1_$0#0 = ((word))PLAYFIELD_SPRITES#0
 Constant (const byte*) irq::toSpritePtr2_sprite#0 = PLAYFIELD_SPRITES#0
-Constant (const byte*) main::vicSelectGfxBank1_gfx#0 = PLAYFIELD_SCREEN#0
-Constant (const byte*) main::toD0181_screen#0 = PLAYFIELD_SCREEN#0
+Constant (const byte*) main::vicSelectGfxBank1_gfx#0 = PLAYFIELD_SCREEN_1#0
+Constant (const byte*) main::toD0181_screen#0 = PLAYFIELD_SCREEN_1#0
 Constant (const byte*) main::toD0181_gfx#0 = PLAYFIELD_CHARSET#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte[$1]) playfield#0 = { fill( $1, 0) }
+Constant (const byte[$2]) playfield#0 = { fill( $2, 0) }
 Constant (const word) toSpritePtr1_$1#0 = toSpritePtr1_$0#0>>6
 Constant (const word) irq::toSpritePtr2_$0#0 = ((word))irq::toSpritePtr2_sprite#0
 Constant (const word) main::vicSelectGfxBank1_toDd001_$0#0 = ((word))main::vicSelectGfxBank1_gfx#0
@@ -995,7 +1002,7 @@ Constant (const byte) main::vicSelectGfxBank1_toDd001_return#0 = 3^main::vicSele
 Constant (const byte) main::toD0181_$3#0 = >main::toD0181_$2#0
 Constant (const byte) main::toD0181_$7#0 = main::toD0181_$6#0&15
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) $2 = toSpritePtr1_return#1
+Constant (const byte) $3 = toSpritePtr1_return#1
 Constant (const byte) irq::toSpritePtr2_return#1 = irq::toSpritePtr2_return#0
 Constant (const byte) main::toD0181_return#0 = main::toD0181_$3#0|main::toD0181_$7#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1005,10 +1012,14 @@ Consolidated array index constant in *(SPRITES_YPOS#0+0)
 Consolidated array index constant in *(SPRITES_YPOS#0+2)
 Consolidated array index constant in *(SPRITES_YPOS#0+4)
 Consolidated array index constant in *(SPRITES_YPOS#0+6)
-Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS#0+0)
-Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS#0+1)
-Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS#0+2)
-Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS#0+3)
+Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS_1#0+0)
+Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS_2#0+0)
+Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS_1#0+1)
+Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS_2#0+1)
+Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS_1#0+2)
+Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS_2#0+2)
+Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS_1#0+3)
+Consolidated array index constant in *(PLAYFIELD_SPRITE_PTRS_2#0+3)
 Successful SSA optimization Pass2ConstantAdditionElimination
 if() condition always true - replacing block destination if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -1028,28 +1039,28 @@ Inlining constant with var siblings (const byte) sprites_init::s#0
 Inlining constant with var siblings (const byte) sprites_init::xpos#0
 Inlining constant with different constant siblings (const byte) irq::toSpritePtr2_return#1
 Inlining constant with different constant siblings (const byte) toSpritePtr1_return#1
-Constant inlined main::toD0181_screen#0 = (const byte*) PLAYFIELD_SCREEN#0
+Constant inlined main::toD0181_screen#0 = (const byte*) PLAYFIELD_SCREEN_1#0
 Constant inlined main::toD0181_gfx#0 = (const byte*) PLAYFIELD_CHARSET#0
 Constant inlined sprites_init::xpos#0 = (byte/signed byte/word/signed word/dword/signed dword) 24+(byte/signed byte/word/signed word/dword/signed dword) 15*(byte/signed byte/word/signed word/dword/signed dword) 8
-Constant inlined $1 = (const byte) PLAYFIELD_LINES#0*(const byte) PLAYFIELD_COLS#0
-Constant inlined $2 = (const byte) toSpritePtr1_return#0
+Constant inlined $2 = (const byte) PLAYFIELD_LINES#0*(const byte) PLAYFIELD_COLS#0
+Constant inlined $3 = (const byte) toSpritePtr1_return#0
 Constant inlined irq::toSpritePtr2_sprite#0 = (const byte*) PLAYFIELD_SPRITES#0
 Constant inlined irq::toSpritePtr2_return#1 = (const byte) irq::toSpritePtr2_return#0
 Constant inlined sprites_init::s#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined main::vicSelectGfxBank1_toDd001_$2#0 = >((word))(const byte*) PLAYFIELD_SCREEN#0>>(byte/signed byte/word/signed word/dword/signed dword) 6
-Constant inlined main::vicSelectGfxBank1_toDd001_$1#0 = >((word))(const byte*) PLAYFIELD_SCREEN#0
+Constant inlined main::vicSelectGfxBank1_toDd001_$2#0 = >((word))(const byte*) PLAYFIELD_SCREEN_1#0>>(byte/signed byte/word/signed word/dword/signed dword) 6
+Constant inlined main::vicSelectGfxBank1_toDd001_$1#0 = >((word))(const byte*) PLAYFIELD_SCREEN_1#0
 Constant inlined sprites_irq_init::$0 = &interrupt(HARDWARE_CLOBBER)(void()) irq()
-Constant inlined main::vicSelectGfxBank1_toDd001_$0#0 = ((word))(const byte*) PLAYFIELD_SCREEN#0
-Constant inlined main::toD0181_$0#0 = ((word))(const byte*) PLAYFIELD_SCREEN#0
-Constant inlined main::toD0181_$1#0 = ((word))(const byte*) PLAYFIELD_SCREEN#0&(word/signed word/dword/signed dword) 16383
+Constant inlined main::vicSelectGfxBank1_toDd001_$0#0 = ((word))(const byte*) PLAYFIELD_SCREEN_1#0
+Constant inlined main::toD0181_$0#0 = ((word))(const byte*) PLAYFIELD_SCREEN_1#0
+Constant inlined main::toD0181_$1#0 = ((word))(const byte*) PLAYFIELD_SCREEN_1#0&(word/signed word/dword/signed dword) 16383
 Constant inlined main::toD0181_$6#0 = >((word))(const byte*) PLAYFIELD_CHARSET#0>>(byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined main::toD0181_$7#0 = >((word))(const byte*) PLAYFIELD_CHARSET#0>>(byte/signed byte/word/signed word/dword/signed dword) 2&(byte/signed byte/word/signed word/dword/signed dword) 15
-Constant inlined main::toD0181_$2#0 = ((word))(const byte*) PLAYFIELD_SCREEN#0&(word/signed word/dword/signed dword) 16383<<(byte/signed byte/word/signed word/dword/signed dword) 2
-Constant inlined main::toD0181_$3#0 = >((word))(const byte*) PLAYFIELD_SCREEN#0&(word/signed word/dword/signed dword) 16383<<(byte/signed byte/word/signed word/dword/signed dword) 2
+Constant inlined main::toD0181_$2#0 = ((word))(const byte*) PLAYFIELD_SCREEN_1#0&(word/signed word/dword/signed dword) 16383<<(byte/signed byte/word/signed word/dword/signed dword) 2
+Constant inlined main::toD0181_$3#0 = >((word))(const byte*) PLAYFIELD_SCREEN_1#0&(word/signed word/dword/signed dword) 16383<<(byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined main::toD0181_$4#0 = ((word))(const byte*) PLAYFIELD_CHARSET#0
 Constant inlined main::toD0181_$5#0 = >((word))(const byte*) PLAYFIELD_CHARSET#0
 Constant inlined toSpritePtr1_$1#0 = ((word))(const byte*) PLAYFIELD_SPRITES#0>>(byte/signed byte/word/signed word/dword/signed dword) 6
-Constant inlined main::vicSelectGfxBank1_gfx#0 = (const byte*) PLAYFIELD_SCREEN#0
+Constant inlined main::vicSelectGfxBank1_gfx#0 = (const byte*) PLAYFIELD_SCREEN_1#0
 Constant inlined toSpritePtr1_$2#0 = (const byte) toSpritePtr1_return#0
 Constant inlined sprites_init::$0 = (byte/signed byte/word/signed word/dword/signed dword) 15*(byte/signed byte/word/signed word/dword/signed dword) 8
 Constant inlined toSpritePtr1_$0#0 = ((word))(const byte*) PLAYFIELD_SPRITES#0
@@ -1060,7 +1071,8 @@ Constant inlined irq::toSpritePtr2_$0#0 = ((word))(const byte*) PLAYFIELD_SPRITE
 Constant inlined irq::toSpritePtr2_$2#0 = (const byte) irq::toSpritePtr2_return#0
 Successful SSA optimization Pass2ConstantInlining
 Simplifying constant plus zero SPRITES_YPOS#0+0
-Simplifying constant plus zero PLAYFIELD_SPRITE_PTRS#0+0
+Simplifying constant plus zero PLAYFIELD_SPRITE_PTRS_1#0+0
+Simplifying constant plus zero PLAYFIELD_SPRITE_PTRS_2#0+0
 Added new block during phi lifting sprites_init::@3(between sprites_init::@1 and sprites_init::@1)
 Added new block during phi lifting irq::@10(between irq::@3 and irq::@4)
 Adding NOP phi() at start of @begin
@@ -1079,10 +1091,10 @@ Calls in [main] to sprites_init:16 sprites_irq_init:18
 Created 4 initial phi equivalence classes
 Coalesced [44] sprites_init::s#3 ← sprites_init::s#1
 Coalesced [45] sprites_init::xpos#3 ← sprites_init::xpos#1
-Coalesced [65] irq_raster_next#19 ← irq_raster_next#2
-Coalesced [71] irq::raster_next#5 ← irq::raster_next#1
-Coalesced [77] irq::raster_next#4 ← irq::raster_next#0
-Coalesced [83] irq_raster_next#20 ← irq_raster_next#1
+Coalesced [69] irq_raster_next#19 ← irq_raster_next#2
+Coalesced [75] irq::raster_next#5 ← irq::raster_next#1
+Coalesced [81] irq::raster_next#4 ← irq::raster_next#0
+Coalesced [87] irq_raster_next#20 ← irq_raster_next#1
 Coalesced down to 4 phi equivalence classes
 Culled Empty Block (label) sprites_init::@3
 Culled Empty Block (label) irq::@10
@@ -1155,7 +1167,7 @@ main::@9: scope:[main]  from main::@8
   [18] call sprites_irq_init 
   to:main::@2
 main::@2: scope:[main]  from main::@2 main::@9
-  [19] *((const byte*) PLAYFIELD_SCREEN#0) ← ++ *((const byte*) PLAYFIELD_SCREEN#0)
+  [19] *((const byte*) PLAYFIELD_SCREEN_1#0) ← ++ *((const byte*) PLAYFIELD_SCREEN_1#0)
   to:main::@2
 sprites_irq_init: scope:[sprites_irq_init]  from main::@9
   asm { sei  }
@@ -1205,48 +1217,52 @@ irq::@1: scope:[irq]  from irq irq::@1
   to:irq::@5
 irq::@5: scope:[irq]  from irq::@1
   [51] (byte) irq::ptr#0 ← (byte) irq_sprite_ptr#0
-  [52] *((const byte*) PLAYFIELD_SPRITE_PTRS#0) ← (byte) irq::ptr#0
-  [53] (byte) irq::ptr#1 ← ++ (byte) irq::ptr#0
-  [54] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1
-  [55] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1
-  [56] (byte) irq::ptr#2 ← ++ (byte) irq::ptr#1
-  [57] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2
-  [58] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0
-  [59] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2
+  [52] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0) ← (byte) irq::ptr#0
+  [53] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0) ← (byte) irq::ptr#0
+  [54] (byte) irq::ptr#1 ← ++ (byte) irq::ptr#0
+  [55] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1
+  [56] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1
+  [57] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1
+  [58] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1
+  [59] (byte) irq::ptr#2 ← ++ (byte) irq::ptr#1
+  [60] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2
+  [61] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2
+  [62] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0
+  [63] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2
   to:irq::@6
 irq::@6: scope:[irq]  from irq::@5
-  [60] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21
-  [61] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21
-  [62] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3
+  [64] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21
+  [65] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21
+  [66] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3
   to:irq::@3
 irq::@3: scope:[irq]  from irq::@6 irq::@9
-  [63] (byte) irq_raster_next#12 ← phi( irq::@6/(byte) irq_raster_next#2 irq::@9/(byte) irq_raster_next#1 )
-  [64] (byte) irq::raster_next#0 ← (byte) irq_raster_next#12
-  [65] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7
-  [66] if((byte~) irq::$3!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto irq::@4
+  [67] (byte) irq_raster_next#12 ← phi( irq::@6/(byte) irq_raster_next#2 irq::@9/(byte) irq_raster_next#1 )
+  [68] (byte) irq::raster_next#0 ← (byte) irq_raster_next#12
+  [69] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7
+  [70] if((byte~) irq::$3!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto irq::@4
   to:irq::@8
 irq::@8: scope:[irq]  from irq::@3
-  [67] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1
+  [71] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1
   to:irq::@4
 irq::@4: scope:[irq]  from irq::@3 irq::@8
-  [68] (byte) irq::raster_next#2 ← phi( irq::@3/(byte) irq::raster_next#0 irq::@8/(byte) irq::raster_next#1 )
-  [69] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2
-  [70] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
-  [71] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0
+  [72] (byte) irq::raster_next#2 ← phi( irq::@3/(byte) irq::raster_next#0 irq::@8/(byte) irq::raster_next#1 )
+  [73] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2
+  [74] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
+  [75] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@4
-  [72] return 
+  [76] return 
   to:@return
 irq::@2: scope:[irq]  from irq::@5
-  [73] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  [74] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0
-  [75] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50
+  [77] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  [78] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0
+  [79] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50
   to:irq::toSpritePtr2
 irq::toSpritePtr2: scope:[irq]  from irq::@2
-  [76] phi()
+  [80] phi()
   to:irq::@9
 irq::@9: scope:[irq]  from irq::toSpritePtr2
-  [77] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0
+  [81] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0
   to:irq::@3
 
 
@@ -1299,9 +1315,12 @@ VARIABLE REGISTER WEIGHTS
 (byte*) PLAYFIELD_CHARSET
 (byte) PLAYFIELD_COLS
 (byte) PLAYFIELD_LINES
-(byte*) PLAYFIELD_SCREEN
+(byte*) PLAYFIELD_SCREEN_1
+(byte*) PLAYFIELD_SCREEN_2
+(byte*) PLAYFIELD_SCREEN_ORIGINAL
 (byte*) PLAYFIELD_SPRITES
-(byte*) PLAYFIELD_SPRITE_PTRS
+(byte*) PLAYFIELD_SPRITE_PTRS_1
+(byte*) PLAYFIELD_SPRITE_PTRS_2
 (byte*) PROCPORT
 (byte) PROCPORT_BASIC_KERNEL_IO
 (byte*) PROCPORT_DDR
@@ -1344,9 +1363,9 @@ VARIABLE REGISTER WEIGHTS
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte~) irq::$3 4.0
 (byte) irq::ptr
-(byte) irq::ptr#0 3.0
-(byte) irq::ptr#1 2.6666666666666665
-(byte) irq::ptr#2 4.0
+(byte) irq::ptr#0 2.6666666666666665
+(byte) irq::ptr#1 2.4
+(byte) irq::ptr#2 3.0
 (byte) irq::raster_next
 (byte) irq::raster_next#0 2.6666666666666665
 (byte) irq::raster_next#1 4.0
@@ -1359,20 +1378,20 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte) irq::ypos
 (byte) irq::ypos#0 2.5
 (byte) irq_cnt
-(byte) irq_cnt#0 0.2857142857142857
+(byte) irq_cnt#0 0.2222222222222222
 (byte) irq_cnt#1 4.0
 (byte) irq_cnt#13 20.0
 (byte) irq_raster_next
-(byte) irq_raster_next#0 0.25
+(byte) irq_raster_next#0 0.2
 (byte) irq_raster_next#1 1.0
 (byte) irq_raster_next#12 6.0
 (byte) irq_raster_next#2 1.3333333333333333
 (byte) irq_sprite_ptr
-(byte) irq_sprite_ptr#0 0.3333333333333333
+(byte) irq_sprite_ptr#0 0.2727272727272727
 (byte) irq_sprite_ptr#1 20.0
 (byte) irq_sprite_ptr#2 20.0
 (byte) irq_sprite_ypos
-(byte) irq_sprite_ypos#0 1.0
+(byte) irq_sprite_ypos#0 0.8095238095238095
 (byte) irq_sprite_ypos#1 20.0
 (byte) irq_sprite_ypos#2 20.0
 (void()) main()
@@ -1508,13 +1527,15 @@ INITIAL ASM
   .label HARDWARE_IRQ = $fffe
   .const BLACK = 0
   .const DARK_GREY = $b
-  .label PLAYFIELD_SCREEN = $400
+  .label PLAYFIELD_SCREEN_1 = $400
+  .label PLAYFIELD_SCREEN_2 = $2c00
   .label PLAYFIELD_SPRITES = $2000
   .label PLAYFIELD_CHARSET = $2800
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
   .const IRQ_RASTER_FIRST = $31
-  .label PLAYFIELD_SPRITE_PTRS = PLAYFIELD_SCREEN+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label irq_raster_next = 6
   .label irq_sprite_ypos = 7
@@ -1574,8 +1595,8 @@ bend_from_b8:
 bend:
 //SEG19 main
 main: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN)>>6
-    .const toD0181_return = (>(PLAYFIELD_SCREEN&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)>>6
+    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
     jmp vicSelectGfxBank1
   //SEG20 main::vicSelectGfxBank1
   vicSelectGfxBank1:
@@ -1616,8 +1637,8 @@ main: {
     jmp b2
   //SEG34 main::@2
   b2:
-  //SEG35 [19] *((const byte*) PLAYFIELD_SCREEN#0) ← ++ *((const byte*) PLAYFIELD_SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc PLAYFIELD_SCREEN
+  //SEG35 [19] *((const byte*) PLAYFIELD_SCREEN_1#0) ← ++ *((const byte*) PLAYFIELD_SCREEN_1#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc PLAYFIELD_SCREEN_1
     jmp b2
 }
 //SEG36 sprites_irq_init
@@ -1767,95 +1788,107 @@ irq: {
   //SEG81 [51] (byte) irq::ptr#0 ← (byte) irq_sprite_ptr#0 -- vbuz1=vbuz2 
     lda irq_sprite_ptr
     sta ptr
-  //SEG82 [52] *((const byte*) PLAYFIELD_SPRITE_PTRS#0) ← (byte) irq::ptr#0 -- _deref_pbuc1=vbuz1 
+  //SEG82 [52] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0) ← (byte) irq::ptr#0 -- _deref_pbuc1=vbuz1 
     lda ptr
-    sta PLAYFIELD_SPRITE_PTRS
-  //SEG83 [53] (byte) irq::ptr#1 ← ++ (byte) irq::ptr#0 -- vbuz1=_inc_vbuz2 
+    sta PLAYFIELD_SPRITE_PTRS_1
+  //SEG83 [53] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0) ← (byte) irq::ptr#0 -- _deref_pbuc1=vbuz1 
+    lda ptr
+    sta PLAYFIELD_SPRITE_PTRS_2
+  //SEG84 [54] (byte) irq::ptr#1 ← ++ (byte) irq::ptr#0 -- vbuz1=_inc_vbuz2 
     ldy ptr
     iny
     sty ptr_1
-  //SEG84 [54] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuz1 
+  //SEG85 [55] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuz1 
     lda ptr_1
-    sta PLAYFIELD_SPRITE_PTRS+1
-  //SEG85 [55] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuz1 
+    sta PLAYFIELD_SPRITE_PTRS_1+1
+  //SEG86 [56] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuz1 
     lda ptr_1
-    sta PLAYFIELD_SPRITE_PTRS+2
-  //SEG86 [56] (byte) irq::ptr#2 ← ++ (byte) irq::ptr#1 -- vbuz1=_inc_vbuz2 
+    sta PLAYFIELD_SPRITE_PTRS_2+1
+  //SEG87 [57] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuz1 
+    lda ptr_1
+    sta PLAYFIELD_SPRITE_PTRS_1+2
+  //SEG88 [58] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuz1 
+    lda ptr_1
+    sta PLAYFIELD_SPRITE_PTRS_2+2
+  //SEG89 [59] (byte) irq::ptr#2 ← ++ (byte) irq::ptr#1 -- vbuz1=_inc_vbuz2 
     ldy ptr_1
     iny
     sty ptr_2
-  //SEG87 [57] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2 -- _deref_pbuc1=vbuz1 
+  //SEG90 [60] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2 -- _deref_pbuc1=vbuz1 
     lda ptr_2
-    sta PLAYFIELD_SPRITE_PTRS+3
-  //SEG88 [58] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 -- vbuz1=_inc_vbuz2 
+    sta PLAYFIELD_SPRITE_PTRS_1+3
+  //SEG91 [61] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2 -- _deref_pbuc1=vbuz1 
+    lda ptr_2
+    sta PLAYFIELD_SPRITE_PTRS_2+3
+  //SEG92 [62] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 -- vbuz1=_inc_vbuz2 
     ldy irq_cnt
     iny
     sty irq_cnt_1
-  //SEG89 [59] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 -- vbuz1_eq_vbuc1_then_la1 
+  //SEG93 [63] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 -- vbuz1_eq_vbuc1_then_la1 
     lda irq_cnt_1
     cmp #$a
     beq b2
     jmp b6
-  //SEG90 irq::@6
+  //SEG94 irq::@6
   b6:
-  //SEG91 [60] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz2_plus_vbuc1 
+  //SEG95 [64] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz2_plus_vbuc1 
     lda #$15
     clc
     adc irq_raster_next
     sta irq_raster_next_2
-  //SEG92 [61] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz2_plus_vbuc1 
+  //SEG96 [65] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz2_plus_vbuc1 
     lda #$15
     clc
     adc irq_sprite_ypos
     sta irq_sprite_ypos_2
-  //SEG93 [62] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz2_plus_vbuc1 
+  //SEG97 [66] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz2_plus_vbuc1 
     lda #3
     clc
     adc irq_sprite_ptr
     sta irq_sprite_ptr_2
-  //SEG94 [63] phi from irq::@6 irq::@9 to irq::@3 [phi:irq::@6/irq::@9->irq::@3]
+  //SEG98 [67] phi from irq::@6 irq::@9 to irq::@3 [phi:irq::@6/irq::@9->irq::@3]
   b3_from_b6:
   b3_from_b9:
-  //SEG95 [63] phi (byte) irq_raster_next#12 = (byte) irq_raster_next#2 [phi:irq::@6/irq::@9->irq::@3#0] -- register_copy 
+  //SEG99 [67] phi (byte) irq_raster_next#12 = (byte) irq_raster_next#2 [phi:irq::@6/irq::@9->irq::@3#0] -- register_copy 
     jmp b3
-  //SEG96 irq::@3
+  //SEG100 irq::@3
   b3:
-  //SEG97 [64] (byte) irq::raster_next#0 ← (byte) irq_raster_next#12 -- vbuz1=vbuz2 
+  //SEG101 [68] (byte) irq::raster_next#0 ← (byte) irq_raster_next#12 -- vbuz1=vbuz2 
     lda irq_raster_next_12
     sta raster_next
-  //SEG98 [65] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG102 [69] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and raster_next
     sta _3
-  //SEG99 [66] if((byte~) irq::$3!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto irq::@4 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG103 [70] if((byte~) irq::$3!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto irq::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda _3
     cmp #3
     bne b4_from_b3
     jmp b8
-  //SEG100 irq::@8
+  //SEG104 irq::@8
   b8:
-  //SEG101 [67] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_minus_1 
+  //SEG105 [71] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_minus_1 
     dec raster_next
-  //SEG102 [68] phi from irq::@3 irq::@8 to irq::@4 [phi:irq::@3/irq::@8->irq::@4]
+  //SEG106 [72] phi from irq::@3 irq::@8 to irq::@4 [phi:irq::@3/irq::@8->irq::@4]
   b4_from_b3:
   b4_from_b8:
-  //SEG103 [68] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq::@3/irq::@8->irq::@4#0] -- register_copy 
+  //SEG107 [72] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq::@3/irq::@8->irq::@4#0] -- register_copy 
     jmp b4
-  //SEG104 irq::@4
+  //SEG108 irq::@4
   b4:
-  //SEG105 [69] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuz1 
+  //SEG109 [73] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuz1 
     lda raster_next
     sta RASTER
-  //SEG106 [70] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG110 [74] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG107 [71] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG111 [75] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp breturn
-  //SEG108 irq::@return
+  //SEG112 irq::@return
   breturn:
-  //SEG109 [72] return  - exit interrupt(HARDWARE_CLOBBER)
+  //SEG113 [76] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
@@ -1863,26 +1896,26 @@ irq: {
   regy:
     ldy #00
     rti
-  //SEG110 irq::@2
+  //SEG114 irq::@2
   b2:
-  //SEG111 [73] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //SEG115 [77] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta irq_cnt_13
-  //SEG112 [74] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
+  //SEG116 [78] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next_1
-  //SEG113 [75] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- vbuz1=vbuc1 
+  //SEG117 [79] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- vbuz1=vbuc1 
     lda #$32
     sta irq_sprite_ypos_1
-  //SEG114 [76] phi from irq::@2 to irq::toSpritePtr2 [phi:irq::@2->irq::toSpritePtr2]
+  //SEG118 [80] phi from irq::@2 to irq::toSpritePtr2 [phi:irq::@2->irq::toSpritePtr2]
   toSpritePtr2_from_b2:
     jmp toSpritePtr2
-  //SEG115 irq::toSpritePtr2
+  //SEG119 irq::toSpritePtr2
   toSpritePtr2:
     jmp b9
-  //SEG116 irq::@9
+  //SEG120 irq::@9
   b9:
-  //SEG117 [77] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 -- vbuz1=vbuc1 
+  //SEG121 [81] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 -- vbuz1=vbuc1 
     lda #toSpritePtr2_return
     sta irq_sprite_ptr_1
     jmp b3_from_b9
@@ -1930,20 +1963,20 @@ Statement [39] *((const byte*) SPRITES_COLS#0 + (byte) sprites_init::s#2) ← (c
 Statement [40] (byte) sprites_init::xpos#1 ← (byte) sprites_init::xpos#2 + (byte/signed byte/word/signed word/dword/signed dword) 24 [ sprites_init::s#2 sprites_init::xpos#1 ] ( main:8::sprites_init:16 [ sprites_init::s#2 sprites_init::xpos#1 ] ) always clobbers reg byte a 
 Statement [44] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#0 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#0 ] ) always clobbers reg byte a 
 Statement [50] if(*((const byte*) RASTER#0)!=(byte) irq_sprite_ypos#0) goto irq::@1 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#0 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#0 ] ) always clobbers reg byte a 
-Statement [58] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#1 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#1 ] ) always clobbers reg byte y 
-Statement [59] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 ] ) always clobbers reg byte a 
-Statement [60] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_sprite_ypos#0 irq_sprite_ptr#0 irq_raster_next#2 ] (  [ irq_sprite_ypos#0 irq_sprite_ptr#0 irq_raster_next#2 ] ) always clobbers reg byte a 
-Statement [61] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_sprite_ptr#0 irq_raster_next#2 ] (  [ irq_sprite_ptr#0 irq_raster_next#2 ] ) always clobbers reg byte a 
-Statement [62] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 [ irq_raster_next#2 ] (  [ irq_raster_next#2 ] ) always clobbers reg byte a 
-Statement [65] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ irq::raster_next#0 irq::$3 ] (  [ irq::raster_next#0 irq::$3 ] ) always clobbers reg byte a 
+Statement [62] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#1 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#1 ] ) always clobbers reg byte y 
+Statement [63] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 ] ) always clobbers reg byte a 
+Statement [64] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_sprite_ypos#0 irq_sprite_ptr#0 irq_raster_next#2 ] (  [ irq_sprite_ypos#0 irq_sprite_ptr#0 irq_raster_next#2 ] ) always clobbers reg byte a 
+Statement [65] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_sprite_ptr#0 irq_raster_next#2 ] (  [ irq_sprite_ptr#0 irq_raster_next#2 ] ) always clobbers reg byte a 
+Statement [66] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 [ irq_raster_next#2 ] (  [ irq_raster_next#2 ] ) always clobbers reg byte a 
+Statement [69] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ irq::raster_next#0 irq::$3 ] (  [ irq::raster_next#0 irq::$3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ]
-Statement [70] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [71] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [72] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [73] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [74] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
-Statement [75] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
-Statement [77] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
+Statement [74] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [75] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [76] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [77] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [78] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
+Statement [79] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
+Statement [81] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
 Statement [2] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 [ ] ( ) always clobbers reg byte a 
 Statement [3] (byte) irq_sprite_ypos#0 ← (byte/signed byte/word/signed word/dword/signed dword) 50 [ ] ( ) always clobbers reg byte a 
 Statement [5] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0 [ ] ( ) always clobbers reg byte a 
@@ -1970,19 +2003,19 @@ Statement [39] *((const byte*) SPRITES_COLS#0 + (byte) sprites_init::s#2) ← (c
 Statement [40] (byte) sprites_init::xpos#1 ← (byte) sprites_init::xpos#2 + (byte/signed byte/word/signed word/dword/signed dword) 24 [ sprites_init::s#2 sprites_init::xpos#1 ] ( main:8::sprites_init:16 [ sprites_init::s#2 sprites_init::xpos#1 ] ) always clobbers reg byte a 
 Statement [44] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#0 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#0 ] ) always clobbers reg byte a 
 Statement [50] if(*((const byte*) RASTER#0)!=(byte) irq_sprite_ypos#0) goto irq::@1 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#0 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#0 ] ) always clobbers reg byte a 
-Statement [58] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#1 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#1 ] ) always clobbers reg byte y 
-Statement [59] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 ] ) always clobbers reg byte a 
-Statement [60] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_sprite_ypos#0 irq_sprite_ptr#0 irq_raster_next#2 ] (  [ irq_sprite_ypos#0 irq_sprite_ptr#0 irq_raster_next#2 ] ) always clobbers reg byte a 
-Statement [61] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_sprite_ptr#0 irq_raster_next#2 ] (  [ irq_sprite_ptr#0 irq_raster_next#2 ] ) always clobbers reg byte a 
-Statement [62] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 [ irq_raster_next#2 ] (  [ irq_raster_next#2 ] ) always clobbers reg byte a 
-Statement [65] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ irq::raster_next#0 irq::$3 ] (  [ irq::raster_next#0 irq::$3 ] ) always clobbers reg byte a 
-Statement [70] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [71] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [72] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [73] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [74] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
-Statement [75] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
-Statement [77] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
+Statement [62] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#1 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 irq_cnt#1 ] ) always clobbers reg byte y 
+Statement [63] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 ] (  [ irq_raster_next#0 irq_sprite_ypos#0 irq_sprite_ptr#0 ] ) always clobbers reg byte a 
+Statement [64] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_sprite_ypos#0 irq_sprite_ptr#0 irq_raster_next#2 ] (  [ irq_sprite_ypos#0 irq_sprite_ptr#0 irq_raster_next#2 ] ) always clobbers reg byte a 
+Statement [65] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_sprite_ptr#0 irq_raster_next#2 ] (  [ irq_sprite_ptr#0 irq_raster_next#2 ] ) always clobbers reg byte a 
+Statement [66] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 [ irq_raster_next#2 ] (  [ irq_raster_next#2 ] ) always clobbers reg byte a 
+Statement [69] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ irq::raster_next#0 irq::$3 ] (  [ irq::raster_next#0 irq::$3 ] ) always clobbers reg byte a 
+Statement [74] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [75] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [76] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [77] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [78] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
+Statement [79] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
+Statement [81] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ sprites_init::s#2 sprites_init::s#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ sprites_init::xpos#2 sprites_init::xpos#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 ] : zp ZP_BYTE:4 , 
@@ -2005,46 +2038,46 @@ Potential registers zp ZP_BYTE:20 [ irq_sprite_ypos#1 ] : zp ZP_BYTE:20 ,
 Potential registers zp ZP_BYTE:21 [ irq_sprite_ptr#1 ] : zp ZP_BYTE:21 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 20: zp ZP_BYTE:16 [ irq_sprite_ypos#2 ] 20: zp ZP_BYTE:17 [ irq_sprite_ptr#2 ] 20: zp ZP_BYTE:19 [ irq_cnt#13 ] 20: zp ZP_BYTE:20 [ irq_sprite_ypos#1 ] 20: zp ZP_BYTE:21 [ irq_sprite_ptr#1 ] 8.33: zp ZP_BYTE:4 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 ] 4: zp ZP_BYTE:15 [ irq_cnt#1 ] 1: zp ZP_BYTE:7 [ irq_sprite_ypos#0 ] 0.33: zp ZP_BYTE:8 [ irq_sprite_ptr#0 ] 0.29: zp ZP_BYTE:9 [ irq_cnt#0 ] 0.25: zp ZP_BYTE:6 [ irq_raster_next#0 ] 
+Uplift Scope [] 20: zp ZP_BYTE:16 [ irq_sprite_ypos#2 ] 20: zp ZP_BYTE:17 [ irq_sprite_ptr#2 ] 20: zp ZP_BYTE:19 [ irq_cnt#13 ] 20: zp ZP_BYTE:20 [ irq_sprite_ypos#1 ] 20: zp ZP_BYTE:21 [ irq_sprite_ptr#1 ] 8.33: zp ZP_BYTE:4 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 ] 4: zp ZP_BYTE:15 [ irq_cnt#1 ] 0.81: zp ZP_BYTE:7 [ irq_sprite_ypos#0 ] 0.27: zp ZP_BYTE:8 [ irq_sprite_ptr#0 ] 0.22: zp ZP_BYTE:9 [ irq_cnt#0 ] 0.2: zp ZP_BYTE:6 [ irq_raster_next#0 ] 
 Uplift Scope [sprites_init] 25.3: zp ZP_BYTE:2 [ sprites_init::s#2 sprites_init::s#1 ] 22: zp ZP_BYTE:10 [ sprites_init::s2#0 ] 15.58: zp ZP_BYTE:3 [ sprites_init::xpos#2 sprites_init::xpos#1 ] 
-Uplift Scope [irq] 12.67: zp ZP_BYTE:5 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] 4: zp ZP_BYTE:14 [ irq::ptr#2 ] 4: zp ZP_BYTE:18 [ irq::$3 ] 3: zp ZP_BYTE:12 [ irq::ptr#0 ] 2.67: zp ZP_BYTE:13 [ irq::ptr#1 ] 2.5: zp ZP_BYTE:11 [ irq::ypos#0 ] 
+Uplift Scope [irq] 12.67: zp ZP_BYTE:5 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] 4: zp ZP_BYTE:18 [ irq::$3 ] 3: zp ZP_BYTE:14 [ irq::ptr#2 ] 2.67: zp ZP_BYTE:12 [ irq::ptr#0 ] 2.5: zp ZP_BYTE:11 [ irq::ypos#0 ] 2.4: zp ZP_BYTE:13 [ irq::ptr#1 ] 
 Uplift Scope [sprites_irq_init] 
 Uplift Scope [main] 
 
-Uplifting [] best 1901 combination zp ZP_BYTE:16 [ irq_sprite_ypos#2 ] zp ZP_BYTE:17 [ irq_sprite_ptr#2 ] zp ZP_BYTE:19 [ irq_cnt#13 ] zp ZP_BYTE:20 [ irq_sprite_ypos#1 ] zp ZP_BYTE:21 [ irq_sprite_ptr#1 ] zp ZP_BYTE:4 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 ] zp ZP_BYTE:15 [ irq_cnt#1 ] zp ZP_BYTE:7 [ irq_sprite_ypos#0 ] zp ZP_BYTE:8 [ irq_sprite_ptr#0 ] zp ZP_BYTE:9 [ irq_cnt#0 ] zp ZP_BYTE:6 [ irq_raster_next#0 ] 
-Uplifting [sprites_init] best 1731 combination reg byte x [ sprites_init::s#2 sprites_init::s#1 ] reg byte a [ sprites_init::s2#0 ] zp ZP_BYTE:3 [ sprites_init::xpos#2 sprites_init::xpos#1 ] 
-Uplifting [irq] best 1702 combination reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] reg byte x [ irq::ptr#2 ] reg byte a [ irq::$3 ] reg byte a [ irq::ptr#0 ] zp ZP_BYTE:13 [ irq::ptr#1 ] zp ZP_BYTE:11 [ irq::ypos#0 ] 
+Uplifting [] best 1929 combination zp ZP_BYTE:16 [ irq_sprite_ypos#2 ] zp ZP_BYTE:17 [ irq_sprite_ptr#2 ] zp ZP_BYTE:19 [ irq_cnt#13 ] zp ZP_BYTE:20 [ irq_sprite_ypos#1 ] zp ZP_BYTE:21 [ irq_sprite_ptr#1 ] zp ZP_BYTE:4 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 ] zp ZP_BYTE:15 [ irq_cnt#1 ] zp ZP_BYTE:7 [ irq_sprite_ypos#0 ] zp ZP_BYTE:8 [ irq_sprite_ptr#0 ] zp ZP_BYTE:9 [ irq_cnt#0 ] zp ZP_BYTE:6 [ irq_raster_next#0 ] 
+Uplifting [sprites_init] best 1759 combination reg byte x [ sprites_init::s#2 sprites_init::s#1 ] reg byte a [ sprites_init::s2#0 ] zp ZP_BYTE:3 [ sprites_init::xpos#2 sprites_init::xpos#1 ] 
+Uplifting [irq] best 1724 combination reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] reg byte a [ irq::$3 ] reg byte x [ irq::ptr#2 ] reg byte a [ irq::ptr#0 ] zp ZP_BYTE:11 [ irq::ypos#0 ] zp ZP_BYTE:13 [ irq::ptr#1 ] 
 Limited combination testing to 100 combinations of 3072 possible.
-Uplifting [sprites_irq_init] best 1702 combination 
-Uplifting [main] best 1702 combination 
+Uplifting [sprites_irq_init] best 1724 combination 
+Uplifting [main] best 1724 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:16 [ irq_sprite_ypos#2 ]
-Uplifting [] best 1702 combination zp ZP_BYTE:16 [ irq_sprite_ypos#2 ] 
+Uplifting [] best 1724 combination zp ZP_BYTE:16 [ irq_sprite_ypos#2 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:17 [ irq_sprite_ptr#2 ]
-Uplifting [] best 1702 combination zp ZP_BYTE:17 [ irq_sprite_ptr#2 ] 
+Uplifting [] best 1724 combination zp ZP_BYTE:17 [ irq_sprite_ptr#2 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:19 [ irq_cnt#13 ]
-Uplifting [] best 1702 combination zp ZP_BYTE:19 [ irq_cnt#13 ] 
+Uplifting [] best 1724 combination zp ZP_BYTE:19 [ irq_cnt#13 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ irq_sprite_ypos#1 ]
-Uplifting [] best 1702 combination zp ZP_BYTE:20 [ irq_sprite_ypos#1 ] 
+Uplifting [] best 1724 combination zp ZP_BYTE:20 [ irq_sprite_ypos#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:21 [ irq_sprite_ptr#1 ]
-Uplifting [] best 1702 combination zp ZP_BYTE:21 [ irq_sprite_ptr#1 ] 
+Uplifting [] best 1724 combination zp ZP_BYTE:21 [ irq_sprite_ptr#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ sprites_init::xpos#2 sprites_init::xpos#1 ]
-Uplifting [sprites_init] best 1702 combination zp ZP_BYTE:3 [ sprites_init::xpos#2 sprites_init::xpos#1 ] 
+Uplifting [sprites_init] best 1724 combination zp ZP_BYTE:3 [ sprites_init::xpos#2 sprites_init::xpos#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 ]
-Uplifting [] best 1702 combination zp ZP_BYTE:4 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 ] 
+Uplifting [] best 1724 combination zp ZP_BYTE:4 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:15 [ irq_cnt#1 ]
-Uplifting [] best 1702 combination zp ZP_BYTE:15 [ irq_cnt#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:13 [ irq::ptr#1 ]
-Uplifting [irq] best 1690 combination reg byte x [ irq::ptr#1 ] 
+Uplifting [] best 1724 combination zp ZP_BYTE:15 [ irq_cnt#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:11 [ irq::ypos#0 ]
-Uplifting [irq] best 1675 combination reg byte a [ irq::ypos#0 ] 
+Uplifting [irq] best 1709 combination reg byte a [ irq::ypos#0 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:13 [ irq::ptr#1 ]
+Uplifting [irq] best 1691 combination reg byte x [ irq::ptr#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:7 [ irq_sprite_ypos#0 ]
-Uplifting [] best 1675 combination zp ZP_BYTE:7 [ irq_sprite_ypos#0 ] 
+Uplifting [] best 1691 combination zp ZP_BYTE:7 [ irq_sprite_ypos#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:8 [ irq_sprite_ptr#0 ]
-Uplifting [] best 1675 combination zp ZP_BYTE:8 [ irq_sprite_ptr#0 ] 
+Uplifting [] best 1691 combination zp ZP_BYTE:8 [ irq_sprite_ptr#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:9 [ irq_cnt#0 ]
-Uplifting [] best 1675 combination zp ZP_BYTE:9 [ irq_cnt#0 ] 
+Uplifting [] best 1691 combination zp ZP_BYTE:9 [ irq_cnt#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ irq_raster_next#0 ]
-Uplifting [] best 1675 combination zp ZP_BYTE:6 [ irq_raster_next#0 ] 
+Uplifting [] best 1691 combination zp ZP_BYTE:6 [ irq_raster_next#0 ] 
 Coalescing zero page register with common assignment [ zp ZP_BYTE:4 [ irq_raster_next#12 irq_raster_next#2 irq_raster_next#1 ] ] with [ zp ZP_BYTE:6 [ irq_raster_next#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_BYTE:7 [ irq_sprite_ypos#0 ] ] with [ zp ZP_BYTE:16 [ irq_sprite_ypos#2 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_BYTE:8 [ irq_sprite_ptr#0 ] ] with [ zp ZP_BYTE:17 [ irq_sprite_ptr#2 ] ] - score: 1
@@ -2059,8 +2092,8 @@ Allocated (was zp ZP_BYTE:8) zp ZP_BYTE:5 [ irq_sprite_ptr#0 irq_sprite_ptr#2 ir
 Allocated (was zp ZP_BYTE:9) zp ZP_BYTE:6 [ irq_cnt#0 irq_cnt#1 irq_cnt#13 ]
 Interrupt procedure irq clobbers AXCNZV
 Removing interrupt register storage sty regy+1 in SEG71 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regy: in SEG109 [72] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldy #00 in SEG109 [72] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage regy: in SEG113 [76] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage ldy #00 in SEG113 [76] return  - exit interrupt(HARDWARE_CLOBBER)
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 Basic Upstart
@@ -2094,13 +2127,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label HARDWARE_IRQ = $fffe
   .const BLACK = 0
   .const DARK_GREY = $b
-  .label PLAYFIELD_SCREEN = $400
+  .label PLAYFIELD_SCREEN_1 = $400
+  .label PLAYFIELD_SCREEN_2 = $2c00
   .label PLAYFIELD_SPRITES = $2000
   .label PLAYFIELD_CHARSET = $2800
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
   .const IRQ_RASTER_FIRST = $31
-  .label PLAYFIELD_SPRITE_PTRS = PLAYFIELD_SCREEN+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label irq_raster_next = 3
   .label irq_sprite_ypos = 4
@@ -2151,8 +2186,8 @@ bend_from_b8:
 bend:
 //SEG19 main
 main: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN)>>6
-    .const toD0181_return = (>(PLAYFIELD_SCREEN&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)>>6
+    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
     jmp vicSelectGfxBank1
   //SEG20 main::vicSelectGfxBank1
   vicSelectGfxBank1:
@@ -2193,8 +2228,8 @@ main: {
     jmp b2
   //SEG34 main::@2
   b2:
-  //SEG35 [19] *((const byte*) PLAYFIELD_SCREEN#0) ← ++ *((const byte*) PLAYFIELD_SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc PLAYFIELD_SCREEN
+  //SEG35 [19] *((const byte*) PLAYFIELD_SCREEN_1#0) ← ++ *((const byte*) PLAYFIELD_SCREEN_1#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc PLAYFIELD_SCREEN_1
     jmp b2
 }
 //SEG36 sprites_irq_init
@@ -2325,107 +2360,115 @@ irq: {
   b5:
   //SEG81 [51] (byte) irq::ptr#0 ← (byte) irq_sprite_ptr#0 -- vbuaa=vbuz1 
     lda irq_sprite_ptr
-  //SEG82 [52] *((const byte*) PLAYFIELD_SPRITE_PTRS#0) ← (byte) irq::ptr#0 -- _deref_pbuc1=vbuaa 
-    sta PLAYFIELD_SPRITE_PTRS
-  //SEG83 [53] (byte) irq::ptr#1 ← ++ (byte) irq::ptr#0 -- vbuxx=_inc_vbuaa 
+  //SEG82 [52] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0) ← (byte) irq::ptr#0 -- _deref_pbuc1=vbuaa 
+    sta PLAYFIELD_SPRITE_PTRS_1
+  //SEG83 [53] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0) ← (byte) irq::ptr#0 -- _deref_pbuc1=vbuaa 
+    sta PLAYFIELD_SPRITE_PTRS_2
+  //SEG84 [54] (byte) irq::ptr#1 ← ++ (byte) irq::ptr#0 -- vbuxx=_inc_vbuaa 
     tax
     inx
-  //SEG84 [54] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
-    stx PLAYFIELD_SPRITE_PTRS+1
-  //SEG85 [55] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
-    stx PLAYFIELD_SPRITE_PTRS+2
-  //SEG86 [56] (byte) irq::ptr#2 ← ++ (byte) irq::ptr#1 -- vbuxx=_inc_vbuxx 
+  //SEG85 [55] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_1+1
+  //SEG86 [56] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_2+1
+  //SEG87 [57] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_1+2
+  //SEG88 [58] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_2+2
+  //SEG89 [59] (byte) irq::ptr#2 ← ++ (byte) irq::ptr#1 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG87 [57] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2 -- _deref_pbuc1=vbuxx 
-    stx PLAYFIELD_SPRITE_PTRS+3
-  //SEG88 [58] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 -- vbuz1=_inc_vbuz1 
+  //SEG90 [60] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_1+3
+  //SEG91 [61] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_2+3
+  //SEG92 [62] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 -- vbuz1=_inc_vbuz1 
     inc irq_cnt
-  //SEG89 [59] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 -- vbuz1_eq_vbuc1_then_la1 
+  //SEG93 [63] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 -- vbuz1_eq_vbuc1_then_la1 
     lda irq_cnt
     cmp #$a
     beq b2
     jmp b6
-  //SEG90 irq::@6
+  //SEG94 irq::@6
   b6:
-  //SEG91 [60] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG95 [64] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
     lda #$15
     clc
     adc irq_raster_next
     sta irq_raster_next
-  //SEG92 [61] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG96 [65] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
     lda #$15
     clc
     adc irq_sprite_ypos
     sta irq_sprite_ypos
-  //SEG93 [62] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG97 [66] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz1_plus_vbuc1 
     lda #3
     clc
     adc irq_sprite_ptr
     sta irq_sprite_ptr
-  //SEG94 [63] phi from irq::@6 irq::@9 to irq::@3 [phi:irq::@6/irq::@9->irq::@3]
+  //SEG98 [67] phi from irq::@6 irq::@9 to irq::@3 [phi:irq::@6/irq::@9->irq::@3]
   b3_from_b6:
   b3_from_b9:
-  //SEG95 [63] phi (byte) irq_raster_next#12 = (byte) irq_raster_next#2 [phi:irq::@6/irq::@9->irq::@3#0] -- register_copy 
+  //SEG99 [67] phi (byte) irq_raster_next#12 = (byte) irq_raster_next#2 [phi:irq::@6/irq::@9->irq::@3#0] -- register_copy 
     jmp b3
-  //SEG96 irq::@3
+  //SEG100 irq::@3
   b3:
-  //SEG97 [64] (byte) irq::raster_next#0 ← (byte) irq_raster_next#12 -- vbuxx=vbuz1 
+  //SEG101 [68] (byte) irq::raster_next#0 ← (byte) irq_raster_next#12 -- vbuxx=vbuz1 
     ldx irq_raster_next
-  //SEG98 [65] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG102 [69] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-  //SEG99 [66] if((byte~) irq::$3!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto irq::@4 -- vbuaa_neq_vbuc1_then_la1 
+  //SEG103 [70] if((byte~) irq::$3!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto irq::@4 -- vbuaa_neq_vbuc1_then_la1 
     cmp #3
     bne b4_from_b3
     jmp b8
-  //SEG100 irq::@8
+  //SEG104 irq::@8
   b8:
-  //SEG101 [67] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_minus_1 
+  //SEG105 [71] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_minus_1 
     dex
-  //SEG102 [68] phi from irq::@3 irq::@8 to irq::@4 [phi:irq::@3/irq::@8->irq::@4]
+  //SEG106 [72] phi from irq::@3 irq::@8 to irq::@4 [phi:irq::@3/irq::@8->irq::@4]
   b4_from_b3:
   b4_from_b8:
-  //SEG103 [68] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq::@3/irq::@8->irq::@4#0] -- register_copy 
+  //SEG107 [72] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq::@3/irq::@8->irq::@4#0] -- register_copy 
     jmp b4
-  //SEG104 irq::@4
+  //SEG108 irq::@4
   b4:
-  //SEG105 [69] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
+  //SEG109 [73] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
     stx RASTER
-  //SEG106 [70] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG110 [74] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG107 [71] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG111 [75] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp breturn
-  //SEG108 irq::@return
+  //SEG112 irq::@return
   breturn:
-  //SEG109 [72] return  - exit interrupt(HARDWARE_CLOBBER)
+  //SEG113 [76] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
     ldx #00
     rti
-  //SEG110 irq::@2
+  //SEG114 irq::@2
   b2:
-  //SEG111 [73] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //SEG115 [77] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta irq_cnt
-  //SEG112 [74] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
+  //SEG116 [78] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next
-  //SEG113 [75] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- vbuz1=vbuc1 
+  //SEG117 [79] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- vbuz1=vbuc1 
     lda #$32
     sta irq_sprite_ypos
-  //SEG114 [76] phi from irq::@2 to irq::toSpritePtr2 [phi:irq::@2->irq::toSpritePtr2]
+  //SEG118 [80] phi from irq::@2 to irq::toSpritePtr2 [phi:irq::@2->irq::toSpritePtr2]
   toSpritePtr2_from_b2:
     jmp toSpritePtr2
-  //SEG115 irq::toSpritePtr2
+  //SEG119 irq::toSpritePtr2
   toSpritePtr2:
     jmp b9
-  //SEG116 irq::@9
+  //SEG120 irq::@9
   b9:
-  //SEG117 [77] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 -- vbuz1=vbuc1 
+  //SEG121 [81] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 -- vbuz1=vbuc1 
     lda #toSpritePtr2_return
     sta irq_sprite_ptr
     jmp b3_from_b9
@@ -2587,12 +2630,17 @@ FINAL SYMBOL TABLE
 (const byte) PLAYFIELD_COLS#0 PLAYFIELD_COLS = (byte/signed byte/word/signed word/dword/signed dword) 10
 (byte) PLAYFIELD_LINES
 (const byte) PLAYFIELD_LINES#0 PLAYFIELD_LINES = (byte/signed byte/word/signed word/dword/signed dword) 22
-(byte*) PLAYFIELD_SCREEN
-(const byte*) PLAYFIELD_SCREEN#0 PLAYFIELD_SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte*) PLAYFIELD_SCREEN_1
+(const byte*) PLAYFIELD_SCREEN_1#0 PLAYFIELD_SCREEN_1 = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte*) PLAYFIELD_SCREEN_2
+(const byte*) PLAYFIELD_SCREEN_2#0 PLAYFIELD_SCREEN_2 = ((byte*))(word/signed word/dword/signed dword) 11264
+(byte*) PLAYFIELD_SCREEN_ORIGINAL
 (byte*) PLAYFIELD_SPRITES
 (const byte*) PLAYFIELD_SPRITES#0 PLAYFIELD_SPRITES = ((byte*))(word/signed word/dword/signed dword) 8192
-(byte*) PLAYFIELD_SPRITE_PTRS
-(const byte*) PLAYFIELD_SPRITE_PTRS#0 PLAYFIELD_SPRITE_PTRS = (const byte*) PLAYFIELD_SCREEN#0+(const word) SPRITE_PTRS#0
+(byte*) PLAYFIELD_SPRITE_PTRS_1
+(const byte*) PLAYFIELD_SPRITE_PTRS_1#0 PLAYFIELD_SPRITE_PTRS_1 = (const byte*) PLAYFIELD_SCREEN_1#0+(const word) SPRITE_PTRS#0
+(byte*) PLAYFIELD_SPRITE_PTRS_2
+(const byte*) PLAYFIELD_SPRITE_PTRS_2#0 PLAYFIELD_SPRITE_PTRS_2 = (const byte*) PLAYFIELD_SCREEN_2#0+(const word) SPRITE_PTRS#0
 (byte*) PROCPORT
 (const byte*) PROCPORT#0 PROCPORT = ((byte*))(byte/signed byte/word/signed word/dword/signed dword) 1
 (byte) PROCPORT_BASIC_KERNEL_IO
@@ -2658,9 +2706,9 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (label) irq::@9
 (label) irq::@return
 (byte) irq::ptr
-(byte) irq::ptr#0 reg byte a 3.0
-(byte) irq::ptr#1 reg byte x 2.6666666666666665
-(byte) irq::ptr#2 reg byte x 4.0
+(byte) irq::ptr#0 reg byte a 2.6666666666666665
+(byte) irq::ptr#1 reg byte x 2.4
+(byte) irq::ptr#2 reg byte x 3.0
 (byte) irq::raster_next
 (byte) irq::raster_next#0 reg byte x 2.6666666666666665
 (byte) irq::raster_next#1 reg byte x 4.0
@@ -2675,20 +2723,20 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte) irq::ypos
 (byte) irq::ypos#0 reg byte a 2.5
 (byte) irq_cnt
-(byte) irq_cnt#0 irq_cnt zp ZP_BYTE:6 0.2857142857142857
+(byte) irq_cnt#0 irq_cnt zp ZP_BYTE:6 0.2222222222222222
 (byte) irq_cnt#1 irq_cnt zp ZP_BYTE:6 4.0
 (byte) irq_cnt#13 irq_cnt zp ZP_BYTE:6 20.0
 (byte) irq_raster_next
-(byte) irq_raster_next#0 irq_raster_next zp ZP_BYTE:3 0.25
+(byte) irq_raster_next#0 irq_raster_next zp ZP_BYTE:3 0.2
 (byte) irq_raster_next#1 irq_raster_next zp ZP_BYTE:3 1.0
 (byte) irq_raster_next#12 irq_raster_next zp ZP_BYTE:3 6.0
 (byte) irq_raster_next#2 irq_raster_next zp ZP_BYTE:3 1.3333333333333333
 (byte) irq_sprite_ptr
-(byte) irq_sprite_ptr#0 irq_sprite_ptr zp ZP_BYTE:5 0.3333333333333333
+(byte) irq_sprite_ptr#0 irq_sprite_ptr zp ZP_BYTE:5 0.2727272727272727
 (byte) irq_sprite_ptr#1 irq_sprite_ptr zp ZP_BYTE:5 20.0
 (byte) irq_sprite_ptr#2 irq_sprite_ptr zp ZP_BYTE:5 20.0
 (byte) irq_sprite_ypos
-(byte) irq_sprite_ypos#0 irq_sprite_ypos zp ZP_BYTE:4 1.0
+(byte) irq_sprite_ypos#0 irq_sprite_ypos zp ZP_BYTE:4 0.8095238095238095
 (byte) irq_sprite_ypos#1 irq_sprite_ypos zp ZP_BYTE:4 20.0
 (byte) irq_sprite_ypos#2 irq_sprite_ypos zp ZP_BYTE:4 20.0
 (void()) main()
@@ -2707,7 +2755,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte~) main::toD0181_$8
 (byte*) main::toD0181_gfx
 (byte) main::toD0181_return
-(const byte) main::toD0181_return#0 toD0181_return = >((word))(const byte*) PLAYFIELD_SCREEN#0&(word/signed word/dword/signed dword) 16383<<(byte/signed byte/word/signed word/dword/signed dword) 2|>((word))(const byte*) PLAYFIELD_CHARSET#0>>(byte/signed byte/word/signed word/dword/signed dword) 2&(byte/signed byte/word/signed word/dword/signed dword) 15
+(const byte) main::toD0181_return#0 toD0181_return = >((word))(const byte*) PLAYFIELD_SCREEN_1#0&(word/signed word/dword/signed dword) 16383<<(byte/signed byte/word/signed word/dword/signed dword) 2|>((word))(const byte*) PLAYFIELD_CHARSET#0>>(byte/signed byte/word/signed word/dword/signed dword) 2&(byte/signed byte/word/signed word/dword/signed dword) 15
 (byte*) main::toD0181_screen
 (label) main::vicSelectGfxBank1
 (byte~) main::vicSelectGfxBank1_$0
@@ -2720,7 +2768,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte/word/dword~) main::vicSelectGfxBank1_toDd001_$3
 (byte*) main::vicSelectGfxBank1_toDd001_gfx
 (byte) main::vicSelectGfxBank1_toDd001_return
-(const byte) main::vicSelectGfxBank1_toDd001_return#0 vicSelectGfxBank1_toDd001_return = (byte/signed byte/word/signed word/dword/signed dword) 3^>((word))(const byte*) PLAYFIELD_SCREEN#0>>(byte/signed byte/word/signed word/dword/signed dword) 6
+(const byte) main::vicSelectGfxBank1_toDd001_return#0 vicSelectGfxBank1_toDd001_return = (byte/signed byte/word/signed word/dword/signed dword) 3^>((word))(const byte*) PLAYFIELD_SCREEN_1#0>>(byte/signed byte/word/signed word/dword/signed dword) 6
 (byte[PLAYFIELD_LINES#0*PLAYFIELD_COLS#0]) playfield
 (void()) sprites_init()
 (label) sprites_init::@1
@@ -2759,7 +2807,7 @@ reg byte a [ irq::$3 ]
 
 
 FINAL ASSEMBLER
-Score: 1274
+Score: 1290
 
 //SEG0 Basic Upstart
 .pc = $801 "Basic"
@@ -2792,13 +2840,15 @@ Score: 1274
   .label HARDWARE_IRQ = $fffe
   .const BLACK = 0
   .const DARK_GREY = $b
-  .label PLAYFIELD_SCREEN = $400
+  .label PLAYFIELD_SCREEN_1 = $400
+  .label PLAYFIELD_SCREEN_2 = $2c00
   .label PLAYFIELD_SPRITES = $2000
   .label PLAYFIELD_CHARSET = $2800
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
   .const IRQ_RASTER_FIRST = $31
-  .label PLAYFIELD_SPRITE_PTRS = PLAYFIELD_SCREEN+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label irq_raster_next = 3
   .label irq_sprite_ypos = 4
@@ -2833,8 +2883,8 @@ bbegin:
 //SEG18 @end
 //SEG19 main
 main: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN)>>6
-    .const toD0181_return = (>(PLAYFIELD_SCREEN&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)>>6
+    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
   //SEG20 main::vicSelectGfxBank1
   //SEG21 [11] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
     lda #3
@@ -2859,8 +2909,8 @@ main: {
     jsr sprites_irq_init
   //SEG34 main::@2
   b2:
-  //SEG35 [19] *((const byte*) PLAYFIELD_SCREEN#0) ← ++ *((const byte*) PLAYFIELD_SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc PLAYFIELD_SCREEN
+  //SEG35 [19] *((const byte*) PLAYFIELD_SCREEN_1#0) ← ++ *((const byte*) PLAYFIELD_SCREEN_1#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc PLAYFIELD_SCREEN_1
     jmp b2
 }
 //SEG36 sprites_irq_init
@@ -2978,90 +3028,98 @@ irq: {
   //SEG80 irq::@5
   //SEG81 [51] (byte) irq::ptr#0 ← (byte) irq_sprite_ptr#0 -- vbuaa=vbuz1 
     lda irq_sprite_ptr
-  //SEG82 [52] *((const byte*) PLAYFIELD_SPRITE_PTRS#0) ← (byte) irq::ptr#0 -- _deref_pbuc1=vbuaa 
-    sta PLAYFIELD_SPRITE_PTRS
-  //SEG83 [53] (byte) irq::ptr#1 ← ++ (byte) irq::ptr#0 -- vbuxx=_inc_vbuaa 
+  //SEG82 [52] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0) ← (byte) irq::ptr#0 -- _deref_pbuc1=vbuaa 
+    sta PLAYFIELD_SPRITE_PTRS_1
+  //SEG83 [53] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0) ← (byte) irq::ptr#0 -- _deref_pbuc1=vbuaa 
+    sta PLAYFIELD_SPRITE_PTRS_2
+  //SEG84 [54] (byte) irq::ptr#1 ← ++ (byte) irq::ptr#0 -- vbuxx=_inc_vbuaa 
     tax
     inx
-  //SEG84 [54] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
-    stx PLAYFIELD_SPRITE_PTRS+1
-  //SEG85 [55] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
-    stx PLAYFIELD_SPRITE_PTRS+2
-  //SEG86 [56] (byte) irq::ptr#2 ← ++ (byte) irq::ptr#1 -- vbuxx=_inc_vbuxx 
+  //SEG85 [55] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_1+1
+  //SEG86 [56] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_2+1
+  //SEG87 [57] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_1+2
+  //SEG88 [58] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) irq::ptr#1 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_2+2
+  //SEG89 [59] (byte) irq::ptr#2 ← ++ (byte) irq::ptr#1 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG87 [57] *((const byte*) PLAYFIELD_SPRITE_PTRS#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2 -- _deref_pbuc1=vbuxx 
-    stx PLAYFIELD_SPRITE_PTRS+3
-  //SEG88 [58] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 -- vbuz1=_inc_vbuz1 
+  //SEG90 [60] *((const byte*) PLAYFIELD_SPRITE_PTRS_1#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_1+3
+  //SEG91 [61] *((const byte*) PLAYFIELD_SPRITE_PTRS_2#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) irq::ptr#2 -- _deref_pbuc1=vbuxx 
+    stx PLAYFIELD_SPRITE_PTRS_2+3
+  //SEG92 [62] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 -- vbuz1=_inc_vbuz1 
     inc irq_cnt
-  //SEG89 [59] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 -- vbuz1_eq_vbuc1_then_la1 
+  //SEG93 [63] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 10) goto irq::@2 -- vbuz1_eq_vbuc1_then_la1 
     lda irq_cnt
     cmp #$a
     beq b2
-  //SEG90 irq::@6
-  //SEG91 [60] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG94 irq::@6
+  //SEG95 [64] (byte) irq_raster_next#2 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
     lda #$15
     clc
     adc irq_raster_next
     sta irq_raster_next
-  //SEG92 [61] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG96 [65] (byte) irq_sprite_ypos#2 ← (byte) irq_sprite_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
     lda #$15
     clc
     adc irq_sprite_ypos
     sta irq_sprite_ypos
-  //SEG93 [62] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG97 [66] (byte) irq_sprite_ptr#2 ← (byte) irq_sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz1_plus_vbuc1 
     lda #3
     clc
     adc irq_sprite_ptr
     sta irq_sprite_ptr
-  //SEG94 [63] phi from irq::@6 irq::@9 to irq::@3 [phi:irq::@6/irq::@9->irq::@3]
-  //SEG95 [63] phi (byte) irq_raster_next#12 = (byte) irq_raster_next#2 [phi:irq::@6/irq::@9->irq::@3#0] -- register_copy 
-  //SEG96 irq::@3
+  //SEG98 [67] phi from irq::@6 irq::@9 to irq::@3 [phi:irq::@6/irq::@9->irq::@3]
+  //SEG99 [67] phi (byte) irq_raster_next#12 = (byte) irq_raster_next#2 [phi:irq::@6/irq::@9->irq::@3#0] -- register_copy 
+  //SEG100 irq::@3
   b3:
-  //SEG97 [64] (byte) irq::raster_next#0 ← (byte) irq_raster_next#12 -- vbuxx=vbuz1 
+  //SEG101 [68] (byte) irq::raster_next#0 ← (byte) irq_raster_next#12 -- vbuxx=vbuz1 
     ldx irq_raster_next
-  //SEG98 [65] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG102 [69] (byte~) irq::$3 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-  //SEG99 [66] if((byte~) irq::$3!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto irq::@4 -- vbuaa_neq_vbuc1_then_la1 
+  //SEG103 [70] if((byte~) irq::$3!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto irq::@4 -- vbuaa_neq_vbuc1_then_la1 
     cmp #3
     bne b4
-  //SEG100 irq::@8
-  //SEG101 [67] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_minus_1 
+  //SEG104 irq::@8
+  //SEG105 [71] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_minus_1 
     dex
-  //SEG102 [68] phi from irq::@3 irq::@8 to irq::@4 [phi:irq::@3/irq::@8->irq::@4]
-  //SEG103 [68] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq::@3/irq::@8->irq::@4#0] -- register_copy 
-  //SEG104 irq::@4
+  //SEG106 [72] phi from irq::@3 irq::@8 to irq::@4 [phi:irq::@3/irq::@8->irq::@4]
+  //SEG107 [72] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq::@3/irq::@8->irq::@4#0] -- register_copy 
+  //SEG108 irq::@4
   b4:
-  //SEG105 [69] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
+  //SEG109 [73] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
     stx RASTER
-  //SEG106 [70] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG110 [74] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG107 [71] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG111 [75] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  //SEG108 irq::@return
-  //SEG109 [72] return  - exit interrupt(HARDWARE_CLOBBER)
+  //SEG112 irq::@return
+  //SEG113 [76] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
     ldx #00
     rti
-  //SEG110 irq::@2
+  //SEG114 irq::@2
   b2:
-  //SEG111 [73] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //SEG115 [77] (byte) irq_cnt#13 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta irq_cnt
-  //SEG112 [74] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
+  //SEG116 [78] (byte) irq_raster_next#1 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next
-  //SEG113 [75] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- vbuz1=vbuc1 
+  //SEG117 [79] (byte) irq_sprite_ypos#1 ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- vbuz1=vbuc1 
     lda #$32
     sta irq_sprite_ypos
-  //SEG114 [76] phi from irq::@2 to irq::toSpritePtr2 [phi:irq::@2->irq::toSpritePtr2]
-  //SEG115 irq::toSpritePtr2
-  //SEG116 irq::@9
-  //SEG117 [77] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 -- vbuz1=vbuc1 
+  //SEG118 [80] phi from irq::@2 to irq::toSpritePtr2 [phi:irq::@2->irq::toSpritePtr2]
+  //SEG119 irq::toSpritePtr2
+  //SEG120 irq::@9
+  //SEG121 [81] (byte) irq_sprite_ptr#1 ← (const byte) irq::toSpritePtr2_return#0 -- vbuz1=vbuc1 
     lda #toSpritePtr2_return
     sta irq_sprite_ptr
     jmp b3

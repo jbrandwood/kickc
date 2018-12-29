@@ -6,35 +6,35 @@ kickasm(pc PLAYFIELD_CHARSET, resource "nes-screen.imap") {{
 }}
 
 const byte PLAYFIELD_SCREEN_ORIGINAL_WIDTH=32;
-const byte* PLAYFIELD_SCREEN_ORIGINAL = $2c00;
 // Address of the screen data original
 kickasm(pc PLAYFIELD_SCREEN_ORIGINAL, resource "nes-screen.iscr") {{
   .import binary "nes-screen.iscr"
 }}
 
-
 // Pointers to the screen address for rendering each playfield line
-byte*[PLAYFIELD_LINES] screen_lines;
+// The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
+align($80) byte*[PLAYFIELD_LINES] screen_lines_1;
+align($40) byte*[PLAYFIELD_LINES] screen_lines_2;
+
+// The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
+byte render_screen_show;
+// The screen currently being rendered to. $00 for screen 1 / $40 for screen 2.
+byte render_screen_render;
 
 // Initialize rendering
 void render_init() {
-	vicSelectGfxBank(PLAYFIELD_SCREEN);
-	*D018 = toD018(PLAYFIELD_SCREEN, PLAYFIELD_CHARSET);
+	vicSelectGfxBank(PLAYFIELD_CHARSET);
 	// Enable Extended Background Color Mode
 	*D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3;
 	*BGCOL1 = BLACK;
 	*BGCOL2 = BLUE;
 	*BGCOL3 = CYAN;
 	*BGCOL4 = GREY;
-	fill(COLS,1000,DARK_GREY);
-	render_screen_original(PLAYFIELD_SCREEN);
 
-	// Initialize the screen line pointers;
-	byte* li = PLAYFIELD_SCREEN + 2*40 + 16;
-	for(byte i:0..PLAYFIELD_LINES-1) {
-		screen_lines[i<<1] = li;
-		li += 40;
-	}
+    // Setup chars on the screens
+	render_screen_original(PLAYFIELD_SCREEN_1);
+	render_screen_original(PLAYFIELD_SCREEN_2);
+	fill(COLS,1000,DARK_GREY);
 
 	// Fill the playfield frame with the white background color
 	byte* line = COLS + 4*40 + 16;
@@ -45,6 +45,36 @@ void render_init() {
 		line +=40;
 	}
 
+	// Initialize the screen line pointers;
+	byte* li_1 = PLAYFIELD_SCREEN_1 + 2*40 + 16;
+	byte* li_2 = PLAYFIELD_SCREEN_2 + 2*40 + 16;
+	for(byte i:0..PLAYFIELD_LINES-1) {
+		screen_lines_1[i<<1] = li_1;
+		screen_lines_2[i<<1] = li_2;
+		li_1 += 40;
+		li_2 += 40;
+	}
+
+    // Show showing screen 1 and rendering to screen 2
+    render_screen_show = 0;
+    render_screen_render = $40;
+}
+
+// Update $D018 to show the current screen (used for double buffering)
+void render_show() {
+    byte d018val = 0;
+    if(render_screen_show==0) {
+        d018val = toD018(PLAYFIELD_SCREEN_1, PLAYFIELD_CHARSET);
+    } else {
+        d018val = toD018(PLAYFIELD_SCREEN_2, PLAYFIELD_CHARSET);
+    }
+	*D018 = d018val;
+}
+
+// Swap rendering to the other screen (used for double buffering)
+void render_screen_swap() {
+    render_screen_render ^= $40;
+    render_screen_show ^= $40;
 }
 
 // Copy the original screen data to the passed screen
@@ -75,7 +105,7 @@ void render_playfield() {
 	// Do not render the top 2 lines.
 	byte i = PLAYFIELD_COLS*2;
 	for(byte l:2..PLAYFIELD_LINES-1) {
-		byte* screen_line = screen_lines[l<<1];
+		byte* screen_line = screen_lines_1[render_screen_render+l<<1];
 		for(byte c:0..PLAYFIELD_COLS-1) {
 			*(screen_line++) = playfield[i++];
 		}
@@ -88,7 +118,7 @@ void render_current() {
 	byte ypos2 = current_ypos<<1;
 	for(byte l:0..3) {
 		if(ypos2>2 && ypos2<2*PLAYFIELD_LINES) {
-			byte* screen_line = screen_lines[ypos2];
+			byte* screen_line = screen_lines_1[render_screen_render+ypos2];
 			byte xpos = current_xpos;
 			for(byte c:0..3) {
 				byte current_cell = current_piece_gfx[i++];
@@ -105,3 +135,4 @@ void render_current() {
 		ypos2 += 2;
 	}
 }
+

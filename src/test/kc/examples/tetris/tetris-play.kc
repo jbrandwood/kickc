@@ -1,4 +1,6 @@
-// Implementation of the games play logic
+// Tetris Game for the Commodore 64
+// Implementation of the tetris game play logic. Most of the logic is modelled after NES tetris
+// Source: https://meatfighter.com/nintendotetrisai/
 
 import "tetris-data"
 import "tetris-pieces"
@@ -17,16 +19,20 @@ byte* current_piece = 0;
 byte current_orientation = 0;
 
 // The rate of moving down the current piece (number of frames between moves if movedown is  not forced)
-const byte current_movedown_slow = 50;
+byte current_movedown_slow = 48;
 
 // The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
-const byte current_movedown_fast = 5;
+const byte current_movedown_fast = 2;
 
 // Counts up to the next movedown of current piece
 byte current_movedown_counter = 0;
 
 // Score values for removing 0-4 lines (in BCD)
 dword[] score_add_bcd = { $0000, $0040, $0100, $0300, $1200 };
+
+// The speed of moving down the piece when soft-drop is not activated
+// This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
+const byte[] MOVEDOWN_SLOW_SPEEDS = { 48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 };
 
 // Initialize play data tables
 void play_init() {
@@ -40,6 +46,9 @@ void play_init() {
 		idx += PLAYFIELD_COLS;
 	}
 	playfield_lines_idx[PLAYFIELD_LINES] = PLAYFIELD_COLS*PLAYFIELD_LINES;
+
+	// Set initial speed of moving down a tetromino
+	current_movedown_slow = MOVEDOWN_SLOW_SPEEDS[level];
 }
 
 // Move down the current piece
@@ -248,12 +257,26 @@ void play_update_score(byte removed) {
         // If line 10-part updated increase the level
         byte lines_after = <lines_bcd&$f0;
         if(lines_before!=lines_after) {
-             level_bcd++;
-             if((level_bcd&$f)==$a) {
-                // If level low nybble hits $a change to $10
-                level_bcd += 6;
-             }
+            play_increase_level();
         }
+    }
+}
+
+// Increase the level
+void play_increase_level() {
+    // Increase level
+    level++;
+    // Update speed of moving tetrominos down
+    if(level>29) {
+        current_movedown_slow = 1;
+    } else {
+        current_movedown_slow = MOVEDOWN_SLOW_SPEEDS[level];
+    }
+    // Increase BCD-format level
+    level_bcd++;
+    if((level_bcd&$f)==$a) {
+         // If level low nybble hits $a change to $10
+        level_bcd += 6;
     }
 }
 

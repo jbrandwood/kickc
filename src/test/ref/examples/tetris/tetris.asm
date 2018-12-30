@@ -66,8 +66,7 @@
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
   .const IRQ_RASTER_FIRST = $31
-  .const current_movedown_slow = $32
-  .const current_movedown_fast = 5
+  .const current_movedown_fast = 2
   .const COLLISION_NONE = 0
   .const COLLISION_PLAYFIELD = 1
   .const COLLISION_BOTTOM = 2
@@ -76,24 +75,26 @@
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
-  .label keyboard_events_size = $1f
-  .label render_screen_showing = $21
-  .label irq_raster_next = $20
-  .label irq_sprite_ypos = $22
-  .label irq_sprite_ptr = $23
-  .label irq_cnt = $24
+  .label keyboard_events_size = $21
+  .label render_screen_showing = $23
+  .label irq_raster_next = $22
+  .label irq_sprite_ypos = $24
+  .label irq_sprite_ptr = $25
+  .label irq_cnt = $26
+  .label current_movedown_slow = $18
   .label current_movedown_counter = 4
   .label current_ypos = $10
-  .label current_piece_gfx = $1b
-  .label current_xpos = $1d
-  .label current_piece_char = $1e
-  .label current_orientation = $1a
-  .label level_bcd = $17
+  .label current_piece_gfx = $1d
+  .label current_xpos = $1f
+  .label current_piece_char = $20
+  .label current_orientation = $1c
+  .label level_bcd = $19
   .label render_screen_render = 3
   .label render_screen_show = 2
   .label lines_bcd = $11
   .label score_bcd = $13
-  .label current_piece = $18
+  .label level = $17
+  .label current_piece = $1a
   .label current_piece_12 = 5
   .label render_screen_render_30 = 9
   .label current_xpos_47 = $a
@@ -121,7 +122,7 @@ bbegin:
   jsr main
 main: {
     .label key_event = $f
-    .label render = $25
+    .label render = $27
     jsr sid_rnd_init
     sei
     jsr render_init
@@ -141,15 +142,15 @@ main: {
     ldx current_piece_char
     lda #$40
     sta render_screen_render_30
-    jsr render_current
+    jsr render_moving
     ldy play_spawn_current._3
     lda PIECES,y
     sta current_piece
     lda PIECES+1,y
     sta current_piece+1
-    lda #1
-    sta level_bcd
     lda #0
+    sta level_bcd
+    sta level
     sta score_bcd
     sta score_bcd+1
     sta score_bcd+2
@@ -199,7 +200,7 @@ main: {
     lda current_piece_gfx+1
     sta current_piece_gfx_103+1
     ldx current_piece_char
-    jsr render_current
+    jsr render_moving
     jsr render_score
     jsr render_screen_swap
     jmp b4
@@ -319,7 +320,7 @@ render_bcd: {
   !:
     rts
 }
-render_current: {
+render_moving: {
     .label ypos2 = $b
     .label screen_line = 7
     .label xpos = $e
@@ -484,7 +485,7 @@ play_collision: {
     .label piece_gfx = 5
     .label ypos2 = $b
     .label playfield_line = 7
-    .label i = $26
+    .label i = $28
     .label col = $e
     .label l = $c
     .label i_2 = $d
@@ -632,7 +633,7 @@ play_move_down: {
     inx
   b2:
     lda current_movedown_counter
-    cmp #current_movedown_slow
+    cmp current_movedown_slow
     bcc b4
     inx
   b4:
@@ -709,7 +710,7 @@ sid_rnd: {
 }
 play_update_score: {
     .label lines_before = 4
-    .label add_bcd = $27
+    .label add_bcd = $29
     cpx #0
     beq breturn
     lda lines_bcd
@@ -753,6 +754,25 @@ play_update_score: {
     and #$f0
     cmp lines_before
     beq breturn
+    jsr play_increase_level
+  breturn:
+    rts
+}
+play_increase_level: {
+    inc level
+    lda level
+    cmp #$1d
+    beq !+
+    bcs b1
+  !:
+    ldy level
+    lda MOVEDOWN_SLOW_SPEEDS,y
+    sta current_movedown_slow
+    jmp b2
+  b1:
+    lda #1
+    sta current_movedown_slow
+  b2:
     inc level_bcd
     lda #$f
     and level_bcd
@@ -1063,6 +1083,8 @@ play_init: {
     bne b1
     lda #PLAYFIELD_COLS*PLAYFIELD_LINES
     sta playfield_lines_idx+PLAYFIELD_LINES
+    lda MOVEDOWN_SLOW_SPEEDS
+    sta current_movedown_slow
     rts
 }
 sprites_irq_init: {
@@ -1193,7 +1215,7 @@ render_init: {
 render_screen_original: {
     .const SPACE = 0
     .label screen = $11
-    .label cols = $18
+    .label cols = $1a
     .label oscr = 5
     .label ocols = 7
     .label y = 2
@@ -1391,6 +1413,7 @@ sprites_irq: {
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
   score_add_bcd: .dword 0, $40, $100, $300, $1200
+  MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40

@@ -1,3 +1,7 @@
+// Tetris Game for the Commodore 64
+// All rendering logic for showing the playfield, the pieces and the scores
+// Also handles double buffering
+
 import "tetris-data"
 
 kickasm(pc PLAYFIELD_CHARSET, resource "playfield-screen.imap") {{
@@ -137,7 +141,7 @@ void render_screen_original(byte* screen) {
 	}
 }
 
-// Render the static playfield on the screen
+// Render the static playfield on the screen (all pieces already locked into place)
 void render_playfield() {
 	// Do not render the top 2 lines.
 	byte i = PLAYFIELD_COLS*2;
@@ -150,7 +154,7 @@ void render_playfield() {
 }
 
 // Render the current moving piece at position (current_xpos, current_ypos)
-void render_current() {
+void render_moving() {
 	byte i = 0;
 	byte ypos2 = current_ypos<<1;
 	for(byte l:0..3) {

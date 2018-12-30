@@ -77,21 +77,40 @@ void render_screen_swap() {
 
 // Show the current score
 void render_score() {
-    const byte ZERO_CHAR = 51;
-    byte SCREEN_SCORE_ROW = $05;
-    byte SCREEN_SCORE_COL = $21;
-    byte* screen_score_pos;
+    byte* screen;
     if(render_screen_render==0) {
-        screen_score_pos = PLAYFIELD_SCREEN_1 + 40*SCREEN_SCORE_ROW + SCREEN_SCORE_COL;
+        screen = PLAYFIELD_SCREEN_1;
     } else {
-        screen_score_pos = PLAYFIELD_SCREEN_2 + 40*SCREEN_SCORE_ROW + SCREEN_SCORE_COL;
+        screen = PLAYFIELD_SCREEN_2;
     }
+
     byte* score_bytes = (byte*)(&score_bcd);
-    for (byte b:0..2) {
-        byte score_byte = score_bytes[b];
-        *screen_score_pos-- = ZERO_CHAR + (score_byte & $0f);
-        *screen_score_pos-- = ZERO_CHAR + (score_byte>>4);
+    word score_offset = 40*$05 + $1c;
+    render_bcd( screen, score_offset, score_bytes[2], 0);
+    render_bcd( screen, score_offset+2, score_bytes[1], 0);
+    render_bcd( screen, score_offset+4, score_bytes[0], 0);
+
+    word lines_offset = 40*$01 + $16;
+    render_bcd( screen, lines_offset, >lines_bcd, 1);
+    render_bcd( screen, lines_offset+1, <lines_bcd, 0);
+
+    word level_offset = 40*19 + $1f;
+    render_bcd( screen, level_offset, level_bcd, 0);
+
+}
+
+// Render BCD digits on a screen.
+// - screen: pointer to the screen to render on
+// - offset: offset on the screen
+// - bcd: The BCD-value to render
+// - only_low: if non-zero only renders the low digit
+void render_bcd(byte* screen, word offset, byte bcd, byte only_low) {
+    const byte ZERO_CHAR = 51;
+    byte* screen_pos = screen+offset;
+    if(only_low==0) {
+        *screen_pos++ = ZERO_CHAR + (bcd >> 4);
     }
+    *screen_pos++ = ZERO_CHAR + (bcd & $0f);
 }
 
 // Copy the original screen data to the passed screen

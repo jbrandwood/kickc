@@ -238,8 +238,15 @@ byte play_remove_lines() {
 void play_update_score(byte removed) {
     if(removed!=0){
         dword add_bcd = score_add_bcd[removed<<2];
+        byte lines_before = <lines_bcd&$f0;
         asm { sed }
+        lines_bcd += removed;
         score_bcd += add_bcd;
+        // If line mod 10 == 0 increase level
+        byte lines_after = <lines_bcd&$f0;
+        if(lines_before!=lines_after) {
+             level_bcd = level_bcd + 1;
+        }
         asm { cld }
     }
 }

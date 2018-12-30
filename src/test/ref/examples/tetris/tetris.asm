@@ -1389,7 +1389,7 @@ sprites_irq: {
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
   PIECES_CHARS: .byte $64, $65, $a5, $65, $64, $64, $a5
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
-  PIECES_START_Y: .byte 1, 1, 1, 1, 2, 1, 1
+  PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
   score_add_bcd: .dword 0, $40, $100, $300, $1200
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0

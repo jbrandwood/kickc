@@ -84,16 +84,16 @@
   .label irq_cnt = $24
   .label current_movedown_counter = 4
   .label current_ypos = $10
-  .label current_piece_gfx = $1a
-  .label current_xpos = $1c
-  .label current_piece_char = $1d
-  .label current_orientation = $19
-  .label level_bcd = $1e
+  .label current_piece_gfx = $1b
+  .label current_xpos = $1d
+  .label current_piece_char = $1e
+  .label current_orientation = $1a
+  .label level_bcd = $17
   .label render_screen_render = 3
   .label render_screen_show = 2
   .label lines_bcd = $11
   .label score_bcd = $13
-  .label current_piece = $17
+  .label current_piece = $18
   .label current_piece_12 = 5
   .label render_screen_render_30 = 9
   .label current_xpos_47 = $a
@@ -708,10 +708,13 @@ sid_rnd: {
     rts
 }
 play_update_score: {
-    .label add_bcd = $27
     .label lines_before = 4
+    .label add_bcd = $27
     cpx #0
     beq breturn
+    lda lines_bcd
+    and #$f0
+    sta lines_before
     txa
     asl
     asl
@@ -724,9 +727,6 @@ play_update_score: {
     sta add_bcd+2
     lda score_add_bcd+3,y
     sta add_bcd+3
-    lda lines_bcd
-    and #$f0
-    sta lines_before
     sed
     txa
     clc
@@ -748,13 +748,20 @@ play_update_score: {
     lda score_bcd+3
     adc add_bcd+3
     sta score_bcd+3
+    cld
     lda lines_bcd
     and #$f0
     cmp lines_before
-    beq b2
+    beq breturn
     inc level_bcd
-  b2:
-    cld
+    lda #$f
+    and level_bcd
+    cmp #$a
+    bne breturn
+    lda #6
+    clc
+    adc level_bcd
+    sta level_bcd
   breturn:
     rts
 }
@@ -1186,7 +1193,7 @@ render_init: {
 render_screen_original: {
     .const SPACE = 0
     .label screen = $11
-    .label cols = $17
+    .label cols = $18
     .label oscr = 5
     .label ocols = 7
     .label y = 2

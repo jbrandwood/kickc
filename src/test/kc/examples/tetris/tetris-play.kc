@@ -237,17 +237,23 @@ byte play_remove_lines() {
 // Update the score based on the number of lines removed
 void play_update_score(byte removed) {
     if(removed!=0){
-        dword add_bcd = score_add_bcd[removed<<2];
         byte lines_before = <lines_bcd&$f0;
+        dword add_bcd = score_add_bcd[removed<<2];
+
         asm { sed }
         lines_bcd += removed;
         score_bcd += add_bcd;
-        // If line mod 10 == 0 increase level
+        asm { cld }
+
+        // If line 10-part updated increase the level
         byte lines_after = <lines_bcd&$f0;
         if(lines_before!=lines_after) {
-             level_bcd = level_bcd + 1;
+             level_bcd++;
+             if((level_bcd&$f)==$a) {
+                // If level low nybble hits $a change to $10
+                level_bcd += 6;
+             }
         }
-        asm { cld }
     }
 }
 

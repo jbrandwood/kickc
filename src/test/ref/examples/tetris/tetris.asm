@@ -777,12 +777,36 @@ play_increase_level: {
     lda #$f
     and level_bcd
     cmp #$a
-    bne breturn
+    bne b3
     lda #6
     clc
     adc level_bcd
     sta level_bcd
-  breturn:
+  b3:
+    sed
+    ldx #0
+  b4:
+    txa
+    asl
+    asl
+    tay
+    clc
+    lda score_add_bcd,y
+    adc SCORE_BASE_BCD,y
+    sta score_add_bcd,y
+    lda score_add_bcd+1,y
+    adc SCORE_BASE_BCD+1,y
+    sta score_add_bcd+1,y
+    lda score_add_bcd+2,y
+    adc SCORE_BASE_BCD+2,y
+    sta score_add_bcd+2,y
+    lda score_add_bcd+3,y
+    adc SCORE_BASE_BCD+3,y
+    sta score_add_bcd+3,y
+    inx
+    cpx #5
+    bne b4
+    cld
     rts
 }
 play_remove_lines: {
@@ -1085,6 +1109,23 @@ play_init: {
     sta playfield_lines_idx+PLAYFIELD_LINES
     lda MOVEDOWN_SLOW_SPEEDS
     sta current_movedown_slow
+    ldx #0
+  b2:
+    txa
+    asl
+    asl
+    tay
+    lda SCORE_BASE_BCD,y
+    sta score_add_bcd,y
+    lda SCORE_BASE_BCD+1,y
+    sta score_add_bcd+1,y
+    lda SCORE_BASE_BCD+2,y
+    sta score_add_bcd+2,y
+    lda SCORE_BASE_BCD+3,y
+    sta score_add_bcd+3,y
+    inx
+    cpx #5
+    bne b2
     rts
 }
 sprites_irq_init: {
@@ -1412,7 +1453,8 @@ sprites_irq: {
   PIECES_CHARS: .byte $64, $65, $a5, $65, $64, $64, $a5
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
-  score_add_bcd: .dword 0, $40, $100, $300, $1200
+  SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
+  score_add_bcd: .fill 4*5, 0
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0

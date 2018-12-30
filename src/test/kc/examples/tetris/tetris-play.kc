@@ -27,8 +27,13 @@ const byte current_movedown_fast = 2;
 // Counts up to the next movedown of current piece
 byte current_movedown_counter = 0;
 
+// Base Score values for removing 0-4 lines (in BCD)
+// These values are added to score_add_bcd for each level gained.
+const dword[] SCORE_BASE_BCD = { $0000, $0040, $0100, $0300, $1200 };
+
 // Score values for removing 0-4 lines (in BCD)
-dword[] score_add_bcd = { $0000, $0040, $0100, $0300, $1200 };
+// These values are updated based on the players level and the base values from SCORE_BASE_BCD
+dword[5] score_add_bcd;
 
 // The speed of moving down the piece when soft-drop is not activated
 // This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
@@ -49,6 +54,12 @@ void play_init() {
 
 	// Set initial speed of moving down a tetromino
 	current_movedown_slow = MOVEDOWN_SLOW_SPEEDS[level];
+	// Set the initial score add values
+    for(byte b: 0..4) {
+        byte b4 = b<<2;
+        score_add_bcd[b4] = SCORE_BASE_BCD[b4];
+    }
+
 }
 
 // Move down the current piece
@@ -278,5 +289,12 @@ void play_increase_level() {
          // If level low nybble hits $a change to $10
         level_bcd += 6;
     }
+    // Increase the score values gained
+ 	asm { sed }
+    for(byte b: 0..4) {
+        byte b4 = b<<2;
+        score_add_bcd[b4] += SCORE_BASE_BCD[b4];
+    }
+ 	asm { cld }
 }
 

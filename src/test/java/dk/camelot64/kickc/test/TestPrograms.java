@@ -54,7 +54,6 @@ public class TestPrograms {
       compileAndCompare("examples/tetris/tetris");
    }
 
-
    @Test
    public void testClobberAProblem() throws IOException, URISyntaxException {
       compileAndCompare("clobber-a-problem");

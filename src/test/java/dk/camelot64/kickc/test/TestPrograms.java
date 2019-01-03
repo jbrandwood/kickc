@@ -55,6 +55,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testScanDesireProblem() throws IOException, URISyntaxException {
+      compileAndCompare("scan-desire-problem");
+   }
+
+   @Test
    public void testClobberAProblem() throws IOException, URISyntaxException {
       compileAndCompare("clobber-a-problem");
    }

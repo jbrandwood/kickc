@@ -100,20 +100,17 @@
   .label current_piece_16 = 5
   .label render_screen_render_30 = 9
   .label current_xpos_57 = $a
-  .label current_piece_gfx_62 = 5
-  .label current_piece_char_75 = $b
-  .label render_screen_render_68 = 9
-  .label current_xpos_125 = $a
+  .label current_piece_gfx_63 = 5
+  .label render_screen_render_66 = 9
   .label current_xpos_126 = $a
-  .label current_piece_gfx_115 = 5
+  .label current_xpos_127 = $a
   .label current_piece_gfx_116 = 5
-  .label current_piece_char_103 = $b
-  .label current_piece_char_104 = $b
-  .label current_piece_89 = 5
+  .label current_piece_gfx_117 = 5
   .label current_piece_90 = 5
   .label current_piece_91 = 5
   .label current_piece_92 = 5
   .label current_piece_93 = 5
+  .label current_piece_94 = 5
 bbegin:
   lda #0
   sta render_screen_showing
@@ -138,15 +135,14 @@ main: {
     jsr play_spawn_current
     ldx #$40
     jsr render_playfield
-    ldx current_ypos
+    ldy current_ypos
     lda current_xpos
-    sta current_xpos_125
+    sta current_xpos_126
     lda current_piece_gfx
-    sta current_piece_gfx_115
+    sta current_piece_gfx_116
     lda current_piece_gfx+1
-    sta current_piece_gfx_115+1
-    lda current_piece_char
-    sta current_piece_char_103
+    sta current_piece_gfx_116+1
+    ldx current_piece_char
     lda #$40
     sta render_screen_render_30
     jsr render_moving
@@ -175,12 +171,6 @@ main: {
     lda RASTER
     cmp #$ff
     bne b4
-    lda render_screen_show
-    lsr
-    lsr
-    lsr
-    lsr
-    sta BORDERCOL
     jsr render_show
     jsr keyboard_event_scan
     jsr keyboard_event_get
@@ -195,26 +185,22 @@ main: {
     jsr play_movement
     lda play_movement.return
     cmp #0
-    beq b12
+    beq b4
     ldx render_screen_render
     jsr render_playfield
-    ldx current_ypos
+    ldy current_ypos
     lda render_screen_render
-    sta render_screen_render_68
+    sta render_screen_render_66
     lda current_xpos
-    sta current_xpos_126
+    sta current_xpos_127
     lda current_piece_gfx
-    sta current_piece_gfx_116
+    sta current_piece_gfx_117
     lda current_piece_gfx+1
-    sta current_piece_gfx_116+1
-    lda current_piece_char
-    sta current_piece_char_104
+    sta current_piece_gfx_117+1
+    ldx current_piece_char
     jsr render_moving
     jsr render_score
     jsr render_screen_swap
-  b12:
-    lda #0
-    sta BORDERCOL
     jmp b4
 }
 render_screen_swap: {
@@ -333,12 +319,13 @@ render_bcd: {
     rts
 }
 render_moving: {
-    .label ypos2 = $c
+    .label ypos2 = $b
     .label screen_line = 7
-    .label xpos = $f
-    .label i = $e
-    .label l = $d
-    txa
+    .label xpos = $e
+    .label i = $d
+    .label l = $c
+    .label c = $f
+    tya
     asl
     sta ypos2
     lda #0
@@ -381,23 +368,25 @@ render_moving: {
     sta screen_line+1
     lda current_xpos_57
     sta xpos
-    ldx #0
+    lda #0
+    sta c
   b4:
     ldy i
-    lda (current_piece_gfx_62),y
+    lda (current_piece_gfx_63),y
     inc i
     cmp #0
     beq b5
     lda xpos
     cmp #PLAYFIELD_COLS
     bcs b5
-    lda current_piece_char_75
-    ldy xpos
+    tay
+    txa
     sta (screen_line),y
   b5:
     inc xpos
-    inx
-    cpx #4
+    inc c
+    lda c
+    cmp #4
     bne b4
     jmp b3
 }
@@ -494,9 +483,9 @@ play_move_rotate: {
     sta play_collision.ypos
     ldx orientation
     lda current_piece
-    sta current_piece_92
+    sta current_piece_93
     lda current_piece+1
-    sta current_piece_92+1
+    sta current_piece_93+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -621,9 +610,9 @@ play_move_leftright: {
     sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_91
+    sta current_piece_92
     lda current_piece+1
-    sta current_piece_91+1
+    sta current_piece_92+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -643,9 +632,9 @@ play_move_leftright: {
     sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_90
+    sta current_piece_91
     lda current_piece+1
-    sta current_piece_90+1
+    sta current_piece_91+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -685,9 +674,9 @@ play_move_down: {
     sta play_collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_89
+    sta current_piece_90
     lda current_piece+1
-    sta current_piece_89+1
+    sta current_piece_90+1
     jsr play_collision
     cmp #COLLISION_NONE
     beq b6
@@ -742,9 +731,9 @@ play_spawn_current: {
     lda current_ypos
     sta play_collision.ypos
     lda PIECES,y
-    sta current_piece_93
+    sta current_piece_94
     lda PIECES+1,y
-    sta current_piece_93+1
+    sta current_piece_94+1
     ldx #0
     jsr play_collision
     cmp #COLLISION_PLAYFIELD

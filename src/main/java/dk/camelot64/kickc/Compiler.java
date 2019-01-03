@@ -52,6 +52,18 @@ public class Compiler {
             program.getLog().append(fileStream.toString());
          }
          KickCLexer lexer = new KickCLexer(fileStream);
+         lexer.addErrorListener(new BaseErrorListener() {
+            @Override
+            public void syntaxError(
+                  Recognizer<?, ?> recognizer,
+                  Object offendingSymbol,
+                  int line,
+                  int charPositionInLine,
+                  String msg,
+                  RecognitionException e) {
+               throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
+            }
+         });
          KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
          parser.setBuildParseTree(true);
          parser.addErrorListener(new BaseErrorListener() {

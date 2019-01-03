@@ -32,15 +32,18 @@
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
   .const SPRITES_FIRST_YPOS = $31
+  .label SIN = $1400
+  .label SIN_SPRITE = $2800
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
-  .label render_screen_showing = 4
-  .label irq_raster_next = 3
-  .label irq_sprite_ypos = 5
-  .label irq_sprite_ptr = 6
-  .label irq_cnt = 7
+  .label render_screen_showing = 5
+  .label irq_raster_next = 4
+  .label irq_sprite_ypos = 6
+  .label irq_sprite_ptr = 7
+  .label irq_cnt = 8
+  .label sin_idx = 2
 bbegin:
   lda #0
   sta render_screen_showing
@@ -54,8 +57,11 @@ bbegin:
   sta irq_cnt
   jsr main
 main: {
+    .const toSpritePtr2_return = SIN_SPRITE>>6
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)>>6
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+    .label xpos = 2
+    .label ypos = 3
     lda #3
     sta CIA2_PORT_A_DDR
     lda #vicSelectGfxBank1_toDd001_return
@@ -63,10 +69,71 @@ main: {
     lda #toD0181_return
     sta D018
     jsr sprites_init
+    lda #$ff
+    sta SPRITES_ENABLE
+    lda #$32
+    sta ypos
+    lda #$18
+    sta xpos
+    ldy #4
+  b1:
+    tya
+    asl
+    tax
+    lda xpos
+    sta SPRITES_XPOS,x
+    lda ypos
+    sta SPRITES_YPOS,x
+    tya
+    sec
+    sbc #3
+    sta SPRITES_COLS,y
+    lda #toSpritePtr2_return
+    sta PLAYFIELD_SPRITE_PTRS_1,y
+    lda #$18
+    clc
+    adc xpos
+    sta xpos
+    lda #$18
+    clc
+    adc ypos
+    sta ypos
+    iny
+    cpy #8
+    bne b1
     jsr sprites_irq_init
-  b2:
-    inc PLAYFIELD_SCREEN_1
-    jmp b2
+    jsr loop
+    rts
+}
+loop: {
+    .label _1 = 9
+    .label idx = 3
+    lda #0
+    sta sin_idx
+  b4:
+    lda RASTER
+    cmp #$ff
+    bne b4
+    lda sin_idx
+    sta idx
+    ldx #4
+  b5:
+    txa
+    asl
+    sta _1
+    ldy idx
+    lda SIN,y
+    ldy _1
+    sta SPRITES_YPOS,y
+    lda #$a
+    clc
+    adc idx
+    sta idx
+    inx
+    cpx #8
+    bne b5
+    inc sin_idx
+    jmp b4
 }
 sprites_irq_init: {
     sei
@@ -123,7 +190,7 @@ sprites_init: {
 }
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
-    .label raster_sprite_gfx_modify = 8
+    .label raster_sprite_gfx_modify = $a
     sta rega+1
     stx regx+1
     cld
@@ -232,4 +299,13 @@ sprites_irq: {
 	    	.byte 0
 	  	}
 	}
+
+.pc = SIN "SIN"
+  .var AMPL = 200-21
+    .for(var i=0; i<256; i++) {
+  	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
+    }
+
+.pc = SIN_SPRITE "SIN_SPRITE"
+  .fill $40, $ff
 

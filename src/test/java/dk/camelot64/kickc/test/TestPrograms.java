@@ -46,12 +46,12 @@ public class TestPrograms {
 
    @Test
    public void testTetrisSprites() throws IOException, URISyntaxException {
-      compileAndCompare("examples/tetris/test-sprites");
+      compileAndCompare("complex/tetris/test-sprites");
    }
 
    @Test
    public void testTetris() throws IOException, URISyntaxException {
-      compileAndCompare("examples/tetris/tetris");
+      compileAndCompare("complex/tetris/tetris");
    }
 
    @Test

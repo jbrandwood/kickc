@@ -5,11 +5,14 @@ import "tetris-data"
 
 kickasm(pc PLAYFIELD_SPRITES, resource "playfield-sprites.png") {{
 	.var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
+	// Put the sprites into memory 
 	.for(var sy=0;sy<10;sy++) {
+	    .var sprite_gfx_y = sy*20
 		.for(var sx=0;sx<3;sx++) {
 	    	.for (var y=0;y<21; y++) {
+	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21)
 		    	.for (var c=0; c<3; c++) {
-	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y)
+	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y)
 	            }
 	        }
 	    	.byte 0
@@ -30,14 +33,16 @@ void sprites_init() {
     }
 }
 
-// The line of the first IRQ - 48 is 2 lines before the start of the screen
-const byte IRQ_RASTER_FIRST = 49;
+// The Y-position of the first sprite row
+const byte SPRITES_FIRST_YPOS = 49;
+// The line of the first IRQ
+const byte IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS + 19;
 // The raster line of the next IRQ
 volatile byte irq_raster_next = IRQ_RASTER_FIRST;
 // Y-pos of the sprites on the next IRQ
-volatile byte irq_sprite_ypos = 50;
+volatile byte irq_sprite_ypos = SPRITES_FIRST_YPOS + 21;
 // Index of the sprites to show on the next IRQ
-volatile byte irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES);
+volatile byte irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES) + 3;
 // Counting the 10 IRQs
 volatile byte irq_cnt = 0;
 
@@ -65,7 +70,8 @@ void sprites_irq_init() {
 
 
 // Raster Interrupt Routine - sets up the sprites covering the playfield
-// Repeats 10 timers every 21 lines from line IRQ_RASTER_FIRST
+// Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+// Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 interrupt(hardware_clobber) void sprites_irq() {
     // Clear decimal flag (because it is used by the score algorithm)
     asm { cld }
@@ -77,8 +83,9 @@ interrupt(hardware_clobber) void sprites_irq() {
 	SPRITES_YPOS[6] = ypos;
 
 	// Wait for the y-position before changing sprite pointers
+	volatile byte raster_sprite_gfx_modify = irq_raster_next+1;
 	do {
-	} while(*RASTER<irq_sprite_ypos);
+	} while(*RASTER<raster_sprite_gfx_modify);
 
 	byte ptr = irq_sprite_ptr;
 	if(render_screen_showing==0) {
@@ -94,23 +101,25 @@ interrupt(hardware_clobber) void sprites_irq() {
 	}
 
     // Find next raster line / sprite positions
-    if(++irq_cnt==10) {
+    ++irq_cnt;
+    if(irq_cnt==9) {
+    	irq_raster_next += 21;
+    	irq_sprite_ypos = SPRITES_FIRST_YPOS;
+    	irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES);
+    } else if(irq_cnt==10) {
     	irq_cnt = 0;
     	irq_raster_next = IRQ_RASTER_FIRST;
-    	irq_sprite_ypos = 50;
-    	irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES);
+    	irq_sprite_ypos += 21;
+    	irq_sprite_ptr += 3;
     } else {
-    	irq_raster_next += 21;
+    	irq_raster_next += 20;
     	irq_sprite_ypos += 21;
     	irq_sprite_ptr += 3;
     }
 
-    // Setup next interrupt - start 1 line earlier when overlapping a badline
-    byte raster_next = irq_raster_next;
-    if((raster_next&7)==3) {
-    	raster_next -=1;
-    }
-    *RASTER = raster_next;
+    // Setup next interrupt
+    *RASTER = irq_raster_next;
+
     // Acknowledge the IRQ and setup the next one
     *IRQ_STATUS = IRQ_RASTER;
 

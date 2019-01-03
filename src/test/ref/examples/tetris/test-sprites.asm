@@ -31,9 +31,10 @@
   .label PLAYFIELD_CHARSET = $2800
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
-  .const IRQ_RASTER_FIRST = $31
+  .const SPRITES_FIRST_YPOS = $31
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
+  .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label render_screen_showing = 4
   .label irq_raster_next = 3
@@ -45,9 +46,9 @@ bbegin:
   sta render_screen_showing
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
-  lda #$32
+  lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
-  lda #toSpritePtr1_return
+  lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
   lda #0
   sta irq_cnt
@@ -122,6 +123,7 @@ sprites_init: {
 }
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
+    .label raster_sprite_gfx_modify = 8
     sta rega+1
     stx regx+1
     cld
@@ -130,26 +132,34 @@ sprites_irq: {
     sta SPRITES_YPOS+2
     sta SPRITES_YPOS+4
     sta SPRITES_YPOS+6
+    ldx irq_raster_next
+    inx
+    stx raster_sprite_gfx_modify
   b1:
     lda RASTER
-    cmp irq_sprite_ypos
+    cmp raster_sprite_gfx_modify
     bcc b1
     ldx irq_sprite_ptr
     lda render_screen_showing
     cmp #0
     beq b2
     stx PLAYFIELD_SPRITE_PTRS_2
-    inx
-    stx PLAYFIELD_SPRITE_PTRS_2+1
-    stx PLAYFIELD_SPRITE_PTRS_2+2
-    inx
-    stx PLAYFIELD_SPRITE_PTRS_2+3
+    txa
+    clc
+    adc #1
+    sta PLAYFIELD_SPRITE_PTRS_2+1
+    sta PLAYFIELD_SPRITE_PTRS_2+2
+    clc
+    adc #1
+    sta PLAYFIELD_SPRITE_PTRS_2+3
   b3:
     inc irq_cnt
     lda irq_cnt
-    cmp #$a
+    cmp #9
     beq b4
-    lda #$15
+    cmp #$a
+    beq b5
+    lda #$14
     clc
     adc irq_raster_next
     sta irq_raster_next
@@ -161,15 +171,9 @@ sprites_irq: {
     clc
     adc irq_sprite_ptr
     sta irq_sprite_ptr
-  b5:
-    ldx irq_raster_next
-    txa
-    and #7
-    cmp #3
-    bne b6
-    dex
-  b6:
-    stx RASTER
+  b7:
+    lda irq_raster_next
+    sta RASTER
     lda #IRQ_RASTER
     sta IRQ_STATUS
   rega:
@@ -177,16 +181,30 @@ sprites_irq: {
   regx:
     ldx #00
     rti
-  b4:
+  b5:
     lda #0
     sta irq_cnt
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next
-    lda #$32
+    lda #$15
+    clc
+    adc irq_sprite_ypos
+    sta irq_sprite_ypos
+    lda #3
+    clc
+    adc irq_sprite_ptr
+    sta irq_sprite_ptr
+    jmp b7
+  b4:
+    lda #$15
+    clc
+    adc irq_raster_next
+    sta irq_raster_next
+    lda #SPRITES_FIRST_YPOS
     sta irq_sprite_ypos
     lda #toSpritePtr2_return
     sta irq_sprite_ptr
-    jmp b5
+    jmp b7
   b2:
     stx PLAYFIELD_SPRITE_PTRS_1
     txa
@@ -201,11 +219,14 @@ sprites_irq: {
 }
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
   .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
+	// Put the sprites into memory 
 	.for(var sy=0;sy<10;sy++) {
+	    .var sprite_gfx_y = sy*20
 		.for(var sx=0;sx<3;sx++) {
 	    	.for (var y=0;y<21; y++) {
+	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21)
 		    	.for (var c=0; c<3; c++) {
-	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y)
+	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y)
 	            }
 	        }
 	    	.byte 0

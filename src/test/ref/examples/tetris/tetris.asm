@@ -65,7 +65,7 @@
   .label PLAYFIELD_CHARSET = $2800
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
-  .const IRQ_RASTER_FIRST = $31
+  .const SPRITES_FIRST_YPOS = $31
   .const current_movedown_fast = 2
   .const COLLISION_NONE = 0
   .const COLLISION_PLAYFIELD = 1
@@ -74,72 +74,79 @@
   .const COLLISION_RIGHT = 8
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
+  .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
-  .label keyboard_events_size = $21
-  .label render_screen_showing = $23
-  .label irq_raster_next = $22
-  .label irq_sprite_ypos = $24
-  .label irq_sprite_ptr = $25
-  .label irq_cnt = $26
+  .label keyboard_events_size = $22
+  .label render_screen_showing = $24
+  .label irq_raster_next = $23
+  .label irq_sprite_ypos = $25
+  .label irq_sprite_ptr = $26
+  .label irq_cnt = $27
   .label current_movedown_slow = $18
-  .label current_movedown_counter = 4
   .label current_ypos = $10
-  .label current_piece_gfx = $1d
-  .label current_xpos = $1f
-  .label current_piece_char = $20
-  .label current_orientation = $1c
+  .label current_xpos = $20
+  .label current_orientation = $1d
+  .label current_piece_gfx = $1e
   .label level_bcd = $19
+  .label level = $17
   .label render_screen_render = 3
   .label render_screen_show = 2
+  .label current_movedown_counter = 4
   .label lines_bcd = $11
   .label score_bcd = $13
-  .label level = $17
   .label current_piece = $1a
-  .label current_piece_12 = 5
+  .label current_piece_char = $1c
+  .label game_over = $21
+  .label current_piece_16 = 5
   .label render_screen_render_30 = 9
-  .label current_xpos_47 = $a
-  .label current_piece_gfx_53 = 5
-  .label render_screen_render_64 = 9
-  .label current_xpos_112 = $a
-  .label current_xpos_113 = $a
-  .label current_piece_gfx_102 = 5
-  .label current_piece_gfx_103 = 5
-  .label current_piece_76 = 5
-  .label current_piece_77 = 5
-  .label current_piece_78 = 5
-  .label current_piece_79 = 5
+  .label current_xpos_57 = $a
+  .label current_piece_gfx_62 = 5
+  .label current_piece_char_75 = $b
+  .label render_screen_render_68 = 9
+  .label current_xpos_125 = $a
+  .label current_xpos_126 = $a
+  .label current_piece_gfx_115 = 5
+  .label current_piece_gfx_116 = 5
+  .label current_piece_char_103 = $b
+  .label current_piece_char_104 = $b
+  .label current_piece_89 = 5
+  .label current_piece_90 = 5
+  .label current_piece_91 = 5
+  .label current_piece_92 = 5
+  .label current_piece_93 = 5
 bbegin:
   lda #0
   sta render_screen_showing
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
-  lda #$32
+  lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
-  lda #toSpritePtr1_return
+  lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
   lda #0
   sta irq_cnt
   jsr main
 main: {
-    .label key_event = $f
-    .label render = $27
     jsr sid_rnd_init
     sei
     jsr render_init
     jsr sprites_init
     jsr sprites_irq_init
     jsr play_init
+    lda #0
+    sta game_over
     jsr play_spawn_current
     ldx #$40
     jsr render_playfield
-    ldy current_ypos
+    ldx current_ypos
     lda current_xpos
-    sta current_xpos_112
+    sta current_xpos_125
     lda current_piece_gfx
-    sta current_piece_gfx_102
+    sta current_piece_gfx_115
     lda current_piece_gfx+1
-    sta current_piece_gfx_102+1
-    ldx current_piece_char
+    sta current_piece_gfx_115+1
+    lda current_piece_char
+    sta current_piece_char_103
     lda #$40
     sta render_screen_render_30
     jsr render_moving
@@ -168,41 +175,46 @@ main: {
     lda RASTER
     cmp #$ff
     bne b4
+    lda render_screen_show
+    lsr
+    lsr
+    lsr
+    lsr
+    sta BORDERCOL
     jsr render_show
     jsr keyboard_event_scan
     jsr keyboard_event_get
-    sta key_event
-    jsr play_move_down
-    txa
-    clc
-    adc #0
-    sta render
-    lda key_event
-    jsr play_move_leftright
-    clc
-    adc render
-    sta render
-    lda key_event
-    jsr play_move_rotate
-    clc
-    adc render
+    lda game_over
     cmp #0
-    beq b4
+    beq b7
+  b9:
+    inc BORDERCOL
+    jmp b9
+  b7:
+    stx play_movement.key_event
+    jsr play_movement
+    lda play_movement.return
+    cmp #0
+    beq b12
     ldx render_screen_render
     jsr render_playfield
-    ldy current_ypos
+    ldx current_ypos
     lda render_screen_render
-    sta render_screen_render_64
+    sta render_screen_render_68
     lda current_xpos
-    sta current_xpos_113
+    sta current_xpos_126
     lda current_piece_gfx
-    sta current_piece_gfx_103
+    sta current_piece_gfx_116
     lda current_piece_gfx+1
-    sta current_piece_gfx_103+1
-    ldx current_piece_char
+    sta current_piece_gfx_116+1
+    lda current_piece_char
+    sta current_piece_char_104
     jsr render_moving
     jsr render_score
     jsr render_screen_swap
+  b12:
+    lda #0
+    sta BORDERCOL
     jmp b4
 }
 render_screen_swap: {
@@ -281,7 +293,7 @@ render_score: {
     rts
 }
 render_bcd: {
-    .const ZERO_CHAR = $33
+    .const ZERO_CHAR = $35
     .label screen = 5
     .label screen_pos = 7
     .label offset = 7
@@ -321,13 +333,12 @@ render_bcd: {
     rts
 }
 render_moving: {
-    .label ypos2 = $b
+    .label ypos2 = $c
     .label screen_line = 7
-    .label xpos = $e
-    .label i = $d
-    .label l = $c
-    .label c = $f
-    tya
+    .label xpos = $f
+    .label i = $e
+    .label l = $d
+    txa
     asl
     sta ypos2
     lda #0
@@ -368,27 +379,25 @@ render_moving: {
     sta screen_line
     lda screen_lines_1+1,y
     sta screen_line+1
-    lda current_xpos_47
+    lda current_xpos_57
     sta xpos
-    lda #0
-    sta c
+    ldx #0
   b4:
     ldy i
-    lda (current_piece_gfx_53),y
+    lda (current_piece_gfx_62),y
     inc i
     cmp #0
     beq b5
     lda xpos
     cmp #PLAYFIELD_COLS
     bcs b5
-    tay
-    txa
+    lda current_piece_char_75
+    ldy xpos
     sta (screen_line),y
   b5:
     inc xpos
-    inc c
-    lda c
-    cmp #4
+    inx
+    cpx #4
     bne b4
     jmp b3
 }
@@ -434,8 +443,36 @@ render_playfield: {
     bne b1
     rts
 }
+play_movement: {
+    .label render = 9
+    .label return = 9
+    .label key_event = $28
+    lda key_event
+    jsr play_move_down
+    txa
+    clc
+    adc #0
+    sta render
+    lda game_over
+    cmp #0
+    beq b1
+  breturn:
+    rts
+  b1:
+    lda key_event
+    jsr play_move_leftright
+    clc
+    adc render
+    sta render
+    lda key_event
+    jsr play_move_rotate
+    clc
+    adc return
+    sta return
+    jmp breturn
+}
 play_move_rotate: {
-    .label orientation = 9
+    .label orientation = $a
     cmp #KEY_Z
     beq b1
     cmp #KEY_X
@@ -453,12 +490,13 @@ play_move_rotate: {
   b4:
     lda current_xpos
     sta play_collision.xpos
-    ldy current_ypos
+    lda current_ypos
+    sta play_collision.ypos
     ldx orientation
     lda current_piece
-    sta current_piece_79
+    sta current_piece_92
     lda current_piece+1
-    sta current_piece_79+1
+    sta current_piece_92+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -481,17 +519,18 @@ play_move_rotate: {
     jmp b4
 }
 play_collision: {
-    .label xpos = $a
+    .label xpos = $c
+    .label ypos = $b
     .label piece_gfx = 5
     .label ypos2 = $b
     .label playfield_line = 7
-    .label i = $28
-    .label col = $e
-    .label l = $c
-    .label i_2 = $d
-    .label i_3 = $d
-    .label i_11 = $d
-    .label i_13 = $d
+    .label i = $29
+    .label col = $f
+    .label l = $d
+    .label i_2 = $e
+    .label i_3 = $e
+    .label i_11 = $e
+    .label i_13 = $e
     txa
     clc
     adc piece_gfx
@@ -499,9 +538,7 @@ play_collision: {
     lda #0
     adc piece_gfx+1
     sta piece_gfx+1
-    tya
-    asl
-    sta ypos2
+    asl ypos2
     lda #0
     sta l
     sta i_3
@@ -580,12 +617,13 @@ play_move_leftright: {
     ldy current_xpos
     iny
     sty play_collision.xpos
-    ldy current_ypos
+    lda current_ypos
+    sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_78
+    sta current_piece_91
     lda current_piece+1
-    sta current_piece_78+1
+    sta current_piece_91+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -601,12 +639,13 @@ play_move_leftright: {
     ldx current_xpos
     dex
     stx play_collision.xpos
-    ldy current_ypos
+    lda current_ypos
+    sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_77
+    sta current_piece_90
     lda current_piece+1
-    sta current_piece_77+1
+    sta current_piece_90+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -641,13 +680,14 @@ play_move_down: {
     beq b5
     ldy current_ypos
     iny
+    sty play_collision.ypos
     lda current_xpos
     sta play_collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_76
+    sta current_piece_89
     lda current_piece+1
-    sta current_piece_76+1
+    sta current_piece_89+1
     jsr play_collision
     cmp #COLLISION_NONE
     beq b6
@@ -686,7 +726,9 @@ play_spawn_current: {
     txa
     asl
     sta _3
-    tay
+    lda PIECES_CHARS,x
+    sta current_piece_char
+    ldy _3
     lda PIECES,y
     sta current_piece_gfx
     lda PIECES+1,y
@@ -695,8 +737,21 @@ play_spawn_current: {
     sta current_xpos
     lda PIECES_START_Y,x
     sta current_ypos
-    lda PIECES_CHARS,x
-    sta current_piece_char
+    lda current_xpos
+    sta play_collision.xpos
+    lda current_ypos
+    sta play_collision.ypos
+    lda PIECES,y
+    sta current_piece_93
+    lda PIECES+1,y
+    sta current_piece_93+1
+    ldx #0
+    jsr play_collision
+    cmp #COLLISION_PLAYFIELD
+    bne breturn
+    lda #1
+    sta game_over
+  breturn:
     rts
   b2:
     jsr sid_rnd
@@ -710,7 +765,7 @@ sid_rnd: {
 }
 play_update_score: {
     .label lines_before = 4
-    .label add_bcd = $29
+    .label add_bcd = $2a
     cpx #0
     beq breturn
     lda lines_bcd
@@ -943,11 +998,12 @@ keyboard_event_get: {
     cmp #0
     beq b1
     dec keyboard_events_size
-    ldy keyboard_events_size
-    lda keyboard_events,y
+    ldx keyboard_events_size
+    lda keyboard_events,x
+    tax
     jmp breturn
   b1:
-    lda #$ff
+    ldx #$ff
   breturn:
     rts
 }
@@ -1355,6 +1411,7 @@ sid_rnd_init: {
 }
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
+    .label raster_sprite_gfx_modify = $2e
     sta rega+1
     stx regx+1
     cld
@@ -1363,26 +1420,34 @@ sprites_irq: {
     sta SPRITES_YPOS+2
     sta SPRITES_YPOS+4
     sta SPRITES_YPOS+6
+    ldx irq_raster_next
+    inx
+    stx raster_sprite_gfx_modify
   b1:
     lda RASTER
-    cmp irq_sprite_ypos
+    cmp raster_sprite_gfx_modify
     bcc b1
     ldx irq_sprite_ptr
     lda render_screen_showing
     cmp #0
     beq b2
     stx PLAYFIELD_SPRITE_PTRS_2
-    inx
-    stx PLAYFIELD_SPRITE_PTRS_2+1
-    stx PLAYFIELD_SPRITE_PTRS_2+2
-    inx
-    stx PLAYFIELD_SPRITE_PTRS_2+3
+    txa
+    clc
+    adc #1
+    sta PLAYFIELD_SPRITE_PTRS_2+1
+    sta PLAYFIELD_SPRITE_PTRS_2+2
+    clc
+    adc #1
+    sta PLAYFIELD_SPRITE_PTRS_2+3
   b3:
     inc irq_cnt
     lda irq_cnt
-    cmp #$a
+    cmp #9
     beq b4
-    lda #$15
+    cmp #$a
+    beq b5
+    lda #$14
     clc
     adc irq_raster_next
     sta irq_raster_next
@@ -1394,15 +1459,9 @@ sprites_irq: {
     clc
     adc irq_sprite_ptr
     sta irq_sprite_ptr
-  b5:
-    ldx irq_raster_next
-    txa
-    and #7
-    cmp #3
-    bne b6
-    dex
-  b6:
-    stx RASTER
+  b7:
+    lda irq_raster_next
+    sta RASTER
     lda #IRQ_RASTER
     sta IRQ_STATUS
   rega:
@@ -1410,16 +1469,30 @@ sprites_irq: {
   regx:
     ldx #00
     rti
-  b4:
+  b5:
     lda #0
     sta irq_cnt
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next
-    lda #$32
+    lda #$15
+    clc
+    adc irq_sprite_ypos
+    sta irq_sprite_ypos
+    lda #3
+    clc
+    adc irq_sprite_ptr
+    sta irq_sprite_ptr
+    jmp b7
+  b4:
+    lda #$15
+    clc
+    adc irq_raster_next
+    sta irq_raster_next
+    lda #SPRITES_FIRST_YPOS
     sta irq_sprite_ypos
     lda #toSpritePtr2_return
     sta irq_sprite_ptr
-    jmp b5
+    jmp b7
   b2:
     stx PLAYFIELD_SPRITE_PTRS_1
     txa
@@ -1453,9 +1526,9 @@ sprites_irq: {
   PIECES_CHARS: .byte $64, $65, $a5, $65, $64, $64, $a5
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
+  MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
   SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
   score_add_bcd: .fill 4*5, 0
-  MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40
@@ -1483,11 +1556,14 @@ sprites_irq: {
 
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
   .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
+	// Put the sprites into memory 
 	.for(var sy=0;sy<10;sy++) {
+	    .var sprite_gfx_y = sy*20
 		.for(var sx=0;sx<3;sx++) {
 	    	.for (var y=0;y<21; y++) {
+	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21)
 		    	.for (var c=0; c<3; c++) {
-	            	.byte sprites.getSinglecolorByte(sx*3+c,sy*21+y)
+	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y)
 	            }
 	        }
 	    	.byte 0

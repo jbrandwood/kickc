@@ -49,7 +49,7 @@
 (byte) IRQ_RASTER
 (const byte) IRQ_RASTER#0 IRQ_RASTER = (byte/signed byte/word/signed word/dword/signed dword) 1
 (byte) IRQ_RASTER_FIRST
-(const byte) IRQ_RASTER_FIRST#0 IRQ_RASTER_FIRST = (byte/signed byte/word/signed word/dword/signed dword) 49
+(const byte) IRQ_RASTER_FIRST#0 IRQ_RASTER_FIRST = (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 19
 (byte*) IRQ_STATUS
 (const byte*) IRQ_STATUS#0 IRQ_STATUS = ((byte*))(word/dword/signed dword) 53273
 (void()**) KERNEL_IRQ
@@ -102,6 +102,8 @@
 (const byte*) SPRITES_EXPAND_X#0 SPRITES_EXPAND_X = ((byte*))(word/dword/signed dword) 53277
 (byte*) SPRITES_EXPAND_Y
 (const byte*) SPRITES_EXPAND_Y#0 SPRITES_EXPAND_Y = ((byte*))(word/dword/signed dword) 53271
+(byte) SPRITES_FIRST_YPOS
+(const byte) SPRITES_FIRST_YPOS#0 SPRITES_FIRST_YPOS = (byte/signed byte/word/signed word/dword/signed dword) 49
 (byte*) SPRITES_MC
 (const byte*) SPRITES_MC#0 SPRITES_MC = ((byte*))(word/dword/signed dword) 53276
 (byte*) SPRITES_MC1
@@ -131,23 +133,27 @@
 (byte*) current_piece_gfx
 (byte) current_xpos
 (byte) current_ypos
+(byte) game_over
 (byte) irq_cnt
-(byte) irq_cnt#0 irq_cnt zp ZP_BYTE:7 0.19047619047619047
-(byte) irq_cnt#1 irq_cnt zp ZP_BYTE:7 4.0
-(byte) irq_cnt#14 irq_cnt zp ZP_BYTE:7 20.0
+(byte) irq_cnt#0 irq_cnt zp ZP_BYTE:7 0.17391304347826086
+(byte) irq_cnt#1 irq_cnt zp ZP_BYTE:7 3.0
+(byte) irq_cnt#2 irq_cnt zp ZP_BYTE:7 20.0
 (byte) irq_raster_next
-(byte) irq_raster_next#0 irq_raster_next zp ZP_BYTE:3 0.17391304347826086
+(byte) irq_raster_next#0 irq_raster_next zp ZP_BYTE:3 0.3076923076923077
 (byte) irq_raster_next#1 irq_raster_next zp ZP_BYTE:3 1.0
-(byte) irq_raster_next#13 irq_raster_next zp ZP_BYTE:3 6.0
 (byte) irq_raster_next#2 irq_raster_next zp ZP_BYTE:3 1.3333333333333333
+(byte) irq_raster_next#3 irq_raster_next zp ZP_BYTE:3 1.3333333333333333
+(byte) irq_raster_next#4 irq_raster_next zp ZP_BYTE:3 8.0
 (byte) irq_sprite_ptr
-(byte) irq_sprite_ptr#0 irq_sprite_ptr zp ZP_BYTE:6 0.24
+(byte) irq_sprite_ptr#0 irq_sprite_ptr zp ZP_BYTE:6 0.25806451612903225
 (byte) irq_sprite_ptr#1 irq_sprite_ptr zp ZP_BYTE:6 20.0
 (byte) irq_sprite_ptr#2 irq_sprite_ptr zp ZP_BYTE:6 20.0
+(byte) irq_sprite_ptr#3 irq_sprite_ptr zp ZP_BYTE:6 20.0
 (byte) irq_sprite_ypos
-(byte) irq_sprite_ypos#0 irq_sprite_ypos zp ZP_BYTE:5 0.7083333333333334
+(byte) irq_sprite_ypos#0 irq_sprite_ypos zp ZP_BYTE:5 0.27586206896551724
 (byte) irq_sprite_ypos#1 irq_sprite_ypos zp ZP_BYTE:5 20.0
 (byte) irq_sprite_ypos#2 irq_sprite_ypos zp ZP_BYTE:5 20.0
+(byte) irq_sprite_ypos#3 irq_sprite_ypos zp ZP_BYTE:5 20.0
 (byte) level
 (byte) level_bcd
 (word) lines_bcd
@@ -185,7 +191,7 @@
 (byte) render_screen_render
 (byte) render_screen_show
 (byte) render_screen_showing
-(byte) render_screen_showing#0 render_screen_showing zp ZP_BYTE:4 0.5
+(byte) render_screen_showing#0 render_screen_showing zp ZP_BYTE:4 0.4
 (dword) score_bcd
 (void()) sprites_init()
 (label) sprites_init::@1
@@ -199,29 +205,27 @@
 (byte) sprites_init::xpos#1 xpos zp ZP_BYTE:2 7.333333333333333
 (byte) sprites_init::xpos#2 xpos zp ZP_BYTE:2 8.25
 interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
-(byte~) sprites_irq::$4 reg byte a 4.0
+(byte/signed word/word/dword/signed dword~) sprites_irq::$0 reg byte x 4.0
 (label) sprites_irq::@1
-(label) sprites_irq::@10
+(label) sprites_irq::@11
 (label) sprites_irq::@12
-(label) sprites_irq::@13
+(label) sprites_irq::@15
 (label) sprites_irq::@2
 (label) sprites_irq::@3
 (label) sprites_irq::@4
 (label) sprites_irq::@5
-(label) sprites_irq::@6
 (label) sprites_irq::@7
 (label) sprites_irq::@8
+(label) sprites_irq::@9
 (label) sprites_irq::@return
 (byte) sprites_irq::ptr
 (byte) sprites_irq::ptr#0 reg byte x 2.5
 (byte) sprites_irq::ptr#1 reg byte a 2.6666666666666665
 (byte) sprites_irq::ptr#2 reg byte a 4.0
-(byte) sprites_irq::ptr#3 reg byte x 2.6666666666666665
-(byte) sprites_irq::ptr#4 reg byte x 4.0
-(byte) sprites_irq::raster_next
-(byte) sprites_irq::raster_next#0 reg byte x 2.6666666666666665
-(byte) sprites_irq::raster_next#1 reg byte x 4.0
-(byte) sprites_irq::raster_next#2 reg byte x 6.0
+(byte) sprites_irq::ptr#3 reg byte a 2.6666666666666665
+(byte) sprites_irq::ptr#4 reg byte a 4.0
+(byte) sprites_irq::raster_sprite_gfx_modify
+(byte) sprites_irq::raster_sprite_gfx_modify#0 raster_sprite_gfx_modify zp ZP_BYTE:8 6.5
 (label) sprites_irq::toSpritePtr2
 (word~) sprites_irq::toSpritePtr2_$0
 (word~) sprites_irq::toSpritePtr2_$1
@@ -243,17 +247,17 @@ interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 
 reg byte x [ sprites_init::s#2 sprites_init::s#1 ]
 zp ZP_BYTE:2 [ sprites_init::xpos#2 sprites_init::xpos#1 ]
-zp ZP_BYTE:3 [ irq_raster_next#13 irq_raster_next#2 irq_raster_next#1 irq_raster_next#0 ]
-reg byte x [ sprites_irq::raster_next#2 sprites_irq::raster_next#1 sprites_irq::raster_next#0 ]
+zp ZP_BYTE:3 [ irq_raster_next#4 irq_raster_next#3 irq_raster_next#1 irq_raster_next#2 irq_raster_next#0 ]
 zp ZP_BYTE:4 [ render_screen_showing#0 ]
-zp ZP_BYTE:5 [ irq_sprite_ypos#0 irq_sprite_ypos#2 irq_sprite_ypos#1 ]
-zp ZP_BYTE:6 [ irq_sprite_ptr#0 irq_sprite_ptr#2 irq_sprite_ptr#1 ]
-zp ZP_BYTE:7 [ irq_cnt#0 irq_cnt#1 irq_cnt#14 ]
+zp ZP_BYTE:5 [ irq_sprite_ypos#0 irq_sprite_ypos#3 irq_sprite_ypos#2 irq_sprite_ypos#1 ]
+zp ZP_BYTE:6 [ irq_sprite_ptr#0 irq_sprite_ptr#3 irq_sprite_ptr#2 irq_sprite_ptr#1 ]
+zp ZP_BYTE:7 [ irq_cnt#0 irq_cnt#1 irq_cnt#2 ]
 reg byte a [ sprites_init::s2#0 ]
 reg byte a [ sprites_irq::ypos#0 ]
+reg byte x [ sprites_irq::$0 ]
+zp ZP_BYTE:8 [ sprites_irq::raster_sprite_gfx_modify#0 ]
 reg byte x [ sprites_irq::ptr#0 ]
-reg byte x [ sprites_irq::ptr#3 ]
-reg byte x [ sprites_irq::ptr#4 ]
-reg byte a [ sprites_irq::$4 ]
+reg byte a [ sprites_irq::ptr#3 ]
+reg byte a [ sprites_irq::ptr#4 ]
 reg byte a [ sprites_irq::ptr#1 ]
 reg byte a [ sprites_irq::ptr#2 ]

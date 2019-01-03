@@ -18,6 +18,10 @@ byte* current_piece = 0;
 // The orientation chooses one of the 4 sub-graphics of the piece.
 byte current_orientation = 0;
 
+// The speed of moving down the piece when soft-drop is not activated
+// This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
+const byte[] MOVEDOWN_SLOW_SPEEDS = { 48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 };
+
 // The rate of moving down the current piece (number of frames between moves if movedown is  not forced)
 byte current_movedown_slow = 48;
 
@@ -34,10 +38,6 @@ const dword[] SCORE_BASE_BCD = { $0000, $0040, $0100, $0300, $1200 };
 // Score values for removing 0-4 lines (in BCD)
 // These values are updated based on the players level and the base values from SCORE_BASE_BCD
 dword[5] score_add_bcd;
-
-// The speed of moving down the piece when soft-drop is not activated
-// This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
-const byte[] MOVEDOWN_SLOW_SPEEDS = { 48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 };
 
 // Initialize play data tables
 void play_init() {
@@ -60,6 +60,20 @@ void play_init() {
         score_add_bcd[b4] = SCORE_BASE_BCD[b4];
     }
 
+}
+
+// Perform any movement of the current piece
+// key_event is the next keyboard_event() og $ff if no keyboard event is pending
+// Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
+byte play_movement(byte key_event) {
+    byte render = 0;
+	render += play_move_down(key_event);
+	if(game_over!=0) {
+	    return render;
+	}
+	render += play_move_leftright(key_event);
+	render += play_move_rotate(key_event);
+	return render;
 }
 
 // Move down the current piece
@@ -212,11 +226,14 @@ void play_spawn_current() {
 		piece_idx = sid_rnd()&7;
 	}
 	current_piece = PIECES[piece_idx<<1];
+	current_piece_char = PIECES_CHARS[piece_idx];
 	current_orientation = 0;
 	current_piece_gfx = current_piece + current_orientation;
 	current_xpos = PIECES_START_X[piece_idx];
 	current_ypos = PIECES_START_Y[piece_idx];
-	current_piece_char = PIECES_CHARS[piece_idx];
+	if(play_collision(current_xpos,current_ypos,current_orientation)==COLLISION_PLAYFIELD) {
+	    game_over = 1;
+	}
 }
 
 // Look through the playfield for lines - and remove any lines found

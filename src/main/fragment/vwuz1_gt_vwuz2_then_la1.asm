@@ -1,8 +1,8 @@
-lda {z1}
-cmp {z2}
-lda {z1}+1
-sbc {z2}+1
-bvc !+
-eor #$80
+lda {z2}+1
+cmp {z1}+1
+bne !+
+lda {z2}
+cmp {z1}
 !:
-bpl {la1}
+bcc {la1}
+beq {la1}

@@ -55,6 +55,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConsolidateConstantProblem() throws IOException, URISyntaxException {
+      compileAndCompare("consolidate-constant-problem");
+   }
+
+   @Test
    public void testConsolidateArrayIndexProblem() throws IOException, URISyntaxException {
       compileAndCompare("consolidate-array-index-problem");
    }

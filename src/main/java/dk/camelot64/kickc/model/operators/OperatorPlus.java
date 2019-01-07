@@ -29,6 +29,9 @@ public class OperatorPlus extends OperatorBinary {
       } else if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
          long location = ((ConstantPointer) left).getLocation() + ((ConstantInteger) right).getInteger();
          return new ConstantPointer(location, ((ConstantPointer) left).getElementType());
+      } else if(left instanceof ConstantInteger && right instanceof ConstantPointer) {
+         long location = ((ConstantPointer) right).getLocation() + ((ConstantInteger) left).getInteger();
+         return new ConstantPointer(location, ((ConstantPointer) right).getElementType());
       }
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }

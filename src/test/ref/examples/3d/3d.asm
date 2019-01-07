@@ -519,8 +519,14 @@ calculate_matrix: {
     clc
     adc sy
     tay
-    stx t3
-    stx t4
+    txa
+    clc
+    adc #sz
+    sta t3
+    txa
+    sec
+    sbc #sz
+    sta t4
     txa
     sty $ff
     clc
@@ -565,8 +571,8 @@ calculate_matrix: {
     ldx t3
     ldy t4
     sec
-    lda SINH+sz,x
-    sbc SINH+-sz,y
+    lda SINH,x
+    sbc SINH,y
     ldy t6
     clc
     adc COSQ,y

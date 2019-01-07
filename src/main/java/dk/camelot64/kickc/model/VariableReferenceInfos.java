@@ -245,6 +245,21 @@ public class VariableReferenceInfos {
       return stmts;
    }
 
+   /**
+    * Get all statements using a variable
+    *
+    * @param varRef The variable to look for
+    * @return Index of all statements using the variable (ie. referencing but not defining it)
+    */
+   public Collection<Integer> getVarUseStatements(VariableRef varRef) {
+      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(varRef);
+      LinkedHashSet<Integer> stmts = new LinkedHashSet<>();
+      refs.stream()
+            .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
+            .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE == referenceToSymbolVar.getReferenceType())
+            .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).getStatementIdx()));
+      return stmts;
+   }
 
 
    /**

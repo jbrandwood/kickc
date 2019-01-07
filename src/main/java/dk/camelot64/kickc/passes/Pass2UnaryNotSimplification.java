@@ -24,7 +24,7 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
     */
    @Override
    public boolean step() {
-      final Map<VariableRef, Integer> usages = countVarUsages();
+      final VariableReferenceInfos usages = getProgram().getVariableReferenceInfos();
       final Map<LValue, StatementAssignment> assignments = getAllAssignments();
       final List<VariableRef> unusedComparisons = optimizeUnaryNots(assignments, usages);
       removeAssignments(unusedComparisons);
@@ -39,7 +39,7 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
     * @param usages All variable usages
     * @return Unused comparisons (because they have been replaced with reversed comparisions)
     */
-   private List<VariableRef> optimizeUnaryNots(final Map<LValue, StatementAssignment> assignments, final Map<VariableRef, Integer> usages) {
+   private List<VariableRef> optimizeUnaryNots(final Map<LValue, StatementAssignment> assignments, VariableReferenceInfos usages) {
 
       final List<VariableRef> unused = new ArrayList<>();
       for(StatementAssignment assignment : assignments.values()) {
@@ -50,7 +50,8 @@ public class Pass2UnaryNotSimplification extends Pass2SsaOptimization {
                ) {
             VariableRef tempVar = (VariableRef) assignment.getrValue2();
             StatementAssignment tempAssignment = assignments.get(tempVar);
-            if(usages.get(tempVar) == 1 && tempAssignment!=null && tempAssignment.getOperator() != null) {
+            int tempVarUsages = usages.getVarUseStatements(tempVar).size();
+            if(tempVarUsages == 1 && tempAssignment!=null && tempAssignment.getOperator() != null) {
                switch(tempAssignment.getOperator().getOperator()) {
                   case "<":
                      createInverse(">=", assignment, tempAssignment);

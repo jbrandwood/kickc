@@ -1,15 +1,17 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.values.*;
 
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * Compiler Pass eliminating several additions of constants by consolidating them to a single (compile time) constant c1+v+c2 => (c1+c2)+v
@@ -23,7 +25,7 @@ import java.util.Map;
  */
 public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
 
-   private Map<VariableRef, Integer> usages;
+   private VariableReferenceInfos variableReferenceInfos;
 
    public Pass2ConstantAdditionElimination(Program program) {
       super(program);
@@ -38,7 +40,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
    public boolean step() {
       boolean optimized = false;
 
-      this.usages = countVarUsages();
+       this.variableReferenceInfos = getProgram().getVariableReferenceInfos();
 
       // Examine all assignments - performing constant consolidation
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -230,10 +232,9 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       return null;
    }
 
-   private Integer getUsages(VariableRef variable) {
-      Integer useCount = usages.get(variable);
-      if(useCount == null) useCount = 0;
-      return useCount;
+   private int getUsages(VariableRef variable) {
+      Collection<Integer> refStatements = variableReferenceInfos.getVarUseStatements(variable);
+      return refStatements.size();
    }
 
 }

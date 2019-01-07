@@ -219,6 +219,8 @@ public class Compiler {
    private void pass2Optimize() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2CullEmptyBlocks(program));
+      optimizations.add(new PassNStatementIndices(program));
+      optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2SelfPhiElimination(program));
@@ -227,6 +229,8 @@ public class Compiler {
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new Pass2ConstantIdentification(program));
+      optimizations.add(new PassNStatementIndices(program));
+      optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2ConstantIfs(program));
       optimizations.add(new Pass2FixInlineConstructors(program));

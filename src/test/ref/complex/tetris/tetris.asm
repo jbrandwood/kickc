@@ -66,7 +66,7 @@
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
   .const SPRITES_FIRST_YPOS = $31
-  .const current_movedown_fast = 2
+  .const current_movedown_fast = $a
   .const COLLISION_NONE = 0
   .const COLLISION_PLAYFIELD = 1
   .const COLLISION_BOTTOM = 2

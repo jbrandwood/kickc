@@ -160,14 +160,14 @@ point_init: {
     lda y_diff+1
     sta abs16s2_return+1
   b10:
-    lda abs16s1_return
-    cmp abs16s2_return
-    lda abs16s1_return+1
-    sbc abs16s2_return+1
-    bvc !+
-    eor #$80
+    lda abs16s2_return+1
+    cmp abs16s1_return+1
+    bne !+
+    lda abs16s2_return
+    cmp abs16s1_return
   !:
-    bpl b1
+    bcc b1
+    beq b1
   b2:
     ldy point_idx
     lda x_start,y

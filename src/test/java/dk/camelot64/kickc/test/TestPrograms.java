@@ -46,12 +46,12 @@ public class TestPrograms {
 
    @Test
    public void testRuntimeUnusedProcedure() throws IOException, URISyntaxException {
-      compileAndCompare("runtime-unused-procedure.kc");
+      compileAndCompare("runtime-unused-procedure");
    }
 
    //@Test
    //public void testRobozzle64() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/robozzle_c64/robozzle64.kc");
+   //   compileAndCompare("complex/robozzle_c64/robozzle64");
    //}
 
    @Test

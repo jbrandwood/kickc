@@ -1,0 +1,287 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte) call#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:@2
+main: scope:[main]  from @2
+  (byte) call#1 ← phi( @2/(byte) call#2 )
+  (byte*) screen#1 ← phi( @2/(byte*) screen#4 )
+  *((byte*) screen#1 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a'
+  (bool~) main::$0 ← (byte) call#1 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (bool~) main::$1 ← ! (bool~) main::$0
+  if((bool~) main::$1) goto main::@1
+  to:main::@2
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@2: scope:[main]  from main
+  (byte*) screen#5 ← phi( main/(byte*) screen#1 )
+  call proc 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@3
+  return 
+  to:@return
+proc: scope:[proc]  from main::@2
+  (byte*) screen#2 ← phi( main::@2/(byte*) screen#5 )
+  *((byte*) screen#2 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) 'a'
+  (bool~) proc::$0 ← *((byte*) screen#2 + (byte/signed byte/word/signed word/dword/signed dword) 1) != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (bool~) proc::$1 ← ! (bool~) proc::$0
+  if((bool~) proc::$1) goto proc::@1
+  to:proc::@2
+proc::@1: scope:[proc]  from proc
+  to:proc::@return
+proc::@2: scope:[proc]  from proc
+  (byte*) screen#3 ← phi( proc/(byte*) screen#2 )
+  *((byte*) screen#3 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) 'a'
+  to:proc::@return
+proc::@return: scope:[proc]  from proc::@1 proc::@2
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  (byte) call#2 ← phi( @begin/(byte) call#0 )
+  (byte*) screen#4 ← phi( @begin/(byte*) screen#0 )
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte) call
+(byte) call#0
+(byte) call#1
+(byte) call#2
+(void()) main()
+(bool~) main::$0
+(bool~) main::$1
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(void()) proc()
+(bool~) proc::$0
+(bool~) proc::$1
+(label) proc::@1
+(label) proc::@2
+(label) proc::@return
+(byte*) screen
+(byte*) screen#0
+(byte*) screen#1
+(byte*) screen#2
+(byte*) screen#3
+(byte*) screen#4
+(byte*) screen#5
+
+Culled Empty Block (label) main::@1
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) proc::@1
+Culled Empty Block (label) @3
+Successful SSA optimization Pass2CullEmptyBlocks
+Inversing boolean not [5] (bool~) main::$1 ← (byte) call#1 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [4] (bool~) main::$0 ← (byte) call#1 != (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not [13] (bool~) proc::$1 ← *((byte*) screen#2 + (byte/signed byte/word/signed word/dword/signed dword) 1) == (byte/signed byte/word/signed word/dword/signed dword) 0 from [12] (bool~) proc::$0 ← *((byte*) screen#2 + (byte/signed byte/word/signed word/dword/signed dword) 1) != (byte/signed byte/word/signed word/dword/signed dword) 0
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias (byte*) screen#1 = (byte*) screen#5 
+Alias (byte*) screen#2 = (byte*) screen#3 
+Alias (byte*) screen#0 = (byte*) screen#4 
+Alias (byte) call#0 = (byte) call#2 
+Successful SSA optimization Pass2AliasElimination
+Redundant Phi (byte*) screen#1 (byte*) screen#0
+Redundant Phi (byte) call#1 (byte) call#0
+Redundant Phi (byte*) screen#2 (byte*) screen#1
+Successful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) main::$1 [6] if((byte) call#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@return
+Simple Condition (bool~) proc::$1 [14] if(*((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 1)==(byte/signed byte/word/signed word/dword/signed dword) 0) goto proc::@return
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte) call#0 = 0
+Constant (const byte*) screen#0 = ((byte*))1024
+Successful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(screen#0+0)
+Consolidated array index constant in *(screen#0+1)
+Consolidated array index constant in *(screen#0+1)
+Consolidated array index constant in *(screen#0+2)
+Successful SSA optimization Pass2ConstantAdditionElimination
+if() condition always true - replacing block destination [1] if((const byte) call#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@return
+Successful SSA optimization Pass2ConstantIfs
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused block main::@2
+Removing unused procedure proc
+Removing unused procedure block proc
+Removing unused procedure block proc::@2
+Removing unused procedure block proc::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Simplifying constant plus zero screen#0+0
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@2
+@2: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @2
+  [3] phi()
+main: scope:[main]  from @2
+  [4] *((const byte*) screen#0) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) call
+(void()) main()
+(byte*) screen
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label screen = $400
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main 
+  jsr main
+//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+  //SEG9 [4] *((const byte*) screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen
+    jmp breturn
+  //SEG10 main::@return
+  breturn:
+  //SEG11 [5] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) screen#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 27 combination 
+Uplifting [] best 27 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label screen = $400
+//SEG2 @begin
+bbegin:
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG4 @2
+b2:
+//SEG5 [2] call main 
+  jsr main
+//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG7 @end
+bend:
+//SEG8 main
+main: {
+  //SEG9 [4] *((const byte*) screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen
+    jmp breturn
+  //SEG10 main::@return
+  breturn:
+  //SEG11 [5] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b2_from_bbegin:
+Removing instruction b2:
+Removing instruction bend_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(byte) call
+(void()) main()
+(label) main::@return
+(byte*) screen
+(const byte*) screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+//SEG0 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG1 Global Constants & labels
+  .label screen = $400
+//SEG2 @begin
+//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 @2
+//SEG5 [2] call main 
+//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+//SEG7 @end
+//SEG8 main
+main: {
+  //SEG9 [4] *((const byte*) screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen
+  //SEG10 main::@return
+  //SEG11 [5] return 
+    rts
+}
+

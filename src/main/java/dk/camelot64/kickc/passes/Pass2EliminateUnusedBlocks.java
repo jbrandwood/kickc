@@ -1,22 +1,19 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.SymbolRef;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.values.*;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.*;
 
 /** Pass that eliminates constant if's - they are either removed (if false) or replaces the default successor (if true). */
 public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
@@ -30,7 +27,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
       Set<LabelRef> referencedBlocks = getReferencedBlocks();
       Set<LabelRef> unusedBlocks = new LinkedHashSet<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         if(!referencedBlocks.contains(block.getLabel()) ) {
+         if(!referencedBlocks.contains(block.getLabel())) {
             unusedBlocks.add(block.getLabel());
             for(Statement stmt : block.getStatements()) {
                if(stmt instanceof StatementAssignment) {
@@ -53,18 +50,43 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
             }
          }
       }
-      for(LabelRef unusedBlock : unusedBlocks) {
-         getGraph().remove(unusedBlock);
-         Label label = getScope().getLabel(unusedBlock);
-         label.getScope().remove(label);
-         removePhiRValues(unusedBlock);
-         getLog().append("Removing unused block "+unusedBlock);
+
+
+      Set<LabelRef> unusedProcedureBlocks = new HashSet<>();
+      for( LabelRef unusedBlock : unusedBlocks) {
+         Symbol unusedSymbol = getScope().getSymbol(unusedBlock);
+         if(unusedSymbol instanceof Label) {
+            getGraph().remove(unusedBlock);
+            Label label = getScope().getLabel(unusedBlock);
+            label.getScope().remove(label);
+            removePhiRValues(unusedBlock);
+            getLog().append("Removing unused block " + unusedBlock);
+         } else if(unusedSymbol instanceof Procedure) {
+            ProcedureRef unusedProcedureRef = ((Procedure) unusedSymbol).getRef();
+            getLog().append("Removing unused procedure " + unusedProcedureRef);
+            Procedure unusedProcedure = getProgram().getScope().getProcedure(unusedProcedureRef);
+            List<ControlFlowBlock> procedureBlocks = getProgram().getGraph().getScopeBlocks(unusedProcedureRef);
+            for(ControlFlowBlock procedureBlock : procedureBlocks) {
+               LabelRef blockLabelRef = procedureBlock.getLabel();
+               getLog().append("Removing unused procedure block " + blockLabelRef);
+               getProgram().getGraph().remove(blockLabelRef);
+               removePhiRValues(blockLabelRef);
+               unusedProcedureBlocks.add(blockLabelRef);
+            }
+            unusedProcedure.getScope().remove(unusedProcedure);
+         } else if(unusedProcedureBlocks.contains(unusedBlock)) {
+            // Already removed - we are happy!
+         } else {
+            throw new CompileError("Unable to remove unused block "+unusedBlock);
+         }
       }
-      return unusedBlocks.size()>0;
+
+      return unusedBlocks.size() > 0;
    }
 
    /**
     * Get all referenced blocks in the entire program
+    *
     * @return All blocks referenced
     */
    private Set<LabelRef> getReferencedBlocks() {
@@ -78,6 +100,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
 
    /**
     * Remove all PHI RValues in any phi-statements referencing the passed block
+    *
     * @param removeBlock The block to remove from PHI RValues
     */
    private void removePhiRValues(LabelRef removeBlock) {
@@ -99,7 +122,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
             while(phiRValueIt.hasNext()) {
                StatementPhiBlock.PhiRValue phiRValue = phiRValueIt.next();
                if(phiRValue.getPredecessor().equals(removeBlock)) {
-                  log.append("Removing PHI-reference to removed block ("+removeBlock+") in block "+block.getLabel());
+                  log.append("Removing PHI-reference to removed block (" + removeBlock + ") in block " + block.getLabel());
                   phiRValueIt.remove();
                }
             }
@@ -109,24 +132,25 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
 
    /**
     * Find all referenced block labels recursively
+    *
     * @param block The block to add (inc. all blocks that this block calls or jumps to)
     * @param used The blocks already discovered (not examined again)
     */
    private void findReferencedBlocks(ControlFlowBlock block, Set<LabelRef> used) {
-      if(block==null) {
+      if(block == null) {
          return;
       }
       if(used.contains(block.getLabel())) {
          return;
       }
       used.add(block.getLabel());
-      if(block.getCallSuccessor()!=null) {
+      if(block.getCallSuccessor() != null) {
          findReferencedBlocks(getGraph().getBlock(block.getCallSuccessor()), used);
       }
-      if(block.getConditionalSuccessor()!=null) {
+      if(block.getConditionalSuccessor() != null) {
          findReferencedBlocks(getGraph().getBlock(block.getConditionalSuccessor()), used);
       }
-      if(block.getDefaultSuccessor()!=null) {
+      if(block.getDefaultSuccessor() != null) {
          if(block.getDefaultSuccessor().getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) {
             return;
          }

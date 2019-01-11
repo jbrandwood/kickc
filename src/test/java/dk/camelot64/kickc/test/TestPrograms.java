@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testWordsizeArrays() throws IOException, URISyntaxException {
+      compileAndCompare("test-word-size-arrays");
+   }
+
+   @Test
    public void testRuntimeUnusedProcedure() throws IOException, URISyntaxException {
       compileAndCompare("runtime-unused-procedure");
    }

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testScrollUp() throws IOException, URISyntaxException {
+      compileAndCompare("test-scroll-up");
+   }
+
+   @Test
    public void testWordsizeArrays() throws IOException, URISyntaxException {
       compileAndCompare("test-word-size-arrays");
    }

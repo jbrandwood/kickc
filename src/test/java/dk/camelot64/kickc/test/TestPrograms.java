@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testScrollUp() throws IOException, URISyntaxException {
+      compileAndCompare("test-scroll-up");
+   }
+
+   @Test
    public void testRollSpriteMsb() throws IOException, URISyntaxException {
       compileAndCompare("roll-sprite-msb");
    }

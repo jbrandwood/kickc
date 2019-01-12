@@ -45,6 +45,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testRollSpriteMsb() throws IOException, URISyntaxException {
+      compileAndCompare("roll-sprite-msb");
+   }
+
+   @Test
+   public void testRollVariable() throws IOException, URISyntaxException {
+      compileAndCompare("roll-variable");
+   }
+
+   @Test
    public void testWordsizeArrays() throws IOException, URISyntaxException {
       compileAndCompare("test-word-size-arrays");
    }

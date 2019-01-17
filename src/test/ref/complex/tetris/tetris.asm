@@ -100,12 +100,12 @@
   .label current_piece_16 = 5
   .label render_screen_render_30 = 9
   .label current_xpos_57 = $a
-  .label current_piece_gfx_63 = 5
-  .label render_screen_render_66 = 9
-  .label current_xpos_126 = $a
-  .label current_xpos_127 = $a
-  .label current_piece_gfx_116 = 5
-  .label current_piece_gfx_117 = 5
+  .label current_piece_gfx_62 = 5
+  .label render_screen_render_64 = 9
+  .label current_xpos_124 = $a
+  .label current_xpos_125 = $a
+  .label current_piece_gfx_114 = 5
+  .label current_piece_gfx_115 = 5
   .label current_piece_90 = 5
   .label current_piece_91 = 5
   .label current_piece_92 = 5
@@ -137,11 +137,11 @@ main: {
     jsr render_playfield
     ldy current_ypos
     lda current_xpos
-    sta current_xpos_126
+    sta current_xpos_124
     lda current_piece_gfx
-    sta current_piece_gfx_116
+    sta current_piece_gfx_114
     lda current_piece_gfx+1
-    sta current_piece_gfx_116+1
+    sta current_piece_gfx_114+1
     ldx current_piece_char
     lda #$40
     sta render_screen_render_30
@@ -190,13 +190,13 @@ main: {
     jsr render_playfield
     ldy current_ypos
     lda render_screen_render
-    sta render_screen_render_66
+    sta render_screen_render_64
     lda current_xpos
-    sta current_xpos_127
+    sta current_xpos_125
     lda current_piece_gfx
-    sta current_piece_gfx_117
+    sta current_piece_gfx_115
     lda current_piece_gfx+1
-    sta current_piece_gfx_117+1
+    sta current_piece_gfx_115+1
     ldx current_piece_char
     jsr render_moving
     jsr render_score
@@ -335,9 +335,8 @@ render_moving: {
     lda ypos2
     cmp #2
     beq !+
-    bcs b13
+    bcs b2
   !:
-  b7:
     lda #4
     clc
     adc i
@@ -352,11 +351,6 @@ render_moving: {
     cmp #4
     bne b1
     rts
-  b13:
-    lda ypos2
-    cmp #2*PLAYFIELD_LINES
-    bcc b2
-    jmp b7
   b2:
     lda render_screen_render_30
     clc
@@ -372,14 +366,11 @@ render_moving: {
     sta c
   b4:
     ldy i
-    lda (current_piece_gfx_63),y
+    lda (current_piece_gfx_62),y
     inc i
     cmp #0
     beq b5
-    lda xpos
-    cmp #PLAYFIELD_COLS
-    bcs b5
-    tay
+    ldy xpos
     txa
     sta (screen_line),y
   b5:

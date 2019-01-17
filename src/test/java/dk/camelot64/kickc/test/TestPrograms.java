@@ -1137,6 +1137,11 @@ public class TestPrograms {
       assertError("no-returninterrupt", "Interrupts cannot return anything.");
    }
 
+   @Test
+   public void testConditionTypeMismatch() throws IOException, URISyntaxException {
+      assertError("condition-type-mismatch", "Type mismatch non-boolean condition");
+   }
+
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
       try {
          compileAndCompare(kcFile);

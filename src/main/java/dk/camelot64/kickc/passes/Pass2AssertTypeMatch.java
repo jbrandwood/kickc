@@ -1,11 +1,13 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.values.RValue;
 
 /**
  * Asserts that types match in all assignments and calculations
@@ -23,7 +25,20 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
             if(statement instanceof StatementAssignment) {
                checkAssignment((StatementAssignment) statement);
             }
-            // TODO: Implement checking for calls / conditional jumps / ...
+            if(statement instanceof StatementConditionalJump) {
+               StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
+               if(conditionalJump.getOperator()==null) {
+                  RValue rValue = conditionalJump.getrValue2();
+                  SymbolType rValueType = SymbolTypeInference.inferType(getScope(), rValue);
+                  if(!SymbolTypeInference.typeMatch(SymbolType.BOOLEAN, rValueType)) {
+                     getLog().append("ERROR! Type mismatch non-boolean condition from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
+                     throw new CompileError("ERROR! Type mismatch non-boolean condition from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false), statement.getSource());
+                  }
+               } else {
+                 // Conditions with operators always result in booleans?
+               }
+            }
+            // TODO: Implement checking for calls / ...
          }
       }
 

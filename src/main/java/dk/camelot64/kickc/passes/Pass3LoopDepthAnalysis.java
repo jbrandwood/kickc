@@ -34,7 +34,7 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
          LabelRef label = entryPointBlock.getLabel();
          ScopeRef scope;
          if(label.getFullName().equals(LabelRef.BEGIN_BLOCK_NAME)) {
-            scope = callGraph.getFirstCallBlock();
+            scope = ScopeRef.ROOT;
          } else {
             scope = entryPointBlock.getScope();
          }

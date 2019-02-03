@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNoRecursionHeavy() throws IOException, URISyntaxException {
+      compileAndCompare("no-recursion-heavy");
+   }
+
+   @Test
    public void testScrollUp() throws IOException, URISyntaxException {
       compileAndCompare("test-scroll-up");
    }

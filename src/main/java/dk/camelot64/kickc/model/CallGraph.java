@@ -54,10 +54,6 @@ public class CallGraph {
       return null;
    }
 
-   public ScopeRef getFirstCallBlock() {
-      return ScopeRef.ROOT;
-   }
-
    /**
     * Get sub call blocks called from a specific call block.
     *
@@ -88,6 +84,47 @@ public class CallGraph {
       }
       return callingBlocks;
    }
+
+   /**
+    * Get the closure of all procedures called from a specific scope.
+    * This includes the recursive closure of calls (ie. sub-calls and their sub-calls).
+    * @param scopeRef The scope (procedure/root) to examine
+    * @return All scopes called in the closure of calls
+    */
+   public Collection<ScopeRef> getRecursiveCalls(ScopeRef scopeRef) {
+      ArrayList<ScopeRef> closure = new ArrayList<>();
+      CallBlock callBlock = getCallBlock(scopeRef);
+      if(callBlock!=null) {
+         for(CallBlock.Call call : callBlock.getCalls()) {
+            addRecursiveCalls(call.getProcedure(), closure);
+         }
+      }
+      return closure;
+   }
+
+   /**
+    * Get the closure of all procedures called from a specific scope.
+    * This includes the recursive closure of calls (ie. sub-calls and their sub-calls).
+    * @param scopeRef The scope (procedure/root) to examine
+    * @param found The scopes already found
+    *
+    * @return All scopes called in the closure of calls
+    */
+   private void addRecursiveCalls(ScopeRef scopeRef, Collection<ScopeRef> found) {
+      if(found.contains(scopeRef)) {
+         // Recursion detected - stop here
+         return;
+      }
+      found.add(scopeRef);
+      CallBlock callBlock = getCallBlock(scopeRef);
+      if(callBlock!=null) {
+         for(CallBlock.Call call : callBlock.getCalls()) {
+            addRecursiveCalls(call.getProcedure(), found);
+         }
+      }
+   }
+
+
 
    @Override
    public String toString() {
@@ -126,6 +163,9 @@ public class CallGraph {
        */
       private ScopeRef scopeLabel;
 
+      /**
+       * All direct calls from the scope.
+       */
       private List<Call> calls;
 
       public CallBlock(ScopeRef scopeLabel) {

@@ -7,8 +7,8 @@ import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.model.CallGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,10 +83,10 @@ public class Pass4InterruptClobberFix extends Pass2Base {
       }
 
       CallGraph callGraph = getProgram().getCallGraph();
-      CallGraph.CallBlock callBlock = callGraph.getCallBlock(procedure.getLabel().getRef());
+      CallGraph.CallBlock callBlock = callGraph.getCallBlock(procedure.getRef());
       List<CallGraph.CallBlock.Call> calls = callBlock.getCalls();
       for(CallGraph.CallBlock.Call call : calls) {
-         LabelRef calledProcLabel = call.getProcedure();
+         ScopeRef calledProcLabel = call.getProcedure();
          ProcedureRef calledProcRef = new ProcedureRef(calledProcLabel.getFullName());
          Procedure calledProc = getProgram().getScope().getProcedure(calledProcRef);
          AsmClobber calledClobber = getProcedureClobber(calledProc);

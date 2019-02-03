@@ -72,7 +72,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
          }
 
          Collection<CallGraph.CallBlock.Call> callers =
-               getProgram().getCallGraph().getCallers(procedure.getLabel().getRef());
+               getProgram().getCallGraph().getCallers(procedure.getRef());
          for(CallGraph.CallBlock.Call caller : callers) {
             // Each caller creates its own call-paths
             StatementCall callStatement =

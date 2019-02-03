@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.passes.PassNCallGraphAnalysis;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +12,7 @@ import java.util.List;
 
 /**
  * The call graph for the entire control flow graph.
- * Created by {@link dk.camelot64.kickc.passes.Pass3CallGraphAnalysis}
+ * Created by {@link PassNCallGraphAnalysis}
  */
 public class CallGraph {
 
@@ -26,7 +28,7 @@ public class CallGraph {
     * @param scopeLabel The label for the scope.
     * @return The call block for the scope
     */
-   public CallBlock getOrCreateCallBlock(LabelRef scopeLabel) {
+   public CallBlock getOrCreateCallBlock(ScopeRef scopeLabel) {
       CallBlock callBlock = getCallBlock(scopeLabel);
       if(callBlock != null) {
          return callBlock;
@@ -43,7 +45,7 @@ public class CallGraph {
     * @param scopeLabel The label for the scope.
     * @return The call block for the scope. Null if the call block does not exist (no calls are made from it).
     */
-   public CallBlock getCallBlock(LabelRef scopeLabel) {
+   public CallBlock getCallBlock(ScopeRef scopeLabel) {
       for(CallBlock callBlock : callBlocks) {
          if(callBlock.getScopeLabel().equals(scopeLabel)) {
             return callBlock;
@@ -52,8 +54,8 @@ public class CallGraph {
       return null;
    }
 
-   public LabelRef getFirstCallBlock() {
-      return new LabelRef("");
+   public ScopeRef getFirstCallBlock() {
+      return ScopeRef.ROOT;
    }
 
    /**
@@ -63,9 +65,9 @@ public class CallGraph {
     * @return The sub call blocks called from the passed block
     */
    public Collection<CallBlock> getCalledBlocks(CallBlock block) {
-      Collection<LabelRef> calledLabels = block.getCalledBlocks();
+      Collection<ScopeRef> calledLabels = block.getCalledBlocks();
       LinkedHashSet<CallBlock> called = new LinkedHashSet<>();
-      for(LabelRef calledLabel : calledLabels) {
+      for(ScopeRef calledLabel : calledLabels) {
          called.add(getOrCreateCallBlock(calledLabel));
       }
       return called;
@@ -77,8 +79,8 @@ public class CallGraph {
     * @param scopeLabel The label of scope (the call block)
     * @return The scope labels of call blocks that call the passed block
     */
-   public Collection<LabelRef> getCallingBlocks(LabelRef scopeLabel) {
-      ArrayList<LabelRef> callingBlocks = new ArrayList<>();
+   public Collection<ScopeRef> getCallingBlocks(ScopeRef scopeLabel) {
+      ArrayList<ScopeRef> callingBlocks = new ArrayList<>();
       for(CallBlock callBlock : callBlocks) {
          if(callBlock.getCalledBlocks().contains(scopeLabel)) {
             callingBlocks.add(callBlock.getScopeLabel());
@@ -102,7 +104,7 @@ public class CallGraph {
     * @param label The label of the procedure
     * @return All calls
     */
-   public Collection<CallBlock.Call> getCallers(LabelRef label) {
+   public Collection<CallBlock.Call> getCallers(ScopeRef label) {
       Collection<CallBlock.Call> callers = new ArrayList<>();
       for(CallBlock callBlock : callBlocks) {
          for(CallBlock.Call call : callBlock.getCalls()) {
@@ -122,20 +124,20 @@ public class CallGraph {
       /**
        * The label of the scope. (Program scope has label "" and procedure scopes have their respective labels).
        */
-      private LabelRef scopeLabel;
+      private ScopeRef scopeLabel;
 
       private List<Call> calls;
 
-      public CallBlock(LabelRef scopeLabel) {
+      public CallBlock(ScopeRef scopeLabel) {
          this.scopeLabel = scopeLabel;
          this.calls = new ArrayList<>();
       }
 
-      public LabelRef getScopeLabel() {
+      public ScopeRef getScopeLabel() {
          return scopeLabel;
       }
 
-      public void addCall(LabelRef procedureLabel, StatementCall statementCall) {
+      public void addCall(ProcedureRef procedureLabel, StatementCall statementCall) {
          this.calls.add(new Call(procedureLabel, statementCall));
       }
 
@@ -144,8 +146,8 @@ public class CallGraph {
        *
        * @return The scope labels of all call blocks called from this one.
        */
-      public Collection<LabelRef> getCalledBlocks() {
-         LinkedHashSet<LabelRef> called = new LinkedHashSet<>();
+      public Collection<ScopeRef> getCalledBlocks() {
+         LinkedHashSet<ScopeRef> called = new LinkedHashSet<>();
          for(Call call : calls) {
             called.add(call.getProcedure());
          }
@@ -177,7 +179,7 @@ public class CallGraph {
        * @param scope The scope label of the block
        * @return All calls to the passed scope
        */
-      public Collection<Call> getCalls(LabelRef scope) {
+      public Collection<Call> getCalls(ScopeRef scope) {
          ArrayList<Call> callsToScope = new ArrayList<>();
          for(Call call : calls) {
             if(call.getProcedure().equals(scope)) {
@@ -200,14 +202,14 @@ public class CallGraph {
          /**
           * The label of the called procedure.
           */
-         private LabelRef procedure;
+         private ProcedureRef procedure;
 
-         public Call(LabelRef procedure, StatementCall statementCall) {
+         Call(ProcedureRef procedure, StatementCall statementCall) {
             this.callStatementIdx = statementCall.getIndex();
             this.procedure = procedure;
          }
 
-         public LabelRef getProcedure() {
+         public ProcedureRef getProcedure() {
             return procedure;
          }
 

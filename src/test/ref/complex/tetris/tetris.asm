@@ -37,9 +37,17 @@
   .label CIA2_PORT_A_DDR = $dd02
   .label HARDWARE_IRQ = $fffe
   .const BLACK = 0
+  .const RED = 2
   .const CYAN = 3
+  .const PURPLE = 4
+  .const GREEN = 5
   .const BLUE = 6
+  .const ORANGE = 8
+  .const PINK = $a
+  .const DARK_GREY = $b
   .const GREY = $c
+  .const LIGHT_GREEN = $d
+  .const LIGHT_BLUE = $e
   .const KEY_Z = $c
   .const KEY_LSHIFT = $f
   .const KEY_X = $17
@@ -1183,6 +1191,11 @@ render_show: {
     lda #toD0182_return
   b2:
     sta D018
+    ldy level
+    lda PIECES_COLORS_1,y
+    sta BGCOL2
+    lda PIECES_COLORS_2,y
+    sta BGCOL3
     lda render_screen_show
     sta render_screen_showing
     rts
@@ -1313,9 +1326,9 @@ render_init: {
     lda #BLACK
     sta BORDERCOL
     sta BGCOL1
-    lda #BLUE
+    lda PIECES_COLORS_1
     sta BGCOL2
-    lda #CYAN
+    lda PIECES_COLORS_2
     sta BGCOL3
     lda #GREY
     sta BGCOL4
@@ -1593,6 +1606,8 @@ sprites_irq: {
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
   SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
   score_add_bcd: .fill 4*5, 0
+  PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
+  PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40

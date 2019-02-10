@@ -26,6 +26,19 @@ kickasm(pc PLAYFIELD_COLORS_ORIGINAL, resource "playfield-screen.col") {{
   .import binary "playfield-screen.col"
 }}
 
+// The color #1 to use for the pieces for each level
+byte[] PIECES_COLORS_1 = {
+            BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED,
+            BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED,
+            BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
+        };
+// The color #2 to use for the pieces for each level
+byte[] PIECES_COLORS_2 = {
+            CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE,
+            CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE,
+            CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
+        };
+
 // Pointers to the screen address for rendering each playfield line
 // The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
 align($80) byte*[PLAYFIELD_LINES] screen_lines_1;
@@ -38,8 +51,8 @@ void render_init() {
 	*D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3;
 	*BORDERCOL = BLACK;
 	*BGCOL1 = BLACK;
-	*BGCOL2 = BLUE;
-	*BGCOL3 = CYAN;
+	*BGCOL2 = PIECES_COLORS_1[0];
+	*BGCOL3 = PIECES_COLORS_2[0];
 	*BGCOL4 = GREY;
 
     // Setup chars on the screens
@@ -70,6 +83,8 @@ void render_show() {
         d018val = toD018(PLAYFIELD_SCREEN_2, PLAYFIELD_CHARSET);
     }
 	*D018 = d018val;
+	*BGCOL2 = PIECES_COLORS_1[level];
+	*BGCOL3 = PIECES_COLORS_2[level];
 	render_screen_showing = render_screen_show;
 }
 

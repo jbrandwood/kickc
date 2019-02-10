@@ -11,6 +11,9 @@ byte*[PLAYFIELD_LINES] playfield_lines;
 // Indixes into the playfield  for each playfield line
 byte[PLAYFIELD_LINES+1] playfield_lines_idx;
 
+// The index of the next moving piece. (0-6)
+byte next_piece_idx = 0;
+
 // The current moving piece. Points to the start of the piece definition.
 byte* current_piece = 0;
 
@@ -219,21 +222,28 @@ void play_lock_current() {
 }
 
 // Spawn a new piece
+// Moves the next piece into the current and spawns a new next piece
 void play_spawn_current() {
+    // Move next piece into current
+	byte current_piece_idx = next_piece_idx;
+	current_piece = PIECES[current_piece_idx<<1];
+	current_piece_char = PIECES_CHARS[current_piece_idx];
+	current_orientation = 0;
+	current_piece_gfx = current_piece + current_orientation;
+	current_xpos = PIECES_START_X[current_piece_idx];
+	current_ypos = PIECES_START_Y[current_piece_idx];
+	if(play_collision(current_xpos,current_ypos,current_orientation)==COLLISION_PLAYFIELD) {
+	    game_over = 1;
+	}
+
+    // Spawn a new next piece
 	// Pick a random piece (0-6)
 	byte piece_idx = 7;
 	while(piece_idx==7) {
 		piece_idx = sid_rnd()&7;
 	}
-	current_piece = PIECES[piece_idx<<1];
-	current_piece_char = PIECES_CHARS[piece_idx];
-	current_orientation = 0;
-	current_piece_gfx = current_piece + current_orientation;
-	current_xpos = PIECES_START_X[piece_idx];
-	current_ypos = PIECES_START_Y[piece_idx];
-	if(play_collision(current_xpos,current_ypos,current_orientation)==COLLISION_PLAYFIELD) {
-	    game_over = 1;
-	}
+	next_piece_idx = piece_idx;
+
 }
 
 // Look through the playfield for lines - and remove any lines found

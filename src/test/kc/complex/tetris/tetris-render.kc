@@ -176,3 +176,32 @@ void render_moving() {
 	}
 }
 
+// Render the next tetromino in the "next" area
+void render_next() {
+
+    // Find the screen area
+	word next_area_offset = 40*12 + 24 + 4;
+    byte* screen_next_area;
+    if(render_screen_render==0) {
+        screen_next_area = PLAYFIELD_SCREEN_1+next_area_offset;
+    } else {
+        screen_next_area = PLAYFIELD_SCREEN_2+next_area_offset;
+    }
+
+    // Render the next piece
+	byte* next_piece_gfx = PIECES[next_piece_idx<<1];
+	byte next_piece_char = PIECES_NEXT_CHARS[next_piece_idx];
+	for(byte l:0..3) {
+	    for(byte c:0..3) {
+            byte cell = *next_piece_gfx++;
+			if(cell!=0) {
+		        *screen_next_area = next_piece_char;
+		    } else {
+		        *screen_next_area = 0;
+		    }
+            screen_next_area++;
+        }
+		screen_next_area += 36;
+	}
+}
+

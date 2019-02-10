@@ -358,13 +358,13 @@ public class TestPrograms {
    }
 
    @Test
-   public void testCompoundAssignment() throws IOException, URISyntaxException {
-      compileAndCompare("compound-assignment");
+   public void testAssignmentCompound() throws IOException, URISyntaxException {
+      compileAndCompare("assignment-compound");
    }
 
    @Test
-   public void testChainedAssignment() throws IOException, URISyntaxException {
-      compileAndCompare("chained-assignment");
+   public void testAssignmentChained() throws IOException, URISyntaxException {
+      compileAndCompare("assignment-chained");
    }
 
    @Test

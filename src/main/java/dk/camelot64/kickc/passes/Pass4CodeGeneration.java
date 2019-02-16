@@ -45,13 +45,13 @@ public class Pass4CodeGeneration {
       AsmProgram asm = new AsmProgram();
       ScopeRef currentScope = ScopeRef.ROOT;
 
-      asm.startSegment( currentScope, null, "Basic Upstart");
+      asm.startSegment(currentScope, null, "Basic Upstart");
       asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
       asm.addLine(new AsmBasicUpstart("bbegin"));
       asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(0x080d)));
 
       // Generate global ZP labels
-      asm.startSegment( currentScope, null, "Global Constants & labels");
+      asm.startSegment(currentScope, null, "Global Constants & labels");
       addConstants(asm, currentScope);
       addZpLabels(asm, currentScope);
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -66,10 +66,7 @@ public class Pass4CodeGeneration {
             // Add any procedure comments
             if(block.isProcedureEntry(program)) {
                Procedure procedure = block.getProcedure(program);
-               List<Comment> comments = procedure.getComments();
-               for(Comment comment : comments) {
-                  asm.addComment(comment.getComment());
-               }
+               addComments(asm, procedure.getComments());
             }
             // Start the new scope
             asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
@@ -84,7 +81,7 @@ public class Pass4CodeGeneration {
          if(block.isProcedureEntry(program)) {
             // Generate interrupt entry if needed
             Procedure procedure = block.getProcedure(program);
-            if(procedure!=null && procedure.getInterruptType()!=null) {
+            if(procedure != null && procedure.getInterruptType() != null) {
                generateInterruptEntry(asm, procedure);
             }
          } else {
@@ -150,11 +147,13 @@ public class Pass4CodeGeneration {
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       for(ConstantVar constantVar : scopeConstants) {
-
          if(!hasData(constantVar)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
                added.add(asmName);
+               // Add any comments
+               addComments(asm, constantVar.getComments());
+               // Find the constant value calculation
                String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
                if(constantVar.getType() instanceof SymbolTypePointer) {
                   // Must use a label for pointers
@@ -174,6 +173,18 @@ public class Pass4CodeGeneration {
                }
             }
          }
+      }
+   }
+
+   /**
+    * Add comments to the assembler program
+    *
+    * @param asm The assembler program
+    * @param comments The comments to add
+    */
+   private void addComments(AsmProgram asm, List<Comment> comments) {
+      for(Comment comment : comments) {
+         asm.addComment(comment.getComment());
       }
    }
 
@@ -272,17 +283,24 @@ public class Pass4CodeGeneration {
       Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       for(ConstantVar constantVar : scopeConstants) {
-         Integer declaredAlignment = constantVar.getDeclaredAlignment();
-         if(declaredAlignment != null) {
-            String alignment = AsmFormat.getAsmNumber(declaredAlignment);
-            asm.addDataAlignment(alignment);
-         }
-         if(constantVar.getValue() instanceof ConstantArrayList) {
-            SymbolTypeArray constTypeArray = (SymbolTypeArray) constantVar.getType();
-            SymbolType elementType = constTypeArray.getElementType();
-            ConstantArrayList constantArrayList = (ConstantArrayList) constantVar.getValue();
+         if(hasData(constantVar)) {
+            // Skip if already added
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-            if(asmName != null && !added.contains(asmName)) {
+            if(added.contains(asmName)) {
+               continue;
+            }
+            // Add any comments
+            addComments(asm, constantVar.getComments());
+            // Add any alignment
+            Integer declaredAlignment = constantVar.getDeclaredAlignment();
+            if(declaredAlignment != null) {
+               String alignment = AsmFormat.getAsmNumber(declaredAlignment);
+               asm.addDataAlignment(alignment);
+            }
+            if(constantVar.getValue() instanceof ConstantArrayList) {
+               SymbolTypeArray constTypeArray = (SymbolTypeArray) constantVar.getType();
+               SymbolType elementType = constTypeArray.getElementType();
+               ConstantArrayList constantArrayList = (ConstantArrayList) constantVar.getValue();
                List<String> asmElements = new ArrayList<>();
                for(ConstantValue element : constantArrayList.getElements()) {
                   String asmElement = AsmFormat.getAsmConstant(program, element, 99, scopeRef);
@@ -300,58 +318,56 @@ public class Pass4CodeGeneration {
                } else {
                   throw new RuntimeException("Unhandled constant array element type " + constantArrayList.toString(program));
                }
-            }
-         } else if(constantVar.getValue() instanceof ConstantArrayFilled) {
-            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-            ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantVar.getValue();
-            ConstantValue arraySize = constantArrayFilled.getSize();
-            ConstantLiteral arraySizeConst = arraySize.calculateLiteral(getScope());
-            if(!(arraySizeConst instanceof ConstantInteger)) {
-               throw new Pass2SsaAssertion.AssertionFailed("Error! Array size is not constant integer " + constantVar.toString(program));
-            }
-            Integer size = ((ConstantInteger) arraySizeConst).getInteger().intValue();
-            if(SymbolType.isByte(constantArrayFilled.getElementType())) {
-               String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
-               added.add(asmName);
-            } else if(SymbolType.isSByte(constantArrayFilled.getElementType())) {
-               String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
-               added.add(asmName);
-            } else if(SymbolType.isWord(constantArrayFilled.getElementType())) {
-               String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
-               added.add(asmName);
-            } else if(SymbolType.isSWord(constantArrayFilled.getElementType())) {
-               String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
-               added.add(asmName);
-            } else if(SymbolType.isDWord(constantArrayFilled.getElementType())) {
-               String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
-               added.add(asmName);
-            } else if(SymbolType.isSDWord(constantArrayFilled.getElementType())) {
-               String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
-               added.add(asmName);
-            } else if(constantArrayFilled.getElementType() instanceof SymbolTypePointer) {
-               String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
-               asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
-               added.add(asmName);
-            } else {
-               throw new RuntimeException("Unhandled constant array element type " + constantArrayFilled.toString(program));
-            }
-         } else {
-            try {
-               ConstantLiteral literal = constantVar.getValue().calculateLiteral(getScope());
-               if(literal instanceof ConstantString) {
-                  String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-                  String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
-                  asm.addDataString(asmName.replace("#", "_").replace("$", "_"), asmConstant);
-                  added.add(asmName);
+            } else if(constantVar.getValue() instanceof ConstantArrayFilled) {
+               ConstantArrayFilled constantArrayFilled = (ConstantArrayFilled) constantVar.getValue();
+               ConstantValue arraySize = constantArrayFilled.getSize();
+               ConstantLiteral arraySizeConst = arraySize.calculateLiteral(getScope());
+               if(!(arraySizeConst instanceof ConstantInteger)) {
+                  throw new Pass2SsaAssertion.AssertionFailed("Error! Array size is not constant integer " + constantVar.toString(program));
                }
-            } catch(ConstantNotLiteral e) {
-               // can't calculate literal value, so it is not data - just return
+               int size = ((ConstantInteger) arraySizeConst).getInteger().intValue();
+               if(SymbolType.isByte(constantArrayFilled.getElementType())) {
+                  String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
+                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
+                  added.add(asmName);
+               } else if(SymbolType.isSByte(constantArrayFilled.getElementType())) {
+                  String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
+                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
+                  added.add(asmName);
+               } else if(SymbolType.isWord(constantArrayFilled.getElementType())) {
+                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+                  added.add(asmName);
+               } else if(SymbolType.isSWord(constantArrayFilled.getElementType())) {
+                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+                  added.add(asmName);
+               } else if(SymbolType.isDWord(constantArrayFilled.getElementType())) {
+                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
+                  added.add(asmName);
+               } else if(SymbolType.isSDWord(constantArrayFilled.getElementType())) {
+                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
+                  added.add(asmName);
+               } else if(constantArrayFilled.getElementType() instanceof SymbolTypePointer) {
+                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+                  added.add(asmName);
+               } else {
+                  throw new RuntimeException("Unhandled constant array element type " + constantArrayFilled.toString(program));
+               }
+            } else {
+               try {
+                  ConstantLiteral literal = constantVar.getValue().calculateLiteral(getScope());
+                  if(literal instanceof ConstantString) {
+                     String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
+                     asm.addDataString(asmName.replace("#", "_").replace("$", "_"), asmConstant);
+                     added.add(asmName);
+                  }
+               } catch(ConstantNotLiteral e) {
+                  // can't calculate literal value, so it is not data - just return
+               }
             }
          }
       }
@@ -372,6 +388,9 @@ public class Pass4CodeGeneration {
             Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
             String asmName = scopeVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
+               // Add any comments
+               addComments(asm, scopeVar.getComments());
+               // Add the label declaration
                asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), registerZp.getZp());
                added.add(asmName);
             }
@@ -470,11 +489,11 @@ public class Pass4CodeGeneration {
             ScopeRef scope = block.getScope();
             if(!scope.equals(ScopeRef.ROOT)) {
                Procedure procedure = getScope().getProcedure(scope.getFullName());
-               if(procedure!=null) {
+               if(procedure != null) {
                   interruptType = procedure.getInterruptType();
                }
             }
-            if(interruptType==null) {
+            if(interruptType == null) {
                asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
             } else {
                generateInterruptExit(asm, statement, interruptType);
@@ -497,12 +516,13 @@ public class Pass4CodeGeneration {
 
    /**
     * Generate exit-code for entering an interrupt procedure based on the interrupt type
+    *
     * @param asm The assembler to generate code into
     * @param procedure The interrupt procedure
     */
    private void generateInterruptEntry(AsmProgram asm, Procedure procedure) {
       Procedure.InterruptType interruptType = procedure.getInterruptType();
-      asm.startSegment( procedure.getRef(), null, "entry interrupt("+interruptType.name()+")");
+      asm.startSegment(procedure.getRef(), null, "entry interrupt(" + interruptType.name() + ")");
       //asm.getCurrentSegment().setXXX();
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
          // No entry ASM needed
@@ -517,19 +537,21 @@ public class Pass4CodeGeneration {
       } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
          asm.addInstruction("sta", AsmAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
          asm.addInstruction("stx", AsmAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
-         asm.addInstruction("sty", AsmAddressingMode.ABS, "regy+1", false).setDontOptimize(true);      } else {
+         asm.addInstruction("sty", AsmAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
+      } else {
          throw new RuntimeException("Interrupt Type not supported " + interruptType.name());
       }
    }
 
    /**
     * Generate exit-code for ending an interrupt procedure based on the interrupt type
+    *
     * @param asm The assembler to generate code into
     * @param statement The return statement
     * @param interruptType The type of interrupt to generate
     */
    private void generateInterruptExit(AsmProgram asm, Statement statement, Procedure.InterruptType interruptType) {
-      asm.getCurrentSegment().setSource(asm.getCurrentSegment().getSource() + " - exit interrupt("+interruptType.name()+")");
+      asm.getCurrentSegment().setSource(asm.getCurrentSegment().getSource() + " - exit interrupt(" + interruptType.name() + ")");
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
          asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea81", false);
       } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
@@ -612,7 +634,7 @@ public class Pass4CodeGeneration {
             segmentSrc += fBlock.getLabel().getFullName() + " ";
          }
          segmentSrc += "to " + toBlock.getLabel().getFullName();
-         asm.startSegment( scope, toFirstStatement.getIndex(), segmentSrc);
+         asm.startSegment(scope, toFirstStatement.getIndex(), segmentSrc);
          asm.getCurrentSegment().setPhiTransitionId(transition.getTransitionId());
          for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
             asm.addLabel((toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()).replace('@', 'b').replace(':', '_'));

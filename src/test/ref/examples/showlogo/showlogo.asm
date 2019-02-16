@@ -9,7 +9,9 @@
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label D018 = $d018
+  //  Color Ram
   .label COLS = $d800
+  //  The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const DARK_GREY = $b

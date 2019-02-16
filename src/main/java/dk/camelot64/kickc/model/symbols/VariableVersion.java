@@ -13,6 +13,7 @@ public class VariableVersion extends Variable {
       this.setDeclaredRegister(versionOf.getDeclaredRegister());
       this.setDeclaredVolatile(versionOf.isDeclaredVolatile());
       this.versionOfName = versionOf.getLocalName();
+      this.setComments(versionOf.getComments());
    }
 
    public VariableVersion(

@@ -1,10 +1,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
+  //  Commodore 64 Registers and Constants
+  //  Processor port data direction register
   .label PROCPORT_DDR = 0
+  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
+  //  The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -16,26 +22,46 @@
   .label SPRITES_COLS = $d027
   .label VIC_CONTROL = $d011
   .label D018 = $d018
+  //  VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
+  //  VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
+  //  Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  //  CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
+  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
+  //  CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
+  //  The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
+  //  The colors of the C64
   .const BLACK = 0
+  //  Tetris Game for the Commodore 64
+  //  Memory Layout and Shared Data
+  //  Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
+  //  Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
+  //  Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
+  //  Address of the charset
   .label PLAYFIELD_CHARSET = $2800
+  //  The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
+  //  The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
   .label SIN = $1400
   .label SIN_SPRITE = $2800
+  //  Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  //  Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
+  //  The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label render_screen_showing = 5

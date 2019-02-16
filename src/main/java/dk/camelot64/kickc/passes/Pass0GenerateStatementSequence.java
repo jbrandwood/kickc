@@ -114,7 +114,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentSymbols().addProcedure(name, type);
       addDirectives(procedure, ctx.directive());
-      addComments(procedure, ctx);
+      procedure.setComments(getComments(ctx));
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       VariableUnversioned returnVar = null;
@@ -146,10 +146,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /**
     * Find comments preceding the passed context
-    * @param procedure
-    * @param ctx
+    * @param ctx The parse context to examine
+    * @return The comments preceding the context
     */
-   private void addComments(Procedure procedure, ParserRuleContext ctx) {
+   private List<Comment> getComments(ParserRuleContext ctx) {
       List<Comment> comments = new ArrayList<>();
       List<Token> hiddenTokensToLeft = tokenStream.getHiddenTokensToLeft(ctx.start.getTokenIndex());
       if(hiddenTokensToLeft!=null) {
@@ -162,7 +162,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             comments.add(comment);
          }
       }
-      procedure.setComments(comments);
+      return comments;
    }
 
    @Override
@@ -323,6 +323,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Array / String variables are implicitly constant
       if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
          lValue.setDeclaredConstant(true);
+      }
+      if(lValue.isDeclaredConstant()) {
+         // Add comments to constant
+         lValue.setComments(getComments(ctx));
       }
       KickCParser.ExprContext initializer = ctx.expr();
       if(initializer != null) {

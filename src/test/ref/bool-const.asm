@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  A Minimal test of boolean constants.
   .label SCREEN = $400
 main: {
     jsr bool_const_if

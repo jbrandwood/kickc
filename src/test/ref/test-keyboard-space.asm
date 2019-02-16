@@ -3,9 +3,13 @@
 .pc = $80d "Program"
   .label RASTER = $d012
   .label BGCOL = $d021
+  //  CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
+  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
+  //  CIA #1 Port A data direction register.
   .label CIA1_PORT_A_DDR = $dc02
+  //  CIA #1 Port B data direction register.
   .label CIA1_PORT_B_DDR = $dc03
   .const GREEN = 5
   .const BLUE = 6
@@ -58,5 +62,7 @@ keyboard_init: {
     sta CIA1_PORT_B_DDR
     rts
 }
+  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
+  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80

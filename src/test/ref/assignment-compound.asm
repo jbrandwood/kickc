@@ -71,4 +71,5 @@ test: {
     sta cols,x
     jmp breturn
 }
+  //  Test compound assignment operators
   ref: .byte 3, 4, 3, $12, 9, 1, 4, 2, 4, 5, 1, 0

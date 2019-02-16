@@ -13,6 +13,7 @@
   .label BGCOL4 = $d024
   .label SPRITES_COLS = $d027
   .label D018 = $d018
+  //  The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const RED = 2

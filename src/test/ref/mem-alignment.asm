@@ -22,5 +22,6 @@ main: {
     .align $100
     cs: .fill $100, 0
 }
+  //  Test that memory alignment of arrays work
   .align $100
   bs: .fill $100, 0

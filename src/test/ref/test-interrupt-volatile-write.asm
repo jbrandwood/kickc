@@ -1,6 +1,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
+  //  Tests that volatile variables can be both read & written inside & outside interrupts
+  //  Currently fails because the modification is optimized away
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2

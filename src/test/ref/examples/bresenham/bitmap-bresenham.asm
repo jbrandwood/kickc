@@ -410,6 +410,9 @@ bitmap_init: {
     bne b3
     rts
 }
+  //  Plot and line drawing routines for HIRES bitmaps
+  //  Currently it can only plot on the first 256 x-positions.
+  //  Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0

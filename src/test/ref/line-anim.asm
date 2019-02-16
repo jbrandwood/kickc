@@ -1,9 +1,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  Commodore 64 Registers and Constants
+  //  Processor port data direction register
   .label PROCPORT_DDR = 0
+  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -12,10 +17,13 @@
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label D018 = $d018
+  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
+  //  CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
   .label BITMAP = $a000
   .label SCREEN = $8800
+  //  The delay between pixels
   .const DELAY = 8
   .label rem16s = 3
   .label rem16u = 9
@@ -505,15 +513,22 @@ bitmap_init: {
     bne b3
     rts
 }
+  //  The coordinates of the lines to animate
   x_start: .word $a, $14, $1e, $1e
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
+  //  Current x position fixed point [12.4]
   x_cur: .fill 2*4, 0
+  //  Current y position fixed point [12.4]
   y_cur: .fill 2*4, 0
+  //  X position addition per frame s[3.4]
   x_add: .fill 4, 0
+  //  Y position addition per frame s[3.4]
   y_add: .fill 4, 0
+  //  Frame delay (counted down to 0)
   delay: .fill 4, 0
+  //  Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0

@@ -3,6 +3,7 @@
 .pc = $80d "Program"
 //  Test all types of pointers
 main: {
+    //  A constant pointer
     .label SCREEN = $400
     ldx #2
   b1:

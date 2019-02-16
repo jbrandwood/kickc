@@ -48,4 +48,5 @@ print: {
   !:
     jmp b1
 }
+  //  Inline Strings in method calls are automatically converted to local constant variables byte[] st = "..."; - generating an ASM .text).
   msg1: .text "message 1 @"

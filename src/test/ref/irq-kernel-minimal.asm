@@ -2,7 +2,9 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label BGCOL = $d021
+  //  The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
+  //  The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
 //  Setup the IRQ routine

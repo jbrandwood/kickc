@@ -74,4 +74,6 @@ gen_char3: {
     bne b1
     rts
 }
+  //  Stores chars as 15 bits (in 2 bytes) specifying the 3x5
+  //  The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
   charset_spec_row: .word $f7da, $f7de, $f24e, $d6de

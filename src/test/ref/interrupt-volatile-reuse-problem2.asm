@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
+  //  Illustrates problem where volatiles reuse ZP addresses of other variables
   .label KERNEL_IRQ = $314
   .label IRQ_STATUS = $d019
   .label SCREEN = $400

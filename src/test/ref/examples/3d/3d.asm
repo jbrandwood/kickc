@@ -1084,13 +1084,18 @@ sprites_init: {
 }
   print_hextab: .text "0123456789abcdef"
   zs: .byte $34, $34, $34, $34, $34, $34, $34, $34
+  //  Rotated positions
   xrs: .fill 8, 0
   yrs: .fill 8, 0
   zrs: .fill 8, 0
+  //  Persepctive factors (from zrs)
   pps: .fill 8, 0
+  //  Rotated positions with persepctive
   xps: .fill 8, 0
   yps: .fill 8, 0
+  //  The rotation matrix
   rotation_matrix: .fill 9, 0
+  //  Positions to rotate
   xs: .byte -$34, -$34, -$34, 0, 0, $34, $34, $34
   ys: .byte -$34, 0, $34, -$34, $34, -$34, 0, $34
 .pc = mulf_sqr1 "mulf_sqr1"

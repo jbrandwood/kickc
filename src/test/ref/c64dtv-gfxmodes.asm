@@ -1,10 +1,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  Commodore 64 Registers and Constants
+  //  Processor port data direction register
   .label PROCPORT_DDR = 0
+  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
+  //  RAM in $A000, $E000 CHAR ROM in $D000
   .const PROCPORT_RAM_CHARROM = $31
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -22,17 +28,25 @@
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
+  //  Color Ram
   .label COLS = $d800
+  //  CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
+  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
+  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
+  //  CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
+  //  The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
   .const BLUE = 6
   .const LIGHT_GREEN = $d
+  //  Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
+  //  Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
   .const DTV_LINEAR = 1
   .const DTV_BORDER_OFF = 2
@@ -40,22 +54,29 @@
   .const DTV_OVERSCAN = 8
   .const DTV_COLORRAM_OFF = $10
   .const DTV_CHUNKY = $40
+  //  Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
+  //  Linear Graphics Plane A Counter Control
   .label DTV_PLANEA_START_LO = $d03a
   .label DTV_PLANEA_START_MI = $d03b
   .label DTV_PLANEA_START_HI = $d045
   .label DTV_PLANEA_STEP = $d046
   .label DTV_PLANEA_MODULO_LO = $d038
   .label DTV_PLANEA_MODULO_HI = $d039
+  //  Linear Graphics Plane B Counter Control
   .label DTV_PLANEB_START_LO = $d049
   .label DTV_PLANEB_START_MI = $d04a
   .label DTV_PLANEB_START_HI = $d04b
   .label DTV_PLANEB_STEP = $d04c
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
+  //  Select memory bank where color data is fetched from (bits 11:0)
+  //  Memory address of Color RAM is ColorBank*$400
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
   .const DTV_COLOR_BANK_DEFAULT = $1d800
+  //  Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
+  //  Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .const KEY_3 = 8
   .const KEY_A = $a
@@ -237,6 +258,7 @@ menu: {
 //  - 8bpp color PlaneB[7:0]
 //  To set up a linear video frame buffer the step size must be set to 8.
 mode_8bppchunkybmm: {
+    //  8BPP Chunky Bitmap (contains 8bpp pixels)
     .const PLANEB = $20000
     .label _23 = $d
     .label gfxb = 5
@@ -456,7 +478,9 @@ dtvSetCpuBankSegment1: {
 // The characters come from counter A and the font (or "cells") from counter B.
 // Counter B step and modulo should be set to 0, counter A modulo to 0 and counter A step to 1 for normal operation.
 mode_8bpppixelcell: {
+    //  8BPP Pixel Cell Screen (contains 40x25=1000 chars)
     .label PLANEA = $3c00
+    //  8BPP Pixel Cell Charset (contains 256 64 byte chars)
     .label PLANEB = $4000
     .label _14 = 7
     .label gfxa = 2
@@ -1056,6 +1080,7 @@ mode_sixsfred2: {
 mode_hicolmcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
+    //  Charset ROM
     .label COLORS = $8400
     .label _26 = 7
     .label col = 2
@@ -1155,6 +1180,7 @@ mode_hicolmcchar: {
 mode_hicolecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
+    //  Charset ROM
     .label COLORS = $8400
     .label _26 = 7
     .label col = 2
@@ -1252,6 +1278,7 @@ mode_hicolecmchar: {
 mode_hicolstdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
+    //  Charset ROM
     .label COLORS = $8400
     .label _25 = 7
     .label col = 2
@@ -1797,6 +1824,7 @@ bitmap_init: {
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
+    //  Charset ROM
     .label COLORS = $d800
     .label _28 = 7
     .label col = 2
@@ -1899,6 +1927,7 @@ mode_mcchar: {
 mode_ecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
+    //  Charset ROM
     .label COLORS = $d800
     .label _28 = 7
     .label col = 2
@@ -1998,6 +2027,7 @@ mode_ecmchar: {
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
+    //  Charset ROM
     .label COLORS = $d800
     .label _27 = 7
     .label col = 2
@@ -2175,9 +2205,15 @@ print_cls: {
 print_set_screen: {
     rts
 }
+  //  Default vallues for the palette
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
+  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
+  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
+  //  Plot and line drawing routines for HIRES bitmaps
+  //  Currently it can only plot on the first 256 x-positions.
+  //  Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0

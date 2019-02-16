@@ -1,8 +1,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
+  //  PI in u[4.28] format
   .const PI_u4f28 = $3243f6a9
+  //  PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
   .label print_line_cursor = $400
   .label rem16u = 2

@@ -1,7 +1,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  The address of the CHARGEN character set
   .label CHARGEN = $d000
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -12,7 +14,12 @@
   .label SPRITES_EXPAND_X = $d01d
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  //  Color Ram
   .label COLS = $d800
+  //  Library wrapping the BASIC floating point functions
+  //  See https://www.c64-wiki.com/wiki/Floating_point_arithmetic
+  //  See http://www.pagetable.com/c64rom/c64rom_sc.html
+  //  Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
   .label memHi = $ff
   .const sinlen_x = $dd
@@ -290,7 +297,9 @@ gen_sintab: {
     bcc b1
     rts
     f_i: .byte 0, 0, 0, 0, 0
+    //  i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0
+    //  amplitude/2 + min
     f_amp: .byte 0, 0, 0, 0, 0
 }
 //  Increase PETSCII progress one bit
@@ -315,6 +324,7 @@ progress_inc: {
     ldy #0
     sta (progress_cursor),y
     rts
+    //  Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 //  word = FAC

@@ -12810,10 +12810,16 @@ INITIAL ASM
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
+  //  Commodore 64 Registers and Constants
+  //  Processor port data direction register
   .label PROCPORT_DDR = 0
+  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
+  //  The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -12834,17 +12840,29 @@ INITIAL ASM
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label D018 = $d018
+  //  VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
+  //  VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
+  //  Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  //  Color Ram
   .label COLS = $d800
+  //  CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
+  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
+  //  CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
+  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
+  //  CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
+  //  The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
+  //  The colors of the C64
   .const BLACK = 0
   .const RED = 2
   .const CYAN = 3
@@ -12866,31 +12884,55 @@ INITIAL ASM
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
+  //  Left shift is pressed
   .const KEY_MODIFIER_LSHIFT = 1
+  //  Right shift is pressed
   .const KEY_MODIFIER_RSHIFT = 2
+  //  CTRL is pressed
   .const KEY_MODIFIER_CTRL = 4
+  //  Commodore is pressed
   .const KEY_MODIFIER_COMMODORE = 8
+  //  SID registers for random number generation
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
   .const SID_CONTROL_NOISE = $80
   .label SID_VOICE3_OSC = $d41b
+  //  Tetris Game for the Commodore 64
+  //  Memory Layout and Shared Data
+  //  Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
+  //  Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
+  //  Address of the original playscreen chars
   .label PLAYFIELD_SCREEN_ORIGINAL = $1800
+  //  Address of the original playscreen colors
   .label PLAYFIELD_COLORS_ORIGINAL = $1c00
+  //  Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
+  //  Address of the charset
   .label PLAYFIELD_CHARSET = $2800
+  //  The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
+  //  The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
+  //  The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
   .const current_movedown_fast = $a
+  //  No collision
   .const COLLISION_NONE = 0
+  //  Playfield piece collision (cell on top of other cell on the playfield)
   .const COLLISION_PLAYFIELD = 1
+  //  Bottom collision (cell below bottom of the playfield)
   .const COLLISION_BOTTOM = 2
+  //  Left side collision (cell beyond the left side of the playfield)
   .const COLLISION_LEFT = 4
+  //  Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
+  //  Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  //  Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
+  //  The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $5e
@@ -16677,40 +16719,71 @@ sprites_irq: {
     sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }
+  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
+  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
+  //  Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
   keyboard_events: .fill 8, 0
+  //  The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
+  //  Tetris Game for the Commodore 64
+  //  The tetris pieces
+  //  The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  //  The S-piece
   .align $40
   PIECE_S: .byte 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0
+  //  The Z-piece
   .align $40
   PIECE_Z: .byte 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  //  The L-piece
   .align $40
   PIECE_L: .byte 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0
+  //  The J-piece
   .align $40
   PIECE_J: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  //  The O-piece
   .align $40
   PIECE_O: .byte 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0
+  //  The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
+  //  The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
+  //  The chars to use for the different pieces - when outside the playing area (eg. the next area).
   PIECES_NEXT_CHARS: .byte $63, $64, $a4, $64, $63, $63, $a4
+  //  The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
+  //  The speed of moving down the piece when soft-drop is not activated
+  //  This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
+  //  Base Score values for removing 0-4 lines (in BCD)
+  //  These values are added to score_add_bcd for each level gained.
   SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
+  //  Score values for removing 0-4 lines (in BCD)
+  //  These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
+  //  The color #1 to use for the pieces for each level
   PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
+  //  The color #2 to use for the pieces for each level
   PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
+  //  Pointers to the screen address for rendering each playfield line
+  //  The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40
   screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
+  //  Pointers to the playfield address for each playfield line
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
+  //  The playfield.  0 is empty non-zero is color.
+  //  The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
+  //  The different pieces
   PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
+  //  Indixes into the playfield  for each playfield line
   playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
@@ -17982,10 +18055,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
+  //  Commodore 64 Registers and Constants
+  //  Processor port data direction register
   .label PROCPORT_DDR = 0
+  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
+  //  The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -18006,17 +18085,29 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label D018 = $d018
+  //  VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
+  //  VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
+  //  Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  //  Color Ram
   .label COLS = $d800
+  //  CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
+  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
+  //  CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
+  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
+  //  CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
+  //  The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
+  //  The colors of the C64
   .const BLACK = 0
   .const RED = 2
   .const CYAN = 3
@@ -18038,31 +18129,55 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
+  //  Left shift is pressed
   .const KEY_MODIFIER_LSHIFT = 1
+  //  Right shift is pressed
   .const KEY_MODIFIER_RSHIFT = 2
+  //  CTRL is pressed
   .const KEY_MODIFIER_CTRL = 4
+  //  Commodore is pressed
   .const KEY_MODIFIER_COMMODORE = 8
+  //  SID registers for random number generation
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
   .const SID_CONTROL_NOISE = $80
   .label SID_VOICE3_OSC = $d41b
+  //  Tetris Game for the Commodore 64
+  //  Memory Layout and Shared Data
+  //  Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
+  //  Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
+  //  Address of the original playscreen chars
   .label PLAYFIELD_SCREEN_ORIGINAL = $1800
+  //  Address of the original playscreen colors
   .label PLAYFIELD_COLORS_ORIGINAL = $1c00
+  //  Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
+  //  Address of the charset
   .label PLAYFIELD_CHARSET = $2800
+  //  The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
+  //  The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
+  //  The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
   .const current_movedown_fast = $a
+  //  No collision
   .const COLLISION_NONE = 0
+  //  Playfield piece collision (cell on top of other cell on the playfield)
   .const COLLISION_PLAYFIELD = 1
+  //  Bottom collision (cell below bottom of the playfield)
   .const COLLISION_BOTTOM = 2
+  //  Left side collision (cell beyond the left side of the playfield)
   .const COLLISION_LEFT = 4
+  //  Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
+  //  Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  //  Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
+  //  The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $23
@@ -21431,40 +21546,71 @@ sprites_irq: {
     sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }
+  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
+  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
+  //  Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
   keyboard_events: .fill 8, 0
+  //  The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
+  //  Tetris Game for the Commodore 64
+  //  The tetris pieces
+  //  The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  //  The S-piece
   .align $40
   PIECE_S: .byte 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0
+  //  The Z-piece
   .align $40
   PIECE_Z: .byte 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  //  The L-piece
   .align $40
   PIECE_L: .byte 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0
+  //  The J-piece
   .align $40
   PIECE_J: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  //  The O-piece
   .align $40
   PIECE_O: .byte 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0
+  //  The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
+  //  The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
+  //  The chars to use for the different pieces - when outside the playing area (eg. the next area).
   PIECES_NEXT_CHARS: .byte $63, $64, $a4, $64, $63, $63, $a4
+  //  The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
+  //  The speed of moving down the piece when soft-drop is not activated
+  //  This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
+  //  Base Score values for removing 0-4 lines (in BCD)
+  //  These values are added to score_add_bcd for each level gained.
   SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
+  //  Score values for removing 0-4 lines (in BCD)
+  //  These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
+  //  The color #1 to use for the pieces for each level
   PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
+  //  The color #2 to use for the pieces for each level
   PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
+  //  Pointers to the screen address for rendering each playfield line
+  //  The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40
   screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
+  //  Pointers to the playfield address for each playfield line
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
+  //  The playfield.  0 is empty non-zero is color.
+  //  The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
+  //  The different pieces
   PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
+  //  Indixes into the playfield  for each playfield line
   playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
@@ -23461,10 +23607,16 @@ Score: 3365357
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG1 Global Constants & labels
+  //  Commodore 64 Registers and Constants
+  //  Processor port data direction register
   .label PROCPORT_DDR = 0
+  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
+  //  The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -23485,17 +23637,29 @@ Score: 3365357
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label D018 = $d018
+  //  VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
+  //  VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
+  //  Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  //  Color Ram
   .label COLS = $d800
+  //  CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
+  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
+  //  CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
+  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
+  //  CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
+  //  The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
+  //  The colors of the C64
   .const BLACK = 0
   .const RED = 2
   .const CYAN = 3
@@ -23517,31 +23681,55 @@ Score: 3365357
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
+  //  Left shift is pressed
   .const KEY_MODIFIER_LSHIFT = 1
+  //  Right shift is pressed
   .const KEY_MODIFIER_RSHIFT = 2
+  //  CTRL is pressed
   .const KEY_MODIFIER_CTRL = 4
+  //  Commodore is pressed
   .const KEY_MODIFIER_COMMODORE = 8
+  //  SID registers for random number generation
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
   .const SID_CONTROL_NOISE = $80
   .label SID_VOICE3_OSC = $d41b
+  //  Tetris Game for the Commodore 64
+  //  Memory Layout and Shared Data
+  //  Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
+  //  Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
+  //  Address of the original playscreen chars
   .label PLAYFIELD_SCREEN_ORIGINAL = $1800
+  //  Address of the original playscreen colors
   .label PLAYFIELD_COLORS_ORIGINAL = $1c00
+  //  Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
+  //  Address of the charset
   .label PLAYFIELD_CHARSET = $2800
+  //  The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
+  //  The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
+  //  The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
   .const current_movedown_fast = $a
+  //  No collision
   .const COLLISION_NONE = 0
+  //  Playfield piece collision (cell on top of other cell on the playfield)
   .const COLLISION_PLAYFIELD = 1
+  //  Bottom collision (cell below bottom of the playfield)
   .const COLLISION_BOTTOM = 2
+  //  Left side collision (cell beyond the left side of the playfield)
   .const COLLISION_LEFT = 4
+  //  Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
+  //  Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  //  Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
+  //  The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $23
@@ -26369,40 +26557,71 @@ sprites_irq: {
     sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }
+  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
+  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
+  //  Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
   keyboard_events: .fill 8, 0
+  //  The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
+  //  Tetris Game for the Commodore 64
+  //  The tetris pieces
+  //  The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  //  The S-piece
   .align $40
   PIECE_S: .byte 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0
+  //  The Z-piece
   .align $40
   PIECE_Z: .byte 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  //  The L-piece
   .align $40
   PIECE_L: .byte 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0
+  //  The J-piece
   .align $40
   PIECE_J: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
+  //  The O-piece
   .align $40
   PIECE_O: .byte 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0
+  //  The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
+  //  The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
+  //  The chars to use for the different pieces - when outside the playing area (eg. the next area).
   PIECES_NEXT_CHARS: .byte $63, $64, $a4, $64, $63, $63, $a4
+  //  The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
+  //  The speed of moving down the piece when soft-drop is not activated
+  //  This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
+  //  Base Score values for removing 0-4 lines (in BCD)
+  //  These values are added to score_add_bcd for each level gained.
   SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
+  //  Score values for removing 0-4 lines (in BCD)
+  //  These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
+  //  The color #1 to use for the pieces for each level
   PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
+  //  The color #2 to use for the pieces for each level
   PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
+  //  Pointers to the screen address for rendering each playfield line
+  //  The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40
   screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
+  //  Pointers to the playfield address for each playfield line
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
+  //  The playfield.  0 is empty non-zero is color.
+  //  The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
+  //  The different pieces
   PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
+  //  Indixes into the playfield  for each playfield line
   playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset

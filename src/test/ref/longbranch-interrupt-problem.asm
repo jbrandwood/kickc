@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
+  //  Tests that long branch fixing works with interrupt exits (to $ea81)
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2

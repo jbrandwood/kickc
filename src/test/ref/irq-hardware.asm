@@ -13,9 +13,13 @@
   .const BLACK = 0
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
+  //  Processor port data direction register
   .label PROCPORT_DDR = 0
+  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
 //  RAM in $A000, $E000 CHAR ROM in $D000
 main: {

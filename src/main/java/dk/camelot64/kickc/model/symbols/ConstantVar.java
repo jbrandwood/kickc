@@ -8,7 +8,6 @@ import dk.camelot64.kickc.model.values.ConstantValue;
 /** A named constant or a variable that has been inferred to be constant in the symbol table */
 public class ConstantVar extends SymbolVariable {
 
-
    /** The constant value. */
    private ConstantValue value;
 

@@ -324,14 +324,23 @@ mulf_init: {
     sta mulf_sqr2_hi+$1ff
     rts
 }
+  //  Library Implementation of the Seriously Fast Multiplication
+  //  See http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
+  //  Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
+  //  mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
+  //  <f(x) = <(( x * x )/4)
   .align $100
   mulf_sqr1_lo: .fill $200, 0
+  //  >f(x) = >(( x * x )/4)
   .align $100
   mulf_sqr1_hi: .fill $200, 0
+  //  <g(x) =  <((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_lo: .fill $200, 0
+  //  >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
+  //  Positions to rotate
   xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
   ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
 .pc = COS "COS"

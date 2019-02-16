@@ -1,9 +1,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  Commodore 64 Registers and Constants
+  //  Processor port data direction register
   .label PROCPORT_DDR = 0
+  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -15,23 +20,30 @@
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
+  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
+  //  CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
+  //  Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
+  //  Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
   .const DTV_LINEAR = 1
   .const DTV_HIGHCOLOR = 4
   .const DTV_COLORRAM_OFF = $10
   .const DTV_BADLINE_OFF = $20
   .const DTV_CHUNKY = $40
+  //  Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
+  //  Linear Graphics Plane B Counter Control
   .label DTV_PLANEB_START_LO = $d049
   .label DTV_PLANEB_START_MI = $d04a
   .label DTV_PLANEB_START_HI = $d04b
   .label DTV_PLANEB_STEP = $d04c
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
+  //  Plane with all pixels
   .label CHUNKY = $8000
 main: {
     sei

@@ -54,6 +54,7 @@ rvaluevar: {
     jmp b1
 }
 rvalue: {
+    //  A constant pointer
     .label SCREEN = $400
     lda SCREEN
     lda SCREEN+1
@@ -68,6 +69,7 @@ rvalue: {
     jmp b1
 }
 lvalue: {
+    //  A constant pointer
     .label SCREEN = $400
     lda #1
     sta SCREEN

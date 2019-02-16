@@ -294,8 +294,19 @@ mulf_init: {
     rts
 }
   print_hextab: .text "0123456789abcdef"
+  //  Multiplication tables for seriously fast multiplication. 
+  //  This version is optimized for speed over accuracy
+  //  - It can multiply signed numbers with no extra code - but only for numbers in [-$3f;$3f]  
+  //  - It throws away the low part of the 32-bit result
+  //  - It return >a*b*4 to maximize precision (when passed maximal input values $3f*$3f the result is $3e) 
+  //  See the following for information about the method
+  //  - http://codebase64.org/doku.php?id=base:seriously_fast_multiplication 
+  //  - http://codebase64.org/doku.php?id=magazines:chacking16
+  //  mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  //  f(x) = >(( x * x ))
   .align $100
   mulf_sqr1: .fill $200, 0
+  //  g(x) =  >((( 1 - x ) * ( 1 - x )))
   .align $100
   mulf_sqr2: .fill $200, 0
 .pc = PERSP_Z "PERSP_Z"

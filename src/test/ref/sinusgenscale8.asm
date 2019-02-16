@@ -1,8 +1,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  PI*2 in u[4.12] format
   .const PI2_u4f12 = $6488
+  //  PI in u[4.12] format
   .const PI_u4f12 = $3244
+  //  PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
   .label rem16u = 2
   .label print_char_cursor = $d
@@ -367,6 +370,7 @@ mul8u: {
 //  x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 //  result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
 sin8s: {
+    //  u[2.6] x^3
     .const DIV_6 = $2b
     .label _6 = $b
     .label x = $b

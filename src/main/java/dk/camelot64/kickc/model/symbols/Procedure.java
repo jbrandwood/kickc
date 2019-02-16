@@ -20,7 +20,7 @@ public class Procedure extends Scope {
    private boolean declaredInline;
    /** The type of interrupt that the procedure serves. Null for all procedures not serving an interrupt. */
    private InterruptType interruptType;
-   /** Comments preceeding the procedure in the source code. */
+   /** Comments preceding the procedure in the source code. */
    private List<Comment> comments;
 
    public Procedure(String name, SymbolType returnType, Scope parentScope) {

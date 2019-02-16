@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  PI in u[4.28] format
   .const PI_u4f28 = $3243f6a9
 main: {
     .label SCREEN = $400

@@ -12,8 +12,10 @@
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
+  //  The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
+  //  The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
   .label SCREEN = $400
   .label SPRITE = $2000
@@ -263,10 +265,15 @@ plexInit: {
     bne b1
     rts
 }
+  //  Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
+  //  The x-positions of the multiplexer sprites ($000-$1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
+  //  The y-positions of the multiplexer sprites.
   PLEX_YPOS: .fill PLEX_COUNT, 0
+  //  The sprite pointers for the multiplexed sprites
   PLEX_PTR: .fill PLEX_COUNT, 0
+  //  Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
   PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
 .pc = YSIN "YSIN"
   .var min = 50

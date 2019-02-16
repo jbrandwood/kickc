@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  used vars
   .label SCREEN = $400
 main: {
     .const col = 2

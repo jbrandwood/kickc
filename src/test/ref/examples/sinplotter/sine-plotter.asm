@@ -1,9 +1,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  Commodore 64 Registers and Constants
+  //  Processor port data direction register
   .label PROCPORT_DDR = 0
+  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
+  //  Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   .label BGCOL = $d021
   .label D011 = $d011
@@ -13,11 +18,16 @@
   .label D016 = $d016
   .const VIC_CSEL = 8
   .label D018 = $d018
+  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
+  //  CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
   .const WHITE = 1
+  //  PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
+  //  PI in u[4.28] format
   .const PI_u4f28 = $3243f6a9
+  //  PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
   .label SCREEN = $400
   .label BITMAP = $2000
@@ -797,6 +807,7 @@ fill: {
     bne b1
     rts
 }
+  //  Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0

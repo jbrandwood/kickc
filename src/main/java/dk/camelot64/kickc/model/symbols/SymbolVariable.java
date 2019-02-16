@@ -1,8 +1,12 @@
 package dk.camelot64.kickc.model.symbols;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.types.SymbolType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** Abstract Variable or a Constant Variable */
 public abstract class SymbolVariable implements Symbol {
@@ -34,11 +38,15 @@ public abstract class SymbolVariable implements Symbol {
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). */
    private boolean declaredVolatile;
 
+   /** Comments preceding the procedure in the source code. */
+   private List<Comment> comments;
+
    public SymbolVariable(String name, Scope scope, SymbolType type) {
       this.name = name;
       this.scope = scope;
       this.type = type;
       this.inferredType = false;
+      this.comments = new ArrayList<>();
    }
 
    @Override
@@ -137,6 +145,14 @@ public abstract class SymbolVariable implements Symbol {
       this.declaredVolatile = declaredVolatile;
    }
 
+   public List<Comment> getComments() {
+      return comments;
+   }
+
+   public void setComments(List<Comment> comments) {
+      this.comments = comments;
+   }
+
    @Override
    public String toString() {
       return toString(null);
@@ -188,4 +204,5 @@ public abstract class SymbolVariable implements Symbol {
       result = 31 * result + (asmName != null ? asmName.hashCode() : 0);
       return result;
    }
+
 }

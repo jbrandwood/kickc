@@ -199,7 +199,8 @@ public class AsmSegment {
          }
          out.append("\n");
       }
-      for(AsmLine line : lines) {
+      for(int i = 0; i < lines.size(); i++) {
+         AsmLine line = lines.get(i);
          if(line instanceof AsmScopeEnd) {
             printState.decIndent();
          }
@@ -207,8 +208,20 @@ public class AsmSegment {
             out.append("["+line.getIndex()+"]");
          }
          out.append(printState.getIndent());
-         if(line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment || line instanceof AsmInlineKickAsm) {
+         if(shouldIndentAsm(line)) {
             out.append("  ");
+         }
+         if(line instanceof AsmComment) {
+            // Peek forward to find the comment indent
+            for(int j=i;j<lines.size();j++) {
+               AsmLine peek = lines.get(j);
+               if(peek instanceof AsmScopeBegin) {
+                  break;
+               } else if(shouldIndentAsm(peek)) {
+                  out.append("  ");
+                  break;
+               }
+            }
          }
          out.append(line.getAsm() + "\n");
          if(line instanceof AsmScopeBegin) {
@@ -216,6 +229,16 @@ public class AsmSegment {
          }
       }
       return out.toString();
+   }
+
+   /**
+    * Should this ASM line be indented a few spaces.
+    * Instructions, variables and similar ASM is indented slightly more than other ASM.
+    * @param line The line to examine
+    * @return true if the line is an instruction or similar.
+    */
+   private boolean shouldIndentAsm(AsmLine line) {
+      return line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment || line instanceof AsmInlineKickAsm;
    }
 
    @Override

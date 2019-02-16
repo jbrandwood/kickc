@@ -9,12 +9,17 @@
   .label D016 = $d016
   .const VIC_MCM = $10
   .label D018 = $d018
+  //  Color Ram
   .label COLS = $d800
+  //  The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const DARK_GREY = $b
+  //  PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
+  //  PI in u[4.28] format
   .const PI_u4f28 = $3243f6a9
+  //  PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
   .label SCREEN = $400
   .label LOGO = $2000

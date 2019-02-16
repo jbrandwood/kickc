@@ -56,12 +56,22 @@ public class Pass4CodeGeneration {
       addZpLabels(asm, currentScope);
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          if(!block.getScope().equals(currentScope)) {
+            // The current block is in a different scope. End the old scope.
             if(!ScopeRef.ROOT.equals(currentScope)) {
                addData(asm, currentScope);
                asm.addScopeEnd();
             }
             currentScope = block.getScope();
             asm.startSegment(currentScope, null, block.getLabel().getFullName());
+            // Add any procedure comments
+            if(block.isProcedureEntry(program)) {
+               Procedure procedure = block.getProcedure(program);
+               List<Comment> comments = procedure.getComments();
+               for(Comment comment : comments) {
+                  asm.addComment(comment.getComment());
+               }
+            }
+            // Start the new scope
             asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
             // Add all ZP labels for the scope
             addConstants(asm, currentScope);
@@ -421,7 +431,7 @@ public class Pass4CodeGeneration {
                VariableRef lValueRef = (VariableRef) lValue;
                Registers.Register lValRegister = program.getSymbolInfos().getVariable(lValueRef).getAllocation();
                if(lValRegister.getType().equals(Registers.RegisterType.REG_ALU)) {
-                  asm.addComment(statement + "  //  ALU");
+                  //asm.addComment(statement + "  //  ALU");
                   StatementAssignment assignmentAlu = assignment;
                   aluState.setAluAssignment(assignmentAlu);
                   isAlu = true;
@@ -429,7 +439,7 @@ public class Pass4CodeGeneration {
             }
             if(!isAlu) {
                if(assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
-                  asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
+                  //asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
                   AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(assignment, program);
                   AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());

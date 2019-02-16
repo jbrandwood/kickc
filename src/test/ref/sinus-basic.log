@@ -1293,6 +1293,7 @@ main: {
     f_127: .byte 0, 0, 0, 0, 0
 }
 //SEG83 print_ln
+//  Print a newline
 print_ln: {
   //SEG84 [39] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -1325,6 +1326,7 @@ print_ln: {
     rts
 }
 //SEG91 print_word
+//  Print a word as HEX
 print_word: {
     .label w = $13
   //SEG92 [43] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
@@ -1355,6 +1357,7 @@ print_word: {
     rts
 }
 //SEG105 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label _0 = $15
     .label _2 = $16
@@ -1400,6 +1403,7 @@ print_byte: {
     rts
 }
 //SEG121 print_char
+//  Print a single char
 print_char: {
     .label ch = 6
   //SEG122 [57] *((byte*) print_char_cursor#23) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuz2 
@@ -1418,6 +1422,9 @@ print_char: {
     rts
 }
 //SEG126 getFAC
+//  word = FAC
+//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
+//  Destroys the value in the FAC in the process
 getFAC: {
     .label return = $17
     .label return_2 = $11
@@ -1437,6 +1444,9 @@ getFAC: {
     rts
 }
 //SEG131 addMEMtoFAC
+//  FAC = MEM+FAC
+//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+//  Reads 5 bytes from memory
 addMEMtoFAC: {
   //SEG132 [64] call prepareMEM 
   //SEG133 [67] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
@@ -1461,6 +1471,7 @@ addMEMtoFAC: {
     rts
 }
 //SEG139 prepareMEM
+//  Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label _0 = $19
     .label _1 = $1a
@@ -1484,6 +1495,9 @@ prepareMEM: {
     rts
 }
 //SEG146 mulFACbyMEM
+//  FAC = MEM*FAC
+//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+//  Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = $b
   //SEG147 [74] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2 -- pbuz1=pbuz2 
@@ -1510,6 +1524,9 @@ mulFACbyMEM: {
     rts
 }
 //SEG155 sinFAC
+//  FAC = sin(FAC)
+//  Set FAC to sinus of the FAC - sin(FAC)
+//  Sinus is calculated on radians (0-2*PI)
 sinFAC: {
   //SEG156 asm { jsr$e26b  }
     jsr $e26b
@@ -1520,6 +1537,9 @@ sinFAC: {
     rts
 }
 //SEG159 divMEMbyFAC
+//  FAC = MEM/FAC
+//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+//  Reads 5 bytes from memory
 divMEMbyFAC: {
   //SEG160 [81] call prepareMEM 
   //SEG161 [67] phi from divMEMbyFAC to prepareMEM [phi:divMEMbyFAC->prepareMEM]
@@ -1544,6 +1564,8 @@ divMEMbyFAC: {
     rts
 }
 //SEG167 setFAC
+//  FAC = word
+//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = $d
   //SEG168 [85] (byte*~) prepareMEM::mem#7 ← (byte*)(word) setFAC::w#3 -- pbuz1=pbuz2 
@@ -1570,6 +1592,9 @@ setFAC: {
     rts
 }
 //SEG176 setMEMtoFAC
+//  MEM = FAC
+//  Stores the value of the FAC to memory
+//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = $f
   //SEG177 [90] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2 -- pbuz1=pbuz2 
@@ -1596,6 +1621,8 @@ setMEMtoFAC: {
     rts
 }
 //SEG185 divFACby10
+//  FAC = FAC/10
+//  Set FAC to FAC divided by 10
 divFACby10: {
   //SEG186 asm { jsr$bafe  }
     jsr $bafe
@@ -1891,12 +1918,10 @@ main: {
   //SEG63 [28] call getFAC 
     jsr getFAC
   //SEG64 [29] (word) getFAC::return#2 ← (word) getFAC::return#0
-    // (word) getFAC::return#2 = (word) getFAC::return#0  // register copy zp ZP_WORD:7
     jmp b14
   //SEG65 main::@14
   b14:
   //SEG66 [30] (word) print_word::w#0 ← (word) getFAC::return#2
-    // (word) print_word::w#0 = (word) getFAC::return#2  // register copy zp ZP_WORD:7
   //SEG67 [31] call print_word 
     jsr print_word
   //SEG68 [32] phi from main::@14 to main::@15 [phi:main::@14->main::@15]
@@ -1939,6 +1964,7 @@ main: {
     f_127: .byte 0, 0, 0, 0, 0
 }
 //SEG83 print_ln
+//  Print a newline
 print_ln: {
   //SEG84 [39] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -1971,6 +1997,7 @@ print_ln: {
     rts
 }
 //SEG91 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 7
   //SEG92 [43] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuxx=_hi_vwuz1 
@@ -2001,6 +2028,7 @@ print_word: {
     rts
 }
 //SEG105 print_byte
+//  Print a byte as HEX
 print_byte: {
   //SEG106 [49] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
@@ -2039,6 +2067,7 @@ print_byte: {
     rts
 }
 //SEG121 print_char
+//  Print a single char
 print_char: {
   //SEG122 [57] *((byte*) print_char_cursor#23) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -2055,6 +2084,9 @@ print_char: {
     rts
 }
 //SEG126 getFAC
+//  word = FAC
+//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
+//  Destroys the value in the FAC in the process
 getFAC: {
     .label return = 7
   //SEG127 asm { jsr$b1aa sty$fe sta$ff  }
@@ -2073,6 +2105,9 @@ getFAC: {
     rts
 }
 //SEG131 addMEMtoFAC
+//  FAC = MEM+FAC
+//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+//  Reads 5 bytes from memory
 addMEMtoFAC: {
   //SEG132 [64] call prepareMEM 
   //SEG133 [67] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
@@ -2097,6 +2132,7 @@ addMEMtoFAC: {
     rts
 }
 //SEG139 prepareMEM
+//  Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label mem = 7
   //SEG140 [68] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
@@ -2114,10 +2150,12 @@ prepareMEM: {
     rts
 }
 //SEG146 mulFACbyMEM
+//  FAC = MEM*FAC
+//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+//  Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = 7
   //SEG147 [74] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
-    // (byte*) prepareMEM::mem#4 = (byte*) mulFACbyMEM::mem#2  // register copy zp ZP_WORD:7
   //SEG148 [75] call prepareMEM 
   //SEG149 [67] phi from mulFACbyMEM to prepareMEM [phi:mulFACbyMEM->prepareMEM]
   prepareMEM_from_mulFACbyMEM:
@@ -2137,6 +2175,9 @@ mulFACbyMEM: {
     rts
 }
 //SEG155 sinFAC
+//  FAC = sin(FAC)
+//  Set FAC to sinus of the FAC - sin(FAC)
+//  Sinus is calculated on radians (0-2*PI)
 sinFAC: {
   //SEG156 asm { jsr$e26b  }
     jsr $e26b
@@ -2147,6 +2188,9 @@ sinFAC: {
     rts
 }
 //SEG159 divMEMbyFAC
+//  FAC = MEM/FAC
+//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+//  Reads 5 bytes from memory
 divMEMbyFAC: {
   //SEG160 [81] call prepareMEM 
   //SEG161 [67] phi from divMEMbyFAC to prepareMEM [phi:divMEMbyFAC->prepareMEM]
@@ -2171,10 +2215,11 @@ divMEMbyFAC: {
     rts
 }
 //SEG167 setFAC
+//  FAC = word
+//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = 7
   //SEG168 [85] (byte*~) prepareMEM::mem#7 ← (byte*)(word) setFAC::w#3
-    // (byte*~) prepareMEM::mem#7 = (byte*)(word) setFAC::w#3  // register copy zp ZP_WORD:7
   //SEG169 [86] call prepareMEM 
   //SEG170 [67] phi from setFAC to prepareMEM [phi:setFAC->prepareMEM]
   prepareMEM_from_setFAC:
@@ -2194,10 +2239,12 @@ setFAC: {
     rts
 }
 //SEG176 setMEMtoFAC
+//  MEM = FAC
+//  Stores the value of the FAC to memory
+//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = 7
   //SEG177 [90] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2
-    // (byte*) prepareMEM::mem#1 = (byte*) setMEMtoFAC::mem#2  // register copy zp ZP_WORD:7
   //SEG178 [91] call prepareMEM 
   //SEG179 [67] phi from setMEMtoFAC to prepareMEM [phi:setMEMtoFAC->prepareMEM]
   prepareMEM_from_setMEMtoFAC:
@@ -2217,6 +2264,8 @@ setMEMtoFAC: {
     rts
 }
 //SEG185 divFACby10
+//  FAC = FAC/10
+//  Set FAC to FAC divided by 10
 divFACby10: {
   //SEG186 asm { jsr$bafe  }
     jsr $bafe
@@ -2606,10 +2655,8 @@ main: {
   //SEG63 [28] call getFAC 
     jsr getFAC
   //SEG64 [29] (word) getFAC::return#2 ← (word) getFAC::return#0
-    // (word) getFAC::return#2 = (word) getFAC::return#0  // register copy zp ZP_WORD:7
   //SEG65 main::@14
   //SEG66 [30] (word) print_word::w#0 ← (word) getFAC::return#2
-    // (word) print_word::w#0 = (word) getFAC::return#2  // register copy zp ZP_WORD:7
   //SEG67 [31] call print_word 
     jsr print_word
   //SEG68 [32] phi from main::@14 to main::@15 [phi:main::@14->main::@15]
@@ -2643,6 +2690,7 @@ main: {
     f_127: .byte 0, 0, 0, 0, 0
 }
 //SEG83 print_ln
+//  Print a newline
 print_ln: {
   //SEG84 [39] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   //SEG85 [39] phi (byte*) print_line_cursor#6 = (byte*) print_line_cursor#13 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
@@ -2670,6 +2718,7 @@ print_ln: {
     rts
 }
 //SEG91 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 7
   //SEG92 [43] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuxx=_hi_vwuz1 
@@ -2694,6 +2743,7 @@ print_word: {
     rts
 }
 //SEG105 print_byte
+//  Print a byte as HEX
 print_byte: {
   //SEG106 [49] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
@@ -2726,6 +2776,7 @@ print_byte: {
     rts
 }
 //SEG121 print_char
+//  Print a single char
 print_char: {
   //SEG122 [57] *((byte*) print_char_cursor#23) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -2740,6 +2791,9 @@ print_char: {
     rts
 }
 //SEG126 getFAC
+//  word = FAC
+//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
+//  Destroys the value in the FAC in the process
 getFAC: {
     .label return = 7
   //SEG127 asm { jsr$b1aa sty$fe sta$ff  }
@@ -2756,6 +2810,9 @@ getFAC: {
     rts
 }
 //SEG131 addMEMtoFAC
+//  FAC = MEM+FAC
+//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+//  Reads 5 bytes from memory
 addMEMtoFAC: {
   //SEG132 [64] call prepareMEM 
   //SEG133 [67] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
@@ -2775,6 +2832,7 @@ addMEMtoFAC: {
     rts
 }
 //SEG139 prepareMEM
+//  Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label mem = 7
   //SEG140 [68] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
@@ -2790,10 +2848,12 @@ prepareMEM: {
     rts
 }
 //SEG146 mulFACbyMEM
+//  FAC = MEM*FAC
+//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+//  Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = 7
   //SEG147 [74] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
-    // (byte*) prepareMEM::mem#4 = (byte*) mulFACbyMEM::mem#2  // register copy zp ZP_WORD:7
   //SEG148 [75] call prepareMEM 
   //SEG149 [67] phi from mulFACbyMEM to prepareMEM [phi:mulFACbyMEM->prepareMEM]
   //SEG150 [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#4 [phi:mulFACbyMEM->prepareMEM#0] -- register_copy 
@@ -2808,6 +2868,9 @@ mulFACbyMEM: {
     rts
 }
 //SEG155 sinFAC
+//  FAC = sin(FAC)
+//  Set FAC to sinus of the FAC - sin(FAC)
+//  Sinus is calculated on radians (0-2*PI)
 sinFAC: {
   //SEG156 asm { jsr$e26b  }
     jsr $e26b
@@ -2816,6 +2879,9 @@ sinFAC: {
     rts
 }
 //SEG159 divMEMbyFAC
+//  FAC = MEM/FAC
+//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+//  Reads 5 bytes from memory
 divMEMbyFAC: {
   //SEG160 [81] call prepareMEM 
   //SEG161 [67] phi from divMEMbyFAC to prepareMEM [phi:divMEMbyFAC->prepareMEM]
@@ -2835,10 +2901,11 @@ divMEMbyFAC: {
     rts
 }
 //SEG167 setFAC
+//  FAC = word
+//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = 7
   //SEG168 [85] (byte*~) prepareMEM::mem#7 ← (byte*)(word) setFAC::w#3
-    // (byte*~) prepareMEM::mem#7 = (byte*)(word) setFAC::w#3  // register copy zp ZP_WORD:7
   //SEG169 [86] call prepareMEM 
   //SEG170 [67] phi from setFAC to prepareMEM [phi:setFAC->prepareMEM]
   //SEG171 [67] phi (byte*) prepareMEM::mem#5 = (byte*~) prepareMEM::mem#7 [phi:setFAC->prepareMEM#0] -- register_copy 
@@ -2853,10 +2920,12 @@ setFAC: {
     rts
 }
 //SEG176 setMEMtoFAC
+//  MEM = FAC
+//  Stores the value of the FAC to memory
+//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = 7
   //SEG177 [90] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#2
-    // (byte*) prepareMEM::mem#1 = (byte*) setMEMtoFAC::mem#2  // register copy zp ZP_WORD:7
   //SEG178 [91] call prepareMEM 
   //SEG179 [67] phi from setMEMtoFAC to prepareMEM [phi:setMEMtoFAC->prepareMEM]
   //SEG180 [67] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#1 [phi:setMEMtoFAC->prepareMEM#0] -- register_copy 
@@ -2871,6 +2940,8 @@ setMEMtoFAC: {
     rts
 }
 //SEG185 divFACby10
+//  FAC = FAC/10
+//  Set FAC to FAC divided by 10
 divFACby10: {
   //SEG186 asm { jsr$bafe  }
     jsr $bafe

@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  A test of boolean conditions using && || and !
 main: {
     jsr bool_and
     jsr bool_or

@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Example of NOP-casting a dereferenced signed byte to a byte
 main: {
     .label SCREEN = $400
     ldx #0

@@ -213,5 +213,5 @@ fragment NAME_CHAR : [a-zA-Z0-9_];
 ASMREL: '!' NAME_CHAR* [+-]+ ;
 
 WS : [ \t\r\n\u00a0]+ -> skip ;
-COMMENT_LINE : '//' ~[\r\n]* -> skip ;
-COMMENT_BLOCK : '/*' .*? '*/' -> skip;
+COMMENT_LINE : '//' ~[\r\n]* -> channel(HIDDEN);
+COMMENT_BLOCK : '/*' .*? '*/' -> channel(HIDDEN);

@@ -1,6 +1,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Test a constant word pointers (pointing to a word placed on zeropage).
+//  The result when running is "CML!" on the screen.
 main: {
     .label screen = $400
     .label wp = w

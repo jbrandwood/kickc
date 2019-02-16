@@ -2460,6 +2460,7 @@ main: {
     lintab3: .fill 2*$14, 0
 }
 //SEG163 print_ln
+//  Print a newline
 print_ln: {
   //SEG164 [62] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -2492,6 +2493,7 @@ print_ln: {
     rts
 }
 //SEG171 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 5
   //SEG172 [67] (byte) print_byte::b#0 ← > (word) print_word::w#10 -- vbuz1=_hi_vwuz2 
@@ -2522,6 +2524,7 @@ print_word: {
     rts
 }
 //SEG185 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label _0 = $24
     .label _2 = $25
@@ -2567,6 +2570,7 @@ print_byte: {
     rts
 }
 //SEG201 print_char
+//  Print a single char
 print_char: {
     .label ch = 8
   //SEG202 [81] *((byte*) print_char_cursor#50) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuz2 
@@ -2585,6 +2589,7 @@ print_char: {
     rts
 }
 //SEG206 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = $b
   //SEG207 [85] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -2625,6 +2630,7 @@ print_str: {
     jmp b1_from_b2
 }
 //SEG218 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $d
   //SEG219 [92] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -2664,6 +2670,9 @@ print_cls: {
     rts
 }
 //SEG229 lin16u_gen
+//  Generate word linear table
+//  lintab - the table to generate into
+//  length - the number of points in a total sinus wavelength (the size of the table)
 lin16u_gen: {
     .label _5 = $34
     .label ampl = $26
@@ -2840,6 +2849,10 @@ lin16u_gen: {
     rts
 }
 //SEG268 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label _1 = $36
     .label _2 = $37
@@ -3578,6 +3591,7 @@ main: {
     lintab3: .fill 2*$14, 0
 }
 //SEG163 print_ln
+//  Print a newline
 print_ln: {
   //SEG164 [62] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -3610,6 +3624,7 @@ print_ln: {
     rts
 }
 //SEG171 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 5
   //SEG172 [67] (byte) print_byte::b#0 ← > (word) print_word::w#10 -- vbuxx=_hi_vwuz1 
@@ -3640,6 +3655,7 @@ print_word: {
     rts
 }
 //SEG185 print_byte
+//  Print a byte as HEX
 print_byte: {
   //SEG186 [73] (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
@@ -3678,6 +3694,7 @@ print_byte: {
     rts
 }
 //SEG201 print_char
+//  Print a single char
 print_char: {
   //SEG202 [81] *((byte*) print_char_cursor#50) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -3694,6 +3711,7 @@ print_char: {
     rts
 }
 //SEG206 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = 5
   //SEG207 [85] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -3734,6 +3752,7 @@ print_str: {
     jmp b1_from_b2
 }
 //SEG218 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 3
   //SEG219 [92] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -3773,6 +3792,9 @@ print_cls: {
     rts
 }
 //SEG229 lin16u_gen
+//  Generate word linear table
+//  lintab - the table to generate into
+//  length - the number of points in a total sinus wavelength (the size of the table)
 lin16u_gen: {
     .label _5 = 5
     .label ampl = 3
@@ -3793,7 +3815,6 @@ lin16u_gen: {
     sbc min+1
     sta ampl+1
   //SEG231 [99] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0
-    // (word) divr16u::dividend#1 = (word) lin16u_gen::ampl#0  // register copy zp ZP_WORD:3
   //SEG232 [100] call divr16u 
   //SEG233 [117] phi from lin16u_gen to divr16u [phi:lin16u_gen->divr16u]
   divr16u_from_lin16u_gen:
@@ -3810,7 +3831,6 @@ lin16u_gen: {
     sta divr16u.rem+1
     jsr divr16u
   //SEG237 [101] (word) divr16u::return#2 ← (word) divr16u::return#0
-    // (word) divr16u::return#2 = (word) divr16u::return#0  // register copy zp ZP_WORD:17
     jmp b3
   //SEG238 lin16u_gen::@3
   b3:
@@ -3820,7 +3840,6 @@ lin16u_gen: {
     lda divr16u.return+1
     sta stepi+1
   //SEG240 [103] (word) divr16u::rem#4 ← (word) rem16u#1
-    // (word) divr16u::rem#4 = (word) rem16u#1  // register copy zp ZP_WORD:15
   //SEG241 [104] call divr16u 
   //SEG242 [117] phi from lin16u_gen::@3 to divr16u [phi:lin16u_gen::@3->divr16u]
   divr16u_from_b3:
@@ -3837,12 +3856,10 @@ lin16u_gen: {
   //SEG245 [117] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:lin16u_gen::@3->divr16u#2] -- register_copy 
     jsr divr16u
   //SEG246 [105] (word) divr16u::return#3 ← (word) divr16u::return#0
-    // (word) divr16u::return#3 = (word) divr16u::return#0  // register copy zp ZP_WORD:17
     jmp b4
   //SEG247 lin16u_gen::@4
   b4:
   //SEG248 [106] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3
-    // (word) lin16u_gen::stepf#0 = (word) divr16u::return#3  // register copy zp ZP_WORD:17
   //SEG249 [107] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 -- vduz1=vwuz2_dword_vwuz3 
     lda stepi
     sta step+2
@@ -3934,6 +3951,10 @@ lin16u_gen: {
     rts
 }
 //SEG268 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = $f
     .label dividend = 3
@@ -4033,7 +4054,6 @@ divr16u: {
   //SEG301 divr16u::@6
   b6:
   //SEG302 [133] (word) rem16u#1 ← (word) divr16u::rem#11
-    // (word) rem16u#1 = (word) divr16u::rem#11  // register copy zp ZP_WORD:15
     jmp breturn
   //SEG303 divr16u::@return
   breturn:
@@ -4174,6 +4194,7 @@ Removing instruction b2_from_b1:
 Removing instruction b2_from_b4:
 Removing instruction b3_from_b2:
 Removing instruction b3_from_b5:
+Removing instruction breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction lin16u_gen_from_main:
@@ -4232,7 +4253,6 @@ Removing instruction b1_from_divr16u:
 Removing instruction b4:
 Removing instruction b5:
 Removing instruction b6:
-Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
@@ -4794,6 +4814,7 @@ main: {
     lintab3: .fill 2*$14, 0
 }
 //SEG163 print_ln
+//  Print a newline
 print_ln: {
   //SEG164 [62] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   //SEG165 [62] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#21 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
@@ -4821,6 +4842,7 @@ print_ln: {
     rts
 }
 //SEG171 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 5
   //SEG172 [67] (byte) print_byte::b#0 ← > (word) print_word::w#10 -- vbuxx=_hi_vwuz1 
@@ -4845,6 +4867,7 @@ print_word: {
     rts
 }
 //SEG185 print_byte
+//  Print a byte as HEX
 print_byte: {
   //SEG186 [73] (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
@@ -4877,6 +4900,7 @@ print_byte: {
     rts
 }
 //SEG201 print_char
+//  Print a single char
 print_char: {
   //SEG202 [81] *((byte*) print_char_cursor#50) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -4891,6 +4915,7 @@ print_char: {
     rts
 }
 //SEG206 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = 5
   //SEG207 [85] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -4925,6 +4950,7 @@ print_str: {
     jmp b1
 }
 //SEG218 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 3
   //SEG219 [92] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -4958,6 +4984,9 @@ print_cls: {
     rts
 }
 //SEG229 lin16u_gen
+//  Generate word linear table
+//  lintab - the table to generate into
+//  length - the number of points in a total sinus wavelength (the size of the table)
 lin16u_gen: {
     .label _5 = 5
     .label ampl = 3
@@ -4978,7 +5007,6 @@ lin16u_gen: {
     sbc min+1
     sta ampl+1
   //SEG231 [99] (word) divr16u::dividend#1 ← (word) lin16u_gen::ampl#0
-    // (word) divr16u::dividend#1 = (word) lin16u_gen::ampl#0  // register copy zp ZP_WORD:3
   //SEG232 [100] call divr16u 
   //SEG233 [117] phi from lin16u_gen to divr16u [phi:lin16u_gen->divr16u]
   //SEG234 [117] phi (word) divr16u::divisor#6 = (byte/signed byte/word/signed word/dword/signed dword) 20-(byte/signed byte/word/signed word/dword/signed dword) 1 [phi:lin16u_gen->divr16u#0] -- vwuz1=vbuc1 
@@ -4993,7 +5021,6 @@ lin16u_gen: {
     sta divr16u.rem+1
     jsr divr16u
   //SEG237 [101] (word) divr16u::return#2 ← (word) divr16u::return#0
-    // (word) divr16u::return#2 = (word) divr16u::return#0  // register copy zp ZP_WORD:17
   //SEG238 lin16u_gen::@3
   //SEG239 [102] (word) lin16u_gen::stepi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
     lda divr16u.return
@@ -5001,7 +5028,6 @@ lin16u_gen: {
     lda divr16u.return+1
     sta stepi+1
   //SEG240 [103] (word) divr16u::rem#4 ← (word) rem16u#1
-    // (word) divr16u::rem#4 = (word) rem16u#1  // register copy zp ZP_WORD:15
   //SEG241 [104] call divr16u 
   //SEG242 [117] phi from lin16u_gen::@3 to divr16u [phi:lin16u_gen::@3->divr16u]
   //SEG243 [117] phi (word) divr16u::divisor#6 = (byte/signed byte/word/signed word/dword/signed dword) 20-(byte/signed byte/word/signed word/dword/signed dword) 1 [phi:lin16u_gen::@3->divr16u#0] -- vwuz1=vbuc1 
@@ -5016,10 +5042,8 @@ lin16u_gen: {
   //SEG245 [117] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:lin16u_gen::@3->divr16u#2] -- register_copy 
     jsr divr16u
   //SEG246 [105] (word) divr16u::return#3 ← (word) divr16u::return#0
-    // (word) divr16u::return#3 = (word) divr16u::return#0  // register copy zp ZP_WORD:17
   //SEG247 lin16u_gen::@4
   //SEG248 [106] (word) lin16u_gen::stepf#0 ← (word) divr16u::return#3
-    // (word) lin16u_gen::stepf#0 = (word) divr16u::return#3  // register copy zp ZP_WORD:17
   //SEG249 [107] (dword) lin16u_gen::step#0 ← (word) lin16u_gen::stepi#0 dw= (word) lin16u_gen::stepf#0 -- vduz1=vwuz2_dword_vwuz3 
     lda stepi
     sta step+2
@@ -5103,6 +5127,10 @@ lin16u_gen: {
     rts
 }
 //SEG268 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = $f
     .label dividend = 3
@@ -5185,7 +5213,6 @@ divr16u: {
     bne b1
   //SEG301 divr16u::@6
   //SEG302 [133] (word) rem16u#1 ← (word) divr16u::rem#11
-    // (word) rem16u#1 = (word) divr16u::rem#11  // register copy zp ZP_WORD:15
   //SEG303 divr16u::@return
   //SEG304 [134] return 
     rts

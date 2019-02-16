@@ -2,6 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label screen = 2
+//  Inline Strings in assignments
 main: {
     lda #<$400
     sta screen

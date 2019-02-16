@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Fills the screen using an unrolled inner while()-loop
 main: {
     .label SCREEN = $400
     ldx #0

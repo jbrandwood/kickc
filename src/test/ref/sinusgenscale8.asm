@@ -14,6 +14,11 @@ main: {
     rts
     sintab: .fill $14, 0
 }
+//  Generate unsigned byte sinus table in a min-max range
+//  sintab - the table to generate into
+//  tabsize - the number of sinus points (the size of the table)
+//  min - the minimal value
+//  max - the maximal value
 sin8u_table: {
     .const min = $a
     .const max = $ff
@@ -182,6 +187,7 @@ sin8u_table: {
     str7: .text " scaled: @"
     str8: .text " trans: @"
 }
+//  Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -201,6 +207,7 @@ print_ln: {
   !:
     rts
 }
+//  Print a byte as HEX
 print_byte: {
     .label b = $a
     lda b
@@ -218,6 +225,7 @@ print_byte: {
     jsr print_char
     rts
 }
+//  Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -227,6 +235,7 @@ print_char: {
   !:
     rts
 }
+//  Print a zero-terminated string
 print_str: {
     .label str = $b
   b1:
@@ -249,6 +258,7 @@ print_str: {
   !:
     jmp b1
 }
+//  Print a signed word as HEX
 print_sword: {
     .label w = $b
     lda w+1
@@ -268,6 +278,7 @@ print_sword: {
     jsr print_word
     rts
 }
+//  Print a word as HEX
 print_word: {
     .label w = $b
     lda w+1
@@ -278,6 +289,7 @@ print_word: {
     jsr print_byte
     rts
 }
+//  Print a signed byte as HEX
 print_sbyte: {
     .label b = $a
     lda b
@@ -297,6 +309,8 @@ print_sbyte: {
     sta b
     jmp b2
 }
+//  Multiply a signed byte and an unsigned byte (into a signed word)
+//  Fixes offsets introduced by using unsigned multiplication
 mul8su: {
     .const b = sin8u_table.amplitude+1
     .label m = $f
@@ -314,6 +328,8 @@ mul8su: {
   b1:
     rts
 }
+//  Simple binary multiplication implementation
+//  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .label mb = $b
     .label res = $f
@@ -347,6 +363,9 @@ mul8u: {
     rol mb+1
     jmp b1
 }
+//  Calculate signed byte sinus sin(x)
+//  x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
+//  result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
 sin8s: {
     .const DIV_6 = $2b
     .label _6 = $b
@@ -455,6 +474,8 @@ sin8s: {
     txa
     jmp b4
 }
+//  Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
+//  The select parameter indicates how many of the highest bits of the 16-bit result to skip
 mulu8_sel: {
     .label _0 = $f
     .label _1 = $f
@@ -472,11 +493,19 @@ mulu8_sel: {
     lda _1+1
     rts
 }
+//  Performs division on two 16 bit unsigned words
+//  Returns the quotient dividend/divisor.
+//  The remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 div16u: {
     .label return = $12
     jsr divr16u
     rts
 }
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = 2
     .label dividend = 4
@@ -533,6 +562,7 @@ divr16u: {
     bne b1
     rts
 }
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<$400

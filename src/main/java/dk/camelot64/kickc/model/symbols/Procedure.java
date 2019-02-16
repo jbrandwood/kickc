@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.symbols;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
@@ -11,19 +12,23 @@ import java.util.List;
 /** Symbol describing a procedure/function */
 public class Procedure extends Scope {
 
-   public static final ProcedureRef ROOT = new ProcedureRef("");
+   /** The return type. {@link SymbolType#VOID} if the procedure does not return a value.  */
    private final SymbolType returnType;
+   /** The names of the parameters of the procedure. */
    private List<String> parameterNames;
+   /** true if the procedure is declared inline. */
    private boolean declaredInline;
-
    /** The type of interrupt that the procedure serves. Null for all procedures not serving an interrupt. */
    private InterruptType interruptType;
+   /** Comments preceeding the procedure in the source code. */
+   private List<Comment> comments;
 
    public Procedure(String name, SymbolType returnType, Scope parentScope) {
       super(name, parentScope);
       this.returnType = returnType;
       this.declaredInline = false;
       this.interruptType = null;
+      this.comments = new ArrayList<>();
    }
 
    public List<String> getParameterNames() {
@@ -52,6 +57,15 @@ public class Procedure extends Scope {
          add(parameter);
          parameterNames.add(parameter.getLocalName());
       }
+   }
+
+
+   public List<Comment> getComments() {
+      return comments;
+   }
+
+   public void setComments(List<Comment> comments) {
+      this.comments = comments;
    }
 
    @Override

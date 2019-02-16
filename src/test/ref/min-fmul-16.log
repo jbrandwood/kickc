@@ -1450,6 +1450,7 @@ main: {
     jmp b1
 }
 //SEG34 print_set_screen
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     jmp breturn
   //SEG35 print_set_screen::@return
@@ -1458,6 +1459,7 @@ print_set_screen: {
     rts
 }
 //SEG37 print_dword
+//  Print a dword as HEX
 print_dword: {
     .label dw = $1e
   //SEG38 [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
@@ -1492,6 +1494,7 @@ print_dword: {
     rts
 }
 //SEG51 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 2
   //SEG52 [26] (byte) print_byte::b#0 ← > (word) print_word::w#2 -- vbuz1=_hi_vwuz2 
@@ -1522,6 +1525,7 @@ print_word: {
     rts
 }
 //SEG65 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label _0 = $22
     .label _2 = $23
@@ -1567,6 +1571,7 @@ print_byte: {
     rts
 }
 //SEG81 print_char
+//  Print a single char
 print_char: {
     .label ch = 5
   //SEG82 [40] *((byte*) print_char_cursor#27) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuz2 
@@ -1585,6 +1590,8 @@ print_char: {
     rts
 }
 //SEG86 mulf16u
+//  Fast multiply two unsigned words to a double word result
+//  Done in assembler to utilize fast addition A+X
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -1710,6 +1717,7 @@ mulf16u: {
     rts
 }
 //SEG93 mulf_init
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label _2 = $28
     .label _5 = $29
@@ -2125,16 +2133,13 @@ main: {
   //SEG21 [10] call mulf16u 
     jsr mulf16u
   //SEG22 [11] (dword) mulf16u::return#0 ← (dword) mulf16u::return#1
-    // (dword) mulf16u::return#0 = (dword) mulf16u::return#1  // register copy zp ZP_DWORD:9
     jmp b14
   //SEG23 main::@14
   b14:
   //SEG24 [12] (dword) main::r#0 ← (dword) mulf16u::return#0
-    // (dword) main::r#0 = (dword) mulf16u::return#0  // register copy zp ZP_DWORD:9
   //SEG25 [13] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
   //SEG26 [14] (dword) print_dword::dw#0 ← (dword) main::r#0
-    // (dword) print_dword::dw#0 = (dword) main::r#0  // register copy zp ZP_DWORD:9
   //SEG27 [15] call print_dword 
     jsr print_dword
   //SEG28 [16] phi from main::@14 to main::@15 [phi:main::@14->main::@15]
@@ -2156,6 +2161,7 @@ main: {
     jmp b1
 }
 //SEG34 print_set_screen
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     jmp breturn
   //SEG35 print_set_screen::@return
@@ -2164,6 +2170,7 @@ print_set_screen: {
     rts
 }
 //SEG37 print_dword
+//  Print a dword as HEX
 print_dword: {
     .label dw = 9
   //SEG38 [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
@@ -2198,6 +2205,7 @@ print_dword: {
     rts
 }
 //SEG51 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 2
   //SEG52 [26] (byte) print_byte::b#0 ← > (word) print_word::w#2 -- vbuxx=_hi_vwuz1 
@@ -2228,6 +2236,7 @@ print_word: {
     rts
 }
 //SEG65 print_byte
+//  Print a byte as HEX
 print_byte: {
   //SEG66 [32] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
@@ -2266,6 +2275,7 @@ print_byte: {
     rts
 }
 //SEG81 print_char
+//  Print a single char
 print_char: {
   //SEG82 [40] *((byte*) print_char_cursor#27) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -2282,6 +2292,8 @@ print_char: {
     rts
 }
 //SEG86 mulf16u
+//  Fast multiply two unsigned words to a double word result
+//  Done in assembler to utilize fast addition A+X
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -2406,6 +2418,7 @@ mulf16u: {
     rts
 }
 //SEG93 mulf_init
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 4
     .label sqr = 7
@@ -2899,14 +2912,11 @@ main: {
   //SEG21 [10] call mulf16u 
     jsr mulf16u
   //SEG22 [11] (dword) mulf16u::return#0 ← (dword) mulf16u::return#1
-    // (dword) mulf16u::return#0 = (dword) mulf16u::return#1  // register copy zp ZP_DWORD:9
   //SEG23 main::@14
   //SEG24 [12] (dword) main::r#0 ← (dword) mulf16u::return#0
-    // (dword) main::r#0 = (dword) mulf16u::return#0  // register copy zp ZP_DWORD:9
   //SEG25 [13] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
   //SEG26 [14] (dword) print_dword::dw#0 ← (dword) main::r#0
-    // (dword) print_dword::dw#0 = (dword) main::r#0  // register copy zp ZP_DWORD:9
   //SEG27 [15] call print_dword 
     jsr print_dword
   //SEG28 [16] phi from main::@14 to main::@15 [phi:main::@14->main::@15]
@@ -2923,12 +2933,14 @@ main: {
     jmp b4
 }
 //SEG34 print_set_screen
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
   //SEG35 print_set_screen::@return
   //SEG36 [19] return 
     rts
 }
 //SEG37 print_dword
+//  Print a dword as HEX
 print_dword: {
     .label dw = 9
   //SEG38 [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
@@ -2957,6 +2969,7 @@ print_dword: {
     rts
 }
 //SEG51 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 2
   //SEG52 [26] (byte) print_byte::b#0 ← > (word) print_word::w#2 -- vbuxx=_hi_vwuz1 
@@ -2981,6 +2994,7 @@ print_word: {
     rts
 }
 //SEG65 print_byte
+//  Print a byte as HEX
 print_byte: {
   //SEG66 [32] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
@@ -3013,6 +3027,7 @@ print_byte: {
     rts
 }
 //SEG81 print_char
+//  Print a single char
 print_char: {
   //SEG82 [40] *((byte*) print_char_cursor#27) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -3027,6 +3042,8 @@ print_char: {
     rts
 }
 //SEG86 mulf16u
+//  Fast multiply two unsigned words to a double word result
+//  Done in assembler to utilize fast addition A+X
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -3149,6 +3166,7 @@ mulf16u: {
     rts
 }
 //SEG93 mulf_init
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 4
     .label sqr = 7

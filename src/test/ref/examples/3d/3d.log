@@ -6380,6 +6380,7 @@ debug_print: {
     rts
 }
 //SEG232 print_sbyte_at
+//  Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label b = 9
     .label at = 7
@@ -6451,6 +6452,7 @@ print_sbyte_at: {
     jmp b2_from_b5
 }
 //SEG255 print_char_at
+//  Print a single char
 print_char_at: {
     .label at = $b
     .label ch = $a
@@ -6465,6 +6467,7 @@ print_char_at: {
     rts
 }
 //SEG259 print_byte_at
+//  Print a byte as HEX at a specific position
 print_byte_at: {
     .label _0 = $2c
     .label _2 = $2d
@@ -6523,6 +6526,10 @@ print_byte_at: {
     rts
 }
 //SEG277 rotate_matrix
+//  Rotate a 3D point (x,y,z) using the rotation matrix
+//  The rotation matrix is prepared by calling prepare_matrix() 
+//  The passed points must be in the interval [-$3f;$3f].
+//  Implemented in assembler to utilize seriously fast multiplication 
 rotate_matrix: {
     .label x = $19
     .label y = $1a
@@ -6630,6 +6637,9 @@ rotate_matrix: {
     rts
 }
 //SEG284 store_matrix
+//  Store the rotation matrix into the rotation routine rotate()
+//  After this each call to rotate() will rotate a point with the matrix
+//  Implemented in assembler to utilize seriously fast multiplication 
 store_matrix: {
   //SEG285 asm { ldarotation_matrix+0 starotate_matrix.A1+1 eor#$ff starotate_matrix.A2+1 ldarotation_matrix+1 starotate_matrix.B1+1 eor#$ff starotate_matrix.B2+1 ldarotation_matrix+2 starotate_matrix.C1+1 eor#$ff starotate_matrix.C2+1 ldarotation_matrix+3 starotate_matrix.D1+1 eor#$ff starotate_matrix.D2+1 ldarotation_matrix+4 starotate_matrix.E1+1 eor#$ff starotate_matrix.E2+1 ldarotation_matrix+5 starotate_matrix.F1+1 eor#$ff starotate_matrix.F2+1 ldarotation_matrix+6 starotate_matrix.G1+1 eor#$ff starotate_matrix.G2+1 ldarotation_matrix+7 starotate_matrix.H1+1 eor#$ff starotate_matrix.H2+1 ldarotation_matrix+8 starotate_matrix.I1+1 eor#$ff starotate_matrix.I2+1  }
     lda rotation_matrix+0
@@ -6675,6 +6685,9 @@ store_matrix: {
     rts
 }
 //SEG288 calculate_matrix
+//  Prepare the 3x3 rotation matrix into rotation_matrix[]
+//  Angles sx, sy, sz are based on 2*PI=$100 
+//  Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 calculate_matrix: {
     .label _10 = $38
     .label _11 = $39
@@ -7525,6 +7538,7 @@ debug_print_init: {
     str11: .text "yp@"
 }
 //SEG478 print_str_at
+//  Print a string at a specific screen position
 print_str_at: {
     .label at = $12
     .label str = $10
@@ -7566,6 +7580,7 @@ print_str_at: {
     jmp b1_from_b2
 }
 //SEG490 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $14
   //SEG491 [268] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -7605,6 +7620,7 @@ print_cls: {
     rts
 }
 //SEG501 sprites_init
+//  Initialize sprites
 sprites_init: {
     .label SCREEN = $400
     .label sprites_ptr = SCREEN+$3f8
@@ -8550,7 +8566,6 @@ anim: {
   //SEG44 [27] (signed byte) calculate_matrix::sx#0 ← (signed byte) sx#10 -- vbsxx=vbsz1 
     ldx sx
   //SEG45 [28] (signed byte) calculate_matrix::sy#0 ← (signed byte) sy#10
-    // (signed byte) calculate_matrix::sy#0 = (signed byte) sy#10  // register copy zp ZP_BYTE:3
   //SEG46 [29] call calculate_matrix 
     jsr calculate_matrix
   //SEG47 [30] phi from anim::@12 to anim::@27 [phi:anim::@12->anim::@27]
@@ -8699,7 +8714,6 @@ debug_print: {
   //SEG86 debug_print::print_sbyte_pos1
   print_sbyte_pos1:
   //SEG87 [57] (signed byte) print_sbyte_at::b#4 ← (signed byte) debug_print::print_sbyte_pos1_sb#0
-    // (signed byte) print_sbyte_at::b#4 = (signed byte) debug_print::print_sbyte_pos1_sb#0  // register copy reg byte x
   //SEG88 [58] call print_sbyte_at 
   //SEG89 [114] phi from debug_print::print_sbyte_pos1 to print_sbyte_at [phi:debug_print::print_sbyte_pos1->print_sbyte_at]
   print_sbyte_at_from_print_sbyte_pos1:
@@ -8775,7 +8789,6 @@ debug_print: {
   //SEG116 debug_print::print_sbyte_pos5
   print_sbyte_pos5:
   //SEG117 [68] (signed byte) print_sbyte_at::b#8 ← (signed byte) debug_print::print_sbyte_pos5_sb#0
-    // (signed byte) print_sbyte_at::b#8 = (signed byte) debug_print::print_sbyte_pos5_sb#0  // register copy reg byte x
   //SEG118 [69] call print_sbyte_at 
   //SEG119 [114] phi from debug_print::print_sbyte_pos5 to print_sbyte_at [phi:debug_print::print_sbyte_pos5->print_sbyte_at]
   print_sbyte_at_from_print_sbyte_pos5:
@@ -8795,7 +8808,6 @@ debug_print: {
   //SEG124 debug_print::print_sbyte_pos6
   print_sbyte_pos6:
   //SEG125 [71] (signed byte) print_sbyte_at::b#9 ← (signed byte) debug_print::print_sbyte_pos6_sb#0
-    // (signed byte) print_sbyte_at::b#9 = (signed byte) debug_print::print_sbyte_pos6_sb#0  // register copy reg byte x
   //SEG126 [72] call print_sbyte_at 
   //SEG127 [114] phi from debug_print::print_sbyte_pos6 to print_sbyte_at [phi:debug_print::print_sbyte_pos6->print_sbyte_at]
   print_sbyte_at_from_print_sbyte_pos6:
@@ -8815,7 +8827,6 @@ debug_print: {
   //SEG132 debug_print::print_sbyte_pos7
   print_sbyte_pos7:
   //SEG133 [74] (signed byte) print_sbyte_at::b#10 ← (signed byte) debug_print::print_sbyte_pos7_sb#0
-    // (signed byte) print_sbyte_at::b#10 = (signed byte) debug_print::print_sbyte_pos7_sb#0  // register copy reg byte x
   //SEG134 [75] call print_sbyte_at 
   //SEG135 [114] phi from debug_print::print_sbyte_pos7 to print_sbyte_at [phi:debug_print::print_sbyte_pos7->print_sbyte_at]
   print_sbyte_at_from_print_sbyte_pos7:
@@ -8835,7 +8846,6 @@ debug_print: {
   //SEG140 debug_print::print_sbyte_pos8
   print_sbyte_pos8:
   //SEG141 [77] (signed byte) print_sbyte_at::b#11 ← (signed byte) debug_print::print_sbyte_pos8_sb#0
-    // (signed byte) print_sbyte_at::b#11 = (signed byte) debug_print::print_sbyte_pos8_sb#0  // register copy reg byte x
   //SEG142 [78] call print_sbyte_at 
   //SEG143 [114] phi from debug_print::print_sbyte_pos8 to print_sbyte_at [phi:debug_print::print_sbyte_pos8->print_sbyte_at]
   print_sbyte_at_from_print_sbyte_pos8:
@@ -8855,7 +8865,6 @@ debug_print: {
   //SEG148 debug_print::print_sbyte_pos9
   print_sbyte_pos9:
   //SEG149 [80] (signed byte) print_sbyte_at::b#12 ← (signed byte) debug_print::print_sbyte_pos9_sb#0
-    // (signed byte) print_sbyte_at::b#12 = (signed byte) debug_print::print_sbyte_pos9_sb#0  // register copy reg byte x
   //SEG150 [81] call print_sbyte_at 
   //SEG151 [114] phi from debug_print::print_sbyte_pos9 to print_sbyte_at [phi:debug_print::print_sbyte_pos9->print_sbyte_at]
   print_sbyte_at_from_print_sbyte_pos9:
@@ -8875,7 +8884,6 @@ debug_print: {
   //SEG156 debug_print::print_sbyte_pos10
   print_sbyte_pos10:
   //SEG157 [83] (signed byte) print_sbyte_at::b#13 ← (signed byte) debug_print::print_sbyte_pos10_sb#0
-    // (signed byte) print_sbyte_at::b#13 = (signed byte) debug_print::print_sbyte_pos10_sb#0  // register copy reg byte x
   //SEG158 [84] call print_sbyte_at 
   //SEG159 [114] phi from debug_print::print_sbyte_pos10 to print_sbyte_at [phi:debug_print::print_sbyte_pos10->print_sbyte_at]
   print_sbyte_at_from_print_sbyte_pos10:
@@ -8895,7 +8903,6 @@ debug_print: {
   //SEG164 debug_print::print_sbyte_pos11
   print_sbyte_pos11:
   //SEG165 [86] (signed byte) print_sbyte_at::b#14 ← (signed byte) debug_print::print_sbyte_pos11_sb#0
-    // (signed byte) print_sbyte_at::b#14 = (signed byte) debug_print::print_sbyte_pos11_sb#0  // register copy reg byte x
   //SEG166 [87] call print_sbyte_at 
   //SEG167 [114] phi from debug_print::print_sbyte_pos11 to print_sbyte_at [phi:debug_print::print_sbyte_pos11->print_sbyte_at]
   print_sbyte_at_from_print_sbyte_pos11:
@@ -8915,7 +8922,6 @@ debug_print: {
   //SEG172 debug_print::print_sbyte_pos12
   print_sbyte_pos12:
   //SEG173 [89] (signed byte) print_sbyte_at::b#15 ← (signed byte) debug_print::print_sbyte_pos12_sb#0
-    // (signed byte) print_sbyte_at::b#15 = (signed byte) debug_print::print_sbyte_pos12_sb#0  // register copy reg byte x
   //SEG174 [90] call print_sbyte_at 
   //SEG175 [114] phi from debug_print::print_sbyte_pos12 to print_sbyte_at [phi:debug_print::print_sbyte_pos12->print_sbyte_at]
   print_sbyte_at_from_print_sbyte_pos12:
@@ -9086,6 +9092,7 @@ debug_print: {
     rts
 }
 //SEG232 print_sbyte_at
+//  Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label at = 6
   //SEG233 [115] if((signed byte) print_sbyte_at::b#22<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte_at::@1 -- vbsxx_lt_0_then_la1 
@@ -9095,7 +9102,6 @@ print_sbyte_at: {
   //SEG234 print_sbyte_at::@3
   b3:
   //SEG235 [116] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#21
-    // (byte*) print_char_at::at#1 = (byte*) print_sbyte_at::at#21  // register copy zp ZP_WORD:6
   //SEG236 [117] call print_char_at 
   //SEG237 [125] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
   print_char_at_from_b3:
@@ -9126,7 +9132,6 @@ print_sbyte_at: {
   //SEG247 print_sbyte_at::@1
   b1:
   //SEG248 [122] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#21
-    // (byte*) print_char_at::at#0 = (byte*) print_sbyte_at::at#21  // register copy zp ZP_WORD:6
   //SEG249 [123] call print_char_at 
   //SEG250 [125] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
   print_char_at_from_b1:
@@ -9147,6 +9152,7 @@ print_sbyte_at: {
     jmp b2_from_b5
 }
 //SEG255 print_char_at
+//  Print a single char
 print_char_at: {
     .label at = 6
     .label ch = 8
@@ -9161,6 +9167,7 @@ print_char_at: {
     rts
 }
 //SEG259 print_byte_at
+//  Print a byte as HEX at a specific position
 print_byte_at: {
     .label at = 6
   //SEG260 [128] (byte~) print_byte_at::$0 ← (byte)(signed byte) print_sbyte_at::b#24 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
@@ -9174,7 +9181,6 @@ print_byte_at: {
     lda print_hextab,y
     sta print_char_at.ch
   //SEG262 [130] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
-    // (byte*) print_char_at::at#2 = (byte*) print_byte_at::at#0  // register copy zp ZP_WORD:6
   //SEG263 [131] call print_char_at 
   //SEG264 [125] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
   print_char_at_from_print_byte_at:
@@ -9209,6 +9215,10 @@ print_byte_at: {
     rts
 }
 //SEG277 rotate_matrix
+//  Rotate a 3D point (x,y,z) using the rotation matrix
+//  The rotation matrix is prepared by calling prepare_matrix() 
+//  The passed points must be in the interval [-$3f;$3f].
+//  Implemented in assembler to utilize seriously fast multiplication 
 rotate_matrix: {
     .label x = 5
   //SEG278 [137] *((const signed byte*) xr#0) ← (signed byte) rotate_matrix::x#0 -- _deref_pbsc1=vbsz1 
@@ -9314,6 +9324,9 @@ rotate_matrix: {
     rts
 }
 //SEG284 store_matrix
+//  Store the rotation matrix into the rotation routine rotate()
+//  After this each call to rotate() will rotate a point with the matrix
+//  Implemented in assembler to utilize seriously fast multiplication 
 store_matrix: {
   //SEG285 asm { ldarotation_matrix+0 starotate_matrix.A1+1 eor#$ff starotate_matrix.A2+1 ldarotation_matrix+1 starotate_matrix.B1+1 eor#$ff starotate_matrix.B2+1 ldarotation_matrix+2 starotate_matrix.C1+1 eor#$ff starotate_matrix.C2+1 ldarotation_matrix+3 starotate_matrix.D1+1 eor#$ff starotate_matrix.D2+1 ldarotation_matrix+4 starotate_matrix.E1+1 eor#$ff starotate_matrix.E2+1 ldarotation_matrix+5 starotate_matrix.F1+1 eor#$ff starotate_matrix.F2+1 ldarotation_matrix+6 starotate_matrix.G1+1 eor#$ff starotate_matrix.G2+1 ldarotation_matrix+7 starotate_matrix.H1+1 eor#$ff starotate_matrix.H2+1 ldarotation_matrix+8 starotate_matrix.I1+1 eor#$ff starotate_matrix.I2+1  }
     lda rotation_matrix+0
@@ -9359,6 +9372,9 @@ store_matrix: {
     rts
 }
 //SEG288 calculate_matrix
+//  Prepare the 3x3 rotation matrix into rotation_matrix[]
+//  Angles sx, sy, sz are based on 2*PI=$100 
+//  Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 calculate_matrix: {
     .label sy = 3
     .label t1 = 4
@@ -10130,6 +10146,7 @@ debug_print_init: {
     str11: .text "yp@"
 }
 //SEG478 print_str_at
+//  Print a string at a specific screen position
 print_str_at: {
     .label at = 9
     .label str = 6
@@ -10171,6 +10188,7 @@ print_str_at: {
     jmp b1_from_b2
 }
 //SEG490 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 6
   //SEG491 [268] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -10210,6 +10228,7 @@ print_cls: {
     rts
 }
 //SEG501 sprites_init
+//  Initialize sprites
 sprites_init: {
     .label SCREEN = $400
     .label sprites_ptr = SCREEN+$3f8
@@ -10483,11 +10502,22 @@ Removing instruction anim_from_b2:
 Removing instruction b1:
 Removing instruction b27_from_b12:
 Removing instruction b13_from_b29:
+Removing instruction print_sbyte_at_from_print_sbyte_pos1:
 Removing instruction print_sbyte_pos3_from_print_sbyte_pos2:
 Removing instruction print_sbyte_at_from_print_sbyte_pos3:
+Removing instruction print_sbyte_at_from_print_sbyte_pos5:
+Removing instruction print_sbyte_at_from_print_sbyte_pos6:
+Removing instruction print_sbyte_at_from_print_sbyte_pos7:
+Removing instruction print_sbyte_at_from_print_sbyte_pos8:
+Removing instruction print_sbyte_at_from_print_sbyte_pos9:
+Removing instruction print_sbyte_at_from_print_sbyte_pos10:
+Removing instruction print_sbyte_at_from_print_sbyte_pos11:
+Removing instruction print_sbyte_at_from_print_sbyte_pos12:
 Removing instruction b1_from_b32:
+Removing instruction print_char_at_from_b3:
 Removing instruction b2_from_b3:
 Removing instruction b2_from_b5:
+Removing instruction print_char_at_from_b1:
 Removing instruction b5_from_debug_print_init:
 Removing instruction print_str_at_from_b5:
 Removing instruction b6_from_b5:
@@ -10533,7 +10563,6 @@ Removing instruction b25:
 Removing instruction b30:
 Removing instruction b1_from_b30:
 Removing instruction print_sbyte_pos1:
-Removing instruction print_sbyte_at_from_print_sbyte_pos1:
 Removing instruction b3:
 Removing instruction print_sbyte_pos2:
 Removing instruction print_sbyte_at_from_print_sbyte_pos2:
@@ -10543,28 +10572,20 @@ Removing instruction print_sbyte_pos4:
 Removing instruction print_sbyte_at_from_print_sbyte_pos4:
 Removing instruction b6:
 Removing instruction print_sbyte_pos5:
-Removing instruction print_sbyte_at_from_print_sbyte_pos5:
 Removing instruction b7:
 Removing instruction print_sbyte_pos6:
-Removing instruction print_sbyte_at_from_print_sbyte_pos6:
 Removing instruction b8:
 Removing instruction print_sbyte_pos7:
-Removing instruction print_sbyte_at_from_print_sbyte_pos7:
 Removing instruction b9:
 Removing instruction print_sbyte_pos8:
-Removing instruction print_sbyte_at_from_print_sbyte_pos8:
 Removing instruction b10:
 Removing instruction print_sbyte_pos9:
-Removing instruction print_sbyte_at_from_print_sbyte_pos9:
 Removing instruction b11:
 Removing instruction print_sbyte_pos10:
-Removing instruction print_sbyte_at_from_print_sbyte_pos10:
 Removing instruction b12:
 Removing instruction print_sbyte_pos11:
-Removing instruction print_sbyte_at_from_print_sbyte_pos11:
 Removing instruction b13:
 Removing instruction print_sbyte_pos12:
-Removing instruction print_sbyte_at_from_print_sbyte_pos12:
 Removing instruction b1_from_print_sbyte_pos12:
 Removing instruction print_sbyte_at_from_b1:
 Removing instruction b27:
@@ -10580,9 +10601,7 @@ Removing instruction print_sbyte_at_from_b31:
 Removing instruction b32:
 Removing instruction breturn:
 Removing instruction b3:
-Removing instruction print_char_at_from_b3:
 Removing instruction breturn:
-Removing instruction print_char_at_from_b1:
 Removing instruction b5:
 Removing instruction breturn:
 Removing instruction print_char_at_from_print_byte_at:
@@ -10633,8 +10652,8 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Fixing long branch [306] bne b1 to beq
-Fixing long branch [980] bne b2 to beq
-Fixing long branch [990] bne b1 to beq
+Fixing long branch [993] bne b2 to beq
+Fixing long branch [1003] bne b1 to beq
 
 FINAL SYMBOL TABLE
 (label) @33
@@ -11377,7 +11396,6 @@ anim: {
   //SEG44 [27] (signed byte) calculate_matrix::sx#0 ← (signed byte) sx#10 -- vbsxx=vbsz1 
     ldx sx
   //SEG45 [28] (signed byte) calculate_matrix::sy#0 ← (signed byte) sy#10
-    // (signed byte) calculate_matrix::sy#0 = (signed byte) sy#10  // register copy zp ZP_BYTE:3
   //SEG46 [29] call calculate_matrix 
     jsr calculate_matrix
   //SEG47 [30] phi from anim::@12 to anim::@27 [phi:anim::@12->anim::@27]
@@ -11504,7 +11522,6 @@ debug_print: {
     ldx sx
   //SEG86 debug_print::print_sbyte_pos1
   //SEG87 [57] (signed byte) print_sbyte_at::b#4 ← (signed byte) debug_print::print_sbyte_pos1_sb#0
-    // (signed byte) print_sbyte_at::b#4 = (signed byte) debug_print::print_sbyte_pos1_sb#0  // register copy reg byte x
   //SEG88 [58] call print_sbyte_at 
   //SEG89 [114] phi from debug_print::print_sbyte_pos1 to print_sbyte_at [phi:debug_print::print_sbyte_pos1->print_sbyte_at]
   //SEG90 [114] phi (byte*) print_sbyte_at::at#21 = (const byte*) print_line_cursor#0+(const byte) debug_print::print_sbyte_pos1_row#0*(byte/signed byte/word/signed word/dword/signed dword) 40+(const byte) debug_print::print_sbyte_pos1_col#0 [phi:debug_print::print_sbyte_pos1->print_sbyte_at#0] -- pbuz1=pbuc1 
@@ -11561,7 +11578,6 @@ debug_print: {
     ldx rotation_matrix+1
   //SEG116 debug_print::print_sbyte_pos5
   //SEG117 [68] (signed byte) print_sbyte_at::b#8 ← (signed byte) debug_print::print_sbyte_pos5_sb#0
-    // (signed byte) print_sbyte_at::b#8 = (signed byte) debug_print::print_sbyte_pos5_sb#0  // register copy reg byte x
   //SEG118 [69] call print_sbyte_at 
   //SEG119 [114] phi from debug_print::print_sbyte_pos5 to print_sbyte_at [phi:debug_print::print_sbyte_pos5->print_sbyte_at]
   //SEG120 [114] phi (byte*) print_sbyte_at::at#21 = (const byte*) print_line_cursor#0+(const byte) debug_print::print_sbyte_pos5_row#0*(byte/signed byte/word/signed word/dword/signed dword) 40+(const byte) debug_print::print_sbyte_pos5_col#0 [phi:debug_print::print_sbyte_pos5->print_sbyte_at#0] -- pbuz1=pbuc1 
@@ -11576,7 +11592,6 @@ debug_print: {
     ldx rotation_matrix+2
   //SEG124 debug_print::print_sbyte_pos6
   //SEG125 [71] (signed byte) print_sbyte_at::b#9 ← (signed byte) debug_print::print_sbyte_pos6_sb#0
-    // (signed byte) print_sbyte_at::b#9 = (signed byte) debug_print::print_sbyte_pos6_sb#0  // register copy reg byte x
   //SEG126 [72] call print_sbyte_at 
   //SEG127 [114] phi from debug_print::print_sbyte_pos6 to print_sbyte_at [phi:debug_print::print_sbyte_pos6->print_sbyte_at]
   //SEG128 [114] phi (byte*) print_sbyte_at::at#21 = (const byte*) print_line_cursor#0+(const byte) debug_print::print_sbyte_pos6_row#0*(byte/signed byte/word/signed word/dword/signed dword) 40+(const byte) debug_print::print_sbyte_pos6_col#0 [phi:debug_print::print_sbyte_pos6->print_sbyte_at#0] -- pbuz1=pbuc1 
@@ -11591,7 +11606,6 @@ debug_print: {
     ldx rotation_matrix+3
   //SEG132 debug_print::print_sbyte_pos7
   //SEG133 [74] (signed byte) print_sbyte_at::b#10 ← (signed byte) debug_print::print_sbyte_pos7_sb#0
-    // (signed byte) print_sbyte_at::b#10 = (signed byte) debug_print::print_sbyte_pos7_sb#0  // register copy reg byte x
   //SEG134 [75] call print_sbyte_at 
   //SEG135 [114] phi from debug_print::print_sbyte_pos7 to print_sbyte_at [phi:debug_print::print_sbyte_pos7->print_sbyte_at]
   //SEG136 [114] phi (byte*) print_sbyte_at::at#21 = (const byte*) print_line_cursor#0+(const byte) debug_print::print_sbyte_pos7_row#0*(byte/signed byte/word/signed word/dword/signed dword) 40+(const byte) debug_print::print_sbyte_pos7_col#0 [phi:debug_print::print_sbyte_pos7->print_sbyte_at#0] -- pbuz1=pbuc1 
@@ -11606,7 +11620,6 @@ debug_print: {
     ldx rotation_matrix+4
   //SEG140 debug_print::print_sbyte_pos8
   //SEG141 [77] (signed byte) print_sbyte_at::b#11 ← (signed byte) debug_print::print_sbyte_pos8_sb#0
-    // (signed byte) print_sbyte_at::b#11 = (signed byte) debug_print::print_sbyte_pos8_sb#0  // register copy reg byte x
   //SEG142 [78] call print_sbyte_at 
   //SEG143 [114] phi from debug_print::print_sbyte_pos8 to print_sbyte_at [phi:debug_print::print_sbyte_pos8->print_sbyte_at]
   //SEG144 [114] phi (byte*) print_sbyte_at::at#21 = (const byte*) print_line_cursor#0+(const byte) debug_print::print_sbyte_pos8_row#0*(byte/signed byte/word/signed word/dword/signed dword) 40+(const byte) debug_print::print_sbyte_pos8_col#0 [phi:debug_print::print_sbyte_pos8->print_sbyte_at#0] -- pbuz1=pbuc1 
@@ -11621,7 +11634,6 @@ debug_print: {
     ldx rotation_matrix+5
   //SEG148 debug_print::print_sbyte_pos9
   //SEG149 [80] (signed byte) print_sbyte_at::b#12 ← (signed byte) debug_print::print_sbyte_pos9_sb#0
-    // (signed byte) print_sbyte_at::b#12 = (signed byte) debug_print::print_sbyte_pos9_sb#0  // register copy reg byte x
   //SEG150 [81] call print_sbyte_at 
   //SEG151 [114] phi from debug_print::print_sbyte_pos9 to print_sbyte_at [phi:debug_print::print_sbyte_pos9->print_sbyte_at]
   //SEG152 [114] phi (byte*) print_sbyte_at::at#21 = (const byte*) print_line_cursor#0+(const byte) debug_print::print_sbyte_pos9_row#0*(byte/signed byte/word/signed word/dword/signed dword) 40+(const byte) debug_print::print_sbyte_pos9_col#0 [phi:debug_print::print_sbyte_pos9->print_sbyte_at#0] -- pbuz1=pbuc1 
@@ -11636,7 +11648,6 @@ debug_print: {
     ldx rotation_matrix+6
   //SEG156 debug_print::print_sbyte_pos10
   //SEG157 [83] (signed byte) print_sbyte_at::b#13 ← (signed byte) debug_print::print_sbyte_pos10_sb#0
-    // (signed byte) print_sbyte_at::b#13 = (signed byte) debug_print::print_sbyte_pos10_sb#0  // register copy reg byte x
   //SEG158 [84] call print_sbyte_at 
   //SEG159 [114] phi from debug_print::print_sbyte_pos10 to print_sbyte_at [phi:debug_print::print_sbyte_pos10->print_sbyte_at]
   //SEG160 [114] phi (byte*) print_sbyte_at::at#21 = (const byte*) print_line_cursor#0+(const byte) debug_print::print_sbyte_pos10_row#0*(byte/signed byte/word/signed word/dword/signed dword) 40+(const byte) debug_print::print_sbyte_pos10_col#0 [phi:debug_print::print_sbyte_pos10->print_sbyte_at#0] -- pbuz1=pbuc1 
@@ -11651,7 +11662,6 @@ debug_print: {
     ldx rotation_matrix+7
   //SEG164 debug_print::print_sbyte_pos11
   //SEG165 [86] (signed byte) print_sbyte_at::b#14 ← (signed byte) debug_print::print_sbyte_pos11_sb#0
-    // (signed byte) print_sbyte_at::b#14 = (signed byte) debug_print::print_sbyte_pos11_sb#0  // register copy reg byte x
   //SEG166 [87] call print_sbyte_at 
   //SEG167 [114] phi from debug_print::print_sbyte_pos11 to print_sbyte_at [phi:debug_print::print_sbyte_pos11->print_sbyte_at]
   //SEG168 [114] phi (byte*) print_sbyte_at::at#21 = (const byte*) print_line_cursor#0+(const byte) debug_print::print_sbyte_pos11_row#0*(byte/signed byte/word/signed word/dword/signed dword) 40+(const byte) debug_print::print_sbyte_pos11_col#0 [phi:debug_print::print_sbyte_pos11->print_sbyte_at#0] -- pbuz1=pbuc1 
@@ -11666,7 +11676,6 @@ debug_print: {
     ldx rotation_matrix+8
   //SEG172 debug_print::print_sbyte_pos12
   //SEG173 [89] (signed byte) print_sbyte_at::b#15 ← (signed byte) debug_print::print_sbyte_pos12_sb#0
-    // (signed byte) print_sbyte_at::b#15 = (signed byte) debug_print::print_sbyte_pos12_sb#0  // register copy reg byte x
   //SEG174 [90] call print_sbyte_at 
   //SEG175 [114] phi from debug_print::print_sbyte_pos12 to print_sbyte_at [phi:debug_print::print_sbyte_pos12->print_sbyte_at]
   //SEG176 [114] phi (byte*) print_sbyte_at::at#21 = (const byte*) print_line_cursor#0+(const byte) debug_print::print_sbyte_pos12_row#0*(byte/signed byte/word/signed word/dword/signed dword) 40+(const byte) debug_print::print_sbyte_pos12_col#0 [phi:debug_print::print_sbyte_pos12->print_sbyte_at#0] -- pbuz1=pbuc1 
@@ -11814,6 +11823,7 @@ debug_print: {
     rts
 }
 //SEG232 print_sbyte_at
+//  Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label at = 6
   //SEG233 [115] if((signed byte) print_sbyte_at::b#22<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte_at::@1 -- vbsxx_lt_0_then_la1 
@@ -11821,7 +11831,6 @@ print_sbyte_at: {
     bmi b1
   //SEG234 print_sbyte_at::@3
   //SEG235 [116] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#21
-    // (byte*) print_char_at::at#1 = (byte*) print_sbyte_at::at#21  // register copy zp ZP_WORD:6
   //SEG236 [117] call print_char_at 
   //SEG237 [125] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
   //SEG238 [125] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
@@ -11846,7 +11855,6 @@ print_sbyte_at: {
   //SEG247 print_sbyte_at::@1
   b1:
   //SEG248 [122] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#21
-    // (byte*) print_char_at::at#0 = (byte*) print_sbyte_at::at#21  // register copy zp ZP_WORD:6
   //SEG249 [123] call print_char_at 
   //SEG250 [125] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
   //SEG251 [125] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
@@ -11864,6 +11872,7 @@ print_sbyte_at: {
     jmp b2
 }
 //SEG255 print_char_at
+//  Print a single char
 print_char_at: {
     .label at = 6
     .label ch = 8
@@ -11876,6 +11885,7 @@ print_char_at: {
     rts
 }
 //SEG259 print_byte_at
+//  Print a byte as HEX at a specific position
 print_byte_at: {
     .label at = 6
   //SEG260 [128] (byte~) print_byte_at::$0 ← (byte)(signed byte) print_sbyte_at::b#24 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
@@ -11889,7 +11899,6 @@ print_byte_at: {
     lda print_hextab,y
     sta print_char_at.ch
   //SEG262 [130] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
-    // (byte*) print_char_at::at#2 = (byte*) print_byte_at::at#0  // register copy zp ZP_WORD:6
   //SEG263 [131] call print_char_at 
   //SEG264 [125] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
   //SEG265 [125] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
@@ -11918,6 +11927,10 @@ print_byte_at: {
     rts
 }
 //SEG277 rotate_matrix
+//  Rotate a 3D point (x,y,z) using the rotation matrix
+//  The rotation matrix is prepared by calling prepare_matrix() 
+//  The passed points must be in the interval [-$3f;$3f].
+//  Implemented in assembler to utilize seriously fast multiplication 
 rotate_matrix: {
     .label x = 5
   //SEG278 [137] *((const signed byte*) xr#0) ← (signed byte) rotate_matrix::x#0 -- _deref_pbsc1=vbsz1 
@@ -12021,6 +12034,9 @@ rotate_matrix: {
     rts
 }
 //SEG284 store_matrix
+//  Store the rotation matrix into the rotation routine rotate()
+//  After this each call to rotate() will rotate a point with the matrix
+//  Implemented in assembler to utilize seriously fast multiplication 
 store_matrix: {
   //SEG285 asm { ldarotation_matrix+0 starotate_matrix.A1+1 eor#$ff starotate_matrix.A2+1 ldarotation_matrix+1 starotate_matrix.B1+1 eor#$ff starotate_matrix.B2+1 ldarotation_matrix+2 starotate_matrix.C1+1 eor#$ff starotate_matrix.C2+1 ldarotation_matrix+3 starotate_matrix.D1+1 eor#$ff starotate_matrix.D2+1 ldarotation_matrix+4 starotate_matrix.E1+1 eor#$ff starotate_matrix.E2+1 ldarotation_matrix+5 starotate_matrix.F1+1 eor#$ff starotate_matrix.F2+1 ldarotation_matrix+6 starotate_matrix.G1+1 eor#$ff starotate_matrix.G2+1 ldarotation_matrix+7 starotate_matrix.H1+1 eor#$ff starotate_matrix.H2+1 ldarotation_matrix+8 starotate_matrix.I1+1 eor#$ff starotate_matrix.I2+1  }
     lda rotation_matrix+0
@@ -12064,6 +12080,9 @@ store_matrix: {
     rts
 }
 //SEG288 calculate_matrix
+//  Prepare the 3x3 rotation matrix into rotation_matrix[]
+//  Angles sx, sy, sz are based on 2*PI=$100 
+//  Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 calculate_matrix: {
     .label sy = 3
     .label t1 = 4
@@ -12759,6 +12778,7 @@ debug_print_init: {
     str11: .text "yp@"
 }
 //SEG478 print_str_at
+//  Print a string at a specific screen position
 print_str_at: {
     .label at = 9
     .label str = 6
@@ -12794,6 +12814,7 @@ print_str_at: {
     jmp b1
 }
 //SEG490 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 6
   //SEG491 [268] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -12827,6 +12848,7 @@ print_cls: {
     rts
 }
 //SEG501 sprites_init
+//  Initialize sprites
 sprites_init: {
     .label SCREEN = $400
     .label sprites_ptr = SCREEN+$3f8

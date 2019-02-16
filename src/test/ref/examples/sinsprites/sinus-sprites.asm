@@ -185,6 +185,11 @@ clear_screen: {
   !:
     rts
 }
+//  Generate a sinus table using BASIC floats
+//  - sintab is a pointer to the table to fill
+//  - length is the length of the sine table
+//  - min is the minimum value of the generated sinus
+//  - max is the maximum value of the generated sinus
 gen_sintab: {
     .label f_2pi = $e2e5
     .label _23 = $c
@@ -288,6 +293,8 @@ gen_sintab: {
     f_min: .byte 0, 0, 0, 0, 0
     f_amp: .byte 0, 0, 0, 0, 0
 }
+//  Increase PETSCII progress one bit
+//  Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
     inc progress_idx
     lda progress_idx
@@ -310,6 +317,9 @@ progress_inc: {
     rts
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
+//  word = FAC
+//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
+//  Destroys the value in the FAC in the process
 getFAC: {
     .label return = $c
     jsr $b1aa
@@ -321,6 +331,9 @@ getFAC: {
     sta return+1
     rts
 }
+//  FAC = MEM+FAC
+//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+//  Reads 5 bytes from memory
 addMEMtoFAC: {
     lda #<gen_sintab.f_min
     sta prepareMEM.mem
@@ -332,6 +345,7 @@ addMEMtoFAC: {
     jsr $b867
     rts
 }
+//  Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label mem = $c
     lda mem
@@ -340,6 +354,9 @@ prepareMEM: {
     sta memHi
     rts
 }
+//  FAC = MEM*FAC
+//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+//  Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = $c
     jsr prepareMEM
@@ -348,10 +365,16 @@ mulFACbyMEM: {
     jsr $ba28
     rts
 }
+//  FAC = sin(FAC)
+//  Set FAC to sinus of the FAC - sin(FAC)
+//  Sinus is calculated on radians (0-2*PI)
 sinFAC: {
     jsr $e26b
     rts
 }
+//  FAC = MEM/FAC
+//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+//  Reads 5 bytes from memory
 divMEMbyFAC: {
     .label mem = $c
     jsr prepareMEM
@@ -360,6 +383,8 @@ divMEMbyFAC: {
     jsr $bb0f
     rts
 }
+//  FAC = word
+//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = $c
     jsr prepareMEM
@@ -368,6 +393,9 @@ setFAC: {
     jsr $b391
     rts
 }
+//  MEM = FAC
+//  Stores the value of the FAC to memory
+//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = $c
     jsr prepareMEM
@@ -376,14 +404,19 @@ setMEMtoFAC: {
     jsr $bbd4
     rts
 }
+//  FAC = ARG-FAC
+//  Set FAC to ARG minus FAC
 subFACfromARG: {
     jsr $b853
     rts
 }
+//  ARG = FAC
+//  Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
 setARGtoFAC: {
     jsr $bc0f
     rts
 }
+//  Initialize the PETSCII progress bar
 progress_init: {
     .label line = $a
     rts
@@ -419,6 +452,9 @@ gen_sprites: {
     rts
     cml: .text "camelot"
 }
+//  Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
+//  - c is the character to generate
+//  - sprite is a pointer to the position of the sprite to generate
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c

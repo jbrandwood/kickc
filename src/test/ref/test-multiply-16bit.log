@@ -4778,6 +4778,7 @@ main: {
     rts
 }
 //SEG25 mul16s_compare
+//  Perform many possible word multiplications (slow and fast) and compare the results
 mul16s_compare: {
     .label a = 3
     .label b = 5
@@ -5141,6 +5142,7 @@ mul16s_compare: {
     str1: .text "signed word multiply results match!@"
 }
 //SEG123 print_ln
+//  Print a newline
 print_ln: {
   //SEG124 [60] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -5173,6 +5175,7 @@ print_ln: {
     rts
 }
 //SEG131 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = $b
   //SEG132 [65] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -5389,6 +5392,7 @@ mul16s_error: {
     str4: .text " / fast:@"
 }
 //SEG205 print_sdword
+//  Print a signed dword as HEX
 print_sdword: {
     .label dw = $d
   //SEG206 [95] if((signed dword) print_sdword::dw#4>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sdword::@1 -- vdsz1_ge_0_then_la1 
@@ -5458,6 +5462,7 @@ print_sdword: {
     rts
 }
 //SEG226 print_dword
+//  Print a dword as HEX
 print_dword: {
     .label dw = $11
   //SEG227 [104] (word) print_word::w#1 ← > (dword) print_dword::dw#4 -- vwuz1=_hi_vduz2 
@@ -5492,6 +5497,7 @@ print_dword: {
     rts
 }
 //SEG240 print_word
+//  Print a word as HEX
 print_word: {
     .label w = $15
   //SEG241 [110] (byte) print_byte::b#0 ← > (word) print_word::w#5 -- vbuz1=_hi_vwuz2 
@@ -5522,6 +5528,7 @@ print_word: {
     rts
 }
 //SEG254 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label _0 = $8e
     .label _2 = $8f
@@ -5567,6 +5574,7 @@ print_byte: {
     rts
 }
 //SEG270 print_char
+//  Print a single char
 print_char: {
     .label ch = $18
   //SEG271 [124] *((byte*) print_char_cursor#84) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuz2 
@@ -5585,6 +5593,7 @@ print_char: {
     rts
 }
 //SEG275 print_sword
+//  Print a signed word as HEX
 print_sword: {
     .label w = $1b
   //SEG276 [128] if((signed word) print_sword::w#3>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -5642,6 +5651,8 @@ print_sword: {
     rts
 }
 //SEG296 mulf16s
+//  Fast multiply two signed words to a signed double word result
+//  Fixes offsets introduced by using unsigned multiplication
 mulf16s: {
     .label _5 = $94
     .label _6 = $96
@@ -5779,6 +5790,8 @@ mulf16s: {
     rts
 }
 //SEG327 mulf16u
+//  Fast multiply two unsigned words to a double word result
+//  Done in assembler to utilize fast addition A+X
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -5907,6 +5920,8 @@ mulf16u: {
     rts
 }
 //SEG334 mul16s
+//  Multiply of two signed words to a signed double word
+//  Fixes offsets introduced by using unsigned multiplication
 mul16s: {
     .label _5 = $ac
     .label _6 = $ae
@@ -6044,6 +6059,7 @@ mul16s: {
     rts
 }
 //SEG365 mul16u
+//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label _1 = $bc
     .label mb = $31
@@ -6135,6 +6151,8 @@ mul16u: {
     jmp b1
 }
 //SEG389 muls16s
+//  Slow multiplication of signed words
+//  Perform a signed multiplication by repeated addition/subtraction
 muls16s: {
     .label m = $37
     .label j = $35
@@ -6296,6 +6314,7 @@ muls16s: {
     jmp b4_from_b5
 }
 //SEG420 mul16u_compare
+//  Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
     .label a = $3e
     .label b = $40
@@ -6855,6 +6874,8 @@ mul16u_error: {
     str4: .text " / fast:@"
 }
 //SEG590 muls16u
+//  Slow multiplication of unsigned words
+//  Calculate an unsigned multiplication by repeated addition
 muls16u: {
     .label return = $46
     .label m = $46
@@ -6939,6 +6960,7 @@ muls16u: {
     rts
 }
 //SEG609 mulf_init
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label _2 = $e9
     .label _5 = $ea
@@ -7150,6 +7172,7 @@ mulf_init: {
     jmp b4
 }
 //SEG671 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $58
   //SEG672 [309] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -7796,6 +7819,7 @@ main: {
     rts
 }
 //SEG25 mul16s_compare
+//  Perform many possible word multiplications (slow and fast) and compare the results
 mul16s_compare: {
     .label a = 3
     .label b = 5
@@ -7876,44 +7900,32 @@ mul16s_compare: {
     adc #>$ffd
     sta b+1
   //SEG53 [19] (signed word) muls16s::a#0 ← (signed word) mul16s_compare::a#1
-    // (signed word) muls16s::a#0 = (signed word) mul16s_compare::a#1  // register copy zp ZP_WORD:3
   //SEG54 [20] (signed word) muls16s::b#0 ← (signed word) mul16s_compare::b#1
-    // (signed word) muls16s::b#0 = (signed word) mul16s_compare::b#1  // register copy zp ZP_WORD:5
   //SEG55 [21] call muls16s 
     jsr muls16s
   //SEG56 [22] (signed dword) muls16s::return#2 ← (signed dword) muls16s::return#0
-    // (signed dword) muls16s::return#2 = (signed dword) muls16s::return#0  // register copy zp ZP_DWORD:11
     jmp b13
   //SEG57 mul16s_compare::@13
   b13:
   //SEG58 [23] (signed dword) mul16s_compare::ms#0 ← (signed dword) muls16s::return#2
-    // (signed dword) mul16s_compare::ms#0 = (signed dword) muls16s::return#2  // register copy zp ZP_DWORD:11
   //SEG59 [24] (signed word) mul16s::a#0 ← (signed word) mul16s_compare::a#1
-    // (signed word) mul16s::a#0 = (signed word) mul16s_compare::a#1  // register copy zp ZP_WORD:3
   //SEG60 [25] (signed word) mul16s::b#0 ← (signed word) mul16s_compare::b#1
-    // (signed word) mul16s::b#0 = (signed word) mul16s_compare::b#1  // register copy zp ZP_WORD:5
   //SEG61 [26] call mul16s 
     jsr mul16s
   //SEG62 [27] (signed dword) mul16s::return#2 ← (signed dword) mul16s::return#0
-    // (signed dword) mul16s::return#2 = (signed dword) mul16s::return#0  // register copy zp ZP_DWORD:25
     jmp b14
   //SEG63 mul16s_compare::@14
   b14:
   //SEG64 [28] (signed dword) mul16s_compare::mn#0 ← (signed dword) mul16s::return#2
-    // (signed dword) mul16s_compare::mn#0 = (signed dword) mul16s::return#2  // register copy zp ZP_DWORD:25
   //SEG65 [29] (signed word) mulf16s::a#0 ← (signed word) mul16s_compare::a#1
-    // (signed word) mulf16s::a#0 = (signed word) mul16s_compare::a#1  // register copy zp ZP_WORD:3
   //SEG66 [30] (signed word) mulf16s::b#0 ← (signed word) mul16s_compare::b#1
-    // (signed word) mulf16s::b#0 = (signed word) mul16s_compare::b#1  // register copy zp ZP_WORD:5
   //SEG67 [31] call mulf16s 
     jsr mulf16s
   //SEG68 [32] (signed dword) mulf16s::return#2 ← (signed dword) mulf16s::return#0
-    // (signed dword) mulf16s::return#2 = (signed dword) mulf16s::return#0  // register copy zp ZP_DWORD:17
     jmp b15
   //SEG69 mul16s_compare::@15
   b15:
   //SEG70 [33] (signed dword) mul16s_compare::mf#0 ← (signed dword) mulf16s::return#2
-    // (signed dword) mul16s_compare::mf#0 = (signed dword) mulf16s::return#2  // register copy zp ZP_DWORD:17
   //SEG71 [34] if((signed dword) mul16s_compare::ms#0==(signed dword) mul16s_compare::mf#0) goto mul16s_compare::@3 -- vdsz1_eq_vdsz2_then_la1 
     lda ms
     cmp mf
@@ -7976,15 +7988,10 @@ mul16s_compare: {
     lda #2
     sta BGCOL
   //SEG86 [41] (signed word) mul16s_error::a#0 ← (signed word) mul16s_compare::a#1
-    // (signed word) mul16s_error::a#0 = (signed word) mul16s_compare::a#1  // register copy zp ZP_WORD:3
   //SEG87 [42] (signed word) mul16s_error::b#0 ← (signed word) mul16s_compare::b#1
-    // (signed word) mul16s_error::b#0 = (signed word) mul16s_compare::b#1  // register copy zp ZP_WORD:5
   //SEG88 [43] (signed dword) mul16s_error::ms#0 ← (signed dword) mul16s_compare::ms#0
-    // (signed dword) mul16s_error::ms#0 = (signed dword) mul16s_compare::ms#0  // register copy zp ZP_DWORD:11
   //SEG89 [44] (signed dword) mul16s_error::mn#0 ← (signed dword) mul16s_compare::mn#0
-    // (signed dword) mul16s_error::mn#0 = (signed dword) mul16s_compare::mn#0  // register copy zp ZP_DWORD:25
   //SEG90 [45] (signed dword) mul16s_error::mf#0 ← (signed dword) mul16s_compare::mf#0
-    // (signed dword) mul16s_error::mf#0 = (signed dword) mul16s_compare::mf#0  // register copy zp ZP_DWORD:17
   //SEG91 [46] call mul16s_error 
   //SEG92 [71] phi from mul16s_compare::@8 to mul16s_error [phi:mul16s_compare::@8->mul16s_error]
   mul16s_error_from_b8:
@@ -8064,6 +8071,7 @@ mul16s_compare: {
     str1: .text "signed word multiply results match!@"
 }
 //SEG123 print_ln
+//  Print a newline
 print_ln: {
   //SEG124 [60] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -8096,6 +8104,7 @@ print_ln: {
     rts
 }
 //SEG131 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = 9
   //SEG132 [65] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -8156,7 +8165,6 @@ mul16s_error: {
   //SEG148 mul16s_error::@1
   b1:
   //SEG149 [73] (signed word) print_sword::w#1 ← (signed word) mul16s_error::a#0
-    // (signed word) print_sword::w#1 = (signed word) mul16s_error::a#0  // register copy zp ZP_WORD:3
   //SEG150 [74] call print_sword 
   //SEG151 [127] phi from mul16s_error::@1 to print_sword [phi:mul16s_error::@1->print_sword]
   print_sword_from_b1:
@@ -8209,7 +8217,6 @@ mul16s_error: {
   //SEG170 mul16s_error::@5
   b5:
   //SEG171 [81] (signed dword) print_sdword::dw#1 ← (signed dword) mul16s_error::ms#0
-    // (signed dword) print_sdword::dw#1 = (signed dword) mul16s_error::ms#0  // register copy zp ZP_DWORD:11
   //SEG172 [82] call print_sdword 
   //SEG173 [94] phi from mul16s_error::@5 to print_sdword [phi:mul16s_error::@5->print_sdword]
   print_sdword_from_b5:
@@ -8302,6 +8309,7 @@ mul16s_error: {
     str4: .text " / fast:@"
 }
 //SEG205 print_sdword
+//  Print a signed dword as HEX
 print_sdword: {
     .label dw = $b
   //SEG206 [95] if((signed dword) print_sdword::dw#4>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sdword::@1 -- vdsz1_ge_0_then_la1 
@@ -8362,6 +8370,7 @@ print_sdword: {
     rts
 }
 //SEG226 print_dword
+//  Print a dword as HEX
 print_dword: {
     .label dw = $b
   //SEG227 [104] (word) print_word::w#1 ← > (dword) print_dword::dw#4 -- vwuz1=_hi_vduz2 
@@ -8396,6 +8405,7 @@ print_dword: {
     rts
 }
 //SEG240 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 3
   //SEG241 [110] (byte) print_byte::b#0 ← > (word) print_word::w#5 -- vbuxx=_hi_vwuz1 
@@ -8426,6 +8436,7 @@ print_word: {
     rts
 }
 //SEG254 print_byte
+//  Print a byte as HEX
 print_byte: {
   //SEG255 [116] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
@@ -8464,6 +8475,7 @@ print_byte: {
     rts
 }
 //SEG270 print_char
+//  Print a single char
 print_char: {
   //SEG271 [124] *((byte*) print_char_cursor#84) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -8480,6 +8492,7 @@ print_char: {
     rts
 }
 //SEG275 print_sword
+//  Print a signed word as HEX
 print_sword: {
     .label w = 3
   //SEG276 [128] if((signed word) print_sword::w#3>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -8519,7 +8532,6 @@ print_sword: {
   //SEG288 print_sword::@1
   b1:
   //SEG289 [133] (word~) print_word::w#11 ← (word)(signed word) print_sword::w#4
-    // (word~) print_word::w#11 = (word)(signed word) print_sword::w#4  // register copy zp ZP_WORD:3
   //SEG290 [134] call print_word 
   //SEG291 [109] phi from print_sword::@1 to print_word [phi:print_sword::@1->print_word]
   print_word_from_b1:
@@ -8533,6 +8545,8 @@ print_sword: {
     rts
 }
 //SEG296 mulf16s
+//  Fast multiply two signed words to a signed double word result
+//  Fixes offsets introduced by using unsigned multiplication
 mulf16s: {
     .label _5 = 3
     .label _6 = 9
@@ -8561,12 +8575,10 @@ mulf16s: {
   //SEG302 [155] phi (word) mulf16u::a#2 = (word~) mulf16u::a#4 [phi:mulf16s->mulf16u#1] -- register_copy 
     jsr mulf16u
   //SEG303 [139] (dword) mulf16u::return#2 ← (dword) mulf16u::return#0
-    // (dword) mulf16u::return#2 = (dword) mulf16u::return#0  // register copy zp ZP_DWORD:17
     jmp b6
   //SEG304 mulf16s::@6
   b6:
   //SEG305 [140] (dword) mulf16s::m#0 ← (dword) mulf16u::return#2
-    // (dword) mulf16s::m#0 = (dword) mulf16u::return#2  // register copy zp ZP_DWORD:17
   //SEG306 [141] if((signed word) mulf16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mulf16s::@1 -- vwsz1_ge_0_then_la1 
     lda a+1
     bpl b1_from_b6
@@ -8647,6 +8659,8 @@ mulf16s: {
     rts
 }
 //SEG327 mulf16u
+//  Fast multiply two unsigned words to a double word result
+//  Done in assembler to utilize fast addition A+X
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -8773,6 +8787,8 @@ mulf16u: {
     rts
 }
 //SEG334 mul16s
+//  Multiply of two signed words to a signed double word
+//  Fixes offsets introduced by using unsigned multiplication
 mul16s: {
     .label _5 = 3
     .label _6 = 9
@@ -8801,12 +8817,10 @@ mul16s: {
   //SEG340 [180] phi (word) mul16u::b#2 = (word~) mul16u::b#3 [phi:mul16s->mul16u#1] -- register_copy 
     jsr mul16u
   //SEG341 [164] (dword) mul16u::return#2 ← (dword) mul16u::res#2
-    // (dword) mul16u::return#2 = (dword) mul16u::res#2  // register copy zp ZP_DWORD:25
     jmp b6
   //SEG342 mul16s::@6
   b6:
   //SEG343 [165] (dword) mul16s::m#0 ← (dword) mul16u::return#2
-    // (dword) mul16s::m#0 = (dword) mul16u::return#2  // register copy zp ZP_DWORD:25
   //SEG344 [166] if((signed word) mul16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul16s::@1 -- vwsz1_ge_0_then_la1 
     lda a+1
     bpl b1_from_b6
@@ -8887,6 +8901,7 @@ mul16s: {
     rts
 }
 //SEG365 mul16u
+//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label mb = $11
     .label a = 9
@@ -8974,6 +8989,8 @@ mul16u: {
     jmp b1
 }
 //SEG389 muls16s
+//  Slow multiplication of signed words
+//  Perform a signed multiplication by repeated addition/subtraction
 muls16s: {
     .label m = $b
     .label j = 9
@@ -9134,6 +9151,7 @@ muls16s: {
     jmp b4_from_b5
 }
 //SEG420 mul16u_compare
+//  Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
     .label a = $15
     .label b = $17
@@ -9213,25 +9231,20 @@ mul16u_compare: {
     adc #>$ffd
     sta b+1
   //SEG447 [209] (word) muls16u::a#0 ← (word) mul16u_compare::a#1
-    // (word) muls16u::a#0 = (word) mul16u_compare::a#1  // register copy zp ZP_WORD:21
   //SEG448 [210] (word) muls16u::b#0 ← (word) mul16u_compare::b#1
-    // (word) muls16u::b#0 = (word) mul16u_compare::b#1  // register copy zp ZP_WORD:23
   //SEG449 [211] call muls16u 
     jsr muls16u
   //SEG450 [212] (dword) muls16u::return#2 ← (dword) muls16u::return#0
-    // (dword) muls16u::return#2 = (dword) muls16u::return#0  // register copy zp ZP_DWORD:11
     jmp b13
   //SEG451 mul16u_compare::@13
   b13:
   //SEG452 [213] (dword) mul16u_compare::ms#0 ← (dword) muls16u::return#2
-    // (dword) mul16u_compare::ms#0 = (dword) muls16u::return#2  // register copy zp ZP_DWORD:11
   //SEG453 [214] (word) mul16u::a#2 ← (word) mul16u_compare::a#1 -- vwuz1=vwuz2 
     lda a
     sta mul16u.a
     lda a+1
     sta mul16u.a+1
   //SEG454 [215] (word) mul16u::b#1 ← (word) mul16u_compare::b#1
-    // (word) mul16u::b#1 = (word) mul16u_compare::b#1  // register copy zp ZP_WORD:23
   //SEG455 [216] call mul16u 
   //SEG456 [180] phi from mul16u_compare::@13 to mul16u [phi:mul16u_compare::@13->mul16u]
   mul16u_from_b13:
@@ -9239,16 +9252,12 @@ mul16u_compare: {
   //SEG458 [180] phi (word) mul16u::b#2 = (word) mul16u::b#1 [phi:mul16u_compare::@13->mul16u#1] -- register_copy 
     jsr mul16u
   //SEG459 [217] (dword) mul16u::return#3 ← (dword) mul16u::res#2
-    // (dword) mul16u::return#3 = (dword) mul16u::res#2  // register copy zp ZP_DWORD:25
     jmp b14
   //SEG460 mul16u_compare::@14
   b14:
   //SEG461 [218] (dword) mul16u_compare::mn#0 ← (dword) mul16u::return#3
-    // (dword) mul16u_compare::mn#0 = (dword) mul16u::return#3  // register copy zp ZP_DWORD:25
   //SEG462 [219] (word) mulf16u::a#1 ← (word) mul16u_compare::a#1
-    // (word) mulf16u::a#1 = (word) mul16u_compare::a#1  // register copy zp ZP_WORD:21
   //SEG463 [220] (word) mulf16u::b#1 ← (word) mul16u_compare::b#1
-    // (word) mulf16u::b#1 = (word) mul16u_compare::b#1  // register copy zp ZP_WORD:23
   //SEG464 [221] call mulf16u 
   //SEG465 [155] phi from mul16u_compare::@14 to mulf16u [phi:mul16u_compare::@14->mulf16u]
   mulf16u_from_b14:
@@ -9256,12 +9265,10 @@ mul16u_compare: {
   //SEG467 [155] phi (word) mulf16u::a#2 = (word) mulf16u::a#1 [phi:mul16u_compare::@14->mulf16u#1] -- register_copy 
     jsr mulf16u
   //SEG468 [222] (dword) mulf16u::return#3 ← (dword) mulf16u::return#0
-    // (dword) mulf16u::return#3 = (dword) mulf16u::return#0  // register copy zp ZP_DWORD:17
     jmp b15
   //SEG469 mul16u_compare::@15
   b15:
   //SEG470 [223] (dword) mul16u_compare::mf#0 ← (dword) mulf16u::return#3
-    // (dword) mul16u_compare::mf#0 = (dword) mulf16u::return#3  // register copy zp ZP_DWORD:17
   //SEG471 [224] if((dword) mul16u_compare::ms#0==(dword) mul16u_compare::mf#0) goto mul16u_compare::@3 -- vduz1_eq_vduz2_then_la1 
     lda ms
     cmp mf
@@ -9329,13 +9336,9 @@ mul16u_compare: {
     lda a+1
     sta mul16u_error.a+1
   //SEG487 [232] (word) mul16u_error::b#0 ← (word) mul16u_compare::b#1
-    // (word) mul16u_error::b#0 = (word) mul16u_compare::b#1  // register copy zp ZP_WORD:23
   //SEG488 [233] (dword) mul16u_error::ms#0 ← (dword) mul16u_compare::ms#0
-    // (dword) mul16u_error::ms#0 = (dword) mul16u_compare::ms#0  // register copy zp ZP_DWORD:11
   //SEG489 [234] (dword) mul16u_error::mn#0 ← (dword) mul16u_compare::mn#0
-    // (dword) mul16u_error::mn#0 = (dword) mul16u_compare::mn#0  // register copy zp ZP_DWORD:25
   //SEG490 [235] (dword) mul16u_error::mf#0 ← (dword) mul16u_compare::mf#0
-    // (dword) mul16u_error::mf#0 = (dword) mul16u_compare::mf#0  // register copy zp ZP_DWORD:17
   //SEG491 [236] call mul16u_error 
   //SEG492 [249] phi from mul16u_compare::@8 to mul16u_error [phi:mul16u_compare::@8->mul16u_error]
   mul16u_error_from_b8:
@@ -9439,7 +9442,6 @@ mul16u_error: {
   //SEG528 mul16u_error::@1
   b1:
   //SEG529 [251] (word) print_word::w#3 ← (word) mul16u_error::a#0
-    // (word) print_word::w#3 = (word) mul16u_error::a#0  // register copy zp ZP_WORD:3
   //SEG530 [252] call print_word 
   //SEG531 [109] phi from mul16u_error::@1 to print_word [phi:mul16u_error::@1->print_word]
   print_word_from_b1:
@@ -9494,7 +9496,6 @@ mul16u_error: {
   //SEG552 mul16u_error::@5
   b5:
   //SEG553 [259] (dword) print_dword::dw#1 ← (dword) mul16u_error::ms#0
-    // (dword) print_dword::dw#1 = (dword) mul16u_error::ms#0  // register copy zp ZP_DWORD:11
   //SEG554 [260] call print_dword 
   //SEG555 [103] phi from mul16u_error::@5 to print_dword [phi:mul16u_error::@5->print_dword]
   print_dword_from_b5:
@@ -9594,6 +9595,8 @@ mul16u_error: {
     str4: .text " / fast:@"
 }
 //SEG590 muls16u
+//  Slow multiplication of unsigned words
+//  Calculate an unsigned multiplication by repeated addition
 muls16u: {
     .label return = $b
     .label m = $b
@@ -9677,6 +9680,7 @@ muls16u: {
     rts
 }
 //SEG609 mulf_init
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 5
     .label sqr = 7
@@ -9872,6 +9876,7 @@ mulf_init: {
     jmp b4
 }
 //SEG671 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 3
   //SEG672 [309] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -10109,10 +10114,12 @@ Removing instruction b1_from_print_ln:
 Removing instruction b1_from_b1:
 Removing instruction b1_from_print_str:
 Removing instruction b1_from_b2:
+Removing instruction print_sword_from_b1:
 Removing instruction b2_from_b1:
 Removing instruction print_str_from_b2:
 Removing instruction b4_from_b3:
 Removing instruction print_str_from_b4:
+Removing instruction print_sdword_from_b5:
 Removing instruction b6_from_b5:
 Removing instruction print_str_from_b6:
 Removing instruction b8_from_b7:
@@ -10128,6 +10135,7 @@ Removing instruction b2_from_print_sword:
 Removing instruction print_char_from_b2:
 Removing instruction b1_from_print_sword:
 Removing instruction b1_from_b4:
+Removing instruction print_word_from_b1:
 Removing instruction b1_from_b3:
 Removing instruction b1_from_b6:
 Removing instruction b2_from_b1:
@@ -10147,6 +10155,7 @@ Removing instruction b5_from_b5:
 Removing instruction b1_from_b10:
 Removing instruction print_str_from_b1:
 Removing instruction b2_from_b5:
+Removing instruction mulf16u_from_b14:
 Removing instruction b6_from_b15:
 Removing instruction b3_from_b6:
 Removing instruction b11_from_b10:
@@ -10155,10 +10164,12 @@ Removing instruction b18_from_b17:
 Removing instruction print_ln_from_b18:
 Removing instruction b22_from_b3:
 Removing instruction b4_from_b22:
+Removing instruction print_word_from_b1:
 Removing instruction b2_from_b1:
 Removing instruction print_str_from_b2:
 Removing instruction b4_from_b3:
 Removing instruction print_str_from_b4:
+Removing instruction print_dword_from_b5:
 Removing instruction b6_from_b5:
 Removing instruction print_str_from_b6:
 Removing instruction b8_from_b7:
@@ -10199,13 +10210,11 @@ Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction print_str_from_mul16s_error:
 Removing instruction b1:
-Removing instruction print_sword_from_b1:
 Removing instruction b2:
 Removing instruction b3:
 Removing instruction print_sword_from_b3:
 Removing instruction b4:
 Removing instruction b5:
-Removing instruction print_sdword_from_b5:
 Removing instruction b6:
 Removing instruction b7:
 Removing instruction print_sdword_from_b7:
@@ -10232,7 +10241,6 @@ Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction b2:
 Removing instruction b4:
-Removing instruction print_word_from_b1:
 Removing instruction breturn:
 Removing instruction mulf16u_from_mulf16s:
 Removing instruction b6:
@@ -10254,7 +10262,6 @@ Removing instruction b2_from_b1:
 Removing instruction b13:
 Removing instruction mul16u_from_b13:
 Removing instruction b14:
-Removing instruction mulf16u_from_b14:
 Removing instruction b15:
 Removing instruction b6:
 Removing instruction b4_from_b3:
@@ -10267,13 +10274,11 @@ Removing instruction print_str_from_b17:
 Removing instruction b18:
 Removing instruction print_str_from_mul16u_error:
 Removing instruction b1:
-Removing instruction print_word_from_b1:
 Removing instruction b2:
 Removing instruction b3:
 Removing instruction print_word_from_b3:
 Removing instruction b4:
 Removing instruction b5:
-Removing instruction print_dword_from_b5:
 Removing instruction b6:
 Removing instruction b7:
 Removing instruction print_dword_from_b7:
@@ -10332,8 +10337,8 @@ Removing unreachable instruction jmp b4
 Removing unreachable instruction jmp b4
 Removing unreachable instruction jmp b4
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [108] bne b1 to beq
-Fixing long branch [830] bne b1 to beq
+Fixing long branch [109] bne b1 to beq
+Fixing long branch [849] bne b1 to beq
 
 FINAL SYMBOL TABLE
 (label) @40
@@ -10845,6 +10850,7 @@ main: {
     rts
 }
 //SEG25 mul16s_compare
+//  Perform many possible word multiplications (slow and fast) and compare the results
 mul16s_compare: {
     .label a = 3
     .label b = 5
@@ -10916,38 +10922,26 @@ mul16s_compare: {
     adc #>$ffd
     sta b+1
   //SEG53 [19] (signed word) muls16s::a#0 ← (signed word) mul16s_compare::a#1
-    // (signed word) muls16s::a#0 = (signed word) mul16s_compare::a#1  // register copy zp ZP_WORD:3
   //SEG54 [20] (signed word) muls16s::b#0 ← (signed word) mul16s_compare::b#1
-    // (signed word) muls16s::b#0 = (signed word) mul16s_compare::b#1  // register copy zp ZP_WORD:5
   //SEG55 [21] call muls16s 
     jsr muls16s
   //SEG56 [22] (signed dword) muls16s::return#2 ← (signed dword) muls16s::return#0
-    // (signed dword) muls16s::return#2 = (signed dword) muls16s::return#0  // register copy zp ZP_DWORD:11
   //SEG57 mul16s_compare::@13
   //SEG58 [23] (signed dword) mul16s_compare::ms#0 ← (signed dword) muls16s::return#2
-    // (signed dword) mul16s_compare::ms#0 = (signed dword) muls16s::return#2  // register copy zp ZP_DWORD:11
   //SEG59 [24] (signed word) mul16s::a#0 ← (signed word) mul16s_compare::a#1
-    // (signed word) mul16s::a#0 = (signed word) mul16s_compare::a#1  // register copy zp ZP_WORD:3
   //SEG60 [25] (signed word) mul16s::b#0 ← (signed word) mul16s_compare::b#1
-    // (signed word) mul16s::b#0 = (signed word) mul16s_compare::b#1  // register copy zp ZP_WORD:5
   //SEG61 [26] call mul16s 
     jsr mul16s
   //SEG62 [27] (signed dword) mul16s::return#2 ← (signed dword) mul16s::return#0
-    // (signed dword) mul16s::return#2 = (signed dword) mul16s::return#0  // register copy zp ZP_DWORD:25
   //SEG63 mul16s_compare::@14
   //SEG64 [28] (signed dword) mul16s_compare::mn#0 ← (signed dword) mul16s::return#2
-    // (signed dword) mul16s_compare::mn#0 = (signed dword) mul16s::return#2  // register copy zp ZP_DWORD:25
   //SEG65 [29] (signed word) mulf16s::a#0 ← (signed word) mul16s_compare::a#1
-    // (signed word) mulf16s::a#0 = (signed word) mul16s_compare::a#1  // register copy zp ZP_WORD:3
   //SEG66 [30] (signed word) mulf16s::b#0 ← (signed word) mul16s_compare::b#1
-    // (signed word) mulf16s::b#0 = (signed word) mul16s_compare::b#1  // register copy zp ZP_WORD:5
   //SEG67 [31] call mulf16s 
     jsr mulf16s
   //SEG68 [32] (signed dword) mulf16s::return#2 ← (signed dword) mulf16s::return#0
-    // (signed dword) mulf16s::return#2 = (signed dword) mulf16s::return#0  // register copy zp ZP_DWORD:17
   //SEG69 mul16s_compare::@15
   //SEG70 [33] (signed dword) mul16s_compare::mf#0 ← (signed dword) mulf16s::return#2
-    // (signed dword) mul16s_compare::mf#0 = (signed dword) mulf16s::return#2  // register copy zp ZP_DWORD:17
   //SEG71 [34] if((signed dword) mul16s_compare::ms#0==(signed dword) mul16s_compare::mf#0) goto mul16s_compare::@3 -- vdsz1_eq_vdsz2_then_la1 
     lda ms
     cmp mf
@@ -11001,15 +10995,10 @@ mul16s_compare: {
     lda #2
     sta BGCOL
   //SEG86 [41] (signed word) mul16s_error::a#0 ← (signed word) mul16s_compare::a#1
-    // (signed word) mul16s_error::a#0 = (signed word) mul16s_compare::a#1  // register copy zp ZP_WORD:3
   //SEG87 [42] (signed word) mul16s_error::b#0 ← (signed word) mul16s_compare::b#1
-    // (signed word) mul16s_error::b#0 = (signed word) mul16s_compare::b#1  // register copy zp ZP_WORD:5
   //SEG88 [43] (signed dword) mul16s_error::ms#0 ← (signed dword) mul16s_compare::ms#0
-    // (signed dword) mul16s_error::ms#0 = (signed dword) mul16s_compare::ms#0  // register copy zp ZP_DWORD:11
   //SEG89 [44] (signed dword) mul16s_error::mn#0 ← (signed dword) mul16s_compare::mn#0
-    // (signed dword) mul16s_error::mn#0 = (signed dword) mul16s_compare::mn#0  // register copy zp ZP_DWORD:25
   //SEG90 [45] (signed dword) mul16s_error::mf#0 ← (signed dword) mul16s_compare::mf#0
-    // (signed dword) mul16s_error::mf#0 = (signed dword) mul16s_compare::mf#0  // register copy zp ZP_DWORD:17
   //SEG91 [46] call mul16s_error 
   //SEG92 [71] phi from mul16s_compare::@8 to mul16s_error [phi:mul16s_compare::@8->mul16s_error]
     jsr mul16s_error
@@ -11071,6 +11060,7 @@ mul16s_compare: {
     str1: .text "signed word multiply results match!@"
 }
 //SEG123 print_ln
+//  Print a newline
 print_ln: {
   //SEG124 [60] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   //SEG125 [60] phi (byte*) print_line_cursor#22 = (byte*) print_line_cursor#43 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
@@ -11098,6 +11088,7 @@ print_ln: {
     rts
 }
 //SEG131 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = 9
   //SEG132 [65] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -11149,7 +11140,6 @@ mul16s_error: {
     jsr print_str
   //SEG148 mul16s_error::@1
   //SEG149 [73] (signed word) print_sword::w#1 ← (signed word) mul16s_error::a#0
-    // (signed word) print_sword::w#1 = (signed word) mul16s_error::a#0  // register copy zp ZP_WORD:3
   //SEG150 [74] call print_sword 
   //SEG151 [127] phi from mul16s_error::@1 to print_sword [phi:mul16s_error::@1->print_sword]
   //SEG152 [127] phi (signed word) print_sword::w#3 = (signed word) print_sword::w#1 [phi:mul16s_error::@1->print_sword#0] -- register_copy 
@@ -11188,7 +11178,6 @@ mul16s_error: {
     jsr print_str
   //SEG170 mul16s_error::@5
   //SEG171 [81] (signed dword) print_sdword::dw#1 ← (signed dword) mul16s_error::ms#0
-    // (signed dword) print_sdword::dw#1 = (signed dword) mul16s_error::ms#0  // register copy zp ZP_DWORD:11
   //SEG172 [82] call print_sdword 
   //SEG173 [94] phi from mul16s_error::@5 to print_sdword [phi:mul16s_error::@5->print_sdword]
   //SEG174 [94] phi (signed dword) print_sdword::dw#4 = (signed dword) print_sdword::dw#1 [phi:mul16s_error::@5->print_sdword#0] -- register_copy 
@@ -11260,6 +11249,7 @@ mul16s_error: {
     str4: .text " / fast:@"
 }
 //SEG205 print_sdword
+//  Print a signed dword as HEX
 print_sdword: {
     .label dw = $b
   //SEG206 [95] if((signed dword) print_sdword::dw#4>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sdword::@1 -- vdsz1_ge_0_then_la1 
@@ -11308,6 +11298,7 @@ print_sdword: {
     rts
 }
 //SEG226 print_dword
+//  Print a dword as HEX
 print_dword: {
     .label dw = $b
   //SEG227 [104] (word) print_word::w#1 ← > (dword) print_dword::dw#4 -- vwuz1=_hi_vduz2 
@@ -11336,6 +11327,7 @@ print_dword: {
     rts
 }
 //SEG240 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 3
   //SEG241 [110] (byte) print_byte::b#0 ← > (word) print_word::w#5 -- vbuxx=_hi_vwuz1 
@@ -11360,6 +11352,7 @@ print_word: {
     rts
 }
 //SEG254 print_byte
+//  Print a byte as HEX
 print_byte: {
   //SEG255 [116] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
@@ -11392,6 +11385,7 @@ print_byte: {
     rts
 }
 //SEG270 print_char
+//  Print a single char
 print_char: {
   //SEG271 [124] *((byte*) print_char_cursor#84) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -11406,6 +11400,7 @@ print_char: {
     rts
 }
 //SEG275 print_sword
+//  Print a signed word as HEX
 print_sword: {
     .label w = 3
   //SEG276 [128] if((signed word) print_sword::w#3>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -11436,7 +11431,6 @@ print_sword: {
   //SEG288 print_sword::@1
   b1:
   //SEG289 [133] (word~) print_word::w#11 ← (word)(signed word) print_sword::w#4
-    // (word~) print_word::w#11 = (word)(signed word) print_sword::w#4  // register copy zp ZP_WORD:3
   //SEG290 [134] call print_word 
   //SEG291 [109] phi from print_sword::@1 to print_word [phi:print_sword::@1->print_word]
   //SEG292 [109] phi (byte*) print_char_cursor#132 = (byte*) print_char_cursor#130 [phi:print_sword::@1->print_word#0] -- register_copy 
@@ -11447,6 +11441,8 @@ print_sword: {
     rts
 }
 //SEG296 mulf16s
+//  Fast multiply two signed words to a signed double word result
+//  Fixes offsets introduced by using unsigned multiplication
 mulf16s: {
     .label _5 = 3
     .label _6 = 9
@@ -11474,10 +11470,8 @@ mulf16s: {
   //SEG302 [155] phi (word) mulf16u::a#2 = (word~) mulf16u::a#4 [phi:mulf16s->mulf16u#1] -- register_copy 
     jsr mulf16u
   //SEG303 [139] (dword) mulf16u::return#2 ← (dword) mulf16u::return#0
-    // (dword) mulf16u::return#2 = (dword) mulf16u::return#0  // register copy zp ZP_DWORD:17
   //SEG304 mulf16s::@6
   //SEG305 [140] (dword) mulf16s::m#0 ← (dword) mulf16u::return#2
-    // (dword) mulf16s::m#0 = (dword) mulf16u::return#2  // register copy zp ZP_DWORD:17
   //SEG306 [141] if((signed word) mulf16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mulf16s::@1 -- vwsz1_ge_0_then_la1 
     lda a+1
     bpl b1
@@ -11546,6 +11540,8 @@ mulf16s: {
     rts
 }
 //SEG327 mulf16u
+//  Fast multiply two unsigned words to a double word result
+//  Done in assembler to utilize fast addition A+X
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -11670,6 +11666,8 @@ mulf16u: {
     rts
 }
 //SEG334 mul16s
+//  Multiply of two signed words to a signed double word
+//  Fixes offsets introduced by using unsigned multiplication
 mul16s: {
     .label _5 = 3
     .label _6 = 9
@@ -11697,10 +11695,8 @@ mul16s: {
   //SEG340 [180] phi (word) mul16u::b#2 = (word~) mul16u::b#3 [phi:mul16s->mul16u#1] -- register_copy 
     jsr mul16u
   //SEG341 [164] (dword) mul16u::return#2 ← (dword) mul16u::res#2
-    // (dword) mul16u::return#2 = (dword) mul16u::res#2  // register copy zp ZP_DWORD:25
   //SEG342 mul16s::@6
   //SEG343 [165] (dword) mul16s::m#0 ← (dword) mul16u::return#2
-    // (dword) mul16s::m#0 = (dword) mul16u::return#2  // register copy zp ZP_DWORD:25
   //SEG344 [166] if((signed word) mul16s::a#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul16s::@1 -- vwsz1_ge_0_then_la1 
     lda a+1
     bpl b1
@@ -11769,6 +11765,7 @@ mul16s: {
     rts
 }
 //SEG365 mul16u
+//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label mb = $11
     .label a = 9
@@ -11844,6 +11841,8 @@ mul16u: {
     jmp b1
 }
 //SEG389 muls16s
+//  Slow multiplication of signed words
+//  Perform a signed multiplication by repeated addition/subtraction
 muls16s: {
     .label m = $b
     .label j = 9
@@ -11982,6 +11981,7 @@ muls16s: {
     jmp b4
 }
 //SEG420 mul16u_compare
+//  Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
     .label a = $15
     .label b = $17
@@ -12048,47 +12048,36 @@ mul16u_compare: {
     adc #>$ffd
     sta b+1
   //SEG447 [209] (word) muls16u::a#0 ← (word) mul16u_compare::a#1
-    // (word) muls16u::a#0 = (word) mul16u_compare::a#1  // register copy zp ZP_WORD:21
   //SEG448 [210] (word) muls16u::b#0 ← (word) mul16u_compare::b#1
-    // (word) muls16u::b#0 = (word) mul16u_compare::b#1  // register copy zp ZP_WORD:23
   //SEG449 [211] call muls16u 
     jsr muls16u
   //SEG450 [212] (dword) muls16u::return#2 ← (dword) muls16u::return#0
-    // (dword) muls16u::return#2 = (dword) muls16u::return#0  // register copy zp ZP_DWORD:11
   //SEG451 mul16u_compare::@13
   //SEG452 [213] (dword) mul16u_compare::ms#0 ← (dword) muls16u::return#2
-    // (dword) mul16u_compare::ms#0 = (dword) muls16u::return#2  // register copy zp ZP_DWORD:11
   //SEG453 [214] (word) mul16u::a#2 ← (word) mul16u_compare::a#1 -- vwuz1=vwuz2 
     lda a
     sta mul16u.a
     lda a+1
     sta mul16u.a+1
   //SEG454 [215] (word) mul16u::b#1 ← (word) mul16u_compare::b#1
-    // (word) mul16u::b#1 = (word) mul16u_compare::b#1  // register copy zp ZP_WORD:23
   //SEG455 [216] call mul16u 
   //SEG456 [180] phi from mul16u_compare::@13 to mul16u [phi:mul16u_compare::@13->mul16u]
   //SEG457 [180] phi (word) mul16u::a#6 = (word) mul16u::a#2 [phi:mul16u_compare::@13->mul16u#0] -- register_copy 
   //SEG458 [180] phi (word) mul16u::b#2 = (word) mul16u::b#1 [phi:mul16u_compare::@13->mul16u#1] -- register_copy 
     jsr mul16u
   //SEG459 [217] (dword) mul16u::return#3 ← (dword) mul16u::res#2
-    // (dword) mul16u::return#3 = (dword) mul16u::res#2  // register copy zp ZP_DWORD:25
   //SEG460 mul16u_compare::@14
   //SEG461 [218] (dword) mul16u_compare::mn#0 ← (dword) mul16u::return#3
-    // (dword) mul16u_compare::mn#0 = (dword) mul16u::return#3  // register copy zp ZP_DWORD:25
   //SEG462 [219] (word) mulf16u::a#1 ← (word) mul16u_compare::a#1
-    // (word) mulf16u::a#1 = (word) mul16u_compare::a#1  // register copy zp ZP_WORD:21
   //SEG463 [220] (word) mulf16u::b#1 ← (word) mul16u_compare::b#1
-    // (word) mulf16u::b#1 = (word) mul16u_compare::b#1  // register copy zp ZP_WORD:23
   //SEG464 [221] call mulf16u 
   //SEG465 [155] phi from mul16u_compare::@14 to mulf16u [phi:mul16u_compare::@14->mulf16u]
   //SEG466 [155] phi (word) mulf16u::b#2 = (word) mulf16u::b#1 [phi:mul16u_compare::@14->mulf16u#0] -- register_copy 
   //SEG467 [155] phi (word) mulf16u::a#2 = (word) mulf16u::a#1 [phi:mul16u_compare::@14->mulf16u#1] -- register_copy 
     jsr mulf16u
   //SEG468 [222] (dword) mulf16u::return#3 ← (dword) mulf16u::return#0
-    // (dword) mulf16u::return#3 = (dword) mulf16u::return#0  // register copy zp ZP_DWORD:17
   //SEG469 mul16u_compare::@15
   //SEG470 [223] (dword) mul16u_compare::mf#0 ← (dword) mulf16u::return#3
-    // (dword) mul16u_compare::mf#0 = (dword) mulf16u::return#3  // register copy zp ZP_DWORD:17
   //SEG471 [224] if((dword) mul16u_compare::ms#0==(dword) mul16u_compare::mf#0) goto mul16u_compare::@3 -- vduz1_eq_vduz2_then_la1 
     lda ms
     cmp mf
@@ -12147,13 +12136,9 @@ mul16u_compare: {
     lda a+1
     sta mul16u_error.a+1
   //SEG487 [232] (word) mul16u_error::b#0 ← (word) mul16u_compare::b#1
-    // (word) mul16u_error::b#0 = (word) mul16u_compare::b#1  // register copy zp ZP_WORD:23
   //SEG488 [233] (dword) mul16u_error::ms#0 ← (dword) mul16u_compare::ms#0
-    // (dword) mul16u_error::ms#0 = (dword) mul16u_compare::ms#0  // register copy zp ZP_DWORD:11
   //SEG489 [234] (dword) mul16u_error::mn#0 ← (dword) mul16u_compare::mn#0
-    // (dword) mul16u_error::mn#0 = (dword) mul16u_compare::mn#0  // register copy zp ZP_DWORD:25
   //SEG490 [235] (dword) mul16u_error::mf#0 ← (dword) mul16u_compare::mf#0
-    // (dword) mul16u_error::mf#0 = (dword) mul16u_compare::mf#0  // register copy zp ZP_DWORD:17
   //SEG491 [236] call mul16u_error 
   //SEG492 [249] phi from mul16u_compare::@8 to mul16u_error [phi:mul16u_compare::@8->mul16u_error]
     jsr mul16u_error
@@ -12236,7 +12221,6 @@ mul16u_error: {
     jsr print_str
   //SEG528 mul16u_error::@1
   //SEG529 [251] (word) print_word::w#3 ← (word) mul16u_error::a#0
-    // (word) print_word::w#3 = (word) mul16u_error::a#0  // register copy zp ZP_WORD:3
   //SEG530 [252] call print_word 
   //SEG531 [109] phi from mul16u_error::@1 to print_word [phi:mul16u_error::@1->print_word]
   //SEG532 [109] phi (byte*) print_char_cursor#132 = (byte*) print_char_cursor#128 [phi:mul16u_error::@1->print_word#0] -- register_copy 
@@ -12277,7 +12261,6 @@ mul16u_error: {
     jsr print_str
   //SEG552 mul16u_error::@5
   //SEG553 [259] (dword) print_dword::dw#1 ← (dword) mul16u_error::ms#0
-    // (dword) print_dword::dw#1 = (dword) mul16u_error::ms#0  // register copy zp ZP_DWORD:11
   //SEG554 [260] call print_dword 
   //SEG555 [103] phi from mul16u_error::@5 to print_dword [phi:mul16u_error::@5->print_dword]
   //SEG556 [103] phi (byte*) print_char_cursor#133 = (byte*) print_char_cursor#128 [phi:mul16u_error::@5->print_dword#0] -- register_copy 
@@ -12356,6 +12339,8 @@ mul16u_error: {
     str4: .text " / fast:@"
 }
 //SEG590 muls16u
+//  Slow multiplication of unsigned words
+//  Calculate an unsigned multiplication by repeated addition
 muls16u: {
     .label return = $b
     .label m = $b
@@ -12427,6 +12412,7 @@ muls16u: {
     rts
 }
 //SEG609 mulf_init
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 5
     .label sqr = 7
@@ -12595,6 +12581,7 @@ mulf_init: {
   //SEG670 [301] phi (byte) mulf_init::dir#3 = (byte) mulf_init::dir#2 [phi:mulf_init::@12->mulf_init::@4#0] -- register_copy 
 }
 //SEG671 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 3
   //SEG672 [309] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]

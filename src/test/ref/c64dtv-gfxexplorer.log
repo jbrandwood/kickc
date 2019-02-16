@@ -13944,6 +13944,7 @@ main: {
     jmp b1
 }
 //SEG34 gfx_mode
+//  Change graphics mode to show the selected graphics mode
 gfx_mode: {
     .label _29 = $9e
     .label _31 = $a4
@@ -14752,6 +14753,9 @@ gfx_mode: {
     jmp b19
 }
 //SEG252 keyboard_event_get
+//  Get the next event from the keyboard event buffer.
+//  Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+//  The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
     .label return = $d
     .label return_3 = $f1
@@ -14787,6 +14791,10 @@ keyboard_event_get: {
     rts
 }
 //SEG265 keyboard_event_scan
+//  Scans the entire matrix to determine which keys have been pressed/depressed.
+//  Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+//  Handles debounce and only generates events when the status of a key changes.
+//  Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label _3 = $fe
     .label _4 = $ff
@@ -15105,6 +15113,8 @@ keyboard_event_scan: {
     jmp b5_from_b7
 }
 //SEG374 keyboard_event_pressed
+//  Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+//  Returns 0 is not pressed and non-0 if pressed
 keyboard_event_pressed: {
     .label _0 = $102
     .label _1 = $104
@@ -15141,6 +15151,11 @@ keyboard_event_pressed: {
     rts
 }
 //SEG381 keyboard_matrix_read
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     .label return = $106
     .label rowid = $f3
@@ -15160,6 +15175,7 @@ keyboard_matrix_read: {
     rts
 }
 //SEG386 get_vic_screen
+//  Get the VIC screen address from the screen index
 get_vic_screen: {
     .label return = $15
     .label idx = $14
@@ -15250,6 +15266,7 @@ get_vic_screen: {
     jmp breturn_from_b9
 }
 //SEG410 get_vic_charset
+//  Get the VIC charset/bitmap address from the index
 get_vic_charset: {
     .label return = $17
     .label idx = $dd
@@ -15294,6 +15311,7 @@ get_vic_charset: {
     jmp breturn_from_b3
 }
 //SEG422 get_plane
+//  Get plane address from a plane index (from the form)
 get_plane: {
     .label return = $1a
     .label idx = $19
@@ -15575,6 +15593,7 @@ get_plane: {
     jmp breturn_from_b27
 }
 //SEG482 form_mode
+//  Show the form - and let the user change values
 form_mode: {
     .label _36 = $108
     .label i = $1e
@@ -15832,6 +15851,8 @@ form_mode: {
     jmp b2_from_b32
 }
 //SEG580 render_preset_name
+//  Render form preset name in the form
+//  idx is the ID of the preset
 render_preset_name: {
     .label idx = $22
     .label name = $23
@@ -16040,6 +16061,7 @@ render_preset_name: {
     name_11: .text "Standard Charset              @"
 }
 //SEG634 print_str_at
+//  Print a string at a specific screen position
 print_str_at: {
     .label at = $27
     .label str = $25
@@ -16088,6 +16110,7 @@ print_str_at: {
     jmp b1
 }
 //SEG649 form_render_values
+//  Render all form values from the form_fields_val array
 form_render_values: {
     .label field = $10c
     .label idx = $29
@@ -16144,6 +16167,8 @@ form_render_values: {
     rts
 }
 //SEG667 form_field_ptr
+//  Get the screen address of a form field
+//  field_idx is the index of the field to get the screen address for
 form_field_ptr: {
     .label y = $10e
     .label x = $111
@@ -16181,6 +16206,8 @@ form_field_ptr: {
     rts
 }
 //SEG674 apply_preset
+//  Apply a form value preset to the form values
+//  idx is the ID of the preset
 apply_preset: {
     .label i = $2d
     .label idx = $109
@@ -16384,6 +16411,8 @@ apply_preset: {
     rts
 }
 //SEG731 form_control
+//  Reads keyboard and allows the user to navigate and change the fields of the form
+//  Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
     .label _5 = $118
     .label _6 = $11e
@@ -16677,6 +16706,8 @@ form_control: {
     jmp b1
 }
 //SEG824 form_set_screen
+//  Set the screen to use for the form.
+//  screen is the start address of the screen to use
 form_set_screen: {
     .label _0 = $11f
     .label _1 = $120
@@ -16735,6 +16766,8 @@ form_set_screen: {
     rts
 }
 //SEG841 print_str_lines
+//  Print a number of zero-terminated strings, each followed by a newline.
+//  The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label ch = $121
     .label str = $32
@@ -16823,6 +16856,7 @@ print_str_lines: {
     jmp b1_from_b9
 }
 //SEG870 print_ln
+//  Print a newline
 print_ln: {
   //SEG871 [436] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -16855,6 +16889,7 @@ print_ln: {
     rts
 }
 //SEG878 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label _0 = $122
     .label sc = $38
@@ -16901,6 +16936,7 @@ print_cls: {
     rts
 }
 //SEG889 print_set_screen
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     .label screen = $36
     jmp breturn
@@ -16910,6 +16946,7 @@ print_set_screen: {
     rts
 }
 //SEG892 gfx_init
+//  Initialize the different graphics in the memory
 gfx_init: {
   //SEG893 [450] call gfx_init_screen0 
   //SEG894 [848] phi from gfx_init to gfx_init_screen0 [phi:gfx_init->gfx_init_screen0]
@@ -17046,6 +17083,7 @@ gfx_init: {
     rts
 }
 //SEG952 gfx_init_plane_full
+//  Initialize Plane with all pixels
 gfx_init_plane_full: {
   //SEG953 [481] call gfx_init_plane_fill 
   //SEG954 [483] phi from gfx_init_plane_full to gfx_init_plane_fill [phi:gfx_init_plane_full->gfx_init_plane_fill]
@@ -17070,6 +17108,7 @@ gfx_init_plane_full: {
     rts
 }
 //SEG959 gfx_init_plane_fill
+//  Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
 gfx_init_plane_fill: {
     .label _0 = $124
     .label _1 = $128
@@ -17219,6 +17258,9 @@ gfx_init_plane_fill: {
     rts
 }
 //SEG1001 dtvSetCpuBankSegment1
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
     .label cpuBankIdx = $43
@@ -17236,6 +17278,7 @@ dtvSetCpuBankSegment1: {
     rts
 }
 //SEG1006 gfx_init_plane_blank
+//  Initialize Plane with blank pixels
 gfx_init_plane_blank: {
   //SEG1007 [510] call gfx_init_plane_fill 
   //SEG1008 [483] phi from gfx_init_plane_blank to gfx_init_plane_fill [phi:gfx_init_plane_blank->gfx_init_plane_fill]
@@ -17260,6 +17303,7 @@ gfx_init_plane_blank: {
     rts
 }
 //SEG1013 gfx_init_plane_vertical2
+//  Initialize Plane with Vertical Stripes every 2 pixels
 gfx_init_plane_vertical2: {
   //SEG1014 [513] call gfx_init_plane_fill 
   //SEG1015 [483] phi from gfx_init_plane_vertical2 to gfx_init_plane_fill [phi:gfx_init_plane_vertical2->gfx_init_plane_fill]
@@ -17284,6 +17328,7 @@ gfx_init_plane_vertical2: {
     rts
 }
 //SEG1020 gfx_init_plane_horisontal2
+//  Initialize Plane with Horizontal Stripes every 2 pixels
 gfx_init_plane_horisontal2: {
     .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
     .label _5 = $132
@@ -17383,6 +17428,7 @@ gfx_init_plane_horisontal2: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 //SEG1054 gfx_init_plane_vertical
+//  Initialize Plane with Vertical Stripes
 gfx_init_plane_vertical: {
     .const gfxbCpuBank = PLANE_VERTICAL/$4000
     .label gfxb = $49
@@ -17470,6 +17516,7 @@ gfx_init_plane_vertical: {
     rts
 }
 //SEG1086 gfx_init_plane_horisontal
+//  Initialize Plane with Horizontal Stripes
 gfx_init_plane_horisontal: {
     .const gfxbCpuBank = PLANE_HORISONTAL/$4000
     .label _5 = $134
@@ -17588,6 +17635,7 @@ gfx_init_plane_horisontal: {
     jmp b4_from_b3
 }
 //SEG1127 gfx_init_plane_charset8
+//  Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
     .label _5 = $135
@@ -17768,6 +17816,7 @@ gfx_init_plane_charset8: {
     rts
 }
 //SEG1196 gfx_init_plane_8bppchunky
+//  Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
     .label _6 = $136
     .label c = $138
@@ -17921,6 +17970,7 @@ gfx_init_plane_8bppchunky: {
     rts
 }
 //SEG1249 gfx_init_vic_bitmap
+//  Initialize VIC bitmap
 gfx_init_vic_bitmap: {
     .const lines_cnt = 9
     .label l = $60
@@ -17983,6 +18033,7 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 //SEG1270 bitmap_line
+//  Draw a line on the bitmap
 bitmap_line: {
     .label xd = $140
     .label xd_1 = $13d
@@ -18657,6 +18708,7 @@ bitmap_line_ydxd: {
     rts
 }
 //SEG1516 bitmap_clear
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = $7c
     .label x = $7e
@@ -18731,6 +18783,7 @@ bitmap_clear: {
     rts
 }
 //SEG1542 bitmap_init
+//  Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _0 = $150
     .label _6 = $151
@@ -18973,6 +19026,7 @@ gfx_init_charset: {
     rts
 }
 //SEG1621 gfx_init_screen4
+//  Initialize VIC screen 4 - all chars are 00
 gfx_init_screen4: {
     .label ch = $8b
     .label cx = $8d
@@ -19040,6 +19094,7 @@ gfx_init_screen4: {
     rts
 }
 //SEG1645 gfx_init_screen3
+//  Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 gfx_init_screen3: {
     .label _0 = $156
     .label _1 = $157
@@ -19130,6 +19185,7 @@ gfx_init_screen3: {
     rts
 }
 //SEG1673 gfx_init_screen2
+//  Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
 gfx_init_screen2: {
     .label _0 = $15a
     .label _3 = $15d
@@ -19227,6 +19283,7 @@ gfx_init_screen2: {
     rts
 }
 //SEG1702 gfx_init_screen1
+//  Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
 gfx_init_screen1: {
     .label _0 = $15f
     .label _1 = $160
@@ -19305,6 +19362,7 @@ gfx_init_screen1: {
     rts
 }
 //SEG1728 gfx_init_screen0
+//  Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
     .label _0 = $161
     .label _1 = $162
@@ -19395,6 +19453,7 @@ gfx_init_screen0: {
     rts
 }
 //SEG1756 keyboard_init
+//  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
   //SEG1757 [862] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
     lda #$ff
@@ -21076,6 +21135,7 @@ main: {
     jmp b1
 }
 //SEG34 gfx_mode
+//  Change graphics mode to show the selected graphics mode
 gfx_mode: {
     .label _31 = $a
     .label _33 = 3
@@ -21291,12 +21351,10 @@ gfx_mode: {
   //SEG103 [236] phi (byte) get_plane::idx#10 = (byte) get_plane::idx#0 [phi:gfx_mode::@9->get_plane#0] -- register_copy 
     jsr get_plane
   //SEG104 [50] (dword) get_plane::return#16 ← (dword) get_plane::return#14
-    // (dword) get_plane::return#16 = (dword) get_plane::return#14  // register copy zp ZP_DWORD:10
     jmp b46
   //SEG105 gfx_mode::@46
   b46:
   //SEG106 [51] (dword~) gfx_mode::$31 ← (dword) get_plane::return#16
-    // (dword~) gfx_mode::$31 = (dword) get_plane::return#16  // register copy zp ZP_DWORD:10
   //SEG107 [52] (dword) gfx_mode::plane_a#0 ← (dword~) gfx_mode::$31 + (byte) gfx_mode::plane_a_offs#0 -- vduz1=vduz1_plus_vbuyy 
     tya
     clc
@@ -21378,12 +21436,10 @@ gfx_mode: {
   //SEG129 [236] phi (byte) get_plane::idx#10 = (byte) get_plane::idx#1 [phi:gfx_mode::@46->get_plane#0] -- register_copy 
     jsr get_plane
   //SEG130 [73] (dword) get_plane::return#17 ← (dword) get_plane::return#14
-    // (dword) get_plane::return#17 = (dword) get_plane::return#14  // register copy zp ZP_DWORD:10
     jmp b47
   //SEG131 gfx_mode::@47
   b47:
   //SEG132 [74] (dword~) gfx_mode::$45 ← (dword) get_plane::return#17
-    // (dword~) gfx_mode::$45 = (dword) get_plane::return#17  // register copy zp ZP_DWORD:10
   //SEG133 [75] (dword) gfx_mode::plane_b#0 ← (dword~) gfx_mode::$45 + (byte) gfx_mode::plane_b_offs#0 -- vduz1=vduz1_plus_vbuyy 
     tya
     clc
@@ -21462,12 +21518,10 @@ gfx_mode: {
   //SEG155 [222] phi (byte) get_vic_screen::idx#2 = (byte) get_vic_screen::idx#0 [phi:gfx_mode::@47->get_vic_screen#0] -- register_copy 
     jsr get_vic_screen
   //SEG156 [96] (byte*) get_vic_screen::return#10 ← (byte*) get_vic_screen::return#5
-    // (byte*) get_vic_screen::return#10 = (byte*) get_vic_screen::return#5  // register copy zp ZP_WORD:3
     jmp b48
   //SEG157 gfx_mode::@48
   b48:
   //SEG158 [97] (byte*~) gfx_mode::$61 ← (byte*) get_vic_screen::return#10
-    // (byte*~) gfx_mode::$61 = (byte*) get_vic_screen::return#10  // register copy zp ZP_WORD:3
   //SEG159 [98] (word~) gfx_mode::$63 ← (word)(byte*~) gfx_mode::$61 & (word/signed word/dword/signed dword) 16383 -- vwuz1=vwuz1_band_vwuc1 
     lda _63
     and #<$3fff
@@ -21490,12 +21544,10 @@ gfx_mode: {
   //SEG163 [102] call get_vic_charset 
     jsr get_vic_charset
   //SEG164 [103] (byte*) get_vic_charset::return#4 ← (byte*) get_vic_charset::return#2
-    // (byte*) get_vic_charset::return#4 = (byte*) get_vic_charset::return#2  // register copy zp ZP_WORD:3
     jmp b49
   //SEG165 gfx_mode::@49
   b49:
   //SEG166 [104] (byte*~) gfx_mode::$66 ← (byte*) get_vic_charset::return#4
-    // (byte*~) gfx_mode::$66 = (byte*) get_vic_charset::return#4  // register copy zp ZP_WORD:3
   //SEG167 [105] (word~) gfx_mode::$68 ← (word)(byte*~) gfx_mode::$66 & (word/signed word/dword/signed dword) 16383 -- vwuz1=vwuz1_band_vwuc1 
     lda _68
     and #<$3fff
@@ -21520,12 +21572,10 @@ gfx_mode: {
   //SEG175 [222] phi (byte) get_vic_screen::idx#2 = (byte) get_vic_screen::idx#1 [phi:gfx_mode::@49->get_vic_screen#0] -- register_copy 
     jsr get_vic_screen
   //SEG176 [112] (byte*) get_vic_screen::return#11 ← (byte*) get_vic_screen::return#5
-    // (byte*) get_vic_screen::return#11 = (byte*) get_vic_screen::return#5  // register copy zp ZP_WORD:3
     jmp b50
   //SEG177 gfx_mode::@50
   b50:
   //SEG178 [113] (byte*) gfx_mode::vic_colors#0 ← (byte*) get_vic_screen::return#11
-    // (byte*) gfx_mode::vic_colors#0 = (byte*) get_vic_screen::return#11  // register copy zp ZP_WORD:3
   //SEG179 [114] phi from gfx_mode::@50 to gfx_mode::@10 [phi:gfx_mode::@50->gfx_mode::@10]
   b10_from_b50:
   //SEG180 [114] phi (byte) gfx_mode::cy#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:gfx_mode::@50->gfx_mode::@10#0] -- vbuz1=vbuc1 
@@ -21686,12 +21736,10 @@ gfx_mode: {
   //SEG237 [145] call keyboard_event_get 
     jsr keyboard_event_get
   //SEG238 [146] (byte) keyboard_event_get::return#3 ← (byte) keyboard_event_get::return#2
-    // (byte) keyboard_event_get::return#3 = (byte) keyboard_event_get::return#2  // register copy reg byte a
     jmp b52
   //SEG239 gfx_mode::@52
   b52:
   //SEG240 [147] (byte) gfx_mode::keyboard_event#0 ← (byte) keyboard_event_get::return#3
-    // (byte) gfx_mode::keyboard_event#0 = (byte) keyboard_event_get::return#3  // register copy reg byte a
   //SEG241 [148] if((byte) gfx_mode::keyboard_event#0!=(const byte) KEY_SPACE#0) goto gfx_mode::@19 -- vbuaa_neq_vbuc1_then_la1 
     cmp #KEY_SPACE
     bne b19
@@ -21722,6 +21770,9 @@ gfx_mode: {
     jmp b19
 }
 //SEG252 keyboard_event_get
+//  Get the next event from the keyboard event buffer.
+//  Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+//  The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
   //SEG253 [154] if((byte) keyboard_events_size#100==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_get::@return -- vbuz1_eq_0_then_la1 
     lda keyboard_events_size
@@ -21752,6 +21803,10 @@ keyboard_event_get: {
     rts
 }
 //SEG265 keyboard_event_scan
+//  Scans the entire matrix to determine which keys have been pressed/depressed.
+//  Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+//  Handles debounce and only generates events when the status of a key changes.
+//  Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label row_scan = $12
     .label keycode = 8
@@ -21780,7 +21835,6 @@ keyboard_event_scan: {
   //SEG276 [162] call keyboard_matrix_read 
     jsr keyboard_matrix_read
   //SEG277 [163] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    // (byte) keyboard_matrix_read::return#2 = (byte) keyboard_matrix_read::return#0  // register copy reg byte a
     jmp b25
   //SEG278 keyboard_event_scan::@25
   b25:
@@ -21826,12 +21880,10 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
   //SEG294 [172] (byte) keyboard_event_pressed::return#0 ← (byte) keyboard_event_pressed::return#10
-    // (byte) keyboard_event_pressed::return#0 = (byte) keyboard_event_pressed::return#10  // register copy reg byte a
     jmp b26
   //SEG295 keyboard_event_scan::@26
   b26:
   //SEG296 [173] (byte~) keyboard_event_scan::$14 ← (byte) keyboard_event_pressed::return#0
-    // (byte~) keyboard_event_scan::$14 = (byte) keyboard_event_pressed::return#0  // register copy reg byte a
   //SEG297 [174] if((byte~) keyboard_event_scan::$14==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_scan::@9 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b9_from_b26
@@ -21862,12 +21914,10 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
   //SEG308 [178] (byte) keyboard_event_pressed::return#1 ← (byte) keyboard_event_pressed::return#10
-    // (byte) keyboard_event_pressed::return#1 = (byte) keyboard_event_pressed::return#10  // register copy reg byte a
     jmp b27
   //SEG309 keyboard_event_scan::@27
   b27:
   //SEG310 [179] (byte~) keyboard_event_scan::$18 ← (byte) keyboard_event_pressed::return#1
-    // (byte~) keyboard_event_scan::$18 = (byte) keyboard_event_pressed::return#1  // register copy reg byte a
   //SEG311 [180] if((byte~) keyboard_event_scan::$18==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_scan::@10 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b10_from_b27
@@ -21893,12 +21943,10 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
   //SEG320 [184] (byte) keyboard_event_pressed::return#2 ← (byte) keyboard_event_pressed::return#10
-    // (byte) keyboard_event_pressed::return#2 = (byte) keyboard_event_pressed::return#10  // register copy reg byte a
     jmp b28
   //SEG321 keyboard_event_scan::@28
   b28:
   //SEG322 [185] (byte~) keyboard_event_scan::$22 ← (byte) keyboard_event_pressed::return#2
-    // (byte~) keyboard_event_scan::$22 = (byte) keyboard_event_pressed::return#2  // register copy reg byte a
   //SEG323 [186] if((byte~) keyboard_event_scan::$22==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_scan::@11 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b11_from_b28
@@ -21924,12 +21972,10 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
   //SEG332 [190] (byte) keyboard_event_pressed::return#3 ← (byte) keyboard_event_pressed::return#10
-    // (byte) keyboard_event_pressed::return#3 = (byte) keyboard_event_pressed::return#10  // register copy reg byte a
     jmp b29
   //SEG333 keyboard_event_scan::@29
   b29:
   //SEG334 [191] (byte~) keyboard_event_scan::$26 ← (byte) keyboard_event_pressed::return#3
-    // (byte~) keyboard_event_scan::$26 = (byte) keyboard_event_pressed::return#3  // register copy reg byte a
   //SEG335 [192] if((byte~) keyboard_event_scan::$26==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_scan::@return -- vbuaa_eq_0_then_la1 
     cmp #0
     beq breturn_from_b29
@@ -22039,6 +22085,8 @@ keyboard_event_scan: {
     jmp b5_from_b7
 }
 //SEG374 keyboard_event_pressed
+//  Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+//  Returns 0 is not pressed and non-0 if pressed
 keyboard_event_pressed: {
     .label row_bits = 8
     .label keycode = 7
@@ -22065,6 +22113,11 @@ keyboard_event_pressed: {
     rts
 }
 //SEG381 keyboard_matrix_read
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
   //SEG382 [219] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuaa 
     tay
@@ -22080,6 +22133,7 @@ keyboard_matrix_read: {
     rts
 }
 //SEG386 get_vic_screen
+//  Get the VIC screen address from the screen index
 get_vic_screen: {
     .label return = 3
   //SEG387 [223] if((byte) get_vic_screen::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_vic_screen::@return -- vbuaa_eq_0_then_la1 
@@ -22162,6 +22216,7 @@ get_vic_screen: {
     jmp breturn_from_b9
 }
 //SEG410 get_vic_charset
+//  Get the VIC charset/bitmap address from the index
 get_vic_charset: {
     .label return = 3
   //SEG411 [231] if((byte) get_vic_charset::idx#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_vic_charset::@return -- vbuaa_eq_0_then_la1 
@@ -22202,6 +22257,7 @@ get_vic_charset: {
     jmp breturn_from_b3
 }
 //SEG422 get_plane
+//  Get plane address from a plane index (from the form)
 get_plane: {
     .label return = $a
   //SEG423 [237] if((byte) get_plane::idx#10==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_plane::@return -- vbuaa_eq_0_then_la1 
@@ -22466,6 +22522,7 @@ get_plane: {
     jmp breturn_from_b27
 }
 //SEG482 form_mode
+//  Show the form - and let the user change values
 form_mode: {
     .label preset_current = $f
   //SEG483 [255] call print_set_screen 
@@ -22667,7 +22724,6 @@ form_mode: {
   //SEG561 form_mode::@30
   b30:
   //SEG562 [296] (byte~) form_mode::$36 ← (byte) form_control::return#0
-    // (byte~) form_mode::$36 = (byte) form_control::return#0  // register copy reg byte a
   //SEG563 [297] if((byte~) form_mode::$36==(byte/signed byte/word/signed word/dword/signed dword) 0) goto form_mode::@8 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b8
@@ -22712,6 +22768,8 @@ form_mode: {
     jmp b2_from_b32
 }
 //SEG580 render_preset_name
+//  Render form preset name in the form
+//  idx is the ID of the preset
 render_preset_name: {
     .label name = 3
   //SEG581 [307] if((byte) render_preset_name::idx#10==(byte/signed byte/word/signed word/dword/signed dword) 0) goto render_preset_name::@22 -- vbuaa_eq_0_then_la1 
@@ -22881,7 +22939,6 @@ render_preset_name: {
   //SEG628 render_preset_name::@22
   b22:
   //SEG629 [320] (byte*) print_str_at::str#1 ← (byte*) render_preset_name::name#12
-    // (byte*) print_str_at::str#1 = (byte*) render_preset_name::name#12  // register copy zp ZP_WORD:3
   //SEG630 [321] call print_str_at 
   //SEG631 [323] phi from render_preset_name::@22 to print_str_at [phi:render_preset_name::@22->print_str_at]
   print_str_at_from_b22:
@@ -22905,6 +22962,7 @@ render_preset_name: {
     name_11: .text "Standard Charset              @"
 }
 //SEG634 print_str_at
+//  Print a string at a specific screen position
 print_str_at: {
     .label at = 5
     .label str = 3
@@ -22953,6 +23011,7 @@ print_str_at: {
     jmp b1
 }
 //SEG649 form_render_values
+//  Render all form values from the form_fields_val array
 form_render_values: {
     .label field = 3
     .label idx = 2
@@ -22969,19 +23028,16 @@ form_render_values: {
   //SEG654 form_render_values::@1
   b1:
   //SEG655 [332] (byte) form_field_ptr::field_idx#0 ← (byte) form_render_values::idx#2
-    // (byte) form_field_ptr::field_idx#0 = (byte) form_render_values::idx#2  // register copy zp ZP_BYTE:2
   //SEG656 [333] call form_field_ptr 
   //SEG657 [340] phi from form_render_values::@1 to form_field_ptr [phi:form_render_values::@1->form_field_ptr]
   form_field_ptr_from_b1:
   //SEG658 [340] phi (byte) form_field_ptr::field_idx#2 = (byte) form_field_ptr::field_idx#0 [phi:form_render_values::@1->form_field_ptr#0] -- register_copy 
     jsr form_field_ptr
   //SEG659 [334] (byte*) form_field_ptr::return#2 ← (byte*) form_field_ptr::return#0
-    // (byte*) form_field_ptr::return#2 = (byte*) form_field_ptr::return#0  // register copy zp ZP_WORD:3
     jmp b3
   //SEG660 form_render_values::@3
   b3:
   //SEG661 [335] (byte*) form_render_values::field#0 ← (byte*) form_field_ptr::return#2
-    // (byte*) form_render_values::field#0 = (byte*) form_field_ptr::return#2  // register copy zp ZP_WORD:3
   //SEG662 [336] *((byte*) form_render_values::field#0) ← *((const byte[]) print_hextab#0 + *((const byte[]) form_fields_val#0 + (byte) form_render_values::idx#2)) -- _deref_pbuz1=pbuc1_derefidx_pbuc2_derefidx_vbuz2 
     ldy idx
     lda form_fields_val,y
@@ -23002,6 +23058,8 @@ form_render_values: {
     rts
 }
 //SEG667 form_field_ptr
+//  Get the screen address of a form field
+//  field_idx is the index of the field to get the screen address for
 form_field_ptr: {
     .label return = 3
     .label field_idx = 2
@@ -23032,6 +23090,8 @@ form_field_ptr: {
     rts
 }
 //SEG674 apply_preset
+//  Apply a form value preset to the form values
+//  idx is the ID of the preset
 apply_preset: {
     .label preset = 3
   //SEG675 [346] if((byte) apply_preset::idx#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto apply_preset::@22 -- vbuaa_eq_0_then_la1 
@@ -23219,6 +23279,8 @@ apply_preset: {
     rts
 }
 //SEG731 form_control
+//  Reads keyboard and allows the user to navigate and change the fields of the form
+//  Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
     .label field = 3
   //SEG732 [364] (byte) form_field_ptr::field_idx#1 ← (byte) form_field_idx#28 -- vbuz1=vbuxx 
@@ -23229,12 +23291,10 @@ form_control: {
   //SEG735 [340] phi (byte) form_field_ptr::field_idx#2 = (byte) form_field_ptr::field_idx#1 [phi:form_control->form_field_ptr#0] -- register_copy 
     jsr form_field_ptr
   //SEG736 [366] (byte*) form_field_ptr::return#3 ← (byte*) form_field_ptr::return#0
-    // (byte*) form_field_ptr::return#3 = (byte*) form_field_ptr::return#0  // register copy zp ZP_WORD:3
     jmp b33
   //SEG737 form_control::@33
   b33:
   //SEG738 [367] (byte*) form_control::field#0 ← (byte*) form_field_ptr::return#3
-    // (byte*) form_control::field#0 = (byte*) form_field_ptr::return#3  // register copy zp ZP_WORD:3
   //SEG739 [368] (signed byte) form_cursor_count#5 ← -- (signed byte) form_cursor_count#21 -- vbsz1=_dec_vbsz1 
     dec form_cursor_count
   //SEG740 [369] if((signed byte) form_cursor_count#5>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto form_control::@36 -- vbsz1_ge_0_then_la1 
@@ -23286,12 +23346,10 @@ form_control: {
   //SEG755 [377] call keyboard_event_get 
     jsr keyboard_event_get
   //SEG756 [378] (byte) keyboard_event_get::return#4 ← (byte) keyboard_event_get::return#2
-    // (byte) keyboard_event_get::return#4 = (byte) keyboard_event_get::return#2  // register copy reg byte a
     jmp b35
   //SEG757 form_control::@35
   b35:
   //SEG758 [379] (byte) form_control::key_event#0 ← (byte) keyboard_event_get::return#4
-    // (byte) form_control::key_event#0 = (byte) keyboard_event_get::return#4  // register copy reg byte a
   //SEG759 [380] if((byte) form_control::key_event#0!=(const byte) KEY_CRSR_DOWN#0) goto form_control::@4 -- vbuaa_neq_vbuc1_then_la1 
     cmp #KEY_CRSR_DOWN
     bne b4
@@ -23470,6 +23528,8 @@ form_control: {
     jmp b1
 }
 //SEG824 form_set_screen
+//  Set the screen to use for the form.
+//  screen is the start address of the screen to use
 form_set_screen: {
     .label line = 3
   //SEG825 [410] phi from form_set_screen to form_set_screen::@1 [phi:form_set_screen->form_set_screen::@1]
@@ -23517,6 +23577,8 @@ form_set_screen: {
     rts
 }
 //SEG841 print_str_lines
+//  Print a number of zero-terminated strings, each followed by a newline.
+//  The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label str = 3
   //SEG842 [420] (byte*~) print_char_cursor#77 ← (byte*) print_set_screen::screen#2 -- pbuz1=pbuz2 
@@ -23600,6 +23662,7 @@ print_str_lines: {
     jmp b1_from_b9
 }
 //SEG870 print_ln
+//  Print a newline
 print_ln: {
   //SEG871 [436] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -23632,6 +23695,7 @@ print_ln: {
     rts
 }
 //SEG878 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label _0 = 5
     .label sc = 3
@@ -23678,6 +23742,7 @@ print_cls: {
     rts
 }
 //SEG889 print_set_screen
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     .label screen = $10
     jmp breturn
@@ -23687,6 +23752,7 @@ print_set_screen: {
     rts
 }
 //SEG892 gfx_init
+//  Initialize the different graphics in the memory
 gfx_init: {
   //SEG893 [450] call gfx_init_screen0 
   //SEG894 [848] phi from gfx_init to gfx_init_screen0 [phi:gfx_init->gfx_init_screen0]
@@ -23823,6 +23889,7 @@ gfx_init: {
     rts
 }
 //SEG952 gfx_init_plane_full
+//  Initialize Plane with all pixels
 gfx_init_plane_full: {
   //SEG953 [481] call gfx_init_plane_fill 
   //SEG954 [483] phi from gfx_init_plane_full to gfx_init_plane_fill [phi:gfx_init_plane_full->gfx_init_plane_fill]
@@ -23847,6 +23914,7 @@ gfx_init_plane_full: {
     rts
 }
 //SEG959 gfx_init_plane_fill
+//  Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
 gfx_init_plane_fill: {
     .label _0 = $13
     .label _1 = 3
@@ -23915,7 +23983,6 @@ gfx_init_plane_fill: {
     adc #>$4000
     sta _6+1
   //SEG972 [493] (byte*~) gfx_init_plane_fill::gfxb#6 ← (byte*)(word/signed dword/dword~) gfx_init_plane_fill::$6
-    // (byte*~) gfx_init_plane_fill::gfxb#6 = (byte*)(word/signed dword/dword~) gfx_init_plane_fill::$6  // register copy zp ZP_WORD:3
   //SEG973 [494] phi from gfx_init_plane_fill::@5 to gfx_init_plane_fill::@1 [phi:gfx_init_plane_fill::@5->gfx_init_plane_fill::@1]
   b1_from_b5:
   //SEG974 [494] phi (byte) gfx_init_plane_fill::by#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:gfx_init_plane_fill::@5->gfx_init_plane_fill::@1#0] -- vbuz1=vbuc1 
@@ -23984,6 +24051,9 @@ gfx_init_plane_fill: {
     rts
 }
 //SEG1001 dtvSetCpuBankSegment1
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
   //SEG1002 [506] *((const byte*) dtvSetCpuBankSegment1::cpuBank#0) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx#13 -- _deref_pbuc1=vbuaa 
@@ -23999,6 +24069,7 @@ dtvSetCpuBankSegment1: {
     rts
 }
 //SEG1006 gfx_init_plane_blank
+//  Initialize Plane with blank pixels
 gfx_init_plane_blank: {
   //SEG1007 [510] call gfx_init_plane_fill 
   //SEG1008 [483] phi from gfx_init_plane_blank to gfx_init_plane_fill [phi:gfx_init_plane_blank->gfx_init_plane_fill]
@@ -24023,6 +24094,7 @@ gfx_init_plane_blank: {
     rts
 }
 //SEG1013 gfx_init_plane_vertical2
+//  Initialize Plane with Vertical Stripes every 2 pixels
 gfx_init_plane_vertical2: {
   //SEG1014 [513] call gfx_init_plane_fill 
   //SEG1015 [483] phi from gfx_init_plane_vertical2 to gfx_init_plane_fill [phi:gfx_init_plane_vertical2->gfx_init_plane_fill]
@@ -24047,6 +24119,7 @@ gfx_init_plane_vertical2: {
     rts
 }
 //SEG1020 gfx_init_plane_horisontal2
+//  Initialize Plane with Horizontal Stripes every 2 pixels
 gfx_init_plane_horisontal2: {
     .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
     .label gfxa = 3
@@ -24136,6 +24209,7 @@ gfx_init_plane_horisontal2: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 //SEG1054 gfx_init_plane_vertical
+//  Initialize Plane with Vertical Stripes
 gfx_init_plane_vertical: {
     .const gfxbCpuBank = PLANE_VERTICAL/$4000
     .label gfxb = 3
@@ -24218,6 +24292,7 @@ gfx_init_plane_vertical: {
     rts
 }
 //SEG1086 gfx_init_plane_horisontal
+//  Initialize Plane with Horizontal Stripes
 gfx_init_plane_horisontal: {
     .const gfxbCpuBank = PLANE_HORISONTAL/$4000
     .label gfxa = 3
@@ -24328,6 +24403,7 @@ gfx_init_plane_horisontal: {
     jmp b4_from_b3
 }
 //SEG1127 gfx_init_plane_charset8
+//  Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
     .label bits = 8
@@ -24496,6 +24572,7 @@ gfx_init_plane_charset8: {
     rts
 }
 //SEG1196 gfx_init_plane_8bppchunky
+//  Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
     .label _6 = $10
     .label gfxb = 5
@@ -24641,6 +24718,7 @@ gfx_init_plane_8bppchunky: {
     rts
 }
 //SEG1249 gfx_init_vic_bitmap
+//  Initialize VIC bitmap
 gfx_init_vic_bitmap: {
     .const lines_cnt = 9
     .label l = 2
@@ -24702,6 +24780,7 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 //SEG1270 bitmap_line
+//  Draw a line on the bitmap
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -24747,11 +24826,8 @@ bitmap_line: {
   //SEG1280 [625] (byte) bitmap_line_ydxi::x#0 ← (byte) bitmap_line::x1#0 -- vbuxx=vbuz1 
     ldx x1
   //SEG1281 [626] (byte) bitmap_line_ydxi::y1#0 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_ydxi::y1#0 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:15
   //SEG1282 [627] (byte) bitmap_line_ydxi::yd#0 ← (byte) bitmap_line::yd#1
-    // (byte) bitmap_line_ydxi::yd#0 = (byte) bitmap_line::yd#1  // register copy zp ZP_BYTE:7
   //SEG1283 [628] (byte) bitmap_line_ydxi::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_ydxi::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1284 [629] call bitmap_line_ydxi 
   //SEG1285 [703] phi from bitmap_line::@17 to bitmap_line_ydxi [phi:bitmap_line::@17->bitmap_line_ydxi]
   bitmap_line_ydxi_from_b17:
@@ -24774,11 +24850,8 @@ bitmap_line: {
   //SEG1295 [632] (byte) bitmap_line_xdyi::y#0 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_xdyi.y
   //SEG1296 [633] (byte) bitmap_line_xdyi::x1#0 ← (byte) bitmap_line::x0#0
-    // (byte) bitmap_line_xdyi::x1#0 = (byte) bitmap_line::x0#0  // register copy zp ZP_BYTE:9
   //SEG1297 [634] (byte) bitmap_line_xdyi::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_xdyi::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1298 [635] (byte) bitmap_line_xdyi::yd#0 ← (byte) bitmap_line::yd#1
-    // (byte) bitmap_line_xdyi::yd#0 = (byte) bitmap_line::yd#1  // register copy zp ZP_BYTE:7
   //SEG1299 [636] call bitmap_line_xdyi 
   //SEG1300 [681] phi from bitmap_line::@3 to bitmap_line_xdyi [phi:bitmap_line::@3->bitmap_line_xdyi]
   bitmap_line_xdyi_from_b3:
@@ -24811,9 +24884,7 @@ bitmap_line: {
   //SEG1312 [641] (byte) bitmap_line_ydxd::y1#0 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_ydxd.y1
   //SEG1313 [642] (byte) bitmap_line_ydxd::yd#0 ← (byte) bitmap_line::yd#0
-    // (byte) bitmap_line_ydxd::yd#0 = (byte) bitmap_line::yd#0  // register copy zp ZP_BYTE:7
   //SEG1314 [643] (byte) bitmap_line_ydxd::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_ydxd::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1315 [644] call bitmap_line_ydxd 
   //SEG1316 [733] phi from bitmap_line::@20 to bitmap_line_ydxd [phi:bitmap_line::@20->bitmap_line_ydxd]
   bitmap_line_ydxd_from_b20:
@@ -24835,9 +24906,7 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyd.x1
   //SEG1326 [648] (byte) bitmap_line_xdyd::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_xdyd::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1327 [649] (byte) bitmap_line_xdyd::yd#0 ← (byte) bitmap_line::yd#0
-    // (byte) bitmap_line_xdyd::yd#0 = (byte) bitmap_line::yd#0  // register copy zp ZP_BYTE:7
   //SEG1328 [650] call bitmap_line_xdyd 
   //SEG1329 [718] phi from bitmap_line::@6 to bitmap_line_xdyd [phi:bitmap_line::@6->bitmap_line_xdyd]
   bitmap_line_xdyd_from_b6:
@@ -24882,11 +24951,8 @@ bitmap_line: {
   //SEG1343 [656] (byte) bitmap_line_ydxd::x#1 ← (byte) bitmap_line::x1#0 -- vbuxx=vbuz1 
     ldx x1
   //SEG1344 [657] (byte) bitmap_line_ydxd::y1#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_ydxd::y1#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:15
   //SEG1345 [658] (byte) bitmap_line_ydxd::yd#1 ← (byte) bitmap_line::yd#3
-    // (byte) bitmap_line_ydxd::yd#1 = (byte) bitmap_line::yd#3  // register copy zp ZP_BYTE:7
   //SEG1346 [659] (byte) bitmap_line_ydxd::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_ydxd::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1347 [660] call bitmap_line_ydxd 
   //SEG1348 [733] phi from bitmap_line::@24 to bitmap_line_ydxd [phi:bitmap_line::@24->bitmap_line_ydxd]
   bitmap_line_ydxd_from_b24:
@@ -24903,13 +24969,9 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyd.x
   //SEG1356 [662] (byte) bitmap_line_xdyd::y#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_xdyd::y#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:15
   //SEG1357 [663] (byte) bitmap_line_xdyd::x1#1 ← (byte) bitmap_line::x1#0
-    // (byte) bitmap_line_xdyd::x1#1 = (byte) bitmap_line::x1#0  // register copy zp ZP_BYTE:18
   //SEG1358 [664] (byte) bitmap_line_xdyd::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_xdyd::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1359 [665] (byte) bitmap_line_xdyd::yd#1 ← (byte) bitmap_line::yd#3
-    // (byte) bitmap_line_xdyd::yd#1 = (byte) bitmap_line::yd#3  // register copy zp ZP_BYTE:7
   //SEG1360 [666] call bitmap_line_xdyd 
   //SEG1361 [718] phi from bitmap_line::@10 to bitmap_line_xdyd [phi:bitmap_line::@10->bitmap_line_xdyd]
   bitmap_line_xdyd_from_b10:
@@ -24942,9 +25004,7 @@ bitmap_line: {
   //SEG1373 [671] (byte) bitmap_line_ydxi::y1#1 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_ydxi.y1
   //SEG1374 [672] (byte) bitmap_line_ydxi::yd#1 ← (byte) bitmap_line::yd#10
-    // (byte) bitmap_line_ydxi::yd#1 = (byte) bitmap_line::yd#10  // register copy zp ZP_BYTE:7
   //SEG1375 [673] (byte) bitmap_line_ydxi::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_ydxi::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1376 [674] call bitmap_line_ydxi 
   //SEG1377 [703] phi from bitmap_line::@27 to bitmap_line_ydxi [phi:bitmap_line::@27->bitmap_line_ydxi]
   bitmap_line_ydxi_from_b27:
@@ -24961,14 +25021,11 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyi.x
   //SEG1385 [676] (byte) bitmap_line_xdyi::y#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_xdyi::y#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:15
   //SEG1386 [677] (byte) bitmap_line_xdyi::x1#1 ← (byte) bitmap_line::x1#0 -- vbuz1=vbuz2 
     lda x1
     sta bitmap_line_xdyi.x1
   //SEG1387 [678] (byte) bitmap_line_xdyi::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_xdyi::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1388 [679] (byte) bitmap_line_xdyi::yd#1 ← (byte) bitmap_line::yd#10
-    // (byte) bitmap_line_xdyi::yd#1 = (byte) bitmap_line::yd#10  // register copy zp ZP_BYTE:7
   //SEG1389 [680] call bitmap_line_xdyi 
   //SEG1390 [681] phi from bitmap_line::@13 to bitmap_line_xdyi [phi:bitmap_line::@13->bitmap_line_xdyi]
   bitmap_line_xdyi_from_b13:
@@ -25112,7 +25169,6 @@ bitmap_line_ydxi: {
   //SEG1438 bitmap_line_ydxi::@1
   b1:
   //SEG1439 [706] (byte) bitmap_plot::x#2 ← (byte) bitmap_line_ydxi::x#3
-    // (byte) bitmap_plot::x#2 = (byte) bitmap_line_ydxi::x#3  // register copy reg byte x
   //SEG1440 [707] (byte) bitmap_plot::y#2 ← (byte) bitmap_line_ydxi::y#3 -- vbuyy=vbuz1 
     ldy y
   //SEG1441 [708] call bitmap_plot 
@@ -25262,7 +25318,6 @@ bitmap_line_ydxd: {
   //SEG1494 bitmap_line_ydxd::@1
   b1:
   //SEG1495 [736] (byte) bitmap_plot::x#3 ← (byte) bitmap_line_ydxd::x#3
-    // (byte) bitmap_plot::x#3 = (byte) bitmap_line_ydxd::x#3  // register copy reg byte x
   //SEG1496 [737] (byte) bitmap_plot::y#3 ← (byte) bitmap_line_ydxd::y#2 -- vbuyy=vbuz1 
     ldy y
   //SEG1497 [738] call bitmap_plot 
@@ -25317,6 +25372,7 @@ bitmap_line_ydxd: {
     rts
 }
 //SEG1516 bitmap_clear
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
@@ -25327,7 +25383,6 @@ bitmap_clear: {
     lda bitmap_plot_xhi
     sta _3+1
   //SEG1518 [749] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3
-    // (byte*~) bitmap_clear::bitmap#5 = (byte*)(word~) bitmap_clear::$3  // register copy zp ZP_WORD:3
   //SEG1519 [750] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
   b1_from_bitmap_clear:
   //SEG1520 [750] phi (byte) bitmap_clear::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bitmap_clear->bitmap_clear::@1#0] -- vbuz1=vbuc1 
@@ -25385,6 +25440,7 @@ bitmap_clear: {
     rts
 }
 //SEG1542 bitmap_init
+//  Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _6 = 2
     .label yoffs = 3
@@ -25596,6 +25652,7 @@ gfx_init_charset: {
     rts
 }
 //SEG1621 gfx_init_screen4
+//  Initialize VIC screen 4 - all chars are 00
 gfx_init_screen4: {
     .label ch = 3
     .label cy = 2
@@ -25660,6 +25717,7 @@ gfx_init_screen4: {
     rts
 }
 //SEG1645 gfx_init_screen3
+//  Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 gfx_init_screen3: {
     .label _1 = 7
     .label ch = 3
@@ -25738,6 +25796,7 @@ gfx_init_screen3: {
     rts
 }
 //SEG1673 gfx_init_screen2
+//  Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
 gfx_init_screen2: {
     .label col2 = 7
     .label ch = 3
@@ -25823,6 +25882,7 @@ gfx_init_screen2: {
     rts
 }
 //SEG1702 gfx_init_screen1
+//  Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
 gfx_init_screen1: {
     .label ch = 3
     .label cy = 2
@@ -25892,6 +25952,7 @@ gfx_init_screen1: {
     rts
 }
 //SEG1728 gfx_init_screen0
+//  Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
     .label _1 = 7
     .label ch = 3
@@ -25970,6 +26031,7 @@ gfx_init_screen0: {
     rts
 }
 //SEG1756 keyboard_init
+//  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
   //SEG1757 [862] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
     lda #$ff
@@ -26466,6 +26528,7 @@ Removing instruction b8_from_b30:
 Removing instruction b8_from_b7:
 Removing instruction b31_from_b8:
 Removing instruction b9_from_b31:
+Removing instruction b10_from_b50:
 Removing instruction b10_from_b32:
 Removing instruction b11_from_b10:
 Removing instruction b11_from_b11:
@@ -26519,7 +26582,9 @@ Removing instruction b2:
 Removing instruction b7_from_b5:
 Removing instruction b33_from_b32:
 Removing instruction b22_from_b33:
+Removing instruction print_str_at_from_b22:
 Removing instruction b1_from_b3:
+Removing instruction form_field_ptr_from_b1:
 Removing instruction b34_from_b33:
 Removing instruction b22_from_apply_preset:
 Removing instruction b22_from_b34:
@@ -26679,7 +26744,6 @@ Removing instruction b48:
 Removing instruction b49:
 Removing instruction get_vic_screen_from_b49:
 Removing instruction b50:
-Removing instruction b10_from_b50:
 Removing instruction b32:
 Removing instruction b33:
 Removing instruction b13_from_b33:
@@ -26760,13 +26824,11 @@ Removing instruction b30:
 Removing instruction b31:
 Removing instruction b32:
 Removing instruction b33:
-Removing instruction print_str_at_from_b22:
 Removing instruction breturn:
 Removing instruction b1_from_print_str_at:
 Removing instruction breturn:
 Removing instruction b1_from_b2:
 Removing instruction b1_from_form_render_values:
-Removing instruction form_field_ptr_from_b1:
 Removing instruction b3:
 Removing instruction breturn:
 Removing instruction breturn:
@@ -27075,18 +27137,18 @@ Removing instruction b37:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction jmp b7
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [686] beq b5 to bne
-Fixing long branch [690] beq b6 to bne
-Fixing long branch [694] beq b7 to bne
-Fixing long branch [698] beq b8 to bne
-Fixing long branch [684] beq b4 to bne
-Fixing long branch [704] beq b9 to bne
-Fixing long branch [708] beq b10 to bne
-Fixing long branch [712] beq b11 to bne
-Fixing long branch [716] beq b12 to bne
-Fixing long branch [682] beq b3 to bne
-Fixing long branch [722] beq b13 to bne
-Fixing long branch [1246] bmi b2 to bpl
+Fixing long branch [704] beq b5 to bne
+Fixing long branch [708] beq b6 to bne
+Fixing long branch [712] beq b7 to bne
+Fixing long branch [716] beq b8 to bne
+Fixing long branch [702] beq b4 to bne
+Fixing long branch [722] beq b9 to bne
+Fixing long branch [726] beq b10 to bne
+Fixing long branch [730] beq b11 to bne
+Fixing long branch [734] beq b12 to bne
+Fixing long branch [700] beq b3 to bne
+Fixing long branch [740] beq b13 to bne
+Fixing long branch [1275] bmi b2 to bpl
 
 FINAL SYMBOL TABLE
 (label) @68
@@ -28979,6 +29041,7 @@ main: {
     jmp b2
 }
 //SEG34 gfx_mode
+//  Change graphics mode to show the selected graphics mode
 gfx_mode: {
     .label _31 = $a
     .label _33 = 3
@@ -29148,10 +29211,8 @@ gfx_mode: {
   //SEG103 [236] phi (byte) get_plane::idx#10 = (byte) get_plane::idx#0 [phi:gfx_mode::@9->get_plane#0] -- register_copy 
     jsr get_plane
   //SEG104 [50] (dword) get_plane::return#16 ← (dword) get_plane::return#14
-    // (dword) get_plane::return#16 = (dword) get_plane::return#14  // register copy zp ZP_DWORD:10
   //SEG105 gfx_mode::@46
   //SEG106 [51] (dword~) gfx_mode::$31 ← (dword) get_plane::return#16
-    // (dword~) gfx_mode::$31 = (dword) get_plane::return#16  // register copy zp ZP_DWORD:10
   //SEG107 [52] (dword) gfx_mode::plane_a#0 ← (dword~) gfx_mode::$31 + (byte) gfx_mode::plane_a_offs#0 -- vduz1=vduz1_plus_vbuyy 
     tya
     clc
@@ -29231,10 +29292,8 @@ gfx_mode: {
   //SEG129 [236] phi (byte) get_plane::idx#10 = (byte) get_plane::idx#1 [phi:gfx_mode::@46->get_plane#0] -- register_copy 
     jsr get_plane
   //SEG130 [73] (dword) get_plane::return#17 ← (dword) get_plane::return#14
-    // (dword) get_plane::return#17 = (dword) get_plane::return#14  // register copy zp ZP_DWORD:10
   //SEG131 gfx_mode::@47
   //SEG132 [74] (dword~) gfx_mode::$45 ← (dword) get_plane::return#17
-    // (dword~) gfx_mode::$45 = (dword) get_plane::return#17  // register copy zp ZP_DWORD:10
   //SEG133 [75] (dword) gfx_mode::plane_b#0 ← (dword~) gfx_mode::$45 + (byte) gfx_mode::plane_b_offs#0 -- vduz1=vduz1_plus_vbuyy 
     tya
     clc
@@ -29311,10 +29370,8 @@ gfx_mode: {
   //SEG155 [222] phi (byte) get_vic_screen::idx#2 = (byte) get_vic_screen::idx#0 [phi:gfx_mode::@47->get_vic_screen#0] -- register_copy 
     jsr get_vic_screen
   //SEG156 [96] (byte*) get_vic_screen::return#10 ← (byte*) get_vic_screen::return#5
-    // (byte*) get_vic_screen::return#10 = (byte*) get_vic_screen::return#5  // register copy zp ZP_WORD:3
   //SEG157 gfx_mode::@48
   //SEG158 [97] (byte*~) gfx_mode::$61 ← (byte*) get_vic_screen::return#10
-    // (byte*~) gfx_mode::$61 = (byte*) get_vic_screen::return#10  // register copy zp ZP_WORD:3
   //SEG159 [98] (word~) gfx_mode::$63 ← (word)(byte*~) gfx_mode::$61 & (word/signed word/dword/signed dword) 16383 -- vwuz1=vwuz1_band_vwuc1 
     lda _63
     and #<$3fff
@@ -29337,10 +29394,8 @@ gfx_mode: {
   //SEG163 [102] call get_vic_charset 
     jsr get_vic_charset
   //SEG164 [103] (byte*) get_vic_charset::return#4 ← (byte*) get_vic_charset::return#2
-    // (byte*) get_vic_charset::return#4 = (byte*) get_vic_charset::return#2  // register copy zp ZP_WORD:3
   //SEG165 gfx_mode::@49
   //SEG166 [104] (byte*~) gfx_mode::$66 ← (byte*) get_vic_charset::return#4
-    // (byte*~) gfx_mode::$66 = (byte*) get_vic_charset::return#4  // register copy zp ZP_WORD:3
   //SEG167 [105] (word~) gfx_mode::$68 ← (word)(byte*~) gfx_mode::$66 & (word/signed word/dword/signed dword) 16383 -- vwuz1=vwuz1_band_vwuc1 
     lda _68
     and #<$3fff
@@ -29363,10 +29418,8 @@ gfx_mode: {
   //SEG175 [222] phi (byte) get_vic_screen::idx#2 = (byte) get_vic_screen::idx#1 [phi:gfx_mode::@49->get_vic_screen#0] -- register_copy 
     jsr get_vic_screen
   //SEG176 [112] (byte*) get_vic_screen::return#11 ← (byte*) get_vic_screen::return#5
-    // (byte*) get_vic_screen::return#11 = (byte*) get_vic_screen::return#5  // register copy zp ZP_WORD:3
   //SEG177 gfx_mode::@50
   //SEG178 [113] (byte*) gfx_mode::vic_colors#0 ← (byte*) get_vic_screen::return#11
-    // (byte*) gfx_mode::vic_colors#0 = (byte*) get_vic_screen::return#11  // register copy zp ZP_WORD:3
   //SEG179 [114] phi from gfx_mode::@50 to gfx_mode::@10 [phi:gfx_mode::@50->gfx_mode::@10]
   //SEG180 [114] phi (byte) gfx_mode::cy#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:gfx_mode::@50->gfx_mode::@10#0] -- vbuz1=vbuc1 
     lda #0
@@ -29502,10 +29555,8 @@ gfx_mode: {
   //SEG237 [145] call keyboard_event_get 
     jsr keyboard_event_get
   //SEG238 [146] (byte) keyboard_event_get::return#3 ← (byte) keyboard_event_get::return#2
-    // (byte) keyboard_event_get::return#3 = (byte) keyboard_event_get::return#2  // register copy reg byte a
   //SEG239 gfx_mode::@52
   //SEG240 [147] (byte) gfx_mode::keyboard_event#0 ← (byte) keyboard_event_get::return#3
-    // (byte) gfx_mode::keyboard_event#0 = (byte) keyboard_event_get::return#3  // register copy reg byte a
   //SEG241 [148] if((byte) gfx_mode::keyboard_event#0!=(const byte) KEY_SPACE#0) goto gfx_mode::@19 -- vbuaa_neq_vbuc1_then_la1 
     cmp #KEY_SPACE
     bne b19
@@ -29531,6 +29582,9 @@ gfx_mode: {
     jmp b19
 }
 //SEG252 keyboard_event_get
+//  Get the next event from the keyboard event buffer.
+//  Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+//  The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
   //SEG253 [154] if((byte) keyboard_events_size#100==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_get::@return -- vbuz1_eq_0_then_la1 
     lda keyboard_events_size
@@ -29557,6 +29611,10 @@ keyboard_event_get: {
     rts
 }
 //SEG265 keyboard_event_scan
+//  Scans the entire matrix to determine which keys have been pressed/depressed.
+//  Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+//  Handles debounce and only generates events when the status of a key changes.
+//  Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label row_scan = $12
     .label keycode = 8
@@ -29580,7 +29638,6 @@ keyboard_event_scan: {
   //SEG276 [162] call keyboard_matrix_read 
     jsr keyboard_matrix_read
   //SEG277 [163] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    // (byte) keyboard_matrix_read::return#2 = (byte) keyboard_matrix_read::return#0  // register copy reg byte a
   //SEG278 keyboard_event_scan::@25
   //SEG279 [164] (byte) keyboard_event_scan::row_scan#0 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuaa 
     sta row_scan
@@ -29614,10 +29671,8 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
   //SEG294 [172] (byte) keyboard_event_pressed::return#0 ← (byte) keyboard_event_pressed::return#10
-    // (byte) keyboard_event_pressed::return#0 = (byte) keyboard_event_pressed::return#10  // register copy reg byte a
   //SEG295 keyboard_event_scan::@26
   //SEG296 [173] (byte~) keyboard_event_scan::$14 ← (byte) keyboard_event_pressed::return#0
-    // (byte~) keyboard_event_scan::$14 = (byte) keyboard_event_pressed::return#0  // register copy reg byte a
   //SEG297 [174] if((byte~) keyboard_event_scan::$14==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_scan::@9 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
@@ -29642,10 +29697,8 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
   //SEG308 [178] (byte) keyboard_event_pressed::return#1 ← (byte) keyboard_event_pressed::return#10
-    // (byte) keyboard_event_pressed::return#1 = (byte) keyboard_event_pressed::return#10  // register copy reg byte a
   //SEG309 keyboard_event_scan::@27
   //SEG310 [179] (byte~) keyboard_event_scan::$18 ← (byte) keyboard_event_pressed::return#1
-    // (byte~) keyboard_event_scan::$18 = (byte) keyboard_event_pressed::return#1  // register copy reg byte a
   //SEG311 [180] if((byte~) keyboard_event_scan::$18==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_scan::@10 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b10
@@ -29665,10 +29718,8 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
   //SEG320 [184] (byte) keyboard_event_pressed::return#2 ← (byte) keyboard_event_pressed::return#10
-    // (byte) keyboard_event_pressed::return#2 = (byte) keyboard_event_pressed::return#10  // register copy reg byte a
   //SEG321 keyboard_event_scan::@28
   //SEG322 [185] (byte~) keyboard_event_scan::$22 ← (byte) keyboard_event_pressed::return#2
-    // (byte~) keyboard_event_scan::$22 = (byte) keyboard_event_pressed::return#2  // register copy reg byte a
   //SEG323 [186] if((byte~) keyboard_event_scan::$22==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_scan::@11 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b11
@@ -29688,10 +29739,8 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
   //SEG332 [190] (byte) keyboard_event_pressed::return#3 ← (byte) keyboard_event_pressed::return#10
-    // (byte) keyboard_event_pressed::return#3 = (byte) keyboard_event_pressed::return#10  // register copy reg byte a
   //SEG333 keyboard_event_scan::@29
   //SEG334 [191] (byte~) keyboard_event_scan::$26 ← (byte) keyboard_event_pressed::return#3
-    // (byte~) keyboard_event_scan::$26 = (byte) keyboard_event_pressed::return#3  // register copy reg byte a
   //SEG335 [192] if((byte~) keyboard_event_scan::$26==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_scan::@return -- vbuaa_eq_0_then_la1 
     cmp #0
     beq breturn
@@ -29779,6 +29828,8 @@ keyboard_event_scan: {
     jmp b5
 }
 //SEG374 keyboard_event_pressed
+//  Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+//  Returns 0 is not pressed and non-0 if pressed
 keyboard_event_pressed: {
     .label row_bits = 8
     .label keycode = 7
@@ -29803,6 +29854,11 @@ keyboard_event_pressed: {
     rts
 }
 //SEG381 keyboard_matrix_read
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
   //SEG382 [219] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuaa 
     tay
@@ -29816,6 +29872,7 @@ keyboard_matrix_read: {
     rts
 }
 //SEG386 get_vic_screen
+//  Get the VIC screen address from the screen index
 get_vic_screen: {
     .label return = 3
   //SEG387 [223] if((byte) get_vic_screen::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_vic_screen::@return -- vbuaa_eq_0_then_la1 
@@ -29883,6 +29940,7 @@ get_vic_screen: {
   //SEG409 get_vic_screen::@9
 }
 //SEG410 get_vic_charset
+//  Get the VIC charset/bitmap address from the index
 get_vic_charset: {
     .label return = 3
   //SEG411 [231] if((byte) get_vic_charset::idx#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_vic_charset::@return -- vbuaa_eq_0_then_la1 
@@ -29914,6 +29972,7 @@ get_vic_charset: {
   //SEG421 get_vic_charset::@3
 }
 //SEG422 get_plane
+//  Get plane address from a plane index (from the form)
 get_plane: {
     .label return = $a
   //SEG423 [237] if((byte) get_plane::idx#10==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_plane::@return -- vbuaa_eq_0_then_la1 
@@ -30167,6 +30226,7 @@ get_plane: {
   //SEG481 get_plane::@27
 }
 //SEG482 form_mode
+//  Show the form - and let the user change values
 form_mode: {
     .label preset_current = $f
   //SEG483 [255] call print_set_screen 
@@ -30317,7 +30377,6 @@ form_mode: {
     tya
   //SEG561 form_mode::@30
   //SEG562 [296] (byte~) form_mode::$36 ← (byte) form_control::return#0
-    // (byte~) form_mode::$36 = (byte) form_control::return#0  // register copy reg byte a
   //SEG563 [297] if((byte~) form_mode::$36==(byte/signed byte/word/signed word/dword/signed dword) 0) goto form_mode::@8 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b8
@@ -30351,6 +30410,8 @@ form_mode: {
     jmp b5
 }
 //SEG580 render_preset_name
+//  Render form preset name in the form
+//  idx is the ID of the preset
 render_preset_name: {
     .label name = 3
   //SEG581 [307] if((byte) render_preset_name::idx#10==(byte/signed byte/word/signed word/dword/signed dword) 0) goto render_preset_name::@22 -- vbuaa_eq_0_then_la1 
@@ -30495,7 +30556,6 @@ render_preset_name: {
   //SEG628 render_preset_name::@22
   b22:
   //SEG629 [320] (byte*) print_str_at::str#1 ← (byte*) render_preset_name::name#12
-    // (byte*) print_str_at::str#1 = (byte*) render_preset_name::name#12  // register copy zp ZP_WORD:3
   //SEG630 [321] call print_str_at 
   //SEG631 [323] phi from render_preset_name::@22 to print_str_at [phi:render_preset_name::@22->print_str_at]
     jsr print_str_at
@@ -30516,6 +30576,7 @@ render_preset_name: {
     name_11: .text "Standard Charset              @"
 }
 //SEG634 print_str_at
+//  Print a string at a specific screen position
 print_str_at: {
     .label at = 5
     .label str = 3
@@ -30558,6 +30619,7 @@ print_str_at: {
     jmp b1
 }
 //SEG649 form_render_values
+//  Render all form values from the form_fields_val array
 form_render_values: {
     .label field = 3
     .label idx = 2
@@ -30570,16 +30632,13 @@ form_render_values: {
   //SEG654 form_render_values::@1
   b1:
   //SEG655 [332] (byte) form_field_ptr::field_idx#0 ← (byte) form_render_values::idx#2
-    // (byte) form_field_ptr::field_idx#0 = (byte) form_render_values::idx#2  // register copy zp ZP_BYTE:2
   //SEG656 [333] call form_field_ptr 
   //SEG657 [340] phi from form_render_values::@1 to form_field_ptr [phi:form_render_values::@1->form_field_ptr]
   //SEG658 [340] phi (byte) form_field_ptr::field_idx#2 = (byte) form_field_ptr::field_idx#0 [phi:form_render_values::@1->form_field_ptr#0] -- register_copy 
     jsr form_field_ptr
   //SEG659 [334] (byte*) form_field_ptr::return#2 ← (byte*) form_field_ptr::return#0
-    // (byte*) form_field_ptr::return#2 = (byte*) form_field_ptr::return#0  // register copy zp ZP_WORD:3
   //SEG660 form_render_values::@3
   //SEG661 [335] (byte*) form_render_values::field#0 ← (byte*) form_field_ptr::return#2
-    // (byte*) form_render_values::field#0 = (byte*) form_field_ptr::return#2  // register copy zp ZP_WORD:3
   //SEG662 [336] *((byte*) form_render_values::field#0) ← *((const byte[]) print_hextab#0 + *((const byte[]) form_fields_val#0 + (byte) form_render_values::idx#2)) -- _deref_pbuz1=pbuc1_derefidx_pbuc2_derefidx_vbuz2 
     ldy idx
     lda form_fields_val,y
@@ -30598,6 +30657,8 @@ form_render_values: {
     rts
 }
 //SEG667 form_field_ptr
+//  Get the screen address of a form field
+//  field_idx is the index of the field to get the screen address for
 form_field_ptr: {
     .label return = 3
     .label field_idx = 2
@@ -30626,6 +30687,8 @@ form_field_ptr: {
     rts
 }
 //SEG674 apply_preset
+//  Apply a form value preset to the form values
+//  idx is the ID of the preset
 apply_preset: {
     .label preset = 3
   //SEG675 [346] if((byte) apply_preset::idx#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto apply_preset::@22 -- vbuaa_eq_0_then_la1 
@@ -30782,6 +30845,8 @@ apply_preset: {
     rts
 }
 //SEG731 form_control
+//  Reads keyboard and allows the user to navigate and change the fields of the form
+//  Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
     .label field = 3
   //SEG732 [364] (byte) form_field_ptr::field_idx#1 ← (byte) form_field_idx#28 -- vbuz1=vbuxx 
@@ -30791,10 +30856,8 @@ form_control: {
   //SEG735 [340] phi (byte) form_field_ptr::field_idx#2 = (byte) form_field_ptr::field_idx#1 [phi:form_control->form_field_ptr#0] -- register_copy 
     jsr form_field_ptr
   //SEG736 [366] (byte*) form_field_ptr::return#3 ← (byte*) form_field_ptr::return#0
-    // (byte*) form_field_ptr::return#3 = (byte*) form_field_ptr::return#0  // register copy zp ZP_WORD:3
   //SEG737 form_control::@33
   //SEG738 [367] (byte*) form_control::field#0 ← (byte*) form_field_ptr::return#3
-    // (byte*) form_control::field#0 = (byte*) form_field_ptr::return#3  // register copy zp ZP_WORD:3
   //SEG739 [368] (signed byte) form_cursor_count#5 ← -- (signed byte) form_cursor_count#21 -- vbsz1=_dec_vbsz1 
     dec form_cursor_count
   //SEG740 [369] if((signed byte) form_cursor_count#5>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto form_control::@36 -- vbsz1_ge_0_then_la1 
@@ -30836,10 +30899,8 @@ form_control: {
   //SEG755 [377] call keyboard_event_get 
     jsr keyboard_event_get
   //SEG756 [378] (byte) keyboard_event_get::return#4 ← (byte) keyboard_event_get::return#2
-    // (byte) keyboard_event_get::return#4 = (byte) keyboard_event_get::return#2  // register copy reg byte a
   //SEG757 form_control::@35
   //SEG758 [379] (byte) form_control::key_event#0 ← (byte) keyboard_event_get::return#4
-    // (byte) form_control::key_event#0 = (byte) keyboard_event_get::return#4  // register copy reg byte a
   //SEG759 [380] if((byte) form_control::key_event#0!=(const byte) KEY_CRSR_DOWN#0) goto form_control::@4 -- vbuaa_neq_vbuc1_then_la1 
     cmp #KEY_CRSR_DOWN
     bne b4
@@ -30977,6 +31038,8 @@ form_control: {
   //SEG823 [370] phi (signed byte) form_cursor_count#15 = (signed byte) form_cursor_count#5 [phi:form_control::@36->form_control::@1#0] -- register_copy 
 }
 //SEG824 form_set_screen
+//  Set the screen to use for the form.
+//  screen is the start address of the screen to use
 form_set_screen: {
     .label line = 3
   //SEG825 [410] phi from form_set_screen to form_set_screen::@1 [phi:form_set_screen->form_set_screen::@1]
@@ -31018,6 +31081,8 @@ form_set_screen: {
     rts
 }
 //SEG841 print_str_lines
+//  Print a number of zero-terminated strings, each followed by a newline.
+//  The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label str = 3
   //SEG842 [420] (byte*~) print_char_cursor#77 ← (byte*) print_set_screen::screen#2 -- pbuz1=pbuz2 
@@ -31084,6 +31149,7 @@ print_str_lines: {
     jmp b1
 }
 //SEG870 print_ln
+//  Print a newline
 print_ln: {
   //SEG871 [436] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   //SEG872 [436] phi (byte*) print_line_cursor#21 = (byte*) print_line_cursor#2 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
@@ -31111,6 +31177,7 @@ print_ln: {
     rts
 }
 //SEG878 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label _0 = 5
     .label sc = 3
@@ -31152,6 +31219,7 @@ print_cls: {
     rts
 }
 //SEG889 print_set_screen
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     .label screen = $10
   //SEG890 print_set_screen::@return
@@ -31159,6 +31227,7 @@ print_set_screen: {
     rts
 }
 //SEG892 gfx_init
+//  Initialize the different graphics in the memory
 gfx_init: {
   //SEG893 [450] call gfx_init_screen0 
   //SEG894 [848] phi from gfx_init to gfx_init_screen0 [phi:gfx_init->gfx_init_screen0]
@@ -31237,6 +31306,7 @@ gfx_init: {
     rts
 }
 //SEG952 gfx_init_plane_full
+//  Initialize Plane with all pixels
 gfx_init_plane_full: {
   //SEG953 [481] call gfx_init_plane_fill 
   //SEG954 [483] phi from gfx_init_plane_full to gfx_init_plane_fill [phi:gfx_init_plane_full->gfx_init_plane_fill]
@@ -31258,6 +31328,7 @@ gfx_init_plane_full: {
     rts
 }
 //SEG959 gfx_init_plane_fill
+//  Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
 gfx_init_plane_fill: {
     .label _0 = $13
     .label _1 = 3
@@ -31323,7 +31394,6 @@ gfx_init_plane_fill: {
     adc #>$4000
     sta _6+1
   //SEG972 [493] (byte*~) gfx_init_plane_fill::gfxb#6 ← (byte*)(word/signed dword/dword~) gfx_init_plane_fill::$6
-    // (byte*~) gfx_init_plane_fill::gfxb#6 = (byte*)(word/signed dword/dword~) gfx_init_plane_fill::$6  // register copy zp ZP_WORD:3
   //SEG973 [494] phi from gfx_init_plane_fill::@5 to gfx_init_plane_fill::@1 [phi:gfx_init_plane_fill::@5->gfx_init_plane_fill::@1]
   //SEG974 [494] phi (byte) gfx_init_plane_fill::by#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:gfx_init_plane_fill::@5->gfx_init_plane_fill::@1#0] -- vbuz1=vbuc1 
     lda #0
@@ -31376,6 +31446,9 @@ gfx_init_plane_fill: {
     rts
 }
 //SEG1001 dtvSetCpuBankSegment1
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
   //SEG1002 [506] *((const byte*) dtvSetCpuBankSegment1::cpuBank#0) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx#13 -- _deref_pbuc1=vbuaa 
@@ -31389,6 +31462,7 @@ dtvSetCpuBankSegment1: {
     rts
 }
 //SEG1006 gfx_init_plane_blank
+//  Initialize Plane with blank pixels
 gfx_init_plane_blank: {
   //SEG1007 [510] call gfx_init_plane_fill 
   //SEG1008 [483] phi from gfx_init_plane_blank to gfx_init_plane_fill [phi:gfx_init_plane_blank->gfx_init_plane_fill]
@@ -31410,6 +31484,7 @@ gfx_init_plane_blank: {
     rts
 }
 //SEG1013 gfx_init_plane_vertical2
+//  Initialize Plane with Vertical Stripes every 2 pixels
 gfx_init_plane_vertical2: {
   //SEG1014 [513] call gfx_init_plane_fill 
   //SEG1015 [483] phi from gfx_init_plane_vertical2 to gfx_init_plane_fill [phi:gfx_init_plane_vertical2->gfx_init_plane_fill]
@@ -31431,6 +31506,7 @@ gfx_init_plane_vertical2: {
     rts
 }
 //SEG1020 gfx_init_plane_horisontal2
+//  Initialize Plane with Horizontal Stripes every 2 pixels
 gfx_init_plane_horisontal2: {
     .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
     .label gfxa = 3
@@ -31503,6 +31579,7 @@ gfx_init_plane_horisontal2: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 //SEG1054 gfx_init_plane_vertical
+//  Initialize Plane with Vertical Stripes
 gfx_init_plane_vertical: {
     .const gfxbCpuBank = PLANE_VERTICAL/$4000
     .label gfxb = 3
@@ -31568,6 +31645,7 @@ gfx_init_plane_vertical: {
     rts
 }
 //SEG1086 gfx_init_plane_horisontal
+//  Initialize Plane with Horizontal Stripes
 gfx_init_plane_horisontal: {
     .const gfxbCpuBank = PLANE_HORISONTAL/$4000
     .label gfxa = 3
@@ -31656,6 +31734,7 @@ gfx_init_plane_horisontal: {
     jmp b4
 }
 //SEG1127 gfx_init_plane_charset8
+//  Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
     .label bits = 8
@@ -31795,6 +31874,7 @@ gfx_init_plane_charset8: {
     rts
 }
 //SEG1196 gfx_init_plane_8bppchunky
+//  Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
     .label _6 = $10
     .label gfxb = 5
@@ -31913,6 +31993,7 @@ gfx_init_plane_8bppchunky: {
     rts
 }
 //SEG1249 gfx_init_vic_bitmap
+//  Initialize VIC bitmap
 gfx_init_vic_bitmap: {
     .const lines_cnt = 9
     .label l = 2
@@ -31960,6 +32041,7 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 //SEG1270 bitmap_line
+//  Draw a line on the bitmap
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -31997,11 +32079,8 @@ bitmap_line: {
   //SEG1280 [625] (byte) bitmap_line_ydxi::x#0 ← (byte) bitmap_line::x1#0 -- vbuxx=vbuz1 
     ldx x1
   //SEG1281 [626] (byte) bitmap_line_ydxi::y1#0 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_ydxi::y1#0 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:15
   //SEG1282 [627] (byte) bitmap_line_ydxi::yd#0 ← (byte) bitmap_line::yd#1
-    // (byte) bitmap_line_ydxi::yd#0 = (byte) bitmap_line::yd#1  // register copy zp ZP_BYTE:7
   //SEG1283 [628] (byte) bitmap_line_ydxi::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_ydxi::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1284 [629] call bitmap_line_ydxi 
   //SEG1285 [703] phi from bitmap_line::@17 to bitmap_line_ydxi [phi:bitmap_line::@17->bitmap_line_ydxi]
   //SEG1286 [703] phi (byte) bitmap_line_ydxi::y1#6 = (byte) bitmap_line_ydxi::y1#0 [phi:bitmap_line::@17->bitmap_line_ydxi#0] -- register_copy 
@@ -32022,11 +32101,8 @@ bitmap_line: {
   //SEG1295 [632] (byte) bitmap_line_xdyi::y#0 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_xdyi.y
   //SEG1296 [633] (byte) bitmap_line_xdyi::x1#0 ← (byte) bitmap_line::x0#0
-    // (byte) bitmap_line_xdyi::x1#0 = (byte) bitmap_line::x0#0  // register copy zp ZP_BYTE:9
   //SEG1297 [634] (byte) bitmap_line_xdyi::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_xdyi::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1298 [635] (byte) bitmap_line_xdyi::yd#0 ← (byte) bitmap_line::yd#1
-    // (byte) bitmap_line_xdyi::yd#0 = (byte) bitmap_line::yd#1  // register copy zp ZP_BYTE:7
   //SEG1299 [636] call bitmap_line_xdyi 
   //SEG1300 [681] phi from bitmap_line::@3 to bitmap_line_xdyi [phi:bitmap_line::@3->bitmap_line_xdyi]
   //SEG1301 [681] phi (byte) bitmap_line_xdyi::x1#6 = (byte) bitmap_line_xdyi::x1#0 [phi:bitmap_line::@3->bitmap_line_xdyi#0] -- register_copy 
@@ -32055,9 +32131,7 @@ bitmap_line: {
   //SEG1312 [641] (byte) bitmap_line_ydxd::y1#0 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_ydxd.y1
   //SEG1313 [642] (byte) bitmap_line_ydxd::yd#0 ← (byte) bitmap_line::yd#0
-    // (byte) bitmap_line_ydxd::yd#0 = (byte) bitmap_line::yd#0  // register copy zp ZP_BYTE:7
   //SEG1314 [643] (byte) bitmap_line_ydxd::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_ydxd::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1315 [644] call bitmap_line_ydxd 
   //SEG1316 [733] phi from bitmap_line::@20 to bitmap_line_ydxd [phi:bitmap_line::@20->bitmap_line_ydxd]
   //SEG1317 [733] phi (byte) bitmap_line_ydxd::y1#6 = (byte) bitmap_line_ydxd::y1#0 [phi:bitmap_line::@20->bitmap_line_ydxd#0] -- register_copy 
@@ -32078,9 +32152,7 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyd.x1
   //SEG1326 [648] (byte) bitmap_line_xdyd::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_xdyd::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1327 [649] (byte) bitmap_line_xdyd::yd#0 ← (byte) bitmap_line::yd#0
-    // (byte) bitmap_line_xdyd::yd#0 = (byte) bitmap_line::yd#0  // register copy zp ZP_BYTE:7
   //SEG1328 [650] call bitmap_line_xdyd 
   //SEG1329 [718] phi from bitmap_line::@6 to bitmap_line_xdyd [phi:bitmap_line::@6->bitmap_line_xdyd]
   //SEG1330 [718] phi (byte) bitmap_line_xdyd::x1#6 = (byte) bitmap_line_xdyd::x1#0 [phi:bitmap_line::@6->bitmap_line_xdyd#0] -- register_copy 
@@ -32119,11 +32191,8 @@ bitmap_line: {
   //SEG1343 [656] (byte) bitmap_line_ydxd::x#1 ← (byte) bitmap_line::x1#0 -- vbuxx=vbuz1 
     ldx x1
   //SEG1344 [657] (byte) bitmap_line_ydxd::y1#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_ydxd::y1#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:15
   //SEG1345 [658] (byte) bitmap_line_ydxd::yd#1 ← (byte) bitmap_line::yd#3
-    // (byte) bitmap_line_ydxd::yd#1 = (byte) bitmap_line::yd#3  // register copy zp ZP_BYTE:7
   //SEG1346 [659] (byte) bitmap_line_ydxd::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_ydxd::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1347 [660] call bitmap_line_ydxd 
   //SEG1348 [733] phi from bitmap_line::@24 to bitmap_line_ydxd [phi:bitmap_line::@24->bitmap_line_ydxd]
   //SEG1349 [733] phi (byte) bitmap_line_ydxd::y1#6 = (byte) bitmap_line_ydxd::y1#1 [phi:bitmap_line::@24->bitmap_line_ydxd#0] -- register_copy 
@@ -32139,13 +32208,9 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyd.x
   //SEG1356 [662] (byte) bitmap_line_xdyd::y#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_xdyd::y#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:15
   //SEG1357 [663] (byte) bitmap_line_xdyd::x1#1 ← (byte) bitmap_line::x1#0
-    // (byte) bitmap_line_xdyd::x1#1 = (byte) bitmap_line::x1#0  // register copy zp ZP_BYTE:18
   //SEG1358 [664] (byte) bitmap_line_xdyd::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_xdyd::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1359 [665] (byte) bitmap_line_xdyd::yd#1 ← (byte) bitmap_line::yd#3
-    // (byte) bitmap_line_xdyd::yd#1 = (byte) bitmap_line::yd#3  // register copy zp ZP_BYTE:7
   //SEG1360 [666] call bitmap_line_xdyd 
   //SEG1361 [718] phi from bitmap_line::@10 to bitmap_line_xdyd [phi:bitmap_line::@10->bitmap_line_xdyd]
   //SEG1362 [718] phi (byte) bitmap_line_xdyd::x1#6 = (byte) bitmap_line_xdyd::x1#1 [phi:bitmap_line::@10->bitmap_line_xdyd#0] -- register_copy 
@@ -32174,9 +32239,7 @@ bitmap_line: {
   //SEG1373 [671] (byte) bitmap_line_ydxi::y1#1 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_ydxi.y1
   //SEG1374 [672] (byte) bitmap_line_ydxi::yd#1 ← (byte) bitmap_line::yd#10
-    // (byte) bitmap_line_ydxi::yd#1 = (byte) bitmap_line::yd#10  // register copy zp ZP_BYTE:7
   //SEG1375 [673] (byte) bitmap_line_ydxi::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_ydxi::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1376 [674] call bitmap_line_ydxi 
   //SEG1377 [703] phi from bitmap_line::@27 to bitmap_line_ydxi [phi:bitmap_line::@27->bitmap_line_ydxi]
   //SEG1378 [703] phi (byte) bitmap_line_ydxi::y1#6 = (byte) bitmap_line_ydxi::y1#1 [phi:bitmap_line::@27->bitmap_line_ydxi#0] -- register_copy 
@@ -32192,14 +32255,11 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyi.x
   //SEG1385 [676] (byte) bitmap_line_xdyi::y#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_xdyi::y#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:15
   //SEG1386 [677] (byte) bitmap_line_xdyi::x1#1 ← (byte) bitmap_line::x1#0 -- vbuz1=vbuz2 
     lda x1
     sta bitmap_line_xdyi.x1
   //SEG1387 [678] (byte) bitmap_line_xdyi::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_xdyi::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1388 [679] (byte) bitmap_line_xdyi::yd#1 ← (byte) bitmap_line::yd#10
-    // (byte) bitmap_line_xdyi::yd#1 = (byte) bitmap_line::yd#10  // register copy zp ZP_BYTE:7
   //SEG1389 [680] call bitmap_line_xdyi 
   //SEG1390 [681] phi from bitmap_line::@13 to bitmap_line_xdyi [phi:bitmap_line::@13->bitmap_line_xdyi]
   //SEG1391 [681] phi (byte) bitmap_line_xdyi::x1#6 = (byte) bitmap_line_xdyi::x1#1 [phi:bitmap_line::@13->bitmap_line_xdyi#0] -- register_copy 
@@ -32323,7 +32383,6 @@ bitmap_line_ydxi: {
   //SEG1438 bitmap_line_ydxi::@1
   b1:
   //SEG1439 [706] (byte) bitmap_plot::x#2 ← (byte) bitmap_line_ydxi::x#3
-    // (byte) bitmap_plot::x#2 = (byte) bitmap_line_ydxi::x#3  // register copy reg byte x
   //SEG1440 [707] (byte) bitmap_plot::y#2 ← (byte) bitmap_line_ydxi::y#3 -- vbuyy=vbuz1 
     ldy y
   //SEG1441 [708] call bitmap_plot 
@@ -32447,7 +32506,6 @@ bitmap_line_ydxd: {
   //SEG1494 bitmap_line_ydxd::@1
   b1:
   //SEG1495 [736] (byte) bitmap_plot::x#3 ← (byte) bitmap_line_ydxd::x#3
-    // (byte) bitmap_plot::x#3 = (byte) bitmap_line_ydxd::x#3  // register copy reg byte x
   //SEG1496 [737] (byte) bitmap_plot::y#3 ← (byte) bitmap_line_ydxd::y#2 -- vbuyy=vbuz1 
     ldy y
   //SEG1497 [738] call bitmap_plot 
@@ -32492,6 +32550,7 @@ bitmap_line_ydxd: {
     rts
 }
 //SEG1516 bitmap_clear
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
@@ -32502,7 +32561,6 @@ bitmap_clear: {
     lda bitmap_plot_xhi
     sta _3+1
   //SEG1518 [749] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3
-    // (byte*~) bitmap_clear::bitmap#5 = (byte*)(word~) bitmap_clear::$3  // register copy zp ZP_WORD:3
   //SEG1519 [750] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
   //SEG1520 [750] phi (byte) bitmap_clear::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bitmap_clear->bitmap_clear::@1#0] -- vbuz1=vbuc1 
     lda #0
@@ -32548,6 +32606,7 @@ bitmap_clear: {
     rts
 }
 //SEG1542 bitmap_init
+//  Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _6 = 2
     .label yoffs = 3
@@ -32721,6 +32780,7 @@ gfx_init_charset: {
     rts
 }
 //SEG1621 gfx_init_screen4
+//  Initialize VIC screen 4 - all chars are 00
 gfx_init_screen4: {
     .label ch = 3
     .label cy = 2
@@ -32773,6 +32833,7 @@ gfx_init_screen4: {
     rts
 }
 //SEG1645 gfx_init_screen3
+//  Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 gfx_init_screen3: {
     .label _1 = 7
     .label ch = 3
@@ -32839,6 +32900,7 @@ gfx_init_screen3: {
     rts
 }
 //SEG1673 gfx_init_screen2
+//  Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
 gfx_init_screen2: {
     .label col2 = 7
     .label ch = 3
@@ -32912,6 +32974,7 @@ gfx_init_screen2: {
     rts
 }
 //SEG1702 gfx_init_screen1
+//  Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
 gfx_init_screen1: {
     .label ch = 3
     .label cy = 2
@@ -32969,6 +33032,7 @@ gfx_init_screen1: {
     rts
 }
 //SEG1728 gfx_init_screen0
+//  Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
     .label _1 = 7
     .label ch = 3
@@ -33035,6 +33099,7 @@ gfx_init_screen0: {
     rts
 }
 //SEG1756 keyboard_init
+//  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
   //SEG1757 [862] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
     lda #$ff

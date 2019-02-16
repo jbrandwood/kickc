@@ -309,6 +309,7 @@ debug_print: {
   !b1:
     rts
 }
+//  Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label at = 6
     cpx #0
@@ -334,6 +335,7 @@ print_sbyte_at: {
     tax
     jmp b2
 }
+//  Print a single char
 print_char_at: {
     .label at = 6
     .label ch = 8
@@ -342,6 +344,7 @@ print_char_at: {
     sta (at),y
     rts
 }
+//  Print a byte as HEX at a specific position
 print_byte_at: {
     .label at = 6
     txa
@@ -365,6 +368,10 @@ print_byte_at: {
     jsr print_char_at
     rts
 }
+//  Rotate a 3D point (x,y,z) using the rotation matrix
+//  The rotation matrix is prepared by calling prepare_matrix() 
+//  The passed points must be in the interval [-$3f;$3f].
+//  Implemented in assembler to utilize seriously fast multiplication 
 rotate_matrix: {
     .label x = 5
     lda x
@@ -461,6 +468,9 @@ rotate_matrix: {
     sta xp
     rts
 }
+//  Store the rotation matrix into the rotation routine rotate()
+//  After this each call to rotate() will rotate a point with the matrix
+//  Implemented in assembler to utilize seriously fast multiplication 
 store_matrix: {
     lda rotation_matrix+0
     sta rotate_matrix.A1+1
@@ -500,6 +510,9 @@ store_matrix: {
     sta rotate_matrix.I2+1
     rts
 }
+//  Prepare the 3x3 rotation matrix into rotation_matrix[]
+//  Angles sx, sy, sz are based on 2*PI=$100 
+//  Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 calculate_matrix: {
     .label sy = 3
     .label t1 = 4
@@ -1005,6 +1018,7 @@ debug_print_init: {
     str10: .text "xp@"
     str11: .text "yp@"
 }
+//  Print a string at a specific screen position
 print_str_at: {
     .label at = 9
     .label str = 6
@@ -1028,6 +1042,7 @@ print_str_at: {
   !:
     jmp b1
 }
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 6
     lda #<print_line_cursor
@@ -1050,6 +1065,7 @@ print_cls: {
     bne b1
     rts
 }
+//  Initialize sprites
 sprites_init: {
     .label SCREEN = $400
     .label sprites_ptr = SCREEN+$3f8

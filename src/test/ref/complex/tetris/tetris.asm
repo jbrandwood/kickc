@@ -220,6 +220,7 @@ main: {
     jsr render_screen_swap
     jmp b4
 }
+//  Swap rendering to the other screen (used for double buffering)
 render_screen_swap: {
     lda render_screen_render
     eor #$40
@@ -229,6 +230,7 @@ render_screen_swap: {
     sta render_screen_show
     rts
 }
+//  Show the current score
 render_score: {
     .label score_bytes = score_bcd
     .const score_offset = $28*5+$1c
@@ -295,6 +297,11 @@ render_score: {
     jsr render_bcd
     rts
 }
+//  Render BCD digits on a screen.
+//  - screen: pointer to the screen to render on
+//  - offset: offset on the screen
+//  - bcd: The BCD-value to render
+//  - only_low: if non-zero only renders the low digit
 render_bcd: {
     .const ZERO_CHAR = $35
     .label screen = 5
@@ -335,6 +342,7 @@ render_bcd: {
   !:
     rts
 }
+//  Render the next tetromino in the "next" area
 render_next: {
     .const next_area_offset = $28*$c+$18+4
     .label next_piece_char = $a
@@ -405,6 +413,8 @@ render_next: {
     sta (screen_next_area),y
     jmp b6
 }
+//  Render the current moving piece at position (current_xpos, current_ypos)
+//  Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
 render_moving: {
     .label ypos2 = $b
     .label screen_line = 7
@@ -468,6 +478,7 @@ render_moving: {
     bne b4
     jmp b3
 }
+//  Render the static playfield on the screen (all pieces already locked into place)
 render_playfield: {
     .label screen_line = 5
     .label i = $a
@@ -510,6 +521,9 @@ render_playfield: {
     bne b1
     rts
 }
+//  Perform any movement of the current piece
+//  key_event is the next keyboard_event() og $ff if no keyboard event is pending
+//  Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
 play_movement: {
     .label render = 9
     .label return = 9
@@ -538,6 +552,8 @@ play_movement: {
     sta return
     jmp breturn
 }
+//  Rotate the current piece  based on key-presses
+//  Return non-zero if a render is needed
 play_move_rotate: {
     .label orientation = $a
     cmp #KEY_Z
@@ -585,6 +601,8 @@ play_move_rotate: {
     sta orientation
     jmp b4
 }
+//  Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
+//  Returns information about the type of the collision detected
 play_collision: {
     .label xpos = $c
     .label ypos = $b
@@ -676,6 +694,8 @@ play_collision: {
     sta i_13
     jmp b2
 }
+//  Move left/right or rotate the current piece
+//  Return non-zero if a render is needed
 play_move_leftright: {
     cmp #KEY_COMMA
     beq b1
@@ -719,6 +739,8 @@ play_move_leftright: {
     dec current_xpos
     jmp b2
 }
+//  Move down the current piece
+//  Return non-zero if a render is needed
 play_move_down: {
     inc current_movedown_counter
     cmp #KEY_SPACE
@@ -784,6 +806,8 @@ play_move_down: {
     inc current_ypos
     jmp b7
 }
+//  Spawn a new piece
+//  Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
     .label _0 = 4
     .label piece_idx = $21
@@ -830,10 +854,13 @@ play_spawn_current: {
     sta piece_idx
     jmp b2
 }
+//  Get a random number from the SID voice 3,
+//  Must be initialized with sid_rnd_init()
 sid_rnd: {
     lda SID_VOICE3_OSC
     rts
 }
+//  Update the score based on the number of lines removed
 play_update_score: {
     .label lines_before = 4
     .label add_bcd = $2b
@@ -884,6 +911,7 @@ play_update_score: {
   breturn:
     rts
 }
+//  Increase the level
 play_increase_level: {
     inc level
     lda level
@@ -935,6 +963,10 @@ play_increase_level: {
     cld
     rts
 }
+//  Look through the playfield for lines - and remove any lines found
+//  Utilizes two cursors on the playfield - one reading cells and one writing cells
+//  Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
+//  Returns the number of lines removed
 play_remove_lines: {
     .label c = $c
     .label x = $a
@@ -990,6 +1022,7 @@ play_remove_lines: {
     dex
     jmp b5
 }
+//  Lock the current piece onto the playfield
 play_lock_current: {
     .label ypos2 = $10
     .label playfield_line = 5
@@ -1047,6 +1080,8 @@ play_lock_current: {
     sta i_9
     jmp b2
 }
+//  Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+//  Returns 0 is not pressed and non-0 if pressed
 keyboard_event_pressed: {
     .label row_bits = $a
     .label keycode = 9
@@ -1064,6 +1099,9 @@ keyboard_event_pressed: {
     and row_bits
     rts
 }
+//  Get the next event from the keyboard event buffer.
+//  Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+//  The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
     lda keyboard_events_size
     cmp #0
@@ -1078,6 +1116,10 @@ keyboard_event_get: {
   breturn:
     rts
 }
+//  Scans the entire matrix to determine which keys have been pressed/depressed.
+//  Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+//  Handles debounce and only generates events when the status of a key changes.
+//  Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label row_scan = $b
     .label keycode = $a
@@ -1175,6 +1217,11 @@ keyboard_event_scan: {
     inc keyboard_events_size
     jmp b5
 }
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
@@ -1182,6 +1229,7 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
+//  Update $D018 to show the current screen (used for double buffering)
 render_show: {
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
     .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
@@ -1203,6 +1251,7 @@ render_show: {
     lda #toD0181_return
     jmp b2
 }
+//  Initialize play data tables
 play_init: {
     .label pli = 5
     .label idx = 2
@@ -1260,6 +1309,7 @@ play_init: {
     bne b2
     rts
 }
+//  Setup the IRQ
 sprites_irq_init: {
     sei
     lda #IRQ_RASTER
@@ -1285,6 +1335,7 @@ sprites_irq_init: {
     cli
     rts
 }
+//  Setup the sprites
 sprites_init: {
     .label xpos = 2
     lda #$f
@@ -1313,6 +1364,7 @@ sprites_init: {
     bne b1
     rts
 }
+//  Initialize rendering
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)>>6
     .label li_1 = 5
@@ -1385,6 +1437,8 @@ render_init: {
     bne b1
     rts
 }
+//  Copy the original screen data to the passed screen
+//  Also copies colors to $d800
 render_screen_original: {
     .const SPACE = 0
     .label screen = $11
@@ -1476,6 +1530,7 @@ render_screen_original: {
     bne b1
     rts
 }
+//  Initialize SID voice 3 for random number generation
 sid_rnd_init: {
     lda #<$ffff
     sta SID_VOICE3_FREQ
@@ -1485,6 +1540,9 @@ sid_rnd_init: {
     sta SID_VOICE3_CONTROL
     rts
 }
+//  Raster Interrupt Routine - sets up the sprites covering the playfield
+//  Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+//  Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     .label raster_sprite_gfx_modify = $2f

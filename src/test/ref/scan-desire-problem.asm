@@ -163,6 +163,8 @@ draw_block: {
     sta colors+$29
     rts
 }
+//  Simple binary multiplication implementation
+//  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .const b = $28
     .label mb = 6
@@ -229,6 +231,8 @@ init: {
     sta BGCOL4
     rts
 }
+//  Simple routines for working with memory
+//  Fill some memory with a value
 fill: {
     .label end = 6
     .label addr = 4

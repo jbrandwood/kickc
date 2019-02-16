@@ -30,9 +30,11 @@ main: {
     sta print_char_cursor+1
     jmp b4
 }
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     rts
 }
+//  Print a dword as HEX
 print_dword: {
     .label dw = 9
     lda dw+2
@@ -47,6 +49,7 @@ print_dword: {
     jsr print_word
     rts
 }
+//  Print a word as HEX
 print_word: {
     .label w = 2
     lda w+1
@@ -57,6 +60,7 @@ print_word: {
     jsr print_byte
     rts
 }
+//  Print a byte as HEX
 print_byte: {
     txa
     lsr
@@ -73,6 +77,7 @@ print_byte: {
     jsr print_char
     rts
 }
+//  Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -82,6 +87,8 @@ print_char: {
   !:
     rts
 }
+//  Fast multiply two unsigned words to a double word result
+//  Done in assembler to utilize fast addition A+X
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -197,6 +204,7 @@ mulf16u: {
     sta return+3
     rts
 }
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 4
     .label sqr = 7

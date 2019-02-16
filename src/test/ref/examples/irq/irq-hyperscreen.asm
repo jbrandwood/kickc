@@ -34,6 +34,7 @@ main: {
     cli
     rts
 }
+//  Interrupt Routine 2
 irq_bottom_2: {
     lda #WHITE
     sta BORDERCOL
@@ -52,6 +53,7 @@ irq_bottom_2: {
     sta BORDERCOL
     jmp $ea31
 }
+//  Interrupt Routine 1
 irq_bottom_1: {
     lda #WHITE
     sta BORDERCOL

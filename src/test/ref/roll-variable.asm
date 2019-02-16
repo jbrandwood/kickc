@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Rolling constants by a variable amount
 main: {
     .label screen = $400
     .label b = 2

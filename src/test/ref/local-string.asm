@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Local constant strings are placed at the start of the method. This means the generated ASM jumps / calls straignt into the constant string
 main: {
     .label screen = $400
     ldx #0

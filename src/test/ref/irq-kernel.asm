@@ -30,6 +30,7 @@ main: {
     cli
     rts
 }
+//  Interrupt Routine
 irq: {
     lda #WHITE
     sta BGCOL

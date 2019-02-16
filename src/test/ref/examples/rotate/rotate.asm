@@ -140,6 +140,8 @@ anim: {
     sta BORDERCOL
     jmp b4
 }
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8s_prepare(byte a)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
@@ -163,6 +165,8 @@ mulf8s_prepared: {
   b2:
     rts
 }
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8u_prepare(byte a)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
@@ -186,6 +190,7 @@ mulf8u_prepared: {
     sta return+1
     rts
 }
+//  Prepare for fast multiply with an unsigned byte to a word result
 mulf8u_prepare: {
     .label memA = $fd
     sta memA
@@ -212,6 +217,7 @@ init: {
     bne b1
     rts
 }
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 7
     .label sqr = 9

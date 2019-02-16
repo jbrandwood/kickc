@@ -14,6 +14,7 @@ main: {
     jsr test_sbytes
     rts
 }
+//  Test different signed byte constants
 test_sbytes: {
     .const bb = 0
     .const bc = bb+2
@@ -103,6 +104,7 @@ assert_sbyte: {
     str1: .text "fail!@"
     str2: .text "ok@"
 }
+//  Print a zero-terminated string
 print_str: {
     .label str = 2
   b1:
@@ -125,6 +127,7 @@ print_str: {
   !:
     jmp b1
 }
+//  Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -144,6 +147,7 @@ print_ln: {
   !:
     rts
 }
+//  Test different byte constants
 test_bytes: {
     .const bb = 0
     .const bc = bb+2
@@ -225,6 +229,7 @@ assert_byte: {
     str1: .text "fail!@"
     str2: .text "ok@"
 }
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<$400

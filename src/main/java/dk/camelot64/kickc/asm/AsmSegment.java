@@ -200,11 +200,6 @@ public class AsmSegment {
          out.append("\n");
       }
       for(AsmLine line : lines) {
-         if(line instanceof AsmComment && !printState.isComments()) {
-            if(!((AsmComment) line).getComment().contains("Fragment")) {
-               continue;
-            }
-         }
          if(line instanceof AsmScopeEnd) {
             printState.decIndent();
          }
@@ -212,7 +207,7 @@ public class AsmSegment {
             out.append("["+line.getIndex()+"]");
          }
          out.append(printState.getIndent());
-         if(line instanceof AsmComment || line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment || line instanceof AsmInlineKickAsm) {
+         if(line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment || line instanceof AsmInlineKickAsm) {
             out.append("  ");
          }
          out.append(line.getAsm() + "\n");

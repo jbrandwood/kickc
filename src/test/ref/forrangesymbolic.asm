@@ -1,6 +1,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Range-based for does not recognize symbolic constants.
+//  The following should work but gives a not-constant exception
 main: {
     .label BITMAP = $2000
     .label b = 2

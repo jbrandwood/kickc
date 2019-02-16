@@ -20,7 +20,8 @@ public class Pass5ReindexAsmLines extends Pass5AsmOptimization {
       for(AsmSegment asmSegment : getAsmProgram().getSegments()) {
          for(AsmLine asmLine : asmSegment.getLines()) {
             if((asmLine instanceof AsmComment)) {
-               asmLine.setIndex(-1);
+               asmLine.setIndex(nextIndex);
+               nextIndex += ((AsmComment) asmLine).getLineCount();
             } else if(asmLine instanceof AsmInlineKickAsm) {
                asmLine.setIndex(nextIndex);
                AsmInlineKickAsm inlineKickAsm = (AsmInlineKickAsm) asmLine;

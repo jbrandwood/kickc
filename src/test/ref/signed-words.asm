@@ -170,6 +170,7 @@ anim: {
     sta SPRITES_XMSB
     rts
 }
+//  Fill and show a sprite, clear the screen
 init: {
     .label sc = 2
     lda #1

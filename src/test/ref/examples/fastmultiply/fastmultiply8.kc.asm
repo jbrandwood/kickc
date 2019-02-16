@@ -96,6 +96,7 @@ main: {
     bne b2
     rts
 }
+//  Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label b = $a
     .label at = 8
@@ -122,6 +123,7 @@ print_sbyte_at: {
     sta b
     jmp b2
 }
+//  Print a single char
 print_char_at: {
     .label at = 8
     .label ch = $b
@@ -130,6 +132,7 @@ print_char_at: {
     sta (at),y
     rts
 }
+//  Print a byte as HEX at a specific position
 print_byte_at: {
     .label at = 8
     lda print_sbyte_at.b
@@ -208,6 +211,7 @@ init_screen: {
     bne b2
     rts
 }
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<print_line_cursor

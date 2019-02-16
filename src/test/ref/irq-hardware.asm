@@ -17,6 +17,7 @@
   .const PROCPORT_DDR_MEMORY_MASK = 7
   .label PROCPORT = 1
   .const PROCPORT_RAM_IO = $35
+//  RAM in $A000, $E000 CHAR ROM in $D000
 main: {
     sei
     lda #PROCPORT_DDR_MEMORY_MASK
@@ -41,6 +42,7 @@ main: {
     inc FGCOL
     jmp b2
 }
+//  Interrupt Routine
 irq: {
     sta rega+1
     stx regx+1

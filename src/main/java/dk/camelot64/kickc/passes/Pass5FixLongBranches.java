@@ -104,7 +104,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                      return true;
                   }
                }
-               getLog().append("Warning! Failed to fix long branch at " + contextLine);
+               throw new CompileError("Error! Failed to fix long branch at " + contextLine);
             }
          }
       }

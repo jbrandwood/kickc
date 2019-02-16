@@ -1497,6 +1497,10 @@ menu: {
     jmp b2_from_b6
 }
 //SEG55 keyboard_key_pressed
+//  Determines whether a specific key is currently pressed by accessing the matrix directly
+//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+//  All keys exist as as KEY_XXX constants.
+//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     .label _2 = $d
     .label colidx = 9
@@ -1543,6 +1547,11 @@ keyboard_key_pressed: {
     rts
 }
 //SEG66 keyboard_matrix_read
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     .label return = $f
     .label rowid = $b
@@ -1726,12 +1735,10 @@ menu: {
     ldx #KEY_C
     jsr keyboard_key_pressed
   //SEG20 [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#2 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b16
   //SEG21 menu::@16
   b16:
   //SEG22 [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
-    // (byte~) menu::$0 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
   //SEG23 [12] if((byte~) menu::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4_from_b16
@@ -1759,12 +1766,10 @@ menu: {
     ldx #KEY_I
     jsr keyboard_key_pressed
   //SEG34 [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#3 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b17
   //SEG35 menu::@17
   b17:
   //SEG36 [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
-    // (byte~) menu::$4 = (byte) keyboard_key_pressed::return#3  // register copy reg byte a
   //SEG37 [20] if((byte~) menu::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b5_from_b17
@@ -1789,12 +1794,10 @@ menu: {
     ldx #KEY_E
     jsr keyboard_key_pressed
   //SEG46 [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#4 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b19
   //SEG47 menu::@19
   b19:
   //SEG48 [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
-    // (byte~) menu::$7 = (byte) keyboard_key_pressed::return#4  // register copy reg byte a
   //SEG49 [27] if((byte~) menu::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b6
@@ -1814,6 +1817,10 @@ menu: {
     jmp b2_from_b6
 }
 //SEG55 keyboard_key_pressed
+//  Determines whether a specific key is currently pressed by accessing the matrix directly
+//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+//  All keys exist as as KEY_XXX constants.
+//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
   //SEG56 [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
@@ -1829,12 +1836,10 @@ keyboard_key_pressed: {
   //SEG59 [35] call keyboard_matrix_read 
     jsr keyboard_matrix_read
   //SEG60 [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    // (byte) keyboard_matrix_read::return#2 = (byte) keyboard_matrix_read::return#0  // register copy reg byte a
     jmp b2
   //SEG61 keyboard_key_pressed::@2
   b2:
   //SEG62 [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // (byte~) keyboard_key_pressed::$2 = (byte) keyboard_matrix_read::return#2  // register copy reg byte a
   //SEG63 [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
     jmp breturn
@@ -1844,6 +1849,11 @@ keyboard_key_pressed: {
     rts
 }
 //SEG66 keyboard_matrix_read
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
   //SEG67 [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
@@ -1874,12 +1884,10 @@ pressed: {
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
   //SEG78 [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#10 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b10
   //SEG79 pressed::@10
   b10:
   //SEG80 [47] (byte~) pressed::$0 ← (byte) keyboard_key_pressed::return#10
-    // (byte~) pressed::$0 = (byte) keyboard_key_pressed::return#10  // register copy reg byte a
   //SEG81 [48] if((byte~) pressed::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto pressed::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2_from_b10
@@ -2242,10 +2250,8 @@ menu: {
     ldx #KEY_C
     jsr keyboard_key_pressed
   //SEG20 [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#2 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG21 menu::@16
   //SEG22 [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
-    // (byte~) menu::$0 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
   //SEG23 [12] if((byte~) menu::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4
@@ -2266,10 +2272,8 @@ menu: {
     ldx #KEY_I
     jsr keyboard_key_pressed
   //SEG34 [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#3 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG35 menu::@17
   //SEG36 [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
-    // (byte~) menu::$4 = (byte) keyboard_key_pressed::return#3  // register copy reg byte a
   //SEG37 [20] if((byte~) menu::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b5
@@ -2289,10 +2293,8 @@ menu: {
     ldx #KEY_E
     jsr keyboard_key_pressed
   //SEG46 [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#4 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG47 menu::@19
   //SEG48 [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
-    // (byte~) menu::$7 = (byte) keyboard_key_pressed::return#4  // register copy reg byte a
   //SEG49 [27] if((byte~) menu::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b6
@@ -2310,6 +2312,10 @@ menu: {
     jmp b2
 }
 //SEG55 keyboard_key_pressed
+//  Determines whether a specific key is currently pressed by accessing the matrix directly
+//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+//  All keys exist as as KEY_XXX constants.
+//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
   //SEG56 [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
@@ -2325,10 +2331,8 @@ keyboard_key_pressed: {
   //SEG59 [35] call keyboard_matrix_read 
     jsr keyboard_matrix_read
   //SEG60 [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    // (byte) keyboard_matrix_read::return#2 = (byte) keyboard_matrix_read::return#0  // register copy reg byte a
   //SEG61 keyboard_key_pressed::@2
   //SEG62 [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // (byte~) keyboard_key_pressed::$2 = (byte) keyboard_matrix_read::return#2  // register copy reg byte a
   //SEG63 [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
   //SEG64 keyboard_key_pressed::@return
@@ -2336,6 +2340,11 @@ keyboard_key_pressed: {
     rts
 }
 //SEG66 keyboard_matrix_read
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
   //SEG67 [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
@@ -2360,10 +2369,8 @@ pressed: {
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
   //SEG78 [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#10 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG79 pressed::@10
   //SEG80 [47] (byte~) pressed::$0 ← (byte) keyboard_key_pressed::return#10
-    // (byte~) pressed::$0 = (byte) keyboard_key_pressed::return#10  // register copy reg byte a
   //SEG81 [48] if((byte~) pressed::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto pressed::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2

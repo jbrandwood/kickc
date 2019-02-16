@@ -183,11 +183,13 @@ main: {
     bne b8
     jmp b3
 }
+//  Initialize the different graphics in the memory
 gfx_init: {
     jsr gfx_init_screen0
     jsr gfx_init_plane_charset8
     rts
 }
+//  Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
     .const gfxbCpuBank = $ff&CHARSET8/$4000
     .label bits = 6
@@ -258,6 +260,9 @@ gfx_init_plane_charset8: {
     jsr dtvSetCpuBankSegment1
     rts
 }
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
     sta cpuBank
@@ -266,6 +271,7 @@ dtvSetCpuBankSegment1: {
     .byte $32, $00
     rts
 }
+//  Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
     .label _1 = 5
     .label ch = 3

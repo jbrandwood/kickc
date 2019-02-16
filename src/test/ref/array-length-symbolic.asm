@@ -3,6 +3,7 @@
 .pc = $80d "Program"
   .const ITEM_COUNT = 3
   .const ITEM_SIZE = 5
+//  Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
     .label cur_item = 2
     lda #<items

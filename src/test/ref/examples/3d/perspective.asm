@@ -82,6 +82,7 @@ do_perspective: {
     str4: .text ",@"
     str5: .text ")@"
 }
+//  Print a newline
 print_ln: {
     lda #<$400
     sta print_line_cursor
@@ -105,6 +106,7 @@ print_ln: {
   !:
     rts
 }
+//  Print a zero-terminated string
 print_str: {
     .label str = 2
   b1:
@@ -127,6 +129,7 @@ print_str: {
   !:
     jmp b1
 }
+//  Print a byte as HEX
 print_byte: {
     txa
     lsr
@@ -143,6 +146,7 @@ print_byte: {
     jsr print_char
     rts
 }
+//  Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -152,6 +156,8 @@ print_char: {
   !:
     rts
 }
+//  Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
+//  Implemented in assembler to utilize seriously fast multiplication 
 perspective: {
     lda #do_perspective.x
     sta xr
@@ -179,6 +185,7 @@ perspective: {
     sta xr
     rts
 }
+//  Print a signed byte as HEX
 print_sbyte: {
     cpx #0
     bmi b1
@@ -197,6 +204,7 @@ print_sbyte: {
     tax
     jmp b2
 }
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<$400
@@ -219,6 +227,7 @@ print_cls: {
     bne b1
     rts
 }
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
     .label val = 6
     .label sqr = 2

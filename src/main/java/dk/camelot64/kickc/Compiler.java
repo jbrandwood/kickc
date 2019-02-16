@@ -64,7 +64,8 @@ public class Compiler {
                throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
             }
          });
-         KickCParser parser = new KickCParser(new CommonTokenStream(lexer));
+         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+         KickCParser parser = new KickCParser(tokenStream);
          parser.setBuildParseTree(true);
          parser.addErrorListener(new BaseErrorListener() {
             @Override
@@ -78,7 +79,7 @@ public class Compiler {
                throw new CompileError("Error parsing  file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
             }
          });
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(file, parser.file(), program);
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(file, tokenStream, parser.file(), program);
          pass0GenerateStatementSequence.generate();
       } catch(IOException e) {
          throw new CompileError("Error loading file " + fileName, e);

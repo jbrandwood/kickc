@@ -3359,6 +3359,7 @@ main: {
     sintab2: .fill 2*$78, 0
 }
 //SEG57 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = 7
   //SEG58 [26] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -3399,6 +3400,7 @@ print_str: {
     jmp b1_from_b2
 }
 //SEG69 print_sword
+//  Print a signed word as HEX
 print_sword: {
     .label w = 9
   //SEG70 [32] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -3447,6 +3449,7 @@ print_sword: {
     rts
 }
 //SEG86 print_word
+//  Print a word as HEX
 print_word: {
   //SEG87 [39] (byte) print_byte::b#0 ← > (word)(signed word) print_sword::w#3 -- vbuz1=_hi_vwuz2 
     lda print_sword.w+1
@@ -3476,6 +3479,7 @@ print_word: {
     rts
 }
 //SEG100 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label _0 = $45
     .label _2 = $46
@@ -3521,6 +3525,7 @@ print_byte: {
     rts
 }
 //SEG116 print_char
+//  Print a single char
 print_char: {
     .label ch = $c
   //SEG117 [53] *((byte*) print_char_cursor#33) ← (byte) print_char::ch#3 -- _deref_pbuz1=vbuz2 
@@ -3539,6 +3544,7 @@ print_char: {
     rts
 }
 //SEG121 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $f
   //SEG122 [57] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -3578,6 +3584,9 @@ print_cls: {
     rts
 }
 //SEG132 sin16s_genb
+//  Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+//  sintab - the table to generate into
+//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_genb: {
     .label _2 = $51
     .label step = $4b
@@ -3707,6 +3716,9 @@ sin16s_genb: {
     rts
 }
 //SEG159 sin16sb
+//  Calculate signed word sinus sin(x)
+//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16sb: {
     .label x = $1a
     .label return = $4f
@@ -4022,6 +4034,8 @@ sin16sb: {
     jmp b3_from_b15
 }
 //SEG239 mulu16_sel
+//  Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+//  The select parameter indicates how many of the highest bits of the 32-bit result to skip
 mulu16_sel: {
     .label _0 = $75
     .label _1 = $79
@@ -4103,6 +4117,7 @@ mulu16_sel: {
     rts
 }
 //SEG250 mul16u
+//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label _1 = $7f
     .label mb = $29
@@ -4193,6 +4208,8 @@ mul16u: {
     jmp b1
 }
 //SEG274 div32u16u
+//  Divide unsigned 32-bit dword dividend with a 16-bit word divisor
+//  The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = $82
     .label quotient_lo = $86
@@ -4270,6 +4287,10 @@ div32u16u: {
     rts
 }
 //SEG293 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label _1 = $8c
     .label _2 = $8d
@@ -4390,6 +4411,9 @@ divr16u: {
     rts
 }
 //SEG330 sin16s_gen
+//  Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+//  sintab - the table to generate into
+//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_gen: {
     .label _1 = $9a
     .label step = $94
@@ -4523,6 +4547,9 @@ sin16s_gen: {
     rts
 }
 //SEG357 sin16s
+//  Calculate signed word sinus sin(x)
+//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16s: {
     .label _6 = $9c
     .label x = $3d
@@ -5444,7 +5471,6 @@ main: {
   //SEG41 main::@2
   b2:
   //SEG42 [16] (signed word) print_sword::w#1 ← (signed word) main::sw#0
-    // (signed word) print_sword::w#1 = (signed word) main::sw#0  // register copy zp ZP_WORD:8
   //SEG43 [17] call print_sword 
     jsr print_sword
   //SEG44 [18] phi from main::@2 to main::@8 [phi:main::@2->main::@8]
@@ -5497,6 +5523,7 @@ main: {
     sintab2: .fill 2*$78, 0
 }
 //SEG57 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = 6
   //SEG58 [26] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -5537,6 +5564,7 @@ print_str: {
     jmp b1_from_b2
 }
 //SEG69 print_sword
+//  Print a signed word as HEX
 print_sword: {
     .label w = 8
   //SEG70 [32] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -5584,6 +5612,7 @@ print_sword: {
     rts
 }
 //SEG86 print_word
+//  Print a word as HEX
 print_word: {
   //SEG87 [39] (byte) print_byte::b#0 ← > (word)(signed word) print_sword::w#3 -- vbuz1=_hi_vwuz2 
     lda print_sword.w+1
@@ -5613,6 +5642,7 @@ print_word: {
     rts
 }
 //SEG100 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label b = $a
   //SEG101 [45] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuz1_ror_4 
@@ -5652,6 +5682,7 @@ print_byte: {
     rts
 }
 //SEG116 print_char
+//  Print a single char
 print_char: {
   //SEG117 [53] *((byte*) print_char_cursor#33) ← (byte) print_char::ch#3 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -5668,6 +5699,7 @@ print_char: {
     rts
 }
 //SEG121 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
   //SEG122 [57] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -5707,6 +5739,9 @@ print_cls: {
     rts
 }
 //SEG132 sin16s_genb
+//  Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+//  sintab - the table to generate into
+//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_genb: {
     .label _2 = 8
     .label step = $1d
@@ -5718,12 +5753,10 @@ sin16s_genb: {
   div32u16u_from_sin16s_genb:
     jsr div32u16u
   //SEG135 [64] (dword) div32u16u::return#3 ← (dword) div32u16u::return#0
-    // (dword) div32u16u::return#3 = (dword) div32u16u::return#0  // register copy zp ZP_DWORD:29
     jmp b3
   //SEG136 sin16s_genb::@3
   b3:
   //SEG137 [65] (dword) sin16s_genb::step#0 ← (dword) div32u16u::return#3
-    // (dword) sin16s_genb::step#0 = (dword) div32u16u::return#3  // register copy zp ZP_DWORD:29
   //SEG138 [66] phi from sin16s_genb::@3 to sin16s_genb::@1 [phi:sin16s_genb::@3->sin16s_genb::@1]
   b1_from_b3:
   //SEG139 [66] phi (word) sin16s_genb::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:sin16s_genb::@3->sin16s_genb::@1#0] -- vwuz1=vbuc1 
@@ -5760,12 +5793,10 @@ sin16s_genb: {
   //SEG148 [68] call sin16sb 
     jsr sin16sb
   //SEG149 [69] (signed word) sin16sb::return#0 ← (signed word) sin16sb::return#1
-    // (signed word) sin16sb::return#0 = (signed word) sin16sb::return#1  // register copy zp ZP_WORD:8
     jmp b4
   //SEG150 sin16s_genb::@4
   b4:
   //SEG151 [70] (signed word~) sin16s_genb::$2 ← (signed word) sin16sb::return#0
-    // (signed word~) sin16s_genb::$2 = (signed word) sin16sb::return#0  // register copy zp ZP_WORD:8
   //SEG152 [71] *((signed word*) sin16s_genb::sintab#2) ← (signed word~) sin16s_genb::$2 -- _deref_pwsz1=vwsz2 
     ldy #0
     lda _2
@@ -5816,6 +5847,9 @@ sin16s_genb: {
     rts
 }
 //SEG159 sin16sb
+//  Calculate signed word sinus sin(x)
+//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16sb: {
     .label x = 6
     .label return = 8
@@ -5918,7 +5952,6 @@ sin16sb: {
   //SEG183 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#5 [phi:sin16sb::@2->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG184 [87] (word) mulu16_sel::return#18 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#18 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
     jmp b8
   //SEG185 sin16sb::@8
   b8:
@@ -5928,7 +5961,6 @@ sin16sb: {
     lda mulu16_sel.return_18+1
     sta x2+1
   //SEG187 [89] (word) mulu16_sel::v1#6 ← (word) sin16sb::x2#0
-    // (word) mulu16_sel::v1#6 = (word) sin16sb::x2#0  // register copy zp ZP_WORD:11
   //SEG188 [90] (word) mulu16_sel::v2#6 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -5951,9 +5983,7 @@ sin16sb: {
   //SEG195 sin16sb::@9
   b9:
   //SEG196 [93] (word) sin16sb::x3#0 ← (word) mulu16_sel::return#19
-    // (word) sin16sb::x3#0 = (word) mulu16_sel::return#19  // register copy zp ZP_WORD:11
   //SEG197 [94] (word) mulu16_sel::v1#7 ← (word) sin16sb::x3#0
-    // (word) mulu16_sel::v1#7 = (word) sin16sb::x3#0  // register copy zp ZP_WORD:11
   //SEG198 [95] call mulu16_sel 
   //SEG199 [116] phi from sin16sb::@9 to mulu16_sel [phi:sin16sb::@9->mulu16_sel]
   mulu16_sel_from_b9:
@@ -5967,12 +5997,10 @@ sin16sb: {
   //SEG202 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#7 [phi:sin16sb::@9->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG203 [96] (word) mulu16_sel::return#20 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#20 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
     jmp b10
   //SEG204 sin16sb::@10
   b10:
   //SEG205 [97] (word) sin16sb::x3_6#0 ← (word) mulu16_sel::return#20
-    // (word) sin16sb::x3_6#0 = (word) mulu16_sel::return#20  // register copy zp ZP_WORD:17
   //SEG206 [98] (word) sin16sb::usinx#0 ← (word) sin16sb::x1#0 - (word) sin16sb::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
     lda x1
     sec
@@ -5982,7 +6010,6 @@ sin16sb: {
     sbc x3_6+1
     sta usinx+1
   //SEG207 [99] (word) mulu16_sel::v1#8 ← (word) sin16sb::x3#0
-    // (word) mulu16_sel::v1#8 = (word) sin16sb::x3#0  // register copy zp ZP_WORD:11
   //SEG208 [100] (word) mulu16_sel::v2#8 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -6005,9 +6032,7 @@ sin16sb: {
   //SEG215 sin16sb::@11
   b11:
   //SEG216 [103] (word) sin16sb::x4#0 ← (word) mulu16_sel::return#10
-    // (word) sin16sb::x4#0 = (word) mulu16_sel::return#10  // register copy zp ZP_WORD:11
   //SEG217 [104] (word) mulu16_sel::v1#9 ← (word) sin16sb::x4#0
-    // (word) mulu16_sel::v1#9 = (word) sin16sb::x4#0  // register copy zp ZP_WORD:11
   //SEG218 [105] (word) mulu16_sel::v2#9 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -6022,12 +6047,10 @@ sin16sb: {
   //SEG223 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#9 [phi:sin16sb::@11->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG224 [107] (word) mulu16_sel::return#11 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#11 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
     jmp b12
   //SEG225 sin16sb::@12
   b12:
   //SEG226 [108] (word) sin16sb::x5#0 ← (word) mulu16_sel::return#11
-    // (word) sin16sb::x5#0 = (word) mulu16_sel::return#11  // register copy zp ZP_WORD:17
   //SEG227 [109] (word) sin16sb::x5_128#0 ← (word) sin16sb::x5#0 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vwuz1=vwuz1_ror_4 
     ldy #4
   !:
@@ -6075,10 +6098,11 @@ sin16sb: {
   //SEG237 sin16sb::@15
   b15:
   //SEG238 [115] (signed word~) sin16sb::return#5 ← (signed word)(word) sin16sb::usinx#1
-    // (signed word~) sin16sb::return#5 = (signed word)(word) sin16sb::usinx#1  // register copy zp ZP_WORD:8
     jmp b3_from_b15
 }
 //SEG239 mulu16_sel
+//  Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+//  The select parameter indicates how many of the highest bits of the 32-bit result to skip
 mulu16_sel: {
     .label _0 = $15
     .label _1 = $15
@@ -6097,16 +6121,13 @@ mulu16_sel: {
     lda v1+1
     sta mul16u.a+1
   //SEG241 [118] (word) mul16u::b#0 ← (word) mulu16_sel::v2#10
-    // (word) mul16u::b#0 = (word) mulu16_sel::v2#10  // register copy zp ZP_WORD:17
   //SEG242 [119] call mul16u 
     jsr mul16u
   //SEG243 [120] (dword) mul16u::return#2 ← (dword) mul16u::res#2
-    // (dword) mul16u::return#2 = (dword) mul16u::res#2  // register copy zp ZP_DWORD:21
     jmp b2
   //SEG244 mulu16_sel::@2
   b2:
   //SEG245 [121] (dword~) mulu16_sel::$0 ← (dword) mul16u::return#2
-    // (dword~) mulu16_sel::$0 = (dword) mul16u::return#2  // register copy zp ZP_DWORD:21
   //SEG246 [122] (dword~) mulu16_sel::$1 ← (dword~) mulu16_sel::$0 << (byte) mulu16_sel::select#10 -- vduz1=vduz1_rol_vbuxx 
     cpx #0
     beq !e+
@@ -6130,6 +6151,7 @@ mulu16_sel: {
     rts
 }
 //SEG250 mul16u
+//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label mb = $19
     .label a = $13
@@ -6217,6 +6239,8 @@ mul16u: {
     jmp b1
 }
 //SEG274 div32u16u
+//  Divide unsigned 32-bit dword dividend with a 16-bit word divisor
+//  The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = 8
     .label quotient_lo = 6
@@ -6236,7 +6260,6 @@ div32u16u: {
     sta divr16u.rem+1
     jsr divr16u
   //SEG279 [137] (word) divr16u::return#2 ← (word) divr16u::return#0
-    // (word) divr16u::return#2 = (word) divr16u::return#0  // register copy zp ZP_WORD:6
     jmp b2
   //SEG280 div32u16u::@2
   b2:
@@ -6246,7 +6269,6 @@ div32u16u: {
     lda divr16u.return+1
     sta quotient_hi+1
   //SEG282 [139] (word) divr16u::rem#4 ← (word) rem16u#1
-    // (word) divr16u::rem#4 = (word) rem16u#1  // register copy zp ZP_WORD:2
   //SEG283 [140] call divr16u 
   //SEG284 [145] phi from div32u16u::@2 to divr16u [phi:div32u16u::@2->divr16u]
   divr16u_from_b2:
@@ -6258,12 +6280,10 @@ div32u16u: {
   //SEG286 [145] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:div32u16u::@2->divr16u#1] -- register_copy 
     jsr divr16u
   //SEG287 [141] (word) divr16u::return#3 ← (word) divr16u::return#0
-    // (word) divr16u::return#3 = (word) divr16u::return#0  // register copy zp ZP_WORD:6
     jmp b3
   //SEG288 div32u16u::@3
   b3:
   //SEG289 [142] (word) div32u16u::quotient_lo#0 ← (word) divr16u::return#3
-    // (word) div32u16u::quotient_lo#0 = (word) divr16u::return#3  // register copy zp ZP_WORD:6
   //SEG290 [143] (dword) div32u16u::return#0 ← (word) div32u16u::quotient_hi#0 dw= (word) div32u16u::quotient_lo#0 -- vduz1=vwuz2_dword_vwuz3 
     lda quotient_hi
     sta return+2
@@ -6280,6 +6300,10 @@ div32u16u: {
     rts
 }
 //SEG293 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = 2
     .label dividend = 4
@@ -6378,7 +6402,6 @@ divr16u: {
   //SEG326 divr16u::@6
   b6:
   //SEG327 [161] (word) rem16u#1 ← (word) divr16u::rem#11
-    // (word) rem16u#1 = (word) divr16u::rem#11  // register copy zp ZP_WORD:2
     jmp breturn
   //SEG328 divr16u::@return
   breturn:
@@ -6386,6 +6409,9 @@ divr16u: {
     rts
 }
 //SEG330 sin16s_gen
+//  Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+//  sintab - the table to generate into
+//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_gen: {
     .label _1 = 6
     .label step = $1d
@@ -6397,12 +6423,10 @@ sin16s_gen: {
   div32u16u_from_sin16s_gen:
     jsr div32u16u
   //SEG333 [165] (dword) div32u16u::return#2 ← (dword) div32u16u::return#0
-    // (dword) div32u16u::return#2 = (dword) div32u16u::return#0  // register copy zp ZP_DWORD:29
     jmp b3
   //SEG334 sin16s_gen::@3
   b3:
   //SEG335 [166] (dword) sin16s_gen::step#0 ← (dword) div32u16u::return#2
-    // (dword) sin16s_gen::step#0 = (dword) div32u16u::return#2  // register copy zp ZP_DWORD:29
   //SEG336 [167] phi from sin16s_gen::@3 to sin16s_gen::@1 [phi:sin16s_gen::@3->sin16s_gen::@1]
   b1_from_b3:
   //SEG337 [167] phi (word) sin16s_gen::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:sin16s_gen::@3->sin16s_gen::@1#0] -- vwuz1=vbuc1 
@@ -6443,12 +6467,10 @@ sin16s_gen: {
   //SEG346 [169] call sin16s 
     jsr sin16s
   //SEG347 [170] (signed word) sin16s::return#0 ← (signed word) sin16s::return#1
-    // (signed word) sin16s::return#0 = (signed word) sin16s::return#1  // register copy zp ZP_WORD:6
     jmp b4
   //SEG348 sin16s_gen::@4
   b4:
   //SEG349 [171] (signed word~) sin16s_gen::$1 ← (signed word) sin16s::return#0
-    // (signed word~) sin16s_gen::$1 = (signed word) sin16s::return#0  // register copy zp ZP_WORD:6
   //SEG350 [172] *((signed word*) sin16s_gen::sintab#2) ← (signed word~) sin16s_gen::$1 -- _deref_pwsz1=vwsz2 
     ldy #0
     lda _1
@@ -6499,6 +6521,9 @@ sin16s_gen: {
     rts
 }
 //SEG357 sin16s
+//  Calculate signed word sinus sin(x)
+//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16s: {
     .label _6 = $15
     .label x = $15
@@ -6645,9 +6670,7 @@ sin16s: {
   //SEG384 sin16s::@8
   b8:
   //SEG385 [190] (word) sin16s::x2#0 ← (word) mulu16_sel::return#0
-    // (word) sin16s::x2#0 = (word) mulu16_sel::return#0  // register copy zp ZP_WORD:11
   //SEG386 [191] (word) mulu16_sel::v1#1 ← (word) sin16s::x2#0
-    // (word) mulu16_sel::v1#1 = (word) sin16s::x2#0  // register copy zp ZP_WORD:11
   //SEG387 [192] (word) mulu16_sel::v2#1 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -6670,9 +6693,7 @@ sin16s: {
   //SEG394 sin16s::@9
   b9:
   //SEG395 [195] (word) sin16s::x3#0 ← (word) mulu16_sel::return#1
-    // (word) sin16s::x3#0 = (word) mulu16_sel::return#1  // register copy zp ZP_WORD:11
   //SEG396 [196] (word) mulu16_sel::v1#2 ← (word) sin16s::x3#0
-    // (word) mulu16_sel::v1#2 = (word) sin16s::x3#0  // register copy zp ZP_WORD:11
   //SEG397 [197] call mulu16_sel 
   //SEG398 [116] phi from sin16s::@9 to mulu16_sel [phi:sin16s::@9->mulu16_sel]
   mulu16_sel_from_b9:
@@ -6686,12 +6707,10 @@ sin16s: {
   //SEG401 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#2 [phi:sin16s::@9->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG402 [198] (word) mulu16_sel::return#14 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#14 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
     jmp b10
   //SEG403 sin16s::@10
   b10:
   //SEG404 [199] (word) sin16s::x3_6#0 ← (word) mulu16_sel::return#14
-    // (word) sin16s::x3_6#0 = (word) mulu16_sel::return#14  // register copy zp ZP_WORD:17
   //SEG405 [200] (word) sin16s::usinx#0 ← (word) sin16s::x1#0 - (word) sin16s::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
     lda x1
     sec
@@ -6701,7 +6720,6 @@ sin16s: {
     sbc x3_6+1
     sta usinx+1
   //SEG406 [201] (word) mulu16_sel::v1#3 ← (word) sin16s::x3#0
-    // (word) mulu16_sel::v1#3 = (word) sin16s::x3#0  // register copy zp ZP_WORD:11
   //SEG407 [202] (word) mulu16_sel::v2#3 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -6724,9 +6742,7 @@ sin16s: {
   //SEG414 sin16s::@11
   b11:
   //SEG415 [205] (word) sin16s::x4#0 ← (word) mulu16_sel::return#15
-    // (word) sin16s::x4#0 = (word) mulu16_sel::return#15  // register copy zp ZP_WORD:11
   //SEG416 [206] (word) mulu16_sel::v1#4 ← (word) sin16s::x4#0
-    // (word) mulu16_sel::v1#4 = (word) sin16s::x4#0  // register copy zp ZP_WORD:11
   //SEG417 [207] (word) mulu16_sel::v2#4 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -6741,12 +6757,10 @@ sin16s: {
   //SEG422 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#4 [phi:sin16s::@11->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG423 [209] (word) mulu16_sel::return#16 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#16 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
     jmp b12
   //SEG424 sin16s::@12
   b12:
   //SEG425 [210] (word) sin16s::x5#0 ← (word) mulu16_sel::return#16
-    // (word) sin16s::x5#0 = (word) mulu16_sel::return#16  // register copy zp ZP_WORD:17
   //SEG426 [211] (word) sin16s::x5_128#0 ← (word) sin16s::x5#0 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vwuz1=vwuz1_ror_4 
     ldy #4
   !:
@@ -6794,7 +6808,6 @@ sin16s: {
   //SEG436 sin16s::@15
   b15:
   //SEG437 [217] (signed word~) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1
-    // (signed word~) sin16s::return#5 = (signed word)(word) sin16s::usinx#1  // register copy zp ZP_WORD:6
     jmp b3_from_b15
 }
   print_hextab: .text "0123456789abcdef"
@@ -6928,9 +6941,11 @@ Removing instruction print_char_from_b2:
 Removing instruction b1_from_print_sword:
 Removing instruction b1_from_b4:
 Removing instruction b1_from_b1:
+Removing instruction b1_from_b3:
 Removing instruction b1_from_b4:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b5:
+Removing instruction mulu16_sel_from_b9:
 Removing instruction b3_from_b15:
 Removing instruction b3_from_b6:
 Removing instruction breturn:
@@ -6941,9 +6956,12 @@ Removing instruction b2_from_b1:
 Removing instruction b2_from_b4:
 Removing instruction b3_from_b2:
 Removing instruction b3_from_b5:
+Removing instruction breturn:
+Removing instruction b1_from_b3:
 Removing instruction b1_from_b4:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b5:
+Removing instruction mulu16_sel_from_b9:
 Removing instruction b3_from_b15:
 Removing instruction b3_from_b6:
 Removing instruction breturn:
@@ -6974,7 +6992,6 @@ Removing instruction b1_from_print_cls:
 Removing instruction breturn:
 Removing instruction div32u16u_from_sin16s_genb:
 Removing instruction b3:
-Removing instruction b1_from_b3:
 Removing instruction b4:
 Removing instruction breturn:
 Removing instruction b4:
@@ -6984,7 +7001,6 @@ Removing instruction mulu16_sel_from_b2:
 Removing instruction b8:
 Removing instruction mulu16_sel_from_b8:
 Removing instruction b9:
-Removing instruction mulu16_sel_from_b9:
 Removing instruction b10:
 Removing instruction mulu16_sel_from_b10:
 Removing instruction b11:
@@ -7006,10 +7022,8 @@ Removing instruction b1_from_divr16u:
 Removing instruction b4:
 Removing instruction b5:
 Removing instruction b6:
-Removing instruction breturn:
 Removing instruction div32u16u_from_sin16s_gen:
 Removing instruction b3:
-Removing instruction b1_from_b3:
 Removing instruction b4:
 Removing instruction breturn:
 Removing instruction b4:
@@ -7019,7 +7033,6 @@ Removing instruction mulu16_sel_from_b2:
 Removing instruction b8:
 Removing instruction mulu16_sel_from_b8:
 Removing instruction b9:
-Removing instruction mulu16_sel_from_b9:
 Removing instruction b10:
 Removing instruction mulu16_sel_from_b10:
 Removing instruction b11:
@@ -7517,7 +7530,6 @@ main: {
   //SEG41 main::@2
   b2:
   //SEG42 [16] (signed word) print_sword::w#1 ← (signed word) main::sw#0
-    // (signed word) print_sword::w#1 = (signed word) main::sw#0  // register copy zp ZP_WORD:8
   //SEG43 [17] call print_sword 
     jsr print_sword
   //SEG44 [18] phi from main::@2 to main::@8 [phi:main::@2->main::@8]
@@ -7562,6 +7574,7 @@ main: {
     sintab2: .fill 2*$78, 0
 }
 //SEG57 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = 6
   //SEG58 [26] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -7596,6 +7609,7 @@ print_str: {
     jmp b1
 }
 //SEG69 print_sword
+//  Print a signed word as HEX
 print_sword: {
     .label w = 8
   //SEG70 [32] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -7632,6 +7646,7 @@ print_sword: {
     rts
 }
 //SEG86 print_word
+//  Print a word as HEX
 print_word: {
   //SEG87 [39] (byte) print_byte::b#0 ← > (word)(signed word) print_sword::w#3 -- vbuz1=_hi_vwuz2 
     lda print_sword.w+1
@@ -7655,6 +7670,7 @@ print_word: {
     rts
 }
 //SEG100 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label b = $a
   //SEG101 [45] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuz1_ror_4 
@@ -7688,6 +7704,7 @@ print_byte: {
     rts
 }
 //SEG116 print_char
+//  Print a single char
 print_char: {
   //SEG117 [53] *((byte*) print_char_cursor#33) ← (byte) print_char::ch#3 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -7702,6 +7719,7 @@ print_char: {
     rts
 }
 //SEG121 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
   //SEG122 [57] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -7735,6 +7753,9 @@ print_cls: {
     rts
 }
 //SEG132 sin16s_genb
+//  Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+//  sintab - the table to generate into
+//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_genb: {
     .label _2 = 8
     .label step = $1d
@@ -7745,10 +7766,8 @@ sin16s_genb: {
   //SEG134 [135] phi from sin16s_genb to div32u16u [phi:sin16s_genb->div32u16u]
     jsr div32u16u
   //SEG135 [64] (dword) div32u16u::return#3 ← (dword) div32u16u::return#0
-    // (dword) div32u16u::return#3 = (dword) div32u16u::return#0  // register copy zp ZP_DWORD:29
   //SEG136 sin16s_genb::@3
   //SEG137 [65] (dword) sin16s_genb::step#0 ← (dword) div32u16u::return#3
-    // (dword) sin16s_genb::step#0 = (dword) div32u16u::return#3  // register copy zp ZP_DWORD:29
   //SEG138 [66] phi from sin16s_genb::@3 to sin16s_genb::@1 [phi:sin16s_genb::@3->sin16s_genb::@1]
   //SEG139 [66] phi (word) sin16s_genb::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:sin16s_genb::@3->sin16s_genb::@1#0] -- vwuz1=vbuc1 
     lda #<0
@@ -7779,10 +7798,8 @@ sin16s_genb: {
   //SEG148 [68] call sin16sb 
     jsr sin16sb
   //SEG149 [69] (signed word) sin16sb::return#0 ← (signed word) sin16sb::return#1
-    // (signed word) sin16sb::return#0 = (signed word) sin16sb::return#1  // register copy zp ZP_WORD:8
   //SEG150 sin16s_genb::@4
   //SEG151 [70] (signed word~) sin16s_genb::$2 ← (signed word) sin16sb::return#0
-    // (signed word~) sin16s_genb::$2 = (signed word) sin16sb::return#0  // register copy zp ZP_WORD:8
   //SEG152 [71] *((signed word*) sin16s_genb::sintab#2) ← (signed word~) sin16s_genb::$2 -- _deref_pwsz1=vwsz2 
     ldy #0
     lda _2
@@ -7831,6 +7848,9 @@ sin16s_genb: {
     rts
 }
 //SEG159 sin16sb
+//  Calculate signed word sinus sin(x)
+//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16sb: {
     .label x = 6
     .label return = 8
@@ -7923,7 +7943,6 @@ sin16sb: {
   //SEG183 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#5 [phi:sin16sb::@2->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG184 [87] (word) mulu16_sel::return#18 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#18 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
   //SEG185 sin16sb::@8
   //SEG186 [88] (word) sin16sb::x2#0 ← (word) mulu16_sel::return#18 -- vwuz1=vwuz2 
     lda mulu16_sel.return_18
@@ -7931,7 +7950,6 @@ sin16sb: {
     lda mulu16_sel.return_18+1
     sta x2+1
   //SEG187 [89] (word) mulu16_sel::v1#6 ← (word) sin16sb::x2#0
-    // (word) mulu16_sel::v1#6 = (word) sin16sb::x2#0  // register copy zp ZP_WORD:11
   //SEG188 [90] (word) mulu16_sel::v2#6 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -7951,9 +7969,7 @@ sin16sb: {
     sta mulu16_sel.return+1
   //SEG195 sin16sb::@9
   //SEG196 [93] (word) sin16sb::x3#0 ← (word) mulu16_sel::return#19
-    // (word) sin16sb::x3#0 = (word) mulu16_sel::return#19  // register copy zp ZP_WORD:11
   //SEG197 [94] (word) mulu16_sel::v1#7 ← (word) sin16sb::x3#0
-    // (word) mulu16_sel::v1#7 = (word) sin16sb::x3#0  // register copy zp ZP_WORD:11
   //SEG198 [95] call mulu16_sel 
   //SEG199 [116] phi from sin16sb::@9 to mulu16_sel [phi:sin16sb::@9->mulu16_sel]
   //SEG200 [116] phi (byte) mulu16_sel::select#10 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:sin16sb::@9->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -7966,10 +7982,8 @@ sin16sb: {
   //SEG202 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#7 [phi:sin16sb::@9->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG203 [96] (word) mulu16_sel::return#20 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#20 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
   //SEG204 sin16sb::@10
   //SEG205 [97] (word) sin16sb::x3_6#0 ← (word) mulu16_sel::return#20
-    // (word) sin16sb::x3_6#0 = (word) mulu16_sel::return#20  // register copy zp ZP_WORD:17
   //SEG206 [98] (word) sin16sb::usinx#0 ← (word) sin16sb::x1#0 - (word) sin16sb::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
     lda x1
     sec
@@ -7979,7 +7993,6 @@ sin16sb: {
     sbc x3_6+1
     sta usinx+1
   //SEG207 [99] (word) mulu16_sel::v1#8 ← (word) sin16sb::x3#0
-    // (word) mulu16_sel::v1#8 = (word) sin16sb::x3#0  // register copy zp ZP_WORD:11
   //SEG208 [100] (word) mulu16_sel::v2#8 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -7999,9 +8012,7 @@ sin16sb: {
     sta mulu16_sel.return+1
   //SEG215 sin16sb::@11
   //SEG216 [103] (word) sin16sb::x4#0 ← (word) mulu16_sel::return#10
-    // (word) sin16sb::x4#0 = (word) mulu16_sel::return#10  // register copy zp ZP_WORD:11
   //SEG217 [104] (word) mulu16_sel::v1#9 ← (word) sin16sb::x4#0
-    // (word) mulu16_sel::v1#9 = (word) sin16sb::x4#0  // register copy zp ZP_WORD:11
   //SEG218 [105] (word) mulu16_sel::v2#9 ← (word) sin16sb::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -8015,10 +8026,8 @@ sin16sb: {
   //SEG223 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#9 [phi:sin16sb::@11->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG224 [107] (word) mulu16_sel::return#11 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#11 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
   //SEG225 sin16sb::@12
   //SEG226 [108] (word) sin16sb::x5#0 ← (word) mulu16_sel::return#11
-    // (word) sin16sb::x5#0 = (word) mulu16_sel::return#11  // register copy zp ZP_WORD:17
   //SEG227 [109] (word) sin16sb::x5_128#0 ← (word) sin16sb::x5#0 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vwuz1=vwuz1_ror_4 
     ldy #4
   !:
@@ -8058,9 +8067,10 @@ sin16sb: {
     rts
   //SEG237 sin16sb::@15
   //SEG238 [115] (signed word~) sin16sb::return#5 ← (signed word)(word) sin16sb::usinx#1
-    // (signed word~) sin16sb::return#5 = (signed word)(word) sin16sb::usinx#1  // register copy zp ZP_WORD:8
 }
 //SEG239 mulu16_sel
+//  Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+//  The select parameter indicates how many of the highest bits of the 32-bit result to skip
 mulu16_sel: {
     .label _0 = $15
     .label _1 = $15
@@ -8079,14 +8089,11 @@ mulu16_sel: {
     lda v1+1
     sta mul16u.a+1
   //SEG241 [118] (word) mul16u::b#0 ← (word) mulu16_sel::v2#10
-    // (word) mul16u::b#0 = (word) mulu16_sel::v2#10  // register copy zp ZP_WORD:17
   //SEG242 [119] call mul16u 
     jsr mul16u
   //SEG243 [120] (dword) mul16u::return#2 ← (dword) mul16u::res#2
-    // (dword) mul16u::return#2 = (dword) mul16u::res#2  // register copy zp ZP_DWORD:21
   //SEG244 mulu16_sel::@2
   //SEG245 [121] (dword~) mulu16_sel::$0 ← (dword) mul16u::return#2
-    // (dword~) mulu16_sel::$0 = (dword) mul16u::return#2  // register copy zp ZP_DWORD:21
   //SEG246 [122] (dword~) mulu16_sel::$1 ← (dword~) mulu16_sel::$0 << (byte) mulu16_sel::select#10 -- vduz1=vduz1_rol_vbuxx 
     cpx #0
     beq !e+
@@ -8108,6 +8115,7 @@ mulu16_sel: {
     rts
 }
 //SEG250 mul16u
+//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label mb = $19
     .label a = $13
@@ -8183,6 +8191,8 @@ mul16u: {
     jmp b1
 }
 //SEG274 div32u16u
+//  Divide unsigned 32-bit dword dividend with a 16-bit word divisor
+//  The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = 8
     .label quotient_lo = 6
@@ -8200,7 +8210,6 @@ div32u16u: {
     sta divr16u.rem+1
     jsr divr16u
   //SEG279 [137] (word) divr16u::return#2 ← (word) divr16u::return#0
-    // (word) divr16u::return#2 = (word) divr16u::return#0  // register copy zp ZP_WORD:6
   //SEG280 div32u16u::@2
   //SEG281 [138] (word) div32u16u::quotient_hi#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
     lda divr16u.return
@@ -8208,7 +8217,6 @@ div32u16u: {
     lda divr16u.return+1
     sta quotient_hi+1
   //SEG282 [139] (word) divr16u::rem#4 ← (word) rem16u#1
-    // (word) divr16u::rem#4 = (word) rem16u#1  // register copy zp ZP_WORD:2
   //SEG283 [140] call divr16u 
   //SEG284 [145] phi from div32u16u::@2 to divr16u [phi:div32u16u::@2->divr16u]
   //SEG285 [145] phi (word) divr16u::dividend#5 = <(const dword) PI2_u4f28#0 [phi:div32u16u::@2->divr16u#0] -- vwuz1=vwuc1 
@@ -8219,10 +8227,8 @@ div32u16u: {
   //SEG286 [145] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:div32u16u::@2->divr16u#1] -- register_copy 
     jsr divr16u
   //SEG287 [141] (word) divr16u::return#3 ← (word) divr16u::return#0
-    // (word) divr16u::return#3 = (word) divr16u::return#0  // register copy zp ZP_WORD:6
   //SEG288 div32u16u::@3
   //SEG289 [142] (word) div32u16u::quotient_lo#0 ← (word) divr16u::return#3
-    // (word) div32u16u::quotient_lo#0 = (word) divr16u::return#3  // register copy zp ZP_WORD:6
   //SEG290 [143] (dword) div32u16u::return#0 ← (word) div32u16u::quotient_hi#0 dw= (word) div32u16u::quotient_lo#0 -- vduz1=vwuz2_dword_vwuz3 
     lda quotient_hi
     sta return+2
@@ -8237,6 +8243,10 @@ div32u16u: {
     rts
 }
 //SEG293 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = 2
     .label dividend = 4
@@ -8318,12 +8328,14 @@ divr16u: {
     bne b1
   //SEG326 divr16u::@6
   //SEG327 [161] (word) rem16u#1 ← (word) divr16u::rem#11
-    // (word) rem16u#1 = (word) divr16u::rem#11  // register copy zp ZP_WORD:2
   //SEG328 divr16u::@return
   //SEG329 [162] return 
     rts
 }
 //SEG330 sin16s_gen
+//  Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+//  sintab - the table to generate into
+//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_gen: {
     .label _1 = 6
     .label step = $1d
@@ -8334,10 +8346,8 @@ sin16s_gen: {
   //SEG332 [135] phi from sin16s_gen to div32u16u [phi:sin16s_gen->div32u16u]
     jsr div32u16u
   //SEG333 [165] (dword) div32u16u::return#2 ← (dword) div32u16u::return#0
-    // (dword) div32u16u::return#2 = (dword) div32u16u::return#0  // register copy zp ZP_DWORD:29
   //SEG334 sin16s_gen::@3
   //SEG335 [166] (dword) sin16s_gen::step#0 ← (dword) div32u16u::return#2
-    // (dword) sin16s_gen::step#0 = (dword) div32u16u::return#2  // register copy zp ZP_DWORD:29
   //SEG336 [167] phi from sin16s_gen::@3 to sin16s_gen::@1 [phi:sin16s_gen::@3->sin16s_gen::@1]
   //SEG337 [167] phi (word) sin16s_gen::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:sin16s_gen::@3->sin16s_gen::@1#0] -- vwuz1=vbuc1 
     lda #<0
@@ -8372,10 +8382,8 @@ sin16s_gen: {
   //SEG346 [169] call sin16s 
     jsr sin16s
   //SEG347 [170] (signed word) sin16s::return#0 ← (signed word) sin16s::return#1
-    // (signed word) sin16s::return#0 = (signed word) sin16s::return#1  // register copy zp ZP_WORD:6
   //SEG348 sin16s_gen::@4
   //SEG349 [171] (signed word~) sin16s_gen::$1 ← (signed word) sin16s::return#0
-    // (signed word~) sin16s_gen::$1 = (signed word) sin16s::return#0  // register copy zp ZP_WORD:6
   //SEG350 [172] *((signed word*) sin16s_gen::sintab#2) ← (signed word~) sin16s_gen::$1 -- _deref_pwsz1=vwsz2 
     ldy #0
     lda _1
@@ -8424,6 +8432,9 @@ sin16s_gen: {
     rts
 }
 //SEG357 sin16s
+//  Calculate signed word sinus sin(x)
+//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16s: {
     .label _6 = $15
     .label x = $15
@@ -8558,9 +8569,7 @@ sin16s: {
     sta mulu16_sel.return+1
   //SEG384 sin16s::@8
   //SEG385 [190] (word) sin16s::x2#0 ← (word) mulu16_sel::return#0
-    // (word) sin16s::x2#0 = (word) mulu16_sel::return#0  // register copy zp ZP_WORD:11
   //SEG386 [191] (word) mulu16_sel::v1#1 ← (word) sin16s::x2#0
-    // (word) mulu16_sel::v1#1 = (word) sin16s::x2#0  // register copy zp ZP_WORD:11
   //SEG387 [192] (word) mulu16_sel::v2#1 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -8580,9 +8589,7 @@ sin16s: {
     sta mulu16_sel.return+1
   //SEG394 sin16s::@9
   //SEG395 [195] (word) sin16s::x3#0 ← (word) mulu16_sel::return#1
-    // (word) sin16s::x3#0 = (word) mulu16_sel::return#1  // register copy zp ZP_WORD:11
   //SEG396 [196] (word) mulu16_sel::v1#2 ← (word) sin16s::x3#0
-    // (word) mulu16_sel::v1#2 = (word) sin16s::x3#0  // register copy zp ZP_WORD:11
   //SEG397 [197] call mulu16_sel 
   //SEG398 [116] phi from sin16s::@9 to mulu16_sel [phi:sin16s::@9->mulu16_sel]
   //SEG399 [116] phi (byte) mulu16_sel::select#10 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:sin16s::@9->mulu16_sel#0] -- vbuxx=vbuc1 
@@ -8595,10 +8602,8 @@ sin16s: {
   //SEG401 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#2 [phi:sin16s::@9->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG402 [198] (word) mulu16_sel::return#14 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#14 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
   //SEG403 sin16s::@10
   //SEG404 [199] (word) sin16s::x3_6#0 ← (word) mulu16_sel::return#14
-    // (word) sin16s::x3_6#0 = (word) mulu16_sel::return#14  // register copy zp ZP_WORD:17
   //SEG405 [200] (word) sin16s::usinx#0 ← (word) sin16s::x1#0 - (word) sin16s::x3_6#0 -- vwuz1=vwuz2_minus_vwuz3 
     lda x1
     sec
@@ -8608,7 +8613,6 @@ sin16s: {
     sbc x3_6+1
     sta usinx+1
   //SEG406 [201] (word) mulu16_sel::v1#3 ← (word) sin16s::x3#0
-    // (word) mulu16_sel::v1#3 = (word) sin16s::x3#0  // register copy zp ZP_WORD:11
   //SEG407 [202] (word) mulu16_sel::v2#3 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -8628,9 +8632,7 @@ sin16s: {
     sta mulu16_sel.return+1
   //SEG414 sin16s::@11
   //SEG415 [205] (word) sin16s::x4#0 ← (word) mulu16_sel::return#15
-    // (word) sin16s::x4#0 = (word) mulu16_sel::return#15  // register copy zp ZP_WORD:11
   //SEG416 [206] (word) mulu16_sel::v1#4 ← (word) sin16s::x4#0
-    // (word) mulu16_sel::v1#4 = (word) sin16s::x4#0  // register copy zp ZP_WORD:11
   //SEG417 [207] (word) mulu16_sel::v2#4 ← (word) sin16s::x1#0 -- vwuz1=vwuz2 
     lda x1
     sta mulu16_sel.v2
@@ -8644,10 +8646,8 @@ sin16s: {
   //SEG422 [116] phi (word) mulu16_sel::v1#10 = (word) mulu16_sel::v1#4 [phi:sin16s::@11->mulu16_sel#2] -- register_copy 
     jsr mulu16_sel
   //SEG423 [209] (word) mulu16_sel::return#16 ← (word) mulu16_sel::return#17
-    // (word) mulu16_sel::return#16 = (word) mulu16_sel::return#17  // register copy zp ZP_WORD:17
   //SEG424 sin16s::@12
   //SEG425 [210] (word) sin16s::x5#0 ← (word) mulu16_sel::return#16
-    // (word) sin16s::x5#0 = (word) mulu16_sel::return#16  // register copy zp ZP_WORD:17
   //SEG426 [211] (word) sin16s::x5_128#0 ← (word) sin16s::x5#0 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vwuz1=vwuz1_ror_4 
     ldy #4
   !:
@@ -8687,7 +8687,6 @@ sin16s: {
     rts
   //SEG436 sin16s::@15
   //SEG437 [217] (signed word~) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1
-    // (signed word~) sin16s::return#5 = (signed word)(word) sin16s::usinx#1  // register copy zp ZP_WORD:6
 }
   print_hextab: .text "0123456789abcdef"
 

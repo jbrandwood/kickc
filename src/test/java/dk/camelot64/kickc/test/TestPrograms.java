@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testBgBlack() throws IOException, URISyntaxException {
+      compileAndCompare("bgblack");
+   }
+
+   @Test
    public void testNoRecursionHeavy() throws IOException, URISyntaxException {
       compileAndCompare("no-recursion-heavy");
    }
@@ -76,7 +81,7 @@ public class TestPrograms {
 
    //@Test
    //public void testRobozzle64() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/robozzle_c64/robozzle64");
+   //   compileAndCompare("complex/robozzle64/robozzle64");
    //}
 
    @Test
@@ -251,6 +256,10 @@ public class TestPrograms {
       compileAndCompare("irq-kernel");
    }
 
+   @Test
+   public void testIrqKernelMinimal() throws IOException, URISyntaxException {
+      compileAndCompare("irq-kernel-minimal");
+   }
 
    @Test
    public void testIrqHyperscreen() throws IOException, URISyntaxException {

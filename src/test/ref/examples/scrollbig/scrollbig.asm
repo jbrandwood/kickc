@@ -136,6 +136,7 @@ scroll_hard: {
     bne b1
     rts
 }
+//  Find the next char of the scroll text
 next_char: {
     ldy #0
     lda (nxt),y
@@ -153,6 +154,7 @@ next_char: {
   !:
     rts
 }
+//  Fill the screen with one char
 fillscreen: {
     .const fill = $20
     .label cursor = 3

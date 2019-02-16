@@ -3282,6 +3282,7 @@ main: {
     jmp b5
 }
 //SEG55 bitmap_plot
+//  Plot a single dot in the bitmap
 bitmap_plot: {
     .label _1 = $2d
     .label _2 = $31
@@ -3327,6 +3328,7 @@ bitmap_plot: {
     rts
 }
 //SEG63 point_init
+//  Initialize the points to be animated
 point_init: {
     .label _4 = $35
     .label _5 = $37
@@ -3595,6 +3597,11 @@ point_init: {
     jmp abs16s1_breturn_from_abs16s1_b1
 }
 //SEG120 divr16s
+//  Perform division on two signed 16-bit numbers with an initial remainder.
+//  Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 divr16s: {
     .const dividend = 0
     .label _7 = $57
@@ -3790,6 +3797,10 @@ divr16s: {
     jmp b2
 }
 //SEG168 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label _1 = $59
     .label _2 = $5a
@@ -3902,6 +3913,7 @@ divr16u: {
     rts
 }
 //SEG203 screen_fill
+//  Fill the screen with a specific char
 screen_fill: {
     .const ch = $10
     .label screen = $1a
@@ -3970,6 +3982,7 @@ screen_fill: {
     rts
 }
 //SEG227 bitmap_clear
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = $1e
     .label x = $20
@@ -4625,7 +4638,6 @@ main: {
   //SEG40 main::@1
   b1:
   //SEG41 [19] (byte) point_init::point_idx#0 ← (byte) main::i#2
-    // (byte) point_init::point_idx#0 = (byte) main::i#2  // register copy zp ZP_BYTE:2
   //SEG42 [20] call point_init 
     jsr point_init
     jmp b20
@@ -4672,6 +4684,7 @@ main: {
     jmp b5
 }
 //SEG55 bitmap_plot
+//  Plot a single dot in the bitmap
 bitmap_plot: {
     .label _1 = $b
     .label x = 5
@@ -4713,6 +4726,7 @@ bitmap_plot: {
     rts
 }
 //SEG63 point_init
+//  Initialize the points to be animated
 point_init: {
     .label _4 = $e
     .label _5 = 5
@@ -4889,7 +4903,6 @@ point_init: {
   //SEG101 point_init::@4
   b4:
   //SEG102 [57] (signed word) divr16s::divisor#0 ← (signed word) point_init::x_diff#1
-    // (signed word) divr16s::divisor#0 = (signed word) point_init::x_diff#1  // register copy zp ZP_WORD:11
   //SEG103 [58] (signed word) divr16s::rem#0 ← (signed word) point_init::y_diff#0 -- vwsz1=vwsz2 
     lda y_diff
     sta divr16s.rem
@@ -4900,12 +4913,10 @@ point_init: {
   divr16s_from_b4:
     jsr divr16s
   //SEG106 [60] (signed word) divr16s::return#3 ← (signed word) divr16s::return#2
-    // (signed word) divr16s::return#3 = (signed word) divr16s::return#2  // register copy zp ZP_WORD:5
     jmp b11
   //SEG107 point_init::@11
   b11:
   //SEG108 [61] (signed word) point_init::x_stepf#0 ← (signed word) divr16s::return#3
-    // (signed word) point_init::x_stepf#0 = (signed word) divr16s::return#3  // register copy zp ZP_WORD:5
   //SEG109 [62] (byte~) point_init::$13 ← > (signed word) point_init::x_stepf#0 -- vbuaa=_hi_vwsz1 
     lda x_stepf+1
   //SEG110 [63] (byte~) point_init::$14 ← (byte~) point_init::$13 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuaa_ror_4 
@@ -4937,7 +4948,6 @@ point_init: {
     adc #0
     sta abs16s2__2+1
   //SEG116 [67] (word~) point_init::abs16s2_return#5 ← (word)(signed word) point_init::abs16s2_$2#0
-    // (word~) point_init::abs16s2_return#5 = (word)(signed word) point_init::abs16s2_$2#0  // register copy zp ZP_WORD:7
     jmp abs16s2_breturn_from_abs16s2_b1
   //SEG117 point_init::abs16s1_@1
   abs16s1_b1:
@@ -4952,10 +4962,14 @@ point_init: {
     adc #0
     sta abs16s1__2+1
   //SEG119 [69] (word~) point_init::abs16s1_return#5 ← (word)(signed word) point_init::abs16s1_$2#0
-    // (word~) point_init::abs16s1_return#5 = (word)(signed word) point_init::abs16s1_$2#0  // register copy zp ZP_WORD:5
     jmp abs16s1_breturn_from_abs16s1_b1
 }
 //SEG120 divr16s
+//  Perform division on two signed 16-bit numbers with an initial remainder.
+//  Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 divr16s: {
     .const dividend = 0
     .label _7 = 9
@@ -4977,7 +4991,6 @@ divr16s: {
   //SEG123 divr16s::@17
   b17:
   //SEG124 [72] (word~) divr16s::remu#8 ← (word)(signed word) divr16s::rem#0
-    // (word~) divr16s::remu#8 = (word)(signed word) divr16s::rem#0  // register copy zp ZP_WORD:9
   //SEG125 [73] phi from divr16s::@17 to divr16s::@2 [phi:divr16s::@17->divr16s::@2]
   b2_from_b17:
   //SEG126 [73] phi (word) divr16s::remu#3 = (word~) divr16s::remu#8 [phi:divr16s::@17->divr16s::@2#0] -- register_copy 
@@ -4998,7 +5011,6 @@ divr16s: {
   //SEG131 divr16s::@18
   b18:
   //SEG132 [75] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0
-    // (word~) divr16s::divisoru#5 = (word)(signed word) divr16s::divisor#0  // register copy zp ZP_WORD:11
   //SEG133 [76] phi from divr16s::@18 divr16s::@3 to divr16s::@4 [phi:divr16s::@18/divr16s::@3->divr16s::@4]
   b4_from_b18:
   b4_from_b3:
@@ -5008,22 +5020,17 @@ divr16s: {
   //SEG136 divr16s::@4
   b4:
   //SEG137 [77] (word) divr16u::dividend#1 ← (word) divr16s::dividendu#3
-    // (word) divr16u::dividend#1 = (word) divr16s::dividendu#3  // register copy zp ZP_WORD:3
   //SEG138 [78] (word) divr16u::divisor#0 ← (word) divr16s::divisoru#3
-    // (word) divr16u::divisor#0 = (word) divr16s::divisoru#3  // register copy zp ZP_WORD:11
   //SEG139 [79] (word) divr16u::rem#3 ← (word) divr16s::remu#3
-    // (word) divr16u::rem#3 = (word) divr16s::remu#3  // register copy zp ZP_WORD:9
   //SEG140 [80] call divr16u 
   //SEG141 [95] phi from divr16s::@4 to divr16u [phi:divr16s::@4->divr16u]
   divr16u_from_b4:
     jsr divr16u
   //SEG142 [81] (word) divr16u::return#2 ← (word) divr16u::return#0
-    // (word) divr16u::return#2 = (word) divr16u::return#0  // register copy zp ZP_WORD:5
     jmp b15
   //SEG143 divr16s::@15
   b15:
   //SEG144 [82] (word) divr16s::resultu#0 ← (word) divr16u::return#2
-    // (word) divr16s::resultu#0 = (word) divr16u::return#2  // register copy zp ZP_WORD:5
   //SEG145 [83] if((byte) divr16s::neg#4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto divr16s::@19 -- vbuyy_eq_0_then_la1 
     cpy #0
     beq b19
@@ -5063,7 +5070,6 @@ divr16s: {
   //SEG154 divr16s::@19
   b19:
   //SEG155 [88] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0
-    // (signed word~) divr16s::return#7 = (signed word)(word) divr16s::resultu#0  // register copy zp ZP_WORD:5
   //SEG156 [89] (signed word~) rem16s#57 ← (signed word)(word) divr16u::rem#10 -- vwsz1=vwsz2 
     lda divr16u.rem
     sta rem16s
@@ -5087,7 +5093,6 @@ divr16s: {
     eor #1
     tay
   //SEG160 [92] (word~) divr16s::divisoru#4 ← (word)(signed word~) divr16s::$11
-    // (word~) divr16s::divisoru#4 = (word)(signed word~) divr16s::$11  // register copy zp ZP_WORD:11
     jmp b4_from_b3
   //SEG161 divr16s::@1
   b1:
@@ -5102,7 +5107,6 @@ divr16s: {
     adc #0
     sta _7+1
   //SEG163 [94] (word~) divr16s::remu#7 ← (word)(signed word~) divr16s::$7
-    // (word~) divr16s::remu#7 = (word)(signed word~) divr16s::$7  // register copy zp ZP_WORD:9
   //SEG164 [73] phi from divr16s::@1 to divr16s::@2 [phi:divr16s::@1->divr16s::@2]
   b2_from_b1:
   //SEG165 [73] phi (word) divr16s::remu#3 = (word~) divr16s::remu#7 [phi:divr16s::@1->divr16s::@2#0] -- register_copy 
@@ -5116,6 +5120,10 @@ divr16s: {
     jmp b2
 }
 //SEG168 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = 9
     .label dividend = 3
@@ -5218,6 +5226,7 @@ divr16u: {
     rts
 }
 //SEG203 screen_fill
+//  Fill the screen with a specific char
 screen_fill: {
     .const ch = $10
     .label screen = 3
@@ -5283,6 +5292,7 @@ screen_fill: {
     rts
 }
 //SEG227 bitmap_clear
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
@@ -5293,7 +5303,6 @@ bitmap_clear: {
     lda bitmap_plot_yhi
     sta _3+1
   //SEG229 [123] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3
-    // (byte*~) bitmap_clear::bitmap#5 = (byte*)(word~) bitmap_clear::$3  // register copy zp ZP_WORD:3
   //SEG230 [124] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
   b1_from_bitmap_clear:
   //SEG231 [124] phi (byte) bitmap_clear::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bitmap_clear->bitmap_clear::@1#0] -- vbuz1=vbuc1 
@@ -5582,8 +5591,11 @@ Removing instruction abs16s2_breturn_from_abs16s2_b1:
 Removing instruction abs16s2_breturn:
 Removing instruction b2_from_b10:
 Removing instruction b2_from_b11:
+Removing instruction b2_from_b17:
+Removing instruction b18:
 Removing instruction b4_from_b18:
 Removing instruction b4_from_b3:
+Removing instruction divr16u_from_b4:
 Removing instruction breturn_from_b11:
 Removing instruction breturn_from_b19:
 Removing instruction b1_from_b3:
@@ -5625,9 +5637,6 @@ Removing instruction divr16s_from_b4:
 Removing instruction b11:
 Removing instruction b16:
 Removing instruction b17:
-Removing instruction b2_from_b17:
-Removing instruction b18:
-Removing instruction divr16u_from_b4:
 Removing instruction b15:
 Removing instruction b11:
 Removing instruction b2_from_b1:
@@ -5666,8 +5675,8 @@ Removing instruction b10:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction jmp b2
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [145] bmi abs16s1_b1 to bpl
-Fixing long branch [154] bmi abs16s2_b1 to bpl
+Fixing long branch [147] bmi abs16s1_b1 to bpl
+Fixing long branch [156] bmi abs16s2_b1 to bpl
 
 FINAL SYMBOL TABLE
 (label) @19
@@ -6170,7 +6179,6 @@ main: {
   //SEG40 main::@1
   b1:
   //SEG41 [19] (byte) point_init::point_idx#0 ← (byte) main::i#2
-    // (byte) point_init::point_idx#0 = (byte) main::i#2  // register copy zp ZP_BYTE:2
   //SEG42 [20] call point_init 
     jsr point_init
   //SEG43 main::@20
@@ -6209,6 +6217,7 @@ main: {
     jmp b5
 }
 //SEG55 bitmap_plot
+//  Plot a single dot in the bitmap
 bitmap_plot: {
     .label _1 = $b
     .label x = 5
@@ -6247,6 +6256,7 @@ bitmap_plot: {
     rts
 }
 //SEG63 point_init
+//  Initialize the points to be animated
 point_init: {
     .label _4 = $e
     .label _5 = 5
@@ -6401,7 +6411,6 @@ point_init: {
   //SEG101 point_init::@4
   b4:
   //SEG102 [57] (signed word) divr16s::divisor#0 ← (signed word) point_init::x_diff#1
-    // (signed word) divr16s::divisor#0 = (signed word) point_init::x_diff#1  // register copy zp ZP_WORD:11
   //SEG103 [58] (signed word) divr16s::rem#0 ← (signed word) point_init::y_diff#0 -- vwsz1=vwsz2 
     lda y_diff
     sta divr16s.rem
@@ -6411,10 +6420,8 @@ point_init: {
   //SEG105 [70] phi from point_init::@4 to divr16s [phi:point_init::@4->divr16s]
     jsr divr16s
   //SEG106 [60] (signed word) divr16s::return#3 ← (signed word) divr16s::return#2
-    // (signed word) divr16s::return#3 = (signed word) divr16s::return#2  // register copy zp ZP_WORD:5
   //SEG107 point_init::@11
   //SEG108 [61] (signed word) point_init::x_stepf#0 ← (signed word) divr16s::return#3
-    // (signed word) point_init::x_stepf#0 = (signed word) divr16s::return#3  // register copy zp ZP_WORD:5
   //SEG109 [62] (byte~) point_init::$13 ← > (signed word) point_init::x_stepf#0 -- vbuaa=_hi_vwsz1 
     lda x_stepf+1
   //SEG110 [63] (byte~) point_init::$14 ← (byte~) point_init::$13 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuaa_ror_4 
@@ -6446,7 +6453,6 @@ point_init: {
     adc #0
     sta abs16s2__2+1
   //SEG116 [67] (word~) point_init::abs16s2_return#5 ← (word)(signed word) point_init::abs16s2_$2#0
-    // (word~) point_init::abs16s2_return#5 = (word)(signed word) point_init::abs16s2_$2#0  // register copy zp ZP_WORD:7
     jmp b10
   //SEG117 point_init::abs16s1_@1
   abs16s1_b1:
@@ -6461,10 +6467,14 @@ point_init: {
     adc #0
     sta abs16s1__2+1
   //SEG119 [69] (word~) point_init::abs16s1_return#5 ← (word)(signed word) point_init::abs16s1_$2#0
-    // (word~) point_init::abs16s1_return#5 = (word)(signed word) point_init::abs16s1_$2#0  // register copy zp ZP_WORD:5
     jmp abs16s2
 }
 //SEG120 divr16s
+//  Perform division on two signed 16-bit numbers with an initial remainder.
+//  Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 divr16s: {
     .const dividend = 0
     .label _7 = 9
@@ -6482,7 +6492,6 @@ divr16s: {
     bmi b1
   //SEG123 divr16s::@17
   //SEG124 [72] (word~) divr16s::remu#8 ← (word)(signed word) divr16s::rem#0
-    // (word~) divr16s::remu#8 = (word)(signed word) divr16s::rem#0  // register copy zp ZP_WORD:9
   //SEG125 [73] phi from divr16s::@17 to divr16s::@2 [phi:divr16s::@17->divr16s::@2]
   //SEG126 [73] phi (word) divr16s::remu#3 = (word~) divr16s::remu#8 [phi:divr16s::@17->divr16s::@2#0] -- register_copy 
   //SEG127 [73] phi (word) divr16s::dividendu#3 = ((word))(const signed word) divr16s::dividend#0 [phi:divr16s::@17->divr16s::@2#1] -- vwuz1=vbuc1 
@@ -6499,26 +6508,20 @@ divr16s: {
     bmi b3
   //SEG131 divr16s::@18
   //SEG132 [75] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0
-    // (word~) divr16s::divisoru#5 = (word)(signed word) divr16s::divisor#0  // register copy zp ZP_WORD:11
   //SEG133 [76] phi from divr16s::@18 divr16s::@3 to divr16s::@4 [phi:divr16s::@18/divr16s::@3->divr16s::@4]
   //SEG134 [76] phi (byte) divr16s::neg#4 = (byte) divr16s::neg#3 [phi:divr16s::@18/divr16s::@3->divr16s::@4#0] -- register_copy 
   //SEG135 [76] phi (word) divr16s::divisoru#3 = (word~) divr16s::divisoru#5 [phi:divr16s::@18/divr16s::@3->divr16s::@4#1] -- register_copy 
   //SEG136 divr16s::@4
   b4:
   //SEG137 [77] (word) divr16u::dividend#1 ← (word) divr16s::dividendu#3
-    // (word) divr16u::dividend#1 = (word) divr16s::dividendu#3  // register copy zp ZP_WORD:3
   //SEG138 [78] (word) divr16u::divisor#0 ← (word) divr16s::divisoru#3
-    // (word) divr16u::divisor#0 = (word) divr16s::divisoru#3  // register copy zp ZP_WORD:11
   //SEG139 [79] (word) divr16u::rem#3 ← (word) divr16s::remu#3
-    // (word) divr16u::rem#3 = (word) divr16s::remu#3  // register copy zp ZP_WORD:9
   //SEG140 [80] call divr16u 
   //SEG141 [95] phi from divr16s::@4 to divr16u [phi:divr16s::@4->divr16u]
     jsr divr16u
   //SEG142 [81] (word) divr16u::return#2 ← (word) divr16u::return#0
-    // (word) divr16u::return#2 = (word) divr16u::return#0  // register copy zp ZP_WORD:5
   //SEG143 divr16s::@15
   //SEG144 [82] (word) divr16s::resultu#0 ← (word) divr16u::return#2
-    // (word) divr16s::resultu#0 = (word) divr16u::return#2  // register copy zp ZP_WORD:5
   //SEG145 [83] if((byte) divr16s::neg#4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto divr16s::@19 -- vbuyy_eq_0_then_la1 
     cpy #0
     beq b19
@@ -6553,7 +6556,6 @@ divr16s: {
   //SEG154 divr16s::@19
   b19:
   //SEG155 [88] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0
-    // (signed word~) divr16s::return#7 = (signed word)(word) divr16s::resultu#0  // register copy zp ZP_WORD:5
   //SEG156 [89] (signed word~) rem16s#57 ← (signed word)(word) divr16u::rem#10 -- vwsz1=vwsz2 
     lda divr16u.rem
     sta rem16s
@@ -6577,7 +6579,6 @@ divr16s: {
     eor #1
     tay
   //SEG160 [92] (word~) divr16s::divisoru#4 ← (word)(signed word~) divr16s::$11
-    // (word~) divr16s::divisoru#4 = (word)(signed word~) divr16s::$11  // register copy zp ZP_WORD:11
     jmp b4
   //SEG161 divr16s::@1
   b1:
@@ -6592,7 +6593,6 @@ divr16s: {
     adc #0
     sta _7+1
   //SEG163 [94] (word~) divr16s::remu#7 ← (word)(signed word~) divr16s::$7
-    // (word~) divr16s::remu#7 = (word)(signed word~) divr16s::$7  // register copy zp ZP_WORD:9
   //SEG164 [73] phi from divr16s::@1 to divr16s::@2 [phi:divr16s::@1->divr16s::@2]
   //SEG165 [73] phi (word) divr16s::remu#3 = (word~) divr16s::remu#7 [phi:divr16s::@1->divr16s::@2#0] -- register_copy 
   //SEG166 [73] phi (word) divr16s::dividendu#3 = ((word))-(const signed word) divr16s::dividend#0 [phi:divr16s::@1->divr16s::@2#1] -- vwuz1=vbuc1 
@@ -6605,6 +6605,10 @@ divr16s: {
     jmp b2
 }
 //SEG168 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = 9
     .label dividend = 3
@@ -6690,6 +6694,7 @@ divr16u: {
     rts
 }
 //SEG203 screen_fill
+//  Fill the screen with a specific char
 screen_fill: {
     .const ch = $10
     .label screen = 3
@@ -6743,6 +6748,7 @@ screen_fill: {
     rts
 }
 //SEG227 bitmap_clear
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
@@ -6753,7 +6759,6 @@ bitmap_clear: {
     lda bitmap_plot_yhi
     sta _3+1
   //SEG229 [123] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3
-    // (byte*~) bitmap_clear::bitmap#5 = (byte*)(word~) bitmap_clear::$3  // register copy zp ZP_WORD:3
   //SEG230 [124] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
   //SEG231 [124] phi (byte) bitmap_clear::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bitmap_clear->bitmap_clear::@1#0] -- vbuz1=vbuc1 
     lda #0

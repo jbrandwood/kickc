@@ -230,6 +230,12 @@ menu: {
     jsr mode_8bppchunkybmm
     jmp breturn
 }
+// Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
+//  Resolution: 320x200
+//  Linear Adressing
+//  CharData/PlaneB Pixel Shifter (8):
+//  - 8bpp color PlaneB[7:0]
+//  To set up a linear video frame buffer the step size must be set to 8.
 mode_8bppchunkybmm: {
     .const PLANEB = $20000
     .label _23 = $d
@@ -324,6 +330,7 @@ mode_8bppchunkybmm: {
     jsr mode_ctrl
     rts
 }
+//  Allow the user to control the DTV graphics using different keys
 mode_ctrl: {
   b4:
     lda RASTER
@@ -397,6 +404,10 @@ mode_ctrl: {
     stx BORDERCOL
     jmp b4
 }
+//  Determines whether a specific key is currently pressed by accessing the matrix directly
+//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+//  All keys exist as as KEY_XXX constants.
+//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     .label colidx = 7
     tya
@@ -412,6 +423,11 @@ keyboard_key_pressed: {
     and keyboard_matrix_col_bitmask,y
     rts
 }
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
@@ -419,6 +435,9 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
     sta cpuBank
@@ -427,6 +446,15 @@ dtvSetCpuBankSegment1: {
     .byte $32, $00
     rts
 }
+// 8bpp Pixel Cell Mode (BMM/COLDIS = 0, ECM/MCM/HICOL/LINEAR/CHUNK = 1)
+// Pixel Cell Adressing
+// CharData[8]: (PlaneA[21:0])
+// GfxData[8]: (PlaneB[21:14] & CharData[7:0] & RowCounter[3:0] & PixelCounter[7:0] )
+// GfxData Pixel Shifter (8):
+// - 8bpp color GfxData[7:0]
+// Pixel cell mode can be thought of as a text mode that uses a 8x8 pixel 8bpp font (64 bytes/char).
+// The characters come from counter A and the font (or "cells") from counter B.
+// Counter B step and modulo should be set to 0, counter A modulo to 0 and counter A step to 1 for normal operation.
 mode_8bpppixelcell: {
     .label PLANEA = $3c00
     .label PLANEB = $4000
@@ -566,6 +594,12 @@ mode_8bpppixelcell: {
     jsr mode_ctrl
     rts
 }
+//  Sixs Fred Mode - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS = 0, ECM/BMM/MCM/HICOL/LINEAR = 1)
+//  Resolution: 160x200
+//  Linear Adressing
+//  GfxData/PlaneA Pixel Shifter (2), CharData/PlaneB Pixel Shifter (2):
+//  - 8bpp color (ColorData[3:0],CharData/PlaneB[1:0], GfxData/PlaneA[1:0])
 mode_sixsfred: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -699,6 +733,15 @@ mode_sixsfred: {
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
 }
+//  Two Plane Bitmap - generated from the two DTV linear graphics plane counters
+//  Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
+//  Resolution: 320x200
+//  Linear Adressing
+//  GfxData/PlaneA Pixel Shifter (1), CharData/PlaneB Pixel Shifter (1):
+//  - Plane A = 0 Plane B = 0: 8bpp BgColor0[7:0]
+//  - Plane A = 0 Plane B = 1: 8bpp "0000" & ColorData[7:4]
+//  - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
+//  - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
 mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -852,6 +895,12 @@ mode_twoplanebitmap: {
   !:
     jmp b7
 }
+//  Sixs Fred Mode 2 - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS/HICOL = 0, ECM/BMM/MCM/LINEAR = 1)
+//  Resolution: 160x200
+//  Linear Adressing
+//  PlaneA Pixel Shifter (2), PlaneB Pixel Shifter (2):
+//  - 8bpp color (PlaneB[1:0],ColorData[5:4],PlaneA[1:0],ColorData[1:0])
 mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -992,6 +1041,18 @@ mode_sixsfred2: {
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
 }
+//  High Color Multicolor Character Mode (LINEAR/CHUNK/COLDIS/BMM/ECM = 0, MCM/HICOL = 1)
+//  Resolution: 160x200 (320x200)
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+// GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+//  - 0: 8bpp BgColor0[7:0]
+//  - 1: 8bpp ColorData[7:4] "0" & Color[2:0]
+// GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+//  - 00: 8bpp BgColor0[7:0]
+//  - 01: 8bpp BgColor1[7:0]
+//  - 10: 8bpp BgColor2[7:0]
+//  - 11: 8bpp ColorData[7:4] "0" & Color[2:0]
 mode_hicolmcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -1080,6 +1141,17 @@ mode_hicolmcchar: {
     jsr mode_ctrl
     rts
 }
+//  High Color Extended Background Color Character Mode (LINEAR/CHUNK/COLDIS/MCM/BMM = 0, ECM/HICOL = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] )
+//  GfxData Pixel Shifter (1)
+//   - 0: 8bpp Background Color
+//     - CharData[7:6] 00: 8bpp BgColor0[7:0]
+//     - CharData[7:6] 01: 8bpp BgColor1[7:0]
+//     - CharData[7:6] 10: 8bpp BgColor2[7:0]
+//     - CharData[7:6] 11: 8bpp BgColor3[7:0]
+//   - 1: 8bpp ColorData[7:0]
 mode_hicolecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -1170,6 +1242,13 @@ mode_hicolecmchar: {
     jsr mode_ctrl
     rts
 }
+//  High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//   - 0: 8bpp BgColor0[7:0]
+//   - 1: 8bpp ColorData[7:0]
 mode_hicolstdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -1253,6 +1332,13 @@ mode_hicolstdchar: {
     jsr mode_ctrl
     rts
 }
+//  Standard Bitmap Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/ECM = 0, BMM = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:2] & Matrix[9:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//   - 0: 4bpp CharData[3:0]
+//   - 1: 4bpp CharData[7:4]
 mode_stdbitmap: {
     .label SCREEN = $4000
     .label BITMAP = $6000
@@ -1349,6 +1435,7 @@ mode_stdbitmap: {
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
+//  Draw a line on the bitmap
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -1611,6 +1698,7 @@ bitmap_line_ydxd: {
     bne b1
     rts
 }
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 2
     .label y = 4
@@ -1640,6 +1728,7 @@ bitmap_clear: {
     bne b1
     rts
 }
+//  Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _6 = 4
     .label yoffs = 2
@@ -1693,6 +1782,18 @@ bitmap_init: {
     bne b3
     rts
 }
+//  Multicolor Character Mode (LINEAR/HICOL/CHUNK/COLDIS/BMM/ECM = 0, MCM = 1)
+//  Resolution: 160x200 (320x200)
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+//   - 0: 4bpp BgColor0[3:0]
+//   - 1: 4bpp ColorData[2:0]
+//  GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+//   - 00: 4bpp BgColor0[3:0]
+//   - 01: 4bpp BgColor1[3:0]
+//   - 10: 4bpp BgColor2[3:0]
+//   - 11: 4bpp ColorData[2:0]// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -1784,6 +1885,17 @@ mode_mcchar: {
     jsr mode_ctrl
     rts
 }
+//  Extended Background Color Character Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/BMM = 0, ECM = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] ) 
+//  GfxData Pixel Shifter (1)
+//   - 0: 4bpp Background Color
+//     - CharData[7:6] 00: 4bpp BgColor0[3:0]
+//     - CharData[7:6] 01: 4bpp BgColor1[3:0]
+//     - CharData[7:6] 10: 4bpp BgColor2[3:0]
+//     - CharData[7:6] 11: 4bpp BgColor3[3:0]
+//   - 1: 4bpp ColorData[3:0]
 mode_ecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -1876,6 +1988,13 @@ mode_ecmchar: {
     jsr mode_ctrl
     rts
 }
+//  Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//  - 0: 4bpp BgColor0[3:0]
+//  - 1: 4bpp ColorData[3:0]
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -1962,6 +2081,8 @@ mode_stdchar: {
     jsr mode_ctrl
     rts
 }
+//  Print a number of zero-terminated strings, each followed by a newline.
+//  The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label str = 2
     lda #<menu.SCREEN
@@ -2007,6 +2128,7 @@ print_str_lines: {
     sta print_char_cursor+1
     jmp b1
 }
+//  Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -2026,6 +2148,7 @@ print_ln: {
   !:
     rts
 }
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<menu.SCREEN
@@ -2048,6 +2171,7 @@ print_cls: {
     bne b1
     rts
 }
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     rts
 }

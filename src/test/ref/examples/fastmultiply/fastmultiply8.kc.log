@@ -1522,6 +1522,7 @@ main: {
     rts
 }
 //SEG73 print_sbyte_at
+//  Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label b = $d
     .label at = $b
@@ -1593,6 +1594,7 @@ print_sbyte_at: {
     jmp b2_from_b5
 }
 //SEG96 print_char_at
+//  Print a single char
 print_char_at: {
     .label at = $f
     .label ch = $e
@@ -1607,6 +1609,7 @@ print_char_at: {
     rts
 }
 //SEG100 print_byte_at
+//  Print a byte as HEX at a specific position
 print_byte_at: {
     .label _0 = $1d
     .label _2 = $1e
@@ -1784,6 +1787,7 @@ init_screen: {
     rts
 }
 //SEG152 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $15
   //SEG153 [79] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -2139,12 +2143,10 @@ main: {
   //SEG55 [24] call fmul8 
     jsr fmul8
   //SEG56 [25] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1
-    // (signed byte) fmul8::return#0 = (signed byte) fmul8::return#1  // register copy reg byte a
     jmp b10
   //SEG57 main::@10
   b10:
   //SEG58 [26] (signed byte) main::r#0 ← (signed byte) fmul8::return#0
-    // (signed byte) main::r#0 = (signed byte) fmul8::return#0  // register copy reg byte a
   //SEG59 [27] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0 -- vbsz1=vbsaa 
     sta print_sbyte_at.b
   //SEG60 [28] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 -- pbuz1=pbuz2 
@@ -2183,6 +2185,7 @@ main: {
     rts
 }
 //SEG73 print_sbyte_at
+//  Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label b = $a
     .label at = 8
@@ -2193,7 +2196,6 @@ print_sbyte_at: {
   //SEG75 print_sbyte_at::@3
   b3:
   //SEG76 [37] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3
-    // (byte*) print_char_at::at#1 = (byte*) print_sbyte_at::at#3  // register copy zp ZP_WORD:8
   //SEG77 [38] call print_char_at 
   //SEG78 [46] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
   print_char_at_from_b3:
@@ -2224,7 +2226,6 @@ print_sbyte_at: {
   //SEG88 print_sbyte_at::@1
   b1:
   //SEG89 [43] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3
-    // (byte*) print_char_at::at#0 = (byte*) print_sbyte_at::at#3  // register copy zp ZP_WORD:8
   //SEG90 [44] call print_char_at 
   //SEG91 [46] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
   print_char_at_from_b1:
@@ -2245,6 +2246,7 @@ print_sbyte_at: {
     jmp b2_from_b5
 }
 //SEG96 print_char_at
+//  Print a single char
 print_char_at: {
     .label at = 8
     .label ch = $b
@@ -2259,6 +2261,7 @@ print_char_at: {
     rts
 }
 //SEG100 print_byte_at
+//  Print a byte as HEX at a specific position
 print_byte_at: {
     .label at = 8
   //SEG101 [49] (byte~) print_byte_at::$0 ← (byte)(signed byte) print_sbyte_at::b#6 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuz1_ror_4 
@@ -2272,7 +2275,6 @@ print_byte_at: {
     lda print_hextab,y
     sta print_char_at.ch
   //SEG103 [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
-    // (byte*) print_char_at::at#2 = (byte*) print_byte_at::at#0  // register copy zp ZP_WORD:8
   //SEG104 [52] call print_char_at 
   //SEG105 [46] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
   print_char_at_from_print_byte_at:
@@ -2413,6 +2415,7 @@ init_screen: {
     rts
 }
 //SEG152 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
   //SEG153 [79] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -2512,8 +2515,10 @@ Removing instruction bend_from_b22:
 Removing instruction b1_from_b8:
 Removing instruction b2_from_b5:
 Removing instruction b3_from_b11:
+Removing instruction print_char_at_from_b3:
 Removing instruction b2_from_b3:
 Removing instruction b2_from_b5:
+Removing instruction print_char_at_from_b1:
 Removing instruction b1_from_b1:
 Removing instruction b2_from_b2:
 Removing instruction b1_from_b1:
@@ -2532,9 +2537,7 @@ Removing instruction b11:
 Removing instruction b5:
 Removing instruction breturn:
 Removing instruction b3:
-Removing instruction print_char_at_from_b3:
 Removing instruction breturn:
-Removing instruction print_char_at_from_b1:
 Removing instruction b5:
 Removing instruction breturn:
 Removing instruction print_char_at_from_print_byte_at:
@@ -2843,10 +2846,8 @@ main: {
   //SEG55 [24] call fmul8 
     jsr fmul8
   //SEG56 [25] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1
-    // (signed byte) fmul8::return#0 = (signed byte) fmul8::return#1  // register copy reg byte a
   //SEG57 main::@10
   //SEG58 [26] (signed byte) main::r#0 ← (signed byte) fmul8::return#0
-    // (signed byte) main::r#0 = (signed byte) fmul8::return#0  // register copy reg byte a
   //SEG59 [27] (signed byte) print_sbyte_at::b#3 ← (signed byte) main::r#0 -- vbsz1=vbsaa 
     sta print_sbyte_at.b
   //SEG60 [28] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 -- pbuz1=pbuz2 
@@ -2878,6 +2879,7 @@ main: {
     rts
 }
 //SEG73 print_sbyte_at
+//  Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label b = $a
     .label at = 8
@@ -2886,7 +2888,6 @@ print_sbyte_at: {
     bmi b1
   //SEG75 print_sbyte_at::@3
   //SEG76 [37] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#3
-    // (byte*) print_char_at::at#1 = (byte*) print_sbyte_at::at#3  // register copy zp ZP_WORD:8
   //SEG77 [38] call print_char_at 
   //SEG78 [46] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
   //SEG79 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
@@ -2911,7 +2912,6 @@ print_sbyte_at: {
   //SEG88 print_sbyte_at::@1
   b1:
   //SEG89 [43] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#3
-    // (byte*) print_char_at::at#0 = (byte*) print_sbyte_at::at#3  // register copy zp ZP_WORD:8
   //SEG90 [44] call print_char_at 
   //SEG91 [46] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
   //SEG92 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
@@ -2929,6 +2929,7 @@ print_sbyte_at: {
     jmp b2
 }
 //SEG96 print_char_at
+//  Print a single char
 print_char_at: {
     .label at = 8
     .label ch = $b
@@ -2941,6 +2942,7 @@ print_char_at: {
     rts
 }
 //SEG100 print_byte_at
+//  Print a byte as HEX at a specific position
 print_byte_at: {
     .label at = 8
   //SEG101 [49] (byte~) print_byte_at::$0 ← (byte)(signed byte) print_sbyte_at::b#6 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuz1_ror_4 
@@ -2954,7 +2956,6 @@ print_byte_at: {
     lda print_hextab,y
     sta print_char_at.ch
   //SEG103 [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
-    // (byte*) print_char_at::at#2 = (byte*) print_byte_at::at#0  // register copy zp ZP_WORD:8
   //SEG104 [52] call print_char_at 
   //SEG105 [46] phi from print_byte_at to print_char_at [phi:print_byte_at->print_char_at]
   //SEG106 [46] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
@@ -3072,6 +3073,7 @@ init_screen: {
     rts
 }
 //SEG152 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
   //SEG153 [79] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]

@@ -28,6 +28,7 @@ main: {
     jsr loop
     rts
 }
+//  The raster loop
 loop: {
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = 9
@@ -89,6 +90,8 @@ loop: {
     sta BORDERCOL
     jmp b4
 }
+//  Show the next sprite.
+//  plexSort() prepares showing the sprites
 plexShowSprite: {
     .label plex_sprite_idx2 = 9
     .label xpos_idx = $a
@@ -151,6 +154,15 @@ plexShowSprite: {
     sta SPRITES_XMSB
     jmp b2
 }
+//  Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
+//  Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
+//  Uses an insertion sort:
+//  1. Moves a marker (m) from the start to end of the array. Every time the marker moves forward all elements before the marker are sorted correctly.
+//  2a. If the next element after the marker is larger that the current element
+//      the marker can be moved forwards (as the sorting is correct).
+//  2b. If the next element after the marker is smaller than the current element:
+//      elements before the marker are shifted right one at a time until encountering one smaller than the current one.
+//       It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
     .label nxt_idx = 4
     .label nxt_y = 5
@@ -198,6 +210,7 @@ plexSort: {
     bcc b3
     jmp b5
 }
+//  Initialize the program
 init: {
     .label xp = 7
     lda #VIC_DEN|VIC_RSEL|3
@@ -239,6 +252,7 @@ init: {
     bne b2
     rts
 }
+//  Initialize the multiplexer data structures
 plexInit: {
     ldx #0
   b1:

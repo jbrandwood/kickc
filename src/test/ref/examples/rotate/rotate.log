@@ -2647,6 +2647,8 @@ anim: {
     jmp b1
 }
 //SEG108 mulf8s_prepared
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8s_prepare(byte a)
 mulf8s_prepared: {
     .label memA = $fd
     .label _4 = $41
@@ -2739,6 +2741,8 @@ mulf8s_prepared: {
     rts
 }
 //SEG133 mulf8u_prepared
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8u_prepare(byte a)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
@@ -2772,6 +2776,7 @@ mulf8u_prepared: {
     rts
 }
 //SEG139 mulf8u_prepare
+//  Prepare for fast multiply with an unsigned byte to a word result
 mulf8u_prepare: {
     .label memA = $fd
     .label a = 8
@@ -2838,6 +2843,7 @@ init: {
     rts
 }
 //SEG160 mulf_init
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label _2 = $49
     .label _5 = $4a
@@ -3481,7 +3487,6 @@ anim: {
   //SEG46 [62] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#0 [phi:anim::@17->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
   //SEG47 [21] (signed word) mulf8s_prepared::return#2 ← (signed word)(word) mulf8s_prepared::m#4
-    // (signed word) mulf8s_prepared::return#2 = (signed word)(word) mulf8s_prepared::m#4  // register copy zp ZP_WORD:5
     jmp b20
   //SEG48 anim::@20
   b20:
@@ -3501,7 +3506,6 @@ anim: {
   //SEG54 [62] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#1 [phi:anim::@20->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
   //SEG55 [26] (signed word) mulf8s_prepared::return#3 ← (signed word)(word) mulf8s_prepared::m#4
-    // (signed word) mulf8s_prepared::return#3 = (signed word)(word) mulf8s_prepared::m#4  // register copy zp ZP_WORD:5
     jmp b21
   //SEG56 anim::@21
   b21:
@@ -3535,12 +3539,10 @@ anim: {
   //SEG68 [62] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#2 [phi:anim::@18->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
   //SEG69 [33] (signed word) mulf8s_prepared::return#4 ← (signed word)(word) mulf8s_prepared::m#4
-    // (signed word) mulf8s_prepared::return#4 = (signed word)(word) mulf8s_prepared::m#4  // register copy zp ZP_WORD:5
     jmp b23
   //SEG70 anim::@23
   b23:
   //SEG71 [34] (signed word~) anim::$9 ← (signed word) mulf8s_prepared::return#4
-    // (signed word~) anim::$9 = (signed word) mulf8s_prepared::return#4  // register copy zp ZP_WORD:5
   //SEG72 [35] (signed word~) anim::$10 ← (signed word~) anim::$9 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwsz1=vwsz1_rol_1 
     asl _10
     rol _10+1
@@ -3560,12 +3562,10 @@ anim: {
   //SEG77 [62] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#3 [phi:anim::@23->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
   //SEG78 [39] (signed word) mulf8s_prepared::return#10 ← (signed word)(word) mulf8s_prepared::m#4
-    // (signed word) mulf8s_prepared::return#10 = (signed word)(word) mulf8s_prepared::m#4  // register copy zp ZP_WORD:5
     jmp b24
   //SEG79 anim::@24
   b24:
   //SEG80 [40] (signed word~) anim::$11 ← (signed word) mulf8s_prepared::return#10
-    // (signed word~) anim::$11 = (signed word) mulf8s_prepared::return#10  // register copy zp ZP_WORD:5
   //SEG81 [41] (signed word~) anim::$12 ← (signed word~) anim::$11 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwsz1=vwsz1_rol_1 
     asl _12
     rol _12+1
@@ -3580,7 +3580,6 @@ anim: {
   //SEG83 [43] (byte~) anim::$13 ← > (signed word) anim::xr#1 -- vbuaa=_hi_vwsz1 
     lda xr+1
   //SEG84 [44] (signed byte~) anim::$15 ← (signed byte)(byte~) anim::$13
-    // (signed byte~) anim::$15 = (signed byte)(byte~) anim::$13  // register copy reg byte a
   //SEG85 [45] (signed word) anim::xpos#0 ← (signed byte~) anim::$15 + (byte/signed byte/word/signed word/dword/signed dword) 24+(byte/word/signed word/dword/signed dword) 149 -- vwsz1=vbsaa_plus_vbuc1 
     sta xpos
     ora #$7f
@@ -3656,6 +3655,8 @@ anim: {
     jmp b1
 }
 //SEG108 mulf8s_prepared
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8s_prepare(byte a)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
@@ -3663,12 +3664,10 @@ mulf8s_prepared: {
   //SEG109 [63] call mulf8u_prepared 
     jsr mulf8u_prepared
   //SEG110 [64] (word) mulf8u_prepared::return#2 ← (word) mulf8u_prepared::return#0
-    // (word) mulf8u_prepared::return#2 = (word) mulf8u_prepared::return#0  // register copy zp ZP_WORD:5
     jmp b6
   //SEG111 mulf8s_prepared::@6
   b6:
   //SEG112 [65] (word) mulf8s_prepared::m#0 ← (word) mulf8u_prepared::return#2
-    // (word) mulf8s_prepared::m#0 = (word) mulf8u_prepared::return#2  // register copy zp ZP_WORD:5
   //SEG113 [66] if(*((const signed byte*) mulf8s_prepared::memA#0)>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mulf8s_prepared::@1 -- _deref_pbsc1_ge_0_then_la1 
     lda memA
     cmp #0
@@ -3722,6 +3721,8 @@ mulf8s_prepared: {
     rts
 }
 //SEG133 mulf8u_prepared
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8u_prepare(byte a)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
@@ -3753,6 +3754,7 @@ mulf8u_prepared: {
     rts
 }
 //SEG139 mulf8u_prepare
+//  Prepare for fast multiply with an unsigned byte to a word result
 mulf8u_prepare: {
     .label memA = $fd
   //SEG140 [84] *((const byte*) mulf8u_prepare::memA#0) ← (byte) mulf8u_prepare::a#2 -- _deref_pbuc1=vbuaa 
@@ -3812,6 +3814,7 @@ init: {
     rts
 }
 //SEG160 mulf_init
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 7
     .label sqr = 9
@@ -4595,7 +4598,6 @@ anim: {
   //SEG46 [62] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#0 [phi:anim::@17->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
   //SEG47 [21] (signed word) mulf8s_prepared::return#2 ← (signed word)(word) mulf8s_prepared::m#4
-    // (signed word) mulf8s_prepared::return#2 = (signed word)(word) mulf8s_prepared::m#4  // register copy zp ZP_WORD:5
   //SEG48 anim::@20
   //SEG49 [22] (signed word~) anim::$4 ← (signed word) mulf8s_prepared::return#2 -- vwsz1=vwsz2 
     lda mulf8s_prepared.return
@@ -4612,7 +4614,6 @@ anim: {
   //SEG54 [62] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#1 [phi:anim::@20->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
   //SEG55 [26] (signed word) mulf8s_prepared::return#3 ← (signed word)(word) mulf8s_prepared::m#4
-    // (signed word) mulf8s_prepared::return#3 = (signed word)(word) mulf8s_prepared::m#4  // register copy zp ZP_WORD:5
   //SEG56 anim::@21
   //SEG57 [27] (signed word~) anim::$6 ← (signed word) mulf8s_prepared::return#3 -- vwsz1=vwsz2 
     lda mulf8s_prepared.return
@@ -4638,10 +4639,8 @@ anim: {
   //SEG68 [62] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#2 [phi:anim::@18->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
   //SEG69 [33] (signed word) mulf8s_prepared::return#4 ← (signed word)(word) mulf8s_prepared::m#4
-    // (signed word) mulf8s_prepared::return#4 = (signed word)(word) mulf8s_prepared::m#4  // register copy zp ZP_WORD:5
   //SEG70 anim::@23
   //SEG71 [34] (signed word~) anim::$9 ← (signed word) mulf8s_prepared::return#4
-    // (signed word~) anim::$9 = (signed word) mulf8s_prepared::return#4  // register copy zp ZP_WORD:5
   //SEG72 [35] (signed word~) anim::$10 ← (signed word~) anim::$9 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwsz1=vwsz1_rol_1 
     asl _10
     rol _10+1
@@ -4660,10 +4659,8 @@ anim: {
   //SEG77 [62] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#3 [phi:anim::@23->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
   //SEG78 [39] (signed word) mulf8s_prepared::return#10 ← (signed word)(word) mulf8s_prepared::m#4
-    // (signed word) mulf8s_prepared::return#10 = (signed word)(word) mulf8s_prepared::m#4  // register copy zp ZP_WORD:5
   //SEG79 anim::@24
   //SEG80 [40] (signed word~) anim::$11 ← (signed word) mulf8s_prepared::return#10
-    // (signed word~) anim::$11 = (signed word) mulf8s_prepared::return#10  // register copy zp ZP_WORD:5
   //SEG81 [41] (signed word~) anim::$12 ← (signed word~) anim::$11 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwsz1=vwsz1_rol_1 
     asl _12
     rol _12+1
@@ -4678,7 +4675,6 @@ anim: {
   //SEG83 [43] (byte~) anim::$13 ← > (signed word) anim::xr#1 -- vbuaa=_hi_vwsz1 
     lda xr+1
   //SEG84 [44] (signed byte~) anim::$15 ← (signed byte)(byte~) anim::$13
-    // (signed byte~) anim::$15 = (signed byte)(byte~) anim::$13  // register copy reg byte a
   //SEG85 [45] (signed word) anim::xpos#0 ← (signed byte~) anim::$15 + (byte/signed byte/word/signed word/dword/signed dword) 24+(byte/word/signed word/dword/signed dword) 149 -- vwsz1=vbsaa_plus_vbuc1 
     sta xpos
     ora #$7f
@@ -4747,6 +4743,8 @@ anim: {
     jmp b4
 }
 //SEG108 mulf8s_prepared
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8s_prepare(byte a)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
@@ -4754,10 +4752,8 @@ mulf8s_prepared: {
   //SEG109 [63] call mulf8u_prepared 
     jsr mulf8u_prepared
   //SEG110 [64] (word) mulf8u_prepared::return#2 ← (word) mulf8u_prepared::return#0
-    // (word) mulf8u_prepared::return#2 = (word) mulf8u_prepared::return#0  // register copy zp ZP_WORD:5
   //SEG111 mulf8s_prepared::@6
   //SEG112 [65] (word) mulf8s_prepared::m#0 ← (word) mulf8u_prepared::return#2
-    // (word) mulf8s_prepared::m#0 = (word) mulf8u_prepared::return#2  // register copy zp ZP_WORD:5
   //SEG113 [66] if(*((const signed byte*) mulf8s_prepared::memA#0)>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mulf8s_prepared::@1 -- _deref_pbsc1_ge_0_then_la1 
     lda memA
     cmp #0
@@ -4797,6 +4793,8 @@ mulf8s_prepared: {
     rts
 }
 //SEG133 mulf8u_prepared
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8u_prepare(byte a)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
@@ -4826,6 +4824,7 @@ mulf8u_prepared: {
     rts
 }
 //SEG139 mulf8u_prepare
+//  Prepare for fast multiply with an unsigned byte to a word result
 mulf8u_prepare: {
     .label memA = $fd
   //SEG140 [84] *((const byte*) mulf8u_prepare::memA#0) ← (byte) mulf8u_prepare::a#2 -- _deref_pbuc1=vbuaa 
@@ -4873,6 +4872,7 @@ init: {
     rts
 }
 //SEG160 mulf_init
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 7
     .label sqr = 9

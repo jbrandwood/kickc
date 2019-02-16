@@ -135,6 +135,7 @@ loop: {
     inc sin_idx
     jmp b4
 }
+//  Setup the IRQ
 sprites_irq_init: {
     sei
     lda #IRQ_RASTER
@@ -160,6 +161,7 @@ sprites_irq_init: {
     cli
     rts
 }
+//  Setup the sprites
 sprites_init: {
     .label xpos = 2
     lda #$f
@@ -188,6 +190,9 @@ sprites_init: {
     bne b1
     rts
 }
+//  Raster Interrupt Routine - sets up the sprites covering the playfield
+//  Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+//  Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     .label raster_sprite_gfx_modify = $a

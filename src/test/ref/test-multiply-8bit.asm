@@ -15,6 +15,7 @@ main: {
     jsr mul8s_compare
     rts
 }
+//  Perform all possible signed byte multiplications (slow and fast) and compare the results
 mul8s_compare: {
     .label ms = 8
     .label mf = $e
@@ -85,6 +86,7 @@ mul8s_compare: {
     jmp breturn
     str: .text "signed multiply results match!@"
 }
+//  Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -104,6 +106,7 @@ print_ln: {
   !:
     rts
 }
+//  Print a zero-terminated string
 print_str: {
     .label str = 6
   b1:
@@ -182,6 +185,7 @@ mul8s_error: {
     str3: .text " / normal:@"
     str4: .text " / fast:@"
 }
+//  Print a signed word as HEX
 print_sword: {
     .label w = 8
     lda w+1
@@ -201,6 +205,7 @@ print_sword: {
     jsr print_word
     rts
 }
+//  Print a word as HEX
 print_word: {
     .label w = 8
     lda w+1
@@ -211,6 +216,7 @@ print_word: {
     jsr print_byte
     rts
 }
+//  Print a byte as HEX
 print_byte: {
     txa
     lsr
@@ -227,6 +233,7 @@ print_byte: {
     jsr print_char
     rts
 }
+//  Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -236,6 +243,7 @@ print_char: {
   !:
     rts
 }
+//  Print a signed byte as HEX
 print_sbyte: {
     cpx #0
     bmi b1
@@ -254,6 +262,8 @@ print_sbyte: {
     tax
     jmp b2
 }
+//  Multiply of two signed bytes to a signed word
+//  Fixes offsets introduced by using unsigned multiplication
 mul8s: {
     .label m = $c
     .label a = 2
@@ -279,6 +289,8 @@ mul8s: {
   b2:
     rts
 }
+//  Simple binary multiplication implementation
+//  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .label mb = 6
     .label res = $c
@@ -312,6 +324,7 @@ mul8u: {
     rol mb+1
     jmp b1
 }
+//  Fast multiply two signed bytes to a word result
 mulf8s: {
     .label return = $e
     jsr mulf8u_prepare
@@ -319,6 +332,8 @@ mulf8s: {
     jsr mulf8s_prepared
     rts
 }
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8s_prepare(byte a)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = $e
@@ -344,6 +359,8 @@ mulf8s_prepared: {
   b2:
     rts
 }
+//  Calculate fast multiply with a prepared unsigned byte to a word result
+//  The prepared number is set by calling mulf8u_prepare(byte a)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
@@ -366,6 +383,7 @@ mulf8u_prepared: {
     sta return+1
     rts
 }
+//  Prepare for fast multiply with an unsigned byte to a word result
 mulf8u_prepare: {
     .label memA = $fd
     sta memA
@@ -376,6 +394,8 @@ mulf8u_prepare: {
     sta mulf8u_prepared.sm4+1
     rts
 }
+//  Slow multiplication of signed bytes
+//  Perform a signed multiplication by repeated addition/subtraction
 muls8s: {
     .label m = 8
     .label return = 8
@@ -438,6 +458,7 @@ muls8s: {
     bne b5
     jmp b4
 }
+//  Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
     .label ms = 8
     .label mf = $e
@@ -557,12 +578,15 @@ mul8u_error: {
     str3: .text " / normal:@"
     str4: .text " / fast:@"
 }
+//  Fast multiply two unsigned bytes to a word result
 mulf8u: {
     .label return = $e
     jsr mulf8u_prepare
     jsr mulf8u_prepared
     rts
 }
+//  Slow multiplication of unsigned bytes
+//  Calculate an unsigned multiplication by repeated addition
 muls8u: {
     .label return = 8
     .label m = 8
@@ -593,6 +617,8 @@ muls8u: {
   b1:
     rts
 }
+//  Compare the ASM-based mul tables with the KC-based mul tables
+//  Red screen on failure - green on success
 mulf_tables_cmp: {
     .label asm_sqr = 8
     .label kc_sqr = 4
@@ -677,6 +703,8 @@ mulf_tables_cmp: {
     str1: .text " / @"
     str2: .text "multiply tables match!@"
 }
+//  Initialize the multiplication tables using ASM code from
+//  http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 mulf_init_asm: {
     .label mem = $ff
     ldx #0
@@ -727,6 +755,7 @@ mulf_init_asm: {
     sta mem
     rts
 }
+//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 6
     .label sqr = 8
@@ -833,6 +862,7 @@ mulf_init: {
     sta mulf_sqr2_hi+$1ff
     rts
 }
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 4
     lda #<$400

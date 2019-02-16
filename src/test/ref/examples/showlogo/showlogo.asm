@@ -60,6 +60,7 @@ main: {
     inc $d020 
     jmp b3
 }
+//  Fill some memory with a value
 fill: {
     .label end = 2
     .label addr = 4

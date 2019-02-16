@@ -76,6 +76,9 @@ public class LiveRangeVariablesEffective {
    /** Cached alive combinations. */
    Map<Integer, AliveCombinations> statementAliveCombinations = new LinkedHashMap<>();
 
+   /** Special procedure reference used to represent the ROOT scope during live range analysis.*/
+   static final ProcedureRef ROOT_PROCEDURE = new ProcedureRef("");
+
    /**
     * Get all combinations of variables alive at a statement.
     * If the statement is inside a method the different combinations in the result arises from different calls of the method
@@ -101,7 +104,7 @@ public class LiveRangeVariablesEffective {
             callPaths = procedureCallPaths.get(procedure.getRef());
             referencedInProcedure = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
          } else {
-            callPaths = new CallPaths(Procedure.ROOT);
+            callPaths = new CallPaths(ROOT_PROCEDURE);
             referencedInProcedure = new ArrayList<>();
          }
          Pass2AliasElimination.Aliases callAliases = null;

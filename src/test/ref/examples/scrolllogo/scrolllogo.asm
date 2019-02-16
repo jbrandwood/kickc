@@ -228,6 +228,9 @@ render_logo: {
     iny
     jmp b11
 }
+//  Generate signed word sinus table - with values in the range min-max.
+//  sintab - the table to generate into
+//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_gen2: {
     .const min = -$140
     .const max = $140
@@ -315,6 +318,8 @@ sin16s_gen2: {
   !:
     rts
 }
+//  Multiply of two signed words to a signed double word
+//  Fixes offsets introduced by using unsigned multiplication
 mul16s: {
     .label _5 = 2
     .label _6 = $e
@@ -355,6 +360,7 @@ mul16s: {
   b2:
     rts
 }
+//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label mb = $12
     .label a = $10
@@ -406,6 +412,9 @@ mul16u: {
     rol mb+3
     jmp b1
 }
+//  Calculate signed word sinus sin(x)
+//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16s: {
     .label _6 = $a
     .label x = $a
@@ -579,6 +588,8 @@ sin16s: {
   b3:
     rts
 }
+//  Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+//  The select parameter indicates how many of the highest bits of the 32-bit result to skip
 mulu16_sel: {
     .label _0 = $a
     .label _1 = $a
@@ -608,6 +619,8 @@ mulu16_sel: {
     sta return+1
     rts
 }
+//  Divide unsigned 32-bit dword dividend with a 16-bit word divisor
+//  The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = $10
     .label quotient_lo = $e
@@ -639,6 +652,10 @@ div32u16u: {
     sta return+1
     rts
 }
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = 2
     .label dividend = 8
@@ -688,6 +705,8 @@ divr16u: {
     bne b1
     rts
 }
+//  Simple routines for working with memory
+//  Fill some memory with a value
 fill: {
     .label end = 8
     .label addr = 2

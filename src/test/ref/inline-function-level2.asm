@@ -2,6 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label cur_line = 4
+//  Inline functions in two levels
 main: {
     .const line1_xpos = 2
     .const line1_xadd = $40

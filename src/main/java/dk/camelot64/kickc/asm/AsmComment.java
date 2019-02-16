@@ -45,5 +45,14 @@ public class AsmComment implements AsmLine {
       return getAsm();
    }
 
+   /**
+    * Get the number of lines the comment has
+    * @return The number of lines
+    */
+   public long getLineCount() {
+      return comment.chars().filter(x -> x == '\n').count() + 1;
+   }
+
+
 
 }

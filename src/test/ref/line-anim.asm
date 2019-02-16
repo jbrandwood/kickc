@@ -70,6 +70,7 @@ main: {
     inc BORDERCOL
     jmp b5
 }
+//  Plot a single dot in the bitmap
 bitmap_plot: {
     .label _1 = $b
     .label x = 5
@@ -100,6 +101,7 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
+//  Initialize the points to be animated
 point_init: {
     .label _4 = $e
     .label _5 = 5
@@ -256,6 +258,11 @@ point_init: {
     sta abs16s1__2+1
     jmp abs16s2
 }
+//  Perform division on two signed 16-bit numbers with an initial remainder.
+//  Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 divr16s: {
     .const dividend = 0
     .label _7 = 9
@@ -338,6 +345,10 @@ divr16s: {
     ldy #1
     jmp b2
 }
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = 9
     .label dividend = 3
@@ -388,6 +399,7 @@ divr16u: {
     bne b1
     rts
 }
+//  Fill the screen with a specific char
 screen_fill: {
     .const ch = $10
     .label screen = 3
@@ -417,6 +429,7 @@ screen_fill: {
     bne b1
     rts
 }
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2

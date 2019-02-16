@@ -4738,6 +4738,7 @@ test_16s: {
     divisors: .word 5, -7, $b, -$d, -$11, $13
 }
 //SEG93 print_ln
+//  Print a newline
 print_ln: {
   //SEG94 [45] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -4770,6 +4771,7 @@ print_ln: {
     rts
 }
 //SEG101 print_sword
+//  Print a signed word as HEX
 print_sword: {
     .label w = 5
   //SEG102 [50] if((signed word) print_sword::w#5>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -4827,6 +4829,7 @@ print_sword: {
     rts
 }
 //SEG122 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 7
   //SEG123 [59] (byte) print_byte::b#1 ← > (word) print_word::w#5 -- vbuz1=_hi_vwuz2 
@@ -4857,6 +4860,7 @@ print_word: {
     rts
 }
 //SEG136 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label _0 = $40
     .label _2 = $41
@@ -4902,6 +4906,7 @@ print_byte: {
     rts
 }
 //SEG152 print_char
+//  Print a single char
 print_char: {
     .label ch = $a
   //SEG153 [73] *((byte*) print_char_cursor#82) ← (byte) print_char::ch#5 -- _deref_pbuz1=vbuz2 
@@ -4920,6 +4925,7 @@ print_char: {
     rts
 }
 //SEG157 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = $d
   //SEG158 [77] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -4960,6 +4966,12 @@ print_str: {
     jmp b1_from_b2
 }
 //SEG169 div16s
+//  Perform division on two signed 16-bit numbers
+//  Returns dividend/divisor.
+//  The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 div16s: {
     .label return = $48
     .label dividend = $38
@@ -4997,6 +5009,11 @@ div16s: {
     rts
 }
 //SEG178 divr16s
+//  Perform division on two signed 16-bit numbers with an initial remainder.
+//  Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 divr16s: {
     .const rem = 0
     .label _5 = $50
@@ -5192,6 +5209,10 @@ divr16s: {
     jmp b2
 }
 //SEG228 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label _1 = $52
     .label _2 = $53
@@ -5478,6 +5499,7 @@ test_8s: {
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
 //SEG328 print_sbyte
+//  Print a signed byte as HEX
 print_sbyte: {
     .label b = $24
   //SEG329 [161] if((signed byte) print_sbyte::b#10<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
@@ -5542,6 +5564,12 @@ print_sbyte: {
     jmp b2_from_b5
 }
 //SEG354 div8s
+//  Perform division on two signed 8-bit numbers
+//  Returns dividend/divisor.
+//  The remainder will be set into the global variable rem8s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 div8s: {
     .label _2 = $5f
     .label _6 = $5e
@@ -5683,6 +5711,10 @@ div8s: {
     jmp b2
 }
 //SEG400 div8u
+//  Performs division on two 8 bit unsigned bytes
+//  Returns dividend/divisor.
+//  The remainder will be set into the global variable rem8u
+//  Implemented using simple binary division
 div8u: {
     .label return = $62
     .label dividend = $2a
@@ -5715,6 +5747,10 @@ div8u: {
     rts
 }
 //SEG410 divr8u
+//  Performs division on two 8 bit unsigned bytes and an initial remainder
+//  Returns dividend/divisor.
+//  The final remainder will be set into the global variable rem8u
+//  Implemented using simple binary division
 divr8u: {
     .label _1 = $63
     .label dividend = $2d
@@ -6003,6 +6039,10 @@ test_16u: {
     divisors: .word 5, 7, $b, $d, $11, $13
 }
 //SEG509 div16u
+//  Performs division on two 16 bit unsigned words
+//  Returns the quotient dividend/divisor.
+//  The remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 div16u: {
     .label return = $73
     .label dividend = $69
@@ -6232,6 +6272,7 @@ test_8u: {
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
 //SEG593 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $32
   //SEG594 [283] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -6807,20 +6848,15 @@ test_16s: {
     lda divisors+1,y
     sta divisor+1
   //SEG38 [19] (signed word) div16s::dividend#0 ← (signed word) test_16s::dividend#0
-    // (signed word) div16s::dividend#0 = (signed word) test_16s::dividend#0  // register copy zp ZP_WORD:5
   //SEG39 [20] (signed word) div16s::divisor#0 ← (signed word) test_16s::divisor#0
-    // (signed word) div16s::divisor#0 = (signed word) test_16s::divisor#0  // register copy zp ZP_WORD:19
   //SEG40 [21] call div16s 
     jsr div16s
   //SEG41 [22] (signed word) div16s::return#2 ← (signed word) div16s::return#0
-    // (signed word) div16s::return#2 = (signed word) div16s::return#0  // register copy zp ZP_WORD:14
     jmp b3
   //SEG42 test_16s::@3
   b3:
   //SEG43 [23] (signed word) test_16s::res#0 ← (signed word) div16s::return#2
-    // (signed word) test_16s::res#0 = (signed word) div16s::return#2  // register copy zp ZP_WORD:14
   //SEG44 [24] (signed word) print_sword::w#1 ← (signed word) test_16s::dividend#0
-    // (signed word) print_sword::w#1 = (signed word) test_16s::dividend#0  // register copy zp ZP_WORD:5
   //SEG45 [25] (byte*~) print_char_cursor#159 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda print_line_cursor
     sta print_char_cursor
@@ -6950,6 +6986,7 @@ test_16s: {
     divisors: .word 5, -7, $b, -$d, -$11, $13
 }
 //SEG93 print_ln
+//  Print a newline
 print_ln: {
   //SEG94 [45] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -6982,6 +7019,7 @@ print_ln: {
     rts
 }
 //SEG101 print_sword
+//  Print a signed word as HEX
 print_sword: {
     .label w = 5
   //SEG102 [50] if((signed word) print_sword::w#5>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -7021,7 +7059,6 @@ print_sword: {
   //SEG114 print_sword::@1
   b1:
   //SEG115 [55] (word~) print_word::w#7 ← (word)(signed word) print_sword::w#6
-    // (word~) print_word::w#7 = (word)(signed word) print_sword::w#6  // register copy zp ZP_WORD:5
   //SEG116 [56] call print_word 
   //SEG117 [58] phi from print_sword::@1 to print_word [phi:print_sword::@1->print_word]
   print_word_from_b1:
@@ -7035,6 +7072,7 @@ print_sword: {
     rts
 }
 //SEG122 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 5
   //SEG123 [59] (byte) print_byte::b#1 ← > (word) print_word::w#5 -- vbuz1=_hi_vwuz2 
@@ -7065,6 +7103,7 @@ print_word: {
     rts
 }
 //SEG136 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label b = 7
   //SEG137 [65] (byte~) print_byte::$0 ← (byte) print_byte::b#7 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuz1_ror_4 
@@ -7104,6 +7143,7 @@ print_byte: {
     rts
 }
 //SEG152 print_char
+//  Print a single char
 print_char: {
   //SEG153 [73] *((byte*) print_char_cursor#82) ← (byte) print_char::ch#5 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -7120,6 +7160,7 @@ print_char: {
     rts
 }
 //SEG157 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = 5
   //SEG158 [77] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -7160,6 +7201,12 @@ print_str: {
     jmp b1_from_b2
 }
 //SEG169 div16s
+//  Perform division on two signed 16-bit numbers
+//  Returns dividend/divisor.
+//  The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 div16s: {
     .label return = $e
     .label dividend = 5
@@ -7177,12 +7224,10 @@ div16s: {
   //SEG172 [85] call divr16s 
     jsr divr16s
   //SEG173 [86] (signed word) divr16s::return#3 ← (signed word) divr16s::return#2
-    // (signed word) divr16s::return#3 = (signed word) divr16s::return#2  // register copy zp ZP_WORD:14
     jmp b2
   //SEG174 div16s::@2
   b2:
   //SEG175 [87] (signed word) div16s::return#0 ← (signed word) divr16s::return#3
-    // (signed word) div16s::return#0 = (signed word) divr16s::return#3  // register copy zp ZP_WORD:14
     jmp breturn
   //SEG176 div16s::@return
   breturn:
@@ -7190,6 +7235,11 @@ div16s: {
     rts
 }
 //SEG178 divr16s
+//  Perform division on two signed 16-bit numbers with an initial remainder.
+//  Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 divr16s: {
     .const rem = 0
     .label _5 = 8
@@ -7208,7 +7258,6 @@ divr16s: {
   //SEG180 divr16s::@17
   b17:
   //SEG181 [90] (word~) divr16s::dividendu#8 ← (word)(signed word) divr16s::dividend#0
-    // (word~) divr16s::dividendu#8 = (word)(signed word) divr16s::dividend#0  // register copy zp ZP_WORD:8
   //SEG182 [91] phi from divr16s::@17 to divr16s::@2 [phi:divr16s::@17->divr16s::@2]
   b2_from_b17:
   //SEG183 [91] phi (word) divr16s::remu#3 = ((word))(const signed word) divr16s::rem#0 [phi:divr16s::@17->divr16s::@2#0] -- vwuz1=vbuc1 
@@ -7229,7 +7278,6 @@ divr16s: {
   //SEG188 divr16s::@18
   b18:
   //SEG189 [93] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0
-    // (word~) divr16s::divisoru#5 = (word)(signed word) divr16s::divisor#0  // register copy zp ZP_WORD:12
   //SEG190 [94] phi from divr16s::@18 divr16s::@3 to divr16s::@4 [phi:divr16s::@18/divr16s::@3->divr16s::@4]
   b4_from_b18:
   b4_from_b3:
@@ -7239,11 +7287,8 @@ divr16s: {
   //SEG193 divr16s::@4
   b4:
   //SEG194 [95] (word) divr16u::dividend#2 ← (word) divr16s::dividendu#3
-    // (word) divr16u::dividend#2 = (word) divr16s::dividendu#3  // register copy zp ZP_WORD:8
   //SEG195 [96] (word) divr16u::divisor#1 ← (word) divr16s::divisoru#3
-    // (word) divr16u::divisor#1 = (word) divr16s::divisoru#3  // register copy zp ZP_WORD:12
   //SEG196 [97] (word) divr16u::rem#4 ← (word) divr16s::remu#3
-    // (word) divr16u::rem#4 = (word) divr16s::remu#3  // register copy zp ZP_WORD:10
   //SEG197 [98] call divr16u 
   //SEG198 [113] phi from divr16s::@4 to divr16u [phi:divr16s::@4->divr16u]
   divr16u_from_b4:
@@ -7252,12 +7297,10 @@ divr16s: {
   //SEG201 [113] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:divr16s::@4->divr16u#2] -- register_copy 
     jsr divr16u
   //SEG202 [99] (word) divr16u::return#3 ← (word) divr16u::return#0
-    // (word) divr16u::return#3 = (word) divr16u::return#0  // register copy zp ZP_WORD:14
     jmp b15
   //SEG203 divr16s::@15
   b15:
   //SEG204 [100] (word) divr16s::resultu#0 ← (word) divr16u::return#3
-    // (word) divr16s::resultu#0 = (word) divr16u::return#3  // register copy zp ZP_WORD:14
   //SEG205 [101] if((byte) divr16s::neg#4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto divr16s::@19 -- vbuyy_eq_0_then_la1 
     cpy #0
     beq b19
@@ -7297,9 +7340,7 @@ divr16s: {
   //SEG214 divr16s::@19
   b19:
   //SEG215 [106] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0
-    // (signed word~) divr16s::return#7 = (signed word)(word) divr16s::resultu#0  // register copy zp ZP_WORD:14
   //SEG216 [107] (signed word~) rem16s#37 ← (signed word)(word) rem16u#1
-    // (signed word~) rem16s#37 = (signed word)(word) rem16u#1  // register copy zp ZP_WORD:10
     jmp breturn_from_b19
   //SEG217 divr16s::@3
   b3:
@@ -7318,7 +7359,6 @@ divr16s: {
     eor #1
     tay
   //SEG220 [110] (word~) divr16s::divisoru#4 ← (word)(signed word~) divr16s::$11
-    // (word~) divr16s::divisoru#4 = (word)(signed word~) divr16s::$11  // register copy zp ZP_WORD:12
     jmp b4_from_b3
   //SEG221 divr16s::@1
   b1:
@@ -7333,7 +7373,6 @@ divr16s: {
     adc #0
     sta _5+1
   //SEG223 [112] (word~) divr16s::dividendu#7 ← (word)(signed word~) divr16s::$5
-    // (word~) divr16s::dividendu#7 = (word)(signed word~) divr16s::$5  // register copy zp ZP_WORD:8
   //SEG224 [91] phi from divr16s::@1 to divr16s::@2 [phi:divr16s::@1->divr16s::@2]
   b2_from_b1:
   //SEG225 [91] phi (word) divr16s::remu#3 = ((word))-(const signed word) divr16s::rem#0 [phi:divr16s::@1->divr16s::@2#0] -- vwuz1=vbuc1 
@@ -7347,6 +7386,10 @@ divr16s: {
     jmp b2
 }
 //SEG228 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = $a
     .label dividend = 8
@@ -7446,7 +7489,6 @@ divr16u: {
   //SEG261 divr16u::@6
   b6:
   //SEG262 [129] (word) rem16u#1 ← (word) divr16u::rem#11
-    // (word) rem16u#1 = (word) divr16u::rem#11  // register copy zp ZP_WORD:10
     jmp breturn
   //SEG263 divr16u::@return
   breturn:
@@ -7486,14 +7528,12 @@ test_8s: {
   //SEG275 [137] call div8s 
     jsr div8s
   //SEG276 [138] (signed byte) div8s::return#3 ← (signed byte) div8s::return#2
-    // (signed byte) div8s::return#3 = (signed byte) div8s::return#2  // register copy reg byte a
     jmp b3
   //SEG277 test_8s::@3
   b3:
   //SEG278 [139] (signed byte) test_8s::res#0 ← (signed byte) div8s::return#3 -- vbsz1=vbsaa 
     sta res
   //SEG279 [140] (signed byte) print_sbyte::b#1 ← (signed byte) test_8s::dividend#0
-    // (signed byte) print_sbyte::b#1 = (signed byte) test_8s::dividend#0  // register copy zp ZP_BYTE:7
   //SEG280 [141] (byte*~) print_char_cursor#184 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda print_line_cursor
     sta print_char_cursor
@@ -7613,6 +7653,7 @@ test_8s: {
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
 //SEG328 print_sbyte
+//  Print a signed byte as HEX
 print_sbyte: {
     .label b = 7
   //SEG329 [161] if((signed byte) print_sbyte::b#10<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
@@ -7638,7 +7679,6 @@ print_sbyte: {
   //SEG338 print_sbyte::@2
   b2:
   //SEG339 [165] (byte~) print_byte::b#9 ← (byte)(signed byte) print_sbyte::b#7
-    // (byte~) print_byte::b#9 = (byte)(signed byte) print_sbyte::b#7  // register copy zp ZP_BYTE:7
   //SEG340 [166] call print_byte 
   //SEG341 [64] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
   print_byte_from_b2:
@@ -7674,6 +7714,12 @@ print_sbyte: {
     jmp b2_from_b5
 }
 //SEG354 div8s
+//  Perform division on two signed 8-bit numbers
+//  Returns dividend/divisor.
+//  The remainder will be set into the global variable rem8s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 div8s: {
     .label neg = $10
   //SEG355 [171] if((signed byte) div8s::dividend#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto div8s::@1 -- vbsyy_lt_0_then_la1 
@@ -7683,7 +7729,6 @@ div8s: {
   //SEG356 div8s::@16
   b16:
   //SEG357 [172] (byte~) div8s::dividendu#8 ← (byte)(signed byte) div8s::dividend#0
-    // (byte~) div8s::dividendu#8 = (byte)(signed byte) div8s::dividend#0  // register copy reg byte y
   //SEG358 [173] phi from div8s::@16 to div8s::@2 [phi:div8s::@16->div8s::@2]
   b2_from_b16:
   //SEG359 [173] phi (byte) div8s::dividendu#3 = (byte~) div8s::dividendu#8 [phi:div8s::@16->div8s::@2#0] -- register_copy 
@@ -7700,7 +7745,6 @@ div8s: {
   //SEG363 div8s::@17
   b17:
   //SEG364 [175] (byte~) div8s::divisoru#5 ← (byte)(signed byte) div8s::divisor#0
-    // (byte~) div8s::divisoru#5 = (byte)(signed byte) div8s::divisor#0  // register copy reg byte x
   //SEG365 [176] phi from div8s::@17 div8s::@3 to div8s::@4 [phi:div8s::@17/div8s::@3->div8s::@4]
   b4_from_b17:
   b4_from_b3:
@@ -7712,7 +7756,6 @@ div8s: {
   //SEG369 [177] (byte) div8u::dividend#0 ← (byte) div8s::dividendu#3 -- vbuaa=vbuyy 
     tya
   //SEG370 [178] (byte) div8u::divisor#0 ← (byte) div8s::divisoru#3
-    // (byte) div8u::divisor#0 = (byte) div8s::divisoru#3  // register copy reg byte x
   //SEG371 [179] call div8u 
   //SEG372 [194] phi from div8s::@4 to div8u [phi:div8s::@4->div8u]
   div8u_from_b4:
@@ -7720,7 +7763,6 @@ div8s: {
   //SEG374 [194] phi (byte) div8u::dividend#2 = (byte) div8u::dividend#0 [phi:div8s::@4->div8u#1] -- register_copy 
     jsr div8u
   //SEG375 [180] (byte) div8u::return#2 ← (byte) div8u::return#0
-    // (byte) div8u::return#2 = (byte) div8u::return#0  // register copy reg byte a
     jmp b15
   //SEG376 div8s::@15
   b15:
@@ -7759,7 +7801,6 @@ div8s: {
   //SEG388 [187] (signed byte~) div8s::return#7 ← (signed byte)(byte) div8s::resultu#0 -- vbsaa=vbsyy 
     tya
   //SEG389 [188] (signed byte~) rem8s#33 ← (signed byte)(byte) rem8u#17
-    // (signed byte~) rem8s#33 = (signed byte)(byte) rem8u#17  // register copy reg byte x
     jmp breturn_from_b18
   //SEG390 div8s::@3
   b3:
@@ -7774,7 +7815,6 @@ div8s: {
     eor #1
     sta neg
   //SEG393 [191] (byte~) div8s::divisoru#4 ← (byte)(signed byte~) div8s::$6
-    // (byte~) div8s::divisoru#4 = (byte)(signed byte~) div8s::$6  // register copy reg byte x
     jmp b4_from_b3
   //SEG394 div8s::@1
   b1:
@@ -7794,6 +7834,10 @@ div8s: {
     jmp b2
 }
 //SEG400 div8u
+//  Performs division on two 8 bit unsigned bytes
+//  Returns dividend/divisor.
+//  The remainder will be set into the global variable rem8u
+//  Implemented using simple binary division
 div8u: {
   //SEG401 [195] (byte) divr8u::dividend#0 ← (byte) div8u::dividend#2 -- vbuz1=vbuaa 
     sta divr8u.dividend
@@ -7809,7 +7853,6 @@ div8u: {
   //SEG406 div8u::@2
   b2:
   //SEG407 [199] (byte) div8u::return#0 ← (byte) divr8u::return#0
-    // (byte) div8u::return#0 = (byte) divr8u::return#0  // register copy reg byte a
     jmp breturn
   //SEG408 div8u::@return
   breturn:
@@ -7817,6 +7860,10 @@ div8u: {
     rts
 }
 //SEG410 divr8u
+//  Performs division on two 8 bit unsigned bytes and an initial remainder
+//  Returns dividend/divisor.
+//  The final remainder will be set into the global variable rem8u
+//  Implemented using simple binary division
 divr8u: {
     .label dividend = $11
     .label divisor = $16
@@ -7939,20 +7986,15 @@ test_16u: {
     lda divisors+1,y
     sta divisor+1
   //SEG454 [222] (word) div16u::dividend#0 ← (word) test_16u::dividend#0
-    // (word) div16u::dividend#0 = (word) test_16u::dividend#0  // register copy zp ZP_WORD:5
   //SEG455 [223] (word) div16u::divisor#0 ← (word) test_16u::divisor#0
-    // (word) div16u::divisor#0 = (word) test_16u::divisor#0  // register copy zp ZP_WORD:12
   //SEG456 [224] call div16u 
     jsr div16u
   //SEG457 [225] (word) div16u::return#2 ← (word) div16u::return#0
-    // (word) div16u::return#2 = (word) div16u::return#0  // register copy zp ZP_WORD:14
     jmp b3
   //SEG458 test_16u::@3
   b3:
   //SEG459 [226] (word) test_16u::res#0 ← (word) div16u::return#2
-    // (word) test_16u::res#0 = (word) div16u::return#2  // register copy zp ZP_WORD:14
   //SEG460 [227] (word) print_word::w#1 ← (word) test_16u::dividend#0
-    // (word) print_word::w#1 = (word) test_16u::dividend#0  // register copy zp ZP_WORD:5
   //SEG461 [228] (byte*~) print_char_cursor#166 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda print_line_cursor
     sta print_char_cursor
@@ -8082,6 +8124,10 @@ test_16u: {
     divisors: .word 5, 7, $b, $d, $11, $13
 }
 //SEG509 div16u
+//  Performs division on two 16 bit unsigned words
+//  Returns the quotient dividend/divisor.
+//  The remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 div16u: {
     .label return = $e
     .label dividend = 5
@@ -8092,7 +8138,6 @@ div16u: {
     lda dividend+1
     sta divr16u.dividend+1
   //SEG511 [248] (word) divr16u::divisor#0 ← (word) div16u::divisor#0
-    // (word) divr16u::divisor#0 = (word) div16u::divisor#0  // register copy zp ZP_WORD:12
   //SEG512 [249] call divr16u 
   //SEG513 [113] phi from div16u to divr16u [phi:div16u->divr16u]
   divr16u_from_div16u:
@@ -8105,12 +8150,10 @@ div16u: {
     sta divr16u.rem+1
     jsr divr16u
   //SEG517 [250] (word) divr16u::return#2 ← (word) divr16u::return#0
-    // (word) divr16u::return#2 = (word) divr16u::return#0  // register copy zp ZP_WORD:14
     jmp b2
   //SEG518 div16u::@2
   b2:
   //SEG519 [251] (word) div16u::return#0 ← (word) divr16u::return#2
-    // (word) div16u::return#0 = (word) divr16u::return#2  // register copy zp ZP_WORD:14
     jmp breturn
   //SEG520 div16u::@return
   breturn:
@@ -8160,14 +8203,12 @@ test_8u: {
   //SEG535 [194] phi (byte) div8u::dividend#2 = (byte) div8u::dividend#1 [phi:test_8u::@1->div8u#1] -- register_copy 
     jsr div8u
   //SEG536 [260] (byte) div8u::return#3 ← (byte) div8u::return#0
-    // (byte) div8u::return#3 = (byte) div8u::return#0  // register copy reg byte a
     jmp b3
   //SEG537 test_8u::@3
   b3:
   //SEG538 [261] (byte) test_8u::res#0 ← (byte) div8u::return#3 -- vbuz1=vbuaa 
     sta res
   //SEG539 [262] (byte) print_byte::b#3 ← (byte) test_8u::dividend#0
-    // (byte) print_byte::b#3 = (byte) test_8u::dividend#0  // register copy zp ZP_BYTE:7
   //SEG540 [263] call print_byte 
   //SEG541 [64] phi from test_8u::@3 to print_byte [phi:test_8u::@3->print_byte]
   print_byte_from_b3:
@@ -8295,6 +8336,7 @@ test_8u: {
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
 //SEG593 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 3
   //SEG594 [283] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -8505,10 +8547,15 @@ Removing instruction b2_from_print_sword:
 Removing instruction print_char_from_b2:
 Removing instruction b1_from_print_sword:
 Removing instruction b1_from_b4:
+Removing instruction print_word_from_b1:
 Removing instruction b1_from_print_str:
 Removing instruction b1_from_b2:
+Removing instruction breturn:
+Removing instruction b2_from_b17:
+Removing instruction b18:
 Removing instruction b4_from_b18:
 Removing instruction b4_from_b3:
+Removing instruction divr16u_from_b4:
 Removing instruction breturn_from_b11:
 Removing instruction breturn_from_b19:
 Removing instruction b1_from_b3:
@@ -8516,6 +8563,7 @@ Removing instruction b2_from_b1:
 Removing instruction b2_from_b4:
 Removing instruction b3_from_b2:
 Removing instruction b3_from_b5:
+Removing instruction breturn:
 Removing instruction b1_from_b11:
 Removing instruction b4_from_b3:
 Removing instruction print_str_from_b4:
@@ -8529,12 +8577,16 @@ Removing instruction b3_from_print_sbyte:
 Removing instruction print_char_from_b3:
 Removing instruction b2_from_b3:
 Removing instruction b2_from_b5:
+Removing instruction print_byte_from_b2:
 Removing instruction b1_from_print_sbyte:
 Removing instruction print_char_from_b1:
+Removing instruction b2_from_b16:
+Removing instruction b17:
 Removing instruction b4_from_b17:
 Removing instruction b4_from_b3:
 Removing instruction breturn_from_b11:
 Removing instruction breturn_from_b18:
+Removing instruction breturn:
 Removing instruction b1_from_b3:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b4:
@@ -8549,6 +8601,7 @@ Removing instruction b8_from_b7:
 Removing instruction print_str_from_b8:
 Removing instruction b10_from_b9:
 Removing instruction print_ln_from_b10:
+Removing instruction breturn:
 Removing instruction b4_from_b3:
 Removing instruction print_str_from_b4:
 Removing instruction b6_from_b5:
@@ -8584,7 +8637,6 @@ Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction b2:
 Removing instruction b4:
-Removing instruction print_word_from_b1:
 Removing instruction breturn:
 Removing instruction print_byte_from_print_word:
 Removing instruction b1:
@@ -8597,11 +8649,7 @@ Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction b2:
-Removing instruction breturn:
 Removing instruction b17:
-Removing instruction b2_from_b17:
-Removing instruction b18:
-Removing instruction divr16u_from_b4:
 Removing instruction b15:
 Removing instruction b11:
 Removing instruction b2_from_b1:
@@ -8609,7 +8657,6 @@ Removing instruction b1_from_divr16u:
 Removing instruction b4:
 Removing instruction b5:
 Removing instruction b6:
-Removing instruction breturn:
 Removing instruction b1_from_test_8s:
 Removing instruction b3:
 Removing instruction print_sbyte_from_b3:
@@ -8626,19 +8673,15 @@ Removing instruction b10:
 Removing instruction b11:
 Removing instruction breturn:
 Removing instruction b3:
-Removing instruction print_byte_from_b2:
 Removing instruction breturn:
 Removing instruction b5:
 Removing instruction b16:
-Removing instruction b2_from_b16:
-Removing instruction b17:
 Removing instruction div8u_from_b4:
 Removing instruction b15:
 Removing instruction b11:
 Removing instruction b2_from_b1:
 Removing instruction divr8u_from_div8u:
 Removing instruction b2:
-Removing instruction breturn:
 Removing instruction b1_from_divr8u:
 Removing instruction b4:
 Removing instruction b5:
@@ -8661,7 +8704,6 @@ Removing instruction b11:
 Removing instruction breturn:
 Removing instruction divr16u_from_div16u:
 Removing instruction b2:
-Removing instruction breturn:
 Removing instruction b1_from_test_8u:
 Removing instruction div8u_from_b1:
 Removing instruction b3:
@@ -9234,18 +9276,13 @@ test_16s: {
     lda divisors+1,y
     sta divisor+1
   //SEG38 [19] (signed word) div16s::dividend#0 ← (signed word) test_16s::dividend#0
-    // (signed word) div16s::dividend#0 = (signed word) test_16s::dividend#0  // register copy zp ZP_WORD:5
   //SEG39 [20] (signed word) div16s::divisor#0 ← (signed word) test_16s::divisor#0
-    // (signed word) div16s::divisor#0 = (signed word) test_16s::divisor#0  // register copy zp ZP_WORD:19
   //SEG40 [21] call div16s 
     jsr div16s
   //SEG41 [22] (signed word) div16s::return#2 ← (signed word) div16s::return#0
-    // (signed word) div16s::return#2 = (signed word) div16s::return#0  // register copy zp ZP_WORD:14
   //SEG42 test_16s::@3
   //SEG43 [23] (signed word) test_16s::res#0 ← (signed word) div16s::return#2
-    // (signed word) test_16s::res#0 = (signed word) div16s::return#2  // register copy zp ZP_WORD:14
   //SEG44 [24] (signed word) print_sword::w#1 ← (signed word) test_16s::dividend#0
-    // (signed word) print_sword::w#1 = (signed word) test_16s::dividend#0  // register copy zp ZP_WORD:5
   //SEG45 [25] (byte*~) print_char_cursor#159 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda print_line_cursor
     sta print_char_cursor
@@ -9344,6 +9381,7 @@ test_16s: {
     divisors: .word 5, -7, $b, -$d, -$11, $13
 }
 //SEG93 print_ln
+//  Print a newline
 print_ln: {
   //SEG94 [45] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   //SEG95 [45] phi (byte*) print_line_cursor#20 = (byte*) print_line_cursor#39 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
@@ -9371,6 +9409,7 @@ print_ln: {
     rts
 }
 //SEG101 print_sword
+//  Print a signed word as HEX
 print_sword: {
     .label w = 5
   //SEG102 [50] if((signed word) print_sword::w#5>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -9401,7 +9440,6 @@ print_sword: {
   //SEG114 print_sword::@1
   b1:
   //SEG115 [55] (word~) print_word::w#7 ← (word)(signed word) print_sword::w#6
-    // (word~) print_word::w#7 = (word)(signed word) print_sword::w#6  // register copy zp ZP_WORD:5
   //SEG116 [56] call print_word 
   //SEG117 [58] phi from print_sword::@1 to print_word [phi:print_sword::@1->print_word]
   //SEG118 [58] phi (byte*) print_char_cursor#135 = (byte*) print_char_cursor#130 [phi:print_sword::@1->print_word#0] -- register_copy 
@@ -9412,6 +9450,7 @@ print_sword: {
     rts
 }
 //SEG122 print_word
+//  Print a word as HEX
 print_word: {
     .label w = 5
   //SEG123 [59] (byte) print_byte::b#1 ← > (word) print_word::w#5 -- vbuz1=_hi_vwuz2 
@@ -9436,6 +9475,7 @@ print_word: {
     rts
 }
 //SEG136 print_byte
+//  Print a byte as HEX
 print_byte: {
     .label b = 7
   //SEG137 [65] (byte~) print_byte::$0 ← (byte) print_byte::b#7 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuz1_ror_4 
@@ -9469,6 +9509,7 @@ print_byte: {
     rts
 }
 //SEG152 print_char
+//  Print a single char
 print_char: {
   //SEG153 [73] *((byte*) print_char_cursor#82) ← (byte) print_char::ch#5 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -9483,6 +9524,7 @@ print_char: {
     rts
 }
 //SEG157 print_str
+//  Print a zero-terminated string
 print_str: {
     .label str = 5
   //SEG158 [77] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -9517,6 +9559,12 @@ print_str: {
     jmp b1
 }
 //SEG169 div16s
+//  Perform division on two signed 16-bit numbers
+//  Returns dividend/divisor.
+//  The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 div16s: {
     .label return = $e
     .label dividend = 5
@@ -9534,15 +9582,18 @@ div16s: {
   //SEG172 [85] call divr16s 
     jsr divr16s
   //SEG173 [86] (signed word) divr16s::return#3 ← (signed word) divr16s::return#2
-    // (signed word) divr16s::return#3 = (signed word) divr16s::return#2  // register copy zp ZP_WORD:14
   //SEG174 div16s::@2
   //SEG175 [87] (signed word) div16s::return#0 ← (signed word) divr16s::return#3
-    // (signed word) div16s::return#0 = (signed word) divr16s::return#3  // register copy zp ZP_WORD:14
   //SEG176 div16s::@return
   //SEG177 [88] return 
     rts
 }
 //SEG178 divr16s
+//  Perform division on two signed 16-bit numbers with an initial remainder.
+//  Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 divr16s: {
     .const rem = 0
     .label _5 = 8
@@ -9559,7 +9610,6 @@ divr16s: {
     bmi b1
   //SEG180 divr16s::@17
   //SEG181 [90] (word~) divr16s::dividendu#8 ← (word)(signed word) divr16s::dividend#0
-    // (word~) divr16s::dividendu#8 = (word)(signed word) divr16s::dividend#0  // register copy zp ZP_WORD:8
   //SEG182 [91] phi from divr16s::@17 to divr16s::@2 [phi:divr16s::@17->divr16s::@2]
   //SEG183 [91] phi (word) divr16s::remu#3 = ((word))(const signed word) divr16s::rem#0 [phi:divr16s::@17->divr16s::@2#0] -- vwuz1=vbuc1 
     lda #<rem
@@ -9576,18 +9626,14 @@ divr16s: {
     bmi b3
   //SEG188 divr16s::@18
   //SEG189 [93] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0
-    // (word~) divr16s::divisoru#5 = (word)(signed word) divr16s::divisor#0  // register copy zp ZP_WORD:12
   //SEG190 [94] phi from divr16s::@18 divr16s::@3 to divr16s::@4 [phi:divr16s::@18/divr16s::@3->divr16s::@4]
   //SEG191 [94] phi (byte) divr16s::neg#4 = (byte) divr16s::neg#3 [phi:divr16s::@18/divr16s::@3->divr16s::@4#0] -- register_copy 
   //SEG192 [94] phi (word) divr16s::divisoru#3 = (word~) divr16s::divisoru#5 [phi:divr16s::@18/divr16s::@3->divr16s::@4#1] -- register_copy 
   //SEG193 divr16s::@4
   b4:
   //SEG194 [95] (word) divr16u::dividend#2 ← (word) divr16s::dividendu#3
-    // (word) divr16u::dividend#2 = (word) divr16s::dividendu#3  // register copy zp ZP_WORD:8
   //SEG195 [96] (word) divr16u::divisor#1 ← (word) divr16s::divisoru#3
-    // (word) divr16u::divisor#1 = (word) divr16s::divisoru#3  // register copy zp ZP_WORD:12
   //SEG196 [97] (word) divr16u::rem#4 ← (word) divr16s::remu#3
-    // (word) divr16u::rem#4 = (word) divr16s::remu#3  // register copy zp ZP_WORD:10
   //SEG197 [98] call divr16u 
   //SEG198 [113] phi from divr16s::@4 to divr16u [phi:divr16s::@4->divr16u]
   //SEG199 [113] phi (word) divr16u::divisor#6 = (word) divr16u::divisor#1 [phi:divr16s::@4->divr16u#0] -- register_copy 
@@ -9595,10 +9641,8 @@ divr16s: {
   //SEG201 [113] phi (word) divr16u::rem#10 = (word) divr16u::rem#4 [phi:divr16s::@4->divr16u#2] -- register_copy 
     jsr divr16u
   //SEG202 [99] (word) divr16u::return#3 ← (word) divr16u::return#0
-    // (word) divr16u::return#3 = (word) divr16u::return#0  // register copy zp ZP_WORD:14
   //SEG203 divr16s::@15
   //SEG204 [100] (word) divr16s::resultu#0 ← (word) divr16u::return#3
-    // (word) divr16s::resultu#0 = (word) divr16u::return#3  // register copy zp ZP_WORD:14
   //SEG205 [101] if((byte) divr16s::neg#4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto divr16s::@19 -- vbuyy_eq_0_then_la1 
     cpy #0
     beq breturn
@@ -9632,9 +9676,7 @@ divr16s: {
     rts
   //SEG214 divr16s::@19
   //SEG215 [106] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0
-    // (signed word~) divr16s::return#7 = (signed word)(word) divr16s::resultu#0  // register copy zp ZP_WORD:14
   //SEG216 [107] (signed word~) rem16s#37 ← (signed word)(word) rem16u#1
-    // (signed word~) rem16s#37 = (signed word)(word) rem16u#1  // register copy zp ZP_WORD:10
   //SEG217 divr16s::@3
   b3:
   //SEG218 [108] (signed word~) divr16s::$11 ← - (signed word) divr16s::divisor#0 -- vwsz1=_neg_vwsz1 
@@ -9652,7 +9694,6 @@ divr16s: {
     eor #1
     tay
   //SEG220 [110] (word~) divr16s::divisoru#4 ← (word)(signed word~) divr16s::$11
-    // (word~) divr16s::divisoru#4 = (word)(signed word~) divr16s::$11  // register copy zp ZP_WORD:12
     jmp b4
   //SEG221 divr16s::@1
   b1:
@@ -9667,7 +9708,6 @@ divr16s: {
     adc #0
     sta _5+1
   //SEG223 [112] (word~) divr16s::dividendu#7 ← (word)(signed word~) divr16s::$5
-    // (word~) divr16s::dividendu#7 = (word)(signed word~) divr16s::$5  // register copy zp ZP_WORD:8
   //SEG224 [91] phi from divr16s::@1 to divr16s::@2 [phi:divr16s::@1->divr16s::@2]
   //SEG225 [91] phi (word) divr16s::remu#3 = ((word))-(const signed word) divr16s::rem#0 [phi:divr16s::@1->divr16s::@2#0] -- vwuz1=vbuc1 
     lda #<-rem
@@ -9680,6 +9720,10 @@ divr16s: {
     jmp b2
 }
 //SEG228 divr16u
+//  Performs division on two 16 bit unsigned words and an initial remainder
+//  Returns the quotient dividend/divisor.
+//  The final remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 divr16u: {
     .label rem = $a
     .label dividend = 8
@@ -9762,7 +9806,6 @@ divr16u: {
     bne b1
   //SEG261 divr16u::@6
   //SEG262 [129] (word) rem16u#1 ← (word) divr16u::rem#11
-    // (word) rem16u#1 = (word) divr16u::rem#11  // register copy zp ZP_WORD:10
   //SEG263 divr16u::@return
   //SEG264 [130] return 
     rts
@@ -9795,12 +9838,10 @@ test_8s: {
   //SEG275 [137] call div8s 
     jsr div8s
   //SEG276 [138] (signed byte) div8s::return#3 ← (signed byte) div8s::return#2
-    // (signed byte) div8s::return#3 = (signed byte) div8s::return#2  // register copy reg byte a
   //SEG277 test_8s::@3
   //SEG278 [139] (signed byte) test_8s::res#0 ← (signed byte) div8s::return#3 -- vbsz1=vbsaa 
     sta res
   //SEG279 [140] (signed byte) print_sbyte::b#1 ← (signed byte) test_8s::dividend#0
-    // (signed byte) print_sbyte::b#1 = (signed byte) test_8s::dividend#0  // register copy zp ZP_BYTE:7
   //SEG280 [141] (byte*~) print_char_cursor#184 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda print_line_cursor
     sta print_char_cursor
@@ -9890,6 +9931,7 @@ test_8s: {
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
 //SEG328 print_sbyte
+//  Print a signed byte as HEX
 print_sbyte: {
     .label b = 7
   //SEG329 [161] if((signed byte) print_sbyte::b#10<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
@@ -9908,7 +9950,6 @@ print_sbyte: {
   //SEG338 print_sbyte::@2
   b2:
   //SEG339 [165] (byte~) print_byte::b#9 ← (byte)(signed byte) print_sbyte::b#7
-    // (byte~) print_byte::b#9 = (byte)(signed byte) print_sbyte::b#7  // register copy zp ZP_BYTE:7
   //SEG340 [166] call print_byte 
   //SEG341 [64] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
   //SEG342 [64] phi (byte*) print_char_cursor#136 = (byte*) print_char_cursor#18 [phi:print_sbyte::@2->print_byte#0] -- register_copy 
@@ -9936,6 +9977,12 @@ print_sbyte: {
     jmp b2
 }
 //SEG354 div8s
+//  Perform division on two signed 8-bit numbers
+//  Returns dividend/divisor.
+//  The remainder will be set into the global variable rem8s.
+//  Implemented using simple binary division
+//  Follows the C99 standard by truncating toward zero on negative results.
+//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 div8s: {
     .label neg = $10
   //SEG355 [171] if((signed byte) div8s::dividend#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto div8s::@1 -- vbsyy_lt_0_then_la1 
@@ -9943,7 +9990,6 @@ div8s: {
     bmi b1
   //SEG356 div8s::@16
   //SEG357 [172] (byte~) div8s::dividendu#8 ← (byte)(signed byte) div8s::dividend#0
-    // (byte~) div8s::dividendu#8 = (byte)(signed byte) div8s::dividend#0  // register copy reg byte y
   //SEG358 [173] phi from div8s::@16 to div8s::@2 [phi:div8s::@16->div8s::@2]
   //SEG359 [173] phi (byte) div8s::dividendu#3 = (byte~) div8s::dividendu#8 [phi:div8s::@16->div8s::@2#0] -- register_copy 
   //SEG360 [173] phi (byte) div8s::neg#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:div8s::@16->div8s::@2#1] -- vbuz1=vbuc1 
@@ -9956,7 +10002,6 @@ div8s: {
     bmi b3
   //SEG363 div8s::@17
   //SEG364 [175] (byte~) div8s::divisoru#5 ← (byte)(signed byte) div8s::divisor#0
-    // (byte~) div8s::divisoru#5 = (byte)(signed byte) div8s::divisor#0  // register copy reg byte x
   //SEG365 [176] phi from div8s::@17 div8s::@3 to div8s::@4 [phi:div8s::@17/div8s::@3->div8s::@4]
   //SEG366 [176] phi (byte) div8s::neg#4 = (byte) div8s::neg#3 [phi:div8s::@17/div8s::@3->div8s::@4#0] -- register_copy 
   //SEG367 [176] phi (byte) div8s::divisoru#3 = (byte~) div8s::divisoru#5 [phi:div8s::@17/div8s::@3->div8s::@4#1] -- register_copy 
@@ -9965,14 +10010,12 @@ div8s: {
   //SEG369 [177] (byte) div8u::dividend#0 ← (byte) div8s::dividendu#3 -- vbuaa=vbuyy 
     tya
   //SEG370 [178] (byte) div8u::divisor#0 ← (byte) div8s::divisoru#3
-    // (byte) div8u::divisor#0 = (byte) div8s::divisoru#3  // register copy reg byte x
   //SEG371 [179] call div8u 
   //SEG372 [194] phi from div8s::@4 to div8u [phi:div8s::@4->div8u]
   //SEG373 [194] phi (byte) div8u::divisor#2 = (byte) div8u::divisor#0 [phi:div8s::@4->div8u#0] -- register_copy 
   //SEG374 [194] phi (byte) div8u::dividend#2 = (byte) div8u::dividend#0 [phi:div8s::@4->div8u#1] -- register_copy 
     jsr div8u
   //SEG375 [180] (byte) div8u::return#2 ← (byte) div8u::return#0
-    // (byte) div8u::return#2 = (byte) div8u::return#0  // register copy reg byte a
   //SEG376 div8s::@15
   //SEG377 [181] (byte) div8s::resultu#0 ← (byte) div8u::return#2 -- vbuyy=vbuaa 
     tay
@@ -10004,7 +10047,6 @@ div8s: {
   //SEG388 [187] (signed byte~) div8s::return#7 ← (signed byte)(byte) div8s::resultu#0 -- vbsaa=vbsyy 
     tya
   //SEG389 [188] (signed byte~) rem8s#33 ← (signed byte)(byte) rem8u#17
-    // (signed byte~) rem8s#33 = (signed byte)(byte) rem8u#17  // register copy reg byte x
     jmp breturn
   //SEG390 div8s::@3
   b3:
@@ -10019,7 +10061,6 @@ div8s: {
     eor #1
     sta neg
   //SEG393 [191] (byte~) div8s::divisoru#4 ← (byte)(signed byte~) div8s::$6
-    // (byte~) div8s::divisoru#4 = (byte)(signed byte~) div8s::$6  // register copy reg byte x
     jmp b4
   //SEG394 div8s::@1
   b1:
@@ -10038,6 +10079,10 @@ div8s: {
     jmp b2
 }
 //SEG400 div8u
+//  Performs division on two 8 bit unsigned bytes
+//  Returns dividend/divisor.
+//  The remainder will be set into the global variable rem8u
+//  Implemented using simple binary division
 div8u: {
   //SEG401 [195] (byte) divr8u::dividend#0 ← (byte) div8u::dividend#2 -- vbuz1=vbuaa 
     sta divr8u.dividend
@@ -10050,12 +10095,15 @@ div8u: {
     lda divr8u.return
   //SEG406 div8u::@2
   //SEG407 [199] (byte) div8u::return#0 ← (byte) divr8u::return#0
-    // (byte) div8u::return#0 = (byte) divr8u::return#0  // register copy reg byte a
   //SEG408 div8u::@return
   //SEG409 [200] return 
     rts
 }
 //SEG410 divr8u
+//  Performs division on two 8 bit unsigned bytes and an initial remainder
+//  Returns dividend/divisor.
+//  The final remainder will be set into the global variable rem8u
+//  Implemented using simple binary division
 divr8u: {
     .label dividend = $11
     .label divisor = $16
@@ -10155,18 +10203,13 @@ test_16u: {
     lda divisors+1,y
     sta divisor+1
   //SEG454 [222] (word) div16u::dividend#0 ← (word) test_16u::dividend#0
-    // (word) div16u::dividend#0 = (word) test_16u::dividend#0  // register copy zp ZP_WORD:5
   //SEG455 [223] (word) div16u::divisor#0 ← (word) test_16u::divisor#0
-    // (word) div16u::divisor#0 = (word) test_16u::divisor#0  // register copy zp ZP_WORD:12
   //SEG456 [224] call div16u 
     jsr div16u
   //SEG457 [225] (word) div16u::return#2 ← (word) div16u::return#0
-    // (word) div16u::return#2 = (word) div16u::return#0  // register copy zp ZP_WORD:14
   //SEG458 test_16u::@3
   //SEG459 [226] (word) test_16u::res#0 ← (word) div16u::return#2
-    // (word) test_16u::res#0 = (word) div16u::return#2  // register copy zp ZP_WORD:14
   //SEG460 [227] (word) print_word::w#1 ← (word) test_16u::dividend#0
-    // (word) print_word::w#1 = (word) test_16u::dividend#0  // register copy zp ZP_WORD:5
   //SEG461 [228] (byte*~) print_char_cursor#166 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda print_line_cursor
     sta print_char_cursor
@@ -10265,6 +10308,10 @@ test_16u: {
     divisors: .word 5, 7, $b, $d, $11, $13
 }
 //SEG509 div16u
+//  Performs division on two 16 bit unsigned words
+//  Returns the quotient dividend/divisor.
+//  The remainder will be set into the global variable rem16u
+//  Implemented using simple binary division
 div16u: {
     .label return = $e
     .label dividend = 5
@@ -10275,7 +10322,6 @@ div16u: {
     lda dividend+1
     sta divr16u.dividend+1
   //SEG511 [248] (word) divr16u::divisor#0 ← (word) div16u::divisor#0
-    // (word) divr16u::divisor#0 = (word) div16u::divisor#0  // register copy zp ZP_WORD:12
   //SEG512 [249] call divr16u 
   //SEG513 [113] phi from div16u to divr16u [phi:div16u->divr16u]
   //SEG514 [113] phi (word) divr16u::divisor#6 = (word) divr16u::divisor#0 [phi:div16u->divr16u#0] -- register_copy 
@@ -10286,10 +10332,8 @@ div16u: {
     sta divr16u.rem+1
     jsr divr16u
   //SEG517 [250] (word) divr16u::return#2 ← (word) divr16u::return#0
-    // (word) divr16u::return#2 = (word) divr16u::return#0  // register copy zp ZP_WORD:14
   //SEG518 div16u::@2
   //SEG519 [251] (word) div16u::return#0 ← (word) divr16u::return#2
-    // (word) div16u::return#0 = (word) divr16u::return#2  // register copy zp ZP_WORD:14
   //SEG520 div16u::@return
   //SEG521 [252] return 
     rts
@@ -10333,12 +10377,10 @@ test_8u: {
   //SEG535 [194] phi (byte) div8u::dividend#2 = (byte) div8u::dividend#1 [phi:test_8u::@1->div8u#1] -- register_copy 
     jsr div8u
   //SEG536 [260] (byte) div8u::return#3 ← (byte) div8u::return#0
-    // (byte) div8u::return#3 = (byte) div8u::return#0  // register copy reg byte a
   //SEG537 test_8u::@3
   //SEG538 [261] (byte) test_8u::res#0 ← (byte) div8u::return#3 -- vbuz1=vbuaa 
     sta res
   //SEG539 [262] (byte) print_byte::b#3 ← (byte) test_8u::dividend#0
-    // (byte) print_byte::b#3 = (byte) test_8u::dividend#0  // register copy zp ZP_BYTE:7
   //SEG540 [263] call print_byte 
   //SEG541 [64] phi from test_8u::@3 to print_byte [phi:test_8u::@3->print_byte]
   //SEG542 [64] phi (byte*) print_char_cursor#136 = (byte*) print_char_cursor#138 [phi:test_8u::@3->print_byte#0] -- register_copy 
@@ -10435,6 +10477,7 @@ test_8u: {
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
 //SEG593 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 3
   //SEG594 [283] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]

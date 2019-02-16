@@ -41,6 +41,7 @@ main: {
     inc BORDERCOL
     jmp b2
 }
+//  Interrupt Routine
 irq: {
     sta rega+1
     jsr do_irq

@@ -166,6 +166,7 @@ main: {
     bne b8
     jmp b3
 }
+//  Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
     .label _6 = 7
     .label gfxb = 5
@@ -231,6 +232,9 @@ gfx_init_chunky: {
     jsr dtvSetCpuBankSegment1
     rts
 }
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
     sta cpuBank

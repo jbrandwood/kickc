@@ -3950,6 +3950,11 @@ clear_screen: {
     rts
 }
 //SEG150 gen_sintab
+//  Generate a sinus table using BASIC floats
+//  - sintab is a pointer to the table to fill
+//  - length is the length of the sine table
+//  - min is the minimum value of the generated sinus
+//  - max is the maximum value of the generated sinus
 gen_sintab: {
     .label f_2pi = $e2e5
     .label _23 = $37
@@ -4254,6 +4259,8 @@ gen_sintab: {
     f_amp: .byte 0, 0, 0, 0, 0
 }
 //SEG260 progress_inc
+//  Increase PETSCII progress one bit
+//  Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
   //SEG261 [122] (byte) progress_idx#10 ← ++ (byte) progress_idx#34 -- vbuz1=_inc_vbuz1 
     inc progress_idx
@@ -4300,6 +4307,9 @@ progress_inc: {
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 //SEG276 getFAC
+//  word = FAC
+//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
+//  Destroys the value in the FAC in the process
 getFAC: {
     .label return = $3a
     .label return_2 = $35
@@ -4319,6 +4329,9 @@ getFAC: {
     rts
 }
 //SEG281 addMEMtoFAC
+//  FAC = MEM+FAC
+//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+//  Reads 5 bytes from memory
 addMEMtoFAC: {
   //SEG282 [133] call prepareMEM 
   //SEG283 [136] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
@@ -4343,6 +4356,7 @@ addMEMtoFAC: {
     rts
 }
 //SEG289 prepareMEM
+//  Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label _0 = $3c
     .label _1 = $3d
@@ -4366,6 +4380,9 @@ prepareMEM: {
     rts
 }
 //SEG296 mulFACbyMEM
+//  FAC = MEM*FAC
+//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+//  Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = $17
   //SEG297 [143] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2 -- pbuz1=pbuz2 
@@ -4392,6 +4409,9 @@ mulFACbyMEM: {
     rts
 }
 //SEG305 sinFAC
+//  FAC = sin(FAC)
+//  Set FAC to sinus of the FAC - sin(FAC)
+//  Sinus is calculated on radians (0-2*PI)
 sinFAC: {
   //SEG306 asm { jsr$e26b  }
     jsr $e26b
@@ -4402,6 +4422,9 @@ sinFAC: {
     rts
 }
 //SEG309 divMEMbyFAC
+//  FAC = MEM/FAC
+//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+//  Reads 5 bytes from memory
 divMEMbyFAC: {
     .label mem = $19
   //SEG310 [150] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2 -- pbuz1=pbuz2 
@@ -4428,6 +4451,8 @@ divMEMbyFAC: {
     rts
 }
 //SEG318 setFAC
+//  FAC = word
+//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = $1b
   //SEG319 [155] (byte*~) prepareMEM::mem#8 ← (byte*)(word) setFAC::w#5 -- pbuz1=pbuz2 
@@ -4454,6 +4479,9 @@ setFAC: {
     rts
 }
 //SEG327 setMEMtoFAC
+//  MEM = FAC
+//  Stores the value of the FAC to memory
+//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = $1d
   //SEG328 [160] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5 -- pbuz1=pbuz2 
@@ -4480,6 +4508,8 @@ setMEMtoFAC: {
     rts
 }
 //SEG336 subFACfromARG
+//  FAC = ARG-FAC
+//  Set FAC to ARG minus FAC
 subFACfromARG: {
   //SEG337 asm { jsr$b853  }
     jsr $b853
@@ -4490,6 +4520,8 @@ subFACfromARG: {
     rts
 }
 //SEG340 setARGtoFAC
+//  ARG = FAC
+//  Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
 setARGtoFAC: {
   //SEG341 asm { jsr$bc0f  }
     jsr $bc0f
@@ -4500,6 +4532,7 @@ setARGtoFAC: {
     rts
 }
 //SEG344 progress_init
+//  Initialize the PETSCII progress bar
 progress_init: {
     .label line = $13
     jmp breturn
@@ -4566,6 +4599,9 @@ gen_sprites: {
     cml: .text "camelot"
 }
 //SEG364 gen_chargen_sprite
+//  Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
+//  - c is the character to generate
+//  - sprite is a pointer to the position of the sprite to generate
 gen_chargen_sprite: {
     .label _0 = $3f
     .label _1 = $41
@@ -5660,6 +5696,11 @@ clear_screen: {
     rts
 }
 //SEG150 gen_sintab
+//  Generate a sinus table using BASIC floats
+//  - sintab is a pointer to the table to fill
+//  - length is the length of the sine table
+//  - min is the minimum value of the generated sinus
+//  - max is the maximum value of the generated sinus
 gen_sintab: {
     .label f_2pi = $e2e5
     .label _23 = $c
@@ -5922,12 +5963,10 @@ gen_sintab: {
   //SEG248 [113] call getFAC 
     jsr getFAC
   //SEG249 [114] (word) getFAC::return#2 ← (word) getFAC::return#0
-    // (word) getFAC::return#2 = (word) getFAC::return#0  // register copy zp ZP_WORD:12
     jmp b22
   //SEG250 gen_sintab::@22
   b22:
   //SEG251 [115] (word~) gen_sintab::$23 ← (word) getFAC::return#2
-    // (word~) gen_sintab::$23 = (word) getFAC::return#2  // register copy zp ZP_WORD:12
   //SEG252 [116] (byte~) gen_sintab::$24 ← ((byte)) (word~) gen_sintab::$23 -- vbuaa=_byte_vwuz1 
     lda _23
   //SEG253 [117] *((byte*) gen_sintab::sintab#12 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$24 -- pbuz1_derefidx_vbuz2=vbuaa 
@@ -5954,6 +5993,8 @@ gen_sintab: {
     f_amp: .byte 0, 0, 0, 0, 0
 }
 //SEG260 progress_inc
+//  Increase PETSCII progress one bit
+//  Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
   //SEG261 [122] (byte) progress_idx#10 ← ++ (byte) progress_idx#34 -- vbuz1=_inc_vbuz1 
     inc progress_idx
@@ -6000,6 +6041,9 @@ progress_inc: {
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 //SEG276 getFAC
+//  word = FAC
+//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
+//  Destroys the value in the FAC in the process
 getFAC: {
     .label return = $c
   //SEG277 asm { jsr$b1aa sty$fe sta$ff  }
@@ -6018,6 +6062,9 @@ getFAC: {
     rts
 }
 //SEG281 addMEMtoFAC
+//  FAC = MEM+FAC
+//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+//  Reads 5 bytes from memory
 addMEMtoFAC: {
   //SEG282 [133] call prepareMEM 
   //SEG283 [136] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
@@ -6042,6 +6089,7 @@ addMEMtoFAC: {
     rts
 }
 //SEG289 prepareMEM
+//  Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label mem = $c
   //SEG290 [137] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
@@ -6059,10 +6107,12 @@ prepareMEM: {
     rts
 }
 //SEG296 mulFACbyMEM
+//  FAC = MEM*FAC
+//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+//  Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = $c
   //SEG297 [143] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
-    // (byte*) prepareMEM::mem#4 = (byte*) mulFACbyMEM::mem#2  // register copy zp ZP_WORD:12
   //SEG298 [144] call prepareMEM 
   //SEG299 [136] phi from mulFACbyMEM to prepareMEM [phi:mulFACbyMEM->prepareMEM]
   prepareMEM_from_mulFACbyMEM:
@@ -6082,6 +6132,9 @@ mulFACbyMEM: {
     rts
 }
 //SEG305 sinFAC
+//  FAC = sin(FAC)
+//  Set FAC to sinus of the FAC - sin(FAC)
+//  Sinus is calculated on radians (0-2*PI)
 sinFAC: {
   //SEG306 asm { jsr$e26b  }
     jsr $e26b
@@ -6092,10 +6145,12 @@ sinFAC: {
     rts
 }
 //SEG309 divMEMbyFAC
+//  FAC = MEM/FAC
+//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+//  Reads 5 bytes from memory
 divMEMbyFAC: {
     .label mem = $c
   //SEG310 [150] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2
-    // (byte*) prepareMEM::mem#3 = (byte*) divMEMbyFAC::mem#2  // register copy zp ZP_WORD:12
   //SEG311 [151] call prepareMEM 
   //SEG312 [136] phi from divMEMbyFAC to prepareMEM [phi:divMEMbyFAC->prepareMEM]
   prepareMEM_from_divMEMbyFAC:
@@ -6115,10 +6170,11 @@ divMEMbyFAC: {
     rts
 }
 //SEG318 setFAC
+//  FAC = word
+//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = $c
   //SEG319 [155] (byte*~) prepareMEM::mem#8 ← (byte*)(word) setFAC::w#5
-    // (byte*~) prepareMEM::mem#8 = (byte*)(word) setFAC::w#5  // register copy zp ZP_WORD:12
   //SEG320 [156] call prepareMEM 
   //SEG321 [136] phi from setFAC to prepareMEM [phi:setFAC->prepareMEM]
   prepareMEM_from_setFAC:
@@ -6138,10 +6194,12 @@ setFAC: {
     rts
 }
 //SEG327 setMEMtoFAC
+//  MEM = FAC
+//  Stores the value of the FAC to memory
+//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = $c
   //SEG328 [160] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5
-    // (byte*) prepareMEM::mem#1 = (byte*) setMEMtoFAC::mem#5  // register copy zp ZP_WORD:12
   //SEG329 [161] call prepareMEM 
   //SEG330 [136] phi from setMEMtoFAC to prepareMEM [phi:setMEMtoFAC->prepareMEM]
   prepareMEM_from_setMEMtoFAC:
@@ -6161,6 +6219,8 @@ setMEMtoFAC: {
     rts
 }
 //SEG336 subFACfromARG
+//  FAC = ARG-FAC
+//  Set FAC to ARG minus FAC
 subFACfromARG: {
   //SEG337 asm { jsr$b853  }
     jsr $b853
@@ -6171,6 +6231,8 @@ subFACfromARG: {
     rts
 }
 //SEG340 setARGtoFAC
+//  ARG = FAC
+//  Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
 setARGtoFAC: {
   //SEG341 asm { jsr$bc0f  }
     jsr $bc0f
@@ -6181,6 +6243,7 @@ setARGtoFAC: {
     rts
 }
 //SEG344 progress_init
+//  Initialize the PETSCII progress bar
 progress_init: {
     .label line = $a
     jmp breturn
@@ -6246,6 +6309,9 @@ gen_sprites: {
     cml: .text "camelot"
 }
 //SEG364 gen_chargen_sprite
+//  Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
+//  - c is the character to generate
+//  - sprite is a pointer to the position of the sprite to generate
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c
@@ -7600,6 +7666,11 @@ clear_screen: {
     rts
 }
 //SEG150 gen_sintab
+//  Generate a sinus table using BASIC floats
+//  - sintab is a pointer to the table to fill
+//  - length is the length of the sine table
+//  - min is the minimum value of the generated sinus
+//  - max is the maximum value of the generated sinus
 gen_sintab: {
     .label f_2pi = $e2e5
     .label _23 = $c
@@ -7789,10 +7860,8 @@ gen_sintab: {
   //SEG248 [113] call getFAC 
     jsr getFAC
   //SEG249 [114] (word) getFAC::return#2 ← (word) getFAC::return#0
-    // (word) getFAC::return#2 = (word) getFAC::return#0  // register copy zp ZP_WORD:12
   //SEG250 gen_sintab::@22
   //SEG251 [115] (word~) gen_sintab::$23 ← (word) getFAC::return#2
-    // (word~) gen_sintab::$23 = (word) getFAC::return#2  // register copy zp ZP_WORD:12
   //SEG252 [116] (byte~) gen_sintab::$24 ← ((byte)) (word~) gen_sintab::$23 -- vbuaa=_byte_vwuz1 
     lda _23
   //SEG253 [117] *((byte*) gen_sintab::sintab#12 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$24 -- pbuz1_derefidx_vbuz2=vbuaa 
@@ -7815,6 +7884,8 @@ gen_sintab: {
     f_amp: .byte 0, 0, 0, 0, 0
 }
 //SEG260 progress_inc
+//  Increase PETSCII progress one bit
+//  Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
   //SEG261 [122] (byte) progress_idx#10 ← ++ (byte) progress_idx#34 -- vbuz1=_inc_vbuz1 
     inc progress_idx
@@ -7853,6 +7924,9 @@ progress_inc: {
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 //SEG276 getFAC
+//  word = FAC
+//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
+//  Destroys the value in the FAC in the process
 getFAC: {
     .label return = $c
   //SEG277 asm { jsr$b1aa sty$fe sta$ff  }
@@ -7869,6 +7943,9 @@ getFAC: {
     rts
 }
 //SEG281 addMEMtoFAC
+//  FAC = MEM+FAC
+//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+//  Reads 5 bytes from memory
 addMEMtoFAC: {
   //SEG282 [133] call prepareMEM 
   //SEG283 [136] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
@@ -7888,6 +7965,7 @@ addMEMtoFAC: {
     rts
 }
 //SEG289 prepareMEM
+//  Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label mem = $c
   //SEG290 [137] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
@@ -7903,10 +7981,12 @@ prepareMEM: {
     rts
 }
 //SEG296 mulFACbyMEM
+//  FAC = MEM*FAC
+//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+//  Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = $c
   //SEG297 [143] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
-    // (byte*) prepareMEM::mem#4 = (byte*) mulFACbyMEM::mem#2  // register copy zp ZP_WORD:12
   //SEG298 [144] call prepareMEM 
   //SEG299 [136] phi from mulFACbyMEM to prepareMEM [phi:mulFACbyMEM->prepareMEM]
   //SEG300 [136] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#4 [phi:mulFACbyMEM->prepareMEM#0] -- register_copy 
@@ -7921,6 +8001,9 @@ mulFACbyMEM: {
     rts
 }
 //SEG305 sinFAC
+//  FAC = sin(FAC)
+//  Set FAC to sinus of the FAC - sin(FAC)
+//  Sinus is calculated on radians (0-2*PI)
 sinFAC: {
   //SEG306 asm { jsr$e26b  }
     jsr $e26b
@@ -7929,10 +8012,12 @@ sinFAC: {
     rts
 }
 //SEG309 divMEMbyFAC
+//  FAC = MEM/FAC
+//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+//  Reads 5 bytes from memory
 divMEMbyFAC: {
     .label mem = $c
   //SEG310 [150] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2
-    // (byte*) prepareMEM::mem#3 = (byte*) divMEMbyFAC::mem#2  // register copy zp ZP_WORD:12
   //SEG311 [151] call prepareMEM 
   //SEG312 [136] phi from divMEMbyFAC to prepareMEM [phi:divMEMbyFAC->prepareMEM]
   //SEG313 [136] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#3 [phi:divMEMbyFAC->prepareMEM#0] -- register_copy 
@@ -7947,10 +8032,11 @@ divMEMbyFAC: {
     rts
 }
 //SEG318 setFAC
+//  FAC = word
+//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = $c
   //SEG319 [155] (byte*~) prepareMEM::mem#8 ← (byte*)(word) setFAC::w#5
-    // (byte*~) prepareMEM::mem#8 = (byte*)(word) setFAC::w#5  // register copy zp ZP_WORD:12
   //SEG320 [156] call prepareMEM 
   //SEG321 [136] phi from setFAC to prepareMEM [phi:setFAC->prepareMEM]
   //SEG322 [136] phi (byte*) prepareMEM::mem#5 = (byte*~) prepareMEM::mem#8 [phi:setFAC->prepareMEM#0] -- register_copy 
@@ -7965,10 +8051,12 @@ setFAC: {
     rts
 }
 //SEG327 setMEMtoFAC
+//  MEM = FAC
+//  Stores the value of the FAC to memory
+//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = $c
   //SEG328 [160] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5
-    // (byte*) prepareMEM::mem#1 = (byte*) setMEMtoFAC::mem#5  // register copy zp ZP_WORD:12
   //SEG329 [161] call prepareMEM 
   //SEG330 [136] phi from setMEMtoFAC to prepareMEM [phi:setMEMtoFAC->prepareMEM]
   //SEG331 [136] phi (byte*) prepareMEM::mem#5 = (byte*) prepareMEM::mem#1 [phi:setMEMtoFAC->prepareMEM#0] -- register_copy 
@@ -7983,6 +8071,8 @@ setMEMtoFAC: {
     rts
 }
 //SEG336 subFACfromARG
+//  FAC = ARG-FAC
+//  Set FAC to ARG minus FAC
 subFACfromARG: {
   //SEG337 asm { jsr$b853  }
     jsr $b853
@@ -7991,6 +8081,8 @@ subFACfromARG: {
     rts
 }
 //SEG340 setARGtoFAC
+//  ARG = FAC
+//  Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
 setARGtoFAC: {
   //SEG341 asm { jsr$bc0f  }
     jsr $bc0f
@@ -7999,6 +8091,7 @@ setARGtoFAC: {
     rts
 }
 //SEG344 progress_init
+//  Initialize the PETSCII progress bar
 progress_init: {
     .label line = $a
   //SEG345 progress_init::@return
@@ -8054,6 +8147,9 @@ gen_sprites: {
     cml: .text "camelot"
 }
 //SEG364 gen_chargen_sprite
+//  Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
+//  - c is the character to generate
+//  - sprite is a pointer to the position of the sprite to generate
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c

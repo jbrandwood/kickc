@@ -206,6 +206,7 @@ main: {
     str2: .text "f5@"
     str3: .text "f7@"
 }
+//  Render 8x8 char (ch) as pixels on char canvas #pos
 plot_chargen: {
     .label _0 = 2
     .label _1 = 2
@@ -296,6 +297,8 @@ plot_chargen: {
     cli
     rts
 }
+//  Simple binary multiplication implementation
+//  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .const b = $a
     .label mb = $b
@@ -332,6 +335,10 @@ mul8u: {
     rol mb+1
     jmp b1
 }
+//  Determines whether a specific key is currently pressed by accessing the matrix directly
+//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+//  All keys exist as as KEY_XXX constants.
+//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     txa
     and #7
@@ -345,6 +352,11 @@ keyboard_key_pressed: {
     and keyboard_matrix_col_bitmask,y
     rts
 }
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
@@ -352,10 +364,15 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
+//  Get the keycode corresponding to a specific screen code character
+//  ch is the character to get the key code for ($00-$3f)
+//  Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
+//  If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 keyboard_get_keycode: {
     lda keyboard_char_keycodes,x
     rts
 }
+//  Print a string at a specific screen position
 print_str_at: {
     .label at = 9
     .label str = 2

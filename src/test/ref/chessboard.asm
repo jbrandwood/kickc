@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Draws a chess board in the upper left corner of the screen
 main: {
     .label screen = 2
     .label colors = 4

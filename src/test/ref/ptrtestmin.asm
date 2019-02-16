@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Test all types of pointers
 main: {
     .label SCREEN = $400
     ldx #2

@@ -2,10 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.Registers;
-import dk.camelot64.kickc.model.StatementSequence;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
@@ -17,7 +14,9 @@ import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.File;
@@ -37,6 +36,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    private File file;
    /** The source ANTLR parse tree of the source file. */
    private KickCParser.FileContext fileCtx;
+   /** The source ANTLR Token Stream (used for finding comments in the lexer input.) */
+   private CommonTokenStream tokenStream;
 
    /** The program containing all compile structures. */
    private Program program;
@@ -45,8 +46,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    /** Used to build the scopes of the source file. */
    private Stack<Scope> scopeStack;
 
-   public Pass0GenerateStatementSequence(File file, KickCParser.FileContext fileCtx, Program program) {
+   public Pass0GenerateStatementSequence(File file, CommonTokenStream tokenStream, KickCParser.FileContext fileCtx, Program program) {
       this.file = file;
+      this.tokenStream = tokenStream;
       this.fileCtx = fileCtx;
       this.program = program;
       this.sequence = program.getStatementSequence();
@@ -112,6 +114,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentSymbols().addProcedure(name, type);
       addDirectives(procedure, ctx.directive());
+      addComments(procedure, ctx);
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       VariableUnversioned returnVar = null;
@@ -139,6 +142,27 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       scopeStack.pop();
       sequence.addStatement(new StatementProcedureEnd(procedure.getRef(), new StatementSource(ctx)));
       return null;
+   }
+
+   /**
+    * Find comments preceding the passed context
+    * @param procedure
+    * @param ctx
+    */
+   private void addComments(Procedure procedure, ParserRuleContext ctx) {
+      List<Comment> comments = new ArrayList<>();
+      List<Token> hiddenTokensToLeft = tokenStream.getHiddenTokensToLeft(ctx.start.getTokenIndex());
+      if(hiddenTokensToLeft!=null) {
+         for(Token hiddenToken : hiddenTokensToLeft) {
+            String text = hiddenToken.getText();
+            if(text.startsWith("//")) {
+               text = text.substring(2);
+            }
+            Comment comment = new Comment(text);
+            comments.add(comment);
+         }
+      }
+      procedure.setComments(comments);
    }
 
    @Override

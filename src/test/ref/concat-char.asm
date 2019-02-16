@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Concatenate a char to a string
 main: {
     .label screen = $400
     ldx #0

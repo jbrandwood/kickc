@@ -13228,6 +13228,12 @@ menu: {
     jmp breturn
 }
 //SEG201 mode_8bppchunkybmm
+// Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
+//  Resolution: 320x200
+//  Linear Adressing
+//  CharData/PlaneB Pixel Shifter (8):
+//  - 8bpp color PlaneB[7:0]
+//  To set up a linear video frame buffer the step size must be set to 8.
 mode_8bppchunkybmm: {
     .const PLANEB = $20000
     .label _23 = $b9
@@ -13452,6 +13458,7 @@ mode_8bppchunkybmm: {
     rts
 }
 //SEG279 mode_ctrl
+//  Allow the user to control the DTV graphics using different keys
 mode_ctrl: {
     .label _1 = $bd
     .label _4 = $bf
@@ -13774,6 +13781,10 @@ mode_ctrl: {
     jmp b14
 }
 //SEG390 keyboard_key_pressed
+//  Determines whether a specific key is currently pressed by accessing the matrix directly
+//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+//  All keys exist as as KEY_XXX constants.
+//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     .label _2 = $d0
     .label colidx = $cc
@@ -13836,6 +13847,11 @@ keyboard_key_pressed: {
     rts
 }
 //SEG401 keyboard_matrix_read
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     .label return = $d2
     .label rowid = $ce
@@ -13855,6 +13871,9 @@ keyboard_matrix_read: {
     rts
 }
 //SEG406 dtvSetCpuBankSegment1
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
     .label cpuBankIdx = $f
@@ -13872,6 +13891,15 @@ dtvSetCpuBankSegment1: {
     rts
 }
 //SEG411 mode_8bpppixelcell
+// 8bpp Pixel Cell Mode (BMM/COLDIS = 0, ECM/MCM/HICOL/LINEAR/CHUNK = 1)
+// Pixel Cell Adressing
+// CharData[8]: (PlaneA[21:0])
+// GfxData[8]: (PlaneB[21:14] & CharData[7:0] & RowCounter[3:0] & PixelCounter[7:0] )
+// GfxData Pixel Shifter (8):
+// - 8bpp color GfxData[7:0]
+// Pixel cell mode can be thought of as a text mode that uses a 8x8 pixel 8bpp font (64 bytes/char).
+// The characters come from counter A and the font (or "cells") from counter B.
+// Counter B step and modulo should be set to 0, counter A modulo to 0 and counter A step to 1 for normal operation.
 mode_8bpppixelcell: {
     .label PLANEA = $3c00
     .label PLANEB = $4000
@@ -14199,6 +14227,12 @@ mode_8bpppixelcell: {
     rts
 }
 //SEG526 mode_sixsfred
+//  Sixs Fred Mode - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS = 0, ECM/BMM/MCM/HICOL/LINEAR = 1)
+//  Resolution: 160x200
+//  Linear Adressing
+//  GfxData/PlaneA Pixel Shifter (2), CharData/PlaneB Pixel Shifter (2):
+//  - 8bpp color (ColorData[3:0],CharData/PlaneB[1:0], GfxData/PlaneA[1:0])
 mode_sixsfred: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -14502,6 +14536,15 @@ mode_sixsfred: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 //SEG628 mode_twoplanebitmap
+//  Two Plane Bitmap - generated from the two DTV linear graphics plane counters
+//  Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
+//  Resolution: 320x200
+//  Linear Adressing
+//  GfxData/PlaneA Pixel Shifter (1), CharData/PlaneB Pixel Shifter (1):
+//  - Plane A = 0 Plane B = 0: 8bpp BgColor0[7:0]
+//  - Plane A = 0 Plane B = 1: 8bpp "0000" & ColorData[7:4]
+//  - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
+//  - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
 mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -14842,6 +14885,12 @@ mode_twoplanebitmap: {
     jmp b7_from_b6
 }
 //SEG741 mode_sixsfred2
+//  Sixs Fred Mode 2 - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS/HICOL = 0, ECM/BMM/MCM/LINEAR = 1)
+//  Resolution: 160x200
+//  Linear Adressing
+//  PlaneA Pixel Shifter (2), PlaneB Pixel Shifter (2):
+//  - 8bpp color (PlaneB[1:0],ColorData[5:4],PlaneA[1:0],ColorData[1:0])
 mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -15157,6 +15206,18 @@ mode_sixsfred2: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 //SEG845 mode_hicolmcchar
+//  High Color Multicolor Character Mode (LINEAR/CHUNK/COLDIS/BMM/ECM = 0, MCM/HICOL = 1)
+//  Resolution: 160x200 (320x200)
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+// GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+//  - 0: 8bpp BgColor0[7:0]
+//  - 1: 8bpp ColorData[7:4] "0" & Color[2:0]
+// GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+//  - 00: 8bpp BgColor0[7:0]
+//  - 01: 8bpp BgColor1[7:0]
+//  - 10: 8bpp BgColor2[7:0]
+//  - 11: 8bpp ColorData[7:4] "0" & Color[2:0]
 mode_hicolmcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -15345,6 +15406,17 @@ mode_hicolmcchar: {
     rts
 }
 //SEG906 mode_hicolecmchar
+//  High Color Extended Background Color Character Mode (LINEAR/CHUNK/COLDIS/MCM/BMM = 0, ECM/HICOL = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] )
+//  GfxData Pixel Shifter (1)
+//   - 0: 8bpp Background Color
+//     - CharData[7:6] 00: 8bpp BgColor0[7:0]
+//     - CharData[7:6] 01: 8bpp BgColor1[7:0]
+//     - CharData[7:6] 10: 8bpp BgColor2[7:0]
+//     - CharData[7:6] 11: 8bpp BgColor3[7:0]
+//   - 1: 8bpp ColorData[7:0]
 mode_hicolecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -15536,6 +15608,13 @@ mode_hicolecmchar: {
     rts
 }
 //SEG968 mode_hicolstdchar
+//  High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//   - 0: 8bpp BgColor0[7:0]
+//   - 1: 8bpp ColorData[7:0]
 mode_hicolstdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -15718,6 +15797,13 @@ mode_hicolstdchar: {
     rts
 }
 //SEG1027 mode_stdbitmap
+//  Standard Bitmap Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/ECM = 0, BMM = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:2] & Matrix[9:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//   - 0: 4bpp CharData[3:0]
+//   - 1: 4bpp CharData[7:4]
 mode_stdbitmap: {
     .label SCREEN = $4000
     .label BITMAP = $6000
@@ -15941,6 +16027,7 @@ mode_stdbitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 //SEG1099 bitmap_line
+//  Draw a line on the bitmap
 bitmap_line: {
     .label xd = $ff
     .label xd_1 = $fc
@@ -16615,6 +16702,7 @@ bitmap_line_ydxd: {
     rts
 }
 //SEG1345 bitmap_clear
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = $7c
     .label x = $7e
@@ -16689,6 +16777,7 @@ bitmap_clear: {
     rts
 }
 //SEG1371 bitmap_init
+//  Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _0 = $10f
     .label _6 = $110
@@ -16840,6 +16929,18 @@ bitmap_init: {
     jmp b2
 }
 //SEG1418 mode_mcchar
+//  Multicolor Character Mode (LINEAR/HICOL/CHUNK/COLDIS/BMM/ECM = 0, MCM = 1)
+//  Resolution: 160x200 (320x200)
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+//   - 0: 4bpp BgColor0[3:0]
+//   - 1: 4bpp ColorData[2:0]
+//  GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+//   - 00: 4bpp BgColor0[3:0]
+//   - 01: 4bpp BgColor1[3:0]
+//   - 10: 4bpp BgColor2[3:0]
+//   - 11: 4bpp ColorData[2:0]// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -17039,6 +17140,17 @@ mode_mcchar: {
     rts
 }
 //SEG1481 mode_ecmchar
+//  Extended Background Color Character Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/BMM = 0, ECM = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] ) 
+//  GfxData Pixel Shifter (1)
+//   - 0: 4bpp Background Color
+//     - CharData[7:6] 00: 4bpp BgColor0[3:0]
+//     - CharData[7:6] 01: 4bpp BgColor1[3:0]
+//     - CharData[7:6] 10: 4bpp BgColor2[3:0]
+//     - CharData[7:6] 11: 4bpp BgColor3[3:0]
+//   - 1: 4bpp ColorData[3:0]
 mode_ecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -17241,6 +17353,13 @@ mode_ecmchar: {
     rts
 }
 //SEG1545 mode_stdchar
+//  Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//  - 0: 4bpp BgColor0[3:0]
+//  - 1: 4bpp ColorData[3:0]
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -17434,6 +17553,8 @@ mode_stdchar: {
     rts
 }
 //SEG1606 print_str_lines
+//  Print a number of zero-terminated strings, each followed by a newline.
+//  The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label ch = $127
     .label str = $99
@@ -17533,6 +17654,7 @@ print_str_lines: {
     jmp b1
 }
 //SEG1638 print_ln
+//  Print a newline
 print_ln: {
   //SEG1639 [881] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -17565,6 +17687,7 @@ print_ln: {
     rts
 }
 //SEG1646 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $9f
   //SEG1647 [886] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -17604,6 +17727,7 @@ print_cls: {
     rts
 }
 //SEG1657 print_set_screen
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     jmp breturn
   //SEG1658 print_set_screen::@return
@@ -19468,12 +19592,10 @@ menu: {
     ldy #KEY_1
     jsr keyboard_key_pressed
   //SEG60 [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#2 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b50
   //SEG61 menu::@50
   b50:
   //SEG62 [37] (byte~) menu::$29 ← (byte) keyboard_key_pressed::return#2
-    // (byte~) menu::$29 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
   //SEG63 [38] if((byte~) menu::$29==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b6_from_b50
@@ -19501,12 +19623,10 @@ menu: {
     ldy #KEY_2
     jsr keyboard_key_pressed
   //SEG74 [44] (byte) keyboard_key_pressed::return#24 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#24 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b51
   //SEG75 menu::@51
   b51:
   //SEG76 [45] (byte~) menu::$33 ← (byte) keyboard_key_pressed::return#24
-    // (byte~) menu::$33 = (byte) keyboard_key_pressed::return#24  // register copy reg byte a
   //SEG77 [46] if((byte~) menu::$33==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@7 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b7_from_b51
@@ -19530,12 +19650,10 @@ menu: {
     ldy #KEY_3
     jsr keyboard_key_pressed
   //SEG86 [51] (byte) keyboard_key_pressed::return#25 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#25 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b53
   //SEG87 menu::@53
   b53:
   //SEG88 [52] (byte~) menu::$37 ← (byte) keyboard_key_pressed::return#25
-    // (byte~) menu::$37 = (byte) keyboard_key_pressed::return#25  // register copy reg byte a
   //SEG89 [53] if((byte~) menu::$37==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@8 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b8_from_b53
@@ -19559,12 +19677,10 @@ menu: {
     ldy #KEY_4
     jsr keyboard_key_pressed
   //SEG98 [58] (byte) keyboard_key_pressed::return#26 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#26 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b55
   //SEG99 menu::@55
   b55:
   //SEG100 [59] (byte~) menu::$41 ← (byte) keyboard_key_pressed::return#26
-    // (byte~) menu::$41 = (byte) keyboard_key_pressed::return#26  // register copy reg byte a
   //SEG101 [60] if((byte~) menu::$41==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@9 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b9_from_b55
@@ -19588,12 +19704,10 @@ menu: {
     ldy #KEY_6
     jsr keyboard_key_pressed
   //SEG110 [65] (byte) keyboard_key_pressed::return#27 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#27 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b57
   //SEG111 menu::@57
   b57:
   //SEG112 [66] (byte~) menu::$45 ← (byte) keyboard_key_pressed::return#27
-    // (byte~) menu::$45 = (byte) keyboard_key_pressed::return#27  // register copy reg byte a
   //SEG113 [67] if((byte~) menu::$45==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@10 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b10_from_b57
@@ -19617,12 +19731,10 @@ menu: {
     ldy #KEY_7
     jsr keyboard_key_pressed
   //SEG122 [72] (byte) keyboard_key_pressed::return#28 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#28 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b59
   //SEG123 menu::@59
   b59:
   //SEG124 [73] (byte~) menu::$49 ← (byte) keyboard_key_pressed::return#28
-    // (byte~) menu::$49 = (byte) keyboard_key_pressed::return#28  // register copy reg byte a
   //SEG125 [74] if((byte~) menu::$49==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@11 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b11_from_b59
@@ -19646,12 +19758,10 @@ menu: {
     ldy #KEY_8
     jsr keyboard_key_pressed
   //SEG134 [79] (byte) keyboard_key_pressed::return#29 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#29 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b61
   //SEG135 menu::@61
   b61:
   //SEG136 [80] (byte~) menu::$53 ← (byte) keyboard_key_pressed::return#29
-    // (byte~) menu::$53 = (byte) keyboard_key_pressed::return#29  // register copy reg byte a
   //SEG137 [81] if((byte~) menu::$53==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@12 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b12_from_b61
@@ -19675,12 +19785,10 @@ menu: {
     ldy #KEY_A
     jsr keyboard_key_pressed
   //SEG146 [86] (byte) keyboard_key_pressed::return#30 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#30 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b63
   //SEG147 menu::@63
   b63:
   //SEG148 [87] (byte~) menu::$57 ← (byte) keyboard_key_pressed::return#30
-    // (byte~) menu::$57 = (byte) keyboard_key_pressed::return#30  // register copy reg byte a
   //SEG149 [88] if((byte~) menu::$57==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@13 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b13_from_b63
@@ -19704,12 +19812,10 @@ menu: {
     ldy #KEY_B
     jsr keyboard_key_pressed
   //SEG158 [93] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#10 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b65
   //SEG159 menu::@65
   b65:
   //SEG160 [94] (byte~) menu::$61 ← (byte) keyboard_key_pressed::return#10
-    // (byte~) menu::$61 = (byte) keyboard_key_pressed::return#10  // register copy reg byte a
   //SEG161 [95] if((byte~) menu::$61==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@14 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b14_from_b65
@@ -19733,12 +19839,10 @@ menu: {
     ldy #KEY_C
     jsr keyboard_key_pressed
   //SEG170 [100] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#11 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b67
   //SEG171 menu::@67
   b67:
   //SEG172 [101] (byte~) menu::$65 ← (byte) keyboard_key_pressed::return#11
-    // (byte~) menu::$65 = (byte) keyboard_key_pressed::return#11  // register copy reg byte a
   //SEG173 [102] if((byte~) menu::$65==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@15 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b15_from_b67
@@ -19762,12 +19866,10 @@ menu: {
     ldy #KEY_D
     jsr keyboard_key_pressed
   //SEG182 [107] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#12 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b69
   //SEG183 menu::@69
   b69:
   //SEG184 [108] (byte~) menu::$69 ← (byte) keyboard_key_pressed::return#12
-    // (byte~) menu::$69 = (byte) keyboard_key_pressed::return#12  // register copy reg byte a
   //SEG185 [109] if((byte~) menu::$69==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@16 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b16_from_b69
@@ -19791,12 +19893,10 @@ menu: {
     ldy #KEY_E
     jsr keyboard_key_pressed
   //SEG194 [114] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#13 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b71
   //SEG195 menu::@71
   b71:
   //SEG196 [115] (byte~) menu::$73 ← (byte) keyboard_key_pressed::return#13
-    // (byte~) menu::$73 = (byte) keyboard_key_pressed::return#13  // register copy reg byte a
   //SEG197 [116] if((byte~) menu::$73==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4_from_b71
@@ -19810,6 +19910,12 @@ menu: {
     jmp breturn
 }
 //SEG201 mode_8bppchunkybmm
+// Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
+//  Resolution: 320x200
+//  Linear Adressing
+//  CharData/PlaneB Pixel Shifter (8):
+//  - 8bpp color PlaneB[7:0]
+//  To set up a linear video frame buffer the step size must be set to 8.
 mode_8bppchunkybmm: {
     .const PLANEB = $20000
     .label _23 = $d
@@ -20022,6 +20128,7 @@ mode_8bppchunkybmm: {
     rts
 }
 //SEG279 mode_ctrl
+//  Allow the user to control the DTV graphics using different keys
 mode_ctrl: {
   //SEG280 [156] phi from mode_ctrl mode_ctrl::@30 to mode_ctrl::@1 [phi:mode_ctrl/mode_ctrl::@30->mode_ctrl::@1]
   b1_from_mode_ctrl:
@@ -20052,12 +20159,10 @@ mode_ctrl: {
     ldy #KEY_SPACE
     jsr keyboard_key_pressed
   //SEG291 [160] (byte) keyboard_key_pressed::return#14 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#14 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b32
   //SEG292 mode_ctrl::@32
   b32:
   //SEG293 [161] (byte~) mode_ctrl::$1 ← (byte) keyboard_key_pressed::return#14
-    // (byte~) mode_ctrl::$1 = (byte) keyboard_key_pressed::return#14  // register copy reg byte a
   //SEG294 [162] if((byte~) mode_ctrl::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@7 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b7
@@ -20077,12 +20182,10 @@ mode_ctrl: {
     ldy #KEY_L
     jsr keyboard_key_pressed
   //SEG302 [166] (byte) keyboard_key_pressed::return#15 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#15 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b33
   //SEG303 mode_ctrl::@33
   b33:
   //SEG304 [167] (byte~) mode_ctrl::$4 ← (byte) keyboard_key_pressed::return#15
-    // (byte~) mode_ctrl::$4 = (byte) keyboard_key_pressed::return#15  // register copy reg byte a
   //SEG305 [168] if((byte~) mode_ctrl::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@8 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b8_from_b33
@@ -20107,12 +20210,10 @@ mode_ctrl: {
     ldy #KEY_H
     jsr keyboard_key_pressed
   //SEG314 [172] (byte) keyboard_key_pressed::return#16 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#16 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b34
   //SEG315 mode_ctrl::@34
   b34:
   //SEG316 [173] (byte~) mode_ctrl::$8 ← (byte) keyboard_key_pressed::return#16
-    // (byte~) mode_ctrl::$8 = (byte) keyboard_key_pressed::return#16  // register copy reg byte a
   //SEG317 [174] if((byte~) mode_ctrl::$8==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@9 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b9_from_b34
@@ -20137,12 +20238,10 @@ mode_ctrl: {
     ldy #KEY_O
     jsr keyboard_key_pressed
   //SEG326 [178] (byte) keyboard_key_pressed::return#17 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#17 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b35
   //SEG327 mode_ctrl::@35
   b35:
   //SEG328 [179] (byte~) mode_ctrl::$12 ← (byte) keyboard_key_pressed::return#17
-    // (byte~) mode_ctrl::$12 = (byte) keyboard_key_pressed::return#17  // register copy reg byte a
   //SEG329 [180] if((byte~) mode_ctrl::$12==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@10 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b10_from_b35
@@ -20167,12 +20266,10 @@ mode_ctrl: {
     ldy #KEY_B
     jsr keyboard_key_pressed
   //SEG338 [184] (byte) keyboard_key_pressed::return#18 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#18 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b36
   //SEG339 mode_ctrl::@36
   b36:
   //SEG340 [185] (byte~) mode_ctrl::$16 ← (byte) keyboard_key_pressed::return#18
-    // (byte~) mode_ctrl::$16 = (byte) keyboard_key_pressed::return#18  // register copy reg byte a
   //SEG341 [186] if((byte~) mode_ctrl::$16==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@11 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b11_from_b36
@@ -20197,12 +20294,10 @@ mode_ctrl: {
     ldy #KEY_U
     jsr keyboard_key_pressed
   //SEG350 [190] (byte) keyboard_key_pressed::return#19 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#19 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b37
   //SEG351 mode_ctrl::@37
   b37:
   //SEG352 [191] (byte~) mode_ctrl::$20 ← (byte) keyboard_key_pressed::return#19
-    // (byte~) mode_ctrl::$20 = (byte) keyboard_key_pressed::return#19  // register copy reg byte a
   //SEG353 [192] if((byte~) mode_ctrl::$20==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@12 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b12_from_b37
@@ -20227,12 +20322,10 @@ mode_ctrl: {
     ldy #KEY_C
     jsr keyboard_key_pressed
   //SEG362 [196] (byte) keyboard_key_pressed::return#20 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#20 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b38
   //SEG363 mode_ctrl::@38
   b38:
   //SEG364 [197] (byte~) mode_ctrl::$24 ← (byte) keyboard_key_pressed::return#20
-    // (byte~) mode_ctrl::$24 = (byte) keyboard_key_pressed::return#20  // register copy reg byte a
   //SEG365 [198] if((byte~) mode_ctrl::$24==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@13 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b13_from_b38
@@ -20257,12 +20350,10 @@ mode_ctrl: {
     ldy #KEY_0
     jsr keyboard_key_pressed
   //SEG374 [202] (byte) keyboard_key_pressed::return#21 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#21 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
     jmp b39
   //SEG375 mode_ctrl::@39
   b39:
   //SEG376 [203] (byte~) mode_ctrl::$28 ← (byte) keyboard_key_pressed::return#21
-    // (byte~) mode_ctrl::$28 = (byte) keyboard_key_pressed::return#21  // register copy reg byte a
   //SEG377 [204] if((byte~) mode_ctrl::$28==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@46 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b46_from_b39
@@ -20297,6 +20388,10 @@ mode_ctrl: {
     jmp b14
 }
 //SEG390 keyboard_key_pressed
+//  Determines whether a specific key is currently pressed by accessing the matrix directly
+//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+//  All keys exist as as KEY_XXX constants.
+//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     .label colidx = 7
   //SEG391 [212] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#20 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuyy_band_vbuc1 
@@ -20313,12 +20408,10 @@ keyboard_key_pressed: {
   //SEG394 [215] call keyboard_matrix_read 
     jsr keyboard_matrix_read
   //SEG395 [216] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    // (byte) keyboard_matrix_read::return#2 = (byte) keyboard_matrix_read::return#0  // register copy reg byte a
     jmp b2
   //SEG396 keyboard_key_pressed::@2
   b2:
   //SEG397 [217] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // (byte~) keyboard_key_pressed::$2 = (byte) keyboard_matrix_read::return#2  // register copy reg byte a
   //SEG398 [218] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuz1 
     ldy colidx
     and keyboard_matrix_col_bitmask,y
@@ -20329,6 +20422,11 @@ keyboard_key_pressed: {
     rts
 }
 //SEG401 keyboard_matrix_read
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
   //SEG402 [220] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuyy 
     lda keyboard_matrix_row_bitmask,y
@@ -20343,6 +20441,9 @@ keyboard_matrix_read: {
     rts
 }
 //SEG406 dtvSetCpuBankSegment1
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
   //SEG407 [224] *((const byte*) dtvSetCpuBankSegment1::cpuBank#0) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx#3 -- _deref_pbuc1=vbuaa 
@@ -20358,6 +20459,15 @@ dtvSetCpuBankSegment1: {
     rts
 }
 //SEG411 mode_8bpppixelcell
+// 8bpp Pixel Cell Mode (BMM/COLDIS = 0, ECM/MCM/HICOL/LINEAR/CHUNK = 1)
+// Pixel Cell Adressing
+// CharData[8]: (PlaneA[21:0])
+// GfxData[8]: (PlaneB[21:14] & CharData[7:0] & RowCounter[3:0] & PixelCounter[7:0] )
+// GfxData Pixel Shifter (8):
+// - 8bpp color GfxData[7:0]
+// Pixel cell mode can be thought of as a text mode that uses a 8x8 pixel 8bpp font (64 bytes/char).
+// The characters come from counter A and the font (or "cells") from counter B.
+// Counter B step and modulo should be set to 0, counter A modulo to 0 and counter A step to 1 for normal operation.
 mode_8bpppixelcell: {
     .label PLANEA = $3c00
     .label PLANEB = $4000
@@ -20659,6 +20769,12 @@ mode_8bpppixelcell: {
     rts
 }
 //SEG526 mode_sixsfred
+//  Sixs Fred Mode - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS = 0, ECM/BMM/MCM/HICOL/LINEAR = 1)
+//  Resolution: 160x200
+//  Linear Adressing
+//  GfxData/PlaneA Pixel Shifter (2), CharData/PlaneB Pixel Shifter (2):
+//  - 8bpp color (ColorData[3:0],CharData/PlaneB[1:0], GfxData/PlaneA[1:0])
 mode_sixsfred: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -20938,6 +21054,15 @@ mode_sixsfred: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 //SEG628 mode_twoplanebitmap
+//  Two Plane Bitmap - generated from the two DTV linear graphics plane counters
+//  Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
+//  Resolution: 320x200
+//  Linear Adressing
+//  GfxData/PlaneA Pixel Shifter (1), CharData/PlaneB Pixel Shifter (1):
+//  - Plane A = 0 Plane B = 0: 8bpp BgColor0[7:0]
+//  - Plane A = 0 Plane B = 1: 8bpp "0000" & ColorData[7:4]
+//  - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
+//  - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
 mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -21253,6 +21378,12 @@ mode_twoplanebitmap: {
     jmp b7_from_b6
 }
 //SEG741 mode_sixsfred2
+//  Sixs Fred Mode 2 - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS/HICOL = 0, ECM/BMM/MCM/LINEAR = 1)
+//  Resolution: 160x200
+//  Linear Adressing
+//  PlaneA Pixel Shifter (2), PlaneB Pixel Shifter (2):
+//  - 8bpp color (PlaneB[1:0],ColorData[5:4],PlaneA[1:0],ColorData[1:0])
 mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -21541,6 +21672,18 @@ mode_sixsfred2: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 //SEG845 mode_hicolmcchar
+//  High Color Multicolor Character Mode (LINEAR/CHUNK/COLDIS/BMM/ECM = 0, MCM/HICOL = 1)
+//  Resolution: 160x200 (320x200)
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+// GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+//  - 0: 8bpp BgColor0[7:0]
+//  - 1: 8bpp ColorData[7:4] "0" & Color[2:0]
+// GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+//  - 00: 8bpp BgColor0[7:0]
+//  - 01: 8bpp BgColor1[7:0]
+//  - 10: 8bpp BgColor2[7:0]
+//  - 11: 8bpp ColorData[7:4] "0" & Color[2:0]
 mode_hicolmcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -21712,6 +21855,17 @@ mode_hicolmcchar: {
     rts
 }
 //SEG906 mode_hicolecmchar
+//  High Color Extended Background Color Character Mode (LINEAR/CHUNK/COLDIS/MCM/BMM = 0, ECM/HICOL = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] )
+//  GfxData Pixel Shifter (1)
+//   - 0: 8bpp Background Color
+//     - CharData[7:6] 00: 8bpp BgColor0[7:0]
+//     - CharData[7:6] 01: 8bpp BgColor1[7:0]
+//     - CharData[7:6] 10: 8bpp BgColor2[7:0]
+//     - CharData[7:6] 11: 8bpp BgColor3[7:0]
+//   - 1: 8bpp ColorData[7:0]
 mode_hicolecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -21886,6 +22040,13 @@ mode_hicolecmchar: {
     rts
 }
 //SEG968 mode_hicolstdchar
+//  High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//   - 0: 8bpp BgColor0[7:0]
+//   - 1: 8bpp ColorData[7:0]
 mode_hicolstdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -22051,6 +22212,13 @@ mode_hicolstdchar: {
     rts
 }
 //SEG1027 mode_stdbitmap
+//  Standard Bitmap Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/ECM = 0, BMM = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:2] & Matrix[9:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//   - 0: 4bpp CharData[3:0]
+//   - 1: 4bpp CharData[7:4]
 mode_stdbitmap: {
     .label SCREEN = $4000
     .label BITMAP = $6000
@@ -22257,6 +22425,7 @@ mode_stdbitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 //SEG1099 bitmap_line
+//  Draw a line on the bitmap
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -22302,11 +22471,8 @@ bitmap_line: {
   //SEG1109 [598] (byte) bitmap_line_ydxi::x#0 ← (byte) bitmap_line::x1#0 -- vbuxx=vbuz1 
     ldx x1
   //SEG1110 [599] (byte) bitmap_line_ydxi::y1#0 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_ydxi::y1#0 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:11
   //SEG1111 [600] (byte) bitmap_line_ydxi::yd#0 ← (byte) bitmap_line::yd#1
-    // (byte) bitmap_line_ydxi::yd#0 = (byte) bitmap_line::yd#1  // register copy zp ZP_BYTE:7
   //SEG1112 [601] (byte) bitmap_line_ydxi::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_ydxi::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1113 [602] call bitmap_line_ydxi 
   //SEG1114 [676] phi from bitmap_line::@17 to bitmap_line_ydxi [phi:bitmap_line::@17->bitmap_line_ydxi]
   bitmap_line_ydxi_from_b17:
@@ -22329,11 +22495,8 @@ bitmap_line: {
   //SEG1124 [605] (byte) bitmap_line_xdyi::y#0 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_xdyi.y
   //SEG1125 [606] (byte) bitmap_line_xdyi::x1#0 ← (byte) bitmap_line::x0#0
-    // (byte) bitmap_line_xdyi::x1#0 = (byte) bitmap_line::x0#0  // register copy zp ZP_BYTE:9
   //SEG1126 [607] (byte) bitmap_line_xdyi::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_xdyi::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1127 [608] (byte) bitmap_line_xdyi::yd#0 ← (byte) bitmap_line::yd#1
-    // (byte) bitmap_line_xdyi::yd#0 = (byte) bitmap_line::yd#1  // register copy zp ZP_BYTE:7
   //SEG1128 [609] call bitmap_line_xdyi 
   //SEG1129 [654] phi from bitmap_line::@3 to bitmap_line_xdyi [phi:bitmap_line::@3->bitmap_line_xdyi]
   bitmap_line_xdyi_from_b3:
@@ -22366,9 +22529,7 @@ bitmap_line: {
   //SEG1141 [614] (byte) bitmap_line_ydxd::y1#0 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_ydxd.y1
   //SEG1142 [615] (byte) bitmap_line_ydxd::yd#0 ← (byte) bitmap_line::yd#0
-    // (byte) bitmap_line_ydxd::yd#0 = (byte) bitmap_line::yd#0  // register copy zp ZP_BYTE:7
   //SEG1143 [616] (byte) bitmap_line_ydxd::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_ydxd::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1144 [617] call bitmap_line_ydxd 
   //SEG1145 [706] phi from bitmap_line::@20 to bitmap_line_ydxd [phi:bitmap_line::@20->bitmap_line_ydxd]
   bitmap_line_ydxd_from_b20:
@@ -22390,9 +22551,7 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyd.x1
   //SEG1155 [621] (byte) bitmap_line_xdyd::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_xdyd::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1156 [622] (byte) bitmap_line_xdyd::yd#0 ← (byte) bitmap_line::yd#0
-    // (byte) bitmap_line_xdyd::yd#0 = (byte) bitmap_line::yd#0  // register copy zp ZP_BYTE:7
   //SEG1157 [623] call bitmap_line_xdyd 
   //SEG1158 [691] phi from bitmap_line::@6 to bitmap_line_xdyd [phi:bitmap_line::@6->bitmap_line_xdyd]
   bitmap_line_xdyd_from_b6:
@@ -22437,11 +22596,8 @@ bitmap_line: {
   //SEG1172 [629] (byte) bitmap_line_ydxd::x#1 ← (byte) bitmap_line::x1#0 -- vbuxx=vbuz1 
     ldx x1
   //SEG1173 [630] (byte) bitmap_line_ydxd::y1#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_ydxd::y1#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:11
   //SEG1174 [631] (byte) bitmap_line_ydxd::yd#1 ← (byte) bitmap_line::yd#3
-    // (byte) bitmap_line_ydxd::yd#1 = (byte) bitmap_line::yd#3  // register copy zp ZP_BYTE:7
   //SEG1175 [632] (byte) bitmap_line_ydxd::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_ydxd::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1176 [633] call bitmap_line_ydxd 
   //SEG1177 [706] phi from bitmap_line::@24 to bitmap_line_ydxd [phi:bitmap_line::@24->bitmap_line_ydxd]
   bitmap_line_ydxd_from_b24:
@@ -22458,13 +22614,9 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyd.x
   //SEG1185 [635] (byte) bitmap_line_xdyd::y#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_xdyd::y#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:11
   //SEG1186 [636] (byte) bitmap_line_xdyd::x1#1 ← (byte) bitmap_line::x1#0
-    // (byte) bitmap_line_xdyd::x1#1 = (byte) bitmap_line::x1#0  // register copy zp ZP_BYTE:12
   //SEG1187 [637] (byte) bitmap_line_xdyd::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_xdyd::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1188 [638] (byte) bitmap_line_xdyd::yd#1 ← (byte) bitmap_line::yd#3
-    // (byte) bitmap_line_xdyd::yd#1 = (byte) bitmap_line::yd#3  // register copy zp ZP_BYTE:7
   //SEG1189 [639] call bitmap_line_xdyd 
   //SEG1190 [691] phi from bitmap_line::@10 to bitmap_line_xdyd [phi:bitmap_line::@10->bitmap_line_xdyd]
   bitmap_line_xdyd_from_b10:
@@ -22497,9 +22649,7 @@ bitmap_line: {
   //SEG1202 [644] (byte) bitmap_line_ydxi::y1#1 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_ydxi.y1
   //SEG1203 [645] (byte) bitmap_line_ydxi::yd#1 ← (byte) bitmap_line::yd#10
-    // (byte) bitmap_line_ydxi::yd#1 = (byte) bitmap_line::yd#10  // register copy zp ZP_BYTE:7
   //SEG1204 [646] (byte) bitmap_line_ydxi::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_ydxi::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1205 [647] call bitmap_line_ydxi 
   //SEG1206 [676] phi from bitmap_line::@27 to bitmap_line_ydxi [phi:bitmap_line::@27->bitmap_line_ydxi]
   bitmap_line_ydxi_from_b27:
@@ -22516,14 +22666,11 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyi.x
   //SEG1214 [649] (byte) bitmap_line_xdyi::y#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_xdyi::y#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:11
   //SEG1215 [650] (byte) bitmap_line_xdyi::x1#1 ← (byte) bitmap_line::x1#0 -- vbuz1=vbuz2 
     lda x1
     sta bitmap_line_xdyi.x1
   //SEG1216 [651] (byte) bitmap_line_xdyi::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_xdyi::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1217 [652] (byte) bitmap_line_xdyi::yd#1 ← (byte) bitmap_line::yd#10
-    // (byte) bitmap_line_xdyi::yd#1 = (byte) bitmap_line::yd#10  // register copy zp ZP_BYTE:7
   //SEG1218 [653] call bitmap_line_xdyi 
   //SEG1219 [654] phi from bitmap_line::@13 to bitmap_line_xdyi [phi:bitmap_line::@13->bitmap_line_xdyi]
   bitmap_line_xdyi_from_b13:
@@ -22667,7 +22814,6 @@ bitmap_line_ydxi: {
   //SEG1267 bitmap_line_ydxi::@1
   b1:
   //SEG1268 [679] (byte) bitmap_plot::x#2 ← (byte) bitmap_line_ydxi::x#3
-    // (byte) bitmap_plot::x#2 = (byte) bitmap_line_ydxi::x#3  // register copy reg byte x
   //SEG1269 [680] (byte) bitmap_plot::y#2 ← (byte) bitmap_line_ydxi::y#3 -- vbuyy=vbuz1 
     ldy y
   //SEG1270 [681] call bitmap_plot 
@@ -22817,7 +22963,6 @@ bitmap_line_ydxd: {
   //SEG1323 bitmap_line_ydxd::@1
   b1:
   //SEG1324 [709] (byte) bitmap_plot::x#3 ← (byte) bitmap_line_ydxd::x#3
-    // (byte) bitmap_plot::x#3 = (byte) bitmap_line_ydxd::x#3  // register copy reg byte x
   //SEG1325 [710] (byte) bitmap_plot::y#3 ← (byte) bitmap_line_ydxd::y#2 -- vbuyy=vbuz1 
     ldy y
   //SEG1326 [711] call bitmap_plot 
@@ -22872,6 +23017,7 @@ bitmap_line_ydxd: {
     rts
 }
 //SEG1345 bitmap_clear
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 2
     .label y = 4
@@ -22882,7 +23028,6 @@ bitmap_clear: {
     lda bitmap_plot_xhi
     sta _3+1
   //SEG1347 [722] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3
-    // (byte*~) bitmap_clear::bitmap#5 = (byte*)(word~) bitmap_clear::$3  // register copy zp ZP_WORD:2
   //SEG1348 [723] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
   b1_from_bitmap_clear:
   //SEG1349 [723] phi (byte) bitmap_clear::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bitmap_clear->bitmap_clear::@1#0] -- vbuz1=vbuc1 
@@ -22940,6 +23085,7 @@ bitmap_clear: {
     rts
 }
 //SEG1371 bitmap_init
+//  Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _6 = 4
     .label yoffs = 2
@@ -23063,6 +23209,18 @@ bitmap_init: {
     jmp b2
 }
 //SEG1418 mode_mcchar
+//  Multicolor Character Mode (LINEAR/HICOL/CHUNK/COLDIS/BMM/ECM = 0, MCM = 1)
+//  Resolution: 160x200 (320x200)
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+//   - 0: 4bpp BgColor0[3:0]
+//   - 1: 4bpp ColorData[2:0]
+//  GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+//   - 00: 4bpp BgColor0[3:0]
+//   - 01: 4bpp BgColor1[3:0]
+//   - 10: 4bpp BgColor2[3:0]
+//   - 11: 4bpp ColorData[2:0]// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -23240,6 +23398,17 @@ mode_mcchar: {
     rts
 }
 //SEG1481 mode_ecmchar
+//  Extended Background Color Character Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/BMM = 0, ECM = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] ) 
+//  GfxData Pixel Shifter (1)
+//   - 0: 4bpp Background Color
+//     - CharData[7:6] 00: 4bpp BgColor0[3:0]
+//     - CharData[7:6] 01: 4bpp BgColor1[3:0]
+//     - CharData[7:6] 10: 4bpp BgColor2[3:0]
+//     - CharData[7:6] 11: 4bpp BgColor3[3:0]
+//   - 1: 4bpp ColorData[3:0]
 mode_ecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -23420,6 +23589,13 @@ mode_ecmchar: {
     rts
 }
 //SEG1545 mode_stdchar
+//  Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//  - 0: 4bpp BgColor0[3:0]
+//  - 1: 4bpp ColorData[3:0]
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -23591,6 +23767,8 @@ mode_stdchar: {
     rts
 }
 //SEG1606 print_str_lines
+//  Print a number of zero-terminated strings, each followed by a newline.
+//  The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label str = 2
   //SEG1607 [866] phi from print_str_lines to print_str_lines::@1 [phi:print_str_lines->print_str_lines::@1]
@@ -23685,6 +23863,7 @@ print_str_lines: {
     jmp b1
 }
 //SEG1638 print_ln
+//  Print a newline
 print_ln: {
   //SEG1639 [881] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   b1_from_print_ln:
@@ -23717,6 +23896,7 @@ print_ln: {
     rts
 }
 //SEG1646 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
   //SEG1647 [886] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -23756,6 +23936,7 @@ print_cls: {
     rts
 }
 //SEG1657 print_set_screen
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     jmp breturn
   //SEG1658 print_set_screen::@return
@@ -26388,10 +26569,8 @@ menu: {
     ldy #KEY_1
     jsr keyboard_key_pressed
   //SEG60 [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#2 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG61 menu::@50
   //SEG62 [37] (byte~) menu::$29 ← (byte) keyboard_key_pressed::return#2
-    // (byte~) menu::$29 = (byte) keyboard_key_pressed::return#2  // register copy reg byte a
   //SEG63 [38] if((byte~) menu::$29==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b6
@@ -26412,10 +26591,8 @@ menu: {
     ldy #KEY_2
     jsr keyboard_key_pressed
   //SEG74 [44] (byte) keyboard_key_pressed::return#24 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#24 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG75 menu::@51
   //SEG76 [45] (byte~) menu::$33 ← (byte) keyboard_key_pressed::return#24
-    // (byte~) menu::$33 = (byte) keyboard_key_pressed::return#24  // register copy reg byte a
   //SEG77 [46] if((byte~) menu::$33==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@7 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b7
@@ -26433,10 +26610,8 @@ menu: {
     ldy #KEY_3
     jsr keyboard_key_pressed
   //SEG86 [51] (byte) keyboard_key_pressed::return#25 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#25 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG87 menu::@53
   //SEG88 [52] (byte~) menu::$37 ← (byte) keyboard_key_pressed::return#25
-    // (byte~) menu::$37 = (byte) keyboard_key_pressed::return#25  // register copy reg byte a
   //SEG89 [53] if((byte~) menu::$37==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@8 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b8
@@ -26454,10 +26629,8 @@ menu: {
     ldy #KEY_4
     jsr keyboard_key_pressed
   //SEG98 [58] (byte) keyboard_key_pressed::return#26 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#26 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG99 menu::@55
   //SEG100 [59] (byte~) menu::$41 ← (byte) keyboard_key_pressed::return#26
-    // (byte~) menu::$41 = (byte) keyboard_key_pressed::return#26  // register copy reg byte a
   //SEG101 [60] if((byte~) menu::$41==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@9 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b9
@@ -26475,10 +26648,8 @@ menu: {
     ldy #KEY_6
     jsr keyboard_key_pressed
   //SEG110 [65] (byte) keyboard_key_pressed::return#27 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#27 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG111 menu::@57
   //SEG112 [66] (byte~) menu::$45 ← (byte) keyboard_key_pressed::return#27
-    // (byte~) menu::$45 = (byte) keyboard_key_pressed::return#27  // register copy reg byte a
   //SEG113 [67] if((byte~) menu::$45==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@10 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b10
@@ -26496,10 +26667,8 @@ menu: {
     ldy #KEY_7
     jsr keyboard_key_pressed
   //SEG122 [72] (byte) keyboard_key_pressed::return#28 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#28 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG123 menu::@59
   //SEG124 [73] (byte~) menu::$49 ← (byte) keyboard_key_pressed::return#28
-    // (byte~) menu::$49 = (byte) keyboard_key_pressed::return#28  // register copy reg byte a
   //SEG125 [74] if((byte~) menu::$49==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@11 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b11
@@ -26517,10 +26686,8 @@ menu: {
     ldy #KEY_8
     jsr keyboard_key_pressed
   //SEG134 [79] (byte) keyboard_key_pressed::return#29 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#29 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG135 menu::@61
   //SEG136 [80] (byte~) menu::$53 ← (byte) keyboard_key_pressed::return#29
-    // (byte~) menu::$53 = (byte) keyboard_key_pressed::return#29  // register copy reg byte a
   //SEG137 [81] if((byte~) menu::$53==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@12 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b12
@@ -26538,10 +26705,8 @@ menu: {
     ldy #KEY_A
     jsr keyboard_key_pressed
   //SEG146 [86] (byte) keyboard_key_pressed::return#30 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#30 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG147 menu::@63
   //SEG148 [87] (byte~) menu::$57 ← (byte) keyboard_key_pressed::return#30
-    // (byte~) menu::$57 = (byte) keyboard_key_pressed::return#30  // register copy reg byte a
   //SEG149 [88] if((byte~) menu::$57==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@13 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b13
@@ -26559,10 +26724,8 @@ menu: {
     ldy #KEY_B
     jsr keyboard_key_pressed
   //SEG158 [93] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#10 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG159 menu::@65
   //SEG160 [94] (byte~) menu::$61 ← (byte) keyboard_key_pressed::return#10
-    // (byte~) menu::$61 = (byte) keyboard_key_pressed::return#10  // register copy reg byte a
   //SEG161 [95] if((byte~) menu::$61==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@14 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b14
@@ -26580,10 +26743,8 @@ menu: {
     ldy #KEY_C
     jsr keyboard_key_pressed
   //SEG170 [100] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#11 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG171 menu::@67
   //SEG172 [101] (byte~) menu::$65 ← (byte) keyboard_key_pressed::return#11
-    // (byte~) menu::$65 = (byte) keyboard_key_pressed::return#11  // register copy reg byte a
   //SEG173 [102] if((byte~) menu::$65==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@15 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b15
@@ -26601,10 +26762,8 @@ menu: {
     ldy #KEY_D
     jsr keyboard_key_pressed
   //SEG182 [107] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#12 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG183 menu::@69
   //SEG184 [108] (byte~) menu::$69 ← (byte) keyboard_key_pressed::return#12
-    // (byte~) menu::$69 = (byte) keyboard_key_pressed::return#12  // register copy reg byte a
   //SEG185 [109] if((byte~) menu::$69==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@16 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b16
@@ -26622,10 +26781,8 @@ menu: {
     ldy #KEY_E
     jsr keyboard_key_pressed
   //SEG194 [114] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#13 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG195 menu::@71
   //SEG196 [115] (byte~) menu::$73 ← (byte) keyboard_key_pressed::return#13
-    // (byte~) menu::$73 = (byte) keyboard_key_pressed::return#13  // register copy reg byte a
   //SEG197 [116] if((byte~) menu::$73==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     bne !b4+
@@ -26638,6 +26795,12 @@ menu: {
     jmp breturn
 }
 //SEG201 mode_8bppchunkybmm
+// Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
+//  Resolution: 320x200
+//  Linear Adressing
+//  CharData/PlaneB Pixel Shifter (8):
+//  - 8bpp color PlaneB[7:0]
+//  To set up a linear video frame buffer the step size must be set to 8.
 mode_8bppchunkybmm: {
     .const PLANEB = $20000
     .label _23 = $d
@@ -26810,6 +26973,7 @@ mode_8bppchunkybmm: {
     rts
 }
 //SEG279 mode_ctrl
+//  Allow the user to control the DTV graphics using different keys
 mode_ctrl: {
   //SEG280 [156] phi from mode_ctrl mode_ctrl::@30 to mode_ctrl::@1 [phi:mode_ctrl/mode_ctrl::@30->mode_ctrl::@1]
   //SEG281 [156] phi (byte) dtv_control#114 = (byte) dtv_control#145 [phi:mode_ctrl/mode_ctrl::@30->mode_ctrl::@1#0] -- register_copy 
@@ -26829,10 +26993,8 @@ mode_ctrl: {
     ldy #KEY_SPACE
     jsr keyboard_key_pressed
   //SEG291 [160] (byte) keyboard_key_pressed::return#14 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#14 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG292 mode_ctrl::@32
   //SEG293 [161] (byte~) mode_ctrl::$1 ← (byte) keyboard_key_pressed::return#14
-    // (byte~) mode_ctrl::$1 = (byte) keyboard_key_pressed::return#14  // register copy reg byte a
   //SEG294 [162] if((byte~) mode_ctrl::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@7 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b7
@@ -26849,10 +27011,8 @@ mode_ctrl: {
     ldy #KEY_L
     jsr keyboard_key_pressed
   //SEG302 [166] (byte) keyboard_key_pressed::return#15 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#15 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG303 mode_ctrl::@33
   //SEG304 [167] (byte~) mode_ctrl::$4 ← (byte) keyboard_key_pressed::return#15
-    // (byte~) mode_ctrl::$4 = (byte) keyboard_key_pressed::return#15  // register copy reg byte a
   //SEG305 [168] if((byte~) mode_ctrl::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@8 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b8
@@ -26871,10 +27031,8 @@ mode_ctrl: {
     ldy #KEY_H
     jsr keyboard_key_pressed
   //SEG314 [172] (byte) keyboard_key_pressed::return#16 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#16 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG315 mode_ctrl::@34
   //SEG316 [173] (byte~) mode_ctrl::$8 ← (byte) keyboard_key_pressed::return#16
-    // (byte~) mode_ctrl::$8 = (byte) keyboard_key_pressed::return#16  // register copy reg byte a
   //SEG317 [174] if((byte~) mode_ctrl::$8==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@9 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b9
@@ -26893,10 +27051,8 @@ mode_ctrl: {
     ldy #KEY_O
     jsr keyboard_key_pressed
   //SEG326 [178] (byte) keyboard_key_pressed::return#17 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#17 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG327 mode_ctrl::@35
   //SEG328 [179] (byte~) mode_ctrl::$12 ← (byte) keyboard_key_pressed::return#17
-    // (byte~) mode_ctrl::$12 = (byte) keyboard_key_pressed::return#17  // register copy reg byte a
   //SEG329 [180] if((byte~) mode_ctrl::$12==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@10 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b10
@@ -26915,10 +27071,8 @@ mode_ctrl: {
     ldy #KEY_B
     jsr keyboard_key_pressed
   //SEG338 [184] (byte) keyboard_key_pressed::return#18 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#18 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG339 mode_ctrl::@36
   //SEG340 [185] (byte~) mode_ctrl::$16 ← (byte) keyboard_key_pressed::return#18
-    // (byte~) mode_ctrl::$16 = (byte) keyboard_key_pressed::return#18  // register copy reg byte a
   //SEG341 [186] if((byte~) mode_ctrl::$16==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@11 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b11
@@ -26937,10 +27091,8 @@ mode_ctrl: {
     ldy #KEY_U
     jsr keyboard_key_pressed
   //SEG350 [190] (byte) keyboard_key_pressed::return#19 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#19 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG351 mode_ctrl::@37
   //SEG352 [191] (byte~) mode_ctrl::$20 ← (byte) keyboard_key_pressed::return#19
-    // (byte~) mode_ctrl::$20 = (byte) keyboard_key_pressed::return#19  // register copy reg byte a
   //SEG353 [192] if((byte~) mode_ctrl::$20==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@12 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b12
@@ -26959,10 +27111,8 @@ mode_ctrl: {
     ldy #KEY_C
     jsr keyboard_key_pressed
   //SEG362 [196] (byte) keyboard_key_pressed::return#20 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#20 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG363 mode_ctrl::@38
   //SEG364 [197] (byte~) mode_ctrl::$24 ← (byte) keyboard_key_pressed::return#20
-    // (byte~) mode_ctrl::$24 = (byte) keyboard_key_pressed::return#20  // register copy reg byte a
   //SEG365 [198] if((byte~) mode_ctrl::$24==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@13 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b13
@@ -26981,10 +27131,8 @@ mode_ctrl: {
     ldy #KEY_0
     jsr keyboard_key_pressed
   //SEG374 [202] (byte) keyboard_key_pressed::return#21 ← (byte) keyboard_key_pressed::return#0
-    // (byte) keyboard_key_pressed::return#21 = (byte) keyboard_key_pressed::return#0  // register copy reg byte a
   //SEG375 mode_ctrl::@39
   //SEG376 [203] (byte~) mode_ctrl::$28 ← (byte) keyboard_key_pressed::return#21
-    // (byte~) mode_ctrl::$28 = (byte) keyboard_key_pressed::return#21  // register copy reg byte a
   //SEG377 [204] if((byte~) mode_ctrl::$28==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode_ctrl::@46 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b14
@@ -27010,6 +27158,10 @@ mode_ctrl: {
   //SEG389 [205] phi (byte) mode_ctrl::ctrl#14 = (byte) mode_ctrl::ctrl#22 [phi:mode_ctrl::@46->mode_ctrl::@14#0] -- register_copy 
 }
 //SEG390 keyboard_key_pressed
+//  Determines whether a specific key is currently pressed by accessing the matrix directly
+//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+//  All keys exist as as KEY_XXX constants.
+//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     .label colidx = 7
   //SEG391 [212] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#20 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuyy_band_vbuc1 
@@ -27026,10 +27178,8 @@ keyboard_key_pressed: {
   //SEG394 [215] call keyboard_matrix_read 
     jsr keyboard_matrix_read
   //SEG395 [216] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    // (byte) keyboard_matrix_read::return#2 = (byte) keyboard_matrix_read::return#0  // register copy reg byte a
   //SEG396 keyboard_key_pressed::@2
   //SEG397 [217] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // (byte~) keyboard_key_pressed::$2 = (byte) keyboard_matrix_read::return#2  // register copy reg byte a
   //SEG398 [218] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuz1 
     ldy colidx
     and keyboard_matrix_col_bitmask,y
@@ -27038,6 +27188,11 @@ keyboard_key_pressed: {
     rts
 }
 //SEG401 keyboard_matrix_read
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
   //SEG402 [220] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuyy 
     lda keyboard_matrix_row_bitmask,y
@@ -27050,6 +27205,9 @@ keyboard_matrix_read: {
     rts
 }
 //SEG406 dtvSetCpuBankSegment1
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
   //SEG407 [224] *((const byte*) dtvSetCpuBankSegment1::cpuBank#0) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx#3 -- _deref_pbuc1=vbuaa 
@@ -27063,6 +27221,15 @@ dtvSetCpuBankSegment1: {
     rts
 }
 //SEG411 mode_8bpppixelcell
+// 8bpp Pixel Cell Mode (BMM/COLDIS = 0, ECM/MCM/HICOL/LINEAR/CHUNK = 1)
+// Pixel Cell Adressing
+// CharData[8]: (PlaneA[21:0])
+// GfxData[8]: (PlaneB[21:14] & CharData[7:0] & RowCounter[3:0] & PixelCounter[7:0] )
+// GfxData Pixel Shifter (8):
+// - 8bpp color GfxData[7:0]
+// Pixel cell mode can be thought of as a text mode that uses a 8x8 pixel 8bpp font (64 bytes/char).
+// The characters come from counter A and the font (or "cells") from counter B.
+// Counter B step and modulo should be set to 0, counter A modulo to 0 and counter A step to 1 for normal operation.
 mode_8bpppixelcell: {
     .label PLANEA = $3c00
     .label PLANEB = $4000
@@ -27317,6 +27484,12 @@ mode_8bpppixelcell: {
     rts
 }
 //SEG526 mode_sixsfred
+//  Sixs Fred Mode - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS = 0, ECM/BMM/MCM/HICOL/LINEAR = 1)
+//  Resolution: 160x200
+//  Linear Adressing
+//  GfxData/PlaneA Pixel Shifter (2), CharData/PlaneB Pixel Shifter (2):
+//  - 8bpp color (ColorData[3:0],CharData/PlaneB[1:0], GfxData/PlaneA[1:0])
 mode_sixsfred: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -27552,6 +27725,15 @@ mode_sixsfred: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 //SEG628 mode_twoplanebitmap
+//  Two Plane Bitmap - generated from the two DTV linear graphics plane counters
+//  Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
+//  Resolution: 320x200
+//  Linear Adressing
+//  GfxData/PlaneA Pixel Shifter (1), CharData/PlaneB Pixel Shifter (1):
+//  - Plane A = 0 Plane B = 0: 8bpp BgColor0[7:0]
+//  - Plane A = 0 Plane B = 1: 8bpp "0000" & ColorData[7:4]
+//  - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
+//  - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
 mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -27818,6 +28000,12 @@ mode_twoplanebitmap: {
     jmp b7
 }
 //SEG741 mode_sixsfred2
+//  Sixs Fred Mode 2 - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS/HICOL = 0, ECM/BMM/MCM/LINEAR = 1)
+//  Resolution: 160x200
+//  Linear Adressing
+//  PlaneA Pixel Shifter (2), PlaneB Pixel Shifter (2):
+//  - 8bpp color (PlaneB[1:0],ColorData[5:4],PlaneA[1:0],ColorData[1:0])
 mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -28062,6 +28250,18 @@ mode_sixsfred2: {
     row_bitmask: .byte 0, $55, $aa, $ff
 }
 //SEG845 mode_hicolmcchar
+//  High Color Multicolor Character Mode (LINEAR/CHUNK/COLDIS/BMM/ECM = 0, MCM/HICOL = 1)
+//  Resolution: 160x200 (320x200)
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+// GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+//  - 0: 8bpp BgColor0[7:0]
+//  - 1: 8bpp ColorData[7:4] "0" & Color[2:0]
+// GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+//  - 00: 8bpp BgColor0[7:0]
+//  - 01: 8bpp BgColor1[7:0]
+//  - 10: 8bpp BgColor2[7:0]
+//  - 11: 8bpp ColorData[7:4] "0" & Color[2:0]
 mode_hicolmcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -28211,6 +28411,17 @@ mode_hicolmcchar: {
     rts
 }
 //SEG906 mode_hicolecmchar
+//  High Color Extended Background Color Character Mode (LINEAR/CHUNK/COLDIS/MCM/BMM = 0, ECM/HICOL = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] )
+//  GfxData Pixel Shifter (1)
+//   - 0: 8bpp Background Color
+//     - CharData[7:6] 00: 8bpp BgColor0[7:0]
+//     - CharData[7:6] 01: 8bpp BgColor1[7:0]
+//     - CharData[7:6] 10: 8bpp BgColor2[7:0]
+//     - CharData[7:6] 11: 8bpp BgColor3[7:0]
+//   - 1: 8bpp ColorData[7:0]
 mode_hicolecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -28363,6 +28574,13 @@ mode_hicolecmchar: {
     rts
 }
 //SEG968 mode_hicolstdchar
+//  High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//   - 0: 8bpp BgColor0[7:0]
+//   - 1: 8bpp ColorData[7:0]
 mode_hicolstdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -28505,6 +28723,13 @@ mode_hicolstdchar: {
     rts
 }
 //SEG1027 mode_stdbitmap
+//  Standard Bitmap Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/ECM = 0, BMM = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:2] & Matrix[9:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//   - 0: 4bpp CharData[3:0]
+//   - 1: 4bpp CharData[7:4]
 mode_stdbitmap: {
     .label SCREEN = $4000
     .label BITMAP = $6000
@@ -28673,6 +28898,7 @@ mode_stdbitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 //SEG1099 bitmap_line
+//  Draw a line on the bitmap
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -28710,11 +28936,8 @@ bitmap_line: {
   //SEG1109 [598] (byte) bitmap_line_ydxi::x#0 ← (byte) bitmap_line::x1#0 -- vbuxx=vbuz1 
     ldx x1
   //SEG1110 [599] (byte) bitmap_line_ydxi::y1#0 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_ydxi::y1#0 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:11
   //SEG1111 [600] (byte) bitmap_line_ydxi::yd#0 ← (byte) bitmap_line::yd#1
-    // (byte) bitmap_line_ydxi::yd#0 = (byte) bitmap_line::yd#1  // register copy zp ZP_BYTE:7
   //SEG1112 [601] (byte) bitmap_line_ydxi::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_ydxi::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1113 [602] call bitmap_line_ydxi 
   //SEG1114 [676] phi from bitmap_line::@17 to bitmap_line_ydxi [phi:bitmap_line::@17->bitmap_line_ydxi]
   //SEG1115 [676] phi (byte) bitmap_line_ydxi::y1#6 = (byte) bitmap_line_ydxi::y1#0 [phi:bitmap_line::@17->bitmap_line_ydxi#0] -- register_copy 
@@ -28735,11 +28958,8 @@ bitmap_line: {
   //SEG1124 [605] (byte) bitmap_line_xdyi::y#0 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_xdyi.y
   //SEG1125 [606] (byte) bitmap_line_xdyi::x1#0 ← (byte) bitmap_line::x0#0
-    // (byte) bitmap_line_xdyi::x1#0 = (byte) bitmap_line::x0#0  // register copy zp ZP_BYTE:9
   //SEG1126 [607] (byte) bitmap_line_xdyi::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_xdyi::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1127 [608] (byte) bitmap_line_xdyi::yd#0 ← (byte) bitmap_line::yd#1
-    // (byte) bitmap_line_xdyi::yd#0 = (byte) bitmap_line::yd#1  // register copy zp ZP_BYTE:7
   //SEG1128 [609] call bitmap_line_xdyi 
   //SEG1129 [654] phi from bitmap_line::@3 to bitmap_line_xdyi [phi:bitmap_line::@3->bitmap_line_xdyi]
   //SEG1130 [654] phi (byte) bitmap_line_xdyi::x1#6 = (byte) bitmap_line_xdyi::x1#0 [phi:bitmap_line::@3->bitmap_line_xdyi#0] -- register_copy 
@@ -28768,9 +28988,7 @@ bitmap_line: {
   //SEG1141 [614] (byte) bitmap_line_ydxd::y1#0 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_ydxd.y1
   //SEG1142 [615] (byte) bitmap_line_ydxd::yd#0 ← (byte) bitmap_line::yd#0
-    // (byte) bitmap_line_ydxd::yd#0 = (byte) bitmap_line::yd#0  // register copy zp ZP_BYTE:7
   //SEG1143 [616] (byte) bitmap_line_ydxd::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_ydxd::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1144 [617] call bitmap_line_ydxd 
   //SEG1145 [706] phi from bitmap_line::@20 to bitmap_line_ydxd [phi:bitmap_line::@20->bitmap_line_ydxd]
   //SEG1146 [706] phi (byte) bitmap_line_ydxd::y1#6 = (byte) bitmap_line_ydxd::y1#0 [phi:bitmap_line::@20->bitmap_line_ydxd#0] -- register_copy 
@@ -28791,9 +29009,7 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyd.x1
   //SEG1155 [621] (byte) bitmap_line_xdyd::xd#0 ← (byte) bitmap_line::xd#1
-    // (byte) bitmap_line_xdyd::xd#0 = (byte) bitmap_line::xd#1  // register copy zp ZP_BYTE:8
   //SEG1156 [622] (byte) bitmap_line_xdyd::yd#0 ← (byte) bitmap_line::yd#0
-    // (byte) bitmap_line_xdyd::yd#0 = (byte) bitmap_line::yd#0  // register copy zp ZP_BYTE:7
   //SEG1157 [623] call bitmap_line_xdyd 
   //SEG1158 [691] phi from bitmap_line::@6 to bitmap_line_xdyd [phi:bitmap_line::@6->bitmap_line_xdyd]
   //SEG1159 [691] phi (byte) bitmap_line_xdyd::x1#6 = (byte) bitmap_line_xdyd::x1#0 [phi:bitmap_line::@6->bitmap_line_xdyd#0] -- register_copy 
@@ -28832,11 +29048,8 @@ bitmap_line: {
   //SEG1172 [629] (byte) bitmap_line_ydxd::x#1 ← (byte) bitmap_line::x1#0 -- vbuxx=vbuz1 
     ldx x1
   //SEG1173 [630] (byte) bitmap_line_ydxd::y1#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_ydxd::y1#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:11
   //SEG1174 [631] (byte) bitmap_line_ydxd::yd#1 ← (byte) bitmap_line::yd#3
-    // (byte) bitmap_line_ydxd::yd#1 = (byte) bitmap_line::yd#3  // register copy zp ZP_BYTE:7
   //SEG1175 [632] (byte) bitmap_line_ydxd::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_ydxd::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1176 [633] call bitmap_line_ydxd 
   //SEG1177 [706] phi from bitmap_line::@24 to bitmap_line_ydxd [phi:bitmap_line::@24->bitmap_line_ydxd]
   //SEG1178 [706] phi (byte) bitmap_line_ydxd::y1#6 = (byte) bitmap_line_ydxd::y1#1 [phi:bitmap_line::@24->bitmap_line_ydxd#0] -- register_copy 
@@ -28852,13 +29065,9 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyd.x
   //SEG1185 [635] (byte) bitmap_line_xdyd::y#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_xdyd::y#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:11
   //SEG1186 [636] (byte) bitmap_line_xdyd::x1#1 ← (byte) bitmap_line::x1#0
-    // (byte) bitmap_line_xdyd::x1#1 = (byte) bitmap_line::x1#0  // register copy zp ZP_BYTE:12
   //SEG1187 [637] (byte) bitmap_line_xdyd::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_xdyd::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1188 [638] (byte) bitmap_line_xdyd::yd#1 ← (byte) bitmap_line::yd#3
-    // (byte) bitmap_line_xdyd::yd#1 = (byte) bitmap_line::yd#3  // register copy zp ZP_BYTE:7
   //SEG1189 [639] call bitmap_line_xdyd 
   //SEG1190 [691] phi from bitmap_line::@10 to bitmap_line_xdyd [phi:bitmap_line::@10->bitmap_line_xdyd]
   //SEG1191 [691] phi (byte) bitmap_line_xdyd::x1#6 = (byte) bitmap_line_xdyd::x1#1 [phi:bitmap_line::@10->bitmap_line_xdyd#0] -- register_copy 
@@ -28887,9 +29096,7 @@ bitmap_line: {
   //SEG1202 [644] (byte) bitmap_line_ydxi::y1#1 ← (byte) bitmap_line::y1#0 -- vbuz1=vbuyy 
     sty bitmap_line_ydxi.y1
   //SEG1203 [645] (byte) bitmap_line_ydxi::yd#1 ← (byte) bitmap_line::yd#10
-    // (byte) bitmap_line_ydxi::yd#1 = (byte) bitmap_line::yd#10  // register copy zp ZP_BYTE:7
   //SEG1204 [646] (byte) bitmap_line_ydxi::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_ydxi::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1205 [647] call bitmap_line_ydxi 
   //SEG1206 [676] phi from bitmap_line::@27 to bitmap_line_ydxi [phi:bitmap_line::@27->bitmap_line_ydxi]
   //SEG1207 [676] phi (byte) bitmap_line_ydxi::y1#6 = (byte) bitmap_line_ydxi::y1#1 [phi:bitmap_line::@27->bitmap_line_ydxi#0] -- register_copy 
@@ -28905,14 +29112,11 @@ bitmap_line: {
     lda x0
     sta bitmap_line_xdyi.x
   //SEG1214 [649] (byte) bitmap_line_xdyi::y#1 ← (byte) bitmap_line::y0#0
-    // (byte) bitmap_line_xdyi::y#1 = (byte) bitmap_line::y0#0  // register copy zp ZP_BYTE:11
   //SEG1215 [650] (byte) bitmap_line_xdyi::x1#1 ← (byte) bitmap_line::x1#0 -- vbuz1=vbuz2 
     lda x1
     sta bitmap_line_xdyi.x1
   //SEG1216 [651] (byte) bitmap_line_xdyi::xd#1 ← (byte) bitmap_line::xd#0
-    // (byte) bitmap_line_xdyi::xd#1 = (byte) bitmap_line::xd#0  // register copy zp ZP_BYTE:8
   //SEG1217 [652] (byte) bitmap_line_xdyi::yd#1 ← (byte) bitmap_line::yd#10
-    // (byte) bitmap_line_xdyi::yd#1 = (byte) bitmap_line::yd#10  // register copy zp ZP_BYTE:7
   //SEG1218 [653] call bitmap_line_xdyi 
   //SEG1219 [654] phi from bitmap_line::@13 to bitmap_line_xdyi [phi:bitmap_line::@13->bitmap_line_xdyi]
   //SEG1220 [654] phi (byte) bitmap_line_xdyi::x1#6 = (byte) bitmap_line_xdyi::x1#1 [phi:bitmap_line::@13->bitmap_line_xdyi#0] -- register_copy 
@@ -29036,7 +29240,6 @@ bitmap_line_ydxi: {
   //SEG1267 bitmap_line_ydxi::@1
   b1:
   //SEG1268 [679] (byte) bitmap_plot::x#2 ← (byte) bitmap_line_ydxi::x#3
-    // (byte) bitmap_plot::x#2 = (byte) bitmap_line_ydxi::x#3  // register copy reg byte x
   //SEG1269 [680] (byte) bitmap_plot::y#2 ← (byte) bitmap_line_ydxi::y#3 -- vbuyy=vbuz1 
     ldy y
   //SEG1270 [681] call bitmap_plot 
@@ -29160,7 +29363,6 @@ bitmap_line_ydxd: {
   //SEG1323 bitmap_line_ydxd::@1
   b1:
   //SEG1324 [709] (byte) bitmap_plot::x#3 ← (byte) bitmap_line_ydxd::x#3
-    // (byte) bitmap_plot::x#3 = (byte) bitmap_line_ydxd::x#3  // register copy reg byte x
   //SEG1325 [710] (byte) bitmap_plot::y#3 ← (byte) bitmap_line_ydxd::y#2 -- vbuyy=vbuz1 
     ldy y
   //SEG1326 [711] call bitmap_plot 
@@ -29205,6 +29407,7 @@ bitmap_line_ydxd: {
     rts
 }
 //SEG1345 bitmap_clear
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 2
     .label y = 4
@@ -29215,7 +29418,6 @@ bitmap_clear: {
     lda bitmap_plot_xhi
     sta _3+1
   //SEG1347 [722] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear::$3
-    // (byte*~) bitmap_clear::bitmap#5 = (byte*)(word~) bitmap_clear::$3  // register copy zp ZP_WORD:2
   //SEG1348 [723] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
   //SEG1349 [723] phi (byte) bitmap_clear::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:bitmap_clear->bitmap_clear::@1#0] -- vbuz1=vbuc1 
     lda #0
@@ -29261,6 +29463,7 @@ bitmap_clear: {
     rts
 }
 //SEG1371 bitmap_init
+//  Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _6 = 4
     .label yoffs = 2
@@ -29361,6 +29564,18 @@ bitmap_init: {
   //SEG1417 [740] phi (byte) bitmap_init::bits#4 = (byte) bitmap_init::bits#1 [phi:bitmap_init::@10->bitmap_init::@2#0] -- register_copy 
 }
 //SEG1418 mode_mcchar
+//  Multicolor Character Mode (LINEAR/HICOL/CHUNK/COLDIS/BMM/ECM = 0, MCM = 1)
+//  Resolution: 160x200 (320x200)
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+//   - 0: 4bpp BgColor0[3:0]
+//   - 1: 4bpp ColorData[2:0]
+//  GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+//   - 00: 4bpp BgColor0[3:0]
+//   - 01: 4bpp BgColor1[3:0]
+//   - 10: 4bpp BgColor2[3:0]
+//   - 11: 4bpp ColorData[2:0]// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -29515,6 +29730,17 @@ mode_mcchar: {
     rts
 }
 //SEG1481 mode_ecmchar
+//  Extended Background Color Character Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/BMM = 0, ECM = 1)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] ) 
+//  GfxData Pixel Shifter (1)
+//   - 0: 4bpp Background Color
+//     - CharData[7:6] 00: 4bpp BgColor0[3:0]
+//     - CharData[7:6] 01: 4bpp BgColor1[3:0]
+//     - CharData[7:6] 10: 4bpp BgColor2[3:0]
+//     - CharData[7:6] 11: 4bpp BgColor3[3:0]
+//   - 1: 4bpp ColorData[3:0]
 mode_ecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -29671,6 +29897,13 @@ mode_ecmchar: {
     rts
 }
 //SEG1545 mode_stdchar
+//  Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
+//  Resolution: 320x200
+//  Normal VIC Adressing:
+//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//  Pixel Shifter (1)
+//  - 0: 4bpp BgColor0[3:0]
+//  - 1: 4bpp ColorData[3:0]
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
@@ -29818,6 +30051,8 @@ mode_stdchar: {
     rts
 }
 //SEG1606 print_str_lines
+//  Print a number of zero-terminated strings, each followed by a newline.
+//  The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label str = 2
   //SEG1607 [866] phi from print_str_lines to print_str_lines::@1 [phi:print_str_lines->print_str_lines::@1]
@@ -29895,6 +30130,7 @@ print_str_lines: {
     jmp b1
 }
 //SEG1638 print_ln
+//  Print a newline
 print_ln: {
   //SEG1639 [881] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   //SEG1640 [881] phi (byte*) print_line_cursor#18 = (byte*) print_line_cursor#17 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
@@ -29922,6 +30158,7 @@ print_ln: {
     rts
 }
 //SEG1646 print_cls
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
   //SEG1647 [886] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
@@ -29955,6 +30192,7 @@ print_cls: {
     rts
 }
 //SEG1657 print_set_screen
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
   //SEG1658 print_set_screen::@return
   //SEG1659 [892] return 

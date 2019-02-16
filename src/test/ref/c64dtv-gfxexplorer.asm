@@ -147,6 +147,7 @@ main: {
     jsr gfx_mode
     jmp b2
 }
+//  Change graphics mode to show the selected graphics mode
 gfx_mode: {
     .label _31 = $a
     .label _33 = 3
@@ -469,6 +470,9 @@ gfx_mode: {
     bne b15
     jmp b19
 }
+//  Get the next event from the keyboard event buffer.
+//  Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+//  The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
     lda keyboard_events_size
     cmp #0
@@ -482,6 +486,10 @@ keyboard_event_get: {
   breturn:
     rts
 }
+//  Scans the entire matrix to determine which keys have been pressed/depressed.
+//  Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+//  Handles debounce and only generates events when the status of a key changes.
+//  Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label row_scan = $12
     .label keycode = 8
@@ -586,6 +594,8 @@ keyboard_event_scan: {
     inc keyboard_events_size
     jmp b5
 }
+//  Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+//  Returns 0 is not pressed and non-0 if pressed
 keyboard_event_pressed: {
     .label row_bits = 8
     .label keycode = 7
@@ -603,6 +613,11 @@ keyboard_event_pressed: {
     and row_bits
     rts
 }
+//  Read a single row of the keyboard matrix
+//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+//  Returns the keys pressed on the row as bits according to the C64 key matrix.
+//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     tay
     lda keyboard_matrix_row_bitmask,y
@@ -611,6 +626,7 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
+//  Get the VIC screen address from the screen index
 get_vic_screen: {
     .label return = 3
     cmp #0
@@ -654,6 +670,7 @@ get_vic_screen: {
   breturn:
     rts
 }
+//  Get the VIC charset/bitmap address from the index
 get_vic_charset: {
     .label return = 3
     cmp #0
@@ -673,6 +690,7 @@ get_vic_charset: {
   breturn:
     rts
 }
+//  Get plane address from a plane index (from the form)
 get_plane: {
     .label return = $a
     cmp #0
@@ -866,6 +884,7 @@ get_plane: {
   breturn:
     rts
 }
+//  Show the form - and let the user change values
 form_mode: {
     .label preset_current = $f
     lda #<COLS
@@ -951,6 +970,8 @@ form_mode: {
     jsr render_preset_name
     jmp b5
 }
+//  Render form preset name in the form
+//  idx is the ID of the preset
 render_preset_name: {
     .label name = 3
     cmp #0
@@ -1061,6 +1082,7 @@ render_preset_name: {
     name_10: .text "8bpp Pixel Cell               @"
     name_11: .text "Standard Charset              @"
 }
+//  Print a string at a specific screen position
 print_str_at: {
     .label at = 5
     .label str = 3
@@ -1088,6 +1110,7 @@ print_str_at: {
   !:
     jmp b1
 }
+//  Render all form values from the form_fields_val array
 form_render_values: {
     .label field = 3
     .label idx = 2
@@ -1107,6 +1130,8 @@ form_render_values: {
     bcc b1
     rts
 }
+//  Get the screen address of a form field
+//  field_idx is the index of the field to get the screen address for
 form_field_ptr: {
     .label return = 3
     .label field_idx = 2
@@ -1128,6 +1153,8 @@ form_field_ptr: {
     sta return+1
     rts
 }
+//  Apply a form value preset to the form values
+//  idx is the ID of the preset
 apply_preset: {
     .label preset = 3
     cmp #0
@@ -1227,6 +1254,8 @@ apply_preset: {
     bne b23
     rts
 }
+//  Reads keyboard and allows the user to navigate and change the fields of the form
+//  Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
     .label field = 3
     stx form_field_ptr.field_idx
@@ -1325,6 +1354,8 @@ form_control: {
     sta (field),y
     jmp b3
 }
+//  Set the screen to use for the form.
+//  screen is the start address of the screen to use
 form_set_screen: {
     .label line = 3
     ldy #0
@@ -1349,6 +1380,8 @@ form_set_screen: {
     bne b1
     rts
 }
+//  Print a number of zero-terminated strings, each followed by a newline.
+//  The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label str = 3
     lda print_set_screen.screen
@@ -1386,6 +1419,7 @@ print_str_lines: {
     sta print_char_cursor+1
     jmp b1
 }
+//  Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -1405,6 +1439,7 @@ print_ln: {
   !:
     rts
 }
+//  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label _0 = 5
     .label sc = 3
@@ -1435,10 +1470,12 @@ print_cls: {
     bne b1
     rts
 }
+//  Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     .label screen = $10
     rts
 }
+//  Initialize the different graphics in the memory
 gfx_init: {
     jsr gfx_init_screen0
     jsr gfx_init_screen1
@@ -1457,6 +1494,7 @@ gfx_init: {
     jsr gfx_init_plane_full
     rts
 }
+//  Initialize Plane with all pixels
 gfx_init_plane_full: {
     lda #$ff
     sta gfx_init_plane_fill.fill
@@ -1471,6 +1509,7 @@ gfx_init_plane_full: {
     jsr gfx_init_plane_fill
     rts
 }
+//  Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
 gfx_init_plane_fill: {
     .label _0 = $13
     .label _1 = 3
@@ -1546,6 +1585,9 @@ gfx_init_plane_fill: {
     jsr dtvSetCpuBankSegment1
     rts
 }
+//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+//  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
     .label cpuBank = $ff
     sta cpuBank
@@ -1554,6 +1596,7 @@ dtvSetCpuBankSegment1: {
     .byte $32, $00
     rts
 }
+//  Initialize Plane with blank pixels
 gfx_init_plane_blank: {
     lda #0
     sta gfx_init_plane_fill.fill
@@ -1568,6 +1611,7 @@ gfx_init_plane_blank: {
     jsr gfx_init_plane_fill
     rts
 }
+//  Initialize Plane with Vertical Stripes every 2 pixels
 gfx_init_plane_vertical2: {
     lda #$1b
     sta gfx_init_plane_fill.fill
@@ -1582,6 +1626,7 @@ gfx_init_plane_vertical2: {
     jsr gfx_init_plane_fill
     rts
 }
+//  Initialize Plane with Horizontal Stripes every 2 pixels
 gfx_init_plane_horisontal2: {
     .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
     .label gfxa = 3
@@ -1620,6 +1665,7 @@ gfx_init_plane_horisontal2: {
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
 }
+//  Initialize Plane with Vertical Stripes
 gfx_init_plane_vertical: {
     .const gfxbCpuBank = PLANE_VERTICAL/$4000
     .label gfxb = 3
@@ -1653,6 +1699,7 @@ gfx_init_plane_vertical: {
     jsr dtvSetCpuBankSegment1
     rts
 }
+//  Initialize Plane with Horizontal Stripes
 gfx_init_plane_horisontal: {
     .const gfxbCpuBank = PLANE_HORISONTAL/$4000
     .label gfxa = 3
@@ -1700,6 +1747,7 @@ gfx_init_plane_horisontal: {
   !:
     jmp b4
 }
+//  Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
     .label bits = 8
@@ -1770,6 +1818,7 @@ gfx_init_plane_charset8: {
     jsr dtvSetCpuBankSegment1
     rts
 }
+//  Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
     .label _6 = $10
     .label gfxb = 5
@@ -1835,6 +1884,7 @@ gfx_init_plane_8bppchunky: {
     jsr dtvSetCpuBankSegment1
     rts
 }
+//  Initialize VIC bitmap
 gfx_init_vic_bitmap: {
     .const lines_cnt = 9
     .label l = 2
@@ -1861,6 +1911,7 @@ gfx_init_vic_bitmap: {
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
+//  Draw a line on the bitmap
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -2123,6 +2174,7 @@ bitmap_line_ydxd: {
     bne b1
     rts
 }
+//  Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
@@ -2152,6 +2204,7 @@ bitmap_clear: {
     bne b1
     rts
 }
+//  Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _6 = 2
     .label yoffs = 3
@@ -2246,6 +2299,7 @@ gfx_init_charset: {
     sta PROCPORT
     rts
 }
+//  Initialize VIC screen 4 - all chars are 00
 gfx_init_screen4: {
     .label ch = 3
     .label cy = 2
@@ -2274,6 +2328,7 @@ gfx_init_screen4: {
     bne b1
     rts
 }
+//  Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 gfx_init_screen3: {
     .label _1 = 7
     .label ch = 3
@@ -2312,6 +2367,7 @@ gfx_init_screen3: {
     bne b1
     rts
 }
+//  Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
 gfx_init_screen2: {
     .label col2 = 7
     .label ch = 3
@@ -2356,6 +2412,7 @@ gfx_init_screen2: {
     bne b1
     rts
 }
+//  Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
 gfx_init_screen1: {
     .label ch = 3
     .label cy = 2
@@ -2387,6 +2444,7 @@ gfx_init_screen1: {
     bne b1
     rts
 }
+//  Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
     .label _1 = 7
     .label ch = 3
@@ -2425,6 +2483,7 @@ gfx_init_screen0: {
     bne b1
     rts
 }
+//  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
     lda #$ff
     sta CIA1_PORT_A_DDR

@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+//  Minimal example program generating two long jumps
 main: {
     jsr long1
     jsr long2

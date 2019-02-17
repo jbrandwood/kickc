@@ -1,3 +1,4 @@
+//  An 8x8 char letter scroller
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

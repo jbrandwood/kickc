@@ -459,7 +459,7 @@ public class KickCLexer extends Lexer {
 		"\u0385\3\2\2\2\u0385\u0386\b_\3\2\u0386\u00be\3\2\2\2!\2\u02a7\u02af\u02ca"+
 		"\u02d0\u02d2\u02db\u02e8\u02ec\u02f1\u02f8\u02fd\u0304\u0309\u0310\u0317"+
 		"\u031c\u0323\u0328\u032f\u0335\u0337\u033c\u0343\u0348\u0354\u035f\u0365"+
-		"\u036a\u0374\u037f\4\b\2\2\2\3\2";
+		"\u036a\u0374\u037f\4\2\3\2\2\4\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

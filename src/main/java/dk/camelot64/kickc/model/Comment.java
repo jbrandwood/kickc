@@ -9,6 +9,11 @@ public class Comment {
 
    private String comment;
 
+   /** The index of the hidden parser token containing the comment.
+    * Used to prevent comments from being included multiple times.
+    */
+   private int tokenIndex;
+
    public Comment(String comment) {
       this.comment = comment;
    }
@@ -17,4 +22,11 @@ public class Comment {
       return comment;
    }
 
+   public int getTokenIndex() {
+      return tokenIndex;
+   }
+
+   public void setTokenIndex(int tokenIndex) {
+      this.tokenIndex = tokenIndex;
+   }
 }

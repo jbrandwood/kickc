@@ -1,3 +1,5 @@
+//  Linear table generator
+//  Work in progress towards a sinus generator
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

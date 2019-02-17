@@ -1,3 +1,7 @@
+//  3D Rotation using a Rotation Matrix
+//  Based on: 
+//  - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
+//  - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

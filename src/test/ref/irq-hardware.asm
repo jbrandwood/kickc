@@ -1,3 +1,4 @@
+//  A minimal working raster IRQ
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

@@ -1603,11 +1603,13 @@ Allocated zp ZP_BYTE:27 [ keyboard_matrix_read::return#0 ]
 Allocated zp ZP_BYTE:28 [ keyboard_get_keycode::return#0 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label RASTER = $d012
   //  CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
@@ -1667,23 +1669,23 @@ INITIAL ASM
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @12 [phi:@begin->@12]
+//SEG4 [1] phi from @begin to @12 [phi:@begin->@12]
 b12_from_bbegin:
   jmp b12
-//SEG4 @12
+//SEG5 @12
 b12:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @12 to main [phi:@12->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @12 to main [phi:@12->main]
 main_from_b12:
   jsr main
-//SEG7 [3] phi from @12 to @end [phi:@12->@end]
+//SEG8 [3] phi from @12 to @end [phi:@12->@end]
 bend_from_b12:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
     .label _5 = $d
     .label _15 = $15
@@ -1696,30 +1698,30 @@ main: {
     .label key = $12
     .label ch = 9
     .label i = $a
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte*) main::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG12 [5] phi (byte*) main::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
     sta sc+1
     jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG13 [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG16 [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG16 [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG17 [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG17 [8] if((byte*) main::sc#1<(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG18 [8] if((byte*) main::sc#1<(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bcc b1_from_b1
@@ -1728,99 +1730,99 @@ main: {
     cmp #<$400+$3e8
     bcc b1_from_b1
   !:
-  //SEG18 [9] phi from main::@1 to main::@14 [phi:main::@1->main::@14]
+  //SEG19 [9] phi from main::@1 to main::@14 [phi:main::@1->main::@14]
   b14_from_b1:
     jmp b14
-  //SEG19 main::@14
+  //SEG20 main::@14
   b14:
-  //SEG20 [10] call keyboard_init 
+  //SEG21 [10] call keyboard_init 
     jsr keyboard_init
     jmp b5
-  //SEG21 main::@5
+  //SEG22 main::@5
   b5:
-  //SEG22 [11] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@5 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG23 [11] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@5 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$ff
     bne b5
-  //SEG23 [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
+  //SEG24 [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
   b6_from_b5:
-  //SEG24 [12] phi (byte*) main::screen#13 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@5->main::@6#0] -- pbuz1=pbuc1 
+  //SEG25 [12] phi (byte*) main::screen#13 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@5->main::@6#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG25 [12] phi (byte) main::row#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#1] -- vbuz1=vbuc1 
+  //SEG26 [12] phi (byte) main::row#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#1] -- vbuz1=vbuc1 
     lda #0
     sta row
     jmp b6
-  //SEG26 [12] phi from main::@20 to main::@6 [phi:main::@20->main::@6]
+  //SEG27 [12] phi from main::@20 to main::@6 [phi:main::@20->main::@6]
   b6_from_b20:
-  //SEG27 [12] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@20->main::@6#0] -- register_copy 
-  //SEG28 [12] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@20->main::@6#1] -- register_copy 
+  //SEG28 [12] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@20->main::@6#0] -- register_copy 
+  //SEG29 [12] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@20->main::@6#1] -- register_copy 
     jmp b6
-  //SEG29 main::@6
+  //SEG30 main::@6
   b6:
-  //SEG30 [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuz1=vbuz2 
+  //SEG31 [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuz1=vbuz2 
     lda row
     sta keyboard_matrix_read.rowid
-  //SEG31 [14] call keyboard_matrix_read 
-  //SEG32 [57] phi from main::@6 to keyboard_matrix_read [phi:main::@6->keyboard_matrix_read]
+  //SEG32 [14] call keyboard_matrix_read 
+  //SEG33 [57] phi from main::@6 to keyboard_matrix_read [phi:main::@6->keyboard_matrix_read]
   keyboard_matrix_read_from_b6:
-  //SEG33 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@6->keyboard_matrix_read#0] -- register_copy 
+  //SEG34 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@6->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
-  //SEG34 [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
+  //SEG35 [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return
     sta keyboard_matrix_read.return_3
     jmp b28
-  //SEG35 main::@28
+  //SEG36 main::@28
   b28:
-  //SEG36 [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuz1=vbuz2 
+  //SEG37 [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return_3
     sta row_pressed_bits
-  //SEG37 [17] phi from main::@28 to main::@7 [phi:main::@28->main::@7]
+  //SEG38 [17] phi from main::@28 to main::@7 [phi:main::@28->main::@7]
   b7_from_b28:
-  //SEG38 [17] phi (byte) main::col#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@28->main::@7#0] -- vbuz1=vbuc1 
+  //SEG39 [17] phi (byte) main::col#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@28->main::@7#0] -- vbuz1=vbuc1 
     lda #0
     sta col
-  //SEG39 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@28->main::@7#1] -- register_copy 
+  //SEG40 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@28->main::@7#1] -- register_copy 
     jmp b7
-  //SEG40 [17] phi from main::@9 to main::@7 [phi:main::@9->main::@7]
+  //SEG41 [17] phi from main::@9 to main::@7 [phi:main::@9->main::@7]
   b7_from_b9:
-  //SEG41 [17] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@9->main::@7#0] -- register_copy 
-  //SEG42 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@9->main::@7#1] -- register_copy 
+  //SEG42 [17] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@9->main::@7#0] -- register_copy 
+  //SEG43 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@9->main::@7#1] -- register_copy 
     jmp b7
-  //SEG43 main::@7
+  //SEG44 main::@7
   b7:
-  //SEG44 [18] (byte~) main::$5 ← (byte) main::row_pressed_bits#2 & (byte/word/signed word/dword/signed dword) 128 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG45 [18] (byte~) main::$5 ← (byte) main::row_pressed_bits#2 & (byte/word/signed word/dword/signed dword) 128 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
     and row_pressed_bits
     sta _5
-  //SEG45 [19] if((byte~) main::$5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@8 -- vbuz1_neq_0_then_la1 
+  //SEG46 [19] if((byte~) main::$5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@8 -- vbuz1_neq_0_then_la1 
     lda _5
     cmp #0
     bne b8
     jmp b18
-  //SEG46 main::@18
+  //SEG47 main::@18
   b18:
-  //SEG47 [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuz2=vbuc1 
+  //SEG48 [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #'0'
     ldy col
     sta (screen),y
     jmp b9
-  //SEG48 main::@9
+  //SEG49 main::@9
   b9:
-  //SEG49 [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_rol_1 
+  //SEG50 [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_rol_1 
     asl row_pressed_bits
-  //SEG50 [22] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuz1=_inc_vbuz1 
+  //SEG51 [22] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuz1=_inc_vbuz1 
     inc col
-  //SEG51 [23] if((byte) main::col#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@7 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG52 [23] if((byte) main::col#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda col
     cmp #8
     bne b7_from_b9
     jmp b20
-  //SEG52 main::@20
+  //SEG53 main::@20
   b20:
-  //SEG53 [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG54 [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda screen
     clc
     adc #$28
@@ -1828,16 +1830,16 @@ main: {
     bcc !+
     inc screen+1
   !:
-  //SEG54 [25] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
+  //SEG55 [25] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
     inc row
-  //SEG55 [26] if((byte) main::row#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG56 [26] if((byte) main::row#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda row
     cmp #8
     bne b6_from_b20
     jmp b21
-  //SEG56 main::@21
+  //SEG57 main::@21
   b21:
-  //SEG57 [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz2_plus_vbuc1 
+  //SEG58 [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc
     adc screen
@@ -1845,111 +1847,111 @@ main: {
     lda #0
     adc screen+1
     sta screen_2+1
-  //SEG58 [28] phi from main::@21 to main::@10 [phi:main::@21->main::@10]
+  //SEG59 [28] phi from main::@21 to main::@10 [phi:main::@21->main::@10]
   b10_from_b21:
-  //SEG59 [28] phi (byte) main::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#0] -- vbuz1=vbuc1 
+  //SEG60 [28] phi (byte) main::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG60 [28] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#1] -- vbuz1=vbuc1 
+  //SEG61 [28] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#1] -- vbuz1=vbuc1 
     lda #0
     sta ch
     jmp b10
-  //SEG61 [28] phi from main::@11 to main::@10 [phi:main::@11->main::@10]
+  //SEG62 [28] phi from main::@11 to main::@10 [phi:main::@11->main::@10]
   b10_from_b11:
-  //SEG62 [28] phi (byte) main::i#10 = (byte) main::i#6 [phi:main::@11->main::@10#0] -- register_copy 
-  //SEG63 [28] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@11->main::@10#1] -- register_copy 
+  //SEG63 [28] phi (byte) main::i#10 = (byte) main::i#6 [phi:main::@11->main::@10#0] -- register_copy 
+  //SEG64 [28] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@11->main::@10#1] -- register_copy 
     jmp b10
-  //SEG64 main::@10
+  //SEG65 main::@10
   b10:
-  //SEG65 [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuz1=vbuz2 
+  //SEG66 [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuz1=vbuz2 
     lda ch
     sta keyboard_get_keycode.ch
-  //SEG66 [30] call keyboard_get_keycode 
+  //SEG67 [30] call keyboard_get_keycode 
     jsr keyboard_get_keycode
-  //SEG67 [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0 -- vbuz1=vbuz2 
+  //SEG68 [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0 -- vbuz1=vbuz2 
     lda keyboard_get_keycode.return
     sta keyboard_get_keycode.return_2
     jmp b29
-  //SEG68 main::@29
+  //SEG69 main::@29
   b29:
-  //SEG69 [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2 -- vbuz1=vbuz2 
+  //SEG70 [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2 -- vbuz1=vbuz2 
     lda keyboard_get_keycode.return_2
     sta key
-  //SEG70 [33] if((byte) main::key#0==(byte/signed byte/word/signed word/dword/signed dword) 63) goto main::@11 -- vbuz1_eq_vbuc1_then_la1 
+  //SEG71 [33] if((byte) main::key#0==(byte/signed byte/word/signed word/dword/signed dword) 63) goto main::@11 -- vbuz1_eq_vbuc1_then_la1 
     lda key
     cmp #$3f
     beq b11_from_b29
     jmp b22
-  //SEG71 main::@22
+  //SEG72 main::@22
   b22:
-  //SEG72 [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuz1=vbuz2 
+  //SEG73 [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuz1=vbuz2 
     lda key
     sta keyboard_key_pressed.key
-  //SEG73 [35] call keyboard_key_pressed 
+  //SEG74 [35] call keyboard_key_pressed 
     jsr keyboard_key_pressed
-  //SEG74 [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+  //SEG75 [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_2
     jmp b30
-  //SEG75 main::@30
+  //SEG76 main::@30
   b30:
-  //SEG76 [37] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
+  //SEG77 [37] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_2
     sta _15
-  //SEG77 [38] if((byte~) main::$15==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@11 -- vbuz1_eq_0_then_la1 
+  //SEG78 [38] if((byte~) main::$15==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@11 -- vbuz1_eq_0_then_la1 
     lda _15
     cmp #0
     beq b11_from_b30
     jmp b23
-  //SEG78 main::@23
+  //SEG79 main::@23
   b23:
-  //SEG79 [39] *((byte*) main::screen#2 + (byte) main::i#10) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuz2=vbuz3 
+  //SEG80 [39] *((byte*) main::screen#2 + (byte) main::i#10) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda ch
     ldy i
     sta (screen_2),y
-  //SEG80 [40] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuz1=_inc_vbuz1 
+  //SEG81 [40] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG81 [41] phi from main::@23 main::@29 main::@30 to main::@11 [phi:main::@23/main::@29/main::@30->main::@11]
+  //SEG82 [41] phi from main::@23 main::@29 main::@30 to main::@11 [phi:main::@23/main::@29/main::@30->main::@11]
   b11_from_b23:
   b11_from_b29:
   b11_from_b30:
-  //SEG82 [41] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@23/main::@29/main::@30->main::@11#0] -- register_copy 
+  //SEG83 [41] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@23/main::@29/main::@30->main::@11#0] -- register_copy 
     jmp b11
-  //SEG83 main::@11
+  //SEG84 main::@11
   b11:
-  //SEG84 [42] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+  //SEG85 [42] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-  //SEG85 [43] if((byte) main::ch#1!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@10 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG86 [43] if((byte) main::ch#1!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@10 -- vbuz1_neq_vbuc1_then_la1 
     lda ch
     cmp #$40
     bne b10_from_b11
-  //SEG86 [44] phi from main::@11 main::@13 to main::@13 [phi:main::@11/main::@13->main::@13]
+  //SEG87 [44] phi from main::@11 main::@13 to main::@13 [phi:main::@11/main::@13->main::@13]
   b13_from_b11:
   b13_from_b13:
-  //SEG87 [44] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@11/main::@13->main::@13#0] -- register_copy 
+  //SEG88 [44] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@11/main::@13->main::@13#0] -- register_copy 
     jmp b13
-  //SEG88 main::@13
+  //SEG89 main::@13
   b13:
-  //SEG89 [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
+  //SEG90 [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #' '
     ldy i
     sta (screen_2),y
-  //SEG90 [46] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuz1=_inc_vbuz1 
+  //SEG91 [46] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG91 [47] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@13 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG92 [47] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@13 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #5
     bcc b13_from_b13
     jmp b5
-  //SEG92 main::@8
+  //SEG93 main::@8
   b8:
-  //SEG93 [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuz2=vbuc1 
+  //SEG94 [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #'1'
     ldy col
     sta (screen),y
     jmp b9
 }
-//SEG94 keyboard_key_pressed
+//SEG95 keyboard_key_pressed
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 //  All keys exist as as KEY_XXX constants.
@@ -1961,45 +1963,45 @@ keyboard_key_pressed: {
     .label return = $1a
     .label key = $13
     .label return_2 = $14
-  //SEG95 [49] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG96 [49] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and key
     sta colidx
-  //SEG96 [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz2_ror_3 
+  //SEG97 [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz2_ror_3 
     lda key
     lsr
     lsr
     lsr
     sta rowidx
-  //SEG97 [51] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
+  //SEG98 [51] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
     lda rowidx
     sta keyboard_matrix_read.rowid
-  //SEG98 [52] call keyboard_matrix_read 
-  //SEG99 [57] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
+  //SEG99 [52] call keyboard_matrix_read 
+  //SEG100 [57] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
   keyboard_matrix_read_from_keyboard_key_pressed:
-  //SEG100 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
+  //SEG101 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
-  //SEG101 [53] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
+  //SEG102 [53] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return
     sta keyboard_matrix_read.return_2
     jmp b2
-  //SEG102 keyboard_key_pressed::@2
+  //SEG103 keyboard_key_pressed::@2
   b2:
-  //SEG103 [54] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
+  //SEG104 [54] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return_2
     sta _2
-  //SEG104 [55] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
+  //SEG105 [55] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
     lda _2
     ldy colidx
     and keyboard_matrix_col_bitmask,y
     sta return
     jmp breturn
-  //SEG105 keyboard_key_pressed::@return
+  //SEG106 keyboard_key_pressed::@return
   breturn:
-  //SEG106 [56] return 
+  //SEG107 [56] return 
     rts
 }
-//SEG107 keyboard_matrix_read
+//SEG108 keyboard_matrix_read
 //  Read a single row of the keyboard matrix
 //  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 //  Returns the keys pressed on the row as bits according to the C64 key matrix.
@@ -2010,21 +2012,21 @@ keyboard_matrix_read: {
     .label rowid = $b
     .label return_2 = $18
     .label return_3 = $c
-  //SEG108 [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+  //SEG109 [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
-  //SEG109 [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
+  //SEG110 [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     sta return
     jmp breturn
-  //SEG110 keyboard_matrix_read::@return
+  //SEG111 keyboard_matrix_read::@return
   breturn:
-  //SEG111 [60] return 
+  //SEG112 [60] return 
     rts
 }
-//SEG112 keyboard_get_keycode
+//SEG113 keyboard_get_keycode
 //  Get the keycode corresponding to a specific screen code character
 //  ch is the character to get the key code for ($00-$3f)
 //  Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
@@ -2033,29 +2035,29 @@ keyboard_get_keycode: {
     .label return = $1c
     .label ch = $10
     .label return_2 = $11
-  //SEG113 [61] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG114 [61] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy ch
     lda keyboard_char_keycodes,y
     sta return
     jmp breturn
-  //SEG114 keyboard_get_keycode::@return
+  //SEG115 keyboard_get_keycode::@return
   breturn:
-  //SEG115 [62] return 
+  //SEG116 [62] return 
     rts
 }
-//SEG116 keyboard_init
+//SEG117 keyboard_init
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-  //SEG117 [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
+  //SEG118 [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta CIA1_PORT_A_DDR
-  //SEG118 [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG119 [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta CIA1_PORT_B_DDR
     jmp breturn
-  //SEG119 keyboard_init::@return
+  //SEG120 keyboard_init::@return
   breturn:
-  //SEG120 [65] return 
+  //SEG121 [65] return 
     rts
 }
   //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
@@ -2167,11 +2169,13 @@ Coalescing zero page register [ zp ZP_BYTE:4 [ main::row#2 main::row#1 ] ] with 
 Allocated (was zp ZP_BYTE:22) zp ZP_BYTE:5 [ keyboard_key_pressed::colidx#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label RASTER = $d012
   //  CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
@@ -2231,52 +2235,52 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @12 [phi:@begin->@12]
+//SEG4 [1] phi from @begin to @12 [phi:@begin->@12]
 b12_from_bbegin:
   jmp b12
-//SEG4 @12
+//SEG5 @12
 b12:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @12 to main [phi:@12->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @12 to main [phi:@12->main]
 main_from_b12:
   jsr main
-//SEG7 [3] phi from @12 to @end [phi:@12->@end]
+//SEG8 [3] phi from @12 to @end [phi:@12->@end]
 bend_from_b12:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
     .label sc = 2
     .label screen = 2
     .label row = 4
     .label ch = 4
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte*) main::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG12 [5] phi (byte*) main::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
     sta sc+1
     jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG13 [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG16 [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG16 [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG17 [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG17 [8] if((byte*) main::sc#1<(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG18 [8] if((byte*) main::sc#1<(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bcc b1_from_b1
@@ -2285,92 +2289,92 @@ main: {
     cmp #<$400+$3e8
     bcc b1_from_b1
   !:
-  //SEG18 [9] phi from main::@1 to main::@14 [phi:main::@1->main::@14]
+  //SEG19 [9] phi from main::@1 to main::@14 [phi:main::@1->main::@14]
   b14_from_b1:
     jmp b14
-  //SEG19 main::@14
+  //SEG20 main::@14
   b14:
-  //SEG20 [10] call keyboard_init 
+  //SEG21 [10] call keyboard_init 
     jsr keyboard_init
     jmp b5
-  //SEG21 main::@5
+  //SEG22 main::@5
   b5:
-  //SEG22 [11] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@5 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG23 [11] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@5 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$ff
     bne b5
-  //SEG23 [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
+  //SEG24 [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
   b6_from_b5:
-  //SEG24 [12] phi (byte*) main::screen#13 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@5->main::@6#0] -- pbuz1=pbuc1 
+  //SEG25 [12] phi (byte*) main::screen#13 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@5->main::@6#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG25 [12] phi (byte) main::row#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#1] -- vbuz1=vbuc1 
+  //SEG26 [12] phi (byte) main::row#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#1] -- vbuz1=vbuc1 
     lda #0
     sta row
     jmp b6
-  //SEG26 [12] phi from main::@20 to main::@6 [phi:main::@20->main::@6]
+  //SEG27 [12] phi from main::@20 to main::@6 [phi:main::@20->main::@6]
   b6_from_b20:
-  //SEG27 [12] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@20->main::@6#0] -- register_copy 
-  //SEG28 [12] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@20->main::@6#1] -- register_copy 
+  //SEG28 [12] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@20->main::@6#0] -- register_copy 
+  //SEG29 [12] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@20->main::@6#1] -- register_copy 
     jmp b6
-  //SEG29 main::@6
+  //SEG30 main::@6
   b6:
-  //SEG30 [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuyy=vbuz1 
+  //SEG31 [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuyy=vbuz1 
     ldy row
-  //SEG31 [14] call keyboard_matrix_read 
-  //SEG32 [57] phi from main::@6 to keyboard_matrix_read [phi:main::@6->keyboard_matrix_read]
+  //SEG32 [14] call keyboard_matrix_read 
+  //SEG33 [57] phi from main::@6 to keyboard_matrix_read [phi:main::@6->keyboard_matrix_read]
   keyboard_matrix_read_from_b6:
-  //SEG33 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@6->keyboard_matrix_read#0] -- register_copy 
+  //SEG34 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@6->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
-  //SEG34 [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
+  //SEG35 [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
     jmp b28
-  //SEG35 main::@28
+  //SEG36 main::@28
   b28:
-  //SEG36 [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuxx=vbuaa 
+  //SEG37 [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuxx=vbuaa 
     tax
-  //SEG37 [17] phi from main::@28 to main::@7 [phi:main::@28->main::@7]
+  //SEG38 [17] phi from main::@28 to main::@7 [phi:main::@28->main::@7]
   b7_from_b28:
-  //SEG38 [17] phi (byte) main::col#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@28->main::@7#0] -- vbuyy=vbuc1 
+  //SEG39 [17] phi (byte) main::col#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@28->main::@7#0] -- vbuyy=vbuc1 
     ldy #0
-  //SEG39 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@28->main::@7#1] -- register_copy 
+  //SEG40 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@28->main::@7#1] -- register_copy 
     jmp b7
-  //SEG40 [17] phi from main::@9 to main::@7 [phi:main::@9->main::@7]
+  //SEG41 [17] phi from main::@9 to main::@7 [phi:main::@9->main::@7]
   b7_from_b9:
-  //SEG41 [17] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@9->main::@7#0] -- register_copy 
-  //SEG42 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@9->main::@7#1] -- register_copy 
+  //SEG42 [17] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@9->main::@7#0] -- register_copy 
+  //SEG43 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@9->main::@7#1] -- register_copy 
     jmp b7
-  //SEG43 main::@7
+  //SEG44 main::@7
   b7:
-  //SEG44 [18] (byte~) main::$5 ← (byte) main::row_pressed_bits#2 & (byte/word/signed word/dword/signed dword) 128 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG45 [18] (byte~) main::$5 ← (byte) main::row_pressed_bits#2 & (byte/word/signed word/dword/signed dword) 128 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$80
-  //SEG45 [19] if((byte~) main::$5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@8 -- vbuaa_neq_0_then_la1 
+  //SEG46 [19] if((byte~) main::$5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@8 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b8
     jmp b18
-  //SEG46 main::@18
+  //SEG47 main::@18
   b18:
-  //SEG47 [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuyy=vbuc1 
+  //SEG48 [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'0'
     sta (screen),y
     jmp b9
-  //SEG48 main::@9
+  //SEG49 main::@9
   b9:
-  //SEG49 [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_rol_1 
+  //SEG50 [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_rol_1 
     txa
     asl
     tax
-  //SEG50 [22] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuyy=_inc_vbuyy 
+  //SEG51 [22] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG51 [23] if((byte) main::col#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@7 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG52 [23] if((byte) main::col#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@7 -- vbuyy_neq_vbuc1_then_la1 
     cpy #8
     bne b7_from_b9
     jmp b20
-  //SEG52 main::@20
+  //SEG53 main::@20
   b20:
-  //SEG53 [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG54 [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda screen
     clc
     adc #$28
@@ -2378,16 +2382,16 @@ main: {
     bcc !+
     inc screen+1
   !:
-  //SEG54 [25] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
+  //SEG55 [25] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
     inc row
-  //SEG55 [26] if((byte) main::row#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG56 [26] if((byte) main::row#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda row
     cmp #8
     bne b6_from_b20
     jmp b21
-  //SEG56 main::@21
+  //SEG57 main::@21
   b21:
-  //SEG57 [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG58 [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda screen
     clc
     adc #$28
@@ -2395,180 +2399,180 @@ main: {
     bcc !+
     inc screen+1
   !:
-  //SEG58 [28] phi from main::@21 to main::@10 [phi:main::@21->main::@10]
+  //SEG59 [28] phi from main::@21 to main::@10 [phi:main::@21->main::@10]
   b10_from_b21:
-  //SEG59 [28] phi (byte) main::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#0] -- vbuxx=vbuc1 
+  //SEG60 [28] phi (byte) main::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG60 [28] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#1] -- vbuz1=vbuc1 
+  //SEG61 [28] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#1] -- vbuz1=vbuc1 
     lda #0
     sta ch
     jmp b10
-  //SEG61 [28] phi from main::@11 to main::@10 [phi:main::@11->main::@10]
+  //SEG62 [28] phi from main::@11 to main::@10 [phi:main::@11->main::@10]
   b10_from_b11:
-  //SEG62 [28] phi (byte) main::i#10 = (byte) main::i#6 [phi:main::@11->main::@10#0] -- register_copy 
-  //SEG63 [28] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@11->main::@10#1] -- register_copy 
+  //SEG63 [28] phi (byte) main::i#10 = (byte) main::i#6 [phi:main::@11->main::@10#0] -- register_copy 
+  //SEG64 [28] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@11->main::@10#1] -- register_copy 
     jmp b10
-  //SEG64 main::@10
+  //SEG65 main::@10
   b10:
-  //SEG65 [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuyy=vbuz1 
+  //SEG66 [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuyy=vbuz1 
     ldy ch
-  //SEG66 [30] call keyboard_get_keycode 
+  //SEG67 [30] call keyboard_get_keycode 
     jsr keyboard_get_keycode
-  //SEG67 [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
+  //SEG68 [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
     jmp b29
-  //SEG68 main::@29
+  //SEG69 main::@29
   b29:
-  //SEG69 [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
-  //SEG70 [33] if((byte) main::key#0==(byte/signed byte/word/signed word/dword/signed dword) 63) goto main::@11 -- vbuaa_eq_vbuc1_then_la1 
+  //SEG70 [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
+  //SEG71 [33] if((byte) main::key#0==(byte/signed byte/word/signed word/dword/signed dword) 63) goto main::@11 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$3f
     beq b11_from_b29
     jmp b22
-  //SEG71 main::@22
+  //SEG72 main::@22
   b22:
-  //SEG72 [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuyy=vbuaa 
+  //SEG73 [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuyy=vbuaa 
     tay
-  //SEG73 [35] call keyboard_key_pressed 
+  //SEG74 [35] call keyboard_key_pressed 
     jsr keyboard_key_pressed
-  //SEG74 [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+  //SEG75 [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
     jmp b30
-  //SEG75 main::@30
+  //SEG76 main::@30
   b30:
-  //SEG76 [37] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2
-  //SEG77 [38] if((byte~) main::$15==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@11 -- vbuaa_eq_0_then_la1 
+  //SEG77 [37] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2
+  //SEG78 [38] if((byte~) main::$15==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@11 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b11_from_b30
     jmp b23
-  //SEG78 main::@23
+  //SEG79 main::@23
   b23:
-  //SEG79 [39] *((byte*) main::screen#2 + (byte) main::i#10) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuxx=vbuz2 
+  //SEG80 [39] *((byte*) main::screen#2 + (byte) main::i#10) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuxx=vbuz2 
     txa
     tay
     lda ch
     sta (screen),y
-  //SEG80 [40] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuxx=_inc_vbuxx 
+  //SEG81 [40] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG81 [41] phi from main::@23 main::@29 main::@30 to main::@11 [phi:main::@23/main::@29/main::@30->main::@11]
+  //SEG82 [41] phi from main::@23 main::@29 main::@30 to main::@11 [phi:main::@23/main::@29/main::@30->main::@11]
   b11_from_b23:
   b11_from_b29:
   b11_from_b30:
-  //SEG82 [41] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@23/main::@29/main::@30->main::@11#0] -- register_copy 
+  //SEG83 [41] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@23/main::@29/main::@30->main::@11#0] -- register_copy 
     jmp b11
-  //SEG83 main::@11
+  //SEG84 main::@11
   b11:
-  //SEG84 [42] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+  //SEG85 [42] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-  //SEG85 [43] if((byte) main::ch#1!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@10 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG86 [43] if((byte) main::ch#1!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@10 -- vbuz1_neq_vbuc1_then_la1 
     lda ch
     cmp #$40
     bne b10_from_b11
-  //SEG86 [44] phi from main::@11 main::@13 to main::@13 [phi:main::@11/main::@13->main::@13]
+  //SEG87 [44] phi from main::@11 main::@13 to main::@13 [phi:main::@11/main::@13->main::@13]
   b13_from_b11:
   b13_from_b13:
-  //SEG87 [44] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@11/main::@13->main::@13#0] -- register_copy 
+  //SEG88 [44] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@11/main::@13->main::@13#0] -- register_copy 
     jmp b13
-  //SEG88 main::@13
+  //SEG89 main::@13
   b13:
-  //SEG89 [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuxx=vbuc1 
+  //SEG90 [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuxx=vbuc1 
     txa
     tay
     lda #' '
     sta (screen),y
-  //SEG90 [46] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
+  //SEG91 [46] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG91 [47] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@13 -- vbuxx_lt_vbuc1_then_la1 
+  //SEG92 [47] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@13 -- vbuxx_lt_vbuc1_then_la1 
     cpx #5
     bcc b13_from_b13
     jmp b5
-  //SEG92 main::@8
+  //SEG93 main::@8
   b8:
-  //SEG93 [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuyy=vbuc1 
+  //SEG94 [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'1'
     sta (screen),y
     jmp b9
 }
-//SEG94 keyboard_key_pressed
+//SEG95 keyboard_key_pressed
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 //  All keys exist as as KEY_XXX constants.
 //  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     .label colidx = 5
-  //SEG95 [49] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuyy_band_vbuc1 
+  //SEG96 [49] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #7
     sta colidx
-  //SEG96 [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuaa=vbuyy_ror_3 
+  //SEG97 [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuaa=vbuyy_ror_3 
     tya
     lsr
     lsr
     lsr
-  //SEG97 [51] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuyy=vbuaa 
+  //SEG98 [51] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuyy=vbuaa 
     tay
-  //SEG98 [52] call keyboard_matrix_read 
-  //SEG99 [57] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
+  //SEG99 [52] call keyboard_matrix_read 
+  //SEG100 [57] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
   keyboard_matrix_read_from_keyboard_key_pressed:
-  //SEG100 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
+  //SEG101 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
-  //SEG101 [53] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+  //SEG102 [53] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
     jmp b2
-  //SEG102 keyboard_key_pressed::@2
+  //SEG103 keyboard_key_pressed::@2
   b2:
-  //SEG103 [54] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  //SEG104 [55] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuz1 
+  //SEG104 [54] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+  //SEG105 [55] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuz1 
     ldy colidx
     and keyboard_matrix_col_bitmask,y
     jmp breturn
-  //SEG105 keyboard_key_pressed::@return
+  //SEG106 keyboard_key_pressed::@return
   breturn:
-  //SEG106 [56] return 
+  //SEG107 [56] return 
     rts
 }
-//SEG107 keyboard_matrix_read
+//SEG108 keyboard_matrix_read
 //  Read a single row of the keyboard matrix
 //  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 //  Returns the keys pressed on the row as bits according to the C64 key matrix.
 //  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 //  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-  //SEG108 [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuyy 
+  //SEG109 [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuyy 
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
-  //SEG109 [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+  //SEG110 [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     jmp breturn
-  //SEG110 keyboard_matrix_read::@return
+  //SEG111 keyboard_matrix_read::@return
   breturn:
-  //SEG111 [60] return 
+  //SEG112 [60] return 
     rts
 }
-//SEG112 keyboard_get_keycode
+//SEG113 keyboard_get_keycode
 //  Get the keycode corresponding to a specific screen code character
 //  ch is the character to get the key code for ($00-$3f)
 //  Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 //  If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 keyboard_get_keycode: {
-  //SEG113 [61] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuyy 
+  //SEG114 [61] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuyy 
     lda keyboard_char_keycodes,y
     jmp breturn
-  //SEG114 keyboard_get_keycode::@return
+  //SEG115 keyboard_get_keycode::@return
   breturn:
-  //SEG115 [62] return 
+  //SEG116 [62] return 
     rts
 }
-//SEG116 keyboard_init
+//SEG117 keyboard_init
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-  //SEG117 [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
+  //SEG118 [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta CIA1_PORT_A_DDR
-  //SEG118 [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG119 [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta CIA1_PORT_B_DDR
     jmp breturn
-  //SEG119 keyboard_init::@return
+  //SEG120 keyboard_init::@return
   breturn:
-  //SEG120 [65] return 
+  //SEG121 [65] return 
     rts
 }
   //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
@@ -2988,11 +2992,13 @@ reg byte a [ keyboard_get_keycode::return#0 ]
 FINAL ASSEMBLER
 Score: 56821
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label RASTER = $d012
   //  CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
@@ -3052,39 +3058,39 @@ Score: 56821
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @12 [phi:@begin->@12]
-//SEG4 @12
-//SEG5 [2] call main 
-//SEG6 [4] phi from @12 to main [phi:@12->main]
-//SEG7 [3] phi from @12 to @end [phi:@12->@end]
-//SEG8 @end
-//SEG9 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @12 [phi:@begin->@12]
+//SEG5 @12
+//SEG6 [2] call main 
+//SEG7 [4] phi from @12 to main [phi:@12->main]
+//SEG8 [3] phi from @12 to @end [phi:@12->@end]
+//SEG9 @end
+//SEG10 main
 main: {
     .label sc = 2
     .label screen = 2
     .label row = 4
     .label ch = 4
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte*) main::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [5] phi (byte*) main::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
     sta sc+1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG13 [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG14 main::@1
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG14 [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG16 [6] *((byte*) main::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG16 [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG17 [7] (byte*) main::sc#1 ← ++ (byte*) main::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG17 [8] if((byte*) main::sc#1<(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG18 [8] if((byte*) main::sc#1<(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bcc b1
@@ -3093,72 +3099,72 @@ main: {
     cmp #<$400+$3e8
     bcc b1
   !:
-  //SEG18 [9] phi from main::@1 to main::@14 [phi:main::@1->main::@14]
-  //SEG19 main::@14
-  //SEG20 [10] call keyboard_init 
+  //SEG19 [9] phi from main::@1 to main::@14 [phi:main::@1->main::@14]
+  //SEG20 main::@14
+  //SEG21 [10] call keyboard_init 
     jsr keyboard_init
-  //SEG21 main::@5
+  //SEG22 main::@5
   b5:
-  //SEG22 [11] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@5 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG23 [11] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@5 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$ff
     bne b5
-  //SEG23 [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
-  //SEG24 [12] phi (byte*) main::screen#13 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@5->main::@6#0] -- pbuz1=pbuc1 
+  //SEG24 [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
+  //SEG25 [12] phi (byte*) main::screen#13 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main::@5->main::@6#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG25 [12] phi (byte) main::row#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#1] -- vbuz1=vbuc1 
+  //SEG26 [12] phi (byte) main::row#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#1] -- vbuz1=vbuc1 
     lda #0
     sta row
-  //SEG26 [12] phi from main::@20 to main::@6 [phi:main::@20->main::@6]
-  //SEG27 [12] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@20->main::@6#0] -- register_copy 
-  //SEG28 [12] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@20->main::@6#1] -- register_copy 
-  //SEG29 main::@6
+  //SEG27 [12] phi from main::@20 to main::@6 [phi:main::@20->main::@6]
+  //SEG28 [12] phi (byte*) main::screen#13 = (byte*) main::screen#1 [phi:main::@20->main::@6#0] -- register_copy 
+  //SEG29 [12] phi (byte) main::row#2 = (byte) main::row#1 [phi:main::@20->main::@6#1] -- register_copy 
+  //SEG30 main::@6
   b6:
-  //SEG30 [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuyy=vbuz1 
+  //SEG31 [13] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuyy=vbuz1 
     ldy row
-  //SEG31 [14] call keyboard_matrix_read 
-  //SEG32 [57] phi from main::@6 to keyboard_matrix_read [phi:main::@6->keyboard_matrix_read]
-  //SEG33 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@6->keyboard_matrix_read#0] -- register_copy 
+  //SEG32 [14] call keyboard_matrix_read 
+  //SEG33 [57] phi from main::@6 to keyboard_matrix_read [phi:main::@6->keyboard_matrix_read]
+  //SEG34 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@6->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
-  //SEG34 [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
-  //SEG35 main::@28
-  //SEG36 [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuxx=vbuaa 
+  //SEG35 [15] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
+  //SEG36 main::@28
+  //SEG37 [16] (byte) main::row_pressed_bits#0 ← (byte) keyboard_matrix_read::return#3 -- vbuxx=vbuaa 
     tax
-  //SEG37 [17] phi from main::@28 to main::@7 [phi:main::@28->main::@7]
-  //SEG38 [17] phi (byte) main::col#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@28->main::@7#0] -- vbuyy=vbuc1 
+  //SEG38 [17] phi from main::@28 to main::@7 [phi:main::@28->main::@7]
+  //SEG39 [17] phi (byte) main::col#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@28->main::@7#0] -- vbuyy=vbuc1 
     ldy #0
-  //SEG39 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@28->main::@7#1] -- register_copy 
-  //SEG40 [17] phi from main::@9 to main::@7 [phi:main::@9->main::@7]
-  //SEG41 [17] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@9->main::@7#0] -- register_copy 
-  //SEG42 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@9->main::@7#1] -- register_copy 
-  //SEG43 main::@7
+  //SEG40 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#0 [phi:main::@28->main::@7#1] -- register_copy 
+  //SEG41 [17] phi from main::@9 to main::@7 [phi:main::@9->main::@7]
+  //SEG42 [17] phi (byte) main::col#2 = (byte) main::col#1 [phi:main::@9->main::@7#0] -- register_copy 
+  //SEG43 [17] phi (byte) main::row_pressed_bits#2 = (byte) main::row_pressed_bits#1 [phi:main::@9->main::@7#1] -- register_copy 
+  //SEG44 main::@7
   b7:
-  //SEG44 [18] (byte~) main::$5 ← (byte) main::row_pressed_bits#2 & (byte/word/signed word/dword/signed dword) 128 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG45 [18] (byte~) main::$5 ← (byte) main::row_pressed_bits#2 & (byte/word/signed word/dword/signed dword) 128 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$80
-  //SEG45 [19] if((byte~) main::$5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@8 -- vbuaa_neq_0_then_la1 
+  //SEG46 [19] if((byte~) main::$5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@8 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b8
-  //SEG46 main::@18
-  //SEG47 [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuyy=vbuc1 
+  //SEG47 main::@18
+  //SEG48 [20] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'0'
     sta (screen),y
-  //SEG48 main::@9
+  //SEG49 main::@9
   b9:
-  //SEG49 [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_rol_1 
+  //SEG50 [21] (byte) main::row_pressed_bits#1 ← (byte) main::row_pressed_bits#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_rol_1 
     txa
     asl
     tax
-  //SEG50 [22] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuyy=_inc_vbuyy 
+  //SEG51 [22] (byte) main::col#1 ← ++ (byte) main::col#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG51 [23] if((byte) main::col#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@7 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG52 [23] if((byte) main::col#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@7 -- vbuyy_neq_vbuc1_then_la1 
     cpy #8
     bne b7
-  //SEG52 main::@20
-  //SEG53 [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG53 main::@20
+  //SEG54 [24] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda screen
     clc
     adc #$28
@@ -3166,14 +3172,14 @@ main: {
     bcc !+
     inc screen+1
   !:
-  //SEG54 [25] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
+  //SEG55 [25] (byte) main::row#1 ← ++ (byte) main::row#2 -- vbuz1=_inc_vbuz1 
     inc row
-  //SEG55 [26] if((byte) main::row#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG56 [26] if((byte) main::row#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda row
     cmp #8
     bne b6
-  //SEG56 main::@21
-  //SEG57 [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG57 main::@21
+  //SEG58 [27] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda screen
     clc
     adc #$28
@@ -3181,150 +3187,150 @@ main: {
     bcc !+
     inc screen+1
   !:
-  //SEG58 [28] phi from main::@21 to main::@10 [phi:main::@21->main::@10]
-  //SEG59 [28] phi (byte) main::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#0] -- vbuxx=vbuc1 
+  //SEG59 [28] phi from main::@21 to main::@10 [phi:main::@21->main::@10]
+  //SEG60 [28] phi (byte) main::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG60 [28] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#1] -- vbuz1=vbuc1 
+  //SEG61 [28] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@21->main::@10#1] -- vbuz1=vbuc1 
     txa
     sta ch
-  //SEG61 [28] phi from main::@11 to main::@10 [phi:main::@11->main::@10]
-  //SEG62 [28] phi (byte) main::i#10 = (byte) main::i#6 [phi:main::@11->main::@10#0] -- register_copy 
-  //SEG63 [28] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@11->main::@10#1] -- register_copy 
-  //SEG64 main::@10
+  //SEG62 [28] phi from main::@11 to main::@10 [phi:main::@11->main::@10]
+  //SEG63 [28] phi (byte) main::i#10 = (byte) main::i#6 [phi:main::@11->main::@10#0] -- register_copy 
+  //SEG64 [28] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@11->main::@10#1] -- register_copy 
+  //SEG65 main::@10
   b10:
-  //SEG65 [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuyy=vbuz1 
+  //SEG66 [29] (byte) keyboard_get_keycode::ch#0 ← (byte) main::ch#2 -- vbuyy=vbuz1 
     ldy ch
-  //SEG66 [30] call keyboard_get_keycode 
+  //SEG67 [30] call keyboard_get_keycode 
     jsr keyboard_get_keycode
-  //SEG67 [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
-  //SEG68 main::@29
-  //SEG69 [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
-  //SEG70 [33] if((byte) main::key#0==(byte/signed byte/word/signed word/dword/signed dword) 63) goto main::@11 -- vbuaa_eq_vbuc1_then_la1 
+  //SEG68 [31] (byte) keyboard_get_keycode::return#2 ← (byte) keyboard_get_keycode::return#0
+  //SEG69 main::@29
+  //SEG70 [32] (byte) main::key#0 ← (byte) keyboard_get_keycode::return#2
+  //SEG71 [33] if((byte) main::key#0==(byte/signed byte/word/signed word/dword/signed dword) 63) goto main::@11 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$3f
     beq b11
-  //SEG71 main::@22
-  //SEG72 [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuyy=vbuaa 
+  //SEG72 main::@22
+  //SEG73 [34] (byte) keyboard_key_pressed::key#0 ← (byte) main::key#0 -- vbuyy=vbuaa 
     tay
-  //SEG73 [35] call keyboard_key_pressed 
+  //SEG74 [35] call keyboard_key_pressed 
     jsr keyboard_key_pressed
-  //SEG74 [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-  //SEG75 main::@30
-  //SEG76 [37] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2
-  //SEG77 [38] if((byte~) main::$15==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@11 -- vbuaa_eq_0_then_la1 
+  //SEG75 [36] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+  //SEG76 main::@30
+  //SEG77 [37] (byte~) main::$15 ← (byte) keyboard_key_pressed::return#2
+  //SEG78 [38] if((byte~) main::$15==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@11 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b11
-  //SEG78 main::@23
-  //SEG79 [39] *((byte*) main::screen#2 + (byte) main::i#10) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuxx=vbuz2 
+  //SEG79 main::@23
+  //SEG80 [39] *((byte*) main::screen#2 + (byte) main::i#10) ← (byte) main::ch#2 -- pbuz1_derefidx_vbuxx=vbuz2 
     txa
     tay
     lda ch
     sta (screen),y
-  //SEG80 [40] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuxx=_inc_vbuxx 
+  //SEG81 [40] (byte) main::i#1 ← ++ (byte) main::i#10 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG81 [41] phi from main::@23 main::@29 main::@30 to main::@11 [phi:main::@23/main::@29/main::@30->main::@11]
-  //SEG82 [41] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@23/main::@29/main::@30->main::@11#0] -- register_copy 
-  //SEG83 main::@11
+  //SEG82 [41] phi from main::@23 main::@29 main::@30 to main::@11 [phi:main::@23/main::@29/main::@30->main::@11]
+  //SEG83 [41] phi (byte) main::i#6 = (byte) main::i#1 [phi:main::@23/main::@29/main::@30->main::@11#0] -- register_copy 
+  //SEG84 main::@11
   b11:
-  //SEG84 [42] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+  //SEG85 [42] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-  //SEG85 [43] if((byte) main::ch#1!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@10 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG86 [43] if((byte) main::ch#1!=(byte/signed byte/word/signed word/dword/signed dword) 64) goto main::@10 -- vbuz1_neq_vbuc1_then_la1 
     lda ch
     cmp #$40
     bne b10
-  //SEG86 [44] phi from main::@11 main::@13 to main::@13 [phi:main::@11/main::@13->main::@13]
-  //SEG87 [44] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@11/main::@13->main::@13#0] -- register_copy 
-  //SEG88 main::@13
+  //SEG87 [44] phi from main::@11 main::@13 to main::@13 [phi:main::@11/main::@13->main::@13]
+  //SEG88 [44] phi (byte) main::i#4 = (byte) main::i#6 [phi:main::@11/main::@13->main::@13#0] -- register_copy 
+  //SEG89 main::@13
   b13:
-  //SEG89 [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuxx=vbuc1 
+  //SEG90 [45] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' -- pbuz1_derefidx_vbuxx=vbuc1 
     txa
     tay
     lda #' '
     sta (screen),y
-  //SEG90 [46] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
+  //SEG91 [46] (byte) main::i#2 ← ++ (byte) main::i#4 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG91 [47] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@13 -- vbuxx_lt_vbuc1_then_la1 
+  //SEG92 [47] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@13 -- vbuxx_lt_vbuc1_then_la1 
     cpx #5
     bcc b13
     jmp b5
-  //SEG92 main::@8
+  //SEG93 main::@8
   b8:
-  //SEG93 [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuyy=vbuc1 
+  //SEG94 [48] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'1'
     sta (screen),y
     jmp b9
 }
-//SEG94 keyboard_key_pressed
+//SEG95 keyboard_key_pressed
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 //  All keys exist as as KEY_XXX constants.
 //  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     .label colidx = 5
-  //SEG95 [49] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuyy_band_vbuc1 
+  //SEG96 [49] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuyy_band_vbuc1 
     tya
     and #7
     sta colidx
-  //SEG96 [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuaa=vbuyy_ror_3 
+  //SEG97 [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuaa=vbuyy_ror_3 
     tya
     lsr
     lsr
     lsr
-  //SEG97 [51] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuyy=vbuaa 
+  //SEG98 [51] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuyy=vbuaa 
     tay
-  //SEG98 [52] call keyboard_matrix_read 
-  //SEG99 [57] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
-  //SEG100 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
+  //SEG99 [52] call keyboard_matrix_read 
+  //SEG100 [57] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
+  //SEG101 [57] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
-  //SEG101 [53] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-  //SEG102 keyboard_key_pressed::@2
-  //SEG103 [54] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  //SEG104 [55] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuz1 
+  //SEG102 [53] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+  //SEG103 keyboard_key_pressed::@2
+  //SEG104 [54] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+  //SEG105 [55] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuz1 
     ldy colidx
     and keyboard_matrix_col_bitmask,y
-  //SEG105 keyboard_key_pressed::@return
-  //SEG106 [56] return 
+  //SEG106 keyboard_key_pressed::@return
+  //SEG107 [56] return 
     rts
 }
-//SEG107 keyboard_matrix_read
+//SEG108 keyboard_matrix_read
 //  Read a single row of the keyboard matrix
 //  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 //  Returns the keys pressed on the row as bits according to the C64 key matrix.
 //  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 //  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-  //SEG108 [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuyy 
+  //SEG109 [58] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuyy 
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
-  //SEG109 [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+  //SEG110 [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
-  //SEG110 keyboard_matrix_read::@return
-  //SEG111 [60] return 
+  //SEG111 keyboard_matrix_read::@return
+  //SEG112 [60] return 
     rts
 }
-//SEG112 keyboard_get_keycode
+//SEG113 keyboard_get_keycode
 //  Get the keycode corresponding to a specific screen code character
 //  ch is the character to get the key code for ($00-$3f)
 //  Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 //  If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 keyboard_get_keycode: {
-  //SEG113 [61] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuyy 
+  //SEG114 [61] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuyy 
     lda keyboard_char_keycodes,y
-  //SEG114 keyboard_get_keycode::@return
-  //SEG115 [62] return 
+  //SEG115 keyboard_get_keycode::@return
+  //SEG116 [62] return 
     rts
 }
-//SEG116 keyboard_init
+//SEG117 keyboard_init
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-  //SEG117 [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
+  //SEG118 [63] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta CIA1_PORT_A_DDR
-  //SEG118 [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG119 [64] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta CIA1_PORT_B_DDR
-  //SEG119 keyboard_init::@return
-  //SEG120 [65] return 
+  //SEG120 keyboard_init::@return
+  //SEG121 [65] return 
     rts
 }
   //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)

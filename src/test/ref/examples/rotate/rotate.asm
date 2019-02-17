@@ -1,3 +1,4 @@
+//  2D rotattion of 8 sprites 
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -324,9 +325,6 @@ mulf_init: {
     sta mulf_sqr2_hi+$1ff
     rts
 }
-  //  Library Implementation of the Seriously Fast Multiplication
-  //  See http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
-  //  Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
   //  mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   //  <f(x) = <(( x * x )/4)
   .align $100

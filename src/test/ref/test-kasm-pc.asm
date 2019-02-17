@@ -1,3 +1,4 @@
+//  Test inline KickAssembler code with PC location specification
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

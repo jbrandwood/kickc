@@ -1,7 +1,7 @@
+//  Tests different ways of scrolling up the screen
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Tests different ways of scrolling up the screen
   .label screen = $400
 main: {
     jsr scrollup1

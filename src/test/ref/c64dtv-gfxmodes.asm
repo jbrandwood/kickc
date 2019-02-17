@@ -1,7 +1,7 @@
+//  Exploring C64DTV Screen Modes
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Commodore 64 Registers and Constants
   //  Processor port data direction register
   .label PROCPORT_DDR = 0
   //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -2211,8 +2211,6 @@ print_set_screen: {
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  //  Plot and line drawing routines for HIRES bitmaps
-  //  Currently it can only plot on the first 256 x-positions.
   //  Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0

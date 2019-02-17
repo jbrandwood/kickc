@@ -487,63 +487,65 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  A minimal working IRQ
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label BGCOL = $d021
   //  The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   //  The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
 b6_from_bbegin:
   jmp b6
-//SEG4 @6
+//SEG5 @6
 b6:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @6 to @end [phi:@6->@end]
+//SEG7 [3] phi from @6 to @end [phi:@6->@end]
 bend_from_b6:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 //  Setup the IRQ routine
 main: {
-  //SEG9 asm { sei  }
+  //SEG10 asm { sei  }
     sei
-  //SEG10 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG11 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 asm { cli  }
+  //SEG12 asm { cli  }
     cli
     jmp breturn
-  //SEG12 main::@return
+  //SEG13 main::@return
   breturn:
-  //SEG13 [7] return 
+  //SEG14 [7] return 
     rts
 }
-//SEG14 irq
+//SEG15 irq
 //  The Interrupt Handler
 irq: {
-  //SEG15 entry interrupt(KERNEL_KEYBOARD)
-  //SEG16 [8] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG16 entry interrupt(KERNEL_KEYBOARD)
+  //SEG17 [8] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  //SEG17 [9] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG18 [9] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
     jmp breturn
-  //SEG18 irq::@return
+  //SEG19 irq::@return
   breturn:
-  //SEG19 [10] return  - exit interrupt(KERNEL_KEYBOARD)
+  //SEG20 [10] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
 
@@ -562,63 +564,65 @@ Uplifting [irq] best 55 combination
 Uplifting [] best 55 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  A minimal working IRQ
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label BGCOL = $d021
   //  The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   //  The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
 b6_from_bbegin:
   jmp b6
-//SEG4 @6
+//SEG5 @6
 b6:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @6 to @end [phi:@6->@end]
+//SEG7 [3] phi from @6 to @end [phi:@6->@end]
 bend_from_b6:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 //  Setup the IRQ routine
 main: {
-  //SEG9 asm { sei  }
+  //SEG10 asm { sei  }
     sei
-  //SEG10 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG11 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 asm { cli  }
+  //SEG12 asm { cli  }
     cli
     jmp breturn
-  //SEG12 main::@return
+  //SEG13 main::@return
   breturn:
-  //SEG13 [7] return 
+  //SEG14 [7] return 
     rts
 }
-//SEG14 irq
+//SEG15 irq
 //  The Interrupt Handler
 irq: {
-  //SEG15 entry interrupt(KERNEL_KEYBOARD)
-  //SEG16 [8] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG16 entry interrupt(KERNEL_KEYBOARD)
+  //SEG17 [8] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  //SEG17 [9] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG18 [9] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
     jmp breturn
-  //SEG18 irq::@return
+  //SEG19 irq::@return
   breturn:
-  //SEG19 [10] return  - exit interrupt(KERNEL_KEYBOARD)
+  //SEG20 [10] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
 
@@ -739,51 +743,53 @@ interrupt(KERNEL_KEYBOARD)(void()) irq()
 FINAL ASSEMBLER
 Score: 37
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  A minimal working IRQ
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label BGCOL = $d021
   //  The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   //  The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
-//SEG4 @6
-//SEG5 [2] call main 
-//SEG6 [3] phi from @6 to @end [phi:@6->@end]
-//SEG7 @end
-//SEG8 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
+//SEG5 @6
+//SEG6 [2] call main 
+//SEG7 [3] phi from @6 to @end [phi:@6->@end]
+//SEG8 @end
+//SEG9 main
 //  Setup the IRQ routine
 main: {
-  //SEG9 asm { sei  }
+  //SEG10 asm { sei  }
     sei
-  //SEG10 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG11 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 asm { cli  }
+  //SEG12 asm { cli  }
     cli
-  //SEG12 main::@return
-  //SEG13 [7] return 
+  //SEG13 main::@return
+  //SEG14 [7] return 
     rts
 }
-//SEG14 irq
+//SEG15 irq
 //  The Interrupt Handler
 irq: {
-  //SEG15 entry interrupt(KERNEL_KEYBOARD)
-  //SEG16 [8] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG16 entry interrupt(KERNEL_KEYBOARD)
+  //SEG17 [8] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  //SEG17 [9] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG18 [9] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  //SEG18 irq::@return
-  //SEG19 [10] return  - exit interrupt(KERNEL_KEYBOARD)
+  //SEG19 irq::@return
+  //SEG20 [10] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
 

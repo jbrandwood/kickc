@@ -1,3 +1,4 @@
+//  Generate a charset based on a 5x3 pattern stored in 2 bytes
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

@@ -1,3 +1,4 @@
+//  Test C64DTV v2 256-colors and the 16-color redefinable palette
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

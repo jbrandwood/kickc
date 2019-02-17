@@ -1,7 +1,7 @@
+//  Tests that immediate zero values are reused - even when assigning to words
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//  Tests that immediate zero values are reused - even when assigning to words
 main: {
     .label w = 2
     lda #<0

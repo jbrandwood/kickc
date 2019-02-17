@@ -1,7 +1,7 @@
+//  Test a function taking boolean parameter and returning boolean result
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//  Test a function taking boolean parameter and returning boolean result
 main: {
     .label screen = $400
     ldx #0

@@ -710,7 +710,6 @@ divr16u: {
     bne b1
     rts
 }
-//  Simple routines for working with memory
 //  Fill some memory with a value
 fill: {
     .label end = 8

@@ -1,3 +1,4 @@
+//  Tests procedures using global variables (should not fail)
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

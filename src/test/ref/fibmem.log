@@ -126,68 +126,69 @@ Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::$2 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label fibs = $1100
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 main: {
     .label _2 = 3
     .label i = 2
-  //SEG9 [4] *((const byte[15]) fibs#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte[15]) fibs#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta fibs
-  //SEG10 [5] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta fibs+1
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG13 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG14 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG15 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG15 main::@1
+  //SEG16 main::@1
   b1:
-  //SEG16 [7] (byte~) main::$2 ← *((const byte[15]) fibs#0 + (byte) main::i#2) + *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc2_derefidx_vbuz2 
+  //SEG17 [7] (byte~) main::$2 ← *((const byte[15]) fibs#0 + (byte) main::i#2) + *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc2_derefidx_vbuz2 
     ldy i
     lda fibs,y
     clc
     adc fibs+1,y
     sta _2
-  //SEG17 [8] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG18 [8] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _2
     ldy i
     sta fibs+2,y
-  //SEG18 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG19 [10] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 15) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG20 [10] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 15) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$f
     bcc b1_from_b1
     jmp breturn
-  //SEG20 main::@return
+  //SEG21 main::@return
   breturn:
-  //SEG21 [11] return 
+  //SEG22 [11] return 
     rts
 }
 
@@ -210,60 +211,61 @@ Uplifting [main] best 365 combination reg byte x [ main::i#2 main::i#1 ] reg byt
 Uplifting [] best 365 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label fibs = $1100
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 main: {
-  //SEG9 [4] *((const byte[15]) fibs#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte[15]) fibs#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta fibs
-  //SEG10 [5] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta fibs+1
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG13 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG14 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG15 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG15 main::@1
+  //SEG16 main::@1
   b1:
-  //SEG16 [7] (byte~) main::$2 ← *((const byte[15]) fibs#0 + (byte) main::i#2) + *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+  //SEG17 [7] (byte~) main::$2 ← *((const byte[15]) fibs#0 + (byte) main::i#2) + *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda fibs,x
     clc
     adc fibs+1,x
-  //SEG17 [8] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+  //SEG18 [8] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta fibs+2,x
-  //SEG18 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG19 [10] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 15) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
+  //SEG20 [10] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 15) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$f
     bcc b1_from_b1
     jmp breturn
-  //SEG20 main::@return
+  //SEG21 main::@return
   breturn:
-  //SEG21 [11] return 
+  //SEG22 [11] return 
     rts
 }
 
@@ -312,46 +314,47 @@ reg byte a [ main::$2 ]
 FINAL ASSEMBLER
 Score: 263
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label fibs = $1100
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main 
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-//SEG8 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
 main: {
-  //SEG9 [4] *((const byte[15]) fibs#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte[15]) fibs#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta fibs
-  //SEG10 [5] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta fibs+1
-  //SEG11 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG13 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG13 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG14 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG15 main::@1
+  //SEG14 [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG15 [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG16 main::@1
   b1:
-  //SEG16 [7] (byte~) main::$2 ← *((const byte[15]) fibs#0 + (byte) main::i#2) + *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+  //SEG17 [7] (byte~) main::$2 ← *((const byte[15]) fibs#0 + (byte) main::i#2) + *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda fibs,x
     clc
     adc fibs+1,x
-  //SEG17 [8] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+  //SEG18 [8] *((const byte[15]) fibs#0+(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta fibs+2,x
-  //SEG18 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG19 [10] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 15) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
+  //SEG20 [10] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 15) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$f
     bcc b1
-  //SEG20 main::@return
-  //SEG21 [11] return 
+  //SEG21 main::@return
+  //SEG22 [11] return 
     rts
 }
 

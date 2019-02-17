@@ -206,88 +206,89 @@ Allocated zp ZP_BYTE:2 [ col#12 col#0 col#1 ]
 Allocated zp ZP_BYTE:3 [ col#3 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Tests that long branch fixing works with interrupt exits (to $ea81)
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-  //  Tests that long branch fixing works with interrupt exits (to $ea81)
+//SEG2 Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
   .label col_3 = 3
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG5 @2
+//SEG6 @2
 b2:
-//SEG6 [2] call main 
+//SEG7 [2] call main 
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG11 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 [5] phi from main main::@7 to main::@1 [phi:main/main::@7->main::@1]
+  //SEG12 [5] phi from main main::@7 to main::@1 [phi:main/main::@7->main::@1]
   b1_from_main:
   b1_from_b7:
-  //SEG12 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@7->main::@1#0] -- register_copy 
+  //SEG13 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@7->main::@1#0] -- register_copy 
     jmp b1
-  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
     jmp b2
-  //SEG15 main::@2
+  //SEG16 main::@2
   b2:
-  //SEG16 [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@1 -- vbuz1_le_vbuc1_then_la1 
+  //SEG17 [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@1 -- vbuz1_le_vbuc1_then_la1 
     lda #$a
     cmp col
     bcs b1_from_b2
     jmp b7
-  //SEG17 main::@7
+  //SEG18 main::@7
   b7:
-  //SEG18 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
     jmp b1_from_b7
 }
-//SEG19 irq
+//SEG20 irq
 irq: {
-  //SEG20 entry interrupt(KERNEL_MIN)
-  //SEG21 asm { lda$dc0d  }
+  //SEG21 entry interrupt(KERNEL_MIN)
+  //SEG22 asm { lda$dc0d  }
     lda $dc0d
-  //SEG22 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+  //SEG23 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG23 [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
+  //SEG24 [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda col
     cmp #0
     beq breturn
     jmp b2
-  //SEG24 irq::@2
+  //SEG25 irq::@2
   b2:
-  //SEG25 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz2 
+  //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz2 
     ldy col
     iny
     sty col_3
     jmp breturn
-  //SEG26 irq::@return
+  //SEG27 irq::@return
   breturn:
-  //SEG27 [12] return  - exit interrupt(KERNEL_MIN)
+  //SEG28 [12] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -318,85 +319,86 @@ Uplifting [] best 1824 combination zp ZP_BYTE:3 [ col#3 ]
 Coalescing zero page register with common assignment [ zp ZP_BYTE:2 [ col#12 col#0 col#1 ] ] with [ zp ZP_BYTE:3 [ col#3 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Tests that long branch fixing works with interrupt exits (to $ea81)
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-  //  Tests that long branch fixing works with interrupt exits (to $ea81)
+//SEG2 Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG5 @2
+//SEG6 @2
 b2:
-//SEG6 [2] call main 
+//SEG7 [2] call main 
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG11 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 [5] phi from main main::@7 to main::@1 [phi:main/main::@7->main::@1]
+  //SEG12 [5] phi from main main::@7 to main::@1 [phi:main/main::@7->main::@1]
   b1_from_main:
   b1_from_b7:
-  //SEG12 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@7->main::@1#0] -- register_copy 
+  //SEG13 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@7->main::@1#0] -- register_copy 
     jmp b1
-  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
     jmp b2
-  //SEG15 main::@2
+  //SEG16 main::@2
   b2:
-  //SEG16 [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@1 -- vbuz1_le_vbuc1_then_la1 
+  //SEG17 [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@1 -- vbuz1_le_vbuc1_then_la1 
     lda #$a
     cmp col
     bcs b1_from_b2
     jmp b7
-  //SEG17 main::@7
+  //SEG18 main::@7
   b7:
-  //SEG18 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
     jmp b1_from_b7
 }
-//SEG19 irq
+//SEG20 irq
 irq: {
-  //SEG20 entry interrupt(KERNEL_MIN)
-  //SEG21 asm { lda$dc0d  }
+  //SEG21 entry interrupt(KERNEL_MIN)
+  //SEG22 asm { lda$dc0d  }
     lda $dc0d
-  //SEG22 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+  //SEG23 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG23 [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
+  //SEG24 [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda col
     cmp #0
     beq breturn
     jmp b2
-  //SEG24 irq::@2
+  //SEG25 irq::@2
   b2:
-  //SEG25 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+  //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
     jmp breturn
-  //SEG26 irq::@return
+  //SEG27 irq::@return
   breturn:
-  //SEG27 [12] return  - exit interrupt(KERNEL_MIN)
+  //SEG28 [12] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -462,68 +464,69 @@ zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ]
 FINAL ASSEMBLER
 Score: 882
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Tests that long branch fixing works with interrupt exits (to $ea81)
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-  //  Tests that long branch fixing works with interrupt exits (to $ea81)
+//SEG2 Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG5 @2
-//SEG6 [2] call main 
+//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG6 @2
+//SEG7 [2] call main 
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-//SEG9 main
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+//SEG9 @end
+//SEG10 main
 main: {
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG11 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 [5] phi from main main::@7 to main::@1 [phi:main/main::@7->main::@1]
-  //SEG12 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@7->main::@1#0] -- register_copy 
-  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG14 main::@1
-  //SEG15 main::@2
+  //SEG12 [5] phi from main main::@7 to main::@1 [phi:main/main::@7->main::@1]
+  //SEG13 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@7->main::@1#0] -- register_copy 
+  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG15 main::@1
+  //SEG16 main::@2
   b2:
-  //SEG16 [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@1 -- vbuz1_le_vbuc1_then_la1 
+  //SEG17 [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@1 -- vbuz1_le_vbuc1_then_la1 
     lda #$a
     cmp col
     bcs b2
-  //SEG17 main::@7
-  //SEG18 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //SEG18 main::@7
+  //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
     jmp b2
 }
-//SEG19 irq
+//SEG20 irq
 irq: {
-  //SEG20 entry interrupt(KERNEL_MIN)
-  //SEG21 asm { lda$dc0d  }
+  //SEG21 entry interrupt(KERNEL_MIN)
+  //SEG22 asm { lda$dc0d  }
     lda $dc0d
-  //SEG22 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+  //SEG23 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG23 [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
+  //SEG24 [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda col
     cmp #0
     bne !_ea81+
     jmp $ea81
   !_ea81:
-  //SEG24 irq::@2
-  //SEG25 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+  //SEG25 irq::@2
+  //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
-  //SEG26 irq::@return
-  //SEG27 [12] return  - exit interrupt(KERNEL_MIN)
+  //SEG27 irq::@return
+  //SEG28 [12] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 

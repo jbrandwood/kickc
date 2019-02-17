@@ -1,7 +1,7 @@
+//  Minimal example program generating a long jump
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//  Minimal example program generating a long jump
 main: {
     .label SCREEN = $400
     ldx #0

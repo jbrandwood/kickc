@@ -45,6 +45,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCommentsSingle() throws IOException, URISyntaxException {
+      compileAndCompare("test-comments-single");
+   }
+
+   @Test
+   public void testCommentsUsage() throws IOException, URISyntaxException {
+      compileAndCompare("test-comments-usage");
+   }
+
+   @Test
    public void testBgBlack() throws IOException, URISyntaxException {
       compileAndCompare("bgblack");
    }
@@ -163,7 +173,7 @@ public class TestPrograms {
 
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
-      compileAndCompare("examples/fastmultiply/fastmultiply8.kc");
+      compileAndCompare("examples/fastmultiply/fastmultiply8");
    }
 
    @Test

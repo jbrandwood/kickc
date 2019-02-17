@@ -1,3 +1,4 @@
+//  java.lang.NullPointerException during Pass2TypeInference.java
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -17,5 +18,4 @@ main: {
     bne b1
     rts
 }
-  //  java.lang.NullPointerException during Pass2TypeInference.java
   table: .fill $100, 0

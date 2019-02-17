@@ -1,7 +1,7 @@
+//  An unrolled loop modifying a var used later
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//  An unrolled loop modifying a var used later
 main: {
     .label SCREEN = $400
     lda #3

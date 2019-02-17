@@ -1,7 +1,7 @@
+//  Interactive Explorer for C64DTV Screen Modes
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Commodore 64 Registers and Constants
   //  Processor port data direction register
   .label PROCPORT_DDR = 0
   //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -2544,8 +2544,6 @@ keyboard_init: {
   keyboard_events: .fill 8, 0
   //  The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
-  //  Plot and line drawing routines for HIRES bitmaps
-  //  Currently it can only plot on the first 256 x-positions.
   //  Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0

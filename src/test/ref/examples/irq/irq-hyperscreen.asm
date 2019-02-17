@@ -1,3 +1,4 @@
+//  A raster IRQ that opens the top/bottom border.
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

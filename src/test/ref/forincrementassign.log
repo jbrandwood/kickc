@@ -120,60 +120,63 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Classic for() does not allow assignment as increment, eg. for(byte i=0;i<40;i=i+2) {}
+//  The following should give a program rendering a char on every second char of the first line - but results in a syntax error
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label SCREEN = $400
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @1 to main [phi:@1->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
     .label i = 2
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+  //SEG16 [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy i
     tya
     sta SCREEN,y
-  //SEG16 [7] (byte) main::i#1 ← (byte) main::i#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuz1=vbuz1_plus_2 
+  //SEG17 [7] (byte) main::i#1 ← (byte) main::i#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuz1=vbuz1_plus_2 
     lda i
     clc
     adc #2
     sta i
-  //SEG17 [8] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG18 [8] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$28
     bcc b1_from_b1
     jmp breturn
-  //SEG18 main::@return
+  //SEG19 main::@return
   breturn:
-  //SEG19 [9] return 
+  //SEG20 [9] return 
     rts
 }
 
@@ -188,54 +191,57 @@ Uplifting [main] best 283 combination reg byte a [ main::i#2 main::i#1 ]
 Uplifting [] best 283 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Classic for() does not allow assignment as increment, eg. for(byte i=0;i<40;i=i+2) {}
+//  The following should give a program rendering a char on every second char of the first line - but results in a syntax error
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label SCREEN = $400
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @1 to main [phi:@1->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #0
     jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuaa=vbuaa 
+  //SEG16 [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuaa=vbuaa 
     tax
     sta SCREEN,x
-  //SEG16 [7] (byte) main::i#1 ← (byte) main::i#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuaa=vbuaa_plus_2 
+  //SEG17 [7] (byte) main::i#1 ← (byte) main::i#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuaa=vbuaa_plus_2 
     clc
     adc #2
-  //SEG17 [8] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
+  //SEG18 [8] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$28
     bcc b1_from_b1
     jmp breturn
-  //SEG18 main::@return
+  //SEG19 main::@return
   breturn:
-  //SEG19 [9] return 
+  //SEG20 [9] return 
     rts
 }
 
@@ -283,39 +289,42 @@ reg byte a [ main::i#2 main::i#1 ]
 FINAL ASSEMBLER
 Score: 181
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Classic for() does not allow assignment as increment, eg. for(byte i=0;i<40;i=i+2) {}
+//  The following should give a program rendering a char on every second char of the first line - but results in a syntax error
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label SCREEN = $400
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main 
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
 main: {
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #0
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG14 main::@1
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuaa=vbuaa 
+  //SEG16 [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuaa=vbuaa 
     tax
     sta SCREEN,x
-  //SEG16 [7] (byte) main::i#1 ← (byte) main::i#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuaa=vbuaa_plus_2 
+  //SEG17 [7] (byte) main::i#1 ← (byte) main::i#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuaa=vbuaa_plus_2 
     clc
     adc #2
-  //SEG17 [8] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
+  //SEG18 [8] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$28
     bcc b1
-  //SEG18 main::@return
-  //SEG19 [9] return 
+  //SEG19 main::@return
+  //SEG20 [9] return 
     rts
 }
 

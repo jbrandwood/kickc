@@ -1,3 +1,4 @@
+//  Test the fast multiplication library
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -289,7 +290,6 @@ mul8s: {
   b2:
     rts
 }
-//  Simple binary multiplication implementation
 //  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .label mb = 6
@@ -886,9 +886,6 @@ print_cls: {
     rts
 }
   print_hextab: .text "0123456789abcdef"
-  //  Library Implementation of the Seriously Fast Multiplication
-  //  See http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
-  //  Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
   //  mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   //  <f(x) = <(( x * x )/4)
   .align $100

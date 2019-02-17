@@ -136,58 +136,60 @@ Complete equivalence classes
 Allocated zp ZP_BYTE:2 [ main::sub#2 main::sub#1 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Illustrates symbolic array lengths
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .const SZ = $f
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @1 to main [phi:@1->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 //  Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
     .label sub = 2
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::sub#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::sub#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta sub
     jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG13 [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+  //SEG16 [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy sub
     tya
     sta items,y
-  //SEG16 [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuz1=_inc_vbuz1 
+  //SEG17 [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuz1=_inc_vbuz1 
     inc sub
-  //SEG17 [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG18 [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda sub
     cmp #SZ+1
     bne b1_from_b1
     jmp breturn
-  //SEG18 main::@return
+  //SEG19 main::@return
   breturn:
-  //SEG19 [9] return 
+  //SEG20 [9] return 
     rts
 }
   items: .fill SZ, 0
@@ -203,54 +205,56 @@ Uplifting [main] best 263 combination reg byte x [ main::sub#2 main::sub#1 ]
 Uplifting [] best 263 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Illustrates symbolic array lengths
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .const SZ = $f
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @1 to main [phi:@1->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 //  Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::sub#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::sub#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG13 [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+  //SEG16 [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta items,x
-  //SEG16 [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
+  //SEG17 [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG17 [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG18 [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #SZ+1
     bne b1_from_b1
     jmp breturn
-  //SEG18 main::@return
+  //SEG19 main::@return
   breturn:
-  //SEG19 [9] return 
+  //SEG20 [9] return 
     rts
 }
   items: .fill SZ, 0
@@ -302,39 +306,41 @@ reg byte x [ main::sub#2 main::sub#1 ]
 FINAL ASSEMBLER
 Score: 161
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Illustrates symbolic array lengths
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .const SZ = $f
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main 
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
 //  Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::sub#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [5] phi (byte) main::sub#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG12 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG13 [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG14 main::@1
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG14 [5] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+  //SEG16 [6] *((const byte[SZ#0]) items#0 + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta items,x
-  //SEG16 [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
+  //SEG17 [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG17 [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG18 [8] if((byte) main::sub#1!=(const byte) SZ#0+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #SZ+1
     bne b1
-  //SEG18 main::@return
-  //SEG19 [9] return 
+  //SEG19 main::@return
+  //SEG20 [9] return 
     rts
 }
   items: .fill SZ, 0

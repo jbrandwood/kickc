@@ -1,3 +1,10 @@
+//  Seriously fast multiply 8-bit version (8bit*8bit=8bit)
+//  Multiplies two signed 8-bit numbers and results in an 8-bit number
+//  C=A*B, A in [-64;64], B in [-96;95], C in [-96;95] - 64 acts a 1 (X*64=X)
+//  Uses the formula a*b = (a+b)^2/4 - (a-b)^2/4
+//  See the following for information about the method
+//  - http://codebase64.org/doku.php?id=base:seriously_fast_multiplication 
+//  - http://codebase64.org/doku.php?id=magazines:chacking16
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

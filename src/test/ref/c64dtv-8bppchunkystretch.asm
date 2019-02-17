@@ -1,7 +1,7 @@
+//  C64DTV 8bpp charmode stretcher
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Commodore 64 Registers and Constants
   //  Processor port data direction register
   .label PROCPORT_DDR = 0
   //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written

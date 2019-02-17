@@ -255,11 +255,12 @@ Allocated zp ZP_BYTE:4 [ irq_raster_next#1 ]
 Allocated zp ZP_BYTE:5 [ irq::$0 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label BORDERCOL = $d020
   .label RASTER = $d012
   .const DARK_GREY = $b
@@ -267,88 +268,88 @@ INITIAL ASM
   .label KERNEL_IRQ = $314
   .label irq_raster_next = 3
   .label irq_raster_next_1 = 4
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
   jmp b1
-//SEG3 @1
+//SEG4 @1
 b1:
-//SEG4 [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG5 [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta irq_raster_next
-//SEG5 [2] phi from @1 to @2 [phi:@1->@2]
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-//SEG6 @2
+//SEG7 @2
 b2:
-//SEG7 [3] call main 
+//SEG8 [3] call main 
   jsr main
-//SEG8 [4] phi from @2 to @end [phi:@2->@end]
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG9 @end
+//SEG10 @end
 bend:
-//SEG10 main
+//SEG11 main
 main: {
-  //SEG11 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG12 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
     jmp breturn
-  //SEG12 main::@return
+  //SEG13 main::@return
   breturn:
-  //SEG13 [6] return 
+  //SEG14 [6] return 
     rts
 }
-//SEG14 irq
+//SEG15 irq
 irq: {
     .label _0 = 5
     .label raster_next = 2
-  //SEG15 entry interrupt(HARDWARE_CLOBBER)
+  //SEG16 entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
     sty regy+1
-  //SEG16 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
+  //SEG17 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  //SEG17 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz2_plus_vbuc1 
+  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz2_plus_vbuc1 
     lda #$15
     clc
     adc irq_raster_next
     sta irq_raster_next_1
-  //SEG18 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuz1=vbuz2 
+  //SEG19 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuz1=vbuz2 
     lda irq_raster_next_1
     sta raster_next
-  //SEG19 [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG20 [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and raster_next
     sta _0
-  //SEG20 [11] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
+  //SEG21 [11] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda _0
     cmp #0
     bne b1_from_irq
     jmp b2
-  //SEG21 irq::@2
+  //SEG22 irq::@2
   b2:
-  //SEG22 [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_minus_1 
+  //SEG23 [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_minus_1 
     dec raster_next
-  //SEG23 [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+  //SEG24 [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
   b1_from_irq:
   b1_from_b2:
-  //SEG24 [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+  //SEG25 [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp b1
-  //SEG25 irq::@1
+  //SEG26 irq::@1
   b1:
-  //SEG26 [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuz1 
+  //SEG27 [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuz1 
     lda raster_next
     sta RASTER
-  //SEG27 [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG28 [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp breturn
-  //SEG28 irq::@return
+  //SEG29 irq::@return
   breturn:
-  //SEG29 [16] return  - exit interrupt(HARDWARE_CLOBBER)
+  //SEG30 [16] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
@@ -394,97 +395,98 @@ Uplifting [] best 248 combination zp ZP_BYTE:4 [ irq_raster_next#1 ]
 Coalescing zero page register with common assignment [ zp ZP_BYTE:3 [ irq_raster_next#0 ] ] with [ zp ZP_BYTE:4 [ irq_raster_next#1 ] ] - score: 1
 Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ irq_raster_next#0 irq_raster_next#1 ]
 Interrupt procedure irq clobbers AXCNZV
-Removing interrupt register storage sty regy+1 in SEG15 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regy: in SEG29 [16] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldy #00 in SEG29 [16] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage sty regy+1 in SEG16 entry interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage regy: in SEG30 [16] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage ldy #00 in SEG30 [16] return  - exit interrupt(HARDWARE_CLOBBER)
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label BORDERCOL = $d020
   .label RASTER = $d012
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
   .label irq_raster_next = 2
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
   jmp b1
-//SEG3 @1
+//SEG4 @1
 b1:
-//SEG4 [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG5 [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta irq_raster_next
-//SEG5 [2] phi from @1 to @2 [phi:@1->@2]
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
-//SEG6 @2
+//SEG7 @2
 b2:
-//SEG7 [3] call main 
+//SEG8 [3] call main 
   jsr main
-//SEG8 [4] phi from @2 to @end [phi:@2->@end]
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG9 @end
+//SEG10 @end
 bend:
-//SEG10 main
+//SEG11 main
 main: {
-  //SEG11 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG12 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
     jmp breturn
-  //SEG12 main::@return
+  //SEG13 main::@return
   breturn:
-  //SEG13 [6] return 
+  //SEG14 [6] return 
     rts
 }
-//SEG14 irq
+//SEG15 irq
 irq: {
-  //SEG15 entry interrupt(HARDWARE_CLOBBER)
+  //SEG16 entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
-  //SEG16 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
+  //SEG17 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  //SEG17 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
     lda #$15
     clc
     adc irq_raster_next
     sta irq_raster_next
-  //SEG18 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
+  //SEG19 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
     ldx irq_raster_next
-  //SEG19 [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG20 [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-  //SEG20 [11] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1 -- vbuaa_neq_0_then_la1 
+  //SEG21 [11] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b1_from_irq
     jmp b2
-  //SEG21 irq::@2
+  //SEG22 irq::@2
   b2:
-  //SEG22 [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_minus_1 
+  //SEG23 [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_minus_1 
     dex
-  //SEG23 [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+  //SEG24 [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
   b1_from_irq:
   b1_from_b2:
-  //SEG24 [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+  //SEG25 [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp b1
-  //SEG25 irq::@1
+  //SEG26 irq::@1
   b1:
-  //SEG26 [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
+  //SEG27 [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
     stx RASTER
-  //SEG27 [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG28 [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
     jmp breturn
-  //SEG28 irq::@return
+  //SEG29 irq::@return
   breturn:
-  //SEG29 [16] return  - exit interrupt(HARDWARE_CLOBBER)
+  //SEG30 [16] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
@@ -554,75 +556,76 @@ reg byte a [ irq::$0 ]
 FINAL ASSEMBLER
 Score: 157
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label BORDERCOL = $d020
   .label RASTER = $d012
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
   .label irq_raster_next = 2
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 @1
-//SEG4 [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 @1
+//SEG5 [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta irq_raster_next
-//SEG5 [2] phi from @1 to @2 [phi:@1->@2]
-//SEG6 @2
-//SEG7 [3] call main 
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+//SEG7 @2
+//SEG8 [3] call main 
   jsr main
-//SEG8 [4] phi from @2 to @end [phi:@2->@end]
-//SEG9 @end
-//SEG10 main
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+//SEG10 @end
+//SEG11 main
 main: {
-  //SEG11 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG12 [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 main::@return
-  //SEG13 [6] return 
+  //SEG13 main::@return
+  //SEG14 [6] return 
     rts
 }
-//SEG14 irq
+//SEG15 irq
 irq: {
-  //SEG15 entry interrupt(HARDWARE_CLOBBER)
+  //SEG16 entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
-  //SEG16 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
+  //SEG17 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  //SEG17 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
     lda #$15
     clc
     adc irq_raster_next
     sta irq_raster_next
-  //SEG18 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
+  //SEG19 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
     tax
-  //SEG19 [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG20 [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-  //SEG20 [11] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1 -- vbuaa_neq_0_then_la1 
+  //SEG21 [11] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b1
-  //SEG21 irq::@2
-  //SEG22 [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_minus_1 
+  //SEG22 irq::@2
+  //SEG23 [12] (byte) irq::raster_next#1 ← (byte) irq::raster_next#0 - (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_minus_1 
     dex
-  //SEG23 [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
-  //SEG24 [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
-  //SEG25 irq::@1
+  //SEG24 [13] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+  //SEG25 [13] phi (byte) irq::raster_next#2 = (byte) irq::raster_next#0 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+  //SEG26 irq::@1
   b1:
-  //SEG26 [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
+  //SEG27 [14] *((const byte*) RASTER#0) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
     stx RASTER
-  //SEG27 [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG28 [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  //SEG28 irq::@return
-  //SEG29 [16] return  - exit interrupt(HARDWARE_CLOBBER)
+  //SEG29 irq::@return
+  //SEG30 [16] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:

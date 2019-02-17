@@ -1,3 +1,4 @@
+//  TEst inlining a slightly complex print function (containing a loop)
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

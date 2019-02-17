@@ -1,7 +1,7 @@
+//  A minimal working raster IRQ
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  A minimal working raster IRQ
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VIC_CONTROL = $d011

@@ -1,3 +1,4 @@
+//  Tests that inline ASM clobbering is taken into account when assigning registers
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

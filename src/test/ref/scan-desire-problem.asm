@@ -1,3 +1,4 @@
+//  Illustrates a problem with a missing fragment - pbuc1_derefidx_vwuz1=vbuz2
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -164,7 +165,6 @@ draw_block: {
     sta colors+$29
     rts
 }
-//  Simple binary multiplication implementation
 //  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .const b = $28
@@ -232,7 +232,6 @@ init: {
     sta BGCOL4
     rts
 }
-//  Simple routines for working with memory
 //  Fill some memory with a value
 fill: {
     .label end = 6

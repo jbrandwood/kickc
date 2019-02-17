@@ -1,3 +1,4 @@
+//  Allows analysis of the CHARGEN ROM font
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -301,7 +302,6 @@ plot_chargen: {
     cli
     rts
 }
-//  Simple binary multiplication implementation
 //  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .const b = $a

@@ -1,3 +1,5 @@
+//  Arrays / strings allocated inline destroy functions (because they are allocated where the call enters.
+//  The following places the text at the start of the main-function - and JSR's straight into the text - not the code.
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

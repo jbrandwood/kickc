@@ -28,6 +28,8 @@ public class Program {
    private AsmProgram asm;
    /** Resource files that should be copied to the output folder to be compiled with the generated ASM. */
    private List<Path> asmResourceFiles;
+   /** Comments for the (main) file. */
+   private List<Comment> fileComments;
 
    /** The log containing information about the compilation process. */
    private CompileLog log;
@@ -66,6 +68,14 @@ public class Program {
       this.importPaths = new ArrayList<>();
       this.imported = new ArrayList<>();
       this.asmResourceFiles = new ArrayList<>();
+   }
+
+   public List<Comment> getFileComments() {
+      return fileComments;
+   }
+
+   public void setFileComments(List<Comment> fileComments) {
+      this.fileComments = fileComments;
    }
 
    public List<String> getImportPaths() {

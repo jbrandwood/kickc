@@ -247,123 +247,124 @@ Allocated zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ]
 Allocated zp ZP_WORD:4 [ print::msg#4 print::msg#6 print::msg#3 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Inline Strings in method calls are automatically converted to local constant variables byte[] st = "..."; - generating an ASM .text).
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label screen = 2
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG4 @2
+//SEG5 @2
 b2:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @2 to main [phi:@2->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
-  //SEG10 [5] call print 
-  //SEG11 [11] phi from main to print [phi:main->print]
+  //SEG11 [5] call print 
+  //SEG12 [11] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG12 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
+  //SEG13 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG13 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+  //SEG14 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta print.msg
     lda #>msg1
     sta print.msg+1
     jsr print
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG15 main::@1
+  //SEG16 main::@1
   b1:
-  //SEG16 [7] call print 
-  //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
+  //SEG17 [7] call print 
+  //SEG18 [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG18 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
-  //SEG19 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+  //SEG19 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
+  //SEG20 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta print.msg
     lda #>msg2
     sta print.msg+1
     jsr print
-  //SEG20 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG21 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG21 main::@2
+  //SEG22 main::@2
   b2:
-  //SEG22 [9] call print 
-  //SEG23 [11] phi from main::@2 to print [phi:main::@2->print]
+  //SEG23 [9] call print 
+  //SEG24 [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  //SEG24 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
-  //SEG25 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
+  //SEG25 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
+  //SEG26 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
     lda #<msg
     sta print.msg
     lda #>msg
     sta print.msg+1
     jsr print
     jmp breturn
-  //SEG26 main::@return
+  //SEG27 main::@return
   breturn:
-  //SEG27 [10] return 
+  //SEG28 [10] return 
     rts
     msg: .text "message 3 @"
     msg2: .text "message 2 @"
 }
-//SEG28 print
+//SEG29 print
 print: {
     .label msg = 4
-  //SEG29 [12] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
+  //SEG30 [12] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
   b1_from_print:
   b1_from_b2:
-  //SEG30 [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
-  //SEG31 [12] phi (byte*) print::msg#4 = (byte*) print::msg#6 [phi:print/print::@2->print::@1#1] -- register_copy 
+  //SEG31 [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
+  //SEG32 [12] phi (byte*) print::msg#4 = (byte*) print::msg#6 [phi:print/print::@2->print::@1#1] -- register_copy 
     jmp b1
-  //SEG32 print::@1
+  //SEG33 print::@1
   b1:
-  //SEG33 [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+  //SEG34 [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (msg),y
     cmp #'@'
     bne b2
     jmp breturn
-  //SEG34 print::@return
+  //SEG35 print::@return
   breturn:
-  //SEG35 [14] return 
+  //SEG36 [14] return 
     rts
-  //SEG36 print::@2
+  //SEG37 print::@2
   b2:
-  //SEG37 [15] *((byte*) screen#12) ← *((byte*) print::msg#4) -- _deref_pbuz1=_deref_pbuz2 
+  //SEG38 [15] *((byte*) screen#12) ← *((byte*) print::msg#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
     ldy #0
     sta (screen),y
-  //SEG38 [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
+  //SEG39 [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG39 [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 -- pbuz1=_inc_pbuz1 
+  //SEG40 [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 -- pbuz1=_inc_pbuz1 
     inc msg
     bne !+
     inc msg+1
   !:
     jmp b1_from_b2
 }
-  //  Inline Strings in method calls are automatically converted to local constant variables byte[] st = "..."; - generating an ASM .text).
   msg1: .text "message 1 @"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -382,123 +383,124 @@ Uplifting [] best 706 combination zp ZP_WORD:2 [ screen#18 screen#12 screen#5 ]
 Uplifting [main] best 706 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Inline Strings in method calls are automatically converted to local constant variables byte[] st = "..."; - generating an ASM .text).
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label screen = 2
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG4 @2
+//SEG5 @2
 b2:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @2 to main [phi:@2->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
-  //SEG10 [5] call print 
-  //SEG11 [11] phi from main to print [phi:main->print]
+  //SEG11 [5] call print 
+  //SEG12 [11] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG12 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
+  //SEG13 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG13 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+  //SEG14 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta print.msg
     lda #>msg1
     sta print.msg+1
     jsr print
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
     jmp b1
-  //SEG15 main::@1
+  //SEG16 main::@1
   b1:
-  //SEG16 [7] call print 
-  //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
+  //SEG17 [7] call print 
+  //SEG18 [11] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG18 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
-  //SEG19 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+  //SEG19 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
+  //SEG20 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta print.msg
     lda #>msg2
     sta print.msg+1
     jsr print
-  //SEG20 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG21 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG21 main::@2
+  //SEG22 main::@2
   b2:
-  //SEG22 [9] call print 
-  //SEG23 [11] phi from main::@2 to print [phi:main::@2->print]
+  //SEG23 [9] call print 
+  //SEG24 [11] phi from main::@2 to print [phi:main::@2->print]
   print_from_b2:
-  //SEG24 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
-  //SEG25 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
+  //SEG25 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
+  //SEG26 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
     lda #<msg
     sta print.msg
     lda #>msg
     sta print.msg+1
     jsr print
     jmp breturn
-  //SEG26 main::@return
+  //SEG27 main::@return
   breturn:
-  //SEG27 [10] return 
+  //SEG28 [10] return 
     rts
     msg: .text "message 3 @"
     msg2: .text "message 2 @"
 }
-//SEG28 print
+//SEG29 print
 print: {
     .label msg = 4
-  //SEG29 [12] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
+  //SEG30 [12] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
   b1_from_print:
   b1_from_b2:
-  //SEG30 [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
-  //SEG31 [12] phi (byte*) print::msg#4 = (byte*) print::msg#6 [phi:print/print::@2->print::@1#1] -- register_copy 
+  //SEG31 [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
+  //SEG32 [12] phi (byte*) print::msg#4 = (byte*) print::msg#6 [phi:print/print::@2->print::@1#1] -- register_copy 
     jmp b1
-  //SEG32 print::@1
+  //SEG33 print::@1
   b1:
-  //SEG33 [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+  //SEG34 [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (msg),y
     cmp #'@'
     bne b2
     jmp breturn
-  //SEG34 print::@return
+  //SEG35 print::@return
   breturn:
-  //SEG35 [14] return 
+  //SEG36 [14] return 
     rts
-  //SEG36 print::@2
+  //SEG37 print::@2
   b2:
-  //SEG37 [15] *((byte*) screen#12) ← *((byte*) print::msg#4) -- _deref_pbuz1=_deref_pbuz2 
+  //SEG38 [15] *((byte*) screen#12) ← *((byte*) print::msg#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
     ldy #0
     sta (screen),y
-  //SEG38 [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
+  //SEG39 [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG39 [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 -- pbuz1=_inc_pbuz1 
+  //SEG40 [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 -- pbuz1=_inc_pbuz1 
     inc msg
     bne !+
     inc msg+1
   !:
     jmp b1_from_b2
 }
-  //  Inline Strings in method calls are automatically converted to local constant variables byte[] st = "..."; - generating an ASM .text).
   msg1: .text "message 1 @"
 
 ASSEMBLER OPTIMIZATIONS
@@ -570,96 +572,97 @@ zp ZP_WORD:4 [ print::msg#4 print::msg#6 print::msg#3 ]
 FINAL ASSEMBLER
 Score: 605
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Inline Strings in method calls are automatically converted to local constant variables byte[] st = "..."; - generating an ASM .text).
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label screen = 2
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-//SEG5 [2] call main 
-//SEG6 [4] phi from @2 to main [phi:@2->main]
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-//SEG9 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG5 @2
+//SEG6 [2] call main 
+//SEG7 [4] phi from @2 to main [phi:@2->main]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+//SEG9 @end
+//SEG10 main
 main: {
-  //SEG10 [5] call print 
-  //SEG11 [11] phi from main to print [phi:main->print]
-  //SEG12 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
+  //SEG11 [5] call print 
+  //SEG12 [11] phi from main to print [phi:main->print]
+  //SEG13 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG13 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
+  //SEG14 [11] phi (byte*) print::msg#6 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta print.msg
     lda #>msg1
     sta print.msg+1
     jsr print
-  //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
-  //SEG15 main::@1
-  //SEG16 [7] call print 
-  //SEG17 [11] phi from main::@1 to print [phi:main::@1->print]
-  //SEG18 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
-  //SEG19 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+  //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
+  //SEG16 main::@1
+  //SEG17 [7] call print 
+  //SEG18 [11] phi from main::@1 to print [phi:main::@1->print]
+  //SEG19 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@1->print#0] -- register_copy 
+  //SEG20 [11] phi (byte*) print::msg#6 = (const byte[]) main::msg2#0 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta print.msg
     lda #>msg2
     sta print.msg+1
     jsr print
-  //SEG20 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG21 main::@2
-  //SEG22 [9] call print 
-  //SEG23 [11] phi from main::@2 to print [phi:main::@2->print]
-  //SEG24 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
-  //SEG25 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
+  //SEG21 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG22 main::@2
+  //SEG23 [9] call print 
+  //SEG24 [11] phi from main::@2 to print [phi:main::@2->print]
+  //SEG25 [11] phi (byte*) screen#18 = (byte*) screen#12 [phi:main::@2->print#0] -- register_copy 
+  //SEG26 [11] phi (byte*) print::msg#6 = (const string) main::msg [phi:main::@2->print#1] -- pbuz1=pbuc1 
     lda #<msg
     sta print.msg
     lda #>msg
     sta print.msg+1
     jsr print
-  //SEG26 main::@return
-  //SEG27 [10] return 
+  //SEG27 main::@return
+  //SEG28 [10] return 
     rts
     msg: .text "message 3 @"
     msg2: .text "message 2 @"
 }
-//SEG28 print
+//SEG29 print
 print: {
     .label msg = 4
-  //SEG29 [12] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
-  //SEG30 [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
-  //SEG31 [12] phi (byte*) print::msg#4 = (byte*) print::msg#6 [phi:print/print::@2->print::@1#1] -- register_copy 
-  //SEG32 print::@1
+  //SEG30 [12] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
+  //SEG31 [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
+  //SEG32 [12] phi (byte*) print::msg#4 = (byte*) print::msg#6 [phi:print/print::@2->print::@1#1] -- register_copy 
+  //SEG33 print::@1
   b1:
-  //SEG33 [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+  //SEG34 [13] if(*((byte*) print::msg#4)!=(byte) '@') goto print::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (msg),y
     cmp #'@'
     bne b2
-  //SEG34 print::@return
-  //SEG35 [14] return 
+  //SEG35 print::@return
+  //SEG36 [14] return 
     rts
-  //SEG36 print::@2
+  //SEG37 print::@2
   b2:
-  //SEG37 [15] *((byte*) screen#12) ← *((byte*) print::msg#4) -- _deref_pbuz1=_deref_pbuz2 
+  //SEG38 [15] *((byte*) screen#12) ← *((byte*) print::msg#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
     sta (screen),y
-  //SEG38 [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
+  //SEG39 [16] (byte*) screen#5 ← ++ (byte*) screen#12 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG39 [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 -- pbuz1=_inc_pbuz1 
+  //SEG40 [17] (byte*) print::msg#3 ← ++ (byte*) print::msg#4 -- pbuz1=_inc_pbuz1 
     inc msg
     bne !+
     inc msg+1
   !:
     jmp b1
 }
-  //  Inline Strings in method calls are automatically converted to local constant variables byte[] st = "..."; - generating an ASM .text).
   msg1: .text "message 1 @"
 

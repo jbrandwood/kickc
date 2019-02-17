@@ -1,7 +1,9 @@
+//  Tetris Game for the Commodore 64
+//  The tetris game tries to match NES tetris gameplay pretty closely
+//  Source: https://meatfighter.com/nintendotetrisai/
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-  //  Commodore 64 Registers and Constants
   //  Processor port data direction register
   .label PROCPORT_DDR = 0
   //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -88,8 +90,6 @@
   .label SID_VOICE3_CONTROL = $d412
   .const SID_CONTROL_NOISE = $80
   .label SID_VOICE3_OSC = $d41b
-  //  Tetris Game for the Commodore 64
-  //  Memory Layout and Shared Data
   //  Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
   //  Address of the second screen
@@ -1689,8 +1689,6 @@ sprites_irq: {
   keyboard_events: .fill 8, 0
   //  The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
-  //  Tetris Game for the Commodore 64
-  //  The tetris pieces
   //  The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0

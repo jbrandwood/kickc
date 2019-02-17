@@ -1,3 +1,4 @@
+//  Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

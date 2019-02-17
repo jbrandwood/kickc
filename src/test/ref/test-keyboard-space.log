@@ -1087,11 +1087,13 @@ Allocated zp ZP_BYTE:6 [ keyboard_key_pressed::return#0 ]
 Allocated zp ZP_BYTE:7 [ keyboard_matrix_read::return#0 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test keyboard input - test the space bar
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label RASTER = $d012
   .label BGCOL = $d021
   //  CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -1105,71 +1107,71 @@ INITIAL ASM
   .const GREEN = 5
   .const BLUE = 6
   .const KEY_SPACE = $3c
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @12 [phi:@begin->@12]
+//SEG4 [1] phi from @begin to @12 [phi:@begin->@12]
 b12_from_bbegin:
   jmp b12
-//SEG4 @12
+//SEG5 @12
 b12:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @12 to main [phi:@12->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @12 to main [phi:@12->main]
 main_from_b12:
   jsr main
-//SEG7 [3] phi from @12 to @end [phi:@12->@end]
+//SEG8 [3] phi from @12 to @end [phi:@12->@end]
 bend_from_b12:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
     .label _2 = 3
-  //SEG10 [5] call keyboard_init 
+  //SEG11 [5] call keyboard_init 
     jsr keyboard_init
     jmp b4
-  //SEG11 main::@4
+  //SEG12 main::@4
   b4:
-  //SEG12 [6] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG13 [6] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$ff
     bne b4
-  //SEG13 [7] phi from main::@4 to main::@9 [phi:main::@4->main::@9]
+  //SEG14 [7] phi from main::@4 to main::@9 [phi:main::@4->main::@9]
   b9_from_b4:
     jmp b9
-  //SEG14 main::@9
+  //SEG15 main::@9
   b9:
-  //SEG15 [8] call keyboard_key_pressed 
-  //SEG16 [14] phi from main::@9 to keyboard_key_pressed [phi:main::@9->keyboard_key_pressed]
+  //SEG16 [8] call keyboard_key_pressed 
+  //SEG17 [14] phi from main::@9 to keyboard_key_pressed [phi:main::@9->keyboard_key_pressed]
   keyboard_key_pressed_from_b9:
     jsr keyboard_key_pressed
-  //SEG17 [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+  //SEG18 [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_2
     jmp b14
-  //SEG18 main::@14
+  //SEG19 main::@14
   b14:
-  //SEG19 [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
+  //SEG20 [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_2
     sta _2
-  //SEG20 [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuz1_neq_0_then_la1 
+  //SEG21 [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuz1_neq_0_then_la1 
     lda _2
     cmp #0
     bne b5
     jmp b10
-  //SEG21 main::@10
+  //SEG22 main::@10
   b10:
-  //SEG22 [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+  //SEG23 [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
     jmp b4
-  //SEG23 main::@5
+  //SEG24 main::@5
   b5:
-  //SEG24 [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG25 [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL
     jmp b4
 }
-//SEG25 keyboard_key_pressed
+//SEG26 keyboard_key_pressed
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 //  All keys exist as as KEY_XXX constants.
@@ -1180,28 +1182,28 @@ keyboard_key_pressed: {
     .label _2 = 5
     .label return = 6
     .label return_2 = 2
-  //SEG26 [15] call keyboard_matrix_read 
+  //SEG27 [15] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-  //SEG27 [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
+  //SEG28 [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return
     sta keyboard_matrix_read.return_2
     jmp b2
-  //SEG28 keyboard_key_pressed::@2
+  //SEG29 keyboard_key_pressed::@2
   b2:
-  //SEG29 [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
+  //SEG30 [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return_2
     sta _2
-  //SEG30 [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band__deref_pbuc1 
+  //SEG31 [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band__deref_pbuc1 
     lda keyboard_matrix_col_bitmask+colidx
     and _2
     sta return
     jmp breturn
-  //SEG31 keyboard_key_pressed::@return
+  //SEG32 keyboard_key_pressed::@return
   breturn:
-  //SEG32 [19] return 
+  //SEG33 [19] return 
     rts
 }
-//SEG33 keyboard_matrix_read
+//SEG34 keyboard_matrix_read
 //  Read a single row of the keyboard matrix
 //  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 //  Returns the keys pressed on the row as bits according to the C64 key matrix.
@@ -1210,32 +1212,32 @@ keyboard_key_pressed: {
 keyboard_matrix_read: {
     .label return = 7
     .label return_2 = 4
-  //SEG34 [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+  //SEG35 [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
-  //SEG35 [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
+  //SEG36 [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     sta return
     jmp breturn
-  //SEG36 keyboard_matrix_read::@return
+  //SEG37 keyboard_matrix_read::@return
   breturn:
-  //SEG37 [22] return 
+  //SEG38 [22] return 
     rts
 }
-//SEG38 keyboard_init
+//SEG39 keyboard_init
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-  //SEG39 [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
+  //SEG40 [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta CIA1_PORT_A_DDR
-  //SEG40 [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG41 [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta CIA1_PORT_B_DDR
     jmp breturn
-  //SEG41 keyboard_init::@return
+  //SEG42 keyboard_init::@return
   breturn:
-  //SEG42 [25] return 
+  //SEG43 [25] return 
     rts
 }
   //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
@@ -1273,11 +1275,13 @@ Uplifting [keyboard_init] best 1258 combination
 Uplifting [] best 1258 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test keyboard input - test the space bar
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label RASTER = $d012
   .label BGCOL = $d021
   //  CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -1291,65 +1295,65 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const GREEN = 5
   .const BLUE = 6
   .const KEY_SPACE = $3c
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @12 [phi:@begin->@12]
+//SEG4 [1] phi from @begin to @12 [phi:@begin->@12]
 b12_from_bbegin:
   jmp b12
-//SEG4 @12
+//SEG5 @12
 b12:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @12 to main [phi:@12->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @12 to main [phi:@12->main]
 main_from_b12:
   jsr main
-//SEG7 [3] phi from @12 to @end [phi:@12->@end]
+//SEG8 [3] phi from @12 to @end [phi:@12->@end]
 bend_from_b12:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
-  //SEG10 [5] call keyboard_init 
+  //SEG11 [5] call keyboard_init 
     jsr keyboard_init
     jmp b4
-  //SEG11 main::@4
+  //SEG12 main::@4
   b4:
-  //SEG12 [6] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG13 [6] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$ff
     bne b4
-  //SEG13 [7] phi from main::@4 to main::@9 [phi:main::@4->main::@9]
+  //SEG14 [7] phi from main::@4 to main::@9 [phi:main::@4->main::@9]
   b9_from_b4:
     jmp b9
-  //SEG14 main::@9
+  //SEG15 main::@9
   b9:
-  //SEG15 [8] call keyboard_key_pressed 
-  //SEG16 [14] phi from main::@9 to keyboard_key_pressed [phi:main::@9->keyboard_key_pressed]
+  //SEG16 [8] call keyboard_key_pressed 
+  //SEG17 [14] phi from main::@9 to keyboard_key_pressed [phi:main::@9->keyboard_key_pressed]
   keyboard_key_pressed_from_b9:
     jsr keyboard_key_pressed
-  //SEG17 [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+  //SEG18 [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
     jmp b14
-  //SEG18 main::@14
+  //SEG19 main::@14
   b14:
-  //SEG19 [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2
-  //SEG20 [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuaa_neq_0_then_la1 
+  //SEG20 [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2
+  //SEG21 [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b5
     jmp b10
-  //SEG21 main::@10
+  //SEG22 main::@10
   b10:
-  //SEG22 [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+  //SEG23 [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
     jmp b4
-  //SEG23 main::@5
+  //SEG24 main::@5
   b5:
-  //SEG24 [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG25 [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL
     jmp b4
 }
-//SEG25 keyboard_key_pressed
+//SEG26 keyboard_key_pressed
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 //  All keys exist as as KEY_XXX constants.
@@ -1357,53 +1361,53 @@ main: {
 keyboard_key_pressed: {
     .const colidx = KEY_SPACE&7
     .label rowidx = KEY_SPACE>>3
-  //SEG26 [15] call keyboard_matrix_read 
+  //SEG27 [15] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-  //SEG27 [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+  //SEG28 [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
     jmp b2
-  //SEG28 keyboard_key_pressed::@2
+  //SEG29 keyboard_key_pressed::@2
   b2:
-  //SEG29 [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  //SEG30 [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
+  //SEG30 [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+  //SEG31 [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
     and keyboard_matrix_col_bitmask+colidx
     jmp breturn
-  //SEG31 keyboard_key_pressed::@return
+  //SEG32 keyboard_key_pressed::@return
   breturn:
-  //SEG32 [19] return 
+  //SEG33 [19] return 
     rts
 }
-//SEG33 keyboard_matrix_read
+//SEG34 keyboard_matrix_read
 //  Read a single row of the keyboard matrix
 //  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 //  Returns the keys pressed on the row as bits according to the C64 key matrix.
 //  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 //  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-  //SEG34 [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+  //SEG35 [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
-  //SEG35 [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+  //SEG36 [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     jmp breturn
-  //SEG36 keyboard_matrix_read::@return
+  //SEG37 keyboard_matrix_read::@return
   breturn:
-  //SEG37 [22] return 
+  //SEG38 [22] return 
     rts
 }
-//SEG38 keyboard_init
+//SEG39 keyboard_init
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-  //SEG39 [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
+  //SEG40 [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta CIA1_PORT_A_DDR
-  //SEG40 [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG41 [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta CIA1_PORT_B_DDR
     jmp breturn
-  //SEG41 keyboard_init::@return
+  //SEG42 keyboard_init::@return
   breturn:
-  //SEG42 [25] return 
+  //SEG43 [25] return 
     rts
 }
   //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
@@ -1655,11 +1659,13 @@ reg byte a [ keyboard_matrix_read::return#0 ]
 FINAL ASSEMBLER
 Score: 1141
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test keyboard input - test the space bar
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label RASTER = $d012
   .label BGCOL = $d021
   //  CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -1673,47 +1679,47 @@ Score: 1141
   .const GREEN = 5
   .const BLUE = 6
   .const KEY_SPACE = $3c
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @12 [phi:@begin->@12]
-//SEG4 @12
-//SEG5 [2] call main 
-//SEG6 [4] phi from @12 to main [phi:@12->main]
-//SEG7 [3] phi from @12 to @end [phi:@12->@end]
-//SEG8 @end
-//SEG9 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @12 [phi:@begin->@12]
+//SEG5 @12
+//SEG6 [2] call main 
+//SEG7 [4] phi from @12 to main [phi:@12->main]
+//SEG8 [3] phi from @12 to @end [phi:@12->@end]
+//SEG9 @end
+//SEG10 main
 main: {
-  //SEG10 [5] call keyboard_init 
+  //SEG11 [5] call keyboard_init 
     jsr keyboard_init
-  //SEG11 main::@4
+  //SEG12 main::@4
   b4:
-  //SEG12 [6] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG13 [6] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$ff
     bne b4
-  //SEG13 [7] phi from main::@4 to main::@9 [phi:main::@4->main::@9]
-  //SEG14 main::@9
-  //SEG15 [8] call keyboard_key_pressed 
-  //SEG16 [14] phi from main::@9 to keyboard_key_pressed [phi:main::@9->keyboard_key_pressed]
+  //SEG14 [7] phi from main::@4 to main::@9 [phi:main::@4->main::@9]
+  //SEG15 main::@9
+  //SEG16 [8] call keyboard_key_pressed 
+  //SEG17 [14] phi from main::@9 to keyboard_key_pressed [phi:main::@9->keyboard_key_pressed]
     jsr keyboard_key_pressed
-  //SEG17 [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-  //SEG18 main::@14
-  //SEG19 [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2
-  //SEG20 [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuaa_neq_0_then_la1 
+  //SEG18 [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+  //SEG19 main::@14
+  //SEG20 [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2
+  //SEG21 [11] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b5
-  //SEG21 main::@10
-  //SEG22 [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+  //SEG22 main::@10
+  //SEG23 [12] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
     jmp b4
-  //SEG23 main::@5
+  //SEG24 main::@5
   b5:
-  //SEG24 [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG25 [13] *((const byte*) BGCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL
     jmp b4
 }
-//SEG25 keyboard_key_pressed
+//SEG26 keyboard_key_pressed
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 //  All keys exist as as KEY_XXX constants.
@@ -1721,45 +1727,45 @@ main: {
 keyboard_key_pressed: {
     .const colidx = KEY_SPACE&7
     .label rowidx = KEY_SPACE>>3
-  //SEG26 [15] call keyboard_matrix_read 
+  //SEG27 [15] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-  //SEG27 [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-  //SEG28 keyboard_key_pressed::@2
-  //SEG29 [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  //SEG30 [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
+  //SEG28 [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+  //SEG29 keyboard_key_pressed::@2
+  //SEG30 [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+  //SEG31 [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
     and keyboard_matrix_col_bitmask+colidx
-  //SEG31 keyboard_key_pressed::@return
-  //SEG32 [19] return 
+  //SEG32 keyboard_key_pressed::@return
+  //SEG33 [19] return 
     rts
 }
-//SEG33 keyboard_matrix_read
+//SEG34 keyboard_matrix_read
 //  Read a single row of the keyboard matrix
 //  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 //  Returns the keys pressed on the row as bits according to the C64 key matrix.
 //  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 //  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-  //SEG34 [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+  //SEG35 [20] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
-  //SEG35 [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+  //SEG36 [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
-  //SEG36 keyboard_matrix_read::@return
-  //SEG37 [22] return 
+  //SEG37 keyboard_matrix_read::@return
+  //SEG38 [22] return 
     rts
 }
-//SEG38 keyboard_init
+//SEG39 keyboard_init
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-  //SEG39 [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
+  //SEG40 [23] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta CIA1_PORT_A_DDR
-  //SEG40 [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG41 [24] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta CIA1_PORT_B_DDR
-  //SEG41 keyboard_init::@return
-  //SEG42 [25] return 
+  //SEG42 keyboard_init::@return
+  //SEG43 [25] return 
     rts
 }
   //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)

@@ -324,7 +324,6 @@ mulu8_sel: {
     lda _1+1
     rts
 }
-//  Simple binary multiplication implementation
 //  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .label mb = $c

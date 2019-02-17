@@ -1,7 +1,7 @@
+//  Illustrates problem where volatiles reuse the same ZP addresses for multiple overlapping volatiles
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-  //  Illustrates problem where volatiles reuse the same ZP addresses for multiple overlapping volatiles
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
   .label col1 = 2

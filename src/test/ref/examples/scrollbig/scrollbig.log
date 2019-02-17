@@ -1568,11 +1568,13 @@ Allocated zp ZP_BYTE:22 [ scroll_bit::bits#0 ]
 Allocated zp ZP_BYTE:23 [ scroll_bit::$9 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  An 8x8 char letter scroller
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label PROCPORT = 1
   .label CHARGEN = $d000
   .label SCREEN = $400
@@ -1583,126 +1585,126 @@ INITIAL ASM
   .label current_bit = 3
   .label current_chargen = 4
   .label nxt = $b
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
 b6_from_bbegin:
   jmp b6
-//SEG4 @6
+//SEG5 @6
 b6:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @6 to main [phi:@6->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @6 to main [phi:@6->main]
 main_from_b6:
   jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
+//SEG8 [3] phi from @6 to @end [phi:@6->@end]
 bend_from_b6:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
-  //SEG10 [5] call fillscreen 
-  //SEG11 [64] phi from main to fillscreen [phi:main->fillscreen]
+  //SEG11 [5] call fillscreen 
+  //SEG12 [64] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
-  //SEG12 [6] phi from main to main::@2 [phi:main->main::@2]
+  //SEG13 [6] phi from main to main::@2 [phi:main->main::@2]
   b2_from_main:
-  //SEG13 [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@2#0] -- pbuz1=pbuc1 
+  //SEG14 [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<CHARGEN
     sta current_chargen
     lda #>CHARGEN
     sta current_chargen+1
-  //SEG14 [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@2#1] -- pbuz1=pbuc1 
+  //SEG15 [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@2#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  //SEG15 [6] phi (byte) current_bit#29 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->main::@2#2] -- vbuz1=vbuc1 
+  //SEG16 [6] phi (byte) current_bit#29 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->main::@2#2] -- vbuz1=vbuc1 
     lda #1
     sta current_bit
-  //SEG16 [6] phi (byte) scroll#18 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:main->main::@2#3] -- vbuz1=vbuc1 
+  //SEG17 [6] phi (byte) scroll#18 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:main->main::@2#3] -- vbuz1=vbuc1 
     lda #7
     sta scroll
     jmp b2
-  //SEG17 [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  //SEG18 [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
     jmp b2
-  //SEG18 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG19 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 254) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG20 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 254) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$fe
     bne b2_from_b2
     jmp b3
-  //SEG20 main::@3
+  //SEG21 main::@3
   b3:
-  //SEG21 [8] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG22 [8] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$ff
     bne b3
     jmp b5
-  //SEG22 main::@5
+  //SEG23 main::@5
   b5:
-  //SEG23 [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG24 [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG24 [10] call scroll_soft 
+  //SEG25 [10] call scroll_soft 
     jsr scroll_soft
     jmp b8
-  //SEG25 main::@8
+  //SEG26 main::@8
   b8:
-  //SEG26 [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+  //SEG27 [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  //SEG27 [6] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
+  //SEG28 [6] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
   b2_from_b8:
-  //SEG28 [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@8->main::@2#0] -- register_copy 
-  //SEG29 [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@8->main::@2#1] -- register_copy 
-  //SEG30 [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@8->main::@2#2] -- register_copy 
-  //SEG31 [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@8->main::@2#3] -- register_copy 
+  //SEG29 [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@8->main::@2#0] -- register_copy 
+  //SEG30 [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@8->main::@2#1] -- register_copy 
+  //SEG31 [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@8->main::@2#2] -- register_copy 
+  //SEG32 [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@8->main::@2#3] -- register_copy 
     jmp b2
 }
-//SEG32 scroll_soft
+//SEG33 scroll_soft
 scroll_soft: {
-  //SEG33 [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuz1=_dec_vbuz1 
+  //SEG34 [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuz1=_dec_vbuz1 
     dec scroll
-  //SEG34 [13] if((byte) scroll#3!=(byte/word/signed word/dword/signed dword) 255) goto scroll_soft::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG35 [13] if((byte) scroll#3!=(byte/word/signed word/dword/signed dword) 255) goto scroll_soft::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda scroll
     cmp #$ff
     bne b1_from_scroll_soft
-  //SEG35 [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
+  //SEG36 [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
   b2_from_scroll_soft:
     jmp b2
-  //SEG36 scroll_soft::@2
+  //SEG37 scroll_soft::@2
   b2:
-  //SEG37 [15] call scroll_bit 
+  //SEG38 [15] call scroll_bit 
     jsr scroll_bit
-  //SEG38 [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
+  //SEG39 [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
   b1_from_b2:
-  //SEG39 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
-  //SEG40 [16] phi (byte*) nxt#14 = (byte*) nxt#36 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
-  //SEG41 [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
-  //SEG42 [16] phi (byte) scroll#10 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuz1=vbuc1 
+  //SEG40 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
+  //SEG41 [16] phi (byte*) nxt#14 = (byte*) nxt#36 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
+  //SEG42 [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
+  //SEG43 [16] phi (byte) scroll#10 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuz1=vbuc1 
     lda #7
     sta scroll
     jmp b1
-  //SEG43 [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
+  //SEG44 [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
   b1_from_scroll_soft:
-  //SEG44 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
-  //SEG45 [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
-  //SEG46 [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
-  //SEG47 [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
+  //SEG45 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
+  //SEG46 [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
+  //SEG47 [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
+  //SEG48 [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
     jmp b1
-  //SEG48 scroll_soft::@1
+  //SEG49 scroll_soft::@1
   b1:
-  //SEG49 [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuz1 
+  //SEG50 [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuz1 
     lda scroll
     sta SCROLL
     jmp breturn
-  //SEG50 scroll_soft::@return
+  //SEG51 scroll_soft::@return
   breturn:
-  //SEG51 [18] return 
+  //SEG52 [18] return 
     rts
 }
-//SEG52 scroll_bit
+//SEG53 scroll_bit
 scroll_bit: {
     .label _3 = $11
     .label _4 = $14
@@ -1712,34 +1714,34 @@ scroll_bit: {
     .label sc = 7
     .label r = 6
     .label b = 9
-  //SEG53 [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_ror_1 
+  //SEG54 [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_ror_1 
     lsr current_bit
-  //SEG54 [20] if((byte) current_bit#5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
+  //SEG55 [20] if((byte) current_bit#5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
     lda current_bit
     cmp #0
     bne b1_from_scroll_bit
-  //SEG55 [21] phi from scroll_bit to scroll_bit::@4 [phi:scroll_bit->scroll_bit::@4]
+  //SEG56 [21] phi from scroll_bit to scroll_bit::@4 [phi:scroll_bit->scroll_bit::@4]
   b4_from_scroll_bit:
     jmp b4
-  //SEG56 scroll_bit::@4
+  //SEG57 scroll_bit::@4
   b4:
-  //SEG57 [22] call next_char 
+  //SEG58 [22] call next_char 
     jsr next_char
-  //SEG58 [23] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuz1=vbuz2 
+  //SEG59 [23] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuz1=vbuz2 
     lda next_char.return_1
     sta next_char.return
     jmp b8
-  //SEG59 scroll_bit::@8
+  //SEG60 scroll_bit::@8
   b8:
-  //SEG60 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0 -- vbuz1=vbuz2 
+  //SEG61 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0 -- vbuz1=vbuz2 
     lda next_char.return
     sta _3
-  //SEG61 [25] (word) scroll_bit::c#0 ← ((word)) (byte~) scroll_bit::$3 -- vwuz1=_word_vbuz2 
+  //SEG62 [25] (word) scroll_bit::c#0 ← ((word)) (byte~) scroll_bit::$3 -- vwuz1=_word_vbuz2 
     lda _3
     sta c
     lda #0
     sta c+1
-  //SEG62 [26] (word~) scroll_bit::$4 ← (word) scroll_bit::c#0 << (byte/signed byte/word/signed word/dword/signed dword) 3 -- vwuz1=vwuz2_rol_3 
+  //SEG63 [26] (word~) scroll_bit::$4 ← (word) scroll_bit::c#0 << (byte/signed byte/word/signed word/dword/signed dword) 3 -- vwuz1=vwuz2_rol_3 
     lda c
     asl
     sta _4
@@ -1750,7 +1752,7 @@ scroll_bit: {
     rol _4+1
     asl _4
     rol _4+1
-  //SEG63 [27] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 -- pbuz1=pbuc1_plus_vwuz2 
+  //SEG64 [27] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 -- pbuz1=pbuc1_plus_vwuz2 
     lda _4
     clc
     adc #<CHARGEN
@@ -1758,88 +1760,88 @@ scroll_bit: {
     lda _4+1
     adc #>CHARGEN
     sta current_chargen+1
-  //SEG64 [28] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
+  //SEG65 [28] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   b1_from_b8:
-  //SEG65 [28] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
-  //SEG66 [28] phi (byte) current_bit#21 = (byte/word/signed word/dword/signed dword) 128 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
+  //SEG66 [28] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
+  //SEG67 [28] phi (byte) current_bit#21 = (byte/word/signed word/dword/signed dword) 128 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta current_bit
-  //SEG67 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
+  //SEG68 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
     jmp b1
-  //SEG68 [28] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
+  //SEG69 [28] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
   b1_from_scroll_bit:
-  //SEG69 [28] phi (byte*) nxt#36 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
-  //SEG70 [28] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
-  //SEG71 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
+  //SEG70 [28] phi (byte*) nxt#36 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
+  //SEG71 [28] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
+  //SEG72 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
     jmp b1
-  //SEG72 scroll_bit::@1
+  //SEG73 scroll_bit::@1
   b1:
-  //SEG73 [29] call scroll_hard 
-  //SEG74 [45] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
+  //SEG74 [29] call scroll_hard 
+  //SEG75 [45] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
   scroll_hard_from_b1:
     jsr scroll_hard
     jmp b7
-  //SEG75 scroll_bit::@7
+  //SEG76 scroll_bit::@7
   b7:
-  //SEG76 asm { sei  }
+  //SEG77 asm { sei  }
     sei
-  //SEG77 [31] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- _deref_pbuc1=vbuc2 
+  //SEG78 [31] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-  //SEG78 [32] phi from scroll_bit::@7 to scroll_bit::@2 [phi:scroll_bit::@7->scroll_bit::@2]
+  //SEG79 [32] phi from scroll_bit::@7 to scroll_bit::@2 [phi:scroll_bit::@7->scroll_bit::@2]
   b2_from_b7:
-  //SEG79 [32] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40+(byte/signed byte/word/signed word/dword/signed dword) 39 [phi:scroll_bit::@7->scroll_bit::@2#0] -- pbuz1=pbuc1 
+  //SEG80 [32] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40+(byte/signed byte/word/signed word/dword/signed dword) 39 [phi:scroll_bit::@7->scroll_bit::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28+$27
     sta sc
     lda #>SCREEN+$28+$27
     sta sc+1
-  //SEG80 [32] phi (byte) scroll_bit::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_bit::@7->scroll_bit::@2#1] -- vbuz1=vbuc1 
+  //SEG81 [32] phi (byte) scroll_bit::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_bit::@7->scroll_bit::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta r
     jmp b2
-  //SEG81 [32] phi from scroll_bit::@3 to scroll_bit::@2 [phi:scroll_bit::@3->scroll_bit::@2]
+  //SEG82 [32] phi from scroll_bit::@3 to scroll_bit::@2 [phi:scroll_bit::@3->scroll_bit::@2]
   b2_from_b3:
-  //SEG82 [32] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@3->scroll_bit::@2#0] -- register_copy 
-  //SEG83 [32] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@3->scroll_bit::@2#1] -- register_copy 
+  //SEG83 [32] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@3->scroll_bit::@2#0] -- register_copy 
+  //SEG84 [32] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@3->scroll_bit::@2#1] -- register_copy 
     jmp b2
-  //SEG84 scroll_bit::@2
+  //SEG85 scroll_bit::@2
   b2:
-  //SEG85 [33] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuz1=pbuz2_derefidx_vbuz3 
+  //SEG86 [33] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuz1=pbuz2_derefidx_vbuz3 
     ldy r
     lda (current_chargen),y
     sta bits
-  //SEG86 [34] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuz1=vbuz2_band_vbuz3 
+  //SEG87 [34] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuz1=vbuz2_band_vbuz3 
     lda bits
     and current_bit
     sta _9
-  //SEG87 [35] if((byte~) scroll_bit::$9==(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@3 -- vbuz1_eq_0_then_la1 
+  //SEG88 [35] if((byte~) scroll_bit::$9==(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@3 -- vbuz1_eq_0_then_la1 
     lda _9
     cmp #0
     beq b3_from_b2
-  //SEG88 [36] phi from scroll_bit::@2 to scroll_bit::@5 [phi:scroll_bit::@2->scroll_bit::@5]
+  //SEG89 [36] phi from scroll_bit::@2 to scroll_bit::@5 [phi:scroll_bit::@2->scroll_bit::@5]
   b5_from_b2:
     jmp b5
-  //SEG89 scroll_bit::@5
+  //SEG90 scroll_bit::@5
   b5:
-  //SEG90 [37] phi from scroll_bit::@5 to scroll_bit::@3 [phi:scroll_bit::@5->scroll_bit::@3]
+  //SEG91 [37] phi from scroll_bit::@5 to scroll_bit::@3 [phi:scroll_bit::@5->scroll_bit::@3]
   b3_from_b5:
-  //SEG91 [37] phi (byte) scroll_bit::b#2 = (byte/word/signed word/dword/signed dword) 128+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@3#0] -- vbuz1=vbuc1 
+  //SEG92 [37] phi (byte) scroll_bit::b#2 = (byte/word/signed word/dword/signed dword) 128+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@3#0] -- vbuz1=vbuc1 
     lda #$80+' '
     sta b
     jmp b3
-  //SEG92 [37] phi from scroll_bit::@2 to scroll_bit::@3 [phi:scroll_bit::@2->scroll_bit::@3]
+  //SEG93 [37] phi from scroll_bit::@2 to scroll_bit::@3 [phi:scroll_bit::@2->scroll_bit::@3]
   b3_from_b2:
-  //SEG93 [37] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@2->scroll_bit::@3#0] -- vbuz1=vbuc1 
+  //SEG94 [37] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@2->scroll_bit::@3#0] -- vbuz1=vbuc1 
     lda #' '
     sta b
     jmp b3
-  //SEG94 scroll_bit::@3
+  //SEG95 scroll_bit::@3
   b3:
-  //SEG95 [38] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuz2 
+  //SEG96 [38] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuz2 
     lda b
     ldy #0
     sta (sc),y
-  //SEG96 [39] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG97 [39] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda sc
     clc
     adc #$28
@@ -1847,161 +1849,161 @@ scroll_bit: {
     bcc !+
     inc sc+1
   !:
-  //SEG97 [40] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuz1=_inc_vbuz1 
+  //SEG98 [40] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuz1=_inc_vbuz1 
     inc r
-  //SEG98 [41] if((byte) scroll_bit::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto scroll_bit::@2 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG99 [41] if((byte) scroll_bit::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto scroll_bit::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda r
     cmp #8
     bne b2_from_b3
     jmp b6
-  //SEG99 scroll_bit::@6
+  //SEG100 scroll_bit::@6
   b6:
-  //SEG100 [42] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 55 -- _deref_pbuc1=vbuc2 
+  //SEG101 [42] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 55 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
-  //SEG101 asm { cli  }
+  //SEG102 asm { cli  }
     cli
     jmp breturn
-  //SEG102 scroll_bit::@return
+  //SEG103 scroll_bit::@return
   breturn:
-  //SEG103 [44] return 
+  //SEG104 [44] return 
     rts
 }
-//SEG104 scroll_hard
+//SEG105 scroll_hard
 scroll_hard: {
     .label i = $a
-  //SEG105 [46] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
+  //SEG106 [46] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
   b1_from_scroll_hard:
-  //SEG106 [46] phi (byte) scroll_hard::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuz1=vbuc1 
+  //SEG107 [46] phi (byte) scroll_hard::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG107 [46] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
+  //SEG108 [46] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
   b1_from_b1:
-  //SEG108 [46] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
+  //SEG109 [46] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
     jmp b1
-  //SEG109 scroll_hard::@1
+  //SEG110 scroll_hard::@1
   b1:
-  //SEG110 [47] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG111 [47] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+1,y
     sta SCREEN,y
-  //SEG111 [48] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG112 [48] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*1+1,y
     sta SCREEN+$28*1,y
-  //SEG112 [49] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG113 [49] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*2+1,y
     sta SCREEN+$28*2,y
-  //SEG113 [50] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG114 [50] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*3+1,y
     sta SCREEN+$28*3,y
-  //SEG114 [51] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG115 [51] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*4+1,y
     sta SCREEN+$28*4,y
-  //SEG115 [52] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG116 [52] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*5+1,y
     sta SCREEN+$28*5,y
-  //SEG116 [53] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG117 [53] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*6+1,y
     sta SCREEN+$28*6,y
-  //SEG117 [54] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+  //SEG118 [54] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy i
     lda SCREEN+$28*7+1,y
     sta SCREEN+$28*7,y
-  //SEG118 [55] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuz1=_inc_vbuz1 
+  //SEG119 [55] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG119 [56] if((byte) scroll_hard::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 39) goto scroll_hard::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG120 [56] if((byte) scroll_hard::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 39) goto scroll_hard::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$27
     bne b1_from_b1
     jmp breturn
-  //SEG120 scroll_hard::@return
+  //SEG121 scroll_hard::@return
   breturn:
-  //SEG121 [57] return 
+  //SEG122 [57] return 
     rts
 }
-//SEG122 next_char
+//SEG123 next_char
 //  Find the next char of the scroll text
 next_char: {
     .label return = $10
     .label c = $d
     .label return_1 = $d
-  //SEG123 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuz1=_deref_pbuz2 
+  //SEG124 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (nxt),y
     sta c
-  //SEG124 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG125 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda c
     cmp #'@'
     bne b1_from_next_char
     jmp b2
-  //SEG125 next_char::@2
+  //SEG126 next_char::@2
   b2:
-  //SEG126 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuz1=_deref_pbuc1 
+  //SEG127 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuz1=_deref_pbuc1 
     lda TEXT
     sta c
-  //SEG127 [61] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
+  //SEG128 [61] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
   b1_from_b2:
-  //SEG128 [61] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
-  //SEG129 [61] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
+  //SEG129 [61] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
+  //SEG130 [61] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
     jmp b1
-  //SEG130 [61] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
+  //SEG131 [61] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
   b1_from_next_char:
-  //SEG131 [61] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
-  //SEG132 [61] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
+  //SEG132 [61] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
+  //SEG133 [61] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
     jmp b1
-  //SEG133 next_char::@1
+  //SEG134 next_char::@1
   b1:
-  //SEG134 [62] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
+  //SEG135 [62] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
     inc nxt
     bne !+
     inc nxt+1
   !:
     jmp breturn
-  //SEG135 next_char::@return
+  //SEG136 next_char::@return
   breturn:
-  //SEG136 [63] return 
+  //SEG137 [63] return 
     rts
 }
-//SEG137 fillscreen
+//SEG138 fillscreen
 //  Fill the screen with one char
 fillscreen: {
     .const fill = $20
     .label cursor = $e
-  //SEG138 [65] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+  //SEG139 [65] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  //SEG139 [65] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+  //SEG140 [65] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
     sta cursor+1
     jmp b1
-  //SEG140 [65] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+  //SEG141 [65] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   b1_from_b1:
-  //SEG141 [65] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+  //SEG142 [65] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
     jmp b1
-  //SEG142 fillscreen::@1
+  //SEG143 fillscreen::@1
   b1:
-  //SEG143 [66] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
+  //SEG144 [66] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
     lda #fill
     ldy #0
     sta (cursor),y
-  //SEG144 [67] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
+  //SEG145 [67] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG145 [68] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
+  //SEG146 [68] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -2011,9 +2013,9 @@ fillscreen: {
     bcc b1_from_b1
   !:
     jmp breturn
-  //SEG146 fillscreen::@return
+  //SEG147 fillscreen::@return
   breturn:
-  //SEG147 [69] return 
+  //SEG148 [69] return 
     rts
 }
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
@@ -2116,11 +2118,13 @@ Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
 Allocated (was zp ZP_WORD:11) zp ZP_WORD:7 [ nxt#18 nxt#31 nxt#14 nxt#36 nxt#19 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  An 8x8 char letter scroller
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label PROCPORT = 1
   .label CHARGEN = $d000
   .label SCREEN = $400
@@ -2130,156 +2134,156 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label current_bit = 2
   .label current_chargen = 3
   .label nxt = 7
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
+//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
 b6_from_bbegin:
   jmp b6
-//SEG4 @6
+//SEG5 @6
 b6:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @6 to main [phi:@6->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @6 to main [phi:@6->main]
 main_from_b6:
   jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
+//SEG8 [3] phi from @6 to @end [phi:@6->@end]
 bend_from_b6:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
-  //SEG10 [5] call fillscreen 
-  //SEG11 [64] phi from main to fillscreen [phi:main->fillscreen]
+  //SEG11 [5] call fillscreen 
+  //SEG12 [64] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
-  //SEG12 [6] phi from main to main::@2 [phi:main->main::@2]
+  //SEG13 [6] phi from main to main::@2 [phi:main->main::@2]
   b2_from_main:
-  //SEG13 [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@2#0] -- pbuz1=pbuc1 
+  //SEG14 [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<CHARGEN
     sta current_chargen
     lda #>CHARGEN
     sta current_chargen+1
-  //SEG14 [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@2#1] -- pbuz1=pbuc1 
+  //SEG15 [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@2#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  //SEG15 [6] phi (byte) current_bit#29 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->main::@2#2] -- vbuz1=vbuc1 
+  //SEG16 [6] phi (byte) current_bit#29 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->main::@2#2] -- vbuz1=vbuc1 
     lda #1
     sta current_bit
-  //SEG16 [6] phi (byte) scroll#18 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:main->main::@2#3] -- vbuxx=vbuc1 
+  //SEG17 [6] phi (byte) scroll#18 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:main->main::@2#3] -- vbuxx=vbuc1 
     ldx #7
     jmp b2
-  //SEG17 [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  //SEG18 [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   b2_from_b2:
     jmp b2
-  //SEG18 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG19 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 254) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG20 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 254) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$fe
     bne b2_from_b2
     jmp b3
-  //SEG20 main::@3
+  //SEG21 main::@3
   b3:
-  //SEG21 [8] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG22 [8] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$ff
     bne b3
     jmp b5
-  //SEG22 main::@5
+  //SEG23 main::@5
   b5:
-  //SEG23 [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG24 [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG24 [10] call scroll_soft 
+  //SEG25 [10] call scroll_soft 
     jsr scroll_soft
     jmp b8
-  //SEG25 main::@8
+  //SEG26 main::@8
   b8:
-  //SEG26 [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+  //SEG27 [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  //SEG27 [6] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
+  //SEG28 [6] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
   b2_from_b8:
-  //SEG28 [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@8->main::@2#0] -- register_copy 
-  //SEG29 [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@8->main::@2#1] -- register_copy 
-  //SEG30 [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@8->main::@2#2] -- register_copy 
-  //SEG31 [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@8->main::@2#3] -- register_copy 
+  //SEG29 [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@8->main::@2#0] -- register_copy 
+  //SEG30 [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@8->main::@2#1] -- register_copy 
+  //SEG31 [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@8->main::@2#2] -- register_copy 
+  //SEG32 [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@8->main::@2#3] -- register_copy 
     jmp b2
 }
-//SEG32 scroll_soft
+//SEG33 scroll_soft
 scroll_soft: {
-  //SEG33 [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuxx=_dec_vbuxx 
+  //SEG34 [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuxx=_dec_vbuxx 
     dex
-  //SEG34 [13] if((byte) scroll#3!=(byte/word/signed word/dword/signed dword) 255) goto scroll_soft::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG35 [13] if((byte) scroll#3!=(byte/word/signed word/dword/signed dword) 255) goto scroll_soft::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$ff
     bne b1_from_scroll_soft
-  //SEG35 [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
+  //SEG36 [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
   b2_from_scroll_soft:
     jmp b2
-  //SEG36 scroll_soft::@2
+  //SEG37 scroll_soft::@2
   b2:
-  //SEG37 [15] call scroll_bit 
+  //SEG38 [15] call scroll_bit 
     jsr scroll_bit
-  //SEG38 [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
+  //SEG39 [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
   b1_from_b2:
-  //SEG39 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
-  //SEG40 [16] phi (byte*) nxt#14 = (byte*) nxt#36 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
-  //SEG41 [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
-  //SEG42 [16] phi (byte) scroll#10 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuxx=vbuc1 
+  //SEG40 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
+  //SEG41 [16] phi (byte*) nxt#14 = (byte*) nxt#36 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
+  //SEG42 [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
+  //SEG43 [16] phi (byte) scroll#10 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuxx=vbuc1 
     ldx #7
     jmp b1
-  //SEG43 [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
+  //SEG44 [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
   b1_from_scroll_soft:
-  //SEG44 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
-  //SEG45 [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
-  //SEG46 [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
-  //SEG47 [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
+  //SEG45 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
+  //SEG46 [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
+  //SEG47 [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
+  //SEG48 [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
     jmp b1
-  //SEG48 scroll_soft::@1
+  //SEG49 scroll_soft::@1
   b1:
-  //SEG49 [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuxx 
+  //SEG50 [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuxx 
     stx SCROLL
     jmp breturn
-  //SEG50 scroll_soft::@return
+  //SEG51 scroll_soft::@return
   breturn:
-  //SEG51 [18] return 
+  //SEG52 [18] return 
     rts
 }
-//SEG52 scroll_bit
+//SEG53 scroll_bit
 scroll_bit: {
     .label _4 = 3
     .label c = 3
     .label sc = 5
-  //SEG53 [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_ror_1 
+  //SEG54 [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_ror_1 
     lsr current_bit
-  //SEG54 [20] if((byte) current_bit#5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
+  //SEG55 [20] if((byte) current_bit#5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
     lda current_bit
     cmp #0
     bne b1_from_scroll_bit
-  //SEG55 [21] phi from scroll_bit to scroll_bit::@4 [phi:scroll_bit->scroll_bit::@4]
+  //SEG56 [21] phi from scroll_bit to scroll_bit::@4 [phi:scroll_bit->scroll_bit::@4]
   b4_from_scroll_bit:
     jmp b4
-  //SEG56 scroll_bit::@4
+  //SEG57 scroll_bit::@4
   b4:
-  //SEG57 [22] call next_char 
+  //SEG58 [22] call next_char 
     jsr next_char
-  //SEG58 [23] (byte) next_char::return#0 ← (byte) next_char::return#1
+  //SEG59 [23] (byte) next_char::return#0 ← (byte) next_char::return#1
     jmp b8
-  //SEG59 scroll_bit::@8
+  //SEG60 scroll_bit::@8
   b8:
-  //SEG60 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0
-  //SEG61 [25] (word) scroll_bit::c#0 ← ((word)) (byte~) scroll_bit::$3 -- vwuz1=_word_vbuaa 
+  //SEG61 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0
+  //SEG62 [25] (word) scroll_bit::c#0 ← ((word)) (byte~) scroll_bit::$3 -- vwuz1=_word_vbuaa 
     sta c
     lda #0
     sta c+1
-  //SEG62 [26] (word~) scroll_bit::$4 ← (word) scroll_bit::c#0 << (byte/signed byte/word/signed word/dword/signed dword) 3 -- vwuz1=vwuz1_rol_3 
+  //SEG63 [26] (word~) scroll_bit::$4 ← (word) scroll_bit::c#0 << (byte/signed byte/word/signed word/dword/signed dword) 3 -- vwuz1=vwuz1_rol_3 
     asl _4
     rol _4+1
     asl _4
     rol _4+1
     asl _4
     rol _4+1
-  //SEG63 [27] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 -- pbuz1=pbuc1_plus_vwuz1 
+  //SEG64 [27] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda current_chargen
     adc #<CHARGEN
@@ -2287,81 +2291,81 @@ scroll_bit: {
     lda current_chargen+1
     adc #>CHARGEN
     sta current_chargen+1
-  //SEG64 [28] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
+  //SEG65 [28] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
   b1_from_b8:
-  //SEG65 [28] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
-  //SEG66 [28] phi (byte) current_bit#21 = (byte/word/signed word/dword/signed dword) 128 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
+  //SEG66 [28] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
+  //SEG67 [28] phi (byte) current_bit#21 = (byte/word/signed word/dword/signed dword) 128 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta current_bit
-  //SEG67 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
+  //SEG68 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
     jmp b1
-  //SEG68 [28] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
+  //SEG69 [28] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
   b1_from_scroll_bit:
-  //SEG69 [28] phi (byte*) nxt#36 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
-  //SEG70 [28] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
-  //SEG71 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
+  //SEG70 [28] phi (byte*) nxt#36 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
+  //SEG71 [28] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
+  //SEG72 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
     jmp b1
-  //SEG72 scroll_bit::@1
+  //SEG73 scroll_bit::@1
   b1:
-  //SEG73 [29] call scroll_hard 
-  //SEG74 [45] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
+  //SEG74 [29] call scroll_hard 
+  //SEG75 [45] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
   scroll_hard_from_b1:
     jsr scroll_hard
     jmp b7
-  //SEG75 scroll_bit::@7
+  //SEG76 scroll_bit::@7
   b7:
-  //SEG76 asm { sei  }
+  //SEG77 asm { sei  }
     sei
-  //SEG77 [31] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- _deref_pbuc1=vbuc2 
+  //SEG78 [31] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-  //SEG78 [32] phi from scroll_bit::@7 to scroll_bit::@2 [phi:scroll_bit::@7->scroll_bit::@2]
+  //SEG79 [32] phi from scroll_bit::@7 to scroll_bit::@2 [phi:scroll_bit::@7->scroll_bit::@2]
   b2_from_b7:
-  //SEG79 [32] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40+(byte/signed byte/word/signed word/dword/signed dword) 39 [phi:scroll_bit::@7->scroll_bit::@2#0] -- pbuz1=pbuc1 
+  //SEG80 [32] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40+(byte/signed byte/word/signed word/dword/signed dword) 39 [phi:scroll_bit::@7->scroll_bit::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28+$27
     sta sc
     lda #>SCREEN+$28+$27
     sta sc+1
-  //SEG80 [32] phi (byte) scroll_bit::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_bit::@7->scroll_bit::@2#1] -- vbuxx=vbuc1 
+  //SEG81 [32] phi (byte) scroll_bit::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_bit::@7->scroll_bit::@2#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b2
-  //SEG81 [32] phi from scroll_bit::@3 to scroll_bit::@2 [phi:scroll_bit::@3->scroll_bit::@2]
+  //SEG82 [32] phi from scroll_bit::@3 to scroll_bit::@2 [phi:scroll_bit::@3->scroll_bit::@2]
   b2_from_b3:
-  //SEG82 [32] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@3->scroll_bit::@2#0] -- register_copy 
-  //SEG83 [32] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@3->scroll_bit::@2#1] -- register_copy 
+  //SEG83 [32] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@3->scroll_bit::@2#0] -- register_copy 
+  //SEG84 [32] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@3->scroll_bit::@2#1] -- register_copy 
     jmp b2
-  //SEG84 scroll_bit::@2
+  //SEG85 scroll_bit::@2
   b2:
-  //SEG85 [33] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuaa=pbuz1_derefidx_vbuxx 
+  //SEG86 [33] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuaa=pbuz1_derefidx_vbuxx 
     txa
     tay
     lda (current_chargen),y
-  //SEG86 [34] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuaa=vbuaa_band_vbuz1 
+  //SEG87 [34] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuaa=vbuaa_band_vbuz1 
     and current_bit
-  //SEG87 [35] if((byte~) scroll_bit::$9==(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@3 -- vbuaa_eq_0_then_la1 
+  //SEG88 [35] if((byte~) scroll_bit::$9==(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
-  //SEG88 [36] phi from scroll_bit::@2 to scroll_bit::@5 [phi:scroll_bit::@2->scroll_bit::@5]
+  //SEG89 [36] phi from scroll_bit::@2 to scroll_bit::@5 [phi:scroll_bit::@2->scroll_bit::@5]
   b5_from_b2:
     jmp b5
-  //SEG89 scroll_bit::@5
+  //SEG90 scroll_bit::@5
   b5:
-  //SEG90 [37] phi from scroll_bit::@5 to scroll_bit::@3 [phi:scroll_bit::@5->scroll_bit::@3]
+  //SEG91 [37] phi from scroll_bit::@5 to scroll_bit::@3 [phi:scroll_bit::@5->scroll_bit::@3]
   b3_from_b5:
-  //SEG91 [37] phi (byte) scroll_bit::b#2 = (byte/word/signed word/dword/signed dword) 128+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@3#0] -- vbuaa=vbuc1 
+  //SEG92 [37] phi (byte) scroll_bit::b#2 = (byte/word/signed word/dword/signed dword) 128+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@3#0] -- vbuaa=vbuc1 
     lda #$80+' '
     jmp b3
-  //SEG92 [37] phi from scroll_bit::@2 to scroll_bit::@3 [phi:scroll_bit::@2->scroll_bit::@3]
+  //SEG93 [37] phi from scroll_bit::@2 to scroll_bit::@3 [phi:scroll_bit::@2->scroll_bit::@3]
   b3_from_b2:
-  //SEG93 [37] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@2->scroll_bit::@3#0] -- vbuaa=vbuc1 
+  //SEG94 [37] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@2->scroll_bit::@3#0] -- vbuaa=vbuc1 
     lda #' '
     jmp b3
-  //SEG94 scroll_bit::@3
+  //SEG95 scroll_bit::@3
   b3:
-  //SEG95 [38] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuaa 
+  //SEG96 [38] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sc),y
-  //SEG96 [39] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG97 [39] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda sc
     clc
     adc #$28
@@ -2369,143 +2373,143 @@ scroll_bit: {
     bcc !+
     inc sc+1
   !:
-  //SEG97 [40] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuxx=_inc_vbuxx 
+  //SEG98 [40] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG98 [41] if((byte) scroll_bit::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto scroll_bit::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG99 [41] if((byte) scroll_bit::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto scroll_bit::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b2_from_b3
     jmp b6
-  //SEG99 scroll_bit::@6
+  //SEG100 scroll_bit::@6
   b6:
-  //SEG100 [42] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 55 -- _deref_pbuc1=vbuc2 
+  //SEG101 [42] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 55 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
-  //SEG101 asm { cli  }
+  //SEG102 asm { cli  }
     cli
     jmp breturn
-  //SEG102 scroll_bit::@return
+  //SEG103 scroll_bit::@return
   breturn:
-  //SEG103 [44] return 
+  //SEG104 [44] return 
     rts
 }
-//SEG104 scroll_hard
+//SEG105 scroll_hard
 scroll_hard: {
-  //SEG105 [46] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
+  //SEG106 [46] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
   b1_from_scroll_hard:
-  //SEG106 [46] phi (byte) scroll_hard::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuxx=vbuc1 
+  //SEG107 [46] phi (byte) scroll_hard::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG107 [46] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
+  //SEG108 [46] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
   b1_from_b1:
-  //SEG108 [46] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
+  //SEG109 [46] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
     jmp b1
-  //SEG109 scroll_hard::@1
+  //SEG110 scroll_hard::@1
   b1:
-  //SEG110 [47] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG111 [47] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+1,x
     sta SCREEN,x
-  //SEG111 [48] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG112 [48] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*1+1,x
     sta SCREEN+$28*1,x
-  //SEG112 [49] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG113 [49] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*2+1,x
     sta SCREEN+$28*2,x
-  //SEG113 [50] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG114 [50] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*3+1,x
     sta SCREEN+$28*3,x
-  //SEG114 [51] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG115 [51] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*4+1,x
     sta SCREEN+$28*4,x
-  //SEG115 [52] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG116 [52] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*5+1,x
     sta SCREEN+$28*5,x
-  //SEG116 [53] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG117 [53] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*6+1,x
     sta SCREEN+$28*6,x
-  //SEG117 [54] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG118 [54] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*7+1,x
     sta SCREEN+$28*7,x
-  //SEG118 [55] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG119 [55] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG119 [56] if((byte) scroll_hard::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 39) goto scroll_hard::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG120 [56] if((byte) scroll_hard::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 39) goto scroll_hard::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$27
     bne b1_from_b1
     jmp breturn
-  //SEG120 scroll_hard::@return
+  //SEG121 scroll_hard::@return
   breturn:
-  //SEG121 [57] return 
+  //SEG122 [57] return 
     rts
 }
-//SEG122 next_char
+//SEG123 next_char
 //  Find the next char of the scroll text
 next_char: {
-  //SEG123 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuaa=_deref_pbuz1 
+  //SEG124 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (nxt),y
-  //SEG124 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuaa_neq_vbuc1_then_la1 
+  //SEG125 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #'@'
     bne b1_from_next_char
     jmp b2
-  //SEG125 next_char::@2
+  //SEG126 next_char::@2
   b2:
-  //SEG126 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuaa=_deref_pbuc1 
+  //SEG127 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuaa=_deref_pbuc1 
     lda TEXT
-  //SEG127 [61] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
+  //SEG128 [61] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
   b1_from_b2:
-  //SEG128 [61] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
-  //SEG129 [61] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
+  //SEG129 [61] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
+  //SEG130 [61] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
     jmp b1
-  //SEG130 [61] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
+  //SEG131 [61] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
   b1_from_next_char:
-  //SEG131 [61] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
-  //SEG132 [61] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
+  //SEG132 [61] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
+  //SEG133 [61] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
     jmp b1
-  //SEG133 next_char::@1
+  //SEG134 next_char::@1
   b1:
-  //SEG134 [62] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
+  //SEG135 [62] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
     inc nxt
     bne !+
     inc nxt+1
   !:
     jmp breturn
-  //SEG135 next_char::@return
+  //SEG136 next_char::@return
   breturn:
-  //SEG136 [63] return 
+  //SEG137 [63] return 
     rts
 }
-//SEG137 fillscreen
+//SEG138 fillscreen
 //  Fill the screen with one char
 fillscreen: {
     .const fill = $20
     .label cursor = 3
-  //SEG138 [65] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+  //SEG139 [65] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  //SEG139 [65] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+  //SEG140 [65] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
     sta cursor+1
     jmp b1
-  //SEG140 [65] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+  //SEG141 [65] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   b1_from_b1:
-  //SEG141 [65] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+  //SEG142 [65] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
     jmp b1
-  //SEG142 fillscreen::@1
+  //SEG143 fillscreen::@1
   b1:
-  //SEG143 [66] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
+  //SEG144 [66] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
     lda #fill
     ldy #0
     sta (cursor),y
-  //SEG144 [67] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
+  //SEG145 [67] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG145 [68] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
+  //SEG146 [68] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b1
@@ -2515,9 +2519,9 @@ fillscreen: {
     bcc b1_from_b1
   !:
     jmp breturn
-  //SEG146 fillscreen::@return
+  //SEG147 fillscreen::@return
   breturn:
-  //SEG147 [69] return 
+  //SEG148 [69] return 
     rts
 }
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"
@@ -2731,11 +2735,13 @@ reg byte a [ scroll_bit::$9 ]
 FINAL ASSEMBLER
 Score: 20822
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  An 8x8 char letter scroller
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label PROCPORT = 1
   .label CHARGEN = $d000
   .label SCREEN = $400
@@ -2745,122 +2751,122 @@ Score: 20822
   .label current_bit = 2
   .label current_chargen = 3
   .label nxt = 7
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @6 [phi:@begin->@6]
-//SEG4 @6
-//SEG5 [2] call main 
-//SEG6 [4] phi from @6 to main [phi:@6->main]
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
-//SEG8 @end
-//SEG9 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
+//SEG5 @6
+//SEG6 [2] call main 
+//SEG7 [4] phi from @6 to main [phi:@6->main]
+//SEG8 [3] phi from @6 to @end [phi:@6->@end]
+//SEG9 @end
+//SEG10 main
 main: {
-  //SEG10 [5] call fillscreen 
-  //SEG11 [64] phi from main to fillscreen [phi:main->fillscreen]
+  //SEG11 [5] call fillscreen 
+  //SEG12 [64] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
-  //SEG12 [6] phi from main to main::@2 [phi:main->main::@2]
-  //SEG13 [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@2#0] -- pbuz1=pbuc1 
+  //SEG13 [6] phi from main to main::@2 [phi:main->main::@2]
+  //SEG14 [6] phi (byte*) current_chargen#27 = (const byte*) CHARGEN#0 [phi:main->main::@2#0] -- pbuz1=pbuc1 
     lda #<CHARGEN
     sta current_chargen
     lda #>CHARGEN
     sta current_chargen+1
-  //SEG14 [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@2#1] -- pbuz1=pbuc1 
+  //SEG15 [6] phi (byte*) nxt#31 = (const byte*) TEXT#0 [phi:main->main::@2#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  //SEG15 [6] phi (byte) current_bit#29 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->main::@2#2] -- vbuz1=vbuc1 
+  //SEG16 [6] phi (byte) current_bit#29 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->main::@2#2] -- vbuz1=vbuc1 
     lda #1
     sta current_bit
-  //SEG16 [6] phi (byte) scroll#18 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:main->main::@2#3] -- vbuxx=vbuc1 
+  //SEG17 [6] phi (byte) scroll#18 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:main->main::@2#3] -- vbuxx=vbuc1 
     ldx #7
-  //SEG17 [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  //SEG18 main::@2
+  //SEG18 [6] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  //SEG19 main::@2
   b2:
-  //SEG19 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 254) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG20 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 254) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$fe
     bne b2
-  //SEG20 main::@3
+  //SEG21 main::@3
   b3:
-  //SEG21 [8] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG22 [8] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda RASTER
     cmp #$ff
     bne b3
-  //SEG22 main::@5
-  //SEG23 [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG23 main::@5
+  //SEG24 [9] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG24 [10] call scroll_soft 
+  //SEG25 [10] call scroll_soft 
     jsr scroll_soft
-  //SEG25 main::@8
-  //SEG26 [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+  //SEG26 main::@8
+  //SEG27 [11] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  //SEG27 [6] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
-  //SEG28 [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@8->main::@2#0] -- register_copy 
-  //SEG29 [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@8->main::@2#1] -- register_copy 
-  //SEG30 [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@8->main::@2#2] -- register_copy 
-  //SEG31 [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@8->main::@2#3] -- register_copy 
+  //SEG28 [6] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
+  //SEG29 [6] phi (byte*) current_chargen#27 = (byte*) current_chargen#11 [phi:main::@8->main::@2#0] -- register_copy 
+  //SEG30 [6] phi (byte*) nxt#31 = (byte*) nxt#14 [phi:main::@8->main::@2#1] -- register_copy 
+  //SEG31 [6] phi (byte) current_bit#29 = (byte) current_bit#12 [phi:main::@8->main::@2#2] -- register_copy 
+  //SEG32 [6] phi (byte) scroll#18 = (byte) scroll#10 [phi:main::@8->main::@2#3] -- register_copy 
     jmp b2
 }
-//SEG32 scroll_soft
+//SEG33 scroll_soft
 scroll_soft: {
-  //SEG33 [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuxx=_dec_vbuxx 
+  //SEG34 [12] (byte) scroll#3 ← -- (byte) scroll#18 -- vbuxx=_dec_vbuxx 
     dex
-  //SEG34 [13] if((byte) scroll#3!=(byte/word/signed word/dword/signed dword) 255) goto scroll_soft::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG35 [13] if((byte) scroll#3!=(byte/word/signed word/dword/signed dword) 255) goto scroll_soft::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$ff
     bne b1
-  //SEG35 [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
-  //SEG36 scroll_soft::@2
-  //SEG37 [15] call scroll_bit 
+  //SEG36 [14] phi from scroll_soft to scroll_soft::@2 [phi:scroll_soft->scroll_soft::@2]
+  //SEG37 scroll_soft::@2
+  //SEG38 [15] call scroll_bit 
     jsr scroll_bit
-  //SEG38 [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
-  //SEG39 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
-  //SEG40 [16] phi (byte*) nxt#14 = (byte*) nxt#36 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
-  //SEG41 [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
-  //SEG42 [16] phi (byte) scroll#10 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuxx=vbuc1 
+  //SEG39 [16] phi from scroll_soft::@2 to scroll_soft::@1 [phi:scroll_soft::@2->scroll_soft::@1]
+  //SEG40 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#19 [phi:scroll_soft::@2->scroll_soft::@1#0] -- register_copy 
+  //SEG41 [16] phi (byte*) nxt#14 = (byte*) nxt#36 [phi:scroll_soft::@2->scroll_soft::@1#1] -- register_copy 
+  //SEG42 [16] phi (byte) current_bit#12 = (byte) current_bit#21 [phi:scroll_soft::@2->scroll_soft::@1#2] -- register_copy 
+  //SEG43 [16] phi (byte) scroll#10 = (byte/signed byte/word/signed word/dword/signed dword) 7 [phi:scroll_soft::@2->scroll_soft::@1#3] -- vbuxx=vbuc1 
     ldx #7
-  //SEG43 [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
-  //SEG44 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
-  //SEG45 [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
-  //SEG46 [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
-  //SEG47 [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
-  //SEG48 scroll_soft::@1
+  //SEG44 [16] phi from scroll_soft to scroll_soft::@1 [phi:scroll_soft->scroll_soft::@1]
+  //SEG45 [16] phi (byte*) current_chargen#11 = (byte*) current_chargen#27 [phi:scroll_soft->scroll_soft::@1#0] -- register_copy 
+  //SEG46 [16] phi (byte*) nxt#14 = (byte*) nxt#31 [phi:scroll_soft->scroll_soft::@1#1] -- register_copy 
+  //SEG47 [16] phi (byte) current_bit#12 = (byte) current_bit#29 [phi:scroll_soft->scroll_soft::@1#2] -- register_copy 
+  //SEG48 [16] phi (byte) scroll#10 = (byte) scroll#3 [phi:scroll_soft->scroll_soft::@1#3] -- register_copy 
+  //SEG49 scroll_soft::@1
   b1:
-  //SEG49 [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuxx 
+  //SEG50 [17] *((const byte*) SCROLL#0) ← (byte) scroll#10 -- _deref_pbuc1=vbuxx 
     stx SCROLL
-  //SEG50 scroll_soft::@return
-  //SEG51 [18] return 
+  //SEG51 scroll_soft::@return
+  //SEG52 [18] return 
     rts
 }
-//SEG52 scroll_bit
+//SEG53 scroll_bit
 scroll_bit: {
     .label _4 = 3
     .label c = 3
     .label sc = 5
-  //SEG53 [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_ror_1 
+  //SEG54 [19] (byte) current_bit#5 ← (byte) current_bit#29 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_ror_1 
     lsr current_bit
-  //SEG54 [20] if((byte) current_bit#5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
+  //SEG55 [20] if((byte) current_bit#5!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@1 -- vbuz1_neq_0_then_la1 
     lda current_bit
     cmp #0
     bne b1
-  //SEG55 [21] phi from scroll_bit to scroll_bit::@4 [phi:scroll_bit->scroll_bit::@4]
-  //SEG56 scroll_bit::@4
-  //SEG57 [22] call next_char 
+  //SEG56 [21] phi from scroll_bit to scroll_bit::@4 [phi:scroll_bit->scroll_bit::@4]
+  //SEG57 scroll_bit::@4
+  //SEG58 [22] call next_char 
     jsr next_char
-  //SEG58 [23] (byte) next_char::return#0 ← (byte) next_char::return#1
-  //SEG59 scroll_bit::@8
-  //SEG60 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0
-  //SEG61 [25] (word) scroll_bit::c#0 ← ((word)) (byte~) scroll_bit::$3 -- vwuz1=_word_vbuaa 
+  //SEG59 [23] (byte) next_char::return#0 ← (byte) next_char::return#1
+  //SEG60 scroll_bit::@8
+  //SEG61 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0
+  //SEG62 [25] (word) scroll_bit::c#0 ← ((word)) (byte~) scroll_bit::$3 -- vwuz1=_word_vbuaa 
     sta c
     lda #0
     sta c+1
-  //SEG62 [26] (word~) scroll_bit::$4 ← (word) scroll_bit::c#0 << (byte/signed byte/word/signed word/dword/signed dword) 3 -- vwuz1=vwuz1_rol_3 
+  //SEG63 [26] (word~) scroll_bit::$4 ← (word) scroll_bit::c#0 << (byte/signed byte/word/signed word/dword/signed dword) 3 -- vwuz1=vwuz1_rol_3 
     asl _4
     rol _4+1
     asl _4
     rol _4+1
     asl _4
     rol _4+1
-  //SEG63 [27] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 -- pbuz1=pbuc1_plus_vwuz1 
+  //SEG64 [27] (byte*) current_chargen#5 ← (const byte*) CHARGEN#0 + (word~) scroll_bit::$4 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda current_chargen
     adc #<CHARGEN
@@ -2868,65 +2874,65 @@ scroll_bit: {
     lda current_chargen+1
     adc #>CHARGEN
     sta current_chargen+1
-  //SEG64 [28] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
-  //SEG65 [28] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
-  //SEG66 [28] phi (byte) current_bit#21 = (byte/word/signed word/dword/signed dword) 128 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
+  //SEG65 [28] phi from scroll_bit::@8 to scroll_bit::@1 [phi:scroll_bit::@8->scroll_bit::@1]
+  //SEG66 [28] phi (byte*) nxt#36 = (byte*) nxt#19 [phi:scroll_bit::@8->scroll_bit::@1#0] -- register_copy 
+  //SEG67 [28] phi (byte) current_bit#21 = (byte/word/signed word/dword/signed dword) 128 [phi:scroll_bit::@8->scroll_bit::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta current_bit
-  //SEG67 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
-  //SEG68 [28] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
-  //SEG69 [28] phi (byte*) nxt#36 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
-  //SEG70 [28] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
-  //SEG71 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
-  //SEG72 scroll_bit::@1
+  //SEG68 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#5 [phi:scroll_bit::@8->scroll_bit::@1#2] -- register_copy 
+  //SEG69 [28] phi from scroll_bit to scroll_bit::@1 [phi:scroll_bit->scroll_bit::@1]
+  //SEG70 [28] phi (byte*) nxt#36 = (byte*) nxt#31 [phi:scroll_bit->scroll_bit::@1#0] -- register_copy 
+  //SEG71 [28] phi (byte) current_bit#21 = (byte) current_bit#5 [phi:scroll_bit->scroll_bit::@1#1] -- register_copy 
+  //SEG72 [28] phi (byte*) current_chargen#19 = (byte*) current_chargen#27 [phi:scroll_bit->scroll_bit::@1#2] -- register_copy 
+  //SEG73 scroll_bit::@1
   b1:
-  //SEG73 [29] call scroll_hard 
-  //SEG74 [45] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
+  //SEG74 [29] call scroll_hard 
+  //SEG75 [45] phi from scroll_bit::@1 to scroll_hard [phi:scroll_bit::@1->scroll_hard]
     jsr scroll_hard
-  //SEG75 scroll_bit::@7
-  //SEG76 asm { sei  }
+  //SEG76 scroll_bit::@7
+  //SEG77 asm { sei  }
     sei
-  //SEG77 [31] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- _deref_pbuc1=vbuc2 
+  //SEG78 [31] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 50 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-  //SEG78 [32] phi from scroll_bit::@7 to scroll_bit::@2 [phi:scroll_bit::@7->scroll_bit::@2]
-  //SEG79 [32] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40+(byte/signed byte/word/signed word/dword/signed dword) 39 [phi:scroll_bit::@7->scroll_bit::@2#0] -- pbuz1=pbuc1 
+  //SEG79 [32] phi from scroll_bit::@7 to scroll_bit::@2 [phi:scroll_bit::@7->scroll_bit::@2]
+  //SEG80 [32] phi (byte*) scroll_bit::sc#2 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40+(byte/signed byte/word/signed word/dword/signed dword) 39 [phi:scroll_bit::@7->scroll_bit::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28+$27
     sta sc
     lda #>SCREEN+$28+$27
     sta sc+1
-  //SEG80 [32] phi (byte) scroll_bit::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_bit::@7->scroll_bit::@2#1] -- vbuxx=vbuc1 
+  //SEG81 [32] phi (byte) scroll_bit::r#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_bit::@7->scroll_bit::@2#1] -- vbuxx=vbuc1 
     ldx #0
-  //SEG81 [32] phi from scroll_bit::@3 to scroll_bit::@2 [phi:scroll_bit::@3->scroll_bit::@2]
-  //SEG82 [32] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@3->scroll_bit::@2#0] -- register_copy 
-  //SEG83 [32] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@3->scroll_bit::@2#1] -- register_copy 
-  //SEG84 scroll_bit::@2
+  //SEG82 [32] phi from scroll_bit::@3 to scroll_bit::@2 [phi:scroll_bit::@3->scroll_bit::@2]
+  //SEG83 [32] phi (byte*) scroll_bit::sc#2 = (byte*) scroll_bit::sc#1 [phi:scroll_bit::@3->scroll_bit::@2#0] -- register_copy 
+  //SEG84 [32] phi (byte) scroll_bit::r#2 = (byte) scroll_bit::r#1 [phi:scroll_bit::@3->scroll_bit::@2#1] -- register_copy 
+  //SEG85 scroll_bit::@2
   b2:
-  //SEG85 [33] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuaa=pbuz1_derefidx_vbuxx 
+  //SEG86 [33] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) -- vbuaa=pbuz1_derefidx_vbuxx 
     txa
     tay
     lda (current_chargen),y
-  //SEG86 [34] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuaa=vbuaa_band_vbuz1 
+  //SEG87 [34] (byte~) scroll_bit::$9 ← (byte) scroll_bit::bits#0 & (byte) current_bit#21 -- vbuaa=vbuaa_band_vbuz1 
     and current_bit
-  //SEG87 [35] if((byte~) scroll_bit::$9==(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@3 -- vbuaa_eq_0_then_la1 
+  //SEG88 [35] if((byte~) scroll_bit::$9==(byte/signed byte/word/signed word/dword/signed dword) 0) goto scroll_bit::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4
-  //SEG88 [36] phi from scroll_bit::@2 to scroll_bit::@5 [phi:scroll_bit::@2->scroll_bit::@5]
-  //SEG89 scroll_bit::@5
-  //SEG90 [37] phi from scroll_bit::@5 to scroll_bit::@3 [phi:scroll_bit::@5->scroll_bit::@3]
-  //SEG91 [37] phi (byte) scroll_bit::b#2 = (byte/word/signed word/dword/signed dword) 128+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@3#0] -- vbuaa=vbuc1 
+  //SEG89 [36] phi from scroll_bit::@2 to scroll_bit::@5 [phi:scroll_bit::@2->scroll_bit::@5]
+  //SEG90 scroll_bit::@5
+  //SEG91 [37] phi from scroll_bit::@5 to scroll_bit::@3 [phi:scroll_bit::@5->scroll_bit::@3]
+  //SEG92 [37] phi (byte) scroll_bit::b#2 = (byte/word/signed word/dword/signed dword) 128+(byte) ' ' [phi:scroll_bit::@5->scroll_bit::@3#0] -- vbuaa=vbuc1 
     lda #$80+' '
     jmp b3
-  //SEG92 [37] phi from scroll_bit::@2 to scroll_bit::@3 [phi:scroll_bit::@2->scroll_bit::@3]
+  //SEG93 [37] phi from scroll_bit::@2 to scroll_bit::@3 [phi:scroll_bit::@2->scroll_bit::@3]
   b4:
-  //SEG93 [37] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@2->scroll_bit::@3#0] -- vbuaa=vbuc1 
+  //SEG94 [37] phi (byte) scroll_bit::b#2 = (byte) ' ' [phi:scroll_bit::@2->scroll_bit::@3#0] -- vbuaa=vbuc1 
     lda #' '
-  //SEG94 scroll_bit::@3
+  //SEG95 scroll_bit::@3
   b3:
-  //SEG95 [38] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuaa 
+  //SEG96 [38] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sc),y
-  //SEG96 [39] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG97 [39] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda sc
     clc
     adc #$28
@@ -2934,121 +2940,121 @@ scroll_bit: {
     bcc !+
     inc sc+1
   !:
-  //SEG97 [40] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuxx=_inc_vbuxx 
+  //SEG98 [40] (byte) scroll_bit::r#1 ← ++ (byte) scroll_bit::r#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG98 [41] if((byte) scroll_bit::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto scroll_bit::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG99 [41] if((byte) scroll_bit::r#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto scroll_bit::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne b2
-  //SEG99 scroll_bit::@6
-  //SEG100 [42] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 55 -- _deref_pbuc1=vbuc2 
+  //SEG100 scroll_bit::@6
+  //SEG101 [42] *((const byte*) PROCPORT#0) ← (byte/signed byte/word/signed word/dword/signed dword) 55 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
-  //SEG101 asm { cli  }
+  //SEG102 asm { cli  }
     cli
-  //SEG102 scroll_bit::@return
-  //SEG103 [44] return 
+  //SEG103 scroll_bit::@return
+  //SEG104 [44] return 
     rts
 }
-//SEG104 scroll_hard
+//SEG105 scroll_hard
 scroll_hard: {
-  //SEG105 [46] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
-  //SEG106 [46] phi (byte) scroll_hard::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuxx=vbuc1 
+  //SEG106 [46] phi from scroll_hard to scroll_hard::@1 [phi:scroll_hard->scroll_hard::@1]
+  //SEG107 [46] phi (byte) scroll_hard::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:scroll_hard->scroll_hard::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG107 [46] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
-  //SEG108 [46] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
-  //SEG109 scroll_hard::@1
+  //SEG108 [46] phi from scroll_hard::@1 to scroll_hard::@1 [phi:scroll_hard::@1->scroll_hard::@1]
+  //SEG109 [46] phi (byte) scroll_hard::i#2 = (byte) scroll_hard::i#1 [phi:scroll_hard::@1->scroll_hard::@1#0] -- register_copy 
+  //SEG110 scroll_hard::@1
   b1:
-  //SEG110 [47] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG111 [47] *((const byte*) SCREEN#0 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+1,x
     sta SCREEN,x
-  //SEG111 [48] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG112 [48] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*1+1,x
     sta SCREEN+$28*1,x
-  //SEG112 [49] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG113 [49] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*2+1,x
     sta SCREEN+$28*2,x
-  //SEG113 [50] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG114 [50] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 3+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*3+1,x
     sta SCREEN+$28*3,x
-  //SEG114 [51] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG115 [51] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 4+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*4+1,x
     sta SCREEN+$28*4,x
-  //SEG115 [52] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG116 [52] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*5+1,x
     sta SCREEN+$28*5,x
-  //SEG116 [53] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG117 [53] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 6+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*6+1,x
     sta SCREEN+$28*6,x
-  //SEG117 [54] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+  //SEG118 [54] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 7+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) scroll_hard::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SCREEN+$28*7+1,x
     sta SCREEN+$28*7,x
-  //SEG118 [55] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG119 [55] (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG119 [56] if((byte) scroll_hard::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 39) goto scroll_hard::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG120 [56] if((byte) scroll_hard::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 39) goto scroll_hard::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$27
     bne b1
-  //SEG120 scroll_hard::@return
-  //SEG121 [57] return 
+  //SEG121 scroll_hard::@return
+  //SEG122 [57] return 
     rts
 }
-//SEG122 next_char
+//SEG123 next_char
 //  Find the next char of the scroll text
 next_char: {
-  //SEG123 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuaa=_deref_pbuz1 
+  //SEG124 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (nxt),y
-  //SEG124 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuaa_neq_vbuc1_then_la1 
+  //SEG125 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #'@'
     bne b1
-  //SEG125 next_char::@2
-  //SEG126 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuaa=_deref_pbuc1 
+  //SEG126 next_char::@2
+  //SEG127 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuaa=_deref_pbuc1 
     lda TEXT
-  //SEG127 [61] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
-  //SEG128 [61] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
-  //SEG129 [61] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
+  //SEG128 [61] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
+  //SEG129 [61] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
+  //SEG130 [61] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  //SEG130 [61] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
-  //SEG131 [61] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
-  //SEG132 [61] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
-  //SEG133 next_char::@1
+  //SEG131 [61] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
+  //SEG132 [61] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
+  //SEG133 [61] phi (byte*) nxt#18 = (byte*) nxt#31 [phi:next_char->next_char::@1#1] -- register_copy 
+  //SEG134 next_char::@1
   b1:
-  //SEG134 [62] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
+  //SEG135 [62] (byte*) nxt#19 ← ++ (byte*) nxt#18 -- pbuz1=_inc_pbuz1 
     inc nxt
     bne !+
     inc nxt+1
   !:
-  //SEG135 next_char::@return
-  //SEG136 [63] return 
+  //SEG136 next_char::@return
+  //SEG137 [63] return 
     rts
 }
-//SEG137 fillscreen
+//SEG138 fillscreen
 //  Fill the screen with one char
 fillscreen: {
     .const fill = $20
     .label cursor = 3
-  //SEG138 [65] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  //SEG139 [65] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+  //SEG139 [65] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+  //SEG140 [65] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN#0 [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta cursor
     lda #>SCREEN
     sta cursor+1
-  //SEG140 [65] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
-  //SEG141 [65] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
-  //SEG142 fillscreen::@1
+  //SEG141 [65] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+  //SEG142 [65] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+  //SEG143 fillscreen::@1
   b1:
-  //SEG143 [66] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
+  //SEG144 [66] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
     lda #fill
     ldy #0
     sta (cursor),y
-  //SEG144 [67] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
+  //SEG145 [67] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
     inc cursor
     bne !+
     inc cursor+1
   !:
-  //SEG145 [68] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
+  //SEG146 [68] if((byte*) fillscreen::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto fillscreen::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1
@@ -3057,8 +3063,8 @@ fillscreen: {
     cmp #<SCREEN+$3e8
     bcc b1
   !:
-  //SEG146 fillscreen::@return
-  //SEG147 [69] return 
+  //SEG147 fillscreen::@return
+  //SEG148 [69] return 
     rts
 }
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     @"

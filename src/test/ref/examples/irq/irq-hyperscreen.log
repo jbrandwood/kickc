@@ -554,11 +554,13 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  A raster IRQ that opens the top/bottom border.
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
@@ -578,113 +580,113 @@ INITIAL ASM
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @7 [phi:@begin->@7]
+//SEG4 [1] phi from @begin to @7 [phi:@begin->@7]
 b7_from_bbegin:
   jmp b7
-//SEG4 @7
+//SEG5 @7
 b7:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @7 to @end [phi:@7->@end]
+//SEG7 [3] phi from @7 to @end [phi:@7->@end]
 bend_from_b7:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 main: {
-  //SEG9 [4] *((const byte*) GHOST_BYTE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) GHOST_BYTE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta GHOST_BYTE
-  //SEG10 asm { sei  }
+  //SEG11 asm { sei  }
     sei
-  //SEG11 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG12 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
-  //SEG13 [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
+  //SEG14 [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-  //SEG14 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG15 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG16 asm { cli  }
+  //SEG17 asm { cli  }
     cli
     jmp breturn
-  //SEG17 main::@return
+  //SEG18 main::@return
   breturn:
-  //SEG18 [12] return 
+  //SEG19 [12] return 
     rts
 }
-//SEG19 irq_bottom_2
+//SEG20 irq_bottom_2
 //  Interrupt Routine 2
 irq_bottom_2: {
-  //SEG20 entry interrupt(KERNEL_KEYBOARD)
-  //SEG21 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG21 entry interrupt(KERNEL_KEYBOARD)
+  //SEG22 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG22 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
-  //SEG23 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG24 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
+  //SEG25 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-  //SEG25 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG26 [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG27 [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp breturn
-  //SEG27 irq_bottom_2::@return
+  //SEG28 irq_bottom_2::@return
   breturn:
-  //SEG28 [19] return  - exit interrupt(KERNEL_KEYBOARD)
+  //SEG29 [19] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
-//SEG29 irq_bottom_1
+//SEG30 irq_bottom_1
 //  Interrupt Routine 1
 irq_bottom_1: {
-  //SEG30 entry interrupt(KERNEL_MIN)
-  //SEG31 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG31 entry interrupt(KERNEL_MIN)
+  //SEG32 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG32 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
-  //SEG33 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG34 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
+  //SEG35 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-  //SEG35 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
+  //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-  //SEG36 [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG37 [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp breturn
-  //SEG37 irq_bottom_1::@return
+  //SEG38 irq_bottom_1::@return
   breturn:
-  //SEG38 [26] return  - exit interrupt(KERNEL_MIN)
+  //SEG39 [26] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -720,11 +722,13 @@ Uplifting [irq_bottom_2] best 175 combination
 Uplifting [] best 175 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  A raster IRQ that opens the top/bottom border.
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
@@ -744,113 +748,113 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @7 [phi:@begin->@7]
+//SEG4 [1] phi from @begin to @7 [phi:@begin->@7]
 b7_from_bbegin:
   jmp b7
-//SEG4 @7
+//SEG5 @7
 b7:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @7 to @end [phi:@7->@end]
+//SEG7 [3] phi from @7 to @end [phi:@7->@end]
 bend_from_b7:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 main: {
-  //SEG9 [4] *((const byte*) GHOST_BYTE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) GHOST_BYTE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta GHOST_BYTE
-  //SEG10 asm { sei  }
+  //SEG11 asm { sei  }
     sei
-  //SEG11 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG12 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
-  //SEG13 [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
+  //SEG14 [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-  //SEG14 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG15 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG16 asm { cli  }
+  //SEG17 asm { cli  }
     cli
     jmp breturn
-  //SEG17 main::@return
+  //SEG18 main::@return
   breturn:
-  //SEG18 [12] return 
+  //SEG19 [12] return 
     rts
 }
-//SEG19 irq_bottom_2
+//SEG20 irq_bottom_2
 //  Interrupt Routine 2
 irq_bottom_2: {
-  //SEG20 entry interrupt(KERNEL_KEYBOARD)
-  //SEG21 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG21 entry interrupt(KERNEL_KEYBOARD)
+  //SEG22 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG22 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
-  //SEG23 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG24 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
+  //SEG25 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-  //SEG25 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG26 [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG27 [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp breturn
-  //SEG27 irq_bottom_2::@return
+  //SEG28 irq_bottom_2::@return
   breturn:
-  //SEG28 [19] return  - exit interrupt(KERNEL_KEYBOARD)
+  //SEG29 [19] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
-//SEG29 irq_bottom_1
+//SEG30 irq_bottom_1
 //  Interrupt Routine 1
 irq_bottom_1: {
-  //SEG30 entry interrupt(KERNEL_MIN)
-  //SEG31 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG31 entry interrupt(KERNEL_MIN)
+  //SEG32 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG32 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
-  //SEG33 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG34 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
+  //SEG35 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-  //SEG35 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
+  //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-  //SEG36 [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG37 [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp breturn
-  //SEG37 irq_bottom_1::@return
+  //SEG38 irq_bottom_1::@return
   breturn:
-  //SEG38 [26] return  - exit interrupt(KERNEL_MIN)
+  //SEG39 [26] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -985,11 +989,13 @@ interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 FINAL ASSEMBLER
 Score: 154
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  A raster IRQ that opens the top/bottom border.
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
@@ -1009,99 +1015,99 @@ Score: 154
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @7 [phi:@begin->@7]
-//SEG4 @7
-//SEG5 [2] call main 
-//SEG6 [3] phi from @7 to @end [phi:@7->@end]
-//SEG7 @end
-//SEG8 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @7 [phi:@begin->@7]
+//SEG5 @7
+//SEG6 [2] call main 
+//SEG7 [3] phi from @7 to @end [phi:@7->@end]
+//SEG8 @end
+//SEG9 main
 main: {
-  //SEG9 [4] *((const byte*) GHOST_BYTE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) GHOST_BYTE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta GHOST_BYTE
-  //SEG10 asm { sei  }
+  //SEG11 asm { sei  }
     sei
-  //SEG11 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG12 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
-  //SEG13 [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
+  //SEG14 [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-  //SEG14 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG15 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG16 asm { cli  }
+  //SEG17 asm { cli  }
     cli
-  //SEG17 main::@return
-  //SEG18 [12] return 
+  //SEG18 main::@return
+  //SEG19 [12] return 
     rts
 }
-//SEG19 irq_bottom_2
+//SEG20 irq_bottom_2
 //  Interrupt Routine 2
 irq_bottom_2: {
-  //SEG20 entry interrupt(KERNEL_KEYBOARD)
-  //SEG21 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG21 entry interrupt(KERNEL_KEYBOARD)
+  //SEG22 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG22 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
-  //SEG23 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG24 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
+  //SEG25 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-  //SEG25 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+  //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-  //SEG26 [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG27 [18] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
-  //SEG27 irq_bottom_2::@return
-  //SEG28 [19] return  - exit interrupt(KERNEL_KEYBOARD)
+  //SEG28 irq_bottom_2::@return
+  //SEG29 [19] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
-//SEG29 irq_bottom_1
+//SEG30 irq_bottom_1
 //  Interrupt Routine 1
 irq_bottom_1: {
-  //SEG30 entry interrupt(KERNEL_MIN)
-  //SEG31 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG31 entry interrupt(KERNEL_MIN)
+  //SEG32 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-  //SEG32 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+  //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
-  //SEG33 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG34 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
+  //SEG35 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-  //SEG35 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
+  //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-  //SEG36 [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG37 [25] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
-  //SEG37 irq_bottom_1::@return
-  //SEG38 [26] return  - exit interrupt(KERNEL_MIN)
+  //SEG38 irq_bottom_1::@return
+  //SEG39 [26] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 

@@ -45,6 +45,10 @@ public class Pass4CodeGeneration {
       AsmProgram asm = new AsmProgram();
       ScopeRef currentScope = ScopeRef.ROOT;
 
+      // Add file level comments
+      asm.startSegment(currentScope, null, "File Comments");
+      addComments(asm, program.getFileComments());
+
       asm.startSegment(currentScope, null, "Basic Upstart");
       asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
       asm.addLine(new AsmBasicUpstart("bbegin"));

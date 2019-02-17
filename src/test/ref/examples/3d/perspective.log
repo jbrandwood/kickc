@@ -1927,11 +1927,16 @@ Allocated zp ZP_BYTE:23 [ mulf_init::$8 ]
 Allocated zp ZP_BYTE:24 [ mulf_init::$10 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  3D Rotation using a Rotation Matrix
+//  Based on: 
+//  - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
+//  - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
@@ -1940,233 +1945,233 @@ INITIAL ASM
   .label PERSP_Z = $2400
   .label print_char_cursor = 8
   .label print_line_cursor = 2
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
   jmp b27
-//SEG3 @27
+//SEG4 @27
 b27:
-//SEG4 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
-//SEG5 [2] call main 
+//SEG5 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @27 to @end [phi:@27->@end]
+//SEG7 [3] phi from @27 to @end [phi:@27->@end]
 bend_from_b27:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 main: {
-  //SEG9 asm { sei  }
+  //SEG10 asm { sei  }
     sei
-  //SEG10 [5] call mulf_init 
-  //SEG11 [85] phi from main to mulf_init [phi:main->mulf_init]
+  //SEG11 [5] call mulf_init 
+  //SEG12 [85] phi from main to mulf_init [phi:main->mulf_init]
   mulf_init_from_main:
     jsr mulf_init
     jmp b1
-  //SEG12 main::@1
+  //SEG13 main::@1
   b1:
-  //SEG13 [6] *((const word*) psp1#0) ← ((word))(const byte[512]) mulf_sqr1#0 -- _deref_pwuc1=vwuc2 
+  //SEG14 [6] *((const word*) psp1#0) ← ((word))(const byte[512]) mulf_sqr1#0 -- _deref_pwuc1=vwuc2 
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
     sta psp1+1
-  //SEG14 [7] *((const word*) psp2#0) ← ((word))(const byte[512]) mulf_sqr2#0 -- _deref_pwuc1=vwuc2 
+  //SEG15 [7] *((const word*) psp2#0) ← ((word))(const byte[512]) mulf_sqr2#0 -- _deref_pwuc1=vwuc2 
     lda #<mulf_sqr2
     sta psp2
     lda #>mulf_sqr2
     sta psp2+1
-  //SEG15 [8] call print_cls 
-  //SEG16 [79] phi from main::@1 to print_cls [phi:main::@1->print_cls]
+  //SEG16 [8] call print_cls 
+  //SEG17 [79] phi from main::@1 to print_cls [phi:main::@1->print_cls]
   print_cls_from_b1:
     jsr print_cls
-  //SEG17 [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG18 [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG18 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG19 [10] call do_perspective 
-  //SEG20 [12] phi from main::@2 to do_perspective [phi:main::@2->do_perspective]
+  //SEG20 [10] call do_perspective 
+  //SEG21 [12] phi from main::@2 to do_perspective [phi:main::@2->do_perspective]
   do_perspective_from_b2:
     jsr do_perspective
     jmp breturn
-  //SEG21 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG22 [11] return 
+  //SEG23 [11] return 
     rts
 }
-//SEG23 do_perspective
+//SEG24 do_perspective
 do_perspective: {
     .label y = -$47
     .label x = $39
     .label z = $36
-  //SEG24 [13] call print_str 
-  //SEG25 [44] phi from do_perspective to print_str [phi:do_perspective->print_str]
+  //SEG25 [13] call print_str 
+  //SEG26 [44] phi from do_perspective to print_str [phi:do_perspective->print_str]
   print_str_from_do_perspective:
-  //SEG26 [44] phi (byte*) print_char_cursor#74 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:do_perspective->print_str#0] -- pbuz1=pbuc1 
+  //SEG27 [44] phi (byte*) print_char_cursor#74 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:do_perspective->print_str#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_char_cursor
     lda #>$400
     sta print_char_cursor+1
-  //SEG27 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str [phi:do_perspective->print_str#1] -- pbuz1=pbuc1 
+  //SEG28 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str [phi:do_perspective->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta print_str.str
     lda #>str
     sta print_str.str+1
     jsr print_str
-  //SEG28 [14] phi from do_perspective to do_perspective::@1 [phi:do_perspective->do_perspective::@1]
+  //SEG29 [14] phi from do_perspective to do_perspective::@1 [phi:do_perspective->do_perspective::@1]
   b1_from_do_perspective:
     jmp b1
-  //SEG29 do_perspective::@1
+  //SEG30 do_perspective::@1
   b1:
-  //SEG30 [15] call print_sbyte 
-  //SEG31 [68] phi from do_perspective::@1 to print_sbyte [phi:do_perspective::@1->print_sbyte]
+  //SEG31 [15] call print_sbyte 
+  //SEG32 [68] phi from do_perspective::@1 to print_sbyte [phi:do_perspective::@1->print_sbyte]
   print_sbyte_from_b1:
-  //SEG32 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::x#0 [phi:do_perspective::@1->print_sbyte#0] -- vbsz1=vbsc1 
+  //SEG33 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::x#0 [phi:do_perspective::@1->print_sbyte#0] -- vbsz1=vbsc1 
     lda #x
     sta print_sbyte.b
     jsr print_sbyte
-  //SEG33 [16] phi from do_perspective::@1 to do_perspective::@2 [phi:do_perspective::@1->do_perspective::@2]
+  //SEG34 [16] phi from do_perspective::@1 to do_perspective::@2 [phi:do_perspective::@1->do_perspective::@2]
   b2_from_b1:
     jmp b2
-  //SEG34 do_perspective::@2
+  //SEG35 do_perspective::@2
   b2:
-  //SEG35 [17] call print_str 
-  //SEG36 [44] phi from do_perspective::@2 to print_str [phi:do_perspective::@2->print_str]
+  //SEG36 [17] call print_str 
+  //SEG37 [44] phi from do_perspective::@2 to print_str [phi:do_perspective::@2->print_str]
   print_str_from_b2:
-  //SEG37 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@2->print_str#0] -- register_copy 
-  //SEG38 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@2->print_str#1] -- pbuz1=pbuc1 
+  //SEG38 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@2->print_str#0] -- register_copy 
+  //SEG39 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@2->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
     sta print_str.str
     lda #>str1
     sta print_str.str+1
     jsr print_str
-  //SEG39 [18] phi from do_perspective::@2 to do_perspective::@3 [phi:do_perspective::@2->do_perspective::@3]
+  //SEG40 [18] phi from do_perspective::@2 to do_perspective::@3 [phi:do_perspective::@2->do_perspective::@3]
   b3_from_b2:
     jmp b3
-  //SEG40 do_perspective::@3
+  //SEG41 do_perspective::@3
   b3:
-  //SEG41 [19] call print_sbyte 
-  //SEG42 [68] phi from do_perspective::@3 to print_sbyte [phi:do_perspective::@3->print_sbyte]
+  //SEG42 [19] call print_sbyte 
+  //SEG43 [68] phi from do_perspective::@3 to print_sbyte [phi:do_perspective::@3->print_sbyte]
   print_sbyte_from_b3:
-  //SEG43 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::y#0 [phi:do_perspective::@3->print_sbyte#0] -- vbsz1=vbsc1 
+  //SEG44 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::y#0 [phi:do_perspective::@3->print_sbyte#0] -- vbsz1=vbsc1 
     lda #y
     sta print_sbyte.b
     jsr print_sbyte
-  //SEG44 [20] phi from do_perspective::@3 to do_perspective::@4 [phi:do_perspective::@3->do_perspective::@4]
+  //SEG45 [20] phi from do_perspective::@3 to do_perspective::@4 [phi:do_perspective::@3->do_perspective::@4]
   b4_from_b3:
     jmp b4
-  //SEG45 do_perspective::@4
+  //SEG46 do_perspective::@4
   b4:
-  //SEG46 [21] call print_str 
-  //SEG47 [44] phi from do_perspective::@4 to print_str [phi:do_perspective::@4->print_str]
+  //SEG47 [21] call print_str 
+  //SEG48 [44] phi from do_perspective::@4 to print_str [phi:do_perspective::@4->print_str]
   print_str_from_b4:
-  //SEG48 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@4->print_str#0] -- register_copy 
-  //SEG49 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str2 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
+  //SEG49 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@4->print_str#0] -- register_copy 
+  //SEG50 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str2 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
     lda #<str2
     sta print_str.str
     lda #>str2
     sta print_str.str+1
     jsr print_str
-  //SEG50 [22] phi from do_perspective::@4 to do_perspective::@5 [phi:do_perspective::@4->do_perspective::@5]
+  //SEG51 [22] phi from do_perspective::@4 to do_perspective::@5 [phi:do_perspective::@4->do_perspective::@5]
   b5_from_b4:
     jmp b5
-  //SEG51 do_perspective::@5
+  //SEG52 do_perspective::@5
   b5:
-  //SEG52 [23] call print_sbyte 
-  //SEG53 [68] phi from do_perspective::@5 to print_sbyte [phi:do_perspective::@5->print_sbyte]
+  //SEG53 [23] call print_sbyte 
+  //SEG54 [68] phi from do_perspective::@5 to print_sbyte [phi:do_perspective::@5->print_sbyte]
   print_sbyte_from_b5:
-  //SEG54 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::z#0 [phi:do_perspective::@5->print_sbyte#0] -- vbsz1=vbsc1 
+  //SEG55 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::z#0 [phi:do_perspective::@5->print_sbyte#0] -- vbsz1=vbsc1 
     lda #z
     sta print_sbyte.b
     jsr print_sbyte
-  //SEG55 [24] phi from do_perspective::@5 to do_perspective::@6 [phi:do_perspective::@5->do_perspective::@6]
+  //SEG56 [24] phi from do_perspective::@5 to do_perspective::@6 [phi:do_perspective::@5->do_perspective::@6]
   b6_from_b5:
     jmp b6
-  //SEG56 do_perspective::@6
+  //SEG57 do_perspective::@6
   b6:
-  //SEG57 [25] call print_str 
-  //SEG58 [44] phi from do_perspective::@6 to print_str [phi:do_perspective::@6->print_str]
+  //SEG58 [25] call print_str 
+  //SEG59 [44] phi from do_perspective::@6 to print_str [phi:do_perspective::@6->print_str]
   print_str_from_b6:
-  //SEG59 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@6->print_str#0] -- register_copy 
-  //SEG60 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str3 [phi:do_perspective::@6->print_str#1] -- pbuz1=pbuc1 
+  //SEG60 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@6->print_str#0] -- register_copy 
+  //SEG61 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str3 [phi:do_perspective::@6->print_str#1] -- pbuz1=pbuc1 
     lda #<str3
     sta print_str.str
     lda #>str3
     sta print_str.str+1
     jsr print_str
-  //SEG61 [26] phi from do_perspective::@6 to do_perspective::@7 [phi:do_perspective::@6->do_perspective::@7]
+  //SEG62 [26] phi from do_perspective::@6 to do_perspective::@7 [phi:do_perspective::@6->do_perspective::@7]
   b7_from_b6:
     jmp b7
-  //SEG62 do_perspective::@7
+  //SEG63 do_perspective::@7
   b7:
-  //SEG63 [27] call perspective 
+  //SEG64 [27] call perspective 
     jsr perspective
     jmp b8
-  //SEG64 do_perspective::@8
+  //SEG65 do_perspective::@8
   b8:
-  //SEG65 [28] (byte~) print_byte::b#6 ← (byte)*((const signed byte*) xr#0) -- vbuz1=_deref_pbuc1 
+  //SEG66 [28] (byte~) print_byte::b#6 ← (byte)*((const signed byte*) xr#0) -- vbuz1=_deref_pbuc1 
     lda xr
     sta print_byte.b
-  //SEG66 [29] call print_byte 
-  //SEG67 [51] phi from do_perspective::@8 to print_byte [phi:do_perspective::@8->print_byte]
+  //SEG67 [29] call print_byte 
+  //SEG68 [51] phi from do_perspective::@8 to print_byte [phi:do_perspective::@8->print_byte]
   print_byte_from_b8:
-  //SEG68 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@8->print_byte#0] -- register_copy 
-  //SEG69 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#6 [phi:do_perspective::@8->print_byte#1] -- register_copy 
+  //SEG69 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@8->print_byte#0] -- register_copy 
+  //SEG70 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#6 [phi:do_perspective::@8->print_byte#1] -- register_copy 
     jsr print_byte
-  //SEG70 [30] phi from do_perspective::@8 to do_perspective::@9 [phi:do_perspective::@8->do_perspective::@9]
+  //SEG71 [30] phi from do_perspective::@8 to do_perspective::@9 [phi:do_perspective::@8->do_perspective::@9]
   b9_from_b8:
     jmp b9
-  //SEG71 do_perspective::@9
+  //SEG72 do_perspective::@9
   b9:
-  //SEG72 [31] call print_str 
-  //SEG73 [44] phi from do_perspective::@9 to print_str [phi:do_perspective::@9->print_str]
+  //SEG73 [31] call print_str 
+  //SEG74 [44] phi from do_perspective::@9 to print_str [phi:do_perspective::@9->print_str]
   print_str_from_b9:
-  //SEG74 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@9->print_str#0] -- register_copy 
-  //SEG75 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str4 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
+  //SEG75 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@9->print_str#0] -- register_copy 
+  //SEG76 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str4 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
     lda #<str4
     sta print_str.str
     lda #>str4
     sta print_str.str+1
     jsr print_str
     jmp b10
-  //SEG76 do_perspective::@10
+  //SEG77 do_perspective::@10
   b10:
-  //SEG77 [32] (byte~) print_byte::b#5 ← (byte)*((const signed byte*) yr#0) -- vbuz1=_deref_pbuc1 
+  //SEG78 [32] (byte~) print_byte::b#5 ← (byte)*((const signed byte*) yr#0) -- vbuz1=_deref_pbuc1 
     lda yr
     sta print_byte.b
-  //SEG78 [33] call print_byte 
-  //SEG79 [51] phi from do_perspective::@10 to print_byte [phi:do_perspective::@10->print_byte]
+  //SEG79 [33] call print_byte 
+  //SEG80 [51] phi from do_perspective::@10 to print_byte [phi:do_perspective::@10->print_byte]
   print_byte_from_b10:
-  //SEG80 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@10->print_byte#0] -- register_copy 
-  //SEG81 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#5 [phi:do_perspective::@10->print_byte#1] -- register_copy 
+  //SEG81 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@10->print_byte#0] -- register_copy 
+  //SEG82 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#5 [phi:do_perspective::@10->print_byte#1] -- register_copy 
     jsr print_byte
-  //SEG82 [34] phi from do_perspective::@10 to do_perspective::@11 [phi:do_perspective::@10->do_perspective::@11]
+  //SEG83 [34] phi from do_perspective::@10 to do_perspective::@11 [phi:do_perspective::@10->do_perspective::@11]
   b11_from_b10:
     jmp b11
-  //SEG83 do_perspective::@11
+  //SEG84 do_perspective::@11
   b11:
-  //SEG84 [35] call print_str 
-  //SEG85 [44] phi from do_perspective::@11 to print_str [phi:do_perspective::@11->print_str]
+  //SEG85 [35] call print_str 
+  //SEG86 [44] phi from do_perspective::@11 to print_str [phi:do_perspective::@11->print_str]
   print_str_from_b11:
-  //SEG86 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@11->print_str#0] -- register_copy 
-  //SEG87 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str5 [phi:do_perspective::@11->print_str#1] -- pbuz1=pbuc1 
+  //SEG87 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@11->print_str#0] -- register_copy 
+  //SEG88 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str5 [phi:do_perspective::@11->print_str#1] -- pbuz1=pbuc1 
     lda #<str5
     sta print_str.str
     lda #>str5
     sta print_str.str+1
     jsr print_str
-  //SEG88 [36] phi from do_perspective::@11 to do_perspective::@12 [phi:do_perspective::@11->do_perspective::@12]
+  //SEG89 [36] phi from do_perspective::@11 to do_perspective::@12 [phi:do_perspective::@11->do_perspective::@12]
   b12_from_b11:
     jmp b12
-  //SEG89 do_perspective::@12
+  //SEG90 do_perspective::@12
   b12:
-  //SEG90 [37] call print_ln 
-  //SEG91 [39] phi from do_perspective::@12 to print_ln [phi:do_perspective::@12->print_ln]
+  //SEG91 [37] call print_ln 
+  //SEG92 [39] phi from do_perspective::@12 to print_ln [phi:do_perspective::@12->print_ln]
   print_ln_from_b12:
     jsr print_ln
     jmp breturn
-  //SEG92 do_perspective::@return
+  //SEG93 do_perspective::@return
   breturn:
-  //SEG93 [38] return 
+  //SEG94 [38] return 
     rts
     str: .text "(@"
     str1: .text ",@"
@@ -2175,24 +2180,24 @@ do_perspective: {
     str4: .text ",@"
     str5: .text ")@"
 }
-//SEG94 print_ln
+//SEG95 print_ln
 //  Print a newline
 print_ln: {
-  //SEG95 [40] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
+  //SEG96 [40] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
   b1_from_print_ln:
-  //SEG96 [40] phi (byte*) print_line_cursor#11 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
+  //SEG97 [40] phi (byte*) print_line_cursor#11 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
     jmp b1
-  //SEG97 [40] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
+  //SEG98 [40] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
   b1_from_b1:
-  //SEG98 [40] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
+  //SEG99 [40] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
     jmp b1
-  //SEG99 print_ln::@1
+  //SEG100 print_ln::@1
   b1:
-  //SEG100 [41] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG101 [41] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda print_line_cursor
     clc
     adc #$28
@@ -2200,7 +2205,7 @@ print_ln: {
     bcc !+
     inc print_line_cursor+1
   !:
-  //SEG101 [42] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
+  //SEG102 [42] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda print_line_cursor+1
     cmp print_char_cursor+1
     bcc b1_from_b1
@@ -2210,131 +2215,131 @@ print_ln: {
     bcc b1_from_b1
   !:
     jmp breturn
-  //SEG102 print_ln::@return
+  //SEG103 print_ln::@return
   breturn:
-  //SEG103 [43] return 
+  //SEG104 [43] return 
     rts
 }
-//SEG104 print_str
+//SEG105 print_str
 //  Print a zero-terminated string
 print_str: {
     .label str = 4
-  //SEG105 [45] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
+  //SEG106 [45] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
   b1_from_print_str:
   b1_from_b2:
-  //SEG106 [45] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#74 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
-  //SEG107 [45] phi (byte*) print_str::str#7 = (byte*) print_str::str#9 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
+  //SEG107 [45] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#74 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
+  //SEG108 [45] phi (byte*) print_str::str#7 = (byte*) print_str::str#9 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
     jmp b1
-  //SEG108 print_str::@1
+  //SEG109 print_str::@1
   b1:
-  //SEG109 [46] if(*((byte*) print_str::str#7)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+  //SEG110 [46] if(*((byte*) print_str::str#7)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (str),y
     cmp #'@'
     bne b2
     jmp breturn
-  //SEG110 print_str::@return
+  //SEG111 print_str::@return
   breturn:
-  //SEG111 [47] return 
+  //SEG112 [47] return 
     rts
-  //SEG112 print_str::@2
+  //SEG113 print_str::@2
   b2:
-  //SEG113 [48] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#7) -- _deref_pbuz1=_deref_pbuz2 
+  //SEG114 [48] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#7) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     ldy #0
     sta (print_char_cursor),y
-  //SEG114 [49] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#2 -- pbuz1=_inc_pbuz1 
+  //SEG115 [49] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#2 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  //SEG115 [50] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#7 -- pbuz1=_inc_pbuz1 
+  //SEG116 [50] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#7 -- pbuz1=_inc_pbuz1 
     inc str
     bne !+
     inc str+1
   !:
     jmp b1_from_b2
 }
-//SEG116 print_byte
+//SEG117 print_byte
 //  Print a byte as HEX
 print_byte: {
     .label _0 = $12
     .label _2 = $13
     .label b = 6
-  //SEG117 [52] (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuz1=vbuz2_ror_4 
+  //SEG118 [52] (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuz1=vbuz2_ror_4 
     lda b
     lsr
     lsr
     lsr
     lsr
     sta _0
-  //SEG118 [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG119 [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _0
     lda print_hextab,y
     sta print_char.ch
-  //SEG119 [54] call print_char 
-  //SEG120 [59] phi from print_byte to print_char [phi:print_byte->print_char]
+  //SEG120 [54] call print_char 
+  //SEG121 [59] phi from print_byte to print_char [phi:print_byte->print_char]
   print_char_from_print_byte:
-  //SEG121 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#69 [phi:print_byte->print_char#0] -- register_copy 
-  //SEG122 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#2 [phi:print_byte->print_char#1] -- register_copy 
+  //SEG122 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#69 [phi:print_byte->print_char#0] -- register_copy 
+  //SEG123 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#2 [phi:print_byte->print_char#1] -- register_copy 
     jsr print_char
     jmp b1
-  //SEG123 print_byte::@1
+  //SEG124 print_byte::@1
   b1:
-  //SEG124 [55] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte/signed byte/word/signed word/dword/signed dword) 15 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG125 [55] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte/signed byte/word/signed word/dword/signed dword) 15 -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and b
     sta _2
-  //SEG125 [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG126 [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy _2
     lda print_hextab,y
     sta print_char.ch
-  //SEG126 [57] call print_char 
-  //SEG127 [59] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
+  //SEG127 [57] call print_char 
+  //SEG128 [59] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   print_char_from_b1:
-  //SEG128 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#12 [phi:print_byte::@1->print_char#0] -- register_copy 
-  //SEG129 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#3 [phi:print_byte::@1->print_char#1] -- register_copy 
+  //SEG129 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#12 [phi:print_byte::@1->print_char#0] -- register_copy 
+  //SEG130 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#3 [phi:print_byte::@1->print_char#1] -- register_copy 
     jsr print_char
     jmp breturn
-  //SEG130 print_byte::@return
+  //SEG131 print_byte::@return
   breturn:
-  //SEG131 [58] return 
+  //SEG132 [58] return 
     rts
 }
-//SEG132 print_char
+//SEG133 print_char
 //  Print a single char
 print_char: {
     .label ch = 7
-  //SEG133 [60] *((byte*) print_char_cursor#44) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuz2 
+  //SEG134 [60] *((byte*) print_char_cursor#44) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuz2 
     lda ch
     ldy #0
     sta (print_char_cursor),y
-  //SEG134 [61] (byte*) print_char_cursor#12 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
+  //SEG135 [61] (byte*) print_char_cursor#12 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
     jmp breturn
-  //SEG135 print_char::@return
+  //SEG136 print_char::@return
   breturn:
-  //SEG136 [62] return 
+  //SEG137 [62] return 
     rts
 }
-//SEG137 perspective
+//SEG138 perspective
 //  Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
 //  Implemented in assembler to utilize seriously fast multiplication 
 perspective: {
-  //SEG138 [63] *((const signed byte*) xr#0) ← (const signed byte) do_perspective::x#0 -- _deref_pbsc1=vbsc2 
+  //SEG139 [63] *((const signed byte*) xr#0) ← (const signed byte) do_perspective::x#0 -- _deref_pbsc1=vbsc2 
     lda #do_perspective.x
     sta xr
-  //SEG139 [64] *((const signed byte*) yr#0) ← (const signed byte) do_perspective::y#0 -- _deref_pbsc1=vbsc2 
+  //SEG140 [64] *((const signed byte*) yr#0) ← (const signed byte) do_perspective::y#0 -- _deref_pbsc1=vbsc2 
     lda #do_perspective.y
     sta yr
-  //SEG140 [65] *((const signed byte*) zr#0) ← (const signed byte) do_perspective::z#0 -- _deref_pbsc1=vbsc2 
+  //SEG141 [65] *((const signed byte*) zr#0) ← (const signed byte) do_perspective::z#0 -- _deref_pbsc1=vbsc2 
     lda #do_perspective.z
     sta zr
-  //SEG141 asm { ldazr staPP+1 PP: ldaPERSP_Z stapsp1 eor#$ff stapsp2 clc ldyyr lda(psp1),y sbc(psp2),y adc#$80 stayr clc ldyxr lda(psp1),y sbc(psp2),y adc#$80 staxr  }
+  //SEG142 asm { ldazr staPP+1 PP: ldaPERSP_Z stapsp1 eor#$ff stapsp2 clc ldyyr lda(psp1),y sbc(psp2),y adc#$80 stayr clc ldyxr lda(psp1),y sbc(psp2),y adc#$80 staxr  }
     lda zr
     sta PP+1
   PP:
@@ -2355,69 +2360,69 @@ perspective: {
     adc #$80
     sta xr
     jmp breturn
-  //SEG142 perspective::@return
+  //SEG143 perspective::@return
   breturn:
-  //SEG143 [67] return 
+  //SEG144 [67] return 
     rts
 }
-//SEG144 print_sbyte
+//SEG145 print_sbyte
 //  Print a signed byte as HEX
 print_sbyte: {
     .label b = $a
-  //SEG145 [69] if((signed byte) print_sbyte::b#4<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
+  //SEG146 [69] if((signed byte) print_sbyte::b#4<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
     lda b
     bmi b1_from_print_sbyte
-  //SEG146 [70] phi from print_sbyte to print_sbyte::@3 [phi:print_sbyte->print_sbyte::@3]
+  //SEG147 [70] phi from print_sbyte to print_sbyte::@3 [phi:print_sbyte->print_sbyte::@3]
   b3_from_print_sbyte:
     jmp b3
-  //SEG147 print_sbyte::@3
+  //SEG148 print_sbyte::@3
   b3:
-  //SEG148 [71] call print_char 
-  //SEG149 [59] phi from print_sbyte::@3 to print_char [phi:print_sbyte::@3->print_char]
+  //SEG149 [71] call print_char 
+  //SEG150 [59] phi from print_sbyte::@3 to print_char [phi:print_sbyte::@3->print_char]
   print_char_from_b3:
-  //SEG150 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@3->print_char#0] -- register_copy 
-  //SEG151 [59] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuz1=vbuc1 
+  //SEG151 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@3->print_char#0] -- register_copy 
+  //SEG152 [59] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuz1=vbuc1 
     lda #' '
     sta print_char.ch
     jsr print_char
-  //SEG152 [72] phi from print_sbyte::@3 print_sbyte::@5 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2]
+  //SEG153 [72] phi from print_sbyte::@3 print_sbyte::@5 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2]
   b2_from_b3:
   b2_from_b5:
-  //SEG153 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2#0] -- register_copy 
+  //SEG154 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2#0] -- register_copy 
     jmp b2
-  //SEG154 print_sbyte::@2
+  //SEG155 print_sbyte::@2
   b2:
-  //SEG155 [73] (byte~) print_byte::b#7 ← (byte)(signed byte) print_sbyte::b#6 -- vbuz1=vbuz2 
+  //SEG156 [73] (byte~) print_byte::b#7 ← (byte)(signed byte) print_sbyte::b#6 -- vbuz1=vbuz2 
     lda b
     sta print_byte.b
-  //SEG156 [74] call print_byte 
-  //SEG157 [51] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
+  //SEG157 [74] call print_byte 
+  //SEG158 [51] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
   print_byte_from_b2:
-  //SEG158 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#12 [phi:print_sbyte::@2->print_byte#0] -- register_copy 
-  //SEG159 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#7 [phi:print_sbyte::@2->print_byte#1] -- register_copy 
+  //SEG159 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#12 [phi:print_sbyte::@2->print_byte#0] -- register_copy 
+  //SEG160 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#7 [phi:print_sbyte::@2->print_byte#1] -- register_copy 
     jsr print_byte
     jmp breturn
-  //SEG160 print_sbyte::@return
+  //SEG161 print_sbyte::@return
   breturn:
-  //SEG161 [75] return 
+  //SEG162 [75] return 
     rts
-  //SEG162 [76] phi from print_sbyte to print_sbyte::@1 [phi:print_sbyte->print_sbyte::@1]
+  //SEG163 [76] phi from print_sbyte to print_sbyte::@1 [phi:print_sbyte->print_sbyte::@1]
   b1_from_print_sbyte:
     jmp b1
-  //SEG163 print_sbyte::@1
+  //SEG164 print_sbyte::@1
   b1:
-  //SEG164 [77] call print_char 
-  //SEG165 [59] phi from print_sbyte::@1 to print_char [phi:print_sbyte::@1->print_char]
+  //SEG165 [77] call print_char 
+  //SEG166 [59] phi from print_sbyte::@1 to print_char [phi:print_sbyte::@1->print_char]
   print_char_from_b1:
-  //SEG166 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@1->print_char#0] -- register_copy 
-  //SEG167 [59] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuz1=vbuc1 
+  //SEG167 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@1->print_char#0] -- register_copy 
+  //SEG168 [59] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuz1=vbuc1 
     lda #'-'
     sta print_char.ch
     jsr print_char
     jmp b5
-  //SEG168 print_sbyte::@5
+  //SEG169 print_sbyte::@5
   b5:
-  //SEG169 [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4 -- vbsz1=_neg_vbsz1 
+  //SEG170 [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4 -- vbsz1=_neg_vbsz1 
     lda b
     eor #$ff
     clc
@@ -2425,34 +2430,34 @@ print_sbyte: {
     sta b
     jmp b2_from_b5
 }
-//SEG170 print_cls
+//SEG171 print_cls
 //  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $b
-  //SEG171 [80] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG172 [80] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  //SEG172 [80] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG173 [80] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
     sta sc+1
     jmp b1
-  //SEG173 [80] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG174 [80] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  //SEG174 [80] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG175 [80] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  //SEG175 print_cls::@1
+  //SEG176 print_cls::@1
   b1:
-  //SEG176 [81] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG177 [81] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG177 [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG178 [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG178 [83] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG179 [83] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bne b1_from_b1
@@ -2460,12 +2465,12 @@ print_cls: {
     cmp #<$400+$3e8
     bne b1_from_b1
     jmp breturn
-  //SEG179 print_cls::@return
+  //SEG180 print_cls::@return
   breturn:
-  //SEG180 [84] return 
+  //SEG181 [84] return 
     rts
 }
-//SEG181 mulf_init
+//SEG182 mulf_init
 //  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
     .label _2 = $15
@@ -2476,88 +2481,88 @@ mulf_init: {
     .label sqr = $d
     .label add = $10
     .label i = $f
-  //SEG182 [86] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
+  //SEG183 [86] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
   b1_from_mulf_init:
-  //SEG183 [86] phi (signed word) mulf_init::add#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:mulf_init->mulf_init::@1#0] -- vwsz1=vbuc1 
+  //SEG184 [86] phi (signed word) mulf_init::add#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:mulf_init->mulf_init::@1#0] -- vwsz1=vbuc1 
     lda #<1
     sta add
     lda #>1
     sta add+1
-  //SEG184 [86] phi (byte) mulf_init::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#1] -- vbuz1=vbuc1 
+  //SEG185 [86] phi (byte) mulf_init::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG185 [86] phi (signed word) mulf_init::sqr#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#2] -- vwsz1=vbuc1 
+  //SEG186 [86] phi (signed word) mulf_init::sqr#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#2] -- vwsz1=vbuc1 
     lda #<0
     sta sqr
     lda #>0
     sta sqr+1
     jmp b1
-  //SEG186 [86] phi from mulf_init::@1 to mulf_init::@1 [phi:mulf_init::@1->mulf_init::@1]
+  //SEG187 [86] phi from mulf_init::@1 to mulf_init::@1 [phi:mulf_init::@1->mulf_init::@1]
   b1_from_b1:
-  //SEG187 [86] phi (signed word) mulf_init::add#2 = (signed word) mulf_init::add#1 [phi:mulf_init::@1->mulf_init::@1#0] -- register_copy 
-  //SEG188 [86] phi (byte) mulf_init::i#2 = (byte) mulf_init::i#1 [phi:mulf_init::@1->mulf_init::@1#1] -- register_copy 
-  //SEG189 [86] phi (signed word) mulf_init::sqr#2 = (signed word) mulf_init::sqr#1 [phi:mulf_init::@1->mulf_init::@1#2] -- register_copy 
+  //SEG188 [86] phi (signed word) mulf_init::add#2 = (signed word) mulf_init::add#1 [phi:mulf_init::@1->mulf_init::@1#0] -- register_copy 
+  //SEG189 [86] phi (byte) mulf_init::i#2 = (byte) mulf_init::i#1 [phi:mulf_init::@1->mulf_init::@1#1] -- register_copy 
+  //SEG190 [86] phi (signed word) mulf_init::sqr#2 = (signed word) mulf_init::sqr#1 [phi:mulf_init::@1->mulf_init::@1#2] -- register_copy 
     jmp b1
-  //SEG190 mulf_init::@1
+  //SEG191 mulf_init::@1
   b1:
-  //SEG191 [87] (byte) mulf_init::val#0 ← > (signed word) mulf_init::sqr#2 -- vbuz1=_hi_vwsz2 
+  //SEG192 [87] (byte) mulf_init::val#0 ← > (signed word) mulf_init::sqr#2 -- vbuz1=_hi_vwsz2 
     lda sqr+1
     sta val
-  //SEG192 [88] *((const byte[512]) mulf_sqr1#0 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG193 [88] *((const byte[512]) mulf_sqr1#0 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy i
     sta mulf_sqr1,y
-  //SEG193 [89] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG194 [89] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy i
     sta mulf_sqr1+$100,y
-  //SEG194 [90] (byte~) mulf_init::$2 ← - (byte) mulf_init::i#2 -- vbuz1=_neg_vbuz2 
+  //SEG195 [90] (byte~) mulf_init::$2 ← - (byte) mulf_init::i#2 -- vbuz1=_neg_vbuz2 
     lda i
     eor #$ff
     clc
     adc #1
     sta _2
-  //SEG195 [91] *((const byte[512]) mulf_sqr1#0 + (byte~) mulf_init::$2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG196 [91] *((const byte[512]) mulf_sqr1#0 + (byte~) mulf_init::$2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy _2
     sta mulf_sqr1,y
-  //SEG196 [92] (byte~) mulf_init::$4 ← - (byte) mulf_init::i#2 -- vbuz1=_neg_vbuz2 
+  //SEG197 [92] (byte~) mulf_init::$4 ← - (byte) mulf_init::i#2 -- vbuz1=_neg_vbuz2 
     lda i
     eor #$ff
     clc
     adc #1
     sta _4
-  //SEG197 [93] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte~) mulf_init::$4) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG198 [93] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte~) mulf_init::$4) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy _4
     sta mulf_sqr1+$100,y
-  //SEG198 [94] *((const byte[512]) mulf_sqr2#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG199 [94] *((const byte[512]) mulf_sqr2#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy i
     sta mulf_sqr2+1,y
-  //SEG199 [95] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG200 [95] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy i
     sta mulf_sqr2+$100+1,y
-  //SEG200 [96] (byte/signed word/word/dword/signed dword~) mulf_init::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuz1=vbuc1_minus_vbuz2 
+  //SEG201 [96] (byte/signed word/word/dword/signed dword~) mulf_init::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuz1=vbuc1_minus_vbuz2 
     lda #1
     sec
     sbc i
     sta _8
-  //SEG201 [97] *((const byte[512]) mulf_sqr2#0 + (byte/signed word/word/dword/signed dword~) mulf_init::$8) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG202 [97] *((const byte[512]) mulf_sqr2#0 + (byte/signed word/word/dword/signed dword~) mulf_init::$8) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy _8
     sta mulf_sqr2,y
-  //SEG202 [98] (byte/signed word/word/dword/signed dword~) mulf_init::$10 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuz1=vbuc1_minus_vbuz2 
+  //SEG203 [98] (byte/signed word/word/dword/signed dword~) mulf_init::$10 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuz1=vbuc1_minus_vbuz2 
     lda #1
     sec
     sbc i
     sta _10
-  //SEG203 [99] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256 + (byte/signed word/word/dword/signed dword~) mulf_init::$10) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG204 [99] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256 + (byte/signed word/word/dword/signed dword~) mulf_init::$10) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy _10
     sta mulf_sqr2+$100,y
-  //SEG204 [100] (signed word) mulf_init::sqr#1 ← (signed word) mulf_init::sqr#2 + (signed word) mulf_init::add#2 -- vwsz1=vwsz1_plus_vwsz2 
+  //SEG205 [100] (signed word) mulf_init::sqr#1 ← (signed word) mulf_init::sqr#2 + (signed word) mulf_init::add#2 -- vwsz1=vwsz1_plus_vwsz2 
     lda sqr
     clc
     adc add
@@ -2565,7 +2570,7 @@ mulf_init: {
     lda sqr+1
     adc add+1
     sta sqr+1
-  //SEG205 [101] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vwsz1=vwsz1_plus_2 
+  //SEG206 [101] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vwsz1=vwsz1_plus_2 
     lda add
     clc
     adc #2
@@ -2573,16 +2578,16 @@ mulf_init: {
     bcc !+
     inc add+1
   !:
-  //SEG206 [102] (byte) mulf_init::i#1 ← ++ (byte) mulf_init::i#2 -- vbuz1=_inc_vbuz1 
+  //SEG207 [102] (byte) mulf_init::i#1 ← ++ (byte) mulf_init::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG207 [103] if((byte) mulf_init::i#1!=(byte/word/signed word/dword/signed dword) 129) goto mulf_init::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG208 [103] if((byte) mulf_init::i#1!=(byte/word/signed word/dword/signed dword) 129) goto mulf_init::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$81
     bne b1_from_b1
     jmp breturn
-  //SEG208 mulf_init::@return
+  //SEG209 mulf_init::@return
   breturn:
-  //SEG209 [104] return 
+  //SEG210 [104] return 
     rts
 }
   print_hextab: .text "0123456789abcdef"
@@ -2736,11 +2741,16 @@ Allocated (was zp ZP_WORD:8) zp ZP_WORD:4 [ print_char_cursor#44 print_char_curs
 Allocated (was zp ZP_BYTE:20) zp ZP_BYTE:6 [ mulf_init::val#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  3D Rotation using a Rotation Matrix
+//  Based on: 
+//  - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
+//  - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
@@ -2749,228 +2759,228 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label PERSP_Z = $2400
   .label print_char_cursor = 4
   .label print_line_cursor = 2
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
   jmp b27
-//SEG3 @27
+//SEG4 @27
 b27:
-//SEG4 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
-//SEG5 [2] call main 
+//SEG5 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @27 to @end [phi:@27->@end]
+//SEG7 [3] phi from @27 to @end [phi:@27->@end]
 bend_from_b27:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 main: {
-  //SEG9 asm { sei  }
+  //SEG10 asm { sei  }
     sei
-  //SEG10 [5] call mulf_init 
-  //SEG11 [85] phi from main to mulf_init [phi:main->mulf_init]
+  //SEG11 [5] call mulf_init 
+  //SEG12 [85] phi from main to mulf_init [phi:main->mulf_init]
   mulf_init_from_main:
     jsr mulf_init
     jmp b1
-  //SEG12 main::@1
+  //SEG13 main::@1
   b1:
-  //SEG13 [6] *((const word*) psp1#0) ← ((word))(const byte[512]) mulf_sqr1#0 -- _deref_pwuc1=vwuc2 
+  //SEG14 [6] *((const word*) psp1#0) ← ((word))(const byte[512]) mulf_sqr1#0 -- _deref_pwuc1=vwuc2 
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
     sta psp1+1
-  //SEG14 [7] *((const word*) psp2#0) ← ((word))(const byte[512]) mulf_sqr2#0 -- _deref_pwuc1=vwuc2 
+  //SEG15 [7] *((const word*) psp2#0) ← ((word))(const byte[512]) mulf_sqr2#0 -- _deref_pwuc1=vwuc2 
     lda #<mulf_sqr2
     sta psp2
     lda #>mulf_sqr2
     sta psp2+1
-  //SEG15 [8] call print_cls 
-  //SEG16 [79] phi from main::@1 to print_cls [phi:main::@1->print_cls]
+  //SEG16 [8] call print_cls 
+  //SEG17 [79] phi from main::@1 to print_cls [phi:main::@1->print_cls]
   print_cls_from_b1:
     jsr print_cls
-  //SEG17 [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG18 [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   b2_from_b1:
     jmp b2
-  //SEG18 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG19 [10] call do_perspective 
-  //SEG20 [12] phi from main::@2 to do_perspective [phi:main::@2->do_perspective]
+  //SEG20 [10] call do_perspective 
+  //SEG21 [12] phi from main::@2 to do_perspective [phi:main::@2->do_perspective]
   do_perspective_from_b2:
     jsr do_perspective
     jmp breturn
-  //SEG21 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG22 [11] return 
+  //SEG23 [11] return 
     rts
 }
-//SEG23 do_perspective
+//SEG24 do_perspective
 do_perspective: {
     .label y = -$47
     .label x = $39
     .label z = $36
-  //SEG24 [13] call print_str 
-  //SEG25 [44] phi from do_perspective to print_str [phi:do_perspective->print_str]
+  //SEG25 [13] call print_str 
+  //SEG26 [44] phi from do_perspective to print_str [phi:do_perspective->print_str]
   print_str_from_do_perspective:
-  //SEG26 [44] phi (byte*) print_char_cursor#74 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:do_perspective->print_str#0] -- pbuz1=pbuc1 
+  //SEG27 [44] phi (byte*) print_char_cursor#74 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:do_perspective->print_str#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_char_cursor
     lda #>$400
     sta print_char_cursor+1
-  //SEG27 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str [phi:do_perspective->print_str#1] -- pbuz1=pbuc1 
+  //SEG28 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str [phi:do_perspective->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta print_str.str
     lda #>str
     sta print_str.str+1
     jsr print_str
-  //SEG28 [14] phi from do_perspective to do_perspective::@1 [phi:do_perspective->do_perspective::@1]
+  //SEG29 [14] phi from do_perspective to do_perspective::@1 [phi:do_perspective->do_perspective::@1]
   b1_from_do_perspective:
     jmp b1
-  //SEG29 do_perspective::@1
+  //SEG30 do_perspective::@1
   b1:
-  //SEG30 [15] call print_sbyte 
-  //SEG31 [68] phi from do_perspective::@1 to print_sbyte [phi:do_perspective::@1->print_sbyte]
+  //SEG31 [15] call print_sbyte 
+  //SEG32 [68] phi from do_perspective::@1 to print_sbyte [phi:do_perspective::@1->print_sbyte]
   print_sbyte_from_b1:
-  //SEG32 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::x#0 [phi:do_perspective::@1->print_sbyte#0] -- vbsxx=vbsc1 
+  //SEG33 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::x#0 [phi:do_perspective::@1->print_sbyte#0] -- vbsxx=vbsc1 
     ldx #x
     jsr print_sbyte
-  //SEG33 [16] phi from do_perspective::@1 to do_perspective::@2 [phi:do_perspective::@1->do_perspective::@2]
+  //SEG34 [16] phi from do_perspective::@1 to do_perspective::@2 [phi:do_perspective::@1->do_perspective::@2]
   b2_from_b1:
     jmp b2
-  //SEG34 do_perspective::@2
+  //SEG35 do_perspective::@2
   b2:
-  //SEG35 [17] call print_str 
-  //SEG36 [44] phi from do_perspective::@2 to print_str [phi:do_perspective::@2->print_str]
+  //SEG36 [17] call print_str 
+  //SEG37 [44] phi from do_perspective::@2 to print_str [phi:do_perspective::@2->print_str]
   print_str_from_b2:
-  //SEG37 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@2->print_str#0] -- register_copy 
-  //SEG38 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@2->print_str#1] -- pbuz1=pbuc1 
+  //SEG38 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@2->print_str#0] -- register_copy 
+  //SEG39 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@2->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
     sta print_str.str
     lda #>str1
     sta print_str.str+1
     jsr print_str
-  //SEG39 [18] phi from do_perspective::@2 to do_perspective::@3 [phi:do_perspective::@2->do_perspective::@3]
+  //SEG40 [18] phi from do_perspective::@2 to do_perspective::@3 [phi:do_perspective::@2->do_perspective::@3]
   b3_from_b2:
     jmp b3
-  //SEG40 do_perspective::@3
+  //SEG41 do_perspective::@3
   b3:
-  //SEG41 [19] call print_sbyte 
-  //SEG42 [68] phi from do_perspective::@3 to print_sbyte [phi:do_perspective::@3->print_sbyte]
+  //SEG42 [19] call print_sbyte 
+  //SEG43 [68] phi from do_perspective::@3 to print_sbyte [phi:do_perspective::@3->print_sbyte]
   print_sbyte_from_b3:
-  //SEG43 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::y#0 [phi:do_perspective::@3->print_sbyte#0] -- vbsxx=vbsc1 
+  //SEG44 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::y#0 [phi:do_perspective::@3->print_sbyte#0] -- vbsxx=vbsc1 
     ldx #y
     jsr print_sbyte
-  //SEG44 [20] phi from do_perspective::@3 to do_perspective::@4 [phi:do_perspective::@3->do_perspective::@4]
+  //SEG45 [20] phi from do_perspective::@3 to do_perspective::@4 [phi:do_perspective::@3->do_perspective::@4]
   b4_from_b3:
     jmp b4
-  //SEG45 do_perspective::@4
+  //SEG46 do_perspective::@4
   b4:
-  //SEG46 [21] call print_str 
-  //SEG47 [44] phi from do_perspective::@4 to print_str [phi:do_perspective::@4->print_str]
+  //SEG47 [21] call print_str 
+  //SEG48 [44] phi from do_perspective::@4 to print_str [phi:do_perspective::@4->print_str]
   print_str_from_b4:
-  //SEG48 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@4->print_str#0] -- register_copy 
-  //SEG49 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str2 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
+  //SEG49 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@4->print_str#0] -- register_copy 
+  //SEG50 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str2 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
     lda #<str2
     sta print_str.str
     lda #>str2
     sta print_str.str+1
     jsr print_str
-  //SEG50 [22] phi from do_perspective::@4 to do_perspective::@5 [phi:do_perspective::@4->do_perspective::@5]
+  //SEG51 [22] phi from do_perspective::@4 to do_perspective::@5 [phi:do_perspective::@4->do_perspective::@5]
   b5_from_b4:
     jmp b5
-  //SEG51 do_perspective::@5
+  //SEG52 do_perspective::@5
   b5:
-  //SEG52 [23] call print_sbyte 
-  //SEG53 [68] phi from do_perspective::@5 to print_sbyte [phi:do_perspective::@5->print_sbyte]
+  //SEG53 [23] call print_sbyte 
+  //SEG54 [68] phi from do_perspective::@5 to print_sbyte [phi:do_perspective::@5->print_sbyte]
   print_sbyte_from_b5:
-  //SEG54 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::z#0 [phi:do_perspective::@5->print_sbyte#0] -- vbsxx=vbsc1 
+  //SEG55 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::z#0 [phi:do_perspective::@5->print_sbyte#0] -- vbsxx=vbsc1 
     ldx #z
     jsr print_sbyte
-  //SEG55 [24] phi from do_perspective::@5 to do_perspective::@6 [phi:do_perspective::@5->do_perspective::@6]
+  //SEG56 [24] phi from do_perspective::@5 to do_perspective::@6 [phi:do_perspective::@5->do_perspective::@6]
   b6_from_b5:
     jmp b6
-  //SEG56 do_perspective::@6
+  //SEG57 do_perspective::@6
   b6:
-  //SEG57 [25] call print_str 
-  //SEG58 [44] phi from do_perspective::@6 to print_str [phi:do_perspective::@6->print_str]
+  //SEG58 [25] call print_str 
+  //SEG59 [44] phi from do_perspective::@6 to print_str [phi:do_perspective::@6->print_str]
   print_str_from_b6:
-  //SEG59 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@6->print_str#0] -- register_copy 
-  //SEG60 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str3 [phi:do_perspective::@6->print_str#1] -- pbuz1=pbuc1 
+  //SEG60 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@6->print_str#0] -- register_copy 
+  //SEG61 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str3 [phi:do_perspective::@6->print_str#1] -- pbuz1=pbuc1 
     lda #<str3
     sta print_str.str
     lda #>str3
     sta print_str.str+1
     jsr print_str
-  //SEG61 [26] phi from do_perspective::@6 to do_perspective::@7 [phi:do_perspective::@6->do_perspective::@7]
+  //SEG62 [26] phi from do_perspective::@6 to do_perspective::@7 [phi:do_perspective::@6->do_perspective::@7]
   b7_from_b6:
     jmp b7
-  //SEG62 do_perspective::@7
+  //SEG63 do_perspective::@7
   b7:
-  //SEG63 [27] call perspective 
+  //SEG64 [27] call perspective 
     jsr perspective
     jmp b8
-  //SEG64 do_perspective::@8
+  //SEG65 do_perspective::@8
   b8:
-  //SEG65 [28] (byte~) print_byte::b#6 ← (byte)*((const signed byte*) xr#0) -- vbuxx=_deref_pbuc1 
+  //SEG66 [28] (byte~) print_byte::b#6 ← (byte)*((const signed byte*) xr#0) -- vbuxx=_deref_pbuc1 
     ldx xr
-  //SEG66 [29] call print_byte 
-  //SEG67 [51] phi from do_perspective::@8 to print_byte [phi:do_perspective::@8->print_byte]
+  //SEG67 [29] call print_byte 
+  //SEG68 [51] phi from do_perspective::@8 to print_byte [phi:do_perspective::@8->print_byte]
   print_byte_from_b8:
-  //SEG68 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@8->print_byte#0] -- register_copy 
-  //SEG69 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#6 [phi:do_perspective::@8->print_byte#1] -- register_copy 
+  //SEG69 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@8->print_byte#0] -- register_copy 
+  //SEG70 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#6 [phi:do_perspective::@8->print_byte#1] -- register_copy 
     jsr print_byte
-  //SEG70 [30] phi from do_perspective::@8 to do_perspective::@9 [phi:do_perspective::@8->do_perspective::@9]
+  //SEG71 [30] phi from do_perspective::@8 to do_perspective::@9 [phi:do_perspective::@8->do_perspective::@9]
   b9_from_b8:
     jmp b9
-  //SEG71 do_perspective::@9
+  //SEG72 do_perspective::@9
   b9:
-  //SEG72 [31] call print_str 
-  //SEG73 [44] phi from do_perspective::@9 to print_str [phi:do_perspective::@9->print_str]
+  //SEG73 [31] call print_str 
+  //SEG74 [44] phi from do_perspective::@9 to print_str [phi:do_perspective::@9->print_str]
   print_str_from_b9:
-  //SEG74 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@9->print_str#0] -- register_copy 
-  //SEG75 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str4 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
+  //SEG75 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@9->print_str#0] -- register_copy 
+  //SEG76 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str4 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
     lda #<str4
     sta print_str.str
     lda #>str4
     sta print_str.str+1
     jsr print_str
     jmp b10
-  //SEG76 do_perspective::@10
+  //SEG77 do_perspective::@10
   b10:
-  //SEG77 [32] (byte~) print_byte::b#5 ← (byte)*((const signed byte*) yr#0) -- vbuxx=_deref_pbuc1 
+  //SEG78 [32] (byte~) print_byte::b#5 ← (byte)*((const signed byte*) yr#0) -- vbuxx=_deref_pbuc1 
     ldx yr
-  //SEG78 [33] call print_byte 
-  //SEG79 [51] phi from do_perspective::@10 to print_byte [phi:do_perspective::@10->print_byte]
+  //SEG79 [33] call print_byte 
+  //SEG80 [51] phi from do_perspective::@10 to print_byte [phi:do_perspective::@10->print_byte]
   print_byte_from_b10:
-  //SEG80 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@10->print_byte#0] -- register_copy 
-  //SEG81 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#5 [phi:do_perspective::@10->print_byte#1] -- register_copy 
+  //SEG81 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@10->print_byte#0] -- register_copy 
+  //SEG82 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#5 [phi:do_perspective::@10->print_byte#1] -- register_copy 
     jsr print_byte
-  //SEG82 [34] phi from do_perspective::@10 to do_perspective::@11 [phi:do_perspective::@10->do_perspective::@11]
+  //SEG83 [34] phi from do_perspective::@10 to do_perspective::@11 [phi:do_perspective::@10->do_perspective::@11]
   b11_from_b10:
     jmp b11
-  //SEG83 do_perspective::@11
+  //SEG84 do_perspective::@11
   b11:
-  //SEG84 [35] call print_str 
-  //SEG85 [44] phi from do_perspective::@11 to print_str [phi:do_perspective::@11->print_str]
+  //SEG85 [35] call print_str 
+  //SEG86 [44] phi from do_perspective::@11 to print_str [phi:do_perspective::@11->print_str]
   print_str_from_b11:
-  //SEG86 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@11->print_str#0] -- register_copy 
-  //SEG87 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str5 [phi:do_perspective::@11->print_str#1] -- pbuz1=pbuc1 
+  //SEG87 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@11->print_str#0] -- register_copy 
+  //SEG88 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str5 [phi:do_perspective::@11->print_str#1] -- pbuz1=pbuc1 
     lda #<str5
     sta print_str.str
     lda #>str5
     sta print_str.str+1
     jsr print_str
-  //SEG88 [36] phi from do_perspective::@11 to do_perspective::@12 [phi:do_perspective::@11->do_perspective::@12]
+  //SEG89 [36] phi from do_perspective::@11 to do_perspective::@12 [phi:do_perspective::@11->do_perspective::@12]
   b12_from_b11:
     jmp b12
-  //SEG89 do_perspective::@12
+  //SEG90 do_perspective::@12
   b12:
-  //SEG90 [37] call print_ln 
-  //SEG91 [39] phi from do_perspective::@12 to print_ln [phi:do_perspective::@12->print_ln]
+  //SEG91 [37] call print_ln 
+  //SEG92 [39] phi from do_perspective::@12 to print_ln [phi:do_perspective::@12->print_ln]
   print_ln_from_b12:
     jsr print_ln
     jmp breturn
-  //SEG92 do_perspective::@return
+  //SEG93 do_perspective::@return
   breturn:
-  //SEG93 [38] return 
+  //SEG94 [38] return 
     rts
     str: .text "(@"
     str1: .text ",@"
@@ -2979,24 +2989,24 @@ do_perspective: {
     str4: .text ",@"
     str5: .text ")@"
 }
-//SEG94 print_ln
+//SEG95 print_ln
 //  Print a newline
 print_ln: {
-  //SEG95 [40] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
+  //SEG96 [40] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
   b1_from_print_ln:
-  //SEG96 [40] phi (byte*) print_line_cursor#11 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
+  //SEG97 [40] phi (byte*) print_line_cursor#11 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
     jmp b1
-  //SEG97 [40] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
+  //SEG98 [40] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
   b1_from_b1:
-  //SEG98 [40] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
+  //SEG99 [40] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
     jmp b1
-  //SEG99 print_ln::@1
+  //SEG100 print_ln::@1
   b1:
-  //SEG100 [41] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG101 [41] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda print_line_cursor
     clc
     adc #$28
@@ -3004,7 +3014,7 @@ print_ln: {
     bcc !+
     inc print_line_cursor+1
   !:
-  //SEG101 [42] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
+  //SEG102 [42] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda print_line_cursor+1
     cmp print_char_cursor+1
     bcc b1_from_b1
@@ -3014,122 +3024,122 @@ print_ln: {
     bcc b1_from_b1
   !:
     jmp breturn
-  //SEG102 print_ln::@return
+  //SEG103 print_ln::@return
   breturn:
-  //SEG103 [43] return 
+  //SEG104 [43] return 
     rts
 }
-//SEG104 print_str
+//SEG105 print_str
 //  Print a zero-terminated string
 print_str: {
     .label str = 2
-  //SEG105 [45] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
+  //SEG106 [45] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
   b1_from_print_str:
   b1_from_b2:
-  //SEG106 [45] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#74 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
-  //SEG107 [45] phi (byte*) print_str::str#7 = (byte*) print_str::str#9 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
+  //SEG107 [45] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#74 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
+  //SEG108 [45] phi (byte*) print_str::str#7 = (byte*) print_str::str#9 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
     jmp b1
-  //SEG108 print_str::@1
+  //SEG109 print_str::@1
   b1:
-  //SEG109 [46] if(*((byte*) print_str::str#7)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+  //SEG110 [46] if(*((byte*) print_str::str#7)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (str),y
     cmp #'@'
     bne b2
     jmp breturn
-  //SEG110 print_str::@return
+  //SEG111 print_str::@return
   breturn:
-  //SEG111 [47] return 
+  //SEG112 [47] return 
     rts
-  //SEG112 print_str::@2
+  //SEG113 print_str::@2
   b2:
-  //SEG113 [48] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#7) -- _deref_pbuz1=_deref_pbuz2 
+  //SEG114 [48] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#7) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     ldy #0
     sta (print_char_cursor),y
-  //SEG114 [49] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#2 -- pbuz1=_inc_pbuz1 
+  //SEG115 [49] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#2 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  //SEG115 [50] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#7 -- pbuz1=_inc_pbuz1 
+  //SEG116 [50] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#7 -- pbuz1=_inc_pbuz1 
     inc str
     bne !+
     inc str+1
   !:
     jmp b1_from_b2
 }
-//SEG116 print_byte
+//SEG117 print_byte
 //  Print a byte as HEX
 print_byte: {
-  //SEG117 [52] (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
+  //SEG118 [52] (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
     lsr
     lsr
     lsr
     lsr
-  //SEG118 [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG119 [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
-  //SEG119 [54] call print_char 
-  //SEG120 [59] phi from print_byte to print_char [phi:print_byte->print_char]
+  //SEG120 [54] call print_char 
+  //SEG121 [59] phi from print_byte to print_char [phi:print_byte->print_char]
   print_char_from_print_byte:
-  //SEG121 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#69 [phi:print_byte->print_char#0] -- register_copy 
-  //SEG122 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#2 [phi:print_byte->print_char#1] -- register_copy 
+  //SEG122 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#69 [phi:print_byte->print_char#0] -- register_copy 
+  //SEG123 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#2 [phi:print_byte->print_char#1] -- register_copy 
     jsr print_char
     jmp b1
-  //SEG123 print_byte::@1
+  //SEG124 print_byte::@1
   b1:
-  //SEG124 [55] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte/signed byte/word/signed word/dword/signed dword) 15 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG125 [55] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte/signed byte/word/signed word/dword/signed dword) 15 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f
-  //SEG125 [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG126 [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
-  //SEG126 [57] call print_char 
-  //SEG127 [59] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
+  //SEG127 [57] call print_char 
+  //SEG128 [59] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   print_char_from_b1:
-  //SEG128 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#12 [phi:print_byte::@1->print_char#0] -- register_copy 
-  //SEG129 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#3 [phi:print_byte::@1->print_char#1] -- register_copy 
+  //SEG129 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#12 [phi:print_byte::@1->print_char#0] -- register_copy 
+  //SEG130 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#3 [phi:print_byte::@1->print_char#1] -- register_copy 
     jsr print_char
     jmp breturn
-  //SEG130 print_byte::@return
+  //SEG131 print_byte::@return
   breturn:
-  //SEG131 [58] return 
+  //SEG132 [58] return 
     rts
 }
-//SEG132 print_char
+//SEG133 print_char
 //  Print a single char
 print_char: {
-  //SEG133 [60] *((byte*) print_char_cursor#44) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuaa 
+  //SEG134 [60] *((byte*) print_char_cursor#44) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (print_char_cursor),y
-  //SEG134 [61] (byte*) print_char_cursor#12 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
+  //SEG135 [61] (byte*) print_char_cursor#12 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
     jmp breturn
-  //SEG135 print_char::@return
+  //SEG136 print_char::@return
   breturn:
-  //SEG136 [62] return 
+  //SEG137 [62] return 
     rts
 }
-//SEG137 perspective
+//SEG138 perspective
 //  Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
 //  Implemented in assembler to utilize seriously fast multiplication 
 perspective: {
-  //SEG138 [63] *((const signed byte*) xr#0) ← (const signed byte) do_perspective::x#0 -- _deref_pbsc1=vbsc2 
+  //SEG139 [63] *((const signed byte*) xr#0) ← (const signed byte) do_perspective::x#0 -- _deref_pbsc1=vbsc2 
     lda #do_perspective.x
     sta xr
-  //SEG139 [64] *((const signed byte*) yr#0) ← (const signed byte) do_perspective::y#0 -- _deref_pbsc1=vbsc2 
+  //SEG140 [64] *((const signed byte*) yr#0) ← (const signed byte) do_perspective::y#0 -- _deref_pbsc1=vbsc2 
     lda #do_perspective.y
     sta yr
-  //SEG140 [65] *((const signed byte*) zr#0) ← (const signed byte) do_perspective::z#0 -- _deref_pbsc1=vbsc2 
+  //SEG141 [65] *((const signed byte*) zr#0) ← (const signed byte) do_perspective::z#0 -- _deref_pbsc1=vbsc2 
     lda #do_perspective.z
     sta zr
-  //SEG141 asm { ldazr staPP+1 PP: ldaPERSP_Z stapsp1 eor#$ff stapsp2 clc ldyyr lda(psp1),y sbc(psp2),y adc#$80 stayr clc ldyxr lda(psp1),y sbc(psp2),y adc#$80 staxr  }
+  //SEG142 asm { ldazr staPP+1 PP: ldaPERSP_Z stapsp1 eor#$ff stapsp2 clc ldyyr lda(psp1),y sbc(psp2),y adc#$80 stayr clc ldyxr lda(psp1),y sbc(psp2),y adc#$80 staxr  }
     lda zr
     sta PP+1
   PP:
@@ -3150,64 +3160,64 @@ perspective: {
     adc #$80
     sta xr
     jmp breturn
-  //SEG142 perspective::@return
+  //SEG143 perspective::@return
   breturn:
-  //SEG143 [67] return 
+  //SEG144 [67] return 
     rts
 }
-//SEG144 print_sbyte
+//SEG145 print_sbyte
 //  Print a signed byte as HEX
 print_sbyte: {
-  //SEG145 [69] if((signed byte) print_sbyte::b#4<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsxx_lt_0_then_la1 
+  //SEG146 [69] if((signed byte) print_sbyte::b#4<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsxx_lt_0_then_la1 
     cpx #0
     bmi b1_from_print_sbyte
-  //SEG146 [70] phi from print_sbyte to print_sbyte::@3 [phi:print_sbyte->print_sbyte::@3]
+  //SEG147 [70] phi from print_sbyte to print_sbyte::@3 [phi:print_sbyte->print_sbyte::@3]
   b3_from_print_sbyte:
     jmp b3
-  //SEG147 print_sbyte::@3
+  //SEG148 print_sbyte::@3
   b3:
-  //SEG148 [71] call print_char 
-  //SEG149 [59] phi from print_sbyte::@3 to print_char [phi:print_sbyte::@3->print_char]
+  //SEG149 [71] call print_char 
+  //SEG150 [59] phi from print_sbyte::@3 to print_char [phi:print_sbyte::@3->print_char]
   print_char_from_b3:
-  //SEG150 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@3->print_char#0] -- register_copy 
-  //SEG151 [59] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuaa=vbuc1 
+  //SEG151 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@3->print_char#0] -- register_copy 
+  //SEG152 [59] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuaa=vbuc1 
     lda #' '
     jsr print_char
-  //SEG152 [72] phi from print_sbyte::@3 print_sbyte::@5 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2]
+  //SEG153 [72] phi from print_sbyte::@3 print_sbyte::@5 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2]
   b2_from_b3:
   b2_from_b5:
-  //SEG153 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2#0] -- register_copy 
+  //SEG154 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2#0] -- register_copy 
     jmp b2
-  //SEG154 print_sbyte::@2
+  //SEG155 print_sbyte::@2
   b2:
-  //SEG155 [73] (byte~) print_byte::b#7 ← (byte)(signed byte) print_sbyte::b#6
-  //SEG156 [74] call print_byte 
-  //SEG157 [51] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
+  //SEG156 [73] (byte~) print_byte::b#7 ← (byte)(signed byte) print_sbyte::b#6
+  //SEG157 [74] call print_byte 
+  //SEG158 [51] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
   print_byte_from_b2:
-  //SEG158 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#12 [phi:print_sbyte::@2->print_byte#0] -- register_copy 
-  //SEG159 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#7 [phi:print_sbyte::@2->print_byte#1] -- register_copy 
+  //SEG159 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#12 [phi:print_sbyte::@2->print_byte#0] -- register_copy 
+  //SEG160 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#7 [phi:print_sbyte::@2->print_byte#1] -- register_copy 
     jsr print_byte
     jmp breturn
-  //SEG160 print_sbyte::@return
+  //SEG161 print_sbyte::@return
   breturn:
-  //SEG161 [75] return 
+  //SEG162 [75] return 
     rts
-  //SEG162 [76] phi from print_sbyte to print_sbyte::@1 [phi:print_sbyte->print_sbyte::@1]
+  //SEG163 [76] phi from print_sbyte to print_sbyte::@1 [phi:print_sbyte->print_sbyte::@1]
   b1_from_print_sbyte:
     jmp b1
-  //SEG163 print_sbyte::@1
+  //SEG164 print_sbyte::@1
   b1:
-  //SEG164 [77] call print_char 
-  //SEG165 [59] phi from print_sbyte::@1 to print_char [phi:print_sbyte::@1->print_char]
+  //SEG165 [77] call print_char 
+  //SEG166 [59] phi from print_sbyte::@1 to print_char [phi:print_sbyte::@1->print_char]
   print_char_from_b1:
-  //SEG166 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@1->print_char#0] -- register_copy 
-  //SEG167 [59] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuaa=vbuc1 
+  //SEG167 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@1->print_char#0] -- register_copy 
+  //SEG168 [59] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuaa=vbuc1 
     lda #'-'
     jsr print_char
     jmp b5
-  //SEG168 print_sbyte::@5
+  //SEG169 print_sbyte::@5
   b5:
-  //SEG169 [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4 -- vbsxx=_neg_vbsxx 
+  //SEG170 [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4 -- vbsxx=_neg_vbsxx 
     txa
     eor #$ff
     clc
@@ -3215,34 +3225,34 @@ print_sbyte: {
     tax
     jmp b2_from_b5
 }
-//SEG170 print_cls
+//SEG171 print_cls
 //  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
-  //SEG171 [80] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG172 [80] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  //SEG172 [80] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG173 [80] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
     sta sc+1
     jmp b1
-  //SEG173 [80] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG174 [80] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  //SEG174 [80] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG175 [80] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  //SEG175 print_cls::@1
+  //SEG176 print_cls::@1
   b1:
-  //SEG176 [81] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG177 [81] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG177 [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG178 [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG178 [83] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG179 [83] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bne b1_from_b1
@@ -3250,92 +3260,92 @@ print_cls: {
     cmp #<$400+$3e8
     bne b1_from_b1
     jmp breturn
-  //SEG179 print_cls::@return
+  //SEG180 print_cls::@return
   breturn:
-  //SEG180 [84] return 
+  //SEG181 [84] return 
     rts
 }
-//SEG181 mulf_init
+//SEG182 mulf_init
 //  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
     .label val = 6
     .label sqr = 2
     .label add = 4
-  //SEG182 [86] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
+  //SEG183 [86] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
   b1_from_mulf_init:
-  //SEG183 [86] phi (signed word) mulf_init::add#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:mulf_init->mulf_init::@1#0] -- vwsz1=vbuc1 
+  //SEG184 [86] phi (signed word) mulf_init::add#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:mulf_init->mulf_init::@1#0] -- vwsz1=vbuc1 
     lda #<1
     sta add
     lda #>1
     sta add+1
-  //SEG184 [86] phi (byte) mulf_init::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#1] -- vbuxx=vbuc1 
+  //SEG185 [86] phi (byte) mulf_init::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#1] -- vbuxx=vbuc1 
     ldx #0
-  //SEG185 [86] phi (signed word) mulf_init::sqr#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#2] -- vwsz1=vbuc1 
+  //SEG186 [86] phi (signed word) mulf_init::sqr#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#2] -- vwsz1=vbuc1 
     lda #<0
     sta sqr
     lda #>0
     sta sqr+1
     jmp b1
-  //SEG186 [86] phi from mulf_init::@1 to mulf_init::@1 [phi:mulf_init::@1->mulf_init::@1]
+  //SEG187 [86] phi from mulf_init::@1 to mulf_init::@1 [phi:mulf_init::@1->mulf_init::@1]
   b1_from_b1:
-  //SEG187 [86] phi (signed word) mulf_init::add#2 = (signed word) mulf_init::add#1 [phi:mulf_init::@1->mulf_init::@1#0] -- register_copy 
-  //SEG188 [86] phi (byte) mulf_init::i#2 = (byte) mulf_init::i#1 [phi:mulf_init::@1->mulf_init::@1#1] -- register_copy 
-  //SEG189 [86] phi (signed word) mulf_init::sqr#2 = (signed word) mulf_init::sqr#1 [phi:mulf_init::@1->mulf_init::@1#2] -- register_copy 
+  //SEG188 [86] phi (signed word) mulf_init::add#2 = (signed word) mulf_init::add#1 [phi:mulf_init::@1->mulf_init::@1#0] -- register_copy 
+  //SEG189 [86] phi (byte) mulf_init::i#2 = (byte) mulf_init::i#1 [phi:mulf_init::@1->mulf_init::@1#1] -- register_copy 
+  //SEG190 [86] phi (signed word) mulf_init::sqr#2 = (signed word) mulf_init::sqr#1 [phi:mulf_init::@1->mulf_init::@1#2] -- register_copy 
     jmp b1
-  //SEG190 mulf_init::@1
+  //SEG191 mulf_init::@1
   b1:
-  //SEG191 [87] (byte) mulf_init::val#0 ← > (signed word) mulf_init::sqr#2 -- vbuz1=_hi_vwsz2 
+  //SEG192 [87] (byte) mulf_init::val#0 ← > (signed word) mulf_init::sqr#2 -- vbuz1=_hi_vwsz2 
     lda sqr+1
     sta val
-  //SEG192 [88] *((const byte[512]) mulf_sqr1#0 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+  //SEG193 [88] *((const byte[512]) mulf_sqr1#0 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda val
     sta mulf_sqr1,x
-  //SEG193 [89] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+  //SEG194 [89] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda val
     sta mulf_sqr1+$100,x
-  //SEG194 [90] (byte~) mulf_init::$2 ← - (byte) mulf_init::i#2 -- vbuaa=_neg_vbuxx 
+  //SEG195 [90] (byte~) mulf_init::$2 ← - (byte) mulf_init::i#2 -- vbuaa=_neg_vbuxx 
     txa
     eor #$ff
     clc
     adc #1
-  //SEG195 [91] *((const byte[512]) mulf_sqr1#0 + (byte~) mulf_init::$2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
+  //SEG196 [91] *((const byte[512]) mulf_sqr1#0 + (byte~) mulf_init::$2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
     tay
     lda val
     sta mulf_sqr1,y
-  //SEG196 [92] (byte~) mulf_init::$4 ← - (byte) mulf_init::i#2 -- vbuaa=_neg_vbuxx 
+  //SEG197 [92] (byte~) mulf_init::$4 ← - (byte) mulf_init::i#2 -- vbuaa=_neg_vbuxx 
     txa
     eor #$ff
     clc
     adc #1
-  //SEG197 [93] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte~) mulf_init::$4) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
+  //SEG198 [93] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte~) mulf_init::$4) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
     tay
     lda val
     sta mulf_sqr1+$100,y
-  //SEG198 [94] *((const byte[512]) mulf_sqr2#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+  //SEG199 [94] *((const byte[512]) mulf_sqr2#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda val
     sta mulf_sqr2+1,x
-  //SEG199 [95] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+  //SEG200 [95] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda val
     sta mulf_sqr2+$100+1,x
-  //SEG200 [96] (byte/signed word/word/dword/signed dword~) mulf_init::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuaa=vbuc1_minus_vbuxx 
+  //SEG201 [96] (byte/signed word/word/dword/signed dword~) mulf_init::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuaa=vbuc1_minus_vbuxx 
     txa
     eor #$ff
     clc
     adc #1+1
-  //SEG201 [97] *((const byte[512]) mulf_sqr2#0 + (byte/signed word/word/dword/signed dword~) mulf_init::$8) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
+  //SEG202 [97] *((const byte[512]) mulf_sqr2#0 + (byte/signed word/word/dword/signed dword~) mulf_init::$8) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
     tay
     lda val
     sta mulf_sqr2,y
-  //SEG202 [98] (byte/signed word/word/dword/signed dword~) mulf_init::$10 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuaa=vbuc1_minus_vbuxx 
+  //SEG203 [98] (byte/signed word/word/dword/signed dword~) mulf_init::$10 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuaa=vbuc1_minus_vbuxx 
     txa
     eor #$ff
     clc
     adc #1+1
-  //SEG203 [99] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256 + (byte/signed word/word/dword/signed dword~) mulf_init::$10) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
+  //SEG204 [99] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256 + (byte/signed word/word/dword/signed dword~) mulf_init::$10) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
     tay
     lda val
     sta mulf_sqr2+$100,y
-  //SEG204 [100] (signed word) mulf_init::sqr#1 ← (signed word) mulf_init::sqr#2 + (signed word) mulf_init::add#2 -- vwsz1=vwsz1_plus_vwsz2 
+  //SEG205 [100] (signed word) mulf_init::sqr#1 ← (signed word) mulf_init::sqr#2 + (signed word) mulf_init::add#2 -- vwsz1=vwsz1_plus_vwsz2 
     lda sqr
     clc
     adc add
@@ -3343,7 +3353,7 @@ mulf_init: {
     lda sqr+1
     adc add+1
     sta sqr+1
-  //SEG205 [101] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vwsz1=vwsz1_plus_2 
+  //SEG206 [101] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vwsz1=vwsz1_plus_2 
     lda add
     clc
     adc #2
@@ -3351,15 +3361,15 @@ mulf_init: {
     bcc !+
     inc add+1
   !:
-  //SEG206 [102] (byte) mulf_init::i#1 ← ++ (byte) mulf_init::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG207 [102] (byte) mulf_init::i#1 ← ++ (byte) mulf_init::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG207 [103] if((byte) mulf_init::i#1!=(byte/word/signed word/dword/signed dword) 129) goto mulf_init::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG208 [103] if((byte) mulf_init::i#1!=(byte/word/signed word/dword/signed dword) 129) goto mulf_init::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$81
     bne b1_from_b1
     jmp breturn
-  //SEG208 mulf_init::@return
+  //SEG209 mulf_init::@return
   breturn:
-  //SEG209 [104] return 
+  //SEG210 [104] return 
     rts
 }
   print_hextab: .text "0123456789abcdef"
@@ -3759,11 +3769,16 @@ reg byte a [ mulf_init::$10 ]
 FINAL ASSEMBLER
 Score: 3781
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  3D Rotation using a Rotation Matrix
+//  Based on: 
+//  - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
+//  - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
@@ -3772,163 +3787,163 @@ Score: 3781
   .label PERSP_Z = $2400
   .label print_char_cursor = 4
   .label print_line_cursor = 2
-//SEG2 @begin
-//SEG3 @27
-//SEG4 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
-//SEG5 [2] call main 
-//SEG6 [3] phi from @27 to @end [phi:@27->@end]
-//SEG7 @end
-//SEG8 main
+//SEG3 @begin
+//SEG4 @27
+//SEG5 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
+//SEG6 [2] call main 
+//SEG7 [3] phi from @27 to @end [phi:@27->@end]
+//SEG8 @end
+//SEG9 main
 main: {
-  //SEG9 asm { sei  }
+  //SEG10 asm { sei  }
     sei
-  //SEG10 [5] call mulf_init 
-  //SEG11 [85] phi from main to mulf_init [phi:main->mulf_init]
+  //SEG11 [5] call mulf_init 
+  //SEG12 [85] phi from main to mulf_init [phi:main->mulf_init]
     jsr mulf_init
-  //SEG12 main::@1
-  //SEG13 [6] *((const word*) psp1#0) ← ((word))(const byte[512]) mulf_sqr1#0 -- _deref_pwuc1=vwuc2 
+  //SEG13 main::@1
+  //SEG14 [6] *((const word*) psp1#0) ← ((word))(const byte[512]) mulf_sqr1#0 -- _deref_pwuc1=vwuc2 
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
     sta psp1+1
-  //SEG14 [7] *((const word*) psp2#0) ← ((word))(const byte[512]) mulf_sqr2#0 -- _deref_pwuc1=vwuc2 
+  //SEG15 [7] *((const word*) psp2#0) ← ((word))(const byte[512]) mulf_sqr2#0 -- _deref_pwuc1=vwuc2 
     lda #<mulf_sqr2
     sta psp2
     lda #>mulf_sqr2
     sta psp2+1
-  //SEG15 [8] call print_cls 
-  //SEG16 [79] phi from main::@1 to print_cls [phi:main::@1->print_cls]
+  //SEG16 [8] call print_cls 
+  //SEG17 [79] phi from main::@1 to print_cls [phi:main::@1->print_cls]
     jsr print_cls
-  //SEG17 [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  //SEG18 main::@2
-  //SEG19 [10] call do_perspective 
-  //SEG20 [12] phi from main::@2 to do_perspective [phi:main::@2->do_perspective]
+  //SEG18 [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  //SEG19 main::@2
+  //SEG20 [10] call do_perspective 
+  //SEG21 [12] phi from main::@2 to do_perspective [phi:main::@2->do_perspective]
     jsr do_perspective
-  //SEG21 main::@return
-  //SEG22 [11] return 
+  //SEG22 main::@return
+  //SEG23 [11] return 
     rts
 }
-//SEG23 do_perspective
+//SEG24 do_perspective
 do_perspective: {
     .label y = -$47
     .label x = $39
     .label z = $36
-  //SEG24 [13] call print_str 
-  //SEG25 [44] phi from do_perspective to print_str [phi:do_perspective->print_str]
-  //SEG26 [44] phi (byte*) print_char_cursor#74 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:do_perspective->print_str#0] -- pbuz1=pbuc1 
+  //SEG25 [13] call print_str 
+  //SEG26 [44] phi from do_perspective to print_str [phi:do_perspective->print_str]
+  //SEG27 [44] phi (byte*) print_char_cursor#74 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:do_perspective->print_str#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_char_cursor
     lda #>$400
     sta print_char_cursor+1
-  //SEG27 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str [phi:do_perspective->print_str#1] -- pbuz1=pbuc1 
+  //SEG28 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str [phi:do_perspective->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta print_str.str
     lda #>str
     sta print_str.str+1
     jsr print_str
-  //SEG28 [14] phi from do_perspective to do_perspective::@1 [phi:do_perspective->do_perspective::@1]
-  //SEG29 do_perspective::@1
-  //SEG30 [15] call print_sbyte 
-  //SEG31 [68] phi from do_perspective::@1 to print_sbyte [phi:do_perspective::@1->print_sbyte]
-  //SEG32 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::x#0 [phi:do_perspective::@1->print_sbyte#0] -- vbsxx=vbsc1 
+  //SEG29 [14] phi from do_perspective to do_perspective::@1 [phi:do_perspective->do_perspective::@1]
+  //SEG30 do_perspective::@1
+  //SEG31 [15] call print_sbyte 
+  //SEG32 [68] phi from do_perspective::@1 to print_sbyte [phi:do_perspective::@1->print_sbyte]
+  //SEG33 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::x#0 [phi:do_perspective::@1->print_sbyte#0] -- vbsxx=vbsc1 
     ldx #x
     jsr print_sbyte
-  //SEG33 [16] phi from do_perspective::@1 to do_perspective::@2 [phi:do_perspective::@1->do_perspective::@2]
-  //SEG34 do_perspective::@2
-  //SEG35 [17] call print_str 
-  //SEG36 [44] phi from do_perspective::@2 to print_str [phi:do_perspective::@2->print_str]
-  //SEG37 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@2->print_str#0] -- register_copy 
-  //SEG38 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@2->print_str#1] -- pbuz1=pbuc1 
+  //SEG34 [16] phi from do_perspective::@1 to do_perspective::@2 [phi:do_perspective::@1->do_perspective::@2]
+  //SEG35 do_perspective::@2
+  //SEG36 [17] call print_str 
+  //SEG37 [44] phi from do_perspective::@2 to print_str [phi:do_perspective::@2->print_str]
+  //SEG38 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@2->print_str#0] -- register_copy 
+  //SEG39 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@2->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
     sta print_str.str
     lda #>str1
     sta print_str.str+1
     jsr print_str
-  //SEG39 [18] phi from do_perspective::@2 to do_perspective::@3 [phi:do_perspective::@2->do_perspective::@3]
-  //SEG40 do_perspective::@3
-  //SEG41 [19] call print_sbyte 
-  //SEG42 [68] phi from do_perspective::@3 to print_sbyte [phi:do_perspective::@3->print_sbyte]
-  //SEG43 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::y#0 [phi:do_perspective::@3->print_sbyte#0] -- vbsxx=vbsc1 
+  //SEG40 [18] phi from do_perspective::@2 to do_perspective::@3 [phi:do_perspective::@2->do_perspective::@3]
+  //SEG41 do_perspective::@3
+  //SEG42 [19] call print_sbyte 
+  //SEG43 [68] phi from do_perspective::@3 to print_sbyte [phi:do_perspective::@3->print_sbyte]
+  //SEG44 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::y#0 [phi:do_perspective::@3->print_sbyte#0] -- vbsxx=vbsc1 
     ldx #y
     jsr print_sbyte
-  //SEG44 [20] phi from do_perspective::@3 to do_perspective::@4 [phi:do_perspective::@3->do_perspective::@4]
-  //SEG45 do_perspective::@4
-  //SEG46 [21] call print_str 
-  //SEG47 [44] phi from do_perspective::@4 to print_str [phi:do_perspective::@4->print_str]
-  //SEG48 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@4->print_str#0] -- register_copy 
-  //SEG49 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str2 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
+  //SEG45 [20] phi from do_perspective::@3 to do_perspective::@4 [phi:do_perspective::@3->do_perspective::@4]
+  //SEG46 do_perspective::@4
+  //SEG47 [21] call print_str 
+  //SEG48 [44] phi from do_perspective::@4 to print_str [phi:do_perspective::@4->print_str]
+  //SEG49 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@4->print_str#0] -- register_copy 
+  //SEG50 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str2 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
     lda #<str2
     sta print_str.str
     lda #>str2
     sta print_str.str+1
     jsr print_str
-  //SEG50 [22] phi from do_perspective::@4 to do_perspective::@5 [phi:do_perspective::@4->do_perspective::@5]
-  //SEG51 do_perspective::@5
-  //SEG52 [23] call print_sbyte 
-  //SEG53 [68] phi from do_perspective::@5 to print_sbyte [phi:do_perspective::@5->print_sbyte]
-  //SEG54 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::z#0 [phi:do_perspective::@5->print_sbyte#0] -- vbsxx=vbsc1 
+  //SEG51 [22] phi from do_perspective::@4 to do_perspective::@5 [phi:do_perspective::@4->do_perspective::@5]
+  //SEG52 do_perspective::@5
+  //SEG53 [23] call print_sbyte 
+  //SEG54 [68] phi from do_perspective::@5 to print_sbyte [phi:do_perspective::@5->print_sbyte]
+  //SEG55 [68] phi (signed byte) print_sbyte::b#4 = (const signed byte) do_perspective::z#0 [phi:do_perspective::@5->print_sbyte#0] -- vbsxx=vbsc1 
     ldx #z
     jsr print_sbyte
-  //SEG55 [24] phi from do_perspective::@5 to do_perspective::@6 [phi:do_perspective::@5->do_perspective::@6]
-  //SEG56 do_perspective::@6
-  //SEG57 [25] call print_str 
-  //SEG58 [44] phi from do_perspective::@6 to print_str [phi:do_perspective::@6->print_str]
-  //SEG59 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@6->print_str#0] -- register_copy 
-  //SEG60 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str3 [phi:do_perspective::@6->print_str#1] -- pbuz1=pbuc1 
+  //SEG56 [24] phi from do_perspective::@5 to do_perspective::@6 [phi:do_perspective::@5->do_perspective::@6]
+  //SEG57 do_perspective::@6
+  //SEG58 [25] call print_str 
+  //SEG59 [44] phi from do_perspective::@6 to print_str [phi:do_perspective::@6->print_str]
+  //SEG60 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@6->print_str#0] -- register_copy 
+  //SEG61 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str3 [phi:do_perspective::@6->print_str#1] -- pbuz1=pbuc1 
     lda #<str3
     sta print_str.str
     lda #>str3
     sta print_str.str+1
     jsr print_str
-  //SEG61 [26] phi from do_perspective::@6 to do_perspective::@7 [phi:do_perspective::@6->do_perspective::@7]
-  //SEG62 do_perspective::@7
-  //SEG63 [27] call perspective 
+  //SEG62 [26] phi from do_perspective::@6 to do_perspective::@7 [phi:do_perspective::@6->do_perspective::@7]
+  //SEG63 do_perspective::@7
+  //SEG64 [27] call perspective 
     jsr perspective
-  //SEG64 do_perspective::@8
-  //SEG65 [28] (byte~) print_byte::b#6 ← (byte)*((const signed byte*) xr#0) -- vbuxx=_deref_pbuc1 
+  //SEG65 do_perspective::@8
+  //SEG66 [28] (byte~) print_byte::b#6 ← (byte)*((const signed byte*) xr#0) -- vbuxx=_deref_pbuc1 
     ldx xr
-  //SEG66 [29] call print_byte 
-  //SEG67 [51] phi from do_perspective::@8 to print_byte [phi:do_perspective::@8->print_byte]
-  //SEG68 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@8->print_byte#0] -- register_copy 
-  //SEG69 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#6 [phi:do_perspective::@8->print_byte#1] -- register_copy 
+  //SEG67 [29] call print_byte 
+  //SEG68 [51] phi from do_perspective::@8 to print_byte [phi:do_perspective::@8->print_byte]
+  //SEG69 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@8->print_byte#0] -- register_copy 
+  //SEG70 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#6 [phi:do_perspective::@8->print_byte#1] -- register_copy 
     jsr print_byte
-  //SEG70 [30] phi from do_perspective::@8 to do_perspective::@9 [phi:do_perspective::@8->do_perspective::@9]
-  //SEG71 do_perspective::@9
-  //SEG72 [31] call print_str 
-  //SEG73 [44] phi from do_perspective::@9 to print_str [phi:do_perspective::@9->print_str]
-  //SEG74 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@9->print_str#0] -- register_copy 
-  //SEG75 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str4 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
+  //SEG71 [30] phi from do_perspective::@8 to do_perspective::@9 [phi:do_perspective::@8->do_perspective::@9]
+  //SEG72 do_perspective::@9
+  //SEG73 [31] call print_str 
+  //SEG74 [44] phi from do_perspective::@9 to print_str [phi:do_perspective::@9->print_str]
+  //SEG75 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@9->print_str#0] -- register_copy 
+  //SEG76 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str4 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
     lda #<str4
     sta print_str.str
     lda #>str4
     sta print_str.str+1
     jsr print_str
-  //SEG76 do_perspective::@10
-  //SEG77 [32] (byte~) print_byte::b#5 ← (byte)*((const signed byte*) yr#0) -- vbuxx=_deref_pbuc1 
+  //SEG77 do_perspective::@10
+  //SEG78 [32] (byte~) print_byte::b#5 ← (byte)*((const signed byte*) yr#0) -- vbuxx=_deref_pbuc1 
     ldx yr
-  //SEG78 [33] call print_byte 
-  //SEG79 [51] phi from do_perspective::@10 to print_byte [phi:do_perspective::@10->print_byte]
-  //SEG80 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@10->print_byte#0] -- register_copy 
-  //SEG81 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#5 [phi:do_perspective::@10->print_byte#1] -- register_copy 
+  //SEG79 [33] call print_byte 
+  //SEG80 [51] phi from do_perspective::@10 to print_byte [phi:do_perspective::@10->print_byte]
+  //SEG81 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#2 [phi:do_perspective::@10->print_byte#0] -- register_copy 
+  //SEG82 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#5 [phi:do_perspective::@10->print_byte#1] -- register_copy 
     jsr print_byte
-  //SEG82 [34] phi from do_perspective::@10 to do_perspective::@11 [phi:do_perspective::@10->do_perspective::@11]
-  //SEG83 do_perspective::@11
-  //SEG84 [35] call print_str 
-  //SEG85 [44] phi from do_perspective::@11 to print_str [phi:do_perspective::@11->print_str]
-  //SEG86 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@11->print_str#0] -- register_copy 
-  //SEG87 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str5 [phi:do_perspective::@11->print_str#1] -- pbuz1=pbuc1 
+  //SEG83 [34] phi from do_perspective::@10 to do_perspective::@11 [phi:do_perspective::@10->do_perspective::@11]
+  //SEG84 do_perspective::@11
+  //SEG85 [35] call print_str 
+  //SEG86 [44] phi from do_perspective::@11 to print_str [phi:do_perspective::@11->print_str]
+  //SEG87 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@11->print_str#0] -- register_copy 
+  //SEG88 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str5 [phi:do_perspective::@11->print_str#1] -- pbuz1=pbuc1 
     lda #<str5
     sta print_str.str
     lda #>str5
     sta print_str.str+1
     jsr print_str
-  //SEG88 [36] phi from do_perspective::@11 to do_perspective::@12 [phi:do_perspective::@11->do_perspective::@12]
-  //SEG89 do_perspective::@12
-  //SEG90 [37] call print_ln 
-  //SEG91 [39] phi from do_perspective::@12 to print_ln [phi:do_perspective::@12->print_ln]
+  //SEG89 [36] phi from do_perspective::@11 to do_perspective::@12 [phi:do_perspective::@11->do_perspective::@12]
+  //SEG90 do_perspective::@12
+  //SEG91 [37] call print_ln 
+  //SEG92 [39] phi from do_perspective::@12 to print_ln [phi:do_perspective::@12->print_ln]
     jsr print_ln
-  //SEG92 do_perspective::@return
-  //SEG93 [38] return 
+  //SEG93 do_perspective::@return
+  //SEG94 [38] return 
     rts
     str: .text "(@"
     str1: .text ",@"
@@ -3937,20 +3952,20 @@ do_perspective: {
     str4: .text ",@"
     str5: .text ")@"
 }
-//SEG94 print_ln
+//SEG95 print_ln
 //  Print a newline
 print_ln: {
-  //SEG95 [40] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
-  //SEG96 [40] phi (byte*) print_line_cursor#11 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
+  //SEG96 [40] phi from print_ln to print_ln::@1 [phi:print_ln->print_ln::@1]
+  //SEG97 [40] phi (byte*) print_line_cursor#11 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_ln->print_ln::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
-  //SEG97 [40] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
-  //SEG98 [40] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
-  //SEG99 print_ln::@1
+  //SEG98 [40] phi from print_ln::@1 to print_ln::@1 [phi:print_ln::@1->print_ln::@1]
+  //SEG99 [40] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#1 [phi:print_ln::@1->print_ln::@1#0] -- register_copy 
+  //SEG100 print_ln::@1
   b1:
-  //SEG100 [41] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG101 [41] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
     lda print_line_cursor
     clc
     adc #$28
@@ -3958,7 +3973,7 @@ print_ln: {
     bcc !+
     inc print_line_cursor+1
   !:
-  //SEG101 [42] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
+  //SEG102 [42] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda print_line_cursor+1
     cmp print_char_cursor+1
     bcc b1
@@ -3967,107 +3982,107 @@ print_ln: {
     cmp print_char_cursor
     bcc b1
   !:
-  //SEG102 print_ln::@return
-  //SEG103 [43] return 
+  //SEG103 print_ln::@return
+  //SEG104 [43] return 
     rts
 }
-//SEG104 print_str
+//SEG105 print_str
 //  Print a zero-terminated string
 print_str: {
     .label str = 2
-  //SEG105 [45] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  //SEG106 [45] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#74 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
-  //SEG107 [45] phi (byte*) print_str::str#7 = (byte*) print_str::str#9 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-  //SEG108 print_str::@1
+  //SEG106 [45] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
+  //SEG107 [45] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#74 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
+  //SEG108 [45] phi (byte*) print_str::str#7 = (byte*) print_str::str#9 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
+  //SEG109 print_str::@1
   b1:
-  //SEG109 [46] if(*((byte*) print_str::str#7)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
+  //SEG110 [46] if(*((byte*) print_str::str#7)!=(byte) '@') goto print_str::@2 -- _deref_pbuz1_neq_vbuc1_then_la1 
     ldy #0
     lda (str),y
     cmp #'@'
     bne b2
-  //SEG110 print_str::@return
-  //SEG111 [47] return 
+  //SEG111 print_str::@return
+  //SEG112 [47] return 
     rts
-  //SEG112 print_str::@2
+  //SEG113 print_str::@2
   b2:
-  //SEG113 [48] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#7) -- _deref_pbuz1=_deref_pbuz2 
+  //SEG114 [48] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#7) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
-  //SEG114 [49] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#2 -- pbuz1=_inc_pbuz1 
+  //SEG115 [49] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#2 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  //SEG115 [50] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#7 -- pbuz1=_inc_pbuz1 
+  //SEG116 [50] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#7 -- pbuz1=_inc_pbuz1 
     inc str
     bne !+
     inc str+1
   !:
     jmp b1
 }
-//SEG116 print_byte
+//SEG117 print_byte
 //  Print a byte as HEX
 print_byte: {
-  //SEG117 [52] (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
+  //SEG118 [52] (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuxx_ror_4 
     txa
     lsr
     lsr
     lsr
     lsr
-  //SEG118 [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG119 [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
-  //SEG119 [54] call print_char 
-  //SEG120 [59] phi from print_byte to print_char [phi:print_byte->print_char]
-  //SEG121 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#69 [phi:print_byte->print_char#0] -- register_copy 
-  //SEG122 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#2 [phi:print_byte->print_char#1] -- register_copy 
+  //SEG120 [54] call print_char 
+  //SEG121 [59] phi from print_byte to print_char [phi:print_byte->print_char]
+  //SEG122 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#69 [phi:print_byte->print_char#0] -- register_copy 
+  //SEG123 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#2 [phi:print_byte->print_char#1] -- register_copy 
     jsr print_char
-  //SEG123 print_byte::@1
-  //SEG124 [55] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte/signed byte/word/signed word/dword/signed dword) 15 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG124 print_byte::@1
+  //SEG125 [55] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte/signed byte/word/signed word/dword/signed dword) 15 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f
-  //SEG125 [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+  //SEG126 [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
-  //SEG126 [57] call print_char 
-  //SEG127 [59] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
-  //SEG128 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#12 [phi:print_byte::@1->print_char#0] -- register_copy 
-  //SEG129 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#3 [phi:print_byte::@1->print_char#1] -- register_copy 
+  //SEG127 [57] call print_char 
+  //SEG128 [59] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
+  //SEG129 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#12 [phi:print_byte::@1->print_char#0] -- register_copy 
+  //SEG130 [59] phi (byte) print_char::ch#4 = (byte) print_char::ch#3 [phi:print_byte::@1->print_char#1] -- register_copy 
     jsr print_char
-  //SEG130 print_byte::@return
-  //SEG131 [58] return 
+  //SEG131 print_byte::@return
+  //SEG132 [58] return 
     rts
 }
-//SEG132 print_char
+//SEG133 print_char
 //  Print a single char
 print_char: {
-  //SEG133 [60] *((byte*) print_char_cursor#44) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuaa 
+  //SEG134 [60] *((byte*) print_char_cursor#44) ← (byte) print_char::ch#4 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (print_char_cursor),y
-  //SEG134 [61] (byte*) print_char_cursor#12 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
+  //SEG135 [61] (byte*) print_char_cursor#12 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  //SEG135 print_char::@return
-  //SEG136 [62] return 
+  //SEG136 print_char::@return
+  //SEG137 [62] return 
     rts
 }
-//SEG137 perspective
+//SEG138 perspective
 //  Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
 //  Implemented in assembler to utilize seriously fast multiplication 
 perspective: {
-  //SEG138 [63] *((const signed byte*) xr#0) ← (const signed byte) do_perspective::x#0 -- _deref_pbsc1=vbsc2 
+  //SEG139 [63] *((const signed byte*) xr#0) ← (const signed byte) do_perspective::x#0 -- _deref_pbsc1=vbsc2 
     lda #do_perspective.x
     sta xr
-  //SEG139 [64] *((const signed byte*) yr#0) ← (const signed byte) do_perspective::y#0 -- _deref_pbsc1=vbsc2 
+  //SEG140 [64] *((const signed byte*) yr#0) ← (const signed byte) do_perspective::y#0 -- _deref_pbsc1=vbsc2 
     lda #do_perspective.y
     sta yr
-  //SEG140 [65] *((const signed byte*) zr#0) ← (const signed byte) do_perspective::z#0 -- _deref_pbsc1=vbsc2 
+  //SEG141 [65] *((const signed byte*) zr#0) ← (const signed byte) do_perspective::z#0 -- _deref_pbsc1=vbsc2 
     lda #do_perspective.z
     sta zr
-  //SEG141 asm { ldazr staPP+1 PP: ldaPERSP_Z stapsp1 eor#$ff stapsp2 clc ldyyr lda(psp1),y sbc(psp2),y adc#$80 stayr clc ldyxr lda(psp1),y sbc(psp2),y adc#$80 staxr  }
+  //SEG142 asm { ldazr staPP+1 PP: ldaPERSP_Z stapsp1 eor#$ff stapsp2 clc ldyyr lda(psp1),y sbc(psp2),y adc#$80 stayr clc ldyxr lda(psp1),y sbc(psp2),y adc#$80 staxr  }
     sta PP+1
   PP:
     lda PERSP_Z
@@ -4086,48 +4101,48 @@ perspective: {
     sbc (psp2),y
     adc #$80
     sta xr
-  //SEG142 perspective::@return
-  //SEG143 [67] return 
+  //SEG143 perspective::@return
+  //SEG144 [67] return 
     rts
 }
-//SEG144 print_sbyte
+//SEG145 print_sbyte
 //  Print a signed byte as HEX
 print_sbyte: {
-  //SEG145 [69] if((signed byte) print_sbyte::b#4<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsxx_lt_0_then_la1 
+  //SEG146 [69] if((signed byte) print_sbyte::b#4<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsxx_lt_0_then_la1 
     cpx #0
     bmi b1
-  //SEG146 [70] phi from print_sbyte to print_sbyte::@3 [phi:print_sbyte->print_sbyte::@3]
-  //SEG147 print_sbyte::@3
-  //SEG148 [71] call print_char 
-  //SEG149 [59] phi from print_sbyte::@3 to print_char [phi:print_sbyte::@3->print_char]
-  //SEG150 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@3->print_char#0] -- register_copy 
-  //SEG151 [59] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuaa=vbuc1 
+  //SEG147 [70] phi from print_sbyte to print_sbyte::@3 [phi:print_sbyte->print_sbyte::@3]
+  //SEG148 print_sbyte::@3
+  //SEG149 [71] call print_char 
+  //SEG150 [59] phi from print_sbyte::@3 to print_char [phi:print_sbyte::@3->print_char]
+  //SEG151 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@3->print_char#0] -- register_copy 
+  //SEG152 [59] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuaa=vbuc1 
     lda #' '
     jsr print_char
-  //SEG152 [72] phi from print_sbyte::@3 print_sbyte::@5 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2]
-  //SEG153 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2#0] -- register_copy 
-  //SEG154 print_sbyte::@2
+  //SEG153 [72] phi from print_sbyte::@3 print_sbyte::@5 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2]
+  //SEG154 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2#0] -- register_copy 
+  //SEG155 print_sbyte::@2
   b2:
-  //SEG155 [73] (byte~) print_byte::b#7 ← (byte)(signed byte) print_sbyte::b#6
-  //SEG156 [74] call print_byte 
-  //SEG157 [51] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
-  //SEG158 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#12 [phi:print_sbyte::@2->print_byte#0] -- register_copy 
-  //SEG159 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#7 [phi:print_sbyte::@2->print_byte#1] -- register_copy 
+  //SEG156 [73] (byte~) print_byte::b#7 ← (byte)(signed byte) print_sbyte::b#6
+  //SEG157 [74] call print_byte 
+  //SEG158 [51] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
+  //SEG159 [51] phi (byte*) print_char_cursor#69 = (byte*) print_char_cursor#12 [phi:print_sbyte::@2->print_byte#0] -- register_copy 
+  //SEG160 [51] phi (byte) print_byte::b#3 = (byte~) print_byte::b#7 [phi:print_sbyte::@2->print_byte#1] -- register_copy 
     jsr print_byte
-  //SEG160 print_sbyte::@return
-  //SEG161 [75] return 
+  //SEG161 print_sbyte::@return
+  //SEG162 [75] return 
     rts
-  //SEG162 [76] phi from print_sbyte to print_sbyte::@1 [phi:print_sbyte->print_sbyte::@1]
-  //SEG163 print_sbyte::@1
+  //SEG163 [76] phi from print_sbyte to print_sbyte::@1 [phi:print_sbyte->print_sbyte::@1]
+  //SEG164 print_sbyte::@1
   b1:
-  //SEG164 [77] call print_char 
-  //SEG165 [59] phi from print_sbyte::@1 to print_char [phi:print_sbyte::@1->print_char]
-  //SEG166 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@1->print_char#0] -- register_copy 
-  //SEG167 [59] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuaa=vbuc1 
+  //SEG165 [77] call print_char 
+  //SEG166 [59] phi from print_sbyte::@1 to print_char [phi:print_sbyte::@1->print_char]
+  //SEG167 [59] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#2 [phi:print_sbyte::@1->print_char#0] -- register_copy 
+  //SEG168 [59] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuaa=vbuc1 
     lda #'-'
     jsr print_char
-  //SEG168 print_sbyte::@5
-  //SEG169 [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4 -- vbsxx=_neg_vbsxx 
+  //SEG169 print_sbyte::@5
+  //SEG170 [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4 -- vbsxx=_neg_vbsxx 
     txa
     eor #$ff
     clc
@@ -4135,111 +4150,111 @@ print_sbyte: {
     tax
     jmp b2
 }
-//SEG170 print_cls
+//SEG171 print_cls
 //  Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
-  //SEG171 [80] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  //SEG172 [80] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG172 [80] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG173 [80] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
     sta sc+1
-  //SEG173 [80] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  //SEG174 [80] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-  //SEG175 print_cls::@1
+  //SEG174 [80] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG175 [80] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG176 print_cls::@1
   b1:
-  //SEG176 [81] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG177 [81] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG177 [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG178 [82] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG178 [83] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG179 [83] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bne b1
     lda sc
     cmp #<$400+$3e8
     bne b1
-  //SEG179 print_cls::@return
-  //SEG180 [84] return 
+  //SEG180 print_cls::@return
+  //SEG181 [84] return 
     rts
 }
-//SEG181 mulf_init
+//SEG182 mulf_init
 //  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
     .label val = 6
     .label sqr = 2
     .label add = 4
-  //SEG182 [86] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
-  //SEG183 [86] phi (signed word) mulf_init::add#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:mulf_init->mulf_init::@1#0] -- vwsz1=vbuc1 
+  //SEG183 [86] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
+  //SEG184 [86] phi (signed word) mulf_init::add#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:mulf_init->mulf_init::@1#0] -- vwsz1=vbuc1 
     lda #<1
     sta add
     lda #>1
     sta add+1
-  //SEG184 [86] phi (byte) mulf_init::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#1] -- vbuxx=vbuc1 
+  //SEG185 [86] phi (byte) mulf_init::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#1] -- vbuxx=vbuc1 
     tax
-  //SEG185 [86] phi (signed word) mulf_init::sqr#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#2] -- vwsz1=vbuc1 
+  //SEG186 [86] phi (signed word) mulf_init::sqr#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mulf_init->mulf_init::@1#2] -- vwsz1=vbuc1 
     sta sqr
     sta sqr+1
-  //SEG186 [86] phi from mulf_init::@1 to mulf_init::@1 [phi:mulf_init::@1->mulf_init::@1]
-  //SEG187 [86] phi (signed word) mulf_init::add#2 = (signed word) mulf_init::add#1 [phi:mulf_init::@1->mulf_init::@1#0] -- register_copy 
-  //SEG188 [86] phi (byte) mulf_init::i#2 = (byte) mulf_init::i#1 [phi:mulf_init::@1->mulf_init::@1#1] -- register_copy 
-  //SEG189 [86] phi (signed word) mulf_init::sqr#2 = (signed word) mulf_init::sqr#1 [phi:mulf_init::@1->mulf_init::@1#2] -- register_copy 
-  //SEG190 mulf_init::@1
+  //SEG187 [86] phi from mulf_init::@1 to mulf_init::@1 [phi:mulf_init::@1->mulf_init::@1]
+  //SEG188 [86] phi (signed word) mulf_init::add#2 = (signed word) mulf_init::add#1 [phi:mulf_init::@1->mulf_init::@1#0] -- register_copy 
+  //SEG189 [86] phi (byte) mulf_init::i#2 = (byte) mulf_init::i#1 [phi:mulf_init::@1->mulf_init::@1#1] -- register_copy 
+  //SEG190 [86] phi (signed word) mulf_init::sqr#2 = (signed word) mulf_init::sqr#1 [phi:mulf_init::@1->mulf_init::@1#2] -- register_copy 
+  //SEG191 mulf_init::@1
   b1:
-  //SEG191 [87] (byte) mulf_init::val#0 ← > (signed word) mulf_init::sqr#2 -- vbuz1=_hi_vwsz2 
+  //SEG192 [87] (byte) mulf_init::val#0 ← > (signed word) mulf_init::sqr#2 -- vbuz1=_hi_vwsz2 
     lda sqr+1
     sta val
-  //SEG192 [88] *((const byte[512]) mulf_sqr1#0 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+  //SEG193 [88] *((const byte[512]) mulf_sqr1#0 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     sta mulf_sqr1,x
-  //SEG193 [89] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+  //SEG194 [89] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     sta mulf_sqr1+$100,x
-  //SEG194 [90] (byte~) mulf_init::$2 ← - (byte) mulf_init::i#2 -- vbuaa=_neg_vbuxx 
+  //SEG195 [90] (byte~) mulf_init::$2 ← - (byte) mulf_init::i#2 -- vbuaa=_neg_vbuxx 
     txa
     eor #$ff
     clc
     adc #1
-  //SEG195 [91] *((const byte[512]) mulf_sqr1#0 + (byte~) mulf_init::$2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
+  //SEG196 [91] *((const byte[512]) mulf_sqr1#0 + (byte~) mulf_init::$2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
     tay
     lda val
     sta mulf_sqr1,y
-  //SEG196 [92] (byte~) mulf_init::$4 ← - (byte) mulf_init::i#2 -- vbuaa=_neg_vbuxx 
+  //SEG197 [92] (byte~) mulf_init::$4 ← - (byte) mulf_init::i#2 -- vbuaa=_neg_vbuxx 
     txa
     eor #$ff
     clc
     adc #1
-  //SEG197 [93] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte~) mulf_init::$4) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
+  //SEG198 [93] *((const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256 + (byte~) mulf_init::$4) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
     tay
     lda val
     sta mulf_sqr1+$100,y
-  //SEG198 [94] *((const byte[512]) mulf_sqr2#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+  //SEG199 [94] *((const byte[512]) mulf_sqr2#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     sta mulf_sqr2+1,x
-  //SEG199 [95] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+  //SEG200 [95] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) mulf_init::i#2) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     sta mulf_sqr2+$100+1,x
-  //SEG200 [96] (byte/signed word/word/dword/signed dword~) mulf_init::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuaa=vbuc1_minus_vbuxx 
+  //SEG201 [96] (byte/signed word/word/dword/signed dword~) mulf_init::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuaa=vbuc1_minus_vbuxx 
     txa
     eor #$ff
     clc
     adc #1+1
-  //SEG201 [97] *((const byte[512]) mulf_sqr2#0 + (byte/signed word/word/dword/signed dword~) mulf_init::$8) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
+  //SEG202 [97] *((const byte[512]) mulf_sqr2#0 + (byte/signed word/word/dword/signed dword~) mulf_init::$8) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
     tay
     lda val
     sta mulf_sqr2,y
-  //SEG202 [98] (byte/signed word/word/dword/signed dword~) mulf_init::$10 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuaa=vbuc1_minus_vbuxx 
+  //SEG203 [98] (byte/signed word/word/dword/signed dword~) mulf_init::$10 ← (byte/signed byte/word/signed word/dword/signed dword) 1 - (byte) mulf_init::i#2 -- vbuaa=vbuc1_minus_vbuxx 
     txa
     eor #$ff
     clc
     adc #1+1
-  //SEG203 [99] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256 + (byte/signed word/word/dword/signed dword~) mulf_init::$10) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
+  //SEG204 [99] *((const byte[512]) mulf_sqr2#0+(word/signed word/dword/signed dword) 256 + (byte/signed word/word/dword/signed dword~) mulf_init::$10) ← (byte) mulf_init::val#0 -- pbuc1_derefidx_vbuaa=vbuz1 
     tay
     lda val
     sta mulf_sqr2+$100,y
-  //SEG204 [100] (signed word) mulf_init::sqr#1 ← (signed word) mulf_init::sqr#2 + (signed word) mulf_init::add#2 -- vwsz1=vwsz1_plus_vwsz2 
+  //SEG205 [100] (signed word) mulf_init::sqr#1 ← (signed word) mulf_init::sqr#2 + (signed word) mulf_init::add#2 -- vwsz1=vwsz1_plus_vwsz2 
     lda sqr
     clc
     adc add
@@ -4247,7 +4262,7 @@ mulf_init: {
     lda sqr+1
     adc add+1
     sta sqr+1
-  //SEG205 [101] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vwsz1=vwsz1_plus_2 
+  //SEG206 [101] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vwsz1=vwsz1_plus_2 
     lda add
     clc
     adc #2
@@ -4255,13 +4270,13 @@ mulf_init: {
     bcc !+
     inc add+1
   !:
-  //SEG206 [102] (byte) mulf_init::i#1 ← ++ (byte) mulf_init::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG207 [102] (byte) mulf_init::i#1 ← ++ (byte) mulf_init::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG207 [103] if((byte) mulf_init::i#1!=(byte/word/signed word/dword/signed dword) 129) goto mulf_init::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG208 [103] if((byte) mulf_init::i#1!=(byte/word/signed word/dword/signed dword) 129) goto mulf_init::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$81
     bne b1
-  //SEG208 mulf_init::@return
-  //SEG209 [104] return 
+  //SEG209 mulf_init::@return
+  //SEG210 [104] return 
     rts
 }
   print_hextab: .text "0123456789abcdef"

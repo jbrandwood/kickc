@@ -1,7 +1,7 @@
+//  Tests a pointer to a boolean
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//  Tests a pointer to a boolean
 main: {
     lda #1
     sta $400

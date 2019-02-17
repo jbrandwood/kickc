@@ -1332,11 +1332,19 @@ Allocated zp ZP_BYTE:16 [ keyboard_key_pressed::return#10 ]
 Allocated zp ZP_BYTE:17 [ pressed::$0 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Exploring keyboard glitch that finds "C" press when pressing space
+//  The glitch is caused by the "normal" C64 interrupt occuring just as the keyboard is read.
+//  Press "I" to disable interrupts (red border)
+//  Press "E" to enable interrupts (green border)
+//  Press "C" to enter pressed state (increaded bgcol) - and "SPACE" to leave presssed state again.
+//  Holding SPACE will sometimes trigger the pressed state when normal interrupts are enabled (green border)
+//  but never when they are disabled (red border)
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   //  CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -1350,155 +1358,155 @@ INITIAL ASM
   .const KEY_I = $21
   .const KEY_SPACE = $3c
   .label SCREEN = $400
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
+//SEG4 [1] phi from @begin to @14 [phi:@begin->@14]
 b14_from_bbegin:
   jmp b14
-//SEG4 @14
+//SEG5 @14
 b14:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @14 to @end [phi:@14->@end]
+//SEG7 [3] phi from @14 to @end [phi:@14->@end]
 bend_from_b14:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 main: {
-  //SEG9 [4] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
-  //SEG10 [5] phi from main main::@2 to main::@2 [phi:main/main::@2->main::@2]
+  //SEG11 [5] phi from main main::@2 to main::@2 [phi:main/main::@2->main::@2]
   b2_from_main:
   b2_from_b2:
     jmp b2
-  //SEG11 main::@2
+  //SEG12 main::@2
   b2:
-  //SEG12 [6] call menu 
-  //SEG13 [7] phi from main::@2 to menu [phi:main::@2->menu]
+  //SEG13 [6] call menu 
+  //SEG14 [7] phi from main::@2 to menu [phi:main::@2->menu]
   menu_from_b2:
     jsr menu
     jmp b2_from_b2
 }
-//SEG14 menu
+//SEG15 menu
 menu: {
     .label _0 = 4
     .label _4 = 6
     .label _7 = 8
-  //SEG15 [8] phi from menu menu::@6 to menu::@2 [phi:menu/menu::@6->menu::@2]
+  //SEG16 [8] phi from menu menu::@6 to menu::@2 [phi:menu/menu::@6->menu::@2]
   b2_from_menu:
   b2_from_b6:
     jmp b2
-  //SEG16 menu::@2
+  //SEG17 menu::@2
   b2:
-  //SEG17 [9] call keyboard_key_pressed 
-  //SEG18 [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
+  //SEG18 [9] call keyboard_key_pressed 
+  //SEG19 [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
   keyboard_key_pressed_from_b2:
-  //SEG19 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_C#0 [phi:menu::@2->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+  //SEG20 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_C#0 [phi:menu::@2->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_C
     sta keyboard_key_pressed.key
     jsr keyboard_key_pressed
-  //SEG20 [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+  //SEG21 [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_2
     jmp b16
-  //SEG21 menu::@16
+  //SEG22 menu::@16
   b16:
-  //SEG22 [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
+  //SEG23 [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_2
     sta _0
-  //SEG23 [12] if((byte~) menu::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuz1_eq_0_then_la1 
+  //SEG24 [12] if((byte~) menu::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuz1_eq_0_then_la1 
     lda _0
     cmp #0
     beq b4_from_b16
-  //SEG24 [13] phi from menu::@16 to menu::@9 [phi:menu::@16->menu::@9]
+  //SEG25 [13] phi from menu::@16 to menu::@9 [phi:menu::@16->menu::@9]
   b9_from_b16:
     jmp b9
-  //SEG25 menu::@9
+  //SEG26 menu::@9
   b9:
-  //SEG26 [14] call pressed 
+  //SEG27 [14] call pressed 
     jsr pressed
     jmp breturn
-  //SEG27 menu::@return
+  //SEG28 menu::@return
   breturn:
-  //SEG28 [15] return 
+  //SEG29 [15] return 
     rts
-  //SEG29 [16] phi from menu::@16 to menu::@4 [phi:menu::@16->menu::@4]
+  //SEG30 [16] phi from menu::@16 to menu::@4 [phi:menu::@16->menu::@4]
   b4_from_b16:
     jmp b4
-  //SEG30 menu::@4
+  //SEG31 menu::@4
   b4:
-  //SEG31 [17] call keyboard_key_pressed 
-  //SEG32 [31] phi from menu::@4 to keyboard_key_pressed [phi:menu::@4->keyboard_key_pressed]
+  //SEG32 [17] call keyboard_key_pressed 
+  //SEG33 [31] phi from menu::@4 to keyboard_key_pressed [phi:menu::@4->keyboard_key_pressed]
   keyboard_key_pressed_from_b4:
-  //SEG33 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_I#0 [phi:menu::@4->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+  //SEG34 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_I#0 [phi:menu::@4->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_I
     sta keyboard_key_pressed.key
     jsr keyboard_key_pressed
-  //SEG34 [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+  //SEG35 [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_3
     jmp b17
-  //SEG35 menu::@17
+  //SEG36 menu::@17
   b17:
-  //SEG36 [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3 -- vbuz1=vbuz2 
+  //SEG37 [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_3
     sta _4
-  //SEG37 [20] if((byte~) menu::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@5 -- vbuz1_eq_0_then_la1 
+  //SEG38 [20] if((byte~) menu::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@5 -- vbuz1_eq_0_then_la1 
     lda _4
     cmp #0
     beq b5_from_b17
     jmp b11
-  //SEG38 menu::@11
+  //SEG39 menu::@11
   b11:
-  //SEG39 [21] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG40 [21] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
-  //SEG40 asm { sei  }
+  //SEG41 asm { sei  }
     sei
     jmp breturn
-  //SEG41 [23] phi from menu::@17 to menu::@5 [phi:menu::@17->menu::@5]
+  //SEG42 [23] phi from menu::@17 to menu::@5 [phi:menu::@17->menu::@5]
   b5_from_b17:
     jmp b5
-  //SEG42 menu::@5
+  //SEG43 menu::@5
   b5:
-  //SEG43 [24] call keyboard_key_pressed 
-  //SEG44 [31] phi from menu::@5 to keyboard_key_pressed [phi:menu::@5->keyboard_key_pressed]
+  //SEG44 [24] call keyboard_key_pressed 
+  //SEG45 [31] phi from menu::@5 to keyboard_key_pressed [phi:menu::@5->keyboard_key_pressed]
   keyboard_key_pressed_from_b5:
-  //SEG45 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_E#0 [phi:menu::@5->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+  //SEG46 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_E#0 [phi:menu::@5->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_E
     sta keyboard_key_pressed.key
     jsr keyboard_key_pressed
-  //SEG46 [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+  //SEG47 [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_4
     jmp b19
-  //SEG47 menu::@19
+  //SEG48 menu::@19
   b19:
-  //SEG48 [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4 -- vbuz1=vbuz2 
+  //SEG49 [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_4
     sta _7
-  //SEG49 [27] if((byte~) menu::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuz1_eq_0_then_la1 
+  //SEG50 [27] if((byte~) menu::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuz1_eq_0_then_la1 
     lda _7
     cmp #0
     beq b6
     jmp b13
-  //SEG50 menu::@13
+  //SEG51 menu::@13
   b13:
-  //SEG51 [28] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG52 [28] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
-  //SEG52 asm { cli  }
+  //SEG53 asm { cli  }
     cli
     jmp breturn
-  //SEG53 menu::@6
+  //SEG54 menu::@6
   b6:
-  //SEG54 [30] *((const byte*) SCREEN#0) ← ++ *((const byte*) SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG55 [30] *((const byte*) SCREEN#0) ← ++ *((const byte*) SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp b2_from_b6
 }
-//SEG55 keyboard_key_pressed
+//SEG56 keyboard_key_pressed
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 //  All keys exist as as KEY_XXX constants.
@@ -1513,42 +1521,42 @@ keyboard_key_pressed: {
     .label return_4 = 7
     .label key = 2
     .label return_10 = $10
-  //SEG56 [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG57 [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and key
     sta colidx
-  //SEG57 [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz2_ror_3 
+  //SEG58 [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuz2_ror_3 
     lda key
     lsr
     lsr
     lsr
     sta rowidx
-  //SEG58 [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
+  //SEG59 [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
     lda rowidx
     sta keyboard_matrix_read.rowid
-  //SEG59 [35] call keyboard_matrix_read 
+  //SEG60 [35] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-  //SEG60 [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
+  //SEG61 [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return
     sta keyboard_matrix_read.return_2
     jmp b2
-  //SEG61 keyboard_key_pressed::@2
+  //SEG62 keyboard_key_pressed::@2
   b2:
-  //SEG62 [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
+  //SEG63 [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
     lda keyboard_matrix_read.return_2
     sta _2
-  //SEG63 [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
+  //SEG64 [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
     lda _2
     ldy colidx
     and keyboard_matrix_col_bitmask,y
     sta return
     jmp breturn
-  //SEG64 keyboard_key_pressed::@return
+  //SEG65 keyboard_key_pressed::@return
   breturn:
-  //SEG65 [39] return 
+  //SEG66 [39] return 
     rts
 }
-//SEG66 keyboard_matrix_read
+//SEG67 keyboard_matrix_read
 //  Read a single row of the keyboard matrix
 //  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 //  Returns the keys pressed on the row as bits according to the C64 key matrix.
@@ -1558,55 +1566,55 @@ keyboard_matrix_read: {
     .label return = $f
     .label rowid = $b
     .label return_2 = $c
-  //SEG67 [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+  //SEG68 [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
-  //SEG68 [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
+  //SEG69 [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     sta return
     jmp breturn
-  //SEG69 keyboard_matrix_read::@return
+  //SEG70 keyboard_matrix_read::@return
   breturn:
-  //SEG70 [42] return 
+  //SEG71 [42] return 
     rts
 }
-//SEG71 pressed
+//SEG72 pressed
 pressed: {
     .label _0 = $11
-  //SEG72 [43] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG73 [43] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG73 [44] phi from pressed pressed::@10 to pressed::@2 [phi:pressed/pressed::@10->pressed::@2]
+  //SEG74 [44] phi from pressed pressed::@10 to pressed::@2 [phi:pressed/pressed::@10->pressed::@2]
   b2_from_pressed:
   b2_from_b10:
     jmp b2
-  //SEG74 pressed::@2
+  //SEG75 pressed::@2
   b2:
-  //SEG75 [45] call keyboard_key_pressed 
-  //SEG76 [31] phi from pressed::@2 to keyboard_key_pressed [phi:pressed::@2->keyboard_key_pressed]
+  //SEG76 [45] call keyboard_key_pressed 
+  //SEG77 [31] phi from pressed::@2 to keyboard_key_pressed [phi:pressed::@2->keyboard_key_pressed]
   keyboard_key_pressed_from_b2:
-  //SEG77 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_SPACE#0 [phi:pressed::@2->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+  //SEG78 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_SPACE#0 [phi:pressed::@2->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_SPACE
     sta keyboard_key_pressed.key
     jsr keyboard_key_pressed
-  //SEG78 [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+  //SEG79 [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return
     sta keyboard_key_pressed.return_10
     jmp b10
-  //SEG79 pressed::@10
+  //SEG80 pressed::@10
   b10:
-  //SEG80 [47] (byte~) pressed::$0 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
+  //SEG81 [47] (byte~) pressed::$0 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
     lda keyboard_key_pressed.return_10
     sta _0
-  //SEG81 [48] if((byte~) pressed::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto pressed::@2 -- vbuz1_eq_0_then_la1 
+  //SEG82 [48] if((byte~) pressed::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto pressed::@2 -- vbuz1_eq_0_then_la1 
     lda _0
     cmp #0
     beq b2_from_b10
     jmp breturn
-  //SEG82 pressed::@return
+  //SEG83 pressed::@return
   breturn:
-  //SEG83 [49] return 
+  //SEG84 [49] return 
     rts
 }
   //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
@@ -1677,11 +1685,19 @@ Attempting to uplift remaining variables inzp ZP_BYTE:9 [ keyboard_key_pressed::
 Uplifting [keyboard_key_pressed] best 6202 combination reg byte y [ keyboard_key_pressed::colidx#0 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Exploring keyboard glitch that finds "C" press when pressing space
+//  The glitch is caused by the "normal" C64 interrupt occuring just as the keyboard is read.
+//  Press "I" to disable interrupts (red border)
+//  Press "E" to enable interrupts (green border)
+//  Press "C" to enter pressed state (increaded bgcol) - and "SPACE" to leave presssed state again.
+//  Holding SPACE will sometimes trigger the pressed state when normal interrupts are enabled (green border)
+//  but never when they are disabled (red border)
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   //  CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -1695,212 +1711,212 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const KEY_I = $21
   .const KEY_SPACE = $3c
   .label SCREEN = $400
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
+//SEG4 [1] phi from @begin to @14 [phi:@begin->@14]
 b14_from_bbegin:
   jmp b14
-//SEG4 @14
+//SEG5 @14
 b14:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @14 to @end [phi:@14->@end]
+//SEG7 [3] phi from @14 to @end [phi:@14->@end]
 bend_from_b14:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 main: {
-  //SEG9 [4] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
-  //SEG10 [5] phi from main main::@2 to main::@2 [phi:main/main::@2->main::@2]
+  //SEG11 [5] phi from main main::@2 to main::@2 [phi:main/main::@2->main::@2]
   b2_from_main:
   b2_from_b2:
     jmp b2
-  //SEG11 main::@2
+  //SEG12 main::@2
   b2:
-  //SEG12 [6] call menu 
-  //SEG13 [7] phi from main::@2 to menu [phi:main::@2->menu]
+  //SEG13 [6] call menu 
+  //SEG14 [7] phi from main::@2 to menu [phi:main::@2->menu]
   menu_from_b2:
     jsr menu
     jmp b2_from_b2
 }
-//SEG14 menu
+//SEG15 menu
 menu: {
-  //SEG15 [8] phi from menu menu::@6 to menu::@2 [phi:menu/menu::@6->menu::@2]
+  //SEG16 [8] phi from menu menu::@6 to menu::@2 [phi:menu/menu::@6->menu::@2]
   b2_from_menu:
   b2_from_b6:
     jmp b2
-  //SEG16 menu::@2
+  //SEG17 menu::@2
   b2:
-  //SEG17 [9] call keyboard_key_pressed 
-  //SEG18 [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
+  //SEG18 [9] call keyboard_key_pressed 
+  //SEG19 [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
   keyboard_key_pressed_from_b2:
-  //SEG19 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_C#0 [phi:menu::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+  //SEG20 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_C#0 [phi:menu::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_C
     jsr keyboard_key_pressed
-  //SEG20 [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+  //SEG21 [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
     jmp b16
-  //SEG21 menu::@16
+  //SEG22 menu::@16
   b16:
-  //SEG22 [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
-  //SEG23 [12] if((byte~) menu::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
+  //SEG23 [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
+  //SEG24 [12] if((byte~) menu::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4_from_b16
-  //SEG24 [13] phi from menu::@16 to menu::@9 [phi:menu::@16->menu::@9]
+  //SEG25 [13] phi from menu::@16 to menu::@9 [phi:menu::@16->menu::@9]
   b9_from_b16:
     jmp b9
-  //SEG25 menu::@9
+  //SEG26 menu::@9
   b9:
-  //SEG26 [14] call pressed 
+  //SEG27 [14] call pressed 
     jsr pressed
     jmp breturn
-  //SEG27 menu::@return
+  //SEG28 menu::@return
   breturn:
-  //SEG28 [15] return 
+  //SEG29 [15] return 
     rts
-  //SEG29 [16] phi from menu::@16 to menu::@4 [phi:menu::@16->menu::@4]
+  //SEG30 [16] phi from menu::@16 to menu::@4 [phi:menu::@16->menu::@4]
   b4_from_b16:
     jmp b4
-  //SEG30 menu::@4
+  //SEG31 menu::@4
   b4:
-  //SEG31 [17] call keyboard_key_pressed 
-  //SEG32 [31] phi from menu::@4 to keyboard_key_pressed [phi:menu::@4->keyboard_key_pressed]
+  //SEG32 [17] call keyboard_key_pressed 
+  //SEG33 [31] phi from menu::@4 to keyboard_key_pressed [phi:menu::@4->keyboard_key_pressed]
   keyboard_key_pressed_from_b4:
-  //SEG33 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_I#0 [phi:menu::@4->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+  //SEG34 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_I#0 [phi:menu::@4->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_I
     jsr keyboard_key_pressed
-  //SEG34 [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
+  //SEG35 [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
     jmp b17
-  //SEG35 menu::@17
+  //SEG36 menu::@17
   b17:
-  //SEG36 [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
-  //SEG37 [20] if((byte~) menu::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@5 -- vbuaa_eq_0_then_la1 
+  //SEG37 [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
+  //SEG38 [20] if((byte~) menu::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b5_from_b17
     jmp b11
-  //SEG38 menu::@11
+  //SEG39 menu::@11
   b11:
-  //SEG39 [21] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG40 [21] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
-  //SEG40 asm { sei  }
+  //SEG41 asm { sei  }
     sei
     jmp breturn
-  //SEG41 [23] phi from menu::@17 to menu::@5 [phi:menu::@17->menu::@5]
+  //SEG42 [23] phi from menu::@17 to menu::@5 [phi:menu::@17->menu::@5]
   b5_from_b17:
     jmp b5
-  //SEG42 menu::@5
+  //SEG43 menu::@5
   b5:
-  //SEG43 [24] call keyboard_key_pressed 
-  //SEG44 [31] phi from menu::@5 to keyboard_key_pressed [phi:menu::@5->keyboard_key_pressed]
+  //SEG44 [24] call keyboard_key_pressed 
+  //SEG45 [31] phi from menu::@5 to keyboard_key_pressed [phi:menu::@5->keyboard_key_pressed]
   keyboard_key_pressed_from_b5:
-  //SEG45 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_E#0 [phi:menu::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+  //SEG46 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_E#0 [phi:menu::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_E
     jsr keyboard_key_pressed
-  //SEG46 [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
+  //SEG47 [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
     jmp b19
-  //SEG47 menu::@19
+  //SEG48 menu::@19
   b19:
-  //SEG48 [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
-  //SEG49 [27] if((byte~) menu::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuaa_eq_0_then_la1 
+  //SEG49 [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
+  //SEG50 [27] if((byte~) menu::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b6
     jmp b13
-  //SEG50 menu::@13
+  //SEG51 menu::@13
   b13:
-  //SEG51 [28] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG52 [28] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
-  //SEG52 asm { cli  }
+  //SEG53 asm { cli  }
     cli
     jmp breturn
-  //SEG53 menu::@6
+  //SEG54 menu::@6
   b6:
-  //SEG54 [30] *((const byte*) SCREEN#0) ← ++ *((const byte*) SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG55 [30] *((const byte*) SCREEN#0) ← ++ *((const byte*) SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp b2_from_b6
 }
-//SEG55 keyboard_key_pressed
+//SEG56 keyboard_key_pressed
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 //  All keys exist as as KEY_XXX constants.
 //  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
-  //SEG56 [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuxx_band_vbuc1 
+  //SEG57 [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
     and #7
     tay
-  //SEG57 [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuaa=vbuxx_ror_3 
+  //SEG58 [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuaa=vbuxx_ror_3 
     txa
     lsr
     lsr
     lsr
-  //SEG58 [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
+  //SEG59 [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
     tax
-  //SEG59 [35] call keyboard_matrix_read 
+  //SEG60 [35] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-  //SEG60 [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+  //SEG61 [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
     jmp b2
-  //SEG61 keyboard_key_pressed::@2
+  //SEG62 keyboard_key_pressed::@2
   b2:
-  //SEG62 [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  //SEG63 [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+  //SEG63 [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+  //SEG64 [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
     jmp breturn
-  //SEG64 keyboard_key_pressed::@return
+  //SEG65 keyboard_key_pressed::@return
   breturn:
-  //SEG65 [39] return 
+  //SEG66 [39] return 
     rts
 }
-//SEG66 keyboard_matrix_read
+//SEG67 keyboard_matrix_read
 //  Read a single row of the keyboard matrix
 //  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 //  Returns the keys pressed on the row as bits according to the C64 key matrix.
 //  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 //  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-  //SEG67 [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+  //SEG68 [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
-  //SEG68 [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+  //SEG69 [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     jmp breturn
-  //SEG69 keyboard_matrix_read::@return
+  //SEG70 keyboard_matrix_read::@return
   breturn:
-  //SEG70 [42] return 
+  //SEG71 [42] return 
     rts
 }
-//SEG71 pressed
+//SEG72 pressed
 pressed: {
-  //SEG72 [43] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG73 [43] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG73 [44] phi from pressed pressed::@10 to pressed::@2 [phi:pressed/pressed::@10->pressed::@2]
+  //SEG74 [44] phi from pressed pressed::@10 to pressed::@2 [phi:pressed/pressed::@10->pressed::@2]
   b2_from_pressed:
   b2_from_b10:
     jmp b2
-  //SEG74 pressed::@2
+  //SEG75 pressed::@2
   b2:
-  //SEG75 [45] call keyboard_key_pressed 
-  //SEG76 [31] phi from pressed::@2 to keyboard_key_pressed [phi:pressed::@2->keyboard_key_pressed]
+  //SEG76 [45] call keyboard_key_pressed 
+  //SEG77 [31] phi from pressed::@2 to keyboard_key_pressed [phi:pressed::@2->keyboard_key_pressed]
   keyboard_key_pressed_from_b2:
-  //SEG77 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_SPACE#0 [phi:pressed::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+  //SEG78 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_SPACE#0 [phi:pressed::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
-  //SEG78 [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
+  //SEG79 [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
     jmp b10
-  //SEG79 pressed::@10
+  //SEG80 pressed::@10
   b10:
-  //SEG80 [47] (byte~) pressed::$0 ← (byte) keyboard_key_pressed::return#10
-  //SEG81 [48] if((byte~) pressed::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto pressed::@2 -- vbuaa_eq_0_then_la1 
+  //SEG81 [47] (byte~) pressed::$0 ← (byte) keyboard_key_pressed::return#10
+  //SEG82 [48] if((byte~) pressed::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto pressed::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2_from_b10
     jmp breturn
-  //SEG82 pressed::@return
+  //SEG83 pressed::@return
   breturn:
-  //SEG83 [49] return 
+  //SEG84 [49] return 
     rts
 }
   //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
@@ -2212,11 +2228,19 @@ reg byte a [ pressed::$0 ]
 FINAL ASSEMBLER
 Score: 2845
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Exploring keyboard glitch that finds "C" press when pressing space
+//  The glitch is caused by the "normal" C64 interrupt occuring just as the keyboard is read.
+//  Press "I" to disable interrupts (red border)
+//  Press "E" to enable interrupts (green border)
+//  Press "C" to enter pressed state (increaded bgcol) - and "SPACE" to leave presssed state again.
+//  Holding SPACE will sometimes trigger the pressed state when normal interrupts are enabled (green border)
+//  but never when they are disabled (red border)
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   //  CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -2230,162 +2254,162 @@ Score: 2845
   .const KEY_I = $21
   .const KEY_SPACE = $3c
   .label SCREEN = $400
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @14 [phi:@begin->@14]
-//SEG4 @14
-//SEG5 [2] call main 
-//SEG6 [3] phi from @14 to @end [phi:@14->@end]
-//SEG7 @end
-//SEG8 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @14 [phi:@begin->@14]
+//SEG5 @14
+//SEG6 [2] call main 
+//SEG7 [3] phi from @14 to @end [phi:@14->@end]
+//SEG8 @end
+//SEG9 main
 main: {
-  //SEG9 [4] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
-  //SEG10 [5] phi from main main::@2 to main::@2 [phi:main/main::@2->main::@2]
-  //SEG11 main::@2
+  //SEG11 [5] phi from main main::@2 to main::@2 [phi:main/main::@2->main::@2]
+  //SEG12 main::@2
   b2:
-  //SEG12 [6] call menu 
-  //SEG13 [7] phi from main::@2 to menu [phi:main::@2->menu]
+  //SEG13 [6] call menu 
+  //SEG14 [7] phi from main::@2 to menu [phi:main::@2->menu]
     jsr menu
     jmp b2
 }
-//SEG14 menu
+//SEG15 menu
 menu: {
-  //SEG15 [8] phi from menu menu::@6 to menu::@2 [phi:menu/menu::@6->menu::@2]
-  //SEG16 menu::@2
+  //SEG16 [8] phi from menu menu::@6 to menu::@2 [phi:menu/menu::@6->menu::@2]
+  //SEG17 menu::@2
   b2:
-  //SEG17 [9] call keyboard_key_pressed 
-  //SEG18 [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
-  //SEG19 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_C#0 [phi:menu::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+  //SEG18 [9] call keyboard_key_pressed 
+  //SEG19 [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
+  //SEG20 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_C#0 [phi:menu::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_C
     jsr keyboard_key_pressed
-  //SEG20 [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-  //SEG21 menu::@16
-  //SEG22 [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
-  //SEG23 [12] if((byte~) menu::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
+  //SEG21 [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+  //SEG22 menu::@16
+  //SEG23 [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
+  //SEG24 [12] if((byte~) menu::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b4
-  //SEG24 [13] phi from menu::@16 to menu::@9 [phi:menu::@16->menu::@9]
-  //SEG25 menu::@9
-  //SEG26 [14] call pressed 
+  //SEG25 [13] phi from menu::@16 to menu::@9 [phi:menu::@16->menu::@9]
+  //SEG26 menu::@9
+  //SEG27 [14] call pressed 
     jsr pressed
-  //SEG27 menu::@return
+  //SEG28 menu::@return
   breturn:
-  //SEG28 [15] return 
+  //SEG29 [15] return 
     rts
-  //SEG29 [16] phi from menu::@16 to menu::@4 [phi:menu::@16->menu::@4]
-  //SEG30 menu::@4
+  //SEG30 [16] phi from menu::@16 to menu::@4 [phi:menu::@16->menu::@4]
+  //SEG31 menu::@4
   b4:
-  //SEG31 [17] call keyboard_key_pressed 
-  //SEG32 [31] phi from menu::@4 to keyboard_key_pressed [phi:menu::@4->keyboard_key_pressed]
-  //SEG33 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_I#0 [phi:menu::@4->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+  //SEG32 [17] call keyboard_key_pressed 
+  //SEG33 [31] phi from menu::@4 to keyboard_key_pressed [phi:menu::@4->keyboard_key_pressed]
+  //SEG34 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_I#0 [phi:menu::@4->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_I
     jsr keyboard_key_pressed
-  //SEG34 [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
-  //SEG35 menu::@17
-  //SEG36 [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
-  //SEG37 [20] if((byte~) menu::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@5 -- vbuaa_eq_0_then_la1 
+  //SEG35 [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
+  //SEG36 menu::@17
+  //SEG37 [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
+  //SEG38 [20] if((byte~) menu::$4==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b5
-  //SEG38 menu::@11
-  //SEG39 [21] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG39 menu::@11
+  //SEG40 [21] *((const byte*) BORDERCOL#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
-  //SEG40 asm { sei  }
+  //SEG41 asm { sei  }
     sei
     jmp breturn
-  //SEG41 [23] phi from menu::@17 to menu::@5 [phi:menu::@17->menu::@5]
-  //SEG42 menu::@5
+  //SEG42 [23] phi from menu::@17 to menu::@5 [phi:menu::@17->menu::@5]
+  //SEG43 menu::@5
   b5:
-  //SEG43 [24] call keyboard_key_pressed 
-  //SEG44 [31] phi from menu::@5 to keyboard_key_pressed [phi:menu::@5->keyboard_key_pressed]
-  //SEG45 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_E#0 [phi:menu::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+  //SEG44 [24] call keyboard_key_pressed 
+  //SEG45 [31] phi from menu::@5 to keyboard_key_pressed [phi:menu::@5->keyboard_key_pressed]
+  //SEG46 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_E#0 [phi:menu::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_E
     jsr keyboard_key_pressed
-  //SEG46 [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
-  //SEG47 menu::@19
-  //SEG48 [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
-  //SEG49 [27] if((byte~) menu::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuaa_eq_0_then_la1 
+  //SEG47 [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
+  //SEG48 menu::@19
+  //SEG49 [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
+  //SEG50 [27] if((byte~) menu::$7==(byte/signed byte/word/signed word/dword/signed dword) 0) goto menu::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b6
-  //SEG50 menu::@13
-  //SEG51 [28] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG51 menu::@13
+  //SEG52 [28] *((const byte*) BORDERCOL#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
-  //SEG52 asm { cli  }
+  //SEG53 asm { cli  }
     cli
     jmp breturn
-  //SEG53 menu::@6
+  //SEG54 menu::@6
   b6:
-  //SEG54 [30] *((const byte*) SCREEN#0) ← ++ *((const byte*) SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG55 [30] *((const byte*) SCREEN#0) ← ++ *((const byte*) SCREEN#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp b2
 }
-//SEG55 keyboard_key_pressed
+//SEG56 keyboard_key_pressed
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 //  All keys exist as as KEY_XXX constants.
 //  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
-  //SEG56 [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuxx_band_vbuc1 
+  //SEG57 [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
     and #7
     tay
-  //SEG57 [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuaa=vbuxx_ror_3 
+  //SEG58 [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuaa=vbuxx_ror_3 
     txa
     lsr
     lsr
     lsr
-  //SEG58 [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
+  //SEG59 [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
     tax
-  //SEG59 [35] call keyboard_matrix_read 
+  //SEG60 [35] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-  //SEG60 [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-  //SEG61 keyboard_key_pressed::@2
-  //SEG62 [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  //SEG63 [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+  //SEG61 [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+  //SEG62 keyboard_key_pressed::@2
+  //SEG63 [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+  //SEG64 [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask#0 + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
-  //SEG64 keyboard_key_pressed::@return
-  //SEG65 [39] return 
+  //SEG65 keyboard_key_pressed::@return
+  //SEG66 [39] return 
     rts
 }
-//SEG66 keyboard_matrix_read
+//SEG67 keyboard_matrix_read
 //  Read a single row of the keyboard matrix
 //  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 //  Returns the keys pressed on the row as bits according to the C64 key matrix.
 //  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 //  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-  //SEG67 [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+  //SEG68 [40] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
-  //SEG68 [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
+  //SEG69 [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B#0) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
-  //SEG69 keyboard_matrix_read::@return
-  //SEG70 [42] return 
+  //SEG70 keyboard_matrix_read::@return
+  //SEG71 [42] return 
     rts
 }
-//SEG71 pressed
+//SEG72 pressed
 pressed: {
-  //SEG72 [43] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG73 [43] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG73 [44] phi from pressed pressed::@10 to pressed::@2 [phi:pressed/pressed::@10->pressed::@2]
-  //SEG74 pressed::@2
+  //SEG74 [44] phi from pressed pressed::@10 to pressed::@2 [phi:pressed/pressed::@10->pressed::@2]
+  //SEG75 pressed::@2
   b2:
-  //SEG75 [45] call keyboard_key_pressed 
-  //SEG76 [31] phi from pressed::@2 to keyboard_key_pressed [phi:pressed::@2->keyboard_key_pressed]
-  //SEG77 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_SPACE#0 [phi:pressed::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+  //SEG76 [45] call keyboard_key_pressed 
+  //SEG77 [31] phi from pressed::@2 to keyboard_key_pressed [phi:pressed::@2->keyboard_key_pressed]
+  //SEG78 [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_SPACE#0 [phi:pressed::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
-  //SEG78 [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
-  //SEG79 pressed::@10
-  //SEG80 [47] (byte~) pressed::$0 ← (byte) keyboard_key_pressed::return#10
-  //SEG81 [48] if((byte~) pressed::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto pressed::@2 -- vbuaa_eq_0_then_la1 
+  //SEG79 [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
+  //SEG80 pressed::@10
+  //SEG81 [47] (byte~) pressed::$0 ← (byte) keyboard_key_pressed::return#10
+  //SEG82 [48] if((byte~) pressed::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto pressed::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b2
-  //SEG82 pressed::@return
-  //SEG83 [49] return 
+  //SEG83 pressed::@return
+  //SEG84 [49] return 
     rts
 }
   //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)

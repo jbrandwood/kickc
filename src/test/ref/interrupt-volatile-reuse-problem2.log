@@ -294,141 +294,142 @@ Allocated zp ZP_BYTE:6 [ main::$1 ]
 Allocated zp ZP_BYTE:7 [ col1#1 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Illustrates problem where volatiles reuse ZP addresses of other variables
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-  //  Illustrates problem where volatiles reuse ZP addresses of other variables
+//SEG2 Global Constants & labels
   .label KERNEL_IRQ = $314
   .label IRQ_STATUS = $d019
   .label SCREEN = $400
   .label col1 = 5
   .label col1_1 = 7
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col1
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG5 @2
+//SEG6 @2
 b2:
-//SEG6 [2] call main 
+//SEG7 [2] call main 
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
     .label _1 = 6
     .label a = 4
     .label y = 3
     .label x = 2
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG11 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 [5] phi from main main::@10 to main::@4 [phi:main/main::@10->main::@4]
+  //SEG12 [5] phi from main main::@10 to main::@4 [phi:main/main::@10->main::@4]
   b4_from_main:
   b4_from_b10:
-  //SEG12 [5] phi (byte) main::x#6 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main/main::@10->main::@4#0] -- vbuz1=vbuc1 
+  //SEG13 [5] phi (byte) main::x#6 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main/main::@10->main::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta x
     jmp b4
-  //SEG13 main::@4
+  //SEG14 main::@4
   b4:
-  //SEG14 [6] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  //SEG15 [6] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
   b5_from_b4:
-  //SEG15 [6] phi (byte) main::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@5#0] -- vbuz1=vbuc1 
+  //SEG16 [6] phi (byte) main::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta y
     jmp b5
-  //SEG16 [6] phi from main::@9 to main::@5 [phi:main::@9->main::@5]
+  //SEG17 [6] phi from main::@9 to main::@5 [phi:main::@9->main::@5]
   b5_from_b9:
-  //SEG17 [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@9->main::@5#0] -- register_copy 
+  //SEG18 [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@9->main::@5#0] -- register_copy 
     jmp b5
-  //SEG18 main::@5
+  //SEG19 main::@5
   b5:
-  //SEG19 [7] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
+  //SEG20 [7] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
   b6_from_b5:
-  //SEG20 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#0] -- vbuz1=vbuc1 
+  //SEG21 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#0] -- vbuz1=vbuc1 
     lda #0
     sta a
     jmp b6
-  //SEG21 [7] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
+  //SEG22 [7] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
   b6_from_b6:
-  //SEG22 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@6#0] -- register_copy 
+  //SEG23 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@6#0] -- register_copy 
     jmp b6
-  //SEG23 main::@6
+  //SEG24 main::@6
   b6:
-  //SEG24 [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuz1=vbuz2_plus_vbuz3 
+  //SEG25 [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuz1=vbuz2_plus_vbuz3 
     lda a
     clc
     adc y
     sta _1
-  //SEG25 [9] *((const byte*) SCREEN#0 + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG26 [9] *((const byte*) SCREEN#0 + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _1
     ldy x
     sta SCREEN,y
-  //SEG26 [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
+  //SEG27 [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
     inc a
-  //SEG27 [11] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG28 [11] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda a
     cmp #$b
     bne b6_from_b6
     jmp b9
-  //SEG28 main::@9
+  //SEG29 main::@9
   b9:
-  //SEG29 [12] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
+  //SEG30 [12] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
     inc y
-  //SEG30 [13] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG31 [13] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda y
     cmp #$b
     bne b5_from_b9
     jmp b10
-  //SEG31 main::@10
+  //SEG32 main::@10
   b10:
-  //SEG32 [14] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuz1=_inc_vbuz1 
+  //SEG33 [14] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuz1=_inc_vbuz1 
     inc x
-  //SEG33 [15] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@13 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG34 [15] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@13 -- vbuz1_neq_vbuc1_then_la1 
     lda x
     cmp #$b
     bne b13_from_b10
     jmp b4_from_b10
-  //SEG34 [16] phi from main::@10 to main::@13 [phi:main::@10->main::@13]
+  //SEG35 [16] phi from main::@10 to main::@13 [phi:main::@10->main::@13]
   b13_from_b10:
     jmp b13
-  //SEG35 main::@13
+  //SEG36 main::@13
   b13:
-  //SEG36 [5] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
+  //SEG37 [5] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
   b4_from_b13:
-  //SEG37 [5] phi (byte) main::x#6 = (byte) main::x#1 [phi:main::@13->main::@4#0] -- register_copy 
+  //SEG38 [5] phi (byte) main::x#6 = (byte) main::x#1 [phi:main::@13->main::@4#0] -- register_copy 
     jmp b4
 }
-//SEG38 irq
+//SEG39 irq
 irq: {
-  //SEG39 entry interrupt(KERNEL_MIN)
-  //SEG40 [17] *((const byte*) IRQ_STATUS#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG40 entry interrupt(KERNEL_MIN)
+  //SEG41 [17] *((const byte*) IRQ_STATUS#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta IRQ_STATUS
-  //SEG41 asm { lda$dc0d  }
+  //SEG42 asm { lda$dc0d  }
     lda $dc0d
-  //SEG42 [19] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
+  //SEG43 [19] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
     lda col1
     sta SCREEN+$28
-  //SEG43 [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz2 
+  //SEG44 [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz2 
     ldy col1
     iny
     sty col1_1
     jmp breturn
-  //SEG44 irq::@return
+  //SEG45 irq::@return
   breturn:
-  //SEG45 [21] return  - exit interrupt(KERNEL_MIN)
+  //SEG46 [21] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -477,128 +478,129 @@ Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ main::y#4 main::y#1 ]
 Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:3 [ col1#0 col1#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Illustrates problem where volatiles reuse ZP addresses of other variables
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-  //  Illustrates problem where volatiles reuse ZP addresses of other variables
+//SEG2 Global Constants & labels
   .label KERNEL_IRQ = $314
   .label IRQ_STATUS = $d019
   .label SCREEN = $400
   .label col1 = 3
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col1
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG5 @2
+//SEG6 @2
 b2:
-//SEG6 [2] call main 
+//SEG7 [2] call main 
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
     .label y = 2
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG11 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 [5] phi from main main::@10 to main::@4 [phi:main/main::@10->main::@4]
+  //SEG12 [5] phi from main main::@10 to main::@4 [phi:main/main::@10->main::@4]
   b4_from_main:
   b4_from_b10:
-  //SEG12 [5] phi (byte) main::x#6 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main/main::@10->main::@4#0] -- vbuxx=vbuc1 
+  //SEG13 [5] phi (byte) main::x#6 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main/main::@10->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b4
-  //SEG13 main::@4
+  //SEG14 main::@4
   b4:
-  //SEG14 [6] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  //SEG15 [6] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
   b5_from_b4:
-  //SEG15 [6] phi (byte) main::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@5#0] -- vbuz1=vbuc1 
+  //SEG16 [6] phi (byte) main::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta y
     jmp b5
-  //SEG16 [6] phi from main::@9 to main::@5 [phi:main::@9->main::@5]
+  //SEG17 [6] phi from main::@9 to main::@5 [phi:main::@9->main::@5]
   b5_from_b9:
-  //SEG17 [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@9->main::@5#0] -- register_copy 
+  //SEG18 [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@9->main::@5#0] -- register_copy 
     jmp b5
-  //SEG18 main::@5
+  //SEG19 main::@5
   b5:
-  //SEG19 [7] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
+  //SEG20 [7] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
   b6_from_b5:
-  //SEG20 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#0] -- vbuyy=vbuc1 
+  //SEG21 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#0] -- vbuyy=vbuc1 
     ldy #0
     jmp b6
-  //SEG21 [7] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
+  //SEG22 [7] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
   b6_from_b6:
-  //SEG22 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@6#0] -- register_copy 
+  //SEG23 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@6#0] -- register_copy 
     jmp b6
-  //SEG23 main::@6
+  //SEG24 main::@6
   b6:
-  //SEG24 [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
+  //SEG25 [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
     tya
     clc
     adc y
-  //SEG25 [9] *((const byte*) SCREEN#0 + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+  //SEG26 [9] *((const byte*) SCREEN#0 + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-  //SEG26 [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
+  //SEG27 [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG27 [11] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG28 [11] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne b6_from_b6
     jmp b9
-  //SEG28 main::@9
+  //SEG29 main::@9
   b9:
-  //SEG29 [12] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
+  //SEG30 [12] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
     inc y
-  //SEG30 [13] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG31 [13] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda y
     cmp #$b
     bne b5_from_b9
     jmp b10
-  //SEG31 main::@10
+  //SEG32 main::@10
   b10:
-  //SEG32 [14] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuxx=_inc_vbuxx 
+  //SEG33 [14] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG33 [15] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@13 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG34 [15] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@13 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b13_from_b10
     jmp b4_from_b10
-  //SEG34 [16] phi from main::@10 to main::@13 [phi:main::@10->main::@13]
+  //SEG35 [16] phi from main::@10 to main::@13 [phi:main::@10->main::@13]
   b13_from_b10:
     jmp b13
-  //SEG35 main::@13
+  //SEG36 main::@13
   b13:
-  //SEG36 [5] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
+  //SEG37 [5] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
   b4_from_b13:
-  //SEG37 [5] phi (byte) main::x#6 = (byte) main::x#1 [phi:main::@13->main::@4#0] -- register_copy 
+  //SEG38 [5] phi (byte) main::x#6 = (byte) main::x#1 [phi:main::@13->main::@4#0] -- register_copy 
     jmp b4
 }
-//SEG38 irq
+//SEG39 irq
 irq: {
-  //SEG39 entry interrupt(KERNEL_MIN)
-  //SEG40 [17] *((const byte*) IRQ_STATUS#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG40 entry interrupt(KERNEL_MIN)
+  //SEG41 [17] *((const byte*) IRQ_STATUS#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta IRQ_STATUS
-  //SEG41 asm { lda$dc0d  }
+  //SEG42 asm { lda$dc0d  }
     lda $dc0d
-  //SEG42 [19] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
+  //SEG43 [19] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
     lda col1
     sta SCREEN+$28
-  //SEG43 [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
+  //SEG44 [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
     inc col1
     jmp breturn
-  //SEG44 irq::@return
+  //SEG45 irq::@return
   breturn:
-  //SEG45 [21] return  - exit interrupt(KERNEL_MIN)
+  //SEG46 [21] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -688,101 +690,102 @@ reg byte a [ main::$1 ]
 FINAL ASSEMBLER
 Score: 223698
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Illustrates problem where volatiles reuse ZP addresses of other variables
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-  //  Illustrates problem where volatiles reuse ZP addresses of other variables
+//SEG2 Global Constants & labels
   .label KERNEL_IRQ = $314
   .label IRQ_STATUS = $d019
   .label SCREEN = $400
   .label col1 = 3
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col1
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG5 @2
-//SEG6 [2] call main 
+//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG6 @2
+//SEG7 [2] call main 
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-//SEG9 main
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+//SEG9 @end
+//SEG10 main
 main: {
     .label y = 2
-  //SEG10 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG11 [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 [5] phi from main main::@10 to main::@4 [phi:main/main::@10->main::@4]
+  //SEG12 [5] phi from main main::@10 to main::@4 [phi:main/main::@10->main::@4]
   b1:
-  //SEG12 [5] phi (byte) main::x#6 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main/main::@10->main::@4#0] -- vbuxx=vbuc1 
+  //SEG13 [5] phi (byte) main::x#6 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main/main::@10->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG13 main::@4
+  //SEG14 main::@4
   b4:
-  //SEG14 [6] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  //SEG15 [6] phi (byte) main::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@5#0] -- vbuz1=vbuc1 
+  //SEG15 [6] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  //SEG16 [6] phi (byte) main::y#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta y
-  //SEG16 [6] phi from main::@9 to main::@5 [phi:main::@9->main::@5]
-  //SEG17 [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@9->main::@5#0] -- register_copy 
-  //SEG18 main::@5
+  //SEG17 [6] phi from main::@9 to main::@5 [phi:main::@9->main::@5]
+  //SEG18 [6] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@9->main::@5#0] -- register_copy 
+  //SEG19 main::@5
   b5:
-  //SEG19 [7] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
-  //SEG20 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#0] -- vbuyy=vbuc1 
+  //SEG20 [7] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
+  //SEG21 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#0] -- vbuyy=vbuc1 
     ldy #0
-  //SEG21 [7] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
-  //SEG22 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@6#0] -- register_copy 
-  //SEG23 main::@6
+  //SEG22 [7] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
+  //SEG23 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@6#0] -- register_copy 
+  //SEG24 main::@6
   b6:
-  //SEG24 [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
+  //SEG25 [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
     tya
     clc
     adc y
-  //SEG25 [9] *((const byte*) SCREEN#0 + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+  //SEG26 [9] *((const byte*) SCREEN#0 + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-  //SEG26 [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
+  //SEG27 [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG27 [11] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG28 [11] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne b6
-  //SEG28 main::@9
-  //SEG29 [12] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
+  //SEG29 main::@9
+  //SEG30 [12] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
     inc y
-  //SEG30 [13] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG31 [13] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda y
     cmp #$b
     bne b5
-  //SEG31 main::@10
-  //SEG32 [14] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuxx=_inc_vbuxx 
+  //SEG32 main::@10
+  //SEG33 [14] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG33 [15] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@13 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG34 [15] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@13 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b4
     jmp b1
-  //SEG34 [16] phi from main::@10 to main::@13 [phi:main::@10->main::@13]
-  //SEG35 main::@13
-  //SEG36 [5] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
-  //SEG37 [5] phi (byte) main::x#6 = (byte) main::x#1 [phi:main::@13->main::@4#0] -- register_copy 
+  //SEG35 [16] phi from main::@10 to main::@13 [phi:main::@10->main::@13]
+  //SEG36 main::@13
+  //SEG37 [5] phi from main::@13 to main::@4 [phi:main::@13->main::@4]
+  //SEG38 [5] phi (byte) main::x#6 = (byte) main::x#1 [phi:main::@13->main::@4#0] -- register_copy 
 }
-//SEG38 irq
+//SEG39 irq
 irq: {
-  //SEG39 entry interrupt(KERNEL_MIN)
-  //SEG40 [17] *((const byte*) IRQ_STATUS#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG40 entry interrupt(KERNEL_MIN)
+  //SEG41 [17] *((const byte*) IRQ_STATUS#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta IRQ_STATUS
-  //SEG41 asm { lda$dc0d  }
+  //SEG42 asm { lda$dc0d  }
     lda $dc0d
-  //SEG42 [19] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
+  //SEG43 [19] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 40) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
     lda col1
     sta SCREEN+$28
-  //SEG43 [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
+  //SEG44 [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
     inc col1
-  //SEG44 irq::@return
-  //SEG45 [21] return  - exit interrupt(KERNEL_MIN)
+  //SEG45 irq::@return
+  //SEG46 [21] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 

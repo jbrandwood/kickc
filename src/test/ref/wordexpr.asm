@@ -1,7 +1,7 @@
+//  Expressions based on bytes but resulting in words are as words - eg. b = b + 40*8;
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//  Expressions based on bytes but resulting in words are as words - eg. b = b + 40*8;
 main: {
     .label b = 2
     ldx #0

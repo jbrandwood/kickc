@@ -22,6 +22,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -75,6 +76,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitFile(KickCParser.FileContext ctx) {
+      if(program.getFileComments()==null) {
+         // Only set program file level comments for the first file.
+         program.setFileComments(getCommentsFile(ctx));
+      }
       this.visit(ctx.importSeq());
       this.visit(ctx.declSeq());
       return null;
@@ -114,7 +119,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentSymbols().addProcedure(name, type);
       addDirectives(procedure, ctx.directive());
-      procedure.setComments(getComments(ctx));
+      procedure.setComments(getCommentsSymbol(ctx));
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       VariableUnversioned returnVar = null;
@@ -144,26 +149,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return null;
    }
 
-   /**
-    * Find comments preceding the passed context
-    * @param ctx The parse context to examine
-    * @return The comments preceding the context
-    */
-   private List<Comment> getComments(ParserRuleContext ctx) {
-      List<Comment> comments = new ArrayList<>();
-      List<Token> hiddenTokensToLeft = tokenStream.getHiddenTokensToLeft(ctx.start.getTokenIndex());
-      if(hiddenTokensToLeft!=null) {
-         for(Token hiddenToken : hiddenTokensToLeft) {
-            String text = hiddenToken.getText();
-            if(text.startsWith("//")) {
-               text = text.substring(2);
-            }
-            Comment comment = new Comment(text);
-            comments.add(comment);
-         }
-      }
-      return comments;
-   }
 
    @Override
    public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
@@ -326,7 +311,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       if(lValue.isDeclaredConstant()) {
          // Add comments to constant
-         lValue.setComments(getComments(ctx));
+         lValue.setComments(getCommentsSymbol(ctx));
       }
       KickCParser.ExprContext initializer = ctx.expr();
       if(initializer != null) {
@@ -927,6 +912,100 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          return new ForwardVariableRef(ctx.NAME().getText());
       }
       throw new CompileError("Error! Unhandled symbol " + symbol.toString(program));
+   }
+
+   /** The hidden lexer channel containing whitespace. */
+   private static final int CHANNEL_WHITESPACE = 1;
+   /** The hidden lexer channel containing comments. */
+   private static final int CHANNEL_COMMENTS = 2;
+
+   /**
+    * Find all comments preceding the passed context.
+    * Group the comments into blocks each time an empty line (double newline) is encountered
+    *
+    * @param ctx The parse context to examine
+    * @return The comment blocks preceding the context
+    */
+   private List<List<Comment>> getCommentBlocks(ParserRuleContext ctx) {
+      List<List<Comment>> commentBlocks = new ArrayList<>();
+      List<Comment> comments = new ArrayList<>();
+      List<Token> hiddenTokens = tokenStream.getHiddenTokensToLeft(ctx.start.getTokenIndex());
+      if(hiddenTokens != null) {
+         for(Token hiddenToken : hiddenTokens) {
+            if(hiddenToken.getChannel() == CHANNEL_WHITESPACE) {
+               String text = hiddenToken.getText();
+               long newlineCount = text.chars().filter(ch -> ch == '\n').count();
+               if(newlineCount > 1 && comments.size()>0) {
+                  // Create new comment block
+                  commentBlocks.add(comments);
+                  comments = new ArrayList<>();
+               }
+            } else if(hiddenToken.getChannel() == CHANNEL_COMMENTS) {
+               String text = hiddenToken.getText();
+               if(text.startsWith("//")) {
+                  text = text.substring(2);
+               }
+               Comment comment = new Comment(text);
+               comment.setTokenIndex(hiddenToken.getTokenIndex());
+               comments.add( comment);
+            }
+         }
+      }
+      if(comments.size()>0) {
+         commentBlocks.add(comments);
+      }
+      return commentBlocks;
+   }
+
+   /** Set containing the token index of all comment blocks that have already been used. */
+   HashSet<Integer> usedCommentTokenIndices = new HashSet<>();
+
+   /**
+    * Ensures that the comments have not already been "used" in another context.
+    *
+    * @param candidate The comments to examine
+    * @return The comments if they are unused. An empty comment if they had already been used.
+    */
+   private List<Comment> ensureUnusedComments(List<Comment> candidate) {
+      int tokenIndex = candidate.get(0).getTokenIndex();
+      if(usedCommentTokenIndices.contains(tokenIndex)) {
+         // Comment was already used - Return an empty list
+         return new ArrayList<>();
+      } else {
+         // Comment unused - Mark as used and return it
+         usedCommentTokenIndices.add(tokenIndex);
+         return candidate;
+      }
+   }
+
+   /**
+    * Find the first comments preceding the passed context (search from start until meeting a double newline).
+    * Only returns comments if they have not already been "used" by another call.
+    *
+    * @param ctx The parse context to examine
+    * @return The first comments preceding the context
+    */
+   private List<Comment> getCommentsFile(ParserRuleContext ctx) {
+      List<List<Comment>> commentBlocks = getCommentBlocks(ctx);
+      if(commentBlocks.size()==0) {
+         return new ArrayList<>();
+      }
+      return ensureUnusedComments(commentBlocks.get(0));
+   }
+
+   /**
+    * Find comments immediately preceding the passed context (search from end until meeting a double newline)
+    * Only returns comments if they have not already been "used" by another call.
+    *
+    * @param ctx The parse context to examine
+    * @return The comments immediately preceding the context
+    */
+   private List<Comment> getCommentsSymbol(ParserRuleContext ctx) {
+      List<List<Comment>> commentBlocks = getCommentBlocks(ctx);
+      if(commentBlocks.size()==0) {
+         return new ArrayList<>();
+      }
+      return ensureUnusedComments(commentBlocks.get(commentBlocks.size() - 1));
    }
 
    /** A declaration directive. */

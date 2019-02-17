@@ -1,3 +1,5 @@
+//  Allocates ZP to j/k-variables even though all of i, j, k could be allocates to x and be more efficient.
+//  Reason: Pass4RegisterUpliftCombinations.isAllocationOverlapping() believes i/j/k variables overlaps insode plot()
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

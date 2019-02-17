@@ -1,3 +1,4 @@
+//  Generates a 16-bit signed sinus
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

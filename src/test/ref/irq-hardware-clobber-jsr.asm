@@ -1,7 +1,7 @@
+//  A minimal working raster hardware IRQ with clobber-based register savings
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Commodore 64 Registers and Constants
   //  Processor port data direction register
   .label PROCPORT_DDR = 0
   //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written

@@ -128,28 +128,29 @@ Allocated zp ZP_BYTE:6 [ main::$3 ]
 Allocated zp ZP_BYTE:7 [ main::$4 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test a constant word pointers (pointing to a word placed on zeropage).
+//  The result when running is "CML!" on the screen.
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
+//SEG2 Global Constants & labels
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
-//  Test a constant word pointers (pointing to a word placed on zeropage).
-//  The result when running is "CML!" on the screen.
+//SEG9 main
 main: {
     .label screen = $400
     .label wp = w
@@ -158,44 +159,44 @@ main: {
     .label _3 = 6
     .label _4 = 7
     .label w = 2
-  //SEG9 [4] (word) main::w#0 ← (word/signed word/dword/signed dword) 3331 -- vwuz1=vwuc1 
+  //SEG10 [4] (word) main::w#0 ← (word/signed word/dword/signed dword) 3331 -- vwuz1=vwuc1 
     lda #<$d03
     sta w
     lda #>$d03
     sta w+1
-  //SEG10 [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
+  //SEG11 [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
     lda wp
     sta _1
-  //SEG11 [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+  //SEG12 [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda _1
     sta screen
-  //SEG12 [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
+  //SEG13 [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
     lda wp+1
     sta _2
-  //SEG13 [8] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+  //SEG14 [8] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
     lda _2
     sta screen+1
-  //SEG14 [9] *((const word*) main::wp#0) ← (word/signed word/dword/signed dword) 8460 -- _deref_pwuc1=vwuc2 
+  //SEG15 [9] *((const word*) main::wp#0) ← (word/signed word/dword/signed dword) 8460 -- _deref_pwuc1=vwuc2 
     lda #<$210c
     sta wp
     lda #>$210c
     sta wp+1
-  //SEG15 [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
+  //SEG16 [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
     lda wp
     sta _3
-  //SEG16 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
+  //SEG17 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
     lda _3
     sta screen+2
-  //SEG17 [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
+  //SEG18 [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
     lda wp+1
     sta _4
-  //SEG18 [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
+  //SEG19 [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
     lda _4
     sta screen+3
     jmp breturn
-  //SEG19 main::@return
+  //SEG20 main::@return
   breturn:
-  //SEG20 [14] return 
+  //SEG21 [14] return 
     rts
 }
 
@@ -217,62 +218,63 @@ Limited combination testing to 100 combinations of 256 possible.
 Uplifting [] best 75 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test a constant word pointers (pointing to a word placed on zeropage).
+//  The result when running is "CML!" on the screen.
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
+//SEG2 Global Constants & labels
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
-//  Test a constant word pointers (pointing to a word placed on zeropage).
-//  The result when running is "CML!" on the screen.
+//SEG9 main
 main: {
     .label screen = $400
     .label wp = w
     .label w = 2
-  //SEG9 [4] (word) main::w#0 ← (word/signed word/dword/signed dword) 3331 -- vwuz1=vwuc1 
+  //SEG10 [4] (word) main::w#0 ← (word/signed word/dword/signed dword) 3331 -- vwuz1=vwuc1 
     lda #<$d03
     sta w
     lda #>$d03
     sta w+1
-  //SEG10 [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+  //SEG11 [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
     lda wp
-  //SEG11 [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+  //SEG12 [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen
-  //SEG12 [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+  //SEG13 [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
     lda wp+1
-  //SEG13 [8] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+  //SEG14 [8] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+1
-  //SEG14 [9] *((const word*) main::wp#0) ← (word/signed word/dword/signed dword) 8460 -- _deref_pwuc1=vwuc2 
+  //SEG15 [9] *((const word*) main::wp#0) ← (word/signed word/dword/signed dword) 8460 -- _deref_pwuc1=vwuc2 
     lda #<$210c
     sta wp
     lda #>$210c
     sta wp+1
-  //SEG15 [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+  //SEG16 [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
     lda wp
-  //SEG16 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+  //SEG17 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta screen+2
-  //SEG17 [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+  //SEG18 [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
     lda wp+1
-  //SEG18 [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+  //SEG19 [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta screen+3
     jmp breturn
-  //SEG19 main::@return
+  //SEG20 main::@return
   breturn:
-  //SEG20 [14] return 
+  //SEG21 [14] return 
     rts
 }
 
@@ -321,52 +323,53 @@ reg byte a [ main::$4 ]
 FINAL ASSEMBLER
 Score: 60
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test a constant word pointers (pointing to a word placed on zeropage).
+//  The result when running is "CML!" on the screen.
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main 
-//SEG6 [3] phi from @1 to @end [phi:@1->@end]
-//SEG7 @end
-//SEG8 main
-//  Test a constant word pointers (pointing to a word placed on zeropage).
-//  The result when running is "CML!" on the screen.
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
 main: {
     .label screen = $400
     .label wp = w
     .label w = 2
-  //SEG9 [4] (word) main::w#0 ← (word/signed word/dword/signed dword) 3331 -- vwuz1=vwuc1 
+  //SEG10 [4] (word) main::w#0 ← (word/signed word/dword/signed dword) 3331 -- vwuz1=vwuc1 
     lda #<$d03
     sta w
     lda #>$d03
     sta w+1
-  //SEG10 [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+  //SEG11 [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
     lda wp
-  //SEG11 [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+  //SEG12 [6] *((const byte*) main::screen#0) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen
-  //SEG12 [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+  //SEG13 [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
     lda wp+1
-  //SEG13 [8] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+  //SEG14 [8] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+1
-  //SEG14 [9] *((const word*) main::wp#0) ← (word/signed word/dword/signed dword) 8460 -- _deref_pwuc1=vwuc2 
+  //SEG15 [9] *((const word*) main::wp#0) ← (word/signed word/dword/signed dword) 8460 -- _deref_pwuc1=vwuc2 
     lda #<$210c
     sta wp
     lda #>$210c
     sta wp+1
-  //SEG15 [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+  //SEG16 [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
     lda wp
-  //SEG16 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+  //SEG17 [11] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta screen+2
-  //SEG17 [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+  //SEG18 [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
     lda wp+1
-  //SEG18 [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+  //SEG19 [13] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta screen+3
-  //SEG19 main::@return
-  //SEG20 [14] return 
+  //SEG20 main::@return
+  //SEG21 [14] return 
     rts
 }
 

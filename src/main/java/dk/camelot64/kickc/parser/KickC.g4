@@ -212,6 +212,8 @@ fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
 ASMREL: '!' NAME_CHAR* [+-]+ ;
 
-WS : [ \t\r\n\u00a0]+ -> skip ;
-COMMENT_LINE : '//' ~[\r\n]* -> channel(HIDDEN);
-COMMENT_BLOCK : '/*' .*? '*/' -> channel(HIDDEN);
+// Add white space to the hidden channel 1
+WS : [ \t\r\n\u00a0]+ -> channel(1);
+// Add comments to the hidden channel 2
+COMMENT_LINE : '//' ~[\r\n]* -> channel(2);
+COMMENT_BLOCK : '/*' .*? '*/' -> channel(2);

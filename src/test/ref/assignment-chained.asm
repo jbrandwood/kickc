@@ -1,7 +1,7 @@
+//  Tests that chained assignments work as intended
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//  Tests that chained assignments work as intended
 main: {
     .label screen = $400
     lda #'c'

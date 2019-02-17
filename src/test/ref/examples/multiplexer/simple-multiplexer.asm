@@ -1,3 +1,4 @@
+//  A simple usage of the flexible sprite multiplexer routine
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

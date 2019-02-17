@@ -1,3 +1,4 @@
+//  Test that memory alignment of arrays work
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -22,6 +23,5 @@ main: {
     .align $100
     cs: .fill $100, 0
 }
-  //  Test that memory alignment of arrays work
   .align $100
   bs: .fill $100, 0

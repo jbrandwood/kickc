@@ -219,11 +219,13 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  A minimal working raster IRQ
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -244,78 +246,78 @@ INITIAL ASM
   .label PROCPORT = 1
   //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG4 @2
+//SEG5 @2
 b2:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 //  RAM in $A000, $E000 CHAR ROM in $D000
 main: {
-  //SEG9 asm { sei  }
+  //SEG10 asm { sei  }
     sei
-  //SEG10 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-  //SEG11 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
+  //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-  //SEG12 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  //SEG13 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG13 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  //SEG14 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda VIC_CONTROL
     ora #$80
     sta VIC_CONTROL
-  //SEG14 [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG15 [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-  //SEG15 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG16 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG16 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_ALL)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG17 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_ALL)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
     sta HARDWARE_IRQ+1
-  //SEG17 asm { cli  }
+  //SEG18 asm { cli  }
     cli
     jmp b2
-  //SEG18 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG19 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG20 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b2
 }
-//SEG20 irq
+//SEG21 irq
 //  Interrupt Routine
 irq: {
-  //SEG21 entry interrupt(HARDWARE_ALL)
+  //SEG22 entry interrupt(HARDWARE_ALL)
     sta rega+1
     stx regx+1
     sty regy+1
-  //SEG22 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG23 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  //SEG23 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG24 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  //SEG24 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG25 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
-  //SEG25 irq::@return
+  //SEG26 irq::@return
   breturn:
-  //SEG26 [17] return  - exit interrupt(HARDWARE_ALL)
+  //SEG27 [17] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
   regx:
@@ -348,11 +350,13 @@ Uplifting [irq] best 314 combination
 Uplifting [] best 314 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  A minimal working raster IRQ
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -373,78 +377,78 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label PROCPORT = 1
   //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG4 @2
+//SEG5 @2
 b2:
-//SEG5 [2] call main 
+//SEG6 [2] call main 
   jsr main
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG7 @end
+//SEG8 @end
 bend:
-//SEG8 main
+//SEG9 main
 //  RAM in $A000, $E000 CHAR ROM in $D000
 main: {
-  //SEG9 asm { sei  }
+  //SEG10 asm { sei  }
     sei
-  //SEG10 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-  //SEG11 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
+  //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-  //SEG12 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  //SEG13 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG13 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  //SEG14 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda VIC_CONTROL
     ora #$80
     sta VIC_CONTROL
-  //SEG14 [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG15 [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-  //SEG15 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG16 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG16 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_ALL)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG17 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_ALL)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
     sta HARDWARE_IRQ+1
-  //SEG17 asm { cli  }
+  //SEG18 asm { cli  }
     cli
     jmp b2
-  //SEG18 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG19 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG20 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b2
 }
-//SEG20 irq
+//SEG21 irq
 //  Interrupt Routine
 irq: {
-  //SEG21 entry interrupt(HARDWARE_ALL)
+  //SEG22 entry interrupt(HARDWARE_ALL)
     sta rega+1
     stx regx+1
     sty regy+1
-  //SEG22 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG23 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  //SEG23 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG24 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  //SEG24 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG25 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
-  //SEG25 irq::@return
+  //SEG26 irq::@return
   breturn:
-  //SEG26 [17] return  - exit interrupt(HARDWARE_ALL)
+  //SEG27 [17] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
   regx:
@@ -523,11 +527,13 @@ interrupt(HARDWARE_ALL)(void()) irq()
 FINAL ASSEMBLER
 Score: 296
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  A minimal working raster IRQ
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -548,67 +554,67 @@ Score: 296
   .label PROCPORT = 1
   //  RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-//SEG5 [2] call main 
-//SEG6 [3] phi from @2 to @end [phi:@2->@end]
-//SEG7 @end
-//SEG8 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG5 @2
+//SEG6 [2] call main 
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 @end
+//SEG9 main
 //  RAM in $A000, $E000 CHAR ROM in $D000
 main: {
-  //SEG9 asm { sei  }
+  //SEG10 asm { sei  }
     sei
-  //SEG10 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-  //SEG11 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
+  //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-  //SEG12 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+  //SEG13 [7] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-  //SEG13 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+  //SEG14 [8] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (byte/word/signed word/dword/signed dword) 128 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda VIC_CONTROL
     ora #$80
     sta VIC_CONTROL
-  //SEG14 [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG15 [9] *((const byte*) RASTER#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-  //SEG15 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG16 [10] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-  //SEG16 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_ALL)(void()) irq() -- _deref_pptc1=pprc2 
+  //SEG17 [11] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_ALL)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
     sta HARDWARE_IRQ+1
-  //SEG17 asm { cli  }
+  //SEG18 asm { cli  }
     cli
-  //SEG18 main::@2
+  //SEG19 main::@2
   b2:
-  //SEG19 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG20 [13] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp b2
 }
-//SEG20 irq
+//SEG21 irq
 //  Interrupt Routine
 irq: {
-  //SEG21 entry interrupt(HARDWARE_ALL)
+  //SEG22 entry interrupt(HARDWARE_ALL)
     sta rega+1
     stx regx+1
     sty regy+1
-  //SEG22 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG23 [14] *((const byte*) BGCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-  //SEG23 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG24 [15] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
-  //SEG24 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG25 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG25 irq::@return
-  //SEG26 [17] return  - exit interrupt(HARDWARE_ALL)
+  //SEG26 irq::@return
+  //SEG27 [17] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
   regx:

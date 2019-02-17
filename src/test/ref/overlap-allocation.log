@@ -287,137 +287,140 @@ Allocated zp ZP_BYTE:4 [ main::k#2 main::k#1 ]
 Allocated zp ZP_BYTE:5 [ plot::x#3 plot::x#0 plot::x#1 plot::x#2 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Allocates ZP to j/k-variables even though all of i, j, k could be allocates to x and be more efficient.
+//  Reason: Pass4RegisterUpliftCombinations.isAllocationOverlapping() believes i/j/k variables overlaps insode plot()
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label SCREEN = $400
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG4 @2
+//SEG5 @2
 b2:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @2 to main [phi:@2->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
     .label i = 2
     .label j = 3
     .label k = 4
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
-  //SEG12 [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
+  //SEG13 [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
   b1_from_b7:
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] (byte) plot::x#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+  //SEG16 [6] (byte) plot::x#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda i
     sta plot.x
-  //SEG16 [7] call plot 
-  //SEG17 [21] phi from main::@1 to plot [phi:main::@1->plot]
+  //SEG17 [7] call plot 
+  //SEG18 [21] phi from main::@1 to plot [phi:main::@1->plot]
   plot_from_b1:
-  //SEG18 [21] phi (byte) plot::x#3 = (byte) plot::x#0 [phi:main::@1->plot#0] -- register_copy 
+  //SEG19 [21] phi (byte) plot::x#3 = (byte) plot::x#0 [phi:main::@1->plot#0] -- register_copy 
     jsr plot
     jmp b7
-  //SEG19 main::@7
+  //SEG20 main::@7
   b7:
-  //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG21 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG22 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$b
     bne b1_from_b7
-  //SEG22 [10] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
+  //SEG23 [10] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
   b2_from_b7:
-  //SEG23 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@2#0] -- vbuz1=vbuc1 
+  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta j
     jmp b2
-  //SEG24 [10] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
+  //SEG25 [10] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
   b2_from_b8:
-  //SEG25 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@2#0] -- register_copy 
+  //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@2#0] -- register_copy 
     jmp b2
-  //SEG26 main::@2
+  //SEG27 main::@2
   b2:
-  //SEG27 [11] (byte) plot::x#1 ← (byte) main::j#2 -- vbuz1=vbuz2 
+  //SEG28 [11] (byte) plot::x#1 ← (byte) main::j#2 -- vbuz1=vbuz2 
     lda j
     sta plot.x
-  //SEG28 [12] call plot 
-  //SEG29 [21] phi from main::@2 to plot [phi:main::@2->plot]
+  //SEG29 [12] call plot 
+  //SEG30 [21] phi from main::@2 to plot [phi:main::@2->plot]
   plot_from_b2:
-  //SEG30 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@2->plot#0] -- register_copy 
+  //SEG31 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@2->plot#0] -- register_copy 
     jsr plot
     jmp b8
-  //SEG31 main::@8
+  //SEG32 main::@8
   b8:
-  //SEG32 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
+  //SEG33 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
     inc j
-  //SEG33 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda j
     cmp #$b
     bne b2_from_b8
-  //SEG34 [15] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
+  //SEG35 [15] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
   b3_from_b8:
-  //SEG35 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@3#0] -- vbuz1=vbuc1 
+  //SEG36 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta k
     jmp b3
-  //SEG36 [15] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
+  //SEG37 [15] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
   b3_from_b9:
-  //SEG37 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@3#0] -- register_copy 
+  //SEG38 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@3#0] -- register_copy 
     jmp b3
-  //SEG38 main::@3
+  //SEG39 main::@3
   b3:
-  //SEG39 [16] (byte) plot::x#2 ← (byte) main::k#2 -- vbuz1=vbuz2 
+  //SEG40 [16] (byte) plot::x#2 ← (byte) main::k#2 -- vbuz1=vbuz2 
     lda k
     sta plot.x
-  //SEG40 [17] call plot 
-  //SEG41 [21] phi from main::@3 to plot [phi:main::@3->plot]
+  //SEG41 [17] call plot 
+  //SEG42 [21] phi from main::@3 to plot [phi:main::@3->plot]
   plot_from_b3:
-  //SEG42 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@3->plot#0] -- register_copy 
+  //SEG43 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@3->plot#0] -- register_copy 
     jsr plot
     jmp b9
-  //SEG43 main::@9
+  //SEG44 main::@9
   b9:
-  //SEG44 [18] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuz1=_inc_vbuz1 
+  //SEG45 [18] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuz1=_inc_vbuz1 
     inc k
-  //SEG45 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG46 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda k
     cmp #$b
     bne b3_from_b9
     jmp breturn
-  //SEG46 main::@return
+  //SEG47 main::@return
   breturn:
-  //SEG47 [20] return 
+  //SEG48 [20] return 
     rts
 }
-//SEG48 plot
+//SEG49 plot
 plot: {
     .label x = 5
-  //SEG49 [22] *((const byte*) SCREEN#0 + (byte) plot::x#3) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+  //SEG50 [22] *((const byte*) SCREEN#0 + (byte) plot::x#3) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
     ldy x
     lda #'*'
     sta SCREEN,y
     jmp breturn
-  //SEG50 plot::@return
+  //SEG51 plot::@return
   breturn:
-  //SEG51 [23] return 
+  //SEG52 [23] return 
     rts
 }
 
@@ -442,120 +445,123 @@ Uplifting [main] best 526 combination reg byte x [ main::i#2 main::i#1 ] reg byt
 Uplifting [] best 526 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Allocates ZP to j/k-variables even though all of i, j, k could be allocates to x and be more efficient.
+//  Reason: Pass4RegisterUpliftCombinations.isAllocationOverlapping() believes i/j/k variables overlaps insode plot()
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label SCREEN = $400
-//SEG2 @begin
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
 b2_from_bbegin:
   jmp b2
-//SEG4 @2
+//SEG5 @2
 b2:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @2 to main [phi:@2->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @2 to main [phi:@2->main]
 main_from_b2:
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
 bend_from_b2:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG12 [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
+  //SEG13 [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
   b1_from_b7:
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#0] -- register_copy 
     jmp b1
-  //SEG14 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] (byte) plot::x#0 ← (byte) main::i#2
-  //SEG16 [7] call plot 
-  //SEG17 [21] phi from main::@1 to plot [phi:main::@1->plot]
+  //SEG16 [6] (byte) plot::x#0 ← (byte) main::i#2
+  //SEG17 [7] call plot 
+  //SEG18 [21] phi from main::@1 to plot [phi:main::@1->plot]
   plot_from_b1:
-  //SEG18 [21] phi (byte) plot::x#3 = (byte) plot::x#0 [phi:main::@1->plot#0] -- register_copy 
+  //SEG19 [21] phi (byte) plot::x#3 = (byte) plot::x#0 [phi:main::@1->plot#0] -- register_copy 
     jsr plot
     jmp b7
-  //SEG19 main::@7
+  //SEG20 main::@7
   b7:
-  //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG21 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG22 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1_from_b7
-  //SEG22 [10] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
+  //SEG23 [10] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
   b2_from_b7:
-  //SEG23 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@2#0] -- vbuxx=vbuc1 
+  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b2
-  //SEG24 [10] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
+  //SEG25 [10] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
   b2_from_b8:
-  //SEG25 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@2#0] -- register_copy 
+  //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@2#0] -- register_copy 
     jmp b2
-  //SEG26 main::@2
+  //SEG27 main::@2
   b2:
-  //SEG27 [11] (byte) plot::x#1 ← (byte) main::j#2
-  //SEG28 [12] call plot 
-  //SEG29 [21] phi from main::@2 to plot [phi:main::@2->plot]
+  //SEG28 [11] (byte) plot::x#1 ← (byte) main::j#2
+  //SEG29 [12] call plot 
+  //SEG30 [21] phi from main::@2 to plot [phi:main::@2->plot]
   plot_from_b2:
-  //SEG30 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@2->plot#0] -- register_copy 
+  //SEG31 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@2->plot#0] -- register_copy 
     jsr plot
     jmp b8
-  //SEG31 main::@8
+  //SEG32 main::@8
   b8:
-  //SEG32 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuxx=_inc_vbuxx 
+  //SEG33 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG33 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b2_from_b8
-  //SEG34 [15] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
+  //SEG35 [15] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
   b3_from_b8:
-  //SEG35 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@3#0] -- vbuxx=vbuc1 
+  //SEG36 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@3#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b3
-  //SEG36 [15] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
+  //SEG37 [15] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
   b3_from_b9:
-  //SEG37 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@3#0] -- register_copy 
+  //SEG38 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@3#0] -- register_copy 
     jmp b3
-  //SEG38 main::@3
+  //SEG39 main::@3
   b3:
-  //SEG39 [16] (byte) plot::x#2 ← (byte) main::k#2
-  //SEG40 [17] call plot 
-  //SEG41 [21] phi from main::@3 to plot [phi:main::@3->plot]
+  //SEG40 [16] (byte) plot::x#2 ← (byte) main::k#2
+  //SEG41 [17] call plot 
+  //SEG42 [21] phi from main::@3 to plot [phi:main::@3->plot]
   plot_from_b3:
-  //SEG42 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@3->plot#0] -- register_copy 
+  //SEG43 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@3->plot#0] -- register_copy 
     jsr plot
     jmp b9
-  //SEG43 main::@9
+  //SEG44 main::@9
   b9:
-  //SEG44 [18] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
+  //SEG45 [18] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG45 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG46 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b3_from_b9
     jmp breturn
-  //SEG46 main::@return
+  //SEG47 main::@return
   breturn:
-  //SEG47 [20] return 
+  //SEG48 [20] return 
     rts
 }
-//SEG48 plot
+//SEG49 plot
 plot: {
-  //SEG49 [22] *((const byte*) SCREEN#0 + (byte) plot::x#3) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG50 [22] *((const byte*) SCREEN#0 + (byte) plot::x#3) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta SCREEN,x
     jmp breturn
-  //SEG50 plot::@return
+  //SEG51 plot::@return
   breturn:
-  //SEG51 [23] return 
+  //SEG52 [23] return 
     rts
 }
 
@@ -645,86 +651,89 @@ reg byte x [ plot::x#3 plot::x#0 plot::x#1 plot::x#2 ]
 FINAL ASSEMBLER
 Score: 292
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Allocates ZP to j/k-variables even though all of i, j, k could be allocates to x and be more efficient.
+//  Reason: Pass4RegisterUpliftCombinations.isAllocationOverlapping() believes i/j/k variables overlaps insode plot()
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
+//SEG2 Global Constants & labels
   .label SCREEN = $400
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG4 @2
-//SEG5 [2] call main 
-//SEG6 [4] phi from @2 to main [phi:@2->main]
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-//SEG8 @end
-//SEG9 main
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG5 @2
+//SEG6 [2] call main 
+//SEG7 [4] phi from @2 to main [phi:@2->main]
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+//SEG9 @end
+//SEG10 main
 main: {
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG12 [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
-  //SEG13 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#0] -- register_copy 
-  //SEG14 main::@1
+  //SEG13 [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#0] -- register_copy 
+  //SEG15 main::@1
   b1:
-  //SEG15 [6] (byte) plot::x#0 ← (byte) main::i#2
-  //SEG16 [7] call plot 
-  //SEG17 [21] phi from main::@1 to plot [phi:main::@1->plot]
-  //SEG18 [21] phi (byte) plot::x#3 = (byte) plot::x#0 [phi:main::@1->plot#0] -- register_copy 
+  //SEG16 [6] (byte) plot::x#0 ← (byte) main::i#2
+  //SEG17 [7] call plot 
+  //SEG18 [21] phi from main::@1 to plot [phi:main::@1->plot]
+  //SEG19 [21] phi (byte) plot::x#3 = (byte) plot::x#0 [phi:main::@1->plot#0] -- register_copy 
     jsr plot
-  //SEG19 main::@7
-  //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG20 main::@7
+  //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG21 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG22 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1
-  //SEG22 [10] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
-  //SEG23 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@2#0] -- vbuxx=vbuc1 
+  //SEG23 [10] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
+  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG24 [10] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
-  //SEG25 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@2#0] -- register_copy 
-  //SEG26 main::@2
+  //SEG25 [10] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
+  //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@2#0] -- register_copy 
+  //SEG27 main::@2
   b2:
-  //SEG27 [11] (byte) plot::x#1 ← (byte) main::j#2
-  //SEG28 [12] call plot 
-  //SEG29 [21] phi from main::@2 to plot [phi:main::@2->plot]
-  //SEG30 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@2->plot#0] -- register_copy 
+  //SEG28 [11] (byte) plot::x#1 ← (byte) main::j#2
+  //SEG29 [12] call plot 
+  //SEG30 [21] phi from main::@2 to plot [phi:main::@2->plot]
+  //SEG31 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@2->plot#0] -- register_copy 
     jsr plot
-  //SEG31 main::@8
-  //SEG32 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuxx=_inc_vbuxx 
+  //SEG32 main::@8
+  //SEG33 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG33 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b2
-  //SEG34 [15] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
-  //SEG35 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@3#0] -- vbuxx=vbuc1 
+  //SEG35 [15] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
+  //SEG36 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@3#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG36 [15] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
-  //SEG37 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@3#0] -- register_copy 
-  //SEG38 main::@3
+  //SEG37 [15] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
+  //SEG38 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@3#0] -- register_copy 
+  //SEG39 main::@3
   b3:
-  //SEG39 [16] (byte) plot::x#2 ← (byte) main::k#2
-  //SEG40 [17] call plot 
-  //SEG41 [21] phi from main::@3 to plot [phi:main::@3->plot]
-  //SEG42 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@3->plot#0] -- register_copy 
+  //SEG40 [16] (byte) plot::x#2 ← (byte) main::k#2
+  //SEG41 [17] call plot 
+  //SEG42 [21] phi from main::@3 to plot [phi:main::@3->plot]
+  //SEG43 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@3->plot#0] -- register_copy 
     jsr plot
-  //SEG43 main::@9
-  //SEG44 [18] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
+  //SEG44 main::@9
+  //SEG45 [18] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG45 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG46 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b3
-  //SEG46 main::@return
-  //SEG47 [20] return 
+  //SEG47 main::@return
+  //SEG48 [20] return 
     rts
 }
-//SEG48 plot
+//SEG49 plot
 plot: {
-  //SEG49 [22] *((const byte*) SCREEN#0 + (byte) plot::x#3) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+  //SEG50 [22] *((const byte*) SCREEN#0 + (byte) plot::x#3) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta SCREEN,x
-  //SEG50 plot::@return
-  //SEG51 [23] return 
+  //SEG51 plot::@return
+  //SEG52 [23] return 
     rts
 }
 

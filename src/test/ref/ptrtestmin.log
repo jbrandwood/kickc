@@ -118,62 +118,63 @@ Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::b#0 ]
 
 INITIAL ASM
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test all types of pointers
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
+//SEG2 Global Constants & labels
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @1 to main [phi:@1->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
-//  Test all types of pointers
+//SEG10 main
 main: {
     //  A constant pointer
     .label SCREEN = $400
     .label b = 3
     .label i = 2
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #2
     sta i
     jmp b1
-  //SEG12 main::@1
+  //SEG13 main::@1
   b1:
-  //SEG13 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG14 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$a
     bcc b2
     jmp breturn
-  //SEG14 main::@return
+  //SEG15 main::@return
   breturn:
-  //SEG15 [7] return 
+  //SEG16 [7] return 
     rts
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+  //SEG18 [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy i
     lda SCREEN,y
     sta b
-  //SEG18 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+  //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG19 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG20 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG20 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG21 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1
 }
 
@@ -189,56 +190,57 @@ Uplifting [main] best 238 combination reg byte a [ main::b#0 ] reg byte x [ main
 Uplifting [] best 238 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test all types of pointers
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
+//SEG2 Global Constants & labels
+//SEG3 @begin
 bbegin:
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 [2] call main 
-//SEG6 [4] phi from @1 to main [phi:@1->main]
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
 main_from_b1:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
-//  Test all types of pointers
+//SEG10 main
 main: {
     //  A constant pointer
     .label SCREEN = $400
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #2
     jmp b1
-  //SEG12 main::@1
+  //SEG13 main::@1
   b1:
-  //SEG13 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+  //SEG14 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b2
     jmp breturn
-  //SEG14 main::@return
+  //SEG15 main::@return
   breturn:
-  //SEG15 [7] return 
+  //SEG16 [7] return 
     rts
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+  //SEG18 [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda SCREEN,x
-  //SEG18 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG19 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG20 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
-  //SEG20 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG21 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1
 }
 
@@ -287,42 +289,43 @@ reg byte a [ main::b#0 ]
 FINAL ASSEMBLER
 Score: 166
 
-//SEG0 Basic Upstart
+//SEG0 File Comments
+//  Test all types of pointers
+//SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//SEG1 Global Constants & labels
-//SEG2 @begin
-//SEG3 [1] phi from @begin to @1 [phi:@begin->@1]
-//SEG4 @1
-//SEG5 [2] call main 
-//SEG6 [4] phi from @1 to main [phi:@1->main]
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
-//  Test all types of pointers
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
 main: {
     //  A constant pointer
     .label SCREEN = $400
-  //SEG10 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG11 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #2
-  //SEG12 main::@1
+  //SEG13 main::@1
   b1:
-  //SEG13 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+  //SEG14 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc b2
-  //SEG14 main::@return
-  //SEG15 [7] return 
+  //SEG15 main::@return
+  //SEG16 [7] return 
     rts
-  //SEG16 main::@2
+  //SEG17 main::@2
   b2:
-  //SEG17 [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+  //SEG18 [8] (byte) main::b#0 ← *((const byte[1024]) main::SCREEN#0 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda SCREEN,x
-  //SEG18 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+  //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG19 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  //SEG20 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG20 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG21 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp b1
 }
 

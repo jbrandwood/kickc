@@ -1,7 +1,7 @@
+//  Test some complex pointers
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-//  Test some complex pointers
 main: {
     .label screen = $400
     .label BGCOL = $d020

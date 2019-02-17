@@ -1,7 +1,7 @@
+//  Generate a big sinus and plot it on a bitmap
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Commodore 64 Registers and Constants
   //  Processor port data direction register
   .label PROCPORT_DDR = 0
   //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -781,7 +781,6 @@ bitmap_init: {
     bne b3
     rts
 }
-//  Simple routines for working with memory
 //  Fill some memory with a value
 fill: {
     .const size = $3e8

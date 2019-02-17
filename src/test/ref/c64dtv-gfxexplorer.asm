@@ -124,6 +124,7 @@
   .label FORM_SCREEN = $400
   //  Charset used for the FORM
   .label FORM_CHARSET = $1800
+  //  Number of form fields
   .const form_fields_cnt = $24
   //  The number of frames to use for a full blink cycle
   .const FORM_CURSOR_BLINK = $28
@@ -1661,6 +1662,7 @@ gfx_init_plane_fill: {
 //  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 //  The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
+    //  Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     sta cpuBank
     .byte $32, $dd

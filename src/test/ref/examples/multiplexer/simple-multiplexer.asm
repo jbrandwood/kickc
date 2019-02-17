@@ -18,6 +18,7 @@
   .const GREEN = 5
   //  The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
+  //  Location of screen & sprites
   .label SCREEN = $400
   .label SPRITE = $2000
   .label YSIN = $2100

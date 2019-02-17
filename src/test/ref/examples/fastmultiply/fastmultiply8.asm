@@ -9,10 +9,14 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_line_cursor = $400
+  //  Pointers to a, b and c=a*b
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
+  //  mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  //  f(x) = >(( x * x ))
   .label mulf_sqr1 = $2000
+  //  g(x) =  >((( 1 - x ) * ( 1 - x )))
   .label mulf_sqr2 = $2200
 main: {
     .label at = 2

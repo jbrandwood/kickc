@@ -12,7 +12,11 @@
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .label SCREEN = $400
+  //  Sine and Cosine tables  
+  //  Angles: $00=0, $80=PI,$100=2*PI
+  //  Sine/Cosine: signed fixed [-$7f,$7f]
   .label COS = $2000
+  //  A single sprite
   .label SPRITE = $3000
   .label SIN = COS+$40
 //  sin(x) = cos(x+PI/2)

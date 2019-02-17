@@ -4,6 +4,7 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
+    //  used vars
     .const col = 2
     .label COLS = $d800
     jsr s

@@ -3,7 +3,9 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    //  RValue pointer expression (constant)
     .label screen = $400
+    //  Increment on a const named pointer
     .label BGCOL = $d020
     .label sc2 = screen+$51
     .label _2 = 2

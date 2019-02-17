@@ -10,6 +10,7 @@ main: {
     rts
 }
 lvaluevar: {
+    //  LValue Variable pointer dereference
     .const b = 4
     .label screen = 2
     lda #<$400

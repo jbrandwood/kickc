@@ -5,11 +5,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  //  The rotated point - updated by calling rotate()
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
+  //  Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
   .label psp1 = $f3
   .label psp2 = $f5
+  //  Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
   .label PERSP_Z = $2400
   .label print_char_cursor = 4
   .label print_line_cursor = 2

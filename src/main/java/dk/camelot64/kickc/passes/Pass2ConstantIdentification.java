@@ -38,7 +38,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
     */
    @Override
    public boolean step() {
-      Map<VariableRef, ConstantValue> constants = findConstantVariables();
+      Map<VariableRef, ConstantVariableValue> constants = findConstantVariables();
       LinkedHashMap<VariableRef, RValue> constAliases = new LinkedHashMap<>();
       // Update symbol table with the constant value
       Set<VariableRef> constVars = new LinkedHashSet<>(constants.keySet());
@@ -51,9 +51,10 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             continue;
          }
 
-         ConstantValue constVal = constants.get(constRef);
+         ConstantVariableValue constVarVal = constants.get(constRef);
          Scope constScope = variable.getScope();
 
+         ConstantValue constVal = constVarVal.getConstantValue();
          SymbolType valueType = SymbolTypeInference.inferType(getScope(), constVal);
          SymbolType variableType = variable.getType();
          SymbolType constType = variableType;
@@ -78,7 +79,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                constVal);
          constantVar.setDeclaredAlignment(variable.getDeclaredAlignment());
          constantVar.setDeclaredRegister(variable.getDeclaredRegister());
-         constantVar.setComments(variable.getComments());
+         if(variable.getComments().size()>0) {
+            constantVar.setComments(variable.getComments());
+         } else {
+            constantVar.setComments(constVarVal.getAssignment().getComments());
+         }
          constScope.remove(variable);
          constScope.add(constantVar);
          constAliases.put(constRef, constantVar.getRef());
@@ -92,12 +97,48 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    }
 
    /**
+    * A variable identified as a constant.
+    */
+   private static class ConstantVariableValue {
+
+      /** The variable that has been determined to be constant. */
+      private VariableRef variableRef;
+
+      /** The constant value of the variable. */
+      private ConstantValue constantValue;
+
+      /**
+       * The statement that assigns the variable its value (the assignment will be removed at the end).
+       * Either a {@link StatementAssignment} or a {@link StatementPhiBlock}.
+       * */
+      private Statement assignment;
+
+      public ConstantVariableValue(VariableRef variableRef, ConstantValue constantValue, Statement assignment) {
+         this.variableRef = variableRef;
+         this.constantValue = constantValue;
+         this.assignment = assignment;
+      }
+
+      public VariableRef getVariableRef() {
+         return variableRef;
+      }
+
+      public ConstantValue getConstantValue() {
+         return constantValue;
+      }
+
+      public Statement getAssignment() {
+         return assignment;
+      }
+   }
+
+   /**
     * Find variables that have constant values.
     *
     * @return Map from Variable to the Constant value
     */
-   private Map<VariableRef, ConstantValue> findConstantVariables() {
-      final Map<VariableRef, ConstantValue> constants = new LinkedHashMap<>();
+   private Map<VariableRef, ConstantVariableValue> findConstantVariables() {
+      final Map<VariableRef, ConstantVariableValue> constants = new LinkedHashMap<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
@@ -113,7 +154,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       return constants;
    }
 
-   private void findConstantsPhi(Map<VariableRef, ConstantValue> constants, StatementPhiBlock phi) {
+   private void findConstantsPhi(Map<VariableRef, ConstantVariableValue> constants, StatementPhiBlock phi) {
       for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
          if(phiVariable.getValues().size() == 1) {
             StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
@@ -125,13 +166,13 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                   continue;
                }
                ConstantValue constant = getConstant(phiRValue.getrValue());
-               constants.put(variable, constant);
+               constants.put(variable, new ConstantVariableValue(variable, constant, phi));
             }
          }
       }
    }
 
-   private void findConstantsAssignment(Map<VariableRef, ConstantValue> constants, StatementAssignment assignment) {
+   private void findConstantsAssignment(Map<VariableRef, ConstantVariableValue> constants, StatementAssignment assignment) {
       LValue lValue = assignment.getlValue();
       if(lValue instanceof VariableRef) {
          VariableRef variable = (VariableRef) lValue;
@@ -145,7 +186,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                // Constant assignment
                ConstantValue constant = getConstant(assignment.getrValue2());
                if(constant != null) {
-                  constants.put(variable, constant);
+                  constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
                }
             } else {
                // Constant unary expression
@@ -154,7 +195,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                      getConstant(assignment.getrValue2())
                );
                if(constant != null) {
-                  constants.put(variable, constant);
+                  constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
                }
             }
          } else if(getConstant(assignment.getrValue1()) != null && getConstant(assignment.getrValue2()) != null) {
@@ -165,7 +206,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                   getConstant(assignment.getrValue2()),
                   getScope());
             if(constant != null) {
-               constants.put(variable, constant);
+               constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
             }
          } else if(assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
             // A candidate for a constant list - examine to confirm
@@ -204,14 +245,14 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                if(allConstant && listType != null) {
                   // Constant list confirmed!
                   ConstantValue constant = new ConstantArrayList(elements, listType);
-                  constants.put(variable, constant);
+                  constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
                }
             }
          } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
             // Constant address-of variable
             if(assignment.getrValue2() instanceof SymbolRef) {
                ConstantSymbolPointer constantSymbolPointer = new ConstantSymbolPointer((SymbolRef) assignment.getrValue2());
-               constants.put(variable, constantSymbolPointer);
+               constants.put(variable, new ConstantVariableValue(variable, constantSymbolPointer, assignment));
             }
          }
       }

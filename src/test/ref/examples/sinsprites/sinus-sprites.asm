@@ -195,6 +195,7 @@ clear_screen: {
 //  - min is the minimum value of the generated sinus
 //  - max is the maximum value of the generated sinus
 gen_sintab: {
+    //  amplitude/2
     .label f_2pi = $e2e5
     .label _23 = $c
     .label i = 2

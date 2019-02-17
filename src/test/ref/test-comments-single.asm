@@ -5,6 +5,7 @@
 .pc = $80d "Program"
   //  The C64 screen
   .label SCREEN = $400
+  //  One of the bytes used for addition
   .const a = 'a'
 //  The program entry point
 main: {

@@ -706,6 +706,7 @@ mulf_tables_cmp: {
 //  Initialize the multiplication tables using ASM code from
 //  http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 mulf_init_asm: {
+    //  Ensure the ASM tables are not detected as unused by the optimizer
     .label mem = $ff
     ldx #0
     txa

@@ -58,6 +58,7 @@
   //  No transparancy
   //  Bit[2]==Bit[1]==0: write in any case
   .const DTV_BLIT_TRANSPARANCY_NONE = 0
+  //  Controls the ALU operation
   .label DTV_BLITTER_ALU = $d33e
   .const DTV_BLIT_ADD = $30
   //  Blitter Control 2

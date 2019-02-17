@@ -2,7 +2,9 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    //  constant byte array
     .const b = 4
+    //  Test the result
     .label pos = $501
     .label bgcol = $d021
     .const w = b*$100

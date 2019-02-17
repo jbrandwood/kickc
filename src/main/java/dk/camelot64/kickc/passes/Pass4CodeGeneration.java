@@ -79,6 +79,8 @@ public class Pass4CodeGeneration {
             addZpLabels(asm, currentScope);
          }
 
+         generateComments(asm, block.getComments());
+
          // Generate entry points (if needed)
          genBlockEntryPoints(asm, block);
 

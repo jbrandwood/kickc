@@ -252,6 +252,7 @@ gen_sintab: {
     lda #0
     sta progress_idx
     sta i
+  //  f_min = min + (max - min) / 2
   b1:
     lda i
     sta setFAC.w
@@ -521,6 +522,7 @@ gen_chargen_sprite: {
     sta c
   b3:
     ldx #0
+  //  generate 3 pixels in the sprite byte (s_gen)
   b4:
     lda s_gen
     asl

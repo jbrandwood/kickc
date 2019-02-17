@@ -73,6 +73,7 @@ loop: {
     sta plex_show_idx
     tax
     sta plex_free_next
+  //  Show the sprites
   b11:
     lda #BLACK
     sta BORDERCOL

@@ -14,6 +14,7 @@ main: {
     lda #>TEXT
     sta nxt+1
     ldx #7
+  //  Wait for raster
   b2:
     lda RASTER
     cmp #$fe
@@ -27,6 +28,7 @@ main: {
     cpx #$ff
     bne b4
     ldx #0
+  //  Hard scroll
   b5:
     lda line+1,x
     sta line,x

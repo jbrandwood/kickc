@@ -96,6 +96,7 @@ sin8u_table: {
     lda #<0
     sta x
     sta x+1
+  //  u[4.12]
   b1:
     lda x
     sta sin8s.x

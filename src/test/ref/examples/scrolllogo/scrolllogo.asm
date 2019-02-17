@@ -69,6 +69,8 @@ loop: {
     lda #<0
     sta xsin_idx
     sta xsin_idx+1
+  b1:
+  //  Wait for the raster to reach the bottom of the screen
   b4:
     lda RASTER
     cmp #$ff
@@ -107,7 +109,7 @@ loop: {
     sta xsin_idx+1
   b7:
     dec BORDERCOL
-    jmp b4
+    jmp b1
 }
 render_logo: {
     .label _3 = $e
@@ -261,6 +263,7 @@ sin16s_gen2: {
     sta x+1
     sta x+2
     sta x+3
+  //  u[4.28]
   b1:
     lda x
     sta sin16s.x

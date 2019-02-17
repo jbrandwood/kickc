@@ -136,6 +136,7 @@ main: {
     lda #DTV_BLIT_DEST_CONT
     sta DTV_BLITTER_CONTROL2
     ldx #0
+  //  wait til blitter is ready
   b2:
     lda DTV_BLITTER_CONTROL2
     and #DTV_BLIT_STATUS_BUSY

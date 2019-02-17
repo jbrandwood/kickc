@@ -257,6 +257,7 @@ sin16s_gen2: {
     sta x+1
     sta x+2
     sta x+3
+  //  u[4.28]
   b1:
     lda x
     sta sin16s.x

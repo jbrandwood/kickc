@@ -62,6 +62,8 @@ anim: {
     lda #0
     sta sy
     sta sx
+  // signed byte xmin = 0;
+  // signed byte xmax = 0;
   b4:
     lda RASTER
     cmp #$ff

@@ -496,6 +496,7 @@ gfx_mode: {
     cmp #0
     beq b18
     ldy #0
+  //  DTV Palette - Grey Tones
   b13:
     tya
     sta DTV_PALETTE,y
@@ -511,6 +512,7 @@ gfx_mode: {
     cmp #KEY_SPACE
     bne b19
     rts
+  //  DTV Palette - default
   b18:
     ldy #0
   b15:
@@ -605,6 +607,7 @@ keyboard_event_scan: {
     sta keyboard_modifiers
   breturn:
     rts
+  //  Something has changed on the keyboard row - check each column
   b6:
     lda #0
     sta col
@@ -1001,6 +1004,7 @@ form_mode: {
     lda #0
     sta DTV_PLANEA_START_HI
     tay
+  //  DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,y
     sta DTV_PALETTE,y
@@ -1013,6 +1017,7 @@ form_mode: {
     sta BORDERCOL
     lda form_fields_val
     sta preset_current
+  //  Let the user change values in the form
   b5:
     lda RASTER
     cmp #$ff
@@ -1310,6 +1315,7 @@ apply_preset: {
     sta preset+1
   b22:
     ldy #0
+  //  Copy preset values into the fields
   b23:
     lda (preset),y
     sta form_fields_val,y

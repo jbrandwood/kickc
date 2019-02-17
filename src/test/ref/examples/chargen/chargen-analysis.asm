@@ -76,6 +76,7 @@ main: {
     sta sc
     lda #>SCREEN
     sta sc+1
+  //  Clear screen
   b1:
     lda #' '
     ldy #0
@@ -183,6 +184,7 @@ main: {
   b9:
     lda #0
     sta ch
+  //  Check for key presses - and plot char if found
   b10:
     ldx ch
     jsr keyboard_get_keycode

@@ -38,12 +38,24 @@ public class ControlFlowBlock {
    /** If the last statement of the block is a call this is the block containing the start of the called procedure. When the procedure returns control moves on to the default successor. */
    private LabelRef callSuccessor;
 
+   /** The comments for the block. */
+   private List<Comment> comments;
+
    public ControlFlowBlock(LabelRef label, ScopeRef scope) {
       this.label = label;
       this.scope = scope;
       this.statements = new ArrayList<>();
       this.defaultSuccessor = null;
       this.conditionalSuccessor = null;
+      this.comments = new ArrayList<>();
+   }
+
+   public List<Comment> getComments() {
+      return comments;
+   }
+
+   public void setComments(List<Comment> comments) {
+      this.comments = comments;
    }
 
    public LabelRef getLabel() {
@@ -159,6 +171,11 @@ public class ControlFlowBlock {
       }
       out.append("\n");
       for(Statement statement : statements) {
+         if(program.getLog().isVerboseComments()) {
+            for(Comment comment : statement.getComments()) {
+               out.append("  // " + comment.getComment() + "\n");
+            }
+         }
          out.append("  " + statement.toString(program, program.getLog().isVerboseLiveRanges()) + "\n");
       }
       if(defaultSuccessor != null) {

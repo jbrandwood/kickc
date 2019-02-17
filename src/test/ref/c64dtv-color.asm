@@ -59,6 +59,7 @@ main: {
     cpx #0
     bne b7
     ldx #0
+  //  Rotate palette
   b8:
     lda palette,x
     sta DTV_PALETTE,x

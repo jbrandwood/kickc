@@ -145,6 +145,7 @@ menu: {
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
@@ -155,6 +156,7 @@ menu: {
     sta c
     lda #>COLS
     sta c+1
+  //  Char Colors
   b2:
     lda #LIGHT_GREEN
     ldy #0
@@ -299,6 +301,7 @@ mode_8bppchunkybmm: {
     //  Border color
     sta BORDERCOL
     tax
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -370,6 +373,8 @@ mode_8bppchunkybmm: {
 }
 //  Allow the user to control the DTV graphics using different keys
 mode_ctrl: {
+  b1:
+  //  Wait for the raster
   b4:
     lda RASTER
     cmp #$ff
@@ -437,11 +442,11 @@ mode_ctrl: {
     ldx #0
   b14:
     cpx dtv_control
-    beq b4
+    beq b1
     stx dtv_control
     stx DTV_CONTROL
     stx BORDERCOL
-    jmp b4
+    jmp b1
 }
 //  Determines whether a specific key is currently pressed by accessing the matrix directly
 //  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
@@ -540,6 +545,7 @@ mode_8bpppixelcell: {
     //  Border color
     sta BORDERCOL
     tax
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -693,6 +699,7 @@ mode_sixsfred: {
     lda #>COLORS/$400
     sta DTV_COLOR_BANK_HI
     ldx #0
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -841,6 +848,7 @@ mode_twoplanebitmap: {
     lda #>COLORS/$400
     sta DTV_COLOR_BANK_HI
     ldx #0
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -1006,6 +1014,7 @@ mode_sixsfred2: {
     lda #>COLORS/$400
     sta DTV_COLOR_BANK_HI
     ldx #0
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -1150,6 +1159,7 @@ mode_hicolmcchar: {
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -1258,6 +1268,7 @@ mode_hicolecmchar: {
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -1364,6 +1375,7 @@ mode_hicolstdchar: {
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -1457,6 +1469,7 @@ mode_stdbitmap: {
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
@@ -1924,6 +1937,7 @@ mode_mcchar: {
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
@@ -2035,6 +2049,7 @@ mode_ecmchar: {
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
@@ -2143,6 +2158,7 @@ mode_stdchar: {
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x

@@ -70,6 +70,7 @@ main: {
     sta sc
     lda #>$400
     sta sc+1
+  //  Clear screen
   b1:
     lda #' '
     ldy #0
@@ -97,6 +98,7 @@ main: {
     sta screen+1
     lda #0
     sta row
+  //  Read & print keyboard matrix
   b6:
     ldy row
     jsr keyboard_matrix_read
@@ -156,14 +158,15 @@ main: {
     lda ch
     cmp #$40
     bne b10
-  b13:
+  b2:
+  //  Add some spaces
     txa
     tay
     lda #' '
     sta (screen),y
     inx
     cpx #5
-    bcc b13
+    bcc b2
     jmp b5
   b8:
     lda #'1'

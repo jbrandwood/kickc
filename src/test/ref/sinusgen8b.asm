@@ -195,6 +195,7 @@ sin16s_gen: {
     sta x+1
     sta x+2
     sta x+3
+  //  u[4.28]
   b1:
     lda x
     sta sin16s.x
@@ -609,6 +610,7 @@ sin8s_gen: {
     lda #<0
     sta x
     sta x+1
+  //  u[4.12]
   b1:
     lda x
     sta sin8s.x

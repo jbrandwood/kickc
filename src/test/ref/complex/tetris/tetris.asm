@@ -229,6 +229,8 @@ main: {
     sta render_screen_render
     lda #0
     sta render_screen_show
+  b1:
+  //  Wait for a frame to pass
   b4:
     lda RASTER
     cmp #$ff
@@ -247,7 +249,7 @@ main: {
     jsr play_movement
     lda play_movement.return
     cmp #0
-    beq b4
+    beq b1
     ldx render_screen_render
     jsr render_playfield
     ldy current_ypos
@@ -266,7 +268,7 @@ main: {
     jsr render_next
     jsr render_score
     jsr render_screen_swap
-    jmp b4
+    jmp b1
 }
 //  Swap rendering to the other screen (used for double buffering)
 render_screen_swap: {
@@ -1031,6 +1033,7 @@ play_remove_lines: {
     sta y
     ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
     ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
+  //  Read all lines and rewrite them
   b1:
     lda #1
     sta full
@@ -1066,6 +1069,7 @@ play_remove_lines: {
     cmp #PLAYFIELD_LINES-1+1
     bne b1
   b5:
+  //  Write zeros in the rest of the lines
     cpx #$ff
     bne b6
     rts
@@ -1233,6 +1237,7 @@ keyboard_event_scan: {
     ora #KEY_MODIFIER_COMMODORE
   breturn:
     rts
+  //  Something has changed on the keyboard row - check each column
   b6:
     ldx #0
   b4:
@@ -1348,6 +1353,7 @@ play_init: {
     lda MOVEDOWN_SLOW_SPEEDS
     sta current_movedown_slow
     ldx #0
+  //  Set the initial score add values
   b2:
     txa
     asl

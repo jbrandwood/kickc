@@ -10,6 +10,7 @@
 main: {
     ldx #0
     ldy #0
+  //  Do some sums
   b1:
     jsr sum
     //  Output the result on the screen

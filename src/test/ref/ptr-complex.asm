@@ -11,6 +11,7 @@ main: {
     .label _11 = 4
     lda screen+$50
     ldx #0
+  //  RValue pointer expression (variable)
   b1:
     txa
     clc
@@ -31,6 +32,7 @@ main: {
     lda screen+$7a
     sta screen+$52
     ldx #0
+  //  LValue pointer expression (variable - directly)
   b2:
     txa
     clc

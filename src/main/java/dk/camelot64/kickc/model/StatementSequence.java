@@ -28,9 +28,16 @@ public class StatementSequence {
    public String toString(Program program) {
       StringBuffer out = new StringBuffer();
       for(Statement statement : statements) {
+         String indent = "";
          if(!(statement instanceof StatementLabel) && !(statement instanceof StatementProcedureBegin) && !(statement instanceof StatementProcedureEnd)) {
-            out.append("  ");
+            indent = "  ";
          }
+         if(program.getLog().isVerboseComments()) {
+            for(Comment comment : statement.getComments()) {
+               out.append(indent + "// " + comment + "\n");
+            }
+         }
+         out.append(indent);
          out.append(statement.toString(program, false) + "\n");
       }
       return out.toString();

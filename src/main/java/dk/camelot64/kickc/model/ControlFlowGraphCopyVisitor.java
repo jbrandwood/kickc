@@ -54,6 +54,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    public ControlFlowBlock visitBlock(ControlFlowBlock origBlock) {
       LabelRef label = origBlock.getLabel();
       ControlFlowBlock copyBlock = new ControlFlowBlock(label, origBlock.getScope());
+      copyBlock.setComments(origBlock.getComments());
       this.origBlock = origBlock;
       this.copyBlock = copyBlock;
       // Handle statements

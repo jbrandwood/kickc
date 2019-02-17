@@ -7,6 +7,7 @@ main: {
     .label h = 2
     lda #0
     sta h
+  //  constant array
   b1:
     ldx #4
   b2:

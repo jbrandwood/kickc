@@ -6,6 +6,7 @@
 main: {
     .label l = 2
     ldx #0
+  //  First loop with no clobber
   b1:
     lda #0
   b2:
@@ -18,6 +19,7 @@ main: {
     cpx #$65
     bne b1
     ldy #0
+  //  Then loop with clobbering A&X
   b3:
     lda #0
     sta l

@@ -109,6 +109,7 @@ main: {
     lda #(SCREEN&$3fff)>>6|(>(SCREEN&$3fff))>>2
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x

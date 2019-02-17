@@ -578,13 +578,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Create and assign declared loop variable
       Variable lValue = getForVariable(forDeclCtx);
       KickCParser.ExprContext initializer = forDeclCtx.expr();
-      List<Comment> comments = getCommentsSymbol(ctx);
       if(initializer != null) {
-         addInitialAssignment(initializer, lValue, comments);
+         addInitialAssignment(initializer, lValue, Comment.NO_COMMENTS);
       }
       // Add label
       Label repeatLabel = getCurrentSymbols().addLabelIntermediate();
-      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
+      List<Comment> comments = getCommentsSymbol(stmtForCtx);
+      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef(), new StatementSource(ctx), comments);
       sequence.addStatement(repeatTarget);
       // Add body
       if(stmtForCtx.stmt() != null) {
@@ -618,12 +618,12 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Assign loop variable with first value
       RValue rangeLastValue = (RValue) visit(rangeLastCtx);
       RValue rangeFirstValue = (RValue) visit(rangeFirstCtx);
-      List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
-      Statement stmtInit = new StatementAssignment(lValue.getRef(), rangeFirstValue, new StatementSource(ctx), comments);
+      Statement stmtInit = new StatementAssignment(lValue.getRef(), rangeFirstValue, new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(stmtInit);
       // Add label
+      List<Comment> comments = ensureUnusedComments(getCommentsSymbol(stmtForCtx));
       Label repeatLabel = getCurrentSymbols().addLabelIntermediate();
-      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
+      StatementLabel repeatTarget = new StatementLabel(repeatLabel.getRef(), new StatementSource(ctx), comments);
       sequence.addStatement(repeatTarget);
       // Add body
       if(stmtForCtx.stmt() != null) {

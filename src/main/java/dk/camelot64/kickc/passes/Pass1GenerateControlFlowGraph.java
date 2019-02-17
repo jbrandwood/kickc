@@ -43,6 +43,7 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
          if(statement instanceof StatementLabel) {
             StatementLabel statementLabel = (StatementLabel) statement;
             ControlFlowBlock nextBlock = getOrCreateBlock(statementLabel.getLabel(), currentBlock.getScope());
+            nextBlock.setComments(statementLabel.getComments());
             currentBlock.setDefaultSuccessor(nextBlock.getLabel());
             blockStack.pop();
             blockStack.push(nextBlock);

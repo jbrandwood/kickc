@@ -87,6 +87,7 @@ main: {
     lda #(CHUNKY&$3fff)>>6|(0)>>2
     sta VIC_MEMORY
     ldx #0
+  //  DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x

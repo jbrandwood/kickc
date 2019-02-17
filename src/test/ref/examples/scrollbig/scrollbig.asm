@@ -24,6 +24,7 @@ main: {
     lda #1
     sta current_bit
     ldx #7
+  //  Wait for raster
   b2:
     lda RASTER
     cmp #$fe
@@ -115,6 +116,7 @@ scroll_bit: {
 }
 scroll_hard: {
     ldx #0
+  //  Hard scroll
   b1:
     lda SCREEN+1,x
     sta SCREEN,x

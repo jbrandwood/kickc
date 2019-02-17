@@ -12701,12 +12701,15 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG13 [7] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG14 [8] phi from main main::@2 to main::@2 [phi:main/main::@2->main::@2]
@@ -12738,30 +12741,39 @@ menu: {
     .label i = 2
     .label c = 3
   //SEG18 [10] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) menu::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  Charset ROM
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG19 [11] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG20 [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG21 [13] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Mode
     lda #0
     sta DTV_CONTROL
   //SEG22 [14] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG23 [15] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) menu::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG24 [16] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG25 [17] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG26 [18] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) menu::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) menu::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG27 [19] phi from menu to menu::@1 [phi:menu->menu::@1]
@@ -12820,6 +12832,7 @@ menu: {
   //SEG43 menu::@19
   b19:
   //SEG44 [27] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG45 [28] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -13270,12 +13283,14 @@ mode_8bppchunkybmm: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
   //SEG204 [120] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG205 [121] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG206 [122] *((const byte*) DTV_PLANEB_START_LO#0) ← <<(const dword) mode_8bppchunkybmm::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #PLANEB&$ffff
     sta DTV_PLANEB_START_LO
   //SEG207 [123] *((const byte*) DTV_PLANEB_START_MI#0) ← ><(const dword) mode_8bppchunkybmm::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -13294,6 +13309,7 @@ mode_8bppchunkybmm: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG212 [128] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Border color
     lda #0
     sta BORDERCOL
   //SEG213 [129] phi from mode_8bppchunkybmm to mode_8bppchunkybmm::@1 [phi:mode_8bppchunkybmm->mode_8bppchunkybmm::@1]
@@ -13542,6 +13558,7 @@ mode_ctrl: {
   //SEG298 mode_ctrl::@7
   b7:
   //SEG299 [164] (byte) mode_ctrl::ctrl#0 ← (byte) dtv_control#114 -- vbuz1=vbuz2 
+    //  Read the current control byte
     lda dtv_control
     sta ctrl
   //SEG300 [165] call keyboard_key_pressed 
@@ -13949,12 +13966,14 @@ mode_8bpppixelcell: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
   //SEG414 [228] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG415 [229] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG416 [230] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_8bpppixelcell::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG417 [231] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_8bpppixelcell::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -13973,6 +13992,7 @@ mode_8bpppixelcell: {
     lda #0
     sta DTV_PLANEA_MODULO_HI
   //SEG422 [236] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_8bpppixelcell::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG423 [237] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_8bpppixelcell::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -13991,6 +14011,7 @@ mode_8bpppixelcell: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG428 [242] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Border color
     lda #0
     sta BORDERCOL
   //SEG429 [243] phi from mode_8bpppixelcell to mode_8bpppixelcell::@1 [phi:mode_8bpppixelcell->mode_8bpppixelcell::@1]
@@ -14094,6 +14115,7 @@ mode_8bpppixelcell: {
   //SEG462 mode_8bpppixelcell::@10
   b10:
   //SEG463 [259] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
+    //  8bpp cells for Plane B (charset) - ROM charset with 256 colors
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
   //SEG464 [260] phi from mode_8bpppixelcell::@10 to mode_8bpppixelcell::@4 [phi:mode_8bpppixelcell::@10->mode_8bpppixelcell::@4]
@@ -14280,12 +14302,14 @@ mode_sixsfred: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
   //SEG529 [283] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG530 [284] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG531 [285] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_sixsfred::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG532 [286] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_sixsfred::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -14304,6 +14328,7 @@ mode_sixsfred: {
     lda #0
     sta DTV_PLANEA_MODULO_HI
   //SEG537 [291] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_sixsfred::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG538 [292] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_sixsfred::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -14322,6 +14347,7 @@ mode_sixsfred: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG543 [297] *((const byte*) DTV_COLOR_BANK_LO#0) ← <(const byte*) mode_sixsfred::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG544 [298] *((const byte*) DTV_COLOR_BANK_HI#0) ← >(const byte*) mode_sixsfred::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -14353,6 +14379,7 @@ mode_sixsfred: {
   //SEG553 mode_sixsfred::@8
   b8:
   //SEG554 [303] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG555 [304] phi from mode_sixsfred::@8 to mode_sixsfred::@2 [phi:mode_sixsfred::@8->mode_sixsfred::@2]
@@ -14593,12 +14620,14 @@ mode_twoplanebitmap: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
   //SEG631 [336] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG632 [337] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG633 [338] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_twoplanebitmap::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG634 [339] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_twoplanebitmap::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -14617,6 +14646,7 @@ mode_twoplanebitmap: {
     lda #0
     sta DTV_PLANEA_MODULO_HI
   //SEG639 [344] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_twoplanebitmap::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG640 [345] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_twoplanebitmap::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -14635,6 +14665,7 @@ mode_twoplanebitmap: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG645 [350] *((const byte*) DTV_COLOR_BANK_LO#0) ← <(const byte*) mode_twoplanebitmap::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG646 [351] *((const byte*) DTV_COLOR_BANK_HI#0) ← >(const byte*) mode_twoplanebitmap::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -14666,12 +14697,14 @@ mode_twoplanebitmap: {
   //SEG655 mode_twoplanebitmap::@10
   b10:
   //SEG656 [356] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG657 [357] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 112 -- _deref_pbuc1=vbuc2 
     lda #$70
     sta BGCOL1
   //SEG658 [358] *((const byte*) BGCOL2#0) ← (byte/word/signed word/dword/signed dword) 212 -- _deref_pbuc1=vbuc2 
+    //  Color for bits 00
     lda #$d4
     sta BGCOL2
   //SEG659 [359] phi from mode_twoplanebitmap::@10 to mode_twoplanebitmap::@2 [phi:mode_twoplanebitmap::@10->mode_twoplanebitmap::@2]
@@ -14940,12 +14973,14 @@ mode_sixsfred2: {
     lda #DTV_LINEAR
     sta DTV_CONTROL
   //SEG744 [396] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG745 [397] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG746 [398] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_sixsfred2::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG747 [399] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_sixsfred2::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -14964,6 +14999,7 @@ mode_sixsfred2: {
     lda #0
     sta DTV_PLANEA_MODULO_HI
   //SEG752 [404] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_sixsfred2::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG753 [405] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_sixsfred2::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -14982,6 +15018,7 @@ mode_sixsfred2: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG758 [410] *((const byte*) DTV_COLOR_BANK_LO#0) ← <(const byte*) mode_sixsfred2::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG759 [411] *((const byte*) DTV_COLOR_BANK_HI#0) ← >(const byte*) mode_sixsfred2::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -15013,6 +15050,7 @@ mode_sixsfred2: {
   //SEG768 mode_sixsfred2::@8
   b8:
   //SEG769 [416] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG770 [417] phi from mode_sixsfred2::@8 to mode_sixsfred2::@2 [phi:mode_sixsfred2::@8->mode_sixsfred2::@2]
@@ -15258,9 +15296,11 @@ mode_hicolmcchar: {
     .label cx = $48
     .label cy = $47
   //SEG847 [450] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_hicolmcchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG848 [451] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_hicolmcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG849 [452] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_hicolmcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -15270,18 +15310,23 @@ mode_hicolmcchar: {
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
   //SEG851 [454] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG852 [455] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_hicolmcchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG853 [456] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG854 [457] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0|(const byte) VIC_MCM#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
   //SEG855 [458] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_hicolmcchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_hicolmcchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG856 [459] phi from mode_hicolmcchar to mode_hicolmcchar::@1 [phi:mode_hicolmcchar->mode_hicolmcchar::@1]
@@ -15310,6 +15355,7 @@ mode_hicolmcchar: {
   //SEG864 mode_hicolmcchar::@4
   b4:
   //SEG865 [463] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG866 [464] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 80 -- _deref_pbuc1=vbuc2 
@@ -15458,9 +15504,11 @@ mode_hicolecmchar: {
     .label cx = $4f
     .label cy = $4e
   //SEG908 [484] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_hicolecmchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG909 [485] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_hicolecmchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG910 [486] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_hicolecmchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -15470,18 +15518,23 @@ mode_hicolecmchar: {
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
   //SEG912 [488] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG913 [489] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_hicolecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG914 [490] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
     sta VIC_CONTROL
   //SEG915 [491] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG916 [492] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_hicolecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_hicolecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG917 [493] phi from mode_hicolecmchar to mode_hicolecmchar::@1 [phi:mode_hicolecmchar->mode_hicolecmchar::@1]
@@ -15510,6 +15563,7 @@ mode_hicolecmchar: {
   //SEG925 mode_hicolecmchar::@4
   b4:
   //SEG926 [497] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG927 [498] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 80 -- _deref_pbuc1=vbuc2 
@@ -15657,9 +15711,11 @@ mode_hicolstdchar: {
     .label cx = $56
     .label cy = $55
   //SEG970 [519] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_hicolstdchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG971 [520] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_hicolstdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG972 [521] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_hicolstdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -15669,18 +15725,23 @@ mode_hicolstdchar: {
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
   //SEG974 [523] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG975 [524] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_hicolstdchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG976 [525] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG977 [526] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG978 [527] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_hicolstdchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_hicolstdchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG979 [528] phi from mode_hicolstdchar to mode_hicolstdchar::@1 [phi:mode_hicolstdchar->mode_hicolstdchar::@1]
@@ -15709,6 +15770,7 @@ mode_hicolstdchar: {
   //SEG987 mode_hicolstdchar::@4
   b4:
   //SEG988 [532] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG989 [533] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -15847,24 +15909,30 @@ mode_stdbitmap: {
     .label cy = $5c
     .label l = $60
   //SEG1029 [551] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdbitmap::BITMAP#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&BITMAP)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1030 [552] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_CONTROL
   //SEG1031 [553] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1032 [554] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_stdbitmap::BITMAP#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^BITMAP/$4000
     sta CIA2_PORT_A
   //SEG1033 [555] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG1034 [556] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG1035 [557] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_stdbitmap::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_stdbitmap::BITMAP#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
   //SEG1036 [558] phi from mode_stdbitmap to mode_stdbitmap::@1 [phi:mode_stdbitmap->mode_stdbitmap::@1]
@@ -15893,6 +15961,7 @@ mode_stdbitmap: {
   //SEG1044 mode_stdbitmap::@5
   b5:
   //SEG1045 [562] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #BLACK
     sta BGCOL
   //SEG1046 [563] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -16986,9 +17055,11 @@ mode_mcchar: {
     .label cx = $86
     .label cy = $85
   //SEG1420 [758] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1421 [759] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG1422 [760] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -16998,18 +17069,23 @@ mode_mcchar: {
     lda #0
     sta DTV_CONTROL
   //SEG1424 [762] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1425 [763] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_mcchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1426 [764] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG1427 [765] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0|(const byte) VIC_MCM#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
   //SEG1428 [766] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_mcchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_mcchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1429 [767] phi from mode_mcchar to mode_mcchar::@1 [phi:mode_mcchar->mode_mcchar::@1]
@@ -17038,6 +17114,7 @@ mode_mcchar: {
   //SEG1437 mode_mcchar::@4
   b4:
   //SEG1438 [771] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG1439 [772] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -17197,9 +17274,11 @@ mode_ecmchar: {
     .label cx = $8d
     .label cy = $8c
   //SEG1483 [794] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1484 [795] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG1485 [796] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -17209,18 +17288,23 @@ mode_ecmchar: {
     lda #0
     sta DTV_CONTROL
   //SEG1487 [798] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1488 [799] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1489 [800] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
     sta VIC_CONTROL
   //SEG1490 [801] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG1491 [802] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1492 [803] phi from mode_ecmchar to mode_ecmchar::@1 [phi:mode_ecmchar->mode_ecmchar::@1]
@@ -17249,6 +17333,7 @@ mode_ecmchar: {
   //SEG1500 mode_ecmchar::@4
   b4:
   //SEG1501 [807] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG1502 [808] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -17407,9 +17492,11 @@ mode_stdchar: {
     .label cx = $94
     .label cy = $93
   //SEG1547 [831] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1548 [832] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG1549 [833] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -17419,18 +17506,23 @@ mode_stdchar: {
     lda #0
     sta DTV_CONTROL
   //SEG1551 [835] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1552 [836] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_stdchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1553 [837] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG1554 [838] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG1555 [839] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_stdchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_stdchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1556 [840] phi from mode_stdchar to mode_stdchar::@1 [phi:mode_stdchar->mode_stdchar::@1]
@@ -17459,6 +17551,7 @@ mode_stdchar: {
   //SEG1564 mode_stdchar::@4
   b4:
   //SEG1565 [844] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG1566 [845] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -19506,12 +19599,15 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG13 [7] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG14 [8] phi from main main::@2 to main::@2 [phi:main/main::@2->main::@2]
@@ -19530,30 +19626,39 @@ menu: {
     .label CHARSET = $9800
     .label c = 2
   //SEG18 [10] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) menu::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  Charset ROM
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG19 [11] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG20 [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG21 [13] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Mode
     lda #0
     sta DTV_CONTROL
   //SEG22 [14] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG23 [15] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) menu::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG24 [16] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG25 [17] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG26 [18] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) menu::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) menu::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG27 [19] phi from menu to menu::@1 [phi:menu->menu::@1]
@@ -19609,6 +19714,7 @@ menu: {
   //SEG43 menu::@19
   b19:
   //SEG44 [27] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG45 [28] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -19984,12 +20090,14 @@ mode_8bppchunkybmm: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
   //SEG204 [120] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG205 [121] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG206 [122] *((const byte*) DTV_PLANEB_START_LO#0) ← <<(const dword) mode_8bppchunkybmm::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #PLANEB&$ffff
     sta DTV_PLANEB_START_LO
   //SEG207 [123] *((const byte*) DTV_PLANEB_START_MI#0) ← ><(const dword) mode_8bppchunkybmm::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -20008,6 +20116,7 @@ mode_8bppchunkybmm: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG212 [128] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Border color
     lda #0
     sta BORDERCOL
   //SEG213 [129] phi from mode_8bppchunkybmm to mode_8bppchunkybmm::@1 [phi:mode_8bppchunkybmm->mode_8bppchunkybmm::@1]
@@ -20232,6 +20341,7 @@ mode_ctrl: {
   //SEG298 mode_ctrl::@7
   b7:
   //SEG299 [164] (byte) mode_ctrl::ctrl#0 ← (byte) dtv_control#114 -- vbuxx=vbuz1 
+    //  Read the current control byte
     ldx dtv_control
   //SEG300 [165] call keyboard_key_pressed 
   //SEG301 [211] phi from mode_ctrl::@7 to keyboard_key_pressed [phi:mode_ctrl::@7->keyboard_key_pressed]
@@ -20544,12 +20654,14 @@ mode_8bpppixelcell: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
   //SEG414 [228] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG415 [229] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG416 [230] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_8bpppixelcell::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG417 [231] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_8bpppixelcell::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -20568,6 +20680,7 @@ mode_8bpppixelcell: {
     lda #0
     sta DTV_PLANEA_MODULO_HI
   //SEG422 [236] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_8bpppixelcell::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG423 [237] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_8bpppixelcell::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -20586,6 +20699,7 @@ mode_8bpppixelcell: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG428 [242] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Border color
     lda #0
     sta BORDERCOL
   //SEG429 [243] phi from mode_8bpppixelcell to mode_8bpppixelcell::@1 [phi:mode_8bpppixelcell->mode_8bpppixelcell::@1]
@@ -20678,6 +20792,7 @@ mode_8bpppixelcell: {
   //SEG462 mode_8bpppixelcell::@10
   b10:
   //SEG463 [259] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
+    //  8bpp cells for Plane B (charset) - ROM charset with 256 colors
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
   //SEG464 [260] phi from mode_8bpppixelcell::@10 to mode_8bpppixelcell::@4 [phi:mode_8bpppixelcell::@10->mode_8bpppixelcell::@4]
@@ -20849,12 +20964,14 @@ mode_sixsfred: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
   //SEG529 [283] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG530 [284] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG531 [285] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_sixsfred::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG532 [286] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_sixsfred::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -20873,6 +20990,7 @@ mode_sixsfred: {
     lda #0
     sta DTV_PLANEA_MODULO_HI
   //SEG537 [291] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_sixsfred::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG538 [292] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_sixsfred::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -20891,6 +21009,7 @@ mode_sixsfred: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG543 [297] *((const byte*) DTV_COLOR_BANK_LO#0) ← <(const byte*) mode_sixsfred::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG544 [298] *((const byte*) DTV_COLOR_BANK_HI#0) ← >(const byte*) mode_sixsfred::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -20919,6 +21038,7 @@ mode_sixsfred: {
   //SEG553 mode_sixsfred::@8
   b8:
   //SEG554 [303] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG555 [304] phi from mode_sixsfred::@8 to mode_sixsfred::@2 [phi:mode_sixsfred::@8->mode_sixsfred::@2]
@@ -21138,12 +21258,14 @@ mode_twoplanebitmap: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
   //SEG631 [336] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG632 [337] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG633 [338] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_twoplanebitmap::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG634 [339] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_twoplanebitmap::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -21162,6 +21284,7 @@ mode_twoplanebitmap: {
     lda #0
     sta DTV_PLANEA_MODULO_HI
   //SEG639 [344] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_twoplanebitmap::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG640 [345] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_twoplanebitmap::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -21180,6 +21303,7 @@ mode_twoplanebitmap: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG645 [350] *((const byte*) DTV_COLOR_BANK_LO#0) ← <(const byte*) mode_twoplanebitmap::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG646 [351] *((const byte*) DTV_COLOR_BANK_HI#0) ← >(const byte*) mode_twoplanebitmap::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -21208,12 +21332,14 @@ mode_twoplanebitmap: {
   //SEG655 mode_twoplanebitmap::@10
   b10:
   //SEG656 [356] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG657 [357] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 112 -- _deref_pbuc1=vbuc2 
     lda #$70
     sta BGCOL1
   //SEG658 [358] *((const byte*) BGCOL2#0) ← (byte/word/signed word/dword/signed dword) 212 -- _deref_pbuc1=vbuc2 
+    //  Color for bits 00
     lda #$d4
     sta BGCOL2
   //SEG659 [359] phi from mode_twoplanebitmap::@10 to mode_twoplanebitmap::@2 [phi:mode_twoplanebitmap::@10->mode_twoplanebitmap::@2]
@@ -21459,12 +21585,14 @@ mode_sixsfred2: {
     lda #DTV_LINEAR
     sta DTV_CONTROL
   //SEG744 [396] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG745 [397] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG746 [398] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_sixsfred2::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG747 [399] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_sixsfred2::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -21483,6 +21611,7 @@ mode_sixsfred2: {
     lda #0
     sta DTV_PLANEA_MODULO_HI
   //SEG752 [404] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_sixsfred2::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG753 [405] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_sixsfred2::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -21501,6 +21630,7 @@ mode_sixsfred2: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG758 [410] *((const byte*) DTV_COLOR_BANK_LO#0) ← <(const byte*) mode_sixsfred2::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG759 [411] *((const byte*) DTV_COLOR_BANK_HI#0) ← >(const byte*) mode_sixsfred2::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -21529,6 +21659,7 @@ mode_sixsfred2: {
   //SEG768 mode_sixsfred2::@8
   b8:
   //SEG769 [416] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG770 [417] phi from mode_sixsfred2::@8 to mode_sixsfred2::@2 [phi:mode_sixsfred2::@8->mode_sixsfred2::@2]
@@ -21754,9 +21885,11 @@ mode_hicolmcchar: {
     .label ch = 5
     .label cy = 4
   //SEG847 [450] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_hicolmcchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG848 [451] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_hicolmcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG849 [452] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_hicolmcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -21766,18 +21899,23 @@ mode_hicolmcchar: {
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
   //SEG851 [454] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG852 [455] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_hicolmcchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG853 [456] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG854 [457] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0|(const byte) VIC_MCM#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
   //SEG855 [458] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_hicolmcchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_hicolmcchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG856 [459] phi from mode_hicolmcchar to mode_hicolmcchar::@1 [phi:mode_hicolmcchar->mode_hicolmcchar::@1]
@@ -21803,6 +21941,7 @@ mode_hicolmcchar: {
   //SEG864 mode_hicolmcchar::@4
   b4:
   //SEG865 [463] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG866 [464] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 80 -- _deref_pbuc1=vbuc2 
@@ -21937,9 +22076,11 @@ mode_hicolecmchar: {
     .label ch = 5
     .label cy = 4
   //SEG908 [484] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_hicolecmchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG909 [485] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_hicolecmchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG910 [486] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_hicolecmchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -21949,18 +22090,23 @@ mode_hicolecmchar: {
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
   //SEG912 [488] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG913 [489] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_hicolecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG914 [490] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
     sta VIC_CONTROL
   //SEG915 [491] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG916 [492] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_hicolecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_hicolecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG917 [493] phi from mode_hicolecmchar to mode_hicolecmchar::@1 [phi:mode_hicolecmchar->mode_hicolecmchar::@1]
@@ -21986,6 +22132,7 @@ mode_hicolecmchar: {
   //SEG925 mode_hicolecmchar::@4
   b4:
   //SEG926 [497] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG927 [498] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 80 -- _deref_pbuc1=vbuc2 
@@ -22119,9 +22266,11 @@ mode_hicolstdchar: {
     .label ch = 5
     .label cy = 4
   //SEG970 [519] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_hicolstdchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG971 [520] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_hicolstdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG972 [521] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_hicolstdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -22131,18 +22280,23 @@ mode_hicolstdchar: {
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
   //SEG974 [523] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG975 [524] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_hicolstdchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG976 [525] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG977 [526] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG978 [527] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_hicolstdchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_hicolstdchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG979 [528] phi from mode_hicolstdchar to mode_hicolstdchar::@1 [phi:mode_hicolstdchar->mode_hicolstdchar::@1]
@@ -22168,6 +22322,7 @@ mode_hicolstdchar: {
   //SEG987 mode_hicolstdchar::@4
   b4:
   //SEG988 [532] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG989 [533] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -22291,24 +22446,30 @@ mode_stdbitmap: {
     .label cy = 4
     .label l = 4
   //SEG1029 [551] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdbitmap::BITMAP#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&BITMAP)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1030 [552] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_CONTROL
   //SEG1031 [553] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1032 [554] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_stdbitmap::BITMAP#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^BITMAP/$4000
     sta CIA2_PORT_A
   //SEG1033 [555] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG1034 [556] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG1035 [557] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_stdbitmap::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_stdbitmap::BITMAP#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
   //SEG1036 [558] phi from mode_stdbitmap to mode_stdbitmap::@1 [phi:mode_stdbitmap->mode_stdbitmap::@1]
@@ -22334,6 +22495,7 @@ mode_stdbitmap: {
   //SEG1044 mode_stdbitmap::@5
   b5:
   //SEG1045 [562] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #BLACK
     sta BGCOL
   //SEG1046 [563] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -23294,9 +23456,11 @@ mode_mcchar: {
     .label ch = 5
     .label cy = 4
   //SEG1420 [758] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1421 [759] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG1422 [760] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -23306,18 +23470,23 @@ mode_mcchar: {
     lda #0
     sta DTV_CONTROL
   //SEG1424 [762] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1425 [763] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_mcchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1426 [764] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG1427 [765] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0|(const byte) VIC_MCM#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
   //SEG1428 [766] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_mcchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_mcchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1429 [767] phi from mode_mcchar to mode_mcchar::@1 [phi:mode_mcchar->mode_mcchar::@1]
@@ -23343,6 +23512,7 @@ mode_mcchar: {
   //SEG1437 mode_mcchar::@4
   b4:
   //SEG1438 [771] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG1439 [772] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -23483,9 +23653,11 @@ mode_ecmchar: {
     .label ch = 5
     .label cy = 4
   //SEG1483 [794] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1484 [795] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG1485 [796] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -23495,18 +23667,23 @@ mode_ecmchar: {
     lda #0
     sta DTV_CONTROL
   //SEG1487 [798] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1488 [799] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1489 [800] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
     sta VIC_CONTROL
   //SEG1490 [801] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG1491 [802] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1492 [803] phi from mode_ecmchar to mode_ecmchar::@1 [phi:mode_ecmchar->mode_ecmchar::@1]
@@ -23532,6 +23709,7 @@ mode_ecmchar: {
   //SEG1500 mode_ecmchar::@4
   b4:
   //SEG1501 [807] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG1502 [808] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -23671,9 +23849,11 @@ mode_stdchar: {
     .label ch = 5
     .label cy = 4
   //SEG1547 [831] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1548 [832] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG1549 [833] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -23683,18 +23863,23 @@ mode_stdchar: {
     lda #0
     sta DTV_CONTROL
   //SEG1551 [835] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1552 [836] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_stdchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1553 [837] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG1554 [838] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG1555 [839] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_stdchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_stdchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1556 [840] phi from mode_stdchar to mode_stdchar::@1 [phi:mode_stdchar->mode_stdchar::@1]
@@ -23720,6 +23905,7 @@ mode_stdchar: {
   //SEG1564 mode_stdchar::@4
   b4:
   //SEG1565 [844] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG1566 [845] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -24911,7 +25097,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction jmp b14
 Removing unreachable instruction jmp b2
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [247] beq b4 to bne
+Fixing long branch [260] beq b4 to bne
 
 FINAL SYMBOL TABLE
 (label) @54
@@ -26546,12 +26732,15 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG13 [7] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG14 [8] phi from main main::@2 to main::@2 [phi:main/main::@2->main::@2]
@@ -26567,29 +26756,38 @@ menu: {
     .label CHARSET = $9800
     .label c = 2
   //SEG18 [10] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) menu::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  Charset ROM
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG19 [11] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG20 [12] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG21 [13] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Mode
     sta DTV_CONTROL
   //SEG22 [14] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG23 [15] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) menu::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG24 [16] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG25 [17] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG26 [18] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) menu::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) menu::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG27 [19] phi from menu to menu::@1 [phi:menu->menu::@1]
@@ -26635,6 +26833,7 @@ menu: {
     bne b2
   //SEG43 menu::@19
   //SEG44 [27] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG45 [28] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -26904,12 +27103,14 @@ mode_8bppchunkybmm: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
   //SEG204 [120] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG205 [121] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG206 [122] *((const byte*) DTV_PLANEB_START_LO#0) ← <<(const dword) mode_8bppchunkybmm::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #PLANEB&$ffff
     sta DTV_PLANEB_START_LO
   //SEG207 [123] *((const byte*) DTV_PLANEB_START_MI#0) ← ><(const dword) mode_8bppchunkybmm::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -26927,6 +27128,7 @@ mode_8bppchunkybmm: {
   //SEG211 [127] *((const byte*) DTV_PLANEB_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEB_MODULO_HI
   //SEG212 [128] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Border color
     sta BORDERCOL
   //SEG213 [129] phi from mode_8bppchunkybmm to mode_8bppchunkybmm::@1 [phi:mode_8bppchunkybmm->mode_8bppchunkybmm::@1]
   //SEG214 [129] phi (byte) mode_8bppchunkybmm::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mode_8bppchunkybmm->mode_8bppchunkybmm::@1#0] -- vbuxx=vbuc1 
@@ -27097,6 +27299,7 @@ mode_ctrl: {
   //SEG298 mode_ctrl::@7
   b7:
   //SEG299 [164] (byte) mode_ctrl::ctrl#0 ← (byte) dtv_control#114 -- vbuxx=vbuz1 
+    //  Read the current control byte
     ldx dtv_control
   //SEG300 [165] call keyboard_key_pressed 
   //SEG301 [211] phi from mode_ctrl::@7 to keyboard_key_pressed [phi:mode_ctrl::@7->keyboard_key_pressed]
@@ -27341,12 +27544,14 @@ mode_8bpppixelcell: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
   //SEG414 [228] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG415 [229] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG416 [230] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_8bpppixelcell::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG417 [231] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_8bpppixelcell::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -27364,6 +27569,7 @@ mode_8bpppixelcell: {
   //SEG421 [235] *((const byte*) DTV_PLANEA_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEA_MODULO_HI
   //SEG422 [236] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_8bpppixelcell::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG423 [237] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_8bpppixelcell::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -27379,6 +27585,7 @@ mode_8bpppixelcell: {
   //SEG427 [241] *((const byte*) DTV_PLANEB_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEB_MODULO_HI
   //SEG428 [242] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Border color
     sta BORDERCOL
   //SEG429 [243] phi from mode_8bpppixelcell to mode_8bpppixelcell::@1 [phi:mode_8bpppixelcell->mode_8bpppixelcell::@1]
   //SEG430 [243] phi (byte) mode_8bpppixelcell::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mode_8bpppixelcell->mode_8bpppixelcell::@1#0] -- vbuxx=vbuc1 
@@ -27454,6 +27661,7 @@ mode_8bpppixelcell: {
     bne b2
   //SEG462 mode_8bpppixelcell::@10
   //SEG463 [259] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_CHARROM#0 -- _deref_pbuc1=vbuc2 
+    //  8bpp cells for Plane B (charset) - ROM charset with 256 colors
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
   //SEG464 [260] phi from mode_8bpppixelcell::@10 to mode_8bpppixelcell::@4 [phi:mode_8bpppixelcell::@10->mode_8bpppixelcell::@4]
@@ -27599,12 +27807,14 @@ mode_sixsfred: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
   //SEG529 [283] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG530 [284] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG531 [285] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_sixsfred::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG532 [286] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_sixsfred::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -27622,6 +27832,7 @@ mode_sixsfred: {
   //SEG536 [290] *((const byte*) DTV_PLANEA_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEA_MODULO_HI
   //SEG537 [291] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_sixsfred::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG538 [292] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_sixsfred::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -27639,6 +27850,7 @@ mode_sixsfred: {
   //SEG542 [296] *((const byte*) DTV_PLANEB_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEB_MODULO_HI
   //SEG543 [297] *((const byte*) DTV_COLOR_BANK_LO#0) ← <(const byte*) mode_sixsfred::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG544 [298] *((const byte*) DTV_COLOR_BANK_HI#0) ← >(const byte*) mode_sixsfred::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -27661,6 +27873,7 @@ mode_sixsfred: {
     bne b1
   //SEG553 mode_sixsfred::@8
   //SEG554 [303] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG555 [304] phi from mode_sixsfred::@8 to mode_sixsfred::@2 [phi:mode_sixsfred::@8->mode_sixsfred::@2]
@@ -27844,12 +28057,14 @@ mode_twoplanebitmap: {
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
   //SEG631 [336] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG632 [337] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG633 [338] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_twoplanebitmap::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG634 [339] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_twoplanebitmap::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -27867,6 +28082,7 @@ mode_twoplanebitmap: {
   //SEG638 [343] *((const byte*) DTV_PLANEA_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEA_MODULO_HI
   //SEG639 [344] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_twoplanebitmap::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG640 [345] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_twoplanebitmap::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -27884,6 +28100,7 @@ mode_twoplanebitmap: {
   //SEG644 [349] *((const byte*) DTV_PLANEB_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEB_MODULO_HI
   //SEG645 [350] *((const byte*) DTV_COLOR_BANK_LO#0) ← <(const byte*) mode_twoplanebitmap::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG646 [351] *((const byte*) DTV_COLOR_BANK_HI#0) ← >(const byte*) mode_twoplanebitmap::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -27906,12 +28123,14 @@ mode_twoplanebitmap: {
     bne b1
   //SEG655 mode_twoplanebitmap::@10
   //SEG656 [356] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG657 [357] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 112 -- _deref_pbuc1=vbuc2 
     lda #$70
     sta BGCOL1
   //SEG658 [358] *((const byte*) BGCOL2#0) ← (byte/word/signed word/dword/signed dword) 212 -- _deref_pbuc1=vbuc2 
+    //  Color for bits 00
     lda #$d4
     sta BGCOL2
   //SEG659 [359] phi from mode_twoplanebitmap::@10 to mode_twoplanebitmap::@2 [phi:mode_twoplanebitmap::@10->mode_twoplanebitmap::@2]
@@ -28116,12 +28335,14 @@ mode_sixsfred2: {
     lda #DTV_LINEAR
     sta DTV_CONTROL
   //SEG744 [396] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_ECM#0|(const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG745 [397] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG746 [398] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) mode_sixsfred2::PLANEA#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
   //SEG747 [399] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) mode_sixsfred2::PLANEA#0 -- _deref_pbuc1=vbuc2 
@@ -28139,6 +28360,7 @@ mode_sixsfred2: {
   //SEG751 [403] *((const byte*) DTV_PLANEA_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEA_MODULO_HI
   //SEG752 [404] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) mode_sixsfred2::PLANEB#0 -- _deref_pbuc1=vbuc2 
+    //  Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
   //SEG753 [405] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) mode_sixsfred2::PLANEB#0 -- _deref_pbuc1=vbuc2 
@@ -28156,6 +28378,7 @@ mode_sixsfred2: {
   //SEG757 [409] *((const byte*) DTV_PLANEB_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEB_MODULO_HI
   //SEG758 [410] *((const byte*) DTV_COLOR_BANK_LO#0) ← <(const byte*) mode_sixsfred2::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG759 [411] *((const byte*) DTV_COLOR_BANK_HI#0) ← >(const byte*) mode_sixsfred2::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -28178,6 +28401,7 @@ mode_sixsfred2: {
     bne b1
   //SEG768 mode_sixsfred2::@8
   //SEG769 [416] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG770 [417] phi from mode_sixsfred2::@8 to mode_sixsfred2::@2 [phi:mode_sixsfred2::@8->mode_sixsfred2::@2]
@@ -28367,9 +28591,11 @@ mode_hicolmcchar: {
     .label ch = 5
     .label cy = 4
   //SEG847 [450] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_hicolmcchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG848 [451] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_hicolmcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG849 [452] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_hicolmcchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -28379,18 +28605,23 @@ mode_hicolmcchar: {
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
   //SEG851 [454] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG852 [455] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_hicolmcchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG853 [456] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG854 [457] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0|(const byte) VIC_MCM#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
   //SEG855 [458] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_hicolmcchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_hicolmcchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG856 [459] phi from mode_hicolmcchar to mode_hicolmcchar::@1 [phi:mode_hicolmcchar->mode_hicolmcchar::@1]
@@ -28410,6 +28641,7 @@ mode_hicolmcchar: {
     bne b1
   //SEG864 mode_hicolmcchar::@4
   //SEG865 [463] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG866 [464] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 80 -- _deref_pbuc1=vbuc2 
@@ -28528,9 +28760,11 @@ mode_hicolecmchar: {
     .label ch = 5
     .label cy = 4
   //SEG908 [484] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_hicolecmchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG909 [485] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_hicolecmchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG910 [486] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_hicolecmchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -28540,18 +28774,23 @@ mode_hicolecmchar: {
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
   //SEG912 [488] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG913 [489] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_hicolecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG914 [490] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
     sta VIC_CONTROL
   //SEG915 [491] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG916 [492] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_hicolecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_hicolecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG917 [493] phi from mode_hicolecmchar to mode_hicolecmchar::@1 [phi:mode_hicolecmchar->mode_hicolecmchar::@1]
@@ -28571,6 +28810,7 @@ mode_hicolecmchar: {
     bne b1
   //SEG925 mode_hicolecmchar::@4
   //SEG926 [497] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG927 [498] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 80 -- _deref_pbuc1=vbuc2 
@@ -28688,9 +28928,11 @@ mode_hicolstdchar: {
     .label ch = 5
     .label cy = 4
   //SEG970 [519] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_hicolstdchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG971 [520] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const byte*) mode_hicolstdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
   //SEG972 [521] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const byte*) mode_hicolstdchar::COLORS#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -28700,18 +28942,23 @@ mode_hicolstdchar: {
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
   //SEG974 [523] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG975 [524] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_hicolstdchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG976 [525] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG977 [526] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG978 [527] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_hicolstdchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_hicolstdchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG979 [528] phi from mode_hicolstdchar to mode_hicolstdchar::@1 [phi:mode_hicolstdchar->mode_hicolstdchar::@1]
@@ -28731,6 +28978,7 @@ mode_hicolstdchar: {
     bne b1
   //SEG987 mode_hicolstdchar::@4
   //SEG988 [532] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG989 [533] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -28837,24 +29085,30 @@ mode_stdbitmap: {
     .label cy = 4
     .label l = 4
   //SEG1029 [551] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdbitmap::BITMAP#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&BITMAP)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1030 [552] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_CONTROL
   //SEG1031 [553] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1032 [554] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_stdbitmap::BITMAP#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^BITMAP/$4000
     sta CIA2_PORT_A
   //SEG1033 [555] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG1034 [556] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG1035 [557] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_stdbitmap::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_stdbitmap::BITMAP#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
   //SEG1036 [558] phi from mode_stdbitmap to mode_stdbitmap::@1 [phi:mode_stdbitmap->mode_stdbitmap::@1]
@@ -28874,6 +29128,7 @@ mode_stdbitmap: {
     bne b1
   //SEG1044 mode_stdbitmap::@5
   //SEG1045 [562] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #BLACK
     sta BGCOL
   //SEG1046 [563] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -29684,9 +29939,11 @@ mode_mcchar: {
     .label ch = 5
     .label cy = 4
   //SEG1420 [758] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_mcchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1421 [759] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG1422 [760] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -29695,18 +29952,23 @@ mode_mcchar: {
   //SEG1423 [761] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_CONTROL
   //SEG1424 [762] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1425 [763] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_mcchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1426 [764] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG1427 [765] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0|(const byte) VIC_MCM#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
   //SEG1428 [766] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_mcchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_mcchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1429 [767] phi from mode_mcchar to mode_mcchar::@1 [phi:mode_mcchar->mode_mcchar::@1]
@@ -29726,6 +29988,7 @@ mode_mcchar: {
     bne b1
   //SEG1437 mode_mcchar::@4
   //SEG1438 [771] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG1439 [772] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -29850,9 +30113,11 @@ mode_ecmchar: {
     .label ch = 5
     .label cy = 4
   //SEG1483 [794] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_ecmchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1484 [795] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG1485 [796] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -29861,18 +30126,23 @@ mode_ecmchar: {
   //SEG1486 [797] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_CONTROL
   //SEG1487 [798] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1488 [799] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_ecmchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1489 [800] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(const byte) VIC_ECM#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
     sta VIC_CONTROL
   //SEG1490 [801] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG1491 [802] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_ecmchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_ecmchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1492 [803] phi from mode_ecmchar to mode_ecmchar::@1 [phi:mode_ecmchar->mode_ecmchar::@1]
@@ -29892,6 +30162,7 @@ mode_ecmchar: {
     bne b1
   //SEG1500 mode_ecmchar::@4
   //SEG1501 [807] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BORDERCOL
   //SEG1502 [808] *((const byte*) BGCOL1#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -30014,9 +30285,11 @@ mode_stdchar: {
     .label ch = 5
     .label cy = 4
   //SEG1547 [831] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) mode_stdchar::CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG1548 [832] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG1549 [833] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
@@ -30025,18 +30298,23 @@ mode_stdchar: {
   //SEG1550 [834] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_CONTROL
   //SEG1551 [835] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG1552 [836] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) mode_stdchar::CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
   //SEG1553 [837] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG1554 [838] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG1555 [839] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) mode_stdchar::SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) mode_stdchar::CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG1556 [840] phi from mode_stdchar to mode_stdchar::@1 [phi:mode_stdchar->mode_stdchar::@1]
@@ -30056,6 +30334,7 @@ mode_stdchar: {
     bne b1
   //SEG1564 mode_stdchar::@4
   //SEG1565 [844] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG1566 [845] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 

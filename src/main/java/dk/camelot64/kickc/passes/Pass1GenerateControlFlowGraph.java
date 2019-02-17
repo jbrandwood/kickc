@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ControlFlowGraph;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.StatementSequence;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -33,7 +30,7 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
       ControlFlowBlock firstBlock = getOrCreateBlock(scope.addLabel(SymbolRef.BEGIN_BLOCK_NAME).getRef(), ScopeRef.ROOT);
       Stack<ControlFlowBlock> blockStack = new Stack<>();
       blockStack.push(firstBlock);
-      sequence.addStatement(new StatementLabel(scope.addLabel(SymbolRef.END_BLOCK_NAME).getRef(), new StatementSource(RuleContext.EMPTY)));
+      sequence.addStatement(new StatementLabel(scope.addLabel(SymbolRef.END_BLOCK_NAME).getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
       for(Statement statement : sequence.getStatements()) {
          ControlFlowBlock currentBlock = blockStack.peek();
          Symbol currentBlockLabel = scope.getSymbol(currentBlock.getLabel());

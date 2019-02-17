@@ -27,6 +27,7 @@ irq: {
     clc
     adc irq_raster_next
     sta irq_raster_next
+    //  Setup next interrupt
     tax
     txa
     and #7

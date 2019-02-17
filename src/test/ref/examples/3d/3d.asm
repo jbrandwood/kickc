@@ -39,9 +39,12 @@
   .label COSQ = SINQ+$40
   .label sx = 2
   .label sy = 3
+//  sin(x) = cos(x+PI/2)
+//  sin(x) = cos(x+PI/2)
 main: {
     sei
     jsr sprites_init
+    // mulf_init();
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
@@ -87,6 +90,8 @@ anim: {
     lda zs,x
     tax
     jsr rotate_matrix
+    // if(*xr<xmin) xmin = *xr;
+    // if(*xr>xmax) xmax = *xr;
     ldy i
     lda xr
     sta xrs,y
@@ -120,6 +125,7 @@ anim: {
     jsr debug_print
     lda #LIGHT_BLUE
     sta BORDERCOL
+    //  Increment angles        
     inc sx
     inc sx
     lda sy

@@ -1,7 +1,10 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.Program;
+
+import java.util.List;
 
 /**
  * Single Static Assignment Form Statement unconditional jump.
@@ -13,9 +16,8 @@ public class StatementJump extends StatementBase {
 
    private LabelRef destination;
 
-   public StatementJump(LabelRef destination,
-                        StatementSource source) {
-      super(null, source);
+   public StatementJump(LabelRef destination, StatementSource source, List<Comment> comments) {
+      super(null, source, comments);
       this.destination = destination;
    }
 

@@ -262,6 +262,7 @@ fill: {
 init_sprites: {
     lda #1
     sta SPRITES_ENABLE
+    //  one sprite enabled
     lda #0
     sta SPRITES_EXPAND_X
     sta SPRITES_EXPAND_Y

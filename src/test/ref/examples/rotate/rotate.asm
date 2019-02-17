@@ -15,6 +15,7 @@
   .label COS = $2000
   .label SPRITE = $3000
   .label SIN = COS+$40
+//  sin(x) = cos(x+PI/2)
 main: {
     sei
     jsr init
@@ -50,6 +51,7 @@ anim: {
     ldy i
     lda xs,y
     sta x
+    //  signed fixed[7.0]
     lda ys,y
     sta y
     ldy angle
@@ -89,6 +91,7 @@ anim: {
     jsr mulf8s_prepared
     asl _12
     rol _12+1
+    //  signed fixed[8.8] 
     lda yr
     clc
     adc _12
@@ -319,6 +322,7 @@ mulf_init: {
     lda sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b3
+    //  Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
     lda mulf_sqr1_hi+$100

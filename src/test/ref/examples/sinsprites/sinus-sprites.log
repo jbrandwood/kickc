@@ -3990,6 +3990,8 @@ gen_sintab: {
   //SEG159 gen_sintab::@4
   b4:
   //SEG160 asm { lda#0 ldx#0 ldy#0  }
+    //  arg = max
+    //  TODO: Kernel JSR clobbers A,X,Y
     lda #0
     ldx #0
     ldy #0
@@ -4240,6 +4242,7 @@ gen_sintab: {
     lda _23
     sta _24
   //SEG254 [117] *((byte*) gen_sintab::sintab#12 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$24 -- pbuz1_derefidx_vbuz2=vbuz3 
+    //  fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     lda _24
     ldy i
     sta (sintab),y
@@ -4322,6 +4325,7 @@ getFAC: {
     .label return = $3a
     .label return_2 = $35
   //SEG278 asm { jsr$b1aa sty$fe sta$ff  }
+    //  Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -4477,6 +4481,7 @@ setFAC: {
   //SEG324 setFAC::@1
   b1:
   //SEG325 asm { ldy$fe lda$ff jsr$b391  }
+    //  Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391
@@ -4669,6 +4674,7 @@ gen_chargen_sprite: {
   //SEG377 gen_chargen_sprite::@1
   b1:
   //SEG378 [185] (byte) gen_chargen_sprite::bits#0 ← *((byte*) gen_chargen_sprite::chargen#0 + (byte) gen_chargen_sprite::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
+    //  current chargen line
     ldy y
     lda (chargen),y
     sta bits
@@ -4759,6 +4765,7 @@ gen_chargen_sprite: {
   //SEG416 gen_chargen_sprite::@7
   b7:
   //SEG417 [196] *((byte*) gen_chargen_sprite::sprite#3 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
+    //  sprite byte filled - store and move to next byte
     lda s_gen
     ldy #0
     sta (sprite),y
@@ -5742,6 +5749,8 @@ gen_sintab: {
   //SEG159 gen_sintab::@4
   b4:
   //SEG160 asm { lda#0 ldx#0 ldy#0  }
+    //  arg = max
+    //  TODO: Kernel JSR clobbers A,X,Y
     lda #0
     ldx #0
     ldy #0
@@ -5983,6 +5992,7 @@ gen_sintab: {
   //SEG253 [116] (byte~) gen_sintab::$24 ← ((byte)) (word~) gen_sintab::$23 -- vbuaa=_byte_vwuz1 
     lda _23
   //SEG254 [117] *((byte*) gen_sintab::sintab#12 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$24 -- pbuz1_derefidx_vbuz2=vbuaa 
+    //  fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy i
     sta (sintab),y
   //SEG255 [118] call progress_inc 
@@ -6063,6 +6073,7 @@ progress_inc: {
 getFAC: {
     .label return = $c
   //SEG278 asm { jsr$b1aa sty$fe sta$ff  }
+    //  Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -6200,6 +6211,7 @@ setFAC: {
   //SEG324 setFAC::@1
   b1:
   //SEG325 asm { ldy$fe lda$ff jsr$b391  }
+    //  Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391
@@ -6378,6 +6390,7 @@ gen_chargen_sprite: {
   //SEG377 gen_chargen_sprite::@1
   b1:
   //SEG378 [185] (byte) gen_chargen_sprite::bits#0 ← *((byte*) gen_chargen_sprite::chargen#0 + (byte) gen_chargen_sprite::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
+    //  current chargen line
     ldy y
     lda (chargen),y
     sta bits
@@ -6461,6 +6474,7 @@ gen_chargen_sprite: {
   //SEG416 gen_chargen_sprite::@7
   b7:
   //SEG417 [196] *((byte*) gen_chargen_sprite::sprite#3 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
+    //  sprite byte filled - store and move to next byte
     lda s_gen
     ldy #0
     sta (sprite),y
@@ -7714,6 +7728,8 @@ gen_sintab: {
     jsr setARGtoFAC
   //SEG159 gen_sintab::@4
   //SEG160 asm { lda#0 ldx#0 ldy#0  }
+    //  arg = max
+    //  TODO: Kernel JSR clobbers A,X,Y
     lda #0
     tax
     tay
@@ -7886,6 +7902,7 @@ gen_sintab: {
   //SEG253 [116] (byte~) gen_sintab::$24 ← ((byte)) (word~) gen_sintab::$23 -- vbuaa=_byte_vwuz1 
     lda _23
   //SEG254 [117] *((byte*) gen_sintab::sintab#12 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$24 -- pbuz1_derefidx_vbuz2=vbuaa 
+    //  fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy i
     sta (sintab),y
   //SEG255 [118] call progress_inc 
@@ -7954,6 +7971,7 @@ progress_inc: {
 getFAC: {
     .label return = $c
   //SEG278 asm { jsr$b1aa sty$fe sta$ff  }
+    //  Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -8067,6 +8085,7 @@ setFAC: {
     jsr prepareMEM
   //SEG324 setFAC::@1
   //SEG325 asm { ldy$fe lda$ff jsr$b391  }
+    //  Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391
@@ -8220,6 +8239,7 @@ gen_chargen_sprite: {
   //SEG377 gen_chargen_sprite::@1
   b1:
   //SEG378 [185] (byte) gen_chargen_sprite::bits#0 ← *((byte*) gen_chargen_sprite::chargen#0 + (byte) gen_chargen_sprite::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
+    //  current chargen line
     ldy y
     lda (chargen),y
     sta bits
@@ -8287,6 +8307,7 @@ gen_chargen_sprite: {
     bne b5
   //SEG416 gen_chargen_sprite::@7
   //SEG417 [196] *((byte*) gen_chargen_sprite::sprite#3 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
+    //  sprite byte filled - store and move to next byte
     ldy #0
     sta (sprite),y
   //SEG418 [197] *((byte*) gen_chargen_sprite::sprite#3 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 

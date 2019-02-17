@@ -57,8 +57,10 @@ keyboard_matrix_read: {
 }
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
+    //  Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
+    //  Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
     rts

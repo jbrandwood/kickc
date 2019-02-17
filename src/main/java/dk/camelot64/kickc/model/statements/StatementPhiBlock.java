@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.RValue;
@@ -21,8 +22,8 @@ public class StatementPhiBlock extends StatementBase {
     */
    private List<PhiVariable> phiVariables;
 
-   public StatementPhiBlock() {
-      super(null, new StatementSource(RuleContext.EMPTY));
+   public StatementPhiBlock(List<Comment> comments) {
+      super(null, new StatementSource(RuleContext.EMPTY), comments);
       this.phiVariables = new ArrayList<>();
    }
 

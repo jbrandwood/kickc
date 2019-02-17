@@ -305,6 +305,7 @@ mulf_init: {
     lda sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b3
+    //  Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
     lda mulf_sqr1_hi+$100

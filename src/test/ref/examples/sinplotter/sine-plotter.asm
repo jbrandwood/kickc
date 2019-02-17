@@ -38,6 +38,8 @@ main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)>>6
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>BITMAP)>>2&$f
     sei
+    //  Disable normal interrupt
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO

@@ -12,6 +12,7 @@ main: {
     ldy #0
   b1:
     jsr sum
+    //  Output the result on the screen
     sta SCREEN,x
     inx
     iny

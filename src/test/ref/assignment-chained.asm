@@ -12,6 +12,7 @@ main: {
     sta screen+$29
     lda #1+'l'
     sta screen+2
+    //  Chained assignment with a modification of the result
     lda #'l'
     sta screen+$2a
     rts

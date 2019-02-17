@@ -2298,6 +2298,7 @@ bbegin:
 //SEG4 @13
 b13:
 //SEG5 kickasm(location (const byte*) COS#0) {{ {     .var min = -$7fff     .var max = $7fff     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))     }     }  }}
+  //  sin(x) = cos(x+PI/2)
   jmp b16
 //SEG6 @16
 b16:
@@ -2398,6 +2399,7 @@ anim: {
     lda xs,y
     sta x
   //SEG37 [16] (signed byte) anim::y#0 ← *((const signed byte[8]) ys#0 + (byte) anim::i#10) -- vbsz1=pbsc1_derefidx_vbuz2 
+    //  signed fixed[7.0]
     ldy i
     lda ys,y
     sta y
@@ -2552,6 +2554,7 @@ anim: {
     rol
     sta _12+1
   //SEG83 [42] (signed word) anim::yr#1 ← (signed word) anim::yr#0 + (signed word~) anim::$12 -- vwsz1=vwsz2_plus_vwsz3 
+    //  signed fixed[8.8] 
     lda yr
     clc
     adc _12
@@ -3036,6 +3039,7 @@ mulf_init: {
   //SEG214 mulf_init::@8
   b8:
   //SEG215 [121] *((const byte[512]) mulf_sqr2_lo#0+(word/signed word/dword/signed dword) 511) ← *((const byte[512]) mulf_sqr1_lo#0+(word/signed word/dword/signed dword) 256) -- _deref_pbuc1=_deref_pbuc2 
+    //  Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
   //SEG216 [122] *((const byte[512]) mulf_sqr2_hi#0+(word/signed word/dword/signed dword) 511) ← *((const byte[512]) mulf_sqr1_hi#0+(word/signed word/dword/signed dword) 256) -- _deref_pbuc1=_deref_pbuc2 
@@ -3381,6 +3385,7 @@ bbegin:
 //SEG4 @13
 b13:
 //SEG5 kickasm(location (const byte*) COS#0) {{ {     .var min = -$7fff     .var max = $7fff     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))     }     }  }}
+  //  sin(x) = cos(x+PI/2)
   jmp b16
 //SEG6 @16
 b16:
@@ -3472,6 +3477,7 @@ anim: {
     lda xs,y
     sta x
   //SEG37 [16] (signed byte) anim::y#0 ← *((const signed byte[8]) ys#0 + (byte) anim::i#10) -- vbsz1=pbsc1_derefidx_vbuz2 
+    //  signed fixed[7.0]
     ldy i
     lda ys,y
     sta y
@@ -3580,6 +3586,7 @@ anim: {
     asl _12
     rol _12+1
   //SEG83 [42] (signed word) anim::yr#1 ← (signed word) anim::yr#0 + (signed word~) anim::$12 -- vwsz1=vwsz1_plus_vwsz2 
+    //  signed fixed[8.8] 
     lda yr
     clc
     adc _12
@@ -3999,6 +4006,7 @@ mulf_init: {
   //SEG214 mulf_init::@8
   b8:
   //SEG215 [121] *((const byte[512]) mulf_sqr2_lo#0+(word/signed word/dword/signed dword) 511) ← *((const byte[512]) mulf_sqr1_lo#0+(word/signed word/dword/signed dword) 256) -- _deref_pbuc1=_deref_pbuc2 
+    //  Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
   //SEG216 [122] *((const byte[512]) mulf_sqr2_hi#0+(word/signed word/dword/signed dword) 511) ← *((const byte[512]) mulf_sqr1_hi#0+(word/signed word/dword/signed dword) 256) -- _deref_pbuc1=_deref_pbuc2 
@@ -4118,7 +4126,6 @@ Replacing label b12_from_b3 with b12
 Replacing label b3_from_b4 with b3
 Replacing label b3_from_b4 with b3
 Removing instruction b13:
-Removing instruction b16:
 Removing instruction bend_from_b16:
 Removing instruction b1_from_main:
 Removing instruction anim_from_b1:
@@ -4139,6 +4146,7 @@ Removing instruction b3_from_b4:
 Removing instruction b12_from_b3:
 Removing instruction b4_from_b12:
 Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b16:
 Removing instruction bend:
 Removing instruction init_from_main:
 Removing instruction b1:
@@ -4194,7 +4202,7 @@ Removing instruction b12:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction jmp b4
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [133] bne b7 to beq
+Fixing long branch [136] bne b7 to beq
 
 FINAL SYMBOL TABLE
 (label) @13
@@ -4531,6 +4539,7 @@ Score: 34700
 //SEG3 @begin
 //SEG4 @13
 //SEG5 kickasm(location (const byte*) COS#0) {{ {     .var min = -$7fff     .var max = $7fff     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))     }     }  }}
+//  sin(x) = cos(x+PI/2)
 //SEG6 @16
 //SEG7 kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
 //SEG8 [3] call main 
@@ -4598,6 +4607,7 @@ anim: {
     lda xs,y
     sta x
   //SEG37 [16] (signed byte) anim::y#0 ← *((const signed byte[8]) ys#0 + (byte) anim::i#10) -- vbsz1=pbsc1_derefidx_vbuz2 
+    //  signed fixed[7.0]
     lda ys,y
     sta y
   //SEG38 anim::mulf8s_prepare1
@@ -4683,6 +4693,7 @@ anim: {
     asl _12
     rol _12+1
   //SEG83 [42] (signed word) anim::yr#1 ← (signed word) anim::yr#0 + (signed word~) anim::$12 -- vwsz1=vwsz1_plus_vwsz2 
+    //  signed fixed[8.8] 
     lda yr
     clc
     adc _12
@@ -5045,6 +5056,7 @@ mulf_init: {
     bne b3
   //SEG214 mulf_init::@8
   //SEG215 [121] *((const byte[512]) mulf_sqr2_lo#0+(word/signed word/dword/signed dword) 511) ← *((const byte[512]) mulf_sqr1_lo#0+(word/signed word/dword/signed dword) 256) -- _deref_pbuc1=_deref_pbuc2 
+    //  Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
   //SEG216 [122] *((const byte[512]) mulf_sqr2_hi#0+(word/signed word/dword/signed dword) 511) ← *((const byte[512]) mulf_sqr1_hi#0+(word/signed word/dword/signed dword) 256) -- _deref_pbuc1=_deref_pbuc2 

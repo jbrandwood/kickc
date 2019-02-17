@@ -55,6 +55,7 @@ plot: {
     sta plotter_x+1
     lda #<0
     sta plotter_x
+  //  Needs word arrays arranged as two underlying byte arrays to allow byte* plotter_x = plot_x[x]; - and eventually - byte* plotter = plot_x[x] + plot_y[y];
     lda plot_xlo,y
     sta plotter_x
     ldy y

@@ -1,7 +1,10 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.RValue;
+
+import java.util.List;
 
 /**
  * Return Statement inside procedure in Single Static Assignment Form.
@@ -13,8 +16,8 @@ public class StatementReturn extends StatementBase {
     */
    private RValue value;
 
-   public StatementReturn(RValue value, StatementSource source) {
-      super(null, source);
+   public StatementReturn(RValue value, StatementSource source, List<Comment> comments) {
+      super(null, source, comments);
       this.value = value;
    }
 

@@ -1,7 +1,10 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.Program;
+
+import java.util.List;
 
 /**
  * Procedure declaration in SSA
@@ -10,8 +13,8 @@ public class StatementProcedureEnd extends StatementBase {
 
    private ProcedureRef procedure;
 
-   public StatementProcedureEnd(ProcedureRef procedure, StatementSource source) {
-      super(null, source);
+   public StatementProcedureEnd(ProcedureRef procedure, StatementSource source, List<Comment> comments) {
+      super(null, source, comments);
       this.procedure = procedure;
    }
 

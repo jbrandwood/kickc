@@ -1,7 +1,10 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.parser.KickCParser;
+
+import java.util.List;
 
 /** Inline ASM code */
 public class StatementAsm extends StatementBase {
@@ -9,9 +12,8 @@ public class StatementAsm extends StatementBase {
    /** ASM Fragment code. */
    private KickCParser.AsmLinesContext asmLines;
 
-   public StatementAsm(KickCParser.AsmLinesContext asmLines,
-                       StatementSource source) {
-      super(null, source);
+   public StatementAsm(KickCParser.AsmLinesContext asmLines, StatementSource source, List<Comment> comments) {
+      super(null, source, comments);
       this.asmLines = asmLines;
    }
 

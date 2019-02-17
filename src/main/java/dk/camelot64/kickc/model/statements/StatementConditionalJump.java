@@ -1,9 +1,12 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.values.RValue;
+
+import java.util.List;
 
 /**
  * SSA form conditional jump. Intermediate form used for compiler optimization.
@@ -23,8 +26,8 @@ public class StatementConditionalJump extends StatementBase {
    /** This conditional has been unrolled. Constant propagation must ensure the conditional is deleted - or the compilation will fail. */
    private boolean wasUnrolled;
 
-   public StatementConditionalJump(RValue condition, LabelRef destination,StatementSource source) {
-      super(null, source);
+   public StatementConditionalJump(RValue condition, LabelRef destination,StatementSource source, List<Comment> comments) {
+      super(null, source, comments);
       this.rValue1 = null;
       this.operator = null;
       this.rValue2 = condition;
@@ -36,8 +39,9 @@ public class StatementConditionalJump extends StatementBase {
          Operator operator,
          RValue rValue2,
          LabelRef destination,
-         StatementSource source) {
-      super(null, source);
+         StatementSource source,
+         List<Comment> comments) {
+      super(null, source, comments);
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;

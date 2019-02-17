@@ -5710,8 +5710,10 @@ b33:
 //SEG7 kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
 //SEG8 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 6.0	     // These values of d/z0 result in table values from $20 to $40 (effectively max is $3f)     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
 //SEG9 kickasm(location (const signed byte*) SINH#0) {{ {     .var min = -$2000     .var max = $2000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)     }     }  }}
+//  sin(x) = cos(x+PI/2)
 //SEG10 kickasm(location (const signed byte*) SINQ#0) {{ {     .var min = -$1000     .var max = $1000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)     }     }  }}
 //SEG11 kickasm(location (const byte*) SINH_LO#0) {{ {     .var min = -$2000     .var max = $2000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte <(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
+//  sin(x) = cos(x+PI/2)
 //SEG12 kickasm(location (const byte*) SINH_HI#0) {{ {     .var min = -$2000     .var max = $2000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte >(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
 //SEG13 kickasm(location (const byte*) SINQ_LO#0) {{ {     .var min = -$1000     .var max = $1000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte <(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
 //SEG14 kickasm(location (const byte*) SINQ_HI#0) {{ {     .var min = -$1000     .var max = $1000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte >(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
@@ -5732,6 +5734,7 @@ main: {
   //SEG21 main::@1
   b1:
   //SEG22 [15] *((const word*) psp1#0) ← ((word))(const byte*) mulf_sqr1#0 -- _deref_pwuc1=vwuc2 
+    // mulf_init();
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
@@ -5850,6 +5853,8 @@ anim: {
   //SEG61 anim::@29
   b29:
   //SEG62 [38] *((const signed byte[8]) xrs#0 + (byte) anim::i#2) ← *((const signed byte*) xr#0) -- pbsc1_derefidx_vbuz1=_deref_pbsc2 
+    // if(*xr<xmin) xmin = *xr;
+    // if(*xr>xmax) xmax = *xr;
     ldy i
     lda xr
     sta xrs,y
@@ -5916,6 +5921,7 @@ anim: {
     lda #LIGHT_BLUE
     sta BORDERCOL
   //SEG80 [54] (signed byte) sx#3 ← (signed byte) sx#10 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbsz1=vbsz1_plus_2 
+    //  Increment angles        
     inc sx
     inc sx
   //SEG81 [55] (signed byte) sy#3 ← (signed byte) sy#10 - (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbsz1=vbsz1_minus_vbuc1 
@@ -8488,8 +8494,10 @@ b33:
 //SEG7 kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
 //SEG8 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 6.0	     // These values of d/z0 result in table values from $20 to $40 (effectively max is $3f)     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
 //SEG9 kickasm(location (const signed byte*) SINH#0) {{ {     .var min = -$2000     .var max = $2000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)     }     }  }}
+//  sin(x) = cos(x+PI/2)
 //SEG10 kickasm(location (const signed byte*) SINQ#0) {{ {     .var min = -$1000     .var max = $1000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)     }     }  }}
 //SEG11 kickasm(location (const byte*) SINH_LO#0) {{ {     .var min = -$2000     .var max = $2000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte <(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
+//  sin(x) = cos(x+PI/2)
 //SEG12 kickasm(location (const byte*) SINH_HI#0) {{ {     .var min = -$2000     .var max = $2000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte >(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
 //SEG13 kickasm(location (const byte*) SINQ_LO#0) {{ {     .var min = -$1000     .var max = $1000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte <(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
 //SEG14 kickasm(location (const byte*) SINQ_HI#0) {{ {     .var min = -$1000     .var max = $1000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte >(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
@@ -8510,6 +8518,7 @@ main: {
   //SEG21 main::@1
   b1:
   //SEG22 [15] *((const word*) psp1#0) ← ((word))(const byte*) mulf_sqr1#0 -- _deref_pwuc1=vwuc2 
+    // mulf_init();
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
@@ -8621,6 +8630,8 @@ anim: {
   //SEG61 anim::@29
   b29:
   //SEG62 [38] *((const signed byte[8]) xrs#0 + (byte) anim::i#2) ← *((const signed byte*) xr#0) -- pbsc1_derefidx_vbuz1=_deref_pbsc2 
+    // if(*xr<xmin) xmin = *xr;
+    // if(*xr>xmax) xmax = *xr;
     ldy i
     lda xr
     sta xrs,y
@@ -8681,6 +8692,7 @@ anim: {
     lda #LIGHT_BLUE
     sta BORDERCOL
   //SEG80 [54] (signed byte) sx#3 ← (signed byte) sx#10 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbsz1=vbsz1_plus_2 
+    //  Increment angles        
     inc sx
     inc sx
   //SEG81 [55] (signed byte) sy#3 ← (signed byte) sy#10 - (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbsz1=vbsz1_minus_vbuc1 
@@ -10671,9 +10683,9 @@ Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [310] bne b1 to beq
-Fixing long branch [997] bne b2 to beq
-Fixing long branch [1007] bne b1 to beq
+Fixing long branch [316] bne b1 to beq
+Fixing long branch [1003] bne b2 to beq
+Fixing long branch [1013] bne b1 to beq
 
 FINAL SYMBOL TABLE
 (label) @33
@@ -11350,8 +11362,10 @@ Score: 85538
 //SEG7 kickasm(location (const byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
 //SEG8 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 6.0	     // These values of d/z0 result in table values from $20 to $40 (effectively max is $3f)     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
 //SEG9 kickasm(location (const signed byte*) SINH#0) {{ {     .var min = -$2000     .var max = $2000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)     }     }  }}
+//  sin(x) = cos(x+PI/2)
 //SEG10 kickasm(location (const signed byte*) SINQ#0) {{ {     .var min = -$1000     .var max = $1000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte round((min+(ampl/2)+(ampl/2)*sin(rad))/256)     }     }  }}
 //SEG11 kickasm(location (const byte*) SINH_LO#0) {{ {     .var min = -$2000     .var max = $2000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte <(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
+//  sin(x) = cos(x+PI/2)
 //SEG12 kickasm(location (const byte*) SINH_HI#0) {{ {     .var min = -$2000     .var max = $2000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte >(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
 //SEG13 kickasm(location (const byte*) SINQ_LO#0) {{ {     .var min = -$1000     .var max = $1000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte <(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
 //SEG14 kickasm(location (const byte*) SINQ_HI#0) {{ {     .var min = -$1000     .var max = $1000     .var ampl = max-min;     .for(var i=0;i<$140;i++) {         .var rad = i*2*PI/256;         .byte >(min+(ampl/2)+(ampl/2)*sin(rad))     }     }  }}
@@ -11366,6 +11380,7 @@ main: {
     jsr sprites_init
   //SEG21 main::@1
   //SEG22 [15] *((const word*) psp1#0) ← ((word))(const byte*) mulf_sqr1#0 -- _deref_pwuc1=vwuc2 
+    // mulf_init();
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
@@ -11451,6 +11466,8 @@ anim: {
     jsr rotate_matrix
   //SEG61 anim::@29
   //SEG62 [38] *((const signed byte[8]) xrs#0 + (byte) anim::i#2) ← *((const signed byte*) xr#0) -- pbsc1_derefidx_vbuz1=_deref_pbsc2 
+    // if(*xr<xmin) xmin = *xr;
+    // if(*xr>xmax) xmax = *xr;
     ldy i
     lda xr
     sta xrs,y
@@ -11502,6 +11519,7 @@ anim: {
     lda #LIGHT_BLUE
     sta BORDERCOL
   //SEG80 [54] (signed byte) sx#3 ← (signed byte) sx#10 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbsz1=vbsz1_plus_2 
+    //  Increment angles        
     inc sx
     inc sx
   //SEG81 [55] (signed byte) sy#3 ← (signed byte) sy#10 - (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbsz1=vbsz1_minus_vbuc1 

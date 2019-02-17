@@ -152,7 +152,7 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
    private Statement unrollStatement(Statement statement, NaturalLoop unrollLoop, Map<LabelRef, LabelRef> blockToNewBlock, Map<VariableRef, VariableRef> definedToNewVar) {
       if(statement instanceof StatementPhiBlock) {
          StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
-         StatementPhiBlock newPhiBlock = new StatementPhiBlock();
+         StatementPhiBlock newPhiBlock = new StatementPhiBlock(Comment.NO_COMMENTS);
          for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
             VariableRef phiVar = phiVariable.getVariable();
             VariableRef newVar = definedToNewVar.get(phiVar);
@@ -180,7 +180,8 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
                unrollValue(assignment.getrValue1(), definedToNewVar),
                assignment.getOperator(),
                unrollValue(assignment.getrValue2(), definedToNewVar),
-               assignment.getSource()
+               assignment.getSource(),
+               Comment.NO_COMMENTS
          );
       } else if(statement instanceof StatementConditionalJump) {
          StatementConditionalJump conditional = (StatementConditionalJump) statement;
@@ -190,13 +191,14 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
                conditional.getOperator(),
                unrollValue(conditional.getrValue2(), definedToNewVar),
                unrollLabel(labelRef, blockToNewBlock),
-               conditional.getSource()
+               conditional.getSource(),
+               Comment.NO_COMMENTS
          );
          newConditional.setDeclaredUnroll(conditional.isDeclaredUnroll());
          return newConditional;
       } else if(statement instanceof StatementCall) {
          StatementCall call = (StatementCall) statement;
-         StatementCall newCall = new StatementCall(null, call.getProcedureName(), null, call.getSource());
+         StatementCall newCall = new StatementCall(null, call.getProcedureName(), null, call.getSource(), Comment.NO_COMMENTS);
          newCall.setProcedure(call.getProcedure());
          return newCall;
       } else {

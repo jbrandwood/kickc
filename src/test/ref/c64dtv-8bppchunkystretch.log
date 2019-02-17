@@ -1639,6 +1639,8 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
@@ -1652,9 +1654,11 @@ main: {
   //SEG15 main::@17
   b17:
   //SEG16 [8] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG17 [9] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_LINEAR#0|(const byte) DTV_COLORRAM_OFF#0|(const byte) DTV_CHUNKY#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
+    //  8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_COLORRAM_OFF|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
   //SEG18 [10] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_ECM#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
@@ -1664,6 +1668,7 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG20 [12] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
+    //  Plane B: CHUNKY
     lda #<CHUNKY
     sta DTV_PLANEB_START_LO
   //SEG21 [13] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
@@ -1682,12 +1687,16 @@ main: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG26 [18] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG27 [19] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) CHUNKY#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
     sta CIA2_PORT_A
   //SEG28 [20] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 6|>((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC memory
     lda #(CHUNKY&$3fff)>>6|(0)>>2
     sta VIC_MEMORY
   //SEG29 [21] phi from main::@17 to main::@1 [phi:main::@17->main::@1]
@@ -1716,6 +1725,7 @@ main: {
   //SEG37 main::@3
   b3:
   //SEG38 asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
+    //  Stabilize Raster
     ldx #$ff
   rff:
     cpx RASTER
@@ -2176,6 +2186,8 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
@@ -2189,9 +2201,11 @@ main: {
   //SEG15 main::@17
   b17:
   //SEG16 [8] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG17 [9] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_LINEAR#0|(const byte) DTV_COLORRAM_OFF#0|(const byte) DTV_CHUNKY#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
+    //  8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_COLORRAM_OFF|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
   //SEG18 [10] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_ECM#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
@@ -2201,6 +2215,7 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG20 [12] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
+    //  Plane B: CHUNKY
     lda #<CHUNKY
     sta DTV_PLANEB_START_LO
   //SEG21 [13] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
@@ -2219,12 +2234,16 @@ main: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG26 [18] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG27 [19] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) CHUNKY#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
     sta CIA2_PORT_A
   //SEG28 [20] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 6|>((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC memory
     lda #(CHUNKY&$3fff)>>6|(0)>>2
     sta VIC_MEMORY
   //SEG29 [21] phi from main::@17 to main::@1 [phi:main::@17->main::@1]
@@ -2250,6 +2269,7 @@ main: {
   //SEG37 main::@3
   b3:
   //SEG38 asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
+    //  Stabilize Raster
     ldx #$ff
   rff:
     cpx RASTER
@@ -2933,6 +2953,8 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
@@ -2943,9 +2965,11 @@ main: {
     jsr gfx_init_chunky
   //SEG15 main::@17
   //SEG16 [8] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG17 [9] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_LINEAR#0|(const byte) DTV_COLORRAM_OFF#0|(const byte) DTV_CHUNKY#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
+    //  8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_COLORRAM_OFF|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
   //SEG18 [10] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_ECM#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
@@ -2955,6 +2979,7 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG20 [12] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
+    //  Plane B: CHUNKY
     lda #<CHUNKY
     sta DTV_PLANEB_START_LO
   //SEG21 [13] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
@@ -2972,12 +2997,16 @@ main: {
   //SEG25 [17] *((const byte*) DTV_PLANEB_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEB_MODULO_HI
   //SEG26 [18] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG27 [19] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) CHUNKY#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
     sta CIA2_PORT_A
   //SEG28 [20] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 6|>((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  VIC memory
     lda #(CHUNKY&$3fff)>>6|(0)>>2
     sta VIC_MEMORY
   //SEG29 [21] phi from main::@17 to main::@1 [phi:main::@17->main::@1]
@@ -2998,6 +3027,7 @@ main: {
   //SEG37 main::@3
   b3:
   //SEG38 asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
+    //  Stabilize Raster
     ldx #$ff
   rff:
     cpx RASTER

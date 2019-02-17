@@ -32,6 +32,8 @@ main: {
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>BITMAP)>>2&$f
     .label i = 2
     sei
+    //  Disable normal interrupt
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO
@@ -219,8 +221,10 @@ point_init: {
     sta delay,y
     rts
   b1:
+    //  X is driver - abs(y/x) is < 1
     lda x_diff+1
     bmi b3
+    //  x add = 1.0
     ldy point_idx
     lda #$10
     sta x_add,y
@@ -239,6 +243,7 @@ point_init: {
     sta y_add,y
     jmp b2
   b3:
+    //  x add = -1.0
     ldy point_idx
     lda #-$10
     sta x_add,y

@@ -57,6 +57,7 @@ main: {
     sta dw2+2
     lda _32+1
     sta dw2+3
+    //  Test set/get high word of dword
     lda dw2
     sta _4
     lda dw2+1

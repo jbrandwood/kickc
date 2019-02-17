@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -89,7 +90,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
       getGraph().addBlock(newBlock);
       LabelRef destLabel = conditional.getDestination();
-      StatementConditionalJump newConditional = new StatementConditionalJump(conditionAssignment.getrValue2(), destLabel, conditional.getSource());
+      StatementConditionalJump newConditional = new StatementConditionalJump(conditionAssignment.getrValue2(), destLabel, conditional.getSource(), Comment.NO_COMMENTS);
       newConditional.setDeclaredUnroll(conditional.isDeclaredUnroll());
       newBlock.getStatements().add(newConditional);
       newBlock.setDefaultSuccessor(block.getDefaultSuccessor());
@@ -121,7 +122,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       Label newBlockLabel = currentScope.addLabelIntermediate();
       ControlFlowBlock newBlock = new ControlFlowBlock(newBlockLabel.getRef(), currentScopeRef);
       getGraph().addBlock(newBlock);
-      StatementConditionalJump newConditional = new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination(), conditional.getSource());
+      StatementConditionalJump newConditional = new StatementConditionalJump(conditionAssignment.getrValue2(), conditional.getDestination(), conditional.getSource(), Comment.NO_COMMENTS);
       // Copy unrolling to the new conditional
       newConditional.setDeclaredUnroll(conditional.isDeclaredUnroll());
       newBlock.getStatements().add(newConditional);

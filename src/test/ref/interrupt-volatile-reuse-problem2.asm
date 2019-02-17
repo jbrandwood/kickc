@@ -41,6 +41,7 @@ main: {
     jmp b1
 }
 irq: {
+    //  Acknowledge the IRQ
     lda #1
     sta IRQ_STATUS
     lda $dc0d

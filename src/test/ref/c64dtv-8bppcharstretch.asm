@@ -59,19 +59,24 @@
   .label CHARSET8 = $8000
 main: {
     sei
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     jsr gfx_init
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
+    //  8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
     lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
+    //  Plane A: SCREEN
     lda #<SCREEN
     sta DTV_PLANEA_START_LO
     lda #>SCREEN
@@ -83,6 +88,7 @@ main: {
     lda #0
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
+    //  Plane B: CHARSET8
     lda #<CHARSET8
     sta DTV_PLANEB_START_LO
     lda #>CHARSET8
@@ -92,10 +98,14 @@ main: {
     sta DTV_PLANEB_STEP
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
+    //  Set VIC Bank bits to output - all others to input
     lda #3^SCREEN/$4000
     sta CIA2_PORT_A
+    //  Set VIC Bank
+    //  VIC memory
     lda #(SCREEN&$3fff)>>6|(>(SCREEN&$3fff))>>2
     sta VIC_MEMORY
     ldx #0
@@ -106,6 +116,7 @@ main: {
     cpx #$10
     bne b1
   b3:
+    //  Stabilize Raster
     ldx #$ff
   rff:
     cpx RASTER

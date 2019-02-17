@@ -25,12 +25,12 @@ public class Pass3AddNopBeforeCallOns extends Pass2Base {
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          List<Statement> statements = block.getStatements();
          if(statements.size() == 0) {
-            statements.add(0, new StatementPhiBlock());
+            statements.add(0, new StatementPhiBlock(Comment.NO_COMMENTS));
             getLog().append("Adding NOP phi() at start of " + block.getLabel());
          } else {
             Statement firstStmt = statements.get(0);
             if(firstStmt instanceof StatementCall) {
-               statements.add(0, new StatementPhiBlock());
+               statements.add(0, new StatementPhiBlock(Comment.NO_COMMENTS));
                getLog().append("Adding NOP phi() at start of " + block.getLabel());
             }
          }

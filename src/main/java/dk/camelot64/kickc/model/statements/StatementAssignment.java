@@ -1,10 +1,13 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.symbols.Variable;
+
+import java.util.List;
 
 /**
  * Single Static Assignment Form Statement.
@@ -22,16 +25,16 @@ public class StatementAssignment extends StatementBase implements StatementLValu
    private Operator operator;
    private RValue rValue2;
 
-   public StatementAssignment(LValue lValue, RValue rValue2, StatementSource source) {
-      this(lValue, null, null, rValue2, null, source);
+   public StatementAssignment(LValue lValue, RValue rValue2, StatementSource source, List<Comment> comments) {
+      this(lValue, null, null, rValue2, null, source, comments);
    }
 
-   public StatementAssignment(LValue lValue, Operator operator, RValue rValue2,StatementSource source) {
-      this(lValue, null, operator, rValue2, null, source);
+   public StatementAssignment(LValue lValue, Operator operator, RValue rValue2,StatementSource source, List<Comment> comments) {
+      this(lValue, null, operator, rValue2, null, source, comments);
    }
 
-   public StatementAssignment(LValue lValue, RValue rValue1, Operator operator, RValue rValue2, StatementSource source) {
-      this(lValue, rValue1, operator, rValue2, null, source);
+   public StatementAssignment(LValue lValue, RValue rValue1, Operator operator, RValue rValue2, StatementSource source, List<Comment> comments) {
+      this(lValue, rValue1, operator, rValue2, null, source, comments);
    }
 
    public StatementAssignment(
@@ -40,8 +43,9 @@ public class StatementAssignment extends StatementBase implements StatementLValu
          Operator operator,
          RValue rValue2,
          Integer index,
-         StatementSource source) {
-      super(index, source);
+         StatementSource source,
+         List<Comment> comments) {
+      super(index, source, comments);
       this.lValue = lValue;
       this.rValue1 = rValue1;
       this.operator = operator;

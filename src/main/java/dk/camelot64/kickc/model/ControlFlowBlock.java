@@ -204,7 +204,7 @@ public class ControlFlowBlock {
          phiBlock = (StatementPhiBlock) statements.get(0);
       }
       if(phiBlock == null) {
-         phiBlock = new StatementPhiBlock();
+         phiBlock = new StatementPhiBlock(new ArrayList<>());
          statements.add(0, phiBlock);
       }
       return phiBlock;

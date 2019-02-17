@@ -1,5 +1,6 @@
 package dk.camelot64.kickc;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.StatementSequence;
@@ -121,7 +122,7 @@ public class Compiler {
          loadAndParseFile(fileName, program, currentPath.toPath());
 
          StatementSequence sequence = program.getStatementSequence();
-         sequence.addStatement(new StatementCall(null, "main", new ArrayList<>(), new StatementSource(RuleContext.EMPTY)));
+         sequence.addStatement(new StatementCall(null, "main", new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
          program.setStatementSequence(sequence);
 
          pass1GenerateSSA();

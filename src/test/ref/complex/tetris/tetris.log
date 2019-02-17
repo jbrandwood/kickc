@@ -13006,11 +13006,13 @@ bbegin:
 //SEG4 @14
 b14:
 //SEG5 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
 //SEG6 kickasm(location (const byte*) PLAYFIELD_CHARSET#0) {{ .fill 8,$00 // Place a filled char at the start of the charset     .import binary "playfield-screen.imap"  }}
 //SEG7 kickasm(location (const byte*) PLAYFIELD_SCREEN_ORIGINAL#0) {{ // Load chars for the screen   .var screen = LoadBinary("playfield-screen.iscr")    // Load extended colors for the screen   .var extended = LoadBinary("playfield-extended.col")   // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8   // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)   // <<6 to move extended colors to the upper 2 bits   .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )  }}
 //SEG8 kickasm(location (const byte*) PLAYFIELD_COLORS_ORIGINAL#0) {{ .import binary "playfield-screen.col"  }}
+  //  Original Color Data
   jmp b23
 //SEG9 @23
 b23:
@@ -13019,9 +13021,11 @@ b23:
 //SEG11 @24
 b24:
 //SEG12 [6] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
+  //  The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
 //SEG13 [7] (byte) irq_sprite_ypos#0 ← (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuc1 
+  //  Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
 //SEG14 [8] phi from @24 to toSpritePtr1 [phi:@24->toSpritePtr1]
@@ -13033,9 +13037,11 @@ toSpritePtr1:
 //SEG16 @39
 b39:
 //SEG17 [9] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuc1 
+  //  Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
 //SEG18 [10] (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //  Counting the 10 IRQs
   lda #0
   sta irq_cnt
 //SEG19 [11] phi from @39 to @38 [phi:@39->@38]
@@ -14476,6 +14482,7 @@ play_move_leftright: {
     .label return = $94
     .label return_2 = $36
   //SEG521 [225] if((byte) play_move_leftright::key_event#0==(const byte) KEY_COMMA#0) goto play_move_leftright::@1 -- vbuz1_eq_vbuc1_then_la1 
+    //  Handle keyboard events
     lda key_event
     cmp #KEY_COMMA
     beq b1
@@ -14875,6 +14882,7 @@ play_spawn_current: {
     .label current_piece_idx = $af
     .label piece_idx = $4a
   //SEG697 [286] (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17 -- vbuz1=vbuz2 
+    //  Move next piece into current
     lda next_piece_idx
     sta current_piece_idx
   //SEG698 [287] (byte~) play_spawn_current::$0 ← (byte) play_spawn_current::current_piece_idx#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_rol_1 
@@ -15115,6 +15123,7 @@ play_increase_level: {
   //SEG768 [327] (byte) level#21 ← ++ (byte) level#10 -- vbuz1=_inc_vbuz1 
     inc level
   //SEG769 [328] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) 29) goto play_increase_level::@2 -- vbuz1_gt_vbuc1_then_la1 
+    //  Update speed of moving tetrominos down
     lda level
     cmp #$1d
     beq !+
@@ -15153,6 +15162,7 @@ play_increase_level: {
   //SEG780 play_increase_level::@7
   b7:
   //SEG781 [334] (byte) level_bcd#8 ← (byte) level_bcd#21 + (byte/signed byte/word/signed word/dword/signed dword) 6 -- vbuz1=vbuz1_plus_vbuc1 
+    //  If level low nybble hits $a change to $10
     lda #6
     clc
     adc level_bcd
@@ -15165,6 +15175,7 @@ play_increase_level: {
   //SEG784 play_increase_level::@3
   b3:
   //SEG785 asm { sed  }
+    //  Increase the score values gained
     sed
   //SEG786 [337] phi from play_increase_level::@3 to play_increase_level::@4 [phi:play_increase_level::@3->play_increase_level::@4]
   b4_from_b3:
@@ -15836,6 +15847,7 @@ keyboard_event_scan: {
   //SEG1008 keyboard_event_scan::@17
   b17:
   //SEG1009 [438] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte) keyboard_event_scan::keycode#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -15862,6 +15874,7 @@ keyboard_event_scan: {
   //SEG1017 keyboard_event_scan::@19
   b19:
   //SEG1018 [444] *((const byte[8]) keyboard_scan_values#0 + (byte) keyboard_event_scan::row#2) ← (byte) keyboard_event_scan::row_scan#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -15873,6 +15886,7 @@ keyboard_event_scan: {
     ora keycode
     sta _11
   //SEG1021 [446] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte/word/dword~) keyboard_event_scan::$11 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Key released
     lda _11
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -16029,6 +16043,7 @@ play_init: {
     lda #PLAYFIELD_COLS*PLAYFIELD_LINES
     sta playfield_lines_idx+PLAYFIELD_LINES
   //SEG1064 [470] (byte) current_movedown_slow#1 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0) -- vbuz1=_deref_pbuc1 
+    //  Set initial speed of moving down a tetromino
     lda MOVEDOWN_SLOW_SPEEDS
     sta current_movedown_slow
   //SEG1065 [471] phi from play_init::@3 to play_init::@2 [phi:play_init::@3->play_init::@2]
@@ -16076,20 +16091,24 @@ sprites_irq_init: {
   //SEG1077 asm { sei  }
     sei
   //SEG1078 [478] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG1079 asm { ldaCIA1_INTERRUPT  }
     lda CIA1_INTERRUPT
   //SEG1080 [480] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG1081 [481] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG1082 [482] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    //  Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG1083 [483] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    //  Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -16097,9 +16116,11 @@ sprites_irq_init: {
     lda #IRQ_RASTER_FIRST
     sta RASTER
   //SEG1085 [485] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG1086 [486] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq() -- _deref_pptc1=pprc2 
+    //  Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -16205,6 +16226,7 @@ render_init: {
   //SEG1117 render_init::@3
   b3:
   //SEG1118 [505] *((const byte*) D011#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Enable Extended Background Color Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta D011
   //SEG1119 [506] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -16531,8 +16553,11 @@ sprites_irq: {
     stx regx+1
     sty regy+1
   //SEG1218 asm { cld  }
+    // (*BGCOL)++;
+    //  Clear decimal flag (because it is used by the score algorithm)
     cld
   //SEG1219 [556] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0 -- vbuz1=vbuz2 
+    //  Place the sprites
     lda irq_sprite_ypos
     sta ypos
   //SEG1220 [557] *((const byte*) SPRITES_YPOS#0) ← (byte) sprites_irq::ypos#0 -- _deref_pbuc1=vbuz1 
@@ -16552,6 +16577,7 @@ sprites_irq: {
     iny
     sty _0
   //SEG1225 [562] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte/signed word/word/dword/signed dword~) sprites_irq::$0 -- vbuz1=vbuz2 
+    //  Wait for the y-position before changing sprite pointers
     lda _0
     sta raster_sprite_gfx_modify
     jmp b1
@@ -16639,9 +16665,11 @@ sprites_irq: {
   //SEG1249 sprites_irq::@7
   b7:
   //SEG1250 [579] *((const byte*) RASTER#0) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
+    //  Setup next interrupt
     lda irq_raster_next_4
     sta RASTER
   //SEG1251 [580] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
@@ -18222,11 +18250,13 @@ bbegin:
 //SEG4 @14
 b14:
 //SEG5 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
 //SEG6 kickasm(location (const byte*) PLAYFIELD_CHARSET#0) {{ .fill 8,$00 // Place a filled char at the start of the charset     .import binary "playfield-screen.imap"  }}
 //SEG7 kickasm(location (const byte*) PLAYFIELD_SCREEN_ORIGINAL#0) {{ // Load chars for the screen   .var screen = LoadBinary("playfield-screen.iscr")    // Load extended colors for the screen   .var extended = LoadBinary("playfield-extended.col")   // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8   // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)   // <<6 to move extended colors to the upper 2 bits   .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )  }}
 //SEG8 kickasm(location (const byte*) PLAYFIELD_COLORS_ORIGINAL#0) {{ .import binary "playfield-screen.col"  }}
+  //  Original Color Data
   jmp b23
 //SEG9 @23
 b23:
@@ -18235,9 +18265,11 @@ b23:
 //SEG11 @24
 b24:
 //SEG12 [6] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
+  //  The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
 //SEG13 [7] (byte) irq_sprite_ypos#0 ← (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuc1 
+  //  Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
 //SEG14 [8] phi from @24 to toSpritePtr1 [phi:@24->toSpritePtr1]
@@ -18249,9 +18281,11 @@ toSpritePtr1:
 //SEG16 @39
 b39:
 //SEG17 [9] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuc1 
+  //  Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
 //SEG18 [10] (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //  Counting the 10 IRQs
   lda #0
   sta irq_cnt
 //SEG19 [11] phi from @39 to @38 [phi:@39->@38]
@@ -19532,6 +19566,7 @@ play_collision: {
 //  Return non-zero if a render is needed
 play_move_leftright: {
   //SEG521 [225] if((byte) play_move_leftright::key_event#0==(const byte) KEY_COMMA#0) goto play_move_leftright::@1 -- vbuaa_eq_vbuc1_then_la1 
+    //  Handle keyboard events
     cmp #KEY_COMMA
     beq b1
     jmp b6
@@ -19884,6 +19919,7 @@ play_spawn_current: {
     .label _0 = 4
     .label piece_idx = $21
   //SEG697 [286] (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17 -- vbuxx=vbuz1 
+    //  Move next piece into current
     ldx next_piece_idx
   //SEG698 [287] (byte~) play_spawn_current::$0 ← (byte) play_spawn_current::current_piece_idx#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuxx_rol_1 
     txa
@@ -20090,6 +20126,7 @@ play_increase_level: {
   //SEG768 [327] (byte) level#21 ← ++ (byte) level#10 -- vbuz1=_inc_vbuz1 
     inc level
   //SEG769 [328] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) 29) goto play_increase_level::@2 -- vbuz1_gt_vbuc1_then_la1 
+    //  Update speed of moving tetrominos down
     lda level
     cmp #$1d
     beq !+
@@ -20126,6 +20163,7 @@ play_increase_level: {
   //SEG780 play_increase_level::@7
   b7:
   //SEG781 [334] (byte) level_bcd#8 ← (byte) level_bcd#21 + (byte/signed byte/word/signed word/dword/signed dword) 6 -- vbuz1=vbuz1_plus_vbuc1 
+    //  If level low nybble hits $a change to $10
     lda #6
     clc
     adc level_bcd
@@ -20138,6 +20176,7 @@ play_increase_level: {
   //SEG784 play_increase_level::@3
   b3:
   //SEG785 asm { sed  }
+    //  Increase the score values gained
     sed
   //SEG786 [337] phi from play_increase_level::@3 to play_increase_level::@4 [phi:play_increase_level::@3->play_increase_level::@4]
   b4_from_b3:
@@ -20733,6 +20772,7 @@ keyboard_event_scan: {
   //SEG1008 keyboard_event_scan::@17
   b17:
   //SEG1009 [438] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte) keyboard_event_scan::keycode#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -20758,6 +20798,7 @@ keyboard_event_scan: {
   //SEG1017 keyboard_event_scan::@19
   b19:
   //SEG1018 [444] *((const byte[8]) keyboard_scan_values#0 + (byte) keyboard_event_scan::row#2) ← (byte) keyboard_event_scan::row_scan#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -20768,6 +20809,7 @@ keyboard_event_scan: {
     lda #$40
     ora keycode
   //SEG1021 [446] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte/word/dword~) keyboard_event_scan::$11 -- pbuc1_derefidx_vbuz1=vbuaa 
+    //  Key released
     ldy keyboard_events_size
     sta keyboard_events,y
   //SEG1022 [447] (byte) keyboard_events_size#1 ← ++ (byte) keyboard_events_size#10 -- vbuz1=_inc_vbuz1 
@@ -20906,6 +20948,7 @@ play_init: {
     lda #PLAYFIELD_COLS*PLAYFIELD_LINES
     sta playfield_lines_idx+PLAYFIELD_LINES
   //SEG1064 [470] (byte) current_movedown_slow#1 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0) -- vbuz1=_deref_pbuc1 
+    //  Set initial speed of moving down a tetromino
     lda MOVEDOWN_SLOW_SPEEDS
     sta current_movedown_slow
   //SEG1065 [471] phi from play_init::@3 to play_init::@2 [phi:play_init::@3->play_init::@2]
@@ -20950,20 +20993,24 @@ sprites_irq_init: {
   //SEG1077 asm { sei  }
     sei
   //SEG1078 [478] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG1079 asm { ldaCIA1_INTERRUPT  }
     lda CIA1_INTERRUPT
   //SEG1080 [480] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG1081 [481] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG1082 [482] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    //  Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG1083 [483] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    //  Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -20971,9 +21018,11 @@ sprites_irq_init: {
     lda #IRQ_RASTER_FIRST
     sta RASTER
   //SEG1085 [485] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG1086 [486] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq() -- _deref_pptc1=pprc2 
+    //  Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -21070,6 +21119,7 @@ render_init: {
   //SEG1117 render_init::@3
   b3:
   //SEG1118 [505] *((const byte*) D011#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Enable Extended Background Color Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta D011
   //SEG1119 [506] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -21379,8 +21429,11 @@ sprites_irq: {
     sta rega+1
     stx regx+1
   //SEG1218 asm { cld  }
+    // (*BGCOL)++;
+    //  Clear decimal flag (because it is used by the score algorithm)
     cld
   //SEG1219 [556] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0 -- vbuaa=vbuz1 
+    //  Place the sprites
     lda irq_sprite_ypos
   //SEG1220 [557] *((const byte*) SPRITES_YPOS#0) ← (byte) sprites_irq::ypos#0 -- _deref_pbuc1=vbuaa 
     sta SPRITES_YPOS
@@ -21394,6 +21447,7 @@ sprites_irq: {
     ldx irq_raster_next
     inx
   //SEG1225 [562] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte/signed word/word/dword/signed dword~) sprites_irq::$0 -- vbuz1=vbuxx 
+    //  Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
     jmp b1
   //SEG1226 sprites_irq::@1
@@ -21472,9 +21526,11 @@ sprites_irq: {
   //SEG1249 sprites_irq::@7
   b7:
   //SEG1250 [579] *((const byte*) RASTER#0) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
+    //  Setup next interrupt
     lda irq_raster_next
     sta RASTER
   //SEG1251 [580] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
@@ -23771,27 +23827,33 @@ Score: 3365357
 bbegin:
 //SEG4 @14
 //SEG5 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
 //SEG6 kickasm(location (const byte*) PLAYFIELD_CHARSET#0) {{ .fill 8,$00 // Place a filled char at the start of the charset     .import binary "playfield-screen.imap"  }}
 //SEG7 kickasm(location (const byte*) PLAYFIELD_SCREEN_ORIGINAL#0) {{ // Load chars for the screen   .var screen = LoadBinary("playfield-screen.iscr")    // Load extended colors for the screen   .var extended = LoadBinary("playfield-extended.col")   // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8   // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)   // <<6 to move extended colors to the upper 2 bits   .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )  }}
 //SEG8 kickasm(location (const byte*) PLAYFIELD_COLORS_ORIGINAL#0) {{ .import binary "playfield-screen.col"  }}
+//  Original Color Data
 //SEG9 @23
 //SEG10 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	// Put the sprites into memory  	.for(var sy=0;sy<10;sy++) { 	    .var sprite_gfx_y = sy*20 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21) 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
 //SEG11 @24
 //SEG12 [6] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
+  //  The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
 //SEG13 [7] (byte) irq_sprite_ypos#0 ← (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuc1 
+  //  Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
 //SEG14 [8] phi from @24 to toSpritePtr1 [phi:@24->toSpritePtr1]
 //SEG15 toSpritePtr1
 //SEG16 @39
 //SEG17 [9] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuc1 
+  //  Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
 //SEG18 [10] (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //  Counting the 10 IRQs
   lda #0
   sta irq_cnt
 //SEG19 [11] phi from @39 to @38 [phi:@39->@38]
@@ -24863,6 +24925,7 @@ play_collision: {
 //  Return non-zero if a render is needed
 play_move_leftright: {
   //SEG521 [225] if((byte) play_move_leftright::key_event#0==(const byte) KEY_COMMA#0) goto play_move_leftright::@1 -- vbuaa_eq_vbuc1_then_la1 
+    //  Handle keyboard events
     cmp #KEY_COMMA
     beq b1
   //SEG522 play_move_leftright::@6
@@ -25153,6 +25216,7 @@ play_spawn_current: {
     .label _0 = 4
     .label piece_idx = $21
   //SEG697 [286] (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17 -- vbuxx=vbuz1 
+    //  Move next piece into current
     ldx next_piece_idx
   //SEG698 [287] (byte~) play_spawn_current::$0 ← (byte) play_spawn_current::current_piece_idx#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuxx_rol_1 
     txa
@@ -25328,6 +25392,7 @@ play_increase_level: {
   //SEG768 [327] (byte) level#21 ← ++ (byte) level#10 -- vbuz1=_inc_vbuz1 
     inc level
   //SEG769 [328] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) 29) goto play_increase_level::@2 -- vbuz1_gt_vbuc1_then_la1 
+    //  Update speed of moving tetrominos down
     lda level
     cmp #$1d
     beq !+
@@ -25358,6 +25423,7 @@ play_increase_level: {
     bne b3
   //SEG780 play_increase_level::@7
   //SEG781 [334] (byte) level_bcd#8 ← (byte) level_bcd#21 + (byte/signed byte/word/signed word/dword/signed dword) 6 -- vbuz1=vbuz1_plus_vbuc1 
+    //  If level low nybble hits $a change to $10
     lda #6
     clc
     adc level_bcd
@@ -25367,6 +25433,7 @@ play_increase_level: {
   //SEG784 play_increase_level::@3
   b3:
   //SEG785 asm { sed  }
+    //  Increase the score values gained
     sed
   //SEG786 [337] phi from play_increase_level::@3 to play_increase_level::@4 [phi:play_increase_level::@3->play_increase_level::@4]
   //SEG787 [337] phi (byte) play_increase_level::b#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:play_increase_level::@3->play_increase_level::@4#0] -- vbuxx=vbuc1 
@@ -25850,6 +25917,7 @@ keyboard_event_scan: {
     beq b7
   //SEG1008 keyboard_event_scan::@17
   //SEG1009 [438] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte) keyboard_event_scan::keycode#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -25868,6 +25936,7 @@ keyboard_event_scan: {
     bne b4
   //SEG1017 keyboard_event_scan::@19
   //SEG1018 [444] *((const byte[8]) keyboard_scan_values#0 + (byte) keyboard_event_scan::row#2) ← (byte) keyboard_event_scan::row_scan#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -25878,6 +25947,7 @@ keyboard_event_scan: {
     lda #$40
     ora keycode
   //SEG1021 [446] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte/word/dword~) keyboard_event_scan::$11 -- pbuc1_derefidx_vbuz1=vbuaa 
+    //  Key released
     ldy keyboard_events_size
     sta keyboard_events,y
   //SEG1022 [447] (byte) keyboard_events_size#1 ← ++ (byte) keyboard_events_size#10 -- vbuz1=_inc_vbuz1 
@@ -25997,6 +26067,7 @@ play_init: {
     lda #PLAYFIELD_COLS*PLAYFIELD_LINES
     sta playfield_lines_idx+PLAYFIELD_LINES
   //SEG1064 [470] (byte) current_movedown_slow#1 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0) -- vbuz1=_deref_pbuc1 
+    //  Set initial speed of moving down a tetromino
     lda MOVEDOWN_SLOW_SPEEDS
     sta current_movedown_slow
   //SEG1065 [471] phi from play_init::@3 to play_init::@2 [phi:play_init::@3->play_init::@2]
@@ -26035,20 +26106,24 @@ sprites_irq_init: {
   //SEG1077 asm { sei  }
     sei
   //SEG1078 [478] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG1079 asm { ldaCIA1_INTERRUPT  }
     lda CIA1_INTERRUPT
   //SEG1080 [480] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG1081 [481] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG1082 [482] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    //  Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG1083 [483] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    //  Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -26056,9 +26131,11 @@ sprites_irq_init: {
     lda #IRQ_RASTER_FIRST
     sta RASTER
   //SEG1085 [485] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG1086 [486] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq() -- _deref_pptc1=pprc2 
+    //  Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -26136,6 +26213,7 @@ render_init: {
     sta CIA2_PORT_A
   //SEG1117 render_init::@3
   //SEG1118 [505] *((const byte*) D011#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  Enable Extended Background Color Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta D011
   //SEG1119 [506] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -26411,8 +26489,11 @@ sprites_irq: {
     sta rega+1
     stx regx+1
   //SEG1218 asm { cld  }
+    // (*BGCOL)++;
+    //  Clear decimal flag (because it is used by the score algorithm)
     cld
   //SEG1219 [556] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0 -- vbuaa=vbuz1 
+    //  Place the sprites
     lda irq_sprite_ypos
   //SEG1220 [557] *((const byte*) SPRITES_YPOS#0) ← (byte) sprites_irq::ypos#0 -- _deref_pbuc1=vbuaa 
     sta SPRITES_YPOS
@@ -26426,6 +26507,7 @@ sprites_irq: {
     ldx irq_raster_next
     inx
   //SEG1225 [562] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte/signed word/word/dword/signed dword~) sprites_irq::$0 -- vbuz1=vbuxx 
+    //  Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
   //SEG1226 sprites_irq::@1
   b1:
@@ -26489,9 +26571,11 @@ sprites_irq: {
   //SEG1249 sprites_irq::@7
   b7:
   //SEG1250 [579] *((const byte*) RASTER#0) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
+    //  Setup next interrupt
     lda irq_raster_next
     sta RASTER
   //SEG1251 [580] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG1252 sprites_irq::@return

@@ -207,6 +207,8 @@ gen_sintab: {
     sta setFAC.w+1
     jsr setFAC
     jsr setARGtoFAC
+    //  arg = max
+    //  TODO: Kernel JSR clobbers A,X,Y
     lda #0
     tax
     tay
@@ -285,6 +287,7 @@ gen_sintab: {
     jsr addMEMtoFAC
     jsr getFAC
     lda _23
+    //  fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy i
     sta (sintab),y
     jsr progress_inc
@@ -329,6 +332,7 @@ progress_inc: {
 //  Destroys the value in the FAC in the process
 getFAC: {
     .label return = $c
+    //  Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -395,6 +399,7 @@ divMEMbyFAC: {
 setFAC: {
     .label w = $c
     jsr prepareMEM
+    //  Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391
@@ -495,6 +500,7 @@ gen_chargen_sprite: {
     lda #0
     sta y
   b1:
+    //  current chargen line
     ldy y
     lda (chargen),y
     sta bits
@@ -523,6 +529,7 @@ gen_chargen_sprite: {
     iny
     cpy #8
     bne b5
+    //  sprite byte filled - store and move to next byte
     ldy #0
     sta (sprite),y
     ldy #3

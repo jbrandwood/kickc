@@ -244,6 +244,7 @@ init: {
     inx
     cpx #PLEX_COUNT-1+1
     bne b1
+    //  Enable & initialize sprites
     lda #$ff
     sta SPRITES_ENABLE
     ldx #0

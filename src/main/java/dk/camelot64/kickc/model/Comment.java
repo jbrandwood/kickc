@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import java.util.ArrayList;
+
 /**
  * A comment in the source code.
  * Comments are attached to symbols and statements and
@@ -7,6 +9,11 @@ package dk.camelot64.kickc.model;
  **/
 public class Comment {
 
+   /** Empty comments collection. */
+   public static final ArrayList<Comment> NO_COMMENTS = new ArrayList<>();
+
+
+   /** The comment. */
    private String comment;
 
    /** The index of the hidden parser token containing the comment.

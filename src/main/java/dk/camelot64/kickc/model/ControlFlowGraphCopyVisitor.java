@@ -124,9 +124,9 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    }
 
    @Override
-   public StatementPhiBlock visitPhiBlock(StatementPhiBlock phi) {
-      StatementPhiBlock copyPhi = new StatementPhiBlock();
-      for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+   public StatementPhiBlock visitPhiBlock(StatementPhiBlock orig) {
+      StatementPhiBlock copyPhi = new StatementPhiBlock(orig.getComments());
+      for(StatementPhiBlock.PhiVariable phiVariable : orig.getPhiVariables()) {
          VariableRef variable = phiVariable.getVariable();
          StatementPhiBlock.PhiVariable copyVar = copyPhi.addPhiVariable(variable);
          for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
@@ -137,68 +137,64 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    }
 
    @Override
-   public StatementAssignment visitAssignment(StatementAssignment origAssignment) {
-      LValue lValue = origAssignment.getlValue();
-      RValue rValue1 = origAssignment.getrValue1();
-      Operator operator = origAssignment.getOperator();
-      RValue rValue2 = origAssignment.getrValue2();
-      return new StatementAssignment(lValue, rValue1, operator, rValue2, origAssignment.getSource());
+   public StatementAssignment visitAssignment(StatementAssignment orig) {
+      return new StatementAssignment(orig.getlValue(), orig.getrValue1(), orig.getOperator(), orig.getrValue2(), orig.getSource(), orig.getComments());
    }
 
    @Override
-   public StatementConditionalJump visitConditionalJump(StatementConditionalJump origConditionalJump) {
-      RValue rValue1 = origConditionalJump.getrValue1();
-      Operator operator = origConditionalJump.getOperator();
-      RValue rValue2 = origConditionalJump.getrValue2();
-      LabelRef destination = origConditionalJump.getDestination();
-      StatementConditionalJump conditionalJump = new StatementConditionalJump(rValue1, operator, rValue2, destination, origConditionalJump.getSource());
-      conditionalJump.setDeclaredUnroll(origConditionalJump.isDeclaredUnroll());
+   public StatementConditionalJump visitConditionalJump(StatementConditionalJump orig) {
+      RValue rValue1 = orig.getrValue1();
+      Operator operator = orig.getOperator();
+      RValue rValue2 = orig.getrValue2();
+      LabelRef destination = orig.getDestination();
+      StatementConditionalJump conditionalJump = new StatementConditionalJump(rValue1, operator, rValue2, destination, orig.getSource(), orig.getComments());
+      conditionalJump.setDeclaredUnroll(orig.isDeclaredUnroll());
       return conditionalJump;
    }
 
    @Override
-   public StatementJump visitJump(StatementJump origJump) {
-      LabelRef destination = origJump.getDestination();
-      return new StatementJump(destination, origJump.getSource());
+   public StatementJump visitJump(StatementJump orig) {
+      LabelRef destination = orig.getDestination();
+      return new StatementJump(destination, orig.getSource(), orig.getComments());
    }
 
    @Override
-   public StatementLabel visitJumpTarget(StatementLabel origJump) {
-      LabelRef label = origJump.getLabel();
-      return new StatementLabel(label, origJump.getSource());
+   public StatementLabel visitJumpTarget(StatementLabel orig) {
+      LabelRef label = orig.getLabel();
+      return new StatementLabel(label, orig.getSource(), orig.getComments());
    }
 
    @Override
-   public StatementCall visitCall(StatementCall origCall) {
-      LValue lValue = origCall.getlValue();
-      String procedureName = origCall.getProcedureName();
-      List<RValue> parameters = origCall.getParameters();
-      return new StatementCall(lValue, procedureName, parameters, origCall.getSource());
+   public StatementCall visitCall(StatementCall orig) {
+      LValue lValue = orig.getlValue();
+      String procedureName = orig.getProcedureName();
+      List<RValue> parameters = orig.getParameters();
+      return new StatementCall(lValue, procedureName, parameters, orig.getSource(), orig.getComments());
    }
 
    @Override
-   public StatementProcedureBegin visitProcedureBegin(StatementProcedureBegin origProcedureBegin) {
-      return new StatementProcedureBegin(origProcedureBegin.getProcedure(), origProcedureBegin.getSource());
+   public StatementProcedureBegin visitProcedureBegin(StatementProcedureBegin orig) {
+      return new StatementProcedureBegin(orig.getProcedure(), orig.getSource(), orig.getComments());
    }
 
    @Override
-   public StatementProcedureEnd visitProcedureEnd(StatementProcedureEnd origProcedureEnd) {
-      return new StatementProcedureEnd(origProcedureEnd.getProcedure(), origProcedureEnd.getSource());
+   public StatementProcedureEnd visitProcedureEnd(StatementProcedureEnd orig) {
+      return new StatementProcedureEnd(orig.getProcedure(), orig.getSource(), orig.getComments());
    }
 
    @Override
-   public StatementReturn visitReturn(StatementReturn origReturn) {
-      return new StatementReturn(origReturn.getValue(), origReturn.getSource());
+   public StatementReturn visitReturn(StatementReturn orig) {
+      return new StatementReturn(orig.getValue(), orig.getSource(), orig.getComments());
    }
 
    @Override
-   public Object visitAsm(StatementAsm asm) {
-      return new StatementAsm(asm.getAsmLines(), asm.getSource());
+   public Object visitAsm(StatementAsm orig) {
+      return new StatementAsm(orig.getAsmLines(), orig.getSource(), orig.getComments());
    }
 
    @Override
-   public Object visitKickAsm(StatementKickAsm kasm) {
-      return new StatementKickAsm(kasm.getKickAsmCode(), kasm.getLocation(), kasm.getBytes(), kasm.getCycles(), kasm.getSource());
+   public Object visitKickAsm(StatementKickAsm orig) {
+      return new StatementKickAsm(orig.getKickAsmCode(), orig.getLocation(), orig.getBytes(), orig.getCycles(), orig.getSource(), orig.getComments());
    }
 
 }

@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.types.SymbolType;
 import org.antlr.v4.runtime.RuleContext;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -33,7 +34,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       ProcedureRef procedureRef = origCall.getProcedure();
       Procedure procedure = program.getScope().getProcedure(procedureRef);
       String procedureName = origCall.getProcedureName();
-      StatementCall copyCall = new StatementCall(null, procedureName, null, origCall.getSource());
+      StatementCall copyCall = new StatementCall(null, procedureName, null, origCall.getSource(), origCall.getComments());
       copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);
       getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
@@ -54,7 +55,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
          if(returnVarFinal == null) {
             throw new RuntimeException("Error! Cannot find final return variable for " + procedure.getFullName());
          }
-         StatementAssignment returnAssignment = new StatementAssignment(origCall.getlValue(), returnVarFinal, origCall.getSource());
+         StatementAssignment returnAssignment = new StatementAssignment(origCall.getlValue(), returnVarFinal, origCall.getSource(), new ArrayList<>());
          addStatementToCurrentBlock(returnAssignment);
       }
 
@@ -102,8 +103,8 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
    }
 
    @Override
-   public StatementReturn visitReturn(StatementReturn origReturn) {
-      addStatementToCurrentBlock(new StatementReturn(null, origReturn.getSource()));
+   public StatementReturn visitReturn(StatementReturn orig) {
+      addStatementToCurrentBlock(new StatementReturn(null, orig.getSource(), orig.getComments()));
       return null;
    }
 }

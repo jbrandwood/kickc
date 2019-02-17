@@ -1,7 +1,10 @@
 package dk.camelot64.kickc.model.statements;
 
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
+
+import java.util.List;
 
 /**
  * Single Static Assignment Form Statement.
@@ -17,13 +20,16 @@ public interface Statement {
    /** Set the index of the statement. Indexes are used during live range analysis. */
    void setIndex(Integer idx);
 
-   /**
-    * Get the source for the statement
-    */
+   /** Get the source for the statement */
     StatementSource getSource();
 
-   /**
-    * Set the source for the statement
-    */
+   /** Set the source for the statement */
    void setSource(StatementSource source);
+
+   /** Get the comments  of the statement */
+   List<Comment> getComments();
+
+   /** Get the comments  of the statement */
+   void setComments(List<Comment> comments);
+
 }

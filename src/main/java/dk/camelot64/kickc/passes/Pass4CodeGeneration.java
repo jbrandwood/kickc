@@ -47,7 +47,7 @@ public class Pass4CodeGeneration {
 
       // Add file level comments
       asm.startSegment(currentScope, null, "File Comments");
-      addComments(asm, program.getFileComments());
+      generateComments(asm, program.getFileComments());
 
       asm.startSegment(currentScope, null, "Basic Upstart");
       asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
@@ -70,7 +70,7 @@ public class Pass4CodeGeneration {
             // Add any procedure comments
             if(block.isProcedureEntry(program)) {
                Procedure procedure = block.getProcedure(program);
-               addComments(asm, procedure.getComments());
+               generateComments(asm, procedure.getComments());
             }
             // Start the new scope
             asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
@@ -156,7 +156,7 @@ public class Pass4CodeGeneration {
             if(asmName != null && !added.contains(asmName)) {
                added.add(asmName);
                // Add any comments
-               addComments(asm, constantVar.getComments());
+               generateComments(asm, constantVar.getComments());
                // Find the constant value calculation
                String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
                if(constantVar.getType() instanceof SymbolTypePointer) {
@@ -186,7 +186,7 @@ public class Pass4CodeGeneration {
     * @param asm The assembler program
     * @param comments The comments to add
     */
-   private void addComments(AsmProgram asm, List<Comment> comments) {
+   private void generateComments(AsmProgram asm, List<Comment> comments) {
       for(Comment comment : comments) {
          asm.addComment(comment.getComment());
       }
@@ -294,7 +294,7 @@ public class Pass4CodeGeneration {
                continue;
             }
             // Add any comments
-            addComments(asm, constantVar.getComments());
+            generateComments(asm, constantVar.getComments());
             // Add any alignment
             Integer declaredAlignment = constantVar.getDeclaredAlignment();
             if(declaredAlignment != null) {
@@ -393,7 +393,7 @@ public class Pass4CodeGeneration {
             String asmName = scopeVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
                // Add any comments
-               addComments(asm, scopeVar.getComments());
+               generateComments(asm, scopeVar.getComments());
                // Add the label declaration
                asm.addLabelDecl(asmName.replace("#", "_").replace("$", "_"), registerZp.getZp());
                added.add(asmName);
@@ -429,7 +429,7 @@ public class Pass4CodeGeneration {
    public void generateStatementAsm(AsmProgram asm, ControlFlowBlock block, Statement statement, AsmCodegenAluState aluState, boolean genCallPhiEntry) {
 
       asm.startSegment(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
-
+      generateComments(asm, statement.getComments());
       // IF the previous statement was added to the ALU register - generate the composite ASM fragment
       if(aluState.hasAluAssignment()) {
          StatementAssignment assignmentAlu = aluState.getAluAssignment();

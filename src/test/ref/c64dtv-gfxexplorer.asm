@@ -171,10 +171,13 @@
   .label form_cursor_count = $e
 main: {
     sei
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO
     sta PROCPORT
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
     jsr keyboard_init
@@ -390,8 +393,10 @@ gfx_mode: {
     sta DTV_PLANEB_MODULO_LO
     lda #0
     sta DTV_PLANEB_MODULO_HI
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
+    //  Set VIC Bank bits to output - all others to input
     lda #3^VIC_SCREEN0/$4000
     sta CIA2_PORT_A
     lda form_vic_screen
@@ -421,6 +426,8 @@ gfx_mode: {
     lsr
     lsr
     ora _65
+    //  Set VIC Bank
+    //  VIC memory
     sta VIC_MEMORY
     lda form_vic_cols
     jsr get_vic_screen
@@ -453,6 +460,7 @@ gfx_mode: {
     lda cy
     cmp #$19
     bne b10
+    //  Background colors
     lda #0
     sta BORDERCOL
     lda form_vic_bg0_hi
@@ -483,6 +491,7 @@ gfx_mode: {
     asl
     ora form_vic_bg3_lo
     sta BGCOL4
+    //  DTV Palette
     lda form_dtv_palet
     cmp #0
     beq b18
@@ -614,6 +623,7 @@ keyboard_event_scan: {
     and keyboard_matrix_col_bitmask,y
     cmp #0
     beq b7
+    //  Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -624,6 +634,7 @@ keyboard_event_scan: {
     lda col
     cmp #8
     bne b4
+    //  Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -631,6 +642,7 @@ keyboard_event_scan: {
   b7:
     lda #$40
     ora keycode
+    //  Key released
     ldy keyboard_events_size
     sta keyboard_events,y
     inc keyboard_events_size
@@ -955,24 +967,33 @@ form_mode: {
     jsr form_render_values
     lda form_fields_val
     jsr render_preset_name
+    //  DTV Graphics Bank
     lda #($ffffffff&FORM_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
+    //  Set VIC Bank bits to output - all others to input
     lda #3^FORM_CHARSET/$4000
     sta CIA2_PORT_A
+    //  Set VIC Bank
+    //  DTV Graphics Mode
     lda #0
     sta DTV_CONTROL
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
+    //  VIC Memory Pointers
     lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
     sta VIC_MEMORY
+    //  DTV Plane A to FORM_SCREEN also
     lda #<FORM_SCREEN
     sta DTV_PLANEA_START_LO
     lda #>FORM_SCREEN
@@ -986,6 +1007,7 @@ form_mode: {
     iny
     cpy #$10
     bne b1
+    //  Screen colors
     lda #0
     sta BGCOL
     sta BORDERCOL
@@ -1330,6 +1352,7 @@ form_control: {
     lda #$7f
     ldy #0
     and (field),y
+    //  Unblink the cursor
     sta (field),y
     lda #KEY_MODIFIER_SHIFT
     and keyboard_modifiers
@@ -1365,6 +1388,7 @@ form_control: {
     lda form_fields_max,x
     sta form_fields_val,x
   b12:
+    //  Render field value
     lda form_fields_val,x
     tay
     lda print_hextab,y
@@ -2527,8 +2551,10 @@ gfx_init_screen0: {
 }
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
+    //  Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
+    //  Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
     rts

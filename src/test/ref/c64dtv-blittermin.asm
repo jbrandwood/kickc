@@ -73,6 +73,7 @@
 main: {
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
+    //  Instruct blitter not to continue previous blit
     lda #DTV_BLIT_CLEAR_IRQ
     sta DTV_BLITTER_CONTROL2
     lda #<SRCA
@@ -89,6 +90,7 @@ main: {
     sta DTV_BLITTER_SRCA_LIN_HI
     lda #$10
     sta DTV_BLITTER_SRCA_STEP
+    //  Step 1.0
     lda #<SRCB
     sta DTV_BLITTER_SRCB_LO
     lda #>SRCB
@@ -103,6 +105,7 @@ main: {
     sta DTV_BLITTER_SRCB_LIN_HI
     lda #0
     sta DTV_BLITTER_SRCB_STEP
+    //  Step 0.0
     lda #<SCREEN
     sta DTV_BLITTER_DEST_LO
     lda #>SCREEN
@@ -117,6 +120,7 @@ main: {
     sta DTV_BLITTER_DEST_LIN_HI
     lda #$10
     sta DTV_BLITTER_DEST_STEP
+    //  Step 1.0
     lda #SRCA_LEN
     sta DTV_BLITTER_LEN_LO
     lda #0
@@ -125,8 +129,10 @@ main: {
     sta DTV_BLITTER_ALU
     lda #DTV_BLIT_TRANSPARANCY_NONE
     sta DTV_BLITTER_TRANSPARANCY
+    //  Start blitter
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
+    //  Instruct blitter to continue at DEST and restart SRC A/B
     lda #DTV_BLIT_DEST_CONT
     sta DTV_BLITTER_CONTROL2
     ldx #0
@@ -135,6 +141,7 @@ main: {
     and #DTV_BLIT_STATUS_BUSY
     cmp #0
     bne b2
+    //  restart
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
     inx

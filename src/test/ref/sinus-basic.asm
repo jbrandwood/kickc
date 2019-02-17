@@ -139,6 +139,7 @@ print_char: {
 //  Destroys the value in the FAC in the process
 getFAC: {
     .label return = 7
+    //  Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -208,6 +209,7 @@ divMEMbyFAC: {
 setFAC: {
     .label w = 7
     jsr prepareMEM
+    //  Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391

@@ -33,6 +33,7 @@ main: {
     inx
     cpx #$27
     bne b5
+    //  Render next char
     ldy #0
     lda (nxt),y
     tax

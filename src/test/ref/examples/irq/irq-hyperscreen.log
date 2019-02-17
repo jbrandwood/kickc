@@ -602,9 +602,11 @@ main: {
   //SEG11 asm { sei  }
     sei
   //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    //  Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    //  Set raster line to $fa
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -612,9 +614,11 @@ main: {
     lda #$fa
     sta RASTER
   //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+    //  Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
@@ -635,13 +639,16 @@ irq_bottom_2: {
     lda #WHITE
     sta BORDERCOL
   //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    //  Set screen height back to 25 lines (preparing for the next screen)
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
   //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG25 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
+    //  Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
   //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
@@ -666,13 +673,16 @@ irq_bottom_1: {
     lda #WHITE
     sta BORDERCOL
   //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    //  Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
   //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG35 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
+    //  Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
   //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
@@ -770,9 +780,11 @@ main: {
   //SEG11 asm { sei  }
     sei
   //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    //  Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    //  Set raster line to $fa
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -780,9 +792,11 @@ main: {
     lda #$fa
     sta RASTER
   //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+    //  Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
@@ -803,13 +817,16 @@ irq_bottom_2: {
     lda #WHITE
     sta BORDERCOL
   //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    //  Set screen height back to 25 lines (preparing for the next screen)
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
   //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG25 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
+    //  Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
   //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
@@ -834,13 +851,16 @@ irq_bottom_1: {
     lda #WHITE
     sta BORDERCOL
   //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    //  Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
   //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG35 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
+    //  Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
   //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
@@ -1029,9 +1049,11 @@ main: {
   //SEG11 asm { sei  }
     sei
   //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    //  Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    //  Set raster line to $fa
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -1039,9 +1061,11 @@ main: {
     lda #$fa
     sta RASTER
   //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+    //  Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
@@ -1060,13 +1084,16 @@ irq_bottom_2: {
     lda #WHITE
     sta BORDERCOL
   //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    //  Set screen height back to 25 lines (preparing for the next screen)
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
   //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG25 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
+    //  Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
   //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
@@ -1089,13 +1116,16 @@ irq_bottom_1: {
     lda #WHITE
     sta BORDERCOL
   //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    //  Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
   //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    //  Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG35 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
+    //  Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
   //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 

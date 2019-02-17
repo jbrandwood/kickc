@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.LValue;
@@ -22,8 +23,8 @@ public class StatementCall extends StatementBase implements StatementLValue {
    private ProcedureRef procedure;
    private List<RValue> parameters;
 
-   public StatementCall(LValue lValue, String procedureName, List<RValue> parameters, StatementSource source) {
-      super(null, source);
+   public StatementCall(LValue lValue, String procedureName, List<RValue> parameters, StatementSource source, List<Comment> comments) {
+      super(null, source, comments);
       this.lValue = lValue;
       this.procedureName = procedureName;
       this.parameters = parameters;

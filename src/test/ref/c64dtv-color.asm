@@ -24,6 +24,7 @@ main: {
     lda RASTER
     cmp #$40
     bne b4
+    //  Create rasterbars
     lda #0
     sta BGCOL
     ldx #$31

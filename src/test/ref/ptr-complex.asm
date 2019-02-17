@@ -27,6 +27,7 @@ main: {
     bne b1
     lda screen+$79
     sta sc2
+    //  LValue pointer expression (constant - directly)
     lda screen+$7a
     sta screen+$52
     ldx #0

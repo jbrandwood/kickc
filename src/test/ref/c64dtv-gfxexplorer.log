@@ -13930,12 +13930,15 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG13 [7] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG14 [8] call keyboard_init 
@@ -14467,9 +14470,11 @@ gfx_mode: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG151 [92] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG152 [93] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) VIC_SCREEN0#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^VIC_SCREEN0/$4000
     sta CIA2_PORT_A
   //SEG153 [94] (byte) get_vic_screen::idx#0 ← *((const byte*) form_vic_screen#0) -- vbuz1=_deref_pbuc1 
@@ -14552,6 +14557,8 @@ gfx_mode: {
     ora _70
     sta _71
   //SEG172 [109] *((const byte*) VIC_MEMORY#0) ← (byte~) gfx_mode::$71 -- _deref_pbuc1=vbuz1 
+    //  Set VIC Bank
+    //  VIC memory
     lda _71
     sta VIC_MEMORY
   //SEG173 [110] (byte) get_vic_screen::idx#1 ← *((const byte*) form_vic_cols#0) -- vbuz1=_deref_pbuc1 
@@ -14645,6 +14652,7 @@ gfx_mode: {
   //SEG206 gfx_mode::@33
   b33:
   //SEG207 [123] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Background colors
     lda #0
     sta BORDERCOL
   //SEG208 [124] (byte~) gfx_mode::$75 ← *((const byte*) form_vic_bg0_hi#0) << (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuz1=_deref_pbuc1_rol_4 
@@ -14704,6 +14712,7 @@ gfx_mode: {
     lda _82
     sta BGCOL4
   //SEG220 [136] if(*((const byte*) form_dtv_palet#0)==(byte/signed byte/word/signed word/dword/signed dword) 0) goto gfx_mode::@15 -- _deref_pbuc1_eq_0_then_la1 
+    //  DTV Palette
     lda form_dtv_palet
     cmp #0
     beq b15_from_b33
@@ -15111,6 +15120,7 @@ keyboard_event_scan: {
   //SEG360 keyboard_event_scan::@17
   b17:
   //SEG361 [203] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#18) ← (byte) keyboard_event_scan::keycode#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -15137,6 +15147,7 @@ keyboard_event_scan: {
   //SEG369 keyboard_event_scan::@19
   b19:
   //SEG370 [209] *((const byte[8]) keyboard_scan_values#0 + (byte) keyboard_event_scan::row#2) ← (byte) keyboard_event_scan::row_scan#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -15148,6 +15159,7 @@ keyboard_event_scan: {
     ora keycode
     sta _11
   //SEG373 [211] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#18) ← (byte/word/dword~) keyboard_event_scan::$11 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Key released
     lda _11
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -15739,33 +15751,42 @@ form_mode: {
   //SEG521 form_mode::@29
   b29:
   //SEG522 [272] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) FORM_CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&FORM_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG523 [273] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG524 [274] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG525 [275] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG526 [276] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) FORM_CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^FORM_CHARSET/$4000
     sta CIA2_PORT_A
   //SEG527 [277] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  DTV Graphics Mode
     lda #0
     sta DTV_CONTROL
   //SEG528 [278] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG529 [279] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG530 [280] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) FORM_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) FORM_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG531 [281] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) FORM_SCREEN#0 -- _deref_pbuc1=vbuc2 
+    //  DTV Plane A to FORM_SCREEN also
     lda #<FORM_SCREEN
     sta DTV_PLANEA_START_LO
   //SEG532 [282] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) FORM_SCREEN#0 -- _deref_pbuc1=vbuc2 
@@ -15800,6 +15821,7 @@ form_mode: {
   //SEG542 form_mode::@10
   b10:
   //SEG543 [288] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG544 [289] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -16561,6 +16583,7 @@ form_control: {
     and (field),y
     sta _11
   //SEG763 [382] *((byte*) form_control::field#0) ← (byte~) form_control::$11 -- _deref_pbuz1=vbuz2 
+    //  Unblink the cursor
     lda _11
     ldy #0
     sta (field),y
@@ -16672,6 +16695,7 @@ form_control: {
   //SEG799 form_control::@12
   b12:
   //SEG800 [400] *((byte*) form_control::field#0) ← *((const byte[]) print_hextab#0 + *((const byte[]) form_fields_val#0 + (byte) form_field_idx#28)) -- _deref_pbuz1=pbuc1_derefidx_pbuc2_derefidx_vbuz2 
+    //  Render field value
     ldy form_field_idx
     lda form_fields_val,y
     tay
@@ -19499,9 +19523,11 @@ gfx_init_screen0: {
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
   //SEG1758 [862] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
+    //  Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
   //SEG1759 [863] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
     jmp breturn
@@ -21187,12 +21213,15 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG13 [7] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG14 [8] call keyboard_init 
@@ -21613,9 +21642,11 @@ gfx_mode: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG151 [92] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG152 [93] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) VIC_SCREEN0#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^VIC_SCREEN0/$4000
     sta CIA2_PORT_A
   //SEG153 [94] (byte) get_vic_screen::idx#0 ← *((const byte*) form_vic_screen#0) -- vbuaa=_deref_pbuc1 
@@ -21671,6 +21702,8 @@ gfx_mode: {
   //SEG171 [108] (byte~) gfx_mode::$71 ← (byte~) gfx_mode::$65 | (byte~) gfx_mode::$70 -- vbuaa=vbuz1_bor_vbuaa 
     ora _65
   //SEG172 [109] *((const byte*) VIC_MEMORY#0) ← (byte~) gfx_mode::$71 -- _deref_pbuc1=vbuaa 
+    //  Set VIC Bank
+    //  VIC memory
     sta VIC_MEMORY
   //SEG173 [110] (byte) get_vic_screen::idx#1 ← *((const byte*) form_vic_cols#0) -- vbuaa=_deref_pbuc1 
     lda form_vic_cols
@@ -21754,6 +21787,7 @@ gfx_mode: {
   //SEG206 gfx_mode::@33
   b33:
   //SEG207 [123] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Background colors
     lda #0
     sta BORDERCOL
   //SEG208 [124] (byte~) gfx_mode::$75 ← *((const byte*) form_vic_bg0_hi#0) << (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=_deref_pbuc1_rol_4 
@@ -21797,6 +21831,7 @@ gfx_mode: {
   //SEG219 [135] *((const byte*) BGCOL4#0) ← (byte~) gfx_mode::$82 -- _deref_pbuc1=vbuaa 
     sta BGCOL4
   //SEG220 [136] if(*((const byte*) form_dtv_palet#0)==(byte/signed byte/word/signed word/dword/signed dword) 0) goto gfx_mode::@15 -- _deref_pbuc1_eq_0_then_la1 
+    //  DTV Palette
     lda form_dtv_palet
     cmp #0
     beq b15_from_b33
@@ -22150,6 +22185,7 @@ keyboard_event_scan: {
   //SEG360 keyboard_event_scan::@17
   b17:
   //SEG361 [203] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#18) ← (byte) keyboard_event_scan::keycode#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -22176,6 +22212,7 @@ keyboard_event_scan: {
   //SEG369 keyboard_event_scan::@19
   b19:
   //SEG370 [209] *((const byte[8]) keyboard_scan_values#0 + (byte) keyboard_event_scan::row#2) ← (byte) keyboard_event_scan::row_scan#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -22186,6 +22223,7 @@ keyboard_event_scan: {
     lda #$40
     ora keycode
   //SEG373 [211] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#18) ← (byte/word/dword~) keyboard_event_scan::$11 -- pbuc1_derefidx_vbuz1=vbuaa 
+    //  Key released
     ldy keyboard_events_size
     sta keyboard_events,y
   //SEG374 [212] (byte) keyboard_events_size#1 ← ++ (byte) keyboard_events_size#18 -- vbuz1=_inc_vbuz1 
@@ -22730,33 +22768,42 @@ form_mode: {
   //SEG521 form_mode::@29
   b29:
   //SEG522 [272] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) FORM_CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&FORM_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG523 [273] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG524 [274] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG525 [275] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG526 [276] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) FORM_CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^FORM_CHARSET/$4000
     sta CIA2_PORT_A
   //SEG527 [277] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  DTV Graphics Mode
     lda #0
     sta DTV_CONTROL
   //SEG528 [278] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG529 [279] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG530 [280] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) FORM_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) FORM_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG531 [281] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) FORM_SCREEN#0 -- _deref_pbuc1=vbuc2 
+    //  DTV Plane A to FORM_SCREEN also
     lda #<FORM_SCREEN
     sta DTV_PLANEA_START_LO
   //SEG532 [282] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) FORM_SCREEN#0 -- _deref_pbuc1=vbuc2 
@@ -22788,6 +22835,7 @@ form_mode: {
   //SEG542 form_mode::@10
   b10:
   //SEG543 [288] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG544 [289] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -23469,6 +23517,7 @@ form_control: {
     ldy #0
     and (field),y
   //SEG763 [382] *((byte*) form_control::field#0) ← (byte~) form_control::$11 -- _deref_pbuz1=vbuaa 
+    //  Unblink the cursor
     ldy #0
     sta (field),y
   //SEG764 [383] (byte~) form_control::$12 ← (byte) keyboard_modifiers#21 & (const byte) KEY_MODIFIER_SHIFT#0 -- vbuaa=vbuz1_band_vbuc1 
@@ -23566,6 +23615,7 @@ form_control: {
   //SEG799 form_control::@12
   b12:
   //SEG800 [400] *((byte*) form_control::field#0) ← *((const byte[]) print_hextab#0 + *((const byte[]) form_fields_val#0 + (byte) form_field_idx#28)) -- _deref_pbuz1=pbuc1_derefidx_pbuc2_derefidx_vbuxx 
+    //  Render field value
     lda form_fields_val,x
     tay
     lda print_hextab,y
@@ -26142,9 +26192,11 @@ gfx_init_screen0: {
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
   //SEG1758 [862] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
+    //  Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
   //SEG1759 [863] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
     jmp breturn
@@ -27267,18 +27319,18 @@ Removing instruction b37:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction jmp b7
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [746] beq b5 to bne
-Fixing long branch [750] beq b6 to bne
-Fixing long branch [754] beq b7 to bne
-Fixing long branch [758] beq b8 to bne
-Fixing long branch [744] beq b4 to bne
-Fixing long branch [764] beq b9 to bne
-Fixing long branch [768] beq b10 to bne
-Fixing long branch [772] beq b11 to bne
-Fixing long branch [776] beq b12 to bne
-Fixing long branch [742] beq b3 to bne
-Fixing long branch [782] beq b13 to bne
-Fixing long branch [1317] bmi b2 to bpl
+Fixing long branch [758] beq b5 to bne
+Fixing long branch [762] beq b6 to bne
+Fixing long branch [766] beq b7 to bne
+Fixing long branch [770] beq b8 to bne
+Fixing long branch [756] beq b4 to bne
+Fixing long branch [776] beq b9 to bne
+Fixing long branch [780] beq b10 to bne
+Fixing long branch [784] beq b11 to bne
+Fixing long branch [788] beq b12 to bne
+Fixing long branch [754] beq b3 to bne
+Fixing long branch [794] beq b13 to bne
+Fixing long branch [1339] bmi b2 to bpl
 
 FINAL SYMBOL TABLE
 (label) @68
@@ -29172,12 +29224,15 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
+    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG13 [7] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
+    //  Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG14 [8] call keyboard_init 
@@ -29531,9 +29586,11 @@ gfx_mode: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG151 [92] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG152 [93] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) VIC_SCREEN0#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^VIC_SCREEN0/$4000
     sta CIA2_PORT_A
   //SEG153 [94] (byte) get_vic_screen::idx#0 ← *((const byte*) form_vic_screen#0) -- vbuaa=_deref_pbuc1 
@@ -29583,6 +29640,8 @@ gfx_mode: {
   //SEG171 [108] (byte~) gfx_mode::$71 ← (byte~) gfx_mode::$65 | (byte~) gfx_mode::$70 -- vbuaa=vbuz1_bor_vbuaa 
     ora _65
   //SEG172 [109] *((const byte*) VIC_MEMORY#0) ← (byte~) gfx_mode::$71 -- _deref_pbuc1=vbuaa 
+    //  Set VIC Bank
+    //  VIC memory
     sta VIC_MEMORY
   //SEG173 [110] (byte) get_vic_screen::idx#1 ← *((const byte*) form_vic_cols#0) -- vbuaa=_deref_pbuc1 
     lda form_vic_cols
@@ -29650,6 +29709,7 @@ gfx_mode: {
     bne b10
   //SEG206 gfx_mode::@33
   //SEG207 [123] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Background colors
     lda #0
     sta BORDERCOL
   //SEG208 [124] (byte~) gfx_mode::$75 ← *((const byte*) form_vic_bg0_hi#0) << (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=_deref_pbuc1_rol_4 
@@ -29693,6 +29753,7 @@ gfx_mode: {
   //SEG219 [135] *((const byte*) BGCOL4#0) ← (byte~) gfx_mode::$82 -- _deref_pbuc1=vbuaa 
     sta BGCOL4
   //SEG220 [136] if(*((const byte*) form_dtv_palet#0)==(byte/signed byte/word/signed word/dword/signed dword) 0) goto gfx_mode::@15 -- _deref_pbuc1_eq_0_then_la1 
+    //  DTV Palette
     lda form_dtv_palet
     cmp #0
     beq b18
@@ -29965,6 +30026,7 @@ keyboard_event_scan: {
     beq b7
   //SEG360 keyboard_event_scan::@17
   //SEG361 [203] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#18) ← (byte) keyboard_event_scan::keycode#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -29984,6 +30046,7 @@ keyboard_event_scan: {
     bne b4
   //SEG369 keyboard_event_scan::@19
   //SEG370 [209] *((const byte[8]) keyboard_scan_values#0 + (byte) keyboard_event_scan::row#2) ← (byte) keyboard_event_scan::row_scan#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    //  Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -29994,6 +30057,7 @@ keyboard_event_scan: {
     lda #$40
     ora keycode
   //SEG373 [211] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#18) ← (byte/word/dword~) keyboard_event_scan::$11 -- pbuc1_derefidx_vbuz1=vbuaa 
+    //  Key released
     ldy keyboard_events_size
     sta keyboard_events,y
   //SEG374 [212] (byte) keyboard_events_size#1 ← ++ (byte) keyboard_events_size#18 -- vbuz1=_inc_vbuz1 
@@ -30467,33 +30531,42 @@ form_mode: {
     jsr render_preset_name
   //SEG521 form_mode::@29
   //SEG522 [272] *((const byte*) DTV_GRAPHICS_VIC_BANK#0) ← ((byte))((dword))(const byte*) FORM_CHARSET#0/(dword/signed dword) 65536 -- _deref_pbuc1=vbuc2 
+    //  DTV Graphics Bank
     lda #($ffffffff&FORM_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
   //SEG523 [273] *((const byte*) DTV_COLOR_BANK_LO#0) ← <((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
   //SEG524 [274] *((const byte*) DTV_COLOR_BANK_HI#0) ← >((word))(const dword) DTV_COLOR_BANK_DEFAULT#0/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
     lda #0
     sta DTV_COLOR_BANK_HI
   //SEG525 [275] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG526 [276] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) FORM_CHARSET#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank bits to output - all others to input
     lda #3^FORM_CHARSET/$4000
     sta CIA2_PORT_A
   //SEG527 [277] *((const byte*) DTV_CONTROL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Set VIC Bank
+    //  DTV Graphics Mode
     lda #0
     sta DTV_CONTROL
   //SEG528 [278] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+    //  VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
   //SEG529 [279] *((const byte*) VIC_CONTROL2#0) ← (const byte) VIC_CSEL#0 -- _deref_pbuc1=vbuc2 
     lda #VIC_CSEL
     sta VIC_CONTROL2
   //SEG530 [280] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) FORM_SCREEN#0&(word/signed word/dword/signed dword) 16383/(byte/signed byte/word/signed word/dword/signed dword) 64|((word))(const byte*) FORM_CHARSET#0&(word/signed word/dword/signed dword) 16383/(word/signed word/dword/signed dword) 1024 -- _deref_pbuc1=vbuc2 
+    //  VIC Memory Pointers
     lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
     sta VIC_MEMORY
   //SEG531 [281] *((const byte*) DTV_PLANEA_START_LO#0) ← <(const byte*) FORM_SCREEN#0 -- _deref_pbuc1=vbuc2 
+    //  DTV Plane A to FORM_SCREEN also
     lda #<FORM_SCREEN
     sta DTV_PLANEA_START_LO
   //SEG532 [282] *((const byte*) DTV_PLANEA_START_MI#0) ← >(const byte*) FORM_SCREEN#0 -- _deref_pbuc1=vbuc2 
@@ -30519,6 +30592,7 @@ form_mode: {
     bne b1
   //SEG542 form_mode::@10
   //SEG543 [288] *((const byte*) BGCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Screen colors
     lda #0
     sta BGCOL
   //SEG544 [289] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
@@ -31083,6 +31157,7 @@ form_control: {
     ldy #0
     and (field),y
   //SEG763 [382] *((byte*) form_control::field#0) ← (byte~) form_control::$11 -- _deref_pbuz1=vbuaa 
+    //  Unblink the cursor
     sta (field),y
   //SEG764 [383] (byte~) form_control::$12 ← (byte) keyboard_modifiers#21 & (const byte) KEY_MODIFIER_SHIFT#0 -- vbuaa=vbuz1_band_vbuc1 
     lda #KEY_MODIFIER_SHIFT
@@ -31155,6 +31230,7 @@ form_control: {
   //SEG799 form_control::@12
   b12:
   //SEG800 [400] *((byte*) form_control::field#0) ← *((const byte[]) print_hextab#0 + *((const byte[]) form_fields_val#0 + (byte) form_field_idx#28)) -- _deref_pbuz1=pbuc1_derefidx_pbuc2_derefidx_vbuxx 
+    //  Render field value
     lda form_fields_val,x
     tay
     lda print_hextab,y
@@ -33275,9 +33351,11 @@ gfx_init_screen0: {
 //  Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
   //SEG1758 [862] *((const byte*) CIA1_PORT_A_DDR#0) ← (byte/word/signed word/dword/signed dword) 255 -- _deref_pbuc1=vbuc2 
+    //  Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
   //SEG1759 [863] *((const byte*) CIA1_PORT_B_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+    //  Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
   //SEG1760 keyboard_init::@return

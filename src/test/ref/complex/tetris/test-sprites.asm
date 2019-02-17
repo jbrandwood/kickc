@@ -68,14 +68,19 @@
   .label irq_cnt = 8
   .label sin_idx = 2
 bbegin:
+  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
+  //  The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
+  //  Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
+  //  Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
+  //  Counting the 10 IRQs
   lda #0
   sta irq_cnt
   jsr main
@@ -161,22 +166,28 @@ loop: {
 //  Setup the IRQ
 sprites_irq_init: {
     sei
+    //  Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
     lda CIA1_INTERRUPT
+    //  Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO
     sta PROCPORT
+    //  Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
+    //  Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
     lda #IRQ_RASTER_FIRST
     sta RASTER
+    //  Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
+    //  Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -221,7 +232,10 @@ sprites_irq: {
     .label raster_sprite_gfx_modify = $a
     sta rega+1
     stx regx+1
+    // (*BGCOL)++;
+    //  Clear decimal flag (because it is used by the score algorithm)
     cld
+    //  Place the sprites
     lda irq_sprite_ypos
     sta SPRITES_YPOS
     sta SPRITES_YPOS+2
@@ -229,6 +243,7 @@ sprites_irq: {
     sta SPRITES_YPOS+6
     ldx irq_raster_next
     inx
+    //  Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
   b1:
     lda RASTER
@@ -267,8 +282,10 @@ sprites_irq: {
     adc irq_sprite_ptr
     sta irq_sprite_ptr
   b7:
+    //  Setup next interrupt
     lda irq_raster_next
     sta RASTER
+    //  Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   rega:

@@ -56,7 +56,9 @@ rvaluevar: {
 rvalue: {
     //  A constant pointer
     .label SCREEN = $400
+    //  RValue constant pointer
     lda SCREEN
+    //  RValue constant array pointer constant index
     lda SCREEN+1
     ldx #2
   b1:
@@ -71,8 +73,10 @@ rvalue: {
 lvalue: {
     //  A constant pointer
     .label SCREEN = $400
+    //  LValue constant pointer dereference
     lda #1
     sta SCREEN
+    //  LValue constant array constant indexing
     lda #2
     sta SCREEN+1
     tax

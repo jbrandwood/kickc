@@ -14,6 +14,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableIntermediate;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -69,7 +70,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
       statementLValue.setlValue(tmpVarRef);
       SymbolTypeInference.inferLValue(getProgram(), statementLValue, false);
       // Insert an extra "set low" assignment statement
-      Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, statementLValue.getSource());
+      Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, statementLValue.getSource(), new ArrayList<>());
       statementsIt.add(setLoHiAssignment);
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("Fixing lo/hi-lvalue with new tmpVar " + tmpVarRef + " " + statementLValue.toString());

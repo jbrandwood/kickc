@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.model.statements;
 
-import dk.camelot64.kickc.model.CallGraph;
-import dk.camelot64.kickc.model.LiveRangeVariables;
-import dk.camelot64.kickc.model.LiveRangeVariablesEffective;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.Collection;
@@ -16,9 +13,13 @@ public abstract class StatementBase implements Statement {
 
    private Integer index;
 
-   public StatementBase(Integer index, StatementSource source) {
+   /** Comments preceding the statement in the source code. */
+   private List<Comment> comments;
+
+   public StatementBase(Integer index, StatementSource source, List<Comment> comments) {
       this.index = index;
       this.source = source;
+      this.comments = comments;
    }
 
    @Override
@@ -39,6 +40,16 @@ public abstract class StatementBase implements Statement {
    @Override
    public void setIndex(Integer index) {
       this.index = index;
+   }
+
+   @Override
+   public List<Comment> getComments() {
+      return comments;
+   }
+
+   @Override
+   public void setComments(List<Comment> comments) {
+      this.comments = comments;
    }
 
    @Override

@@ -1,7 +1,10 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.RValue;
+
+import java.util.List;
 
 /** Inline KickAssembler code */
 public class StatementKickAsm extends StatementBase {
@@ -16,13 +19,13 @@ public class StatementKickAsm extends StatementBase {
    /** The number of cycles used by the generated kick-assembler code. */
    private RValue cycles;
 
-   public StatementKickAsm(String kickAsmCode, StatementSource source) {
-      super(null, source);
+   public StatementKickAsm(String kickAsmCode, StatementSource source, List<Comment> comments) {
+      super(null, source, comments);
       this.kickAsmCode = kickAsmCode;
    }
 
-   public StatementKickAsm(String kickAsmCode, RValue location, RValue bytes, RValue cycles, StatementSource source) {
-      super(null, source);
+   public StatementKickAsm(String kickAsmCode, RValue location, RValue bytes, RValue cycles, StatementSource source, List<Comment> comments) {
+      super(null, source, comments);
       this.kickAsmCode = kickAsmCode;
       this.location = location;
       this.bytes = bytes;

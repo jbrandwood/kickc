@@ -1,4 +1,4 @@
-//  A minimal working raster IRQ
+// A minimal working raster IRQ
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -14,35 +14,35 @@
   .const BLACK = 0
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-//  RAM in $A000, $E000 CHAR ROM in $D000
+// RAM in $A000, $E000 CHAR ROM in $D000
 main: {
     sei
-    //  Disable kernal & basic
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    //  Set raster line to $100
+    // Set raster line to $100
     lda VIC_CONTROL
     ora #$80
     sta VIC_CONTROL
     lda #0
     sta RASTER
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
@@ -52,7 +52,7 @@ main: {
     inc FGCOL
     jmp b2
 }
-//  Interrupt Routine
+// Interrupt Routine
 irq: {
     sta rega+1
     stx regx+1
@@ -61,7 +61,7 @@ irq: {
     sta BGCOL
     lda #BLACK
     sta BGCOL
-    //  Acknowledge the IRQ
+    // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   rega:

@@ -1,4 +1,4 @@
-//  Fills the screen using an unrolled inner while()-loop
+// Fills the screen using an unrolled inner while()-loop
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

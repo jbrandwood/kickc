@@ -1,4 +1,4 @@
-//  Minimal range based for() loop
+// Minimal range based for() loop
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

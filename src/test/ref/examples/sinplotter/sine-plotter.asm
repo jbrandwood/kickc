@@ -1,14 +1,14 @@
-//  Generate a big sinus and plot it on a bitmap
+// Generate a big sinus and plot it on a bitmap
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   .label BGCOL = $d021
   .label D011 = $d011
@@ -18,16 +18,16 @@
   .label D016 = $d016
   .const VIC_CSEL = 8
   .label D018 = $d018
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
   .const WHITE = 1
-  //  PI*2 in u[4.28] format
+  // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
-  //  PI in u[4.28] format
+  // PI in u[4.28] format
   .const PI_u4f28 = $3243f6a9
-  //  PI/2 in u[4.28] format
+  // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
   .label SCREEN = $400
   .label BITMAP = $2000
@@ -38,8 +38,8 @@ main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)>>6
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>BITMAP)>>2&$f
     sei
-    //  Disable normal interrupt
-    //  Disable kernal & basic
+    // Disable normal interrupt
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO
@@ -163,7 +163,7 @@ render_sine: {
   !:
     rts
 }
-//  Plot a single dot in the bitmap
+// Plot a single dot in the bitmap
 bitmap_plot: {
     .label _1 = $10
     .label plotter = 6
@@ -229,9 +229,9 @@ wrap_y: {
     sta y+1
     jmp b1
 }
-//  Generate signed word sinus table - with values in the range min-max.
-//  sintab - the table to generate into
-//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// Generate signed word sinus table - with values in the range min-max.
+// sintab - the table to generate into
+// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_gen2: {
     .const min = -$140
     .const max = $140
@@ -257,7 +257,7 @@ sin16s_gen2: {
     sta x+1
     sta x+2
     sta x+3
-  //  u[4.28]
+  // u[4.28]
   b1:
     lda x
     sta sin16s.x
@@ -320,8 +320,8 @@ sin16s_gen2: {
   !:
     rts
 }
-//  Multiply of two signed words to a signed double word
-//  Fixes offsets introduced by using unsigned multiplication
+// Multiply of two signed words to a signed double word
+// Fixes offsets introduced by using unsigned multiplication
 mul16s: {
     .label _5 = 2
     .label _6 = 6
@@ -362,7 +362,7 @@ mul16s: {
   b2:
     rts
 }
-//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label mb = $12
     .label a = $10
@@ -414,9 +414,9 @@ mul16u: {
     rol mb+3
     jmp b1
 }
-//  Calculate signed word sinus sin(x)
-//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
-//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
+// Calculate signed word sinus sin(x)
+// x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+// result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16s: {
     .label _6 = $c
     .label x = $c
@@ -590,8 +590,8 @@ sin16s: {
   b3:
     rts
 }
-//  Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
-//  The select parameter indicates how many of the highest bits of the 32-bit result to skip
+// Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+// The select parameter indicates how many of the highest bits of the 32-bit result to skip
 mulu16_sel: {
     .label _0 = $c
     .label _1 = $c
@@ -621,8 +621,8 @@ mulu16_sel: {
     sta return+1
     rts
 }
-//  Divide unsigned 32-bit dword dividend with a 16-bit word divisor
-//  The 16-bit word remainder can be found in rem16u after the division
+// Divide unsigned 32-bit dword dividend with a 16-bit word divisor
+// The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = $10
     .label quotient_lo = 6
@@ -654,10 +654,10 @@ div32u16u: {
     sta return+1
     rts
 }
-//  Performs division on two 16 bit unsigned words and an initial remainder
-//  Returns the quotient dividend/divisor.
-//  The final remainder will be set into the global variable rem16u
-//  Implemented using simple binary division
+// Performs division on two 16 bit unsigned words and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
 divr16u: {
     .label rem = 2
     .label dividend = 4
@@ -707,7 +707,7 @@ divr16u: {
     bne b1
     rts
 }
-//  Clear all graphics on the bitmap
+// Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 2
     .label y = $16
@@ -737,7 +737,7 @@ bitmap_clear: {
     bne b1
     rts
 }
-//  Initialize bitmap plotting tables
+// Initialize bitmap plotting tables
 bitmap_init: {
     .label _3 = $16
     .label yoffs = 2
@@ -784,7 +784,7 @@ bitmap_init: {
     bne b3
     rts
 }
-//  Fill some memory with a value
+// Fill some memory with a value
 fill: {
     .const size = $3e8
     .label end = SCREEN+size
@@ -809,7 +809,7 @@ fill: {
     bne b1
     rts
 }
-  //  Tables for the plotter - initialized by calling bitmap_init();
+  // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0

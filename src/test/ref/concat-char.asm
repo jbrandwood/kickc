@@ -1,4 +1,4 @@
-//  Concatenate a char to a string
+// Concatenate a char to a string
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

@@ -1,7 +1,7 @@
-//  3D Rotation using a Rotation Matrix
-//  Based on: 
-//  - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-//  - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
+// 3D Rotation using a Rotation Matrix
+// Based on: 
+// - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
+// - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -15,56 +15,56 @@
   .const LIGHT_BLUE = $e
   .const LIGHT_GREY = $f
   .label print_line_cursor = $400
-  //  The rotated point - updated by calling rotate_matrix()
+  // The rotated point - updated by calling rotate_matrix()
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
-  //  The rotated point with perspective
+  // The rotated point with perspective
   .label pp = $f3
   .label xp = $f4
   .label yp = $f5
-  //  Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
+  // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
   .label psp1 = $f6
   .label psp2 = $f8
   .label SCREEN = $400
   .const sz = 0
-  //  mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
-  //  f(x) = >(( x * x ))
+  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  // f(x) = >(( x * x ))
   .label mulf_sqr1 = $2400
-  //  g(x) =  >((( 1 - x ) * ( 1 - x )))
+  // g(x) =  >((( 1 - x ) * ( 1 - x )))
   .label mulf_sqr2 = $2600
-  //  A single sprite
+  // A single sprite
   .label SPRITE = $3000
-  //  Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
+  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
   .label PERSP_Z = $2800
-  //  Sine and Cosine Tables   
-  //  Angles: $00=0, $80=PI,$100=2*PI
-  //  Half Sine/Cosine: signed fixed [-$20;20]
+  // Sine and Cosine Tables   
+  // Angles: $00=0, $80=PI,$100=2*PI
+  // Half Sine/Cosine: signed fixed [-$20;20]
   .label SINH = $2000
-  //  sin(x) = cos(x+PI/2)
-  //  Quarter Sine/Cosine: signed fixed [-$10,$10]
+  // sin(x) = cos(x+PI/2)
+  // Quarter Sine/Cosine: signed fixed [-$10,$10]
   .label SINQ = $2200
-  //  16 bit Sine and Cosine Tables   
-  //  Angles: $00=0, $80=PI,$100=2*PI
-  //  Half Sine/Cosine: signed fixed [-$1f,$1f]
+  // 16 bit Sine and Cosine Tables   
+  // Angles: $00=0, $80=PI,$100=2*PI
+  // Half Sine/Cosine: signed fixed [-$1f,$1f]
   .label SINH_LO = $4000
-  //  sin(x) = cos(x+PI/2)
+  // sin(x) = cos(x+PI/2)
   .label SINH_HI = $4200
-  //  sin(x) = cos(x+PI/2)
-  //  Quarter Sine/Cosine: signed fixed [-$0f,$0f]
+  // sin(x) = cos(x+PI/2)
+  // Quarter Sine/Cosine: signed fixed [-$0f,$0f]
   .label SINQ_LO = $4400
-  //  sin(x) = cos(x+PI/2)
+  // sin(x) = cos(x+PI/2)
   .label SINQ_HI = $4600
   .label COSH = SINH+$40
   .label COSQ = SINQ+$40
   .label sx = 2
   .label sy = 3
-//  sin(x) = cos(x+PI/2)
-//  sin(x) = cos(x+PI/2)
+// sin(x) = cos(x+PI/2)
+// sin(x) = cos(x+PI/2)
 main: {
     sei
     jsr sprites_init
-    // mulf_init();
+    //mulf_init();
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
@@ -82,8 +82,8 @@ anim: {
     lda #0
     sta sy
     sta sx
-  // signed byte xmin = 0;
-  // signed byte xmax = 0;
+  //signed byte xmin = 0;
+  //signed byte xmax = 0;
   b4:
     lda RASTER
     cmp #$ff
@@ -112,8 +112,8 @@ anim: {
     lda zs,x
     tax
     jsr rotate_matrix
-    // if(*xr<xmin) xmin = *xr;
-    // if(*xr>xmax) xmax = *xr;
+    //if(*xr<xmin) xmin = *xr;
+    //if(*xr>xmax) xmax = *xr;
     ldy i
     lda xr
     sta xrs,y
@@ -147,7 +147,7 @@ anim: {
     jsr debug_print
     lda #LIGHT_BLUE
     sta BORDERCOL
-    //  Increment angles        
+    // Increment angles        
     inc sx
     inc sx
     lda sy
@@ -341,7 +341,7 @@ debug_print: {
   !b1:
     rts
 }
-//  Print a signed byte as hex at a specific screen position
+// Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label at = 6
     cpx #0
@@ -367,7 +367,7 @@ print_sbyte_at: {
     tax
     jmp b2
 }
-//  Print a single char
+// Print a single char
 print_char_at: {
     .label at = 6
     .label ch = 8
@@ -376,7 +376,7 @@ print_char_at: {
     sta (at),y
     rts
 }
-//  Print a byte as HEX at a specific position
+// Print a byte as HEX at a specific position
 print_byte_at: {
     .label at = 6
     txa
@@ -400,10 +400,10 @@ print_byte_at: {
     jsr print_char_at
     rts
 }
-//  Rotate a 3D point (x,y,z) using the rotation matrix
-//  The rotation matrix is prepared by calling prepare_matrix() 
-//  The passed points must be in the interval [-$3f;$3f].
-//  Implemented in assembler to utilize seriously fast multiplication 
+// Rotate a 3D point (x,y,z) using the rotation matrix
+// The rotation matrix is prepared by calling prepare_matrix() 
+// The passed points must be in the interval [-$3f;$3f].
+// Implemented in assembler to utilize seriously fast multiplication 
 rotate_matrix: {
     .label x = 5
     lda x
@@ -500,9 +500,9 @@ rotate_matrix: {
     sta xp
     rts
 }
-//  Store the rotation matrix into the rotation routine rotate()
-//  After this each call to rotate() will rotate a point with the matrix
-//  Implemented in assembler to utilize seriously fast multiplication 
+// Store the rotation matrix into the rotation routine rotate()
+// After this each call to rotate() will rotate a point with the matrix
+// Implemented in assembler to utilize seriously fast multiplication 
 store_matrix: {
     lda rotation_matrix+0
     sta rotate_matrix.A1+1
@@ -542,9 +542,9 @@ store_matrix: {
     sta rotate_matrix.I2+1
     rts
 }
-//  Prepare the 3x3 rotation matrix into rotation_matrix[]
-//  Angles sx, sy, sz are based on 2*PI=$100 
-//  Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
+// Prepare the 3x3 rotation matrix into rotation_matrix[]
+// Angles sx, sy, sz are based on 2*PI=$100 
+// Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 calculate_matrix: {
     .label sy = 3
     .label t1 = 4
@@ -1050,7 +1050,7 @@ debug_print_init: {
     str10: .text "xp@"
     str11: .text "yp@"
 }
-//  Print a string at a specific screen position
+// Print a string at a specific screen position
 print_str_at: {
     .label at = 9
     .label str = 6
@@ -1074,7 +1074,7 @@ print_str_at: {
   !:
     jmp b1
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 6
     lda #<print_line_cursor
@@ -1097,7 +1097,7 @@ print_cls: {
     bne b1
     rts
 }
-//  Initialize sprites
+// Initialize sprites
 sprites_init: {
     .label SCREEN = $400
     .label sprites_ptr = SCREEN+$3f8
@@ -1116,18 +1116,18 @@ sprites_init: {
 }
   print_hextab: .text "0123456789abcdef"
   zs: .byte $34, $34, $34, $34, $34, $34, $34, $34
-  //  Rotated positions
+  // Rotated positions
   xrs: .fill 8, 0
   yrs: .fill 8, 0
   zrs: .fill 8, 0
-  //  Persepctive factors (from zrs)
+  // Persepctive factors (from zrs)
   pps: .fill 8, 0
-  //  Rotated positions with persepctive
+  // Rotated positions with persepctive
   xps: .fill 8, 0
   yps: .fill 8, 0
-  //  The rotation matrix
+  // The rotation matrix
   rotation_matrix: .fill 9, 0
-  //  Positions to rotate
+  // Positions to rotate
   xs: .byte -$34, -$34, -$34, 0, 0, $34, $34, $34
   ys: .byte -$34, 0, $34, -$34, $34, -$34, 0, $34
 .pc = mulf_sqr1 "mulf_sqr1"

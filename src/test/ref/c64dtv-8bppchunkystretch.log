@@ -1566,19 +1566,19 @@ Allocated zp ZP_BYTE:16 [ gfx_init_chunky::c#0 ]
 
 INITIAL ASM
 //SEG0 File Comments
-//  C64DTV 8bpp charmode stretcher
+// C64DTV 8bpp charmode stretcher
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -1590,30 +1590,30 @@ INITIAL ASM
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  Feature enables or disables the extra C64 DTV features
+  // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
-  //  Controls the graphics modes of the C64 DTV
+  // Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
   .const DTV_LINEAR = 1
   .const DTV_HIGHCOLOR = 4
   .const DTV_COLORRAM_OFF = $10
   .const DTV_BADLINE_OFF = $20
   .const DTV_CHUNKY = $40
-  //  Defines colors for the 16 first colors ($00-$0f)
+  // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-  //  Linear Graphics Plane B Counter Control
+  // Linear Graphics Plane B Counter Control
   .label DTV_PLANEB_START_LO = $d049
   .label DTV_PLANEB_START_MI = $d04a
   .label DTV_PLANEB_START_HI = $d04b
   .label DTV_PLANEB_STEP = $d04c
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
-  //  Plane with all pixels
+  // Plane with all pixels
   .label CHUNKY = $8000
 //SEG3 @begin
 bbegin:
@@ -1639,8 +1639,8 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
-    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
-    //  Disable kernal & basic
+    // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
@@ -1654,11 +1654,11 @@ main: {
   //SEG15 main::@17
   b17:
   //SEG16 [8] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
-    //  Enable DTV extended modes
+    // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG17 [9] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_LINEAR#0|(const byte) DTV_COLORRAM_OFF#0|(const byte) DTV_CHUNKY#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
-    //  8BPP Pixel Cell Mode
+    // 8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_COLORRAM_OFF|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
   //SEG18 [10] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_ECM#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
@@ -1668,7 +1668,7 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG20 [12] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
-    //  Plane B: CHUNKY
+    // Plane B: CHUNKY
     lda #<CHUNKY
     sta DTV_PLANEB_START_LO
   //SEG21 [13] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
@@ -1687,16 +1687,16 @@ main: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG26 [18] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG27 [19] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) CHUNKY#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
     sta CIA2_PORT_A
   //SEG28 [20] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 6|>((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
-    //  Set VIC Bank
-    //  VIC memory
+    // Set VIC Bank
+    // VIC memory
     lda #(CHUNKY&$3fff)>>6|(0)>>2
     sta VIC_MEMORY
   //SEG29 [21] phi from main::@17 to main::@1 [phi:main::@17->main::@1]
@@ -1705,7 +1705,7 @@ main: {
     lda #0
     sta j
     jmp b1
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   //SEG31 [21] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
   //SEG32 [21] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@1->main::@1#0] -- register_copy 
@@ -1726,7 +1726,7 @@ main: {
   //SEG37 main::@3
   b3:
   //SEG38 asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
-    //  Stabilize Raster
+    // Stabilize Raster
     ldx #$ff
   rff:
     cpx RASTER
@@ -1848,7 +1848,7 @@ main: {
     jmp b3
 }
 //SEG54 gfx_init_chunky
-//  Initialize Plane with 8bpp chunky
+// Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
     .label _6 = $e
     .label c = $10
@@ -2002,11 +2002,11 @@ gfx_init_chunky: {
     rts
 }
 //SEG107 dtvSetCpuBankSegment1
-//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
-//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
-//  The actual memory addressed will be $4000*cpuSegmentIdx
+// Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+// This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+// The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
-    //  Move CPU BANK 1 SEGMENT ($4000-$7fff)
+    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     .label cpuBankIdx = 9
   //SEG108 [59] *((const byte*) dtvSetCpuBankSegment1::cpuBank#0) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx#3 -- _deref_pbuc1=vbuz1 
@@ -2120,19 +2120,19 @@ Allocated (was zp ZP_WORD:14) zp ZP_WORD:7 [ gfx_init_chunky::$6 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
-//  C64DTV 8bpp charmode stretcher
+// C64DTV 8bpp charmode stretcher
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -2144,30 +2144,30 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  Feature enables or disables the extra C64 DTV features
+  // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
-  //  Controls the graphics modes of the C64 DTV
+  // Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
   .const DTV_LINEAR = 1
   .const DTV_HIGHCOLOR = 4
   .const DTV_COLORRAM_OFF = $10
   .const DTV_BADLINE_OFF = $20
   .const DTV_CHUNKY = $40
-  //  Defines colors for the 16 first colors ($00-$0f)
+  // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-  //  Linear Graphics Plane B Counter Control
+  // Linear Graphics Plane B Counter Control
   .label DTV_PLANEB_START_LO = $d049
   .label DTV_PLANEB_START_MI = $d04a
   .label DTV_PLANEB_START_HI = $d04b
   .label DTV_PLANEB_STEP = $d04c
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
-  //  Plane with all pixels
+  // Plane with all pixels
   .label CHUNKY = $8000
 //SEG3 @begin
 bbegin:
@@ -2188,8 +2188,8 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
-    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
-    //  Disable kernal & basic
+    // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
@@ -2203,11 +2203,11 @@ main: {
   //SEG15 main::@17
   b17:
   //SEG16 [8] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
-    //  Enable DTV extended modes
+    // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG17 [9] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_LINEAR#0|(const byte) DTV_COLORRAM_OFF#0|(const byte) DTV_CHUNKY#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
-    //  8BPP Pixel Cell Mode
+    // 8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_COLORRAM_OFF|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
   //SEG18 [10] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_ECM#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
@@ -2217,7 +2217,7 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG20 [12] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
-    //  Plane B: CHUNKY
+    // Plane B: CHUNKY
     lda #<CHUNKY
     sta DTV_PLANEB_START_LO
   //SEG21 [13] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
@@ -2236,16 +2236,16 @@ main: {
     lda #0
     sta DTV_PLANEB_MODULO_HI
   //SEG26 [18] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG27 [19] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) CHUNKY#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
     sta CIA2_PORT_A
   //SEG28 [20] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 6|>((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
-    //  Set VIC Bank
-    //  VIC memory
+    // Set VIC Bank
+    // VIC memory
     lda #(CHUNKY&$3fff)>>6|(0)>>2
     sta VIC_MEMORY
   //SEG29 [21] phi from main::@17 to main::@1 [phi:main::@17->main::@1]
@@ -2253,7 +2253,7 @@ main: {
   //SEG30 [21] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@17->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   //SEG31 [21] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
   //SEG32 [21] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@1->main::@1#0] -- register_copy 
@@ -2272,7 +2272,7 @@ main: {
   //SEG37 main::@3
   b3:
   //SEG38 asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
-    //  Stabilize Raster
+    // Stabilize Raster
     ldx #$ff
   rff:
     cpx RASTER
@@ -2386,7 +2386,7 @@ main: {
     jmp b3
 }
 //SEG54 gfx_init_chunky
-//  Initialize Plane with 8bpp chunky
+// Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
     .label _6 = 7
     .label gfxb = 5
@@ -2532,11 +2532,11 @@ gfx_init_chunky: {
     rts
 }
 //SEG107 dtvSetCpuBankSegment1
-//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
-//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
-//  The actual memory addressed will be $4000*cpuSegmentIdx
+// Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+// This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+// The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
-    //  Move CPU BANK 1 SEGMENT ($4000-$7fff)
+    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
   //SEG108 [59] *((const byte*) dtvSetCpuBankSegment1::cpuBank#0) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx#3 -- _deref_pbuc1=vbuaa 
     sta cpuBank
@@ -2897,19 +2897,19 @@ FINAL ASSEMBLER
 Score: 19882
 
 //SEG0 File Comments
-//  C64DTV 8bpp charmode stretcher
+// C64DTV 8bpp charmode stretcher
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -2921,30 +2921,30 @@ Score: 19882
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  Feature enables or disables the extra C64 DTV features
+  // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
-  //  Controls the graphics modes of the C64 DTV
+  // Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
   .const DTV_LINEAR = 1
   .const DTV_HIGHCOLOR = 4
   .const DTV_COLORRAM_OFF = $10
   .const DTV_BADLINE_OFF = $20
   .const DTV_CHUNKY = $40
-  //  Defines colors for the 16 first colors ($00-$0f)
+  // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-  //  Linear Graphics Plane B Counter Control
+  // Linear Graphics Plane B Counter Control
   .label DTV_PLANEB_START_LO = $d049
   .label DTV_PLANEB_START_MI = $d04a
   .label DTV_PLANEB_START_HI = $d04b
   .label DTV_PLANEB_STEP = $d04c
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
-  //  Plane with all pixels
+  // Plane with all pixels
   .label CHUNKY = $8000
 //SEG3 @begin
 //SEG4 [1] phi from @begin to @7 [phi:@begin->@7]
@@ -2957,8 +2957,8 @@ main: {
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
-    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
-    //  Disable kernal & basic
+    // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG12 [6] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
@@ -2969,11 +2969,11 @@ main: {
     jsr gfx_init_chunky
   //SEG15 main::@17
   //SEG16 [8] *((const byte*) DTV_FEATURE#0) ← (const byte) DTV_FEATURE_ENABLE#0 -- _deref_pbuc1=vbuc2 
-    //  Enable DTV extended modes
+    // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   //SEG17 [9] *((const byte*) DTV_CONTROL#0) ← (const byte) DTV_HIGHCOLOR#0|(const byte) DTV_LINEAR#0|(const byte) DTV_COLORRAM_OFF#0|(const byte) DTV_CHUNKY#0|(const byte) DTV_BADLINE_OFF#0 -- _deref_pbuc1=vbuc2 
-    //  8BPP Pixel Cell Mode
+    // 8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_COLORRAM_OFF|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
   //SEG18 [10] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_ECM#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
@@ -2983,7 +2983,7 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
   //SEG20 [12] *((const byte*) DTV_PLANEB_START_LO#0) ← <(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
-    //  Plane B: CHUNKY
+    // Plane B: CHUNKY
     lda #<CHUNKY
     sta DTV_PLANEB_START_LO
   //SEG21 [13] *((const byte*) DTV_PLANEB_START_MI#0) ← >(const byte*) CHUNKY#0 -- _deref_pbuc1=vbuc2 
@@ -3001,22 +3001,22 @@ main: {
   //SEG25 [17] *((const byte*) DTV_PLANEB_MODULO_HI#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta DTV_PLANEB_MODULO_HI
   //SEG26 [18] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
   //SEG27 [19] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) CHUNKY#0/(word/signed word/dword/signed dword) 16384 -- _deref_pbuc1=vbuc2 
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
     sta CIA2_PORT_A
   //SEG28 [20] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 6|>((word))(const byte*) CHUNKY#0&(word/signed word/dword/signed dword) 16383>>(byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
-    //  Set VIC Bank
-    //  VIC memory
+    // Set VIC Bank
+    // VIC memory
     lda #(CHUNKY&$3fff)>>6|(0)>>2
     sta VIC_MEMORY
   //SEG29 [21] phi from main::@17 to main::@1 [phi:main::@17->main::@1]
   //SEG30 [21] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@17->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   //SEG31 [21] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   //SEG32 [21] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@1->main::@1#0] -- register_copy 
   //SEG33 main::@1
@@ -3032,7 +3032,7 @@ main: {
   //SEG37 main::@3
   b3:
   //SEG38 asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
-    //  Stabilize Raster
+    // Stabilize Raster
     ldx #$ff
   rff:
     cpx RASTER
@@ -3142,7 +3142,7 @@ main: {
     jmp b3
 }
 //SEG54 gfx_init_chunky
-//  Initialize Plane with 8bpp chunky
+// Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
     .label _6 = 7
     .label gfxb = 5
@@ -3261,11 +3261,11 @@ gfx_init_chunky: {
     rts
 }
 //SEG107 dtvSetCpuBankSegment1
-//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
-//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
-//  The actual memory addressed will be $4000*cpuSegmentIdx
+// Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+// This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+// The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
-    //  Move CPU BANK 1 SEGMENT ($4000-$7fff)
+    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
   //SEG108 [59] *((const byte*) dtvSetCpuBankSegment1::cpuBank#0) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx#3 -- _deref_pbuc1=vbuaa 
     sta cpuBank

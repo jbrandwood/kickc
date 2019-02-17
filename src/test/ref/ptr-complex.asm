@@ -1,11 +1,11 @@
-//  Test some complex pointers
+// Test some complex pointers
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    //  RValue pointer expression (constant)
+    // RValue pointer expression (constant)
     .label screen = $400
-    //  Increment on a const named pointer
+    // Increment on a const named pointer
     .label BGCOL = $d020
     .label sc2 = screen+$51
     .label _2 = 2
@@ -13,7 +13,7 @@ main: {
     .label _11 = 4
     lda screen+$50
     ldx #0
-  //  RValue pointer expression (variable)
+  // RValue pointer expression (variable)
   b1:
     txa
     clc
@@ -30,11 +30,11 @@ main: {
     bne b1
     lda screen+$79
     sta sc2
-    //  LValue pointer expression (constant - directly)
+    // LValue pointer expression (constant - directly)
     lda screen+$7a
     sta screen+$52
     ldx #0
-  //  LValue pointer expression (variable - directly)
+  // LValue pointer expression (variable - directly)
   b2:
     txa
     clc

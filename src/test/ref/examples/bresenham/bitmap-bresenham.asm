@@ -47,7 +47,7 @@ lines: {
     bcc b1
     rts
 }
-//  Draw a line on the bitmap
+// Draw a line on the bitmap
 bitmap_line: {
     .label xd = 4
     .label yd = 3
@@ -326,7 +326,7 @@ init_screen: {
     bne b1
     rts
 }
-//  Clear all graphics on the bitmap
+// Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 9
     .label y = 2
@@ -356,7 +356,7 @@ bitmap_clear: {
     bne b1
     rts
 }
-//  Initialize the bitmap plotter tables for a specific bitmap
+// Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _6 = 2
     .label yoffs = 9
@@ -410,7 +410,7 @@ bitmap_init: {
     bne b3
     rts
 }
-  //  Tables for the plotter - initialized by calling bitmap_draw_init();
+  // Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0

@@ -1,5 +1,5 @@
-//  Test a constant word pointers (pointing to a word placed on zeropage).
-//  The result when running is "CML!" on the screen.
+// Test a constant word pointers (pointing to a word placed on zeropage).
+// The result when running is "CML!" on the screen.
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

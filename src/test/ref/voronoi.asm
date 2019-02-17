@@ -1,11 +1,11 @@
-//  The screen
+// The screen
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label COLORS = $d800
   .const FILL = $e6
-  //  The total number of voronoi points
+  // The total number of voronoi points
   .const numpoints = 6
 main: {
     jsr initscreen
@@ -208,7 +208,7 @@ initscreen: {
   !:
     rts
 }
-  //  Points to create the Voronoi from
+  // Points to create the Voronoi from
   XPOS: .byte 5, $f, 6, $22, $15, $1f
   YPOS: .byte 5, 8, $e, 2, $11, $16
   COLS: .byte 1, 2, 3, 4, 5, 7

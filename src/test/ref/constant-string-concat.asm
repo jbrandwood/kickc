@@ -1,4 +1,4 @@
-//  Concatenates string constants in different ways
+// Concatenates string constants in different ways
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

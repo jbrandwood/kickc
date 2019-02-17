@@ -173,7 +173,7 @@ public class ControlFlowBlock {
       for(Statement statement : statements) {
          if(program.getLog().isVerboseComments()) {
             for(Comment comment : statement.getComments()) {
-               out.append("  // " + comment.getComment() + "\n");
+               out.append("  //" + comment.getComment() + "\n");
             }
          }
          out.append("  " + statement.toString(program, program.getLog().isVerboseLiveRanges()) + "\n");

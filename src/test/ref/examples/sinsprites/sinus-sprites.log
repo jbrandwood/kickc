@@ -3504,9 +3504,9 @@ INITIAL ASM
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  The address of the CHARGEN character set
+  // The address of the CHARGEN character set
   .label CHARGEN = $d000
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -3517,9 +3517,9 @@ INITIAL ASM
   .label SPRITES_EXPAND_X = $d01d
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
+  // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
   .label memHi = $ff
   .const sinlen_x = $dd
@@ -3955,13 +3955,13 @@ clear_screen: {
     rts
 }
 //SEG151 gen_sintab
-//  Generate a sinus table using BASIC floats
-//  - sintab is a pointer to the table to fill
-//  - length is the length of the sine table
-//  - min is the minimum value of the generated sinus
-//  - max is the maximum value of the generated sinus
+// Generate a sinus table using BASIC floats
+// - sintab is a pointer to the table to fill
+// - length is the length of the sine table
+// - min is the minimum value of the generated sinus
+// - max is the maximum value of the generated sinus
 gen_sintab: {
-    //  amplitude/2
+    // amplitude/2
     .label f_2pi = $e2e5
     .label _23 = $37
     .label _24 = $39
@@ -3991,8 +3991,8 @@ gen_sintab: {
   //SEG159 gen_sintab::@4
   b4:
   //SEG160 asm { lda#0 ldx#0 ldy#0  }
-    //  arg = max
-    //  TODO: Kernel JSR clobbers A,X,Y
+    // arg = max
+    // TODO: Kernel JSR clobbers A,X,Y
     lda #0
     ldx #0
     ldy #0
@@ -4116,7 +4116,7 @@ gen_sintab: {
     lda #0
     sta i
     jmp b1
-  //  f_min = min + (max - min) / 2
+  // f_min = min + (max - min) / 2
   //SEG206 [95] phi from gen_sintab::@23 to gen_sintab::@1 [phi:gen_sintab::@23->gen_sintab::@1]
   b1_from_b23:
   //SEG207 [95] phi (byte*) progress_cursor#34 = (byte*) progress_cursor#11 [phi:gen_sintab::@23->gen_sintab::@1#0] -- register_copy 
@@ -4244,7 +4244,7 @@ gen_sintab: {
     lda _23
     sta _24
   //SEG254 [117] *((byte*) gen_sintab::sintab#12 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$24 -- pbuz1_derefidx_vbuz2=vbuz3 
-    //  fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
+    // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     lda _24
     ldy i
     sta (sintab),y
@@ -4265,14 +4265,14 @@ gen_sintab: {
   //SEG260 [121] return 
     rts
     f_i: .byte 0, 0, 0, 0, 0
-    //  i * 2 * PI
+    // i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0
-    //  amplitude/2 + min
+    // amplitude/2 + min
     f_amp: .byte 0, 0, 0, 0, 0
 }
 //SEG261 progress_inc
-//  Increase PETSCII progress one bit
-//  Done by increasing the character until the idx is 8 and then moving to the next char
+// Increase PETSCII progress one bit
+// Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
   //SEG262 [122] (byte) progress_idx#10 ← ++ (byte) progress_idx#34 -- vbuz1=_inc_vbuz1 
     inc progress_idx
@@ -4316,18 +4316,18 @@ progress_inc: {
   breturn:
   //SEG276 [128] return 
     rts
-    //  Progress characters
+    // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 //SEG277 getFAC
-//  word = FAC
-//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
-//  Destroys the value in the FAC in the process
+// word = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit word
+// Destroys the value in the FAC in the process
 getFAC: {
     .label return = $3a
     .label return_2 = $35
   //SEG278 asm { jsr$b1aa sty$fe sta$ff  }
-    //  Load FAC (floating point accumulator) integer part into word register Y,A
+    // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -4343,9 +4343,9 @@ getFAC: {
     rts
 }
 //SEG282 addMEMtoFAC
-//  FAC = MEM+FAC
-//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM+FAC
+// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+// Reads 5 bytes from memory
 addMEMtoFAC: {
   //SEG283 [133] call prepareMEM 
   //SEG284 [136] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
@@ -4370,7 +4370,7 @@ addMEMtoFAC: {
     rts
 }
 //SEG290 prepareMEM
-//  Prepare MEM pointers for operations using MEM
+// Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label _0 = $3c
     .label _1 = $3d
@@ -4394,9 +4394,9 @@ prepareMEM: {
     rts
 }
 //SEG297 mulFACbyMEM
-//  FAC = MEM*FAC
-//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM*FAC
+// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+// Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = $17
   //SEG298 [143] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2 -- pbuz1=pbuz2 
@@ -4423,9 +4423,9 @@ mulFACbyMEM: {
     rts
 }
 //SEG306 sinFAC
-//  FAC = sin(FAC)
-//  Set FAC to sinus of the FAC - sin(FAC)
-//  Sinus is calculated on radians (0-2*PI)
+// FAC = sin(FAC)
+// Set FAC to sinus of the FAC - sin(FAC)
+// Sinus is calculated on radians (0-2*PI)
 sinFAC: {
   //SEG307 asm { jsr$e26b  }
     jsr $e26b
@@ -4436,9 +4436,9 @@ sinFAC: {
     rts
 }
 //SEG310 divMEMbyFAC
-//  FAC = MEM/FAC
-//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM/FAC
+// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+// Reads 5 bytes from memory
 divMEMbyFAC: {
     .label mem = $19
   //SEG311 [150] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2 -- pbuz1=pbuz2 
@@ -4465,8 +4465,8 @@ divMEMbyFAC: {
     rts
 }
 //SEG319 setFAC
-//  FAC = word
-//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// FAC = word
+// Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = $1b
   //SEG320 [155] (byte*~) prepareMEM::mem#8 ← (byte*)(word) setFAC::w#5 -- pbuz1=pbuz2 
@@ -4483,7 +4483,7 @@ setFAC: {
   //SEG324 setFAC::@1
   b1:
   //SEG325 asm { ldy$fe lda$ff jsr$b391  }
-    //  Load word register Y,A into FAC (floating point accumulator)
+    // Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391
@@ -4494,9 +4494,9 @@ setFAC: {
     rts
 }
 //SEG328 setMEMtoFAC
-//  MEM = FAC
-//  Stores the value of the FAC to memory
-//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// MEM = FAC
+// Stores the value of the FAC to memory
+// Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = $1d
   //SEG329 [160] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5 -- pbuz1=pbuz2 
@@ -4523,8 +4523,8 @@ setMEMtoFAC: {
     rts
 }
 //SEG337 subFACfromARG
-//  FAC = ARG-FAC
-//  Set FAC to ARG minus FAC
+// FAC = ARG-FAC
+// Set FAC to ARG minus FAC
 subFACfromARG: {
   //SEG338 asm { jsr$b853  }
     jsr $b853
@@ -4535,8 +4535,8 @@ subFACfromARG: {
     rts
 }
 //SEG341 setARGtoFAC
-//  ARG = FAC
-//  Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
+// ARG = FAC
+// Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
 setARGtoFAC: {
   //SEG342 asm { jsr$bc0f  }
     jsr $bc0f
@@ -4547,7 +4547,7 @@ setARGtoFAC: {
     rts
 }
 //SEG345 progress_init
-//  Initialize the PETSCII progress bar
+// Initialize the PETSCII progress bar
 progress_init: {
     .label line = $13
     jmp breturn
@@ -4614,9 +4614,9 @@ gen_sprites: {
     cml: .text "camelot"
 }
 //SEG365 gen_chargen_sprite
-//  Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
-//  - c is the character to generate
-//  - sprite is a pointer to the position of the sprite to generate
+// Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
+// - c is the character to generate
+// - sprite is a pointer to the position of the sprite to generate
 gen_chargen_sprite: {
     .label _0 = $3f
     .label _1 = $41
@@ -4676,7 +4676,7 @@ gen_chargen_sprite: {
   //SEG377 gen_chargen_sprite::@1
   b1:
   //SEG378 [185] (byte) gen_chargen_sprite::bits#0 ← *((byte*) gen_chargen_sprite::chargen#0 + (byte) gen_chargen_sprite::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
-    //  current chargen line
+    // current chargen line
     ldy y
     lda (chargen),y
     sta bits
@@ -4740,7 +4740,7 @@ gen_chargen_sprite: {
   //SEG404 [191] phi (byte) gen_chargen_sprite::s_gen_cnt#3 = (byte) gen_chargen_sprite::s_gen_cnt#4 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#2] -- register_copy 
   //SEG405 [191] phi (byte) gen_chargen_sprite::s_gen#3 = (byte) gen_chargen_sprite::s_gen#5 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#3] -- register_copy 
     jmp b4
-  //  generate 3 pixels in the sprite byte (s_gen)
+  // generate 3 pixels in the sprite byte (s_gen)
   //SEG406 [191] phi from gen_chargen_sprite::@5 to gen_chargen_sprite::@4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4]
   b4_from_b5:
   //SEG407 [191] phi (byte*) gen_chargen_sprite::sprite#3 = (byte*) gen_chargen_sprite::sprite#4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4#0] -- register_copy 
@@ -4768,7 +4768,7 @@ gen_chargen_sprite: {
   //SEG416 gen_chargen_sprite::@7
   b7:
   //SEG417 [196] *((byte*) gen_chargen_sprite::sprite#3 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
-    //  sprite byte filled - store and move to next byte
+    // sprite byte filled - store and move to next byte
     lda s_gen
     ldy #0
     sta (sprite),y
@@ -5287,9 +5287,9 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  The address of the CHARGEN character set
+  // The address of the CHARGEN character set
   .label CHARGEN = $d000
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -5300,9 +5300,9 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_EXPAND_X = $d01d
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
+  // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
   .label memHi = $ff
   .const sinlen_x = $dd
@@ -5719,13 +5719,13 @@ clear_screen: {
     rts
 }
 //SEG151 gen_sintab
-//  Generate a sinus table using BASIC floats
-//  - sintab is a pointer to the table to fill
-//  - length is the length of the sine table
-//  - min is the minimum value of the generated sinus
-//  - max is the maximum value of the generated sinus
+// Generate a sinus table using BASIC floats
+// - sintab is a pointer to the table to fill
+// - length is the length of the sine table
+// - min is the minimum value of the generated sinus
+// - max is the maximum value of the generated sinus
 gen_sintab: {
-    //  amplitude/2
+    // amplitude/2
     .label f_2pi = $e2e5
     .label _23 = $c
     .label i = 2
@@ -5753,8 +5753,8 @@ gen_sintab: {
   //SEG159 gen_sintab::@4
   b4:
   //SEG160 asm { lda#0 ldx#0 ldy#0  }
-    //  arg = max
-    //  TODO: Kernel JSR clobbers A,X,Y
+    // arg = max
+    // TODO: Kernel JSR clobbers A,X,Y
     lda #0
     ldx #0
     ldy #0
@@ -5878,7 +5878,7 @@ gen_sintab: {
     lda #0
     sta i
     jmp b1
-  //  f_min = min + (max - min) / 2
+  // f_min = min + (max - min) / 2
   //SEG206 [95] phi from gen_sintab::@23 to gen_sintab::@1 [phi:gen_sintab::@23->gen_sintab::@1]
   b1_from_b23:
   //SEG207 [95] phi (byte*) progress_cursor#34 = (byte*) progress_cursor#11 [phi:gen_sintab::@23->gen_sintab::@1#0] -- register_copy 
@@ -5997,7 +5997,7 @@ gen_sintab: {
   //SEG253 [116] (byte~) gen_sintab::$24 ← ((byte)) (word~) gen_sintab::$23 -- vbuaa=_byte_vwuz1 
     lda _23
   //SEG254 [117] *((byte*) gen_sintab::sintab#12 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$24 -- pbuz1_derefidx_vbuz2=vbuaa 
-    //  fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
+    // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy i
     sta (sintab),y
   //SEG255 [118] call progress_inc 
@@ -6017,14 +6017,14 @@ gen_sintab: {
   //SEG260 [121] return 
     rts
     f_i: .byte 0, 0, 0, 0, 0
-    //  i * 2 * PI
+    // i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0
-    //  amplitude/2 + min
+    // amplitude/2 + min
     f_amp: .byte 0, 0, 0, 0, 0
 }
 //SEG261 progress_inc
-//  Increase PETSCII progress one bit
-//  Done by increasing the character until the idx is 8 and then moving to the next char
+// Increase PETSCII progress one bit
+// Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
   //SEG262 [122] (byte) progress_idx#10 ← ++ (byte) progress_idx#34 -- vbuz1=_inc_vbuz1 
     inc progress_idx
@@ -6068,17 +6068,17 @@ progress_inc: {
   breturn:
   //SEG276 [128] return 
     rts
-    //  Progress characters
+    // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 //SEG277 getFAC
-//  word = FAC
-//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
-//  Destroys the value in the FAC in the process
+// word = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit word
+// Destroys the value in the FAC in the process
 getFAC: {
     .label return = $c
   //SEG278 asm { jsr$b1aa sty$fe sta$ff  }
-    //  Load FAC (floating point accumulator) integer part into word register Y,A
+    // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -6094,9 +6094,9 @@ getFAC: {
     rts
 }
 //SEG282 addMEMtoFAC
-//  FAC = MEM+FAC
-//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM+FAC
+// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+// Reads 5 bytes from memory
 addMEMtoFAC: {
   //SEG283 [133] call prepareMEM 
   //SEG284 [136] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
@@ -6121,7 +6121,7 @@ addMEMtoFAC: {
     rts
 }
 //SEG290 prepareMEM
-//  Prepare MEM pointers for operations using MEM
+// Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label mem = $c
   //SEG291 [137] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
@@ -6139,9 +6139,9 @@ prepareMEM: {
     rts
 }
 //SEG297 mulFACbyMEM
-//  FAC = MEM*FAC
-//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM*FAC
+// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+// Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = $c
   //SEG298 [143] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
@@ -6164,9 +6164,9 @@ mulFACbyMEM: {
     rts
 }
 //SEG306 sinFAC
-//  FAC = sin(FAC)
-//  Set FAC to sinus of the FAC - sin(FAC)
-//  Sinus is calculated on radians (0-2*PI)
+// FAC = sin(FAC)
+// Set FAC to sinus of the FAC - sin(FAC)
+// Sinus is calculated on radians (0-2*PI)
 sinFAC: {
   //SEG307 asm { jsr$e26b  }
     jsr $e26b
@@ -6177,9 +6177,9 @@ sinFAC: {
     rts
 }
 //SEG310 divMEMbyFAC
-//  FAC = MEM/FAC
-//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM/FAC
+// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+// Reads 5 bytes from memory
 divMEMbyFAC: {
     .label mem = $c
   //SEG311 [150] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2
@@ -6202,8 +6202,8 @@ divMEMbyFAC: {
     rts
 }
 //SEG319 setFAC
-//  FAC = word
-//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// FAC = word
+// Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = $c
   //SEG320 [155] (byte*~) prepareMEM::mem#8 ← (byte*)(word) setFAC::w#5
@@ -6216,7 +6216,7 @@ setFAC: {
   //SEG324 setFAC::@1
   b1:
   //SEG325 asm { ldy$fe lda$ff jsr$b391  }
-    //  Load word register Y,A into FAC (floating point accumulator)
+    // Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391
@@ -6227,9 +6227,9 @@ setFAC: {
     rts
 }
 //SEG328 setMEMtoFAC
-//  MEM = FAC
-//  Stores the value of the FAC to memory
-//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// MEM = FAC
+// Stores the value of the FAC to memory
+// Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = $c
   //SEG329 [160] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5
@@ -6252,8 +6252,8 @@ setMEMtoFAC: {
     rts
 }
 //SEG337 subFACfromARG
-//  FAC = ARG-FAC
-//  Set FAC to ARG minus FAC
+// FAC = ARG-FAC
+// Set FAC to ARG minus FAC
 subFACfromARG: {
   //SEG338 asm { jsr$b853  }
     jsr $b853
@@ -6264,8 +6264,8 @@ subFACfromARG: {
     rts
 }
 //SEG341 setARGtoFAC
-//  ARG = FAC
-//  Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
+// ARG = FAC
+// Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
 setARGtoFAC: {
   //SEG342 asm { jsr$bc0f  }
     jsr $bc0f
@@ -6276,7 +6276,7 @@ setARGtoFAC: {
     rts
 }
 //SEG345 progress_init
-//  Initialize the PETSCII progress bar
+// Initialize the PETSCII progress bar
 progress_init: {
     .label line = $a
     jmp breturn
@@ -6342,9 +6342,9 @@ gen_sprites: {
     cml: .text "camelot"
 }
 //SEG365 gen_chargen_sprite
-//  Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
-//  - c is the character to generate
-//  - sprite is a pointer to the position of the sprite to generate
+// Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
+// - c is the character to generate
+// - sprite is a pointer to the position of the sprite to generate
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c
@@ -6395,7 +6395,7 @@ gen_chargen_sprite: {
   //SEG377 gen_chargen_sprite::@1
   b1:
   //SEG378 [185] (byte) gen_chargen_sprite::bits#0 ← *((byte*) gen_chargen_sprite::chargen#0 + (byte) gen_chargen_sprite::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
-    //  current chargen line
+    // current chargen line
     ldy y
     lda (chargen),y
     sta bits
@@ -6455,7 +6455,7 @@ gen_chargen_sprite: {
   //SEG404 [191] phi (byte) gen_chargen_sprite::s_gen_cnt#3 = (byte) gen_chargen_sprite::s_gen_cnt#4 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#2] -- register_copy 
   //SEG405 [191] phi (byte) gen_chargen_sprite::s_gen#3 = (byte) gen_chargen_sprite::s_gen#5 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#3] -- register_copy 
     jmp b4
-  //  generate 3 pixels in the sprite byte (s_gen)
+  // generate 3 pixels in the sprite byte (s_gen)
   //SEG406 [191] phi from gen_chargen_sprite::@5 to gen_chargen_sprite::@4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4]
   b4_from_b5:
   //SEG407 [191] phi (byte*) gen_chargen_sprite::sprite#3 = (byte*) gen_chargen_sprite::sprite#4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4#0] -- register_copy 
@@ -6480,7 +6480,7 @@ gen_chargen_sprite: {
   //SEG416 gen_chargen_sprite::@7
   b7:
   //SEG417 [196] *((byte*) gen_chargen_sprite::sprite#3 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
-    //  sprite byte filled - store and move to next byte
+    // sprite byte filled - store and move to next byte
     lda s_gen
     ldy #0
     sta (sprite),y
@@ -7370,9 +7370,9 @@ Score: 768741
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  The address of the CHARGEN character set
+  // The address of the CHARGEN character set
   .label CHARGEN = $d000
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -7383,9 +7383,9 @@ Score: 768741
   .label SPRITES_EXPAND_X = $d01d
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
+  // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
   .label memHi = $ff
   .const sinlen_x = $dd
@@ -7707,13 +7707,13 @@ clear_screen: {
     rts
 }
 //SEG151 gen_sintab
-//  Generate a sinus table using BASIC floats
-//  - sintab is a pointer to the table to fill
-//  - length is the length of the sine table
-//  - min is the minimum value of the generated sinus
-//  - max is the maximum value of the generated sinus
+// Generate a sinus table using BASIC floats
+// - sintab is a pointer to the table to fill
+// - length is the length of the sine table
+// - min is the minimum value of the generated sinus
+// - max is the maximum value of the generated sinus
 gen_sintab: {
-    //  amplitude/2
+    // amplitude/2
     .label f_2pi = $e2e5
     .label _23 = $c
     .label i = 2
@@ -7735,8 +7735,8 @@ gen_sintab: {
     jsr setARGtoFAC
   //SEG159 gen_sintab::@4
   //SEG160 asm { lda#0 ldx#0 ldy#0  }
-    //  arg = max
-    //  TODO: Kernel JSR clobbers A,X,Y
+    // arg = max
+    // TODO: Kernel JSR clobbers A,X,Y
     lda #0
     tax
     tay
@@ -7825,7 +7825,7 @@ gen_sintab: {
     sta progress_idx
   //SEG205 [95] phi (byte) gen_sintab::i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:gen_sintab::@12->gen_sintab::@1#2] -- vbuz1=vbuc1 
     sta i
-  //  f_min = min + (max - min) / 2
+  // f_min = min + (max - min) / 2
   //SEG206 [95] phi from gen_sintab::@23 to gen_sintab::@1 [phi:gen_sintab::@23->gen_sintab::@1]
   //SEG207 [95] phi (byte*) progress_cursor#34 = (byte*) progress_cursor#11 [phi:gen_sintab::@23->gen_sintab::@1#0] -- register_copy 
   //SEG208 [95] phi (byte) progress_idx#34 = (byte) progress_idx#12 [phi:gen_sintab::@23->gen_sintab::@1#1] -- register_copy 
@@ -7910,7 +7910,7 @@ gen_sintab: {
   //SEG253 [116] (byte~) gen_sintab::$24 ← ((byte)) (word~) gen_sintab::$23 -- vbuaa=_byte_vwuz1 
     lda _23
   //SEG254 [117] *((byte*) gen_sintab::sintab#12 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$24 -- pbuz1_derefidx_vbuz2=vbuaa 
-    //  fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
+    // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy i
     sta (sintab),y
   //SEG255 [118] call progress_inc 
@@ -7926,14 +7926,14 @@ gen_sintab: {
   //SEG260 [121] return 
     rts
     f_i: .byte 0, 0, 0, 0, 0
-    //  i * 2 * PI
+    // i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0
-    //  amplitude/2 + min
+    // amplitude/2 + min
     f_amp: .byte 0, 0, 0, 0, 0
 }
 //SEG261 progress_inc
-//  Increase PETSCII progress one bit
-//  Done by increasing the character until the idx is 8 and then moving to the next char
+// Increase PETSCII progress one bit
+// Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
   //SEG262 [122] (byte) progress_idx#10 ← ++ (byte) progress_idx#34 -- vbuz1=_inc_vbuz1 
     inc progress_idx
@@ -7969,17 +7969,17 @@ progress_inc: {
   //SEG275 progress_inc::@return
   //SEG276 [128] return 
     rts
-    //  Progress characters
+    // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
 //SEG277 getFAC
-//  word = FAC
-//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
-//  Destroys the value in the FAC in the process
+// word = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit word
+// Destroys the value in the FAC in the process
 getFAC: {
     .label return = $c
   //SEG278 asm { jsr$b1aa sty$fe sta$ff  }
-    //  Load FAC (floating point accumulator) integer part into word register Y,A
+    // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -7993,9 +7993,9 @@ getFAC: {
     rts
 }
 //SEG282 addMEMtoFAC
-//  FAC = MEM+FAC
-//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM+FAC
+// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+// Reads 5 bytes from memory
 addMEMtoFAC: {
   //SEG283 [133] call prepareMEM 
   //SEG284 [136] phi from addMEMtoFAC to prepareMEM [phi:addMEMtoFAC->prepareMEM]
@@ -8015,7 +8015,7 @@ addMEMtoFAC: {
     rts
 }
 //SEG290 prepareMEM
-//  Prepare MEM pointers for operations using MEM
+// Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label mem = $c
   //SEG291 [137] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
@@ -8031,9 +8031,9 @@ prepareMEM: {
     rts
 }
 //SEG297 mulFACbyMEM
-//  FAC = MEM*FAC
-//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM*FAC
+// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+// Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = $c
   //SEG298 [143] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
@@ -8051,9 +8051,9 @@ mulFACbyMEM: {
     rts
 }
 //SEG306 sinFAC
-//  FAC = sin(FAC)
-//  Set FAC to sinus of the FAC - sin(FAC)
-//  Sinus is calculated on radians (0-2*PI)
+// FAC = sin(FAC)
+// Set FAC to sinus of the FAC - sin(FAC)
+// Sinus is calculated on radians (0-2*PI)
 sinFAC: {
   //SEG307 asm { jsr$e26b  }
     jsr $e26b
@@ -8062,9 +8062,9 @@ sinFAC: {
     rts
 }
 //SEG310 divMEMbyFAC
-//  FAC = MEM/FAC
-//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM/FAC
+// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+// Reads 5 bytes from memory
 divMEMbyFAC: {
     .label mem = $c
   //SEG311 [150] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2
@@ -8082,8 +8082,8 @@ divMEMbyFAC: {
     rts
 }
 //SEG319 setFAC
-//  FAC = word
-//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// FAC = word
+// Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = $c
   //SEG320 [155] (byte*~) prepareMEM::mem#8 ← (byte*)(word) setFAC::w#5
@@ -8093,7 +8093,7 @@ setFAC: {
     jsr prepareMEM
   //SEG324 setFAC::@1
   //SEG325 asm { ldy$fe lda$ff jsr$b391  }
-    //  Load word register Y,A into FAC (floating point accumulator)
+    // Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391
@@ -8102,9 +8102,9 @@ setFAC: {
     rts
 }
 //SEG328 setMEMtoFAC
-//  MEM = FAC
-//  Stores the value of the FAC to memory
-//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// MEM = FAC
+// Stores the value of the FAC to memory
+// Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = $c
   //SEG329 [160] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5
@@ -8122,8 +8122,8 @@ setMEMtoFAC: {
     rts
 }
 //SEG337 subFACfromARG
-//  FAC = ARG-FAC
-//  Set FAC to ARG minus FAC
+// FAC = ARG-FAC
+// Set FAC to ARG minus FAC
 subFACfromARG: {
   //SEG338 asm { jsr$b853  }
     jsr $b853
@@ -8132,8 +8132,8 @@ subFACfromARG: {
     rts
 }
 //SEG341 setARGtoFAC
-//  ARG = FAC
-//  Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
+// ARG = FAC
+// Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
 setARGtoFAC: {
   //SEG342 asm { jsr$bc0f  }
     jsr $bc0f
@@ -8142,7 +8142,7 @@ setARGtoFAC: {
     rts
 }
 //SEG345 progress_init
-//  Initialize the PETSCII progress bar
+// Initialize the PETSCII progress bar
 progress_init: {
     .label line = $a
   //SEG346 progress_init::@return
@@ -8198,9 +8198,9 @@ gen_sprites: {
     cml: .text "camelot"
 }
 //SEG365 gen_chargen_sprite
-//  Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
-//  - c is the character to generate
-//  - sprite is a pointer to the position of the sprite to generate
+// Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
+// - c is the character to generate
+// - sprite is a pointer to the position of the sprite to generate
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c
@@ -8247,7 +8247,7 @@ gen_chargen_sprite: {
   //SEG377 gen_chargen_sprite::@1
   b1:
   //SEG378 [185] (byte) gen_chargen_sprite::bits#0 ← *((byte*) gen_chargen_sprite::chargen#0 + (byte) gen_chargen_sprite::y#2) -- vbuz1=pbuz2_derefidx_vbuz3 
-    //  current chargen line
+    // current chargen line
     ldy y
     lda (chargen),y
     sta bits
@@ -8295,7 +8295,7 @@ gen_chargen_sprite: {
     ldx #0
   //SEG404 [191] phi (byte) gen_chargen_sprite::s_gen_cnt#3 = (byte) gen_chargen_sprite::s_gen_cnt#4 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#2] -- register_copy 
   //SEG405 [191] phi (byte) gen_chargen_sprite::s_gen#3 = (byte) gen_chargen_sprite::s_gen#5 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#3] -- register_copy 
-  //  generate 3 pixels in the sprite byte (s_gen)
+  // generate 3 pixels in the sprite byte (s_gen)
   //SEG406 [191] phi from gen_chargen_sprite::@5 to gen_chargen_sprite::@4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4]
   //SEG407 [191] phi (byte*) gen_chargen_sprite::sprite#3 = (byte*) gen_chargen_sprite::sprite#4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4#0] -- register_copy 
   //SEG408 [191] phi (byte) gen_chargen_sprite::b#2 = (byte) gen_chargen_sprite::b#1 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4#1] -- register_copy 
@@ -8316,7 +8316,7 @@ gen_chargen_sprite: {
     bne b5
   //SEG416 gen_chargen_sprite::@7
   //SEG417 [196] *((byte*) gen_chargen_sprite::sprite#3 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 
-    //  sprite byte filled - store and move to next byte
+    // sprite byte filled - store and move to next byte
     ldy #0
     sta (sprite),y
   //SEG418 [197] *((byte*) gen_chargen_sprite::sprite#3 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) gen_chargen_sprite::s_gen#1 -- pbuz1_derefidx_vbuc1=vbuz2 

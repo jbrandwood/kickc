@@ -1,4 +1,4 @@
-//  Generate a charset based on a 5x3 pattern stored in 2 bytes
+// Generate a charset based on a 5x3 pattern stored in 2 bytes
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -38,8 +38,8 @@ main: {
     sta VIC_MEMORY
     rts
 }
-//  Generate one 5x3 character from a 16-bit char spec
-//  The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
+// Generate one 5x3 character from a 16-bit char spec
+// The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
 gen_char3: {
     .label dst = 2
     .label spec = 6
@@ -75,6 +75,6 @@ gen_char3: {
     bne b1
     rts
 }
-  //  Stores chars as 15 bits (in 2 bytes) specifying the 3x5
-  //  The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
+  // Stores chars as 15 bits (in 2 bytes) specifying the 3x5
+  // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
   charset_spec_row: .word $f7da, $f7de, $f24e, $d6de

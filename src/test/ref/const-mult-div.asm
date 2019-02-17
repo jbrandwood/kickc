@@ -1,4 +1,4 @@
-//  Test a constant with multiplication and division
+// Test a constant with multiplication and division
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

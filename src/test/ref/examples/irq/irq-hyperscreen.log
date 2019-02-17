@@ -555,7 +555,7 @@ Complete equivalence classes
 
 INITIAL ASM
 //SEG0 File Comments
-//  A raster IRQ that opens the top/bottom border.
+// A raster IRQ that opens the top/bottom border.
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
@@ -565,17 +565,17 @@ INITIAL ASM
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
   .const VIC_RSEL = 8
-  //  VIC II IRQ Status Register
+  // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  //  VIC II IRQ Enable Register
+  // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  //  Bits for the IRQ Status/Enable Registers
+  // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  //  CIA#1 Interrupt Status & Control Register
+  // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  The vector used when the KERNAL serves IRQ interrupts
+  // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .const WHITE = 1
   .const RED = 2
@@ -602,11 +602,11 @@ main: {
   //SEG11 asm { sei  }
     sei
   //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set raster line to $fa
+    // Set raster line to $fa
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -614,11 +614,11 @@ main: {
     lda #$fa
     sta RASTER
   //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
@@ -632,23 +632,23 @@ main: {
     rts
 }
 //SEG20 irq_bottom_2
-//  Interrupt Routine 2
+// Interrupt Routine 2
 irq_bottom_2: {
   //SEG21 entry interrupt(KERNEL_KEYBOARD)
   //SEG22 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
   //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
-    //  Set screen height back to 25 lines (preparing for the next screen)
+    // Set screen height back to 25 lines (preparing for the next screen)
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
   //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ
+    // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG25 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
-    //  Trigger IRQ 1 at line $fa
+    // Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
   //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
@@ -666,23 +666,23 @@ irq_bottom_2: {
     jmp $ea31
 }
 //SEG30 irq_bottom_1
-//  Interrupt Routine 1
+// Interrupt Routine 1
 irq_bottom_1: {
   //SEG31 entry interrupt(KERNEL_MIN)
   //SEG32 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
   //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
+    // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
   //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ
+    // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG35 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
-    //  Trigger IRQ 2 at line $fd
+    // Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
   //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
@@ -733,7 +733,7 @@ Uplifting [] best 175 combination
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
-//  A raster IRQ that opens the top/bottom border.
+// A raster IRQ that opens the top/bottom border.
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
@@ -743,17 +743,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
   .const VIC_RSEL = 8
-  //  VIC II IRQ Status Register
+  // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  //  VIC II IRQ Enable Register
+  // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  //  Bits for the IRQ Status/Enable Registers
+  // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  //  CIA#1 Interrupt Status & Control Register
+  // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  The vector used when the KERNAL serves IRQ interrupts
+  // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .const WHITE = 1
   .const RED = 2
@@ -780,11 +780,11 @@ main: {
   //SEG11 asm { sei  }
     sei
   //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set raster line to $fa
+    // Set raster line to $fa
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -792,11 +792,11 @@ main: {
     lda #$fa
     sta RASTER
   //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
@@ -810,23 +810,23 @@ main: {
     rts
 }
 //SEG20 irq_bottom_2
-//  Interrupt Routine 2
+// Interrupt Routine 2
 irq_bottom_2: {
   //SEG21 entry interrupt(KERNEL_KEYBOARD)
   //SEG22 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
   //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
-    //  Set screen height back to 25 lines (preparing for the next screen)
+    // Set screen height back to 25 lines (preparing for the next screen)
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
   //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ
+    // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG25 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
-    //  Trigger IRQ 1 at line $fa
+    // Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
   //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
@@ -844,23 +844,23 @@ irq_bottom_2: {
     jmp $ea31
 }
 //SEG30 irq_bottom_1
-//  Interrupt Routine 1
+// Interrupt Routine 1
 irq_bottom_1: {
   //SEG31 entry interrupt(KERNEL_MIN)
   //SEG32 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
   //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
+    // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
   //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ
+    // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG35 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
-    //  Trigger IRQ 2 at line $fd
+    // Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
   //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
@@ -1010,7 +1010,7 @@ FINAL ASSEMBLER
 Score: 154
 
 //SEG0 File Comments
-//  A raster IRQ that opens the top/bottom border.
+// A raster IRQ that opens the top/bottom border.
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -1020,17 +1020,17 @@ Score: 154
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
   .const VIC_RSEL = 8
-  //  VIC II IRQ Status Register
+  // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  //  VIC II IRQ Enable Register
+  // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  //  Bits for the IRQ Status/Enable Registers
+  // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  //  CIA#1 Interrupt Status & Control Register
+  // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  The vector used when the KERNAL serves IRQ interrupts
+  // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .const WHITE = 1
   .const RED = 2
@@ -1049,11 +1049,11 @@ main: {
   //SEG11 asm { sei  }
     sei
   //SEG12 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG13 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set raster line to $fa
+    // Set raster line to $fa
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -1061,11 +1061,11 @@ main: {
     lda #$fa
     sta RASTER
   //SEG15 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG16 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
@@ -1077,23 +1077,23 @@ main: {
     rts
 }
 //SEG20 irq_bottom_2
-//  Interrupt Routine 2
+// Interrupt Routine 2
 irq_bottom_2: {
   //SEG21 entry interrupt(KERNEL_KEYBOARD)
   //SEG22 [13] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
   //SEG23 [14] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) | (const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
-    //  Set screen height back to 25 lines (preparing for the next screen)
+    // Set screen height back to 25 lines (preparing for the next screen)
     lda VIC_CONTROL
     ora #VIC_RSEL
     sta VIC_CONTROL
   //SEG24 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ
+    // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG25 [16] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 250 -- _deref_pbuc1=vbuc2 
-    //  Trigger IRQ 1 at line $fa
+    // Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
   //SEG26 [17] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
@@ -1109,23 +1109,23 @@ irq_bottom_2: {
     jmp $ea31
 }
 //SEG30 irq_bottom_1
-//  Interrupt Routine 1
+// Interrupt Routine 1
 irq_bottom_1: {
   //SEG31 entry interrupt(KERNEL_MIN)
   //SEG32 [20] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
   //SEG33 [21] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/word/signed word/dword/signed dword) 255^(const byte) VIC_RSEL#0 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
+    // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda VIC_CONTROL
     and #$ff^VIC_RSEL
     sta VIC_CONTROL
   //SEG34 [22] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ
+    // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG35 [23] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) 253 -- _deref_pbuc1=vbuc2 
-    //  Trigger IRQ 2 at line $fd
+    // Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
   //SEG36 [24] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 

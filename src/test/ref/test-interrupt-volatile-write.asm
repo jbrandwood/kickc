@@ -1,5 +1,5 @@
-//  Tests that volatile variables can be both read & written inside & outside interrupts
-//  Currently fails because the modification is optimized away
+// Tests that volatile variables can be both read & written inside & outside interrupts
+// Currently fails because the modification is optimized away
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"

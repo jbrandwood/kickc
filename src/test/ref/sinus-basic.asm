@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
+  // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
   .label memHi = $ff
   .label print_line_cursor = 3
@@ -76,7 +76,7 @@ main: {
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -96,7 +96,7 @@ print_ln: {
   !:
     rts
 }
-//  Print a word as HEX
+// Print a word as HEX
 print_word: {
     .label w = 7
     lda w+1
@@ -107,7 +107,7 @@ print_word: {
     jsr print_byte
     rts
 }
-//  Print a byte as HEX
+// Print a byte as HEX
 print_byte: {
     txa
     lsr
@@ -124,7 +124,7 @@ print_byte: {
     jsr print_char
     rts
 }
-//  Print a single char
+// Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -134,12 +134,12 @@ print_char: {
   !:
     rts
 }
-//  word = FAC
-//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
-//  Destroys the value in the FAC in the process
+// word = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit word
+// Destroys the value in the FAC in the process
 getFAC: {
     .label return = 7
-    //  Load FAC (floating point accumulator) integer part into word register Y,A
+    // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -149,9 +149,9 @@ getFAC: {
     sta return+1
     rts
 }
-//  FAC = MEM+FAC
-//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM+FAC
+// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+// Reads 5 bytes from memory
 addMEMtoFAC: {
     lda #<main.f_127
     sta prepareMEM.mem
@@ -163,7 +163,7 @@ addMEMtoFAC: {
     jsr $b867
     rts
 }
-//  Prepare MEM pointers for operations using MEM
+// Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label mem = 7
     lda mem
@@ -172,9 +172,9 @@ prepareMEM: {
     sta memHi
     rts
 }
-//  FAC = MEM*FAC
-//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM*FAC
+// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+// Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = 7
     jsr prepareMEM
@@ -183,16 +183,16 @@ mulFACbyMEM: {
     jsr $ba28
     rts
 }
-//  FAC = sin(FAC)
-//  Set FAC to sinus of the FAC - sin(FAC)
-//  Sinus is calculated on radians (0-2*PI)
+// FAC = sin(FAC)
+// Set FAC to sinus of the FAC - sin(FAC)
+// Sinus is calculated on radians (0-2*PI)
 sinFAC: {
     jsr $e26b
     rts
 }
-//  FAC = MEM/FAC
-//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM/FAC
+// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+// Reads 5 bytes from memory
 divMEMbyFAC: {
     lda #<main.f_i
     sta prepareMEM.mem
@@ -204,20 +204,20 @@ divMEMbyFAC: {
     jsr $bb0f
     rts
 }
-//  FAC = word
-//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// FAC = word
+// Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = 7
     jsr prepareMEM
-    //  Load word register Y,A into FAC (floating point accumulator)
+    // Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391
     rts
 }
-//  MEM = FAC
-//  Stores the value of the FAC to memory
-//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// MEM = FAC
+// Stores the value of the FAC to memory
+// Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = 7
     jsr prepareMEM
@@ -226,8 +226,8 @@ setMEMtoFAC: {
     jsr $bbd4
     rts
 }
-//  FAC = FAC/10
-//  Set FAC to FAC divided by 10
+// FAC = FAC/10
+// Set FAC to FAC divided by 10
 divFACby10: {
     jsr $bafe
     rts

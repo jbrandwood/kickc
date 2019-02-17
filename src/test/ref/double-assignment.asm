@@ -1,4 +1,4 @@
-//  Test that a double-assignment works.
+// Test that a double-assignment works.
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

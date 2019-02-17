@@ -1,4 +1,4 @@
-//  A test of boolean conditions using && || and !
+// A test of boolean conditions using && || and !
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

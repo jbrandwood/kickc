@@ -12806,23 +12806,23 @@ Allocated zp ZP_BYTE:239 [ sprites_irq::ptr#2 ]
 
 INITIAL ASM
 //SEG0 File Comments
-//  Tetris Game for the Commodore 64
-//  The tetris game tries to match NES tetris gameplay pretty closely
-//  Source: https://meatfighter.com/nintendotetrisai/
+// Tetris Game for the Commodore 64
+// The tetris game tries to match NES tetris gameplay pretty closely
+// Source: https://meatfighter.com/nintendotetrisai/
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-  //  The offset of the sprite pointers from the screen start address
+  // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -12843,29 +12843,29 @@ INITIAL ASM
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label D018 = $d018
-  //  VIC II IRQ Status Register
+  // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  //  VIC II IRQ Enable Register
+  // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  //  Bits for the IRQ Status/Enable Registers
+  // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  CIA#1 Port A: keyboard matrix columns and joystick #2
+  // CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
-  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
+  // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
-  //  CIA#1 Interrupt Status & Control Register
+  // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  The vector used when the HARDWARE serves IRQ interrupts
+  // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
   .const RED = 2
   .const CYAN = 3
@@ -12887,53 +12887,53 @@ INITIAL ASM
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
-  //  Left shift is pressed
+  // Left shift is pressed
   .const KEY_MODIFIER_LSHIFT = 1
-  //  Right shift is pressed
+  // Right shift is pressed
   .const KEY_MODIFIER_RSHIFT = 2
-  //  CTRL is pressed
+  // CTRL is pressed
   .const KEY_MODIFIER_CTRL = 4
-  //  Commodore is pressed
+  // Commodore is pressed
   .const KEY_MODIFIER_COMMODORE = 8
-  //  SID registers for random number generation
+  // SID registers for random number generation
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
   .const SID_CONTROL_NOISE = $80
   .label SID_VOICE3_OSC = $d41b
-  //  Address of the first screen
+  // Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
-  //  Address of the second screen
+  // Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
-  //  Address of the original playscreen chars
+  // Address of the original playscreen chars
   .label PLAYFIELD_SCREEN_ORIGINAL = $1800
-  //  Address of the original playscreen colors
+  // Address of the original playscreen colors
   .label PLAYFIELD_COLORS_ORIGINAL = $1c00
-  //  Address of the sprites covering the playfield
+  // Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
-  //  Address of the charset
+  // Address of the charset
   .label PLAYFIELD_CHARSET = $2800
-  //  The size of the playfield
+  // The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
-  //  The Y-position of the first sprite row
+  // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
-  //  The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
+  // The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
   .const current_movedown_fast = $a
-  //  No collision
+  // No collision
   .const COLLISION_NONE = 0
-  //  Playfield piece collision (cell on top of other cell on the playfield)
+  // Playfield piece collision (cell on top of other cell on the playfield)
   .const COLLISION_PLAYFIELD = 1
-  //  Bottom collision (cell below bottom of the playfield)
+  // Bottom collision (cell below bottom of the playfield)
   .const COLLISION_BOTTOM = 2
-  //  Left side collision (cell beyond the left side of the playfield)
+  // Left side collision (cell beyond the left side of the playfield)
   .const COLLISION_LEFT = 4
-  //  Right side collision (cell beyond the right side of the playfield)
+  // Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
-  //  Screen Sprite pointers on screen 1
+  // Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
-  //  Screen Sprite pointers on screen 2
+  // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  //  The line of the first IRQ
+  // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $5e
@@ -13006,13 +13006,13 @@ bbegin:
 //SEG4 @14
 b14:
 //SEG5 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
+  // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
 //SEG6 kickasm(location (const byte*) PLAYFIELD_CHARSET#0) {{ .fill 8,$00 // Place a filled char at the start of the charset     .import binary "playfield-screen.imap"  }}
 //SEG7 kickasm(location (const byte*) PLAYFIELD_SCREEN_ORIGINAL#0) {{ // Load chars for the screen   .var screen = LoadBinary("playfield-screen.iscr")    // Load extended colors for the screen   .var extended = LoadBinary("playfield-extended.col")   // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8   // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)   // <<6 to move extended colors to the upper 2 bits   .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )  }}
 //SEG8 kickasm(location (const byte*) PLAYFIELD_COLORS_ORIGINAL#0) {{ .import binary "playfield-screen.col"  }}
-  //  Original Color Data
+  // Original Color Data
   jmp b23
 //SEG9 @23
 b23:
@@ -13021,11 +13021,11 @@ b23:
 //SEG11 @24
 b24:
 //SEG12 [6] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
-  //  The raster line of the next IRQ
+  // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
 //SEG13 [7] (byte) irq_sprite_ypos#0 ← (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuc1 
-  //  Y-pos of the sprites on the next IRQ
+  // Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
 //SEG14 [8] phi from @24 to toSpritePtr1 [phi:@24->toSpritePtr1]
@@ -13037,11 +13037,11 @@ toSpritePtr1:
 //SEG16 @39
 b39:
 //SEG17 [9] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuc1 
-  //  Index of the sprites to show on the next IRQ
+  // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
 //SEG18 [10] (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  Counting the 10 IRQs
+  // Counting the 10 IRQs
   lda #0
   sta irq_cnt
 //SEG19 [11] phi from @39 to @38 [phi:@39->@38]
@@ -13247,7 +13247,7 @@ main: {
   //SEG111 main::@1
   b1:
     jmp b4
-  //  Wait for a frame to pass
+  // Wait for a frame to pass
   //SEG112 main::@4
   b4:
   //SEG113 [39] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
@@ -13410,7 +13410,7 @@ main: {
     jmp b1
 }
 //SEG187 render_screen_swap
-//  Swap rendering to the other screen (used for double buffering)
+// Swap rendering to the other screen (used for double buffering)
 render_screen_swap: {
   //SEG188 [70] (byte) render_screen_render#11 ← (byte) render_screen_render#18 ^ (byte/signed byte/word/signed word/dword/signed dword) 64 -- vbuz1=vbuz1_bxor_vbuc1 
     lda render_screen_render
@@ -13427,7 +13427,7 @@ render_screen_swap: {
     rts
 }
 //SEG192 render_score
-//  Show the current score
+// Show the current score
 render_score: {
     .label score_bytes = score_bcd
     .const score_offset = $28*5+$1c
@@ -13615,11 +13615,11 @@ render_score: {
     rts
 }
 //SEG256 render_bcd
-//  Render BCD digits on a screen.
-//  - screen: pointer to the screen to render on
-//  - offset: offset on the screen
-//  - bcd: The BCD-value to render
-//  - only_low: if non-zero only renders the low digit
+// Render BCD digits on a screen.
+// - screen: pointer to the screen to render on
+// - offset: offset on the screen
+// - bcd: The BCD-value to render
+// - only_low: if non-zero only renders the low digit
 render_bcd: {
     .const ZERO_CHAR = $35
     .label _3 = $81
@@ -13703,7 +13703,7 @@ render_bcd: {
     rts
 }
 //SEG273 render_next
-//  Render the next tetromino in the "next" area
+// Render the next tetromino in the "next" area
 render_next: {
     .const next_area_offset = $28*$c+$18+4
     .label _6 = $87
@@ -13851,8 +13851,8 @@ render_next: {
     jmp b6
 }
 //SEG320 render_moving
-//  Render the current moving piece at position (current_xpos, current_ypos)
-//  Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
+// Render the current moving piece at position (current_xpos, current_ypos)
+// Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
 render_moving: {
     .label _2 = $8a
     .label ypos2 = $1d
@@ -13984,7 +13984,7 @@ render_moving: {
     jmp b3_from_b5
 }
 //SEG364 render_playfield
-//  Render the static playfield on the screen (all pieces already locked into place)
+// Render the static playfield on the screen (all pieces already locked into place)
 render_playfield: {
     .label _2 = $8e
     .label _3 = $8f
@@ -14073,9 +14073,9 @@ render_playfield: {
     rts
 }
 //SEG394 play_movement
-//  Perform any movement of the current piece
-//  key_event is the next keyboard_event() og $ff if no keyboard event is pending
-//  Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
+// Perform any movement of the current piece
+// key_event is the next keyboard_event() og $ff if no keyboard event is pending
+// Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
 play_movement: {
     .label _0 = $92
     .label _3 = $95
@@ -14163,8 +14163,8 @@ play_movement: {
     jmp breturn_from_b7
 }
 //SEG422 play_move_rotate
-//  Rotate the current piece  based on key-presses
-//  Return non-zero if a render is needed
+// Rotate the current piece  based on key-presses
+// Return non-zero if a render is needed
 play_move_rotate: {
     .label _2 = $9a
     .label _4 = $9d
@@ -14286,8 +14286,8 @@ play_move_rotate: {
     jmp b4_from_b1
 }
 //SEG462 play_collision
-//  Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
-//  Returns information about the type of the collision detected
+// Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
+// Returns information about the type of the collision detected
 play_collision: {
     .label _7 = $a3
     .label xpos = $2f
@@ -14474,8 +14474,8 @@ play_collision: {
     jmp b2
 }
 //SEG520 play_move_leftright
-//  Move left/right or rotate the current piece
-//  Return non-zero if a render is needed
+// Move left/right or rotate the current piece
+// Return non-zero if a render is needed
 play_move_leftright: {
     .label _4 = $a5
     .label _8 = $a7
@@ -14483,7 +14483,7 @@ play_move_leftright: {
     .label return = $94
     .label return_2 = $36
   //SEG521 [225] if((byte) play_move_leftright::key_event#0==(const byte) KEY_COMMA#0) goto play_move_leftright::@1 -- vbuz1_eq_vbuc1_then_la1 
-    //  Handle keyboard events
+    // Handle keyboard events
     lda key_event
     cmp #KEY_COMMA
     beq b1
@@ -14605,8 +14605,8 @@ play_move_leftright: {
     jmp breturn_from_b11
 }
 //SEG566 play_move_down
-//  Move down the current piece
-//  Return non-zero if a render is needed
+// Move down the current piece
+// Return non-zero if a render is needed
 play_move_down: {
     .label _2 = $a9
     .label _12 = $ab
@@ -14874,8 +14874,8 @@ play_move_down: {
     jmp b7
 }
 //SEG696 play_spawn_current
-//  Spawn a new piece
-//  Moves the next piece into the current and spawns a new next piece
+// Spawn a new piece
+// Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
     .label _0 = $b0
     .label _2 = $b2
@@ -14883,7 +14883,7 @@ play_spawn_current: {
     .label current_piece_idx = $af
     .label piece_idx = $4a
   //SEG697 [286] (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17 -- vbuz1=vbuz2 
-    //  Move next piece into current
+    // Move next piece into current
     lda next_piece_idx
     sta current_piece_idx
   //SEG698 [287] (byte~) play_spawn_current::$0 ← (byte) play_spawn_current::current_piece_idx#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_rol_1 
@@ -15003,8 +15003,8 @@ play_spawn_current: {
     jmp b1
 }
 //SEG738 sid_rnd
-//  Get a random number from the SID voice 3,
-//  Must be initialized with sid_rnd_init()
+// Get a random number from the SID voice 3,
+// Must be initialized with sid_rnd_init()
 sid_rnd: {
     .label return = $b5
     .label return_2 = $b3
@@ -15018,7 +15018,7 @@ sid_rnd: {
     rts
 }
 //SEG742 play_update_score
-//  Update the score based on the number of lines removed
+// Update the score based on the number of lines removed
 play_update_score: {
     .label _2 = $b6
     .label _4 = $b8
@@ -15116,7 +15116,7 @@ play_update_score: {
     rts
 }
 //SEG767 play_increase_level
-//  Increase the level
+// Increase the level
 play_increase_level: {
     .label _1 = $bf
     .label b4 = $c0
@@ -15124,7 +15124,7 @@ play_increase_level: {
   //SEG768 [327] (byte) level#21 ← ++ (byte) level#10 -- vbuz1=_inc_vbuz1 
     inc level
   //SEG769 [328] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) 29) goto play_increase_level::@2 -- vbuz1_gt_vbuc1_then_la1 
-    //  Update speed of moving tetrominos down
+    // Update speed of moving tetrominos down
     lda level
     cmp #$1d
     beq !+
@@ -15163,7 +15163,7 @@ play_increase_level: {
   //SEG780 play_increase_level::@7
   b7:
   //SEG781 [334] (byte) level_bcd#8 ← (byte) level_bcd#21 + (byte/signed byte/word/signed word/dword/signed dword) 6 -- vbuz1=vbuz1_plus_vbuc1 
-    //  If level low nybble hits $a change to $10
+    // If level low nybble hits $a change to $10
     lda #6
     clc
     adc level_bcd
@@ -15176,7 +15176,7 @@ play_increase_level: {
   //SEG784 play_increase_level::@3
   b3:
   //SEG785 asm { sed  }
-    //  Increase the score values gained
+    // Increase the score values gained
     sed
   //SEG786 [337] phi from play_increase_level::@3 to play_increase_level::@4 [phi:play_increase_level::@3->play_increase_level::@4]
   b4_from_b3:
@@ -15228,10 +15228,10 @@ play_increase_level: {
     rts
 }
 //SEG799 play_remove_lines
-//  Look through the playfield for lines - and remove any lines found
-//  Utilizes two cursors on the playfield - one reading cells and one writing cells
-//  Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
-//  Returns the number of lines removed
+// Look through the playfield for lines - and remove any lines found
+// Utilizes two cursors on the playfield - one reading cells and one writing cells
+// Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
+// Returns the number of lines removed
 play_remove_lines: {
     .label return = $ac
     .label c = $c1
@@ -15256,7 +15256,7 @@ play_remove_lines: {
     lda #PLAYFIELD_LINES*PLAYFIELD_COLS-1
     sta r
     jmp b1
-  //  Read all lines and rewrite them
+  // Read all lines and rewrite them
   //SEG805 [345] phi from play_remove_lines::@4 to play_remove_lines::@1 [phi:play_remove_lines::@4->play_remove_lines::@1]
   b1_from_b4:
   //SEG806 [345] phi (byte) play_remove_lines::removed#11 = (byte) play_remove_lines::removed#7 [phi:play_remove_lines::@4->play_remove_lines::@1#0] -- register_copy 
@@ -15352,7 +15352,7 @@ play_remove_lines: {
   b5_from_b6:
   //SEG844 [361] phi (byte) play_remove_lines::w#6 = (byte) play_remove_lines::w#11 [phi:play_remove_lines::@4/play_remove_lines::@6->play_remove_lines::@5#0] -- register_copy 
     jmp b5
-  //  Write zeros in the rest of the lines
+  // Write zeros in the rest of the lines
   //SEG845 play_remove_lines::@5
   b5:
   //SEG846 [362] if((byte) play_remove_lines::w#6!=(byte/word/signed word/dword/signed dword) 255) goto play_remove_lines::@6 -- vbuz1_neq_vbuc1_then_la1 
@@ -15384,7 +15384,7 @@ play_remove_lines: {
     jmp b3
 }
 //SEG856 play_lock_current
-//  Lock the current piece onto the playfield
+// Lock the current piece onto the playfield
 play_lock_current: {
     .label ypos2 = $53
     .label playfield_line = $c2
@@ -15501,8 +15501,8 @@ play_lock_current: {
     jmp b2
 }
 //SEG896 keyboard_event_pressed
-//  Determine if a specific key is currently pressed based on the last keyboard_event_scan()
-//  Returns 0 is not pressed and non-0 if pressed
+// Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+// Returns 0 is not pressed and non-0 if pressed
 keyboard_event_pressed: {
     .label _0 = $c5
     .label _1 = $c7
@@ -15540,9 +15540,9 @@ keyboard_event_pressed: {
     rts
 }
 //SEG903 keyboard_event_get
-//  Get the next event from the keyboard event buffer.
-//  Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
-//  The buffer is filled by keyboard_event_scan()
+// Get the next event from the keyboard event buffer.
+// Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+// The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
     .label return = $59
     .label return_3 = $7c
@@ -15577,10 +15577,10 @@ keyboard_event_get: {
     rts
 }
 //SEG916 keyboard_event_scan
-//  Scans the entire matrix to determine which keys have been pressed/depressed.
-//  Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
-//  Handles debounce and only generates events when the status of a key changes.
-//  Also stores current status of modifiers in keyboard_modifiers.
+// Scans the entire matrix to determine which keys have been pressed/depressed.
+// Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+// Handles debounce and only generates events when the status of a key changes.
+// Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label _3 = $d5
     .label _4 = $d6
@@ -15797,7 +15797,7 @@ keyboard_event_scan: {
   breturn:
   //SEG990 [430] return 
     rts
-  //  Something has changed on the keyboard row - check each column
+  // Something has changed on the keyboard row - check each column
   //SEG991 [431] phi from keyboard_event_scan::@25 to keyboard_event_scan::@4 [phi:keyboard_event_scan::@25->keyboard_event_scan::@4]
   b4_from_b25:
   //SEG992 [431] phi (byte) keyboard_events_size#10 = (byte) keyboard_events_size#29 [phi:keyboard_event_scan::@25->keyboard_event_scan::@4#0] -- register_copy 
@@ -15851,7 +15851,7 @@ keyboard_event_scan: {
   //SEG1008 keyboard_event_scan::@17
   b17:
   //SEG1009 [438] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte) keyboard_event_scan::keycode#10 -- pbuc1_derefidx_vbuz1=vbuz2 
-    //  Key pressed
+    // Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -15878,7 +15878,7 @@ keyboard_event_scan: {
   //SEG1017 keyboard_event_scan::@19
   b19:
   //SEG1018 [444] *((const byte[8]) keyboard_scan_values#0 + (byte) keyboard_event_scan::row#2) ← (byte) keyboard_event_scan::row_scan#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    //  Store the current keyboard status for the row to debounce
+    // Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -15890,7 +15890,7 @@ keyboard_event_scan: {
     ora keycode
     sta _11
   //SEG1021 [446] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte/word/dword~) keyboard_event_scan::$11 -- pbuc1_derefidx_vbuz1=vbuz2 
-    //  Key released
+    // Key released
     lda _11
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -15899,11 +15899,11 @@ keyboard_event_scan: {
     jmp b5_from_b7
 }
 //SEG1023 keyboard_matrix_read
-//  Read a single row of the keyboard matrix
-//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-//  Returns the keys pressed on the row as bits according to the C64 key matrix.
-//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     .label return = $d9
     .label rowid = $c9
@@ -15923,7 +15923,7 @@ keyboard_matrix_read: {
     rts
 }
 //SEG1028 render_show
-//  Update $D018 to show the current screen (used for double buffering)
+// Update $D018 to show the current screen (used for double buffering)
 render_show: {
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
     .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
@@ -15977,7 +15977,7 @@ render_show: {
     jmp b2
 }
 //SEG1045 play_init
-//  Initialize play data tables
+// Initialize play data tables
 play_init: {
     .label _1 = $db
     .label pli = $61
@@ -16047,7 +16047,7 @@ play_init: {
     lda #PLAYFIELD_COLS*PLAYFIELD_LINES
     sta playfield_lines_idx+PLAYFIELD_LINES
   //SEG1064 [470] (byte) current_movedown_slow#1 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0) -- vbuz1=_deref_pbuc1 
-    //  Set initial speed of moving down a tetromino
+    // Set initial speed of moving down a tetromino
     lda MOVEDOWN_SLOW_SPEEDS
     sta current_movedown_slow
   //SEG1065 [471] phi from play_init::@3 to play_init::@2 [phi:play_init::@3->play_init::@2]
@@ -16056,7 +16056,7 @@ play_init: {
     lda #0
     sta b
     jmp b2
-  //  Set the initial score add values
+  // Set the initial score add values
   //SEG1067 [471] phi from play_init::@2 to play_init::@2 [phi:play_init::@2->play_init::@2]
   b2_from_b2:
   //SEG1068 [471] phi (byte) play_init::b#2 = (byte) play_init::b#1 [phi:play_init::@2->play_init::@2#0] -- register_copy 
@@ -16091,29 +16091,29 @@ play_init: {
     rts
 }
 //SEG1076 sprites_irq_init
-//  Setup the IRQ
+// Setup the IRQ
 sprites_irq_init: {
   //SEG1077 asm { sei  }
     sei
   //SEG1078 [478] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge any IRQ and setup the next one
+    // Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG1079 asm { ldaCIA1_INTERRUPT  }
     lda CIA1_INTERRUPT
   //SEG1080 [480] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
-    //  Disable kernal & basic
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG1081 [481] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG1082 [482] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG1083 [483] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set raster line
+    // Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -16121,11 +16121,11 @@ sprites_irq_init: {
     lda #IRQ_RASTER_FIRST
     sta RASTER
   //SEG1085 [485] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG1086 [486] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq() -- _deref_pptc1=pprc2 
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -16139,7 +16139,7 @@ sprites_irq_init: {
     rts
 }
 //SEG1090 sprites_init
-//  Setup the sprites
+// Setup the sprites
 sprites_init: {
     .label s2 = $dd
     .label xpos = $66
@@ -16202,7 +16202,7 @@ sprites_init: {
     rts
 }
 //SEG1110 render_init
-//  Initialize rendering
+// Initialize rendering
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)>>6
     .label _13 = $de
@@ -16231,7 +16231,7 @@ render_init: {
   //SEG1117 render_init::@3
   b3:
   //SEG1118 [505] *((const byte*) D011#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
-    //  Enable Extended Background Color Mode
+    // Enable Extended Background Color Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta D011
   //SEG1119 [506] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -16345,8 +16345,8 @@ render_init: {
     rts
 }
 //SEG1151 render_screen_original
-//  Copy the original screen data to the passed screen
-//  Also copies colors to $d800
+// Copy the original screen data to the passed screen
+// Also copies colors to $d800
 render_screen_original: {
     .const SPACE = 0
     .label screen = $71
@@ -16523,7 +16523,7 @@ render_screen_original: {
     rts
 }
 //SEG1211 sid_rnd_init
-//  Initialize SID voice 3 for random number generation
+// Initialize SID voice 3 for random number generation
 sid_rnd_init: {
   //SEG1212 [552] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) 65535 -- _deref_pwuc1=vwuc2 
     lda #<$ffff
@@ -16540,9 +16540,9 @@ sid_rnd_init: {
     rts
 }
 //SEG1216 sprites_irq
-//  Raster Interrupt Routine - sets up the sprites covering the playfield
-//  Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
-//  Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
+// Raster Interrupt Routine - sets up the sprites covering the playfield
+// Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+// Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     .label _0 = $e1
@@ -16558,11 +16558,11 @@ sprites_irq: {
     stx regx+1
     sty regy+1
   //SEG1218 asm { cld  }
-    // (*BGCOL)++;
-    //  Clear decimal flag (because it is used by the score algorithm)
+    //(*BGCOL)++;
+    // Clear decimal flag (because it is used by the score algorithm)
     cld
   //SEG1219 [556] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0 -- vbuz1=vbuz2 
-    //  Place the sprites
+    // Place the sprites
     lda irq_sprite_ypos
     sta ypos
   //SEG1220 [557] *((const byte*) SPRITES_YPOS#0) ← (byte) sprites_irq::ypos#0 -- _deref_pbuc1=vbuz1 
@@ -16582,7 +16582,7 @@ sprites_irq: {
     iny
     sty _0
   //SEG1225 [562] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte/signed word/word/dword/signed dword~) sprites_irq::$0 -- vbuz1=vbuz2 
-    //  Wait for the y-position before changing sprite pointers
+    // Wait for the y-position before changing sprite pointers
     lda _0
     sta raster_sprite_gfx_modify
     jmp b1
@@ -16670,11 +16670,11 @@ sprites_irq: {
   //SEG1249 sprites_irq::@7
   b7:
   //SEG1250 [579] *((const byte*) RASTER#0) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
-    //  Setup next interrupt
+    // Setup next interrupt
     lda irq_raster_next_4
     sta RASTER
   //SEG1251 [580] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ and setup the next one
+    // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
@@ -16753,69 +16753,69 @@ sprites_irq: {
     sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }
-  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
+  // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
-  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
+  // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  //  Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
+  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
   keyboard_events: .fill 8, 0
-  //  The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
+  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
-  //  The T-piece
+  // The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
-  //  The S-piece
+  // The S-piece
   .align $40
   PIECE_S: .byte 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0
-  //  The Z-piece
+  // The Z-piece
   .align $40
   PIECE_Z: .byte 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
-  //  The L-piece
+  // The L-piece
   .align $40
   PIECE_L: .byte 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0
-  //  The J-piece
+  // The J-piece
   .align $40
   PIECE_J: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
-  //  The O-piece
+  // The O-piece
   .align $40
   PIECE_O: .byte 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0
-  //  The I-piece
+  // The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
-  //  The chars to use for the different pieces - when inside the playing area
+  // The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
-  //  The chars to use for the different pieces - when outside the playing area (eg. the next area).
+  // The chars to use for the different pieces - when outside the playing area (eg. the next area).
   PIECES_NEXT_CHARS: .byte $63, $64, $a4, $64, $63, $63, $a4
-  //  The initial X/Y for each piece
+  // The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
-  //  The speed of moving down the piece when soft-drop is not activated
-  //  This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
+  // The speed of moving down the piece when soft-drop is not activated
+  // This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
-  //  Base Score values for removing 0-4 lines (in BCD)
-  //  These values are added to score_add_bcd for each level gained.
+  // Base Score values for removing 0-4 lines (in BCD)
+  // These values are added to score_add_bcd for each level gained.
   SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
-  //  Score values for removing 0-4 lines (in BCD)
-  //  These values are updated based on the players level and the base values from SCORE_BASE_BCD
+  // Score values for removing 0-4 lines (in BCD)
+  // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
-  //  The color #1 to use for the pieces for each level
+  // The color #1 to use for the pieces for each level
   PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
-  //  The color #2 to use for the pieces for each level
+  // The color #2 to use for the pieces for each level
   PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
-  //  Pointers to the screen address for rendering each playfield line
-  //  The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
+  // Pointers to the screen address for rendering each playfield line
+  // The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40
   screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
-  //  Pointers to the playfield address for each playfield line
+  // Pointers to the playfield address for each playfield line
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
-  //  The playfield.  0 is empty non-zero is color.
-  //  The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
+  // The playfield.  0 is empty non-zero is color.
+  // The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
-  //  The different pieces
+  // The different pieces
   PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
-  //  Indixes into the playfield  for each playfield line
+  // Indixes into the playfield  for each playfield line
   playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
@@ -18083,23 +18083,23 @@ Removing interrupt register storage ldy #00 in SEG1253 [581] return  - exit inte
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
-//  Tetris Game for the Commodore 64
-//  The tetris game tries to match NES tetris gameplay pretty closely
-//  Source: https://meatfighter.com/nintendotetrisai/
+// Tetris Game for the Commodore 64
+// The tetris game tries to match NES tetris gameplay pretty closely
+// Source: https://meatfighter.com/nintendotetrisai/
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-  //  The offset of the sprite pointers from the screen start address
+  // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -18120,29 +18120,29 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label D018 = $d018
-  //  VIC II IRQ Status Register
+  // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  //  VIC II IRQ Enable Register
+  // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  //  Bits for the IRQ Status/Enable Registers
+  // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  CIA#1 Port A: keyboard matrix columns and joystick #2
+  // CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
-  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
+  // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
-  //  CIA#1 Interrupt Status & Control Register
+  // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  The vector used when the HARDWARE serves IRQ interrupts
+  // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
   .const RED = 2
   .const CYAN = 3
@@ -18164,53 +18164,53 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
-  //  Left shift is pressed
+  // Left shift is pressed
   .const KEY_MODIFIER_LSHIFT = 1
-  //  Right shift is pressed
+  // Right shift is pressed
   .const KEY_MODIFIER_RSHIFT = 2
-  //  CTRL is pressed
+  // CTRL is pressed
   .const KEY_MODIFIER_CTRL = 4
-  //  Commodore is pressed
+  // Commodore is pressed
   .const KEY_MODIFIER_COMMODORE = 8
-  //  SID registers for random number generation
+  // SID registers for random number generation
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
   .const SID_CONTROL_NOISE = $80
   .label SID_VOICE3_OSC = $d41b
-  //  Address of the first screen
+  // Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
-  //  Address of the second screen
+  // Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
-  //  Address of the original playscreen chars
+  // Address of the original playscreen chars
   .label PLAYFIELD_SCREEN_ORIGINAL = $1800
-  //  Address of the original playscreen colors
+  // Address of the original playscreen colors
   .label PLAYFIELD_COLORS_ORIGINAL = $1c00
-  //  Address of the sprites covering the playfield
+  // Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
-  //  Address of the charset
+  // Address of the charset
   .label PLAYFIELD_CHARSET = $2800
-  //  The size of the playfield
+  // The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
-  //  The Y-position of the first sprite row
+  // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
-  //  The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
+  // The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
   .const current_movedown_fast = $a
-  //  No collision
+  // No collision
   .const COLLISION_NONE = 0
-  //  Playfield piece collision (cell on top of other cell on the playfield)
+  // Playfield piece collision (cell on top of other cell on the playfield)
   .const COLLISION_PLAYFIELD = 1
-  //  Bottom collision (cell below bottom of the playfield)
+  // Bottom collision (cell below bottom of the playfield)
   .const COLLISION_BOTTOM = 2
-  //  Left side collision (cell beyond the left side of the playfield)
+  // Left side collision (cell beyond the left side of the playfield)
   .const COLLISION_LEFT = 4
-  //  Right side collision (cell beyond the right side of the playfield)
+  // Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
-  //  Screen Sprite pointers on screen 1
+  // Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
-  //  Screen Sprite pointers on screen 2
+  // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  //  The line of the first IRQ
+  // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $23
@@ -18255,13 +18255,13 @@ bbegin:
 //SEG4 @14
 b14:
 //SEG5 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
+  // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
 //SEG6 kickasm(location (const byte*) PLAYFIELD_CHARSET#0) {{ .fill 8,$00 // Place a filled char at the start of the charset     .import binary "playfield-screen.imap"  }}
 //SEG7 kickasm(location (const byte*) PLAYFIELD_SCREEN_ORIGINAL#0) {{ // Load chars for the screen   .var screen = LoadBinary("playfield-screen.iscr")    // Load extended colors for the screen   .var extended = LoadBinary("playfield-extended.col")   // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8   // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)   // <<6 to move extended colors to the upper 2 bits   .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )  }}
 //SEG8 kickasm(location (const byte*) PLAYFIELD_COLORS_ORIGINAL#0) {{ .import binary "playfield-screen.col"  }}
-  //  Original Color Data
+  // Original Color Data
   jmp b23
 //SEG9 @23
 b23:
@@ -18270,11 +18270,11 @@ b23:
 //SEG11 @24
 b24:
 //SEG12 [6] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
-  //  The raster line of the next IRQ
+  // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
 //SEG13 [7] (byte) irq_sprite_ypos#0 ← (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuc1 
-  //  Y-pos of the sprites on the next IRQ
+  // Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
 //SEG14 [8] phi from @24 to toSpritePtr1 [phi:@24->toSpritePtr1]
@@ -18286,11 +18286,11 @@ toSpritePtr1:
 //SEG16 @39
 b39:
 //SEG17 [9] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuc1 
-  //  Index of the sprites to show on the next IRQ
+  // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
 //SEG18 [10] (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  Counting the 10 IRQs
+  // Counting the 10 IRQs
   lda #0
   sta irq_cnt
 //SEG19 [11] phi from @39 to @38 [phi:@39->@38]
@@ -18489,7 +18489,7 @@ main: {
   //SEG111 main::@1
   b1:
     jmp b4
-  //  Wait for a frame to pass
+  // Wait for a frame to pass
   //SEG112 main::@4
   b4:
   //SEG113 [39] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
@@ -18638,7 +18638,7 @@ main: {
     jmp b1
 }
 //SEG187 render_screen_swap
-//  Swap rendering to the other screen (used for double buffering)
+// Swap rendering to the other screen (used for double buffering)
 render_screen_swap: {
   //SEG188 [70] (byte) render_screen_render#11 ← (byte) render_screen_render#18 ^ (byte/signed byte/word/signed word/dword/signed dword) 64 -- vbuz1=vbuz1_bxor_vbuc1 
     lda render_screen_render
@@ -18655,7 +18655,7 @@ render_screen_swap: {
     rts
 }
 //SEG192 render_score
-//  Show the current score
+// Show the current score
 render_score: {
     .label score_bytes = score_bcd
     .const score_offset = $28*5+$1c
@@ -18809,11 +18809,11 @@ render_score: {
     rts
 }
 //SEG256 render_bcd
-//  Render BCD digits on a screen.
-//  - screen: pointer to the screen to render on
-//  - offset: offset on the screen
-//  - bcd: The BCD-value to render
-//  - only_low: if non-zero only renders the low digit
+// Render BCD digits on a screen.
+// - screen: pointer to the screen to render on
+// - offset: offset on the screen
+// - bcd: The BCD-value to render
+// - only_low: if non-zero only renders the low digit
 render_bcd: {
     .const ZERO_CHAR = $35
     .label screen = 5
@@ -18878,7 +18878,7 @@ render_bcd: {
     rts
 }
 //SEG273 render_next
-//  Render the next tetromino in the "next" area
+// Render the next tetromino in the "next" area
 render_next: {
     .const next_area_offset = $28*$c+$18+4
     .label next_piece_char = $a
@@ -19016,8 +19016,8 @@ render_next: {
     jmp b6
 }
 //SEG320 render_moving
-//  Render the current moving piece at position (current_xpos, current_ypos)
-//  Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
+// Render the current moving piece at position (current_xpos, current_ypos)
+// Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
 render_moving: {
     .label ypos2 = $b
     .label screen_line = 7
@@ -19144,7 +19144,7 @@ render_moving: {
     jmp b3_from_b5
 }
 //SEG364 render_playfield
-//  Render the static playfield on the screen (all pieces already locked into place)
+// Render the static playfield on the screen (all pieces already locked into place)
 render_playfield: {
     .label screen_line = 5
     .label i = $a
@@ -19229,9 +19229,9 @@ render_playfield: {
     rts
 }
 //SEG394 play_movement
-//  Perform any movement of the current piece
-//  key_event is the next keyboard_event() og $ff if no keyboard event is pending
-//  Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
+// Perform any movement of the current piece
+// key_event is the next keyboard_event() og $ff if no keyboard event is pending
+// Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
 play_movement: {
     .label render = 9
     .label return = 9
@@ -19297,8 +19297,8 @@ play_movement: {
     jmp breturn_from_b7
 }
 //SEG422 play_move_rotate
-//  Rotate the current piece  based on key-presses
-//  Return non-zero if a render is needed
+// Rotate the current piece  based on key-presses
+// Return non-zero if a render is needed
 play_move_rotate: {
     .label orientation = $a
   //SEG423 [182] if((byte) play_move_rotate::key_event#0==(const byte) KEY_Z#0) goto play_move_rotate::@1 -- vbuaa_eq_vbuc1_then_la1 
@@ -19400,8 +19400,8 @@ play_move_rotate: {
     jmp b4_from_b1
 }
 //SEG462 play_collision
-//  Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
-//  Returns information about the type of the collision detected
+// Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
+// Returns information about the type of the collision detected
 play_collision: {
     .label xpos = $c
     .label ypos = $b
@@ -19568,11 +19568,11 @@ play_collision: {
     jmp b2
 }
 //SEG520 play_move_leftright
-//  Move left/right or rotate the current piece
-//  Return non-zero if a render is needed
+// Move left/right or rotate the current piece
+// Return non-zero if a render is needed
 play_move_leftright: {
   //SEG521 [225] if((byte) play_move_leftright::key_event#0==(const byte) KEY_COMMA#0) goto play_move_leftright::@1 -- vbuaa_eq_vbuc1_then_la1 
-    //  Handle keyboard events
+    // Handle keyboard events
     cmp #KEY_COMMA
     beq b1
     jmp b6
@@ -19678,8 +19678,8 @@ play_move_leftright: {
     jmp breturn_from_b11
 }
 //SEG566 play_move_down
-//  Move down the current piece
-//  Return non-zero if a render is needed
+// Move down the current piece
+// Return non-zero if a render is needed
 play_move_down: {
   //SEG567 [247] (byte) current_movedown_counter#12 ← ++ (byte) current_movedown_counter#16 -- vbuz1=_inc_vbuz1 
     inc current_movedown_counter
@@ -19919,13 +19919,13 @@ play_move_down: {
     jmp b7
 }
 //SEG696 play_spawn_current
-//  Spawn a new piece
-//  Moves the next piece into the current and spawns a new next piece
+// Spawn a new piece
+// Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
     .label _0 = 4
     .label piece_idx = $21
   //SEG697 [286] (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17 -- vbuxx=vbuz1 
-    //  Move next piece into current
+    // Move next piece into current
     ldx next_piece_idx
   //SEG698 [287] (byte~) play_spawn_current::$0 ← (byte) play_spawn_current::current_piece_idx#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuxx_rol_1 
     txa
@@ -20030,8 +20030,8 @@ play_spawn_current: {
     jmp b1
 }
 //SEG738 sid_rnd
-//  Get a random number from the SID voice 3,
-//  Must be initialized with sid_rnd_init()
+// Get a random number from the SID voice 3,
+// Must be initialized with sid_rnd_init()
 sid_rnd: {
   //SEG739 [309] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
     lda SID_VOICE3_OSC
@@ -20042,7 +20042,7 @@ sid_rnd: {
     rts
 }
 //SEG742 play_update_score
-//  Update the score based on the number of lines removed
+// Update the score based on the number of lines removed
 play_update_score: {
     .label lines_before = 4
     .label add_bcd = $2b
@@ -20127,12 +20127,12 @@ play_update_score: {
     rts
 }
 //SEG767 play_increase_level
-//  Increase the level
+// Increase the level
 play_increase_level: {
   //SEG768 [327] (byte) level#21 ← ++ (byte) level#10 -- vbuz1=_inc_vbuz1 
     inc level
   //SEG769 [328] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) 29) goto play_increase_level::@2 -- vbuz1_gt_vbuc1_then_la1 
-    //  Update speed of moving tetrominos down
+    // Update speed of moving tetrominos down
     lda level
     cmp #$1d
     beq !+
@@ -20169,7 +20169,7 @@ play_increase_level: {
   //SEG780 play_increase_level::@7
   b7:
   //SEG781 [334] (byte) level_bcd#8 ← (byte) level_bcd#21 + (byte/signed byte/word/signed word/dword/signed dword) 6 -- vbuz1=vbuz1_plus_vbuc1 
-    //  If level low nybble hits $a change to $10
+    // If level low nybble hits $a change to $10
     lda #6
     clc
     adc level_bcd
@@ -20182,7 +20182,7 @@ play_increase_level: {
   //SEG784 play_increase_level::@3
   b3:
   //SEG785 asm { sed  }
-    //  Increase the score values gained
+    // Increase the score values gained
     sed
   //SEG786 [337] phi from play_increase_level::@3 to play_increase_level::@4 [phi:play_increase_level::@3->play_increase_level::@4]
   b4_from_b3:
@@ -20231,10 +20231,10 @@ play_increase_level: {
     rts
 }
 //SEG799 play_remove_lines
-//  Look through the playfield for lines - and remove any lines found
-//  Utilizes two cursors on the playfield - one reading cells and one writing cells
-//  Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
-//  Returns the number of lines removed
+// Look through the playfield for lines - and remove any lines found
+// Utilizes two cursors on the playfield - one reading cells and one writing cells
+// Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
+// Returns the number of lines removed
 play_remove_lines: {
     .label c = $c
     .label x = $a
@@ -20254,7 +20254,7 @@ play_remove_lines: {
   //SEG804 [345] phi (byte) play_remove_lines::r#3 = (const byte) PLAYFIELD_LINES#0*(const byte) PLAYFIELD_COLS#0-(byte/signed byte/word/signed word/dword/signed dword) 1 [phi:play_remove_lines->play_remove_lines::@1#3] -- vbuyy=vbuc1 
     ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
     jmp b1
-  //  Read all lines and rewrite them
+  // Read all lines and rewrite them
   //SEG805 [345] phi from play_remove_lines::@4 to play_remove_lines::@1 [phi:play_remove_lines::@4->play_remove_lines::@1]
   b1_from_b4:
   //SEG806 [345] phi (byte) play_remove_lines::removed#11 = (byte) play_remove_lines::removed#7 [phi:play_remove_lines::@4->play_remove_lines::@1#0] -- register_copy 
@@ -20348,7 +20348,7 @@ play_remove_lines: {
   b5_from_b6:
   //SEG844 [361] phi (byte) play_remove_lines::w#6 = (byte) play_remove_lines::w#11 [phi:play_remove_lines::@4/play_remove_lines::@6->play_remove_lines::@5#0] -- register_copy 
     jmp b5
-  //  Write zeros in the rest of the lines
+  // Write zeros in the rest of the lines
   //SEG845 play_remove_lines::@5
   b5:
   //SEG846 [362] if((byte) play_remove_lines::w#6!=(byte/word/signed word/dword/signed dword) 255) goto play_remove_lines::@6 -- vbuxx_neq_vbuc1_then_la1 
@@ -20378,7 +20378,7 @@ play_remove_lines: {
     jmp b3
 }
 //SEG856 play_lock_current
-//  Lock the current piece onto the playfield
+// Lock the current piece onto the playfield
 play_lock_current: {
     .label ypos2 = $10
     .label playfield_line = 5
@@ -20490,8 +20490,8 @@ play_lock_current: {
     jmp b2
 }
 //SEG896 keyboard_event_pressed
-//  Determine if a specific key is currently pressed based on the last keyboard_event_scan()
-//  Returns 0 is not pressed and non-0 if pressed
+// Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+// Returns 0 is not pressed and non-0 if pressed
 keyboard_event_pressed: {
     .label row_bits = $a
     .label keycode = 9
@@ -20518,9 +20518,9 @@ keyboard_event_pressed: {
     rts
 }
 //SEG903 keyboard_event_get
-//  Get the next event from the keyboard event buffer.
-//  Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
-//  The buffer is filled by keyboard_event_scan()
+// Get the next event from the keyboard event buffer.
+// Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+// The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
   //SEG904 [390] if((byte) keyboard_events_size#13==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_get::@return -- vbuz1_eq_0_then_la1 
     lda keyboard_events_size
@@ -20552,10 +20552,10 @@ keyboard_event_get: {
     rts
 }
 //SEG916 keyboard_event_scan
-//  Scans the entire matrix to determine which keys have been pressed/depressed.
-//  Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
-//  Handles debounce and only generates events when the status of a key changes.
-//  Also stores current status of modifiers in keyboard_modifiers.
+// Scans the entire matrix to determine which keys have been pressed/depressed.
+// Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+// Handles debounce and only generates events when the status of a key changes.
+// Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label row_scan = $b
     .label keycode = $a
@@ -20736,7 +20736,7 @@ keyboard_event_scan: {
   breturn:
   //SEG990 [430] return 
     rts
-  //  Something has changed on the keyboard row - check each column
+  // Something has changed on the keyboard row - check each column
   //SEG991 [431] phi from keyboard_event_scan::@25 to keyboard_event_scan::@4 [phi:keyboard_event_scan::@25->keyboard_event_scan::@4]
   b4_from_b25:
   //SEG992 [431] phi (byte) keyboard_events_size#10 = (byte) keyboard_events_size#29 [phi:keyboard_event_scan::@25->keyboard_event_scan::@4#0] -- register_copy 
@@ -20781,7 +20781,7 @@ keyboard_event_scan: {
   //SEG1008 keyboard_event_scan::@17
   b17:
   //SEG1009 [438] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte) keyboard_event_scan::keycode#10 -- pbuc1_derefidx_vbuz1=vbuz2 
-    //  Key pressed
+    // Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -20807,7 +20807,7 @@ keyboard_event_scan: {
   //SEG1017 keyboard_event_scan::@19
   b19:
   //SEG1018 [444] *((const byte[8]) keyboard_scan_values#0 + (byte) keyboard_event_scan::row#2) ← (byte) keyboard_event_scan::row_scan#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    //  Store the current keyboard status for the row to debounce
+    // Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -20818,7 +20818,7 @@ keyboard_event_scan: {
     lda #$40
     ora keycode
   //SEG1021 [446] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte/word/dword~) keyboard_event_scan::$11 -- pbuc1_derefidx_vbuz1=vbuaa 
-    //  Key released
+    // Key released
     ldy keyboard_events_size
     sta keyboard_events,y
   //SEG1022 [447] (byte) keyboard_events_size#1 ← ++ (byte) keyboard_events_size#10 -- vbuz1=_inc_vbuz1 
@@ -20826,11 +20826,11 @@ keyboard_event_scan: {
     jmp b5_from_b7
 }
 //SEG1023 keyboard_matrix_read
-//  Read a single row of the keyboard matrix
-//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-//  Returns the keys pressed on the row as bits according to the C64 key matrix.
-//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
   //SEG1024 [448] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
@@ -20845,7 +20845,7 @@ keyboard_matrix_read: {
     rts
 }
 //SEG1028 render_show
-//  Update $D018 to show the current screen (used for double buffering)
+// Update $D018 to show the current screen (used for double buffering)
 render_show: {
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
     .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
@@ -20895,7 +20895,7 @@ render_show: {
     jmp b2
 }
 //SEG1045 play_init
-//  Initialize play data tables
+// Initialize play data tables
 play_init: {
     .label pli = 5
     .label idx = 2
@@ -20957,7 +20957,7 @@ play_init: {
     lda #PLAYFIELD_COLS*PLAYFIELD_LINES
     sta playfield_lines_idx+PLAYFIELD_LINES
   //SEG1064 [470] (byte) current_movedown_slow#1 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0) -- vbuz1=_deref_pbuc1 
-    //  Set initial speed of moving down a tetromino
+    // Set initial speed of moving down a tetromino
     lda MOVEDOWN_SLOW_SPEEDS
     sta current_movedown_slow
   //SEG1065 [471] phi from play_init::@3 to play_init::@2 [phi:play_init::@3->play_init::@2]
@@ -20965,7 +20965,7 @@ play_init: {
   //SEG1066 [471] phi (byte) play_init::b#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:play_init::@3->play_init::@2#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b2
-  //  Set the initial score add values
+  // Set the initial score add values
   //SEG1067 [471] phi from play_init::@2 to play_init::@2 [phi:play_init::@2->play_init::@2]
   b2_from_b2:
   //SEG1068 [471] phi (byte) play_init::b#2 = (byte) play_init::b#1 [phi:play_init::@2->play_init::@2#0] -- register_copy 
@@ -20998,29 +20998,29 @@ play_init: {
     rts
 }
 //SEG1076 sprites_irq_init
-//  Setup the IRQ
+// Setup the IRQ
 sprites_irq_init: {
   //SEG1077 asm { sei  }
     sei
   //SEG1078 [478] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge any IRQ and setup the next one
+    // Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG1079 asm { ldaCIA1_INTERRUPT  }
     lda CIA1_INTERRUPT
   //SEG1080 [480] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
-    //  Disable kernal & basic
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG1081 [481] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG1082 [482] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG1083 [483] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set raster line
+    // Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -21028,11 +21028,11 @@ sprites_irq_init: {
     lda #IRQ_RASTER_FIRST
     sta RASTER
   //SEG1085 [485] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG1086 [486] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq() -- _deref_pptc1=pprc2 
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -21046,7 +21046,7 @@ sprites_irq_init: {
     rts
 }
 //SEG1090 sprites_init
-//  Setup the sprites
+// Setup the sprites
 sprites_init: {
     .label xpos = 2
   //SEG1091 [489] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 15 -- _deref_pbuc1=vbuc2 
@@ -21103,7 +21103,7 @@ sprites_init: {
     rts
 }
 //SEG1110 render_init
-//  Initialize rendering
+// Initialize rendering
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)>>6
     .label li_1 = 5
@@ -21129,7 +21129,7 @@ render_init: {
   //SEG1117 render_init::@3
   b3:
   //SEG1118 [505] *((const byte*) D011#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
-    //  Enable Extended Background Color Mode
+    // Enable Extended Background Color Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta D011
   //SEG1119 [506] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -21239,8 +21239,8 @@ render_init: {
     rts
 }
 //SEG1151 render_screen_original
-//  Copy the original screen data to the passed screen
-//  Also copies colors to $d800
+// Copy the original screen data to the passed screen
+// Also copies colors to $d800
 render_screen_original: {
     .const SPACE = 0
     .label screen = $11
@@ -21412,7 +21412,7 @@ render_screen_original: {
     rts
 }
 //SEG1211 sid_rnd_init
-//  Initialize SID voice 3 for random number generation
+// Initialize SID voice 3 for random number generation
 sid_rnd_init: {
   //SEG1212 [552] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) 65535 -- _deref_pwuc1=vwuc2 
     lda #<$ffff
@@ -21429,9 +21429,9 @@ sid_rnd_init: {
     rts
 }
 //SEG1216 sprites_irq
-//  Raster Interrupt Routine - sets up the sprites covering the playfield
-//  Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
-//  Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
+// Raster Interrupt Routine - sets up the sprites covering the playfield
+// Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+// Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     .label raster_sprite_gfx_modify = $2f
@@ -21439,11 +21439,11 @@ sprites_irq: {
     sta rega+1
     stx regx+1
   //SEG1218 asm { cld  }
-    // (*BGCOL)++;
-    //  Clear decimal flag (because it is used by the score algorithm)
+    //(*BGCOL)++;
+    // Clear decimal flag (because it is used by the score algorithm)
     cld
   //SEG1219 [556] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0 -- vbuaa=vbuz1 
-    //  Place the sprites
+    // Place the sprites
     lda irq_sprite_ypos
   //SEG1220 [557] *((const byte*) SPRITES_YPOS#0) ← (byte) sprites_irq::ypos#0 -- _deref_pbuc1=vbuaa 
     sta SPRITES_YPOS
@@ -21457,7 +21457,7 @@ sprites_irq: {
     ldx irq_raster_next
     inx
   //SEG1225 [562] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte/signed word/word/dword/signed dword~) sprites_irq::$0 -- vbuz1=vbuxx 
-    //  Wait for the y-position before changing sprite pointers
+    // Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
     jmp b1
   //SEG1226 sprites_irq::@1
@@ -21536,11 +21536,11 @@ sprites_irq: {
   //SEG1249 sprites_irq::@7
   b7:
   //SEG1250 [579] *((const byte*) RASTER#0) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
-    //  Setup next interrupt
+    // Setup next interrupt
     lda irq_raster_next
     sta RASTER
   //SEG1251 [580] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ and setup the next one
+    // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
@@ -21612,69 +21612,69 @@ sprites_irq: {
     sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }
-  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
+  // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
-  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
+  // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  //  Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
+  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
   keyboard_events: .fill 8, 0
-  //  The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
+  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
-  //  The T-piece
+  // The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
-  //  The S-piece
+  // The S-piece
   .align $40
   PIECE_S: .byte 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0
-  //  The Z-piece
+  // The Z-piece
   .align $40
   PIECE_Z: .byte 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
-  //  The L-piece
+  // The L-piece
   .align $40
   PIECE_L: .byte 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0
-  //  The J-piece
+  // The J-piece
   .align $40
   PIECE_J: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
-  //  The O-piece
+  // The O-piece
   .align $40
   PIECE_O: .byte 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0
-  //  The I-piece
+  // The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
-  //  The chars to use for the different pieces - when inside the playing area
+  // The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
-  //  The chars to use for the different pieces - when outside the playing area (eg. the next area).
+  // The chars to use for the different pieces - when outside the playing area (eg. the next area).
   PIECES_NEXT_CHARS: .byte $63, $64, $a4, $64, $63, $63, $a4
-  //  The initial X/Y for each piece
+  // The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
-  //  The speed of moving down the piece when soft-drop is not activated
-  //  This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
+  // The speed of moving down the piece when soft-drop is not activated
+  // This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
-  //  Base Score values for removing 0-4 lines (in BCD)
-  //  These values are added to score_add_bcd for each level gained.
+  // Base Score values for removing 0-4 lines (in BCD)
+  // These values are added to score_add_bcd for each level gained.
   SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
-  //  Score values for removing 0-4 lines (in BCD)
-  //  These values are updated based on the players level and the base values from SCORE_BASE_BCD
+  // Score values for removing 0-4 lines (in BCD)
+  // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
-  //  The color #1 to use for the pieces for each level
+  // The color #1 to use for the pieces for each level
   PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
-  //  The color #2 to use for the pieces for each level
+  // The color #2 to use for the pieces for each level
   PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
-  //  Pointers to the screen address for rendering each playfield line
-  //  The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
+  // Pointers to the screen address for rendering each playfield line
+  // The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40
   screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
-  //  Pointers to the playfield address for each playfield line
+  // Pointers to the playfield address for each playfield line
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
-  //  The playfield.  0 is empty non-zero is color.
-  //  The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
+  // The playfield.  0 is empty non-zero is color.
+  // The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
-  //  The different pieces
+  // The different pieces
   PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
-  //  Indixes into the playfield  for each playfield line
+  // Indixes into the playfield  for each playfield line
   playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
@@ -23664,23 +23664,23 @@ FINAL ASSEMBLER
 Score: 3365357
 
 //SEG0 File Comments
-//  Tetris Game for the Commodore 64
-//  The tetris game tries to match NES tetris gameplay pretty closely
-//  Source: https://meatfighter.com/nintendotetrisai/
+// Tetris Game for the Commodore 64
+// The tetris game tries to match NES tetris gameplay pretty closely
+// Source: https://meatfighter.com/nintendotetrisai/
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-  //  The offset of the sprite pointers from the screen start address
+  // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -23701,29 +23701,29 @@ Score: 3365357
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label D018 = $d018
-  //  VIC II IRQ Status Register
+  // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  //  VIC II IRQ Enable Register
+  // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  //  Bits for the IRQ Status/Enable Registers
+  // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  CIA#1 Port A: keyboard matrix columns and joystick #2
+  // CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
-  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
+  // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
-  //  CIA#1 Interrupt Status & Control Register
+  // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  The vector used when the HARDWARE serves IRQ interrupts
+  // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
   .const RED = 2
   .const CYAN = 3
@@ -23745,53 +23745,53 @@ Score: 3365357
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
-  //  Left shift is pressed
+  // Left shift is pressed
   .const KEY_MODIFIER_LSHIFT = 1
-  //  Right shift is pressed
+  // Right shift is pressed
   .const KEY_MODIFIER_RSHIFT = 2
-  //  CTRL is pressed
+  // CTRL is pressed
   .const KEY_MODIFIER_CTRL = 4
-  //  Commodore is pressed
+  // Commodore is pressed
   .const KEY_MODIFIER_COMMODORE = 8
-  //  SID registers for random number generation
+  // SID registers for random number generation
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
   .const SID_CONTROL_NOISE = $80
   .label SID_VOICE3_OSC = $d41b
-  //  Address of the first screen
+  // Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
-  //  Address of the second screen
+  // Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
-  //  Address of the original playscreen chars
+  // Address of the original playscreen chars
   .label PLAYFIELD_SCREEN_ORIGINAL = $1800
-  //  Address of the original playscreen colors
+  // Address of the original playscreen colors
   .label PLAYFIELD_COLORS_ORIGINAL = $1c00
-  //  Address of the sprites covering the playfield
+  // Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
-  //  Address of the charset
+  // Address of the charset
   .label PLAYFIELD_CHARSET = $2800
-  //  The size of the playfield
+  // The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
-  //  The Y-position of the first sprite row
+  // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
-  //  The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
+  // The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
   .const current_movedown_fast = $a
-  //  No collision
+  // No collision
   .const COLLISION_NONE = 0
-  //  Playfield piece collision (cell on top of other cell on the playfield)
+  // Playfield piece collision (cell on top of other cell on the playfield)
   .const COLLISION_PLAYFIELD = 1
-  //  Bottom collision (cell below bottom of the playfield)
+  // Bottom collision (cell below bottom of the playfield)
   .const COLLISION_BOTTOM = 2
-  //  Left side collision (cell beyond the left side of the playfield)
+  // Left side collision (cell beyond the left side of the playfield)
   .const COLLISION_LEFT = 4
-  //  Right side collision (cell beyond the right side of the playfield)
+  // Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
-  //  Screen Sprite pointers on screen 1
+  // Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
-  //  Screen Sprite pointers on screen 2
+  // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  //  The line of the first IRQ
+  // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $23
@@ -23834,33 +23834,33 @@ Score: 3365357
 bbegin:
 //SEG4 @14
 //SEG5 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
+  // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
 //SEG6 kickasm(location (const byte*) PLAYFIELD_CHARSET#0) {{ .fill 8,$00 // Place a filled char at the start of the charset     .import binary "playfield-screen.imap"  }}
 //SEG7 kickasm(location (const byte*) PLAYFIELD_SCREEN_ORIGINAL#0) {{ // Load chars for the screen   .var screen = LoadBinary("playfield-screen.iscr")    // Load extended colors for the screen   .var extended = LoadBinary("playfield-extended.col")   // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8   // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)   // <<6 to move extended colors to the upper 2 bits   .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )  }}
 //SEG8 kickasm(location (const byte*) PLAYFIELD_COLORS_ORIGINAL#0) {{ .import binary "playfield-screen.col"  }}
-//  Original Color Data
+// Original Color Data
 //SEG9 @23
 //SEG10 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	// Put the sprites into memory  	.for(var sy=0;sy<10;sy++) { 	    .var sprite_gfx_y = sy*20 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21) 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
 //SEG11 @24
 //SEG12 [6] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
-  //  The raster line of the next IRQ
+  // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
 //SEG13 [7] (byte) irq_sprite_ypos#0 ← (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuc1 
-  //  Y-pos of the sprites on the next IRQ
+  // Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
 //SEG14 [8] phi from @24 to toSpritePtr1 [phi:@24->toSpritePtr1]
 //SEG15 toSpritePtr1
 //SEG16 @39
 //SEG17 [9] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuc1 
-  //  Index of the sprites to show on the next IRQ
+  // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
 //SEG18 [10] (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  Counting the 10 IRQs
+  // Counting the 10 IRQs
   lda #0
   sta irq_cnt
 //SEG19 [11] phi from @39 to @38 [phi:@39->@38]
@@ -24007,7 +24007,7 @@ main: {
   //SEG110 [38] phi (byte) current_movedown_slow#14 = (byte) current_movedown_slow#21 [phi:main::@11->main::@1#14] -- register_copy 
   //SEG111 main::@1
   b1:
-  //  Wait for a frame to pass
+  // Wait for a frame to pass
   //SEG112 main::@4
   b4:
   //SEG113 [39] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) 255) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
@@ -24123,7 +24123,7 @@ main: {
     jmp b1
 }
 //SEG187 render_screen_swap
-//  Swap rendering to the other screen (used for double buffering)
+// Swap rendering to the other screen (used for double buffering)
 render_screen_swap: {
   //SEG188 [70] (byte) render_screen_render#11 ← (byte) render_screen_render#18 ^ (byte/signed byte/word/signed word/dword/signed dword) 64 -- vbuz1=vbuz1_bxor_vbuc1 
     lda render_screen_render
@@ -24138,7 +24138,7 @@ render_screen_swap: {
     rts
 }
 //SEG192 render_score
-//  Show the current score
+// Show the current score
 render_score: {
     .label score_bytes = score_bcd
     .const score_offset = $28*5+$1c
@@ -24269,11 +24269,11 @@ render_score: {
     rts
 }
 //SEG256 render_bcd
-//  Render BCD digits on a screen.
-//  - screen: pointer to the screen to render on
-//  - offset: offset on the screen
-//  - bcd: The BCD-value to render
-//  - only_low: if non-zero only renders the low digit
+// Render BCD digits on a screen.
+// - screen: pointer to the screen to render on
+// - offset: offset on the screen
+// - bcd: The BCD-value to render
+// - only_low: if non-zero only renders the low digit
 render_bcd: {
     .const ZERO_CHAR = $35
     .label screen = 5
@@ -24331,7 +24331,7 @@ render_bcd: {
     rts
 }
 //SEG273 render_next
-//  Render the next tetromino in the "next" area
+// Render the next tetromino in the "next" area
 render_next: {
     .const next_area_offset = $28*$c+$18+4
     .label next_piece_char = $a
@@ -24449,8 +24449,8 @@ render_next: {
     jmp b6
 }
 //SEG320 render_moving
-//  Render the current moving piece at position (current_xpos, current_ypos)
-//  Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
+// Render the current moving piece at position (current_xpos, current_ypos)
+// Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
 render_moving: {
     .label ypos2 = $b
     .label screen_line = 7
@@ -24558,7 +24558,7 @@ render_moving: {
     jmp b3
 }
 //SEG364 render_playfield
-//  Render the static playfield on the screen (all pieces already locked into place)
+// Render the static playfield on the screen (all pieces already locked into place)
 render_playfield: {
     .label screen_line = 5
     .label i = $a
@@ -24631,9 +24631,9 @@ render_playfield: {
     rts
 }
 //SEG394 play_movement
-//  Perform any movement of the current piece
-//  key_event is the next keyboard_event() og $ff if no keyboard event is pending
-//  Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
+// Perform any movement of the current piece
+// key_event is the next keyboard_event() og $ff if no keyboard event is pending
+// Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
 play_movement: {
     .label render = 9
     .label return = 9
@@ -24690,8 +24690,8 @@ play_movement: {
     jmp breturn
 }
 //SEG422 play_move_rotate
-//  Rotate the current piece  based on key-presses
-//  Return non-zero if a render is needed
+// Rotate the current piece  based on key-presses
+// Return non-zero if a render is needed
 play_move_rotate: {
     .label orientation = $a
   //SEG423 [182] if((byte) play_move_rotate::key_event#0==(const byte) KEY_Z#0) goto play_move_rotate::@1 -- vbuaa_eq_vbuc1_then_la1 
@@ -24779,8 +24779,8 @@ play_move_rotate: {
     jmp b4
 }
 //SEG462 play_collision
-//  Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
-//  Returns information about the type of the collision detected
+// Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
+// Returns information about the type of the collision detected
 play_collision: {
     .label xpos = $c
     .label ypos = $b
@@ -24930,11 +24930,11 @@ play_collision: {
     jmp b2
 }
 //SEG520 play_move_leftright
-//  Move left/right or rotate the current piece
-//  Return non-zero if a render is needed
+// Move left/right or rotate the current piece
+// Return non-zero if a render is needed
 play_move_leftright: {
   //SEG521 [225] if((byte) play_move_leftright::key_event#0==(const byte) KEY_COMMA#0) goto play_move_leftright::@1 -- vbuaa_eq_vbuc1_then_la1 
-    //  Handle keyboard events
+    // Handle keyboard events
     cmp #KEY_COMMA
     beq b1
   //SEG522 play_move_leftright::@6
@@ -25022,8 +25022,8 @@ play_move_leftright: {
     jmp b2
 }
 //SEG566 play_move_down
-//  Move down the current piece
-//  Return non-zero if a render is needed
+// Move down the current piece
+// Return non-zero if a render is needed
 play_move_down: {
   //SEG567 [247] (byte) current_movedown_counter#12 ← ++ (byte) current_movedown_counter#16 -- vbuz1=_inc_vbuz1 
     inc current_movedown_counter
@@ -25219,13 +25219,13 @@ play_move_down: {
     jmp b7
 }
 //SEG696 play_spawn_current
-//  Spawn a new piece
-//  Moves the next piece into the current and spawns a new next piece
+// Spawn a new piece
+// Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
     .label _0 = 4
     .label piece_idx = $21
   //SEG697 [286] (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17 -- vbuxx=vbuz1 
-    //  Move next piece into current
+    // Move next piece into current
     ldx next_piece_idx
   //SEG698 [287] (byte~) play_spawn_current::$0 ← (byte) play_spawn_current::current_piece_idx#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuxx_rol_1 
     txa
@@ -25310,8 +25310,8 @@ play_spawn_current: {
   //SEG737 [299] phi (byte) game_over#52 = (byte) game_over#65 [phi:play_spawn_current::@11->play_spawn_current::@1#0] -- register_copy 
 }
 //SEG738 sid_rnd
-//  Get a random number from the SID voice 3,
-//  Must be initialized with sid_rnd_init()
+// Get a random number from the SID voice 3,
+// Must be initialized with sid_rnd_init()
 sid_rnd: {
   //SEG739 [309] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
     lda SID_VOICE3_OSC
@@ -25320,7 +25320,7 @@ sid_rnd: {
     rts
 }
 //SEG742 play_update_score
-//  Update the score based on the number of lines removed
+// Update the score based on the number of lines removed
 play_update_score: {
     .label lines_before = 4
     .label add_bcd = $2b
@@ -25396,12 +25396,12 @@ play_update_score: {
     rts
 }
 //SEG767 play_increase_level
-//  Increase the level
+// Increase the level
 play_increase_level: {
   //SEG768 [327] (byte) level#21 ← ++ (byte) level#10 -- vbuz1=_inc_vbuz1 
     inc level
   //SEG769 [328] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) 29) goto play_increase_level::@2 -- vbuz1_gt_vbuc1_then_la1 
-    //  Update speed of moving tetrominos down
+    // Update speed of moving tetrominos down
     lda level
     cmp #$1d
     beq !+
@@ -25432,7 +25432,7 @@ play_increase_level: {
     bne b3
   //SEG780 play_increase_level::@7
   //SEG781 [334] (byte) level_bcd#8 ← (byte) level_bcd#21 + (byte/signed byte/word/signed word/dword/signed dword) 6 -- vbuz1=vbuz1_plus_vbuc1 
-    //  If level low nybble hits $a change to $10
+    // If level low nybble hits $a change to $10
     lda #6
     clc
     adc level_bcd
@@ -25442,7 +25442,7 @@ play_increase_level: {
   //SEG784 play_increase_level::@3
   b3:
   //SEG785 asm { sed  }
-    //  Increase the score values gained
+    // Increase the score values gained
     sed
   //SEG786 [337] phi from play_increase_level::@3 to play_increase_level::@4 [phi:play_increase_level::@3->play_increase_level::@4]
   //SEG787 [337] phi (byte) play_increase_level::b#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:play_increase_level::@3->play_increase_level::@4#0] -- vbuxx=vbuc1 
@@ -25483,10 +25483,10 @@ play_increase_level: {
     rts
 }
 //SEG799 play_remove_lines
-//  Look through the playfield for lines - and remove any lines found
-//  Utilizes two cursors on the playfield - one reading cells and one writing cells
-//  Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
-//  Returns the number of lines removed
+// Look through the playfield for lines - and remove any lines found
+// Utilizes two cursors on the playfield - one reading cells and one writing cells
+// Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
+// Returns the number of lines removed
 play_remove_lines: {
     .label c = $c
     .label x = $a
@@ -25503,7 +25503,7 @@ play_remove_lines: {
     ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
   //SEG804 [345] phi (byte) play_remove_lines::r#3 = (const byte) PLAYFIELD_LINES#0*(const byte) PLAYFIELD_COLS#0-(byte/signed byte/word/signed word/dword/signed dword) 1 [phi:play_remove_lines->play_remove_lines::@1#3] -- vbuyy=vbuc1 
     ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
-  //  Read all lines and rewrite them
+  // Read all lines and rewrite them
   //SEG805 [345] phi from play_remove_lines::@4 to play_remove_lines::@1 [phi:play_remove_lines::@4->play_remove_lines::@1]
   //SEG806 [345] phi (byte) play_remove_lines::removed#11 = (byte) play_remove_lines::removed#7 [phi:play_remove_lines::@4->play_remove_lines::@1#0] -- register_copy 
   //SEG807 [345] phi (byte) play_remove_lines::y#8 = (byte) play_remove_lines::y#1 [phi:play_remove_lines::@4->play_remove_lines::@1#1] -- register_copy 
@@ -25579,7 +25579,7 @@ play_remove_lines: {
   //SEG843 [361] phi from play_remove_lines::@4 play_remove_lines::@6 to play_remove_lines::@5 [phi:play_remove_lines::@4/play_remove_lines::@6->play_remove_lines::@5]
   b5:
   //SEG844 [361] phi (byte) play_remove_lines::w#6 = (byte) play_remove_lines::w#11 [phi:play_remove_lines::@4/play_remove_lines::@6->play_remove_lines::@5#0] -- register_copy 
-  //  Write zeros in the rest of the lines
+  // Write zeros in the rest of the lines
   //SEG845 play_remove_lines::@5
   //SEG846 [362] if((byte) play_remove_lines::w#6!=(byte/word/signed word/dword/signed dword) 255) goto play_remove_lines::@6 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$ff
@@ -25601,7 +25601,7 @@ play_remove_lines: {
   //SEG855 [350] phi (byte) play_remove_lines::full#2 = (byte) play_remove_lines::full#4 [phi:play_remove_lines::@18->play_remove_lines::@3#0] -- register_copy 
 }
 //SEG856 play_lock_current
-//  Lock the current piece onto the playfield
+// Lock the current piece onto the playfield
 play_lock_current: {
     .label ypos2 = $10
     .label playfield_line = 5
@@ -25699,8 +25699,8 @@ play_lock_current: {
     jmp b2
 }
 //SEG896 keyboard_event_pressed
-//  Determine if a specific key is currently pressed based on the last keyboard_event_scan()
-//  Returns 0 is not pressed and non-0 if pressed
+// Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+// Returns 0 is not pressed and non-0 if pressed
 keyboard_event_pressed: {
     .label row_bits = $a
     .label keycode = 9
@@ -25725,9 +25725,9 @@ keyboard_event_pressed: {
     rts
 }
 //SEG903 keyboard_event_get
-//  Get the next event from the keyboard event buffer.
-//  Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
-//  The buffer is filled by keyboard_event_scan()
+// Get the next event from the keyboard event buffer.
+// Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+// The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
   //SEG904 [390] if((byte) keyboard_events_size#13==(byte/signed byte/word/signed word/dword/signed dword) 0) goto keyboard_event_get::@return -- vbuz1_eq_0_then_la1 
     lda keyboard_events_size
@@ -25755,10 +25755,10 @@ keyboard_event_get: {
     rts
 }
 //SEG916 keyboard_event_scan
-//  Scans the entire matrix to determine which keys have been pressed/depressed.
-//  Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
-//  Handles debounce and only generates events when the status of a key changes.
-//  Also stores current status of modifiers in keyboard_modifiers.
+// Scans the entire matrix to determine which keys have been pressed/depressed.
+// Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+// Handles debounce and only generates events when the status of a key changes.
+// Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label row_scan = $b
     .label keycode = $a
@@ -25893,7 +25893,7 @@ keyboard_event_scan: {
   breturn:
   //SEG990 [430] return 
     rts
-  //  Something has changed on the keyboard row - check each column
+  // Something has changed on the keyboard row - check each column
   //SEG991 [431] phi from keyboard_event_scan::@25 to keyboard_event_scan::@4 [phi:keyboard_event_scan::@25->keyboard_event_scan::@4]
   b6:
   //SEG992 [431] phi (byte) keyboard_events_size#10 = (byte) keyboard_events_size#29 [phi:keyboard_event_scan::@25->keyboard_event_scan::@4#0] -- register_copy 
@@ -25929,7 +25929,7 @@ keyboard_event_scan: {
     beq b7
   //SEG1008 keyboard_event_scan::@17
   //SEG1009 [438] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte) keyboard_event_scan::keycode#10 -- pbuc1_derefidx_vbuz1=vbuz2 
-    //  Key pressed
+    // Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -25948,7 +25948,7 @@ keyboard_event_scan: {
     bne b4
   //SEG1017 keyboard_event_scan::@19
   //SEG1018 [444] *((const byte[8]) keyboard_scan_values#0 + (byte) keyboard_event_scan::row#2) ← (byte) keyboard_event_scan::row_scan#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    //  Store the current keyboard status for the row to debounce
+    // Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -25959,7 +25959,7 @@ keyboard_event_scan: {
     lda #$40
     ora keycode
   //SEG1021 [446] *((const byte[8]) keyboard_events#0 + (byte) keyboard_events_size#10) ← (byte/word/dword~) keyboard_event_scan::$11 -- pbuc1_derefidx_vbuz1=vbuaa 
-    //  Key released
+    // Key released
     ldy keyboard_events_size
     sta keyboard_events,y
   //SEG1022 [447] (byte) keyboard_events_size#1 ← ++ (byte) keyboard_events_size#10 -- vbuz1=_inc_vbuz1 
@@ -25967,11 +25967,11 @@ keyboard_event_scan: {
     jmp b5
 }
 //SEG1023 keyboard_matrix_read
-//  Read a single row of the keyboard matrix
-//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-//  Returns the keys pressed on the row as bits according to the C64 key matrix.
-//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
   //SEG1024 [448] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
@@ -25984,7 +25984,7 @@ keyboard_matrix_read: {
     rts
 }
 //SEG1028 render_show
-//  Update $D018 to show the current screen (used for double buffering)
+// Update $D018 to show the current screen (used for double buffering)
 render_show: {
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
     .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
@@ -26023,7 +26023,7 @@ render_show: {
     jmp b2
 }
 //SEG1045 play_init
-//  Initialize play data tables
+// Initialize play data tables
 play_init: {
     .label pli = 5
     .label idx = 2
@@ -26079,13 +26079,13 @@ play_init: {
     lda #PLAYFIELD_COLS*PLAYFIELD_LINES
     sta playfield_lines_idx+PLAYFIELD_LINES
   //SEG1064 [470] (byte) current_movedown_slow#1 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0) -- vbuz1=_deref_pbuc1 
-    //  Set initial speed of moving down a tetromino
+    // Set initial speed of moving down a tetromino
     lda MOVEDOWN_SLOW_SPEEDS
     sta current_movedown_slow
   //SEG1065 [471] phi from play_init::@3 to play_init::@2 [phi:play_init::@3->play_init::@2]
   //SEG1066 [471] phi (byte) play_init::b#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:play_init::@3->play_init::@2#0] -- vbuxx=vbuc1 
     ldx #0
-  //  Set the initial score add values
+  // Set the initial score add values
   //SEG1067 [471] phi from play_init::@2 to play_init::@2 [phi:play_init::@2->play_init::@2]
   //SEG1068 [471] phi (byte) play_init::b#2 = (byte) play_init::b#1 [phi:play_init::@2->play_init::@2#0] -- register_copy 
   //SEG1069 play_init::@2
@@ -26114,29 +26114,29 @@ play_init: {
     rts
 }
 //SEG1076 sprites_irq_init
-//  Setup the IRQ
+// Setup the IRQ
 sprites_irq_init: {
   //SEG1077 asm { sei  }
     sei
   //SEG1078 [478] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge any IRQ and setup the next one
+    // Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG1079 asm { ldaCIA1_INTERRUPT  }
     lda CIA1_INTERRUPT
   //SEG1080 [480] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
-    //  Disable kernal & basic
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG1081 [481] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG1082 [482] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG1083 [483] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set raster line
+    // Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -26144,11 +26144,11 @@ sprites_irq_init: {
     lda #IRQ_RASTER_FIRST
     sta RASTER
   //SEG1085 [485] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG1086 [486] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq() -- _deref_pptc1=pprc2 
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -26160,7 +26160,7 @@ sprites_irq_init: {
     rts
 }
 //SEG1090 sprites_init
-//  Setup the sprites
+// Setup the sprites
 sprites_init: {
     .label xpos = 2
   //SEG1091 [489] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 15 -- _deref_pbuc1=vbuc2 
@@ -26209,7 +26209,7 @@ sprites_init: {
     rts
 }
 //SEG1110 render_init
-//  Initialize rendering
+// Initialize rendering
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)>>6
     .label li_1 = 5
@@ -26226,7 +26226,7 @@ render_init: {
     sta CIA2_PORT_A
   //SEG1117 render_init::@3
   //SEG1118 [505] *((const byte*) D011#0) ← (const byte) VIC_ECM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
-    //  Enable Extended Background Color Mode
+    // Enable Extended Background Color Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta D011
   //SEG1119 [506] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -26324,8 +26324,8 @@ render_init: {
     rts
 }
 //SEG1151 render_screen_original
-//  Copy the original screen data to the passed screen
-//  Also copies colors to $d800
+// Copy the original screen data to the passed screen
+// Also copies colors to $d800
 render_screen_original: {
     .const SPACE = 0
     .label screen = $11
@@ -26477,7 +26477,7 @@ render_screen_original: {
     rts
 }
 //SEG1211 sid_rnd_init
-//  Initialize SID voice 3 for random number generation
+// Initialize SID voice 3 for random number generation
 sid_rnd_init: {
   //SEG1212 [552] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) 65535 -- _deref_pwuc1=vwuc2 
     lda #<$ffff
@@ -26492,9 +26492,9 @@ sid_rnd_init: {
     rts
 }
 //SEG1216 sprites_irq
-//  Raster Interrupt Routine - sets up the sprites covering the playfield
-//  Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
-//  Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
+// Raster Interrupt Routine - sets up the sprites covering the playfield
+// Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+// Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     .label raster_sprite_gfx_modify = $2f
@@ -26502,11 +26502,11 @@ sprites_irq: {
     sta rega+1
     stx regx+1
   //SEG1218 asm { cld  }
-    // (*BGCOL)++;
-    //  Clear decimal flag (because it is used by the score algorithm)
+    //(*BGCOL)++;
+    // Clear decimal flag (because it is used by the score algorithm)
     cld
   //SEG1219 [556] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0 -- vbuaa=vbuz1 
-    //  Place the sprites
+    // Place the sprites
     lda irq_sprite_ypos
   //SEG1220 [557] *((const byte*) SPRITES_YPOS#0) ← (byte) sprites_irq::ypos#0 -- _deref_pbuc1=vbuaa 
     sta SPRITES_YPOS
@@ -26520,7 +26520,7 @@ sprites_irq: {
     ldx irq_raster_next
     inx
   //SEG1225 [562] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte/signed word/word/dword/signed dword~) sprites_irq::$0 -- vbuz1=vbuxx 
-    //  Wait for the y-position before changing sprite pointers
+    // Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
   //SEG1226 sprites_irq::@1
   b1:
@@ -26584,11 +26584,11 @@ sprites_irq: {
   //SEG1249 sprites_irq::@7
   b7:
   //SEG1250 [579] *((const byte*) RASTER#0) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
-    //  Setup next interrupt
+    // Setup next interrupt
     lda irq_raster_next
     sta RASTER
   //SEG1251 [580] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ and setup the next one
+    // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG1252 sprites_irq::@return
@@ -26653,69 +26653,69 @@ sprites_irq: {
     sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }
-  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
+  // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
-  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
+  // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  //  Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
+  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
   keyboard_events: .fill 8, 0
-  //  The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
+  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
-  //  The T-piece
+  // The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
-  //  The S-piece
+  // The S-piece
   .align $40
   PIECE_S: .byte 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0
-  //  The Z-piece
+  // The Z-piece
   .align $40
   PIECE_Z: .byte 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
-  //  The L-piece
+  // The L-piece
   .align $40
   PIECE_L: .byte 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0
-  //  The J-piece
+  // The J-piece
   .align $40
   PIECE_J: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
-  //  The O-piece
+  // The O-piece
   .align $40
   PIECE_O: .byte 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0
-  //  The I-piece
+  // The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
-  //  The chars to use for the different pieces - when inside the playing area
+  // The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
-  //  The chars to use for the different pieces - when outside the playing area (eg. the next area).
+  // The chars to use for the different pieces - when outside the playing area (eg. the next area).
   PIECES_NEXT_CHARS: .byte $63, $64, $a4, $64, $63, $63, $a4
-  //  The initial X/Y for each piece
+  // The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
-  //  The speed of moving down the piece when soft-drop is not activated
-  //  This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
+  // The speed of moving down the piece when soft-drop is not activated
+  // This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
-  //  Base Score values for removing 0-4 lines (in BCD)
-  //  These values are added to score_add_bcd for each level gained.
+  // Base Score values for removing 0-4 lines (in BCD)
+  // These values are added to score_add_bcd for each level gained.
   SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
-  //  Score values for removing 0-4 lines (in BCD)
-  //  These values are updated based on the players level and the base values from SCORE_BASE_BCD
+  // Score values for removing 0-4 lines (in BCD)
+  // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
-  //  The color #1 to use for the pieces for each level
+  // The color #1 to use for the pieces for each level
   PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
-  //  The color #2 to use for the pieces for each level
+  // The color #2 to use for the pieces for each level
   PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
-  //  Pointers to the screen address for rendering each playfield line
-  //  The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
+  // Pointers to the screen address for rendering each playfield line
+  // The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40
   screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
-  //  Pointers to the playfield address for each playfield line
+  // Pointers to the playfield address for each playfield line
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
-  //  The playfield.  0 is empty non-zero is color.
-  //  The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
+  // The playfield.  0 is empty non-zero is color.
+  // The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
-  //  The different pieces
+  // The different pieces
   PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
-  //  Indixes into the playfield  for each playfield line
+  // Indixes into the playfield  for each playfield line
   playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset

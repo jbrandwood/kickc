@@ -1,9 +1,9 @@
-//  Test all types of pointers
+// Test all types of pointers
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    //  A constant pointer
+    // A constant pointer
     .label SCREEN = $400
     ldx #2
   b1:

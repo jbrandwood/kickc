@@ -52,8 +52,8 @@ public class AsmProgram {
       getCurrentSegment().addLine(line);
    }
 
-   public void addComment(String comment) {
-      addLine(new AsmComment(comment));
+   public void addComment(String comment, boolean isBlock) {
+      addLine(new AsmComment(comment, isBlock));
    }
 
    public AsmLabel addLabel(String label) {

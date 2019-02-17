@@ -1,4 +1,4 @@
-//  2D rotattion of 8 sprites 
+// 2D rotattion of 8 sprites 
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -12,14 +12,14 @@
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .label SCREEN = $400
-  //  Sine and Cosine tables  
-  //  Angles: $00=0, $80=PI,$100=2*PI
-  //  Sine/Cosine: signed fixed [-$7f,$7f]
+  // Sine and Cosine tables  
+  // Angles: $00=0, $80=PI,$100=2*PI
+  // Sine/Cosine: signed fixed [-$7f,$7f]
   .label COS = $2000
-  //  A single sprite
+  // A single sprite
   .label SPRITE = $3000
   .label SIN = COS+$40
-//  sin(x) = cos(x+PI/2)
+// sin(x) = cos(x+PI/2)
 main: {
     sei
     jsr init
@@ -55,7 +55,7 @@ anim: {
     ldy i
     lda xs,y
     sta x
-    //  signed fixed[7.0]
+    // signed fixed[7.0]
     lda ys,y
     sta y
     ldy angle
@@ -95,7 +95,7 @@ anim: {
     jsr mulf8s_prepared
     asl _12
     rol _12+1
-    //  signed fixed[8.8] 
+    // signed fixed[8.8] 
     lda yr
     clc
     adc _12
@@ -148,8 +148,8 @@ anim: {
     sta BORDERCOL
     jmp b4
 }
-//  Calculate fast multiply with a prepared unsigned byte to a word result
-//  The prepared number is set by calling mulf8s_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned byte to a word result
+// The prepared number is set by calling mulf8s_prepare(byte a)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
@@ -173,8 +173,8 @@ mulf8s_prepared: {
   b2:
     rts
 }
-//  Calculate fast multiply with a prepared unsigned byte to a word result
-//  The prepared number is set by calling mulf8u_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned byte to a word result
+// The prepared number is set by calling mulf8u_prepare(byte a)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
@@ -198,7 +198,7 @@ mulf8u_prepared: {
     sta return+1
     rts
 }
-//  Prepare for fast multiply with an unsigned byte to a word result
+// Prepare for fast multiply with an unsigned byte to a word result
 mulf8u_prepare: {
     .label memA = $fd
     sta memA
@@ -225,7 +225,7 @@ init: {
     bne b1
     rts
 }
-//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
+// Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 7
     .label sqr = 9
@@ -326,27 +326,27 @@ mulf_init: {
     lda sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b3
-    //  Set the very last value g(511) = f(256)
+    // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
     rts
 }
-  //  mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
-  //  <f(x) = <(( x * x )/4)
+  // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
+  // <f(x) = <(( x * x )/4)
   .align $100
   mulf_sqr1_lo: .fill $200, 0
-  //  >f(x) = >(( x * x )/4)
+  // >f(x) = >(( x * x )/4)
   .align $100
   mulf_sqr1_hi: .fill $200, 0
-  //  <g(x) =  <((( x - 255) * ( x - 255 ))/4)
+  // <g(x) =  <((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_lo: .fill $200, 0
-  //  >g(x) = >((( x - 255) * ( x - 255 ))/4)
+  // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
-  //  Positions to rotate
+  // Positions to rotate
   xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
   ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
 .pc = COS "COS"

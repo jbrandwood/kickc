@@ -57,7 +57,7 @@ main: {
     sta dw2+2
     lda _32+1
     sta dw2+3
-    //  Test set/get high word of dword
+    // Test set/get high word of dword
     lda dw2
     sta _4
     lda dw2+1
@@ -155,7 +155,7 @@ main: {
     sta print_char_cursor+1
     jmp b1
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -175,7 +175,7 @@ print_ln: {
   !:
     rts
 }
-//  Print a byte as HEX
+// Print a byte as HEX
 print_byte: {
     txa
     lsr
@@ -192,7 +192,7 @@ print_byte: {
     jsr print_char
     rts
 }
-//  Print a single char
+// Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -202,7 +202,7 @@ print_char: {
   !:
     rts
 }
-//  Print a word as HEX
+// Print a word as HEX
 print_word: {
     .label w = $a
     lda w+1
@@ -213,7 +213,7 @@ print_word: {
     jsr print_byte
     rts
 }
-//  Print a dword as HEX
+// Print a dword as HEX
 print_dword: {
     .label dw = $c
     lda dw+2
@@ -228,7 +228,7 @@ print_dword: {
     jsr print_word
     rts
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 6
     lda #<$400

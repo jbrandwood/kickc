@@ -1,4 +1,4 @@
-//  Test a function taking boolean parameter and returning boolean result
+// Test a function taking boolean parameter and returning boolean result
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -29,8 +29,8 @@ main: {
     sta screen,x
     jmp b3
 }
-//  Determine whether to set a char to '*.
-//  Returns true if i&8!=0 or b=true
+// Determine whether to set a char to '*.
+// Returns true if i&8!=0 or b=true
 isSet: {
     .label b = 2
     txa

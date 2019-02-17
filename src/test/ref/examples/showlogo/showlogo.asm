@@ -9,9 +9,9 @@
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label D018 = $d018
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const DARK_GREY = $b
@@ -62,7 +62,7 @@ main: {
     inc $d020 
     jmp b3
 }
-//  Fill some memory with a value
+// Fill some memory with a value
 fill: {
     .label end = 2
     .label addr = 4

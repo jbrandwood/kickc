@@ -1,4 +1,4 @@
-//  Tests rolling sprite MSB by variable amount
+// Tests rolling sprite MSB by variable amount
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

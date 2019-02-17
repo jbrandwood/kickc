@@ -1,4 +1,4 @@
-//  Draws a chess board in the upper left corner of the screen
+// Draws a chess board in the upper left corner of the screen
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

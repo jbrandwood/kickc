@@ -1,16 +1,16 @@
-//  Exploring C64DTV Screen Modes
+// Exploring C64DTV Screen Modes
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-  //  RAM in $A000, $E000 CHAR ROM in $D000
+  // RAM in $A000, $E000 CHAR ROM in $D000
   .const PROCPORT_RAM_CHARROM = $31
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -28,25 +28,25 @@
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  CIA#1 Port A: keyboard matrix columns and joystick #2
+  // CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
-  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
+  // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
   .const BLUE = 6
   .const LIGHT_GREEN = $d
-  //  Feature enables or disables the extra C64 DTV features
+  // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
-  //  Controls the graphics modes of the C64 DTV
+  // Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
   .const DTV_LINEAR = 1
   .const DTV_BORDER_OFF = 2
@@ -54,29 +54,29 @@
   .const DTV_OVERSCAN = 8
   .const DTV_COLORRAM_OFF = $10
   .const DTV_CHUNKY = $40
-  //  Defines colors for the 16 first colors ($00-$0f)
+  // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-  //  Linear Graphics Plane A Counter Control
+  // Linear Graphics Plane A Counter Control
   .label DTV_PLANEA_START_LO = $d03a
   .label DTV_PLANEA_START_MI = $d03b
   .label DTV_PLANEA_START_HI = $d045
   .label DTV_PLANEA_STEP = $d046
   .label DTV_PLANEA_MODULO_LO = $d038
   .label DTV_PLANEA_MODULO_HI = $d039
-  //  Linear Graphics Plane B Counter Control
+  // Linear Graphics Plane B Counter Control
   .label DTV_PLANEB_START_LO = $d049
   .label DTV_PLANEB_START_MI = $d04a
   .label DTV_PLANEB_START_HI = $d04b
   .label DTV_PLANEB_STEP = $d04c
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
-  //  Select memory bank where color data is fetched from (bits 11:0)
-  //  Memory address of Color RAM is ColorBank*$400
+  // Select memory bank where color data is fetched from (bits 11:0)
+  // Memory address of Color RAM is ColorBank*$400
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
   .const DTV_COLOR_BANK_DEFAULT = $1d800
-  //  Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
-  //  Memory address of VIC Graphics is GraphicsBank*$10000
+  // Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
+  // Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .const KEY_3 = 8
   .const KEY_A = $a
@@ -101,13 +101,13 @@
   .label print_line_cursor = $d
 main: {
     sei
-    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
-    //  Disable kernal & basic
+    // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    //  Enable DTV extended modes
+    // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
   b2:
@@ -118,34 +118,34 @@ menu: {
     .label SCREEN = $8000
     .label CHARSET = $9800
     .label c = 2
-    //  Charset ROM
-    //  DTV Graphics Bank
+    // Charset ROM
+    // DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
-    //  DTV Graphics Mode
+    // DTV Graphics Mode
     sta DTV_CONTROL
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
-    //  Set VIC Bank
-    //  VIC Graphics Mode
+    // Set VIC Bank
+    // VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    //  VIC Memory Pointers
+    // VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
-  //  DTV Palette - default
+  // DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
@@ -156,7 +156,7 @@ menu: {
     sta c
     lda #>COLS
     sta c+1
-  //  Char Colors
+  // Char Colors
   b2:
     lda #LIGHT_GREEN
     ldy #0
@@ -171,7 +171,7 @@ menu: {
     lda c
     cmp #<COLS+$3e8
     bne b2
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BGCOL
     sta BORDERCOL
@@ -266,14 +266,14 @@ menu: {
     jsr mode_8bppchunkybmm
     jmp breturn
 }
-// Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
-//  Resolution: 320x200
-//  Linear Adressing
-//  CharData/PlaneB Pixel Shifter (8):
-//  - 8bpp color PlaneB[7:0]
-//  To set up a linear video frame buffer the step size must be set to 8.
+//Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
+// Resolution: 320x200
+// Linear Adressing
+// CharData/PlaneB Pixel Shifter (8):
+// - 8bpp color PlaneB[7:0]
+// To set up a linear video frame buffer the step size must be set to 8.
 mode_8bppchunkybmm: {
-    //  8BPP Chunky Bitmap (contains 8bpp pixels)
+    // 8BPP Chunky Bitmap (contains 8bpp pixels)
     .const PLANEB = $20000
     .label _23 = $d
     .label gfxb = 5
@@ -281,12 +281,12 @@ mode_8bppchunkybmm: {
     .label y = 4
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
-    //  VIC Graphics Mode
+    // VIC Graphics Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
-    //  Linear Graphics Plane B Counter
+    // Linear Graphics Plane B Counter
     lda #PLANEB&$ffff
     sta DTV_PLANEB_START_LO
     lda #0
@@ -298,10 +298,10 @@ mode_8bppchunkybmm: {
     lda #0
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
-    //  Border color
+    // Border color
     sta BORDERCOL
     tax
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -371,10 +371,10 @@ mode_8bppchunkybmm: {
     jsr mode_ctrl
     rts
 }
-//  Allow the user to control the DTV graphics using different keys
+// Allow the user to control the DTV graphics using different keys
 mode_ctrl: {
   b1:
-  //  Wait for the raster
+  // Wait for the raster
   b4:
     lda RASTER
     cmp #$ff
@@ -385,7 +385,7 @@ mode_ctrl: {
     beq b7
     rts
   b7:
-    //  Read the current control byte
+    // Read the current control byte
     ldx dtv_control
     ldy #KEY_L
     jsr keyboard_key_pressed
@@ -448,10 +448,10 @@ mode_ctrl: {
     stx BORDERCOL
     jmp b1
 }
-//  Determines whether a specific key is currently pressed by accessing the matrix directly
-//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
-//  All keys exist as as KEY_XXX constants.
-//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// Determines whether a specific key is currently pressed by accessing the matrix directly
+// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+// All keys exist as as KEY_XXX constants.
+// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     .label colidx = 7
     tya
@@ -467,11 +467,11 @@ keyboard_key_pressed: {
     and keyboard_matrix_col_bitmask,y
     rts
 }
-//  Read a single row of the keyboard matrix
-//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-//  Returns the keys pressed on the row as bits according to the C64 key matrix.
-//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
@@ -479,11 +479,11 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
-//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
-//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
-//  The actual memory addressed will be $4000*cpuSegmentIdx
+// Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+// This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+// The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
-    //  Move CPU BANK 1 SEGMENT ($4000-$7fff)
+    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     sta cpuBank
     .byte $32, $dd
@@ -491,19 +491,19 @@ dtvSetCpuBankSegment1: {
     .byte $32, $00
     rts
 }
-// 8bpp Pixel Cell Mode (BMM/COLDIS = 0, ECM/MCM/HICOL/LINEAR/CHUNK = 1)
-// Pixel Cell Adressing
-// CharData[8]: (PlaneA[21:0])
-// GfxData[8]: (PlaneB[21:14] & CharData[7:0] & RowCounter[3:0] & PixelCounter[7:0] )
-// GfxData Pixel Shifter (8):
-// - 8bpp color GfxData[7:0]
-// Pixel cell mode can be thought of as a text mode that uses a 8x8 pixel 8bpp font (64 bytes/char).
-// The characters come from counter A and the font (or "cells") from counter B.
-// Counter B step and modulo should be set to 0, counter A modulo to 0 and counter A step to 1 for normal operation.
+//8bpp Pixel Cell Mode (BMM/COLDIS = 0, ECM/MCM/HICOL/LINEAR/CHUNK = 1)
+//Pixel Cell Adressing
+//CharData[8]: (PlaneA[21:0])
+//GfxData[8]: (PlaneB[21:14] & CharData[7:0] & RowCounter[3:0] & PixelCounter[7:0] )
+//GfxData Pixel Shifter (8):
+//- 8bpp color GfxData[7:0]
+//Pixel cell mode can be thought of as a text mode that uses a 8x8 pixel 8bpp font (64 bytes/char).
+//The characters come from counter A and the font (or "cells") from counter B.
+//Counter B step and modulo should be set to 0, counter A modulo to 0 and counter A step to 1 for normal operation.
 mode_8bpppixelcell: {
-    //  8BPP Pixel Cell Screen (contains 40x25=1000 chars)
+    // 8BPP Pixel Cell Screen (contains 40x25=1000 chars)
     .label PLANEA = $3c00
-    //  8BPP Pixel Cell Charset (contains 256 64 byte chars)
+    // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
     .label PLANEB = $4000
     .label _14 = 7
     .label gfxa = 2
@@ -516,12 +516,12 @@ mode_8bpppixelcell: {
     .label ch = 4
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
-    //  VIC Graphics Mode
+    // VIC Graphics Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
-    //  Linear Graphics Plane A Counter
+    // Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
     lda #>PLANEA
@@ -533,7 +533,7 @@ mode_8bpppixelcell: {
     lda #0
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
-    //  Linear Graphics Plane B Counter
+    // Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
     lda #>PLANEB
@@ -543,10 +543,10 @@ mode_8bpppixelcell: {
     sta DTV_PLANEB_STEP
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
-    //  Border color
+    // Border color
     sta BORDERCOL
     tax
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
@@ -585,7 +585,7 @@ mode_8bpppixelcell: {
     lda ay
     cmp #$19
     bne b2
-    //  8bpp cells for Plane B (charset) - ROM charset with 256 colors
+    // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
     lda #0
@@ -647,12 +647,12 @@ mode_8bpppixelcell: {
     jsr mode_ctrl
     rts
 }
-//  Sixs Fred Mode - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
-//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS = 0, ECM/BMM/MCM/HICOL/LINEAR = 1)
-//  Resolution: 160x200
-//  Linear Adressing
-//  GfxData/PlaneA Pixel Shifter (2), CharData/PlaneB Pixel Shifter (2):
-//  - 8bpp color (ColorData[3:0],CharData/PlaneB[1:0], GfxData/PlaneA[1:0])
+// Sixs Fred Mode - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+// Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS = 0, ECM/BMM/MCM/HICOL/LINEAR = 1)
+// Resolution: 160x200
+// Linear Adressing
+// GfxData/PlaneA Pixel Shifter (2), CharData/PlaneB Pixel Shifter (2):
+// - 8bpp color (ColorData[3:0],CharData/PlaneB[1:0], GfxData/PlaneA[1:0])
 mode_sixsfred: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -665,12 +665,12 @@ mode_sixsfred: {
     .label by = 4
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
-    //  VIC Graphics Mode
+    // VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
-    //  Linear Graphics Plane A Counter
+    // Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
     lda #>PLANEA
@@ -682,7 +682,7 @@ mode_sixsfred: {
     lda #0
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
-    //  Linear Graphics Plane B Counter
+    // Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
     lda #>PLANEB
@@ -694,20 +694,20 @@ mode_sixsfred: {
     lda #0
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #>COLORS/$400
     sta DTV_COLOR_BANK_HI
     ldx #0
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BORDERCOL
     lda #<COLORS
@@ -792,15 +792,15 @@ mode_sixsfred: {
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
 }
-//  Two Plane Bitmap - generated from the two DTV linear graphics plane counters
-//  Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
-//  Resolution: 320x200
-//  Linear Adressing
-//  GfxData/PlaneA Pixel Shifter (1), CharData/PlaneB Pixel Shifter (1):
-//  - Plane A = 0 Plane B = 0: 8bpp BgColor0[7:0]
-//  - Plane A = 0 Plane B = 1: 8bpp "0000" & ColorData[7:4]
-//  - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
-//  - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
+// Two Plane Bitmap - generated from the two DTV linear graphics plane counters
+// Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
+// Resolution: 320x200
+// Linear Adressing
+// GfxData/PlaneA Pixel Shifter (1), CharData/PlaneB Pixel Shifter (1):
+// - Plane A = 0 Plane B = 0: 8bpp BgColor0[7:0]
+// - Plane A = 0 Plane B = 1: 8bpp "0000" & ColorData[7:4]
+// - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
+// - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
 mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -814,12 +814,12 @@ mode_twoplanebitmap: {
     .label by = 4
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
-    //  VIC Graphics Mode
+    // VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    //  Linear Graphics Plane A Counter
+    // Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
     lda #>PLANEA
@@ -831,7 +831,7 @@ mode_twoplanebitmap: {
     lda #0
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
-    //  Linear Graphics Plane B Counter
+    // Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
     lda #>PLANEB
@@ -843,25 +843,25 @@ mode_twoplanebitmap: {
     lda #0
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #>COLORS/$400
     sta DTV_COLOR_BANK_HI
     ldx #0
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BORDERCOL
     lda #$70
     sta BGCOL1
-    //  Color for bits 00
+    // Color for bits 00
     lda #$d4
     sta BGCOL2
     lda #<COLORS
@@ -961,12 +961,12 @@ mode_twoplanebitmap: {
   !:
     jmp b7
 }
-//  Sixs Fred Mode 2 - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
-//  Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS/HICOL = 0, ECM/BMM/MCM/LINEAR = 1)
-//  Resolution: 160x200
-//  Linear Adressing
-//  PlaneA Pixel Shifter (2), PlaneB Pixel Shifter (2):
-//  - 8bpp color (PlaneB[1:0],ColorData[5:4],PlaneA[1:0],ColorData[1:0])
+// Sixs Fred Mode 2 - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
+// Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS/HICOL = 0, ECM/BMM/MCM/LINEAR = 1)
+// Resolution: 160x200
+// Linear Adressing
+// PlaneA Pixel Shifter (2), PlaneB Pixel Shifter (2):
+// - 8bpp color (PlaneB[1:0],ColorData[5:4],PlaneA[1:0],ColorData[1:0])
 mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -980,12 +980,12 @@ mode_sixsfred2: {
     .label by = 4
     lda #DTV_LINEAR
     sta DTV_CONTROL
-    //  VIC Graphics Mode
+    // VIC Graphics Mode
     lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
-    //  Linear Graphics Plane A Counter
+    // Linear Graphics Plane A Counter
     lda #<PLANEA
     sta DTV_PLANEA_START_LO
     lda #>PLANEA
@@ -997,7 +997,7 @@ mode_sixsfred2: {
     lda #0
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
-    //  Linear Graphics Plane B Counter
+    // Linear Graphics Plane B Counter
     lda #<PLANEB
     sta DTV_PLANEB_START_LO
     lda #>PLANEB
@@ -1009,20 +1009,20 @@ mode_sixsfred2: {
     lda #0
     sta DTV_PLANEB_MODULO_LO
     sta DTV_PLANEB_MODULO_HI
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #>COLORS/$400
     sta DTV_COLOR_BANK_HI
     ldx #0
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BORDERCOL
     lda #<COLORS
@@ -1113,61 +1113,61 @@ mode_sixsfred2: {
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
 }
-//  High Color Multicolor Character Mode (LINEAR/CHUNK/COLDIS/BMM/ECM = 0, MCM/HICOL = 1)
-//  Resolution: 160x200 (320x200)
-//  Normal VIC Adressing:
-//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
-// GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
-//  - 0: 8bpp BgColor0[7:0]
-//  - 1: 8bpp ColorData[7:4] "0" & Color[2:0]
-// GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
-//  - 00: 8bpp BgColor0[7:0]
-//  - 01: 8bpp BgColor1[7:0]
-//  - 10: 8bpp BgColor2[7:0]
-//  - 11: 8bpp ColorData[7:4] "0" & Color[2:0]
+// High Color Multicolor Character Mode (LINEAR/CHUNK/COLDIS/BMM/ECM = 0, MCM/HICOL = 1)
+// Resolution: 160x200 (320x200)
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+//GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+// - 0: 8bpp BgColor0[7:0]
+// - 1: 8bpp ColorData[7:4] "0" & Color[2:0]
+//GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+// - 00: 8bpp BgColor0[7:0]
+// - 01: 8bpp BgColor1[7:0]
+// - 10: 8bpp BgColor2[7:0]
+// - 11: 8bpp ColorData[7:4] "0" & Color[2:0]
 mode_hicolmcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    //  Charset ROM
+    // Charset ROM
     .label COLORS = $8400
     .label _26 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    //  DTV Graphics Bank
+    // DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
-    //  Set VIC Bank
-    //  VIC Graphics Mode
+    // Set VIC Bank
+    // VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
-    //  VIC Memory Pointers
+    // VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BORDERCOL
     lda #$50
@@ -1223,60 +1223,60 @@ mode_hicolmcchar: {
     jsr mode_ctrl
     rts
 }
-//  High Color Extended Background Color Character Mode (LINEAR/CHUNK/COLDIS/MCM/BMM = 0, ECM/HICOL = 1)
-//  Resolution: 320x200
-//  Normal VIC Adressing:
-//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] )
-//  GfxData Pixel Shifter (1)
-//   - 0: 8bpp Background Color
-//     - CharData[7:6] 00: 8bpp BgColor0[7:0]
-//     - CharData[7:6] 01: 8bpp BgColor1[7:0]
-//     - CharData[7:6] 10: 8bpp BgColor2[7:0]
-//     - CharData[7:6] 11: 8bpp BgColor3[7:0]
-//   - 1: 8bpp ColorData[7:0]
+// High Color Extended Background Color Character Mode (LINEAR/CHUNK/COLDIS/MCM/BMM = 0, ECM/HICOL = 1)
+// Resolution: 320x200
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] )
+// GfxData Pixel Shifter (1)
+//  - 0: 8bpp Background Color
+//    - CharData[7:6] 00: 8bpp BgColor0[7:0]
+//    - CharData[7:6] 01: 8bpp BgColor1[7:0]
+//    - CharData[7:6] 10: 8bpp BgColor2[7:0]
+//    - CharData[7:6] 11: 8bpp BgColor3[7:0]
+//  - 1: 8bpp ColorData[7:0]
 mode_hicolecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    //  Charset ROM
+    // Charset ROM
     .label COLORS = $8400
     .label _26 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    //  DTV Graphics Bank
+    // DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
-    //  Set VIC Bank
-    //  VIC Graphics Mode
+    // Set VIC Bank
+    // VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    //  VIC Memory Pointers
+    // VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BORDERCOL
     lda #$50
@@ -1334,56 +1334,56 @@ mode_hicolecmchar: {
     jsr mode_ctrl
     rts
 }
-//  High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
-//  Resolution: 320x200
-//  Normal VIC Adressing:
-//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
-//  Pixel Shifter (1)
-//   - 0: 8bpp BgColor0[7:0]
-//   - 1: 8bpp ColorData[7:0]
+// High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
+// Resolution: 320x200
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+// Pixel Shifter (1)
+//  - 0: 8bpp BgColor0[7:0]
+//  - 1: 8bpp ColorData[7:0]
 mode_hicolstdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    //  Charset ROM
+    // Charset ROM
     .label COLORS = $8400
     .label _25 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    //  DTV Graphics Bank
+    // DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
-    //  Set VIC Bank
-    //  VIC Graphics Mode
+    // Set VIC Bank
+    // VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    //  VIC Memory Pointers
+    // VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   b1:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BGCOL
     sta BORDERCOL
@@ -1434,13 +1434,13 @@ mode_hicolstdchar: {
     jsr mode_ctrl
     rts
 }
-//  Standard Bitmap Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/ECM = 0, BMM = 1)
-//  Resolution: 320x200
-//  Normal VIC Adressing:
-//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:2] & Matrix[9:0] & RowCounter[2:0] )
-//  Pixel Shifter (1)
-//   - 0: 4bpp CharData[3:0]
-//   - 1: 4bpp CharData[7:4]
+// Standard Bitmap Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/ECM = 0, BMM = 1)
+// Resolution: 320x200
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:2] & Matrix[9:0] & RowCounter[2:0] )
+// Pixel Shifter (1)
+//  - 0: 4bpp CharData[3:0]
+//  - 1: 4bpp CharData[7:4]
 mode_stdbitmap: {
     .label SCREEN = $4000
     .label BITMAP = $6000
@@ -1449,35 +1449,35 @@ mode_stdbitmap: {
     .label ch = 2
     .label cy = 4
     .label l = 4
-    //  DTV Graphics Bank
+    // DTV Graphics Bank
     lda #($ffffffff&BITMAP)/$10000
     sta DTV_GRAPHICS_VIC_BANK
     lda #0
     sta DTV_CONTROL
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^BITMAP/$4000
     sta CIA2_PORT_A
-    //  Set VIC Bank
-    //  VIC Graphics Mode
+    // Set VIC Bank
+    // VIC Graphics Mode
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    //  VIC Memory Pointers
+    // VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
-  //  DTV Palette - default
+  // DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #BLACK
     sta BGCOL
     sta BORDERCOL
@@ -1545,7 +1545,7 @@ mode_stdbitmap: {
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
-//  Draw a line on the bitmap
+// Draw a line on the bitmap
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -1808,7 +1808,7 @@ bitmap_line_ydxd: {
     bne b1
     rts
 }
-//  Clear all graphics on the bitmap
+// Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 2
     .label y = 4
@@ -1838,7 +1838,7 @@ bitmap_clear: {
     bne b1
     rts
 }
-//  Initialize the bitmap plotter tables for a specific bitmap
+// Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _6 = 4
     .label yoffs = 2
@@ -1892,60 +1892,60 @@ bitmap_init: {
     bne b3
     rts
 }
-//  Multicolor Character Mode (LINEAR/HICOL/CHUNK/COLDIS/BMM/ECM = 0, MCM = 1)
-//  Resolution: 160x200 (320x200)
-//  Normal VIC Adressing:
-//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
-//  GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
-//   - 0: 4bpp BgColor0[3:0]
-//   - 1: 4bpp ColorData[2:0]
-//  GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
-//   - 00: 4bpp BgColor0[3:0]
-//   - 01: 4bpp BgColor1[3:0]
-//   - 10: 4bpp BgColor2[3:0]
-//   - 11: 4bpp ColorData[2:0]// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
+// Multicolor Character Mode (LINEAR/HICOL/CHUNK/COLDIS/BMM/ECM = 0, MCM = 1)
+// Resolution: 160x200 (320x200)
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+// GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
+//  - 0: 4bpp BgColor0[3:0]
+//  - 1: 4bpp ColorData[2:0]
+// GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
+//  - 00: 4bpp BgColor0[3:0]
+//  - 01: 4bpp BgColor1[3:0]
+//  - 10: 4bpp BgColor2[3:0]
+//  - 11: 4bpp ColorData[2:0]// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 mode_mcchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    //  Charset ROM
+    // Charset ROM
     .label COLORS = $d800
     .label _28 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    //  DTV Graphics Bank
+    // DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
     sta DTV_CONTROL
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
-    //  Set VIC Bank
-    //  VIC Graphics Mode
+    // Set VIC Bank
+    // VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
-    //  VIC Memory Pointers
+    // VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
-  //  DTV Palette - default
+  // DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BORDERCOL
     lda #BLACK
@@ -2005,59 +2005,59 @@ mode_mcchar: {
     jsr mode_ctrl
     rts
 }
-//  Extended Background Color Character Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/BMM = 0, ECM = 1)
-//  Resolution: 320x200
-//  Normal VIC Adressing:
-//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] ) 
-//  GfxData Pixel Shifter (1)
-//   - 0: 4bpp Background Color
-//     - CharData[7:6] 00: 4bpp BgColor0[3:0]
-//     - CharData[7:6] 01: 4bpp BgColor1[3:0]
-//     - CharData[7:6] 10: 4bpp BgColor2[3:0]
-//     - CharData[7:6] 11: 4bpp BgColor3[3:0]
-//   - 1: 4bpp ColorData[3:0]
+// Extended Background Color Character Mode (LINEAR/HICOL/CHUNK/COLDIS/MCM/BMM = 0, ECM = 1)
+// Resolution: 320x200
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] ) 
+// GfxData Pixel Shifter (1)
+//  - 0: 4bpp Background Color
+//    - CharData[7:6] 00: 4bpp BgColor0[3:0]
+//    - CharData[7:6] 01: 4bpp BgColor1[3:0]
+//    - CharData[7:6] 10: 4bpp BgColor2[3:0]
+//    - CharData[7:6] 11: 4bpp BgColor3[3:0]
+//  - 1: 4bpp ColorData[3:0]
 mode_ecmchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    //  Charset ROM
+    // Charset ROM
     .label COLORS = $d800
     .label _28 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    //  DTV Graphics Bank
+    // DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
     sta DTV_CONTROL
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
-    //  Set VIC Bank
-    //  VIC Graphics Mode
+    // Set VIC Bank
+    // VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    //  VIC Memory Pointers
+    // VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
-  //  DTV Palette - default
+  // DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BORDERCOL
     sta BGCOL1
@@ -2118,55 +2118,55 @@ mode_ecmchar: {
     jsr mode_ctrl
     rts
 }
-//  Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
-//  Resolution: 320x200
-//  Normal VIC Adressing:
-//  VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
-//  Pixel Shifter (1)
-//  - 0: 4bpp BgColor0[3:0]
-//  - 1: 4bpp ColorData[3:0]
+// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
+// Resolution: 320x200
+// Normal VIC Adressing:
+// VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
+// Pixel Shifter (1)
+// - 0: 4bpp BgColor0[3:0]
+// - 1: 4bpp ColorData[3:0]
 mode_stdchar: {
     .label SCREEN = $8000
     .label CHARSET = $9000
-    //  Charset ROM
+    // Charset ROM
     .label COLORS = $d800
     .label _27 = 7
     .label col = 2
     .label ch = 5
     .label cy = 4
-    //  DTV Graphics Bank
+    // DTV Graphics Bank
     lda #($ffffffff&CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
     sta DTV_CONTROL
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2_PORT_A
-    //  Set VIC Bank
-    //  VIC Graphics Mode
+    // Set VIC Bank
+    // VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    //  VIC Memory Pointers
+    // VIC Memory Pointers
     lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
-  //  DTV Palette - default
+  // DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BGCOL
     sta BORDERCOL
@@ -2221,8 +2221,8 @@ mode_stdchar: {
     jsr mode_ctrl
     rts
 }
-//  Print a number of zero-terminated strings, each followed by a newline.
-//  The sequence of lines is terminated by another zero.
+// Print a number of zero-terminated strings, each followed by a newline.
+// The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label str = 2
     lda #<menu.SCREEN
@@ -2268,7 +2268,7 @@ print_str_lines: {
     sta print_char_cursor+1
     jmp b1
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -2288,7 +2288,7 @@ print_ln: {
   !:
     rts
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<menu.SCREEN
@@ -2311,17 +2311,17 @@ print_cls: {
     bne b1
     rts
 }
-//  Set the screen to print on. Also resets current line/char cursor.
+// Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     rts
 }
-  //  Default vallues for the palette
+  // Default vallues for the palette
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
-  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
+  // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
-  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
+  // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  //  Tables for the plotter - initialized by calling bitmap_draw_init();
+  // Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0

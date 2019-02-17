@@ -1,17 +1,17 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  PI*2 in u[4.28] format
+  // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
-  //  PI in u[4.28] format
+  // PI in u[4.28] format
   .const PI_u4f28 = $3243f6a9
-  //  PI/2 in u[4.28] format
+  // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
-  //  PI*2 in u[4.12] format
+  // PI*2 in u[4.12] format
   .const PI2_u4f12 = $6488
-  //  PI in u[4.12] format
+  // PI in u[4.12] format
   .const PI_u4f12 = $3244
-  //  PI/2 in u[4.12] format
+  // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
   .label print_line_cursor = $400
   .label rem16u = 2
@@ -80,7 +80,7 @@ main: {
     sintabb: .fill $c0, 0
     sintabw: .fill 2*$c0, 0
 }
-//  Print a zero-terminated string
+// Print a zero-terminated string
 print_str: {
     .label str = 2
   b1:
@@ -103,7 +103,7 @@ print_str: {
   !:
     jmp b1
 }
-//  Print a signed byte as HEX
+// Print a signed byte as HEX
 print_sbyte: {
     .label b = 4
     lda b
@@ -123,7 +123,7 @@ print_sbyte: {
     sta b
     jmp b2
 }
-//  Print a single char
+// Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -133,7 +133,7 @@ print_char: {
   !:
     rts
 }
-//  Print a byte as HEX
+// Print a byte as HEX
 print_byte: {
     lda print_sbyte.b
     lsr
@@ -150,7 +150,7 @@ print_byte: {
     jsr print_char
     rts
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<print_line_cursor
@@ -173,9 +173,9 @@ print_cls: {
     bne b1
     rts
 }
-//  Generate signed (large) word sinus table - on the full -$7fff - $7fff range
-//  sintab - the table to generate into
-//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+// sintab - the table to generate into
+// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_gen: {
     .label _1 = $f
     .label step = $1c
@@ -195,7 +195,7 @@ sin16s_gen: {
     sta x+1
     sta x+2
     sta x+3
-  //  u[4.28]
+  // u[4.28]
   b1:
     lda x
     sta sin16s.x
@@ -246,9 +246,9 @@ sin16s_gen: {
   !:
     rts
 }
-//  Calculate signed word sinus sin(x)
-//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
-//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
+// Calculate signed word sinus sin(x)
+// x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+// result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16s: {
     .label _6 = $b
     .label x = $b
@@ -422,8 +422,8 @@ sin16s: {
   b3:
     rts
 }
-//  Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
-//  The select parameter indicates how many of the highest bits of the 32-bit result to skip
+// Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+// The select parameter indicates how many of the highest bits of the 32-bit result to skip
 mulu16_sel: {
     .label _0 = $b
     .label _1 = $b
@@ -453,7 +453,7 @@ mulu16_sel: {
     sta return+1
     rts
 }
-//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label mb = $17
     .label a = $15
@@ -505,8 +505,8 @@ mul16u: {
     rol mb+3
     jmp b1
 }
-//  Divide unsigned 32-bit dword dividend with a 16-bit word divisor
-//  The 16-bit word remainder can be found in rem16u after the division
+// Divide unsigned 32-bit dword dividend with a 16-bit word divisor
+// The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = $11
     .label quotient_lo = $f
@@ -538,10 +538,10 @@ div32u16u: {
     sta return+1
     rts
 }
-//  Performs division on two 16 bit unsigned words and an initial remainder
-//  Returns the quotient dividend/divisor.
-//  The final remainder will be set into the global variable rem16u
-//  Implemented using simple binary division
+// Performs division on two 16 bit unsigned words and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
 divr16u: {
     .label rem = 2
     .label dividend = 5
@@ -591,9 +591,9 @@ divr16u: {
     bne b1
     rts
 }
-//  Generate signed byte sinus table - on the full -$7f - $7f range
-//  sintab - the table to generate into
-//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// Generate signed byte sinus table - on the full -$7f - $7f range
+// sintab - the table to generate into
+// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin8s_gen: {
     .label step = $f
     .label sintab = 5
@@ -610,7 +610,7 @@ sin8s_gen: {
     lda #<0
     sta x
     sta x+1
-  //  u[4.12]
+  // u[4.12]
   b1:
     lda x
     sta sin8s.x
@@ -644,11 +644,11 @@ sin8s_gen: {
   !:
     rts
 }
-//  Calculate signed byte sinus sin(x)
-//  x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
-//  result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
+// Calculate signed byte sinus sin(x)
+// x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
+// result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
 sin8s: {
-    //  u[2.6] x^3
+    // u[2.6] x^3
     .const DIV_6 = $2b
     .label _6 = $13
     .label x = $13
@@ -756,8 +756,8 @@ sin8s: {
     txa
     jmp b4
 }
-//  Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
-//  The select parameter indicates how many of the highest bits of the 16-bit result to skip
+// Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
+// The select parameter indicates how many of the highest bits of the 16-bit result to skip
 mulu8_sel: {
     .label _0 = $13
     .label _1 = $13
@@ -775,7 +775,7 @@ mulu8_sel: {
     lda _1+1
     rts
 }
-//  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .label mb = $15
     .label res = $13
@@ -809,10 +809,10 @@ mul8u: {
     rol mb+1
     jmp b1
 }
-//  Performs division on two 16 bit unsigned words
-//  Returns the quotient dividend/divisor.
-//  The remainder will be set into the global variable rem16u
-//  Implemented using simple binary division
+// Performs division on two 16 bit unsigned words
+// Returns the quotient dividend/divisor.
+// The remainder will be set into the global variable rem16u
+// Implemented using simple binary division
 div16u: {
     .label return = $f
     lda #<PI2_u4f12

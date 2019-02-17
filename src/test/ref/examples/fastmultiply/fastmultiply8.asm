@@ -1,22 +1,22 @@
-//  Seriously fast multiply 8-bit version (8bit*8bit=8bit)
-//  Multiplies two signed 8-bit numbers and results in an 8-bit number
-//  C=A*B, A in [-64;64], B in [-96;95], C in [-96;95] - 64 acts a 1 (X*64=X)
-//  Uses the formula a*b = (a+b)^2/4 - (a-b)^2/4
-//  See the following for information about the method
-//  - http://codebase64.org/doku.php?id=base:seriously_fast_multiplication 
-//  - http://codebase64.org/doku.php?id=magazines:chacking16
+// Seriously fast multiply 8-bit version (8bit*8bit=8bit)
+// Multiplies two signed 8-bit numbers and results in an 8-bit number
+// C=A*B, A in [-64;64], B in [-96;95], C in [-96;95] - 64 acts a 1 (X*64=X)
+// Uses the formula a*b = (a+b)^2/4 - (a-b)^2/4
+// See the following for information about the method
+// - http://codebase64.org/doku.php?id=base:seriously_fast_multiplication 
+// - http://codebase64.org/doku.php?id=magazines:chacking16
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_line_cursor = $400
-  //  Pointers to a, b and c=a*b
+  // Pointers to a, b and c=a*b
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
-  //  mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
-  //  f(x) = >(( x * x ))
+  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  // f(x) = >(( x * x ))
   .label mulf_sqr1 = $2000
-  //  g(x) =  >((( 1 - x ) * ( 1 - x )))
+  // g(x) =  >((( 1 - x ) * ( 1 - x )))
   .label mulf_sqr2 = $2200
 main: {
     .label at = 2
@@ -107,7 +107,7 @@ main: {
     bne b2
     rts
 }
-//  Print a signed byte as hex at a specific screen position
+// Print a signed byte as hex at a specific screen position
 print_sbyte_at: {
     .label b = $a
     .label at = 8
@@ -134,7 +134,7 @@ print_sbyte_at: {
     sta b
     jmp b2
 }
-//  Print a single char
+// Print a single char
 print_char_at: {
     .label at = 8
     .label ch = $b
@@ -143,7 +143,7 @@ print_char_at: {
     sta (at),y
     rts
 }
-//  Print a byte as HEX at a specific position
+// Print a byte as HEX at a specific position
 print_byte_at: {
     .label at = 8
     lda print_sbyte_at.b
@@ -222,7 +222,7 @@ init_screen: {
     bne b2
     rts
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<print_line_cursor

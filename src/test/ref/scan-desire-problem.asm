@@ -1,4 +1,4 @@
-//  Illustrates a problem with a missing fragment - pbuc1_derefidx_vwuz1=vbuz2
+// Illustrates a problem with a missing fragment - pbuc1_derefidx_vwuz1=vbuz2
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -14,7 +14,7 @@
   .label BGCOL4 = $d024
   .label SPRITES_COLS = $d027
   .label D018 = $d018
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const RED = 2
@@ -165,7 +165,7 @@ draw_block: {
     sta colors+$29
     rts
 }
-//  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .const b = $28
     .label mb = 6
@@ -232,7 +232,7 @@ init: {
     sta BGCOL4
     rts
 }
-//  Fill some memory with a value
+// Fill some memory with a value
 fill: {
     .label end = 6
     .label addr = 4
@@ -262,7 +262,7 @@ fill: {
 init_sprites: {
     lda #1
     sta SPRITES_ENABLE
-    //  one sprite enabled
+    // one sprite enabled
     lda #0
     sta SPRITES_EXPAND_X
     sta SPRITES_EXPAND_Y

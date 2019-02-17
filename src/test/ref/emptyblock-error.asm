@@ -1,4 +1,4 @@
-//  Error cleaning up unused blocks
+// Error cleaning up unused blocks
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

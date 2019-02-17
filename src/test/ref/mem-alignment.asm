@@ -1,4 +1,4 @@
-//  Test that memory alignment of arrays work
+// Test that memory alignment of arrays work
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

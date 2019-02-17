@@ -1,4 +1,4 @@
-//  PI in u[4.28] format
+// PI in u[4.28] format
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

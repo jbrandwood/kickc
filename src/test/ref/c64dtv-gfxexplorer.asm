@@ -1,18 +1,18 @@
-//  Interactive Explorer for C64DTV Screen Modes
+// Interactive Explorer for C64DTV Screen Modes
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-  //  RAM in $A000, $E000 CHAR ROM in $D000
+  // RAM in $A000, $E000 CHAR ROM in $D000
   .const PROCPORT_RAM_CHARROM = $31
-  //  The address of the CHARGEN character set
+  // The address of the CHARGEN character set
   .label CHARGEN = $d000
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -30,24 +30,24 @@
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  CIA#1 Port A: keyboard matrix columns and joystick #2
+  // CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
-  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
+  // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
-  //  CIA #1 Port A data direction register.
+  // CIA #1 Port A data direction register.
   .label CIA1_PORT_A_DDR = $dc02
-  //  CIA #1 Port B data direction register.
+  // CIA #1 Port B data direction register.
   .label CIA1_PORT_B_DDR = $dc03
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  Feature enables or disables the extra C64 DTV features
+  // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
-  //  Controls the graphics modes of the C64 DTV
+  // Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
   .const DTV_LINEAR = 1
   .const DTV_BORDER_OFF = 2
@@ -55,29 +55,29 @@
   .const DTV_OVERSCAN = 8
   .const DTV_COLORRAM_OFF = $10
   .const DTV_CHUNKY = $40
-  //  Defines colors for the 16 first colors ($00-$0f)
+  // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-  //  Linear Graphics Plane A Counter Control
+  // Linear Graphics Plane A Counter Control
   .label DTV_PLANEA_START_LO = $d03a
   .label DTV_PLANEA_START_MI = $d03b
   .label DTV_PLANEA_START_HI = $d045
   .label DTV_PLANEA_STEP = $d046
   .label DTV_PLANEA_MODULO_LO = $d038
   .label DTV_PLANEA_MODULO_HI = $d039
-  //  Linear Graphics Plane B Counter Control
+  // Linear Graphics Plane B Counter Control
   .label DTV_PLANEB_START_LO = $d049
   .label DTV_PLANEB_START_MI = $d04a
   .label DTV_PLANEB_START_HI = $d04b
   .label DTV_PLANEB_STEP = $d04c
   .label DTV_PLANEB_MODULO_LO = $d047
   .label DTV_PLANEB_MODULO_HI = $d048
-  //  Select memory bank where color data is fetched from (bits 11:0)
-  //  Memory address of Color RAM is ColorBank*$400
+  // Select memory bank where color data is fetched from (bits 11:0)
+  // Memory address of Color RAM is ColorBank*$400
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
   .const DTV_COLOR_BANK_DEFAULT = $1d800
-  //  Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
-  //  Memory address of VIC Graphics is GraphicsBank*$10000
+  // Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
+  // Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .const KEY_CRSR_RIGHT = 2
   .const KEY_CRSR_DOWN = 7
@@ -86,49 +86,49 @@
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
-  //  Left shift is pressed
+  // Left shift is pressed
   .const KEY_MODIFIER_LSHIFT = 1
-  //  Right shift is pressed
+  // Right shift is pressed
   .const KEY_MODIFIER_RSHIFT = 2
-  //  CTRL is pressed
+  // CTRL is pressed
   .const KEY_MODIFIER_CTRL = 4
-  //  Commodore is pressed
+  // Commodore is pressed
   .const KEY_MODIFIER_COMMODORE = 8
-  //  VIC Screens
+  // VIC Screens
   .label VIC_SCREEN0 = $4000
   .label VIC_SCREEN1 = $4400
   .label VIC_SCREEN2 = $4800
   .label VIC_SCREEN3 = $4c00
   .label VIC_SCREEN4 = $5000
-  //  VIC Charset from ROM
+  // VIC Charset from ROM
   .label VIC_CHARSET_ROM = $5800
-  //  VIC Bitmap
+  // VIC Bitmap
   .label VIC_BITMAP = $6000
-  //  8BPP Chunky Bitmap (contains 8bpp pixels)
+  // 8BPP Chunky Bitmap (contains 8bpp pixels)
   .const PLANE_8BPP_CHUNKY = $20000
-  //  Plane with horisontal stripes
+  // Plane with horisontal stripes
   .const PLANE_HORISONTAL = $30000
-  //  Plane with vertical stripes
+  // Plane with vertical stripes
   .const PLANE_VERTICAL = $32000
-  //  Plane with horisontal stripes every 2 pixels
+  // Plane with horisontal stripes every 2 pixels
   .const PLANE_HORISONTAL2 = $34000
-  //  Plane with vertical stripes every 2 pixels
+  // Plane with vertical stripes every 2 pixels
   .const PLANE_VERTICAL2 = $36000
-  //  Plane with blank pixels
+  // Plane with blank pixels
   .const PLANE_BLANK = $38000
-  //  Plane with all pixels
+  // Plane with all pixels
   .const PLANE_FULL = $3a000
-  //  Plane with all pixels
+  // Plane with all pixels
   .const PLANE_CHARSET8 = $3c000
-  //  Screen containing the FORM
+  // Screen containing the FORM
   .label FORM_SCREEN = $400
-  //  Charset used for the FORM
+  // Charset used for the FORM
   .label FORM_CHARSET = $1800
-  //  Number of form fields
+  // Number of form fields
   .const form_fields_cnt = $24
-  //  The number of frames to use for a full blink cycle
+  // The number of frames to use for a full blink cycle
   .const FORM_CURSOR_BLINK = $28
-  //  Any shift is pressed
+  // Any shift is pressed
   .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
   .label form_ctrl_bmm = form_fields_val+1
   .label form_ctrl_mcm = form_fields_val+2
@@ -172,13 +172,13 @@
   .label form_cursor_count = $e
 main: {
     sei
-    //  Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
-    //  Disable kernal & basic
+    // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    //  Enable DTV extended modes
+    // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
     jsr keyboard_init
@@ -193,7 +193,7 @@ main: {
     jsr gfx_mode
     jmp b2
 }
-//  Change graphics mode to show the selected graphics mode
+// Change graphics mode to show the selected graphics mode
 gfx_mode: {
     .label _31 = $a
     .label _33 = 3
@@ -394,10 +394,10 @@ gfx_mode: {
     sta DTV_PLANEB_MODULO_LO
     lda #0
     sta DTV_PLANEB_MODULO_HI
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^VIC_SCREEN0/$4000
     sta CIA2_PORT_A
     lda form_vic_screen
@@ -427,8 +427,8 @@ gfx_mode: {
     lsr
     lsr
     ora _65
-    //  Set VIC Bank
-    //  VIC memory
+    // Set VIC Bank
+    // VIC memory
     sta VIC_MEMORY
     lda form_vic_cols
     jsr get_vic_screen
@@ -461,7 +461,7 @@ gfx_mode: {
     lda cy
     cmp #$19
     bne b10
-    //  Background colors
+    // Background colors
     lda #0
     sta BORDERCOL
     lda form_vic_bg0_hi
@@ -492,12 +492,12 @@ gfx_mode: {
     asl
     ora form_vic_bg3_lo
     sta BGCOL4
-    //  DTV Palette
+    // DTV Palette
     lda form_dtv_palet
     cmp #0
     beq b18
     ldy #0
-  //  DTV Palette - Grey Tones
+  // DTV Palette - Grey Tones
   b13:
     tya
     sta DTV_PALETTE,y
@@ -513,7 +513,7 @@ gfx_mode: {
     cmp #KEY_SPACE
     bne b19
     rts
-  //  DTV Palette - default
+  // DTV Palette - default
   b18:
     ldy #0
   b15:
@@ -524,9 +524,9 @@ gfx_mode: {
     bne b15
     jmp b19
 }
-//  Get the next event from the keyboard event buffer.
-//  Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
-//  The buffer is filled by keyboard_event_scan()
+// Get the next event from the keyboard event buffer.
+// Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+// The buffer is filled by keyboard_event_scan()
 keyboard_event_get: {
     lda keyboard_events_size
     cmp #0
@@ -540,10 +540,10 @@ keyboard_event_get: {
   breturn:
     rts
 }
-//  Scans the entire matrix to determine which keys have been pressed/depressed.
-//  Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
-//  Handles debounce and only generates events when the status of a key changes.
-//  Also stores current status of modifiers in keyboard_modifiers.
+// Scans the entire matrix to determine which keys have been pressed/depressed.
+// Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+// Handles debounce and only generates events when the status of a key changes.
+// Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label row_scan = $12
     .label keycode = 8
@@ -608,7 +608,7 @@ keyboard_event_scan: {
     sta keyboard_modifiers
   breturn:
     rts
-  //  Something has changed on the keyboard row - check each column
+  // Something has changed on the keyboard row - check each column
   b6:
     lda #0
     sta col
@@ -627,7 +627,7 @@ keyboard_event_scan: {
     and keyboard_matrix_col_bitmask,y
     cmp #0
     beq b7
-    //  Key pressed
+    // Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
@@ -638,7 +638,7 @@ keyboard_event_scan: {
     lda col
     cmp #8
     bne b4
-    //  Store the current keyboard status for the row to debounce
+    // Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
@@ -646,14 +646,14 @@ keyboard_event_scan: {
   b7:
     lda #$40
     ora keycode
-    //  Key released
+    // Key released
     ldy keyboard_events_size
     sta keyboard_events,y
     inc keyboard_events_size
     jmp b5
 }
-//  Determine if a specific key is currently pressed based on the last keyboard_event_scan()
-//  Returns 0 is not pressed and non-0 if pressed
+// Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+// Returns 0 is not pressed and non-0 if pressed
 keyboard_event_pressed: {
     .label row_bits = 8
     .label keycode = 7
@@ -671,11 +671,11 @@ keyboard_event_pressed: {
     and row_bits
     rts
 }
-//  Read a single row of the keyboard matrix
-//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-//  Returns the keys pressed on the row as bits according to the C64 key matrix.
-//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     tay
     lda keyboard_matrix_row_bitmask,y
@@ -684,7 +684,7 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
-//  Get the VIC screen address from the screen index
+// Get the VIC screen address from the screen index
 get_vic_screen: {
     .label return = 3
     cmp #0
@@ -728,7 +728,7 @@ get_vic_screen: {
   breturn:
     rts
 }
-//  Get the VIC charset/bitmap address from the index
+// Get the VIC charset/bitmap address from the index
 get_vic_charset: {
     .label return = 3
     cmp #0
@@ -748,7 +748,7 @@ get_vic_charset: {
   breturn:
     rts
 }
-//  Get plane address from a plane index (from the form)
+// Get plane address from a plane index (from the form)
 get_plane: {
     .label return = $a
     cmp #0
@@ -942,7 +942,7 @@ get_plane: {
   breturn:
     rts
 }
-//  Show the form - and let the user change values
+// Show the form - and let the user change values
 form_mode: {
     .label preset_current = $f
     lda #<COLS
@@ -971,33 +971,33 @@ form_mode: {
     jsr form_render_values
     lda form_fields_val
     jsr render_preset_name
-    //  DTV Graphics Bank
+    // DTV Graphics Bank
     lda #($ffffffff&FORM_CHARSET)/$10000
     sta DTV_GRAPHICS_VIC_BANK
-    //  DTV Color Bank
+    // DTV Color Bank
     lda #DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
-    //  VIC Graphics Bank
+    // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
-    //  Set VIC Bank bits to output - all others to input
+    // Set VIC Bank bits to output - all others to input
     lda #3^FORM_CHARSET/$4000
     sta CIA2_PORT_A
-    //  Set VIC Bank
-    //  DTV Graphics Mode
+    // Set VIC Bank
+    // DTV Graphics Mode
     lda #0
     sta DTV_CONTROL
-    //  VIC Graphics Mode
+    // VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
     sta VIC_CONTROL
     lda #VIC_CSEL
     sta VIC_CONTROL2
-    //  VIC Memory Pointers
+    // VIC Memory Pointers
     lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
     sta VIC_MEMORY
-    //  DTV Plane A to FORM_SCREEN also
+    // DTV Plane A to FORM_SCREEN also
     lda #<FORM_SCREEN
     sta DTV_PLANEA_START_LO
     lda #>FORM_SCREEN
@@ -1005,20 +1005,20 @@ form_mode: {
     lda #0
     sta DTV_PLANEA_START_HI
     tay
-  //  DTV Palette - default
+  // DTV Palette - default
   b1:
     lda DTV_PALETTE_DEFAULT,y
     sta DTV_PALETTE,y
     iny
     cpy #$10
     bne b1
-    //  Screen colors
+    // Screen colors
     lda #0
     sta BGCOL
     sta BORDERCOL
     lda form_fields_val
     sta preset_current
-  //  Let the user change values in the form
+  // Let the user change values in the form
   b5:
     lda RASTER
     cmp #$ff
@@ -1040,8 +1040,8 @@ form_mode: {
     jsr render_preset_name
     jmp b5
 }
-//  Render form preset name in the form
-//  idx is the ID of the preset
+// Render form preset name in the form
+// idx is the ID of the preset
 render_preset_name: {
     .label name = 3
     cmp #0
@@ -1152,7 +1152,7 @@ render_preset_name: {
     name_10: .text "8bpp Pixel Cell               @"
     name_11: .text "Standard Charset              @"
 }
-//  Print a string at a specific screen position
+// Print a string at a specific screen position
 print_str_at: {
     .label at = 5
     .label str = 3
@@ -1180,7 +1180,7 @@ print_str_at: {
   !:
     jmp b1
 }
-//  Render all form values from the form_fields_val array
+// Render all form values from the form_fields_val array
 form_render_values: {
     .label field = 3
     .label idx = 2
@@ -1200,8 +1200,8 @@ form_render_values: {
     bcc b1
     rts
 }
-//  Get the screen address of a form field
-//  field_idx is the index of the field to get the screen address for
+// Get the screen address of a form field
+// field_idx is the index of the field to get the screen address for
 form_field_ptr: {
     .label return = 3
     .label field_idx = 2
@@ -1223,8 +1223,8 @@ form_field_ptr: {
     sta return+1
     rts
 }
-//  Apply a form value preset to the form values
-//  idx is the ID of the preset
+// Apply a form value preset to the form values
+// idx is the ID of the preset
 apply_preset: {
     .label preset = 3
     cmp #0
@@ -1316,7 +1316,7 @@ apply_preset: {
     sta preset+1
   b22:
     ldy #0
-  //  Copy preset values into the fields
+  // Copy preset values into the fields
   b23:
     lda (preset),y
     sta form_fields_val,y
@@ -1325,8 +1325,8 @@ apply_preset: {
     bne b23
     rts
 }
-//  Reads keyboard and allows the user to navigate and change the fields of the form
-//  Returns 0 if space is not pressed, non-0 if space is pressed
+// Reads keyboard and allows the user to navigate and change the fields of the form
+// Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
     .label field = 3
     stx form_field_ptr.field_idx
@@ -1359,7 +1359,7 @@ form_control: {
     lda #$7f
     ldy #0
     and (field),y
-    //  Unblink the cursor
+    // Unblink the cursor
     sta (field),y
     lda #KEY_MODIFIER_SHIFT
     and keyboard_modifiers
@@ -1395,7 +1395,7 @@ form_control: {
     lda form_fields_max,x
     sta form_fields_val,x
   b12:
-    //  Render field value
+    // Render field value
     lda form_fields_val,x
     tay
     lda print_hextab,y
@@ -1427,8 +1427,8 @@ form_control: {
     sta (field),y
     jmp b3
 }
-//  Set the screen to use for the form.
-//  screen is the start address of the screen to use
+// Set the screen to use for the form.
+// screen is the start address of the screen to use
 form_set_screen: {
     .label line = 3
     ldy #0
@@ -1453,8 +1453,8 @@ form_set_screen: {
     bne b1
     rts
 }
-//  Print a number of zero-terminated strings, each followed by a newline.
-//  The sequence of lines is terminated by another zero.
+// Print a number of zero-terminated strings, each followed by a newline.
+// The sequence of lines is terminated by another zero.
 print_str_lines: {
     .label str = 3
     lda print_set_screen.screen
@@ -1492,7 +1492,7 @@ print_str_lines: {
     sta print_char_cursor+1
     jmp b1
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -1512,7 +1512,7 @@ print_ln: {
   !:
     rts
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label _0 = 5
     .label sc = 3
@@ -1543,12 +1543,12 @@ print_cls: {
     bne b1
     rts
 }
-//  Set the screen to print on. Also resets current line/char cursor.
+// Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
     .label screen = $10
     rts
 }
-//  Initialize the different graphics in the memory
+// Initialize the different graphics in the memory
 gfx_init: {
     jsr gfx_init_screen0
     jsr gfx_init_screen1
@@ -1567,7 +1567,7 @@ gfx_init: {
     jsr gfx_init_plane_full
     rts
 }
-//  Initialize Plane with all pixels
+// Initialize Plane with all pixels
 gfx_init_plane_full: {
     lda #$ff
     sta gfx_init_plane_fill.fill
@@ -1582,7 +1582,7 @@ gfx_init_plane_full: {
     jsr gfx_init_plane_fill
     rts
 }
-//  Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
+// Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
 gfx_init_plane_fill: {
     .label _0 = $13
     .label _1 = 3
@@ -1658,11 +1658,11 @@ gfx_init_plane_fill: {
     jsr dtvSetCpuBankSegment1
     rts
 }
-//  Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
-//  This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
-//  The actual memory addressed will be $4000*cpuSegmentIdx
+// Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+// This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+// The actual memory addressed will be $4000*cpuSegmentIdx
 dtvSetCpuBankSegment1: {
-    //  Move CPU BANK 1 SEGMENT ($4000-$7fff)
+    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     sta cpuBank
     .byte $32, $dd
@@ -1670,7 +1670,7 @@ dtvSetCpuBankSegment1: {
     .byte $32, $00
     rts
 }
-//  Initialize Plane with blank pixels
+// Initialize Plane with blank pixels
 gfx_init_plane_blank: {
     lda #0
     sta gfx_init_plane_fill.fill
@@ -1685,7 +1685,7 @@ gfx_init_plane_blank: {
     jsr gfx_init_plane_fill
     rts
 }
-//  Initialize Plane with Vertical Stripes every 2 pixels
+// Initialize Plane with Vertical Stripes every 2 pixels
 gfx_init_plane_vertical2: {
     lda #$1b
     sta gfx_init_plane_fill.fill
@@ -1700,7 +1700,7 @@ gfx_init_plane_vertical2: {
     jsr gfx_init_plane_fill
     rts
 }
-//  Initialize Plane with Horizontal Stripes every 2 pixels
+// Initialize Plane with Horizontal Stripes every 2 pixels
 gfx_init_plane_horisontal2: {
     .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
     .label gfxa = 3
@@ -1739,7 +1739,7 @@ gfx_init_plane_horisontal2: {
     rts
     row_bitmask: .byte 0, $55, $aa, $ff
 }
-//  Initialize Plane with Vertical Stripes
+// Initialize Plane with Vertical Stripes
 gfx_init_plane_vertical: {
     .const gfxbCpuBank = PLANE_VERTICAL/$4000
     .label gfxb = 3
@@ -1773,7 +1773,7 @@ gfx_init_plane_vertical: {
     jsr dtvSetCpuBankSegment1
     rts
 }
-//  Initialize Plane with Horizontal Stripes
+// Initialize Plane with Horizontal Stripes
 gfx_init_plane_horisontal: {
     .const gfxbCpuBank = PLANE_HORISONTAL/$4000
     .label gfxa = 3
@@ -1821,7 +1821,7 @@ gfx_init_plane_horisontal: {
   !:
     jmp b4
 }
-//  Initialize Plane with 8bpp charset
+// Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
     .label bits = 8
@@ -1892,7 +1892,7 @@ gfx_init_plane_charset8: {
     jsr dtvSetCpuBankSegment1
     rts
 }
-//  Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
+// Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
     .label _6 = $10
     .label gfxb = 5
@@ -1958,7 +1958,7 @@ gfx_init_plane_8bppchunky: {
     jsr dtvSetCpuBankSegment1
     rts
 }
-//  Initialize VIC bitmap
+// Initialize VIC bitmap
 gfx_init_vic_bitmap: {
     .const lines_cnt = 9
     .label l = 2
@@ -1985,7 +1985,7 @@ gfx_init_vic_bitmap: {
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
-//  Draw a line on the bitmap
+// Draw a line on the bitmap
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -2248,7 +2248,7 @@ bitmap_line_ydxd: {
     bne b1
     rts
 }
-//  Clear all graphics on the bitmap
+// Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
@@ -2278,7 +2278,7 @@ bitmap_clear: {
     bne b1
     rts
 }
-//  Initialize the bitmap plotter tables for a specific bitmap
+// Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
     .label _6 = 2
     .label yoffs = 3
@@ -2373,7 +2373,7 @@ gfx_init_charset: {
     sta PROCPORT
     rts
 }
-//  Initialize VIC screen 4 - all chars are 00
+// Initialize VIC screen 4 - all chars are 00
 gfx_init_screen4: {
     .label ch = 3
     .label cy = 2
@@ -2402,7 +2402,7 @@ gfx_init_screen4: {
     bne b1
     rts
 }
-//  Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
+// Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 gfx_init_screen3: {
     .label _1 = 7
     .label ch = 3
@@ -2441,7 +2441,7 @@ gfx_init_screen3: {
     bne b1
     rts
 }
-//  Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
+// Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
 gfx_init_screen2: {
     .label col2 = 7
     .label ch = 3
@@ -2486,7 +2486,7 @@ gfx_init_screen2: {
     bne b1
     rts
 }
-//  Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
+// Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
 gfx_init_screen1: {
     .label ch = 3
     .label cy = 2
@@ -2518,7 +2518,7 @@ gfx_init_screen1: {
     bne b1
     rts
 }
-//  Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
+// Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
     .label _1 = 7
     .label ch = 3
@@ -2557,65 +2557,65 @@ gfx_init_screen0: {
     bne b1
     rts
 }
-//  Initialize keyboard reading by setting CIA#$ Data Direction Registers
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    //  Keyboard Matrix Columns Write Mode
+    // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
-    //  Keyboard Matrix Columns Read Mode
+    // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
     rts
 }
-  //  Default vallues for the palette
+  // Default vallues for the palette
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   print_hextab: .text "0123456789abcdef"
-  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
+  // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
-  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
+  // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  //  Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
+  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
   keyboard_events: .fill 8, 0
-  //  The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
+  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
-  //  Tables for the plotter - initialized by calling bitmap_draw_init();
+  // Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  //  Form fields x/y-positions
+  // Form fields x/y-positions
   form_fields_x: .byte 8, $c, $c, $c, $c, $c, $c, $c, $c, $c, $19, $18, $19, $18, $19, $18, $19, $19, $18, $19, $18, $19, $18, $19, $25, $25, $25, $25, $24, $25, $24, $25, $24, $25, $24, $25
   form_fields_y: .byte 2, 5, 6, 7, 8, 9, $a, $b, $c, $d, 5, 6, 6, 7, 7, 8, 8, $b, $c, $c, $d, $d, $e, $e, 5, 6, 7, $a, $b, $b, $c, $c, $d, $d, $e, $e
-  //  Form field max values (all values are in the interval 0..max)
+  // Form field max values (all values are in the interval 0..max)
   form_fields_max: .byte $a, 1, 1, 1, 1, 1, 1, 1, 1, 1, $d, $f, $f, $f, $f, $f, $f, $d, $f, $f, $f, $f, $f, $f, 3, 1, 4, 1, $f, $f, $f, $f, $f, $f, $f, $f
-  //  Form fields values
+  // Form fields values
   form_fields_val: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  //  Preset: Standard Char Mode
+  // Preset: Standard Char Mode
   preset_stdchar: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  //  Preset: Extended Color Char Mode
+  // Preset: Extended Color Char Mode
   preset_ecmchar: .byte 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 5, 0, 6
-  //  Preset: Standard Bitmap
+  // Preset: Standard Bitmap
   preset_stdbm: .byte 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  //  Preset: MC Bitmap
+  // Preset: MC Bitmap
   preset_mcbm: .byte 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0
-  //  Preset: Hicolor Standard Char Mode
+  // Preset: Hicolor Standard Char Mode
   preset_hi_stdchar: .byte 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-  //  Preset: Hicolor Extended Color Char Mode
+  // Preset: Hicolor Extended Color Char Mode
   preset_hi_ecmchar: .byte 5, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 3, 4, 6, 8, 9, $c, $c
-  //  Preset: Two plane mode
+  // Preset: Two plane mode
   preset_twoplane: .byte 6, 1, 0, 1, 1, 1, 0, 0, 0, 0, 7, 0, 0, 0, 1, 0, 0, 8, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 7, 0, $d, 4, 0, 0, 0, 0
-  //  Preset: Chunky 8bpp
+  // Preset: Chunky 8bpp
   preset_chunky: .byte 7, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-  //  Preset: Sixs FREDs mode
+  // Preset: Sixs FREDs mode
   preset_sixsfred: .byte 8, 1, 1, 1, 1, 1, 0, 0, 0, 0, 9, 0, 0, 0, 1, 0, 0, $a, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0
-  //  Preset: Sixs FREDs 2 mode
+  // Preset: Sixs FREDs 2 mode
   preset_sixsfred2: .byte 9, 1, 1, 1, 0, 1, 0, 0, 0, 0, 9, 0, 0, 0, 1, 0, 0, $a, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-  //  Preset: 8bpp Pixel Cell
+  // Preset: 8bpp Pixel Cell
   preset_8bpppixelcell: .byte $a, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, $b, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-  //  Table with addresses of the y-lines of the form. The first line contains the address of the form screen.
+  // Table with addresses of the y-lines of the form. The first line contains the address of the form screen.
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0
-  //  Charset ROM
+  // Charset ROM
   FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @"+"                                        @"+" PRESET 0 Standard Charset              @"+"                                        @"+" CONTROL        PLANE  A     VIC II     @"+" bmm        0   pattern p0   screen s0  @"+" mcm        0   start   00   gfx    g0  @"+" ecm        0   step    00   colors c0  @"+" hicolor    0   modulo  00              @"+" linear     0                COLORS     @"+" color off  0   PLANE  B     palet   0  @"+" chunky     0   pattern p0   bgcol0 00  @"+" border off 0   start   00   bgcol1 00  @"+" overscan   0   step    00   bgcol2 00  @"+"                modulo  00   bgcol3 00  @"+"@"
   FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+"                                        @"+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+"                                        @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm              @"+" nnnnnnnnnnnn                jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+"@"

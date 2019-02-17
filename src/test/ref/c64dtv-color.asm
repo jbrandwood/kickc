@@ -1,18 +1,18 @@
-//  Test C64DTV v2 256-colors and the 16-color redefinable palette
+// Test C64DTV v2 256-colors and the 16-color redefinable palette
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label RASTER = $d012
   .label BGCOL = $d021
-  //  Feature enables or disables the extra C64 DTV features
+  // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
-  //  Controls the graphics modes of the C64 DTV
+  // Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
   .const DTV_BORDER_OFF = 2
   .const DTV_HIGHCOLOR = 4
   .const DTV_BADLINE_OFF = $20
-  //  Defines colors for the 16 first colors ($00-$0f)
+  // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
 main: {
     sei
@@ -24,7 +24,7 @@ main: {
     lda RASTER
     cmp #$40
     bne b4
-    //  Create rasterbars
+    // Create rasterbars
     lda #0
     sta BGCOL
     ldx #$31
@@ -59,7 +59,7 @@ main: {
     cpx #0
     bne b7
     ldx #0
-  //  Rotate palette
+  // Rotate palette
   b8:
     lda palette,x
     sta DTV_PALETTE,x

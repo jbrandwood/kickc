@@ -1,4 +1,4 @@
-//  Inline Strings in assignments
+// Inline Strings in assignments
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

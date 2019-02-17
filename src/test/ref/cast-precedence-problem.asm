@@ -1,4 +1,4 @@
-//  Tests that casting inside constants in the output handles precedence between cast and + correctly - should generate the following KA-expression ($ff & sumw>>1)+1
+// Tests that casting inside constants in the output handles precedence between cast and + correctly - should generate the following KA-expression ($ff & sumw>>1)+1
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

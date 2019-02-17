@@ -32,7 +32,7 @@ main: {
     sta print_char_cursor+1
     jmp b1
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -52,7 +52,7 @@ print_ln: {
   !:
     rts
 }
-//  Print a zero-terminated string
+// Print a zero-terminated string
 print_str: {
     .label str = 4
     lda #<txt
@@ -79,7 +79,7 @@ print_str: {
   !:
     jmp b1
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<$400

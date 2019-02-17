@@ -9,7 +9,7 @@ main: {
     rts
     str: .text "hello world!@"
 }
-//  Print a newline
+// Print a newline
 print_ln: {
     lda #<$400
     sta print_line_cursor
@@ -33,7 +33,7 @@ print_ln: {
   !:
     rts
 }
-//  Print a zero-terminated string
+// Print a zero-terminated string
 print_str: {
     .label str = 2
     lda #<$400

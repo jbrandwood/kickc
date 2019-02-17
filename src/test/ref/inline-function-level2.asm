@@ -1,4 +1,4 @@
-//  Inline functions in two levels
+// Inline functions in two levels
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

@@ -1,4 +1,4 @@
-//  Fills the screen using an unrolled inner ranged for()-loop
+// Fills the screen using an unrolled inner ranged for()-loop
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

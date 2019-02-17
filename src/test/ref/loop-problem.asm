@@ -1,4 +1,4 @@
-//  A simple loop results in NullPointerException during loop analysis
+// A simple loop results in NullPointerException during loop analysis
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

@@ -1,5 +1,5 @@
-//  Incrementing / decrementing pointer content should result in code modifying the memory location - eg. inc $d020.
-//  Currently it does not but instead leads to just reading the value a few times.
+// Incrementing / decrementing pointer content should result in code modifying the memory location - eg. inc $d020.
+// Currently it does not but instead leads to just reading the value a few times.
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

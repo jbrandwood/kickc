@@ -1,4 +1,4 @@
-//  Results in infinite compile loop as the compiler keeps trying to remove the same (empty) alias
+// Results in infinite compile loop as the compiler keeps trying to remove the same (empty) alias
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

@@ -1,5 +1,5 @@
-//  Test inline function
-//  Splits screen so upper half is lower case and lower half lower case
+// Test inline function
+// Splits screen so upper half is lower case and lower half lower case
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

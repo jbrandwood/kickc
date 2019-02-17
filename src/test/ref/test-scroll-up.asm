@@ -1,4 +1,4 @@
-//  Tests different ways of scrolling up the screen
+// Tests different ways of scrolling up the screen
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

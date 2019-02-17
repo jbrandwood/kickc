@@ -1,4 +1,4 @@
-//  Tests a pointer to a boolean
+// Tests a pointer to a boolean
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

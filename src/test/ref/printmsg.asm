@@ -40,7 +40,7 @@ main: {
     jsr print_ln
     rts
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -60,7 +60,7 @@ print_ln: {
   !:
     rts
 }
-//  Print a zero-terminated string
+// Print a zero-terminated string
 print_str: {
     .label str = 4
   b1:

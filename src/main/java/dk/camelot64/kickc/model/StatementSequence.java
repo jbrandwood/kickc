@@ -34,7 +34,7 @@ public class StatementSequence {
          }
          if(program.getLog().isVerboseComments()) {
             for(Comment comment : statement.getComments()) {
-               out.append(indent + "// " + comment + "\n");
+               out.append(indent + "//" + comment + "\n");
             }
          }
          out.append(indent);

@@ -1,4 +1,4 @@
-//  Variables without initialization causes problems when compiling
+// Variables without initialization causes problems when compiling
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

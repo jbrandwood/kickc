@@ -1,15 +1,15 @@
-//  Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
+// Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label RASTER = $d012
-  //  CIA#1 Port A: keyboard matrix columns and joystick #2
+  // CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
-  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
+  // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
-  //  CIA #1 Port A data direction register.
+  // CIA #1 Port A data direction register.
   .label CIA1_PORT_A_DDR = $dc02
-  //  CIA #1 Port B data direction register.
+  // CIA #1 Port B data direction register.
   .label CIA1_PORT_B_DDR = $dc03
   .const KEY_3 = 8
   .const KEY_W = 9
@@ -70,7 +70,7 @@ main: {
     sta sc
     lda #>$400
     sta sc+1
-  //  Clear screen
+  // Clear screen
   b1:
     lda #' '
     ldy #0
@@ -98,7 +98,7 @@ main: {
     sta screen+1
     lda #0
     sta row
-  //  Read & print keyboard matrix
+  // Read & print keyboard matrix
   b6:
     ldy row
     jsr keyboard_matrix_read
@@ -159,7 +159,7 @@ main: {
     cmp #$40
     bne b10
   b2:
-  //  Add some spaces
+  // Add some spaces
     txa
     tay
     lda #' '
@@ -173,10 +173,10 @@ main: {
     sta (screen),y
     jmp b9
 }
-//  Determines whether a specific key is currently pressed by accessing the matrix directly
-//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
-//  All keys exist as as KEY_XXX constants.
-//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// Determines whether a specific key is currently pressed by accessing the matrix directly
+// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+// All keys exist as as KEY_XXX constants.
+// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     .label colidx = 5
     tya
@@ -192,11 +192,11 @@ keyboard_key_pressed: {
     and keyboard_matrix_col_bitmask,y
     rts
 }
-//  Read a single row of the keyboard matrix
-//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-//  Returns the keys pressed on the row as bits according to the C64 key matrix.
-//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
@@ -204,28 +204,28 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
-//  Get the keycode corresponding to a specific screen code character
-//  ch is the character to get the key code for ($00-$3f)
-//  Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
-//  If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
+// Get the keycode corresponding to a specific screen code character
+// ch is the character to get the key code for ($00-$3f)
+// Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
+// If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 keyboard_get_keycode: {
     lda keyboard_char_keycodes,y
     rts
 }
-//  Initialize keyboard reading by setting CIA#$ Data Direction Registers
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    //  Keyboard Matrix Columns Write Mode
+    // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
-    //  Keyboard Matrix Columns Read Mode
+    // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
     rts
 }
-  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
+  // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
-  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
+  // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  //  Keycodes for each screen code character from $00-$3f.
-  //  Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
+  // Keycodes for each screen code character from $00-$3f.
+  // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f

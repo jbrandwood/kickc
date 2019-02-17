@@ -1,4 +1,4 @@
-//  An 8x8 char letter scroller
+// An 8x8 char letter scroller
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -24,7 +24,7 @@ main: {
     lda #1
     sta current_bit
     ldx #7
-  //  Wait for raster
+  // Wait for raster
   b2:
     lda RASTER
     cmp #$fe
@@ -116,7 +116,7 @@ scroll_bit: {
 }
 scroll_hard: {
     ldx #0
-  //  Hard scroll
+  // Hard scroll
   b1:
     lda SCREEN+1,x
     sta SCREEN,x
@@ -139,7 +139,7 @@ scroll_hard: {
     bne b1
     rts
 }
-//  Find the next char of the scroll text
+// Find the next char of the scroll text
 next_char: {
     ldy #0
     lda (nxt),y
@@ -157,7 +157,7 @@ next_char: {
   !:
     rts
 }
-//  Fill the screen with one char
+// Fill the screen with one char
 fillscreen: {
     .const fill = $20
     .label cursor = 3

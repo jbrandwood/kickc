@@ -7,8 +7,11 @@ public class AsmComment implements AsmLine {
 
    private int index;
 
-   public AsmComment(String comment) {
+   private boolean isBlock;
+
+   public AsmComment(String comment, boolean isBlock) {
       this.comment = comment;
+      this.isBlock = isBlock;
    }
 
    public String getComment() {
@@ -27,7 +30,12 @@ public class AsmComment implements AsmLine {
 
    @Override
    public String getAsm() {
-      return "// " + comment;
+      if(isBlock) {
+         return "/*" + comment + "*/";
+
+      } else {
+         return "//" + comment;
+      }
    }
 
    @Override
@@ -47,12 +55,12 @@ public class AsmComment implements AsmLine {
 
    /**
     * Get the number of lines the comment has
+    *
     * @return The number of lines
     */
    public long getLineCount() {
       return comment.chars().filter(x -> x == '\n').count() + 1;
    }
-
 
 
 }

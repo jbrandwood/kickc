@@ -1,14 +1,14 @@
-//  A minimal working IRQ
+// A minimal working IRQ
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label BGCOL = $d021
-  //  The vector used when the KERNAL serves IRQ interrupts
+  // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
-//  Setup the IRQ routine
+// Setup the IRQ routine
 main: {
     sei
     lda #<irq
@@ -18,7 +18,7 @@ main: {
     cli
     rts
 }
-//  The Interrupt Handler
+// The Interrupt Handler
 irq: {
     lda #WHITE
     sta BGCOL

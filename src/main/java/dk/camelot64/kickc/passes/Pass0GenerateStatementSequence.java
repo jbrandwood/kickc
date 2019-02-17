@@ -947,11 +947,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
                   comments = new ArrayList<>();
                }
             } else if(hiddenToken.getChannel() == CHANNEL_COMMENTS) {
+               boolean isBlock = false;
                String text = hiddenToken.getText();
                if(text.startsWith("//")) {
                   text = text.substring(2);
                }
+               if(text.startsWith("/*")) {
+                  text = text.substring(2, text.length()-2);
+                  isBlock = true;
+               }
                Comment comment = new Comment(text);
+               comment.setBlock(isBlock);
                comment.setTokenIndex(hiddenToken.getTokenIndex());
                comments.add( comment);
             }

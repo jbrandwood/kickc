@@ -2191,15 +2191,15 @@ INITIAL ASM
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-  //  The offset of the sprite pointers from the screen start address
+  // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -2211,44 +2211,44 @@ INITIAL ASM
   .label SPRITES_COLS = $d027
   .label VIC_CONTROL = $d011
   .label D018 = $d018
-  //  VIC II IRQ Status Register
+  // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  //  VIC II IRQ Enable Register
+  // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  //  Bits for the IRQ Status/Enable Registers
+  // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  //  CIA#1 Interrupt Status & Control Register
+  // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  The vector used when the HARDWARE serves IRQ interrupts
+  // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
-  //  Address of the first screen
+  // Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
-  //  Address of the second screen
+  // Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
-  //  Address of the sprites covering the playfield
+  // Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
-  //  Address of the charset
+  // Address of the charset
   .label PLAYFIELD_CHARSET = $2800
-  //  The size of the playfield
+  // The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
-  //  The Y-position of the first sprite row
+  // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
   .label SIN = $1400
   .label SIN_SPRITE = $2800
-  //  Screen Sprite pointers on screen 1
+  // Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
-  //  Screen Sprite pointers on screen 2
+  // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  //  The line of the first IRQ
+  // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label render_screen_showing = $b
@@ -2275,7 +2275,7 @@ bbegin:
 //SEG4 @4
 b4:
 //SEG5 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
+  // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
 //SEG6 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	// Put the sprites into memory  	.for(var sy=0;sy<10;sy++) { 	    .var sprite_gfx_y = sy*20 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21) 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
@@ -2283,11 +2283,11 @@ b4:
 //SEG7 @5
 b5:
 //SEG8 [3] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
-  //  The raster line of the next IRQ
+  // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
 //SEG9 [4] (byte) irq_sprite_ypos#0 ← (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuc1 
-  //  Y-pos of the sprites on the next IRQ
+  // Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
 //SEG10 [5] phi from @5 to toSpritePtr1 [phi:@5->toSpritePtr1]
@@ -2299,11 +2299,11 @@ toSpritePtr1:
 //SEG12 @10
 b10:
 //SEG13 [6] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuc1 
-  //  Index of the sprites to show on the next IRQ
+  // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
 //SEG14 [7] (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  Counting the 10 IRQs
+  // Counting the 10 IRQs
   lda #0
   sta irq_cnt
   jmp b7
@@ -2533,29 +2533,29 @@ loop: {
     jmp b1
 }
 //SEG93 sprites_irq_init
-//  Setup the IRQ
+// Setup the IRQ
 sprites_irq_init: {
   //SEG94 asm { sei  }
     sei
   //SEG95 [50] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge any IRQ and setup the next one
+    // Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG96 asm { ldaCIA1_INTERRUPT  }
     lda CIA1_INTERRUPT
   //SEG97 [52] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
-    //  Disable kernal & basic
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG98 [53] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG99 [54] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG100 [55] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set raster line
+    // Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -2563,11 +2563,11 @@ sprites_irq_init: {
     lda #IRQ_RASTER_FIRST
     sta RASTER
   //SEG102 [57] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG103 [58] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq() -- _deref_pptc1=pprc2 
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -2581,7 +2581,7 @@ sprites_irq_init: {
     rts
 }
 //SEG107 sprites_init
-//  Setup the sprites
+// Setup the sprites
 sprites_init: {
     .label s2 = $13
     .label xpos = 9
@@ -2644,9 +2644,9 @@ sprites_init: {
     rts
 }
 //SEG127 sprites_irq
-//  Raster Interrupt Routine - sets up the sprites covering the playfield
-//  Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
-//  Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
+// Raster Interrupt Routine - sets up the sprites covering the playfield
+// Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+// Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     .label _0 = $15
@@ -2662,11 +2662,11 @@ sprites_irq: {
     stx regx+1
     sty regy+1
   //SEG129 asm { cld  }
-    // (*BGCOL)++;
-    //  Clear decimal flag (because it is used by the score algorithm)
+    //(*BGCOL)++;
+    // Clear decimal flag (because it is used by the score algorithm)
     cld
   //SEG130 [74] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0 -- vbuz1=vbuz2 
-    //  Place the sprites
+    // Place the sprites
     lda irq_sprite_ypos
     sta ypos
   //SEG131 [75] *((const byte*) SPRITES_YPOS#0) ← (byte) sprites_irq::ypos#0 -- _deref_pbuc1=vbuz1 
@@ -2686,7 +2686,7 @@ sprites_irq: {
     iny
     sty _0
   //SEG136 [80] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte/signed word/word/dword/signed dword~) sprites_irq::$0 -- vbuz1=vbuz2 
-    //  Wait for the y-position before changing sprite pointers
+    // Wait for the y-position before changing sprite pointers
     lda _0
     sta raster_sprite_gfx_modify
     jmp b1
@@ -2774,11 +2774,11 @@ sprites_irq: {
   //SEG160 sprites_irq::@7
   b7:
   //SEG161 [97] *((const byte*) RASTER#0) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
-    //  Setup next interrupt
+    // Setup next interrupt
     lda irq_raster_next_4
     sta RASTER
   //SEG162 [98] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ and setup the next one
+    // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
@@ -3136,15 +3136,15 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-  //  The offset of the sprite pointers from the screen start address
+  // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -3156,44 +3156,44 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_COLS = $d027
   .label VIC_CONTROL = $d011
   .label D018 = $d018
-  //  VIC II IRQ Status Register
+  // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  //  VIC II IRQ Enable Register
+  // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  //  Bits for the IRQ Status/Enable Registers
+  // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  //  CIA#1 Interrupt Status & Control Register
+  // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  The vector used when the HARDWARE serves IRQ interrupts
+  // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
-  //  Address of the first screen
+  // Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
-  //  Address of the second screen
+  // Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
-  //  Address of the sprites covering the playfield
+  // Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
-  //  Address of the charset
+  // Address of the charset
   .label PLAYFIELD_CHARSET = $2800
-  //  The size of the playfield
+  // The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
-  //  The Y-position of the first sprite row
+  // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
   .label SIN = $1400
   .label SIN_SPRITE = $2800
-  //  Screen Sprite pointers on screen 1
+  // Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
-  //  Screen Sprite pointers on screen 2
+  // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  //  The line of the first IRQ
+  // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label render_screen_showing = 5
@@ -3208,7 +3208,7 @@ bbegin:
 //SEG4 @4
 b4:
 //SEG5 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
+  // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
 //SEG6 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	// Put the sprites into memory  	.for(var sy=0;sy<10;sy++) { 	    .var sprite_gfx_y = sy*20 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21) 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
@@ -3216,11 +3216,11 @@ b4:
 //SEG7 @5
 b5:
 //SEG8 [3] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
-  //  The raster line of the next IRQ
+  // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
 //SEG9 [4] (byte) irq_sprite_ypos#0 ← (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuc1 
-  //  Y-pos of the sprites on the next IRQ
+  // Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
 //SEG10 [5] phi from @5 to toSpritePtr1 [phi:@5->toSpritePtr1]
@@ -3232,11 +3232,11 @@ toSpritePtr1:
 //SEG12 @10
 b10:
 //SEG13 [6] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuc1 
-  //  Index of the sprites to show on the next IRQ
+  // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
 //SEG14 [7] (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  Counting the 10 IRQs
+  // Counting the 10 IRQs
   lda #0
   sta irq_cnt
   jmp b7
@@ -3452,29 +3452,29 @@ loop: {
     jmp b1
 }
 //SEG93 sprites_irq_init
-//  Setup the IRQ
+// Setup the IRQ
 sprites_irq_init: {
   //SEG94 asm { sei  }
     sei
   //SEG95 [50] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge any IRQ and setup the next one
+    // Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG96 asm { ldaCIA1_INTERRUPT  }
     lda CIA1_INTERRUPT
   //SEG97 [52] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
-    //  Disable kernal & basic
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG98 [53] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG99 [54] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG100 [55] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set raster line
+    // Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -3482,11 +3482,11 @@ sprites_irq_init: {
     lda #IRQ_RASTER_FIRST
     sta RASTER
   //SEG102 [57] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG103 [58] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq() -- _deref_pptc1=pprc2 
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -3500,7 +3500,7 @@ sprites_irq_init: {
     rts
 }
 //SEG107 sprites_init
-//  Setup the sprites
+// Setup the sprites
 sprites_init: {
     .label xpos = 2
   //SEG108 [61] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 15 -- _deref_pbuc1=vbuc2 
@@ -3557,9 +3557,9 @@ sprites_init: {
     rts
 }
 //SEG127 sprites_irq
-//  Raster Interrupt Routine - sets up the sprites covering the playfield
-//  Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
-//  Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
+// Raster Interrupt Routine - sets up the sprites covering the playfield
+// Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+// Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     .label raster_sprite_gfx_modify = $a
@@ -3567,11 +3567,11 @@ sprites_irq: {
     sta rega+1
     stx regx+1
   //SEG129 asm { cld  }
-    // (*BGCOL)++;
-    //  Clear decimal flag (because it is used by the score algorithm)
+    //(*BGCOL)++;
+    // Clear decimal flag (because it is used by the score algorithm)
     cld
   //SEG130 [74] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0 -- vbuaa=vbuz1 
-    //  Place the sprites
+    // Place the sprites
     lda irq_sprite_ypos
   //SEG131 [75] *((const byte*) SPRITES_YPOS#0) ← (byte) sprites_irq::ypos#0 -- _deref_pbuc1=vbuaa 
     sta SPRITES_YPOS
@@ -3585,7 +3585,7 @@ sprites_irq: {
     ldx irq_raster_next
     inx
   //SEG136 [80] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte/signed word/word/dword/signed dword~) sprites_irq::$0 -- vbuz1=vbuxx 
-    //  Wait for the y-position before changing sprite pointers
+    // Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
     jmp b1
   //SEG137 sprites_irq::@1
@@ -3664,11 +3664,11 @@ sprites_irq: {
   //SEG160 sprites_irq::@7
   b7:
   //SEG161 [97] *((const byte*) RASTER#0) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
-    //  Setup next interrupt
+    // Setup next interrupt
     lda irq_raster_next
     sta RASTER
   //SEG162 [98] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ and setup the next one
+    // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp breturn
@@ -4201,15 +4201,15 @@ Score: 7709
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
-  //  The offset of the sprite pointers from the screen start address
+  // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -4221,44 +4221,44 @@ Score: 7709
   .label SPRITES_COLS = $d027
   .label VIC_CONTROL = $d011
   .label D018 = $d018
-  //  VIC II IRQ Status Register
+  // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
-  //  VIC II IRQ Enable Register
+  // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  //  Bits for the IRQ Status/Enable Registers
+  // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  //  CIA#1 Interrupt Status & Control Register
+  // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
-  //  Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  //  The vector used when the HARDWARE serves IRQ interrupts
+  // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
-  //  Address of the first screen
+  // Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
-  //  Address of the second screen
+  // Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
-  //  Address of the sprites covering the playfield
+  // Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
-  //  Address of the charset
+  // Address of the charset
   .label PLAYFIELD_CHARSET = $2800
-  //  The size of the playfield
+  // The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
-  //  The Y-position of the first sprite row
+  // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
   .label SIN = $1400
   .label SIN_SPRITE = $2800
-  //  Screen Sprite pointers on screen 1
+  // Screen Sprite pointers on screen 1
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
-  //  Screen Sprite pointers on screen 2
+  // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  //  The line of the first IRQ
+  // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label render_screen_showing = 5
@@ -4271,28 +4271,28 @@ Score: 7709
 bbegin:
 //SEG4 @4
 //SEG5 [1] (byte) render_screen_showing#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
+  // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
   sta render_screen_showing
 //SEG6 kickasm(location (const byte*) PLAYFIELD_SPRITES#0) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	// Put the sprites into memory  	.for(var sy=0;sy<10;sy++) { 	    .var sprite_gfx_y = sy*20 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21) 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
 //SEG7 @5
 //SEG8 [3] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST#0 -- vbuz1=vbuc1 
-  //  The raster line of the next IRQ
+  // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
   sta irq_raster_next
 //SEG9 [4] (byte) irq_sprite_ypos#0 ← (const byte) SPRITES_FIRST_YPOS#0+(byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuc1 
-  //  Y-pos of the sprites on the next IRQ
+  // Y-pos of the sprites on the next IRQ
   lda #SPRITES_FIRST_YPOS+$15
   sta irq_sprite_ypos
 //SEG10 [5] phi from @5 to toSpritePtr1 [phi:@5->toSpritePtr1]
 //SEG11 toSpritePtr1
 //SEG12 @10
 //SEG13 [6] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuz1=vbuc1 
-  //  Index of the sprites to show on the next IRQ
+  // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
   sta irq_sprite_ptr
 //SEG14 [7] (byte) irq_cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
-  //  Counting the 10 IRQs
+  // Counting the 10 IRQs
   lda #0
   sta irq_cnt
 //SEG15 @7
@@ -4454,29 +4454,29 @@ loop: {
     jmp b4
 }
 //SEG93 sprites_irq_init
-//  Setup the IRQ
+// Setup the IRQ
 sprites_irq_init: {
   //SEG94 asm { sei  }
     sei
   //SEG95 [50] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge any IRQ and setup the next one
+    // Acknowledge any IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG96 asm { ldaCIA1_INTERRUPT  }
     lda CIA1_INTERRUPT
   //SEG97 [52] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 -- _deref_pbuc1=vbuc2 
-    //  Disable kernal & basic
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
   //SEG98 [53] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
   //SEG99 [54] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
-    //  Disable CIA 1 Timer IRQ
+    // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
   //SEG100 [55] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) 127 -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    //  Set raster line
+    // Set raster line
     lda VIC_CONTROL
     and #$7f
     sta VIC_CONTROL
@@ -4484,11 +4484,11 @@ sprites_irq_init: {
     lda #IRQ_RASTER_FIRST
     sta RASTER
   //SEG102 [57] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Enable Raster Interrupt
+    // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
   //SEG103 [58] *((const void()**) HARDWARE_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq() -- _deref_pptc1=pprc2 
-    //  Set the IRQ routine
+    // Set the IRQ routine
     lda #<sprites_irq
     sta HARDWARE_IRQ
     lda #>sprites_irq
@@ -4500,7 +4500,7 @@ sprites_irq_init: {
     rts
 }
 //SEG107 sprites_init
-//  Setup the sprites
+// Setup the sprites
 sprites_init: {
     .label xpos = 2
   //SEG108 [61] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 15 -- _deref_pbuc1=vbuc2 
@@ -4549,9 +4549,9 @@ sprites_init: {
     rts
 }
 //SEG127 sprites_irq
-//  Raster Interrupt Routine - sets up the sprites covering the playfield
-//  Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
-//  Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
+// Raster Interrupt Routine - sets up the sprites covering the playfield
+// Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+// Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
     .label raster_sprite_gfx_modify = $a
@@ -4559,11 +4559,11 @@ sprites_irq: {
     sta rega+1
     stx regx+1
   //SEG129 asm { cld  }
-    // (*BGCOL)++;
-    //  Clear decimal flag (because it is used by the score algorithm)
+    //(*BGCOL)++;
+    // Clear decimal flag (because it is used by the score algorithm)
     cld
   //SEG130 [74] (byte) sprites_irq::ypos#0 ← (byte) irq_sprite_ypos#0 -- vbuaa=vbuz1 
-    //  Place the sprites
+    // Place the sprites
     lda irq_sprite_ypos
   //SEG131 [75] *((const byte*) SPRITES_YPOS#0) ← (byte) sprites_irq::ypos#0 -- _deref_pbuc1=vbuaa 
     sta SPRITES_YPOS
@@ -4577,7 +4577,7 @@ sprites_irq: {
     ldx irq_raster_next
     inx
   //SEG136 [80] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte/signed word/word/dword/signed dword~) sprites_irq::$0 -- vbuz1=vbuxx 
-    //  Wait for the y-position before changing sprite pointers
+    // Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
   //SEG137 sprites_irq::@1
   b1:
@@ -4641,11 +4641,11 @@ sprites_irq: {
   //SEG160 sprites_irq::@7
   b7:
   //SEG161 [97] *((const byte*) RASTER#0) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
-    //  Setup next interrupt
+    // Setup next interrupt
     lda irq_raster_next
     sta RASTER
   //SEG162 [98] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
-    //  Acknowledge the IRQ and setup the next one
+    // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
   //SEG163 sprites_irq::@return

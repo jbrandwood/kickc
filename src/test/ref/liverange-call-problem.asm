@@ -1,5 +1,5 @@
-//  Live ranges were not functioning properly, when multiple method calls were chained - each modifying different vars.
-//  w1 and w2 ended up having the same zero-page register as their live range was not propagated properly
+// Live ranges were not functioning properly, when multiple method calls were chained - each modifying different vars.
+// w1 and w2 ended up having the same zero-page register as their live range was not propagated properly
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

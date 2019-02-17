@@ -63,7 +63,7 @@ main: {
     bcc b1
   !:
     ldx #0
-  //  Cleare the bottom line
+  // Cleare the bottom line
   b3:
     txa
     clc

@@ -1,14 +1,14 @@
-//  Animated lines drawn on a single color bitmap
+// Animated lines drawn on a single color bitmap
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Processor port data direction register
+  // Processor port data direction register
   .label PROCPORT_DDR = 0
-  //  Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  RAM in $A000, $E000 I/O in $D000
+  // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -17,13 +17,13 @@
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label D018 = $d018
-  //  CIA#2 Port A: Serial bus, RS-232, VIC memory bank
+  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  //  CIA #2 Port A data direction register.
+  // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
   .label BITMAP = $a000
   .label SCREEN = $8800
-  //  The delay between pixels
+  // The delay between pixels
   .const DELAY = 8
   .label rem16s = 3
   .label rem16u = 9
@@ -32,8 +32,8 @@ main: {
     .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>BITMAP)>>2&$f
     .label i = 2
     sei
-    //  Disable normal interrupt
-    //  Disable kernal & basic
+    // Disable normal interrupt
+    // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     lda #PROCPORT_RAM_IO
@@ -80,7 +80,7 @@ main: {
     inc BORDERCOL
     jmp b5
 }
-//  Plot a single dot in the bitmap
+// Plot a single dot in the bitmap
 bitmap_plot: {
     .label _1 = $b
     .label x = 5
@@ -111,7 +111,7 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
-//  Initialize the points to be animated
+// Initialize the points to be animated
 point_init: {
     .label _4 = $e
     .label _5 = 5
@@ -221,10 +221,10 @@ point_init: {
     sta delay,y
     rts
   b1:
-    //  X is driver - abs(y/x) is < 1
+    // X is driver - abs(y/x) is < 1
     lda x_diff+1
     bmi b3
-    //  x add = 1.0
+    // x add = 1.0
     ldy point_idx
     lda #$10
     sta x_add,y
@@ -243,7 +243,7 @@ point_init: {
     sta y_add,y
     jmp b2
   b3:
-    //  x add = -1.0
+    // x add = -1.0
     ldy point_idx
     lda #-$10
     sta x_add,y
@@ -271,11 +271,11 @@ point_init: {
     sta abs16s1__2+1
     jmp abs16s2
 }
-//  Perform division on two signed 16-bit numbers with an initial remainder.
-//  Returns dividend/divisor. The remainder will be set into the global variable rem16s.
-//  Implemented using simple binary division
-//  Follows the C99 standard by truncating toward zero on negative results.
-//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// Perform division on two signed 16-bit numbers with an initial remainder.
+// Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+// Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 divr16s: {
     .const dividend = 0
     .label _7 = 9
@@ -358,10 +358,10 @@ divr16s: {
     ldy #1
     jmp b2
 }
-//  Performs division on two 16 bit unsigned words and an initial remainder
-//  Returns the quotient dividend/divisor.
-//  The final remainder will be set into the global variable rem16u
-//  Implemented using simple binary division
+// Performs division on two 16 bit unsigned words and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
 divr16u: {
     .label rem = 9
     .label dividend = 3
@@ -412,7 +412,7 @@ divr16u: {
     bne b1
     rts
 }
-//  Fill the screen with a specific char
+// Fill the screen with a specific char
 screen_fill: {
     .const ch = $10
     .label screen = 3
@@ -442,7 +442,7 @@ screen_fill: {
     bne b1
     rts
 }
-//  Clear all graphics on the bitmap
+// Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
@@ -518,22 +518,22 @@ bitmap_init: {
     bne b3
     rts
 }
-  //  The coordinates of the lines to animate
+  // The coordinates of the lines to animate
   x_start: .word $a, $14, $1e, $1e
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
-  //  Current x position fixed point [12.4]
+  // Current x position fixed point [12.4]
   x_cur: .fill 2*4, 0
-  //  Current y position fixed point [12.4]
+  // Current y position fixed point [12.4]
   y_cur: .fill 2*4, 0
-  //  X position addition per frame s[3.4]
+  // X position addition per frame s[3.4]
   x_add: .fill 4, 0
-  //  Y position addition per frame s[3.4]
+  // Y position addition per frame s[3.4]
   y_add: .fill 4, 0
-  //  Frame delay (counted down to 0)
+  // Frame delay (counted down to 0)
   delay: .fill 4, 0
-  //  Tables for the plotter - initialized by calling bitmap_init();
+  // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0

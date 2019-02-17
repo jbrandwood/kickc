@@ -12,9 +12,11 @@ public class Comment {
    /** Empty comments collection. */
    public static final ArrayList<Comment> NO_COMMENTS = new ArrayList<>();
 
-
    /** The comment. */
    private String comment;
+
+   /** Specifies whether the comment is a block-comment. If false the comment is a single-line comment. */
+   private boolean isBlock;
 
    /** The index of the hidden parser token containing the comment.
     * Used to prevent comments from being included multiple times.
@@ -35,5 +37,13 @@ public class Comment {
 
    public void setTokenIndex(int tokenIndex) {
       this.tokenIndex = tokenIndex;
+   }
+
+   public boolean isBlock() {
+      return isBlock;
+   }
+
+   public void setBlock(boolean block) {
+      isBlock = block;
    }
 }

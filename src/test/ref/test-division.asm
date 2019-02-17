@@ -1,4 +1,4 @@
-//  Test the binary division library
+// Test the binary division library
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -81,7 +81,7 @@ test_16s: {
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
     divisors: .word 5, -7, $b, -$d, -$11, $13
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -101,7 +101,7 @@ print_ln: {
   !:
     rts
 }
-//  Print a signed word as HEX
+// Print a signed word as HEX
 print_sword: {
     .label w = 5
     lda w+1
@@ -121,7 +121,7 @@ print_sword: {
     jsr print_word
     rts
 }
-//  Print a word as HEX
+// Print a word as HEX
 print_word: {
     .label w = 5
     lda w+1
@@ -132,7 +132,7 @@ print_word: {
     jsr print_byte
     rts
 }
-//  Print a byte as HEX
+// Print a byte as HEX
 print_byte: {
     .label b = 7
     lda b
@@ -150,7 +150,7 @@ print_byte: {
     jsr print_char
     rts
 }
-//  Print a single char
+// Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -160,7 +160,7 @@ print_char: {
   !:
     rts
 }
-//  Print a zero-terminated string
+// Print a zero-terminated string
 print_str: {
     .label str = 5
   b1:
@@ -183,12 +183,12 @@ print_str: {
   !:
     jmp b1
 }
-//  Perform division on two signed 16-bit numbers
-//  Returns dividend/divisor.
-//  The remainder will be set into the global variable rem16s.
-//  Implemented using simple binary division
-//  Follows the C99 standard by truncating toward zero on negative results.
-//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// Perform division on two signed 16-bit numbers
+// Returns dividend/divisor.
+// The remainder will be set into the global variable rem16s.
+// Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 div16s: {
     .label return = $e
     .label dividend = 5
@@ -204,11 +204,11 @@ div16s: {
     jsr divr16s
     rts
 }
-//  Perform division on two signed 16-bit numbers with an initial remainder.
-//  Returns dividend/divisor. The remainder will be set into the global variable rem16s.
-//  Implemented using simple binary division
-//  Follows the C99 standard by truncating toward zero on negative results.
-//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// Perform division on two signed 16-bit numbers with an initial remainder.
+// Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+// Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 divr16s: {
     .const rem = 0
     .label _5 = 8
@@ -285,10 +285,10 @@ divr16s: {
     ldy #1
     jmp b2
 }
-//  Performs division on two 16 bit unsigned words and an initial remainder
-//  Returns the quotient dividend/divisor.
-//  The final remainder will be set into the global variable rem16u
-//  Implemented using simple binary division
+// Performs division on two 16 bit unsigned words and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
 divr16u: {
     .label rem = $a
     .label dividend = 8
@@ -396,7 +396,7 @@ test_8s: {
     dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
-//  Print a signed byte as HEX
+// Print a signed byte as HEX
 print_sbyte: {
     .label b = 7
     lda b
@@ -416,12 +416,12 @@ print_sbyte: {
     sta b
     jmp b2
 }
-//  Perform division on two signed 8-bit numbers
-//  Returns dividend/divisor.
-//  The remainder will be set into the global variable rem8s.
-//  Implemented using simple binary division
-//  Follows the C99 standard by truncating toward zero on negative results.
-//  See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// Perform division on two signed 8-bit numbers
+// Returns dividend/divisor.
+// The remainder will be set into the global variable rem8s.
+// Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 div8s: {
     .label neg = $10
     cpy #0
@@ -472,10 +472,10 @@ div8s: {
     sta neg
     jmp b2
 }
-//  Performs division on two 8 bit unsigned bytes
-//  Returns dividend/divisor.
-//  The remainder will be set into the global variable rem8u
-//  Implemented using simple binary division
+// Performs division on two 8 bit unsigned bytes
+// Returns dividend/divisor.
+// The remainder will be set into the global variable rem8u
+// Implemented using simple binary division
 div8u: {
     sta divr8u.dividend
     stx divr8u.divisor
@@ -483,10 +483,10 @@ div8u: {
     lda divr8u.return
     rts
 }
-//  Performs division on two 8 bit unsigned bytes and an initial remainder
-//  Returns dividend/divisor.
-//  The final remainder will be set into the global variable rem8u
-//  Implemented using simple binary division
+// Performs division on two 8 bit unsigned bytes and an initial remainder
+// Returns dividend/divisor.
+// The final remainder will be set into the global variable rem8u
+// Implemented using simple binary division
 divr8u: {
     .label dividend = $11
     .label divisor = $16
@@ -592,10 +592,10 @@ test_16u: {
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
     divisors: .word 5, 7, $b, $d, $11, $13
 }
-//  Performs division on two 16 bit unsigned words
-//  Returns the quotient dividend/divisor.
-//  The remainder will be set into the global variable rem16u
-//  Implemented using simple binary division
+// Performs division on two 16 bit unsigned words
+// Returns the quotient dividend/divisor.
+// The remainder will be set into the global variable rem16u
+// Implemented using simple binary division
 div16u: {
     .label return = $e
     .label dividend = 5
@@ -677,7 +677,7 @@ test_8u: {
     dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 3
     lda #<$400

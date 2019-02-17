@@ -1,4 +1,4 @@
-//  Rolling constants by a variable amount
+// Rolling constants by a variable amount
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

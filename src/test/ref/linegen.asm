@@ -1,5 +1,5 @@
-//  Linear table generator
-//  Work in progress towards a sinus generator
+// Linear table generator
+// Work in progress towards a sinus generator
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -183,7 +183,7 @@ main: {
     lintab2: .fill 2*$14, 0
     lintab3: .fill 2*$14, 0
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -203,7 +203,7 @@ print_ln: {
   !:
     rts
 }
-//  Print a word as HEX
+// Print a word as HEX
 print_word: {
     .label w = 5
     lda w+1
@@ -214,7 +214,7 @@ print_word: {
     jsr print_byte
     rts
 }
-//  Print a byte as HEX
+// Print a byte as HEX
 print_byte: {
     txa
     lsr
@@ -231,7 +231,7 @@ print_byte: {
     jsr print_char
     rts
 }
-//  Print a single char
+// Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -241,7 +241,7 @@ print_char: {
   !:
     rts
 }
-//  Print a zero-terminated string
+// Print a zero-terminated string
 print_str: {
     .label str = 5
   b1:
@@ -264,7 +264,7 @@ print_str: {
   !:
     jmp b1
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 3
     lda #<$400
@@ -287,9 +287,9 @@ print_cls: {
     bne b1
     rts
 }
-//  Generate word linear table
-//  lintab - the table to generate into
-//  length - the number of points in a total sinus wavelength (the size of the table)
+// Generate word linear table
+// lintab - the table to generate into
+// length - the number of points in a total sinus wavelength (the size of the table)
 lin16u_gen: {
     .label _5 = 5
     .label ampl = 3
@@ -391,10 +391,10 @@ lin16u_gen: {
   !:
     rts
 }
-//  Performs division on two 16 bit unsigned words and an initial remainder
-//  Returns the quotient dividend/divisor.
-//  The final remainder will be set into the global variable rem16u
-//  Implemented using simple binary division
+// Performs division on two 16 bit unsigned words and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
 divr16u: {
     .label rem = $f
     .label dividend = 3

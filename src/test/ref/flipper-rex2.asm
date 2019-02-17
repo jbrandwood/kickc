@@ -22,7 +22,7 @@ main: {
     jsr plot
     jmp b1
 }
-//  Plot buffer on screen
+// Plot buffer on screen
 plot: {
     .label line = 2
     .label y = 4
@@ -55,7 +55,7 @@ plot: {
     bne b1
     rts
 }
-//  Flip buffer
+// Flip buffer
 flip: {
     .label c = 5
     .label r = 4
@@ -92,7 +92,7 @@ flip: {
     bne b3
     rts
 }
-//  Prepare buffer
+// Prepare buffer
 prepare: {
     ldx #0
   b1:

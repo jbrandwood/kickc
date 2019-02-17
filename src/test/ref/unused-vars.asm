@@ -1,10 +1,10 @@
-//  used vars
+// used vars
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    //  used vars
+    // used vars
     .const col = 2
     .label COLS = $d800
     jsr s

@@ -1,4 +1,4 @@
-//  An unrolled loop modifying a var used later
+// An unrolled loop modifying a var used later
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

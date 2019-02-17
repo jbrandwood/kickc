@@ -1,4 +1,4 @@
-//  Tests that inline ASM clobbering is taken into account when assigning registers
+// Tests that inline ASM clobbering is taken into account when assigning registers
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -6,7 +6,7 @@
 main: {
     .label l = 2
     ldx #0
-  //  First loop with no clobber
+  // First loop with no clobber
   b1:
     lda #0
   b2:
@@ -19,7 +19,7 @@ main: {
     cpx #$65
     bne b1
     ldy #0
-  //  Then loop with clobbering A&X
+  // Then loop with clobbering A&X
   b3:
     lda #0
     sta l

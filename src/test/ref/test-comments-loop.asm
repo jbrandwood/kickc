@@ -4,7 +4,7 @@
 main: {
     .label SCREEN = $400
     ldx #0
-  //  Do some sums
+  // Do some sums
   b1:
     lda #'a'
     sta SCREEN,x

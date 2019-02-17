@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCommentsBlock() throws IOException, URISyntaxException {
+      compileAndCompare("test-comments-block");
+   }
+
+   @Test
    public void testCommentsLoop() throws IOException, URISyntaxException {
       compileAndCompare("test-comments-loop");
    }

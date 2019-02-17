@@ -1,5 +1,5 @@
-//  Range-based for does not recognize symbolic constants.
-//  The following should work but gives a not-constant exception
+// Range-based for does not recognize symbolic constants.
+// The following should work but gives a not-constant exception
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

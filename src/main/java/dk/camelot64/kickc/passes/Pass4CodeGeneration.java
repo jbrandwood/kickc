@@ -190,7 +190,7 @@ public class Pass4CodeGeneration {
     */
    private void generateComments(AsmProgram asm, List<Comment> comments) {
       for(Comment comment : comments) {
-         asm.addComment(comment.getComment());
+         asm.addComment(comment.getComment(), comment.isBlock());
       }
    }
 

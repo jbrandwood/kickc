@@ -1,4 +1,4 @@
-//  Illustrates problem where volatiles reuse ZP addresses of other variables
+// Illustrates problem where volatiles reuse ZP addresses of other variables
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
@@ -41,7 +41,7 @@ main: {
     jmp b1
 }
 irq: {
-    //  Acknowledge the IRQ
+    // Acknowledge the IRQ
     lda #1
     sta IRQ_STATUS
     lda $dc0d

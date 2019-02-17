@@ -1,4 +1,4 @@
-//  Test the fast multiplication library
+// Test the fast multiplication library
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -14,7 +14,7 @@ main: {
     jsr mul16s_compare
     rts
 }
-//  Perform many possible word multiplications (slow and fast) and compare the results
+// Perform many possible word multiplications (slow and fast) and compare the results
 mul16s_compare: {
     .label a = 3
     .label b = 5
@@ -126,7 +126,7 @@ mul16s_compare: {
     str: .text ".@"
     str1: .text "signed word multiply results match!@"
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -146,7 +146,7 @@ print_ln: {
   !:
     rts
 }
-//  Print a zero-terminated string
+// Print a zero-terminated string
 print_str: {
     .label str = 9
   b1:
@@ -233,7 +233,7 @@ mul16s_error: {
     str3: .text " / normal:@"
     str4: .text " / fast:@"
 }
-//  Print a signed dword as HEX
+// Print a signed dword as HEX
 print_sdword: {
     .label dw = $b
     lda dw+3
@@ -261,7 +261,7 @@ print_sdword: {
     jsr print_dword
     rts
 }
-//  Print a dword as HEX
+// Print a dword as HEX
 print_dword: {
     .label dw = $b
     lda dw+2
@@ -276,7 +276,7 @@ print_dword: {
     jsr print_word
     rts
 }
-//  Print a word as HEX
+// Print a word as HEX
 print_word: {
     .label w = 3
     lda w+1
@@ -287,7 +287,7 @@ print_word: {
     jsr print_byte
     rts
 }
-//  Print a byte as HEX
+// Print a byte as HEX
 print_byte: {
     txa
     lsr
@@ -304,7 +304,7 @@ print_byte: {
     jsr print_char
     rts
 }
-//  Print a single char
+// Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -314,7 +314,7 @@ print_char: {
   !:
     rts
 }
-//  Print a signed word as HEX
+// Print a signed word as HEX
 print_sword: {
     .label w = 3
     lda w+1
@@ -334,8 +334,8 @@ print_sword: {
     jsr print_word
     rts
 }
-//  Fast multiply two signed words to a signed double word result
-//  Fixes offsets introduced by using unsigned multiplication
+// Fast multiply two signed words to a signed double word result
+// Fixes offsets introduced by using unsigned multiplication
 mulf16s: {
     .label _5 = 3
     .label _6 = 9
@@ -402,8 +402,8 @@ mulf16s: {
   b2:
     rts
 }
-//  Fast multiply two unsigned words to a double word result
-//  Done in assembler to utilize fast addition A+X
+// Fast multiply two unsigned words to a double word result
+// Done in assembler to utilize fast addition A+X
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -521,8 +521,8 @@ mulf16u: {
     sta return+3
     rts
 }
-//  Multiply of two signed words to a signed double word
-//  Fixes offsets introduced by using unsigned multiplication
+// Multiply of two signed words to a signed double word
+// Fixes offsets introduced by using unsigned multiplication
 mul16s: {
     .label _5 = 3
     .label _6 = 9
@@ -589,7 +589,7 @@ mul16s: {
   b2:
     rts
 }
-//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label mb = $11
     .label a = 9
@@ -641,8 +641,8 @@ mul16u: {
     rol mb+3
     jmp b1
 }
-//  Slow multiplication of signed words
-//  Perform a signed multiplication by repeated addition/subtraction
+// Slow multiplication of signed words
+// Perform a signed multiplication by repeated addition/subtraction
 muls16s: {
     .label m = $b
     .label j = 9
@@ -750,7 +750,7 @@ muls16s: {
     bne b5
     jmp b4
 }
-//  Perform many possible word multiplications (slow and fast) and compare the results
+// Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
     .label a = $15
     .label b = $17
@@ -938,8 +938,8 @@ mul16u_error: {
     str3: .text " / normal:@"
     str4: .text " / fast:@"
 }
-//  Slow multiplication of unsigned words
-//  Calculate an unsigned multiplication by repeated addition
+// Slow multiplication of unsigned words
+// Calculate an unsigned multiplication by repeated addition
 muls16u: {
     .label return = $b
     .label m = $b
@@ -992,7 +992,7 @@ muls16u: {
   b1:
     rts
 }
-//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
+// Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     .label sqr1_hi = 5
     .label sqr = 7
@@ -1093,14 +1093,14 @@ mulf_init: {
     lda sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
     bne b3
-    //  Set the very last value g(511) = f(256)
+    // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
     rts
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 3
     lda #<$400
@@ -1124,16 +1124,16 @@ print_cls: {
     rts
 }
   print_hextab: .text "0123456789abcdef"
-  //  mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
-  //  <f(x) = <(( x * x )/4)
+  // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
+  // <f(x) = <(( x * x )/4)
   .align $100
   mulf_sqr1_lo: .fill $200, 0
-  //  >f(x) = >(( x * x )/4)
+  // >f(x) = >(( x * x )/4)
   .align $100
   mulf_sqr1_hi: .fill $200, 0
-  //  <g(x) =  <((( x - 255) * ( x - 255 ))/4)
+  // <g(x) =  <((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_lo: .fill $200, 0
-  //  >g(x) = >((( x - 255) * ( x - 255 ))/4)
+  // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0

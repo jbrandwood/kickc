@@ -1,4 +1,4 @@
-//  Test compound assignment operators
+// Test compound assignment operators
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

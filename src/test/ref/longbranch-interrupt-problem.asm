@@ -1,4 +1,4 @@
-//  Tests that long branch fixing works with interrupt exits (to $ea81)
+// Tests that long branch fixing works with interrupt exits (to $ea81)
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"

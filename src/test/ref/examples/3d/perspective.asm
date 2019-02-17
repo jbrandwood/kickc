@@ -1,18 +1,18 @@
-//  3D Rotation using a Rotation Matrix
-//  Based on: 
-//  - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-//  - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
+// 3D Rotation using a Rotation Matrix
+// Based on: 
+// - C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
+// - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  The rotated point - updated by calling rotate()
+  // The rotated point - updated by calling rotate()
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
-  //  Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
+  // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
   .label psp1 = $f3
   .label psp2 = $f5
-  //  Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
+  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
   .label PERSP_Z = $2400
   .label print_char_cursor = 4
   .label print_line_cursor = 2
@@ -89,7 +89,7 @@ do_perspective: {
     str4: .text ",@"
     str5: .text ")@"
 }
-//  Print a newline
+// Print a newline
 print_ln: {
     lda #<$400
     sta print_line_cursor
@@ -113,7 +113,7 @@ print_ln: {
   !:
     rts
 }
-//  Print a zero-terminated string
+// Print a zero-terminated string
 print_str: {
     .label str = 2
   b1:
@@ -136,7 +136,7 @@ print_str: {
   !:
     jmp b1
 }
-//  Print a byte as HEX
+// Print a byte as HEX
 print_byte: {
     txa
     lsr
@@ -153,7 +153,7 @@ print_byte: {
     jsr print_char
     rts
 }
-//  Print a single char
+// Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -163,8 +163,8 @@ print_char: {
   !:
     rts
 }
-//  Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
-//  Implemented in assembler to utilize seriously fast multiplication 
+// Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
+// Implemented in assembler to utilize seriously fast multiplication 
 perspective: {
     lda #do_perspective.x
     sta xr
@@ -192,7 +192,7 @@ perspective: {
     sta xr
     rts
 }
-//  Print a signed byte as HEX
+// Print a signed byte as HEX
 print_sbyte: {
     cpx #0
     bmi b1
@@ -211,7 +211,7 @@ print_sbyte: {
     tax
     jmp b2
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
     lda #<$400
@@ -234,7 +234,7 @@ print_cls: {
     bne b1
     rts
 }
-//  Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
+// Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
     .label val = 6
     .label sqr = 2
@@ -301,19 +301,19 @@ mulf_init: {
     rts
 }
   print_hextab: .text "0123456789abcdef"
-  //  Multiplication tables for seriously fast multiplication. 
-  //  This version is optimized for speed over accuracy
-  //  - It can multiply signed numbers with no extra code - but only for numbers in [-$3f;$3f]  
-  //  - It throws away the low part of the 32-bit result
-  //  - It return >a*b*4 to maximize precision (when passed maximal input values $3f*$3f the result is $3e) 
-  //  See the following for information about the method
-  //  - http://codebase64.org/doku.php?id=base:seriously_fast_multiplication 
-  //  - http://codebase64.org/doku.php?id=magazines:chacking16
-  //  mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
-  //  f(x) = >(( x * x ))
+  // Multiplication tables for seriously fast multiplication. 
+  // This version is optimized for speed over accuracy
+  // - It can multiply signed numbers with no extra code - but only for numbers in [-$3f;$3f]  
+  // - It throws away the low part of the 32-bit result
+  // - It return >a*b*4 to maximize precision (when passed maximal input values $3f*$3f the result is $3e) 
+  // See the following for information about the method
+  // - http://codebase64.org/doku.php?id=base:seriously_fast_multiplication 
+  // - http://codebase64.org/doku.php?id=magazines:chacking16
+  // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
+  // f(x) = >(( x * x ))
   .align $100
   mulf_sqr1: .fill $200, 0
-  //  g(x) =  >((( 1 - x ) * ( 1 - x )))
+  // g(x) =  >((( 1 - x ) * ( 1 - x )))
   .align $100
   mulf_sqr2: .fill $200, 0
 .pc = PERSP_Z "PERSP_Z"

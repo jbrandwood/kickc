@@ -1,9 +1,9 @@
-//  Illustrates symbolic array lengths
+// Illustrates symbolic array lengths
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SZ = $f
-//  Fills the array item by item with $is, where i is the item# and s is the sub#
+// Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
     ldx #0
   b1:

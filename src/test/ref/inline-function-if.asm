@@ -1,4 +1,4 @@
-//  Test inlining a slightly complex print function (containing an if)
+// Test inlining a slightly complex print function (containing an if)
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

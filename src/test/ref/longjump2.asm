@@ -1,4 +1,4 @@
-//  Minimal example program generating two long jumps
+// Minimal example program generating two long jumps
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

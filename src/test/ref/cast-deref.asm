@@ -1,4 +1,4 @@
-//  Example of NOP-casting a dereferenced signed byte to a byte
+// Example of NOP-casting a dereferenced signed byte to a byte
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

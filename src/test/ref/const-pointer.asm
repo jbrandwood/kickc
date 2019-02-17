@@ -1,4 +1,4 @@
-// Test that constant pointers are detected correctly
+//Test that constant pointers are detected correctly
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

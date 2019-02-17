@@ -396,7 +396,7 @@ main: {
     op19: .text "==@"
     cs: .byte 7, $c7, $37, $97, $67
 }
-//  Print a newline
+// Print a newline
 print_ln: {
   b1:
     lda print_line_cursor
@@ -435,7 +435,7 @@ printu: {
     jsr print_char
     rts
 }
-//  Print a single char
+// Print a single char
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -445,7 +445,7 @@ print_char: {
   !:
     rts
 }
-//  Print a byte as HEX
+// Print a byte as HEX
 print_byte: {
     .label b = $b
     lda b
@@ -463,7 +463,7 @@ print_byte: {
     jsr print_char
     rts
 }
-//  Print a zero-terminated string
+// Print a zero-terminated string
 print_str: {
     .label str = 6
   b1:
@@ -486,7 +486,7 @@ print_str: {
   !:
     jmp b1
 }
-//  Clear the screen. Also resets current line/char cursor.
+// Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 4
     lda #<$400

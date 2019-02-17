@@ -1,14 +1,14 @@
-//  Allows analysis of the CHARGEN ROM font
+// Allows analysis of the CHARGEN ROM font
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  The address of the CHARGEN character set
+  // The address of the CHARGEN character set
   .label CHARGEN = $d000
-  //  CIA#1 Port A: keyboard matrix columns and joystick #2
+  // CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
-  //  CIA#1 Port B: keyboard matrix rows and joystick #1.
+  // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CIA1_PORT_B = $dc01
   .const KEY_F7 = 3
   .const KEY_F1 = 4
@@ -76,7 +76,7 @@ main: {
     sta sc
     lda #>SCREEN
     sta sc+1
-  //  Clear screen
+  // Clear screen
   b1:
     lda #' '
     ldy #0
@@ -184,7 +184,7 @@ main: {
   b9:
     lda #0
     sta ch
-  //  Check for key presses - and plot char if found
+  // Check for key presses - and plot char if found
   b10:
     ldx ch
     jsr keyboard_get_keycode
@@ -213,7 +213,7 @@ main: {
     str2: .text "f5@"
     str3: .text "f7@"
 }
-//  Render 8x8 char (ch) as pixels on char canvas #pos
+// Render 8x8 char (ch) as pixels on char canvas #pos
 plot_chargen: {
     .label _0 = 2
     .label _1 = 2
@@ -304,7 +304,7 @@ plot_chargen: {
     cli
     rts
 }
-//  Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 mul8u: {
     .const b = $a
     .label mb = $b
@@ -341,10 +341,10 @@ mul8u: {
     rol mb+1
     jmp b1
 }
-//  Determines whether a specific key is currently pressed by accessing the matrix directly
-//  The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
-//  All keys exist as as KEY_XXX constants.
-//  Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// Determines whether a specific key is currently pressed by accessing the matrix directly
+// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+// All keys exist as as KEY_XXX constants.
+// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 keyboard_key_pressed: {
     txa
     and #7
@@ -358,11 +358,11 @@ keyboard_key_pressed: {
     and keyboard_matrix_col_bitmask,y
     rts
 }
-//  Read a single row of the keyboard matrix
-//  The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-//  Returns the keys pressed on the row as bits according to the C64 key matrix.
-//  Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-//  leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
@@ -370,15 +370,15 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
-//  Get the keycode corresponding to a specific screen code character
-//  ch is the character to get the key code for ($00-$3f)
-//  Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
-//  If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
+// Get the keycode corresponding to a specific screen code character
+// ch is the character to get the key code for ($00-$3f)
+// Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
+// If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 keyboard_get_keycode: {
     lda keyboard_char_keycodes,x
     rts
 }
-//  Print a string at a specific screen position
+// Print a string at a specific screen position
 print_str_at: {
     .label at = 9
     .label str = 2
@@ -402,10 +402,10 @@ print_str_at: {
   !:
     jmp b1
 }
-  //  Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
+  // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
-  //  Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
+  // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  //  Keycodes for each screen code character from $00-$3f.
-  //  Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
+  // Keycodes for each screen code character from $00-$3f.
+  // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f

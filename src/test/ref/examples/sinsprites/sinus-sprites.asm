@@ -1,9 +1,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  //  Processor Port Register controlling RAM/ROM configuration and the datasette
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  //  The address of the CHARGEN character set
+  // The address of the CHARGEN character set
   .label CHARGEN = $d000
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -14,9 +14,9 @@
   .label SPRITES_EXPAND_X = $d01d
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
+  // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
   .label memHi = $ff
   .const sinlen_x = $dd
@@ -189,13 +189,13 @@ clear_screen: {
   !:
     rts
 }
-//  Generate a sinus table using BASIC floats
-//  - sintab is a pointer to the table to fill
-//  - length is the length of the sine table
-//  - min is the minimum value of the generated sinus
-//  - max is the maximum value of the generated sinus
+// Generate a sinus table using BASIC floats
+// - sintab is a pointer to the table to fill
+// - length is the length of the sine table
+// - min is the minimum value of the generated sinus
+// - max is the maximum value of the generated sinus
 gen_sintab: {
-    //  amplitude/2
+    // amplitude/2
     .label f_2pi = $e2e5
     .label _23 = $c
     .label i = 2
@@ -208,8 +208,8 @@ gen_sintab: {
     sta setFAC.w+1
     jsr setFAC
     jsr setARGtoFAC
-    //  arg = max
-    //  TODO: Kernel JSR clobbers A,X,Y
+    // arg = max
+    // TODO: Kernel JSR clobbers A,X,Y
     lda #0
     tax
     tay
@@ -253,7 +253,7 @@ gen_sintab: {
     lda #0
     sta progress_idx
     sta i
-  //  f_min = min + (max - min) / 2
+  // f_min = min + (max - min) / 2
   b1:
     lda i
     sta setFAC.w
@@ -289,7 +289,7 @@ gen_sintab: {
     jsr addMEMtoFAC
     jsr getFAC
     lda _23
-    //  fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
+    // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy i
     sta (sintab),y
     jsr progress_inc
@@ -299,13 +299,13 @@ gen_sintab: {
     bcc b1
     rts
     f_i: .byte 0, 0, 0, 0, 0
-    //  i * 2 * PI
+    // i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0
-    //  amplitude/2 + min
+    // amplitude/2 + min
     f_amp: .byte 0, 0, 0, 0, 0
 }
-//  Increase PETSCII progress one bit
-//  Done by increasing the character until the idx is 8 and then moving to the next char
+// Increase PETSCII progress one bit
+// Done by increasing the character until the idx is 8 and then moving to the next char
 progress_inc: {
     inc progress_idx
     lda progress_idx
@@ -326,15 +326,15 @@ progress_inc: {
     ldy #0
     sta (progress_cursor),y
     rts
-    //  Progress characters
+    // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
-//  word = FAC
-//  Get the value of the FAC (floating point accumulator) as an integer 16bit word
-//  Destroys the value in the FAC in the process
+// word = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit word
+// Destroys the value in the FAC in the process
 getFAC: {
     .label return = $c
-    //  Load FAC (floating point accumulator) integer part into word register Y,A
+    // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
     sty $fe
     sta $ff
@@ -344,9 +344,9 @@ getFAC: {
     sta return+1
     rts
 }
-//  FAC = MEM+FAC
-//  Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM+FAC
+// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+// Reads 5 bytes from memory
 addMEMtoFAC: {
     lda #<gen_sintab.f_min
     sta prepareMEM.mem
@@ -358,7 +358,7 @@ addMEMtoFAC: {
     jsr $b867
     rts
 }
-//  Prepare MEM pointers for operations using MEM
+// Prepare MEM pointers for operations using MEM
 prepareMEM: {
     .label mem = $c
     lda mem
@@ -367,9 +367,9 @@ prepareMEM: {
     sta memHi
     rts
 }
-//  FAC = MEM*FAC
-//  Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM*FAC
+// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+// Reads 5 bytes from memory
 mulFACbyMEM: {
     .label mem = $c
     jsr prepareMEM
@@ -378,16 +378,16 @@ mulFACbyMEM: {
     jsr $ba28
     rts
 }
-//  FAC = sin(FAC)
-//  Set FAC to sinus of the FAC - sin(FAC)
-//  Sinus is calculated on radians (0-2*PI)
+// FAC = sin(FAC)
+// Set FAC to sinus of the FAC - sin(FAC)
+// Sinus is calculated on radians (0-2*PI)
 sinFAC: {
     jsr $e26b
     rts
 }
-//  FAC = MEM/FAC
-//  Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
-//  Reads 5 bytes from memory
+// FAC = MEM/FAC
+// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+// Reads 5 bytes from memory
 divMEMbyFAC: {
     .label mem = $c
     jsr prepareMEM
@@ -396,20 +396,20 @@ divMEMbyFAC: {
     jsr $bb0f
     rts
 }
-//  FAC = word
-//  Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// FAC = word
+// Set the FAC (floating point accumulator) to the integer value of a 16bit word
 setFAC: {
     .label w = $c
     jsr prepareMEM
-    //  Load word register Y,A into FAC (floating point accumulator)
+    // Load word register Y,A into FAC (floating point accumulator)
     ldy $fe
     lda $ff
     jsr $b391
     rts
 }
-//  MEM = FAC
-//  Stores the value of the FAC to memory
-//  Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// MEM = FAC
+// Stores the value of the FAC to memory
+// Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
 setMEMtoFAC: {
     .label mem = $c
     jsr prepareMEM
@@ -418,19 +418,19 @@ setMEMtoFAC: {
     jsr $bbd4
     rts
 }
-//  FAC = ARG-FAC
-//  Set FAC to ARG minus FAC
+// FAC = ARG-FAC
+// Set FAC to ARG minus FAC
 subFACfromARG: {
     jsr $b853
     rts
 }
-//  ARG = FAC
-//  Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
+// ARG = FAC
+// Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
 setARGtoFAC: {
     jsr $bc0f
     rts
 }
-//  Initialize the PETSCII progress bar
+// Initialize the PETSCII progress bar
 progress_init: {
     .label line = $a
     rts
@@ -466,9 +466,9 @@ gen_sprites: {
     rts
     cml: .text "camelot"
 }
-//  Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
-//  - c is the character to generate
-//  - sprite is a pointer to the position of the sprite to generate
+// Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
+// - c is the character to generate
+// - sprite is a pointer to the position of the sprite to generate
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c
@@ -502,7 +502,7 @@ gen_chargen_sprite: {
     lda #0
     sta y
   b1:
-    //  current chargen line
+    // current chargen line
     ldy y
     lda (chargen),y
     sta bits
@@ -523,7 +523,7 @@ gen_chargen_sprite: {
     sta c
   b3:
     ldx #0
-  //  generate 3 pixels in the sprite byte (s_gen)
+  // generate 3 pixels in the sprite byte (s_gen)
   b4:
     lda s_gen
     asl
@@ -532,7 +532,7 @@ gen_chargen_sprite: {
     iny
     cpy #8
     bne b5
-    //  sprite byte filled - store and move to next byte
+    // sprite byte filled - store and move to next byte
     ldy #0
     sta (sprite),y
     ldy #3

@@ -1,4 +1,4 @@
-//  A simple usage of the flexible sprite multiplexer routine
+// A simple usage of the flexible sprite multiplexer routine
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -13,12 +13,12 @@
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
-  //  The number of sprites in the multiplexer
+  // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
-  //  Location of screen & sprites
+  // Location of screen & sprites
   .label SCREEN = $400
   .label SPRITE = $2000
   .label YSIN = $2100
@@ -32,7 +32,7 @@ main: {
     jsr loop
     rts
 }
-//  The raster loop
+// The raster loop
 loop: {
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = 9
@@ -74,7 +74,7 @@ loop: {
     sta plex_show_idx
     tax
     sta plex_free_next
-  //  Show the sprites
+  // Show the sprites
   b11:
     lda #BLACK
     sta BORDERCOL
@@ -95,8 +95,8 @@ loop: {
     sta BORDERCOL
     jmp b4
 }
-//  Show the next sprite.
-//  plexSort() prepares showing the sprites
+// Show the next sprite.
+// plexSort() prepares showing the sprites
 plexShowSprite: {
     .label plex_sprite_idx2 = 9
     .label xpos_idx = $a
@@ -159,15 +159,15 @@ plexShowSprite: {
     sta SPRITES_XMSB
     jmp b2
 }
-//  Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
-//  Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
-//  Uses an insertion sort:
-//  1. Moves a marker (m) from the start to end of the array. Every time the marker moves forward all elements before the marker are sorted correctly.
-//  2a. If the next element after the marker is larger that the current element
-//      the marker can be moved forwards (as the sorting is correct).
-//  2b. If the next element after the marker is smaller than the current element:
-//      elements before the marker are shifted right one at a time until encountering one smaller than the current one.
-//       It is then inserted at the spot. Now the marker can move forward.
+// Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
+// Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
+// Uses an insertion sort:
+// 1. Moves a marker (m) from the start to end of the array. Every time the marker moves forward all elements before the marker are sorted correctly.
+// 2a. If the next element after the marker is larger that the current element
+//     the marker can be moved forwards (as the sorting is correct).
+// 2b. If the next element after the marker is smaller than the current element:
+//     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
+//      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
     .label nxt_idx = 4
     .label nxt_y = 5
@@ -215,7 +215,7 @@ plexSort: {
     bcc b3
     jmp b5
 }
-//  Initialize the program
+// Initialize the program
 init: {
     .label xp = 7
     lda #VIC_DEN|VIC_RSEL|3
@@ -246,7 +246,7 @@ init: {
     inx
     cpx #PLEX_COUNT-1+1
     bne b1
-    //  Enable & initialize sprites
+    // Enable & initialize sprites
     lda #$ff
     sta SPRITES_ENABLE
     ldx #0
@@ -258,7 +258,7 @@ init: {
     bne b2
     rts
 }
-//  Initialize the multiplexer data structures
+// Initialize the multiplexer data structures
 plexInit: {
     ldx #0
   b1:
@@ -269,15 +269,15 @@ plexInit: {
     bne b1
     rts
 }
-  //  Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
+  // Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
-  //  The x-positions of the multiplexer sprites ($000-$1ff)
+  // The x-positions of the multiplexer sprites ($000-$1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
-  //  The y-positions of the multiplexer sprites.
+  // The y-positions of the multiplexer sprites.
   PLEX_YPOS: .fill PLEX_COUNT, 0
-  //  The sprite pointers for the multiplexed sprites
+  // The sprite pointers for the multiplexed sprites
   PLEX_PTR: .fill PLEX_COUNT, 0
-  //  Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
+  // Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
   PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
 .pc = YSIN "YSIN"
   .var min = 50

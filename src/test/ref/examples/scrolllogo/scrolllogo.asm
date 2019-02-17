@@ -9,17 +9,17 @@
   .label D016 = $d016
   .const VIC_MCM = $10
   .label D018 = $d018
-  //  Color Ram
+  // Color Ram
   .label COLS = $d800
-  //  The colors of the C64
+  // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const DARK_GREY = $b
-  //  PI*2 in u[4.28] format
+  // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
-  //  PI in u[4.28] format
+  // PI in u[4.28] format
   .const PI_u4f28 = $3243f6a9
-  //  PI/2 in u[4.28] format
+  // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
   .label SCREEN = $400
   .label LOGO = $2000
@@ -70,7 +70,7 @@ loop: {
     sta xsin_idx
     sta xsin_idx+1
   b1:
-  //  Wait for the raster to reach the bottom of the screen
+  // Wait for the raster to reach the bottom of the screen
   b4:
     lda RASTER
     cmp #$ff
@@ -235,9 +235,9 @@ render_logo: {
     iny
     jmp b11
 }
-//  Generate signed word sinus table - with values in the range min-max.
-//  sintab - the table to generate into
-//  wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// Generate signed word sinus table - with values in the range min-max.
+// sintab - the table to generate into
+// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 sin16s_gen2: {
     .const min = -$140
     .const max = $140
@@ -263,7 +263,7 @@ sin16s_gen2: {
     sta x+1
     sta x+2
     sta x+3
-  //  u[4.28]
+  // u[4.28]
   b1:
     lda x
     sta sin16s.x
@@ -326,8 +326,8 @@ sin16s_gen2: {
   !:
     rts
 }
-//  Multiply of two signed words to a signed double word
-//  Fixes offsets introduced by using unsigned multiplication
+// Multiply of two signed words to a signed double word
+// Fixes offsets introduced by using unsigned multiplication
 mul16s: {
     .label _5 = 2
     .label _6 = $e
@@ -368,7 +368,7 @@ mul16s: {
   b2:
     rts
 }
-//  Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 mul16u: {
     .label mb = $12
     .label a = $10
@@ -420,9 +420,9 @@ mul16u: {
     rol mb+3
     jmp b1
 }
-//  Calculate signed word sinus sin(x)
-//  x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
-//  result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
+// Calculate signed word sinus sin(x)
+// x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
+// result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 sin16s: {
     .label _6 = $a
     .label x = $a
@@ -596,8 +596,8 @@ sin16s: {
   b3:
     rts
 }
-//  Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
-//  The select parameter indicates how many of the highest bits of the 32-bit result to skip
+// Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+// The select parameter indicates how many of the highest bits of the 32-bit result to skip
 mulu16_sel: {
     .label _0 = $a
     .label _1 = $a
@@ -627,8 +627,8 @@ mulu16_sel: {
     sta return+1
     rts
 }
-//  Divide unsigned 32-bit dword dividend with a 16-bit word divisor
-//  The 16-bit word remainder can be found in rem16u after the division
+// Divide unsigned 32-bit dword dividend with a 16-bit word divisor
+// The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = $10
     .label quotient_lo = $e
@@ -660,10 +660,10 @@ div32u16u: {
     sta return+1
     rts
 }
-//  Performs division on two 16 bit unsigned words and an initial remainder
-//  Returns the quotient dividend/divisor.
-//  The final remainder will be set into the global variable rem16u
-//  Implemented using simple binary division
+// Performs division on two 16 bit unsigned words and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
 divr16u: {
     .label rem = 2
     .label dividend = 8
@@ -713,7 +713,7 @@ divr16u: {
     bne b1
     rts
 }
-//  Fill some memory with a value
+// Fill some memory with a value
 fill: {
     .label end = 8
     .label addr = 2

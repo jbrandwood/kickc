@@ -106,6 +106,7 @@ render: {
     bne b1
     rts
 }
+// findcol(byte zeropage(5) x, byte zeropage(2) y)
 findcol: {
     .label x = 5
     .label y = 2

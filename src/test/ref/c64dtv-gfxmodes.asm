@@ -452,6 +452,7 @@ mode_ctrl: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
     .label colidx = 7
     tya
@@ -472,6 +473,7 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(Y) rowid)
 keyboard_matrix_read: {
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
@@ -482,6 +484,7 @@ keyboard_matrix_read: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
+// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -1546,6 +1549,7 @@ mode_stdbitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
+// bitmap_line(byte zeropage(9) x0, byte zeropage($c) x1, byte zeropage($b) y0, byte register(Y) y1)
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -1649,6 +1653,7 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     jmp breturn
 }
+// bitmap_line_xdyi(byte zeropage($a) x, byte zeropage($b) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyi: {
     .label x = $a
     .label y = $b
@@ -1683,6 +1688,7 @@ bitmap_line_xdyi: {
     bne b1
     rts
 }
+// bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
     .label _0 = 2
     .label plotter_x = 2
@@ -1708,6 +1714,7 @@ bitmap_plot: {
     sta (_0),y
     rts
 }
+// bitmap_line_ydxi(byte zeropage($a) y, byte register(X) x, byte zeropage($b) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxi: {
     .label y = $a
     .label y1 = $b
@@ -1741,6 +1748,7 @@ bitmap_line_ydxi: {
     bne b1
     rts
 }
+// bitmap_line_xdyd(byte zeropage($a) x, byte zeropage($b) y, byte zeropage($c) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyd: {
     .label x = $a
     .label y = $b
@@ -1775,6 +1783,7 @@ bitmap_line_xdyd: {
     bne b1
     rts
 }
+// bitmap_line_ydxd(byte zeropage($a) y, byte register(X) x, byte zeropage($b) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxd: {
     .label y = $a
     .label y1 = $b
@@ -2223,6 +2232,7 @@ mode_stdchar: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
+// print_str_lines(byte* zeropage(2) str)
 print_str_lines: {
     .label str = 2
     lda #<menu.SCREEN

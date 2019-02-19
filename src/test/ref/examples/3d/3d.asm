@@ -342,6 +342,7 @@ debug_print: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
+// print_sbyte_at(signed byte register(X) b, byte* zeropage(6) at)
 print_sbyte_at: {
     .label at = 6
     cpx #0
@@ -368,6 +369,7 @@ print_sbyte_at: {
     jmp b2
 }
 // Print a single char
+// print_char_at(byte zeropage(8) ch, byte* zeropage(6) at)
 print_char_at: {
     .label at = 6
     .label ch = 8
@@ -377,6 +379,7 @@ print_char_at: {
     rts
 }
 // Print a byte as HEX at a specific position
+// print_byte_at(byte* zeropage(6) at)
 print_byte_at: {
     .label at = 6
     txa
@@ -404,6 +407,7 @@ print_byte_at: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
+// rotate_matrix(signed byte zeropage(5) x, signed byte register(Y) y, signed byte register(X) z)
 rotate_matrix: {
     .label x = 5
     lda x
@@ -545,6 +549,7 @@ store_matrix: {
 // Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
+// calculate_matrix(signed byte register(X) sx, signed byte zeropage(3) sy)
 calculate_matrix: {
     .label sy = 3
     .label t1 = 4
@@ -1051,6 +1056,7 @@ debug_print_init: {
     str11: .text "yp@"
 }
 // Print a string at a specific screen position
+// print_str_at(byte* zeropage(6) str, byte* zeropage(9) at)
 print_str_at: {
     .label at = 9
     .label str = 6

@@ -54,6 +54,7 @@ main: {
     jsr test
     rts
 }
+// test(byte register(X) i, byte zeropage(2) a)
 test: {
     .label a = 2
     lda a

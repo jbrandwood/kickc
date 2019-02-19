@@ -3151,6 +3151,7 @@ main: {
 }
 //SEG169 plot_chargen
 // Render 8x8 char (ch) as pixels on char canvas #pos
+// plot_chargen(byte zeropage($b) pos, byte zeropage(9) ch, byte zeropage($a) shift)
 plot_chargen: {
     .label _0 = $2c
     .label _1 = $2e
@@ -3355,6 +3356,7 @@ plot_chargen: {
 }
 //SEG228 mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// mul8u(byte zeropage($14) a)
 mul8u: {
     .const b = $a
     .label _1 = $35
@@ -3432,6 +3434,7 @@ mul8u: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte zeropage($19) key)
 keyboard_key_pressed: {
     .label _2 = $3a
     .label colidx = $36
@@ -3485,6 +3488,7 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte zeropage($38) rowid)
 keyboard_matrix_read: {
     .label return = $3c
     .label rowid = $38
@@ -3508,6 +3512,7 @@ keyboard_matrix_read: {
 // ch is the character to get the key code for ($00-$3f)
 // Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
+// keyboard_get_keycode(byte zeropage($28) ch)
 keyboard_get_keycode: {
     .label return = $3d
     .label ch = $28
@@ -3524,6 +3529,7 @@ keyboard_get_keycode: {
 }
 //SEG271 print_str_at
 // Print a string at a specific screen position
+// print_str_at(byte* zeropage($1a) str, byte* zeropage($1c) at)
 print_str_at: {
     .label at = $1c
     .label str = $1a
@@ -4260,6 +4266,7 @@ main: {
 }
 //SEG169 plot_chargen
 // Render 8x8 char (ch) as pixels on char canvas #pos
+// plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)
 plot_chargen: {
     .label _0 = 2
     .label _1 = 2
@@ -4437,6 +4444,7 @@ plot_chargen: {
 }
 //SEG228 mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// mul8u(byte register(X) a)
 mul8u: {
     .const b = $a
     .label mb = $b
@@ -4511,6 +4519,7 @@ mul8u: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
   //SEG252 [114] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
@@ -4544,6 +4553,7 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
   //SEG263 [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
@@ -4562,6 +4572,7 @@ keyboard_matrix_read: {
 // ch is the character to get the key code for ($00-$3f)
 // Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
+// keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
   //SEG268 [125] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
@@ -4573,6 +4584,7 @@ keyboard_get_keycode: {
 }
 //SEG271 print_str_at
 // Print a string at a specific screen position
+// print_str_at(byte* zeropage(2) str, byte* zeropage(9) at)
 print_str_at: {
     .label at = 9
     .label str = 2
@@ -5642,6 +5654,7 @@ main: {
 }
 //SEG169 plot_chargen
 // Render 8x8 char (ch) as pixels on char canvas #pos
+// plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)
 plot_chargen: {
     .label _0 = 2
     .label _1 = 2
@@ -5792,6 +5805,7 @@ plot_chargen: {
 }
 //SEG228 mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// mul8u(byte register(X) a)
 mul8u: {
     .const b = $a
     .label mb = $b
@@ -5855,6 +5869,7 @@ mul8u: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
   //SEG252 [114] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
@@ -5884,6 +5899,7 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
   //SEG263 [122] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
@@ -5900,6 +5916,7 @@ keyboard_matrix_read: {
 // ch is the character to get the key code for ($00-$3f)
 // Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
+// keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
   //SEG268 [125] (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes#0 + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
@@ -5909,6 +5926,7 @@ keyboard_get_keycode: {
 }
 //SEG271 print_str_at
 // Print a string at a specific screen position
+// print_str_at(byte* zeropage(2) str, byte* zeropage(9) at)
 print_str_at: {
     .label at = 9
     .label str = 2

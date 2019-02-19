@@ -55,6 +55,7 @@ main: {
   b3:
     jmp b3
 }
+// draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
 draw_block: {
     .label tileno = 8
     .label x1 = 9
@@ -166,6 +167,7 @@ draw_block: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// mul8u(byte register(X) a)
 mul8u: {
     .const b = $28
     .label mb = 6
@@ -233,6 +235,7 @@ init: {
     rts
 }
 // Fill some memory with a value
+// fill(byte register(X) val)
 fill: {
     .label end = 6
     .label addr = 4

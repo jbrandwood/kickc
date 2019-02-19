@@ -102,6 +102,7 @@ print_ln: {
     rts
 }
 // Print a signed word as HEX
+// print_sword(signed word zeropage(5) w)
 print_sword: {
     .label w = 5
     lda w+1
@@ -122,6 +123,7 @@ print_sword: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage(5) w)
 print_word: {
     .label w = 5
     lda w+1
@@ -133,6 +135,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte zeropage(7) b)
 print_byte: {
     .label b = 7
     lda b
@@ -151,6 +154,7 @@ print_byte: {
     rts
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -161,6 +165,7 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
+// print_str(byte* zeropage(5) str)
 print_str: {
     .label str = 5
   b1:
@@ -189,6 +194,7 @@ print_str: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// div16s(signed word zeropage(5) dividend, signed word zeropage($13) divisor)
 div16s: {
     .label return = $e
     .label dividend = 5
@@ -209,6 +215,7 @@ div16s: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// divr16s(signed word zeropage(8) dividend, signed word zeropage($c) divisor)
 divr16s: {
     .const rem = 0
     .label _5 = 8
@@ -289,6 +296,7 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
+// divr16u(word zeropage(8) dividend, word zeropage($c) divisor, word zeropage($a) rem)
 divr16u: {
     .label rem = $a
     .label dividend = 8
@@ -397,6 +405,7 @@ test_8s: {
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
 // Print a signed byte as HEX
+// print_sbyte(signed byte zeropage(7) b)
 print_sbyte: {
     .label b = 7
     lda b
@@ -422,6 +431,7 @@ print_sbyte: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// div8s(signed byte register(Y) dividend, signed byte register(X) divisor)
 div8s: {
     .label neg = $10
     cpy #0
@@ -476,6 +486,7 @@ div8s: {
 // Returns dividend/divisor.
 // The remainder will be set into the global variable rem8u
 // Implemented using simple binary division
+// div8u(byte register(A) dividend, byte register(X) divisor)
 div8u: {
     sta divr8u.dividend
     stx divr8u.divisor
@@ -487,6 +498,7 @@ div8u: {
 // Returns dividend/divisor.
 // The final remainder will be set into the global variable rem8u
 // Implemented using simple binary division
+// divr8u(byte zeropage($11) dividend, byte zeropage($16) divisor, byte register(Y) rem)
 divr8u: {
     .label dividend = $11
     .label divisor = $16
@@ -596,6 +608,7 @@ test_16u: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
+// div16u(word zeropage(5) dividend, word zeropage($c) divisor)
 div16u: {
     .label return = $e
     .label dividend = 5

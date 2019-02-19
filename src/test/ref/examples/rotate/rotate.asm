@@ -150,6 +150,7 @@ anim: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
+// mulf8s_prepared(signed byte register(Y) b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
@@ -199,6 +200,7 @@ mulf8u_prepared: {
     rts
 }
 // Prepare for fast multiply with an unsigned byte to a word result
+// mulf8u_prepare(byte register(A) a)
 mulf8u_prepare: {
     .label memA = $fd
     sta memA

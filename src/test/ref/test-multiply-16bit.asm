@@ -147,6 +147,7 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
+// print_str(byte* zeropage(9) str)
 print_str: {
     .label str = 9
   b1:
@@ -169,6 +170,7 @@ print_str: {
   !:
     jmp b1
 }
+// mul16s_error(signed word zeropage(3) a, signed word zeropage(5) b, signed dword zeropage($b) ms, signed dword zeropage($19) mn, signed dword zeropage($11) mf)
 mul16s_error: {
     .label a = 3
     .label b = 5
@@ -234,6 +236,7 @@ mul16s_error: {
     str4: .text " / fast:@"
 }
 // Print a signed dword as HEX
+// print_sdword(signed dword zeropage($b) dw)
 print_sdword: {
     .label dw = $b
     lda dw+3
@@ -262,6 +265,7 @@ print_sdword: {
     rts
 }
 // Print a dword as HEX
+// print_dword(dword zeropage($b) dw)
 print_dword: {
     .label dw = $b
     lda dw+2
@@ -277,6 +281,7 @@ print_dword: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage(3) w)
 print_word: {
     .label w = 3
     lda w+1
@@ -288,6 +293,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte register(X) b)
 print_byte: {
     txa
     lsr
@@ -305,6 +311,7 @@ print_byte: {
     rts
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -315,6 +322,7 @@ print_char: {
     rts
 }
 // Print a signed word as HEX
+// print_sword(signed word zeropage(3) w)
 print_sword: {
     .label w = 3
     lda w+1
@@ -336,6 +344,7 @@ print_sword: {
 }
 // Fast multiply two signed words to a signed double word result
 // Fixes offsets introduced by using unsigned multiplication
+// mulf16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mulf16s: {
     .label _5 = 3
     .label _6 = 9
@@ -404,6 +413,7 @@ mulf16s: {
 }
 // Fast multiply two unsigned words to a double word result
 // Done in assembler to utilize fast addition A+X
+// mulf16u(word zeropage($15) a, word zeropage($17) b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -523,6 +533,7 @@ mulf16u: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
+// mul16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mul16s: {
     .label _5 = 3
     .label _6 = 9
@@ -590,6 +601,7 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// mul16u(word zeropage(9) a, word zeropage($17) b)
 mul16u: {
     .label mb = $11
     .label a = 9
@@ -643,6 +655,7 @@ mul16u: {
 }
 // Slow multiplication of signed words
 // Perform a signed multiplication by repeated addition/subtraction
+// muls16s(signed word zeropage(3) a, signed word zeropage(5) b)
 muls16s: {
     .label m = $b
     .label j = 9
@@ -870,6 +883,7 @@ mul16u_compare: {
     str: .text ".@"
     str1: .text "word multiply results match!@"
 }
+// mul16u_error(word zeropage(3) a, word zeropage($17) b, dword zeropage($b) ms, dword zeropage($19) mn, dword zeropage($11) mf)
 mul16u_error: {
     .label a = 3
     .label b = $17
@@ -940,6 +954,7 @@ mul16u_error: {
 }
 // Slow multiplication of unsigned words
 // Calculate an unsigned multiplication by repeated addition
+// muls16u(word zeropage($15) a, word zeropage($17) b)
 muls16u: {
     .label return = $b
     .label m = $b

@@ -26,6 +26,7 @@ main: {
     bne b1
     rts
 }
+// print(byte register(X) idx, byte register(A) val)
 print: {
     .label SCREEN = $400
     sta SCREEN,x

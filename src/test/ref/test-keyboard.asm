@@ -177,6 +177,7 @@ main: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
     .label colidx = 5
     tya
@@ -197,6 +198,7 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(Y) rowid)
 keyboard_matrix_read: {
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
@@ -208,6 +210,7 @@ keyboard_matrix_read: {
 // ch is the character to get the key code for ($00-$3f)
 // Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
+// keyboard_get_keycode(byte register(Y) ch)
 keyboard_get_keycode: {
     lda keyboard_char_keycodes,y
     rts

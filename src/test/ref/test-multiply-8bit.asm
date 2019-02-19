@@ -108,6 +108,7 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
+// print_str(byte* zeropage(6) str)
 print_str: {
     .label str = 6
   b1:
@@ -130,6 +131,7 @@ print_str: {
   !:
     jmp b1
 }
+// mul8s_error(signed byte register(X) a, signed byte zeropage(3) b, signed word zeropage(8) ms, signed word zeropage($c) mn, signed word zeropage($e) mf)
 mul8s_error: {
     .label b = 3
     .label ms = 8
@@ -187,6 +189,7 @@ mul8s_error: {
     str4: .text " / fast:@"
 }
 // Print a signed word as HEX
+// print_sword(signed word zeropage(8) w)
 print_sword: {
     .label w = 8
     lda w+1
@@ -207,6 +210,7 @@ print_sword: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage(8) w)
 print_word: {
     .label w = 8
     lda w+1
@@ -218,6 +222,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte register(X) b)
 print_byte: {
     txa
     lsr
@@ -235,6 +240,7 @@ print_byte: {
     rts
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -245,6 +251,7 @@ print_char: {
     rts
 }
 // Print a signed byte as HEX
+// print_sbyte(signed byte register(X) b)
 print_sbyte: {
     cpx #0
     bmi b1
@@ -265,6 +272,7 @@ print_sbyte: {
 }
 // Multiply of two signed bytes to a signed word
 // Fixes offsets introduced by using unsigned multiplication
+// mul8s(signed byte zeropage(2) a, signed byte register(Y) b)
 mul8s: {
     .label m = $c
     .label a = 2
@@ -291,6 +299,7 @@ mul8s: {
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
     .label mb = 6
     .label res = $c
@@ -325,6 +334,7 @@ mul8u: {
     jmp b1
 }
 // Fast multiply two signed bytes to a word result
+// mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
     .label return = $e
     jsr mulf8u_prepare
@@ -334,6 +344,7 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
+// mulf8s_prepared(signed byte zeropage(3) b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = $e
@@ -361,6 +372,7 @@ mulf8s_prepared: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8u_prepare(byte a)
+// mulf8u_prepared(byte register(X) b)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
@@ -384,6 +396,7 @@ mulf8u_prepared: {
     rts
 }
 // Prepare for fast multiply with an unsigned byte to a word result
+// mulf8u_prepare(byte register(A) a)
 mulf8u_prepare: {
     .label memA = $fd
     sta memA
@@ -396,6 +409,7 @@ mulf8u_prepare: {
 }
 // Slow multiplication of signed bytes
 // Perform a signed multiplication by repeated addition/subtraction
+// muls8s(signed byte zeropage(2) a, signed byte register(X) b)
 muls8s: {
     .label m = 8
     .label return = 8
@@ -526,6 +540,7 @@ mul8u_compare: {
     jmp breturn
     str: .text "multiply results match!@"
 }
+// mul8u_error(byte register(X) a, byte zeropage(3) b, word zeropage(8) ms, word zeropage($c) mn, word zeropage($e) mf)
 mul8u_error: {
     .label b = 3
     .label ms = 8
@@ -579,6 +594,7 @@ mul8u_error: {
     str4: .text " / fast:@"
 }
 // Fast multiply two unsigned bytes to a word result
+// mulf8u(byte register(A) a, byte register(X) b)
 mulf8u: {
     .label return = $e
     jsr mulf8u_prepare
@@ -587,6 +603,7 @@ mulf8u: {
 }
 // Slow multiplication of unsigned bytes
 // Calculate an unsigned multiplication by repeated addition
+// muls8u(byte zeropage(2) a, byte register(X) b)
 muls8u: {
     .label return = 8
     .label m = 8

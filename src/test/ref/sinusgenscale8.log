@@ -3548,6 +3548,7 @@ main: {
 // tabsize - the number of sinus points (the size of the table)
 // min - the minimal value
 // max - the maximal value
+// sin8u_table(byte* zeropage(4) sintab)
 sin8u_table: {
     .const min = $a
     .const max = $ff
@@ -4000,6 +4001,7 @@ print_ln: {
 }
 //SEG171 print_byte
 // Print a byte as HEX
+// print_byte(byte zeropage($a) b)
 print_byte: {
     .label _0 = $3b
     .label _2 = $3c
@@ -4046,6 +4048,7 @@ print_byte: {
 }
 //SEG187 print_char
 // Print a single char
+// print_char(byte zeropage($b) ch)
 print_char: {
     .label ch = $b
   //SEG188 [83] *((byte*) print_char_cursor#64) ← (byte) print_char::ch#5 -- _deref_pbuz1=vbuz2 
@@ -4065,6 +4068,7 @@ print_char: {
 }
 //SEG192 print_str
 // Print a zero-terminated string
+// print_str(byte* zeropage($c) str)
 print_str: {
     .label str = $c
   //SEG193 [87] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -4106,6 +4110,7 @@ print_str: {
 }
 //SEG204 print_sword
 // Print a signed word as HEX
+// print_sword(signed word zeropage($e) w)
 print_sword: {
     .label w = $e
   //SEG205 [93] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -4164,6 +4169,7 @@ print_sword: {
 }
 //SEG225 print_word
 // Print a word as HEX
+// print_word(word zeropage($12) w)
 print_word: {
     .label w = $12
   //SEG226 [102] (byte) print_byte::b#1 ← > (word) print_word::w#3 -- vbuz1=_hi_vwuz2 
@@ -4195,6 +4201,7 @@ print_word: {
 }
 //SEG239 print_sbyte
 // Print a signed byte as HEX
+// print_sbyte(signed byte zeropage($14) b)
 print_sbyte: {
     .label b = $14
   //SEG240 [107] if((signed byte) print_sbyte::b#1<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
@@ -4261,6 +4268,7 @@ print_sbyte: {
 //SEG265 mul8su
 // Multiply a signed byte and an unsigned byte (into a signed word)
 // Fixes offsets introduced by using unsigned multiplication
+// mul8su(signed byte zeropage($34) a)
 mul8su: {
     .const b = sin8u_table.amplitude+1
     .label _5 = $3f
@@ -4329,6 +4337,7 @@ mul8su: {
 }
 //SEG285 mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// mul8u(byte zeropage($18) a, byte zeropage($17) b)
 mul8u: {
     .label _1 = $42
     .label mb = $1b
@@ -4407,6 +4416,7 @@ mul8u: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
+// sin8s(word zeropage($1e) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
@@ -4691,6 +4701,7 @@ sin8s: {
 //SEG396 mulu8_sel
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
+// mulu8_sel(byte zeropage($22) v1, byte zeropage($23) v2, byte zeropage($24) select)
 mulu8_sel: {
     .label _0 = $54
     .label _1 = $56
@@ -4786,6 +4797,7 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
+// divr16u(word zeropage($27) dividend, word zeropage($25) rem)
 divr16u: {
     .label _1 = $5d
     .label _2 = $5e
@@ -5323,6 +5335,7 @@ main: {
 // tabsize - the number of sinus points (the size of the table)
 // min - the minimal value
 // max - the maximal value
+// sin8u_table(byte* zeropage(4) sintab)
 sin8u_table: {
     .const min = $a
     .const max = $ff
@@ -5750,6 +5763,7 @@ print_ln: {
 }
 //SEG171 print_byte
 // Print a byte as HEX
+// print_byte(byte zeropage($a) b)
 print_byte: {
     .label b = $a
   //SEG172 [75] (byte~) print_byte::$0 ← (byte) print_byte::b#8 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuz1_ror_4 
@@ -5790,6 +5804,7 @@ print_byte: {
 }
 //SEG187 print_char
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
   //SEG188 [83] *((byte*) print_char_cursor#64) ← (byte) print_char::ch#5 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -5807,6 +5822,7 @@ print_char: {
 }
 //SEG192 print_str
 // Print a zero-terminated string
+// print_str(byte* zeropage($b) str)
 print_str: {
     .label str = $b
   //SEG193 [87] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -5848,6 +5864,7 @@ print_str: {
 }
 //SEG204 print_sword
 // Print a signed word as HEX
+// print_sword(signed word zeropage($b) w)
 print_sword: {
     .label w = $b
   //SEG205 [93] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -5901,6 +5918,7 @@ print_sword: {
 }
 //SEG225 print_word
 // Print a word as HEX
+// print_word(word zeropage($b) w)
 print_word: {
     .label w = $b
   //SEG226 [102] (byte) print_byte::b#1 ← > (word) print_word::w#3 -- vbuz1=_hi_vwuz2 
@@ -5932,6 +5950,7 @@ print_word: {
 }
 //SEG239 print_sbyte
 // Print a signed byte as HEX
+// print_sbyte(signed byte zeropage($a) b)
 print_sbyte: {
     .label b = $a
   //SEG240 [107] if((signed byte) print_sbyte::b#1<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
@@ -5994,6 +6013,7 @@ print_sbyte: {
 //SEG265 mul8su
 // Multiply a signed byte and an unsigned byte (into a signed word)
 // Fixes offsets introduced by using unsigned multiplication
+// mul8su(signed byte register(Y) a)
 mul8su: {
     .const b = sin8u_table.amplitude+1
     .label m = $f
@@ -6043,6 +6063,7 @@ mul8su: {
 }
 //SEG285 mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
     .label mb = $b
     .label res = $f
@@ -6115,6 +6136,7 @@ mul8u: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
+// sin8s(word zeropage($b) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
@@ -6349,6 +6371,7 @@ sin8s: {
 //SEG396 mulu8_sel
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($11) select)
 mulu8_sel: {
     .label _0 = $f
     .label _1 = $f
@@ -6411,6 +6434,7 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
+// divr16u(word zeropage(4) dividend, word zeropage(2) rem)
 divr16u: {
     .label rem = 2
     .label dividend = 4
@@ -6850,8 +6874,8 @@ Removing instruction lda #<0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [172] bcc b1 to bcs
-Fixing long branch [178] bcc b1 to bcs
+Fixing long branch [173] bcc b1 to bcs
+Fixing long branch [179] bcc b1 to bcs
 
 FINAL SYMBOL TABLE
 (label) @41
@@ -7276,6 +7300,7 @@ main: {
 // tabsize - the number of sinus points (the size of the table)
 // min - the minimal value
 // max - the maximal value
+// sin8u_table(byte* zeropage(4) sintab)
 sin8u_table: {
     .const min = $a
     .const max = $ff
@@ -7618,6 +7643,7 @@ print_ln: {
 }
 //SEG171 print_byte
 // Print a byte as HEX
+// print_byte(byte zeropage($a) b)
 print_byte: {
     .label b = $a
   //SEG172 [75] (byte~) print_byte::$0 ← (byte) print_byte::b#8 >> (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuaa=vbuz1_ror_4 
@@ -7652,6 +7678,7 @@ print_byte: {
 }
 //SEG187 print_char
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
   //SEG188 [83] *((byte*) print_char_cursor#64) ← (byte) print_char::ch#5 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -7667,6 +7694,7 @@ print_char: {
 }
 //SEG192 print_str
 // Print a zero-terminated string
+// print_str(byte* zeropage($b) str)
 print_str: {
     .label str = $b
   //SEG193 [87] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -7702,6 +7730,7 @@ print_str: {
 }
 //SEG204 print_sword
 // Print a signed word as HEX
+// print_sword(signed word zeropage($b) w)
 print_sword: {
     .label w = $b
   //SEG205 [93] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 -- vwsz1_ge_0_then_la1 
@@ -7743,6 +7772,7 @@ print_sword: {
 }
 //SEG225 print_word
 // Print a word as HEX
+// print_word(word zeropage($b) w)
 print_word: {
     .label w = $b
   //SEG226 [102] (byte) print_byte::b#1 ← > (word) print_word::w#3 -- vbuz1=_hi_vwuz2 
@@ -7768,6 +7798,7 @@ print_word: {
 }
 //SEG239 print_sbyte
 // Print a signed byte as HEX
+// print_sbyte(signed byte zeropage($a) b)
 print_sbyte: {
     .label b = $a
   //SEG240 [107] if((signed byte) print_sbyte::b#1<(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
@@ -7815,6 +7846,7 @@ print_sbyte: {
 //SEG265 mul8su
 // Multiply a signed byte and an unsigned byte (into a signed word)
 // Fixes offsets introduced by using unsigned multiplication
+// mul8su(signed byte register(Y) a)
 mul8su: {
     .const b = sin8u_table.amplitude+1
     .label m = $f
@@ -7853,6 +7885,7 @@ mul8su: {
 }
 //SEG285 mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
     .label mb = $b
     .label res = $f
@@ -7913,6 +7946,7 @@ mul8u: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
+// sin8s(word zeropage($b) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
@@ -8111,6 +8145,7 @@ sin8s: {
 //SEG396 mulu8_sel
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($11) select)
 mulu8_sel: {
     .label _0 = $f
     .label _1 = $f
@@ -8163,6 +8198,7 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
+// divr16u(word zeropage(4) dividend, word zeropage(2) rem)
 divr16u: {
     .label rem = 2
     .label dividend = 4

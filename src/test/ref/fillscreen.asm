@@ -7,6 +7,7 @@ main: {
     jsr fillscreen
     rts
 }
+// fillscreen(byte register(A) c)
 fillscreen: {
     .label SCREEN2 = SCREEN+$100
     .label SCREEN3 = SCREEN+$200

@@ -99,10 +99,10 @@ public class TestPrograms {
       compileAndCompare("runtime-unused-procedure");
    }
 
-   //@Test
-   //public void testRobozzle64() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/robozzle64/robozzle64");
-   //}
+//   @Test
+//   public void testRobozzle64() throws IOException, URISyntaxException {
+//      compileAndCompare("complex/robozzle64/robozzle64");
+//   }
 
    @Test
    public void testTetrisSprites() throws IOException, URISyntaxException {

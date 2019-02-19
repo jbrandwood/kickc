@@ -3960,6 +3960,7 @@ clear_screen: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
+// gen_sintab(byte* zeropage($f) sintab, byte zeropage($e) length, byte zeropage($d) min, byte zeropage($c) max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
@@ -4371,6 +4372,7 @@ addMEMtoFAC: {
 }
 //SEG290 prepareMEM
 // Prepare MEM pointers for operations using MEM
+// prepareMEM(byte* zeropage($15) mem)
 prepareMEM: {
     .label _0 = $3c
     .label _1 = $3d
@@ -4397,6 +4399,7 @@ prepareMEM: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
+// mulFACbyMEM(byte* zeropage($17) mem)
 mulFACbyMEM: {
     .label mem = $17
   //SEG298 [143] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2 -- pbuz1=pbuz2 
@@ -4439,6 +4442,7 @@ sinFAC: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
+// divMEMbyFAC(byte* zeropage($19) mem)
 divMEMbyFAC: {
     .label mem = $19
   //SEG311 [150] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2 -- pbuz1=pbuz2 
@@ -4467,6 +4471,7 @@ divMEMbyFAC: {
 //SEG319 setFAC
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// setFAC(word zeropage($1b) w)
 setFAC: {
     .label w = $1b
   //SEG320 [155] (byte*~) prepareMEM::mem#8 ← (byte*)(word) setFAC::w#5 -- pbuz1=pbuz2 
@@ -4497,6 +4502,7 @@ setFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// setMEMtoFAC(byte* zeropage($1d) mem)
 setMEMtoFAC: {
     .label mem = $1d
   //SEG329 [160] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5 -- pbuz1=pbuz2 
@@ -4548,6 +4554,7 @@ setARGtoFAC: {
 }
 //SEG345 progress_init
 // Initialize the PETSCII progress bar
+// progress_init(byte* zeropage($13) line)
 progress_init: {
     .label line = $13
     jmp breturn
@@ -4617,6 +4624,7 @@ gen_sprites: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
+// gen_chargen_sprite(byte zeropage($3e) ch, byte* zeropage($29) sprite)
 gen_chargen_sprite: {
     .label _0 = $3f
     .label _1 = $41
@@ -5724,6 +5732,7 @@ clear_screen: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
+// gen_sintab(byte* zeropage(8) sintab, byte zeropage(3) length, byte zeropage(2) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
@@ -6122,6 +6131,7 @@ addMEMtoFAC: {
 }
 //SEG290 prepareMEM
 // Prepare MEM pointers for operations using MEM
+// prepareMEM(byte* zeropage($c) mem)
 prepareMEM: {
     .label mem = $c
   //SEG291 [137] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
@@ -6142,6 +6152,7 @@ prepareMEM: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
+// mulFACbyMEM(byte* zeropage($c) mem)
 mulFACbyMEM: {
     .label mem = $c
   //SEG298 [143] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
@@ -6180,6 +6191,7 @@ sinFAC: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
+// divMEMbyFAC(byte* zeropage($c) mem)
 divMEMbyFAC: {
     .label mem = $c
   //SEG311 [150] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2
@@ -6204,6 +6216,7 @@ divMEMbyFAC: {
 //SEG319 setFAC
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// setFAC(word zeropage($c) w)
 setFAC: {
     .label w = $c
   //SEG320 [155] (byte*~) prepareMEM::mem#8 ← (byte*)(word) setFAC::w#5
@@ -6230,6 +6243,7 @@ setFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// setMEMtoFAC(byte* zeropage($c) mem)
 setMEMtoFAC: {
     .label mem = $c
   //SEG329 [160] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5
@@ -6277,6 +6291,7 @@ setARGtoFAC: {
 }
 //SEG345 progress_init
 // Initialize the PETSCII progress bar
+// progress_init(byte* zeropage($a) line)
 progress_init: {
     .label line = $a
     jmp breturn
@@ -6345,6 +6360,7 @@ gen_sprites: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
+// gen_chargen_sprite(byte register(Y) ch, byte* zeropage($a) sprite)
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c
@@ -7712,6 +7728,7 @@ clear_screen: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
+// gen_sintab(byte* zeropage(8) sintab, byte zeropage(3) length, byte zeropage(2) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
@@ -8016,6 +8033,7 @@ addMEMtoFAC: {
 }
 //SEG290 prepareMEM
 // Prepare MEM pointers for operations using MEM
+// prepareMEM(byte* zeropage($c) mem)
 prepareMEM: {
     .label mem = $c
   //SEG291 [137] (byte~) prepareMEM::$0 ← < (byte*) prepareMEM::mem#5 -- vbuaa=_lo_pbuz1 
@@ -8034,6 +8052,7 @@ prepareMEM: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
+// mulFACbyMEM(byte* zeropage($c) mem)
 mulFACbyMEM: {
     .label mem = $c
   //SEG298 [143] (byte*) prepareMEM::mem#4 ← (byte*) mulFACbyMEM::mem#2
@@ -8065,6 +8084,7 @@ sinFAC: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
+// divMEMbyFAC(byte* zeropage($c) mem)
 divMEMbyFAC: {
     .label mem = $c
   //SEG311 [150] (byte*) prepareMEM::mem#3 ← (byte*) divMEMbyFAC::mem#2
@@ -8084,6 +8104,7 @@ divMEMbyFAC: {
 //SEG319 setFAC
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// setFAC(word zeropage($c) w)
 setFAC: {
     .label w = $c
   //SEG320 [155] (byte*~) prepareMEM::mem#8 ← (byte*)(word) setFAC::w#5
@@ -8105,6 +8126,7 @@ setFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// setMEMtoFAC(byte* zeropage($c) mem)
 setMEMtoFAC: {
     .label mem = $c
   //SEG329 [160] (byte*) prepareMEM::mem#1 ← (byte*) setMEMtoFAC::mem#5
@@ -8143,6 +8165,7 @@ setARGtoFAC: {
 }
 //SEG345 progress_init
 // Initialize the PETSCII progress bar
+// progress_init(byte* zeropage($a) line)
 progress_init: {
     .label line = $a
   //SEG346 progress_init::@return
@@ -8201,6 +8224,7 @@ gen_sprites: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
+// gen_chargen_sprite(byte register(Y) ch, byte* zeropage($a) sprite)
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c

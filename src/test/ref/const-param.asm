@@ -16,6 +16,7 @@ main: {
     sta screen+2
     rts
 }
+// sum(byte register(A) b)
 sum: {
     clc
     adc #main.reverse

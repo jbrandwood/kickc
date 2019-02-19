@@ -61,6 +61,7 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
+// print_str(byte* zeropage(4) str)
 print_str: {
     .label str = 4
   b1:

@@ -194,6 +194,7 @@ clear_screen: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
+// gen_sintab(byte* zeropage(8) sintab, byte zeropage(3) length, byte zeropage(2) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
@@ -359,6 +360,7 @@ addMEMtoFAC: {
     rts
 }
 // Prepare MEM pointers for operations using MEM
+// prepareMEM(byte* zeropage($c) mem)
 prepareMEM: {
     .label mem = $c
     lda mem
@@ -370,6 +372,7 @@ prepareMEM: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
+// mulFACbyMEM(byte* zeropage($c) mem)
 mulFACbyMEM: {
     .label mem = $c
     jsr prepareMEM
@@ -388,6 +391,7 @@ sinFAC: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
+// divMEMbyFAC(byte* zeropage($c) mem)
 divMEMbyFAC: {
     .label mem = $c
     jsr prepareMEM
@@ -398,6 +402,7 @@ divMEMbyFAC: {
 }
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// setFAC(word zeropage($c) w)
 setFAC: {
     .label w = $c
     jsr prepareMEM
@@ -410,6 +415,7 @@ setFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// setMEMtoFAC(byte* zeropage($c) mem)
 setMEMtoFAC: {
     .label mem = $c
     jsr prepareMEM
@@ -431,6 +437,7 @@ setARGtoFAC: {
     rts
 }
 // Initialize the PETSCII progress bar
+// progress_init(byte* zeropage($a) line)
 progress_init: {
     .label line = $a
     rts
@@ -469,6 +476,7 @@ gen_sprites: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
+// gen_chargen_sprite(byte register(Y) ch, byte* zeropage($a) sprite)
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c

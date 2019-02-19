@@ -25,6 +25,7 @@ main: {
     sta screen
     rts
 }
+// sum(byte register(Y) a, byte register(A) b)
 sum: {
     sty $ff
     clc

@@ -654,6 +654,7 @@ keyboard_event_scan: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
+// keyboard_event_pressed(byte zeropage(7) keycode)
 keyboard_event_pressed: {
     .label row_bits = 8
     .label keycode = 7
@@ -676,6 +677,7 @@ keyboard_event_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(A) rowid)
 keyboard_matrix_read: {
     tay
     lda keyboard_matrix_row_bitmask,y
@@ -685,6 +687,7 @@ keyboard_matrix_read: {
     rts
 }
 // Get the VIC screen address from the screen index
+// get_vic_screen(byte register(A) idx)
 get_vic_screen: {
     .label return = 3
     cmp #0
@@ -729,6 +732,7 @@ get_vic_screen: {
     rts
 }
 // Get the VIC charset/bitmap address from the index
+// get_vic_charset(byte register(A) idx)
 get_vic_charset: {
     .label return = 3
     cmp #0
@@ -749,6 +753,7 @@ get_vic_charset: {
     rts
 }
 // Get plane address from a plane index (from the form)
+// get_plane(byte register(A) idx)
 get_plane: {
     .label return = $a
     cmp #0
@@ -1042,6 +1047,7 @@ form_mode: {
 }
 // Render form preset name in the form
 // idx is the ID of the preset
+// render_preset_name(byte register(A) idx)
 render_preset_name: {
     .label name = 3
     cmp #0
@@ -1153,6 +1159,7 @@ render_preset_name: {
     name_11: .text "Standard Charset              @"
 }
 // Print a string at a specific screen position
+// print_str_at(byte* zeropage(3) str, byte* zeropage(5) at)
 print_str_at: {
     .label at = 5
     .label str = 3
@@ -1202,6 +1209,7 @@ form_render_values: {
 }
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
+// form_field_ptr(byte zeropage(2) field_idx)
 form_field_ptr: {
     .label return = 3
     .label field_idx = 2
@@ -1225,6 +1233,7 @@ form_field_ptr: {
 }
 // Apply a form value preset to the form values
 // idx is the ID of the preset
+// apply_preset(byte register(A) idx)
 apply_preset: {
     .label preset = 3
     cmp #0
@@ -1455,6 +1464,7 @@ form_set_screen: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
+// print_str_lines(byte* zeropage(3) str)
 print_str_lines: {
     .label str = 3
     lda print_set_screen.screen
@@ -1544,6 +1554,7 @@ print_cls: {
     rts
 }
 // Set the screen to print on. Also resets current line/char cursor.
+// print_set_screen(byte* zeropage($10) screen)
 print_set_screen: {
     .label screen = $10
     rts
@@ -1583,6 +1594,7 @@ gfx_init_plane_full: {
     rts
 }
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
+// gfx_init_plane_fill(dword zeropage($a) plane_addr, byte zeropage(2) fill)
 gfx_init_plane_fill: {
     .label _0 = $13
     .label _1 = 3
@@ -1661,6 +1673,7 @@ gfx_init_plane_fill: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
+// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -1986,6 +1999,7 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
+// bitmap_line(byte zeropage(9) x0, byte zeropage($12) x1, byte zeropage($f) y0, byte register(Y) y1)
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -2089,6 +2103,7 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     jmp breturn
 }
+// bitmap_line_xdyi(byte zeropage($e) x, byte zeropage($f) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyi: {
     .label x = $e
     .label y = $f
@@ -2123,6 +2138,7 @@ bitmap_line_xdyi: {
     bne b1
     rts
 }
+// bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
     .label _0 = 3
     .label plotter_x = 3
@@ -2148,6 +2164,7 @@ bitmap_plot: {
     sta (_0),y
     rts
 }
+// bitmap_line_ydxi(byte zeropage($e) y, byte register(X) x, byte zeropage($f) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxi: {
     .label y = $e
     .label y1 = $f
@@ -2181,6 +2198,7 @@ bitmap_line_ydxi: {
     bne b1
     rts
 }
+// bitmap_line_xdyd(byte zeropage($e) x, byte zeropage($f) y, byte zeropage($12) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyd: {
     .label x = $e
     .label y = $f
@@ -2215,6 +2233,7 @@ bitmap_line_xdyd: {
     bne b1
     rts
 }
+// bitmap_line_ydxd(byte zeropage($e) y, byte register(X) x, byte zeropage($f) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxd: {
     .label y = $e
     .label y1 = $f

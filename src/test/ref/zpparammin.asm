@@ -33,6 +33,7 @@ main: {
     bne b1
     rts
 }
+// sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
 sum2: {
     sty $ff
     clc
@@ -42,6 +43,7 @@ sum2: {
     adc $ff
     rts
 }
+// sum(byte register(Y) a, byte register(A) b, byte register(X) c)
 sum: {
     sty $ff
     clc

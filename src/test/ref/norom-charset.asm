@@ -40,6 +40,7 @@ main: {
 }
 // Generate one 5x3 character from a 16-bit char spec
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
+// gen_char3(byte* zeropage(2) dst, word zeropage(6) spec)
 gen_char3: {
     .label dst = 2
     .label spec = 6

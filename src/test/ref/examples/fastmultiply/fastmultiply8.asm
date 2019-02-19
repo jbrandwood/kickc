@@ -108,6 +108,7 @@ main: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
+// print_sbyte_at(signed byte zeropage($a) b, byte* zeropage(8) at)
 print_sbyte_at: {
     .label b = $a
     .label at = 8
@@ -135,6 +136,7 @@ print_sbyte_at: {
     jmp b2
 }
 // Print a single char
+// print_char_at(byte zeropage($b) ch, byte* zeropage(8) at)
 print_char_at: {
     .label at = 8
     .label ch = $b
@@ -144,6 +146,7 @@ print_char_at: {
     rts
 }
 // Print a byte as HEX at a specific position
+// print_byte_at(byte* zeropage(8) at)
 print_byte_at: {
     .label at = 8
     lda print_sbyte_at.b
@@ -167,6 +170,7 @@ print_byte_at: {
     jsr print_char_at
     rts
 }
+// fmul8(signed byte register(A) a, signed byte register(Y) b)
 fmul8: {
     sta ap
     tya

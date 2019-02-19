@@ -35,6 +35,7 @@ print_set_screen: {
     rts
 }
 // Print a dword as HEX
+// print_dword(dword zeropage(9) dw)
 print_dword: {
     .label dw = 9
     lda dw+2
@@ -50,6 +51,7 @@ print_dword: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage(2) w)
 print_word: {
     .label w = 2
     lda w+1
@@ -61,6 +63,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte register(X) b)
 print_byte: {
     txa
     lsr
@@ -78,6 +81,7 @@ print_byte: {
     rts
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
     ldy #0
     sta (print_char_cursor),y

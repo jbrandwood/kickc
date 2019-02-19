@@ -16,6 +16,7 @@ main: {
     rts
     hello: .text "hello world!@"
 }
+// print2(byte* zeropage(2) at)
 print2: {
     .label at = 2
     ldy #0

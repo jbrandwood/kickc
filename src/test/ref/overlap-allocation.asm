@@ -25,6 +25,7 @@ main: {
     bne b3
     rts
 }
+// plot(byte register(X) x)
 plot: {
     lda #'*'
     sta SCREEN,x

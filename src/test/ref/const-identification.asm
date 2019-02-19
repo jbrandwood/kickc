@@ -29,6 +29,7 @@ line: {
     beq b3
     rts
 }
+// plot(byte register(X) x)
 plot: {
     ldy plots,x
     lda SCREEN,y

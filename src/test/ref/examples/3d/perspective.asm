@@ -114,6 +114,7 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
+// print_str(byte* zeropage(2) str)
 print_str: {
     .label str = 2
   b1:
@@ -137,6 +138,7 @@ print_str: {
     jmp b1
 }
 // Print a byte as HEX
+// print_byte(byte register(X) b)
 print_byte: {
     txa
     lsr
@@ -154,6 +156,7 @@ print_byte: {
     rts
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -193,6 +196,7 @@ perspective: {
     rts
 }
 // Print a signed byte as HEX
+// print_sbyte(signed byte register(X) b)
 print_sbyte: {
     cpx #0
     bmi b1

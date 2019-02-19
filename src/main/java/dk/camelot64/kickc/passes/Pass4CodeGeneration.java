@@ -71,6 +71,8 @@ public class Pass4CodeGeneration {
             if(block.isProcedureEntry(program)) {
                Procedure procedure = block.getProcedure(program);
                generateComments(asm, procedure.getComments());
+               // Generate parameter information
+               generateSignatureComments(asm, procedure);
             }
             // Start the new scope
             asm.addScopeBegin(block.getLabel().getFullName().replace('@', 'b').replace(':', '_'));
@@ -140,6 +142,42 @@ public class Pass4CodeGeneration {
       }
 
       program.setAsm(asm);
+   }
+
+   /**
+    * Generate a comment that describes the procedure signature and parameter transfer
+    * @param asm The assembler program being generated
+    * @param procedure The procedure
+    */
+   private void generateSignatureComments(AsmProgram asm, Procedure procedure) {
+      StringBuilder signature = new StringBuilder();
+      signature.append(" ").append(procedure.getLocalName()).append("(");
+      int i = 0;
+      for(Variable parameter : procedure.getParameters()) {
+         List<VariableVersion> versions = new ArrayList<>(procedure.getVersions((VariableUnversioned) parameter));
+         if(versions.size() > 0) {
+            VariableVersion param = versions.get(0);
+            Registers.Register allocation = param.getAllocation();
+            if(i++ > 0) signature.append(", ");
+            signature.append(param.getType().getTypeName()).append(" ");
+            if(allocation instanceof Registers.RegisterZp) {
+               Registers.RegisterZp registerZp = (Registers.RegisterZp) allocation;
+               signature.append("zeropage(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
+            } else if(allocation instanceof Registers.RegisterAByte) {
+               signature.append("register(A)");
+            } else if(allocation instanceof Registers.RegisterXByte) {
+               signature.append("register(X)");
+            } else if(allocation instanceof Registers.RegisterYByte) {
+               signature.append("register(Y)");
+            }
+            signature.append(" ");
+            signature.append(parameter.getLocalName());
+         }
+      }
+      signature.append(")");
+      if(i>0) {
+         asm.addComment(signature.toString(), false);
+      }
    }
 
    /**

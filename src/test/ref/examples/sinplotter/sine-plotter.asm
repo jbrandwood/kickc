@@ -164,6 +164,7 @@ render_sine: {
     rts
 }
 // Plot a single dot in the bitmap
+// bitmap_plot(word zeropage(4) x, byte register(X) y)
 bitmap_plot: {
     .label _1 = $10
     .label plotter = 6
@@ -194,6 +195,7 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
+// wrap_y(signed word zeropage(6) y)
 wrap_y: {
     .label y = 6
   b1:
@@ -232,6 +234,7 @@ wrap_y: {
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// sin16s_gen2(signed word* zeropage(2) sintab)
 sin16s_gen2: {
     .const min = -$140
     .const max = $140
@@ -322,6 +325,7 @@ sin16s_gen2: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
+// mul16s(signed word zeropage($17) a)
 mul16s: {
     .label _5 = 2
     .label _6 = 6
@@ -363,6 +367,7 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// mul16u(word zeropage($10) a, word zeropage(6) b)
 mul16u: {
     .label mb = $12
     .label a = $10
@@ -417,6 +422,7 @@ mul16u: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
+// sin16s(dword zeropage($c) x)
 sin16s: {
     .label _6 = $c
     .label x = $c
@@ -592,6 +598,7 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
+// mulu16_sel(word zeropage($19) v1, word zeropage(6) v2, byte register(X) select)
 mulu16_sel: {
     .label _0 = $c
     .label _1 = $c
@@ -658,6 +665,7 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
+// divr16u(word zeropage(4) dividend, word zeropage(2) rem)
 divr16u: {
     .label rem = 2
     .label dividend = 4

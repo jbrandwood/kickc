@@ -13829,6 +13829,7 @@ mode_ctrl: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte zeropage($e) key)
 keyboard_key_pressed: {
     .label _2 = $d0
     .label colidx = $cc
@@ -13896,6 +13897,7 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte zeropage($ce) rowid)
 keyboard_matrix_read: {
     .label return = $d2
     .label rowid = $ce
@@ -13918,6 +13920,7 @@ keyboard_matrix_read: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
+// dtvSetCpuBankSegment1(byte zeropage($f) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -16138,6 +16141,7 @@ mode_stdbitmap: {
 }
 //SEG1100 bitmap_line
 // Draw a line on the bitmap
+// bitmap_line(byte zeropage($f8) x0, byte zeropage($f9) x1, byte zeropage($fa) y0, byte zeropage($fb) y1)
 bitmap_line: {
     .label xd = $ff
     .label xd_1 = $fc
@@ -16448,6 +16452,7 @@ bitmap_line: {
     jmp breturn
 }
 //SEG1226 bitmap_line_xdyi
+// bitmap_line_xdyi(byte zeropage($64) x, byte zeropage($65) y, byte zeropage($63) x1, byte zeropage($62) xd, byte zeropage($61) yd)
 bitmap_line_xdyi: {
     .label _6 = $102
     .label x = $64
@@ -16528,6 +16533,7 @@ bitmap_line_xdyi: {
     rts
 }
 //SEG1254 bitmap_plot
+// bitmap_plot(byte zeropage($67) x, byte zeropage($68) y)
 bitmap_plot: {
     .label _0 = $107
     .label _1 = $109
@@ -16572,6 +16578,7 @@ bitmap_plot: {
     rts
 }
 //SEG1262 bitmap_line_ydxi
+// bitmap_line_ydxi(byte zeropage($6d) y, byte zeropage($6c) x, byte zeropage($6b) y1, byte zeropage($6a) yd, byte zeropage($69) xd)
 bitmap_line_ydxi: {
     .label _6 = $10a
     .label y = $6d
@@ -16652,6 +16659,7 @@ bitmap_line_ydxi: {
     rts
 }
 //SEG1290 bitmap_line_xdyd
+// bitmap_line_xdyd(byte zeropage($72) x, byte zeropage($73) y, byte zeropage($71) x1, byte zeropage($70) xd, byte zeropage($6f) yd)
 bitmap_line_xdyd: {
     .label _6 = $10b
     .label x = $72
@@ -16732,6 +16740,7 @@ bitmap_line_xdyd: {
     rts
 }
 //SEG1318 bitmap_line_ydxd
+// bitmap_line_ydxd(byte zeropage($79) y, byte zeropage($78) x, byte zeropage($77) y1, byte zeropage($76) yd, byte zeropage($75) xd)
 bitmap_line_ydxd: {
     .label _6 = $10c
     .label y = $79
@@ -17695,6 +17704,7 @@ mode_stdchar: {
 //SEG1607 print_str_lines
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
+// print_str_lines(byte* zeropage($99) str)
 print_str_lines: {
     .label ch = $127
     .label str = $99
@@ -20580,6 +20590,7 @@ mode_ctrl: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
     .label colidx = 7
   //SEG392 [212] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#20 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuyy_band_vbuc1 
@@ -20615,6 +20626,7 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(Y) rowid)
 keyboard_matrix_read: {
   //SEG403 [220] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuyy 
     lda keyboard_matrix_row_bitmask,y
@@ -20632,6 +20644,7 @@ keyboard_matrix_read: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
+// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -22680,6 +22693,7 @@ mode_stdbitmap: {
 }
 //SEG1100 bitmap_line
 // Draw a line on the bitmap
+// bitmap_line(byte zeropage(9) x0, byte zeropage($c) x1, byte zeropage($b) y0, byte register(Y) y1)
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -22937,6 +22951,7 @@ bitmap_line: {
     jmp breturn
 }
 //SEG1226 bitmap_line_xdyi
+// bitmap_line_xdyi(byte zeropage($a) x, byte zeropage($b) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyi: {
     .label x = $a
     .label y = $b
@@ -23012,6 +23027,7 @@ bitmap_line_xdyi: {
     rts
 }
 //SEG1254 bitmap_plot
+// bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
     .label _0 = 2
     .label plotter_x = 2
@@ -23048,6 +23064,7 @@ bitmap_plot: {
     rts
 }
 //SEG1262 bitmap_line_ydxi
+// bitmap_line_ydxi(byte zeropage($a) y, byte register(X) x, byte zeropage($b) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxi: {
     .label y = $a
     .label y1 = $b
@@ -23122,6 +23139,7 @@ bitmap_line_ydxi: {
     rts
 }
 //SEG1290 bitmap_line_xdyd
+// bitmap_line_xdyd(byte zeropage($a) x, byte zeropage($b) y, byte zeropage($c) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyd: {
     .label x = $a
     .label y = $b
@@ -23197,6 +23215,7 @@ bitmap_line_xdyd: {
     rts
 }
 //SEG1318 bitmap_line_ydxd
+// bitmap_line_ydxd(byte zeropage($a) y, byte register(X) x, byte zeropage($b) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxd: {
     .label y = $a
     .label y1 = $b
@@ -24053,6 +24072,7 @@ mode_stdchar: {
 //SEG1607 print_str_lines
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
+// print_str_lines(byte* zeropage(2) str)
 print_str_lines: {
     .label str = 2
   //SEG1608 [866] phi from print_str_lines to print_str_lines::@1 [phi:print_str_lines->print_str_lines::@1]
@@ -27493,6 +27513,7 @@ mode_ctrl: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
     .label colidx = 7
   //SEG392 [212] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#20 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuyy_band_vbuc1 
@@ -27524,6 +27545,7 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(Y) rowid)
 keyboard_matrix_read: {
   //SEG403 [220] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuyy 
     lda keyboard_matrix_row_bitmask,y
@@ -27539,6 +27561,7 @@ keyboard_matrix_read: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
+// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -29296,6 +29319,7 @@ mode_stdbitmap: {
 }
 //SEG1100 bitmap_line
 // Draw a line on the bitmap
+// bitmap_line(byte zeropage(9) x0, byte zeropage($c) x1, byte zeropage($b) y0, byte register(Y) y1)
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -29525,6 +29549,7 @@ bitmap_line: {
     jmp breturn
 }
 //SEG1226 bitmap_line_xdyi
+// bitmap_line_xdyi(byte zeropage($a) x, byte zeropage($b) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyi: {
     .label x = $a
     .label y = $b
@@ -29587,6 +29612,7 @@ bitmap_line_xdyi: {
     rts
 }
 //SEG1254 bitmap_plot
+// bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
     .label _0 = 2
     .label plotter_x = 2
@@ -29620,6 +29646,7 @@ bitmap_plot: {
     rts
 }
 //SEG1262 bitmap_line_ydxi
+// bitmap_line_ydxi(byte zeropage($a) y, byte register(X) x, byte zeropage($b) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxi: {
     .label y = $a
     .label y1 = $b
@@ -29681,6 +29708,7 @@ bitmap_line_ydxi: {
     rts
 }
 //SEG1290 bitmap_line_xdyd
+// bitmap_line_xdyd(byte zeropage($a) x, byte zeropage($b) y, byte zeropage($c) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyd: {
     .label x = $a
     .label y = $b
@@ -29743,6 +29771,7 @@ bitmap_line_xdyd: {
     rts
 }
 //SEG1318 bitmap_line_ydxd
+// bitmap_line_ydxd(byte zeropage($a) y, byte register(X) x, byte zeropage($b) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxd: {
     .label y = $a
     .label y1 = $b
@@ -30480,6 +30509,7 @@ mode_stdchar: {
 //SEG1607 print_str_lines
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
+// print_str_lines(byte* zeropage(2) str)
 print_str_lines: {
     .label str = 2
   //SEG1608 [866] phi from print_str_lines to print_str_lines::@1 [phi:print_str_lines->print_str_lines::@1]

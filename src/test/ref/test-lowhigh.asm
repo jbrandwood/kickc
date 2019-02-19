@@ -176,6 +176,7 @@ print_ln: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte register(X) b)
 print_byte: {
     txa
     lsr
@@ -193,6 +194,7 @@ print_byte: {
     rts
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -203,6 +205,7 @@ print_char: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage($a) w)
 print_word: {
     .label w = $a
     lda w+1
@@ -214,6 +217,7 @@ print_word: {
     rts
 }
 // Print a dword as HEX
+// print_dword(dword zeropage($c) dw)
 print_dword: {
     .label dw = $c
     lda dw+2

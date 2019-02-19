@@ -25,6 +25,7 @@ main: {
     sta screen+1
     rts
 }
+// fct(byte register(X) x, byte* zeropage(2) z)
 fct: {
     .label z = 2
     ldy #2

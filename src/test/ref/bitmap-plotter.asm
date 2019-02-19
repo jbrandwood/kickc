@@ -44,6 +44,7 @@ plots: {
     bcc b1
     rts
 }
+// plot(byte zeropage(4) x, byte zeropage(5) y)
 plot: {
     .label x = 4
     .label y = 5

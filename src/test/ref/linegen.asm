@@ -204,6 +204,7 @@ print_ln: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage(5) w)
 print_word: {
     .label w = 5
     lda w+1
@@ -215,6 +216,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte register(X) b)
 print_byte: {
     txa
     lsr
@@ -232,6 +234,7 @@ print_byte: {
     rts
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -242,6 +245,7 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
+// print_str(byte* zeropage(5) str)
 print_str: {
     .label str = 5
   b1:
@@ -290,6 +294,7 @@ print_cls: {
 // Generate word linear table
 // lintab - the table to generate into
 // length - the number of points in a total sinus wavelength (the size of the table)
+// lin16u_gen(word zeropage(5) min, word zeropage(3) max, word* zeropage(7) lintab)
 lin16u_gen: {
     .label _5 = 5
     .label ampl = 3
@@ -395,6 +400,7 @@ lin16u_gen: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
+// divr16u(word zeropage(3) dividend, word zeropage($d) divisor, word zeropage($f) rem)
 divr16u: {
     .label rem = $f
     .label dividend = 3

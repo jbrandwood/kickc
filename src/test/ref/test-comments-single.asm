@@ -26,6 +26,7 @@ main: {
 // a - the first byte
 // b - the second byte
 // Returns the sum pf the two bytes
+// sum(byte register(Y) b)
 sum: {
     tya
     clc

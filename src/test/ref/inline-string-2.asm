@@ -14,6 +14,7 @@ main: {
     jsr print_msg
     rts
 }
+// print_msg(byte register(X) idx)
 print_msg: {
     .label msg = 4
     cpx #1
@@ -34,6 +35,7 @@ print_msg: {
     msg_0: .text "Hello @"
     msg_1: .text "World!@"
 }
+// print(byte* zeropage(4) msg)
 print: {
     .label msg = 4
   b1:

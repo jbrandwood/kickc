@@ -63,6 +63,7 @@ main: {
     jmp b3
 }
 // Fill some memory with a value
+// fill(word zeropage(2) size, byte register(X) val)
 fill: {
     .label end = 2
     .label addr = 4

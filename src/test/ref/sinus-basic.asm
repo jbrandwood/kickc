@@ -97,6 +97,7 @@ print_ln: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage(7) w)
 print_word: {
     .label w = 7
     lda w+1
@@ -108,6 +109,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte register(X) b)
 print_byte: {
     txa
     lsr
@@ -125,6 +127,7 @@ print_byte: {
     rts
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -164,6 +167,7 @@ addMEMtoFAC: {
     rts
 }
 // Prepare MEM pointers for operations using MEM
+// prepareMEM(byte* zeropage(7) mem)
 prepareMEM: {
     .label mem = 7
     lda mem
@@ -175,6 +179,7 @@ prepareMEM: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
+// mulFACbyMEM(byte* zeropage(7) mem)
 mulFACbyMEM: {
     .label mem = 7
     jsr prepareMEM
@@ -206,6 +211,7 @@ divMEMbyFAC: {
 }
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// setFAC(word zeropage(7) w)
 setFAC: {
     .label w = 7
     jsr prepareMEM
@@ -218,6 +224,7 @@ setFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// setMEMtoFAC(byte* zeropage(7) mem)
 setMEMtoFAC: {
     .label mem = 7
     jsr prepareMEM

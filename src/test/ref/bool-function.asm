@@ -31,6 +31,7 @@ main: {
 }
 // Determine whether to set a char to '*.
 // Returns true if i&8!=0 or b=true
+// isSet(byte register(X) i, bool zeropage(2) b)
 isSet: {
     .label b = 2
     txa

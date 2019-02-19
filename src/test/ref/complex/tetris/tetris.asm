@@ -352,6 +352,7 @@ render_score: {
 // - offset: offset on the screen
 // - bcd: The BCD-value to render
 // - only_low: if non-zero only renders the low digit
+// render_bcd(byte* zeropage(5) screen, word zeropage(7) offset, byte register(X) bcd, byte register(Y) only_low)
 render_bcd: {
     .const ZERO_CHAR = $35
     .label screen = 5
@@ -574,6 +575,7 @@ render_playfield: {
 // Perform any movement of the current piece
 // key_event is the next keyboard_event() og $ff if no keyboard event is pending
 // Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
+// play_movement(byte zeropage($29) key_event)
 play_movement: {
     .label render = 9
     .label return = 9
@@ -604,6 +606,7 @@ play_movement: {
 }
 // Rotate the current piece  based on key-presses
 // Return non-zero if a render is needed
+// play_move_rotate(byte register(A) key_event)
 play_move_rotate: {
     .label orientation = $a
     cmp #KEY_Z
@@ -653,6 +656,7 @@ play_move_rotate: {
 }
 // Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
 // Returns information about the type of the collision detected
+// play_collision(byte zeropage($c) xpos, byte zeropage($b) ypos, byte register(X) orientation)
 play_collision: {
     .label xpos = $c
     .label ypos = $b
@@ -746,6 +750,7 @@ play_collision: {
 }
 // Move left/right or rotate the current piece
 // Return non-zero if a render is needed
+// play_move_leftright(byte register(A) key_event)
 play_move_leftright: {
     // Handle keyboard events
     cmp #KEY_COMMA
@@ -792,6 +797,7 @@ play_move_leftright: {
 }
 // Move down the current piece
 // Return non-zero if a render is needed
+// play_move_down(byte register(A) key_event)
 play_move_down: {
     inc current_movedown_counter
     cmp #KEY_SPACE
@@ -913,6 +919,7 @@ sid_rnd: {
     rts
 }
 // Update the score based on the number of lines removed
+// play_update_score(byte register(X) removed)
 play_update_score: {
     .label lines_before = 4
     .label add_bcd = $2b
@@ -1139,6 +1146,7 @@ play_lock_current: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
+// keyboard_event_pressed(byte zeropage(9) keycode)
 keyboard_event_pressed: {
     .label row_bits = $a
     .label keycode = 9
@@ -1283,6 +1291,7 @@ keyboard_event_scan: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
@@ -1509,6 +1518,7 @@ render_init: {
 }
 // Copy the original screen data to the passed screen
 // Also copies colors to $d800
+// render_screen_original(byte* zeropage($11) screen)
 render_screen_original: {
     .const SPACE = 0
     .label screen = $11

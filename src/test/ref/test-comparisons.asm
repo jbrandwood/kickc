@@ -416,6 +416,7 @@ print_ln: {
   !:
     rts
 }
+// printu(byte zeropage(2) a, byte[] zeropage(6) op, byte zeropage(8) b, byte register(X) res)
 printu: {
     .label a = 2
     .label b = 8
@@ -436,6 +437,7 @@ printu: {
     rts
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
     ldy #0
     sta (print_char_cursor),y
@@ -446,6 +448,7 @@ print_char: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte zeropage($b) b)
 print_byte: {
     .label b = $b
     lda b
@@ -464,6 +467,7 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
+// print_str(byte* zeropage(6) str)
 print_str: {
     .label str = 6
   b1:

@@ -48,6 +48,7 @@ lines: {
     rts
 }
 // Draw a line on the bitmap
+// bitmap_line(byte zeropage(5) x0, byte zeropage(8) x1, byte zeropage(6) y0, byte register(Y) y1)
 bitmap_line: {
     .label xd = 4
     .label yd = 3
@@ -147,6 +148,7 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     jmp breturn
 }
+// bitmap_line_xdyi(byte register(X) x, byte zeropage(6) y, byte zeropage(5) x1, byte zeropage(4) xd, byte zeropage(3) yd)
 bitmap_line_xdyi: {
     .label _6 = 8
     .label y = 6
@@ -181,6 +183,7 @@ bitmap_line_xdyi: {
     bne b1
     rts
 }
+// bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
     .label _0 = 9
     .label plotter_x = 9
@@ -206,6 +209,7 @@ bitmap_plot: {
     sta (_0),y
     rts
 }
+// bitmap_line_ydxi(byte zeropage(7) y, byte register(X) x, byte zeropage(6) y1, byte zeropage(3) yd, byte zeropage(4) xd)
 bitmap_line_ydxi: {
     .label y = 7
     .label y1 = 6
@@ -238,6 +242,7 @@ bitmap_line_ydxi: {
     bne b1
     rts
 }
+// bitmap_line_xdyd(byte register(X) x, byte zeropage(6) y, byte zeropage(8) x1, byte zeropage(4) xd, byte zeropage(3) yd)
 bitmap_line_xdyd: {
     .label _6 = 7
     .label y = 6
@@ -272,6 +277,7 @@ bitmap_line_xdyd: {
     bne b1
     rts
 }
+// bitmap_line_ydxd(byte zeropage(7) y, byte register(X) x, byte zeropage(6) y1, byte zeropage(3) yd, byte zeropage(4) xd)
 bitmap_line_ydxd: {
     .label y = 7
     .label y1 = 6

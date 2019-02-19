@@ -18,6 +18,7 @@ main: {
     bne b2
     rts
 }
+// line(byte register(X) l)
 line: {
     txa
     jsr plot
@@ -27,6 +28,7 @@ line: {
     jsr plot
     rts
 }
+// plot(byte register(A) x)
 plot: {
     tay
     lda #'*'

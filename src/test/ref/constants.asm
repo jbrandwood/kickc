@@ -68,6 +68,7 @@ test_sbytes: {
     msg3: .text "-(0+2-4)=2@"
     msg4: .text "-127-127=2@"
 }
+// assert_sbyte(byte* zeropage(2) msg, signed byte register(X) b, signed byte zeropage(4) c)
 assert_sbyte: {
     .label msg = 2
     .label c = 4
@@ -105,6 +106,7 @@ assert_sbyte: {
     str2: .text "ok@"
 }
 // Print a zero-terminated string
+// print_str(byte* zeropage(2) str)
 print_str: {
     .label str = 2
   b1:
@@ -197,6 +199,7 @@ test_bytes: {
     msg1: .text "0+2=2@"
     msg2: .text "0+2-4=254@"
 }
+// assert_byte(byte* zeropage(2) msg, byte register(X) b, byte zeropage(4) c)
 assert_byte: {
     .label msg = 2
     .label c = 4

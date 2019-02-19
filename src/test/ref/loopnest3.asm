@@ -11,11 +11,13 @@ main: {
     bne b1
     rts
 }
+// b(byte register(Y) i)
 b: {
     tya
     jsr c
     rts
 }
+// c(byte register(A) i)
 c: {
     ldx #0
   b1:

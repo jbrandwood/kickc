@@ -15174,6 +15174,7 @@ keyboard_event_scan: {
 //SEG375 keyboard_event_pressed
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
+// keyboard_event_pressed(byte zeropage($13) keycode)
 keyboard_event_pressed: {
     .label _0 = $102
     .label _1 = $104
@@ -15215,6 +15216,7 @@ keyboard_event_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte zeropage($f3) rowid)
 keyboard_matrix_read: {
     .label return = $106
     .label rowid = $f3
@@ -15235,6 +15237,7 @@ keyboard_matrix_read: {
 }
 //SEG387 get_vic_screen
 // Get the VIC screen address from the screen index
+// get_vic_screen(byte zeropage($14) idx)
 get_vic_screen: {
     .label return = $15
     .label idx = $14
@@ -15326,6 +15329,7 @@ get_vic_screen: {
 }
 //SEG411 get_vic_charset
 // Get the VIC charset/bitmap address from the index
+// get_vic_charset(byte zeropage($dd) idx)
 get_vic_charset: {
     .label return = $17
     .label idx = $dd
@@ -15371,6 +15375,7 @@ get_vic_charset: {
 }
 //SEG423 get_plane
 // Get plane address from a plane index (from the form)
+// get_plane(byte zeropage($19) idx)
 get_plane: {
     .label return = $1a
     .label idx = $19
@@ -15924,6 +15929,7 @@ form_mode: {
 //SEG581 render_preset_name
 // Render form preset name in the form
 // idx is the ID of the preset
+// render_preset_name(byte zeropage($22) idx)
 render_preset_name: {
     .label idx = $22
     .label name = $23
@@ -16133,6 +16139,7 @@ render_preset_name: {
 }
 //SEG635 print_str_at
 // Print a string at a specific screen position
+// print_str_at(byte* zeropage($25) str, byte* zeropage($27) at)
 print_str_at: {
     .label at = $27
     .label str = $25
@@ -16240,6 +16247,7 @@ form_render_values: {
 //SEG668 form_field_ptr
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
+// form_field_ptr(byte zeropage($2a) field_idx)
 form_field_ptr: {
     .label y = $10e
     .label x = $111
@@ -16279,6 +16287,7 @@ form_field_ptr: {
 //SEG675 apply_preset
 // Apply a form value preset to the form values
 // idx is the ID of the preset
+// apply_preset(byte zeropage($109) idx)
 apply_preset: {
     .label i = $2d
     .label idx = $109
@@ -16842,6 +16851,7 @@ form_set_screen: {
 //SEG842 print_str_lines
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
+// print_str_lines(byte* zeropage($32) str)
 print_str_lines: {
     .label ch = $121
     .label str = $32
@@ -17011,6 +17021,7 @@ print_cls: {
 }
 //SEG890 print_set_screen
 // Set the screen to print on. Also resets current line/char cursor.
+// print_set_screen(byte* zeropage($36) screen)
 print_set_screen: {
     .label screen = $36
     jmp breturn
@@ -17183,6 +17194,7 @@ gfx_init_plane_full: {
 }
 //SEG960 gfx_init_plane_fill
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
+// gfx_init_plane_fill(dword zeropage($3a) plane_addr, byte zeropage($3e) fill)
 gfx_init_plane_fill: {
     .label _0 = $124
     .label _1 = $128
@@ -17335,6 +17347,7 @@ gfx_init_plane_fill: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
+// dtvSetCpuBankSegment1(byte zeropage($43) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -18109,6 +18122,7 @@ gfx_init_vic_bitmap: {
 }
 //SEG1271 bitmap_line
 // Draw a line on the bitmap
+// bitmap_line(byte zeropage($139) x0, byte zeropage($13a) x1, byte zeropage($13b) y0, byte zeropage($13c) y1)
 bitmap_line: {
     .label xd = $140
     .label xd_1 = $13d
@@ -18419,6 +18433,7 @@ bitmap_line: {
     jmp breturn
 }
 //SEG1397 bitmap_line_xdyi
+// bitmap_line_xdyi(byte zeropage($64) x, byte zeropage($65) y, byte zeropage($63) x1, byte zeropage($62) xd, byte zeropage($61) yd)
 bitmap_line_xdyi: {
     .label _6 = $143
     .label x = $64
@@ -18499,6 +18514,7 @@ bitmap_line_xdyi: {
     rts
 }
 //SEG1425 bitmap_plot
+// bitmap_plot(byte zeropage($67) x, byte zeropage($68) y)
 bitmap_plot: {
     .label _0 = $148
     .label _1 = $14a
@@ -18543,6 +18559,7 @@ bitmap_plot: {
     rts
 }
 //SEG1433 bitmap_line_ydxi
+// bitmap_line_ydxi(byte zeropage($6d) y, byte zeropage($6c) x, byte zeropage($6b) y1, byte zeropage($6a) yd, byte zeropage($69) xd)
 bitmap_line_ydxi: {
     .label _6 = $14b
     .label y = $6d
@@ -18623,6 +18640,7 @@ bitmap_line_ydxi: {
     rts
 }
 //SEG1461 bitmap_line_xdyd
+// bitmap_line_xdyd(byte zeropage($72) x, byte zeropage($73) y, byte zeropage($71) x1, byte zeropage($70) xd, byte zeropage($6f) yd)
 bitmap_line_xdyd: {
     .label _6 = $14c
     .label x = $72
@@ -18703,6 +18721,7 @@ bitmap_line_xdyd: {
     rts
 }
 //SEG1489 bitmap_line_ydxd
+// bitmap_line_ydxd(byte zeropage($79) y, byte zeropage($78) x, byte zeropage($77) y1, byte zeropage($76) yd, byte zeropage($75) xd)
 bitmap_line_ydxd: {
     .label _6 = $14d
     .label y = $79
@@ -22245,6 +22264,7 @@ keyboard_event_scan: {
 //SEG375 keyboard_event_pressed
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
+// keyboard_event_pressed(byte zeropage(7) keycode)
 keyboard_event_pressed: {
     .label row_bits = 8
     .label keycode = 7
@@ -22276,6 +22296,7 @@ keyboard_event_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(A) rowid)
 keyboard_matrix_read: {
   //SEG383 [219] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuaa 
     tay
@@ -22292,6 +22313,7 @@ keyboard_matrix_read: {
 }
 //SEG387 get_vic_screen
 // Get the VIC screen address from the screen index
+// get_vic_screen(byte register(A) idx)
 get_vic_screen: {
     .label return = 3
   //SEG388 [223] if((byte) get_vic_screen::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_vic_screen::@return -- vbuaa_eq_0_then_la1 
@@ -22375,6 +22397,7 @@ get_vic_screen: {
 }
 //SEG411 get_vic_charset
 // Get the VIC charset/bitmap address from the index
+// get_vic_charset(byte register(A) idx)
 get_vic_charset: {
     .label return = 3
   //SEG412 [231] if((byte) get_vic_charset::idx#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_vic_charset::@return -- vbuaa_eq_0_then_la1 
@@ -22416,6 +22439,7 @@ get_vic_charset: {
 }
 //SEG423 get_plane
 // Get plane address from a plane index (from the form)
+// get_plane(byte register(A) idx)
 get_plane: {
     .label return = $a
   //SEG424 [237] if((byte) get_plane::idx#10==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_plane::@return -- vbuaa_eq_0_then_la1 
@@ -22940,6 +22964,7 @@ form_mode: {
 //SEG581 render_preset_name
 // Render form preset name in the form
 // idx is the ID of the preset
+// render_preset_name(byte register(A) idx)
 render_preset_name: {
     .label name = 3
   //SEG582 [307] if((byte) render_preset_name::idx#10==(byte/signed byte/word/signed word/dword/signed dword) 0) goto render_preset_name::@22 -- vbuaa_eq_0_then_la1 
@@ -23133,6 +23158,7 @@ render_preset_name: {
 }
 //SEG635 print_str_at
 // Print a string at a specific screen position
+// print_str_at(byte* zeropage(3) str, byte* zeropage(5) at)
 print_str_at: {
     .label at = 5
     .label str = 3
@@ -23230,6 +23256,7 @@ form_render_values: {
 //SEG668 form_field_ptr
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
+// form_field_ptr(byte zeropage(2) field_idx)
 form_field_ptr: {
     .label return = 3
     .label field_idx = 2
@@ -23262,6 +23289,7 @@ form_field_ptr: {
 //SEG675 apply_preset
 // Apply a form value preset to the form values
 // idx is the ID of the preset
+// apply_preset(byte register(A) idx)
 apply_preset: {
     .label preset = 3
   //SEG676 [346] if((byte) apply_preset::idx#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto apply_preset::@22 -- vbuaa_eq_0_then_la1 
@@ -23752,6 +23780,7 @@ form_set_screen: {
 //SEG842 print_str_lines
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
+// print_str_lines(byte* zeropage(3) str)
 print_str_lines: {
     .label str = 3
   //SEG843 [420] (byte*~) print_char_cursor#77 ← (byte*) print_set_screen::screen#2 -- pbuz1=pbuz2 
@@ -23916,6 +23945,7 @@ print_cls: {
 }
 //SEG890 print_set_screen
 // Set the screen to print on. Also resets current line/char cursor.
+// print_set_screen(byte* zeropage($10) screen)
 print_set_screen: {
     .label screen = $10
     jmp breturn
@@ -24088,6 +24118,7 @@ gfx_init_plane_full: {
 }
 //SEG960 gfx_init_plane_fill
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
+// gfx_init_plane_fill(dword zeropage($a) plane_addr, byte zeropage(2) fill)
 gfx_init_plane_fill: {
     .label _0 = $13
     .label _1 = 3
@@ -24227,6 +24258,7 @@ gfx_init_plane_fill: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
+// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -24955,6 +24987,7 @@ gfx_init_vic_bitmap: {
 }
 //SEG1271 bitmap_line
 // Draw a line on the bitmap
+// bitmap_line(byte zeropage(9) x0, byte zeropage($12) x1, byte zeropage($f) y0, byte register(Y) y1)
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -25212,6 +25245,7 @@ bitmap_line: {
     jmp breturn
 }
 //SEG1397 bitmap_line_xdyi
+// bitmap_line_xdyi(byte zeropage($e) x, byte zeropage($f) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyi: {
     .label x = $e
     .label y = $f
@@ -25287,6 +25321,7 @@ bitmap_line_xdyi: {
     rts
 }
 //SEG1425 bitmap_plot
+// bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
     .label _0 = 3
     .label plotter_x = 3
@@ -25323,6 +25358,7 @@ bitmap_plot: {
     rts
 }
 //SEG1433 bitmap_line_ydxi
+// bitmap_line_ydxi(byte zeropage($e) y, byte register(X) x, byte zeropage($f) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxi: {
     .label y = $e
     .label y1 = $f
@@ -25397,6 +25433,7 @@ bitmap_line_ydxi: {
     rts
 }
 //SEG1461 bitmap_line_xdyd
+// bitmap_line_xdyd(byte zeropage($e) x, byte zeropage($f) y, byte zeropage($12) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyd: {
     .label x = $e
     .label y = $f
@@ -25472,6 +25509,7 @@ bitmap_line_xdyd: {
     rts
 }
 //SEG1489 bitmap_line_ydxd
+// bitmap_line_ydxd(byte zeropage($e) y, byte register(X) x, byte zeropage($f) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxd: {
     .label y = $e
     .label y1 = $f
@@ -27334,18 +27372,18 @@ Removing instruction b37:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction jmp b7
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [762] beq b5 to bne
-Fixing long branch [766] beq b6 to bne
-Fixing long branch [770] beq b7 to bne
-Fixing long branch [774] beq b8 to bne
-Fixing long branch [760] beq b4 to bne
-Fixing long branch [780] beq b9 to bne
-Fixing long branch [784] beq b10 to bne
-Fixing long branch [788] beq b11 to bne
-Fixing long branch [792] beq b12 to bne
-Fixing long branch [758] beq b3 to bne
-Fixing long branch [798] beq b13 to bne
-Fixing long branch [1346] bmi b2 to bpl
+Fixing long branch [767] beq b5 to bne
+Fixing long branch [771] beq b6 to bne
+Fixing long branch [775] beq b7 to bne
+Fixing long branch [779] beq b8 to bne
+Fixing long branch [765] beq b4 to bne
+Fixing long branch [785] beq b9 to bne
+Fixing long branch [789] beq b10 to bne
+Fixing long branch [793] beq b11 to bne
+Fixing long branch [797] beq b12 to bne
+Fixing long branch [763] beq b3 to bne
+Fixing long branch [803] beq b13 to bne
+Fixing long branch [1355] bmi b2 to bpl
 
 FINAL SYMBOL TABLE
 (label) @68
@@ -30086,6 +30124,7 @@ keyboard_event_scan: {
 //SEG375 keyboard_event_pressed
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
+// keyboard_event_pressed(byte zeropage(7) keycode)
 keyboard_event_pressed: {
     .label row_bits = 8
     .label keycode = 7
@@ -30115,6 +30154,7 @@ keyboard_event_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(A) rowid)
 keyboard_matrix_read: {
   //SEG383 [219] *((const byte*) CIA1_PORT_A#0) ← *((const byte[8]) keyboard_matrix_row_bitmask#0 + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuaa 
     tay
@@ -30129,6 +30169,7 @@ keyboard_matrix_read: {
 }
 //SEG387 get_vic_screen
 // Get the VIC screen address from the screen index
+// get_vic_screen(byte register(A) idx)
 get_vic_screen: {
     .label return = 3
   //SEG388 [223] if((byte) get_vic_screen::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_vic_screen::@return -- vbuaa_eq_0_then_la1 
@@ -30197,6 +30238,7 @@ get_vic_screen: {
 }
 //SEG411 get_vic_charset
 // Get the VIC charset/bitmap address from the index
+// get_vic_charset(byte register(A) idx)
 get_vic_charset: {
     .label return = 3
   //SEG412 [231] if((byte) get_vic_charset::idx#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_vic_charset::@return -- vbuaa_eq_0_then_la1 
@@ -30229,6 +30271,7 @@ get_vic_charset: {
 }
 //SEG423 get_plane
 // Get plane address from a plane index (from the form)
+// get_plane(byte register(A) idx)
 get_plane: {
     .label return = $a
   //SEG424 [237] if((byte) get_plane::idx#10==(byte/signed byte/word/signed word/dword/signed dword) 0) goto get_plane::@return -- vbuaa_eq_0_then_la1 
@@ -30680,6 +30723,7 @@ form_mode: {
 //SEG581 render_preset_name
 // Render form preset name in the form
 // idx is the ID of the preset
+// render_preset_name(byte register(A) idx)
 render_preset_name: {
     .label name = 3
   //SEG582 [307] if((byte) render_preset_name::idx#10==(byte/signed byte/word/signed word/dword/signed dword) 0) goto render_preset_name::@22 -- vbuaa_eq_0_then_la1 
@@ -30845,6 +30889,7 @@ render_preset_name: {
 }
 //SEG635 print_str_at
 // Print a string at a specific screen position
+// print_str_at(byte* zeropage(3) str, byte* zeropage(5) at)
 print_str_at: {
     .label at = 5
     .label str = 3
@@ -30927,6 +30972,7 @@ form_render_values: {
 //SEG668 form_field_ptr
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
+// form_field_ptr(byte zeropage(2) field_idx)
 form_field_ptr: {
     .label return = 3
     .label field_idx = 2
@@ -30957,6 +31003,7 @@ form_field_ptr: {
 //SEG675 apply_preset
 // Apply a form value preset to the form values
 // idx is the ID of the preset
+// apply_preset(byte register(A) idx)
 apply_preset: {
     .label preset = 3
   //SEG676 [346] if((byte) apply_preset::idx#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto apply_preset::@22 -- vbuaa_eq_0_then_la1 
@@ -31354,6 +31401,7 @@ form_set_screen: {
 //SEG842 print_str_lines
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
+// print_str_lines(byte* zeropage(3) str)
 print_str_lines: {
     .label str = 3
   //SEG843 [420] (byte*~) print_char_cursor#77 ← (byte*) print_set_screen::screen#2 -- pbuz1=pbuz2 
@@ -31491,6 +31539,7 @@ print_cls: {
 }
 //SEG890 print_set_screen
 // Set the screen to print on. Also resets current line/char cursor.
+// print_set_screen(byte* zeropage($10) screen)
 print_set_screen: {
     .label screen = $10
   //SEG891 print_set_screen::@return
@@ -31600,6 +31649,7 @@ gfx_init_plane_full: {
 }
 //SEG960 gfx_init_plane_fill
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
+// gfx_init_plane_fill(dword zeropage($a) plane_addr, byte zeropage(2) fill)
 gfx_init_plane_fill: {
     .label _0 = $13
     .label _1 = 3
@@ -31720,6 +31770,7 @@ gfx_init_plane_fill: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
+// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -32314,6 +32365,7 @@ gfx_init_vic_bitmap: {
 }
 //SEG1271 bitmap_line
 // Draw a line on the bitmap
+// bitmap_line(byte zeropage(9) x0, byte zeropage($12) x1, byte zeropage($f) y0, byte register(Y) y1)
 bitmap_line: {
     .label xd = 8
     .label yd = 7
@@ -32543,6 +32595,7 @@ bitmap_line: {
     jmp breturn
 }
 //SEG1397 bitmap_line_xdyi
+// bitmap_line_xdyi(byte zeropage($e) x, byte zeropage($f) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyi: {
     .label x = $e
     .label y = $f
@@ -32605,6 +32658,7 @@ bitmap_line_xdyi: {
     rts
 }
 //SEG1425 bitmap_plot
+// bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
     .label _0 = 3
     .label plotter_x = 3
@@ -32638,6 +32692,7 @@ bitmap_plot: {
     rts
 }
 //SEG1433 bitmap_line_ydxi
+// bitmap_line_ydxi(byte zeropage($e) y, byte register(X) x, byte zeropage($f) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxi: {
     .label y = $e
     .label y1 = $f
@@ -32699,6 +32754,7 @@ bitmap_line_ydxi: {
     rts
 }
 //SEG1461 bitmap_line_xdyd
+// bitmap_line_xdyd(byte zeropage($e) x, byte zeropage($f) y, byte zeropage($12) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyd: {
     .label x = $e
     .label y = $f
@@ -32761,6 +32817,7 @@ bitmap_line_xdyd: {
     rts
 }
 //SEG1489 bitmap_line_ydxd
+// bitmap_line_ydxd(byte zeropage($e) y, byte register(X) x, byte zeropage($f) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxd: {
     .label y = $e
     .label y1 = $f

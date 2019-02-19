@@ -27,6 +27,7 @@ main: {
     msg: .text "message 3 @"
     msg2: .text "message 2 @"
 }
+// print(byte* zeropage(4) msg)
 print: {
     .label msg = 4
   b1:

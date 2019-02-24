@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStringConstConsolidation() throws IOException, URISyntaxException {
+      compileAndCompare("string-const-consolidation");
+   }
+
+   @Test
    public void testCommentsBlock() throws IOException, URISyntaxException {
       compileAndCompare("test-comments-block");
    }
@@ -56,7 +61,7 @@ public class TestPrograms {
 
    @Test
    public void testCommentsSingle() throws IOException, URISyntaxException {
-      compileAndCompare("test-comments-single");
+      compileAndCompare("test-comments-single");                                                        
    }
 
    @Test

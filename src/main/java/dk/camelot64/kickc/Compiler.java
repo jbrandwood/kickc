@@ -245,6 +245,7 @@ public class Compiler {
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));
+      optimizations.add(new Pass2ConstantStringConsolidation(program));
       pass2Execute(optimizations);
    }
 
@@ -278,6 +279,7 @@ public class Compiler {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new Pass2ConstantInlining(program));
+      constantOptimizations.add(new Pass2ConstantStringConsolidation(program));
       constantOptimizations.add(new Pass2IdenticalPhiElimination(program));
       constantOptimizations.add(new Pass2ConstantIdentification(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));

@@ -62,8 +62,6 @@ test_sbytes: {
     sta assert_sbyte.msg+1
     jsr assert_sbyte
     rts
-    msg: .text "0=0@"
-    msg1: .text "0+2=2@"
     msg2: .text "0+2-4=-2@"
     msg3: .text "-(0+2-4)=2@"
     msg4: .text "-127-127=2@"
@@ -101,9 +99,6 @@ assert_sbyte: {
     sta print_str.str+1
     jsr print_str
     jmp b2
-    str: .text " @"
-    str1: .text "fail!@"
-    str2: .text "ok@"
 }
 // Print a zero-terminated string
 // print_str(byte* zeropage(2) str)
@@ -195,8 +190,6 @@ test_bytes: {
     sta assert_byte.msg+1
     jsr assert_byte
     rts
-    msg: .text "0=0@"
-    msg1: .text "0+2=2@"
     msg2: .text "0+2-4=254@"
 }
 // assert_byte(byte* zeropage(2) msg, byte register(X) b, byte zeropage(4) c)
@@ -228,9 +221,6 @@ assert_byte: {
     sta print_str.str+1
     jsr print_str
     jmp b2
-    str: .text " @"
-    str1: .text "fail!@"
-    str2: .text "ok@"
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -255,3 +245,8 @@ print_cls: {
     bne b1
     rts
 }
+  str: .text " @"
+  str2: .text "ok@"
+  msg1: .text "0+2=2@"
+  msg: .text "0=0@"
+  str1: .text "fail!@"

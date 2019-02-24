@@ -50,9 +50,9 @@ main: {
   b3:
     lda #$37
     sta printu.b
-    lda #<op1
+    lda #<op
     sta printu.op
-    lda #>op1
+    lda #>op
     sta printu.op+1
     jsr printu
     lda a
@@ -67,9 +67,9 @@ main: {
     ldy i
     lda cs,y
     sta printu.b
-    lda #<op2
+    lda #<op
     sta printu.op
-    lda #>op2
+    lda #>op
     sta printu.op+1
     jsr printu
     lda a
@@ -82,9 +82,9 @@ main: {
   b5:
     lda a
     sta printu.b
-    lda #<op3
+    lda #<op
     sta printu.op
-    lda #>op3
+    lda #>op
     sta printu.op+1
     jsr printu
     jsr print_ln
@@ -117,9 +117,9 @@ main: {
   b7:
     lda #$37
     sta printu.b
-    lda #<op5
+    lda #<op4
     sta printu.op
-    lda #>op5
+    lda #>op4
     sta printu.op+1
     jsr printu
     ldy i
@@ -134,9 +134,9 @@ main: {
     ldy i
     lda cs,y
     sta printu.b
-    lda #<op6
+    lda #<op4
     sta printu.op
-    lda #>op6
+    lda #>op4
     sta printu.op+1
     jsr printu
     lda a
@@ -149,9 +149,9 @@ main: {
   b9:
     lda a
     sta printu.b
-    lda #<op7
+    lda #<op4
     sta printu.op
-    lda #>op7
+    lda #>op4
     sta printu.op+1
     jsr printu
     jsr print_ln
@@ -186,9 +186,9 @@ main: {
   b11:
     lda #$37
     sta printu.b
-    lda #<op9
+    lda #<op8
     sta printu.op
-    lda #>op9
+    lda #>op8
     sta printu.op+1
     jsr printu
     ldy i
@@ -203,9 +203,9 @@ main: {
     ldy i
     lda cs,y
     sta printu.b
-    lda #<op10
+    lda #<op8
     sta printu.op
-    lda #>op10
+    lda #>op8
     sta printu.op+1
     jsr printu
     lda a
@@ -218,9 +218,9 @@ main: {
   b13:
     lda a
     sta printu.b
-    lda #<op11
+    lda #<op8
     sta printu.op
-    lda #>op11
+    lda #>op8
     sta printu.op+1
     jsr printu
     jsr print_ln
@@ -253,9 +253,9 @@ main: {
   b15:
     lda #$37
     sta printu.b
-    lda #<op13
+    lda #<op12
     sta printu.op
-    lda #>op13
+    lda #>op12
     sta printu.op+1
     jsr printu
     lda a
@@ -270,9 +270,9 @@ main: {
     ldy i
     lda cs,y
     sta printu.b
-    lda #<op14
+    lda #<op12
     sta printu.op
-    lda #>op14
+    lda #>op12
     sta printu.op+1
     jsr printu
     lda a
@@ -285,9 +285,9 @@ main: {
   b17:
     lda a
     sta printu.b
-    lda #<op15
+    lda #<op12
     sta printu.op
-    lda #>op15
+    lda #>op12
     sta printu.op+1
     jsr printu
     jsr print_ln
@@ -320,9 +320,9 @@ main: {
   b19:
     lda #$37
     sta printu.b
-    lda #<op17
+    lda #<op16
     sta printu.op
-    lda #>op17
+    lda #>op16
     sta printu.op+1
     jsr printu
     lda a
@@ -337,9 +337,9 @@ main: {
     ldy i
     lda cs,y
     sta printu.b
-    lda #<op18
+    lda #<op16
     sta printu.op
-    lda #>op18
+    lda #>op16
     sta printu.op+1
     jsr printu
     lda a
@@ -352,9 +352,9 @@ main: {
   b21:
     lda a
     sta printu.b
-    lda #<op19
+    lda #<op16
     sta printu.op
-    lda #>op19
+    lda #>op16
     sta printu.op+1
     jsr printu
     jsr print_ln
@@ -375,25 +375,10 @@ main: {
     sta print_char_cursor+1
     jmp b1
     op: .text "< @"
-    op1: .text "< @"
-    op2: .text "< @"
-    op3: .text "< @"
     op4: .text "> @"
-    op5: .text "> @"
-    op6: .text "> @"
-    op7: .text "> @"
     op8: .text "<=@"
-    op9: .text "<=@"
-    op10: .text "<=@"
-    op11: .text "<=@"
     op12: .text ">=@"
-    op13: .text ">=@"
-    op14: .text ">=@"
-    op15: .text ">=@"
     op16: .text "==@"
-    op17: .text "==@"
-    op18: .text "==@"
-    op19: .text "==@"
     cs: .byte 7, $c7, $37, $97, $67
 }
 // Print a newline

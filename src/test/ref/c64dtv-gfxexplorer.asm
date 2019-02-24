@@ -1051,93 +1051,88 @@ form_mode: {
 render_preset_name: {
     .label name = 3
     cmp #0
-    beq b1
+    beq b33
     cmp #1
-    beq b2
+    beq b1
     cmp #2
-    beq b3
+    beq b2
     cmp #3
-    beq b4
+    beq b3
     cmp #4
-    beq b5
+    beq b4
     cmp #5
-    beq b6
+    beq b5
     cmp #6
-    beq b7
+    beq b6
     cmp #7
-    beq b8
+    beq b7
     cmp #8
-    beq b9
+    beq b8
     cmp #9
-    beq b10
+    beq b9
     cmp #$a
-    beq b11
-    lda #<name_11
-    sta name
-    lda #>name_11
-    sta name+1
-    jmp b22
-  b1:
+    beq b10
+  b33:
     lda #<name_0
     sta name
     lda #>name_0
     sta name+1
     jmp b22
-  b2:
+  b1:
     lda #<name_1
     sta name
     lda #>name_1
     sta name+1
     jmp b22
-  b3:
+  b2:
     lda #<name_2
     sta name
     lda #>name_2
     sta name+1
     jmp b22
-  b4:
+  b3:
     lda #<name_3
     sta name
     lda #>name_3
     sta name+1
     jmp b22
-  b5:
+  b4:
     lda #<name_4
     sta name
     lda #>name_4
     sta name+1
     jmp b22
-  b6:
+  b5:
     lda #<name_5
     sta name
     lda #>name_5
     sta name+1
     jmp b22
-  b7:
+  b6:
     lda #<name_6
     sta name
     lda #>name_6
     sta name+1
     jmp b22
-  b8:
+  b7:
     lda #<name_7
     sta name
     lda #>name_7
     sta name+1
     jmp b22
-  b9:
+  b8:
     lda #<name_8
     sta name
     lda #>name_8
     sta name+1
     jmp b22
-  b10:
+  b9:
     lda #<name_9
     sta name
     lda #>name_9
     sta name+1
     jmp b22
-  b11:
+  b10:
     lda #<name_10
     sta name
     lda #>name_10
@@ -1156,7 +1151,6 @@ render_preset_name: {
     name_8: .text "Sixs Fred                     @"
     name_9: .text "Sixs Fred 2                   @"
     name_10: .text "8bpp Pixel Cell               @"
-    name_11: .text "Standard Charset              @"
 }
 // Print a string at a specific screen position
 // print_str_at(byte* zeropage(3) str, byte* zeropage(5) at)

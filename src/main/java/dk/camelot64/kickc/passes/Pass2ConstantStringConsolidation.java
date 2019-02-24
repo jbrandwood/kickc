@@ -2,7 +2,12 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.ConstantRef;
+import dk.camelot64.kickc.model.values.ConstantString;
+import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +38,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
          if(constVal instanceof ConstantString) {
             String constString = ((ConstantString) constVal).getString();
             List<ConstantVar> constantVars = constantStringMap.get(constString);
-            if(constantVars==null) {
+            if(constantVars == null) {
                constantVars = new ArrayList<>();
                constantStringMap.put(constString, constantVars);
             }
@@ -41,11 +46,11 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
          }
       }
       // Handle all constant strings with duplicate definitions
-      for(String str : constantStringMap.keySet()) {
-         List<ConstantVar> constantVars = constantStringMap.get(str);
-         if(constantVars.size()>1) {
+      for(String constantString : constantStringMap.keySet()) {
+         List<ConstantVar> constantVars = constantStringMap.get(constantString);
+         if(constantVars.size() > 1) {
             // Found duplicate constant strings
-            modified |= handleDuplicateConstantString(constantVars);
+            modified |= handleDuplicateConstantString(constantVars, constantString);
 
          }
       }
@@ -54,29 +59,83 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
 
    /**
     * Handle duplicate constants strings with identical values
+    *
     * @param constantVars The constant strings with identical values
     * @return true if any optimization was performed
     */
-   private boolean handleDuplicateConstantString(List<ConstantVar> constantVars) {
+   private boolean handleDuplicateConstantString(List<ConstantVar> constantVars, String constString) {
       boolean modified = false;
-      // Look for a constant in the root scope
+      // Look for a constant in the root scope - or check if they are all in the same scope
       ConstantVar rootConstant = null;
+      boolean isCommonScope = true;
+      ScopeRef commonScope = null;
       for(ConstantVar constantVar : constantVars) {
-         if(constantVar.getScope().getRef().equals(ScopeRef.ROOT)) {
+         ScopeRef constScope = constantVar.getScope().getRef();
+         if(constScope.equals(ScopeRef.ROOT)) {
             rootConstant = constantVar;
             break;
          }
-      }
-      if(rootConstant!=null) {
-         // Modify all other constants to be references to the root constant
-         for(ConstantVar constantVar : constantVars) {
-            if(!constantVar.equals(rootConstant)) {
-               constantVar.setValue(new ConstantRef(rootConstant));
-               modified = true;
+         if(commonScope == null) {
+            commonScope = constScope;
+         } else {
+            if(!commonScope.equals(constScope)) {
+               // Found two different scopes
+               isCommonScope = false;
             }
          }
       }
+
+      if(rootConstant == null) {
+         if(isCommonScope) {
+            // If all constants are in the same scope pick the first one as root
+            rootConstant = constantVars.get(0);
+         } else {
+            // Create a new root - and roll around again
+            ProgramScope rootScope = getScope();
+            String localName = getRootName(constantVars);
+            ConstantVar newRootConstant = new ConstantVar(localName, rootScope, SymbolType.STRING, new ConstantString(constString));
+            rootScope.add(newRootConstant);
+            rootConstant = newRootConstant;
+         }
+      }
+      // Modify all other constants to be references to the root constant
+      for(ConstantVar constantVar : constantVars) {
+         if(!constantVar.equals(rootConstant)) {
+            constantVar.setValue(new ConstantRef(rootConstant));
+            modified = true;
+         }
+      }
+      if(getLog().isVerboseSSAOptimize()) {
+         getLog().append("Consolidated constant strings into " + rootConstant);
+
+      }
       return modified;
+   }
+
+   private String getRootName(List<ConstantVar> constantVars) {
+      String constName = null;
+      // Try all variables with non-intermediate names
+      for(ConstantVar constantVar : constantVars) {
+         if(!constantVar.getRef().isIntermediate()) {
+            String candidateName = constantVar.getLocalName();
+            if(getScope().getSymbol(candidateName) == null) {
+               if(constName == null || constName.length() > candidateName.length()) {
+                  constName = candidateName;
+               }
+            }
+         }
+      }
+      if(constName != null) {
+         return constName;
+      }
+      // Try string_nn until an unused name is found
+      int i = 0;
+      do {
+         String candidateName = "string_" + i;
+         if(getScope().getSymbol(candidateName) == null) {
+            return candidateName;
+         }
+      } while(true);
    }
 
 }

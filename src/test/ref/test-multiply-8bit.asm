@@ -183,10 +183,6 @@ mul8s_error: {
     jsr print_ln
     rts
     str: .text "signed multiply mismatch @"
-    str1: .text "*@"
-    str2: .text " slow:@"
-    str3: .text " / normal:@"
-    str4: .text " / fast:@"
 }
 // Print a signed word as HEX
 // print_sword(signed word zeropage(8) w)
@@ -588,10 +584,6 @@ mul8u_error: {
     jsr print_ln
     rts
     str: .text "multiply mismatch @"
-    str1: .text "*@"
-    str2: .text " slow:@"
-    str3: .text " / normal:@"
-    str4: .text " / fast:@"
 }
 // Fast multiply two unsigned bytes to a word result
 // mulf8u(byte register(A) a, byte register(X) b)
@@ -931,3 +923,7 @@ print_cls: {
   // >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mula_sqr2_hi: .fill $200, 0
+  str4: .text " / fast:@"
+  str3: .text " / normal:@"
+  str1: .text "*@"
+  str2: .text " slow:@"

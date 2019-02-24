@@ -123,7 +123,6 @@ mul16s_compare: {
     jsr print_str
     jsr print_ln
     jmp breturn
-    str: .text ".@"
     str1: .text "signed word multiply results match!@"
 }
 // Print a newline
@@ -230,10 +229,6 @@ mul16s_error: {
     jsr print_ln
     rts
     str: .text "signed word multiply mismatch @"
-    str1: .text "*@"
-    str2: .text " slow:@"
-    str3: .text " / normal:@"
-    str4: .text " / fast:@"
 }
 // Print a signed dword as HEX
 // print_sdword(signed dword zeropage($b) dw)
@@ -880,7 +875,6 @@ mul16u_compare: {
     jsr print_str
     jsr print_ln
     jmp breturn
-    str: .text ".@"
     str1: .text "word multiply results match!@"
 }
 // mul16u_error(word zeropage(3) a, word zeropage($17) b, dword zeropage($b) ms, dword zeropage($19) mn, dword zeropage($11) mf)
@@ -947,10 +941,6 @@ mul16u_error: {
     jsr print_ln
     rts
     str: .text "multiply mismatch @"
-    str1: .text "*@"
-    str2: .text " slow:@"
-    str3: .text " / normal:@"
-    str4: .text " / fast:@"
 }
 // Slow multiplication of unsigned words
 // Calculate an unsigned multiplication by repeated addition
@@ -1152,3 +1142,8 @@ print_cls: {
   // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
+  str: .text ".@"
+  str4: .text " / fast:@"
+  str3: .text " / normal:@"
+  str1: .text "*@"
+  str2: .text " slow:@"

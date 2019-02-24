@@ -71,9 +71,9 @@ main: {
     lda #>$79cb
     sta print_word.w+1
     jsr print_word
-    lda #<str2
+    lda #<str1
     sta print_str.str
-    lda #>str2
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     lda #<0
@@ -94,9 +94,9 @@ main: {
     lda print_line_cursor+1
     sta print_char_cursor+1
     jsr print_byte
-    lda #<str3
+    lda #<str1
     sta print_str.str
-    lda #>str3
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     ldy i
@@ -105,9 +105,9 @@ main: {
     lda lintab1+1,y
     sta print_word.w+1
     jsr print_word
-    lda #<str4
+    lda #<str1
     sta print_str.str
-    lda #>str4
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     ldy i
@@ -116,9 +116,9 @@ main: {
     lda lintab2+1,y
     sta print_word.w+1
     jsr print_word
-    lda #<str5
+    lda #<str1
     sta print_str.str
-    lda #>str5
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     ldy i
@@ -138,9 +138,9 @@ main: {
     sta print_char_cursor
     lda print_line_cursor+1
     sta print_char_cursor+1
-    lda #<str6
+    lda #<str
     sta print_str.str
-    lda #>str6
+    lda #>str
     sta print_str.str+1
     jsr print_str
     lda #<$7461
@@ -148,9 +148,9 @@ main: {
     lda #>$7461
     sta print_word.w+1
     jsr print_word
-    lda #<str7
+    lda #<str1
     sta print_str.str
-    lda #>str7
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     lda #<$f781
@@ -158,9 +158,9 @@ main: {
     lda #>$f781
     sta print_word.w+1
     jsr print_word
-    lda #<str8
+    lda #<str1
     sta print_str.str
-    lda #>str8
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     lda #<$6488
@@ -172,13 +172,6 @@ main: {
     rts
     str: .text "   @"
     str1: .text " @"
-    str2: .text " @"
-    str3: .text " @"
-    str4: .text " @"
-    str5: .text " @"
-    str6: .text "   @"
-    str7: .text " @"
-    str8: .text " @"
     lintab1: .fill 2*$14, 0
     lintab2: .fill 2*$14, 0
     lintab3: .fill 2*$14, 0

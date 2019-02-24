@@ -75,9 +75,6 @@ test_16s: {
     cmp #$c
     bne b1
     rts
-    str: .text " / @"
-    str1: .text " = @"
-    str2: .text " @"
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
     divisors: .word 5, -7, $b, -$d, -$11, $13
 }
@@ -398,9 +395,6 @@ test_8s: {
     cmp #6
     bne b1
     rts
-    str: .text " / @"
-    str1: .text " = @"
-    str2: .text " @"
     dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
@@ -598,9 +592,6 @@ test_16u: {
     cmp #$c
     bne b1
     rts
-    str: .text " / @"
-    str1: .text " = @"
-    str2: .text " @"
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
     divisors: .word 5, 7, $b, $d, $11, $13
 }
@@ -684,9 +675,6 @@ test_8u: {
     lda print_line_cursor+1
     sta print_char_cursor+1
     jmp b1
-    str: .text " / @"
-    str1: .text " = @"
-    str2: .text " @"
     dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
@@ -714,3 +702,6 @@ print_cls: {
     rts
 }
   print_hextab: .text "0123456789abcdef"
+  str: .text " / @"
+  str2: .text " @"
+  str1: .text " = @"

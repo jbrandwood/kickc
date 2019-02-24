@@ -1360,6 +1360,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in assignment *(mulf_sqr2#0+1 + mulf_init::$5)
 Consolidated array index constant in assignment *(mulf_init::$6+1 + mulf_init::$7)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Successful SSA optimization Pass2ConstantStringConsolidation
 Inferred type updated to byte in [73] (byte/signed word/word/dword/signed dword~) mulf_init::$5 ← (byte) mulf_init::i#2
 Inferred type updated to byte in [75] (byte/signed word/word/dword/signed dword~) mulf_init::$7 ← (byte) mulf_init::i#2
 Successful SSA optimization PassNEliminateUnusedVars
@@ -1403,7 +1404,9 @@ Inlining constant with var siblings (const byte*) print_line_cursor#0
 Constant inlined print_cls::$0 = ((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000
 Constant inlined print_sbyte::b#1 = (const signed byte) do_perspective::x#0
 Constant inlined print_sbyte::b#2 = (const signed byte) do_perspective::y#0
+Constant inlined do_perspective::str4 = (const string) do_perspective::str1
 Constant inlined print_sbyte::b#3 = (const signed byte) do_perspective::z#0
+Constant inlined do_perspective::str2 = (const string) do_perspective::str1
 Constant inlined mulf_init::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined mulf_init::$1 = (const byte[512]) mulf_sqr1#0+(word/signed word/dword/signed dword) 256
 Constant inlined $0 = (const byte[]) print_hextab#0
@@ -1422,11 +1425,11 @@ Constant inlined main::$2 = ((word))(const byte[512]) mulf_sqr2#0
 Constant inlined print_char::ch#1 = (byte) ' '
 Constant inlined print_char::ch#0 = (byte) '-'
 Constant inlined print_str::str#4 = (const string) do_perspective::str3
-Constant inlined print_str::str#3 = (const string) do_perspective::str2
+Constant inlined print_str::str#3 = (const string) do_perspective::str1
 Constant inlined print_str::str#2 = (const string) do_perspective::str1
 Constant inlined print_str::str#1 = (const string) do_perspective::str
 Constant inlined print_str::str#6 = (const string) do_perspective::str5
-Constant inlined print_str::str#5 = (const string) do_perspective::str4
+Constant inlined print_str::str#5 = (const string) do_perspective::str1
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
@@ -1605,7 +1608,7 @@ print_ln::@return: scope:[print_ln]  from print_ln::@1
   to:@return
 print_str: scope:[print_str]  from do_perspective do_perspective::@11 do_perspective::@2 do_perspective::@4 do_perspective::@6 do_perspective::@9
   [44] (byte*) print_char_cursor#74 ← phi( do_perspective/((byte*))(word/signed word/dword/signed dword) 1024 do_perspective::@11/(byte*) print_char_cursor#12 do_perspective::@2/(byte*) print_char_cursor#12 do_perspective::@4/(byte*) print_char_cursor#12 do_perspective::@6/(byte*) print_char_cursor#12 do_perspective::@9/(byte*) print_char_cursor#12 )
-  [44] (byte*) print_str::str#9 ← phi( do_perspective/(const string) do_perspective::str do_perspective::@11/(const string) do_perspective::str5 do_perspective::@2/(const string) do_perspective::str1 do_perspective::@4/(const string) do_perspective::str2 do_perspective::@6/(const string) do_perspective::str3 do_perspective::@9/(const string) do_perspective::str4 )
+  [44] (byte*) print_str::str#9 ← phi( do_perspective/(const string) do_perspective::str do_perspective::@11/(const string) do_perspective::str5 do_perspective::@2/(const string) do_perspective::str1 do_perspective::@4/(const string) do_perspective::str1 do_perspective::@6/(const string) do_perspective::str3 do_perspective::@9/(const string) do_perspective::str1 )
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   [45] (byte*) print_char_cursor#2 ← phi( print_str/(byte*) print_char_cursor#74 print_str::@2/(byte*) print_char_cursor#1 )
@@ -2068,10 +2071,10 @@ do_perspective: {
   //SEG48 [44] phi from do_perspective::@4 to print_str [phi:do_perspective::@4->print_str]
   print_str_from_b4:
   //SEG49 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@4->print_str#0] -- register_copy 
-  //SEG50 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str2 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
-    lda #<str2
+  //SEG50 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
+    lda #<str1
     sta print_str.str
-    lda #>str2
+    lda #>str1
     sta print_str.str+1
     jsr print_str
   //SEG51 [22] phi from do_perspective::@4 to do_perspective::@5 [phi:do_perspective::@4->do_perspective::@5]
@@ -2129,10 +2132,10 @@ do_perspective: {
   //SEG74 [44] phi from do_perspective::@9 to print_str [phi:do_perspective::@9->print_str]
   print_str_from_b9:
   //SEG75 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@9->print_str#0] -- register_copy 
-  //SEG76 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str4 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
-    lda #<str4
+  //SEG76 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
+    lda #<str1
     sta print_str.str
-    lda #>str4
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     jmp b10
@@ -2178,9 +2181,7 @@ do_perspective: {
     rts
     str: .text "(@"
     str1: .text ",@"
-    str2: .text ",@"
     str3: .text ") -> (@"
-    str4: .text ",@"
     str5: .text ")@"
 }
 //SEG95 print_ln
@@ -2887,10 +2888,10 @@ do_perspective: {
   //SEG48 [44] phi from do_perspective::@4 to print_str [phi:do_perspective::@4->print_str]
   print_str_from_b4:
   //SEG49 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@4->print_str#0] -- register_copy 
-  //SEG50 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str2 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
-    lda #<str2
+  //SEG50 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
+    lda #<str1
     sta print_str.str
-    lda #>str2
+    lda #>str1
     sta print_str.str+1
     jsr print_str
   //SEG51 [22] phi from do_perspective::@4 to do_perspective::@5 [phi:do_perspective::@4->do_perspective::@5]
@@ -2946,10 +2947,10 @@ do_perspective: {
   //SEG74 [44] phi from do_perspective::@9 to print_str [phi:do_perspective::@9->print_str]
   print_str_from_b9:
   //SEG75 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@9->print_str#0] -- register_copy 
-  //SEG76 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str4 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
-    lda #<str4
+  //SEG76 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
+    lda #<str1
     sta print_str.str
-    lda #>str4
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     jmp b10
@@ -2994,9 +2995,7 @@ do_perspective: {
     rts
     str: .text "(@"
     str1: .text ",@"
-    str2: .text ",@"
     str3: .text ") -> (@"
-    str4: .text ",@"
     str5: .text ")@"
 }
 //SEG95 print_ln
@@ -3657,9 +3656,7 @@ FINAL SYMBOL TABLE
 (label) do_perspective::@return
 (const string) do_perspective::str str = (string) "(@"
 (const string) do_perspective::str1 str1 = (string) ",@"
-(const string) do_perspective::str2 str2 = (string) ",@"
 (const string) do_perspective::str3 str3 = (string) ") -> (@"
-(const string) do_perspective::str4 str4 = (string) ",@"
 (const string) do_perspective::str5 str5 = (string) ")@"
 (signed byte) do_perspective::x
 (const signed byte) do_perspective::x#0 x = (byte/signed byte/word/signed word/dword/signed dword) 57
@@ -3888,10 +3885,10 @@ do_perspective: {
   //SEG47 [21] call print_str 
   //SEG48 [44] phi from do_perspective::@4 to print_str [phi:do_perspective::@4->print_str]
   //SEG49 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@4->print_str#0] -- register_copy 
-  //SEG50 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str2 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
-    lda #<str2
+  //SEG50 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@4->print_str#1] -- pbuz1=pbuc1 
+    lda #<str1
     sta print_str.str
-    lda #>str2
+    lda #>str1
     sta print_str.str+1
     jsr print_str
   //SEG51 [22] phi from do_perspective::@4 to do_perspective::@5 [phi:do_perspective::@4->do_perspective::@5]
@@ -3929,10 +3926,10 @@ do_perspective: {
   //SEG73 [31] call print_str 
   //SEG74 [44] phi from do_perspective::@9 to print_str [phi:do_perspective::@9->print_str]
   //SEG75 [44] phi (byte*) print_char_cursor#74 = (byte*) print_char_cursor#12 [phi:do_perspective::@9->print_str#0] -- register_copy 
-  //SEG76 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str4 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
-    lda #<str4
+  //SEG76 [44] phi (byte*) print_str::str#9 = (const string) do_perspective::str1 [phi:do_perspective::@9->print_str#1] -- pbuz1=pbuc1 
+    lda #<str1
     sta print_str.str
-    lda #>str4
+    lda #>str1
     sta print_str.str+1
     jsr print_str
   //SEG77 do_perspective::@10
@@ -3964,9 +3961,7 @@ do_perspective: {
     rts
     str: .text "(@"
     str1: .text ",@"
-    str2: .text ",@"
     str3: .text ") -> (@"
-    str4: .text ",@"
     str5: .text ")@"
 }
 //SEG95 print_ln

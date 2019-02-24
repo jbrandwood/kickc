@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStringConstConsolidationNoRoot() throws IOException, URISyntaxException {
+      compileAndCompare("string-const-consolidation-noroot");
+   }
+
+   @Test
    public void testStringConstConsolidation() throws IOException, URISyntaxException {
       compileAndCompare("string-const-consolidation");
    }

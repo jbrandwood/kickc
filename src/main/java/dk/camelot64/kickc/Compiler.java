@@ -239,13 +239,13 @@ public class Compiler {
       optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2ConstantIfs(program));
+      optimizations.add(new Pass2ConstantStringConsolidation(program));
       optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new Pass2TypeInference(program));
       optimizations.add(new PassNEliminateUnusedVars(program));
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));
-      optimizations.add(new Pass2ConstantStringConsolidation(program));
       pass2Execute(optimizations);
    }
 
@@ -286,6 +286,7 @@ public class Compiler {
       constantOptimizations.add(new Pass2ConstantSimplification(program));
       constantOptimizations.add(new Pass2ConstantIfs(program));
       pass2Execute(constantOptimizations);
+
    }
 
    /**
@@ -389,7 +390,6 @@ public class Compiler {
    }
 
    private void pass4RegisterAllocation() {
-
 
       if(getLog().isVerboseLoopAnalysis()) {
          getLog().append("DOMINATORS");

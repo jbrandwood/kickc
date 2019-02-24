@@ -53,9 +53,9 @@ do_perspective: {
     jsr print_str
     ldx #y
     jsr print_sbyte
-    lda #<str2
+    lda #<str1
     sta print_str.str
-    lda #>str2
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     ldx #z
@@ -68,9 +68,9 @@ do_perspective: {
     jsr perspective
     ldx xr
     jsr print_byte
-    lda #<str4
+    lda #<str1
     sta print_str.str
-    lda #>str4
+    lda #>str1
     sta print_str.str+1
     jsr print_str
     ldx yr
@@ -84,9 +84,7 @@ do_perspective: {
     rts
     str: .text "(@"
     str1: .text ",@"
-    str2: .text ",@"
     str3: .text ") -> (@"
-    str4: .text ",@"
     str5: .text ")@"
 }
 // Print a newline

@@ -31,6 +31,8 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
 
    @Override
    public boolean step() {
+      List<VariableRef> intermediates  = new ArrayList<>();
+
       ProgramScope programScope = getProgram().getScope();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          List<Statement> statements = block.getStatements();
@@ -41,6 +43,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
                StatementLValue statementLValue = (StatementLValue) statement;
                LvalueIntermediate intermediate = (LvalueIntermediate) statementLValue.getlValue();
                StatementAssignment intermediateAssignment = getProgram().getGraph().getAssignment(intermediate.getVariable());
+               intermediates.add(intermediate.getVariable());
                if(Operators.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
                   // Found assignment to an intermediate low byte lValue <x = ...
                   fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_LOWBYTE);
@@ -51,6 +54,11 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
             }
          }
       }
+
+      // Remove intermediates from the code
+      Pass2SsaOptimization.removeAssignments(getGraph(), intermediates);
+      Pass2SsaOptimization.deleteSymbols(programScope, intermediates);
+
       return false;
    }
 

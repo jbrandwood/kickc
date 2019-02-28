@@ -51,7 +51,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       // Replace all usages of the constants in the control flow graph or symbol table
       replaceVariables(inline);
       // Remove from symbol table
-      deleteSymbols(inline.keySet());
+      deleteSymbols(getScope(), inline.keySet());
 
       for(ConstantRef constantRef : inline.keySet()) {
          getLog().append("Constant inlined " + constantRef.toString() + " = " + inline.get(constantRef).toString(getProgram()));

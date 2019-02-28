@@ -57,7 +57,7 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
          RValue alias = phiIdentical.get(var);
          getLog().append("Identical Phi Values " + var.toString(getProgram()) + " " + alias.toString(getProgram()));
       }
-      deleteSymbols(phiIdentical.keySet());
+      deleteSymbols(getScope(), phiIdentical.keySet());
       return phiIdentical.size()>0;
    }
 

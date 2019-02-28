@@ -341,9 +341,7 @@ print_sword: {
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mulf16s: {
-    .label _5 = 3
     .label _6 = 9
-    .label _11 = 3
     .label _12 = 9
     .label _16 = 9
     .label _17 = 9
@@ -363,10 +361,6 @@ mulf16s: {
     lda a+1
     bpl b1
     lda m+2
-    sta _5
-    lda m+3
-    sta _5+1
-    lda m+2
     sta _6
     lda m+3
     sta _6+1
@@ -384,10 +378,6 @@ mulf16s: {
   b1:
     lda b+1
     bpl b2
-    lda m+2
-    sta _11
-    lda m+3
-    sta _11+1
     lda m+2
     sta _12
     lda m+3
@@ -530,9 +520,7 @@ mulf16u: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mul16s: {
-    .label _5 = 3
     .label _6 = 9
-    .label _11 = 3
     .label _12 = 9
     .label _16 = 9
     .label _17 = 9
@@ -552,10 +540,6 @@ mul16s: {
     lda a+1
     bpl b1
     lda m+2
-    sta _5
-    lda m+3
-    sta _5+1
-    lda m+2
     sta _6
     lda m+3
     sta _6+1
@@ -573,10 +557,6 @@ mul16s: {
   b1:
     lda b+1
     bpl b2
-    lda m+2
-    sta _11
-    lda m+3
-    sta _11+1
     lda m+2
     sta _12
     lda m+3

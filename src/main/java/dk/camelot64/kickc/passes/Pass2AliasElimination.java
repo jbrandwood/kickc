@@ -31,7 +31,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       for(AliasSet aliasSet : aliases.getAliasSets()) {
          getLog().append("Alias " + aliasSet.toString(getProgram()));
       }
-      deleteSymbols(aliases.getSymbolsToRemove(getScope()));
+      deleteSymbols(getScope(), aliases.getSymbolsToRemove(getScope()));
       return (aliases.size() > 0);
    }
 

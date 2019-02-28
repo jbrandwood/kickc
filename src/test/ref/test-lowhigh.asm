@@ -4,9 +4,7 @@
   .label print_line_cursor = 6
   .label print_char_cursor = 8
 main: {
-    .label _1 = 6
     .label _2 = $a
-    .label _4 = 6
     .label _5 = $a
     .label _15 = $a
     .label _19 = $a
@@ -35,10 +33,6 @@ main: {
     sta dw+3
   b1:
     lda dw+2
-    sta _1
-    lda dw+3
-    sta _1+1
-    lda dw+2
     sta _2
     lda dw+3
     sta _2+1
@@ -57,11 +51,6 @@ main: {
     sta dw2+2
     lda _32+1
     sta dw2+3
-    // Test set/get high word of dword
-    lda dw2
-    sta _4
-    lda dw2+1
-    sta _4+1
     lda dw
     sta _5
     lda dw+1

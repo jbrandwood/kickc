@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Symbol;
@@ -98,8 +99,8 @@ public abstract class Pass2SsaOptimization extends Pass1Base {
     *
     * @param variables The variables to eliminate
     */
-   public void removeAssignments(Collection<? extends LValue> variables) {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+   public static void removeAssignments(ControlFlowGraph graph, Collection<? extends LValue> variables) {
+      for(ControlFlowBlock block : graph.getAllBlocks()) {
          for(Iterator<Statement> iterator = block.getStatements().iterator(); iterator.hasNext(); ) {
             Statement statement = iterator.next();
             if(statement instanceof StatementAssignment) {
@@ -109,13 +110,7 @@ public abstract class Pass2SsaOptimization extends Pass1Base {
                }
             } else if(statement instanceof StatementPhiBlock) {
                StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
-               Iterator<StatementPhiBlock.PhiVariable> variableIterator = phiBlock.getPhiVariables().iterator();
-               while(variableIterator.hasNext()) {
-                  StatementPhiBlock.PhiVariable phiVariable = variableIterator.next();
-                  if(variables.contains(phiVariable.getVariable())) {
-                     variableIterator.remove();
-                  }
-               }
+               phiBlock.getPhiVariables().removeIf(phiVariable -> variables.contains(phiVariable.getVariable()));
                if(phiBlock.getPhiVariables().size() == 0) {
                   iterator.remove();
                }
@@ -124,9 +119,9 @@ public abstract class Pass2SsaOptimization extends Pass1Base {
       }
    }
 
-   public void deleteSymbols(Collection<? extends SymbolRef> symbols) {
+   public static void deleteSymbols(ProgramScope programScope, Collection<? extends SymbolRef> symbols) {
       for(SymbolRef symbolRef : symbols) {
-         Symbol symbol = getScope().getSymbol(symbolRef.getFullName());
+         Symbol symbol = programScope.getSymbol(symbolRef.getFullName());
          symbol.getScope().remove(symbol);
       }
    }

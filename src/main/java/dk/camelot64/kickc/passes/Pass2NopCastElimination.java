@@ -76,7 +76,7 @@ public class Pass2NopCastElimination extends Pass2SsaOptimization {
          }
       }
       replaceVariables(castAliasses);
-      deleteSymbols(castAliasses.keySet());
+      deleteSymbols(getScope(), castAliasses.keySet());
       return (castAliasses.size() > 0);
    }
 

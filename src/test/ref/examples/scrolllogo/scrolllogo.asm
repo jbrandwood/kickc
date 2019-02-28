@@ -332,7 +332,6 @@ sin16s_gen2: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage($17) a)
 mul16s: {
-    .label _5 = 2
     .label _6 = $e
     .label _16 = $e
     .label m = $a
@@ -349,10 +348,6 @@ mul16s: {
     jsr mul16u
     lda a+1
     bpl b2
-    lda m+2
-    sta _5
-    lda m+3
-    sta _5+1
     lda m+2
     sta _6
     lda m+3

@@ -28,8 +28,8 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       if(obsoleteConditionVar!=null) {
          Collection<VariableRef> obsoleteVars = new ArrayList<>();
          obsoleteVars.add(obsoleteConditionVar);
-         removeAssignments(obsoleteVars);
-         deleteSymbols(obsoleteVars);
+         removeAssignments(getGraph(), obsoleteVars);
+         deleteSymbols(getScope(), obsoleteVars);
          return true;
       }  else {
          return false;

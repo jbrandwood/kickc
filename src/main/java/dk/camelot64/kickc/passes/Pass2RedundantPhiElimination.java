@@ -22,13 +22,13 @@ public class Pass2RedundantPhiElimination extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       final Map<VariableRef, RValue> aliases = findRedundantPhis();
-      removeAssignments(aliases.keySet());
+      removeAssignments(getGraph(), aliases.keySet());
       replaceVariables(aliases);
       for(VariableRef var : aliases.keySet()) {
          RValue alias = aliases.get(var);
          getLog().append("Redundant Phi " + var.toString(getProgram()) + " " + alias.toString(getProgram()));
       }
-      deleteSymbols(aliases.keySet());
+      deleteSymbols(getScope(), aliases.keySet());
       return aliases.size() > 0;
    }
 

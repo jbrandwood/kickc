@@ -26,8 +26,8 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
       final Map<LValue, StatementAssignment> assignments = getAllAssignments();
       final Map<RValue, List<Statement>> usages = getAllUsages();
       final List<VariableRef> simpleConditionVars = getSimpleConditions(assignments, usages);
-      removeAssignments(simpleConditionVars);
-      deleteSymbols(simpleConditionVars);
+      removeAssignments(getGraph(), simpleConditionVars);
+      deleteSymbols(getScope(), simpleConditionVars);
       return (simpleConditionVars.size() > 0);
    }
 

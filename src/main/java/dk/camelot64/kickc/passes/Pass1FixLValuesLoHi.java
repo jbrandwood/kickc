@@ -43,13 +43,14 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
                StatementLValue statementLValue = (StatementLValue) statement;
                LvalueIntermediate intermediate = (LvalueIntermediate) statementLValue.getlValue();
                StatementAssignment intermediateAssignment = getProgram().getGraph().getAssignment(intermediate.getVariable());
-               intermediates.add(intermediate.getVariable());
                if(Operators.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
                   // Found assignment to an intermediate low byte lValue <x = ...
                   fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_LOWBYTE);
+                  intermediates.add(intermediate.getVariable());
                } else if(Operators.HIBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
                   // Found assignment to an intermediate low byte lValue >x = ...
                   fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_HIBYTE);
+                  intermediates.add(intermediate.getVariable());
                }
             }
          }

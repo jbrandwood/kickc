@@ -26,7 +26,11 @@ public class Pass1TypeInference extends Pass1Base {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               SymbolTypeInference.inferAssignmentLValue(getProgram(), assignment, false);
+               try {
+                  SymbolTypeInference.inferAssignmentLValue(getProgram(), assignment, false);
+               } catch(CompileError e) {
+                  throw new CompileError(e.getMessage(), statement.getSource());
+               }
             } else if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                String procedureName = call.getProcedureName();

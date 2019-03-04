@@ -8,7 +8,7 @@ public interface LValue extends RValue {
    /**
     * Singleton signalling that an RValue is never assigned and can safely be discarded as rvalue in phi-functions.
     */
-   public static RValue VOID = new RValue() {
+   RValue VOID = new RValue() {
 
       @Override
       public String toString() {

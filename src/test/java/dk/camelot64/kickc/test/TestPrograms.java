@@ -114,6 +114,11 @@ public class TestPrograms {
 //      compileAndCompare("complex/robozzle64/robozzle64");
 //   }
 
+   //@Test
+   //public void testTravisGame() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/travis/game");
+   //}
+
    @Test
    public void testTetrisSprites() throws IOException, URISyntaxException {
       compileAndCompare("complex/tetris/test-sprites");
@@ -464,6 +469,11 @@ public class TestPrograms {
    @Test
    public void testVarForwardProblem() throws IOException, URISyntaxException {
       compileAndCompare("var-forward-problem");
+   }
+
+   @Test
+   public void testVarForwardProblem2() throws IOException, URISyntaxException {
+      compileAndCompare("var-forward-problem2");
    }
 
    @Test
@@ -1054,6 +1064,11 @@ public class TestPrograms {
    @Test
    public void testUseUndeclared() throws IOException, URISyntaxException {
       assertError("useundeclared", "Unknown variable");
+   }
+
+   @Test
+   public void testassignUndeclared() throws IOException, URISyntaxException {
+      assertError("assignundeclared", "Unknown variable");
    }
 
    @Test

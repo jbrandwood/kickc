@@ -25,21 +25,22 @@ main::@return: scope:[main]  from main::@2
 print_msg: scope:[print_msg]  from main main::@1
   (byte*) screen#24 ← phi( main/(byte*) screen#17 main::@1/(byte*) screen#0 )
   (byte) print_msg::idx#2 ← phi( main/(byte) print_msg::idx#0 main::@1/(byte) print_msg::idx#1 )
+  (byte*) print_msg::msg#0 ← (byte*) 0
   (bool~) print_msg::$0 ← (byte) print_msg::idx#2 == (byte/signed byte/word/signed word/dword/signed dword) 1
   if((bool~) print_msg::$0) goto print_msg::@1
   to:print_msg::@3
 print_msg::@1: scope:[print_msg]  from print_msg
   (byte*) screen#21 ← phi( print_msg/(byte*) screen#24 )
-  (byte*) print_msg::msg#0 ← (const string) print_msg::$2
+  (byte*) print_msg::msg#1 ← (const string) print_msg::$2
   to:print_msg::@2
 print_msg::@3: scope:[print_msg]  from print_msg
   (byte*) screen#22 ← phi( print_msg/(byte*) screen#24 )
-  (byte*) print_msg::msg#1 ← (const string) print_msg::$3
+  (byte*) print_msg::msg#2 ← (const string) print_msg::$3
   to:print_msg::@2
 print_msg::@2: scope:[print_msg]  from print_msg::@1 print_msg::@3
   (byte*) screen#18 ← phi( print_msg::@1/(byte*) screen#21 print_msg::@3/(byte*) screen#22 )
-  (byte*) print_msg::msg#2 ← phi( print_msg::@1/(byte*) print_msg::msg#0 print_msg::@3/(byte*) print_msg::msg#1 )
-  (byte*) print::msg#0 ← (byte*) print_msg::msg#2
+  (byte*) print_msg::msg#3 ← phi( print_msg::@1/(byte*) print_msg::msg#1 print_msg::@3/(byte*) print_msg::msg#2 )
+  (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   call print 
   to:print_msg::@5
 print_msg::@5: scope:[print_msg]  from print_msg::@2
@@ -124,6 +125,7 @@ SYMBOL TABLE SSA
 (byte*) print_msg::msg#0
 (byte*) print_msg::msg#1
 (byte*) print_msg::msg#2
+(byte*) print_msg::msg#3
 (byte*) screen
 (byte*) screen#0
 (byte*) screen#1
@@ -170,15 +172,17 @@ Redundant Phi (byte*) print::msg#4 (byte*) print::msg#0
 Redundant Phi (byte*) screen#23 (byte*) screen#18
 Redundant Phi (byte*) screen#16 (byte*) screen#1
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) print_msg::$0 [14] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1
-Simple Condition (bool~) print::$0 [31] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2
+Simple Condition (bool~) print_msg::$0 [15] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1
+Simple Condition (bool~) print::$0 [32] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) print_msg::idx#0 = 1
 Constant (const byte) print_msg::idx#1 = 2
-Constant (const byte*) print_msg::msg#0 = print_msg::$2
-Constant (const byte*) print_msg::msg#1 = print_msg::$3
+Constant (const byte*) print_msg::msg#0 = 0
+Constant (const byte*) print_msg::msg#1 = print_msg::$2
+Constant (const byte*) print_msg::msg#2 = print_msg::$3
 Constant (const byte*) screen#20 = ((byte*))1024
 Successful SSA optimization Pass2ConstantIdentification
+Successful SSA optimization PassNEliminateUnusedVars
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) print_msg::@1
 Culled Empty Block (label) print_msg::@5
@@ -187,19 +191,19 @@ Culled Empty Block (label) @4
 Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte) print_msg::idx#0
 Inlining constant with var siblings (const byte) print_msg::idx#1
-Inlining constant with var siblings (const byte*) print_msg::msg#0
 Inlining constant with var siblings (const byte*) print_msg::msg#1
+Inlining constant with var siblings (const byte*) print_msg::msg#2
 Inlining constant with var siblings (const byte*) screen#20
 Constant inlined print_msg::idx#1 = (byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined print_msg::idx#0 = (byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined screen#20 = ((byte*))(word/signed word/dword/signed dword) 1024
-Constant inlined print_msg::$3 = (const byte*) print_msg::msg#1
-Constant inlined print_msg::$2 = (const byte*) print_msg::msg#0
+Constant inlined print_msg::$3 = (const byte*) print_msg::msg#2
+Constant inlined print_msg::$2 = (const byte*) print_msg::msg#1
 Successful SSA optimization Pass2ConstantInlining
-Inlining constant with var siblings (const byte*) print_msg::msg#0
 Inlining constant with var siblings (const byte*) print_msg::msg#1
-Inlining constant with var siblings (const byte*) print_msg::msg#0
+Inlining constant with var siblings (const byte*) print_msg::msg#2
 Inlining constant with var siblings (const byte*) print_msg::msg#1
+Inlining constant with var siblings (const byte*) print_msg::msg#2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
@@ -255,8 +259,8 @@ print_msg::@3: scope:[print_msg]  from print_msg
   [11] phi()
   to:print_msg::@2
 print_msg::@2: scope:[print_msg]  from print_msg print_msg::@3
-  [12] (byte*) print_msg::msg#2 ← phi( print_msg/(const byte*) print_msg::msg#0 print_msg::@3/(const byte*) print_msg::msg#1 )
-  [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#2
+  [12] (byte*) print_msg::msg#3 ← phi( print_msg/(const byte*) print_msg::msg#1 print_msg::@3/(const byte*) print_msg::msg#2 )
+  [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   [14] call print 
   to:print_msg::@return
 print_msg::@return: scope:[print_msg]  from print_msg::@2
@@ -291,7 +295,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) print_msg::idx
 (byte) print_msg::idx#2 2.0
 (byte*) print_msg::msg
-(byte*) print_msg::msg#2 2.0
+(byte*) print_msg::msg#3 2.0
 (byte*) screen
 (byte*) screen#14 4.625
 (byte*) screen#18 0.6666666666666666
@@ -300,16 +304,16 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ print_msg::idx#2 ]
 [ screen#18 screen#14 screen#6 ]
-[ print_msg::msg#2 ]
+[ print_msg::msg#3 ]
 [ print::msg#2 print::msg#0 print::msg#1 ]
 Complete equivalence classes
 [ print_msg::idx#2 ]
 [ screen#18 screen#14 screen#6 ]
-[ print_msg::msg#2 ]
+[ print_msg::msg#3 ]
 [ print::msg#2 print::msg#0 print::msg#1 ]
 Allocated zp ZP_BYTE:2 [ print_msg::idx#2 ]
 Allocated zp ZP_WORD:3 [ screen#18 screen#14 screen#6 ]
-Allocated zp ZP_WORD:5 [ print_msg::msg#2 ]
+Allocated zp ZP_WORD:5 [ print_msg::msg#3 ]
 Allocated zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ]
 
 INITIAL ASM
@@ -386,23 +390,23 @@ print_msg: {
   b3:
   //SEG27 [12] phi from print_msg::@3 to print_msg::@2 [phi:print_msg::@3->print_msg::@2]
   b2_from_b3:
-  //SEG28 [12] phi (byte*) print_msg::msg#2 = (const byte*) print_msg::msg#1 [phi:print_msg::@3->print_msg::@2#0] -- pbuz1=pbuc1 
+  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@3->print_msg::@2#0] -- pbuz1=pbuc1 
+    lda #<msg_2
+    sta msg
+    lda #>msg_2
+    sta msg+1
+    jmp b2
+  //SEG29 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
+  b2_from_print_msg:
+  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
     jmp b2
-  //SEG29 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
-  b2_from_print_msg:
-  //SEG30 [12] phi (byte*) print_msg::msg#2 = (const byte*) print_msg::msg#0 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
-    lda #<msg_0
-    sta msg
-    lda #>msg_0
-    sta msg+1
-    jmp b2
   //SEG31 print_msg::@2
   b2:
-  //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#2 -- pbuz1=pbuz2 
+  //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3 -- pbuz1=pbuz2 
     lda msg
     sta print.msg
     lda msg+1
@@ -416,8 +420,8 @@ print_msg: {
   breturn:
   //SEG36 [15] return 
     rts
-    msg_0: .text "Hello @"
-    msg_1: .text "World!@"
+    msg_1: .text "Hello @"
+    msg_2: .text "World!@"
 }
 //SEG37 print
 // print(byte* zeropage(7) msg)
@@ -462,27 +466,27 @@ print: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#2 [ screen#18 print::msg#0 ] ( main:2::print_msg:5 [ screen#18 print::msg#0 ] main:2::print_msg:7 [ screen#18 print::msg#0 ] ) always clobbers reg byte a 
+Statement [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3 [ screen#18 print::msg#0 ] ( main:2::print_msg:5 [ screen#18 print::msg#0 ] main:2::print_msg:7 [ screen#18 print::msg#0 ] ) always clobbers reg byte a 
 Statement [18] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2 [ screen#14 print::msg#2 ] ( main:2::print_msg:5::print:14 [ screen#14 print::msg#2 ] main:2::print_msg:7::print:14 [ screen#14 print::msg#2 ] ) always clobbers reg byte a reg byte y 
 Statement [20] *((byte*) screen#14) ← *((byte*) print::msg#2) [ screen#14 print::msg#2 ] ( main:2::print_msg:5::print:14 [ screen#14 print::msg#2 ] main:2::print_msg:7::print:14 [ screen#14 print::msg#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ print_msg::idx#2 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:3 [ screen#18 screen#14 screen#6 ] : zp ZP_WORD:3 , 
-Potential registers zp ZP_WORD:5 [ print_msg::msg#2 ] : zp ZP_WORD:5 , 
+Potential registers zp ZP_WORD:5 [ print_msg::msg#3 ] : zp ZP_WORD:5 , 
 Potential registers zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ] : zp ZP_WORD:7 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [print] 35.5: zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ] 
 Uplift Scope [] 16.29: zp ZP_WORD:3 [ screen#18 screen#14 screen#6 ] 
-Uplift Scope [print_msg] 2: zp ZP_BYTE:2 [ print_msg::idx#2 ] 2: zp ZP_WORD:5 [ print_msg::msg#2 ] 
+Uplift Scope [print_msg] 2: zp ZP_BYTE:2 [ print_msg::idx#2 ] 2: zp ZP_WORD:5 [ print_msg::msg#3 ] 
 Uplift Scope [main] 
 
 Uplifting [print] best 740 combination zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ] 
 Uplifting [] best 740 combination zp ZP_WORD:3 [ screen#18 screen#14 screen#6 ] 
-Uplifting [print_msg] best 731 combination reg byte x [ print_msg::idx#2 ] zp ZP_WORD:5 [ print_msg::msg#2 ] 
+Uplifting [print_msg] best 731 combination reg byte x [ print_msg::idx#2 ] zp ZP_WORD:5 [ print_msg::msg#3 ] 
 Uplifting [main] best 731 combination 
-Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ print_msg::msg#2 ] ] with [ zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ print_msg::msg#3 ] ] with [ zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ] ] - score: 1
 Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ screen#18 screen#14 screen#6 ]
-Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ print_msg::msg#2 print::msg#2 print::msg#0 print::msg#1 ]
+Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -554,23 +558,23 @@ print_msg: {
   b3:
   //SEG27 [12] phi from print_msg::@3 to print_msg::@2 [phi:print_msg::@3->print_msg::@2]
   b2_from_b3:
-  //SEG28 [12] phi (byte*) print_msg::msg#2 = (const byte*) print_msg::msg#1 [phi:print_msg::@3->print_msg::@2#0] -- pbuz1=pbuc1 
+  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@3->print_msg::@2#0] -- pbuz1=pbuc1 
+    lda #<msg_2
+    sta msg
+    lda #>msg_2
+    sta msg+1
+    jmp b2
+  //SEG29 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
+  b2_from_print_msg:
+  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
     jmp b2
-  //SEG29 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
-  b2_from_print_msg:
-  //SEG30 [12] phi (byte*) print_msg::msg#2 = (const byte*) print_msg::msg#0 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
-    lda #<msg_0
-    sta msg
-    lda #>msg_0
-    sta msg+1
-    jmp b2
   //SEG31 print_msg::@2
   b2:
-  //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#2
+  //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   //SEG33 [14] call print 
   //SEG34 [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
   print_from_b2:
@@ -580,8 +584,8 @@ print_msg: {
   breturn:
   //SEG36 [15] return 
     rts
-    msg_0: .text "Hello @"
-    msg_1: .text "World!@"
+    msg_1: .text "Hello @"
+    msg_2: .text "World!@"
 }
 //SEG37 print
 // print(byte* zeropage(4) msg)
@@ -689,9 +693,9 @@ FINAL SYMBOL TABLE
 (byte) print_msg::idx
 (byte) print_msg::idx#2 reg byte x 2.0
 (byte*) print_msg::msg
-(const byte*) print_msg::msg#0 msg#0 = (string) "Hello @"
-(const byte*) print_msg::msg#1 msg#1 = (string) "World!@"
-(byte*) print_msg::msg#2 msg zp ZP_WORD:4 2.0
+(const byte*) print_msg::msg#1 msg#1 = (string) "Hello @"
+(const byte*) print_msg::msg#2 msg#2 = (string) "World!@"
+(byte*) print_msg::msg#3 msg zp ZP_WORD:4 2.0
 (byte*) screen
 (byte*) screen#14 screen zp ZP_WORD:2 4.625
 (byte*) screen#18 screen zp ZP_WORD:2 0.6666666666666666
@@ -699,7 +703,7 @@ FINAL SYMBOL TABLE
 
 reg byte x [ print_msg::idx#2 ]
 zp ZP_WORD:2 [ screen#18 screen#14 screen#6 ]
-zp ZP_WORD:4 [ print_msg::msg#2 print::msg#2 print::msg#0 print::msg#1 ]
+zp ZP_WORD:4 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
 
 
 FINAL ASSEMBLER
@@ -754,30 +758,30 @@ print_msg: {
   //SEG25 [11] phi from print_msg to print_msg::@3 [phi:print_msg->print_msg::@3]
   //SEG26 print_msg::@3
   //SEG27 [12] phi from print_msg::@3 to print_msg::@2 [phi:print_msg::@3->print_msg::@2]
-  //SEG28 [12] phi (byte*) print_msg::msg#2 = (const byte*) print_msg::msg#1 [phi:print_msg::@3->print_msg::@2#0] -- pbuz1=pbuc1 
-    lda #<msg_1
+  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@3->print_msg::@2#0] -- pbuz1=pbuc1 
+    lda #<msg_2
     sta msg
-    lda #>msg_1
+    lda #>msg_2
     sta msg+1
     jmp b2
   //SEG29 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
   b1:
-  //SEG30 [12] phi (byte*) print_msg::msg#2 = (const byte*) print_msg::msg#0 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
-    lda #<msg_0
+  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
+    lda #<msg_1
     sta msg
-    lda #>msg_0
+    lda #>msg_1
     sta msg+1
   //SEG31 print_msg::@2
   b2:
-  //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#2
+  //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   //SEG33 [14] call print 
   //SEG34 [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
     jsr print
   //SEG35 print_msg::@return
   //SEG36 [15] return 
     rts
-    msg_0: .text "Hello @"
-    msg_1: .text "World!@"
+    msg_1: .text "Hello @"
+    msg_2: .text "World!@"
 }
 //SEG37 print
 // print(byte* zeropage(4) msg)

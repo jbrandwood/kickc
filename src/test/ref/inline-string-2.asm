@@ -19,21 +19,21 @@ print_msg: {
     .label msg = 4
     cpx #1
     beq b1
+    lda #<msg_2
+    sta msg
+    lda #>msg_2
+    sta msg+1
+    jmp b2
+  b1:
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
-    jmp b2
-  b1:
-    lda #<msg_0
-    sta msg
-    lda #>msg_0
-    sta msg+1
   b2:
     jsr print
     rts
-    msg_0: .text "Hello @"
-    msg_1: .text "World!@"
+    msg_1: .text "Hello @"
+    msg_2: .text "World!@"
 }
 // print(byte* zeropage(4) msg)
 print: {

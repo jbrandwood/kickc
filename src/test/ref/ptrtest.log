@@ -82,6 +82,7 @@ lvaluevar::@return: scope:[lvaluevar]  from lvaluevar::@1
   to:@return
 rvaluevar: scope:[rvaluevar]  from main::@2
   (byte*) rvaluevar::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte) rvaluevar::b#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) rvaluevar::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 2
   to:rvaluevar::@1
 rvaluevar::@1: scope:[rvaluevar]  from rvaluevar rvaluevar::@2
@@ -93,7 +94,7 @@ rvaluevar::@1: scope:[rvaluevar]  from rvaluevar rvaluevar::@2
 rvaluevar::@2: scope:[rvaluevar]  from rvaluevar::@1
   (byte) rvaluevar::i#3 ← phi( rvaluevar::@1/(byte) rvaluevar::i#2 )
   (byte*) rvaluevar::screen#2 ← phi( rvaluevar::@1/(byte*) rvaluevar::screen#3 )
-  (byte) rvaluevar::b#0 ← *((byte*) rvaluevar::screen#2)
+  (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2)
   (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
   (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#3
   to:rvaluevar::@1
@@ -172,6 +173,7 @@ SYMBOL TABLE SSA
 (label) rvaluevar::@return
 (byte) rvaluevar::b
 (byte) rvaluevar::b#0
+(byte) rvaluevar::b#1
 (byte) rvaluevar::i
 (byte) rvaluevar::i#0
 (byte) rvaluevar::i#1
@@ -201,7 +203,7 @@ Successful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) lvalue::$0 [11] if((byte) lvalue::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto lvalue::@2
 Simple Condition (bool~) rvalue::$0 [22] if((byte) rvalue::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto rvalue::@2
 Simple Condition (bool~) lvaluevar::$0 [32] if((byte) lvaluevar::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto lvaluevar::@2
-Simple Condition (bool~) rvaluevar::$0 [42] if((byte) rvaluevar::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto rvaluevar::@2
+Simple Condition (bool~) rvaluevar::$0 [43] if((byte) rvaluevar::i#2<(byte/signed byte/word/signed word/dword/signed dword) 10) goto rvaluevar::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte[1024]) lvalue::SCREEN#0 = ((byte*))1024
 Constant (const byte) lvalue::i#0 = 2
@@ -211,11 +213,13 @@ Constant (const byte*) lvaluevar::screen#0 = ((byte*))1024
 Constant (const byte) lvaluevar::b#0 = 4
 Constant (const byte) lvaluevar::i#0 = 2
 Constant (const byte*) rvaluevar::screen#0 = ((byte*))1024
+Constant (const byte) rvaluevar::b#0 = 0
 Constant (const byte) rvaluevar::i#0 = 2
 Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(lvalue::SCREEN#0+1)
 Consolidated array index constant in *(rvalue::SCREEN#0+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) lvalue::i#0
 Inlining constant with var siblings (const byte) rvalue::i#0
 Inlining constant with var siblings (const byte*) lvaluevar::screen#0
@@ -317,7 +321,7 @@ rvaluevar::@return: scope:[rvaluevar]  from rvaluevar::@1
   [23] return 
   to:@return
 rvaluevar::@2: scope:[rvaluevar]  from rvaluevar::@1
-  [24] (byte) rvaluevar::b#0 ← *((byte*) rvaluevar::screen#2)
+  [24] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2)
   [25] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
   [26] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2
   to:rvaluevar::@1
@@ -379,7 +383,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) rvalue::i#2 14.666666666666666
 (void()) rvaluevar()
 (byte) rvaluevar::b
-(byte) rvaluevar::b#0 110.0
+(byte) rvaluevar::b#1 110.0
 (byte) rvaluevar::i
 (byte) rvaluevar::i#1 22.0
 (byte) rvaluevar::i#2 8.25
@@ -394,7 +398,7 @@ Initial phi equivalence classes
 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
 [ rvalue::i#2 rvalue::i#1 ]
 [ lvalue::i#2 lvalue::i#1 ]
-Added variable rvaluevar::b#0 to zero page equivalence class [ rvaluevar::b#0 ]
+Added variable rvaluevar::b#1 to zero page equivalence class [ rvaluevar::b#1 ]
 Added variable rvalue::b#0 to zero page equivalence class [ rvalue::b#0 ]
 Added variable rvalue::b#1 to zero page equivalence class [ rvalue::b#1 ]
 Added variable rvalue::b#2 to zero page equivalence class [ rvalue::b#2 ]
@@ -405,7 +409,7 @@ Complete equivalence classes
 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
 [ rvalue::i#2 rvalue::i#1 ]
 [ lvalue::i#2 lvalue::i#1 ]
-[ rvaluevar::b#0 ]
+[ rvaluevar::b#1 ]
 [ rvalue::b#0 ]
 [ rvalue::b#1 ]
 [ rvalue::b#2 ]
@@ -415,7 +419,7 @@ Allocated zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
 Allocated zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
 Allocated zp ZP_BYTE:8 [ rvalue::i#2 rvalue::i#1 ]
 Allocated zp ZP_BYTE:9 [ lvalue::i#2 lvalue::i#1 ]
-Allocated zp ZP_BYTE:10 [ rvaluevar::b#0 ]
+Allocated zp ZP_BYTE:10 [ rvaluevar::b#1 ]
 Allocated zp ZP_BYTE:11 [ rvalue::b#0 ]
 Allocated zp ZP_BYTE:12 [ rvalue::b#1 ]
 Allocated zp ZP_BYTE:13 [ rvalue::b#2 ]
@@ -555,7 +559,7 @@ rvaluevar: {
     rts
   //SEG48 rvaluevar::@2
   b2:
-  //SEG49 [24] (byte) rvaluevar::b#0 ← *((byte*) rvaluevar::screen#2) -- vbuz1=_deref_pbuz2 
+  //SEG49 [24] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (screen),y
     sta b
@@ -666,7 +670,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [17] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b#0 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
-Statement [24] (byte) rvaluevar::b#0 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [24] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
 Statement [34] *((const byte[1024]) lvalue::SCREEN#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
@@ -674,7 +678,7 @@ Statement [35] *((const byte[1024]) lvalue::SCREEN#0+(byte/signed byte/word/sign
 Statement [39] *((const byte[1024]) lvalue::SCREEN#0 + (byte) lvalue::i#2) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ lvalue::i#2 lvalue::i#1 ]
 Statement [17] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b#0 [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) always clobbers reg byte a reg byte y 
-Statement [24] (byte) rvaluevar::b#0 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [24] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 ] ) always clobbers reg byte a reg byte y 
 Statement [34] *((const byte[1024]) lvalue::SCREEN#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
 Statement [35] *((const byte[1024]) lvalue::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
 Statement [39] *((const byte[1024]) lvalue::SCREEN#0 + (byte) lvalue::i#2) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) always clobbers reg byte a 
@@ -684,14 +688,14 @@ Potential registers zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ] : zp ZP_BYTE:
 Potential registers zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] : zp ZP_WORD:6 , 
 Potential registers zp ZP_BYTE:8 [ rvalue::i#2 rvalue::i#1 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:9 [ lvalue::i#2 lvalue::i#1 ] : zp ZP_BYTE:9 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ rvaluevar::b#0 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:10 [ rvaluevar::b#1 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:11 [ rvalue::b#0 ] : zp ZP_BYTE:11 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:12 [ rvalue::b#1 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:13 [ rvalue::b#2 ] : zp ZP_BYTE:13 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [rvalue] 110: zp ZP_BYTE:13 [ rvalue::b#2 ] 36.67: zp ZP_BYTE:8 [ rvalue::i#2 rvalue::i#1 ] 20: zp ZP_BYTE:11 [ rvalue::b#0 ] 20: zp ZP_BYTE:12 [ rvalue::b#1 ] 
-Uplift Scope [rvaluevar] 110: zp ZP_BYTE:10 [ rvaluevar::b#0 ] 30.25: zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ] 22: zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] 
+Uplift Scope [rvaluevar] 110: zp ZP_BYTE:10 [ rvaluevar::b#1 ] 30.25: zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ] 22: zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] 
 Uplift Scope [lvaluevar] 30.25: zp ZP_BYTE:2 [ lvaluevar::i#2 lvaluevar::i#1 ] 22: zp ZP_WORD:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
 Uplift Scope [lvalue] 36.67: zp ZP_BYTE:9 [ lvalue::i#2 lvalue::i#1 ] 
 Uplift Scope [main] 
@@ -699,7 +703,7 @@ Uplift Scope []
 
 Uplifting [rvalue] best 1868 combination reg byte a [ rvalue::b#2 ] reg byte x [ rvalue::i#2 rvalue::i#1 ] reg byte a [ rvalue::b#0 ] reg byte a [ rvalue::b#1 ] 
 Limited combination testing to 100 combinations of 256 possible.
-Uplifting [rvaluevar] best 1748 combination reg byte a [ rvaluevar::b#0 ] reg byte x [ rvaluevar::i#2 rvaluevar::i#1 ] zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] 
+Uplifting [rvaluevar] best 1748 combination reg byte a [ rvaluevar::b#1 ] reg byte x [ rvaluevar::i#2 rvaluevar::i#1 ] zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] 
 Uplifting [lvaluevar] best 1658 combination reg byte x [ lvaluevar::i#2 lvaluevar::i#1 ] zp ZP_WORD:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
 Uplifting [lvalue] best 1538 combination reg byte x [ lvalue::i#2 lvalue::i#1 ] 
 Uplifting [main] best 1538 combination 
@@ -835,7 +839,7 @@ rvaluevar: {
     rts
   //SEG48 rvaluevar::@2
   b2:
-  //SEG49 [24] (byte) rvaluevar::b#0 ← *((byte*) rvaluevar::screen#2) -- vbuaa=_deref_pbuz1 
+  //SEG49 [24] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (screen),y
   //SEG50 [25] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
@@ -1026,7 +1030,7 @@ FINAL SYMBOL TABLE
 (label) rvaluevar::@2
 (label) rvaluevar::@return
 (byte) rvaluevar::b
-(byte) rvaluevar::b#0 reg byte a 110.0
+(byte) rvaluevar::b#1 reg byte a 110.0
 (byte) rvaluevar::i
 (byte) rvaluevar::i#1 reg byte x 22.0
 (byte) rvaluevar::i#2 reg byte x 8.25
@@ -1039,7 +1043,7 @@ zp ZP_WORD:2 [ lvaluevar::screen#2 lvaluevar::screen#1 rvaluevar::screen#2 rvalu
 reg byte x [ rvaluevar::i#2 rvaluevar::i#1 ]
 reg byte x [ rvalue::i#2 rvalue::i#1 ]
 reg byte x [ lvalue::i#2 lvalue::i#1 ]
-reg byte a [ rvaluevar::b#0 ]
+reg byte a [ rvaluevar::b#1 ]
 reg byte a [ rvalue::b#0 ]
 reg byte a [ rvalue::b#1 ]
 reg byte a [ rvalue::b#2 ]
@@ -1144,7 +1148,7 @@ rvaluevar: {
     rts
   //SEG48 rvaluevar::@2
   b2:
-  //SEG49 [24] (byte) rvaluevar::b#0 ← *((byte*) rvaluevar::screen#2) -- vbuaa=_deref_pbuz1 
+  //SEG49 [24] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (screen),y
   //SEG50 [25] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 -- pbuz1=_inc_pbuz1 

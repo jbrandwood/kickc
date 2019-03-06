@@ -1,0 +1,337 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte) b#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (word) w#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) ptr#0 ← (byte*) 0
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  to:@1
+main: scope:[main]  from @1
+  (byte*) ptr#1 ← phi( @1/(byte*) ptr#2 )
+  (word) w#1 ← phi( @1/(word) w#2 )
+  (byte) b#1 ← phi( @1/(byte) b#2 )
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) b#1
+  (byte~) main::$0 ← < (word) w#1
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$0
+  (byte~) main::$1 ← > (word) w#1
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$1
+  (byte~) main::$2 ← < (byte*) ptr#1
+  (byte~) main::$3 ← ((byte)) (byte~) main::$2
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 5) ← (byte~) main::$3
+  (byte~) main::$4 ← > (byte*) ptr#1
+  (byte~) main::$5 ← ((byte)) (byte~) main::$4
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 5) ← (byte~) main::$5
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) ptr#2 ← phi( @begin/(byte*) ptr#0 )
+  (word) w#2 ← phi( @begin/(word) w#0 )
+  (byte) b#2 ← phi( @begin/(byte) b#0 )
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte) b
+(byte) b#0
+(byte) b#1
+(byte) b#2
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(byte~) main::$2
+(byte~) main::$3
+(byte~) main::$4
+(byte~) main::$5
+(label) main::@return
+(byte*) ptr
+(byte*) ptr#0
+(byte*) ptr#1
+(byte*) ptr#2
+(word) w
+(word) w#0
+(word) w#1
+(word) w#2
+
+Culled Empty Block (label) @2
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (byte) b#0 = (byte) b#2 
+Alias (word) w#0 = (word) w#2 
+Alias (byte*) ptr#0 = (byte*) ptr#2 
+Successful SSA optimization Pass2AliasElimination
+Redundant Phi (byte) b#1 (byte) b#0
+Redundant Phi (word) w#1 (word) w#0
+Redundant Phi (byte*) ptr#1 (byte*) ptr#0
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte) b#0 = 0
+Constant (const word) w#0 = 0
+Constant (const byte*) ptr#0 = 0
+Constant (const byte*) SCREEN#0 = ((byte*))1024
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte) main::$0 = <w#0
+Constant (const byte) main::$1 = >w#0
+Constant (const byte) main::$2 = <ptr#0
+Constant (const byte) main::$4 = >ptr#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte) main::$3 = ((byte))main::$2
+Constant (const byte) main::$5 = ((byte))main::$4
+Successful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(SCREEN#0+0)
+Consolidated array index constant in *(SCREEN#0+2)
+Consolidated array index constant in *(SCREEN#0+3)
+Consolidated array index constant in *(SCREEN#0+5)
+Consolidated array index constant in *(SCREEN#0+5)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Constant inlined main::$1 = >(const word) w#0
+Constant inlined main::$2 = <(const byte*) ptr#0
+Constant inlined main::$0 = <(const word) w#0
+Constant inlined main::$5 = ((byte))>(const byte*) ptr#0
+Constant inlined main::$3 = ((byte))<(const byte*) ptr#0
+Constant inlined main::$4 = >(const byte*) ptr#0
+Successful SSA optimization Pass2ConstantInlining
+Simplifying constant plus zero SCREEN#0+0
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte*) SCREEN#0) ← (const byte) b#0
+  [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0
+  [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0
+  [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0
+  [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [9] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(byte) b
+(void()) main()
+(byte*) ptr
+(word) w
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests uninitialized values of variables.
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const b = 0
+  .const w = 0
+  .label ptr = 0
+  .label SCREEN = $400
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [4] *((const byte*) SCREEN#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    lda #b
+    sta SCREEN
+  //SEG11 [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0 -- _deref_pbuc1=vbuc2 
+    lda #<w
+    sta SCREEN+2
+  //SEG12 [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0 -- _deref_pbuc1=vbuc2 
+    lda #>w
+    sta SCREEN+3
+  //SEG13 [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
+    lda #<ptr
+    sta SCREEN+5
+  //SEG14 [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
+    lda #>ptr
+    sta SCREEN+5
+    jmp breturn
+  //SEG15 main::@return
+  breturn:
+  //SEG16 [9] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) SCREEN#0) ← (const byte) b#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 51 combination 
+Uplifting [] best 51 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests uninitialized values of variables.
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const b = 0
+  .const w = 0
+  .label ptr = 0
+  .label SCREEN = $400
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [4] *((const byte*) SCREEN#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    lda #b
+    sta SCREEN
+  //SEG11 [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0 -- _deref_pbuc1=vbuc2 
+    lda #<w
+    sta SCREEN+2
+  //SEG12 [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0 -- _deref_pbuc1=vbuc2 
+    lda #>w
+    sta SCREEN+3
+  //SEG13 [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
+    lda #<ptr
+    sta SCREEN+5
+  //SEG14 [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
+    lda #>ptr
+    sta SCREEN+5
+    jmp breturn
+  //SEG15 main::@return
+  breturn:
+  //SEG16 [9] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte) b
+(const byte) b#0 b = (byte/signed byte/word/signed word/dword/signed dword) 0
+(void()) main()
+(label) main::@return
+(byte*) ptr
+(const byte*) ptr#0 ptr = (byte*) 0
+(word) w
+(const word) w#0 w = (byte/signed byte/word/signed word/dword/signed dword) 0
+
+
+
+FINAL ASSEMBLER
+Score: 36
+
+//SEG0 File Comments
+// Tests uninitialized values of variables.
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const b = 0
+  .const w = 0
+  .label ptr = 0
+  .label SCREEN = $400
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 [4] *((const byte*) SCREEN#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    lda #b
+    sta SCREEN
+  //SEG11 [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0 -- _deref_pbuc1=vbuc2 
+    lda #<w
+    sta SCREEN+2
+  //SEG12 [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0 -- _deref_pbuc1=vbuc2 
+    lda #>w
+    sta SCREEN+3
+  //SEG13 [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
+    lda #<ptr
+    sta SCREEN+5
+  //SEG14 [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
+    lda #>ptr
+    sta SCREEN+5
+  //SEG15 main::@return
+  //SEG16 [9] return 
+    rts
+}
+

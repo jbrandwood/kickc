@@ -1073,84 +1073,84 @@ render_preset_name: {
     cmp #$a
     beq b10
   b33:
-    lda #<name_0
-    sta name
-    lda #>name_0
-    sta name+1
-    jmp b22
-  b1:
     lda #<name_1
     sta name
     lda #>name_1
     sta name+1
     jmp b22
-  b2:
+  b1:
     lda #<name_2
     sta name
     lda #>name_2
     sta name+1
     jmp b22
-  b3:
+  b2:
     lda #<name_3
     sta name
     lda #>name_3
     sta name+1
     jmp b22
-  b4:
+  b3:
     lda #<name_4
     sta name
     lda #>name_4
     sta name+1
     jmp b22
-  b5:
+  b4:
     lda #<name_5
     sta name
     lda #>name_5
     sta name+1
     jmp b22
-  b6:
+  b5:
     lda #<name_6
     sta name
     lda #>name_6
     sta name+1
     jmp b22
-  b7:
+  b6:
     lda #<name_7
     sta name
     lda #>name_7
     sta name+1
     jmp b22
-  b8:
+  b7:
     lda #<name_8
     sta name
     lda #>name_8
     sta name+1
     jmp b22
-  b9:
+  b8:
     lda #<name_9
     sta name
     lda #>name_9
     sta name+1
     jmp b22
-  b10:
+  b9:
     lda #<name_10
     sta name
     lda #>name_10
     sta name+1
+    jmp b22
+  b10:
+    lda #<name_11
+    sta name
+    lda #>name_11
+    sta name+1
   b22:
     jsr print_str_at
     rts
-    name_0: .text "Standard Charset              @"
-    name_1: .text "Extended Color Charset        @"
-    name_2: .text "Standard Bitmap               @"
-    name_3: .text "Multicolor Bitmap             @"
-    name_4: .text "Hicolor Charset               @"
-    name_5: .text "Hicolor Extended Color Charset@"
-    name_6: .text "Twoplane Bitmap               @"
-    name_7: .text "Chunky 8bpp                   @"
-    name_8: .text "Sixs Fred                     @"
-    name_9: .text "Sixs Fred 2                   @"
-    name_10: .text "8bpp Pixel Cell               @"
+    name_1: .text "Standard Charset              @"
+    name_2: .text "Extended Color Charset        @"
+    name_3: .text "Standard Bitmap               @"
+    name_4: .text "Multicolor Bitmap             @"
+    name_5: .text "Hicolor Charset               @"
+    name_6: .text "Hicolor Extended Color Charset@"
+    name_7: .text "Twoplane Bitmap               @"
+    name_8: .text "Chunky 8bpp                   @"
+    name_9: .text "Sixs Fred                     @"
+    name_10: .text "Sixs Fred 2                   @"
+    name_11: .text "8bpp Pixel Cell               @"
 }
 // Print a string at a specific screen position
 // print_str_at(byte* zeropage(3) str, byte* zeropage(5) at)

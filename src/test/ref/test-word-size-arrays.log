@@ -5,18 +5,19 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
   (word) main::line#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (word) main::line#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   (byte*) main::screen#3 ← phi( main/(byte*) main::screen#0 main::@4/(byte*) main::screen#5 )
-  (word) main::line#5 ← phi( main/(word) main::line#0 main::@4/(word) main::line#1 )
+  (word) main::line#6 ← phi( main/(word) main::line#1 main::@4/(word) main::line#2 )
   (byte) main::c#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   (byte*) main::screen#1 ← phi( main::@1/(byte*) main::screen#3 main::@2/(byte*) main::screen#1 )
   (byte) main::c#4 ← phi( main::@1/(byte) main::c#0 main::@2/(byte) main::c#1 )
-  (word) main::line#2 ← phi( main::@1/(word) main::line#5 main::@2/(word) main::line#2 )
-  (word~) main::$0 ← (word) main::line#2 + (byte) main::c#4
-  (word~) main::$1 ← (word) main::line#2 + (byte) main::c#4
+  (word) main::line#3 ← phi( main::@1/(word) main::line#6 main::@2/(word) main::line#3 )
+  (word~) main::$0 ← (word) main::line#3 + (byte) main::c#4
+  (word~) main::$1 ← (word) main::line#3 + (byte) main::c#4
   (word/signed dword/dword~) main::$2 ← (word~) main::$1 + (byte/signed byte/word/signed word/dword/signed dword) 40
   *((byte*) main::screen#1 + (word~) main::$0) ← *((byte*) main::screen#1 + (word/signed dword/dword~) main::$2)
   (byte) main::c#1 ← ++ (byte) main::c#4
@@ -25,22 +26,22 @@ main::@2: scope:[main]  from main::@1 main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
   (byte*) main::screen#5 ← phi( main::@2/(byte*) main::screen#1 )
-  (word) main::line#3 ← phi( main::@2/(word) main::line#2 )
-  (word) main::line#1 ← (word) main::line#3 + (byte/signed byte/word/signed word/dword/signed dword) 40
+  (word) main::line#4 ← phi( main::@2/(word) main::line#3 )
+  (word) main::line#2 ← (word) main::line#4 + (byte/signed byte/word/signed word/dword/signed dword) 40
   (word/signed word/dword/signed dword~) main::$4 ← (byte/signed byte/word/signed word/dword/signed dword) 40 * (byte/signed byte/word/signed word/dword/signed dword) 24
-  (bool~) main::$5 ← (word) main::line#1 < (word/signed word/dword/signed dword~) main::$4
+  (bool~) main::$5 ← (word) main::line#2 < (word/signed word/dword/signed dword~) main::$4
   if((bool~) main::$5) goto main::@1
   to:main::@5
 main::@5: scope:[main]  from main::@4
   (byte*) main::screen#4 ← phi( main::@4/(byte*) main::screen#5 )
-  (word) main::line#6 ← phi( main::@4/(word) main::line#1 )
+  (word) main::line#7 ← phi( main::@4/(word) main::line#2 )
   (byte) main::c#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@3
 main::@3: scope:[main]  from main::@3 main::@5
   (byte*) main::screen#2 ← phi( main::@3/(byte*) main::screen#2 main::@5/(byte*) main::screen#4 )
   (byte) main::c#5 ← phi( main::@3/(byte) main::c#3 main::@5/(byte) main::c#2 )
-  (word) main::line#4 ← phi( main::@3/(word) main::line#4 main::@5/(word) main::line#6 )
-  (word~) main::$6 ← (word) main::line#4 + (byte) main::c#5
+  (word) main::line#5 ← phi( main::@3/(word) main::line#5 main::@5/(word) main::line#7 )
+  (word~) main::$6 ← (word) main::line#5 + (byte) main::c#5
   *((byte*) main::screen#2 + (word~) main::$6) ← (byte) ' '
   (byte) main::c#3 ← ++ (byte) main::c#5
   (bool~) main::$7 ← (byte) main::c#3 < (byte/signed byte/word/signed word/dword/signed dword) 40
@@ -91,6 +92,7 @@ SYMBOL TABLE SSA
 (word) main::line#4
 (word) main::line#5
 (word) main::line#6
+(word) main::line#7
 (byte*) main::screen
 (byte*) main::screen#0
 (byte*) main::screen#1
@@ -101,30 +103,32 @@ SYMBOL TABLE SSA
 
 Culled Empty Block (label) @2
 Successful SSA optimization Pass2CullEmptyBlocks
-Alias (word) main::line#2 = (word) main::line#3 
+Alias (word) main::line#3 = (word) main::line#4 
 Alias (byte*) main::screen#1 = (byte*) main::screen#5 (byte*) main::screen#4 
-Alias (word) main::line#1 = (word) main::line#6 
+Alias (word) main::line#2 = (word) main::line#7 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (word) main::line#2
+Self Phi Eliminated (word) main::line#3
 Self Phi Eliminated (byte*) main::screen#1
-Self Phi Eliminated (word) main::line#4
+Self Phi Eliminated (word) main::line#5
 Self Phi Eliminated (byte*) main::screen#2
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (word) main::line#2 (word) main::line#5
+Redundant Phi (word) main::line#3 (word) main::line#6
 Redundant Phi (byte*) main::screen#1 (byte*) main::screen#3
-Redundant Phi (word) main::line#4 (word) main::line#1
+Redundant Phi (word) main::line#5 (word) main::line#2
 Redundant Phi (byte*) main::screen#2 (byte*) main::screen#1
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$3 [11] if((byte) main::c#1<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@2
-Simple Condition (bool~) main::$5 [16] if((word) main::line#1<(word/signed word/dword/signed dword~) main::$4) goto main::@1
-Simple Condition (bool~) main::$7 [24] if((byte) main::c#3<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@3
+Simple Condition (bool~) main::$3 [12] if((byte) main::c#1<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@2
+Simple Condition (bool~) main::$5 [17] if((word) main::line#2<(word/signed word/dword/signed dword~) main::$4) goto main::@1
+Simple Condition (bool~) main::$7 [25] if((byte) main::c#3<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::screen#0 = ((byte*))1024
 Constant (const word) main::line#0 = 0
+Constant (const word) main::line#1 = 0
 Constant (const byte) main::c#0 = 0
 Constant (const word/signed word/dword/signed dword) main::$4 = 40*24
 Constant (const byte) main::c#2 = 0
 Successful SSA optimization Pass2ConstantIdentification
+Successful SSA optimization PassNEliminateUnusedVars
 Culled Empty Block (label) main::@5
 Successful SSA optimization Pass2CullEmptyBlocks
 Self Phi Eliminated (byte*) main::screen#3
@@ -136,13 +140,13 @@ Successful SSA optimization Pass2ConstantAdditionElimination
 Inferred type updated to word in [4] (word/signed dword/dword~) main::$2 ← (word~) main::$1
 Alias (word~) main::$2 = (word~) main::$1 
 Successful SSA optimization Pass2AliasElimination
-Inlining constant with var siblings (const word) main::line#0
+Inlining constant with var siblings (const word) main::line#1
 Inlining constant with var siblings (const byte) main::c#0
 Inlining constant with var siblings (const byte) main::c#2
 Constant inlined main::c#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::$4 = (byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24
-Constant inlined main::line#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::line#1 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@7(between main::@4 and main::@1)
 Added new block during phi lifting main::@8(between main::@2 and main::@2)
@@ -156,7 +160,7 @@ Calls in [] to main:2
 
 Created 3 initial phi equivalence classes
 Coalesced [20] main::c#7 ← main::c#3
-Coalesced [21] main::line#7 ← main::line#1
+Coalesced [21] main::line#8 ← main::line#2
 Coalesced [22] main::c#6 ← main::c#1
 Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) main::@9
@@ -181,23 +185,23 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@4
-  [5] (word) main::line#5 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(word) main::line#1 )
+  [5] (word) main::line#6 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(word) main::line#2 )
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   [6] (byte) main::c#4 ← phi( main::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::c#1 )
-  [7] (word~) main::$0 ← (word) main::line#5 + (byte) main::c#4
-  [8] (word~) main::$2 ← (word) main::line#5 + (byte) main::c#4
+  [7] (word~) main::$0 ← (word) main::line#6 + (byte) main::c#4
+  [8] (word~) main::$2 ← (word) main::line#6 + (byte) main::c#4
   [9] *((const byte*) main::screen#0 + (word~) main::$0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 40 + (word~) main::$2)
   [10] (byte) main::c#1 ← ++ (byte) main::c#4
   [11] if((byte) main::c#1<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  [12] (word) main::line#1 ← (word) main::line#5 + (byte/signed byte/word/signed word/dword/signed dword) 40
-  [13] if((word) main::line#1<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1
+  [12] (word) main::line#2 ← (word) main::line#6 + (byte/signed byte/word/signed word/dword/signed dword) 40
+  [13] if((word) main::line#2<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@3 main::@4
   [14] (byte) main::c#5 ← phi( main::@3/(byte) main::c#3 main::@4/(byte/signed byte/word/signed word/dword/signed dword) 0 )
-  [15] (word~) main::$6 ← (word) main::line#1 + (byte) main::c#5
+  [15] (word~) main::$6 ← (word) main::line#2 + (byte) main::c#5
   [16] *((const byte*) main::screen#0 + (word~) main::$6) ← (byte) ' '
   [17] (byte) main::c#3 ← ++ (byte) main::c#5
   [18] if((byte) main::c#3<(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@3
@@ -218,25 +222,25 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::c#4 101.0
 (byte) main::c#5 11.0
 (word) main::line
-(word) main::line#1 6.285714285714286
-(word) main::line#5 32.0
+(word) main::line#2 6.285714285714286
+(word) main::line#6 32.0
 (byte*) main::screen
 
 Initial phi equivalence classes
-[ main::line#5 main::line#1 ]
+[ main::line#6 main::line#2 ]
 [ main::c#4 main::c#1 ]
 [ main::c#5 main::c#3 ]
 Added variable main::$0 to zero page equivalence class [ main::$0 ]
 Added variable main::$2 to zero page equivalence class [ main::$2 ]
 Added variable main::$6 to zero page equivalence class [ main::$6 ]
 Complete equivalence classes
-[ main::line#5 main::line#1 ]
+[ main::line#6 main::line#2 ]
 [ main::c#4 main::c#1 ]
 [ main::c#5 main::c#3 ]
 [ main::$0 ]
 [ main::$2 ]
 [ main::$6 ]
-Allocated zp ZP_WORD:2 [ main::line#5 main::line#1 ]
+Allocated zp ZP_WORD:2 [ main::line#6 main::line#2 ]
 Allocated zp ZP_BYTE:4 [ main::c#4 main::c#1 ]
 Allocated zp ZP_BYTE:5 [ main::c#5 main::c#3 ]
 Allocated zp ZP_WORD:6 [ main::$0 ]
@@ -278,7 +282,7 @@ main: {
     .label c_5 = 5
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (word) main::line#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
+  //SEG12 [5] phi (word) main::line#6 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
     lda #<0
     sta line
     lda #>0
@@ -286,7 +290,7 @@ main: {
     jmp b1
   //SEG13 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG14 [5] phi (word) main::line#5 = (word) main::line#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (word) main::line#6 = (word) main::line#2 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
   //SEG15 main::@1
   b1:
@@ -302,7 +306,7 @@ main: {
     jmp b2
   //SEG20 main::@2
   b2:
-  //SEG21 [7] (word~) main::$0 ← (word) main::line#5 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuz3 
+  //SEG21 [7] (word~) main::$0 ← (word) main::line#6 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuz3 
     lda c
     clc
     adc line
@@ -310,7 +314,7 @@ main: {
     lda #0
     adc line+1
     sta _0+1
-  //SEG22 [8] (word~) main::$2 ← (word) main::line#5 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuz3 
+  //SEG22 [8] (word~) main::$2 ← (word) main::line#6 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuz3 
     lda c
     clc
     adc line
@@ -346,7 +350,7 @@ main: {
     jmp b4
   //SEG26 main::@4
   b4:
-  //SEG27 [12] (word) main::line#1 ← (word) main::line#5 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- vwuz1=vwuz1_plus_vbuc1 
+  //SEG27 [12] (word) main::line#2 ← (word) main::line#6 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- vwuz1=vwuz1_plus_vbuc1 
     clc
     lda line
     adc #<$28
@@ -354,7 +358,7 @@ main: {
     lda line+1
     adc #>$28
     sta line+1
-  //SEG28 [13] if((word) main::line#1<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 -- vwuz1_lt_vwuc1_then_la1 
+  //SEG28 [13] if((word) main::line#2<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 -- vwuz1_lt_vwuc1_then_la1 
     lda line+1
     cmp #>$28*$18
     bcc b1_from_b4
@@ -376,7 +380,7 @@ main: {
     jmp b3
   //SEG33 main::@3
   b3:
-  //SEG34 [15] (word~) main::$6 ← (word) main::line#1 + (byte) main::c#5 -- vwuz1=vwuz2_plus_vbuz3 
+  //SEG34 [15] (word~) main::$6 ← (word) main::line#2 + (byte) main::c#5 -- vwuz1=vwuz2_plus_vbuz3 
     lda c_5
     clc
     adc line
@@ -409,23 +413,23 @@ main: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] (word~) main::$0 ← (word) main::line#5 + (byte) main::c#4 [ main::line#5 main::c#4 main::$0 ] ( main:2 [ main::line#5 main::c#4 main::$0 ] ) always clobbers reg byte a 
+Statement [7] (word~) main::$0 ← (word) main::line#6 + (byte) main::c#4 [ main::line#6 main::c#4 main::$0 ] ( main:2 [ main::line#6 main::c#4 main::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::c#4 main::c#1 ]
-Statement [8] (word~) main::$2 ← (word) main::line#5 + (byte) main::c#4 [ main::line#5 main::c#4 main::$0 main::$2 ] ( main:2 [ main::line#5 main::c#4 main::$0 main::$2 ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) main::screen#0 + (word~) main::$0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 40 + (word~) main::$2) [ main::line#5 main::c#4 ] ( main:2 [ main::line#5 main::c#4 ] ) always clobbers reg byte a 
-Statement [12] (word) main::line#1 ← (word) main::line#5 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ main::line#1 ] ( main:2 [ main::line#1 ] ) always clobbers reg byte a 
-Statement [13] if((word) main::line#1<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 [ main::line#1 ] ( main:2 [ main::line#1 ] ) always clobbers reg byte a 
-Statement [15] (word~) main::$6 ← (word) main::line#1 + (byte) main::c#5 [ main::line#1 main::c#5 main::$6 ] ( main:2 [ main::line#1 main::c#5 main::$6 ] ) always clobbers reg byte a 
+Statement [8] (word~) main::$2 ← (word) main::line#6 + (byte) main::c#4 [ main::line#6 main::c#4 main::$0 main::$2 ] ( main:2 [ main::line#6 main::c#4 main::$0 main::$2 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) main::screen#0 + (word~) main::$0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 40 + (word~) main::$2) [ main::line#6 main::c#4 ] ( main:2 [ main::line#6 main::c#4 ] ) always clobbers reg byte a 
+Statement [12] (word) main::line#2 ← (word) main::line#6 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ main::line#2 ] ( main:2 [ main::line#2 ] ) always clobbers reg byte a 
+Statement [13] if((word) main::line#2<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 [ main::line#2 ] ( main:2 [ main::line#2 ] ) always clobbers reg byte a 
+Statement [15] (word~) main::$6 ← (word) main::line#2 + (byte) main::c#5 [ main::line#2 main::c#5 main::$6 ] ( main:2 [ main::line#2 main::c#5 main::$6 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ main::c#5 main::c#3 ]
-Statement [16] *((const byte*) main::screen#0 + (word~) main::$6) ← (byte) ' ' [ main::line#1 main::c#5 ] ( main:2 [ main::line#1 main::c#5 ] ) always clobbers reg byte a 
-Statement [7] (word~) main::$0 ← (word) main::line#5 + (byte) main::c#4 [ main::line#5 main::c#4 main::$0 ] ( main:2 [ main::line#5 main::c#4 main::$0 ] ) always clobbers reg byte a 
-Statement [8] (word~) main::$2 ← (word) main::line#5 + (byte) main::c#4 [ main::line#5 main::c#4 main::$0 main::$2 ] ( main:2 [ main::line#5 main::c#4 main::$0 main::$2 ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) main::screen#0 + (word~) main::$0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 40 + (word~) main::$2) [ main::line#5 main::c#4 ] ( main:2 [ main::line#5 main::c#4 ] ) always clobbers reg byte a 
-Statement [12] (word) main::line#1 ← (word) main::line#5 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ main::line#1 ] ( main:2 [ main::line#1 ] ) always clobbers reg byte a 
-Statement [13] if((word) main::line#1<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 [ main::line#1 ] ( main:2 [ main::line#1 ] ) always clobbers reg byte a 
-Statement [15] (word~) main::$6 ← (word) main::line#1 + (byte) main::c#5 [ main::line#1 main::c#5 main::$6 ] ( main:2 [ main::line#1 main::c#5 main::$6 ] ) always clobbers reg byte a 
-Statement [16] *((const byte*) main::screen#0 + (word~) main::$6) ← (byte) ' ' [ main::line#1 main::c#5 ] ( main:2 [ main::line#1 main::c#5 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ main::line#5 main::line#1 ] : zp ZP_WORD:2 , 
+Statement [16] *((const byte*) main::screen#0 + (word~) main::$6) ← (byte) ' ' [ main::line#2 main::c#5 ] ( main:2 [ main::line#2 main::c#5 ] ) always clobbers reg byte a 
+Statement [7] (word~) main::$0 ← (word) main::line#6 + (byte) main::c#4 [ main::line#6 main::c#4 main::$0 ] ( main:2 [ main::line#6 main::c#4 main::$0 ] ) always clobbers reg byte a 
+Statement [8] (word~) main::$2 ← (word) main::line#6 + (byte) main::c#4 [ main::line#6 main::c#4 main::$0 main::$2 ] ( main:2 [ main::line#6 main::c#4 main::$0 main::$2 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) main::screen#0 + (word~) main::$0) ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 40 + (word~) main::$2) [ main::line#6 main::c#4 ] ( main:2 [ main::line#6 main::c#4 ] ) always clobbers reg byte a 
+Statement [12] (word) main::line#2 ← (word) main::line#6 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ main::line#2 ] ( main:2 [ main::line#2 ] ) always clobbers reg byte a 
+Statement [13] if((word) main::line#2<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 [ main::line#2 ] ( main:2 [ main::line#2 ] ) always clobbers reg byte a 
+Statement [15] (word~) main::$6 ← (word) main::line#2 + (byte) main::c#5 [ main::line#2 main::c#5 main::$6 ] ( main:2 [ main::line#2 main::c#5 main::$6 ] ) always clobbers reg byte a 
+Statement [16] *((const byte*) main::screen#0 + (word~) main::$6) ← (byte) ' ' [ main::line#2 main::c#5 ] ( main:2 [ main::line#2 main::c#5 ] ) always clobbers reg byte a 
+Potential registers zp ZP_WORD:2 [ main::line#6 main::line#2 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ main::c#4 main::c#1 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:5 [ main::c#5 main::c#3 ] : zp ZP_BYTE:5 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:6 [ main::$0 ] : zp ZP_WORD:6 , 
@@ -433,10 +437,10 @@ Potential registers zp ZP_WORD:8 [ main::$2 ] : zp ZP_WORD:8 ,
 Potential registers zp ZP_WORD:10 [ main::$6 ] : zp ZP_WORD:10 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 252.5: zp ZP_BYTE:4 [ main::c#4 main::c#1 ] 202: zp ZP_WORD:8 [ main::$2 ] 101: zp ZP_WORD:6 [ main::$0 ] 38.29: zp ZP_WORD:2 [ main::line#5 main::line#1 ] 27.5: zp ZP_BYTE:5 [ main::c#5 main::c#3 ] 22: zp ZP_WORD:10 [ main::$6 ] 
+Uplift Scope [main] 252.5: zp ZP_BYTE:4 [ main::c#4 main::c#1 ] 202: zp ZP_WORD:8 [ main::$2 ] 101: zp ZP_WORD:6 [ main::$0 ] 38.29: zp ZP_WORD:2 [ main::line#6 main::line#2 ] 27.5: zp ZP_BYTE:5 [ main::c#5 main::c#3 ] 22: zp ZP_WORD:10 [ main::$6 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 11298 combination reg byte x [ main::c#4 main::c#1 ] zp ZP_WORD:8 [ main::$2 ] zp ZP_WORD:6 [ main::$0 ] zp ZP_WORD:2 [ main::line#5 main::line#1 ] reg byte x [ main::c#5 main::c#3 ] zp ZP_WORD:10 [ main::$6 ] 
+Uplifting [main] best 11298 combination reg byte x [ main::c#4 main::c#1 ] zp ZP_WORD:8 [ main::$2 ] zp ZP_WORD:6 [ main::$0 ] zp ZP_WORD:2 [ main::line#6 main::line#2 ] reg byte x [ main::c#5 main::c#3 ] zp ZP_WORD:10 [ main::$6 ] 
 Uplifting [] best 11298 combination 
 Coalescing zero page register [ zp ZP_WORD:6 [ main::$0 ] ] with [ zp ZP_WORD:10 [ main::$6 ] ]
 Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ main::$0 main::$6 ]
@@ -474,7 +478,7 @@ main: {
     .label line = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (word) main::line#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
+  //SEG12 [5] phi (word) main::line#6 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
     lda #<0
     sta line
     lda #>0
@@ -482,7 +486,7 @@ main: {
     jmp b1
   //SEG13 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   b1_from_b4:
-  //SEG14 [5] phi (word) main::line#5 = (word) main::line#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (word) main::line#6 = (word) main::line#2 [phi:main::@4->main::@1#0] -- register_copy 
     jmp b1
   //SEG15 main::@1
   b1:
@@ -497,7 +501,7 @@ main: {
     jmp b2
   //SEG20 main::@2
   b2:
-  //SEG21 [7] (word~) main::$0 ← (word) main::line#5 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuxx 
+  //SEG21 [7] (word~) main::$0 ← (word) main::line#6 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuxx 
     txa
     clc
     adc line
@@ -505,7 +509,7 @@ main: {
     lda #0
     adc line+1
     sta _0+1
-  //SEG22 [8] (word~) main::$2 ← (word) main::line#5 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuxx 
+  //SEG22 [8] (word~) main::$2 ← (word) main::line#6 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuxx 
     txa
     clc
     adc line
@@ -540,7 +544,7 @@ main: {
     jmp b4
   //SEG26 main::@4
   b4:
-  //SEG27 [12] (word) main::line#1 ← (word) main::line#5 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- vwuz1=vwuz1_plus_vbuc1 
+  //SEG27 [12] (word) main::line#2 ← (word) main::line#6 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- vwuz1=vwuz1_plus_vbuc1 
     clc
     lda line
     adc #<$28
@@ -548,7 +552,7 @@ main: {
     lda line+1
     adc #>$28
     sta line+1
-  //SEG28 [13] if((word) main::line#1<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 -- vwuz1_lt_vwuc1_then_la1 
+  //SEG28 [13] if((word) main::line#2<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 -- vwuz1_lt_vwuc1_then_la1 
     lda line+1
     cmp #>$28*$18
     bcc b1_from_b4
@@ -569,7 +573,7 @@ main: {
     jmp b3
   //SEG33 main::@3
   b3:
-  //SEG34 [15] (word~) main::$6 ← (word) main::line#1 + (byte) main::c#5 -- vwuz1=vwuz2_plus_vbuxx 
+  //SEG34 [15] (word~) main::$6 ← (word) main::line#2 + (byte) main::c#5 -- vwuz1=vwuz2_plus_vbuxx 
     txa
     clc
     adc line
@@ -660,12 +664,12 @@ FINAL SYMBOL TABLE
 (byte) main::c#4 reg byte x 101.0
 (byte) main::c#5 reg byte x 11.0
 (word) main::line
-(word) main::line#1 line zp ZP_WORD:2 6.285714285714286
-(word) main::line#5 line zp ZP_WORD:2 32.0
+(word) main::line#2 line zp ZP_WORD:2 6.285714285714286
+(word) main::line#6 line zp ZP_WORD:2 32.0
 (byte*) main::screen
 (const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
 
-zp ZP_WORD:2 [ main::line#5 main::line#1 ]
+zp ZP_WORD:2 [ main::line#6 main::line#2 ]
 reg byte x [ main::c#4 main::c#1 ]
 reg byte x [ main::c#5 main::c#3 ]
 zp ZP_WORD:4 [ main::$0 main::$6 ]
@@ -696,12 +700,12 @@ main: {
     .label _6 = 4
     .label line = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (word) main::line#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
+  //SEG12 [5] phi (word) main::line#6 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
     lda #<0
     sta line
     sta line+1
   //SEG13 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  //SEG14 [5] phi (word) main::line#5 = (word) main::line#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (word) main::line#6 = (word) main::line#2 [phi:main::@4->main::@1#0] -- register_copy 
   //SEG15 main::@1
   b1:
   //SEG16 [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -711,7 +715,7 @@ main: {
   //SEG19 [6] phi (byte) main::c#4 = (byte) main::c#1 [phi:main::@2->main::@2#0] -- register_copy 
   //SEG20 main::@2
   b2:
-  //SEG21 [7] (word~) main::$0 ← (word) main::line#5 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuxx 
+  //SEG21 [7] (word~) main::$0 ← (word) main::line#6 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuxx 
     txa
     clc
     adc line
@@ -719,7 +723,7 @@ main: {
     lda #0
     adc line+1
     sta _0+1
-  //SEG22 [8] (word~) main::$2 ← (word) main::line#5 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuxx 
+  //SEG22 [8] (word~) main::$2 ← (word) main::line#6 + (byte) main::c#4 -- vwuz1=vwuz2_plus_vbuxx 
     txa
     clc
     adc line
@@ -752,7 +756,7 @@ main: {
     cpx #$28
     bcc b2
   //SEG26 main::@4
-  //SEG27 [12] (word) main::line#1 ← (word) main::line#5 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- vwuz1=vwuz1_plus_vbuc1 
+  //SEG27 [12] (word) main::line#2 ← (word) main::line#6 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- vwuz1=vwuz1_plus_vbuc1 
     clc
     lda line
     adc #<$28
@@ -760,7 +764,7 @@ main: {
     lda line+1
     adc #>$28
     sta line+1
-  //SEG28 [13] if((word) main::line#1<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 -- vwuz1_lt_vwuc1_then_la1 
+  //SEG28 [13] if((word) main::line#2<(byte/signed byte/word/signed word/dword/signed dword) 40*(byte/signed byte/word/signed word/dword/signed dword) 24) goto main::@1 -- vwuz1_lt_vwuc1_then_la1 
     cmp #>$28*$18
     bcc b1
     bne !+
@@ -776,7 +780,7 @@ main: {
   //SEG32 [14] phi (byte) main::c#5 = (byte) main::c#3 [phi:main::@3->main::@3#0] -- register_copy 
   //SEG33 main::@3
   b3:
-  //SEG34 [15] (word~) main::$6 ← (word) main::line#1 + (byte) main::c#5 -- vwuz1=vwuz2_plus_vbuxx 
+  //SEG34 [15] (word~) main::$6 ← (word) main::line#2 + (byte) main::c#5 -- vwuz1=vwuz2_plus_vbuxx 
     txa
     clc
     adc line

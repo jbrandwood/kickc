@@ -7,10 +7,7 @@ import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -317,15 +314,31 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       KickCParser.ExprContext initializer = ctx.expr();
       if(initializer != null) {
          addInitialAssignment(initializer, lValue, comments);
-      } else if(type instanceof SymbolTypeArray) {
-         // Add an zero-array initializer
-         SymbolTypeArray typeArray = (SymbolTypeArray) type;
-         RValue size = typeArray.getSize();
-         if(size == null) {
-            throw new CompileError("Error! Array has no declared size. " + lValue.toString(program), new StatementSource(ctx));
+      } else {
+         if(type instanceof SymbolTypeInteger) {
+            // Add an zero value initializer
+            ConstantInteger zero = new ConstantInteger(0l);
+            Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
+            sequence.addStatement(stmt);
+         }  else if(type instanceof SymbolTypeArray) {
+            // Add an zero-array initializer
+            SymbolTypeArray typeArray = (SymbolTypeArray) type;
+            RValue size = typeArray.getSize();
+            if(size == null) {
+               throw new CompileError("Error! Array has no declared size. " + lValue.toString(program), new StatementSource(ctx));
+            }
+            Statement stmt = new StatementAssignment(lValue.getRef(), new ArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx), ensureUnusedComments(comments));
+            sequence.addStatement(stmt);
+         }  else if(type instanceof SymbolTypePointer) {
+            // Add an zero value initializer
+            SymbolTypePointer typePointer = (SymbolTypePointer) type;
+            ConstantValue zero = new ConstantPointer(0l, typePointer.getElementType());
+            Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
+            sequence.addStatement(stmt);
+         } else {
+            throw new CompileError("Default initializer not implemented for type "+type.getTypeName(), new StatementSource(ctx));
          }
-         Statement stmt = new StatementAssignment(lValue.getRef(), new ArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx), ensureUnusedComments(comments));
-         sequence.addStatement(stmt);
+
       }
       return null;
    }

@@ -150,13 +150,13 @@
   .label score_bcd = $13
   .label current_piece_17 = 5
   .label render_screen_render_33 = 9
-  .label current_xpos_58 = $a
-  .label current_piece_gfx_63 = 5
+  .label current_xpos_59 = $a
+  .label current_piece_gfx_64 = 5
   .label render_screen_render_69 = 9
-  .label current_xpos_132 = $a
-  .label current_xpos_133 = $a
-  .label current_piece_gfx_122 = 5
-  .label current_piece_gfx_123 = 5
+  .label current_xpos_128 = $a
+  .label current_xpos_129 = $a
+  .label current_piece_gfx_118 = 5
+  .label current_piece_gfx_119 = 5
   .label current_piece_98 = 5
   .label current_piece_99 = 5
   .label current_piece_100 = 5
@@ -196,11 +196,11 @@ main: {
     jsr render_playfield
     ldy current_ypos
     lda current_xpos
-    sta current_xpos_132
+    sta current_xpos_128
     lda current_piece_gfx
-    sta current_piece_gfx_122
+    sta current_piece_gfx_118
     lda current_piece_gfx+1
-    sta current_piece_gfx_122+1
+    sta current_piece_gfx_118+1
     ldx current_piece_char
     lda #$40
     sta render_screen_render_33
@@ -256,11 +256,11 @@ main: {
     lda render_screen_render
     sta render_screen_render_69
     lda current_xpos
-    sta current_xpos_133
+    sta current_xpos_129
     lda current_piece_gfx
-    sta current_piece_gfx_123
+    sta current_piece_gfx_119
     lda current_piece_gfx+1
-    sta current_piece_gfx_123+1
+    sta current_piece_gfx_119+1
     ldx current_piece_char
     jsr render_moving
     lda render_screen_render
@@ -508,13 +508,13 @@ render_moving: {
     sta screen_line
     lda screen_lines_1+1,y
     sta screen_line+1
-    lda current_xpos_58
+    lda current_xpos_59
     sta xpos
     lda #0
     sta c
   b4:
     ldy i
-    lda (current_piece_gfx_63),y
+    lda (current_piece_gfx_64),y
     inc i
     cmp #0
     beq b5

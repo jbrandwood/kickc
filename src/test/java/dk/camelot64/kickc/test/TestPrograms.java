@@ -50,6 +50,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testTravis1() throws IOException, URISyntaxException {
+      compileAndCompare("travis1");
+   }
+
+   @Test
    public void testUninitialized() throws IOException, URISyntaxException {
       compileAndCompare("uninitialized");
    }

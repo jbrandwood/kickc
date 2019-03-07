@@ -1,5 +1,5 @@
+lda #1
 cmp #{c1}
 beq !+
-lda #1
+lda #0
 !:
-eor #1

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testWordFragment1() throws IOException, URISyntaxException {
+      compileAndCompare("wfragment1");
+   }
+
+   @Test
    public void testUninitialized() throws IOException, URISyntaxException {
       compileAndCompare("uninitialized");
    }

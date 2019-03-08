@@ -81,7 +81,7 @@ public class PassNLoopAnalysis extends Pass2SsaOptimization {
    /**
     * Coalesce loops that are neither nested, nor disjoint
     * @param loopSet The set of loops
-    * @return true if there might be more loops to coalesce - meaning the coalescer shoulbe be called again.
+    * @return true if there might be more loops to coalesce - meaning the coalescer should be be called again.
     *         false if no loops can be coalesced.
     */
    private boolean coalesceLoops(NaturalLoopSet loopSet) {
@@ -91,6 +91,13 @@ public class PassNLoopAnalysis extends Pass2SsaOptimization {
             if(other.equals(loop)) {
                // Same loop - do not process
                continue;
+            } else if(loop.nests(other) && other.nests(loop)) {
+               // The two loops have exactly the same blocks - remove one & restart
+               if(getLog().isVerboseLoopAnalysis()) {
+                  getLog().append("Removing duplicate: " + other.toString());
+               }
+               loopSet.remove(other);
+               return true;
             } else if(loop.nests(other) || other.nests(loop)) {
                // One of the loops nest the other loop
                continue;

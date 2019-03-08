@@ -1,0 +1,432 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) DC00#0 ← ((byte*)) (word/dword/signed dword) $dc00
+  (byte) rpc#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) key#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:@1
+main: scope:[main]  from @1
+  (byte) rpc#7 ← phi( @1/(byte) rpc#9 )
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  (byte) rpc#4 ← phi( main/(byte) rpc#7 main::@3/(byte) rpc#8 )
+  (byte) rpc#1 ← ++ (byte) rpc#4
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
+  (byte) rpc#10 ← phi( main::@1/(byte) rpc#1 main::@2/(byte) rpc#10 )
+  (byte) key#1 ← *((byte*) DC00#0)
+  (bool~) main::$0 ← (byte) key#1 == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f
+  (bool~) main::$2 ← (byte~) main::$1 == (byte/signed byte/word/signed word/dword/signed dword) $1f
+  (bool~) main::$3 ← (bool~) main::$0 && (bool~) main::$2
+  if((bool~) main::$3) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  (byte) key#6 ← phi( main::@2/(byte) key#1 )
+  (byte) rpc#8 ← phi( main::@2/(byte) rpc#10 )
+  if(true) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  (byte) key#4 ← phi( main::@3/(byte) key#6 )
+  (byte) rpc#5 ← phi( main::@3/(byte) rpc#8 )
+  (byte) rpc#2 ← (byte) rpc#5
+  (byte) key#2 ← (byte) key#4
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte) key#7 ← phi( @begin/(byte) key#0 )
+  (byte) rpc#9 ← phi( @begin/(byte) rpc#0 )
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  (byte) key#5 ← phi( @1/(byte) key#2 )
+  (byte) rpc#6 ← phi( @1/(byte) rpc#2 )
+  (byte) rpc#3 ← (byte) rpc#6
+  (byte) key#3 ← (byte) key#5
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) DC00
+(byte*) DC00#0
+(byte) key
+(byte) key#0
+(byte) key#1
+(byte) key#2
+(byte) key#3
+(byte) key#4
+(byte) key#5
+(byte) key#6
+(byte) key#7
+(void()) main()
+(bool~) main::$0
+(byte~) main::$1
+(bool~) main::$2
+(bool~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(byte) rpc
+(byte) rpc#0
+(byte) rpc#1
+(byte) rpc#10
+(byte) rpc#2
+(byte) rpc#3
+(byte) rpc#4
+(byte) rpc#5
+(byte) rpc#6
+(byte) rpc#7
+(byte) rpc#8
+(byte) rpc#9
+
+Alias (byte) rpc#10 = (byte) rpc#8 (byte) rpc#5 (byte) rpc#2 
+Alias (byte) key#1 = (byte) key#6 (byte) key#4 (byte) key#2 
+Alias (byte) rpc#0 = (byte) rpc#9 
+Alias (byte) key#0 = (byte) key#7 
+Alias (byte) rpc#3 = (byte) rpc#6 
+Alias (byte) key#3 = (byte) key#5 
+Successful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (byte) rpc#10
+Successful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (byte) rpc#7 (byte) rpc#0
+Redundant Phi (byte) rpc#10 (byte) rpc#1
+Redundant Phi (byte) rpc#3 (byte) rpc#10
+Redundant Phi (byte) key#3 (byte) key#1
+Successful SSA optimization Pass2RedundantPhiElimination
+Rewriting && if()-condition to two if()s [11] (bool~) main::$3 ← (bool~) main::$0 && (bool~) main::$2
+Successful SSA optimization Pass2ConditionalAndOrRewriting
+Constant (const byte*) DC00#0 = ((byte*))$dc00
+Constant (const byte) rpc#0 = 0
+Constant (const byte) key#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [7] if(true) goto main::@1
+Successful SSA optimization Pass2ConstantIfs
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) @2
+Successful SSA optimization Pass2CullEmptyBlocks
+Simple Condition (bool~) main::$0 [6] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5
+Simple Condition (bool~) main::$2 [8] if((byte~) main::$1==(byte/signed byte/word/signed word/dword/signed dword) $1f) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Inlining constant with var siblings (const byte) rpc#0
+Constant inlined rpc#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@6(between main::@2 and main::@1)
+Added new block during phi lifting main::@7(between main::@5 and main::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 1 initial phi equivalence classes
+Coalesced [10] rpc#11 ← rpc#1
+Coalesced (already) [12] rpc#12 ← rpc#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@7
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2 main::@5
+  [5] (byte) rpc#4 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) rpc#1 main::@5/(byte) rpc#1 )
+  [6] (byte) rpc#1 ← ++ (byte) rpc#4
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@5
+  [7] (byte) key#1 ← *((const byte*) DC00#0)
+  [8] (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f
+  [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5
+  to:main::@1
+main::@5: scope:[main]  from main::@2
+  [10] if((byte~) main::$1==(byte/signed byte/word/signed word/dword/signed dword) $1f) goto main::@2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) DC00
+(byte) key
+(byte) key#1 151.5
+(void()) main()
+(byte~) main::$1 101.0
+(byte) rpc
+(byte) rpc#1 42.6
+(byte) rpc#4 213.0
+
+Initial phi equivalence classes
+[ rpc#4 rpc#1 ]
+Added variable key#1 to zero page equivalence class [ key#1 ]
+Added variable main::$1 to zero page equivalence class [ main::$1 ]
+Complete equivalence classes
+[ rpc#4 rpc#1 ]
+[ key#1 ]
+[ main::$1 ]
+Allocated zp ZP_BYTE:2 [ rpc#4 rpc#1 ]
+Allocated zp ZP_BYTE:3 [ key#1 ]
+Allocated zp ZP_BYTE:4 [ main::$1 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Duplicate Loop Problem from Richard-William Loerakker
+// Resulted in infinite loop in loop depth analysis
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label DC00 = $dc00
+  .label rpc = 2
+  .label key = 3
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .label _1 = 4
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG12 [5] phi (byte) rpc#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta rpc
+    jmp b1
+  //SEG13 main::@1
+  b1:
+  //SEG14 [6] (byte) rpc#1 ← ++ (byte) rpc#4 -- vbuz1=_inc_vbuz1 
+    inc rpc
+    jmp b2
+  //SEG15 main::@2
+  b2:
+  //SEG16 [7] (byte) key#1 ← *((const byte*) DC00#0) -- vbuz1=_deref_pbuc1 
+    lda DC00
+    sta key
+  //SEG17 [8] (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f -- vbuz1=vbuz2_band_vbuc1 
+    lda #$1f
+    and key
+    sta _1
+  //SEG18 [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuz1_eq_0_then_la1 
+    lda key
+    cmp #0
+    beq b5
+  //SEG19 [5] phi from main::@2 main::@5 to main::@1 [phi:main::@2/main::@5->main::@1]
+  b1_from_b2:
+  b1_from_b5:
+  //SEG20 [5] phi (byte) rpc#4 = (byte) rpc#1 [phi:main::@2/main::@5->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG21 main::@5
+  b5:
+  //SEG22 [10] if((byte~) main::$1==(byte/signed byte/word/signed word/dword/signed dword) $1f) goto main::@2 -- vbuz1_eq_vbuc1_then_la1 
+    lda _1
+    cmp #$1f
+    beq b2
+    jmp b1_from_b5
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [8] (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f [ rpc#1 key#1 main::$1 ] ( main:2 [ rpc#1 key#1 main::$1 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ rpc#4 rpc#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ key#1 ]
+Statement [8] (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f [ rpc#1 key#1 main::$1 ] ( main:2 [ rpc#1 key#1 main::$1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ rpc#4 rpc#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ key#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ main::$1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 255.6: zp ZP_BYTE:2 [ rpc#4 rpc#1 ] 151.5: zp ZP_BYTE:3 [ key#1 ] 
+Uplift Scope [main] 101: zp ZP_BYTE:4 [ main::$1 ] 
+
+Uplifting [] best 2742 combination reg byte y [ rpc#4 rpc#1 ] reg byte x [ key#1 ] 
+Uplifting [main] best 2142 combination reg byte a [ main::$1 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Duplicate Loop Problem from Richard-William Loerakker
+// Resulted in infinite loop in loop depth analysis
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label DC00 = $dc00
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG12 [5] phi (byte) rpc#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    jmp b1
+  //SEG13 main::@1
+  b1:
+  //SEG14 [6] (byte) rpc#1 ← ++ (byte) rpc#4 -- vbuyy=_inc_vbuyy 
+    iny
+    jmp b2
+  //SEG15 main::@2
+  b2:
+  //SEG16 [7] (byte) key#1 ← *((const byte*) DC00#0) -- vbuxx=_deref_pbuc1 
+    ldx DC00
+  //SEG17 [8] (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f -- vbuaa=vbuxx_band_vbuc1 
+    txa
+    and #$1f
+  //SEG18 [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuxx_eq_0_then_la1 
+    cpx #0
+    beq b5
+  //SEG19 [5] phi from main::@2 main::@5 to main::@1 [phi:main::@2/main::@5->main::@1]
+  b1_from_b2:
+  b1_from_b5:
+  //SEG20 [5] phi (byte) rpc#4 = (byte) rpc#1 [phi:main::@2/main::@5->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG21 main::@5
+  b5:
+  //SEG22 [10] if((byte~) main::$1==(byte/signed byte/word/signed word/dword/signed dword) $1f) goto main::@2 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #$1f
+    beq b2
+    jmp b1_from_b5
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Skipping double jump to b1 in jmp b1_from_b5
+Succesful ASM optimization Pass5DoubleJumpElimination
+Relabelling long label b1_from_b5 to b3
+Succesful ASM optimization Pass5RelabelLongLabels
+Removing instruction bbegin:
+Removing instruction b3:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) DC00
+(const byte*) DC00#0 DC00 = ((byte*))(word/dword/signed dword) $dc00
+(byte) key
+(byte) key#1 reg byte x 151.5
+(void()) main()
+(byte~) main::$1 reg byte a 101.0
+(label) main::@1
+(label) main::@2
+(label) main::@5
+(byte) rpc
+(byte) rpc#1 reg byte y 42.6
+(byte) rpc#4 reg byte y 213.0
+
+reg byte y [ rpc#4 rpc#1 ]
+reg byte x [ key#1 ]
+reg byte a [ main::$1 ]
+
+
+FINAL ASSEMBLER
+Score: 2070
+
+//SEG0 File Comments
+// Duplicate Loop Problem from Richard-William Loerakker
+// Resulted in infinite loop in loop depth analysis
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label DC00 = $dc00
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
+main: {
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [5] phi (byte) rpc#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+  //SEG13 main::@1
+  b1:
+  //SEG14 [6] (byte) rpc#1 ← ++ (byte) rpc#4 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG15 main::@2
+  b2:
+  //SEG16 [7] (byte) key#1 ← *((const byte*) DC00#0) -- vbuxx=_deref_pbuc1 
+    ldx DC00
+  //SEG17 [8] (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f -- vbuaa=vbuxx_band_vbuc1 
+    txa
+    and #$1f
+  //SEG18 [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuxx_eq_0_then_la1 
+    cpx #0
+    beq b5
+  //SEG19 [5] phi from main::@2 main::@5 to main::@1 [phi:main::@2/main::@5->main::@1]
+  //SEG20 [5] phi (byte) rpc#4 = (byte) rpc#1 [phi:main::@2/main::@5->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG21 main::@5
+  b5:
+  //SEG22 [10] if((byte~) main::$1==(byte/signed byte/word/signed word/dword/signed dword) $1f) goto main::@2 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #$1f
+    beq b2
+    jmp b1
+}
+

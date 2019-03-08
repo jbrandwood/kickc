@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testDuplicateLoopProblem() throws IOException, URISyntaxException {
+      compileAndCompare("duplicate-loop-problem");
+   }
+
+   @Test
    public void testUseUninitialized() throws IOException, URISyntaxException {
       compileAndCompare("useuninitialized");
    }
@@ -134,10 +139,10 @@ public class TestPrograms {
       compileAndCompare("runtime-unused-procedure");
    }
 
-//   @Test
-//   public void testRobozzle64() throws IOException, URISyntaxException {
-//      compileAndCompare("complex/robozzle64/robozzle64");
-//   }
+   //@Test
+   //public void testRobozzle64() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/robozzle64/robozzle64");
+   //}
 
    //@Test
    //public void testTravisGame() throws IOException, URISyntaxException {

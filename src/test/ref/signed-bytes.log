@@ -3,16 +3,16 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   (byte) main::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (signed byte/signed word/signed dword~) main::$0 ← - (byte/signed byte/word/signed word/dword/signed dword) 127
+  (signed byte/signed word/signed dword~) main::$0 ← - (byte/signed byte/word/signed word/dword/signed dword) $7f
   (signed byte) main::i#0 ← (signed byte/signed word/signed dword~) main::$0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::j#3 ← phi( main/(byte) main::j#0 main::@2/(byte) main::j#1 )
   (byte*) main::screen#2 ← phi( main/(byte*) main::screen#0 main::@2/(byte*) main::screen#1 )
   (signed byte) main::i#2 ← phi( main/(signed byte) main::i#0 main::@2/(signed byte) main::i#1 )
-  (bool~) main::$1 ← (signed byte) main::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 127
+  (bool~) main::$1 ← (signed byte) main::i#2 < (byte/signed byte/word/signed word/dword/signed dword) $7f
   if((bool~) main::$1) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
@@ -72,17 +72,17 @@ Self Phi Eliminated (byte*) main::screen#1
 Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte*) main::screen#1 (byte*) main::screen#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$1 [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 127) goto main::@2
+Simple Condition (bool~) main::$1 [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) $7f) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen#0 = ((byte*))1024
+Constant (const byte*) main::screen#0 = ((byte*))$400
 Constant (const byte) main::j#0 = 0
-Constant (const signed byte) main::i#0 = -127
+Constant (const signed byte) main::i#0 = -$7f
 Successful SSA optimization Pass2ConstantIdentification
 Eliminating Noop Cast (byte~) main::$2 ← ((byte)) (signed byte) main::i#2
 Successful SSA optimization Pass2NopCastElimination
 Inlining constant with var siblings (const byte) main::j#0
 Inlining constant with var siblings (const signed byte) main::i#0
-Constant inlined main::i#0 = -(byte/signed byte/word/signed word/dword/signed dword) 127
+Constant inlined main::i#0 = -(byte/signed byte/word/signed word/dword/signed dword) $7f
 Constant inlined main::j#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
@@ -116,8 +116,8 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::j#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::j#1 )
-  [5] (signed byte) main::i#2 ← phi( main/-(byte/signed byte/word/signed word/dword/signed dword) 127 main::@2/(signed byte) main::i#1 )
-  [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 127) goto main::@2
+  [5] (signed byte) main::i#2 ← phi( main/-(byte/signed byte/word/signed word/dword/signed dword) $7f main::@2/(signed byte) main::i#1 )
+  [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) $7f) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [7] return 
@@ -181,13 +181,13 @@ main: {
   //SEG12 [5] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta j
-  //SEG13 [5] phi (signed byte) main::i#2 = -(byte/signed byte/word/signed word/dword/signed dword) 127 [phi:main->main::@1#1] -- vbsz1=vbsc1 
+  //SEG13 [5] phi (signed byte) main::i#2 = -(byte/signed byte/word/signed word/dword/signed dword) $7f [phi:main->main::@1#1] -- vbsz1=vbsc1 
     lda #-$7f
     sta i
     jmp b1
   //SEG14 main::@1
   b1:
-  //SEG15 [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 127) goto main::@2 -- vbsz1_lt_vbuc1_then_la1 
+  //SEG15 [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) $7f) goto main::@2 -- vbsz1_lt_vbuc1_then_la1 
     lda i
     sec
     sbc #$7f
@@ -218,11 +218,11 @@ main: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 127) goto main::@2 [ main::i#2 main::j#2 ] ( main:2 [ main::i#2 main::j#2 ] ) always clobbers reg byte a 
+Statement [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) $7f) goto main::@2 [ main::i#2 main::j#2 ] ( main:2 [ main::i#2 main::j#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::j#2 main::j#1 ]
 Statement [8] *((const byte*) main::screen#0 + (byte) main::j#2) ← (byte)(signed byte) main::i#2 [ main::i#2 main::j#2 ] ( main:2 [ main::i#2 main::j#2 ] ) always clobbers reg byte a 
-Statement [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 127) goto main::@2 [ main::i#2 main::j#2 ] ( main:2 [ main::i#2 main::j#2 ] ) always clobbers reg byte a 
+Statement [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) $7f) goto main::@2 [ main::i#2 main::j#2 ] ( main:2 [ main::i#2 main::j#2 ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) main::screen#0 + (byte) main::j#2) ← (byte)(signed byte) main::i#2 [ main::i#2 main::j#2 ] ( main:2 [ main::i#2 main::j#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::j#2 main::j#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
@@ -264,12 +264,12 @@ main: {
   b1_from_main:
   //SEG12 [5] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  //SEG13 [5] phi (signed byte) main::i#2 = -(byte/signed byte/word/signed word/dword/signed dword) 127 [phi:main->main::@1#1] -- vbsxx=vbsc1 
+  //SEG13 [5] phi (signed byte) main::i#2 = -(byte/signed byte/word/signed word/dword/signed dword) $7f [phi:main->main::@1#1] -- vbsxx=vbsc1 
     ldx #-$7f
     jmp b1
   //SEG14 main::@1
   b1:
-  //SEG15 [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 127) goto main::@2 -- vbsxx_lt_vbuc1_then_la1 
+  //SEG15 [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) $7f) goto main::@2 -- vbsxx_lt_vbuc1_then_la1 
     txa
     sec
     sbc #$7f
@@ -335,7 +335,7 @@ FINAL SYMBOL TABLE
 (byte) main::j#1 reg byte y 22.0
 (byte) main::j#2 reg byte y 8.25
 (byte*) main::screen
-(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
+(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) $400
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::j#2 main::j#1 ]
@@ -363,11 +363,11 @@ main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   //SEG12 [5] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  //SEG13 [5] phi (signed byte) main::i#2 = -(byte/signed byte/word/signed word/dword/signed dword) 127 [phi:main->main::@1#1] -- vbsxx=vbsc1 
+  //SEG13 [5] phi (signed byte) main::i#2 = -(byte/signed byte/word/signed word/dword/signed dword) $7f [phi:main->main::@1#1] -- vbsxx=vbsc1 
     ldx #-$7f
   //SEG14 main::@1
   b1:
-  //SEG15 [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 127) goto main::@2 -- vbsxx_lt_vbuc1_then_la1 
+  //SEG15 [6] if((signed byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) $7f) goto main::@2 -- vbsxx_lt_vbuc1_then_la1 
     txa
     sec
     sbc #$7f

@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   (byte) a#0 ← (byte) 'a'
   to:@2
 main: scope:[main]  from @2
@@ -26,8 +26,8 @@ main::@3: scope:[main]  from main::@1
   (byte~) main::$0 ← (byte) sum::return#3
   *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
-  (byte) main::b#1 ← (byte) main::b#3 + rangenext(0,10)
-  (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,10)
+  (byte) main::b#1 ← (byte) main::b#3 + rangenext(0,$a)
+  (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,$a)
   if((bool~) main::$1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -116,9 +116,9 @@ Redundant Phi (byte) a#1 (byte) a#2
 Redundant Phi (byte) sum::a#1 (byte) sum::a#0
 Redundant Phi (byte) sum::b#1 (byte) sum::b#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$1 [16] if((byte) main::b#1!=rangelast(0,10)) goto main::@1
+Simple Condition (bool~) main::$1 [16] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = ((byte*))1024
+Constant (const byte*) SCREEN#0 = ((byte*))$400
 Constant (const byte) a#0 = 'a'
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::b#0 = 0
@@ -126,7 +126,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) sum::a#0 = a#0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value if(main::b#1!=rangelast(0,10)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 11
+Resolved ranged comparison value if(main::b#1!=rangelast(0,$a)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $b
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::b#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -177,7 +177,7 @@ main::@3: scope:[main]  from main::@1
   [10] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
   [11] (byte) main::i#1 ← ++ (byte) main::i#2
   [12] (byte) main::b#1 ← ++ (byte) main::b#2
-  [13] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1
+  [13] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [14] return 
@@ -307,7 +307,7 @@ main: {
     inc i
   //SEG25 [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  //SEG26 [13] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG26 [13] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda b
     cmp #$b
     bne b1_from_b3
@@ -424,7 +424,7 @@ main: {
     inx
   //SEG25 [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG26 [13] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG26 [13] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne b1_from_b3
     jmp breturn
@@ -486,7 +486,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (byte) a
 (const byte) a#0 a = (byte) 'a'
 (void()) main()
@@ -568,7 +568,7 @@ main: {
     inx
   //SEG25 [12] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG26 [13] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG26 [13] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne b1
   //SEG27 main::@return

@@ -2,11 +2,11 @@ Resolved forward reference irq to interrupt(HARDWARE_CLOBBER)(void()) irq()
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) 53280
-  (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) 53266
-  (byte) DARK_GREY#0 ← (byte/signed byte/word/signed word/dword/signed dword) 11
+  (byte*) BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
+  (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) $d012
+  (byte) DARK_GREY#0 ← (byte/signed byte/word/signed word/dword/signed dword) $b
   (byte) BLACK#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (void()**) KERNEL_IRQ#0 ← ((void()**)) (word/signed word/dword/signed dword) 788
+  (void()**) KERNEL_IRQ#0 ← ((void()**)) (word/signed word/dword/signed dword) $314
   to:@1
 main: scope:[main]  from @2
   (void()*~) main::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
@@ -29,7 +29,7 @@ irq: scope:[irq]  from
   (byte*) BORDERCOL#1 ← phi( @2/(byte*) BORDERCOL#3 )
   (byte) DARK_GREY#1 ← phi( @2/(byte) DARK_GREY#2 )
   *((byte*) BORDERCOL#1) ← (byte) DARK_GREY#1
-  (byte) irq_raster_next#1 ← (byte) irq_raster_next#3 + (byte/signed byte/word/signed word/dword/signed dword) 21
+  (byte) irq_raster_next#1 ← (byte) irq_raster_next#3 + (byte/signed byte/word/signed word/dword/signed dword) $15
   (byte) irq::raster_next#0 ← (byte) irq_raster_next#1
   (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7
   (bool~) irq::$1 ← (byte~) irq::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -158,11 +158,11 @@ Redundant Phi (byte) BLACK#1 (byte) BLACK#0
 Successful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) irq::$2 [17] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) BORDERCOL#0 = ((byte*))53280
-Constant (const byte*) RASTER#0 = ((byte*))53266
-Constant (const byte) DARK_GREY#0 = 11
+Constant (const byte*) BORDERCOL#0 = ((byte*))$d020
+Constant (const byte*) RASTER#0 = ((byte*))$d012
+Constant (const byte) DARK_GREY#0 = $b
 Constant (const byte) BLACK#0 = 0
-Constant (const void()**) KERNEL_IRQ#0 = ((void()**))788
+Constant (const void()**) KERNEL_IRQ#0 = ((void()**))$314
 Constant (const void()*) main::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
 Constant inlined main::$0 = &interrupt(HARDWARE_CLOBBER)(void()) irq()
@@ -204,7 +204,7 @@ main::@return: scope:[main]  from main
   to:@return
 irq: scope:[irq]  from
   [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0
-  [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21
+  [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15
   [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1
   [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7
   [11] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1
@@ -312,7 +312,7 @@ irq: {
   //SEG17 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz2_plus_vbuc1 
+  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 -- vbuz1=vbuz2_plus_vbuc1 
     lda #$15
     clc
     adc irq_raster_next
@@ -364,7 +364,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( ) always clobbers reg byte a 
 Statement [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 [ irq_raster_next#0 ] (  [ irq_raster_next#0 ] ) always clobbers reg byte a 
-Statement [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
+Statement [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
 Statement [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ irq::raster_next#0 irq::$0 ] (  [ irq::raster_next#0 irq::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ]
 Statement [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] (  [ ] ) always clobbers reg byte a 
@@ -372,7 +372,7 @@ Statement [16] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg by
 Statement [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( ) always clobbers reg byte a 
 Statement [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 [ irq_raster_next#0 ] (  [ irq_raster_next#0 ] ) always clobbers reg byte a 
-Statement [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
+Statement [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
 Statement [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ irq::raster_next#0 irq::$0 ] (  [ irq::raster_next#0 irq::$0 ] ) always clobbers reg byte a 
 Statement [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [16] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
@@ -454,7 +454,7 @@ irq: {
   //SEG17 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lda #$15
     clc
     adc irq_raster_next
@@ -528,13 +528,13 @@ FINAL SYMBOL TABLE
 (byte) BLACK
 (const byte) BLACK#0 BLACK = (byte/signed byte/word/signed word/dword/signed dword) 0
 (byte*) BORDERCOL
-(const byte*) BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) 53280
+(const byte*) BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) $d020
 (byte) DARK_GREY
-(const byte) DARK_GREY#0 DARK_GREY = (byte/signed byte/word/signed word/dword/signed dword) 11
+(const byte) DARK_GREY#0 DARK_GREY = (byte/signed byte/word/signed word/dword/signed dword) $b
 (void()**) KERNEL_IRQ
-(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = ((void()**))(word/signed word/dword/signed dword) 788
+(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = ((void()**))(word/signed word/dword/signed dword) $314
 (byte*) RASTER
-(const byte*) RASTER#0 RASTER = ((byte*))(word/dword/signed dword) 53266
+(const byte*) RASTER#0 RASTER = ((byte*))(word/dword/signed dword) $d012
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte~) irq::$0 reg byte a 4.0
 (label) irq::@1
@@ -601,7 +601,7 @@ irq: {
   //SEG17 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) 21 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lda #$15
     clc
     adc irq_raster_next

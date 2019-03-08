@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @2
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -36,8 +36,8 @@ main::@4: scope:[main]  from main::@7
 main::@3: scope:[main]  from main::@2 main::@4
   (byte*) main::screen#5 ← phi( main::@2/(byte*) main::screen#1 main::@4/(byte*) main::screen#2 )
   (byte) main::i#5 ← phi( main::@2/(byte) main::i#3 main::@4/(byte) main::i#4 )
-  (byte) main::i#1 ← (byte) main::i#5 + rangenext(0,100)
-  (bool~) main::$3 ← (byte) main::i#1 != rangelast(0,100)
+  (byte) main::i#1 ← (byte) main::i#5 + rangenext(0,$64)
+  (bool~) main::$3 ← (byte) main::i#1 != rangelast(0,$64)
   if((bool~) main::$3) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -129,13 +129,13 @@ Redundant Phi (byte*) main::screen#1 (byte*) main::screen#0
 Redundant Phi (byte) isSet::i#1 (byte) isSet::i#0
 Redundant Phi (bool) isSet::b#1 (bool) isSet::b#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$3 [19] if((byte) main::i#1!=rangelast(0,100)) goto main::@1
+Simple Condition (bool~) main::$3 [19] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen#0 = ((byte*))1024
+Constant (const byte*) main::screen#0 = ((byte*))$400
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value if(main::i#1!=rangelast(0,100)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 101
+Resolved ranged comparison value if(main::i#1!=rangelast(0,$64)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $65
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -187,7 +187,7 @@ main::@4: scope:[main]  from main::@7
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
   [14] (byte) main::i#1 ← ++ (byte) main::i#2
-  [15] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1
+  [15] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [16] return 
@@ -338,7 +338,7 @@ main: {
   b3:
   //SEG27 [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG28 [15] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG28 [15] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$65
     bne b1_from_b3
@@ -496,7 +496,7 @@ main: {
   b3:
   //SEG27 [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG28 [15] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG28 [15] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
     bne b1_from_b3
     jmp breturn
@@ -594,7 +594,7 @@ FINAL SYMBOL TABLE
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 6.6
 (byte*) main::screen
-(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
+(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) $400
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte a [ main::$0 ]
@@ -661,7 +661,7 @@ main: {
   b3:
   //SEG27 [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG28 [15] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG28 [15] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
     bne b1
   //SEG29 main::@return

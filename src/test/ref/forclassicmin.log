@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*~) $0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*~) $0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   (byte*) SCREEN#0 ← (byte*~) $0
   to:@1
 main: scope:[main]  from @1
@@ -13,7 +13,7 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   *((byte*) SCREEN#1 + (byte) main::i#2) ← (byte) main::i#2
   (byte) main::i#1 ← ++ (byte) main::i#2
-  (bool~) main::$0 ← (byte) main::i#1 != (byte/signed byte/word/signed word/dword/signed dword) 100
+  (bool~) main::$0 ← (byte) main::i#1 != (byte/signed byte/word/signed word/dword/signed dword) $64
   if((bool~) main::$0) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -56,9 +56,9 @@ Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#0
 Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#2
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$0 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1
+Simple Condition (bool~) main::$0 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = ((byte*))1024
+Constant (const byte*) SCREEN#0 = ((byte*))$400
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
@@ -98,7 +98,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) main::i#1 )
   [6] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2
   [7] (byte) main::i#1 ← ++ (byte) main::i#2
-  [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1
+  [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [9] return 
@@ -164,7 +164,7 @@ main: {
     sta SCREEN,y
   //SEG17 [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG18 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG18 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$64
     bne b1_from_b1
@@ -228,7 +228,7 @@ main: {
     sta SCREEN,x
   //SEG17 [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG18 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG18 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$64
     bne b1_from_b1
     jmp breturn
@@ -268,7 +268,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -311,7 +311,7 @@ main: {
     sta SCREEN,x
   //SEG17 [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG18 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG18 [8] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$64
     bne b1
   //SEG19 main::@return

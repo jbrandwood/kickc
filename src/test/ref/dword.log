@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (dword) main::a#0 ← (dword) 4000000000
+  (dword) main::a#0 ← (dword) $ee6b2800
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -13,10 +13,10 @@ main::@1: scope:[main]  from main main::@1
   (dword) main::b#0 ← (dword~) main::$0
   (byte~) main::$1 ← ((byte)) (dword) main::b#0
   (byte) main::c#0 ← (byte~) main::$1
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   *((byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0
-  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,100)
-  (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,100)
+  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$64)
+  (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,$64)
   if((bool~) main::$2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -63,14 +63,14 @@ Self Phi Eliminated (dword) main::a#1
 Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (dword) main::a#1 (dword) main::a#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$2 [11] if((byte) main::i#1!=rangelast(0,100)) goto main::@1
+Simple Condition (bool~) main::$2 [11] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const dword) main::a#0 = 4000000000
+Constant (const dword) main::a#0 = $ee6b2800
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) main::SCREEN#0 = ((byte*))1024
+Constant (const byte*) main::SCREEN#0 = ((byte*))$400
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value if(main::i#1!=rangelast(0,100)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 101
+Resolved ranged comparison value if(main::i#1!=rangelast(0,$64)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $65
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -110,7 +110,7 @@ main::@1: scope:[main]  from main main::@1
   [7] (byte) main::c#0 ← ((byte)) (dword) main::b#0
   [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
-  [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1
+  [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [11] return 
@@ -206,7 +206,7 @@ main: {
     sta SCREEN,y
   //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG20 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG20 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$65
     bne b1_from_b1
@@ -294,7 +294,7 @@ main: {
     sta SCREEN,x
   //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG20 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG20 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
     bne b1_from_b1
     jmp breturn
@@ -337,9 +337,9 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@return
 (byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (dword) main::a
-(const dword) main::a#0 a = (dword) 4000000000
+(const dword) main::a#0 a = (dword) $ee6b2800
 (dword) main::b
 (dword) main::b#0 b zp ZP_DWORD:2 22.0
 (byte) main::c
@@ -401,7 +401,7 @@ main: {
     sta SCREEN,x
   //SEG19 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG20 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 101) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG20 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
     bne b1
   //SEG21 main::@return

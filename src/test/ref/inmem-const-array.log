@@ -10,8 +10,8 @@ main: scope:[main]  from @1
   (byte) RED#1 ← phi( @1/(byte) RED#2 )
   (byte) WHITE#1 ← phi( @1/(byte) WHITE#2 )
   (byte[]) main::colseq#0 ← { (byte) WHITE#1, (byte) RED#1, (byte) GREEN#1 }
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
-  (byte*) main::cols#0 ← ((byte*)) (word/dword/signed dword) 55296
+  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) main::cols#0 ← ((byte*)) (word/dword/signed dword) $d800
   (byte) main::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
@@ -32,8 +32,8 @@ main::@2: scope:[main]  from main::@1 main::@3
   (byte) main::j#4 ← phi( main::@1/(byte) main::j#1 main::@3/(byte) main::j#2 )
   (byte*) main::screen#2 ← phi( main::@1/(byte*) main::screen#1 main::@3/(byte*) main::screen#3 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 main::@3/(byte) main::i#4 )
-  (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,39)
-  (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,39)
+  (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,$27)
+  (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,$27)
   if((bool~) main::$2) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
@@ -130,13 +130,13 @@ Redundant Phi (byte*) main::screen#1 (byte*) main::screen#0
 Redundant Phi (byte*) main::cols#1 (byte*) main::cols#0
 Successful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) main::$1 [15] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto main::@2
-Simple Condition (bool~) main::$2 [19] if((byte) main::i#1!=rangelast(0,39)) goto main::@1
+Simple Condition (bool~) main::$2 [19] if((byte) main::i#1!=rangelast(0,$27)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) WHITE#0 = 1
 Constant (const byte) RED#0 = 2
 Constant (const byte) GREEN#0 = 5
-Constant (const byte*) main::screen#0 = ((byte*))1024
-Constant (const byte*) main::cols#0 = ((byte*))55296
+Constant (const byte*) main::screen#0 = ((byte*))$400
+Constant (const byte*) main::cols#0 = ((byte*))$d800
 Constant (const byte) main::j#0 = 0
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#2 = 0
@@ -144,7 +144,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte[]) main::colseq#0 = { WHITE#0, RED#0, GREEN#0 }
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value if(main::i#1!=rangelast(0,39)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 40
+Resolved ranged comparison value if(main::i#1!=rangelast(0,$27)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $28
 Inlining constant with var siblings (const byte) main::j#0
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::j#2
@@ -199,7 +199,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@6
   [10] (byte) main::j#4 ← phi( main::@6/(byte) main::j#1 main::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 )
   [11] (byte) main::i#1 ← ++ (byte) main::i#2
-  [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1
+  [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [13] return 
@@ -307,7 +307,7 @@ main: {
   b2:
   //SEG25 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG26 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG26 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$28
     bne b1_from_b2
@@ -409,7 +409,7 @@ main: {
   b2:
   //SEG25 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG26 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG26 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
     bne b1_from_b2
     jmp breturn
@@ -481,7 +481,7 @@ FINAL SYMBOL TABLE
 (label) main::@6
 (label) main::@return
 (byte*) main::cols
-(const byte*) main::cols#0 cols = ((byte*))(word/dword/signed dword) 55296
+(const byte*) main::cols#0 cols = ((byte*))(word/dword/signed dword) $d800
 (byte[]) main::colseq
 (const byte[]) main::colseq#0 colseq = { (const byte) WHITE#0, (const byte) RED#0, (const byte) GREEN#0 }
 (byte) main::i
@@ -492,7 +492,7 @@ FINAL SYMBOL TABLE
 (byte) main::j#3 reg byte y 11.0
 (byte) main::j#4 reg byte y 7.333333333333333
 (byte*) main::screen
-(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) 1024
+(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) $400
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::j#3 main::j#4 main::j#1 ]
@@ -549,7 +549,7 @@ main: {
   b2:
   //SEG25 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG26 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 40) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG26 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
     bne b1
   //SEG27 main::@return

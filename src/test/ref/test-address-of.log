@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   (byte) main::b#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -14,8 +14,8 @@ main::@1: scope:[main]  from main main::@1
   (byte/signed word/word/dword/signed dword~) main::$1 ← *((byte*) main::bp#0) + (byte/signed byte/word/signed word/dword/signed dword) 1
   (byte) main::c#0 ← (byte/signed word/word/dword/signed dword~) main::$1
   *((byte*) main::SCREEN#1 + (byte) main::b#2) ← (byte) main::c#0
-  (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,10)
-  (bool~) main::$2 ← (byte) main::b#1 != rangelast(0,10)
+  (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,$a)
+  (bool~) main::$2 ← (byte) main::b#1 != rangelast(0,$a)
   if((bool~) main::$2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -60,14 +60,14 @@ Self Phi Eliminated (byte*) main::SCREEN#1
 Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte*) main::SCREEN#1 (byte*) main::SCREEN#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$2 [10] if((byte) main::b#1!=rangelast(0,10)) goto main::@1
+Simple Condition (bool~) main::$2 [10] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN#0 = ((byte*))1024
+Constant (const byte*) main::SCREEN#0 = ((byte*))$400
 Constant (const byte) main::b#0 = 0
 Constant (const byte*) main::bp#0 = &main::b#2
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value if(main::b#1!=rangelast(0,10)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 11
+Resolved ranged comparison value if(main::b#1!=rangelast(0,$a)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $b
 Inlining constant with var siblings (const byte) main::b#0
 Constant inlined main::b#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -106,7 +106,7 @@ main::@1: scope:[main]  from main main::@1
   [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte/signed byte/word/signed word/dword/signed dword) 1
   [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0
   [8] (byte) main::b#1 ← ++ (byte) main::b#2
-  [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1
+  [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [10] return 
@@ -183,7 +183,7 @@ main: {
     sta SCREEN,y
   //SEG18 [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  //SEG19 [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG19 [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda b
     cmp #$b
     bne b1_from_b1
@@ -196,7 +196,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 [ main::b#2 ] ( main:2 [ main::b#2 ] ) always clobbers reg byte y 
-Statement [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] ) always clobbers reg byte a 
+Statement [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::b#2 main::b#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ main::c#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -258,7 +258,7 @@ main: {
     sta SCREEN,y
   //SEG18 [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  //SEG19 [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG19 [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda b
     cmp #$b
     bne b1_from_b1
@@ -302,7 +302,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@return
 (byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (byte) main::b
 (byte) main::b#1 b zp ZP_BYTE:2 16.5
 (byte) main::b#2 b zp ZP_BYTE:2 11.0
@@ -353,7 +353,7 @@ main: {
     sta SCREEN,y
   //SEG18 [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  //SEG19 [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG19 [9] if((byte) main::b#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda b
     cmp #$b
     bne b1

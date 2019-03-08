@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) print_screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
   to:@12
@@ -34,7 +34,7 @@ print_ln: scope:[print_ln]  from main::@4
 print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
   (byte*) print_char_cursor#14 ← phi( print_ln/(byte*) print_char_cursor#23 print_ln::@1/(byte*) print_char_cursor#14 )
   (byte*) print_line_cursor#9 ← phi( print_ln/(byte*) print_line_cursor#17 print_ln::@1/(byte*) print_line_cursor#1 )
-  (byte*~) print_ln::$0 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) 40
+  (byte*~) print_ln::$0 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) $28
   (byte*) print_line_cursor#1 ← (byte*~) print_ln::$0
   (bool~) print_ln::$1 ← (byte*) print_line_cursor#1 < (byte*) print_char_cursor#14
   if((bool~) print_ln::$1) goto print_ln::@1
@@ -65,7 +65,7 @@ print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
   (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) print_cls::sc#0 print_cls::@1/(byte*) print_cls::sc#1 )
   *((byte*) print_cls::sc#2) ← (byte) ' '
   (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  (byte*~) print_cls::$0 ← (byte*) print_screen#2 + (word/signed word/dword/signed dword) 1000
+  (byte*~) print_cls::$0 ← (byte*) print_screen#2 + (word/signed word/dword/signed dword) $3e8
   (bool~) print_cls::$1 ← (byte*) print_cls::sc#1 != (byte*~) print_cls::$0
   if((bool~) print_cls::$1) goto print_cls::@1
   to:print_cls::@2
@@ -121,8 +121,8 @@ main::@5: scope:[main]  from main::@4
   (byte*) print_line_cursor#6 ← (byte*) print_line_cursor#14
   (byte*) print_char_cursor#9 ← (byte*) print_char_cursor#19
   *((byte[]) txt#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← ++ *((byte[]) txt#0 + (byte/signed byte/word/signed word/dword/signed dword) 1)
-  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,10)
-  (bool~) main::$3 ← (byte) main::i#1 != rangelast(0,10)
+  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$a)
+  (bool~) main::$3 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$3) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@5
@@ -304,15 +304,15 @@ Successful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) print_str::$0 [6] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [19] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#12) goto print_ln::@1
 Simple Condition (bool~) print_cls::$1 [35] if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
-Simple Condition (bool~) main::$3 [63] if((byte) main::i#1!=rangelast(0,10)) goto main::@1
+Simple Condition (bool~) main::$3 [63] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) print_line_cursor#0 = ((byte*))1024
+Constant (const byte*) print_line_cursor#0 = ((byte*))$400
 Constant (const byte[]) print_hextab#0 = $0
 Constant (const byte[]) txt#0 = $1
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print_cls::sc#0 = print_line_cursor#0
-Constant (const byte*) print_cls::$0 = print_line_cursor#0+1000
+Constant (const byte*) print_cls::$0 = print_line_cursor#0+$3e8
 Constant (const byte*) print_str::str#1 = txt#0
 Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(txt#0+1)
@@ -321,7 +321,7 @@ Successful SSA optimization Pass2ConstantAdditionElimination
 Successful SSA optimization PassNEliminateUnusedVars
 Successful SSA optimization PassNEliminateUnusedVars
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value if(main::i#1!=rangelast(0,10)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 11
+Resolved ranged comparison value if(main::i#1!=rangelast(0,$a)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $b
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) @12
 Culled Empty Block (label) print_cls::@2
@@ -335,10 +335,10 @@ Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) print_line_cursor#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined print_str::str#1 = (const byte[]) txt#0
-Constant inlined print_cls::$0 = ((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000
-Constant inlined print_cls::sc#0 = ((byte*))(word/signed word/dword/signed dword) 1024
+Constant inlined print_cls::$0 = ((byte*))(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8
+Constant inlined print_cls::sc#0 = ((byte*))(word/signed word/dword/signed dword) $400
 Constant inlined $1 = (const byte[]) txt#0
-Constant inlined print_line_cursor#0 = ((byte*))(word/signed word/dword/signed dword) 1024
+Constant inlined print_line_cursor#0 = ((byte*))(word/signed word/dword/signed dword) $400
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@6(between main::@5 and main::@1)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
@@ -391,8 +391,8 @@ main: scope:[main]  from @20
   to:main::@1
 main::@1: scope:[main]  from main main::@6
   [6] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@6/(byte) main::i#1 )
-  [6] (byte*) print_line_cursor#19 ← phi( main/((byte*))(word/signed word/dword/signed dword) 1024 main::@6/(byte*) print_line_cursor#1 )
-  [6] (byte*) print_char_cursor#25 ← phi( main/((byte*))(word/signed word/dword/signed dword) 1024 main::@6/(byte*~) print_char_cursor#30 )
+  [6] (byte*) print_line_cursor#19 ← phi( main/((byte*))(word/signed word/dword/signed dword) $400 main::@6/(byte*) print_line_cursor#1 )
+  [6] (byte*) print_char_cursor#25 ← phi( main/((byte*))(word/signed word/dword/signed dword) $400 main::@6/(byte*~) print_char_cursor#30 )
   [7] call print_str 
   to:main::@4
 main::@4: scope:[main]  from main::@1
@@ -402,7 +402,7 @@ main::@4: scope:[main]  from main::@1
 main::@5: scope:[main]  from main::@4
   [10] *((const byte[]) txt#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← ++ *((const byte[]) txt#0+(byte/signed byte/word/signed word/dword/signed dword) 1)
   [11] (byte) main::i#1 ← ++ (byte) main::i#2
-  [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6
+  [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@6
   to:main::@return
 main::@return: scope:[main]  from main::@5
   [13] return 
@@ -415,7 +415,7 @@ print_ln: scope:[print_ln]  from main::@4
   to:print_ln::@1
 print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
   [16] (byte*) print_line_cursor#9 ← phi( print_ln/(byte*) print_line_cursor#19 print_ln::@1/(byte*) print_line_cursor#1 )
-  [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) 40
+  [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) $28
   [18] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#12) goto print_ln::@1
   to:print_ln::@return
 print_ln::@return: scope:[print_ln]  from print_ln::@1
@@ -441,10 +441,10 @@ print_cls: scope:[print_cls]  from main
   [27] phi()
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  [28] (byte*) print_cls::sc#2 ← phi( print_cls/((byte*))(word/signed word/dword/signed dword) 1024 print_cls::@1/(byte*) print_cls::sc#1 )
+  [28] (byte*) print_cls::sc#2 ← phi( print_cls/((byte*))(word/signed word/dword/signed dword) $400 print_cls::@1/(byte*) print_cls::sc#1 )
   [29] *((byte*) print_cls::sc#2) ← (byte) ' '
   [30] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1
+  [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@1
   [32] return 
@@ -533,12 +533,12 @@ main: {
   //SEG14 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG15 [6] phi (byte*) print_line_cursor#19 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+  //SEG15 [6] phi (byte*) print_line_cursor#19 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
-  //SEG16 [6] phi (byte*) print_char_cursor#25 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#2] -- pbuz1=pbuc1 
+  //SEG16 [6] phi (byte*) print_char_cursor#25 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<$400
     sta print_char_cursor
     lda #>$400
@@ -569,7 +569,7 @@ main: {
     sta txt+1
   //SEG26 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG27 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG27 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda i
     cmp #$b
     bne b6
@@ -602,7 +602,7 @@ print_ln: {
     jmp b1
   //SEG39 print_ln::@1
   b1:
-  //SEG40 [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG40 [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda print_line_cursor
     clc
     adc #$28
@@ -680,7 +680,7 @@ print_cls: {
     .label sc = 9
   //SEG60 [28] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  //SEG61 [28] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG61 [28] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
@@ -701,7 +701,7 @@ print_cls: {
     bne !+
     inc sc+1
   !:
-  //SEG67 [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG67 [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bne b1_from_b1
@@ -720,21 +720,21 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [10] *((const byte[]) txt#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← ++ *((const byte[]) txt#0+(byte/signed byte/word/signed word/dword/signed dword) 1) [ main::i#2 print_line_cursor#1 ] ( main:2 [ main::i#2 print_line_cursor#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [14] (byte*~) print_char_cursor#30 ← (byte*) print_line_cursor#1 [ print_char_cursor#30 print_line_cursor#1 main::i#1 ] ( main:2 [ print_char_cursor#30 print_line_cursor#1 main::i#1 ] ) always clobbers reg byte a 
-Statement [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ print_line_cursor#1 print_char_cursor#12 ] ( main:2::print_ln:9 [ main::i#2 print_line_cursor#1 print_char_cursor#12 ] ) always clobbers reg byte a 
+Statement [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) $28 [ print_line_cursor#1 print_char_cursor#12 ] ( main:2::print_ln:9 [ main::i#2 print_line_cursor#1 print_char_cursor#12 ] ) always clobbers reg byte a 
 Statement [18] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#12) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#12 ] ( main:2::print_ln:9 [ main::i#2 print_line_cursor#1 print_char_cursor#12 ] ) always clobbers reg byte a 
 Statement [22] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#12 print_str::str#2 ] ( main:2::print_str:7 [ print_line_cursor#19 main::i#2 print_char_cursor#12 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [24] *((byte*) print_char_cursor#12) ← *((byte*) print_str::str#2) [ print_char_cursor#12 print_str::str#2 ] ( main:2::print_str:7 [ print_line_cursor#19 main::i#2 print_char_cursor#12 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [29] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Statement [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) always clobbers reg byte a 
 Statement [10] *((const byte[]) txt#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← ++ *((const byte[]) txt#0+(byte/signed byte/word/signed word/dword/signed dword) 1) [ main::i#2 print_line_cursor#1 ] ( main:2 [ main::i#2 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [14] (byte*~) print_char_cursor#30 ← (byte*) print_line_cursor#1 [ print_char_cursor#30 print_line_cursor#1 main::i#1 ] ( main:2 [ print_char_cursor#30 print_line_cursor#1 main::i#1 ] ) always clobbers reg byte a 
-Statement [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) 40 [ print_line_cursor#1 print_char_cursor#12 ] ( main:2::print_ln:9 [ main::i#2 print_line_cursor#1 print_char_cursor#12 ] ) always clobbers reg byte a 
+Statement [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) $28 [ print_line_cursor#1 print_char_cursor#12 ] ( main:2::print_ln:9 [ main::i#2 print_line_cursor#1 print_char_cursor#12 ] ) always clobbers reg byte a 
 Statement [18] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#12) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#12 ] ( main:2::print_ln:9 [ main::i#2 print_line_cursor#1 print_char_cursor#12 ] ) always clobbers reg byte a 
 Statement [22] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#12 print_str::str#2 ] ( main:2::print_str:7 [ print_line_cursor#19 main::i#2 print_char_cursor#12 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [24] *((byte*) print_char_cursor#12) ← *((byte*) print_str::str#2) [ print_char_cursor#12 print_str::str#2 ] ( main:2::print_str:7 [ print_line_cursor#19 main::i#2 print_char_cursor#12 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [29] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Statement [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_WORD:3 [ print_line_cursor#9 print_line_cursor#19 print_line_cursor#1 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_WORD:5 [ print_str::str#2 print_str::str#0 ] : zp ZP_WORD:5 , 
@@ -793,12 +793,12 @@ main: {
   b1_from_main:
   //SEG14 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG15 [6] phi (byte*) print_line_cursor#19 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+  //SEG15 [6] phi (byte*) print_line_cursor#19 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
-  //SEG16 [6] phi (byte*) print_char_cursor#25 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#2] -- pbuz1=pbuc1 
+  //SEG16 [6] phi (byte*) print_char_cursor#25 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<$400
     sta print_char_cursor
     lda #>$400
@@ -829,7 +829,7 @@ main: {
     sta txt+1
   //SEG26 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG27 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG27 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b6
     jmp breturn
@@ -861,7 +861,7 @@ print_ln: {
     jmp b1
   //SEG39 print_ln::@1
   b1:
-  //SEG40 [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG40 [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda print_line_cursor
     clc
     adc #$28
@@ -939,7 +939,7 @@ print_cls: {
     .label sc = 2
   //SEG60 [28] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  //SEG61 [28] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG61 [28] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
@@ -960,7 +960,7 @@ print_cls: {
     bne !+
     inc sc+1
   !:
-  //SEG67 [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG67 [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bne b1_from_b1
@@ -1103,12 +1103,12 @@ main: {
   //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
   //SEG14 [6] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG15 [6] phi (byte*) print_line_cursor#19 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+  //SEG15 [6] phi (byte*) print_line_cursor#19 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
-  //SEG16 [6] phi (byte*) print_char_cursor#25 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:main->main::@1#2] -- pbuz1=pbuc1 
+  //SEG16 [6] phi (byte*) print_char_cursor#25 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<$400
     sta print_char_cursor
     lda #>$400
@@ -1131,7 +1131,7 @@ main: {
     sta txt+1
   //SEG26 [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG27 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 11) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG27 [12] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b6
   //SEG28 main::@return
@@ -1157,7 +1157,7 @@ print_ln: {
   //SEG38 [16] phi (byte*) print_line_cursor#9 = (byte*) print_line_cursor#19 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
   //SEG39 print_ln::@1
   b1:
-  //SEG40 [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) 40 -- pbuz1=pbuz1_plus_vbuc1 
+  //SEG40 [17] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte/signed byte/word/signed word/dword/signed dword) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda print_line_cursor
     clc
     adc #$28
@@ -1226,7 +1226,7 @@ print_str: {
 print_cls: {
     .label sc = 2
   //SEG60 [28] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  //SEG61 [28] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG61 [28] phi (byte*) print_cls::sc#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta sc
     lda #>$400
@@ -1244,7 +1244,7 @@ print_cls: {
     bne !+
     inc sc+1
   !:
-  //SEG67 [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) 1024+(word/signed word/dword/signed dword) 1000) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG67 [31] if((byte*) print_cls::sc#1!=((byte*))(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>$400+$3e8
     bne b1

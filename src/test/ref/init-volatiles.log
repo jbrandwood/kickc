@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) 12
+  (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) $c
   to:@1
 main: scope:[main]  from @1
   (byte) x#8 ← phi( @1/(byte) x#10 )
@@ -9,7 +9,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   (byte) x#5 ← phi( main/(byte) x#8 main::@2/(byte) x#9 )
   (byte) x#1 ← ++ (byte) x#5
-  (bool~) main::$0 ← (byte) x#1 < (byte/signed byte/word/signed word/dword/signed dword) 50
+  (bool~) main::$0 ← (byte) x#1 < (byte/signed byte/word/signed word/dword/signed dword) $32
   if((bool~) main::$0) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
@@ -65,7 +65,7 @@ Successful SSA optimization Pass2AliasElimination
 Redundant Phi (byte) x#8 (byte) x#0
 Redundant Phi (byte) x#4 (byte) x#2
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$0 [5] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@2
+Simple Condition (bool~) main::$0 [5] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @2
@@ -87,7 +87,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) 12
+  [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) $c
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -101,7 +101,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) x#5 ← phi( main/(byte) x#0 main::@1/(byte) x#1 )
   [6] (byte) x#1 ← ++ (byte) x#5
-  [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@1
+  [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@1
   [8] (byte) x#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -140,7 +140,7 @@ INITIAL ASM
   .label x_2 = 3
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) 12 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) $c -- vbuz1=vbuc1 
   lda #$c
   sta x
 //SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -168,7 +168,7 @@ main: {
   b1:
   //SEG15 [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
     inc x
-  //SEG16 [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG16 [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #$32
     bcc b1_from_b1
@@ -186,8 +186,8 @@ main: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) 12 [ x#0 ] ( ) always clobbers reg byte a 
-Statement [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@1 [ x#1 ] ( main:2 [ x#1 ] ) always clobbers reg byte a 
+Statement [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) $c [ x#0 ] ( ) always clobbers reg byte a 
+Statement [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@1 [ x#1 ] ( main:2 [ x#1 ] ) always clobbers reg byte a 
 Statement [8] (byte) x#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ x#5 x#0 x#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ x#2 ] : zp ZP_BYTE:3 , 
@@ -215,7 +215,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label x = 2
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) 12 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) $c -- vbuz1=vbuc1 
   lda #$c
   sta x
 //SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -243,7 +243,7 @@ main: {
   b1:
   //SEG15 [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
     inc x
-  //SEG16 [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG16 [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #$32
     bcc b1_from_b1
@@ -310,7 +310,7 @@ Score: 147
   .label x = 2
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) 12 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) $c -- vbuz1=vbuc1 
   lda #$c
   sta x
 //SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -328,7 +328,7 @@ main: {
   b1:
   //SEG15 [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
     inc x
-  //SEG16 [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG16 [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda x
     cmp #$32
     bcc b1

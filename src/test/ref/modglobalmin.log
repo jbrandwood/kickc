@@ -2,7 +2,7 @@
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte[256]) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte[$100]) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   to:@2
 main: scope:[main]  from @2
   (byte) cnt#15 ← phi( @2/(byte) cnt#16 )
@@ -11,7 +11,7 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte) cnt#9 ← phi( main/(byte) cnt#7 )
   (byte) cnt#1 ← (byte) cnt#9
-  *((byte[256]) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) cnt#1
+  *((byte[$100]) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) cnt#1
   (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt 
   to:main::@2
@@ -19,7 +19,7 @@ main::@2: scope:[main]  from main::@1
   (byte) cnt#10 ← phi( main::@1/(byte) cnt#7 )
   (byte) cnt#3 ← (byte) cnt#10
   (byte) cnt#4 ← ++ (byte) cnt#3
-  *((byte[256]) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#4
+  *((byte[$100]) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#4
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
@@ -50,8 +50,8 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte[256]) SCREEN
-(byte[256]) SCREEN#0
+(byte[$100]) SCREEN
+(byte[$100]) SCREEN#0
 (byte) cnt
 (byte) cnt#0
 (byte) cnt#1
@@ -90,7 +90,7 @@ Redundant Phi (byte) cnt#10 (byte) cnt#13
 Redundant Phi (byte) cnt#14 (byte) cnt#11
 Successful SSA optimization Pass2RedundantPhiElimination
 Constant (const byte) cnt#0 = 0
-Constant (const byte[256]) SCREEN#0 = ((byte*))1024
+Constant (const byte[$100]) SCREEN#0 = ((byte*))$400
 Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(SCREEN#0+0)
 Consolidated array index constant in *(SCREEN#0+1)
@@ -132,13 +132,13 @@ main: scope:[main]  from @2
   [5] call inccnt 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((const byte[256]) SCREEN#0) ← (byte) cnt#13
+  [6] *((const byte[$100]) SCREEN#0) ← (byte) cnt#13
   [7] (byte) cnt#2 ← ++ (byte) cnt#13
   [8] call inccnt 
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [9] (byte) cnt#11 ← ++ (byte) cnt#13
-  [10] *((const byte[256]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11
+  [10] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [11] return 
@@ -153,7 +153,7 @@ inccnt::@return: scope:[inccnt]  from inccnt
 
 
 VARIABLE REGISTER WEIGHTS
-(byte[256]) SCREEN
+(byte[$100]) SCREEN
 (byte) cnt
 (byte) cnt#11 4.0
 (byte) cnt#12 4.0
@@ -213,7 +213,7 @@ main: {
     jmp b1
   //SEG14 main::@1
   b1:
-  //SEG15 [6] *((const byte[256]) SCREEN#0) ← (byte) cnt#13 -- _deref_pbuc1=vbuz1 
+  //SEG15 [6] *((const byte[$100]) SCREEN#0) ← (byte) cnt#13 -- _deref_pbuc1=vbuz1 
     lda cnt_13
     sta SCREEN
   //SEG16 [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuz1=_inc_vbuz2 
@@ -232,7 +232,7 @@ main: {
     ldy cnt_13
     iny
     sty cnt_11
-  //SEG22 [10] *((const byte[256]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
+  //SEG22 [10] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
     lda cnt_11
     sta SCREEN+1
     jmp breturn
@@ -303,7 +303,7 @@ main: {
     jmp b1
   //SEG14 main::@1
   b1:
-  //SEG15 [6] *((const byte[256]) SCREEN#0) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
+  //SEG15 [6] *((const byte[$100]) SCREEN#0) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
     stx SCREEN
   //SEG16 [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
@@ -317,7 +317,7 @@ main: {
   b2:
   //SEG21 [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG22 [10] *((const byte[256]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+  //SEG22 [10] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     jmp breturn
   //SEG23 main::@return
@@ -367,8 +367,8 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(byte[256]) SCREEN
-(const byte[256]) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(byte[$100]) SCREEN
+(const byte[$100]) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (byte) cnt
 (byte) cnt#11 reg byte x 4.0
 (byte) cnt#12 reg byte x 4.0
@@ -411,7 +411,7 @@ main: {
     ldx #0
     jsr inccnt
   //SEG14 main::@1
-  //SEG15 [6] *((const byte[256]) SCREEN#0) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
+  //SEG15 [6] *((const byte[$100]) SCREEN#0) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
     stx SCREEN
   //SEG16 [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
@@ -422,7 +422,7 @@ main: {
   //SEG20 main::@2
   //SEG21 [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG22 [10] *((const byte[256]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+  //SEG22 [10] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
   //SEG23 main::@return
   //SEG24 [11] return 

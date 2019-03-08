@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   to:@1
 main: scope:[main]  from @1
   (byte*) SCREEN#3 ← phi( @1/(byte*) SCREEN#5 )
@@ -10,7 +10,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#3 main::@2/(byte*) SCREEN#4 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$0 ← (byte) main::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 50
+  (bool~) main::$0 ← (byte) main::i#2 < (byte/signed byte/word/signed word/dword/signed dword) $32
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@2
   to:main::@3
@@ -18,7 +18,7 @@ main::@2: scope:[main]  from main::@1 main::@3
   (byte*) SCREEN#4 ← phi( main::@1/(byte*) SCREEN#2 main::@3/(byte*) SCREEN#1 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 main::@3/(byte) main::i#4 )
   (byte) main::i#1 ← ++ (byte) main::i#3
-  (bool~) main::$2 ← (byte) main::i#1 < (byte/signed byte/word/signed word/dword/signed dword) 100
+  (bool~) main::$2 ← (byte) main::i#1 < (byte/signed byte/word/signed word/dword/signed dword) $64
   if((bool~) main::$2) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
@@ -66,7 +66,7 @@ SYMBOL TABLE SSA
 
 Culled Empty Block (label) @2
 Successful SSA optimization Pass2CullEmptyBlocks
-Inversing boolean not [5] (bool~) main::$1 ← (byte) main::i#2 >= (byte/signed byte/word/signed word/dword/signed dword) 50 from [4] (bool~) main::$0 ← (byte) main::i#2 < (byte/signed byte/word/signed word/dword/signed dword) 50
+Inversing boolean not [5] (bool~) main::$1 ← (byte) main::i#2 >= (byte/signed byte/word/signed word/dword/signed dword) $32 from [4] (bool~) main::$0 ← (byte) main::i#2 < (byte/signed byte/word/signed word/dword/signed dword) $32
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#2 = (byte) main::i#4 
 Alias (byte*) SCREEN#1 = (byte*) SCREEN#2 
@@ -80,10 +80,10 @@ Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#0
 Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#3
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$1 [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@2
-Simple Condition (bool~) main::$2 [10] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1
+Simple Condition (bool~) main::$1 [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@2
+Simple Condition (bool~) main::$2 [10] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = ((byte*))1024
+Constant (const byte*) SCREEN#0 = ((byte*))$400
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
@@ -121,14 +121,14 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::i#1 )
-  [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@2
+  [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
   [7] *((const byte*) SCREEN#0) ← (byte) main::i#2
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
-  [9] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1
+  [9] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [10] return 
@@ -188,7 +188,7 @@ main: {
     jmp b1
   //SEG15 main::@1
   b1:
-  //SEG16 [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@2 -- vbuz1_ge_vbuc1_then_la1 
+  //SEG16 [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@2 -- vbuz1_ge_vbuc1_then_la1 
     lda i
     cmp #$32
     bcs b2
@@ -203,7 +203,7 @@ main: {
   b2:
   //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG21 [9] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG21 [9] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #$64
     bcc b1_from_b2
@@ -262,7 +262,7 @@ main: {
     jmp b1
   //SEG15 main::@1
   b1:
-  //SEG16 [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@2 -- vbuxx_ge_vbuc1_then_la1 
+  //SEG16 [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@2 -- vbuxx_ge_vbuc1_then_la1 
     cpx #$32
     bcs b2
     jmp b3
@@ -275,7 +275,7 @@ main: {
   b2:
   //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG21 [9] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
+  //SEG21 [9] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$64
     bcc b1_from_b2
     jmp breturn
@@ -318,7 +318,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -358,7 +358,7 @@ main: {
   //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
   //SEG15 main::@1
   b1:
-  //SEG16 [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) 50) goto main::@2 -- vbuxx_ge_vbuc1_then_la1 
+  //SEG16 [6] if((byte) main::i#2>=(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@2 -- vbuxx_ge_vbuc1_then_la1 
     cpx #$32
     bcs b2
   //SEG17 main::@3
@@ -368,7 +368,7 @@ main: {
   b2:
   //SEG20 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG21 [9] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) 100) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
+  //SEG21 [9] if((byte) main::i#1<(byte/signed byte/word/signed word/dword/signed dword) $64) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$64
     bcc b1
   //SEG22 main::@return

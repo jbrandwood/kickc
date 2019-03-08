@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) 1024
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   (byte[]) TEXT#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @1
@@ -24,7 +24,7 @@ main::@2: scope:[main]  from main::@1 main::@3
   (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#4 main::@3/(byte*) SCREEN#5 )
   (byte*) main::cursor#3 ← phi( main::@1/(byte*) main::cursor#2 main::@3/(byte*) main::cursor#4 )
   (byte*) main::cursor#1 ← ++ (byte*) main::cursor#3
-  (byte*~) main::$2 ← (byte*) SCREEN#2 + (word/signed word/dword/signed dword) 1000
+  (byte*~) main::$2 ← (byte*) SCREEN#2 + (word/signed word/dword/signed dword) $3e8
   (bool~) main::$3 ← (byte*) main::cursor#1 < (byte*~) main::$2
   if((bool~) main::$3) goto main::@1
   to:main::@return
@@ -100,13 +100,13 @@ Successful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) main::$1 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@2
 Simple Condition (bool~) main::$3 [15] if((byte*) main::cursor#1<(byte*~) main::$2) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = ((byte*))1024
+Constant (const byte*) SCREEN#0 = ((byte*))$400
 Constant (const byte[]) TEXT#0 = $0
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::i#2 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::cursor#0 = SCREEN#0
-Constant (const byte*) main::$2 = SCREEN#0+1000
+Constant (const byte*) main::$2 = SCREEN#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i#2
@@ -114,7 +114,7 @@ Inlining constant with var siblings (const byte*) main::cursor#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined $0 = (const byte[]) TEXT#0
-Constant inlined main::$2 = (const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000
+Constant inlined main::$2 = (const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8
 Constant inlined main::cursor#0 = (const byte*) SCREEN#0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@2 and main::@1)
@@ -163,7 +163,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1 main::@6
   [9] (byte) main::i#4 ← phi( main::@6/(byte) main::i#1 main::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 )
   [10] (byte*) main::cursor#1 ← ++ (byte*) main::cursor#2
-  [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto main::@1
+  [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [12] return 
@@ -264,7 +264,7 @@ main: {
     bne !+
     inc cursor+1
   !:
-  //SEG25 [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+  //SEG25 [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b2
@@ -294,9 +294,9 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ]
-Statement [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) always clobbers reg byte a 
+Statement [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) always clobbers reg byte a 
 Statement [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT#0 + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
-Statement [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) always clobbers reg byte a 
+Statement [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#3 main::i#4 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_WORD:3 [ main::cursor#2 main::cursor#1 ] : zp ZP_WORD:3 , 
 
@@ -373,7 +373,7 @@ main: {
     bne !+
     inc cursor+1
   !:
-  //SEG25 [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+  //SEG25 [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1_from_b2
@@ -441,7 +441,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) 1024
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (byte[]) TEXT
 (const byte[]) TEXT#0 TEXT = (string) "camelot "
 (void()) main()
@@ -513,7 +513,7 @@ main: {
     bne !+
     inc cursor+1
   !:
-  //SEG25 [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) 1000) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+  //SEG25 [11] if((byte*) main::cursor#1<(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda cursor+1
     cmp #>SCREEN+$3e8
     bcc b1

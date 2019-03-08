@@ -45,6 +45,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testUseUninitialized() throws IOException, URISyntaxException {
+      compileAndCompare("useuninitialized");
+   }
+
+   @Test
+   public void testIllegalLValue2() throws IOException, URISyntaxException {
+      assertError("illegallvalue2", "Illegal assignment Lvalue");
+   }
+
+   @Test
    public void testWordFragment1() throws IOException, URISyntaxException {
       compileAndCompare("wfragment1");
    }
@@ -1084,11 +1094,6 @@ public class TestPrograms {
    @Test
    public void testassignUndeclared() throws IOException, URISyntaxException {
       assertError("assignundeclared", "Unknown variable");
-   }
-
-   @Test
-   public void testUseUninitialized() throws IOException, URISyntaxException {
-      assertError("useuninitialized", "Variable used before being defined");
    }
 
    @Test

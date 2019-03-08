@@ -22,7 +22,7 @@ bool_complex: {
     sta o1
     txa
     and #1
-    cmp #0
+    eor #0
     beq !+
     lda #1
   !:

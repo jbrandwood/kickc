@@ -765,6 +765,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Object visitExprAssignment(KickCParser.ExprAssignmentContext ctx) {
       Object val = visit(ctx.expr(0));
+      if(!(val instanceof LValue)) {
+            throw new CompileError("Error! Illegal assignment Lvalue " + val.toString(), new StatementSource(ctx));
+      }
       LValue lValue = (LValue) val;
       if(lValue instanceof VariableRef && ((VariableRef) lValue).isIntermediate()) {
          // Encountered an intermediate variable. This must be turned into a proper LValue later. Put it into a marker to signify that

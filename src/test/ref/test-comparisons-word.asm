@@ -1,12 +1,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  // empty circle
+  .const FF = $57
+  // filled circle
+  .const TT = $51
   .label print_char_cursor = $c
   .label print_line_cursor = 5
 main: {
     .label w1 = $f
     .label w2 = $11
-    .label ln = 4
+    .label s = 4
     .label j = 3
     .label i = 2
     jsr print_cls
@@ -14,12 +18,13 @@ main: {
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
+    lda #0
+    sta s
     lda #<$400
     sta print_char_cursor
     lda #>$400
     sta print_char_cursor+1
     lda #0
-    sta ln
     sta i
   b1:
     lda i
@@ -41,24 +46,22 @@ main: {
     sta w2+1
     ldx #0
   b3:
-    lda ln
-    cmp #$32
-    bcs b4
     lda w1
     sta compare.w1
     lda w1+1
     sta compare.w1+1
     jsr compare
-    inc ln
-    lda #1
-    and ln
-    cmp #0
+    inc s
+    lda s
+    cmp #3
     bne b4
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
     sta print_char_cursor+1
+    lda #0
+    sta s
   b4:
     inx
     cpx #6
@@ -71,8 +74,8 @@ main: {
     lda i
     cmp #3
     bne b1
-  b7:
-    jmp b7
+  b6:
+    jmp b6
 }
 // Print a newline
 print_ln: {
@@ -114,13 +117,9 @@ compare: {
     jmp b3
   !b3:
     cpx #3
-    bne !b4+
-    jmp b4
-  !b4:
+    beq b4
     cpx #4
-    bne !b5+
-    jmp b5
-  !b5:
+    beq b5
     cpx #5
     bne b8
     lda w1
@@ -130,11 +129,11 @@ compare: {
     cmp w2+1
     beq b6
   !:
-    lda #'+'
+    lda #TT
     sta r
     jmp b7
   b6:
-    lda #'-'
+    lda #FF
     sta r
   b7:
     lda #<ops_1
@@ -143,45 +142,23 @@ compare: {
     sta ops+1
     jmp b16
   b8:
-    lda #'-'
+    lda #FF
     sta r
     lda #<0
     sta ops
     sta ops+1
   b16:
     jsr print_word
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
-    jsr print_str
-    lda ops
-    sta print_str.str
-    lda ops+1
-    sta print_str.str+1
-    jsr print_str
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
     jsr print_str
     lda w2
     sta print_word.w
     lda w2+1
     sta print_word.w+1
     jsr print_word
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
-    jsr print_str
     lda r
     jsr print_char
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
-    jsr print_str
+    lda #' '
+    jsr print_char
     rts
   b5:
     lda w1+1
@@ -190,11 +167,11 @@ compare: {
     lda w1
     cmp w2
     bne b10
-    lda #'+'
+    lda #TT
     sta r
     jmp b9
   b10:
-    lda #'-'
+    lda #FF
     sta r
   b9:
     lda #<ops_2
@@ -211,11 +188,11 @@ compare: {
     cmp w2
     bcc b12
   !:
-    lda #'+'
+    lda #TT
     sta r
     jmp b11
   b12:
-    lda #'-'
+    lda #FF
     sta r
   b11:
     lda #<ops_3
@@ -232,11 +209,11 @@ compare: {
   !:
     bcc b14
     beq b14
-    lda #'+'
+    lda #TT
     sta r
     jmp b13
   b14:
-    lda #'-'
+    lda #FF
     sta r
   b13:
     lda #<ops_4
@@ -253,11 +230,11 @@ compare: {
     cmp w1
     bcc b18
   !:
-    lda #'+'
+    lda #TT
     sta r
     jmp b15
   b18:
-    lda #'-'
+    lda #FF
     sta r
   b15:
     lda #<ops_5
@@ -274,11 +251,11 @@ compare: {
   !:
     bcc b19
     beq b19
-    lda #'+'
+    lda #TT
     sta r
     jmp b17
   b19:
-    lda #'-'
+    lda #FF
     sta r
   b17:
     lda #<ops_6
@@ -286,37 +263,12 @@ compare: {
     lda #>ops_6
     sta ops+1
     jmp b16
-    str: .text " @"
     ops_1: .text "!=@"
     ops_2: .text "==@"
     ops_3: .text ">=@"
     ops_4: .text "> @"
     ops_5: .text "<=@"
     ops_6: .text "< @"
-}
-// Print a zero-terminated string
-// print_str(byte* zeropage($a) str)
-print_str: {
-    .label str = $a
-  b1:
-    ldy #0
-    lda (str),y
-    cmp #'@'
-    bne b2
-    rts
-  b2:
-    ldy #0
-    lda (str),y
-    sta (print_char_cursor),y
-    inc print_char_cursor
-    bne !+
-    inc print_char_cursor+1
-  !:
-    inc str
-    bne !+
-    inc str+1
-  !:
-    jmp b1
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -359,6 +311,30 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     rts
+}
+// Print a zero-terminated string
+// print_str(byte* zeropage(7) str)
+print_str: {
+    .label str = 7
+  b1:
+    ldy #0
+    lda (str),y
+    cmp #'@'
+    bne b2
+    rts
+  b2:
+    ldy #0
+    lda (str),y
+    sta (print_char_cursor),y
+    inc print_char_cursor
+    bne !+
+    inc print_char_cursor+1
+  !:
+    inc str
+    bne !+
+    inc str+1
+  !:
+    jmp b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {

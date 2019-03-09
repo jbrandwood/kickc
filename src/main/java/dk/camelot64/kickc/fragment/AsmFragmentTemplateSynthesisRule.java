@@ -388,9 +388,9 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z3(.*)", lvalZ3+"|"+twoZ3+"|"+rvalXx, "ldx {z3}", "$1xx$2", null, mapZ4));
 
       // Correct wrong ordered Z2/Z1
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*)z1(.*)", null, null, "$1z1$2z2$3", null, mapZ2Swap, false));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*)z1(.*)", twoZ1+"|"+twoZ2, null, "$1z1$2z2$3", null, mapZ2Swap, false));
       // Correct wrong ordered Z3/Z2
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z3(.*)z2(.*)", null, null, "$1z2$2z3$3", null, mapZ3Swap, false));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z3(.*)z2(.*)", twoZ2+"|"+twoZ3, null, "$1z2$2z3$3", null, mapZ3Swap, false));
 
       // Rewrite comparisons < to >
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_gt_(.*)_then_(.*)", null, null, "$2_lt_$1_then_$3", null, null));
@@ -461,6 +461,12 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite C1,y to save and reload YY from $FF
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", twoC1, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta {c1},y", mapC));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", twoC1, "stx $ff\n" , "vb$1aa=$2", "ldx $ff\nsta {c1},x", mapC));
+
+      // Rewrite (Z1),a to save A to $FF and reload it into YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1, "sta $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
+      // Rewrite (Z1),x to save A to $FF and reload it into YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuxx=(.*)", twoZ1, "stx $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
+
 
       // OLD STYLE REWRITES - written when only one rule could be taken
 

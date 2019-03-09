@@ -176,12 +176,12 @@ point_init: {
   b10:
     lda abs16s2_return+1
     cmp abs16s1_return+1
+    bcc b1
     bne !+
     lda abs16s2_return
     cmp abs16s1_return
-  !:
     bcc b1
-    beq b1
+  !:
   b2:
     ldy point_idx
     lda x_start,y

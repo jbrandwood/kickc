@@ -5,4 +5,6 @@ sbc {z2}+1
 bvc !+
 eor #$80
 !:
+beq !e+
 bpl {la1}
+!e:

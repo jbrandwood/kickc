@@ -200,9 +200,9 @@ wrap_y: {
     .label y = 6
   b1:
     lda y
-    cmp #$c8
+    cmp #<$c8
     lda y+1
-    sbc #0
+    sbc #>$c8
     bvc !+
     eor #$80
   !:

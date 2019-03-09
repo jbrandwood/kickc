@@ -31,21 +31,21 @@ public class TestFragments {
    }
 
    @Test
-   public void testAssignmentsBu() throws IOException, URISyntaxException {
+   public void testAssignmentsBu() throws IOException {
       testFragments("fragments-assignment-copy", assignmentsBu());
    }
 
    @Test
-   public void testAssignmentsUnaryBu() throws IOException, URISyntaxException {
+   public void testAssignmentsUnaryBu() throws IOException {
       testFragments("fragments-assignment-unary", assignmentsUnaryBu());
    }
 
    @Test
-   public void testAssignmentsBinaryBu() throws IOException, URISyntaxException {
+   public void testAssignmentsBinaryBu() throws IOException {
       testFragments("fragments-assignment-binary", assignmentsBinaryBu());
    }
 
-   private void testFragments(String fileName, Collection<String> signatures) throws IOException, URISyntaxException {
+   private void testFragments(String fileName, Collection<String> signatures) throws IOException {
       CompileLog log = new CompileLog();
       int cnt = 0;
       for(String signature : signatures) {

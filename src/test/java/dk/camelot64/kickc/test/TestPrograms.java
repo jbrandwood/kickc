@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testTypeMix() throws IOException, URISyntaxException {
+      compileAndCompare("type-mix");
+   }
+
+   @Test
    public void testClobberProblem() throws IOException, URISyntaxException {
       compileAndCompare("scrollbig-clobber");
    }

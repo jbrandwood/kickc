@@ -470,6 +470,34 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite (Z1),a to use TAY prefix
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1+"|"+rvalYy, "tay" , "vb$1aa=$2", "sta ({z1}),y", mapZ, "yy"));
 
+      // Rewrite constant byte values to constant word values
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)", null, null , "$1vw$2c1$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c2(.*)", null, null , "$1vw$2c2$3", null, null));
+      // Rewrite constant word values to constant dword values
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c1(.*)", null, null , "$1vd$2c1$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c2(.*)", null, null , "$1vd$2c2$3", null, null));
+      // Rewrite constant unsigned byte values to constant signed word values
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vbuc1(.*)", null, null , "$1vwsc1$2", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vbuc2(.*)", null, null , "$1vwsc2$2", null, null));
+      // Rewrite constant unsigned word values to constant signed dword values
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc1(.*)", null, null , "$1vdsc1$2", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc2(.*)", null, null , "$1vdsc2$2", null, null));
+
+      /*
+      // Rewrite any zeropage pointer as an unsigned word zeropage values
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..z(.)(.*)", null, null , "$1vwuz$2$3", null, null));
+      // Rewrite any constant pointer as an constant unsigned word
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..c(.)(.*)", null, null , "$1vwuc$2$3", null, null));
+      */
+
+      // Synthesize constants using AA/XX/YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuc1(.*)", rvalAa+"|"+twoC1+"|"+ derefC1, "lda #{c1}", "$1=$2vbuaa$3", null, mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbsc1(.*)", rvalAa+"|"+twoC1+"|"+ derefC1, "lda #{c1}", "$1=$2vbsaa$3", null, mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuc1(.*)", rvalYy+"|"+twoC1+"|"+ derefC1, "ldy #{c1}", "$1=$2vbuyy$3", null, mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbsc1(.*)", rvalYy+"|"+twoC1+"|"+ derefC1, "ldy #{c1}", "$1=$2vbsyy$3", null, mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuc1(.*)", rvalXx+"|"+twoC1+"|"+ derefC1, "ldx #{c1}", "$1=$2vbuxx$3", null, mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbsc1(.*)", rvalXx+"|"+twoC1+"|"+ derefC1, "ldx #{c1}", "$1=$2vbsxx$3", null, mapC));
+
       // OLD STYLE REWRITES - written when only one rule could be taken
 
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*)", twoZ1+"|"+twoC1, null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x", mapZC));
@@ -531,30 +559,6 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(vws..)=(vws..)_(plus|minus)_(vws..)", null, null, "$1=$2_$3_$4", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vds..)=(vds..)_(plus|minus)_(vds..)", null, null, "$1=$2_$3_$4", null, mapSToU));
 
-      // Use constant word ASM to synthesize unsigned constant byte ASM ( ...vb.c... -> vw.c... )
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vwuz.)=(vwuz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vwuc$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vwuz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vwuz.)", null, null, "$1=vwuc$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vwsz.)=(vwsz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vwsc$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vwsz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vwsz.)", null, null, "$1=vwsc$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vwuz.)=vb.c(.)", null, null, "$1=vwuc$2", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vwsz.)=vb.c(.)", null, null, "$1=vwsc$2", null, null));
-
-      // Use constant dword ASM to synthesize unsigned constant word ASM ( ...vw.c... -> vd.c... )
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=(vduz.)_(plus|minus|band|bxor|bor)_vw.c(.)", null, null, "$1=$2_$3_vduc$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=vw.c(.)_(plus|minus|band|bxor|bor)_(vduz.)", null, null, "$1=vduc$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=(vdsz.)_(plus|minus|band|bxor|bor)_vw.c(.)", null, null, "$1=$2_$3_vdsc$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=vw.c(.)_(plus|minus|band|bxor|bor)_(vdsz.)", null, null, "$1=vdsc$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=vw.c(.)", null, null, "$1=vduc$2", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=vw.c(.)", null, null, "$1=vdsc$2", null, null));
-
-      // Use constant dword ASM to synthesize unsigned constant byte ASM ( ...vb.c... -> vd.c... )
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=(vduz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vduc$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vduz.)", null, null, "$1=vduc$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=(vdsz.)_(plus|minus|band|bxor|bor)_vb.c(.)", null, null, "$1=$2_$3_vdsc$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=vb.c(.)_(plus|minus|band|bxor|bor)_(vdsz.)", null, null, "$1=vdsc$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vduz.)=vb.c(.)", null, null, "$1=vduc$2", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vdsz.)=vb.c(.)", null, null, "$1=vdsc$2", null, null));
-
       // Use Z1/Z2 ASM to synthesize Z1-only code ( ...z1...z1... -> ...z1...z2... )
       synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=(v..)z1_(plus|minus|band|bxor|bor)_(.*)", oneZ2, null, "$1z1=$2z2_$3_$4", null, mapZ, false));
       synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=(.*)_(plus|minus|band|bxor|bor)_(v..)z1", oneZ2, null, "$1z1=$2_$3_$4z2", null, mapZ, false));
@@ -566,14 +570,6 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_inc_(.*)", null, null, "vb$1aa=$2_plus_1", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_dec_(.*)", null, null, "vb$1aa=$2_minus_1", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("vw(.)z1=_inc_vw(.z.)", null, null, "vw$1z1=vw$2_plus_1", null, null));
-
-      // Synthesize constants using AA/XX/YY
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuc1(.*)", rvalAa+"|"+twoC1+"|"+ derefC1, "lda #{c1}", "$1=$2vbuaa$3", null, mapC));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbsc1(.*)", rvalAa+"|"+twoC1+"|"+ derefC1, "lda #{c1}", "$1=$2vbsaa$3", null, mapC));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuc1(.*)", rvalYy+"|"+twoC1+"|"+ derefC1, "ldy #{c1}", "$1=$2vbuyy$3", null, mapC));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbsc1(.*)", rvalYy+"|"+twoC1+"|"+ derefC1, "ldy #{c1}", "$1=$2vbsyy$3", null, mapC));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuc1(.*)", rvalXx+"|"+twoC1+"|"+ derefC1, "ldx #{c1}", "$1=$2vbuxx$3", null, mapC));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbsc1(.*)", rvalXx+"|"+twoC1+"|"+ derefC1, "ldx #{c1}", "$1=$2vbsxx$3", null, mapC));
 
       // Synthesize some constant pointers as constant words
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(lt|gt|le|ge|eq|neq)_p..([cz].)_then_(.*)", null, null, "$1_$2_vwu$3_then_$4", null, null));

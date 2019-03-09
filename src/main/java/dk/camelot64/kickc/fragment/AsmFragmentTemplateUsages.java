@@ -42,6 +42,7 @@ public class AsmFragmentTemplateUsages {
       File[] files = AsmFragmentTemplateSynthesizer.SYNTHESIZER.allFragmentFiles();
 
       if(logRedundantFiles) {
+         log.append("\nREDUNDANT ASM FRAGMENT FILES ANALYSIS (if found consider removing them from disk)");
          Set<String> redundantSignatures = new LinkedHashSet<>();
          for(File file : files) {
             String fileName = file.getName();

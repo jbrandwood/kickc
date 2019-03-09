@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testClobberProblem() throws IOException, URISyntaxException {
+      compileAndCompare("scrollbig-clobber");
+   }
+
+   @Test
    public void testComparisonsSWord() throws IOException, URISyntaxException {
       compileAndCompare("test-comparisons-sword");
    }

@@ -79,14 +79,18 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
                PhiTransitions phiTransitions = new PhiTransitions(getProgram(), statementBlock);
                PhiTransitions.PhiTransition phiTransition = phiTransitions.getTransition(phiTransitionId);
                for(PhiTransitions.PhiTransition.PhiAssignment phiAssignment : phiTransition.getAssignments()) {
-                  // IF the assignment is later than the current one
                   if(phiAssignment.getAssignmentIdx() > transitionAssignmentIdx) {
+                     // IF the assignment is later than the current one
                      RValue rValue = phiAssignment.getrValue();
                      Collection<VariableRef> alive = VariableReferenceInfos.getReferencedVars(rValue);
                      aliveVars.addAll(alive);
                      VariableRef assignedVar = phiAssignment.getVariable();
                      assignedVars.remove(assignedVar);
                      alive.remove(assignedVar);
+                  } else if(phiAssignment.getAssignmentIdx() < transitionAssignmentIdx) {
+                     // IF the assignment is before the current one
+                     VariableRef assignedVar = phiAssignment.getVariable();
+                     assignedVars.remove(assignedVar);
                   }
                }
             }

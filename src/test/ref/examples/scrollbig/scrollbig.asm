@@ -57,6 +57,7 @@ scroll_bit: {
     cmp #0
     bne b1
     jsr next_char
+    txa
     sta c
     lda #0
     sta c+1
@@ -143,9 +144,10 @@ scroll_hard: {
 next_char: {
     ldy #0
     lda (nxt),y
-    cmp #'@'
+    tax
+    cpx #'@'
     bne b1
-    lda TEXT
+    ldx TEXT
     lda #<TEXT
     sta nxt
     lda #>TEXT

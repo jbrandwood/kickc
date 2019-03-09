@@ -2104,13 +2104,13 @@ Limited combination testing to 100 combinations of 512 possible.
 Uplifting [scroll_hard] best 24938 combination reg byte x [ scroll_hard::i#2 scroll_hard::i#1 ] 
 Uplifting [] best 24626 combination zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] zp ZP_WORD:11 [ nxt#18 nxt#31 nxt#14 nxt#36 nxt#19 ] reg byte x [ scroll#18 scroll#10 scroll#3 ] 
 Uplifting [fillscreen] best 24626 combination zp ZP_WORD:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
-Uplifting [next_char] best 24608 combination reg byte a [ next_char::return#1 next_char::c#0 next_char::c#1 ] reg byte a [ next_char::return#0 ] 
-Uplifting [main] best 24608 combination 
-Uplifting [scroll_soft] best 24608 combination 
+Uplifting [next_char] best 24610 combination reg byte x [ next_char::return#1 next_char::c#0 next_char::c#1 ] reg byte x [ next_char::return#0 ] 
+Uplifting [main] best 24610 combination 
+Uplifting [scroll_soft] best 24610 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
-Uplifting [] best 24608 combination zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] 
+Uplifting [] best 24610 combination zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:17 [ scroll_bit::$3 ]
-Uplifting [scroll_bit] best 24602 combination reg byte a [ scroll_bit::$3 ] 
+Uplifting [scroll_bit] best 24606 combination reg byte a [ scroll_bit::$3 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] ] with [ zp ZP_WORD:20 [ scroll_bit::$4 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$4 ] ] with [ zp ZP_WORD:18 [ scroll_bit::c#0 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$4 scroll_bit::c#0 ] ] with [ zp ZP_WORD:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] ]
@@ -2274,7 +2274,8 @@ scroll_bit: {
     jmp b8
   //SEG60 scroll_bit::@8
   b8:
-  //SEG61 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0
+  //SEG61 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0 -- vbuaa=vbuxx 
+    txa
   //SEG62 [25] (word) scroll_bit::c#0 ← ((word)) (byte~) scroll_bit::$3 -- vwuz1=_word_vbuaa 
     sta c
     lda #0
@@ -2447,17 +2448,18 @@ scroll_hard: {
 //SEG123 next_char
 // Find the next char of the scroll text
 next_char: {
-  //SEG124 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuaa=_deref_pbuz1 
+  //SEG124 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuxx=_deref_pbuz1 
     ldy #0
     lda (nxt),y
-  //SEG125 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuaa_neq_vbuc1_then_la1 
-    cmp #'@'
+    tax
+  //SEG125 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #'@'
     bne b1_from_next_char
     jmp b2
   //SEG126 next_char::@2
   b2:
-  //SEG127 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuaa=_deref_pbuc1 
-    lda TEXT
+  //SEG127 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuxx=_deref_pbuc1 
+    ldx TEXT
   //SEG128 [61] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
   b1_from_b2:
   //SEG129 [61] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
@@ -2670,11 +2672,11 @@ FINAL SYMBOL TABLE
 (label) next_char::@2
 (label) next_char::@return
 (byte) next_char::c
-(byte) next_char::c#0 reg byte a 3.0
-(byte) next_char::c#1 reg byte a 4.0
+(byte) next_char::c#0 reg byte x 3.0
+(byte) next_char::c#1 reg byte x 4.0
 (byte) next_char::return
-(byte) next_char::return#0 reg byte a 4.0
-(byte) next_char::return#1 reg byte a 1.5
+(byte) next_char::return#0 reg byte x 4.0
+(byte) next_char::return#1 reg byte x 1.5
 (byte*) nxt
 (byte*) nxt#14 nxt zp ZP_WORD:7 3.0
 (byte*) nxt#18 nxt zp ZP_WORD:7 4.0
@@ -2729,15 +2731,15 @@ zp ZP_WORD:5 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
 reg byte a [ scroll_bit::b#2 ]
 reg byte x [ scroll_hard::i#2 scroll_hard::i#1 ]
 zp ZP_WORD:7 [ nxt#18 nxt#31 nxt#14 nxt#36 nxt#19 ]
-reg byte a [ next_char::return#1 next_char::c#0 next_char::c#1 ]
-reg byte a [ next_char::return#0 ]
+reg byte x [ next_char::return#1 next_char::c#0 next_char::c#1 ]
+reg byte x [ next_char::return#0 ]
 reg byte a [ scroll_bit::$3 ]
 reg byte a [ scroll_bit::bits#0 ]
 reg byte a [ scroll_bit::$9 ]
 
 
 FINAL ASSEMBLER
-Score: 20822
+Score: 20826
 
 //SEG0 File Comments
 // An 8x8 char letter scroller
@@ -2859,7 +2861,8 @@ scroll_bit: {
     jsr next_char
   //SEG59 [23] (byte) next_char::return#0 ← (byte) next_char::return#1
   //SEG60 scroll_bit::@8
-  //SEG61 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0
+  //SEG61 [24] (byte~) scroll_bit::$3 ← (byte) next_char::return#0 -- vbuaa=vbuxx 
+    txa
   //SEG62 [25] (word) scroll_bit::c#0 ← ((word)) (byte~) scroll_bit::$3 -- vwuz1=_word_vbuaa 
     sta c
     lda #0
@@ -3006,15 +3009,16 @@ scroll_hard: {
 //SEG123 next_char
 // Find the next char of the scroll text
 next_char: {
-  //SEG124 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuaa=_deref_pbuz1 
+  //SEG124 [58] (byte) next_char::c#0 ← *((byte*) nxt#31) -- vbuxx=_deref_pbuz1 
     ldy #0
     lda (nxt),y
-  //SEG125 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuaa_neq_vbuc1_then_la1 
-    cmp #'@'
+    tax
+  //SEG125 [59] if((byte) next_char::c#0!=(byte) '@') goto next_char::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #'@'
     bne b1
   //SEG126 next_char::@2
-  //SEG127 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuaa=_deref_pbuc1 
-    lda TEXT
+  //SEG127 [60] (byte) next_char::c#1 ← *((const byte*) TEXT#0) -- vbuxx=_deref_pbuc1 
+    ldx TEXT
   //SEG128 [61] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
   //SEG129 [61] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
   //SEG130 [61] phi (byte*) nxt#18 = (const byte*) TEXT#0 [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 

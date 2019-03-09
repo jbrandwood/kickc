@@ -233,6 +233,14 @@ class AsmFragmentTemplateSynthesisRule {
       mapSToU.put("pwsc1", "pwuc1");
       mapSToU.put("pwsc2", "pwuc2");
       mapSToU.put("pwsc3", "pwuc3");
+      Map<String, String> mapZ2Swap = new LinkedHashMap<>();
+      mapZ2Swap.put("z2", "zn");
+      mapZ2Swap.put("z1", "z2");
+      mapZ2Swap.put("zn", "z1");
+      Map<String, String> mapZ3Swap = new LinkedHashMap<>();
+      mapZ3Swap.put("z3", "zn");
+      mapZ3Swap.put("z2", "z3");
+      mapZ3Swap.put("zn", "z2");
 
       // AA/XX/YY/Z1 is an RValue
       String rvalAa = ".*=.*aa.*|.*_.*aa.*|...aa_(lt|gt|le|ge|eq|neq)_.*";
@@ -378,6 +386,11 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z3(.*)", lvalZ3+"|"+twoZ3+"|"+rvalYy, "ldy {z3}", "$1yy$2", null, mapZ4));
       // Replace Z3 with XX (only one)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z3(.*)", lvalZ3+"|"+twoZ3+"|"+rvalXx, "ldx {z3}", "$1xx$2", null, mapZ4));
+
+      // Correct wrong ordered Z2/Z1
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*)z1(.*)", null, null, "$1z1$2z2$3", null, mapZ2Swap, false));
+      // Correct wrong ordered Z3/Z2
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z3(.*)z2(.*)", null, null, "$1z2$2z3$3", null, mapZ3Swap, false));
 
       // Rewrite comparisons < to >
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_gt_(.*)_then_(.*)", null, null, "$2_lt_$1_then_$3", null, null));

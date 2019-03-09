@@ -45,6 +45,12 @@ public class TestPrograms {
    }
 
    @Test
+   public void testComparisonsWord() throws IOException, URISyntaxException {
+      compileAndCompare("test-comparisons-word");
+   }
+
+
+   @Test
    public void testDuplicateLoopProblem() throws IOException, URISyntaxException {
       compileAndCompare("duplicate-loop-problem");
    }

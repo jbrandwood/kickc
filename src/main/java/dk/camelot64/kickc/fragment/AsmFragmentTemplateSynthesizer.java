@@ -57,6 +57,14 @@ public class AsmFragmentTemplateSynthesizer {
     */
    private Map<String, AsmFragmentSynthesis> synthesisGraph;
 
+   /**
+    * Get information about the size of the synthesizer data structures
+    * @return String with size information
+    */
+   public static String getSizes() {
+      return "graph: "+ SYNTHESIZER.synthesisGraph.size();
+   }
+
    public static AsmFragmentInstance getFragmentInstance(AsmFragmentInstanceSpec instanceSpec, CompileLog log) {
       String signature = instanceSpec.getSignature();
       AsmFragmentTemplate fragmentTemplate = SYNTHESIZER.getFragmentTemplate(signature, log);
@@ -366,6 +374,9 @@ public class AsmFragmentTemplateSynthesizer {
    private AsmFragmentSynthesis getSynthesis(String signature) {
       return synthesisGraph.get(signature);
    }
+
+   /** Number of synthesis created
+   private long synthesisCount = 0;
 
    /**
     * Get (or create) the synthesis used to synthesize a fragment template.

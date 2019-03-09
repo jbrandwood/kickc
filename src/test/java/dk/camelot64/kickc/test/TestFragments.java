@@ -10,7 +10,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.*;
 
 import static junit.framework.TestCase.fail;
@@ -41,15 +40,101 @@ public class TestFragments {
    }
 
    @Test
-   public void testAssignmentsBinaryBu() throws IOException {
-      testFragments("fragments-assignment-binary", assignmentsBinaryBu());
+   public void testAssignmentsBinaryVbuaa() throws IOException {
+      testAssignmentsBinary(new Value("vbuaa"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryVbuxx() throws IOException {
+      testAssignmentsBinary(new Value("vbuxx"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryVbuyy() throws IOException {
+      testAssignmentsBinary(new Value("vbuyy"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryVbuz1() throws IOException {
+      testAssignmentsBinary(new Value("vbuz1"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryDerefVbuz1() throws IOException {
+      testAssignmentsBinary(new Value("_deref_pbuz1"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryDerefVbuc1() throws IOException {
+      testAssignmentsBinary(new Value("_deref_pbuc1"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuz1DerefidxVbuaa() throws IOException {
+      testAssignmentsBinary(new Value("pbuz1_derefidx_vbuaa"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuz1DerefidxVbuxx() throws IOException {
+      testAssignmentsBinary(new Value("pbuz1_derefidx_vbuxx"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuz1DerefidxVbuyy() throws IOException {
+      testAssignmentsBinary(new Value("pbuz1_derefidx_vbuyy"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuz1DerefidxVbuz1() throws IOException {
+      testAssignmentsBinary(new Value("pbuz1_derefidx_vbuz1"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuz1DerefidxVbuz2() throws IOException {
+      testAssignmentsBinary(new Value("pbuz1_derefidx_vbuz2"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuz1DerefidxVbuc1() throws IOException {
+      testAssignmentsBinary(new Value("pbuz1_derefidx_vbuc1"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuc1DerefidxVbuaa() throws IOException {
+      testAssignmentsBinary(new Value("pbuc1_derefidx_vbuaa"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuc1DerefidxVbuxx() throws IOException {
+      testAssignmentsBinary(new Value("pbuc1_derefidx_vbuxx"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuc1DerefidxVbuyy() throws IOException {
+      testAssignmentsBinary(new Value("pbuc1_derefidx_vbuyy"));
+   }
+
+   @Test
+   public void testAssignmentsBinaryPbuc1DerefidxVbuz1() throws IOException {
+      testAssignmentsBinary(new Value("pbuc1_derefidx_vbuz1"));
+   }
+
+   private void testAssignmentsBinary(Value lVal) throws IOException {
+      testFragments("fragments-assignment-binary-" + lVal.getSignature(), assignmentsBinaryBu(lVal));
    }
 
    private void testFragments(String fileName, Collection<String> signatures) throws IOException {
+      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
+      System.gc();
       CompileLog log = new CompileLog();
       int cnt = 0;
       for(String signature : signatures) {
-         if(++cnt % 1000 == 0) System.out.println(""+cnt+"/"+signatures.size());
+         if(++cnt % 1000 == 0) {
+            System.gc();
+            Runtime rt = Runtime.getRuntime();
+            long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+            System.out.println(""+cnt+"/"+signatures.size() + " - "+AsmFragmentTemplateSynthesizer.getSizes()+" mem: "+usedMB );
+         }
          List<AsmFragmentTemplate> templates =
                new ArrayList<>(AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log));
          Collections.sort(templates, Comparator.comparing(AsmFragmentTemplate::getClobber));
@@ -97,10 +182,8 @@ public class TestFragments {
       return signatures;
    }
 
-   private Collection<String> assignmentsBinaryBu() {
+   private Collection<String> assignmentsBinaryBu(Value lValue) {
       ArrayList<String> signatures = new ArrayList<>();
-      Collection<Value> lVals = lValuesBu(new ArrayList<>());
-      for(Value lValue : lVals) {
          Collection<Value> rVal1s = rValuesBu(lValue.getAllValues());
          for(Value rVal1 : rVal1s) {
             ArrayList<Value> used = new ArrayList<>();
@@ -113,7 +196,6 @@ public class TestFragments {
                }
             }
          }
-      }
       return signatures;
    }
 

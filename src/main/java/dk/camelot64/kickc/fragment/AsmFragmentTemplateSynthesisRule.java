@@ -463,10 +463,12 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", twoC1, "stx $ff\n" , "vb$1aa=$2", "ldx $ff\nsta {c1},x", mapC));
 
       // Rewrite (Z1),a to save A to $FF and reload it into YY
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1, "sta $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1, "sta $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
       // Rewrite (Z1),x to save A to $FF and reload it into YY
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuxx=(.*)", twoZ1, "stx $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuxx=(.*)", twoZ1, "stx $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
 
+      // Rewrite (Z1),a to use TAY prefix
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1+"|"+rvalYy, "tay" , "vb$1aa=$2", "sta ({z1}),y", mapZ, "yy"));
 
       // OLD STYLE REWRITES - written when only one rule could be taken
 

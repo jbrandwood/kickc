@@ -59,10 +59,10 @@ public class AsmFragmentTemplateSynthesizer {
 
    /**
     * Get information about the size of the synthesizer data structures
-    * @return String with size information
+    * @return the size
     */
-   public static String getSizes() {
-      return "graph: "+ SYNTHESIZER.synthesisGraph.size();
+   public static int getSize() {
+      return SYNTHESIZER.synthesisGraph.size();
    }
 
    public static AsmFragmentInstance getFragmentInstance(AsmFragmentInstanceSpec instanceSpec, CompileLog log) {

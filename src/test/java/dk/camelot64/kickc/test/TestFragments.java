@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.security.Signature;
 import java.util.*;
 
 import static junit.framework.TestCase.fail;
@@ -26,7 +27,7 @@ public class TestFragments {
    public static void tearDown() {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentTemplateUsages.logUsages(log, false, false,  false, false, false, false);
+      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
    @Test
@@ -123,18 +124,34 @@ public class TestFragments {
       testFragments("fragments-assignment-binary-" + lVal.getSignature(), assignmentsBinaryBu(lVal));
    }
 
+   @Test
+   public void testComplexFragments() throws IOException {
+      List<String> signaturesComplex = Arrays.asList(
+            "vbuz1=pbuz2_derefidx_vbuc1_band_pbuz3_derefidx_vbuc2",
+            "pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuz1_band_pbuz3_derefidx_vbuc2",
+            "vbuxx=pbuz1_derefidx_vbuc1_band_pbuz2_derefidx_vbuc2",
+            "_deref_pbuz1=pbuz2_derefidx_vbuc1_band_pbuz3_derefidx_vbuc2",
+            "pbuz1_derefidx_vbuaa=pbuz2_derefidx_vbuc1_band_pbuz3_derefidx_vbuc2");
+      testFragments("fragments-complex", signaturesComplex);
+   }
+
    private void testFragments(String fileName, Collection<String> signatures) throws IOException {
       AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
-      System.gc();
       CompileLog log = new CompileLog();
-      int cnt = 0;
-      for(String signature : signatures) {
-         if(++cnt % 1000 == 0) {
-            System.gc();
-            Runtime rt = Runtime.getRuntime();
-            long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-            System.out.println(""+cnt+"/"+signatures.size() + " - "+AsmFragmentTemplateSynthesizer.getSizes()+" mem: "+usedMB );
-         }
+      List<String> sigs = new ArrayList<>(signatures);
+
+      // Always test max 1000 signatures
+      for(int testStep = 0; testStep < 1000; testStep++) {
+
+         // Calculate the index
+         int testIdx =  (sigs.size() * testStep) / 1000;
+         if(testIdx < testStep) testIdx = testStep;
+         if(testStep > sigs.size() - 1) break;
+
+         if((testStep%100) ==0)
+            System.out.println("Testing "+testIdx + "/"+sigs.size());
+
+         String signature = sigs.get(testIdx);
          List<AsmFragmentTemplate> templates =
                new ArrayList<>(AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log));
          Collections.sort(templates, Comparator.comparing(AsmFragmentTemplate::getClobber));
@@ -147,6 +164,12 @@ public class TestFragments {
             log.append("  " + template.getBody().replace("\n", "\n  "));
          }
       }
+      // Print some information about the testing to stdout
+      System.gc();
+      Runtime rt = Runtime.getRuntime();
+      long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+      System.out.println("Synthesizer Graph Size: " + AsmFragmentTemplateSynthesizer.getSize()+" mem: " + usedMB);
+
       ReferenceHelper helper = new ReferenceHelperFolder("src/test/ref/");
       boolean success = helper.testOutput(fileName, ".log", log.toString());
       if(!success) {
@@ -184,18 +207,18 @@ public class TestFragments {
 
    private Collection<String> assignmentsBinaryBu(Value lValue) {
       ArrayList<String> signatures = new ArrayList<>();
-         Collection<Value> rVal1s = rValuesBu(lValue.getAllValues());
-         for(Value rVal1 : rVal1s) {
-            ArrayList<Value> used = new ArrayList<>();
-            used.addAll(lValue.getAllValues());
-            used.addAll(rVal1.getAllValues());
-            Collection<Value> rVal2s = rValuesBu(used);
-            for(Value rVal2 : rVal2s) {
-               for(String binary : binaryBu()) {
-                  signatures.add(lValue.getSignature() + "=" + rVal1.getSignature() + binary + rVal2.getSignature());
-               }
+      Collection<Value> rVal1s = rValuesBu(lValue.getAllValues());
+      for(Value rVal1 : rVal1s) {
+         ArrayList<Value> used = new ArrayList<>();
+         used.addAll(lValue.getAllValues());
+         used.addAll(rVal1.getAllValues());
+         Collection<Value> rVal2s = rValuesBu(used);
+         for(Value rVal2 : rVal2s) {
+            for(String binary : binaryBu()) {
+               signatures.add(lValue.getSignature() + "=" + rVal1.getSignature() + binary + rVal2.getSignature());
             }
          }
+      }
       return signatures;
    }
 

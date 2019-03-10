@@ -473,6 +473,7 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite constant byte values to constant word values
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)", null, null , "$1vw$2c1$3", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c2(.*)", null, null , "$1vw$2c2$3", null, null));
+      /*
       // Rewrite constant word values to constant dword values
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c1(.*)", null, null , "$1vd$2c1$3", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c2(.*)", null, null , "$1vd$2c2$3", null, null));
@@ -482,6 +483,7 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite constant unsigned word values to constant signed dword values
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc1(.*)", null, null , "$1vdsc1$2", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc2(.*)", null, null , "$1vdsc2$2", null, null));
+      */
 
       /*
       // Rewrite any zeropage pointer as an unsigned word zeropage values

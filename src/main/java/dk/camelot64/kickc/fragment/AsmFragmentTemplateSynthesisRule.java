@@ -479,17 +479,17 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c1(.*)", null, null , "$1vd$2c1$3", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c2(.*)", null, null , "$1vd$2c2$3", null, null));
 
-      /* Removed pending optimization!
+      /* Removed awaiting optimization
       // Rewrite constant unsigned word values to constant signed dword values
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc1(.*)", null, null , "$1vdsc1$2", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc2(.*)", null, null , "$1vdsc2$2", null, null));
       */
 
-      /*
+      /* Removed awaiting optimization
       // Rewrite any zeropage pointer as an unsigned word zeropage values
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..z(.)(.*)", null, null , "$1vwuz$2$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..z(.)(.*)", ".*p..z._deref.*", null , "$1vwuz$2$3", null, null));
       // Rewrite any constant pointer as an constant unsigned word
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..c(.)(.*)", null, null , "$1vwuc$2$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..c(.)(.*)", ".*p..z._deref.*", null , "$1vwuc$2$3", null, null));
       */
 
       // Synthesize some constant pointers as constant words (remove when the above section can be included)

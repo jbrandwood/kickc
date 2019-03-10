@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNoLocalScope() throws IOException, URISyntaxException {
+      assertError("nolocalscope", "Symbol already declared");
+   }
+
+   @Test
    public void testTypeMix() throws IOException, URISyntaxException {
       compileAndCompare("type-mix");
    }
@@ -288,7 +293,7 @@ public class TestPrograms {
 
    @Test
    public void testUnrollInfinite() throws IOException, URISyntaxException {
-      assertError("unroll-infinite", "Loop cannot be unrolled.");
+      assertError("unroll-infinite", "Loop cannot be unrolled.", false);
    }
 
    @Test
@@ -1143,7 +1148,7 @@ public class TestPrograms {
 
    @Test
    public void testNoReturn() throws IOException, URISyntaxException {
-      assertError("noreturn", "Method must end with a return statement");
+      assertError("noreturn", "Method must end with a return statement", false);
    }
 
    @Test
@@ -1158,7 +1163,7 @@ public class TestPrograms {
 
    @Test
    public void testInvalidConstType() throws IOException, URISyntaxException {
-      assertError("invalid-consttype", "Constant variable has a non-matching type");
+      assertError("invalid-consttype", "Constant variable has a non-matching type", false);
    }
 
    @Test
@@ -1173,12 +1178,12 @@ public class TestPrograms {
 
    @Test
    public void testArrayLengthMismatch() throws IOException, URISyntaxException {
-      assertError("array-length-mismatch", "Array length mismatch");
+      assertError("array-length-mismatch", "Array length mismatch", false);
    }
 
    @Test
    public void testStringLengthMismatch() throws IOException, URISyntaxException {
-      assertError("string-length-mismatch", "Array length mismatch");
+      assertError("string-length-mismatch", "Array length mismatch", false);
    }
 
    @Test
@@ -1188,17 +1193,17 @@ public class TestPrograms {
 
    @Test
    public void testRegisterClobber() throws IOException, URISyntaxException {
-      assertError("register-clobber", "CLOBBER ERROR");
+      assertError("register-clobber", "register clobber problem", false);
    }
 
    @Test
    public void testRecursionError() throws IOException, URISyntaxException {
-      assertError("recursion-error", "Recursion");
+      assertError("recursion-error", "Recursion", false);
    }
 
    @Test
    public void testRecursionComplexError() throws IOException, URISyntaxException {
-      assertError("recursion-error-complex", "Recursion");
+      assertError("recursion-error-complex", "Recursion", false);
    }
 
    @Test
@@ -1223,7 +1228,7 @@ public class TestPrograms {
 
    @Test
    public void testNoInlineInterrupt() throws IOException, URISyntaxException {
-      assertError("no-inlineinterrupt", "Interrupts cannot be inlined");
+      assertError("no-inlineinterrupt", "Interrupts cannot be inlined", false);
    }
 
    @Test
@@ -1233,12 +1238,12 @@ public class TestPrograms {
 
    @Test
    public void testNoParamInterrupt() throws IOException, URISyntaxException {
-      assertError("no-paraminterrupt", "Interrupts cannot have parameters.");
+      assertError("no-paraminterrupt", "Interrupts cannot have parameters.", false);
    }
 
    @Test
    public void testNoReturnInterrupt() throws IOException, URISyntaxException {
-      assertError("no-returninterrupt", "Interrupts cannot return anything.");
+      assertError("no-returninterrupt", "Interrupts cannot return anything.", false);
    }
 
    @Test
@@ -1247,12 +1252,20 @@ public class TestPrograms {
    }
 
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {
+      assertError(kcFile, expectError, true);
+   }
+
+   private void assertError(String kcFile, String expectError, boolean expectLineNumber) throws IOException, URISyntaxException {
       try {
          compileAndCompare(kcFile);
       } catch(CompileError e) {
          System.out.println("Got error: " + e.getMessage());
          // expecting error!
          assertTrue("Error message expected  '" + expectError + "' - was:" + e.getMessage(), e.getMessage().contains(expectError));
+         if(expectLineNumber) {
+            // expecting line number!
+            assertTrue("Error message expected  line number - was:" + e.getMessage(), e.getMessage().contains("Line"));
+         }
          return;
       }
       fail("Expected compile error.");

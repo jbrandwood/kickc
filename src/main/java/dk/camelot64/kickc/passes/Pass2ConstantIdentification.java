@@ -68,7 +68,8 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                throw new CompileError(
                      "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
                            "\n value: (" + valueType.toString() + ") " + constVal.calculateLiteral(getScope()) +
-                           "\n value definition: " + constVal.toString(getProgram()));
+                           "\n value definition: " + constVal.toString(getProgram())
+               );
             }
          }
 

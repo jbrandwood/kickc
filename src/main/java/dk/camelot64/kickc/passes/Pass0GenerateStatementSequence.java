@@ -299,7 +299,12 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitDeclVariable(KickCParser.DeclVariableContext ctx) {
       SymbolType type = (SymbolType) visit(ctx.typeDecl());
       String varName = ctx.NAME().getText();
-      VariableUnversioned lValue = getCurrentSymbols().addVariable(varName, type);
+      VariableUnversioned lValue;
+      try {
+         lValue = getCurrentSymbols().addVariable(varName, type);
+      } catch(CompileError e) {
+         throw new CompileError(e.getMessage(), new StatementSource(ctx));
+      }
       // Add directives
       addDirectives(type, lValue, ctx.directive());
       // Array / String variables are implicitly constant
@@ -669,7 +674,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Variable lValue;
       if(forDeclCtx.typeDecl() != null) {
          SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
-         lValue = getCurrentSymbols().addVariable(varName, type);
+         try {
+            lValue = getCurrentSymbols().addVariable(varName, type);
+         } catch(CompileError e) {
+            throw new CompileError(e.getMessage(), new StatementSource(forDeclCtx));
+         }
          // Add directives
          addDirectives(type, lValue, forDeclCtx.directive());
       } else {

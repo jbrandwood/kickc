@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.symbols;
 
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.VariableRegisterWeights;
@@ -97,7 +98,7 @@ public abstract class Scope implements Symbol {
 
    public Symbol add(Symbol symbol) {
       if(symbols.get(symbol.getLocalName()) != null) {
-         throw new RuntimeException("Symbol already declared " + symbol.getLocalName());
+         throw new CompileError("Symbol already declared " + symbol.getLocalName());
       }
       symbols.put(symbol.getLocalName(), symbol);
       return symbol;

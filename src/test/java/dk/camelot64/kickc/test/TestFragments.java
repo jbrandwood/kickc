@@ -142,7 +142,7 @@ public class TestFragments {
    }
 
    /**
-    * Test that  a specific fragment can be succesfully loaded/synthesized
+    * Test that a specific fragment can be succesfully loaded/synthesized
     * @param signature The fragment signature
     */
    private void testFragmentExists(String signature) {

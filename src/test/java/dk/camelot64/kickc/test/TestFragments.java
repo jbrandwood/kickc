@@ -10,9 +10,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.security.Signature;
 import java.util.*;
 
+import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 
 /** Test the ASM fragment sub-system by loading/synthesizing a lot of different fragments and comparing with reference fragments. */
@@ -135,6 +135,30 @@ public class TestFragments {
       testFragments("fragments-complex", signaturesComplex);
    }
 
+   @Test
+   public void testFragmentsExist() {
+      testFragmentExists("pwsc1_derefidx_vbuxx=vwsc2");
+      testFragmentExists("pwsc1_derefidx_vbuyy=vwsc2");
+   }
+
+   /**
+    * Test that  a specific fragment can be succesfully loaded/synthesized
+    * @param signature The fragment signature
+    */
+   private void testFragmentExists(String signature) {
+      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
+      CompileLog log = new CompileLog();
+      log.setSysOut(true);
+      log.setVerboseFragmentLog(true);
+      List<AsmFragmentTemplate> templates =
+            new ArrayList<>(AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log));
+      if(templates.size()==0) {
+         System.out.println(log.toString());
+      }
+      assertTrue("Fragment cannot be synthesized "+signature, templates.size() > 0);
+   }
+
+
    private void testFragments(String fileName, Collection<String> signatures) throws IOException {
       AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
       CompileLog log = new CompileLog();
@@ -144,14 +168,15 @@ public class TestFragments {
       for(int testStep = 0; testStep < 1000; testStep++) {
 
          // Calculate the index
-         int testIdx =  (sigs.size() * testStep) / 1000;
+         int testIdx = (sigs.size() * testStep) / 1000;
          if(testIdx < testStep) testIdx = testStep;
          if(testStep > sigs.size() - 1) break;
 
-         if((testStep%100) ==0)
-            System.out.println("Testing "+testIdx + "/"+sigs.size());
+         if((testStep % 100) == 0)
+            System.out.println("Testing " + testIdx + "/" + sigs.size());
 
          String signature = sigs.get(testIdx);
+
          List<AsmFragmentTemplate> templates =
                new ArrayList<>(AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log));
          Collections.sort(templates, Comparator.comparing(AsmFragmentTemplate::getClobber));
@@ -168,7 +193,7 @@ public class TestFragments {
       System.gc();
       Runtime rt = Runtime.getRuntime();
       long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-      System.out.println("Synthesizer Graph Size: " + AsmFragmentTemplateSynthesizer.getSize()+" mem: " + usedMB);
+      System.out.println("Synthesizer Graph Size: " + AsmFragmentTemplateSynthesizer.getSize() + " mem: " + usedMB);
 
       ReferenceHelper helper = new ReferenceHelperFolder("src/test/ref/");
       boolean success = helper.testOutput(fileName, ".log", log.toString());

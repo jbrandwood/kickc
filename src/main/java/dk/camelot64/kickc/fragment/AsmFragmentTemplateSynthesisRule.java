@@ -479,17 +479,29 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c1(.*)", null, null , "$1vd$2c1$3", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c2(.*)", null, null , "$1vd$2c2$3", null, null));
 
-      /*
-
+      /* Removed pending optimization!
       // Rewrite constant unsigned word values to constant signed dword values
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc1(.*)", null, null , "$1vdsc1$2", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc2(.*)", null, null , "$1vdsc2$2", null, null));
+      */
+
+      /*
       // Rewrite any zeropage pointer as an unsigned word zeropage values
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..z(.)(.*)", null, null , "$1vwuz$2$3", null, null));
       // Rewrite any constant pointer as an constant unsigned word
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..c(.)(.*)", null, null , "$1vwuc$2$3", null, null));
-
       */
+
+      // Synthesize some constant pointers as constant words (remove when the above section can be included)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(lt|gt|le|ge|eq|neq)_p..([cz].)_then_(.*)", null, null, "$1_$2_vwu$3_then_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)_(lt|gt|le|ge|eq|neq)_(.*)", null, null, "vwu$1_$2_$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([zc].)", null, null, "$1=vwu$2", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(plus|minus|bor|bxor)_p..([cz].)", null, null, "$1=$2_$3_vwu$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([cz].)_(plus|minus|bor|bxor)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)=(.*)_(sethi|setlo|plus|minus)_(.*)", null, null, "vwu$1=$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([cz].)_(sethi|setlo|plus|minus)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)=_(inc|dec)_p..([cz].)", null, null, "vwu$1=_$2_vwu$3", null, null));
+
 
       // Synthesize constants using AA/XX/YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuc1(.*)", rvalAa+"|"+twoC1+"|"+ derefC1, "lda #{c1}", "$1=$2vbuaa$3", null, mapC));
@@ -572,15 +584,6 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_dec_(.*)", null, null, "vb$1aa=$2_minus_1", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("vw(.)z1=_inc_vw(.z.)", null, null, "vw$1z1=vw$2_plus_1", null, null));
 
-      // Synthesize some constant pointers as constant words
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(lt|gt|le|ge|eq|neq)_p..([cz].)_then_(.*)", null, null, "$1_$2_vwu$3_then_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)_(lt|gt|le|ge|eq|neq)_(.*)", null, null, "vwu$1_$2_$3", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([zc].)", null, null, "$1=vwu$2", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(plus|minus|bor|bxor)_p..([cz].)", null, null, "$1=$2_$3_vwu$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([cz].)_(plus|minus|bor|bxor)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)=(.*)_(sethi|setlo|plus|minus)_(.*)", null, null, "vwu$1=$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([cz].)_(sethi|setlo|plus|minus)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)=_(inc|dec)_p..([cz].)", null, null, "vwu$1=_$2_vwu$3", null, null));
 
       return synths;
    }

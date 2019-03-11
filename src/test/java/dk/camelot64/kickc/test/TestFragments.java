@@ -139,6 +139,8 @@ public class TestFragments {
    public void testFragmentsExist() {
       testFragmentExists("pwsc1_derefidx_vbuxx=vwsc2");
       testFragmentExists("pwsc1_derefidx_vbuyy=vwsc2");
+      testFragmentExists("pwsc1_derefidx_vbuxx=pwsc1_derefidx_vbuxx_minus_vbuc2");
+      testFragmentExists("pwsc1_derefidx_vbuyy=pwsc1_derefidx_vbuyy_minus_vbuc2");
    }
 
    /**

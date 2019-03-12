@@ -118,15 +118,20 @@ public class KickC implements Callable<Void> {
       }
 
       if(fragment!=null) {
+         configVerbosity(compiler);
+         if(verbose) {
+            compiler.getLog().setVerboseFragmentLog(true);
+         }
          compiler.getLog().setSysOut(true);
          Collection<AsmFragmentTemplate> fragmentTemplates = AsmFragmentTemplateSynthesizer.getFragmentTemplates(fragment, compiler.getLog());
          for(AsmFragmentTemplate fragmentTemplate : fragmentTemplates) {
             AsmFragmentTemplateUsages.logTemplate(compiler.getLog(), fragmentTemplate, "");
          }
-         compiler.getLog().setSysOut(false);
       }
 
       if(kcFile!=null) {
+
+         configVerbosity(compiler);
 
          String fileBaseName = getFileBaseName(kcFile);
 
@@ -148,55 +153,6 @@ public class KickC implements Callable<Void> {
 
          if(optimizeUpliftCombinations != null) {
             compiler.setUpliftCombinations(optimizeUpliftCombinations);
-         }
-
-         if(verbose) {
-            compiler.getLog().setSysOut(true);
-         }
-
-         if(verboseParse) {
-            compiler.getLog().setVerboseParse(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseCreateSsa) {
-            compiler.getLog().setVerboseCreateSsa(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseSSAOptimize) {
-            compiler.getLog().setVerboseSSAOptimize(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseNonOptimization) {
-            compiler.getLog().setVerboseNonOptimization(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseSequencePlan) {
-            compiler.getLog().setVerboseSequencePlan(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseLoopAnalysis) {
-            compiler.getLog().setVerboseLoopAnalysis(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseLoopUnroll) {
-            compiler.getLog().setVerboseLoopUnroll(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseLiveRanges) {
-            compiler.getLog().setVerboseLiveRanges(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseUplift) {
-            compiler.getLog().setVerboseUplift(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseFragments) {
-            compiler.getLog().setVerboseFragmentLog(true);
-            compiler.getLog().setSysOut(true);
-         }
-         if(verboseAsmOptimize) {
-            compiler.getLog().setVerboseAsmOptimize(true);
-            compiler.getLog().setSysOut(true);
          }
 
          System.out.println("Compiling " + kcFile);
@@ -248,6 +204,57 @@ public class KickC implements Callable<Void> {
       }
 
       return null;
+   }
+
+   private void configVerbosity(Compiler compiler) {
+      if(verbose) {
+         compiler.getLog().setSysOut(true);
+      }
+
+      if(verboseParse) {
+         compiler.getLog().setVerboseParse(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseCreateSsa) {
+         compiler.getLog().setVerboseCreateSsa(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseSSAOptimize) {
+         compiler.getLog().setVerboseSSAOptimize(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseNonOptimization) {
+         compiler.getLog().setVerboseNonOptimization(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseSequencePlan) {
+         compiler.getLog().setVerboseSequencePlan(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseLoopAnalysis) {
+         compiler.getLog().setVerboseLoopAnalysis(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseLoopUnroll) {
+         compiler.getLog().setVerboseLoopUnroll(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseLiveRanges) {
+         compiler.getLog().setVerboseLiveRanges(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseUplift) {
+         compiler.getLog().setVerboseUplift(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseFragments) {
+         compiler.getLog().setVerboseFragmentLog(true);
+         compiler.getLog().setSysOut(true);
+      }
+      if(verboseAsmOptimize) {
+         compiler.getLog().setVerboseAsmOptimize(true);
+         compiler.getLog().setSysOut(true);
+      }
    }
 
    /**

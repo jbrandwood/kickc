@@ -93,6 +93,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-fragment" }, description = "Print the ASM code for a named fragment. The fragment is loaded/synthesized and the ASM variations are written to the output.")
    private String fragment = null;
 
+   /** Program Exit Code signaling a compile error. */
+   public static final int COMPILE_ERROR = 1;
+
    public static void main(String[] args) {
       CommandLine.call(new KickC(), args);
    }
@@ -156,7 +159,14 @@ public class KickC implements Callable<Void> {
          }
 
          System.out.println("Compiling " + kcFile);
-         Program program = compiler.compile(kcFile.toString());
+         Program program = null;
+         try {
+            program = compiler.compile(kcFile.toString());
+         } catch(CompileError e) {
+            // Print the error and exit with compile error
+            System.err.print(e.getMessage());
+            System.exit(COMPILE_ERROR);
+         }
 
          Path asmPath = outputDir.resolve(asmFileName);
          System.out.println("Writing asm file " + asmPath);

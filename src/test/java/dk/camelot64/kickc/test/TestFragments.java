@@ -147,6 +147,7 @@ public class TestFragments {
 
    /**
     * Test that a specific fragment can be succesfully loaded/synthesized
+    *
     * @param signature The fragment signature
     */
    private void testFragmentExists(String signature) {
@@ -156,10 +157,14 @@ public class TestFragments {
       log.setVerboseFragmentLog(true);
       List<AsmFragmentTemplate> templates =
             new ArrayList<>(AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log));
-      if(templates.size()==0) {
-         System.out.println(log.toString());
+      if(templates.size() > 0) {
+         log.append("");
+         for(AsmFragmentTemplate template : templates) {
+            AsmFragmentTemplateUsages.logTemplate(log, template, "");
+         }
+         log.append("");
       }
-      assertTrue("Fragment cannot be synthesized "+signature, templates.size() > 0);
+      assertTrue("Fragment cannot be synthesized " + signature, templates.size() > 0);
    }
 
 

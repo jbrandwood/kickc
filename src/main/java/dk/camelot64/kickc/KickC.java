@@ -1,6 +1,8 @@
 package dk.camelot64.kickc;
 
+import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import kickass.KickAssembler;
@@ -8,6 +10,7 @@ import picocli.CommandLine;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -27,7 +30,7 @@ import java.util.concurrent.Callable;
 )
 public class KickC implements Callable<Void> {
 
-   @CommandLine.Parameters(index = "0", description = "The KickC source file to compile.")
+   @CommandLine.Parameters(index = "0", arity="0..1", description = "The KickC source file to compile.")
    private Path kcFile = null;
 
    @CommandLine.Option(names = {"-I", "-libdir" }, description = "Path to a library folder, where the compiler looks for included files. This option can be repeated to add multiple library folders.")
@@ -87,6 +90,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-vasmoptimize" }, description = "Verbosity Option. Assembler optimization.")
    private boolean verboseAsmOptimize = false;
 
+   @CommandLine.Option(names = {"-fragment" }, description = "Print the ASM code for a named fragment. The fragment is loaded/synthesized and the ASM variations are written to the output.")
+   private String fragment = null;
+
    public static void main(String[] args) {
       CommandLine.call(new KickC(), args);
    }
@@ -111,121 +117,134 @@ public class KickC implements Callable<Void> {
          AsmFragmentTemplateSynthesizer.initialize("fragment/");
       }
 
-      String fileBaseName = getFileBaseName(kcFile);
-
-      Path kcFileDir  = kcFile.getParent();
-      if(kcFileDir==null) {
-         kcFileDir = FileSystems.getDefault().getPath(".");
-      }
-
-      if(outputDir==null) {
-         outputDir = kcFileDir;
-      }
-      if(!Files.exists(outputDir)) {
-         Files.createDirectory(outputDir);
+      if(fragment!=null) {
+         compiler.getLog().setSysOut(true);
+         Collection<AsmFragmentTemplate> fragmentTemplates = AsmFragmentTemplateSynthesizer.getFragmentTemplates(fragment, compiler.getLog());
+         for(AsmFragmentTemplate fragmentTemplate : fragmentTemplates) {
+            AsmFragmentTemplateUsages.logTemplate(compiler.getLog(), fragmentTemplate, "");
+         }
+         compiler.getLog().setSysOut(false);
       }
 
-      if(asmFileName == null) {
-         asmFileName = fileBaseName + ".asm";
-      }
+      if(kcFile!=null) {
 
-      if(optimizeUpliftCombinations!=null) {
-         compiler.setUpliftCombinations(optimizeUpliftCombinations);
-      }
+         String fileBaseName = getFileBaseName(kcFile);
 
-      if(verbose) {
-         compiler.getLog().setSysOut(true);
-      }
+         Path kcFileDir = kcFile.getParent();
+         if(kcFileDir == null) {
+            kcFileDir = FileSystems.getDefault().getPath(".");
+         }
 
-      if(verboseParse) {
-         compiler.getLog().setVerboseParse(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseCreateSsa) {
-         compiler.getLog().setVerboseCreateSsa(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseSSAOptimize) {
-         compiler.getLog().setVerboseSSAOptimize(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseNonOptimization) {
-         compiler.getLog().setVerboseNonOptimization(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseSequencePlan) {
-         compiler.getLog().setVerboseSequencePlan(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseLoopAnalysis) {
-         compiler.getLog().setVerboseLoopAnalysis(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseLoopUnroll) {
-         compiler.getLog().setVerboseLoopUnroll(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseLiveRanges) {
-         compiler.getLog().setVerboseLiveRanges(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseUplift) {
-         compiler.getLog().setVerboseUplift(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseFragments) {
-         compiler.getLog().setVerboseFragmentLog(true);
-         compiler.getLog().setSysOut(true);
-      }
-      if(verboseAsmOptimize) {
-         compiler.getLog().setVerboseAsmOptimize(true);
-         compiler.getLog().setSysOut(true);
-      }
+         if(outputDir == null) {
+            outputDir = kcFileDir;
+         }
+         if(!Files.exists(outputDir)) {
+            Files.createDirectory(outputDir);
+         }
 
-      System.out.println("Compiling " + kcFile);
-      Program program = compiler.compile(kcFile.toString());
+         if(asmFileName == null) {
+            asmFileName = fileBaseName + ".asm";
+         }
 
-      Path asmPath = outputDir.resolve(asmFileName);
-      System.out.println("Writing asm file " + asmPath);
-      FileOutputStream asmOutputStream = new FileOutputStream(asmPath.toFile());
-      OutputStreamWriter asmWriter = new OutputStreamWriter(asmOutputStream);
-      String asmCodeString = program.getAsm().toString(false);
-      asmWriter.write(asmCodeString);
-      asmWriter.close();
-      asmOutputStream.close();
+         if(optimizeUpliftCombinations != null) {
+            compiler.setUpliftCombinations(optimizeUpliftCombinations);
+         }
 
-      // Copy Resource Files (if out-dir is different from in-dir)
-      if(!kcFileDir.toAbsolutePath().equals(outputDir.toAbsolutePath())) {
-         for(Path resourcePath : program.getAsmResourceFiles()) {
-            Path outResourcePath = outputDir.resolve(resourcePath.getFileName().toString());
-            System.out.println("Copying resource " + outResourcePath);
-            try {
-               Files.copy(resourcePath, outResourcePath);
-            } catch(FileAlreadyExistsException e) {
-               // Ignore this
+         if(verbose) {
+            compiler.getLog().setSysOut(true);
+         }
+
+         if(verboseParse) {
+            compiler.getLog().setVerboseParse(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseCreateSsa) {
+            compiler.getLog().setVerboseCreateSsa(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseSSAOptimize) {
+            compiler.getLog().setVerboseSSAOptimize(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseNonOptimization) {
+            compiler.getLog().setVerboseNonOptimization(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseSequencePlan) {
+            compiler.getLog().setVerboseSequencePlan(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseLoopAnalysis) {
+            compiler.getLog().setVerboseLoopAnalysis(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseLoopUnroll) {
+            compiler.getLog().setVerboseLoopUnroll(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseLiveRanges) {
+            compiler.getLog().setVerboseLiveRanges(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseUplift) {
+            compiler.getLog().setVerboseUplift(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseFragments) {
+            compiler.getLog().setVerboseFragmentLog(true);
+            compiler.getLog().setSysOut(true);
+         }
+         if(verboseAsmOptimize) {
+            compiler.getLog().setVerboseAsmOptimize(true);
+            compiler.getLog().setSysOut(true);
+         }
+
+         System.out.println("Compiling " + kcFile);
+         Program program = compiler.compile(kcFile.toString());
+
+         Path asmPath = outputDir.resolve(asmFileName);
+         System.out.println("Writing asm file " + asmPath);
+         FileOutputStream asmOutputStream = new FileOutputStream(asmPath.toFile());
+         OutputStreamWriter asmWriter = new OutputStreamWriter(asmOutputStream);
+         String asmCodeString = program.getAsm().toString(false);
+         asmWriter.write(asmCodeString);
+         asmWriter.close();
+         asmOutputStream.close();
+
+         // Copy Resource Files (if out-dir is different from in-dir)
+         if(!kcFileDir.toAbsolutePath().equals(outputDir.toAbsolutePath())) {
+            for(Path resourcePath : program.getAsmResourceFiles()) {
+               Path outResourcePath = outputDir.resolve(resourcePath.getFileName().toString());
+               System.out.println("Copying resource " + outResourcePath);
+               try {
+                  Files.copy(resourcePath, outResourcePath);
+               } catch(FileAlreadyExistsException e) {
+                  // Ignore this
+               }
             }
          }
-      }
 
-      // Assemble the asm-file if instructed
-      Path prgPath = outputDir.resolve(fileBaseName + ".prg");
-      if(assemble || execute) {
-         Path kasmLogPath = outputDir.resolve(fileBaseName+".klog");
-         System.out.println("Assembling to " + prgPath.toString());
-         ByteArrayOutputStream kasmLogOutputStream = new ByteArrayOutputStream();
-         System.setOut(new PrintStream(kasmLogOutputStream));
-         int kasmResult = KickAssembler.main2(new String[]{asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem"});
-         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
-         if(kasmResult != 0) {
-            throw new CompileError("KickAssembling file failed! " + kasmLogOutputStream.toString());
+         // Assemble the asm-file if instructed
+         Path prgPath = outputDir.resolve(fileBaseName + ".prg");
+         if(assemble || execute) {
+            Path kasmLogPath = outputDir.resolve(fileBaseName + ".klog");
+            System.out.println("Assembling to " + prgPath.toString());
+            ByteArrayOutputStream kasmLogOutputStream = new ByteArrayOutputStream();
+            System.setOut(new PrintStream(kasmLogOutputStream));
+            int kasmResult = KickAssembler.main2(new String[]{asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem"});
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+            if(kasmResult != 0) {
+               throw new CompileError("KickAssembling file failed! " + kasmLogOutputStream.toString());
+            }
          }
-      }
 
-      // Execute the prg-file if instructed
-      if(execute) {
-         System.out.println("Executing " + prgPath);
-         Process process = Runtime.getRuntime().exec("x64 " + prgPath.toString() );
-         process.waitFor();
+         // Execute the prg-file if instructed
+         if(execute) {
+            System.out.println("Executing " + prgPath);
+            Process process = Runtime.getRuntime().exec("x64 " + prgPath.toString());
+            process.waitFor();
+         }
+
       }
 
       return null;

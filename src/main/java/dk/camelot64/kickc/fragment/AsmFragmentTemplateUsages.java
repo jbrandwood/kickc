@@ -179,12 +179,16 @@ public class AsmFragmentTemplateUsages {
          log.append(String.format("%8d", usage) + " " + template.getSignature()+" - templates: " + bestTemplates.size());
          if(logBody) {
             for(AsmFragmentTemplate bestTemplate : bestTemplates) {
-               log.append("          " + (bestTemplate.isFile() ? "*" : "") + bestTemplate.getName() + " - clobber:" + bestTemplate.getClobber().toString() + " cycles:" + bestTemplate.getCycles());
-               log.append("            " + bestTemplate.getBody().replace("\n", "\n            "));
+               logTemplate(log, bestTemplate, "      ");
             }
 
          }
       }
+   }
+
+   public static void logTemplate(CompileLog log, AsmFragmentTemplate template, String indent) {
+      log.append(indent + (template.isFile() ? "*" : "") + template.getName() + " - clobber:" + template.getClobber().toString() + " cycles:" + template.getCycles());
+      log.append(indent+ "  " + template.getBody().replace("\n", "\n"+indent+"  "));
    }
 
 

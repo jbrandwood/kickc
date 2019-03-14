@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import sun.reflect.generics.tree.VoidDescriptor;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -690,25 +691,41 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitStmtAsm(KickCParser.StmtAsmContext ctx) {
-      List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
 
+      // ALl defined labels in the ASM
+      List<String> definedLabels = new ArrayList<>();
+      KickCBaseVisitor<Void> findDefinedLabels = new KickCBaseVisitor<Void>() {
+         @Override
+         public Void visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
+            String label = ctx.NAME().getText();
+            definedLabels.add(label);
+            return super.visitAsmLabelName(ctx);
+         }
+      };
+      findDefinedLabels.visit(ctx.asmLines());
+
+      // Find all referenced symbols in the ASM
       Map<String, SymbolVariableRef> referenced = new LinkedHashMap<>();
-      // Find all referenced symbols in the asm lines
-      KickCBaseVisitor<Void> visitor = new KickCBaseVisitor<Void>() {
+      KickCBaseVisitor<Void> findReferenced = new KickCBaseVisitor<Void>() {
          @Override
          public Void visitAsmExprLabel(KickCParser.AsmExprLabelContext ctxLabel) {
             String label = ctxLabel.NAME().toString();
-            Symbol symbol = getCurrentSymbols().getSymbol(ctxLabel.NAME().getText());
-            if(symbol instanceof Variable) {
-               Variable variable = (Variable) symbol;
-               referenced.put(label, variable.getRef());
-            } else {
-               throw new CompileError("Symbol referenced in inline ASM not found " + label, new StatementSource(ctxLabel));
+            if(!definedLabels.contains(label)) {
+               // Look for the symbol
+               Symbol symbol = getCurrentSymbols().getSymbol(ctxLabel.NAME().getText());
+               if(symbol instanceof Variable) {
+                  Variable variable = (Variable) symbol;
+                  referenced.put(label, variable.getRef());
+               } else {
+                  throw new CompileError("Symbol referenced in inline ASM not found " + label, new StatementSource(ctxLabel));
+               }
             }
             return super.visitAsmExprLabel(ctxLabel);
          }
       };
-      visitor.visit(ctx.asmLines());
+      findReferenced.visit(ctx.asmLines());
+
+      List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
       StatementAsm statementAsm = new StatementAsm(ctx.asmLines(), referenced, new StatementSource(ctx), comments);
       sequence.addStatement(statementAsm);
       return null;

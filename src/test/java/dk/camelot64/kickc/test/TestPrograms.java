@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineAsmRefoutLabel() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-label");
+   }
+
+   @Test
    public void testInlineAsmRefoutIllegal() throws IOException, URISyntaxException {
       assertError("inline-asm-refout-illegal", "Inline ASM reference is not constant");
    }

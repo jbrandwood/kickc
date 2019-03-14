@@ -1,0 +1,233 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte[]) table#0 ← (const string) $0
+  to:@1
+main: scope:[main]  from @1
+  asm { ldx#0 nxt: ldatable,x staSCREEN+1,x inx cpx#4 bnenxt  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(const string) $0 = (string) "cml!"
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) main()
+(label) main::@return
+(byte[]) table
+(byte[]) table#0
+
+Culled Empty Block (label) @2
+Successful SSA optimization Pass2CullEmptyBlocks
+Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte[]) table#0 = $0
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined $0 = (const byte[]) table#0
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  asm { ldx#0 nxt: ldatable,x staSCREEN+1,x inx cpx#4 bnenxt  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(void()) main()
+(byte[]) table
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Illustrates how inline assembler use internal labels and external references
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 asm { ldx#0 nxt: ldatable,x staSCREEN+1,x inx cpx#4 bnenxt  }
+    ldx #0
+  nxt:
+    lda table,x
+    sta SCREEN+1,x
+    inx
+    cpx #4
+    bne nxt
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+  table: .text "cml!"
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement asm { ldx#0 nxt: ldatable,x staSCREEN+1,x inx cpx#4 bnenxt  } always clobbers reg byte a reg byte x 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 39 combination 
+Uplifting [] best 39 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Illustrates how inline assembler use internal labels and external references
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 asm { ldx#0 nxt: ldatable,x staSCREEN+1,x inx cpx#4 bnenxt  }
+    ldx #0
+  nxt:
+    lda table,x
+    sta SCREEN+1,x
+    inx
+    cpx #4
+    bne nxt
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+  table: .text "cml!"
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(void()) main()
+(label) main::@return
+(byte[]) table
+(const byte[]) table#0 table = (string) "cml!"
+
+
+
+FINAL ASSEMBLER
+Score: 24
+
+//SEG0 File Comments
+// Illustrates how inline assembler use internal labels and external references
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 asm { ldx#0 nxt: ldatable,x staSCREEN+1,x inx cpx#4 bnenxt  }
+    ldx #0
+  nxt:
+    lda table,x
+    sta SCREEN+1,x
+    inx
+    cpx #4
+    bne nxt
+  //SEG11 main::@return
+  //SEG12 [5] return 
+    rts
+}
+  table: .text "cml!"
+

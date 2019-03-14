@@ -59,12 +59,12 @@ public class TestPrograms {
       assertError("inline-asm-refout-undef", "Symbol referenced in inline ASM not found");
    }
 
-   /*
    @Test
    public void testConstIfProblem() throws IOException, URISyntaxException {
       compileAndCompare("const-if-problem");
    }
 
+   /*
    @Test
    public void testTetrisNullPointer() throws IOException, URISyntaxException {
       compileAndCompare("tetris-npe");

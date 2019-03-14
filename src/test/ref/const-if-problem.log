@@ -1,0 +1,326 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  to:@1
+main: scope:[main]  from @3
+  (byte) cc#4 ← phi( @3/(byte) cc#5 )
+  (byte*) SCREEN#4 ← phi( @3/(byte*) SCREEN#6 )
+  (bool~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 1 == (byte/signed byte/word/signed word/dword/signed dword) 1
+  if((bool~) main::$0) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main
+  (byte*) SCREEN#1 ← phi( main/(byte*) SCREEN#4 )
+  *((byte*) SCREEN#1 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a'
+  to:main::@return
+main::@3: scope:[main]  from main
+  (byte*) SCREEN#5 ← phi( main/(byte*) SCREEN#4 )
+  (byte) cc#3 ← phi( main/(byte) cc#4 )
+  call doit 
+  to:main::@5
+main::@5: scope:[main]  from main::@3
+  to:main::@return
+main::@return: scope:[main]  from main::@1 main::@5
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte*) SCREEN#7 ← phi( @begin/(byte*) SCREEN#0 )
+  (byte) cc#0 ← (byte) 'b'
+  to:@3
+doit: scope:[doit]  from main::@3
+  (byte*) SCREEN#2 ← phi( main::@3/(byte*) SCREEN#5 )
+  (byte) cc#1 ← phi( main::@3/(byte) cc#3 )
+  *((byte*) SCREEN#2 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cc#1
+  call doit2 
+  to:doit::@1
+doit::@1: scope:[doit]  from doit
+  to:doit::@return
+doit::@return: scope:[doit]  from doit::@1
+  return 
+  to:@return
+doit2: scope:[doit2]  from doit
+  (byte*) SCREEN#3 ← phi( doit/(byte*) SCREEN#2 )
+  (byte) cc#2 ← phi( doit/(byte) cc#1 )
+  *((byte*) SCREEN#3 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) cc#2
+  to:doit2::@return
+doit2::@return: scope:[doit2]  from doit2
+  return 
+  to:@return
+@3: scope:[]  from @1
+  (byte) cc#5 ← phi( @1/(byte) cc#0 )
+  (byte*) SCREEN#6 ← phi( @1/(byte*) SCREEN#7 )
+  call main 
+  to:@4
+@4: scope:[]  from @3
+  to:@end
+@end: scope:[]  from @4
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @3
+(label) @4
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte*) SCREEN#1
+(byte*) SCREEN#2
+(byte*) SCREEN#3
+(byte*) SCREEN#4
+(byte*) SCREEN#5
+(byte*) SCREEN#6
+(byte*) SCREEN#7
+(byte) cc
+(byte) cc#0
+(byte) cc#1
+(byte) cc#2
+(byte) cc#3
+(byte) cc#4
+(byte) cc#5
+(void()) doit()
+(label) doit::@1
+(label) doit::@return
+(void()) doit2()
+(label) doit2::@return
+(void()) main()
+(bool~) main::$0
+(label) main::@1
+(label) main::@3
+(label) main::@5
+(label) main::@return
+
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) doit::@1
+Culled Empty Block (label) @4
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (byte*) SCREEN#1 = (byte*) SCREEN#4 (byte*) SCREEN#5 
+Alias (byte) cc#3 = (byte) cc#4 
+Alias (byte*) SCREEN#0 = (byte*) SCREEN#7 (byte*) SCREEN#6 
+Alias (byte) cc#0 = (byte) cc#5 
+Successful SSA optimization Pass2AliasElimination
+Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#0
+Redundant Phi (byte) cc#3 (byte) cc#0
+Redundant Phi (byte) cc#1 (byte) cc#3
+Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#1
+Redundant Phi (byte) cc#2 (byte) cc#1
+Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#2
+Successful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) main::$0 [3] if((byte/signed byte/word/signed word/dword/signed dword) 1==(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte) cc#0 = 'b'
+Successful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(SCREEN#0+0)
+Consolidated array index constant in *(SCREEN#0+1)
+Consolidated array index constant in *(SCREEN#0+2)
+Successful SSA optimization Pass2ConstantAdditionElimination
+if() condition always true - replacing block destination [0] if((byte/signed byte/word/signed word/dword/signed dword) 1==(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1
+Successful SSA optimization Pass2ConstantIfs
+Removing unused block main::@3
+Removing unused procedure doit
+Removing unused procedure block doit
+Removing unused procedure block doit::@return
+Removing unused procedure doit2
+Removing unused procedure block doit2
+Removing unused procedure block doit2::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) @1
+Successful SSA optimization Pass2CullEmptyBlocks
+Successful SSA optimization PassNEliminateUnusedVars
+Simplifying constant plus zero SCREEN#0+0
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@3
+@3: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @3
+  [3] phi()
+main: scope:[main]  from @3
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main
+  [5] *((const byte*) SCREEN#0) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [6] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(byte) cc
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Constant if() contains call to (unused) function - should be optimized away
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
+b3_from_bbegin:
+  jmp b3
+//SEG5 @3
+b3:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @3 to main [phi:@3->main]
+main_from_b3:
+  jsr main
+//SEG8 [3] phi from @3 to @end [phi:@3->@end]
+bend_from_b3:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    jmp b1
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] *((const byte*) SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta SCREEN
+    jmp breturn
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [6] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] *((const byte*) SCREEN#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 57 combination 
+Uplifting [] best 57 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Constant if() contains call to (unused) function - should be optimized away
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
+b3_from_bbegin:
+  jmp b3
+//SEG5 @3
+b3:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @3 to main [phi:@3->main]
+main_from_b3:
+  jsr main
+//SEG8 [3] phi from @3 to @end [phi:@3->@end]
+bend_from_b3:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    jmp b1
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] *((const byte*) SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta SCREEN
+    jmp breturn
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [6] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b3
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b3_from_bbegin:
+Removing instruction b3:
+Removing instruction main_from_b3:
+Removing instruction bend_from_b3:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @3
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(byte) cc
+(void()) main()
+(label) main::@1
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+//SEG0 File Comments
+// Constant if() contains call to (unused) function - should be optimized away
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
+//SEG5 @3
+//SEG6 [2] call main 
+//SEG7 [4] phi from @3 to main [phi:@3->main]
+//SEG8 [3] phi from @3 to @end [phi:@3->@end]
+//SEG9 @end
+//SEG10 main
+main: {
+  //SEG11 main::@1
+  //SEG12 [5] *((const byte*) SCREEN#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta SCREEN
+  //SEG13 main::@return
+  //SEG14 [6] return 
+    rts
+}
+

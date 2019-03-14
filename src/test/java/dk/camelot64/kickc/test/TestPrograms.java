@@ -44,6 +44,59 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
+   /*
+   @Test
+   public void testInlineAsmRefoutProblem() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-refout-problem");
+   }
+
+   @Test
+   public void testConstIfProblem() throws IOException, URISyntaxException {
+      compileAndCompare("const-if-problem");
+   }
+
+   @Test
+   public void testTetrisNullPointer() throws IOException, URISyntaxException {
+      compileAndCompare("tetris-npe");
+   }
+
+   @Test
+   public void testUnrollCall() throws IOException, URISyntaxException {
+      compileAndCompare("unroll-call");
+   }
+   */
+
+
+   @Test
+   public void testInlineKasmLoop() throws IOException, URISyntaxException {
+      compileAndCompare("inline-kasm-loop");
+   }
+
+   @Test
+   public void testInlineKasmData() throws IOException, URISyntaxException {
+      compileAndCompare("inline-kasm-data");
+   }
+
+   @Test
+   public void testInlineKasmResource() throws IOException, URISyntaxException {
+      compileAndCompare("inline-kasm-resource");
+   }
+
+   @Test
+   public void testInlineAsmRefout() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-refout");
+   }
+
+   @Test
+   public void testInlineAsmOptimized() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-optimized");
+   }
+
+   @Test
+   public void testCastNotNeeded() throws IOException, URISyntaxException {
+      compileAndCompare("cast-not-needed");
+   }
+
    @Test
    public void testNoLocalScope() throws IOException, URISyntaxException {
       assertError("nolocalscope", "Symbol already declared");
@@ -234,22 +287,6 @@ public class TestPrograms {
       compileAndCompare("var-init-problem");
    }
 
-   /*
-   @Test
-   public void testConstIfProblem() throws IOException, URISyntaxException {
-      compileAndCompare("const-if-problem");
-   }
-
-   @Test
-   public void testTetrisNullPointer() throws IOException, URISyntaxException {
-      compileAndCompare("tetris-npe");
-   }
-
-   @Test
-   public void testUnrollCall() throws IOException, URISyntaxException {
-      compileAndCompare("unroll-call");
-   }
-   */
 
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {

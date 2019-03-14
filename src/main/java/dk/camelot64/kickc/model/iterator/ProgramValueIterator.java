@@ -133,6 +133,8 @@ public class ProgramValueIterator {
          if(cycles!=null) {
             execute(new ProgramValue.KickAsmCycles(statementKickAsm), handler, statement, statementsIt, block);
          }
+      } else if(statement instanceof StatementAsm) {
+
       }
    }
 

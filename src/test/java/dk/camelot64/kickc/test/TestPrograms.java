@@ -44,12 +44,22 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
-   /*
    @Test
-   public void testInlineAsmRefoutProblem() throws IOException, URISyntaxException {
-      compileAndCompare("inline-asm-refout-problem");
+   public void testInlineAsmRefoutIllegal() throws IOException, URISyntaxException {
+      assertError("inline-asm-refout-illegal", "Inline ASM reference is not constant");
    }
 
+   @Test
+   public void testInlineAsmRefoutConst() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-refout-const");
+   }
+
+   @Test
+   public void testInlineAsmRefoutUndef() throws IOException, URISyntaxException {
+      assertError("inline-asm-refout-undef", "Symbol referenced in inline ASM not found");
+   }
+
+   /*
    @Test
    public void testConstIfProblem() throws IOException, URISyntaxException {
       compileAndCompare("const-if-problem");

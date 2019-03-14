@@ -18,10 +18,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,7 +70,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitFile(KickCParser.FileContext ctx) {
-      if(program.getFileComments()==null) {
+      if(program.getFileComments() == null) {
          // Only set program file level comments for the first file.
          program.setFileComments(ensureUnusedComments(getCommentsFile(ctx)));
       }
@@ -325,7 +322,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             ConstantInteger zero = new ConstantInteger(0l);
             Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
             sequence.addStatement(stmt);
-         }  else if(type instanceof SymbolTypeArray) {
+         } else if(type instanceof SymbolTypeArray) {
             // Add an zero-array initializer
             SymbolTypeArray typeArray = (SymbolTypeArray) type;
             RValue size = typeArray.getSize();
@@ -334,14 +331,14 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             }
             Statement stmt = new StatementAssignment(lValue.getRef(), new ArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx), ensureUnusedComments(comments));
             sequence.addStatement(stmt);
-         }  else if(type instanceof SymbolTypePointer) {
+         } else if(type instanceof SymbolTypePointer) {
             // Add an zero value initializer
             SymbolTypePointer typePointer = (SymbolTypePointer) type;
             ConstantValue zero = new ConstantPointer(0l, typePointer.getElementType());
             Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
             sequence.addStatement(stmt);
          } else {
-            throw new CompileError("Default initializer not implemented for type "+type.getTypeName(), new StatementSource(ctx));
+            throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), new StatementSource(ctx));
          }
 
       }
@@ -538,7 +535,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Label doJumpLabel = getCurrentSymbols().addLabelIntermediate();
       Label endJumpLabel = getCurrentSymbols().addLabelIntermediate();
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
-      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef(), new StatementSource(ctx),comments);
+      StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef(), new StatementSource(ctx), comments);
       sequence.addStatement(beginJumpTarget);
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
@@ -694,7 +691,26 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Object visitStmtAsm(KickCParser.StmtAsmContext ctx) {
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
-      sequence.addStatement(new StatementAsm(ctx.asmLines(), new StatementSource(ctx), comments));
+
+      Map<String, SymbolVariableRef> referenced = new LinkedHashMap<>();
+      // Find all referenced symbols in the asm lines
+      KickCBaseVisitor<Void> visitor = new KickCBaseVisitor<Void>() {
+         @Override
+         public Void visitAsmExprLabel(KickCParser.AsmExprLabelContext ctxLabel) {
+            String label = ctxLabel.NAME().toString();
+            Symbol symbol = getCurrentSymbols().getSymbol(ctxLabel.NAME().getText());
+            if(symbol instanceof Variable) {
+               Variable variable = (Variable) symbol;
+               referenced.put(label, variable.getRef());
+            } else {
+               throw new CompileError("Symbol referenced in inline ASM not found " + label, new StatementSource(ctxLabel));
+            }
+            return super.visitAsmExprLabel(ctxLabel);
+         }
+      };
+      visitor.visit(ctx.asmLines());
+      StatementAsm statementAsm = new StatementAsm(ctx.asmLines(), referenced, new StatementSource(ctx), comments);
+      sequence.addStatement(statementAsm);
       return null;
    }
 
@@ -775,7 +791,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitExprAssignment(KickCParser.ExprAssignmentContext ctx) {
       Object val = visit(ctx.expr(0));
       if(!(val instanceof LValue)) {
-            throw new CompileError("Error! Illegal assignment Lvalue " + val.toString(), new StatementSource(ctx));
+         throw new CompileError("Error! Illegal assignment Lvalue " + val.toString(), new StatementSource(ctx));
       }
       LValue lValue = (LValue) val;
       if(lValue instanceof VariableRef && ((VariableRef) lValue).isIntermediate()) {
@@ -966,7 +982,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             if(hiddenToken.getChannel() == CHANNEL_WHITESPACE) {
                String text = hiddenToken.getText();
                long newlineCount = text.chars().filter(ch -> ch == '\n').count();
-               if(newlineCount > 1 && comments.size()>0) {
+               if(newlineCount > 1 && comments.size() > 0) {
                   // Create new comment block
                   commentBlocks.add(comments);
                   comments = new ArrayList<>();
@@ -978,17 +994,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
                   text = text.substring(2);
                }
                if(text.startsWith("/*")) {
-                  text = text.substring(2, text.length()-2);
+                  text = text.substring(2, text.length() - 2);
                   isBlock = true;
                }
                Comment comment = new Comment(text);
                comment.setBlock(isBlock);
                comment.setTokenIndex(hiddenToken.getTokenIndex());
-               comments.add( comment);
+               comments.add(comment);
             }
          }
       }
-      if(comments.size()>0) {
+      if(comments.size() > 0) {
          commentBlocks.add(comments);
       }
       return commentBlocks;
@@ -1004,7 +1020,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
     * @return The comments if they are unused. An empty comment if they had already been used.
     */
    private List<Comment> ensureUnusedComments(List<Comment> candidate) {
-      if(candidate.size()==0) {
+      if(candidate.size() == 0) {
          return candidate;
       }
       int tokenIndex = candidate.get(0).getTokenIndex();
@@ -1027,7 +1043,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
     */
    private List<Comment> getCommentsFile(ParserRuleContext ctx) {
       List<List<Comment>> commentBlocks = getCommentBlocks(ctx);
-      if(commentBlocks.size()==0) {
+      if(commentBlocks.size() == 0) {
          return new ArrayList<>();
       }
       return commentBlocks.get(0);
@@ -1042,7 +1058,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
     */
    private List<Comment> getCommentsSymbol(ParserRuleContext ctx) {
       List<List<Comment>> commentBlocks = getCommentBlocks(ctx);
-      if(commentBlocks.size()==0) {
+      if(commentBlocks.size() == 0) {
          return new ArrayList<>();
       }
       return commentBlocks.get(commentBlocks.size() - 1);

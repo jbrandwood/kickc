@@ -202,6 +202,27 @@ public abstract class ProgramValue {
 
    }
 
+   /** A variable/constant referenced inside inline ASM. */
+   public static class AsmReferenced extends ProgramValue {
+      private StatementAsm statementAsm;
+      private String label;
+
+      public AsmReferenced(StatementAsm statementAsm, String label) {
+         this.statementAsm = statementAsm;
+         this.label = label;
+      }
+
+      @Override
+      public RValue get() {
+         return statementAsm.getReferenced().get(label);
+      }
+
+      @Override
+      public void set(RValue value) {
+         statementAsm.getReferenced().put(label, (SymbolVariableRef) value);
+      }
+   }
+
    /** Location inside inline kickasm code. */
    public static class KickAsmLocation extends ProgramValue {
 
@@ -614,5 +635,6 @@ public abstract class ProgramValue {
          this.rValue = value;
       }
    }
+
 
 }

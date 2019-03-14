@@ -9,10 +9,14 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.parser.KickCBaseVisitor;
+import dk.camelot64.kickc.parser.KickCParser;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * Capable of iterating the different structures of a Program (graph, block, statement, symboltable, symbol).
@@ -134,7 +138,11 @@ public class ProgramValueIterator {
             execute(new ProgramValue.KickAsmCycles(statementKickAsm), handler, statement, statementsIt, block);
          }
       } else if(statement instanceof StatementAsm) {
-
+         StatementAsm statementAsm = (StatementAsm) statement;
+         Map<String, SymbolVariableRef> referenced = statementAsm.getReferenced();
+         for(String label : referenced.keySet()) {
+            execute(new ProgramValue.AsmReferenced(statementAsm, label), handler, statement, statementsIt, block);
+         }
       }
    }
 

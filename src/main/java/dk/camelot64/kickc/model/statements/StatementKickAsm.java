@@ -3,7 +3,9 @@ package dk.camelot64.kickc.model.statements;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Inline KickAssembler code */
@@ -19,17 +21,22 @@ public class StatementKickAsm extends StatementBase {
    /** The number of cycles used by the generated kick-assembler code. */
    private RValue cycles;
 
+   /** Variables/constants used by the kickasm code. */
+   private List<SymbolVariableRef> uses;
+
    public StatementKickAsm(String kickAsmCode, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
       this.kickAsmCode = kickAsmCode;
+      this.uses = new ArrayList<>();
    }
 
-   public StatementKickAsm(String kickAsmCode, RValue location, RValue bytes, RValue cycles, StatementSource source, List<Comment> comments) {
+   public StatementKickAsm(String kickAsmCode, RValue location, RValue bytes, RValue cycles, List<SymbolVariableRef> uses, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
       this.kickAsmCode = kickAsmCode;
       this.location = location;
       this.bytes = bytes;
       this.cycles = cycles;
+      this.uses = uses;
    }
 
    public RValue getLocation() {
@@ -40,15 +47,27 @@ public class StatementKickAsm extends StatementBase {
       this.location = location;
    }
 
+   public List<SymbolVariableRef> getUses() {
+      return uses;
+   }
+
+   public void setUses(List<SymbolVariableRef> uses) {
+      this.uses = uses;
+   }
+
    @Override
    public String toString(Program program, boolean aliveInfo) {
       StringBuilder txt = new StringBuilder();
-      txt.append("kickasm");
+      txt.append("kickasm(");
       if(location!=null) {
-         txt.append("(location ");
+         txt.append("location ");
          txt.append(location.toString(program));
-         txt.append(")");
       }
+      for(SymbolVariableRef use : uses) {
+         txt.append(" uses ");
+         txt.append(use.getFullName());
+      }
+      txt.append(")");
       txt.append(" {{ ");
       txt.append(kickAsmCode);
       txt.append(" }}");
@@ -73,5 +92,9 @@ public class StatementKickAsm extends StatementBase {
 
    public RValue getCycles() {
       return cycles;
+   }
+
+   public void addUses(SymbolVariableRef symbolVariableRef) {
+      uses.add(symbolVariableRef);
    }
 }

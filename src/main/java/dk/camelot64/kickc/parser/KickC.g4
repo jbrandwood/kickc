@@ -45,6 +45,7 @@ kasmDirectives
 
 kasmDirective
     : 'resource' STRING #kasmDirectiveResource
+    | 'uses' NAME #kasmDirectiveUses
     | 'clobber' NAME #kasmDirectiveClobber
     | 'param' NAME ':' expr #kasmDirectiveTransfer
     | 'bytes' expr #kasmDirectiveBytes

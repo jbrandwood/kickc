@@ -182,6 +182,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
                   statementKickAsm.setBytes(((KasmDirectiveBytes) kasmDirective).getBytes());
                } else if(kasmDirective instanceof KasmDirectiveCycles) {
                   statementKickAsm.setCycles(((KasmDirectiveCycles) kasmDirective).getCycles());
+               } else if(kasmDirective instanceof KasmDirectiveUses) {
+                  statementKickAsm.addUses(((KasmDirectiveUses) kasmDirective).getUses());
                }
             }
          }
@@ -268,6 +270,41 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       public RValue getCycles() {
          return cycles;
       }
+   }
+
+   /** KickAssembler directive specifying a constant used by the kickasm code. */
+   public static class KasmDirectiveUses implements KasmDirective {
+      /** constant/variable used by the KickAssembler-code. */
+      private SymbolVariableRef uses;
+
+      public SymbolVariableRef getUses() {
+         return uses;
+      }
+
+      public KasmDirectiveUses(SymbolVariableRef uses) {
+         this.uses = uses;
+      }
+
+      public void setUses(SymbolVariableRef uses) {
+         this.uses = uses;
+      }
+
+   }
+
+   @Override
+   public Object visitKasmDirectiveUses(KickCParser.KasmDirectiveUsesContext ctx) {
+      String varName = ctx.NAME().getText();
+      SymbolVariableRef variableRef;
+      Symbol symbol = getCurrentSymbols().getSymbol(varName);
+      if(symbol instanceof Variable) {
+         //Found an existing variable
+         Variable variable = (Variable) symbol;
+         variableRef = variable.getRef();
+      } else {
+         // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
+         variableRef = new ForwardVariableRef(varName);
+      }
+      return new KasmDirectiveUses(variableRef);
    }
 
    @Override

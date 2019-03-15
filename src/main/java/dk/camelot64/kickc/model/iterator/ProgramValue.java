@@ -636,5 +636,26 @@ public abstract class ProgramValue {
       }
    }
 
+   /** A variable used by inline kickasm. */
+   public static class KickAsmUses extends ProgramValue {
+      private StatementKickAsm statementKickAsm;
+      private int idx;
 
+      public KickAsmUses(StatementKickAsm statementKickAsm, int idx) {
+         this.statementKickAsm = statementKickAsm;
+         this.idx = idx;
+      }
+
+      @Override
+      public RValue get() {
+         return statementKickAsm.getUses().get(idx);
+      }
+
+      @Override
+      public void set(RValue value) {
+         statementKickAsm.getUses().set(idx, (SymbolVariableRef) value);
+
+      }
+
+   }
 }

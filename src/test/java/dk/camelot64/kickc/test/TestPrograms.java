@@ -87,6 +87,12 @@ public class TestPrograms {
    */
 
 
+
+   @Test
+   public void testInlineKasmRefout() throws IOException, URISyntaxException {
+      compileAndCompare("inline-kasm-refout");
+   }
+
    @Test
    public void testInlineKasmLoop() throws IOException, URISyntaxException {
       compileAndCompare("inline-kasm-loop");

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -77,6 +77,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitKasmDirectiveResource(KickCParser.KasmDirectiveResourceContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code kasmDirectiveUses}
+	 * labeled alternative in {@link KickCParser#kasmDirective}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKasmDirectiveUses(KickCParser.KasmDirectiveUsesContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code kasmDirectiveClobber}
 	 * labeled alternative in {@link KickCParser#kasmDirective}.

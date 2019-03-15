@@ -1,15 +1,17 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
+  (byte[]) table#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @1
   (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte*~) main::$0 ← (byte*) main::SCREEN#0 + (word/signed word/dword/signed dword) $3e8
-  *((byte*~) main::$0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  kickasm() {{ lda #0
-        .for (var i = 0; i < 1000; i++) {
-            sta SCREEN+i
-        }
+  kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0
+        !:
+        lda table,x
+        sta SCREEN+1,x
+        inx
+        cpx #4
+        bne !-
      }}
   to:main::@return
 main::@return: scope:[main]  from main
@@ -23,23 +25,24 @@ main::@return: scope:[main]  from main
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(const string) $0 = (string) "cml!"
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$0
 (label) main::@return
 (byte*) main::SCREEN
 (byte*) main::SCREEN#0
+(byte[]) table
+(byte[]) table#0
 
 Culled Empty Block (label) @2
 Successful SSA optimization Pass2CullEmptyBlocks
+Constant (const byte[]) table#0 = $0
 Constant (const byte*) main::SCREEN#0 = ((byte*))$400
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::$0 = main::SCREEN#0+$3e8
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$0 = (const byte*) main::SCREEN#0+(word/signed word/dword/signed dword) $3e8
+Constant inlined $0 = (const byte[]) table#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -64,28 +67,31 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @1
   [3] phi()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN#0+(word/signed word/dword/signed dword) $3e8) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  kickasm() {{ lda #0
-        .for (var i = 0; i < 1000; i++) {
-            sta SCREEN+i
-        }
+  kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0
+        !:
+        lda table,x
+        sta SCREEN+1,x
+        inx
+        cpx #4
+        bne !-
      }}
   to:main::@return
 main::@return: scope:[main]  from main
-  [6] return 
+  [5] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*) main::SCREEN
+(byte[]) table
 
 Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
 //SEG0 File Comments
-// Example of inline kickasm in a function
+// Illustrates how inline kickassembler can reference data from the outside program
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
@@ -108,35 +114,35 @@ bend:
 //SEG9 main
 main: {
     .label SCREEN = $400
-  //SEG10 [4] *((const byte*) main::SCREEN#0+(word/signed word/dword/signed dword) $3e8) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SCREEN+$3e8
-  //SEG11 kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
-    lda #0
-        .for (var i = 0; i < 1000; i++) {
-            sta SCREEN+i
-        }
+  //SEG10 kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
+    ldx #0
+        !:
+        lda table,x
+        sta SCREEN+1,x
+        inx
+        cpx #4
+        bne !-
     
     jmp breturn
-  //SEG12 main::@return
+  //SEG11 main::@return
   breturn:
-  //SEG13 [6] return 
+  //SEG12 [5] return 
     rts
 }
+  table: .text "cml!"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN#0+(word/signed word/dword/signed dword) $3e8) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 283 combination 
-Uplifting [] best 283 combination 
+Uplifting [main] best 277 combination 
+Uplifting [] best 277 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
-// Example of inline kickasm in a function
+// Illustrates how inline kickassembler can reference data from the outside program
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
@@ -159,21 +165,22 @@ bend:
 //SEG9 main
 main: {
     .label SCREEN = $400
-  //SEG10 [4] *((const byte*) main::SCREEN#0+(word/signed word/dword/signed dword) $3e8) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SCREEN+$3e8
-  //SEG11 kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
-    lda #0
-        .for (var i = 0; i < 1000; i++) {
-            sta SCREEN+i
-        }
+  //SEG10 kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
+    ldx #0
+        !:
+        lda table,x
+        sta SCREEN+1,x
+        inx
+        cpx #4
+        bne !-
     
     jmp breturn
-  //SEG12 main::@return
+  //SEG11 main::@return
   breturn:
-  //SEG13 [6] return 
+  //SEG12 [5] return 
     rts
 }
+  table: .text "cml!"
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
@@ -201,14 +208,16 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (byte*) main::SCREEN
 (const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(byte[]) table
+(const byte[]) table#0 table = (string) "cml!"
 
 
 
 FINAL ASSEMBLER
-Score: 268
+Score: 262
 
 //SEG0 File Comments
-// Example of inline kickasm in a function
+// Illustrates how inline kickassembler can reference data from the outside program
 //SEG1 Basic Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -223,17 +232,18 @@ Score: 268
 //SEG9 main
 main: {
     .label SCREEN = $400
-  //SEG10 [4] *((const byte*) main::SCREEN#0+(word/signed word/dword/signed dword) $3e8) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SCREEN+$3e8
-  //SEG11 kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
-    lda #0
-        .for (var i = 0; i < 1000; i++) {
-            sta SCREEN+i
-        }
+  //SEG10 kickasm( uses main::SCREEN#0 uses table#0) {{ ldx #0         !:         lda table,x         sta SCREEN+1,x         inx         cpx #4         bne !-      }}
+    ldx #0
+        !:
+        lda table,x
+        sta SCREEN+1,x
+        inx
+        cpx #4
+        bne !-
     
-  //SEG12 main::@return
-  //SEG13 [6] return 
+  //SEG11 main::@return
+  //SEG12 [5] return 
     rts
 }
+  table: .text "cml!"
 

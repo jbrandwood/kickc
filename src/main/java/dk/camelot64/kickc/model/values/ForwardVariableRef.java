@@ -7,12 +7,13 @@ import dk.camelot64.kickc.model.Program;
  * Resolved in {@link dk.camelot64.kickc.passes.Pass1ResolveForwardReferences}.
  * After this point they are never present in the program.
  * */
-public class ForwardVariableRef implements LValue {
+public class ForwardVariableRef extends SymbolVariableRef implements LValue {
 
    /** The referenced unresolved variable name. */
    private String name;
 
    public ForwardVariableRef(String name) {
+      super(name);
       this.name = name;
    }
 

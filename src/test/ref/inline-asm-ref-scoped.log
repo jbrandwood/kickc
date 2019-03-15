@@ -1,0 +1,263 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  asm { lda#'c' stasub.ll+1  }
+  call sub 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+sub: scope:[sub]  from main
+  asm { ll: lda#0 sta$400  }
+  to:sub::@return
+sub::@return: scope:[sub]  from sub
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@return
+(void()) sub()
+(label) sub::@return
+
+Culled Empty Block (label) main::@1
+Culled Empty Block (label) @3
+Successful SSA optimization Pass2CullEmptyBlocks
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to sub:5 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@2
+@2: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @2
+  [3] phi()
+main: scope:[main]  from @2
+  asm { lda#'c' stasub.ll+1  }
+  [5] call sub 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+sub: scope:[sub]  from main
+  asm { ll: lda#0 sta$400  }
+  to:sub::@return
+sub::@return: scope:[sub]  from sub
+  [8] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(void()) sub()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests that references to labels in other scopes is possible from inline ASM
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG5 @2
+b2:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 asm { lda#'c' stasub.ll+1  }
+    lda #'c'
+    sta sub.ll+1
+  //SEG11 [5] call sub 
+    jsr sub
+    jmp breturn
+  //SEG12 main::@return
+  breturn:
+  //SEG13 [6] return 
+    rts
+}
+//SEG14 sub
+sub: {
+  //SEG15 asm { ll: lda#0 sta$400  }
+  ll:
+    lda #0
+    sta $400
+    jmp breturn
+  //SEG16 sub::@return
+  breturn:
+  //SEG17 [8] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement asm { lda#'c' stasub.ll+1  } always clobbers reg byte a 
+Statement asm { ll: lda#0 sta$400  } always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [sub] 
+Uplift Scope [] 
+
+Uplifting [main] best 48 combination 
+Uplifting [sub] best 48 combination 
+Uplifting [] best 48 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests that references to labels in other scopes is possible from inline ASM
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG5 @2
+b2:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 asm { lda#'c' stasub.ll+1  }
+    lda #'c'
+    sta sub.ll+1
+  //SEG11 [5] call sub 
+    jsr sub
+    jmp breturn
+  //SEG12 main::@return
+  breturn:
+  //SEG13 [6] return 
+    rts
+}
+//SEG14 sub
+sub: {
+  //SEG15 asm { ll: lda#0 sta$400  }
+  ll:
+    lda #0
+    sta $400
+    jmp breturn
+  //SEG16 sub::@return
+  breturn:
+  //SEG17 [8] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b2_from_bbegin:
+Removing instruction b2:
+Removing instruction bend_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(void()) sub()
+(label) sub::@return
+
+
+
+FINAL ASSEMBLER
+Score: 30
+
+//SEG0 File Comments
+// Tests that references to labels in other scopes is possible from inline ASM
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG5 @2
+//SEG6 [2] call main 
+//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 asm { lda#'c' stasub.ll+1  }
+    lda #'c'
+    sta sub.ll+1
+  //SEG11 [5] call sub 
+    jsr sub
+  //SEG12 main::@return
+  //SEG13 [6] return 
+    rts
+}
+//SEG14 sub
+sub: {
+  //SEG15 asm { ll: lda#0 sta$400  }
+  ll:
+    lda #0
+    sta $400
+  //SEG16 sub::@return
+  //SEG17 [8] return 
+    rts
+}
+

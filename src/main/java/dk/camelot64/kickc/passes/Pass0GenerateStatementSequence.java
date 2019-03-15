@@ -14,6 +14,7 @@ import dk.camelot64.kickc.parser.KickCParser;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import sun.reflect.generics.tree.VoidDescriptor;
 
@@ -691,22 +692,38 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitStmtAsm(KickCParser.StmtAsmContext ctx) {
-
-      // ALl defined labels in the ASM
-      List<String> definedLabels = new ArrayList<>();
-      KickCBaseVisitor<Void> findDefinedLabels = new KickCBaseVisitor<Void>() {
-         @Override
-         public Void visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
-            String label = ctx.NAME().getText();
-            definedLabels.add(label);
-            return super.visitAsmLabelName(ctx);
-         }
-      };
-      findDefinedLabels.visit(ctx.asmLines());
-
+      // Find all defined labels in the ASM
+      List<String> definedLabels = gatAsmDefinedLabels(ctx);
       // Find all referenced symbols in the ASM
+      Map<String, SymbolVariableRef> referenced = getAsmReferencedSymbolVariables(ctx, definedLabels);
+      List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
+      StatementAsm statementAsm = new StatementAsm(ctx.asmLines(), referenced, new StatementSource(ctx), comments);
+      sequence.addStatement(statementAsm);
+      return null;
+   }
+
+   /**
+    * Find all referenced symbol variables
+    * @param ctx An ASM statement
+    * @param definedLabels All labels defined in the ASM
+    * @return All variables/constants referenced in the ASM. Some may be ForwardVariableRefs to be resolved later.
+    */
+   private Map<String, SymbolVariableRef> getAsmReferencedSymbolVariables(KickCParser.StmtAsmContext ctx, List<String> definedLabels) {
       Map<String, SymbolVariableRef> referenced = new LinkedHashMap<>();
       KickCBaseVisitor<Void> findReferenced = new KickCBaseVisitor<Void>() {
+
+         @Override
+         public Void visitAsmExprBinary(KickCParser.AsmExprBinaryContext ctx) {
+            ParseTree operator = ctx.getChild(1);
+            if(operator.getText().equals(".")) {
+               // Skip any . operator for now as it accesses data in another scope.
+               // TODO Implement checking of labels/constants in other scopes
+               return null;
+            } else {
+               return super.visitAsmExprBinary(ctx);
+            }
+         }
+
          @Override
          public Void visitAsmExprLabel(KickCParser.AsmExprLabelContext ctxLabel) {
             String label = ctxLabel.NAME().toString();
@@ -717,18 +734,34 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
                   Variable variable = (Variable) symbol;
                   referenced.put(label, variable.getRef());
                } else {
-                  throw new CompileError("Symbol referenced in inline ASM not found " + label, new StatementSource(ctxLabel));
+                  // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
+                  referenced.put(label, new ForwardVariableRef(ctxLabel.NAME().getText()));
                }
             }
             return super.visitAsmExprLabel(ctxLabel);
          }
       };
       findReferenced.visit(ctx.asmLines());
+      return referenced;
+   }
 
-      List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
-      StatementAsm statementAsm = new StatementAsm(ctx.asmLines(), referenced, new StatementSource(ctx), comments);
-      sequence.addStatement(statementAsm);
-      return null;
+   /**
+    * Find all labels defined in the ASM (not multilabels).
+    * @param ctx An ASM statement
+    * @return All labels defined in the ASM.
+    */
+   private List<String> gatAsmDefinedLabels(KickCParser.StmtAsmContext ctx) {
+      List<String> definedLabels = new ArrayList<>();
+      KickCBaseVisitor<Void> findDefinedLabels = new KickCBaseVisitor<Void>() {
+         @Override
+         public Void visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
+            String label = ctx.NAME().getText();
+            definedLabels.add(label);
+            return super.visitAsmLabelName(ctx);
+         }
+      };
+      findDefinedLabels.visit(ctx.asmLines());
+      return definedLabels;
    }
 
    @Override

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineAsmRefScoped() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-ref-scoped");
+   }
+
+   @Test
    public void testInlineAsmRefoutLabel() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-label");
    }
@@ -61,7 +66,7 @@ public class TestPrograms {
 
    @Test
    public void testInlineAsmRefoutUndef() throws IOException, URISyntaxException {
-      assertError("inline-asm-refout-undef", "Symbol referenced in inline ASM not found");
+      assertError("inline-asm-refout-undef", "Unknown variable qwe");
    }
 
    @Test

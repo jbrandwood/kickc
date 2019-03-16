@@ -44,6 +44,18 @@ public class TestPrograms {
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
+   /*
+   @Test
+   public void testConstSignedPromotion() throws IOException, URISyntaxException {
+      compileAndCompare("const-signed-promotion");
+   }
+   */
+
+   @Test
+   public void testSignedIndexedSubtract() throws IOException, URISyntaxException {
+      compileAndCompare("signed-indexed-subtract");
+   }
+
    @Test
    public void testInlineAsmRefScoped() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-ref-scoped");

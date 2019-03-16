@@ -1,4 +1,4 @@
-eor #{c1}
+eor {c1},y
 beq !+
 lda #1
 !:

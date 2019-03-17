@@ -88,8 +88,8 @@ main: {
   !:
     ldy i
     lda vals,y
-    ldx j
-    ldy vals,x
+    ldy j
+    ldx vals,y
     jsr fmul8
     sta print_sbyte_at.b
     lda at_3
@@ -170,10 +170,10 @@ print_byte_at: {
     jsr print_char_at
     rts
 }
-// fmul8(signed byte register(A) a, signed byte register(Y) b)
+// fmul8(signed byte register(A) a, signed byte register(X) b)
 fmul8: {
     sta ap
-    tya
+    txa
     sta bp
     lda ap
     sta A1+1

@@ -452,8 +452,8 @@ gen_sprites: {
     lda #0
     sta i
   b1:
-    ldx i
-    ldy cml,x
+    ldy i
+    ldx cml,y
     lda spr
     sta gen_chargen_sprite.sprite
     lda spr+1
@@ -476,7 +476,7 @@ gen_sprites: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
-// gen_chargen_sprite(byte register(Y) ch, byte* zeropage($a) sprite)
+// gen_chargen_sprite(byte register(X) ch, byte* zeropage($a) sprite)
 gen_chargen_sprite: {
     .label _0 = $c
     .label _1 = $c
@@ -487,7 +487,7 @@ gen_chargen_sprite: {
     .label x = 5
     .label y = 3
     .label c = 6
-    tya
+    txa
     sta _0
     lda #0
     sta _0+1

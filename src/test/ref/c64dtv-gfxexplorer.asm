@@ -1977,12 +1977,11 @@ gfx_init_vic_bitmap: {
     ldy l
     lda lines_x,y
     sta bitmap_line.x0
-    lda lines_x+1,y
-    sta bitmap_line.x1
+    ldx lines_x+1,y
     lda lines_y,y
     sta bitmap_line.y0
-    ldx l
-    ldy lines_y+1,x
+    lda lines_y+1,y
+    sta bitmap_line.y1
     jsr bitmap_line
     inc l
     lda l
@@ -1993,107 +1992,110 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zeropage(9) x0, byte zeropage($12) x1, byte zeropage($f) y0, byte register(Y) y1)
+// bitmap_line(byte zeropage(9) x0, byte register(X) x1, byte zeropage($f) y0, byte zeropage($12) y1)
 bitmap_line: {
     .label xd = 8
-    .label yd = 7
     .label x0 = 9
-    .label x1 = $12
     .label y0 = $f
-    lda x0
-    cmp x1
-    bcc b1
-    sec
-    sbc x1
-    sta xd
-    tya
-    cmp y0
+    .label y1 = $12
+    txa
+    cmp x0
     beq !+
-    bcs b2
+    bcs b1
   !:
-    tya
+    txa
     eor #$ff
     sec
-    adc y0
-    sta yd
-    cmp xd
+    adc x0
+    sta xd
+    lda y0
+    cmp y1
+    bcc b2
+    sec
+    sbc y1
+    tay
+    cpy xd
     bcc b3
-    sty bitmap_line_ydxi.y
-    ldx x1
+    lda y1
+    sta bitmap_line_ydxi.y
+    lda y0
+    sta bitmap_line_ydxi.y1
+    sty bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
   breturn:
     rts
   b3:
-    lda x1
-    sta bitmap_line_xdyi.x
-    sty bitmap_line_xdyi.y
+    stx bitmap_line_xdyi.x
+    lda y1
+    sta bitmap_line_xdyi.y
+    sty bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     jmp breturn
   b2:
-    tya
+    lda y1
     sec
     sbc y0
-    sta yd
-    cmp xd
+    tay
+    cpy xd
     bcc b6
     lda y0
     sta bitmap_line_ydxd.y
     ldx x0
-    sty bitmap_line_ydxd.y1
+    lda y1
+    sta bitmap_line_ydxd.y1
+    sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     jmp breturn
   b6:
-    lda x1
-    sta bitmap_line_xdyd.x
-    sty bitmap_line_xdyd.y
-    lda x0
-    sta bitmap_line_xdyd.x1
+    stx bitmap_line_xdyd.x
+    lda y1
+    sta bitmap_line_xdyd.y
+    sty bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     jmp breturn
   b1:
-    lda x1
+    txa
     sec
     sbc x0
     sta xd
-    tya
-    cmp y0
-    beq !+
-    bcs b9
-  !:
-    tya
-    eor #$ff
+    lda y0
+    cmp y1
+    bcc b9
     sec
-    adc y0
-    sta yd
-    cmp xd
+    sbc y1
+    tay
+    cpy xd
     bcc b10
-    sty bitmap_line_ydxd.y
-    ldx x1
+    lda y1
+    sta bitmap_line_ydxd.y
+    sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     jmp breturn
   b10:
     lda x0
     sta bitmap_line_xdyd.x
+    stx bitmap_line_xdyd.x1
+    sty bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     jmp breturn
   b9:
-    tya
+    lda y1
     sec
     sbc y0
-    sta yd
-    cmp xd
+    tay
+    cpy xd
     bcc b13
     lda y0
     sta bitmap_line_ydxi.y
     ldx x0
-    sty bitmap_line_ydxi.y1
+    sty bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
     jmp breturn
   b13:
     lda x0
     sta bitmap_line_xdyi.x
-    lda x1
-    sta bitmap_line_xdyi.x1
+    stx bitmap_line_xdyi.x1
+    sty bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     jmp breturn
 }
@@ -2158,10 +2160,10 @@ bitmap_plot: {
     sta (_0),y
     rts
 }
-// bitmap_line_ydxi(byte zeropage($e) y, byte register(X) x, byte zeropage($f) y1, byte zeropage(7) yd, byte zeropage(8) xd)
+// bitmap_line_ydxi(byte zeropage($e) y, byte register(X) x, byte zeropage($12) y1, byte zeropage(7) yd, byte zeropage(8) xd)
 bitmap_line_ydxi: {
     .label y = $e
-    .label y1 = $f
+    .label y1 = $12
     .label yd = 7
     .label xd = 8
     .label e = 9
@@ -2192,14 +2194,14 @@ bitmap_line_ydxi: {
     bne b1
     rts
 }
-// bitmap_line_xdyd(byte zeropage($e) x, byte zeropage($f) y, byte zeropage($12) x1, byte zeropage(8) xd, byte zeropage(7) yd)
+// bitmap_line_xdyd(byte zeropage($e) x, byte zeropage($f) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyd: {
     .label x = $e
     .label y = $f
-    .label x1 = $12
+    .label x1 = 9
     .label xd = 8
     .label yd = 7
-    .label e = 9
+    .label e = $12
     lda yd
     lsr
     sta e

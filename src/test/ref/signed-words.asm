@@ -65,13 +65,13 @@ anim: {
     eor #$ff
     adc #0
     sta xvel+1
-    lda yvel_init
     sec
-    sbc #<$a
+    lda yvel_init
+    sbc #$a
     sta yvel_init
-    lda yvel_init+1
-    sbc #>$a
-    sta yvel_init+1
+    bcs !+
+    dec yvel_init+1
+  !:
     lda yvel_init
     cmp #<-$c8
     lda yvel_init+1

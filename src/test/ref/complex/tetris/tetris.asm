@@ -1172,9 +1172,8 @@ keyboard_event_get: {
     cmp #0
     beq b1
     dec keyboard_events_size
-    ldx keyboard_events_size
-    lda keyboard_events,x
-    tax
+    ldy keyboard_events_size
+    ldx keyboard_events,y
     jmp breturn
   b1:
     ldx #$ff

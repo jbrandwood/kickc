@@ -36,7 +36,7 @@ isSet: {
     .label b = 2
     txa
     and #8
-    cmp #0
+    eor #0
     beq !+
     lda #1
   !:

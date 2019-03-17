@@ -190,13 +190,13 @@ main: {
   //SEG17 main::@1
   b1:
   //SEG18 [6] (signed word) main::w#1 ← (signed word) main::w#2 - (byte/signed byte/word/signed word/dword/signed dword) $c -- vwsz1=vwsz1_minus_vbuc1 
-    lda w
     sec
-    sbc #<$c
+    lda w
+    sbc #$c
     sta w
-    lda w+1
-    sbc #>$c
-    sta w+1
+    bcs !+
+    dec w+1
+  !:
   //SEG19 [7] (byte~) main::$1 ← < (signed word) main::w#1 -- vbuz1=_lo_vwsz2 
     lda w
     sta _1
@@ -231,8 +231,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 28.6: zp ZP_WORD:2 [ main::w#2 main::w#1 ] 24.75: zp ZP_BYTE:4 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:5 [ main::$1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 553 combination zp ZP_WORD:2 [ main::w#2 main::w#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] 
-Uplifting [] best 553 combination 
+Uplifting [main] best 548 combination zp ZP_WORD:2 [ main::w#2 main::w#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] 
+Uplifting [] best 548 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -280,13 +280,13 @@ main: {
   //SEG17 main::@1
   b1:
   //SEG18 [6] (signed word) main::w#1 ← (signed word) main::w#2 - (byte/signed byte/word/signed word/dword/signed dword) $c -- vwsz1=vwsz1_minus_vbuc1 
-    lda w
     sec
-    sbc #<$c
+    lda w
+    sbc #$c
     sta w
-    lda w+1
-    sbc #>$c
-    sta w+1
+    bcs !+
+    dec w+1
+  !:
   //SEG19 [7] (byte~) main::$1 ← < (signed word) main::w#1 -- vbuaa=_lo_vwsz1 
     lda w
   //SEG20 [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
@@ -354,7 +354,7 @@ reg byte a [ main::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 431
+Score: 426
 
 //SEG0 File Comments
 // Tests that mixing types can synthesize a fragment correctly
@@ -387,13 +387,13 @@ main: {
   //SEG17 main::@1
   b1:
   //SEG18 [6] (signed word) main::w#1 ← (signed word) main::w#2 - (byte/signed byte/word/signed word/dword/signed dword) $c -- vwsz1=vwsz1_minus_vbuc1 
-    lda w
     sec
-    sbc #<$c
+    lda w
+    sbc #$c
     sta w
-    lda w+1
-    sbc #>$c
-    sta w+1
+    bcs !+
+    dec w+1
+  !:
   //SEG19 [7] (byte~) main::$1 ← < (signed word) main::w#1 -- vbuaa=_lo_vwsz1 
     lda w
   //SEG20 [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 

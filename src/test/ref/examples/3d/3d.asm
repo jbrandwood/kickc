@@ -105,12 +105,11 @@ anim: {
   b13:
     inc BORDERCOL
     ldy i
-    lda xs,y
-    sta rotate_matrix.x
-    ldx i
-    ldy ys,x
-    lda zs,x
-    tax
+    ldx xs,y
+    lda ys,y
+    sta rotate_matrix.y
+    lda zs,y
+    sta rotate_matrix.z
     jsr rotate_matrix
     //if(*xr<xmin) xmin = *xr;
     //if(*xr>xmax) xmax = *xr;
@@ -270,9 +269,8 @@ debug_print: {
     lda #>at_line
     adc #0
     sta print_sbyte_at.at+1
-    ldx i
-    lda xrs,x
-    tax
+    ldy i
+    ldx xrs,y
     jsr print_sbyte_at
     lda c
     clc
@@ -281,9 +279,8 @@ debug_print: {
     lda #>at_line+$28*1
     adc #0
     sta print_sbyte_at.at+1
-    ldx i
-    lda yrs,x
-    tax
+    ldy i
+    ldx yrs,y
     jsr print_sbyte_at
     lda c
     clc
@@ -292,9 +289,8 @@ debug_print: {
     lda #>at_line+$28*2
     adc #0
     sta print_sbyte_at.at+1
-    ldx i
-    lda zrs,x
-    tax
+    ldy i
+    ldx zrs,y
     jsr print_sbyte_at
     lda c
     clc
@@ -303,9 +299,8 @@ debug_print: {
     lda #>at_line+$28*3
     adc #0
     sta print_sbyte_at.at+1
-    ldx i
-    lda pps,x
-    tax
+    ldy i
+    ldx pps,y
     jsr print_sbyte_at
     lda c
     clc
@@ -314,9 +309,8 @@ debug_print: {
     lda #>at_line+$28*4
     adc #0
     sta print_sbyte_at.at+1
-    ldx i
-    lda xps,x
-    tax
+    ldy i
+    ldx xps,y
     jsr print_sbyte_at
     lda c
     clc
@@ -325,9 +319,8 @@ debug_print: {
     lda #>at_line+$28*5
     adc #0
     sta print_sbyte_at.at+1
-    ldx i
-    lda yps,x
-    tax
+    ldy i
+    ldx yps,y
     jsr print_sbyte_at
     lda #4
     clc
@@ -407,14 +400,15 @@ print_byte_at: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte zeropage(5) x, signed byte register(Y) y, signed byte register(X) z)
+// rotate_matrix(signed byte register(X) x, signed byte zeropage(5) y, signed byte zeropage(8) z)
 rotate_matrix: {
-    .label x = 5
-    lda x
-    sta xr
-    tya
-    sta yr
+    .label y = 5
+    .label z = 8
     txa
+    sta xr
+    lda y
+    sta yr
+    lda z
     sta zr
     tax
   C1:
@@ -849,9 +843,8 @@ debug_print_init: {
     lda #>at_line
     adc #0
     sta print_sbyte_at.at+1
-    ldx i
-    lda xs,x
-    tax
+    ldy i
+    ldx xs,y
     jsr print_sbyte_at
     lda c
     clc
@@ -860,9 +853,8 @@ debug_print_init: {
     lda #>at_line+$28*1
     adc #0
     sta print_sbyte_at.at+1
-    ldx i
-    lda ys,x
-    tax
+    ldy i
+    ldx ys,y
     jsr print_sbyte_at
     lda c
     clc
@@ -871,9 +863,8 @@ debug_print_init: {
     lda #>at_line+$28*2
     adc #0
     sta print_sbyte_at.at+1
-    ldx i
-    lda zs,x
-    tax
+    ldy i
+    ldx zs,y
     jsr print_sbyte_at
     ldx #0
   b2:

@@ -222,13 +222,13 @@ wrap_y: {
     sta y+1
     jmp b4
   b2:
-    lda y
     sec
-    sbc #<$c8
+    lda y
+    sbc #$c8
     sta y
-    lda y+1
-    sbc #>$c8
-    sta y+1
+    bcs !+
+    dec y+1
+  !:
     jmp b1
 }
 // Generate signed word sinus table - with values in the range min-max.

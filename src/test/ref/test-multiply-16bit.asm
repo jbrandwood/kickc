@@ -128,9 +128,9 @@ mul16s_compare: {
 // Print a newline
 print_ln: {
   b1:
-    lda print_line_cursor
+    lda #$28
     clc
-    adc #$28
+    adc print_line_cursor
     sta print_line_cursor
     bcc !+
     inc print_line_cursor+1
@@ -1019,9 +1019,9 @@ mulf_init: {
     clc
     adc sqr
     sta sqr
-    lda #0
-    adc sqr+1
-    sta sqr+1
+    bcc !+
+    inc sqr+1
+  !:
     inc sqr1_lo
     bne !+
     inc sqr1_lo+1

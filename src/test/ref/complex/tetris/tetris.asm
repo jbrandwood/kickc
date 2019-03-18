@@ -446,9 +446,9 @@ render_next: {
     inx
     cpx #4
     bne b4
-    lda screen_next_area
+    lda #$24
     clc
-    adc #$24
+    adc screen_next_area
     sta screen_next_area
     bcc !+
     inc screen_next_area+1
@@ -674,9 +674,9 @@ play_collision: {
     clc
     adc piece_gfx
     sta piece_gfx
-    lda #0
-    adc piece_gfx+1
-    sta piece_gfx+1
+    bcc !+
+    inc piece_gfx+1
+  !:
     asl ypos2
     lda #0
     sta l
@@ -945,9 +945,9 @@ play_update_score: {
     clc
     adc lines_bcd
     sta lines_bcd
-    lda #0
-    adc lines_bcd+1
-    sta lines_bcd+1
+    bcc !+
+    inc lines_bcd+1
+  !:
     lda score_bcd
     clc
     adc add_bcd
@@ -1341,9 +1341,9 @@ play_init: {
     sta playfield_lines+1,y
     lda idx
     sta playfield_lines_idx,x
-    lda pli
+    lda #PLAYFIELD_COLS
     clc
-    adc #PLAYFIELD_COLS
+    adc pli
     sta pli
     bcc !+
     inc pli+1
@@ -1496,16 +1496,16 @@ render_init: {
     sta screen_lines_2,y
     lda li_2+1
     sta screen_lines_2+1,y
-    lda li_1
+    lda #$28
     clc
-    adc #$28
+    adc li_1
     sta li_1
     bcc !+
     inc li_1+1
   !:
-    lda li_2
+    lda #$28
     clc
-    adc #$28
+    adc li_2
     sta li_2
     bcc !+
     inc li_2+1

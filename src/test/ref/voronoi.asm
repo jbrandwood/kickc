@@ -93,9 +93,9 @@ render: {
     lda x
     cmp #$28
     bne b2
-    lda colline
+    lda #$28
     clc
-    adc #$28
+    adc colline
     sta colline
     bcc !+
     inc colline+1

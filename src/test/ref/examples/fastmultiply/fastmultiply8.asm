@@ -40,9 +40,9 @@ main: {
     lda at+1
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
-    lda at
+    lda #4
     clc
-    adc #4
+    adc at
     sta at
     bcc !+
     inc at+1
@@ -57,9 +57,9 @@ main: {
     lda #>$400
     sta at_line+1
   b2:
-    lda at
+    lda #$28
     clc
-    adc #$28
+    adc at
     sta at
     bcc !+
     inc at+1
@@ -79,9 +79,9 @@ main: {
     lda #0
     sta j
   b3:
-    lda at_3
+    lda #4
     clc
-    adc #4
+    adc at_3
     sta at_3
     bcc !+
     inc at_3+1
@@ -214,9 +214,9 @@ init_screen: {
     sta (COLS),y
     ldy #3
     sta (COLS),y
-    lda COLS
+    lda #$28
     clc
-    adc #$28
+    adc COLS
     sta COLS
     bcc !+
     inc COLS+1

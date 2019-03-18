@@ -240,9 +240,9 @@ init: {
     clc
     adc xp
     sta xp
-    lda #0
-    adc xp+1
-    sta xp+1
+    bcc !+
+    inc xp+1
+  !:
     inx
     cpx #PLEX_COUNT-1+1
     bne b1

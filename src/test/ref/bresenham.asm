@@ -35,9 +35,9 @@ main: {
     cpx #xd
     bcc b2
     inc y
-    lda cursor
+    lda #$28
     clc
-    adc #$28
+    adc cursor
     sta cursor
     bcc !+
     inc cursor+1

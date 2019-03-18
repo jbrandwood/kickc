@@ -883,9 +883,9 @@ debug_print_init: {
     clc
     adc _60
     sta _60
-    lda #0
-    adc _60+1
-    sta _60+1
+    bcc !+
+    inc _60+1
+  !:
     lda col
     ldy #0
     sta (_60),y
@@ -900,10 +900,11 @@ debug_print_init: {
     clc
     adc _64
     sta _64
-    tya
-    adc _64+1
-    sta _64+1
+    bcc !+
+    inc _64+1
+  !:
     lda col
+    ldy #0
     sta (_64),y
     lda c
     clc
@@ -916,10 +917,11 @@ debug_print_init: {
     clc
     adc _68
     sta _68
-    tya
-    adc _68+1
-    sta _68+1
+    bcc !+
+    inc _68+1
+  !:
     lda col
+    ldy #0
     sta (_68),y
     lda c
     clc
@@ -932,10 +934,11 @@ debug_print_init: {
     clc
     adc _72
     sta _72
-    tya
-    adc _72+1
-    sta _72+1
+    bcc !+
+    inc _72+1
+  !:
     lda col
+    ldy #0
     sta (_72),y
     lda c
     clc
@@ -948,10 +951,11 @@ debug_print_init: {
     clc
     adc _76
     sta _76
-    tya
-    adc _76+1
-    sta _76+1
+    bcc !+
+    inc _76+1
+  !:
     lda col
+    ldy #0
     sta (_76),y
     lda c
     clc
@@ -964,10 +968,11 @@ debug_print_init: {
     clc
     adc _80
     sta _80
-    tya
-    adc _80+1
-    sta _80+1
+    bcc !+
+    inc _80+1
+  !:
     lda col
+    ldy #0
     sta (_80),y
     lda c
     clc
@@ -980,10 +985,11 @@ debug_print_init: {
     clc
     adc _84
     sta _84
-    tya
-    adc _84+1
-    sta _84+1
+    bcc !+
+    inc _84+1
+  !:
     lda col
+    ldy #0
     sta (_84),y
     lda c
     clc
@@ -996,10 +1002,11 @@ debug_print_init: {
     clc
     adc _88
     sta _88
-    tya
-    adc _88+1
-    sta _88+1
+    bcc !+
+    inc _88+1
+  !:
     lda col
+    ldy #0
     sta (_88),y
     lda c
     clc
@@ -1012,10 +1019,11 @@ debug_print_init: {
     clc
     adc _92
     sta _92
-    tya
-    adc _92+1
-    sta _92+1
+    bcc !+
+    inc _92+1
+  !:
     lda col
+    ldy #0
     sta (_92),y
     inx
     cpx #4

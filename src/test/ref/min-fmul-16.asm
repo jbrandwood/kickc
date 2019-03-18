@@ -256,9 +256,9 @@ mulf_init: {
     clc
     adc sqr
     sta sqr
-    lda #0
-    adc sqr+1
-    sta sqr+1
+    bcc !+
+    inc sqr+1
+  !:
     inc sqr1_lo
     bne !+
     inc sqr1_lo+1

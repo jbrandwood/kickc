@@ -118,9 +118,9 @@ main: {
     iny
     cpy #8
     bne b7
-    lda screen
+    lda #$28
     clc
-    adc #$28
+    adc screen
     sta screen
     bcc !+
     inc screen+1
@@ -129,9 +129,9 @@ main: {
     lda row
     cmp #8
     bne b6
-    lda screen
+    lda #$28
     clc
-    adc #$28
+    adc screen
     sta screen
     bcc !+
     inc screen+1

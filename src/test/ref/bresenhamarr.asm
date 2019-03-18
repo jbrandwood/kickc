@@ -44,9 +44,9 @@ main: {
     clc
     adc idx
     sta idx
-    lda #0
-    adc idx+1
-    sta idx+1
+    bcc !+
+    inc idx+1
+  !:
     tya
     sec
     sbc #xd

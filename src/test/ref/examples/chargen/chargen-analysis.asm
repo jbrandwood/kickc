@@ -289,9 +289,9 @@ plot_chargen: {
     inx
     cpx #8
     bne b3
-    lda sc
+    lda #$20
     clc
-    adc #$20
+    adc sc
     sta sc
     bcc !+
     inc sc+1

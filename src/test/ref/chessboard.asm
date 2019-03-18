@@ -33,16 +33,16 @@ main: {
     txa
     eor #1
     tax
-    lda screen
+    lda #$28
     clc
-    adc #$28
+    adc screen
     sta screen
     bcc !+
     inc screen+1
   !:
-    lda colors
+    lda #$28
     clc
-    adc #$28
+    adc colors
     sta colors
     bcc !+
     inc colors+1

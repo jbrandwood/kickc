@@ -26,9 +26,9 @@ main: {
     iny
     cpy #ITEM_SIZE-1+1
     bne b2
-    lda cur_item
+    lda #ITEM_SIZE
     clc
-    adc #ITEM_SIZE
+    adc cur_item
     sta cur_item
     bcc !+
     inc cur_item+1

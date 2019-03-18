@@ -19,9 +19,9 @@ main: {
     clc
     adc xpos
     sta xpos
-    lda #0
-    adc xpos+1
-    sta xpos+1
+    bcc !+
+    inc xpos+1
+  !:
     inx
     cpx #8
     bne b1

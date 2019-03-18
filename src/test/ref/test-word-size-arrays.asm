@@ -52,9 +52,10 @@ main: {
     clc
     adc line
     sta line
-    lda #0
-    adc line+1
-    sta line+1
+    bcc !+
+    inc line+1
+  !:
+    lda line+1
     cmp #>$28*$18
     bcc b1
     bne !+

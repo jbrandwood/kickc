@@ -459,9 +459,9 @@ gen_sprites: {
     lda spr+1
     sta gen_chargen_sprite.sprite+1
     jsr gen_chargen_sprite
-    lda spr
+    lda #$40
     clc
-    adc #$40
+    adc spr
     sta spr
     bcc !+
     inc spr+1
@@ -563,9 +563,9 @@ gen_chargen_sprite: {
     lda x
     cmp #8
     bne b2
-    lda sprite
+    lda #6
     clc
-    adc #6
+    adc sprite
     sta sprite
     bcc !+
     inc sprite+1

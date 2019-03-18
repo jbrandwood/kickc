@@ -61,12 +61,12 @@ main: {
     clc
     adc line1_pos
     sta line1_pos
-    tya
-    adc line1_pos+1
-    sta line1_pos+1
-    lda cur_line
+    bcc !+
+    inc line1_pos+1
+  !:
+    lda #$28
     clc
-    adc #$28
+    adc cur_line
     sta cur_line
     bcc !+
     inc cur_line+1
@@ -98,12 +98,12 @@ main: {
     clc
     adc line2_pos
     sta line2_pos
-    tya
-    adc line2_pos+1
-    sta line2_pos+1
-    lda cur_line
+    bcc !+
+    inc line2_pos+1
+  !:
+    lda #$28
     clc
-    adc #$28
+    adc cur_line
     sta cur_line
     bcc !+
     inc cur_line+1

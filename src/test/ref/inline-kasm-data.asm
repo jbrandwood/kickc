@@ -19,18 +19,18 @@ main: {
     ldy sintab,x
     lda #'*'
     sta (screen),y
-    lda screen
+    lda #$28
     clc
-    adc #$28
+    adc screen
     sta screen
     bcc !+
     inc screen+1
   !:
     lda #1
     sta (cols),y
-    lda cols
+    lda #$28
     clc
-    adc #$28
+    adc cols
     sta cols
     bcc !+
     inc cols+1

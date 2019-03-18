@@ -21,9 +21,9 @@ main: {
     lda charset_spec_row+1,y
     sta gen_char3.spec+1
     jsr gen_char3
-    lda charset
+    lda #8
     clc
-    adc #8
+    adc charset
     sta charset
     bcc !+
     inc charset+1

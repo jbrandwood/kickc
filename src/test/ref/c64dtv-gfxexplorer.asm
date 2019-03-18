@@ -1220,9 +1220,9 @@ form_field_ptr: {
     clc
     adc return
     sta return
-    lda #0
-    adc return+1
-    sta return+1
+    bcc !+
+    inc return+1
+  !:
     rts
 }
 // Apply a form value preset to the form values
@@ -1444,9 +1444,9 @@ form_set_screen: {
     sta form_line_lo,y
     lda line+1
     sta form_line_hi,y
-    lda line
+    lda #$28
     clc
-    adc #$28
+    adc line
     sta line
     bcc !+
     inc line+1
@@ -1499,9 +1499,9 @@ print_str_lines: {
 // Print a newline
 print_ln: {
   b1:
-    lda print_line_cursor
+    lda #$28
     clc
-    adc #$28
+    adc print_line_cursor
     sta print_line_cursor
     bcc !+
     inc print_line_cursor+1

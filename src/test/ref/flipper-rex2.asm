@@ -42,9 +42,9 @@ plot: {
     iny
     cpy #$10
     bcc b2
-    lda line
+    lda #$28
     clc
-    adc #$28
+    adc line
     sta line
     bcc !+
     inc line+1

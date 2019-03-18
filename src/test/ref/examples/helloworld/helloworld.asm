@@ -16,9 +16,9 @@ print_ln: {
     lda #>$400
     sta print_line_cursor+1
   b1:
-    lda print_line_cursor
+    lda #$28
     clc
-    adc #$28
+    adc print_line_cursor
     sta print_line_cursor
     bcc !+
     inc print_line_cursor+1

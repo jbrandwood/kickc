@@ -100,9 +100,9 @@ scroll_bit: {
   b3:
     ldy #0
     sta (sc),y
-    lda sc
+    lda #$28
     clc
-    adc #$28
+    adc sc
     sta sc
     bcc !+
     inc sc+1

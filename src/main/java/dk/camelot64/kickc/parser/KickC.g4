@@ -46,7 +46,7 @@ kasmDirectives
 kasmDirective
     : 'resource' STRING #kasmDirectiveResource
     | 'uses' NAME #kasmDirectiveUses
-    | 'clobber' NAME #kasmDirectiveClobber
+    | 'clobbers' STRING #kasmDirectiveClobber
     | 'param' NAME ':' expr #kasmDirectiveTransfer
     | 'bytes' expr #kasmDirectiveBytes
     | 'cycles' expr #kasmDirectiveCycles
@@ -82,7 +82,7 @@ stmt
     | directive* 'do' stmt 'while' '(' expr ')' ';' #stmtDoWhile
     | directive* 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
     | 'return' expr? ';' #stmtReturn
-    | 'asm' '{' asmLines '}' #stmtAsm
+    | 'asm' asmDirectives? '{' asmLines '}' #stmtAsm
     | declKasm #stmtDeclKasm
     ;
 
@@ -135,6 +135,14 @@ expr
 
 parameterList
     : expr (',' expr)*
+    ;
+
+asmDirectives
+    : '(' asmDirective ( ',' asmDirective )* ')'
+    ;
+
+asmDirective
+    : 'clobbers' STRING #asmDirectiveClobber
     ;
 
 asmLines

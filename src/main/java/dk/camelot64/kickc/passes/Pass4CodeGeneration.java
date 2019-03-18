@@ -544,6 +544,20 @@ public class Pass4CodeGeneration {
             HashMap<String, Value> bindings = new HashMap<>();
             AsmFragmentInstance asmFragmentInstance = new AsmFragmentInstance(program, "inline", block.getScope(), new AsmFragmentTemplate(statementAsm.getAsmLines()), bindings);
             asmFragmentInstance.generate(asm);
+            AsmSegment currentSegment = asm.getCurrentSegment();
+
+            if(statementAsm.getDeclaredClobber()!=null) {
+               currentSegment.setClobberOverwrite(statementAsm.getDeclaredClobber());
+            } else {
+               for(AsmLine asmLine : currentSegment.getLines()) {
+                  if(asmLine instanceof AsmInstruction) {
+                     AsmInstruction asmInstruction = (AsmInstruction) asmLine;
+                     if(asmInstruction.getType().getMnemnonic().equals("jsr")) {
+                        currentSegment.setClobberOverwrite(AsmClobber.CLOBBER_ALL);
+                     }
+                  }
+               }
+            }
          } else if(statement instanceof StatementKickAsm) {
             StatementKickAsm statementKasm = (StatementKickAsm) statement;
             if(statementKasm.getLocation() == null) {

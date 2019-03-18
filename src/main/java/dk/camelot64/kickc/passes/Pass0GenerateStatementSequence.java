@@ -2,6 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
+import dk.camelot64.kickc.asm.AsmClobber;
+import dk.camelot64.kickc.asm.AsmDataString;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -16,7 +18,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import sun.reflect.generics.tree.VoidDescriptor;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -730,13 +731,67 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Object visitStmtAsm(KickCParser.StmtAsmContext ctx) {
       // Find all defined labels in the ASM
-      List<String> definedLabels = gatAsmDefinedLabels(ctx);
+      List<String> definedLabels = getAsmDefinedLabels(ctx);
       // Find all referenced symbols in the ASM
       Map<String, SymbolVariableRef> referenced = getAsmReferencedSymbolVariables(ctx, definedLabels);
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
-      StatementAsm statementAsm = new StatementAsm(ctx.asmLines(), referenced, new StatementSource(ctx), comments);
+
+      AsmClobber declaredClobber = null;
+      if(ctx.asmDirectives() != null) {
+         List<AsmDirective> asmDirectives = this.visitAsmDirectives(ctx.asmDirectives());
+         for(AsmDirective asmDirective : asmDirectives) {
+            if(asmDirective instanceof AsmDirectiveClobber) {
+               declaredClobber = ((AsmDirectiveClobber) asmDirective).getClobber();
+            }
+         }
+      }
+      StatementAsm statementAsm = new StatementAsm(ctx.asmLines(), referenced, declaredClobber, new StatementSource(ctx), comments);
       sequence.addStatement(statementAsm);
       return null;
+   }
+
+   @Override
+   public List<AsmDirective> visitAsmDirectives(KickCParser.AsmDirectivesContext ctx) {
+      ArrayList<AsmDirective> asmDirectives = new ArrayList<>();
+      List<KickCParser.AsmDirectiveContext> params = ctx.asmDirective();
+      for(KickCParser.AsmDirectiveContext param : params) {
+         AsmDirective directive = (AsmDirective) visit(param);
+         if(directive != null) {
+            asmDirectives.add(directive);
+         }
+      }
+      return asmDirectives;
+   }
+
+   /** Directives for inline ASM. */
+   private interface AsmDirective {
+   }
+
+   /** ASM Directive specifying clobber registers. */
+   private class AsmDirectiveClobber implements AsmDirective {
+      private AsmClobber clobber;
+
+      public AsmDirectiveClobber(AsmClobber clobber) {
+         this.clobber = clobber;
+      }
+
+      public AsmClobber getClobber() {
+         return clobber;
+      }
+   }
+
+   @Override
+   public AsmDirectiveClobber visitAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx) {
+      String clobberString = ctx.STRING().getText().toUpperCase();
+      clobberString = clobberString.substring(1, clobberString.length()-1);
+      if(!clobberString.matches("[AXY]*")) {
+         throw new CompileError("Error! Illegal clobber value " + clobberString, new StatementSource(ctx));
+      }
+      AsmClobber clobber = new AsmClobber();
+      clobber.setClobberA(clobberString.contains("A"));
+      clobber.setClobberX(clobberString.contains("X"));
+      clobber.setClobberY(clobberString.contains("Y"));
+      return new AsmDirectiveClobber(clobber);
    }
 
    /**
@@ -787,7 +842,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
     * @param ctx An ASM statement
     * @return All labels defined in the ASM.
     */
-   private List<String> gatAsmDefinedLabels(KickCParser.StmtAsmContext ctx) {
+   private List<String> getAsmDefinedLabels(KickCParser.StmtAsmContext ctx) {
       List<String> definedLabels = new ArrayList<>();
       KickCBaseVisitor<Void> findDefinedLabels = new KickCBaseVisitor<Void>() {
          @Override

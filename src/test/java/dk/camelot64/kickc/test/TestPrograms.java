@@ -45,6 +45,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineAsmClobberNone() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-clobber-none");
+   }
+
+   @Test
+   public void testInlineAsmJsrClobber() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-jsr-clobber");
+   }
+
+   @Test
    public void testComplexConditionalProblem() throws IOException, URISyntaxException {
       compileAndCompare("complex-conditional-problem");
    }
@@ -1006,7 +1016,7 @@ public class TestPrograms {
 
    @Test
    public void testAsmClobber() throws IOException, URISyntaxException {
-      compileAndCompare("asm-clobber");
+      compileAndCompare("inline-asm-clobber");
    }
 
    @Test
@@ -1351,17 +1361,25 @@ public class TestPrograms {
 
    private void compileAndCompare(String filename) throws IOException, URISyntaxException {
       TestPrograms tester = new TestPrograms();
-      tester.testFile(filename, null);
+      tester.testFile(filename, null, null);
+   }
+
+   private void compileAndCompare(String filename, CompileLog compileLog) throws IOException, URISyntaxException {
+      TestPrograms tester = new TestPrograms();
+      tester.testFile(filename, null, compileLog);
    }
 
    private void compileAndCompare(String filename, int upliftCombinations) throws IOException, URISyntaxException {
       TestPrograms tester = new TestPrograms();
-      tester.testFile(filename, upliftCombinations);
+      tester.testFile(filename, upliftCombinations, null);
    }
 
-   private void testFile(String fileName, Integer upliftCombinations) throws IOException, URISyntaxException {
+   private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException, URISyntaxException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
+      if(compileLog!=null) {
+         compiler.setLog(compileLog);
+      }
       compiler.addImportPath(stdlibPath);
       compiler.addImportPath(testPath);
       if(upliftCombinations != null) {

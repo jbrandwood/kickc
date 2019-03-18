@@ -1,4 +1,4 @@
-// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -747,6 +747,28 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParameterList(KickCParser.ParameterListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#asmDirectives}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmDirectives(KickCParser.AsmDirectivesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#asmDirectives}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmDirectives(KickCParser.AsmDirectivesContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmDirectiveClobber}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmDirectiveClobber}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#asmLines}.
 	 * @param ctx the parse tree

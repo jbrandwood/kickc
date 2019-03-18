@@ -36,6 +36,10 @@ public class Compiler {
       this.upliftCombinations = upliftCombinations;
    }
 
+   public void setLog(CompileLog compileLog) {
+      program.setLog(compileLog);
+   }
+
    public static void loadAndParseFile(String fileName, Program program, Path currentPath) {
       try {
          if(!fileName.endsWith(".kc")) {

@@ -48,6 +48,9 @@ public class AsmSegment {
    /** The full name of the containing scope (procedure). */
    private String scopeLabel;
 
+   /** If non-null this overwrites the clobber of the segment that is calculated by examining the ASM instruction lines. */
+   private AsmClobber clobberOverwrite;
+
    public AsmSegment(int index, ScopeRef scope, Integer statementIdx, String source) {
       this.lines = new ArrayList<>();
       this.scopeLabel = scope.getFullName();
@@ -62,6 +65,14 @@ public class AsmSegment {
 
    public void addLine(AsmLine line) {
       lines.add(line);
+   }
+
+   public AsmClobber getClobberOverwrite() {
+      return clobberOverwrite;
+   }
+
+   public void setClobberOverwrite(AsmClobber clobberOverwrite) {
+      this.clobberOverwrite = clobberOverwrite;
    }
 
    /**
@@ -152,6 +163,9 @@ public class AsmSegment {
     * @return The registers clobbered
     */
    public AsmClobber getClobber() {
+      if(clobberOverwrite!=null) {
+         return clobberOverwrite;
+      }
       AsmClobber clobber = new AsmClobber();
       for(AsmLine line : lines) {
          if(line instanceof AsmInstruction) {

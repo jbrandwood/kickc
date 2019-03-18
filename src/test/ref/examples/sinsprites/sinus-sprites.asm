@@ -209,14 +209,9 @@ gen_sintab: {
     sta setFAC.w+1
     jsr setFAC
     jsr setARGtoFAC
-    // arg = max
-    // TODO: Kernel JSR clobbers A,X,Y
-    lda #0
-    tax
-    tay
     lda min
     sta setFAC.w
-    txa
+    lda #0
     sta setFAC.w+1
     jsr setFAC
     lda #<f_min

@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
@@ -17,10 +18,14 @@ public class StatementAsm extends StatementBase {
    /** All variables/constants referenced in the inline assembler. */
    private Map<String, SymbolVariableRef> referenced;
 
-   public StatementAsm(KickCParser.AsmLinesContext asmLines, Map<String, SymbolVariableRef> referenced, StatementSource source, List<Comment> comments) {
+   /** Declared clobber for the inline ASM. */
+   private AsmClobber declaredClobber;
+
+   public StatementAsm(KickCParser.AsmLinesContext asmLines, Map<String, SymbolVariableRef> referenced, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
       this.asmLines = asmLines;
       this.referenced = referenced;
+      this.declaredClobber = declaredClobber;
    }
 
    @Override
@@ -44,5 +49,13 @@ public class StatementAsm extends StatementBase {
 
    public Map<String, SymbolVariableRef> getReferenced() {
       return referenced;
+   }
+
+   public AsmClobber getDeclaredClobber() {
+      return declaredClobber;
+   }
+
+   public void setDeclaredClobber(AsmClobber declaredClobber) {
+      this.declaredClobber = declaredClobber;
    }
 }

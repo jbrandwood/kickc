@@ -15,7 +15,7 @@ scrollup3: {
     .label line = 2
     .label l2_2 = 4
     .label l2_4 = 4
-    lda #<0
+    lda #0
     sta l2
     sta l2+1
   b1:
@@ -50,12 +50,12 @@ scrollup3: {
     inx
     cpx #$28
     bcc b2
+    lda #$28
     clc
-    lda line
-    adc #<$28
+    adc line
     sta line
-    lda line+1
-    adc #>$28
+    lda #0
+    adc line+1
     sta line+1
     cmp #>$28*$18
     bcc b1
@@ -107,7 +107,7 @@ scrollup1: {
     .label _0 = 4
     .label _2 = 7
     .label line = 2
-    lda #<0
+    lda #0
     sta line
     sta line+1
   b1:
@@ -148,12 +148,12 @@ scrollup1: {
     inx
     cpx #$28
     bcc b2
+    lda #$28
     clc
-    lda line
-    adc #<$28
+    adc line
     sta line
-    lda line+1
-    adc #>$28
+    lda #0
+    adc line+1
     sta line+1
     cmp #>$28*$18
     bcc b1

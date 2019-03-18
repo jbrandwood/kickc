@@ -173,11 +173,10 @@ mul8u: {
     .label mb = 6
     .label res = 4
     .label return = 4
-    lda #<b
+    lda #b
     sta mb
-    lda #>b
+    lda #0
     sta mb+1
-    lda #<0
     sta res
     sta res+1
   b1:

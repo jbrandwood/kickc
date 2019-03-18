@@ -645,14 +645,12 @@ muls16s: {
     lda a
     beq b2
   !:
-    lda #<0
+    lda #0
     sta j
     sta j+1
     sta m
     sta m+1
-    lda #<0>>$10
     sta m+2
-    lda #>0>>$10
     sta m+3
   b3:
     lda b+1
@@ -686,24 +684,20 @@ muls16s: {
     bne b3
     jmp b4
   b2:
-    lda #<0
+    lda #0
     sta return
     sta return+1
-    lda #<0>>$10
     sta return+2
-    lda #>0>>$10
     sta return+3
   b4:
     rts
   b6:
-    lda #<0
+    lda #0
     sta i
     sta i+1
     sta m
     sta m+1
-    lda #<0>>$10
     sta m+2
-    lda #>0>>$10
     sta m+3
   b5:
     lda b+1
@@ -936,7 +930,7 @@ muls16u: {
     lda a+1
     beq b3
   !:
-    lda #<0
+    lda #0
     sta i
     sta i+1
     sta m
@@ -996,7 +990,7 @@ mulf_init: {
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #<0
+    lda #0
     sta sqr
     sta sqr+1
     tax

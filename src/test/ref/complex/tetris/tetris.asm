@@ -310,16 +310,16 @@ render_score: {
     jsr render_bcd
     ldx score_bytes+1
     ldy #0
-    lda #<score_offset+2
+    lda #score_offset+2
     sta render_bcd.offset
-    lda #>score_offset+2
+    tya
     sta render_bcd.offset+1
     jsr render_bcd
     ldx score_bytes
     ldy #0
-    lda #<score_offset+4
+    lda #score_offset+4
     sta render_bcd.offset
-    lda #>score_offset+4
+    tya
     sta render_bcd.offset+1
     jsr render_bcd
     lda lines_bcd+1
@@ -333,9 +333,9 @@ render_score: {
     lda lines_bcd
     tax
     ldy #0
-    lda #<lines_offset+1
+    lda #lines_offset+1
     sta render_bcd.offset
-    lda #>lines_offset+1
+    tya
     sta render_bcd.offset+1
     jsr render_bcd
     ldx level_bcd

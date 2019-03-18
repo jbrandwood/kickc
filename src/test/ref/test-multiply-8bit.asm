@@ -438,7 +438,7 @@ muls8s: {
     bne b3
     jmp b4
   b2:
-    lda #<0
+    lda #0
     sta return
     sta return+1
   b4:
@@ -620,7 +620,7 @@ muls8u: {
     bne b2
     jmp b1
   b3:
-    lda #<0
+    lda #0
     sta return
     sta return+1
   b1:
@@ -784,7 +784,7 @@ mulf_init: {
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #<0
+    lda #0
     sta sqr
     sta sqr+1
     tax

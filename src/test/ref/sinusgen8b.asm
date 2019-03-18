@@ -187,7 +187,7 @@ sin16s_gen: {
     .label x = 7
     .label i = 5
     jsr div32u16u
-    lda #<0
+    lda #0
     sta i
     sta i+1
     lda #<main.sintabw
@@ -522,7 +522,7 @@ div32u16u: {
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
-    lda #<0
+    lda #0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u
@@ -609,14 +609,14 @@ sin8s_gen: {
     .label x = 2
     .label i = $11
     jsr div16u
-    lda #<0
+    lda #0
     sta i
     sta i+1
     lda #<main.sintabb
     sta sintab
     lda #>main.sintabb
     sta sintab+1
-    lda #<0
+    lda #0
     sta x
     sta x+1
   // u[4.12]
@@ -831,7 +831,7 @@ div16u: {
     sta divr16u.dividend
     lda #>PI2_u4f12
     sta divr16u.dividend+1
-    lda #<0
+    lda #0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u

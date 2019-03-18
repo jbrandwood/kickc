@@ -88,7 +88,7 @@ public class AsmFragmentTemplateSynthesizer {
       return SYNTHESIZER.getBestTemplates(signature, log);
    }
 
-   public AsmFragmentTemplate getFragmentTemplate(String signature, CompileLog log) {
+   private AsmFragmentTemplate getFragmentTemplate(String signature, CompileLog log) {
       AsmFragmentTemplate bestTemplate = bestFragmentCache.get(signature);
       if(bestTemplate == UNKNOWN) {
          if(log.isVerboseFragmentLog()) {

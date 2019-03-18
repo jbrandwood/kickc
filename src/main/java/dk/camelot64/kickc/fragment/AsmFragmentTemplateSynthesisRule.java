@@ -469,22 +469,6 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite (Z1),a to use TAY prefix
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1+"|"+rvalYy, "tay" , "vb$1aa=$2", "sta ({z1}),y", mapZ, "yy"));
 
-      // Rewrite constant byte values to constant word values
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)", null, null , "$1vw$2c1$3", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c2(.*)", null, null , "$1vw$2c2$3", null, null));
-      // Rewrite constant unsigned byte values to constant signed word values
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vbuc1(.*)", null, null , "$1vwsc1$2", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vbuc2(.*)", null, null , "$1vwsc2$2", null, null));
-      // Rewrite constant word values to constant dword values
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c1(.*)", null, null , "$1vd$2c1$3", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vw(.)c2(.*)", null, null , "$1vd$2c2$3", null, null));
-
-      /* Removed awaiting optimization
-      // Rewrite constant unsigned word values to constant signed dword values
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc1(.*)", null, null , "$1vdsc1$2", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vwuc2(.*)", null, null , "$1vdsc2$2", null, null));
-      */
-
       /* Removed awaiting optimization
       // Rewrite any zeropage pointer as an unsigned word zeropage values
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..z(.)(.*)", ".*p..z._deref.*", null , "$1vwuz$2$3", null, null));

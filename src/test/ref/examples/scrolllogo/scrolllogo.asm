@@ -66,7 +66,7 @@ main: {
 loop: {
     .label _1 = 8
     .label xpos = 8
-    lda #<0
+    lda #0
     sta xsin_idx
     sta xsin_idx+1
   b1:
@@ -104,7 +104,7 @@ loop: {
     lda xsin_idx
     cmp #<XSIN_SIZE*2
     bne b7
-    lda #<0
+    lda #0
     sta xsin_idx
     sta xsin_idx+1
   b7:
@@ -253,7 +253,7 @@ sin16s_gen2: {
     .label x = 4
     .label i = 8
     jsr div32u16u
-    lda #<0
+    lda #0
     sta i
     sta i+1
     lda #<xsin
@@ -638,7 +638,7 @@ div32u16u: {
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
-    lda #<0
+    lda #0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u

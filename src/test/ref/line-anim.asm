@@ -49,7 +49,7 @@ main: {
     jsr bitmap_init
     jsr bitmap_clear
     jsr screen_fill
-    lda #<0
+    lda #0
     sta rem16s
     sta rem16s+1
     sta rem16u
@@ -292,11 +292,11 @@ divr16s: {
     .label remu = 9
     lda rem+1
     bmi b1
-    lda #<dividend
+    lda #dividend
     sta dividendu
-    lda #>dividend
+    lda #0
     sta dividendu+1
-    ldy #0
+    tay
   b2:
     lda divisor+1
     bmi b3
@@ -354,9 +354,9 @@ divr16s: {
     eor #$ff
     adc #0
     sta _7+1
-    lda #<-dividend
+    lda #-dividend
     sta dividendu
-    lda #>-dividend
+    lda #0
     sta dividendu+1
     ldy #1
     jmp b2

@@ -57,12 +57,12 @@ main: {
     lda #line1_ch
     ldy #0
     sta (plot1__0),y
+    lda #line1_xadd
     clc
-    lda line1_pos
-    adc #<line1_xadd
+    adc line1_pos
     sta line1_pos
-    lda line1_pos+1
-    adc #>line1_xadd
+    tya
+    adc line1_pos+1
     sta line1_pos+1
     lda cur_line
     clc
@@ -94,12 +94,12 @@ main: {
     lda #line2_ch
     ldy #0
     sta (plot2__0),y
+    lda #line2_xadd
     clc
-    lda line2_pos
-    adc #<line2_xadd
+    adc line2_pos
     sta line2_pos
-    lda line2_pos+1
-    adc #>line2_xadd
+    tya
+    adc line2_pos+1
     sta line2_pos+1
     lda cur_line
     clc

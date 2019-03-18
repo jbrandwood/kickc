@@ -183,7 +183,7 @@ sin16s_gen: {
     .label x = $a
     .label i = 4
     jsr div32u16u
-    lda #<0
+    lda #0
     sta i
     sta i+1
     lda #<main.sintab1
@@ -518,7 +518,7 @@ div32u16u: {
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
-    lda #<0
+    lda #0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u

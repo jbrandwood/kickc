@@ -87,14 +87,14 @@ sin8u_table: {
     lda #>$400
     sta print_line_cursor+1
     jsr print_ln
-    lda #<0
+    lda #0
     sta i
     sta i+1
     lda #<main.sintab
     sta sintab
     lda #>main.sintab
     sta sintab+1
-    lda #<0
+    lda #0
     sta x
     sta x+1
   // u[4.12]

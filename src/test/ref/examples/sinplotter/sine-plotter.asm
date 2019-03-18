@@ -72,7 +72,7 @@ render_sine: {
     .label sin2_val = 6
     .label xpos = 4
     .label sin_idx = 2
-    lda #<0
+    lda #0
     sta xpos
     sta xpos+1
     sta sin_idx
@@ -121,12 +121,19 @@ render_sine: {
     lda (sin2_val),y
     stx sin2_val
     sta sin2_val+1
+    lda #$a
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
     clc
     lda wrap_y.y
-    adc #<$a
+    adc $fe
     sta wrap_y.y
     lda wrap_y.y+1
-    adc #>$a
+    adc $ff
     sta wrap_y.y+1
     jsr wrap_y
     tax
@@ -141,7 +148,7 @@ render_sine: {
     lda xpos
     cmp #<$140
     bne b2
-    lda #<0
+    lda #0
     sta xpos
     sta xpos+1
   b2:
@@ -248,7 +255,7 @@ sin16s_gen2: {
     .label x = 8
     .label i = 4
     jsr div32u16u
-    lda #<0
+    lda #0
     sta i
     sta i+1
     lda #<sin
@@ -633,7 +640,7 @@ div32u16u: {
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
-    lda #<0
+    lda #0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u

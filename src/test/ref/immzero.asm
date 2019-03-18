@@ -4,7 +4,7 @@
 .pc = $80d "Program"
 main: {
     .label w = 2
-    lda #<0
+    lda #0
     sta w
     sta w+1
     tax

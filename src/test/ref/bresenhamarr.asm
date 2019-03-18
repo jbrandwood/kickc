@@ -40,12 +40,12 @@ main: {
     bcc b2
     beq b2
     inc y
+    lda #$28
     clc
-    lda idx
-    adc #<$28
+    adc idx
     sta idx
-    lda idx+1
-    adc #>$28
+    lda #0
+    adc idx+1
     sta idx+1
     tya
     sec

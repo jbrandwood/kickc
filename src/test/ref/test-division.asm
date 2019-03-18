@@ -226,11 +226,11 @@ divr16s: {
     .label remu = $a
     lda dividend+1
     bmi b1
-    lda #<rem
+    lda #rem
     sta remu
-    lda #>rem
+    lda #0
     sta remu+1
-    ldy #0
+    tay
   b2:
     lda divisor+1
     bmi b3
@@ -282,9 +282,9 @@ divr16s: {
     eor #$ff
     adc #0
     sta _5+1
-    lda #<-rem
+    lda #-rem
     sta remu
-    lda #>-rem
+    lda #0
     sta remu+1
     ldy #1
     jmp b2
@@ -608,7 +608,7 @@ div16u: {
     sta divr16u.dividend
     lda dividend+1
     sta divr16u.dividend+1
-    lda #<0
+    lda #0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u

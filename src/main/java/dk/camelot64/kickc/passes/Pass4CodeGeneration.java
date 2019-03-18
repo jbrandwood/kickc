@@ -20,7 +20,10 @@ public class Pass4CodeGeneration {
 
    /** Should the generated ASM contain verbose alive info for the statements (costs a bit more to generate). */
    boolean verboseAliveInfo;
+
+   /** The program being generated. */
    private Program program;
+
    /**
     * Keeps track of the phi transitions into blocks during code generation.
     * Used to ensure that duplicate transitions are only code generated once.
@@ -477,10 +480,8 @@ public class Pass4CodeGeneration {
             throw new AsmFragmentInstance.AluNotApplicableException();
          }
          StatementAssignment assignment = (StatementAssignment) statement;
-         AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(assignment, assignmentAlu, program);
-         AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
-         asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
-         asmFragmentInstance.generate(asm);
+         AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(assignment, assignmentAlu, program);
+         generateAsm(asm, asmFragmentInstanceSpecFactory);
          aluState.clear();
          return;
       }
@@ -504,17 +505,13 @@ public class Pass4CodeGeneration {
                if(assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
                   //asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
-                  AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(assignment, program);
-                  AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
-                  asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
-                  asmFragmentInstance.generate(asm);
+                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(assignment, program);
+                  generateAsm(asm, asmFragmentInstanceSpecFactory);
                }
             }
          } else if(statement instanceof StatementConditionalJump) {
-            AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec((StatementConditionalJump) statement, block, program, getGraph());
-            AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
-            asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
-            asmFragmentInstance.generate(asm);
+            AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory((StatementConditionalJump) statement, block, program, getGraph());
+            generateAsm(asm, asmFragmentInstanceSpecFactory);
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             if(genCallPhiEntry) {
@@ -556,6 +553,35 @@ public class Pass4CodeGeneration {
             throw new RuntimeException("Statement not supported " + statement);
          }
       }
+   }
+
+   /**
+    * Generate ASM code for an ASM fragment instance ()
+    * @param asm The ASM program to generate into
+    * @param asmFragmentInstanceSpecFactory The ASM fragment instance specification factory
+    */
+   private void generateAsm(AsmProgram asm, AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory) {
+      AsmFragmentInstanceSpec asmFragmentInstanceSpec = asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec();
+      AsmFragmentInstance asmFragmentInstance = null;
+      while(asmFragmentInstance==null) {
+         try {
+            asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
+         } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
+            // Unknown fragment - keep looking through alternative ASM fragment instance specs until we have tried them all
+            if(asmFragmentInstanceSpec.hasNextVariation()) {
+               String signature = asmFragmentInstanceSpec.getSignature();
+               asmFragmentInstanceSpec.nextVariation();
+               if(program.getLog().isVerboseFragmentLog()) {
+                  program.getLog().append("Fragment not found "+signature+". Attempting another variation "+asmFragmentInstanceSpec.getSignature());
+               }
+            } else {
+               // No more variations available - fail with an error
+               throw e;
+            }
+         }
+      }
+      asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
+      asmFragmentInstance.generate(asm);
    }
 
    /**
@@ -695,10 +721,8 @@ public class Pass4CodeGeneration {
             if(isRegisterCopy(lValue, rValue)) {
                asm.getCurrentSegment().setFragment("register_copy");
             } else {
-               AsmFragmentInstanceSpec asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(lValue, rValue, program, scope);
-               AsmFragmentInstance asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
-               asm.getCurrentSegment().setFragment(asmFragmentInstance.getFragmentName());
-               asmFragmentInstance.generate(asm);
+               AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(lValue, rValue, program, scope);
+               generateAsm(asm, asmFragmentInstanceSpecFactory);
             }
          }
          transition.setGenerated(true);

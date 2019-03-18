@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testComplexConditionalProblem() throws IOException, URISyntaxException {
+      compileAndCompare("complex-conditional-problem");
+   }
+
+   @Test
    public void testConstSignedPromotion() throws IOException, URISyntaxException {
       compileAndCompare("const-signed-promotion");
    }

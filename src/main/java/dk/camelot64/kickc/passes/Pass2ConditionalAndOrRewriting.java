@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.*;
@@ -109,7 +110,7 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
    }
 
    /**
-    * Rewrite logical || condition if(c1&&c2) { xx } to if(c1) goto x else if(c2) goto x else goto end, x:{ xx } end:
+    * Rewrite logical || condition if(c1||c2) { xx } to if(c1) goto x else if(c2) goto x else goto end, x:{ xx } end:
     * @param block The block containing the current if()
     * @param conditional The if()-statement
     * @param conditionAssignment The assignment defining the condition variable.
@@ -134,14 +135,22 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       // Remove any unrolling from the original conditional as only the new one leaves the loop
       conditional.setDeclaredUnroll(false);
 
-      // TODO: Fix phi-values inside the destination phi-blocks to reflect the new control flow! Use replaceLabels(block, replacement)
       ControlFlowBlock conditionalDestBlock = getGraph().getBlock(conditional.getDestination());
       if(conditionalDestBlock.hasPhiBlock()) {
          throw new RuntimeException("TODO: Fix phi-values inside the conditional destination phi-block!");
       }
+      // Update the default destination PHI block to reflect the last of the conditions
       ControlFlowBlock defaultDestBlock = getGraph().getBlock(newBlock.getDefaultSuccessor());
       if(defaultDestBlock.hasPhiBlock()) {
-         throw new RuntimeException("TODO: Fix phi-values inside the default destination phi-block!");
+         StatementPhiBlock defaultDestPhiBlock = defaultDestBlock.getPhiBlock();
+         for(StatementPhiBlock.PhiVariable phiVariable : defaultDestPhiBlock.getPhiVariables()) {
+            for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+               if(phiRValue.getPredecessor().equals(block.getLabel())) {
+                  // Found phi-variable with current block as predecessor - change the predecessor
+                  phiRValue.setPredecessor(newBlock.getLabel());
+               }
+            }
+         }
       }
 
 

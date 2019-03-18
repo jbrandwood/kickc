@@ -135,10 +135,6 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
       // Remove any unrolling from the original conditional as only the new one leaves the loop
       conditional.setDeclaredUnroll(false);
 
-      ControlFlowBlock conditionalDestBlock = getGraph().getBlock(conditional.getDestination());
-      if(conditionalDestBlock.hasPhiBlock()) {
-         throw new RuntimeException("TODO: Fix phi-values inside the conditional destination phi-block!");
-      }
       // Update the default destination PHI block to reflect the last of the conditions
       ControlFlowBlock defaultDestBlock = getGraph().getBlock(newBlock.getDefaultSuccessor());
       if(defaultDestBlock.hasPhiBlock()) {
@@ -153,6 +149,10 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
          }
       }
 
+      ControlFlowBlock conditionalDestBlock = getGraph().getBlock(conditional.getDestination());
+      if(conditionalDestBlock.hasPhiBlock()) {
+         throw new RuntimeException("TODO: Fix phi-values inside the conditional destination phi-block!");
+      }
 
    }
 

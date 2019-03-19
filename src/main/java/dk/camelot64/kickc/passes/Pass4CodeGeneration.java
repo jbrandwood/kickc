@@ -563,6 +563,9 @@ public class Pass4CodeGeneration {
             if(statementKasm.getLocation() == null) {
                addKickAsm(asm, statementKasm);
             }
+            if(statementKasm.getDeclaredClobber()!=null) {
+               asm.getCurrentSegment().setClobberOverwrite(statementKasm.getDeclaredClobber());
+            }
          } else {
             throw new RuntimeException("Statement not supported " + statement);
          }

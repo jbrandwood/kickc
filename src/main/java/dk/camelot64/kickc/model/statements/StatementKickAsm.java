@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.statements;
 
+import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.RValue;
@@ -26,19 +27,31 @@ public class StatementKickAsm extends StatementBase {
    /** Variables/constants used by the kickasm code. */
    private List<SymbolVariableRef> uses;
 
+   /** Declared clobber for the inline kick-assembler . */
+   private AsmClobber declaredClobber;
+
    public StatementKickAsm(String kickAsmCode, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
       this.kickAsmCode = kickAsmCode;
       this.uses = new ArrayList<>();
    }
 
-   public StatementKickAsm(String kickAsmCode, RValue location, RValue bytes, RValue cycles, List<SymbolVariableRef> uses, StatementSource source, List<Comment> comments) {
+   public StatementKickAsm(String kickAsmCode, RValue location, RValue bytes, RValue cycles, List<SymbolVariableRef> uses, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
       this.kickAsmCode = kickAsmCode;
       this.location = location;
       this.bytes = bytes;
       this.cycles = cycles;
       this.uses = uses;
+      this.declaredClobber = declaredClobber;
+   }
+
+   public AsmClobber getDeclaredClobber() {
+      return declaredClobber;
+   }
+
+   public void setDeclaredClobber(AsmClobber declaredClobber) {
+      this.declaredClobber = declaredClobber;
    }
 
    public RValue getLocation() {

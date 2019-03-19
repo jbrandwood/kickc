@@ -88,110 +88,6 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitDeclFunction(KickCParser.DeclFunctionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#declKasm}.
-	 * @param ctx the parse tree
-	 */
-	void enterDeclKasm(KickCParser.DeclKasmContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#declKasm}.
-	 * @param ctx the parse tree
-	 */
-	void exitDeclKasm(KickCParser.DeclKasmContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link KickCParser#kasmDirectives}.
-	 * @param ctx the parse tree
-	 */
-	void enterKasmDirectives(KickCParser.KasmDirectivesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#kasmDirectives}.
-	 * @param ctx the parse tree
-	 */
-	void exitKasmDirectives(KickCParser.KasmDirectivesContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code kasmDirectiveResource}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterKasmDirectiveResource(KickCParser.KasmDirectiveResourceContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code kasmDirectiveResource}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitKasmDirectiveResource(KickCParser.KasmDirectiveResourceContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code kasmDirectiveUses}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterKasmDirectiveUses(KickCParser.KasmDirectiveUsesContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code kasmDirectiveUses}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitKasmDirectiveUses(KickCParser.KasmDirectiveUsesContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code kasmDirectiveClobber}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterKasmDirectiveClobber(KickCParser.KasmDirectiveClobberContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code kasmDirectiveClobber}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitKasmDirectiveClobber(KickCParser.KasmDirectiveClobberContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code kasmDirectiveTransfer}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterKasmDirectiveTransfer(KickCParser.KasmDirectiveTransferContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code kasmDirectiveTransfer}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitKasmDirectiveTransfer(KickCParser.KasmDirectiveTransferContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code kasmDirectiveBytes}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code kasmDirectiveBytes}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code kasmDirectiveCycles}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code kasmDirectiveCycles}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code kasmDirectiveAddress}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code kasmDirectiveAddress}
-	 * labeled alternative in {@link KickCParser#kasmDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree
 	 */
@@ -748,6 +644,16 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitParameterList(KickCParser.ParameterListContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link KickCParser#declKasm}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclKasm(KickCParser.DeclKasmContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#declKasm}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclKasm(KickCParser.DeclKasmContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#asmDirectives}.
 	 * @param ctx the parse tree
 	 */
@@ -757,6 +663,30 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAsmDirectives(KickCParser.AsmDirectivesContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmDirectiveResource}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmDirectiveResource(KickCParser.AsmDirectiveResourceContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmDirectiveResource}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmDirectiveResource(KickCParser.AsmDirectiveResourceContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmDirectiveUses}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmDirectiveUses(KickCParser.AsmDirectiveUsesContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmDirectiveUses}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmDirectiveUses(KickCParser.AsmDirectiveUsesContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code asmDirectiveClobber}
 	 * labeled alternative in {@link KickCParser#asmDirective}.
@@ -769,6 +699,42 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmDirectiveBytes}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmDirectiveBytes(KickCParser.AsmDirectiveBytesContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmDirectiveBytes}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmDirectiveBytes(KickCParser.AsmDirectiveBytesContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmDirectiveCycles}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmDirectiveCycles(KickCParser.AsmDirectiveCyclesContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmDirectiveCycles}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmDirectiveCycles(KickCParser.AsmDirectiveCyclesContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmDirectiveAddress}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmDirectiveAddress(KickCParser.AsmDirectiveAddressContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmDirectiveAddress}
+	 * labeled alternative in {@link KickCParser#asmDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmDirectiveAddress(KickCParser.AsmDirectiveAddressContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#asmLines}.
 	 * @param ctx the parse tree

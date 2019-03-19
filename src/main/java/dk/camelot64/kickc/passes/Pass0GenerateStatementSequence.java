@@ -3,7 +3,6 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.AsmClobber;
-import dk.camelot64.kickc.asm.AsmDataString;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -174,17 +173,21 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(m.find()) {
          String kickAsmCode = m.group(1).replaceAll("\r", "");
          StatementKickAsm statementKickAsm = new StatementKickAsm(kickAsmCode, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
-         if(ctx.kasmDirectives() != null) {
-            List<KasmDirective> kasmDirectives = this.visitKasmDirectives(ctx.kasmDirectives());
-            for(KasmDirective kasmDirective : kasmDirectives) {
-               if(kasmDirective instanceof KasmDirectiveLocation) {
-                  statementKickAsm.setLocation(((KasmDirectiveLocation) kasmDirective).getAddress());
-               } else if(kasmDirective instanceof KasmDirectiveBytes) {
-                  statementKickAsm.setBytes(((KasmDirectiveBytes) kasmDirective).getBytes());
-               } else if(kasmDirective instanceof KasmDirectiveCycles) {
-                  statementKickAsm.setCycles(((KasmDirectiveCycles) kasmDirective).getCycles());
-               } else if(kasmDirective instanceof KasmDirectiveUses) {
-                  statementKickAsm.addUses(((KasmDirectiveUses) kasmDirective).getUses());
+         if(ctx.asmDirectives() != null) {
+            List<AsmDirective> asmDirectives = this.visitAsmDirectives(ctx.asmDirectives());
+            for(AsmDirective asmDirective : asmDirectives) {
+               if(asmDirective instanceof AsmDirectiveLocation) {
+                  statementKickAsm.setLocation(((AsmDirectiveLocation) asmDirective).getAddress());
+               } else if(asmDirective instanceof AsmDirectiveBytes) {
+                  statementKickAsm.setBytes(((AsmDirectiveBytes) asmDirective).getBytes());
+               } else if(asmDirective instanceof AsmDirectiveCycles) {
+                  statementKickAsm.setCycles(((AsmDirectiveCycles) asmDirective).getCycles());
+               } else if(asmDirective instanceof AsmDirectiveUses) {
+                  statementKickAsm.addUses(((AsmDirectiveUses) asmDirective).getUses());
+               } else if(asmDirective instanceof AsmDirectiveClobber) {
+                  statementKickAsm.setDeclaredClobber(((AsmDirectiveClobber) asmDirective).getClobber());
+               } else {
+                  throw new CompileError("kickasm does not support directive "+asmDirective, statementKickAsm);
                }
             }
          }
@@ -193,28 +196,28 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return null;
    }
 
-   private interface KasmDirective {
+   private interface AsmDirective {
    }
 
    @Override
-   public List<KasmDirective> visitKasmDirectives(KickCParser.KasmDirectivesContext ctx) {
-      ArrayList<KasmDirective> kasmDirectives = new ArrayList<>();
-      List<KickCParser.KasmDirectiveContext> params = ctx.kasmDirective();
-      for(KickCParser.KasmDirectiveContext param : params) {
-         KasmDirective directive = (KasmDirective) visit(param);
+   public List<AsmDirective> visitAsmDirectives(KickCParser.AsmDirectivesContext ctx) {
+      ArrayList<AsmDirective> asmDirectives = new ArrayList<>();
+      List<KickCParser.AsmDirectiveContext> params = ctx.asmDirective();
+      for(KickCParser.AsmDirectiveContext param : params) {
+         AsmDirective directive = (AsmDirective) visit(param);
          if(directive != null) {
-            kasmDirectives.add(directive);
+            asmDirectives.add(directive);
          }
       }
-      return kasmDirectives;
+      return asmDirectives;
    }
 
    /** KickAssembler directive specifying an absolute address for the generated code/data. */
-   public static class KasmDirectiveLocation implements KasmDirective {
+   public static class AsmDirectiveLocation implements AsmDirective {
       /** will contain the address to generate the KickAssembler-code to. */
       private RValue address;
 
-      public KasmDirectiveLocation(RValue address) {
+      public AsmDirectiveLocation(RValue address) {
          this.address = address;
       }
 
@@ -222,13 +225,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          return address;
       }
 
+      @Override
+      public String toString() {
+         return "pc";
+      }
    }
 
    @Override
-   public Object visitKasmDirectiveAddress(KickCParser.KasmDirectiveAddressContext ctx) {
+   public Object visitAsmDirectiveAddress(KickCParser.AsmDirectiveAddressContext ctx) {
       if(ctx.expr() != null) {
          RValue expr = (RValue) visit(ctx.expr());
-         return new KasmDirectiveLocation(expr);
+         return new AsmDirectiveLocation(expr);
       } else {
          // PLace inline
          return null;
@@ -236,45 +243,36 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    /** KickAssembler directive specifying the number of bytes for generated code/data. */
-   public static class KasmDirectiveBytes implements KasmDirective {
+   public static class AsmDirectiveBytes implements AsmDirective {
       /** bytes for the KickAssembler-code. */
       private RValue bytes;
 
-      public KasmDirectiveBytes(RValue bytes) {
+      public AsmDirectiveBytes(RValue bytes) {
          this.bytes = bytes;
       }
 
       public RValue getBytes() {
          return bytes;
       }
+
+      @Override
+      public String toString() {
+         return "bytes";
+      }
    }
 
    @Override
-   public KasmDirective visitKasmDirectiveBytes(KickCParser.KasmDirectiveBytesContext ctx) {
+   public AsmDirective visitAsmDirectiveBytes(KickCParser.AsmDirectiveBytesContext ctx) {
       if(ctx.expr() != null) {
          RValue bytes = (RValue) this.visit(ctx.expr());
-         return new KasmDirectiveBytes(bytes);
+         return new AsmDirectiveBytes(bytes);
       } else {
          return null;
       }
    }
 
-   /** KickAssembler directive specifying the number of cycles for generated code/data. */
-   public static class KasmDirectiveCycles implements KasmDirective {
-      /** cycles for the KickAssembler-code. */
-      private RValue cycles;
-
-      public KasmDirectiveCycles(RValue cycles) {
-         this.cycles = cycles;
-      }
-
-      public RValue getCycles() {
-         return cycles;
-      }
-   }
-
    /** KickAssembler directive specifying a constant used by the kickasm code. */
-   public static class KasmDirectiveUses implements KasmDirective {
+   public static class AsmDirectiveUses implements AsmDirective {
       /** constant/variable used by the KickAssembler-code. */
       private SymbolVariableRef uses;
 
@@ -282,7 +280,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          return uses;
       }
 
-      public KasmDirectiveUses(SymbolVariableRef uses) {
+      public AsmDirectiveUses(SymbolVariableRef uses) {
          this.uses = uses;
       }
 
@@ -290,10 +288,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          this.uses = uses;
       }
 
+      @Override
+      public String toString() {
+         return "uses";
+      }
+
    }
 
    @Override
-   public Object visitKasmDirectiveUses(KickCParser.KasmDirectiveUsesContext ctx) {
+   public Object visitAsmDirectiveUses(KickCParser.AsmDirectiveUsesContext ctx) {
       String varName = ctx.NAME().getText();
       SymbolVariableRef variableRef;
       Symbol symbol = getCurrentSymbols().getSymbol(varName);
@@ -305,21 +308,41 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
          variableRef = new ForwardVariableRef(varName);
       }
-      return new KasmDirectiveUses(variableRef);
+      return new AsmDirectiveUses(variableRef);
+   }
+
+   /** KickAssembler directive specifying the number of cycles for generated code/data. */
+   public static class AsmDirectiveCycles implements AsmDirective {
+      /** cycles for the KickAssembler-code. */
+      private RValue cycles;
+
+      public AsmDirectiveCycles(RValue cycles) {
+         this.cycles = cycles;
+      }
+
+      public RValue getCycles() {
+         return cycles;
+      }
+
+      @Override
+      public String toString() {
+         return "cycles";
+      }
+
    }
 
    @Override
-   public KasmDirective visitKasmDirectiveCycles(KickCParser.KasmDirectiveCyclesContext ctx) {
+   public AsmDirective visitAsmDirectiveCycles(KickCParser.AsmDirectiveCyclesContext ctx) {
       if(ctx.expr() != null) {
          RValue cycles = (RValue) this.visit(ctx.expr());
-         return new KasmDirectiveCycles(cycles);
+         return new AsmDirectiveCycles(cycles);
       } else {
          return null;
       }
    }
 
    @Override
-   public Object visitKasmDirectiveResource(KickCParser.KasmDirectiveResourceContext ctx) {
+   public Object visitAsmDirectiveResource(KickCParser.AsmDirectiveResourceContext ctx) {
       TerminalNode resource = ctx.STRING();
       String resourceName = resource.getText();
       resourceName = resourceName.substring(1, resourceName.length() - 1);
@@ -331,6 +354,41 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       return null;
    }
+
+   /** ASM Directive specifying clobber registers. */
+   private class AsmDirectiveClobber implements AsmDirective {
+      private AsmClobber clobber;
+
+      public AsmDirectiveClobber(AsmClobber clobber) {
+         this.clobber = clobber;
+      }
+
+      public AsmClobber getClobber() {
+         return clobber;
+      }
+
+      @Override
+      public String toString() {
+         return "clobbers";
+      }
+
+   }
+
+   @Override
+   public AsmDirectiveClobber visitAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx) {
+      String clobberString = ctx.STRING().getText().toUpperCase();
+      clobberString = clobberString.substring(1, clobberString.length()-1);
+      if(!clobberString.matches("[AXY]*")) {
+         throw new CompileError("Error! Illegal clobber value " + clobberString, new StatementSource(ctx));
+      }
+      AsmClobber clobber = new AsmClobber();
+      clobber.setClobberA(clobberString.contains("A"));
+      clobber.setClobberX(clobberString.contains("X"));
+      clobber.setClobberY(clobberString.contains("Y"));
+      return new AsmDirectiveClobber(clobber);
+   }
+
+
 
    @Override
    public Object visitDeclVariable(KickCParser.DeclVariableContext ctx) {
@@ -742,56 +800,14 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          for(AsmDirective asmDirective : asmDirectives) {
             if(asmDirective instanceof AsmDirectiveClobber) {
                declaredClobber = ((AsmDirectiveClobber) asmDirective).getClobber();
+            } else {
+               throw new CompileError("inline ASM does not support directive "+asmDirective, new StatementSource(ctx));
             }
          }
       }
       StatementAsm statementAsm = new StatementAsm(ctx.asmLines(), referenced, declaredClobber, new StatementSource(ctx), comments);
       sequence.addStatement(statementAsm);
       return null;
-   }
-
-   @Override
-   public List<AsmDirective> visitAsmDirectives(KickCParser.AsmDirectivesContext ctx) {
-      ArrayList<AsmDirective> asmDirectives = new ArrayList<>();
-      List<KickCParser.AsmDirectiveContext> params = ctx.asmDirective();
-      for(KickCParser.AsmDirectiveContext param : params) {
-         AsmDirective directive = (AsmDirective) visit(param);
-         if(directive != null) {
-            asmDirectives.add(directive);
-         }
-      }
-      return asmDirectives;
-   }
-
-   /** Directives for inline ASM. */
-   private interface AsmDirective {
-   }
-
-   /** ASM Directive specifying clobber registers. */
-   private class AsmDirectiveClobber implements AsmDirective {
-      private AsmClobber clobber;
-
-      public AsmDirectiveClobber(AsmClobber clobber) {
-         this.clobber = clobber;
-      }
-
-      public AsmClobber getClobber() {
-         return clobber;
-      }
-   }
-
-   @Override
-   public AsmDirectiveClobber visitAsmDirectiveClobber(KickCParser.AsmDirectiveClobberContext ctx) {
-      String clobberString = ctx.STRING().getText().toUpperCase();
-      clobberString = clobberString.substring(1, clobberString.length()-1);
-      if(!clobberString.matches("[AXY]*")) {
-         throw new CompileError("Error! Illegal clobber value " + clobberString, new StatementSource(ctx));
-      }
-      AsmClobber clobber = new AsmClobber();
-      clobber.setClobberA(clobberString.contains("A"));
-      clobber.setClobberX(clobberString.contains("X"));
-      clobber.setClobberY(clobberString.contains("Y"));
-      return new AsmDirectiveClobber(clobber);
    }
 
    /**

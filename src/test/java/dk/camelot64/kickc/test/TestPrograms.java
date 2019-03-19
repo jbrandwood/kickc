@@ -39,9 +39,19 @@ public class TestPrograms {
 
    @AfterClass
    public static void tearDown() {
+      CompileLog log = getLogSysout();
+      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
+   }
+
+   @Test
+   public void testInlineKickAsmClobber() throws IOException, URISyntaxException {
+      compileAndCompare("inline-kasm-clobber");
+   }
+
+   private static CompileLog getLogSysout() {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
+      return log;
    }
 
    @Test

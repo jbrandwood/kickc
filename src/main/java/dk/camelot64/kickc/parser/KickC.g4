@@ -35,24 +35,6 @@ declFunction
     : directive* typeDecl directive* NAME '(' parameterListDecl? ')' '{' stmtSeq? '}'
     ;
 
-declKasm
-    : 'kickasm' kasmDirectives? KICKASM
-    ;
-
-kasmDirectives
-    : '(' kasmDirective ( ',' kasmDirective )* ')'
-    ;
-
-kasmDirective
-    : 'resource' STRING #kasmDirectiveResource
-    | 'uses' NAME #kasmDirectiveUses
-    | 'clobbers' STRING #kasmDirectiveClobber
-    | 'param' NAME ':' expr #kasmDirectiveTransfer
-    | 'bytes' expr #kasmDirectiveBytes
-    | 'cycles' expr #kasmDirectiveCycles
-    | 'pc' ( 'inline' | expr ) #kasmDirectiveAddress
-    ;
-
 parameterListDecl
     : parameterDecl (',' parameterDecl)* ;
 
@@ -137,12 +119,21 @@ parameterList
     : expr (',' expr)*
     ;
 
+declKasm
+    : 'kickasm' asmDirectives? KICKASM
+    ;
+
 asmDirectives
     : '(' asmDirective ( ',' asmDirective )* ')'
     ;
 
 asmDirective
-    : 'clobbers' STRING #asmDirectiveClobber
+    : 'resource' STRING #asmDirectiveResource
+    | 'uses' NAME #asmDirectiveUses
+    | 'clobbers' STRING #asmDirectiveClobber
+    | 'bytes' expr #asmDirectiveBytes
+    | 'cycles' expr #asmDirectiveCycles
+    | 'pc' ( 'inline' | expr ) #asmDirectiveAddress
     ;
 
 asmLines

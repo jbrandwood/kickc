@@ -32,15 +32,9 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   @BeforeClass
-   public static void setUp() {
-      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
-   }
-
-   @AfterClass
-   public static void tearDown() {
-      CompileLog log = getLogSysout();
-      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
+   @Test
+   public void testDoubleIndexingArrays() throws IOException, URISyntaxException {
+      compileAndCompare("double-indexing-arrays");
    }
 
    @Test
@@ -48,11 +42,6 @@ public class TestPrograms {
       compileAndCompare("inline-kasm-clobber");
    }
 
-   private static CompileLog getLogSysout() {
-      CompileLog log = new CompileLog();
-      log.setSysOut(true);
-      return log;
-   }
 
    @Test
    public void testInlineAsmClobberNone() throws IOException, URISyntaxException {
@@ -1347,6 +1336,23 @@ public class TestPrograms {
    @Test
    public void testConditionTypeMismatch() throws IOException, URISyntaxException {
       assertError("condition-type-mismatch", "Type mismatch non-boolean condition");
+   }
+
+   @BeforeClass
+   public static void setUp() {
+      AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
+   }
+
+   @AfterClass
+   public static void tearDown() {
+      CompileLog log = getLogSysout();
+      AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
+   }
+
+   private static CompileLog getLogSysout() {
+      CompileLog log = new CompileLog();
+      log.setSysOut(true);
+      return log;
    }
 
    private void assertError(String kcFile, String expectError) throws IOException, URISyntaxException {

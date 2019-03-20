@@ -454,7 +454,7 @@ public class Pass4CodeGeneration {
             try {
                generateStatementAsm(asm, block, statement, aluState, true);
             } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
-               throw new CompileError("Unknown fragment for statement " + statement.toString(program, false), e);
+               throw new CompileError("Unknown fragment for statement " + statement.toString(program, false)+"\nMissing ASM fragment "+e.getFragmentSignature(), e);
             }
          }
       }

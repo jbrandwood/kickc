@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -38,48 +39,36 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
     */
    @Override
    public boolean step() {
-      boolean optimized = false;
+      final boolean[] optimized = {false};
 
        this.variableReferenceInfos = getProgram().getVariableReferenceInfos();
 
-      // Examine all assignments - performing constant consolidation
+      ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
+         if(programValue.get() instanceof PointerDereferenceIndexed) {
+            optimized[0] |= optimizePointerDereferenceIndexed(programValue);
+         }
+      });
+
+      // Examine all assignments - performing constant consolidation for +/-
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if(assignment.getlValue() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.LValue(assignment));
-               }
-               if(assignment.getrValue1() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.RValue1(assignment));
-               }
-               if(assignment.getrValue2() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.RValue2(assignment));
-               }
-
                Operator operator = assignment.getOperator();
                if(operator != null) {
                   switch(operator.getOperator()) {
                      case "+":
-                        optimized |= optimizePlus(assignment);
+                        optimized[0] |= optimizePlus(assignment);
                         break;
                      case "*idx":
-                        optimized |= optimizeArrayDeref(assignment);
+                        optimized[0] |= optimizeArrayDeref(assignment);
                         break;
                   }
-               }
-            } else if(statement instanceof StatementConditionalJump) {
-               StatementConditionalJump jump = (StatementConditionalJump) statement;
-               if(jump.getrValue1() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.CondRValue1(jump));
-               }
-               if(jump.getrValue2() instanceof PointerDereferenceIndexed) {
-                  optimized |= optimizePointerDereferenceIndexed(new ProgramValue.CondRValue2(jump));
                }
             }
          }
       }
-      return optimized;
+      return optimized[0];
    }
 
    private boolean optimizePointerDereferenceIndexed(ProgramValue value) {

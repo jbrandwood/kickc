@@ -101,6 +101,10 @@ vbuxx=pbuc1_derefidx_vbuaa < vbuxx=pbuc1_derefidx_vbuyy - clobber:X Y  cycles:6.
 vbuxx=pbuc1_derefidx_vbuxx < vbuaa=pbuc1_derefidx_vbuxx - clobber:A X   cycles:6.5
   lda {c1},x
   tax
+vbuxx=pbuc1_derefidx_vbuxx < vbuxx=vbuyy - clobber:X Y  cycles:10.5
+  ldy {c1},x
+  sty $ff
+  ldx $ff
 *vbuxx=pbuc1_derefidx_vbuyy - clobber:X   cycles:4.5
   ldx {c1},y
 vbuxx=pbuc1_derefidx_vbuz1 < vbuxx=pbuc1_derefidx_vbuxx < vbuaa=pbuc1_derefidx_vbuxx - clobber:A X   cycles:9.5
@@ -168,6 +172,10 @@ vbuyy=pbuc1_derefidx_vbuaa < vbuyy=pbuc1_derefidx_vbuxx - clobber:X Y  cycles:6.
 vbuyy=pbuc1_derefidx_vbuyy < vbuaa=pbuc1_derefidx_vbuyy - clobber:A Y  cycles:6.5
   lda {c1},y
   tay
+vbuyy=pbuc1_derefidx_vbuyy < vbuyy=vbuxx - clobber:X Y  cycles:10.5
+  ldx {c1},y
+  stx $ff
+  ldy $ff
 vbuyy=pbuc1_derefidx_vbuz1 < vbuyy=pbuc1_derefidx_vbuyy < vbuaa=pbuc1_derefidx_vbuyy - clobber:A Y  cycles:9.5
   ldy {z1}
   lda {c1},y
@@ -533,12 +541,22 @@ _deref_pbuc1=pbuc2_derefidx_vbuaa < _deref_pbuc1=pbuc2_derefidx_vbuyy < vbuaa=pb
   tay
   lda {c2},y
   sta {c1}
+_deref_pbuc1=pbuc2_derefidx_vbuaa < _deref_pbuc1=pbuc2_derefidx_vbuxx < _deref_pbuc1=vbuyy - clobber:X Y  cycles:10.5
+  tax
+  ldy {c2},x
+  sty {c1}
 _deref_pbuc1=pbuc2_derefidx_vbuxx < vbuaa=pbuc1_derefidx_vbuxx - clobber:A   cycles:8.5
   lda {c2},x
   sta {c1}
+_deref_pbuc1=pbuc2_derefidx_vbuxx < _deref_pbuc1=vbuyy - clobber:Y  cycles:8.5
+  ldy {c2},x
+  sty {c1}
 _deref_pbuc1=pbuc2_derefidx_vbuyy < vbuaa=pbuc1_derefidx_vbuyy - clobber:A   cycles:8.5
   lda {c2},y
   sta {c1}
+_deref_pbuc1=pbuc2_derefidx_vbuyy < _deref_pbuc1=vbuxx - clobber:X   cycles:8.5
+  ldx {c2},y
+  stx {c1}
 _deref_pbuc1=pbuc2_derefidx_vbuz1 < _deref_pbuc1=pbuc2_derefidx_vbuxx < vbuaa=pbuc1_derefidx_vbuxx - clobber:A X   cycles:11.5
   ldx {z1}
   lda {c2},x
@@ -547,6 +565,10 @@ _deref_pbuc1=pbuc2_derefidx_vbuz1 < _deref_pbuc1=pbuc2_derefidx_vbuyy < vbuaa=pb
   ldy {z1}
   lda {c2},y
   sta {c1}
+_deref_pbuc1=pbuc2_derefidx_vbuz1 < _deref_pbuc1=pbuc2_derefidx_vbuxx < _deref_pbuc1=vbuyy - clobber:X Y  cycles:11.5
+  ldx {z1}
+  ldy {c2},x
+  sty {c1}
 _deref_pbuc1=pbuc2_derefidx_vbuc1 < vbuaa=pbuc2_derefidx_vbuc1 < vbuaa=pbuc1_derefidx_vbuxx - clobber:A X   cycles:10.5
   ldx #{c1}
   lda {c2},x
@@ -655,6 +677,11 @@ pbuz1_derefidx_vbuaa=pbuc1_derefidx_vbuaa < pbuz1_derefidx_vbuyy=pbuc1_derefidx_
 pbuz1_derefidx_vbuaa=pbuc1_derefidx_vbuxx < pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx < pbuz1_derefidx_vbuyy=vbuaa - clobber:A Y  cycles:12.5
   tay
   lda {c1},x
+  sta ({z1}),y
+pbuz1_derefidx_vbuaa=pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=vbuxx < pbuz1_derefidx_vbuyy=vbuxx < pbuz1_derefidx_vbuyy=vbuaa - clobber:A X Y  cycles:14.5
+  ldx {c1},y
+  tay
+  txa
   sta ({z1}),y
 pbuz1_derefidx_vbuaa=pbuc1_derefidx_vbuyy < vbuaa=pbuc1_derefidx_vbuyy - clobber:A Y  cycles:16.5
   sta $ff

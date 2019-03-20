@@ -24,8 +24,9 @@
   .label YSIN = $2100
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
   .label plex_free_next = 3
-  .label plex_show_idx = 4
-  .label plex_sprite_msb = 5
+  .label plex_sprite_idx = 4
+  .label plex_show_idx = 5
+  .label plex_sprite_msb = 6
 main: {
     sei
     jsr init
@@ -35,8 +36,8 @@ main: {
 // The raster loop
 loop: {
     .label sin_idx = 2
-    .label plexFreeNextYpos1_return = 9
-    .label ss = 6
+    .label plexFreeNextYpos1_return = $a
+    .label ss = 7
     lda #0
     sta sin_idx
   b4:
@@ -72,7 +73,7 @@ loop: {
     sta plex_sprite_msb
     lda #0
     sta plex_show_idx
-    tax
+    sta plex_sprite_idx
     sta plex_free_next
   // Show the sprites
   b11:
@@ -98,14 +99,12 @@ loop: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = 9
-    .label xpos_idx = $a
-    txa
+    .label plex_sprite_idx2 = $a
+    lda plex_sprite_idx
     asl
     sta plex_sprite_idx2
-    ldy plex_show_idx
-    lda PLEX_SORTED_IDX,y
-    tay
+    ldx plex_show_idx
+    ldy PLEX_SORTED_IDX,x
     lda PLEX_YPOS,y
     ldy plex_sprite_idx2
     sta SPRITES_YPOS,y
@@ -118,21 +117,18 @@ plexShowSprite: {
     adc #1
     and #7
     sta plex_free_next
-    ldy plex_show_idx
-    lda PLEX_SORTED_IDX,y
-    tay
+    ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
+    ldx plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
-    ldy plex_show_idx
-    lda PLEX_SORTED_IDX,y
+    ldx plex_show_idx
+    lda PLEX_SORTED_IDX,x
     asl
-    sta xpos_idx
-    tay
-    lda PLEX_XPOS,y
+    tax
+    lda PLEX_XPOS,x
     ldy plex_sprite_idx2
     sta SPRITES_XPOS,y
-    ldy xpos_idx
-    lda PLEX_XPOS+1,y
+    lda PLEX_XPOS+1,x
     cmp #0
     bne b1
     lda plex_sprite_msb
@@ -140,10 +136,11 @@ plexShowSprite: {
     and SPRITES_XMSB
     sta SPRITES_XMSB
   b2:
-    inx
-    txa
+    lda plex_sprite_idx
+    clc
+    adc #1
     and #7
-    tax
+    sta plex_sprite_idx
     inc plex_show_idx
     asl plex_sprite_msb
     lda plex_sprite_msb
@@ -217,7 +214,7 @@ plexSort: {
 }
 // Initialize the program
 init: {
-    .label xp = 7
+    .label xp = 8
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
     jsr plexInit

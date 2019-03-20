@@ -167,9 +167,9 @@
   .label form_vic_bg3_lo = form_fields_val+$23
   .label print_char_cursor = 5
   .label print_line_cursor = $10
-  .label keyboard_events_size = 9
-  .label keyboard_modifiers = 2
-  .label form_cursor_count = $e
+  .label keyboard_events_size = 8
+  .label form_cursor_count = $d
+  .label form_field_idx = $e
 main: {
     sei
     // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
@@ -183,8 +183,8 @@ main: {
     sta DTV_FEATURE
     jsr keyboard_init
     jsr gfx_init
-    ldx #0
-    txa
+    lda #0
+    sta form_field_idx
     sta keyboard_events_size
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
@@ -195,11 +195,11 @@ main: {
 }
 // Change graphics mode to show the selected graphics mode
 gfx_mode: {
-    .label _31 = $a
+    .label _31 = 9
     .label _33 = 3
     .label _35 = 3
     .label _37 = 3
-    .label _45 = $a
+    .label _45 = 9
     .label _47 = 3
     .label _49 = 3
     .label _51 = 3
@@ -209,72 +209,71 @@ gfx_mode: {
     .label _65 = 2
     .label _66 = 3
     .label _68 = 3
-    .label plane_a = $a
-    .label plane_b = $a
+    .label plane_a = 9
+    .label plane_b = 9
     .label vic_colors = 3
     .label col = 5
-    .label cx = 7
     .label cy = 2
     lda form_ctrl_line
     cmp #0
     beq b12
-    ldy #0|DTV_LINEAR
+    ldx #0|DTV_LINEAR
     jmp b1
   b12:
-    ldy #0
+    ldx #0
   b1:
     lda form_ctrl_borof
     cmp #0
     beq b2
-    tya
+    txa
     ora #DTV_BORDER_OFF
-    tay
+    tax
   b2:
     lda form_ctrl_hicol
     cmp #0
     beq b3
-    tya
+    txa
     ora #DTV_HIGHCOLOR
-    tay
+    tax
   b3:
     lda form_ctrl_overs
     cmp #0
     beq b4
-    tya
+    txa
     ora #DTV_OVERSCAN
-    tay
+    tax
   b4:
     lda form_ctrl_colof
     cmp #0
     beq b5
-    tya
+    txa
     ora #DTV_COLORRAM_OFF
-    tay
+    tax
   b5:
     lda form_ctrl_chunk
     cmp #0
     beq b6
-    tya
+    txa
     ora #DTV_CHUNKY
-    tay
+    tax
   b6:
-    sty DTV_CONTROL
+    stx DTV_CONTROL
     lda form_ctrl_ecm
     cmp #0
     beq b14
-    ldy #VIC_DEN|VIC_RSEL|3|VIC_ECM
+    ldx #VIC_DEN|VIC_RSEL|3|VIC_ECM
     jmp b7
   b14:
-    ldy #VIC_DEN|VIC_RSEL|3
+    ldx #VIC_DEN|VIC_RSEL|3
   b7:
     lda form_ctrl_bmm
     cmp #0
     beq b8
-    tya
+    txa
     ora #VIC_BMM
-    tay
+    tax
   b8:
-    sty VIC_CONTROL
+    stx VIC_CONTROL
     lda form_ctrl_mcm
     cmp #0
     beq b16
@@ -290,10 +289,10 @@ gfx_mode: {
     asl
     asl
     ora form_a_start_lo
-    tay
+    tax
     lda form_a_pattern
     jsr get_plane
-    tya
+    txa
     clc
     adc plane_a
     sta plane_a
@@ -345,10 +344,10 @@ gfx_mode: {
     asl
     asl
     ora form_b_start_lo
-    tay
+    tax
     lda form_b_pattern
     jsr get_plane
-    tya
+    txa
     clc
     adc plane_b
     sta plane_b
@@ -439,8 +438,7 @@ gfx_mode: {
     lda #>COLS
     sta col+1
   b10:
-    lda #0
-    sta cx
+    ldx #0
   b11:
     ldy #0
     lda (vic_colors),y
@@ -453,9 +451,8 @@ gfx_mode: {
     bne !+
     inc vic_colors+1
   !:
-    inc cx
-    lda cx
-    cmp #$28
+    inx
+    cpx #$28
     bne b11
     inc cy
     lda cy
@@ -496,13 +493,13 @@ gfx_mode: {
     lda form_dtv_palet
     cmp #0
     beq b18
-    ldy #0
+    ldx #0
   // DTV Palette - Grey Tones
   b13:
-    tya
-    sta DTV_PALETTE,y
-    iny
-    cpy #$10
+    txa
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
     bne b13
   b19:
     lda RASTER
@@ -515,12 +512,12 @@ gfx_mode: {
     rts
   // DTV Palette - default
   b18:
-    ldy #0
+    ldx #0
   b15:
-    lda DTV_PALETTE_DEFAULT,y
-    sta DTV_PALETTE,y
-    iny
-    cpy #$10
+    lda DTV_PALETTE_DEFAULT,x
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
     bne b15
     jmp b19
 }
@@ -546,14 +543,13 @@ keyboard_event_get: {
 // Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label row_scan = $12
-    .label keycode = 8
+    .label keycode = 7
     .label row = 2
-    .label col = 7
     lda #0
     sta keycode
     sta row
   b1:
-    lda row
+    ldx row
     jsr keyboard_matrix_read
     sta row_scan
     ldy row
@@ -573,58 +569,54 @@ keyboard_event_scan: {
     jsr keyboard_event_pressed
     cmp #0
     beq b2
-    lda #0|KEY_MODIFIER_LSHIFT
-    sta keyboard_modifiers
+    ldx #0|KEY_MODIFIER_LSHIFT
     jmp b9
   b2:
-    lda #0
-    sta keyboard_modifiers
+    ldx #0
   b9:
     lda #KEY_RSHIFT
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     beq b10
-    lda #KEY_MODIFIER_RSHIFT
-    ora keyboard_modifiers
-    sta keyboard_modifiers
+    txa
+    ora #KEY_MODIFIER_RSHIFT
+    tax
   b10:
     lda #KEY_CTRL
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     beq b11
-    lda #KEY_MODIFIER_CTRL
-    ora keyboard_modifiers
-    sta keyboard_modifiers
+    txa
+    ora #KEY_MODIFIER_CTRL
+    tax
   b11:
     lda #KEY_COMMODORE
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
     beq breturn
-    lda #KEY_MODIFIER_COMMODORE
-    ora keyboard_modifiers
-    sta keyboard_modifiers
+    txa
+    ora #KEY_MODIFIER_COMMODORE
+    tax
   breturn:
     rts
   // Something has changed on the keyboard row - check each column
   b6:
-    lda #0
-    sta col
+    ldx #0
   b4:
     lda row_scan
     ldy row
     eor keyboard_scan_values,y
-    ldy col
-    and keyboard_matrix_col_bitmask,y
+    and keyboard_matrix_col_bitmask,x
     cmp #0
     beq b5
     lda keyboard_events_size
     cmp #8
     beq b5
-    lda row_scan
-    and keyboard_matrix_col_bitmask,y
+    lda keyboard_matrix_col_bitmask,x
+    and row_scan
     cmp #0
     beq b7
     // Key pressed
@@ -634,9 +626,8 @@ keyboard_event_scan: {
     inc keyboard_events_size
   b5:
     inc keycode
-    inc col
-    lda col
-    cmp #8
+    inx
+    cpx #8
     bne b4
     // Store the current keyboard status for the row to debounce
     lda row_scan
@@ -654,10 +645,10 @@ keyboard_event_scan: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte zeropage(7) keycode)
+// keyboard_event_pressed(byte zeropage(2) keycode)
 keyboard_event_pressed: {
-    .label row_bits = 8
-    .label keycode = 7
+    .label row_bits = 7
+    .label keycode = 2
     lda keycode
     lsr
     lsr
@@ -677,10 +668,9 @@ keyboard_event_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-// keyboard_matrix_read(byte register(A) rowid)
+// keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    tay
-    lda keyboard_matrix_row_bitmask,y
+    lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
     lda CIA1_PORT_B
     eor #$ff
@@ -755,7 +745,7 @@ get_vic_charset: {
 // Get plane address from a plane index (from the form)
 // get_plane(byte register(A) idx)
 get_plane: {
-    .label return = $a
+    .label return = 9
     cmp #0
     beq b1
     cmp #1
@@ -1009,13 +999,13 @@ form_mode: {
     sta DTV_PLANEA_START_MI
     lda #0
     sta DTV_PLANEA_START_HI
-    tay
+    tax
   // DTV Palette - default
   b1:
-    lda DTV_PALETTE_DEFAULT,y
-    sta DTV_PALETTE,y
-    iny
-    cpy #$10
+    lda DTV_PALETTE_DEFAULT,x
+    sta DTV_PALETTE,x
+    inx
+    cpx #$10
     bne b1
     // Screen colors
     lda #0
@@ -1029,7 +1019,7 @@ form_mode: {
     cmp #$ff
     bne b5
     jsr form_control
-    tya
+    txa
     cmp #0
     beq b8
     rts
@@ -1188,10 +1178,10 @@ form_render_values: {
     lda #0
     sta idx
   b1:
-    jsr form_field_ptr
     ldy idx
-    lda form_fields_val,y
-    tay
+    jsr form_field_ptr
+    ldx idx
+    ldy form_fields_val,x
     lda print_hextab,y
     ldy #0
     sta (field),y
@@ -1203,19 +1193,15 @@ form_render_values: {
 }
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
-// form_field_ptr(byte zeropage(2) field_idx)
+// form_field_ptr(byte register(Y) field_idx)
 form_field_ptr: {
     .label return = 3
-    .label field_idx = 2
     .label _2 = 3
-    ldy field_idx
-    lda form_fields_y,y
-    tay
-    lda form_line_hi,y
+    ldx form_fields_y,y
+    lda form_line_hi,x
     sta _2+1
-    lda form_line_lo,y
+    lda form_line_lo,x
     sta _2
-    ldy field_idx
     lda form_fields_x,y
     clc
     adc return
@@ -1332,7 +1318,7 @@ apply_preset: {
 // Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
     .label field = 3
-    stx form_field_ptr.field_idx
+    ldy form_field_idx
     jsr form_field_ptr
     dec form_cursor_count
     lda form_cursor_count
@@ -1364,64 +1350,70 @@ form_control: {
     and (field),y
     // Unblink the cursor
     sta (field),y
-    lda #KEY_MODIFIER_SHIFT
-    and keyboard_modifiers
+    txa
+    and #KEY_MODIFIER_SHIFT
     cmp #0
     beq b5
-    dex
-    cpx #$ff
+    dec form_field_idx
+    lda form_field_idx
+    cmp #$ff
     bne b7
-    ldx #form_fields_cnt-1
+    lda #form_fields_cnt-1
+    sta form_field_idx
   b7:
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
-    ldy #0
+    ldx #0
   breturn:
     rts
   b5:
-    inx
-    cpx #form_fields_cnt
+    inc form_field_idx
+    lda form_field_idx
+    cmp #form_fields_cnt
     bne b7
-    ldx #0
+    lda #0
+    sta form_field_idx
     jmp b7
   b4:
     cmp #KEY_CRSR_RIGHT
     bne b9
-    lda #KEY_MODIFIER_SHIFT
-    and keyboard_modifiers
+    txa
+    and #KEY_MODIFIER_SHIFT
     cmp #0
     beq b10
+    ldx form_field_idx
     dec form_fields_val,x
-    lda form_fields_val,x
+    ldy form_field_idx
+    lda form_fields_val,y
     cmp #$ff
     bne b12
-    lda form_fields_max,x
-    sta form_fields_val,x
+    lda form_fields_max,y
+    sta form_fields_val,y
   b12:
     // Render field value
-    lda form_fields_val,x
-    tay
+    ldx form_field_idx
+    ldy form_fields_val,x
     lda print_hextab,y
     ldy #0
     sta (field),y
   b6:
-    ldy #0
+    ldx #0
     jmp breturn
   b10:
+    ldx form_field_idx
     inc form_fields_val,x
-    txa
-    tay
-    lda form_fields_val,x
+    ldy form_field_idx
+    lda form_fields_val,y
     cmp form_fields_max,y
     bcc b12
     beq b12
     lda #0
-    sta form_fields_val,x
+    sta form_fields_val,y
     jmp b12
   b9:
     cmp #KEY_SPACE
     bne b6
-    ldy #$ff
+    ldx #$ff
     jmp breturn
   b2:
     lda #$80
@@ -1434,16 +1426,16 @@ form_control: {
 // screen is the start address of the screen to use
 form_set_screen: {
     .label line = 3
-    ldy #0
+    ldx #0
     lda #<FORM_SCREEN
     sta line
     lda #>FORM_SCREEN
     sta line+1
   b1:
     lda line
-    sta form_line_lo,y
+    sta form_line_lo,x
     lda line+1
-    sta form_line_hi,y
+    sta form_line_hi,x
     lda #$28
     clc
     adc line
@@ -1451,8 +1443,8 @@ form_set_screen: {
     bcc !+
     inc line+1
   !:
-    iny
-    cpy #$19
+    inx
+    cpx #$19
     bne b1
     rts
 }
@@ -1588,7 +1580,7 @@ gfx_init_plane_full: {
     rts
 }
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
-// gfx_init_plane_fill(dword zeropage($a) plane_addr, byte zeropage(2) fill)
+// gfx_init_plane_fill(dword zeropage(9) plane_addr, byte zeropage(2) fill)
 gfx_init_plane_fill: {
     .label _0 = $13
     .label _1 = 3
@@ -1597,7 +1589,7 @@ gfx_init_plane_fill: {
     .label _6 = 3
     .label gfxb = 3
     .label by = 7
-    .label plane_addr = $a
+    .label plane_addr = 9
     .label fill = 2
     lda plane_addr
     sta _0
@@ -1834,7 +1826,7 @@ gfx_init_plane_charset8: {
     .label bits = 8
     .label chargen = 3
     .label gfxa = 5
-    .label col = 9
+    .label col = $d
     .label cr = 7
     .label ch = 2
     lda #gfxbCpuBank
@@ -1992,10 +1984,10 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zeropage(9) x0, byte register(X) x1, byte zeropage($f) y0, byte zeropage($12) y1)
+// bitmap_line(byte zeropage($d) x0, byte register(X) x1, byte zeropage($f) y0, byte zeropage($12) y1)
 bitmap_line: {
     .label xd = 8
-    .label x0 = 9
+    .label x0 = $d
     .label y0 = $f
     .label y1 = $12
     txa
@@ -2099,11 +2091,11 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     jmp breturn
 }
-// bitmap_line_xdyi(byte zeropage($e) x, byte zeropage($f) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
+// bitmap_line_xdyi(byte zeropage($e) x, byte zeropage($f) y, byte zeropage($d) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyi: {
     .label x = $e
     .label y = $f
-    .label x1 = 9
+    .label x1 = $d
     .label xd = 8
     .label yd = 7
     .label e = $12
@@ -2166,7 +2158,7 @@ bitmap_line_ydxi: {
     .label y1 = $12
     .label yd = 7
     .label xd = 8
-    .label e = 9
+    .label e = $d
     lda xd
     lsr
     sta e
@@ -2194,11 +2186,11 @@ bitmap_line_ydxi: {
     bne b1
     rts
 }
-// bitmap_line_xdyd(byte zeropage($e) x, byte zeropage($f) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
+// bitmap_line_xdyd(byte zeropage($e) x, byte zeropage($f) y, byte zeropage($d) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyd: {
     .label x = $e
     .label y = $f
-    .label x1 = 9
+    .label x1 = $d
     .label xd = 8
     .label yd = 7
     .label e = $12
@@ -2235,7 +2227,7 @@ bitmap_line_ydxd: {
     .label y1 = $f
     .label yd = 7
     .label xd = 8
-    .label e = 9
+    .label e = $d
     lda xd
     lsr
     sta e

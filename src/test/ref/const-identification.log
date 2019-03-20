@@ -401,11 +401,10 @@ plot: {
     lda plots,y
     sta idx
   //SEG39 [20] (byte/signed word/word/dword/signed dword~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=pbuc1_derefidx_vbuz2_plus_1 
-    ldy idx
-    lda SCREEN,y
-    clc
-    adc #1
-    sta _0
+    ldx idx
+    ldy SCREEN,x
+    iny
+    sty _0
   //SEG40 [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/signed word/word/dword/signed dword~) plot::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _0
     ldy idx
@@ -420,16 +419,12 @@ plot: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [20] (byte/signed word/word/dword/signed dword~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word/dword/signed dword) 1 [ plot::idx#0 plot::$0 ] ( main:2::line:11::plot:15 [ line::x#2 plot::idx#0 plot::$0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ line::x#2 line::x#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ plot::idx#0 ]
 Statement [6] *((const byte*) plots#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [20] (byte/signed word/word/dword/signed dword~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word/dword/signed dword) 1 [ plot::idx#0 plot::$0 ] ( main:2::line:11::plot:15 [ line::x#2 plot::idx#0 plot::$0 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ line::x#2 line::x#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ line::x#2 line::x#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ plot::x#1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ plot::idx#0 ] : zp ZP_BYTE:5 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:5 [ plot::idx#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:6 [ plot::$0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -438,10 +433,12 @@ Uplift Scope [plot] 103: zp ZP_BYTE:4 [ plot::x#1 ] 4: zp ZP_BYTE:6 [ plot::$0 ]
 Uplift Scope [main] 34.83: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [line] best 3736 combination reg byte x [ line::x#2 line::x#1 ] 
-Uplifting [plot] best 3418 combination reg byte x [ plot::x#1 ] reg byte a [ plot::$0 ] reg byte y [ plot::idx#0 ] 
-Uplifting [main] best 3268 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 3268 combination 
+Uplifting [line] best 4684 combination zp ZP_BYTE:3 [ line::x#2 line::x#1 ] 
+Uplifting [plot] best 4368 combination reg byte y [ plot::x#1 ] reg byte a [ plot::$0 ] reg byte x [ plot::idx#0 ] 
+Uplifting [main] best 4218 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 4218 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ line::x#2 line::x#1 ]
+Uplifting [line] best 3268 combination reg byte y [ line::x#2 line::x#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -510,8 +507,8 @@ line: {
     .const x1 = $a
   //SEG25 [13] phi from line to line::@3 [phi:line->line::@3]
   b3_from_line:
-  //SEG26 [13] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@3#0] -- vbuxx=vbuc1 
-    ldx #x0
+  //SEG26 [13] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@3#0] -- vbuyy=vbuc1 
+    ldy #x0
     jmp b3
   //SEG27 [13] phi from line::@8 to line::@3 [phi:line::@8->line::@3]
   b3_from_b8:
@@ -525,10 +522,10 @@ line: {
     jmp b8
   //SEG32 line::@8
   b8:
-  //SEG33 [16] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG34 [17] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@3 -- vbuxx_le_vbuc1_then_la1 
-    cpx #x1
+  //SEG33 [16] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG34 [17] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@3 -- vbuyy_le_vbuc1_then_la1 
+    cpy #x1
     bcc b3_from_b8
     beq b3_from_b8
     jmp breturn
@@ -538,16 +535,16 @@ line: {
     rts
 }
 //SEG37 plot
-// plot(byte register(X) x)
+// plot(byte register(Y) x)
 plot: {
-  //SEG38 [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1) -- vbuyy=pbuc1_derefidx_vbuxx 
-    ldy plots,x
-  //SEG39 [20] (byte/signed word/word/dword/signed dword~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=pbuc1_derefidx_vbuyy_plus_1 
-    lda SCREEN,y
+  //SEG38 [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1) -- vbuxx=pbuc1_derefidx_vbuyy 
+    ldx plots,y
+  //SEG39 [20] (byte/signed word/word/dword/signed dword~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=pbuc1_derefidx_vbuxx_plus_1 
+    lda SCREEN,x
     clc
     adc #1
-  //SEG40 [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/signed word/word/dword/signed dword~) plot::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
-    sta SCREEN,y
+  //SEG40 [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/signed word/word/dword/signed dword~) plot::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    sta SCREEN,x
     jmp breturn
   //SEG41 plot::@return
   breturn:
@@ -606,8 +603,8 @@ FINAL SYMBOL TABLE
 (label) line::@8
 (label) line::@return
 (byte) line::x
-(byte) line::x#1 reg byte x 151.5
-(byte) line::x#2 reg byte x 101.0
+(byte) line::x#1 reg byte y 151.5
+(byte) line::x#2 reg byte y 101.0
 (byte) line::x0
 (const byte) line::x0#0 x0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 (byte) line::x1
@@ -622,16 +619,16 @@ FINAL SYMBOL TABLE
 (byte/signed word/word/dword/signed dword~) plot::$0 reg byte a 4.0
 (label) plot::@return
 (byte) plot::idx
-(byte) plot::idx#0 reg byte y 3.0
+(byte) plot::idx#0 reg byte x 3.0
 (byte) plot::x
-(byte) plot::x#1 reg byte x 103.0
+(byte) plot::x#1 reg byte y 103.0
 (byte*) plots
 (const byte*) plots#0 plots = ((byte*))(word/signed word/dword/signed dword) $1000
 
 reg byte x [ main::i#2 main::i#1 ]
-reg byte x [ line::x#2 line::x#1 ]
-reg byte x [ plot::x#1 ]
-reg byte y [ plot::idx#0 ]
+reg byte y [ line::x#2 line::x#1 ]
+reg byte y [ plot::x#1 ]
+reg byte x [ plot::idx#0 ]
 reg byte a [ plot::$0 ]
 
 
@@ -686,8 +683,8 @@ line: {
     .const x0 = 0
     .const x1 = $a
   //SEG25 [13] phi from line to line::@3 [phi:line->line::@3]
-  //SEG26 [13] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@3#0] -- vbuxx=vbuc1 
-    ldx #x0
+  //SEG26 [13] phi (byte) line::x#2 = (const byte) line::x0#0 [phi:line->line::@3#0] -- vbuyy=vbuc1 
+    ldy #x0
   //SEG27 [13] phi from line::@8 to line::@3 [phi:line::@8->line::@3]
   //SEG28 [13] phi (byte) line::x#2 = (byte) line::x#1 [phi:line::@8->line::@3#0] -- register_copy 
   //SEG29 line::@3
@@ -696,10 +693,10 @@ line: {
   //SEG31 [15] call plot 
     jsr plot
   //SEG32 line::@8
-  //SEG33 [16] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG34 [17] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@3 -- vbuxx_le_vbuc1_then_la1 
-    cpx #x1
+  //SEG33 [16] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG34 [17] if((byte) line::x#1<=(const byte) line::x1#0) goto line::@3 -- vbuyy_le_vbuc1_then_la1 
+    cpy #x1
     bcc b3
     beq b3
   //SEG35 line::@return
@@ -707,16 +704,16 @@ line: {
     rts
 }
 //SEG37 plot
-// plot(byte register(X) x)
+// plot(byte register(Y) x)
 plot: {
-  //SEG38 [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1) -- vbuyy=pbuc1_derefidx_vbuxx 
-    ldy plots,x
-  //SEG39 [20] (byte/signed word/word/dword/signed dword~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=pbuc1_derefidx_vbuyy_plus_1 
-    lda SCREEN,y
+  //SEG38 [19] (byte) plot::idx#0 ← *((const byte*) plots#0 + (byte) plot::x#1) -- vbuxx=pbuc1_derefidx_vbuyy 
+    ldx plots,y
+  //SEG39 [20] (byte/signed word/word/dword/signed dword~) plot::$0 ← *((const byte*) SCREEN#0 + (byte) plot::idx#0) + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=pbuc1_derefidx_vbuxx_plus_1 
+    lda SCREEN,x
     clc
     adc #1
-  //SEG40 [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/signed word/word/dword/signed dword~) plot::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
-    sta SCREEN,y
+  //SEG40 [21] *((const byte*) SCREEN#0 + (byte) plot::idx#0) ← (byte/signed word/word/dword/signed dword~) plot::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    sta SCREEN,x
   //SEG41 plot::@return
   //SEG42 [22] return 
     rts

@@ -20,21 +20,21 @@ main: {
 line: {
     .const x0 = 0
     .const x1 = $a
-    ldx #x0
+    ldy #x0
   b3:
     jsr plot
-    inx
-    cpx #x1
+    iny
+    cpy #x1
     bcc b3
     beq b3
     rts
 }
-// plot(byte register(X) x)
+// plot(byte register(Y) x)
 plot: {
-    ldy plots,x
-    lda SCREEN,y
+    ldx plots,y
+    lda SCREEN,x
     clc
     adc #1
-    sta SCREEN,y
+    sta SCREEN,x
     rts
 }

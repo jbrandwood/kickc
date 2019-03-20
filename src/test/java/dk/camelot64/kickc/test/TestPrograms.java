@@ -1390,6 +1390,11 @@ public class TestPrograms {
       tester.testFile(filename, upliftCombinations, null);
    }
 
+   private void compileAndCompare(String filename, CompileLog log, int upliftCombinations) throws IOException, URISyntaxException {
+      TestPrograms tester = new TestPrograms();
+      tester.testFile(filename, upliftCombinations, log);
+   }
+
    private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException, URISyntaxException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();

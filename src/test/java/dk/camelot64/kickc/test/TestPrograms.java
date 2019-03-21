@@ -33,6 +33,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSignedWordMinusByte() throws IOException, URISyntaxException {
+      compileAndCompare("test-signed-word-minus-byte");
+   }
+
+   @Test
+   public void testIrqIdxProblem() throws IOException, URISyntaxException {
+      compileAndCompare("irq-idx-problem");
+   }
+
+   @Test
    public void testDoubleIndexingArrays() throws IOException, URISyntaxException {
       compileAndCompare("double-indexing-arrays");
    }

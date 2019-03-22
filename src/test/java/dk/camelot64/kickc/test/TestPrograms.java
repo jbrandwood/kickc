@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testBoolNullPointerException() throws IOException, URISyntaxException {
+      compileAndCompare("bool-nullpointer-exception");
+   }
+
+   @Test
    public void testSignedWordMinusByte() throws IOException, URISyntaxException {
       compileAndCompare("test-signed-word-minus-byte");
    }

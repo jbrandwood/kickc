@@ -54,18 +54,20 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
                   if(conditionRValue instanceof VariableRef && usages.get(conditionRValue).size() == 1) {
                      VariableRef conditionVar = (VariableRef) conditionRValue;
                      StatementAssignment conditionAssignment = assignments.get(conditionVar);
-                     if(Operators.LOGIC_AND.equals(conditionAssignment.getOperator())) {
-                        // Found if() with logical && condition - rewrite to if(c1) if(c2) { xx }
-                        rewriteLogicAnd(block, conditional, conditionAssignment);
-                        return conditionVar;
-                     } else if(Operators.LOGIC_OR.equals(conditionAssignment.getOperator())) {
-                        // Found if() with logical || condition - rewrite to if(c1) goto x else if(c2) goto x else goto end, x:{ xx } end:
-                        rewriteLogicOr(block, conditional, conditionAssignment);
-                        return conditionVar;
-                     } else if(Operators.LOGIC_NOT.equals(conditionAssignment.getOperator())) {
-                        // Found if() with logical ! condition - rewrite to if(!c1) goto x else goto end, x:{ xx } end:
-                        rewriteLogicNot(block, conditional, conditionAssignment);
-                        return conditionVar;
+                     if(conditionAssignment!=null) {
+                        if(Operators.LOGIC_AND.equals(conditionAssignment.getOperator())) {
+                           // Found if() with logical && condition - rewrite to if(c1) if(c2) { xx }
+                           rewriteLogicAnd(block, conditional, conditionAssignment);
+                           return conditionVar;
+                        } else if(Operators.LOGIC_OR.equals(conditionAssignment.getOperator())) {
+                           // Found if() with logical || condition - rewrite to if(c1) goto x else if(c2) goto x else goto end, x:{ xx } end:
+                           rewriteLogicOr(block, conditional, conditionAssignment);
+                           return conditionVar;
+                        } else if(Operators.LOGIC_NOT.equals(conditionAssignment.getOperator())) {
+                           // Found if() with logical ! condition - rewrite to if(!c1) goto x else goto end, x:{ xx } end:
+                           rewriteLogicNot(block, conditional, conditionAssignment);
+                           return conditionVar;
+                        }
                      }
                   }
                }

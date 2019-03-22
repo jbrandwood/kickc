@@ -43,7 +43,7 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                if(conditionRValue instanceof VariableRef && usages.get(conditionRValue).size() == 1) {
                   VariableRef conditionVar = (VariableRef) conditionRValue;
                   StatementAssignment conditionAssignment = assignments.get(conditionVar);
-                  if(conditionAssignment.getOperator() != null) {
+                  if(conditionAssignment!=null && conditionAssignment.getOperator() != null) {
                      switch(conditionAssignment.getOperator().getOperator()) {
                         case "==":
                         case "<>":

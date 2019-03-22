@@ -1,19 +1,17 @@
+Identified constant variable (byte*) SCREEN
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   to:@2
 main: scope:[main]  from @2
-  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#6 )
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) $64
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 main::@3/(byte*) SCREEN#5 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   call nest 
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  (byte*) SCREEN#5 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
   (byte) main::i#1 ← -- (byte) main::i#2
   (bool~) main::$1 ← (byte) main::i#1 > (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -23,13 +21,11 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 nest: scope:[nest]  from main::@1
-  (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) nest::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) $64
   to:nest::@1
 nest::@1: scope:[nest]  from nest nest::@1
-  (byte*) SCREEN#1 ← phi( nest/(byte*) SCREEN#2 nest::@1/(byte*) SCREEN#1 )
   (byte) nest::j#2 ← phi( nest/(byte) nest::j#0 nest::@1/(byte) nest::j#1 )
-  *((byte*) SCREEN#1) ← (byte) nest::j#2
+  *((byte*) SCREEN#0) ← (byte) nest::j#2
   (byte) nest::j#1 ← -- (byte) nest::j#2
   (bool~) nest::$0 ← (byte) nest::j#1 > (byte/signed byte/word/signed word/dword/signed dword) 0
   if((bool~) nest::$0) goto nest::@1
@@ -38,7 +34,6 @@ nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) SCREEN#6 ← phi( @begin/(byte*) SCREEN#0 )
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -52,12 +47,6 @@ SYMBOL TABLE SSA
 (label) @end
 (byte*) SCREEN
 (byte*) SCREEN#0
-(byte*) SCREEN#1
-(byte*) SCREEN#2
-(byte*) SCREEN#3
-(byte*) SCREEN#4
-(byte*) SCREEN#5
-(byte*) SCREEN#6
 (void()) main()
 (bool~) main::$1
 (label) main::@1
@@ -80,19 +69,9 @@ SYMBOL TABLE SSA
 Culled Empty Block (label) @3
 Successful SSA optimization Pass2CullEmptyBlocks
 Alias (byte) main::i#2 = (byte) main::i#3 
-Alias (byte*) SCREEN#3 = (byte*) SCREEN#5 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#6 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte*) SCREEN#3
-Self Phi Eliminated (byte*) SCREEN#1
-Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) SCREEN#4 (byte*) SCREEN#0
-Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#4
-Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#3
-Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#2
-Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$1 [8] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1
-Simple Condition (bool~) nest::$0 [16] if((byte) nest::j#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto nest::@1
+Simple Condition (bool~) main::$1 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1
+Simple Condition (bool~) nest::$0 [14] if((byte) nest::j#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto nest::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = ((byte*))$400
 Constant (const byte) main::i#0 = $64

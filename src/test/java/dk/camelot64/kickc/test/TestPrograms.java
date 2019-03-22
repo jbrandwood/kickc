@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstEarlyIdentification() throws IOException, URISyntaxException {
+      compileAndCompare("const-early-identification");
+   }
+
+   @Test
    public void testBoolNullPointerException() throws IOException, URISyntaxException {
       compileAndCompare("bool-nullpointer-exception");
    }

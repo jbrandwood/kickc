@@ -508,6 +508,7 @@ mode_8bpppixelcell: {
     .label PLANEA = $3c00
     // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
     .label PLANEB = $4000
+    .label CHARGEN = $d000
     .label _14 = 7
     .label gfxa = 2
     .label ay = 4
@@ -598,9 +599,9 @@ mode_8bpppixelcell: {
     sta gfxb
     lda #>PLANEB
     sta gfxb+1
-    lda #<$d000
+    lda #<CHARGEN
     sta chargen
-    lda #>$d000
+    lda #>CHARGEN
     sta chargen+1
   b4:
     lda #0

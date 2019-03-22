@@ -4,20 +4,23 @@
   .const STAR = $51
   .label SCREEN = $400
 main: {
+    .const x0 = 4
+    .const y0 = 4
     .const x1 = $27
     .const y1 = $18
-    .const xd = x1-4
-    .const yd = y1-4
+    .const xd = x1-x0
+    .const yd = y1-y0
     .label x = 4
     .label cursor = 2
     .label y = 5
-    lda #4
+    lda #y0
     sta y
     ldx #yd/2
+    lda #x0
     sta x
-    lda #<SCREEN+4*$28+4
+    lda #<SCREEN+y0*$28+x0
     sta cursor
-    lda #>SCREEN+4*$28+4
+    lda #>SCREEN+y0*$28+x0
     sta cursor+1
   b1:
     lda #STAR

@@ -1,4 +1,8 @@
 Resolved forward reference irq to interrupt(HARDWARE_CLOBBER)(void()) irq()
+Identified constant variable (byte*) BORDERCOL
+Identified constant variable (byte*) RASTER
+Identified constant variable (byte) DARK_GREY
+Identified constant variable (byte) BLACK
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -16,19 +20,11 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte) BLACK#5 ← phi( @begin/(byte) BLACK#0 )
-  (byte*) RASTER#5 ← phi( @begin/(byte*) RASTER#0 )
-  (byte*) BORDERCOL#5 ← phi( @begin/(byte*) BORDERCOL#0 )
-  (byte) DARK_GREY#3 ← phi( @begin/(byte) DARK_GREY#0 )
   (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:@2
 irq: scope:[irq]  from
-  (byte) BLACK#2 ← phi( @2/(byte) BLACK#4 )
-  (byte*) RASTER#2 ← phi( @2/(byte*) RASTER#4 )
   (byte) irq_raster_next#3 ← phi( @2/(byte) irq_raster_next#5 )
-  (byte*) BORDERCOL#1 ← phi( @2/(byte*) BORDERCOL#3 )
-  (byte) DARK_GREY#1 ← phi( @2/(byte) DARK_GREY#2 )
-  *((byte*) BORDERCOL#1) ← (byte) DARK_GREY#1
+  *((byte*) BORDERCOL#0) ← (byte) DARK_GREY#0
   (byte) irq_raster_next#1 ← (byte) irq_raster_next#3 + (byte/signed byte/word/signed word/dword/signed dword) $15
   (byte) irq::raster_next#0 ← (byte) irq_raster_next#1
   (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7
@@ -38,18 +34,12 @@ irq: scope:[irq]  from
   to:irq::@2
 irq::@1: scope:[irq]  from irq irq::@2
   (byte) irq_raster_next#6 ← phi( irq/(byte) irq_raster_next#1 irq::@2/(byte) irq_raster_next#7 )
-  (byte*) BORDERCOL#2 ← phi( irq/(byte*) BORDERCOL#1 irq::@2/(byte*) BORDERCOL#4 )
-  (byte) BLACK#1 ← phi( irq/(byte) BLACK#2 irq::@2/(byte) BLACK#3 )
-  (byte*) RASTER#1 ← phi( irq/(byte*) RASTER#2 irq::@2/(byte*) RASTER#3 )
   (byte) irq::raster_next#2 ← phi( irq/(byte) irq::raster_next#0 irq::@2/(byte) irq::raster_next#1 )
-  *((byte*) RASTER#1) ← (byte) irq::raster_next#2
-  *((byte*) BORDERCOL#2) ← (byte) BLACK#1
+  *((byte*) RASTER#0) ← (byte) irq::raster_next#2
+  *((byte*) BORDERCOL#0) ← (byte) BLACK#0
   to:irq::@return
 irq::@2: scope:[irq]  from irq
   (byte) irq_raster_next#7 ← phi( irq/(byte) irq_raster_next#1 )
-  (byte*) BORDERCOL#4 ← phi( irq/(byte*) BORDERCOL#1 )
-  (byte) BLACK#3 ← phi( irq/(byte) BLACK#2 )
-  (byte*) RASTER#3 ← phi( irq/(byte*) RASTER#2 )
   (byte) irq::raster_next#3 ← phi( irq/(byte) irq::raster_next#0 )
   (byte) irq::raster_next#1 ← (byte) irq::raster_next#3 - (byte/signed byte/word/signed word/dword/signed dword) 1
   to:irq::@1
@@ -59,11 +49,7 @@ irq::@return: scope:[irq]  from irq::@1
   return 
   to:@return
 @2: scope:[]  from @1
-  (byte) BLACK#4 ← phi( @1/(byte) BLACK#5 )
-  (byte*) RASTER#4 ← phi( @1/(byte*) RASTER#5 )
   (byte) irq_raster_next#5 ← phi( @1/(byte) irq_raster_next#0 )
-  (byte*) BORDERCOL#3 ← phi( @1/(byte*) BORDERCOL#5 )
-  (byte) DARK_GREY#2 ← phi( @1/(byte) DARK_GREY#3 )
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -78,32 +64,14 @@ SYMBOL TABLE SSA
 (label) @end
 (byte) BLACK
 (byte) BLACK#0
-(byte) BLACK#1
-(byte) BLACK#2
-(byte) BLACK#3
-(byte) BLACK#4
-(byte) BLACK#5
 (byte*) BORDERCOL
 (byte*) BORDERCOL#0
-(byte*) BORDERCOL#1
-(byte*) BORDERCOL#2
-(byte*) BORDERCOL#3
-(byte*) BORDERCOL#4
-(byte*) BORDERCOL#5
 (byte) DARK_GREY
 (byte) DARK_GREY#0
-(byte) DARK_GREY#1
-(byte) DARK_GREY#2
-(byte) DARK_GREY#3
 (void()**) KERNEL_IRQ
 (void()**) KERNEL_IRQ#0
 (byte*) RASTER
 (byte*) RASTER#0
-(byte*) RASTER#1
-(byte*) RASTER#2
-(byte*) RASTER#3
-(byte*) RASTER#4
-(byte*) RASTER#5
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte~) irq::$0
 (bool~) irq::$1
@@ -131,32 +99,18 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 
 Culled Empty Block (label) @3
 Successful SSA optimization Pass2CullEmptyBlocks
-Inversing boolean not [16] (bool~) irq::$2 ← (byte~) irq::$0 != (byte/signed byte/word/signed word/dword/signed dword) 0 from [15] (bool~) irq::$1 ← (byte~) irq::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not [15] (bool~) irq::$2 ← (byte~) irq::$0 != (byte/signed byte/word/signed word/dword/signed dword) 0 from [14] (bool~) irq::$1 ← (byte~) irq::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte) DARK_GREY#0 = (byte) DARK_GREY#3 (byte) DARK_GREY#2 
-Alias (byte*) BORDERCOL#0 = (byte*) BORDERCOL#5 (byte*) BORDERCOL#3 
-Alias (byte*) RASTER#0 = (byte*) RASTER#5 (byte*) RASTER#4 
-Alias (byte) BLACK#0 = (byte) BLACK#5 (byte) BLACK#4 
 Alias (byte) irq::raster_next#0 = (byte) irq::raster_next#3 
-Alias (byte*) RASTER#2 = (byte*) RASTER#3 
-Alias (byte) BLACK#2 = (byte) BLACK#3 
-Alias (byte*) BORDERCOL#1 = (byte*) BORDERCOL#4 
 Alias (byte) irq_raster_next#1 = (byte) irq_raster_next#7 
 Alias (byte) irq_raster_next#2 = (byte) irq_raster_next#4 (byte) irq_raster_next#6 
 Alias (byte) irq_raster_next#0 = (byte) irq_raster_next#5 
 Successful SSA optimization Pass2AliasElimination
-Alias (byte*) RASTER#1 = (byte*) RASTER#2 
-Alias (byte) BLACK#1 = (byte) BLACK#2 
-Alias (byte*) BORDERCOL#1 = (byte*) BORDERCOL#2 
 Alias (byte) irq_raster_next#1 = (byte) irq_raster_next#2 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte) DARK_GREY#1 (byte) DARK_GREY#0
-Redundant Phi (byte*) BORDERCOL#1 (byte*) BORDERCOL#0
 Redundant Phi (byte) irq_raster_next#3 (byte) irq_raster_next#0
-Redundant Phi (byte*) RASTER#1 (byte*) RASTER#0
-Redundant Phi (byte) BLACK#1 (byte) BLACK#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) irq::$2 [17] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1
+Simple Condition (bool~) irq::$2 [16] if((byte~) irq::$0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) BORDERCOL#0 = ((byte*))$d020
 Constant (const byte*) RASTER#0 = ((byte*))$d012

@@ -1,3 +1,7 @@
+Identified constant variable (byte) c
+Identified constant variable (word) d
+Identified constant variable (byte) main::col
+Identified constant variable (byte*) main::COLS
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -12,7 +16,6 @@ CONTROL FLOW GRAPH SSA
   (word) d#0 ← (word/signed word/dword/signed dword) $3e8
   to:@2
 main: scope:[main]  from @2
-  (word) d#2 ← phi( @2/(word) d#3 )
   (byte) b#13 ← phi( @2/(byte) b#14 )
   (byte) main::col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte*) main::COLS#0 ← ((byte*)) (word/dword/signed dword) $d800
@@ -22,9 +25,6 @@ main: scope:[main]  from @2
   (byte) s::return#0 ← (byte) s::return#2
   to:main::@3
 main::@3: scope:[main]  from main
-  (byte*) main::COLS#2 ← phi( main/(byte*) main::COLS#0 )
-  (byte) main::col#2 ← phi( main/(byte) main::col#0 )
-  (word) d#1 ← phi( main/(word) d#2 )
   (byte) b#7 ← phi( main/(byte) b#5 )
   (byte) s::return#3 ← phi( main/(byte) s::return#0 )
   (byte~) main::$2 ← (byte) s::return#3
@@ -32,7 +32,7 @@ main::@3: scope:[main]  from main
   (byte/signed word/word/dword/signed dword~) main::$3 ← (byte/signed word/word/dword/signed dword/signed byte~) main::$1 + (byte~) main::$2
   (byte) main::e#0 ← (byte/signed word/word/dword/signed dword~) main::$3
   (word/signed word/dword/signed dword~) main::$4 ← (word/signed word/dword/signed dword) $7d0 + (word/signed word/dword/signed dword) $7d0
-  (word/signed dword/dword~) main::$5 ← (word/signed word/dword/signed dword~) main::$4 + (word) d#1
+  (word/signed dword/dword~) main::$5 ← (word/signed word/dword/signed dword~) main::$4 + (word) d#0
   (word/signed dword/dword~) main::$6 ← (word/signed dword/dword~) main::$5 + (byte) b#1
   (word) main::f#0 ← (word/signed dword/dword~) main::$6
   (byte) b#2 ← ++ (byte) b#1
@@ -43,11 +43,9 @@ main::@3: scope:[main]  from main
 main::@1: scope:[main]  from main::@1 main::@3
   (byte) b#8 ← phi( main::@1/(byte) b#8 main::@3/(byte) b#2 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#0 )
-  (byte*) main::COLS#1 ← phi( main::@1/(byte*) main::COLS#1 main::@3/(byte*) main::COLS#2 )
-  (byte) main::col#1 ← phi( main::@1/(byte) main::col#1 main::@3/(byte) main::col#2 )
   (signed byte/signed word/signed dword~) main::$7 ← - (byte/signed byte/word/signed word/dword/signed dword) $d
   (signed byte) main::x#0 ← (signed byte/signed word/signed dword~) main::$7
-  *((byte*) main::COLS#1 + (byte) main::i#2) ← (byte) main::col#1
+  *((byte*) main::COLS#0 + (byte) main::i#2) ← (byte) main::col#0
   *((byte*) SCREEN#0 + (byte) main::i#2) ← (byte) b#8
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$64)
   (bool~) main::$8 ← (byte) main::i#1 != rangelast(0,$64)
@@ -71,7 +69,6 @@ s::@return: scope:[s]  from s
   return 
   to:@return
 @2: scope:[]  from @begin
-  (word) d#3 ← phi( @begin/(word) d#0 )
   (byte) b#14 ← phi( @begin/(byte) b#0 )
   call main 
   to:@3
@@ -116,9 +113,6 @@ SYMBOL TABLE SSA
 (byte) c2#0
 (word) d
 (word) d#0
-(word) d#1
-(word) d#2
-(word) d#3
 (void()) main()
 (byte/signed byte/word/signed word/dword/signed dword~) main::$0
 (byte/signed word/word/dword/signed dword/signed byte~) main::$1
@@ -135,12 +129,8 @@ SYMBOL TABLE SSA
 (label) main::@return
 (byte*) main::COLS
 (byte*) main::COLS#0
-(byte*) main::COLS#1
-(byte*) main::COLS#2
 (byte) main::col
 (byte) main::col#0
-(byte) main::col#1
-(byte) main::col#2
 (byte) main::e
 (byte) main::e#0
 (word) main::f
@@ -168,9 +158,6 @@ SYMBOL TABLE SSA
 
 Alias (byte) b#0 = (byte/signed byte/word/signed word/dword/signed dword~) $0 (byte) b#14 
 Alias (byte) s::return#0 = (byte) s::return#3 
-Alias (word) d#1 = (word) d#2 
-Alias (byte) main::col#0 = (byte) main::col#2 
-Alias (byte*) main::COLS#0 = (byte*) main::COLS#2 
 Alias (byte) b#1 = (byte) b#7 
 Alias (byte) main::e#0 = (byte/signed word/word/dword/signed dword~) main::$3 
 Alias (word) main::f#0 = (word/signed dword/dword~) main::$6 
@@ -178,18 +165,12 @@ Alias (signed byte) main::x#0 = (signed byte/signed word/signed dword~) main::$7
 Alias (byte) b#3 = (byte) b#9 (byte) b#8 
 Alias (byte) s::return#1 = (byte) s::return#4 (byte) s::return#2 
 Alias (byte) b#11 = (byte) b#4 (byte) b#5 
-Alias (word) d#0 = (word) d#3 
 Alias (byte) b#12 = (byte) b#6 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte) main::col#1
-Self Phi Eliminated (byte*) main::COLS#1
 Self Phi Eliminated (byte) b#3
 Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte) b#13 (byte) b#0
-Redundant Phi (word) d#1 (word) d#0
 Redundant Phi (byte) b#1 (byte) b#11
-Redundant Phi (byte) main::col#1 (byte) main::col#0
-Redundant Phi (byte*) main::COLS#1 (byte*) main::COLS#0
 Redundant Phi (byte) b#3 (byte) b#2
 Redundant Phi (byte) b#10 (byte) b#13
 Redundant Phi (byte) b#12 (byte) b#3

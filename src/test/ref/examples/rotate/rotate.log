@@ -1,4 +1,7 @@
 Resolved forward reference SPRITE to (byte*) SPRITE
+Identified constant variable (byte*) SCREEN
+Identified constant variable (byte*) COS
+Identified constant variable (byte*) SPRITE
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call call mulf8s_prepare (signed byte) mulf8s::a 
 Inlined call call mulf8s_prepare (signed byte) anim::cos_a 
@@ -280,15 +283,11 @@ mulf8s_prepared::@return: scope:[mulf8s_prepared]  from mulf8s_prepared::@2
   to:@15
 main: scope:[main]  from @16
   (byte*) SIN#10 ← phi( @16/(byte*) SIN#13 )
-  (byte*) COS#10 ← phi( @16/(byte*) COS#13 )
-  (byte*) SPRITE#4 ← phi( @16/(byte*) SPRITE#0 )
-  (byte*) SCREEN#3 ← phi( @16/(byte*) SCREEN#4 )
   asm { sei  }
   call init 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte*) SIN#8 ← phi( main/(byte*) SIN#10 )
-  (byte*) COS#8 ← phi( main/(byte*) COS#10 )
   call anim 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -297,23 +296,18 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 init: scope:[init]  from main
-  (byte*) SPRITE#3 ← phi( main/(byte*) SPRITE#4 )
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#3 )
   call mulf_init 
   to:init::@3
 init::@3: scope:[init]  from init
-  (byte*) SPRITE#2 ← phi( init/(byte*) SPRITE#3 )
-  (byte*) SCREEN#1 ← phi( init/(byte*) SCREEN#2 )
   *((byte*) SPRITES_ENABLE#0) ← (byte/word/signed word/dword/signed dword) $ff
-  (byte*~) init::$1 ← (byte*) SCREEN#1 + (word/signed word/dword/signed dword) $3f8
+  (byte*~) init::$1 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) $3f8
   (byte*) init::sprites_ptr#0 ← (byte*~) init::$1
   (byte) init::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:init::@1
 init::@1: scope:[init]  from init::@1 init::@3
   (byte) init::i#2 ← phi( init::@1/(byte) init::i#1 init::@3/(byte) init::i#0 )
   (byte*) init::sprites_ptr#1 ← phi( init::@1/(byte*) init::sprites_ptr#1 init::@3/(byte*) init::sprites_ptr#0 )
-  (byte*) SPRITE#1 ← phi( init::@1/(byte*) SPRITE#1 init::@3/(byte*) SPRITE#2 )
-  (byte*~) init::$2 ← (byte*) SPRITE#1 / (byte/signed byte/word/signed word/dword/signed dword) $40
+  (byte*~) init::$2 ← (byte*) SPRITE#0 / (byte/signed byte/word/signed word/dword/signed dword) $40
   (byte~) init::$3 ← ((byte)) (byte*~) init::$2
   *((byte*) init::sprites_ptr#1 + (byte) init::i#2) ← (byte~) init::$3
   *((byte*) SPRITES_COLS#0 + (byte) init::i#2) ← (byte) GREEN#0
@@ -326,8 +320,6 @@ init::@return: scope:[init]  from init::@1
   to:@return
 @15: scope:[]  from @13
   (byte*) SIN#16 ← phi( @13/(byte*) SIN#0 )
-  (byte*) COS#16 ← phi( @13/(byte*) COS#0 )
-  (byte*) SCREEN#5 ← phi( @13/(byte*) SCREEN#0 )
   (signed byte/signed word/signed dword~) $1 ← - (byte/signed byte/word/signed word/dword/signed dword) $46
   (signed byte/signed word/signed dword~) $2 ← - (byte/signed byte/word/signed word/dword/signed dword) $46
   (signed byte/signed word/signed dword~) $3 ← - (byte/signed byte/word/signed word/dword/signed dword) $46
@@ -339,38 +331,32 @@ init::@return: scope:[init]  from init::@1
   to:@16
 anim: scope:[anim]  from main::@1
   (byte*) SIN#6 ← phi( main::@1/(byte*) SIN#8 )
-  (byte*) COS#6 ← phi( main::@1/(byte*) COS#8 )
   (byte) anim::angle#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:anim::@1
 anim::@1: scope:[anim]  from anim anim::@15
   (byte*) SIN#5 ← phi( anim/(byte*) SIN#6 anim::@15/(byte*) SIN#7 )
   (byte) anim::angle#10 ← phi( anim/(byte) anim::angle#0 anim::@15/(byte) anim::angle#1 )
-  (byte*) COS#5 ← phi( anim/(byte*) COS#6 anim::@15/(byte*) COS#7 )
   if(true) goto anim::@2
   to:anim::@return
 anim::@2: scope:[anim]  from anim::@1
   (byte*) SIN#3 ← phi( anim::@1/(byte*) SIN#5 )
   (byte) anim::angle#6 ← phi( anim::@1/(byte) anim::angle#10 )
-  (byte*) COS#3 ← phi( anim::@1/(byte*) COS#5 )
   to:anim::@4
 anim::@4: scope:[anim]  from anim::@2 anim::@5
   (byte*) SIN#2 ← phi( anim::@2/(byte*) SIN#3 anim::@5/(byte*) SIN#4 )
   (byte) anim::angle#4 ← phi( anim::@2/(byte) anim::angle#6 anim::@5/(byte) anim::angle#7 )
-  (byte*) COS#2 ← phi( anim::@2/(byte*) COS#3 anim::@5/(byte*) COS#4 )
   (bool~) anim::$0 ← *((byte*) RASTER#0) != (byte/word/signed word/dword/signed dword) $ff
   if((bool~) anim::$0) goto anim::@5
   to:anim::@6
 anim::@5: scope:[anim]  from anim::@4
   (byte*) SIN#4 ← phi( anim::@4/(byte*) SIN#2 )
   (byte) anim::angle#7 ← phi( anim::@4/(byte) anim::angle#4 )
-  (byte*) COS#4 ← phi( anim::@4/(byte*) COS#2 )
   to:anim::@4
 anim::@6: scope:[anim]  from anim::@4
   (byte*) SIN#1 ← phi( anim::@4/(byte*) SIN#2 )
   (byte) anim::angle#2 ← phi( anim::@4/(byte) anim::angle#4 )
-  (byte*) COS#1 ← phi( anim::@4/(byte*) COS#2 )
   *((byte*) BORDERCOL#0) ← ++ *((byte*) BORDERCOL#0)
-  (signed byte~) anim::$1 ← ((signed byte)) *((byte*) COS#1 + (byte) anim::angle#2)
+  (signed byte~) anim::$1 ← ((signed byte)) *((byte*) COS#0 + (byte) anim::angle#2)
   (signed byte) anim::cos_a#0 ← (signed byte~) anim::$1
   (signed byte~) anim::$2 ← ((signed byte)) *((byte*) SIN#1 + (byte) anim::angle#2)
   (signed byte) anim::sin_a#0 ← (signed byte~) anim::$2
@@ -379,7 +365,6 @@ anim::@6: scope:[anim]  from anim::@4
   to:anim::@7
 anim::@7: scope:[anim]  from anim::@6 anim::@8
   (byte*) SIN#24 ← phi( anim::@6/(byte*) SIN#1 anim::@8/(byte*) SIN#9 )
-  (byte*) COS#24 ← phi( anim::@6/(byte*) COS#1 anim::@8/(byte*) COS#9 )
   (byte) anim::angle#20 ← phi( anim::@6/(byte) anim::angle#2 anim::@8/(byte) anim::angle#5 )
   (byte) anim::sprite_msb#16 ← phi( anim::@6/(byte) anim::sprite_msb#0 anim::@8/(byte) anim::sprite_msb#7 )
   (signed byte) anim::sin_a#6 ← phi( anim::@6/(signed byte) anim::sin_a#0 anim::@8/(signed byte) anim::sin_a#7 )
@@ -391,7 +376,6 @@ anim::@7: scope:[anim]  from anim::@6 anim::@8
   to:anim::mulf8s_prepare1
 anim::mulf8s_prepare1: scope:[anim]  from anim::@7
   (byte*) SIN#23 ← phi( anim::@7/(byte*) SIN#24 )
-  (byte*) COS#23 ← phi( anim::@7/(byte*) COS#24 )
   (byte) anim::angle#19 ← phi( anim::@7/(byte) anim::angle#20 )
   (signed byte) anim::cos_a#13 ← phi( anim::@7/(signed byte) anim::cos_a#1 )
   (byte) anim::i#14 ← phi( anim::@7/(byte) anim::i#2 )
@@ -406,7 +390,6 @@ anim::mulf8s_prepare1: scope:[anim]  from anim::@7
   to:anim::@19
 anim::@19: scope:[anim]  from anim::mulf8s_prepare1
   (byte*) SIN#22 ← phi( anim::mulf8s_prepare1/(byte*) SIN#23 )
-  (byte*) COS#22 ← phi( anim::mulf8s_prepare1/(byte*) COS#23 )
   (byte) anim::angle#18 ← phi( anim::mulf8s_prepare1/(byte) anim::angle#19 )
   (signed byte) anim::cos_a#12 ← phi( anim::mulf8s_prepare1/(signed byte) anim::cos_a#13 )
   (byte) anim::i#13 ← phi( anim::mulf8s_prepare1/(byte) anim::i#14 )
@@ -417,7 +400,6 @@ anim::@19: scope:[anim]  from anim::mulf8s_prepare1
   to:anim::@17
 anim::@17: scope:[anim]  from anim::@19
   (byte*) SIN#21 ← phi( anim::@19/(byte*) SIN#22 )
-  (byte*) COS#21 ← phi( anim::@19/(byte*) COS#22 )
   (byte) anim::angle#17 ← phi( anim::@19/(byte) anim::angle#18 )
   (signed byte) anim::cos_a#11 ← phi( anim::@19/(signed byte) anim::cos_a#12 )
   (byte) anim::i#12 ← phi( anim::@19/(byte) anim::i#13 )
@@ -431,7 +413,6 @@ anim::@17: scope:[anim]  from anim::@19
   to:anim::@20
 anim::@20: scope:[anim]  from anim::@17
   (byte*) SIN#20 ← phi( anim::@17/(byte*) SIN#21 )
-  (byte*) COS#20 ← phi( anim::@17/(byte*) COS#21 )
   (byte) anim::angle#16 ← phi( anim::@17/(byte) anim::angle#17 )
   (signed byte) anim::cos_a#10 ← phi( anim::@17/(signed byte) anim::cos_a#11 )
   (byte) anim::i#11 ← phi( anim::@17/(byte) anim::i#12 )
@@ -449,7 +430,6 @@ anim::@20: scope:[anim]  from anim::@17
   to:anim::@21
 anim::@21: scope:[anim]  from anim::@20
   (byte*) SIN#19 ← phi( anim::@20/(byte*) SIN#20 )
-  (byte*) COS#19 ← phi( anim::@20/(byte*) COS#20 )
   (byte) anim::angle#15 ← phi( anim::@20/(byte) anim::angle#16 )
   (signed byte) anim::cos_a#9 ← phi( anim::@20/(signed byte) anim::cos_a#10 )
   (byte) anim::i#10 ← phi( anim::@20/(byte) anim::i#11 )
@@ -467,7 +447,6 @@ anim::@21: scope:[anim]  from anim::@20
 anim::mulf8s_prepare2: scope:[anim]  from anim::@21
   (signed byte) anim::sin_a#13 ← phi( anim::@21/(signed byte) anim::sin_a#1 )
   (byte*) SIN#18 ← phi( anim::@21/(byte*) SIN#19 )
-  (byte*) COS#18 ← phi( anim::@21/(byte*) COS#19 )
   (byte) anim::angle#14 ← phi( anim::@21/(byte) anim::angle#15 )
   (signed byte) anim::cos_a#8 ← phi( anim::@21/(signed byte) anim::cos_a#9 )
   (byte) anim::i#9 ← phi( anim::@21/(byte) anim::i#10 )
@@ -484,7 +463,6 @@ anim::mulf8s_prepare2: scope:[anim]  from anim::@21
 anim::@22: scope:[anim]  from anim::mulf8s_prepare2
   (signed byte) anim::sin_a#12 ← phi( anim::mulf8s_prepare2/(signed byte) anim::sin_a#13 )
   (byte*) SIN#17 ← phi( anim::mulf8s_prepare2/(byte*) SIN#18 )
-  (byte*) COS#17 ← phi( anim::mulf8s_prepare2/(byte*) COS#18 )
   (byte) anim::angle#13 ← phi( anim::mulf8s_prepare2/(byte) anim::angle#14 )
   (signed byte) anim::cos_a#7 ← phi( anim::mulf8s_prepare2/(signed byte) anim::cos_a#8 )
   (byte) anim::i#8 ← phi( anim::mulf8s_prepare2/(byte) anim::i#9 )
@@ -497,7 +475,6 @@ anim::@22: scope:[anim]  from anim::mulf8s_prepare2
 anim::@18: scope:[anim]  from anim::@22
   (signed byte) anim::sin_a#11 ← phi( anim::@22/(signed byte) anim::sin_a#12 )
   (byte*) SIN#15 ← phi( anim::@22/(byte*) SIN#17 )
-  (byte*) COS#15 ← phi( anim::@22/(byte*) COS#17 )
   (byte) anim::angle#12 ← phi( anim::@22/(byte) anim::angle#13 )
   (signed byte) anim::cos_a#6 ← phi( anim::@22/(signed byte) anim::cos_a#7 )
   (byte) anim::i#7 ← phi( anim::@22/(byte) anim::i#8 )
@@ -513,7 +490,6 @@ anim::@18: scope:[anim]  from anim::@22
 anim::@23: scope:[anim]  from anim::@18
   (signed byte) anim::sin_a#10 ← phi( anim::@18/(signed byte) anim::sin_a#11 )
   (byte*) SIN#14 ← phi( anim::@18/(byte*) SIN#15 )
-  (byte*) COS#14 ← phi( anim::@18/(byte*) COS#15 )
   (byte) anim::angle#11 ← phi( anim::@18/(byte) anim::angle#12 )
   (signed byte) anim::cos_a#5 ← phi( anim::@18/(signed byte) anim::cos_a#6 )
   (byte) anim::i#6 ← phi( anim::@18/(byte) anim::i#7 )
@@ -532,7 +508,6 @@ anim::@23: scope:[anim]  from anim::@18
 anim::@24: scope:[anim]  from anim::@23
   (signed byte) anim::sin_a#9 ← phi( anim::@23/(signed byte) anim::sin_a#10 )
   (byte*) SIN#12 ← phi( anim::@23/(byte*) SIN#14 )
-  (byte*) COS#12 ← phi( anim::@23/(byte*) COS#14 )
   (byte) anim::angle#9 ← phi( anim::@23/(byte) anim::angle#11 )
   (signed byte) anim::cos_a#4 ← phi( anim::@23/(signed byte) anim::cos_a#5 )
   (byte) anim::i#5 ← phi( anim::@23/(byte) anim::i#6 )
@@ -558,7 +533,6 @@ anim::@24: scope:[anim]  from anim::@23
 anim::@8: scope:[anim]  from anim::@14 anim::@24
   (signed byte) anim::sin_a#7 ← phi( anim::@14/(signed byte) anim::sin_a#8 anim::@24/(signed byte) anim::sin_a#9 )
   (byte*) SIN#9 ← phi( anim::@14/(byte*) SIN#11 anim::@24/(byte*) SIN#12 )
-  (byte*) COS#9 ← phi( anim::@14/(byte*) COS#11 anim::@24/(byte*) COS#12 )
   (byte) anim::angle#5 ← phi( anim::@14/(byte) anim::angle#8 anim::@24/(byte) anim::angle#9 )
   (byte) anim::sprite_msb#7 ← phi( anim::@14/(byte) anim::sprite_msb#2 anim::@24/(byte) anim::sprite_msb#1 )
   (signed byte) anim::cos_a#2 ← phi( anim::@14/(signed byte) anim::cos_a#3 anim::@24/(signed byte) anim::cos_a#4 )
@@ -581,7 +555,6 @@ anim::@8: scope:[anim]  from anim::@14 anim::@24
 anim::@14: scope:[anim]  from anim::@24
   (signed byte) anim::sin_a#8 ← phi( anim::@24/(signed byte) anim::sin_a#9 )
   (byte*) SIN#11 ← phi( anim::@24/(byte*) SIN#12 )
-  (byte*) COS#11 ← phi( anim::@24/(byte*) COS#12 )
   (byte) anim::angle#8 ← phi( anim::@24/(byte) anim::angle#9 )
   (signed byte) anim::cos_a#3 ← phi( anim::@24/(signed byte) anim::cos_a#4 )
   (signed word) anim::xpos#2 ← phi( anim::@24/(signed word) anim::xpos#0 )
@@ -592,7 +565,6 @@ anim::@14: scope:[anim]  from anim::@24
   to:anim::@8
 anim::@15: scope:[anim]  from anim::@8
   (byte*) SIN#7 ← phi( anim::@8/(byte*) SIN#9 )
-  (byte*) COS#7 ← phi( anim::@8/(byte*) COS#9 )
   (byte) anim::angle#3 ← phi( anim::@8/(byte) anim::angle#5 )
   (byte) anim::sprite_msb#5 ← phi( anim::@8/(byte) anim::sprite_msb#7 )
   *((byte*) SPRITES_XMSB#0) ← (byte) anim::sprite_msb#5
@@ -604,8 +576,6 @@ anim::@return: scope:[anim]  from anim::@1
   to:@return
 @16: scope:[]  from @15
   (byte*) SIN#13 ← phi( @15/(byte*) SIN#16 )
-  (byte*) COS#13 ← phi( @15/(byte*) COS#16 )
-  (byte*) SCREEN#4 ← phi( @15/(byte*) SCREEN#5 )
   (byte*) SPRITE#0 ← ((byte*)) (word/signed word/dword/signed dword) $3000
   kickasm(location (byte*) SPRITE#0) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
@@ -679,30 +649,6 @@ SYMBOL TABLE SSA
 (byte*) COLS#0
 (byte*) COS
 (byte*) COS#0
-(byte*) COS#1
-(byte*) COS#10
-(byte*) COS#11
-(byte*) COS#12
-(byte*) COS#13
-(byte*) COS#14
-(byte*) COS#15
-(byte*) COS#16
-(byte*) COS#17
-(byte*) COS#18
-(byte*) COS#19
-(byte*) COS#2
-(byte*) COS#20
-(byte*) COS#21
-(byte*) COS#22
-(byte*) COS#23
-(byte*) COS#24
-(byte*) COS#3
-(byte*) COS#4
-(byte*) COS#5
-(byte*) COS#6
-(byte*) COS#7
-(byte*) COS#8
-(byte*) COS#9
 (byte) CYAN
 (byte) CYAN#0
 (byte*) D011
@@ -771,11 +717,6 @@ SYMBOL TABLE SSA
 (byte) RED#0
 (byte*) SCREEN
 (byte*) SCREEN#0
-(byte*) SCREEN#1
-(byte*) SCREEN#2
-(byte*) SCREEN#3
-(byte*) SCREEN#4
-(byte*) SCREEN#5
 (byte*) SIN
 (byte*) SIN#0
 (byte*) SIN#1
@@ -804,10 +745,6 @@ SYMBOL TABLE SSA
 (byte*) SIN#9
 (byte*) SPRITE
 (byte*) SPRITE#0
-(byte*) SPRITE#1
-(byte*) SPRITE#2
-(byte*) SPRITE#3
-(byte*) SPRITE#4
 (byte*) SPRITES_COLS
 (byte*) SPRITES_COLS#0
 (byte*) SPRITES_ENABLE
@@ -1246,7 +1183,7 @@ Inversing boolean not [94] (bool~) mulf_init::$4 ← (byte~) mulf_init::$2 != (b
 Inversing boolean not [124] (bool~) mulf_init::$14 ← (byte) mulf_init::x_255#1 != (byte/signed byte/word/signed word/dword/signed dword) 0 from [123] (bool~) mulf_init::$13 ← (byte) mulf_init::x_255#1 == (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not [164] (bool~) mulf8s_prepared::$3 ← *((signed byte*) mulf8s_prepared::memA#0) >= (byte/signed byte/word/signed word/dword/signed dword) 0 from [163] (bool~) mulf8s_prepared::$2 ← *((signed byte*) mulf8s_prepared::memA#0) < (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not [168] (bool~) mulf8s_prepared::$9 ← (signed byte) mulf8s_prepared::b#5 >= (byte/signed byte/word/signed word/dword/signed dword) 0 from [167] (bool~) mulf8s_prepared::$8 ← (signed byte) mulf8s_prepared::b#5 < (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not [295] (bool~) anim::$20 ← (byte~) anim::$18 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [294] (bool~) anim::$19 ← (byte~) anim::$18 != (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not [293] (bool~) anim::$20 ← (byte~) anim::$18 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [292] (bool~) anim::$19 ← (byte~) anim::$18 != (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) mulf_init::sqr1_hi#0 = (byte*~) mulf_init::$0 
 Alias (byte*) mulf_init::sqr1_lo#0 = (byte*~) mulf_init::$1 
@@ -1270,17 +1207,10 @@ Alias (signed word) mulf8s_prepared::return#0 = (signed word~) mulf8s_prepared::
 Alias (word) mulf8s_prepared::m#5 = (word) mulf8s_prepared::m#6 
 Alias (byte~) mulf8s_prepared::$16 = (byte~) mulf8s_prepared::$13 
 Alias (byte*) SIN#0 = (byte*~) $0 (byte*) SIN#16 (byte*) SIN#13 
-Alias (byte*) COS#10 = (byte*) COS#8 
 Alias (byte*) SIN#10 = (byte*) SIN#8 
-Alias (byte*) SCREEN#1 = (byte*) SCREEN#2 
-Alias (byte*) SPRITE#2 = (byte*) SPRITE#3 
 Alias (byte*) init::sprites_ptr#0 = (byte*~) init::$1 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#5 (byte*) SCREEN#4 
-Alias (byte*) COS#0 = (byte*) COS#16 (byte*) COS#13 
-Alias (byte*) COS#3 = (byte*) COS#5 
 Alias (byte) anim::angle#10 = (byte) anim::angle#6 
 Alias (byte*) SIN#3 = (byte*) SIN#5 
-Alias (byte*) COS#1 = (byte*) COS#4 (byte*) COS#2 
 Alias (byte) anim::angle#2 = (byte) anim::angle#7 (byte) anim::angle#4 
 Alias (byte*) SIN#1 = (byte*) SIN#4 (byte*) SIN#2 
 Alias (signed byte) anim::cos_a#0 = (signed byte~) anim::$1 
@@ -1292,7 +1222,6 @@ Alias (signed byte) anim::sin_a#1 = (signed byte) anim::sin_a#5 (signed byte) an
 Alias (byte) anim::sprite_msb#10 = (byte) anim::sprite_msb#15 (byte) anim::sprite_msb#16 (byte) anim::sprite_msb#14 (byte) anim::sprite_msb#13 (byte) anim::sprite_msb#12 (byte) anim::sprite_msb#11 (byte) anim::sprite_msb#9 (byte) anim::sprite_msb#8 (byte) anim::sprite_msb#6 (byte) anim::sprite_msb#3 
 Alias (byte) anim::i#10 = (byte) anim::i#14 (byte) anim::i#2 (byte) anim::i#13 (byte) anim::i#12 (byte) anim::i#11 (byte) anim::i#9 (byte) anim::i#8 (byte) anim::i#7 (byte) anim::i#6 (byte) anim::i#5 (byte) anim::i#4 
 Alias (byte) anim::angle#11 = (byte) anim::angle#19 (byte) anim::angle#20 (byte) anim::angle#18 (byte) anim::angle#17 (byte) anim::angle#16 (byte) anim::angle#15 (byte) anim::angle#14 (byte) anim::angle#13 (byte) anim::angle#12 (byte) anim::angle#9 (byte) anim::angle#8 
-Alias (byte*) COS#11 = (byte*) COS#23 (byte*) COS#24 (byte*) COS#22 (byte*) COS#21 (byte*) COS#20 (byte*) COS#19 (byte*) COS#18 (byte*) COS#17 (byte*) COS#15 (byte*) COS#14 (byte*) COS#12 
 Alias (byte*) SIN#11 = (byte*) SIN#23 (byte*) SIN#24 (byte*) SIN#22 (byte*) SIN#21 (byte*) SIN#20 (byte*) SIN#19 (byte*) SIN#18 (byte*) SIN#17 (byte*) SIN#15 (byte*) SIN#14 (byte*) SIN#12 
 Alias (byte) mulf8u_prepare::a#0 = (byte) anim::mulf8s_prepare1_$0#0 
 Alias (signed word) mulf8s_prepared::return#2 = (signed word) mulf8s_prepared::return#7 
@@ -1310,7 +1239,6 @@ Alias (byte) anim::i2#0 = (byte~) anim::$24
 Alias (signed word) anim::yr#1 = (signed word) anim::yr#5 
 Alias (byte) anim::sprite_msb#5 = (byte) anim::sprite_msb#7 
 Alias (byte) anim::angle#3 = (byte) anim::angle#5 
-Alias (byte*) COS#7 = (byte*) COS#9 
 Alias (byte*) SIN#7 = (byte*) SIN#9 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte*) mulf_init::sqr1_lo#2 = (byte*) mulf_init::sqr1_lo#3 
@@ -1325,39 +1253,26 @@ Alias (byte) anim::i#10 = (byte) anim::i#3
 Alias (signed word) anim::xpos#0 = (signed word) anim::xpos#1 
 Alias (signed byte) anim::cos_a#1 = (signed byte) anim::cos_a#2 
 Alias (byte) anim::angle#11 = (byte) anim::angle#3 
-Alias (byte*) COS#11 = (byte*) COS#7 
 Alias (byte*) SIN#11 = (byte*) SIN#7 
 Alias (signed byte) anim::sin_a#1 = (signed byte) anim::sin_a#7 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte*) SPRITE#1
 Self Phi Eliminated (byte*) init::sprites_ptr#1
-Self Phi Eliminated (byte*) COS#1
 Self Phi Eliminated (byte) anim::angle#2
 Self Phi Eliminated (byte*) SIN#1
 Self Phi Eliminated (signed byte) anim::cos_a#1
 Self Phi Eliminated (signed byte) anim::sin_a#1
 Self Phi Eliminated (byte) anim::angle#11
-Self Phi Eliminated (byte*) COS#11
 Self Phi Eliminated (byte*) SIN#11
 Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte) mulf8u_prepared::b#1 (byte) mulf8u_prepared::b#0
-Redundant Phi (byte*) SCREEN#3 (byte*) SCREEN#0
-Redundant Phi (byte*) SPRITE#4 (byte*) SPRITE#0
-Redundant Phi (byte*) COS#10 (byte*) COS#0
 Redundant Phi (byte*) SIN#10 (byte*) SIN#0
-Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#3
-Redundant Phi (byte*) SPRITE#2 (byte*) SPRITE#4
-Redundant Phi (byte*) SPRITE#1 (byte*) SPRITE#2
 Redundant Phi (byte*) init::sprites_ptr#1 (byte*) init::sprites_ptr#0
-Redundant Phi (byte*) COS#6 (byte*) COS#10
 Redundant Phi (byte*) SIN#6 (byte*) SIN#10
-Redundant Phi (byte*) COS#1 (byte*) COS#3
 Redundant Phi (byte) anim::angle#2 (byte) anim::angle#10
 Redundant Phi (byte*) SIN#1 (byte*) SIN#3
 Redundant Phi (signed byte) anim::cos_a#1 (signed byte) anim::cos_a#0
 Redundant Phi (signed byte) anim::sin_a#1 (signed byte) anim::sin_a#0
 Redundant Phi (byte) anim::angle#11 (byte) anim::angle#2
-Redundant Phi (byte*) COS#11 (byte*) COS#1
 Redundant Phi (byte*) SIN#11 (byte*) SIN#1
 Successful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) mulf_init::$4 [95] if((byte~) mulf_init::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mulf_init::@2
@@ -1366,10 +1281,10 @@ Simple Condition (bool~) mulf_init::$14 [125] if((byte) mulf_init::x_255#1!=(byt
 Simple Condition (bool~) mulf_init::$16 [130] if((byte*) mulf_init::sqr2_lo#1!=(byte*~) mulf_init::$15) goto mulf_init::@3
 Simple Condition (bool~) mulf8s_prepared::$3 [165] if(*((signed byte*) mulf8s_prepared::memA#0)>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mulf8s_prepared::@1
 Simple Condition (bool~) mulf8s_prepared::$9 [169] if((signed byte) mulf8s_prepared::b#4>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mulf8s_prepared::@2
-Simple Condition (bool~) init::$4 [213] if((byte) init::i#1!=rangelast(0,7)) goto init::@1
-Simple Condition (bool~) anim::$0 [231] if(*((byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $ff) goto anim::@5
-Simple Condition (bool~) anim::$20 [296] if((byte~) anim::$18==(byte/signed byte/word/signed word/dword/signed dword) 0) goto anim::@8
-Simple Condition (bool~) anim::$26 [309] if((byte) anim::i#1!=rangelast(0,7)) goto anim::@7
+Simple Condition (bool~) init::$4 [211] if((byte) init::i#1!=rangelast(0,7)) goto init::@1
+Simple Condition (bool~) anim::$0 [229] if(*((byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $ff) goto anim::@5
+Simple Condition (bool~) anim::$20 [294] if((byte~) anim::$18==(byte/signed byte/word/signed word/dword/signed dword) 0) goto anim::@8
+Simple Condition (bool~) anim::$26 [307] if((byte) anim::i#1!=rangelast(0,7)) goto anim::@7
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) PROCPORT_DDR#0 = ((byte*))0
 Constant (const byte) PROCPORT_DDR_MEMORY_MASK#0 = 7
@@ -1511,7 +1426,7 @@ Eliminating Noop Cast (byte) mulf8u_prepared::b#0 ← ((byte)) (signed byte) mul
 Eliminating Noop Cast (byte~) mulf8s_prepared::$6 ← ((byte)) (signed byte) mulf8s_prepared::b#4
 Eliminating Noop Cast (signed word) mulf8s_prepared::return#0 ← ((signed word)) (word) mulf8s_prepared::m#4
 Eliminating Noop Cast (byte~) mulf8s_prepared::$12 ← ((byte)) *((const signed byte*) mulf8s_prepared::memA#0)
-Eliminating Noop Cast (signed byte) anim::cos_a#0 ← ((signed byte)) *((byte*) COS#3 + (byte) anim::angle#10)
+Eliminating Noop Cast (signed byte) anim::cos_a#0 ← ((signed byte)) *((const byte*) COS#0 + (byte) anim::angle#10)
 Eliminating Noop Cast (signed byte) anim::sin_a#0 ← ((signed byte)) *((byte*) SIN#3 + (byte) anim::angle#10)
 Eliminating Noop Cast (byte) mulf8u_prepare::a#0 ← ((byte)) (signed byte) anim::cos_a#0
 Eliminating Noop Cast (byte) mulf8u_prepare::a#1 ← ((byte)) (signed byte) anim::sin_a#0
@@ -1534,10 +1449,8 @@ Successful SSA optimization Pass2CullEmptyBlocks
 Alias (word) mulf8u_prepared::return#0 = (word~) mulf8u_prepared::$0 
 Alias (byte~) anim::$22 = (byte~) anim::$21 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte*) COS#3
 Self Phi Eliminated (byte*) SIN#3
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) COS#3 (const byte*) COS#0
 Redundant Phi (byte*) SIN#3 (const byte*) SIN#0
 Successful SSA optimization Pass2RedundantPhiElimination
 Inlining constant with var siblings (const word) mulf_init::sqr#0

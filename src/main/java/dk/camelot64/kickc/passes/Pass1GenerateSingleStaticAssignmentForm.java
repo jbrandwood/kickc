@@ -49,6 +49,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * Version all non-versioned non-intermediary being assigned a value.
     */
    private void versionAllAssignments() {
+      Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
@@ -61,7 +62,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                      // Assignment to a non-versioned non-intermediary variable
                      VariableUnversioned assignedSymbol = (VariableUnversioned) assignedVar;
                      VariableVersion version;
-                     if(assignedSymbol.isDeclaredConstant()) {
+                     if(assignedSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedSymbol.getRef())) {
                         Collection<VariableVersion> versions = assignedVar.getScope().getVersions(assignedSymbol);
                         if(versions.size() != 0) {
                            throw new CompileError("Error! Constants can not be modified " + statement, statement.getSource());
@@ -144,13 +145,14 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          RValue rValue,
          Map<VariableUnversioned, VariableVersion> blockVersions,
          Map<VariableUnversioned, VariableVersion> blockNewPhis) {
+      Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       VariableVersion version = null;
       if(rValue instanceof VariableRef) {
          Variable rValueVar = getScope().getVariable((VariableRef) rValue);
          if(rValueVar instanceof VariableUnversioned) {
             // rValue needs versioning - look for version in statements
             VariableUnversioned rSymbol = (VariableUnversioned) rValueVar;
-            if(rSymbol.isDeclaredConstant()) {
+            if(rSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(rSymbol.getRef())) {
                // A constant - find the single created version
                Scope scope = rSymbol.getScope();
                Collection<VariableVersion> versions = scope.getVersions(rSymbol);

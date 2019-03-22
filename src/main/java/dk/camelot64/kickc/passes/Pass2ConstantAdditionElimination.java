@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.Collection;
@@ -41,7 +41,7 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
    public boolean step() {
       final boolean[] optimized = {false};
 
-       this.variableReferenceInfos = getProgram().getVariableReferenceInfos();
+      this.variableReferenceInfos = getProgram().getVariableReferenceInfos();
 
       ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof PointerDereferenceIndexed) {
@@ -156,66 +156,69 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
          //getLog().append("Multiple usages for variable. Not optimizing sub-constant " + variable.toString(getProgram()));
          return null;
       }
-      StatementAssignment assignment = getGraph().getAssignment(variable);
-      if(assignment != null && assignment.getOperator() != null && "+".equals(assignment.getOperator().getOperator())) {
-         if(assignment.getrValue1() instanceof ConstantValue) {
-            ConstantValue constant = (ConstantValue) assignment.getrValue1();
-            assignment.setrValue1(null);
-            assignment.setOperator(null);
-            return constant;
-         } else if(assignment.getrValue2() instanceof ConstantValue) {
-            ConstantValue constant = (ConstantValue) assignment.getrValue2();
-            assignment.setrValue2(assignment.getrValue1());
-            assignment.setOperator(null);
-            assignment.setrValue1(null);
-            return constant;
-         } else {
-            ConstantValue const1 = null;
-            if(assignment.getrValue1() instanceof VariableRef) {
-               const1 = consolidateSubConstants((VariableRef) assignment.getrValue1());
-            }
-            ConstantValue const2 = null;
-            if(assignment.getrValue2() instanceof VariableRef) {
-               const2 = consolidateSubConstants((VariableRef) assignment.getrValue2());
-            }
-            ConstantValue result = null;
-            if(const1 != null) {
-               result = const1;
-               if(const2 != null) {
-                  result = new ConstantBinary(const1, Operators.PLUS, const2);
+      StatementLValue statementLValue = getGraph().getAssignment(variable);
+      if(statementLValue instanceof StatementAssignment) {
+         StatementAssignment assignment = (StatementAssignment) statementLValue;
+         if(assignment.getOperator() != null && "+".equals(assignment.getOperator().getOperator())) {
+            if(assignment.getrValue1() instanceof ConstantValue) {
+               ConstantValue constant = (ConstantValue) assignment.getrValue1();
+               assignment.setrValue1(null);
+               assignment.setOperator(null);
+               return constant;
+            } else if(assignment.getrValue2() instanceof ConstantValue) {
+               ConstantValue constant = (ConstantValue) assignment.getrValue2();
+               assignment.setrValue2(assignment.getrValue1());
+               assignment.setOperator(null);
+               assignment.setrValue1(null);
+               return constant;
+            } else {
+               ConstantValue const1 = null;
+               if(assignment.getrValue1() instanceof VariableRef) {
+                  const1 = consolidateSubConstants((VariableRef) assignment.getrValue1());
                }
-            } else if(const2 != null) {
-               result = const2;
+               ConstantValue const2 = null;
+               if(assignment.getrValue2() instanceof VariableRef) {
+                  const2 = consolidateSubConstants((VariableRef) assignment.getrValue2());
+               }
+               ConstantValue result = null;
+               if(const1 != null) {
+                  result = const1;
+                  if(const2 != null) {
+                     result = new ConstantBinary(const1, Operators.PLUS, const2);
+                  }
+               } else if(const2 != null) {
+                  result = const2;
+               }
+               return result;
             }
-            return result;
          }
-      }
-      if(assignment != null && assignment.getOperator() != null && "-".equals(assignment.getOperator().getOperator())) {
-         if(assignment.getrValue2() instanceof ConstantValue) {
-            ConstantValue constant = (ConstantValue) assignment.getrValue2();
-            assignment.setrValue2(assignment.getrValue1());
-            assignment.setOperator(null);
-            assignment.setrValue1(null);
-            return new ConstantUnary(Operators.NEG, constant);
-         } else {
-            ConstantValue const1 = null;
-            if(assignment.getrValue1() instanceof VariableRef) {
-               const1 = consolidateSubConstants((VariableRef) assignment.getrValue1());
-            }
-            ConstantValue const2 = null;
-            if(assignment.getrValue2() instanceof VariableRef) {
-               const2 = consolidateSubConstants((VariableRef) assignment.getrValue2());
-            }
-            ConstantValue result = null;
-            if(const1 != null) {
-               result = const1;
-               if(const2 != null) {
-                  result = new ConstantBinary(const1, Operators.MINUS, const2);
+         if(assignment != null && assignment.getOperator() != null && "-".equals(assignment.getOperator().getOperator())) {
+            if(assignment.getrValue2() instanceof ConstantValue) {
+               ConstantValue constant = (ConstantValue) assignment.getrValue2();
+               assignment.setrValue2(assignment.getrValue1());
+               assignment.setOperator(null);
+               assignment.setrValue1(null);
+               return new ConstantUnary(Operators.NEG, constant);
+            } else {
+               ConstantValue const1 = null;
+               if(assignment.getrValue1() instanceof VariableRef) {
+                  const1 = consolidateSubConstants((VariableRef) assignment.getrValue1());
                }
-            } else if(const2 != null) {
-               result = const2;
+               ConstantValue const2 = null;
+               if(assignment.getrValue2() instanceof VariableRef) {
+                  const2 = consolidateSubConstants((VariableRef) assignment.getrValue2());
+               }
+               ConstantValue result = null;
+               if(const1 != null) {
+                  result = const1;
+                  if(const2 != null) {
+                     result = new ConstantBinary(const1, Operators.MINUS, const2);
+                  }
+               } else if(const2 != null) {
+                  result = const2;
+               }
+               return result;
             }
-            return result;
          }
       }
       return null;

@@ -1,0 +1,410 @@
+Identified constant variable (byte*) SCREEN
+Identified constant variable (byte) main::B
+Identified constant variable (byte) sub::C
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte) A#0 ← (byte) 'a'
+  to:@2
+main: scope:[main]  from @2
+  (byte) A#1 ← phi( @2/(byte) A#3 )
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) A#1
+  (byte) main::B#0 ← (byte) 'b'
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::B#0
+  (byte*~) main::$0 ← & (byte) A#1
+  (byte*) main::addrA#0 ← (byte*~) main::$0
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← *((byte*) main::addrA#0)
+  call sub 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+sub: scope:[sub]  from main
+  (byte) A#2 ← phi( main/(byte) A#1 )
+  (byte) sub::C#0 ← (byte) 'c'
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) sub::C#0
+  (byte/signed word/word/dword/signed dword~) sub::$0 ← (byte) A#2 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) sub::D#0 ← (byte/signed word/word/dword/signed dword~) sub::$0
+  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte) sub::D#0
+  to:sub::@return
+sub::@return: scope:[sub]  from sub
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  (byte) A#3 ← phi( @begin/(byte) A#0 )
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte) A
+(byte) A#0
+(byte) A#1
+(byte) A#2
+(byte) A#3
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) main()
+(byte*~) main::$0
+(label) main::@1
+(label) main::@return
+(byte) main::B
+(byte) main::B#0
+(byte*) main::addrA
+(byte*) main::addrA#0
+(void()) sub()
+(byte/signed word/word/dword/signed dword~) sub::$0
+(label) sub::@return
+(byte) sub::C
+(byte) sub::C#0
+(byte) sub::D
+(byte) sub::D#0
+
+Culled Empty Block (label) main::@1
+Culled Empty Block (label) @3
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (byte*) main::addrA#0 = (byte*~) main::$0 
+Alias (byte) sub::D#0 = (byte/signed word/word/dword/signed dword~) sub::$0 
+Alias (byte) A#0 = (byte) A#3 
+Successful SSA optimization Pass2AliasElimination
+Redundant Phi (byte) A#1 (byte) A#0
+Redundant Phi (byte) A#2 (byte) A#1
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte) main::B#0 = 'b'
+Constant (const byte*) main::addrA#0 = &A#0
+Constant (const byte) sub::C#0 = 'c'
+Successful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(SCREEN#0+0)
+Consolidated array index constant in *(SCREEN#0+1)
+Consolidated array index constant in *(SCREEN#0+2)
+Consolidated array index constant in *(SCREEN#0+3)
+Consolidated array index constant in *(SCREEN#0+4)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Simplifying constant plus zero SCREEN#0+0
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to sub:7 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] (byte) A#0 ← (byte) 'a'
+  to:@2
+@2: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @2
+  [3] phi()
+main: scope:[main]  from @2
+  [4] *((const byte*) SCREEN#0) ← (byte) A#0
+  [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::B#0
+  [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← *((const byte*) main::addrA#0)
+  [7] call sub 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [8] return 
+  to:@return
+sub: scope:[sub]  from main
+  [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (const byte) sub::C#0
+  [10] (byte) sub::D#0 ← (byte) A#0 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  [11] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte) sub::D#0
+  to:sub::@return
+sub::@return: scope:[sub]  from sub
+  [12] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) A
+(byte) A#0 1.0
+(byte*) SCREEN
+(void()) main()
+(byte) main::B
+(byte*) main::addrA
+(void()) sub()
+(byte) sub::C
+(byte) sub::D
+(byte) sub::D#0 4.0
+
+Initial phi equivalence classes
+Added variable A#0 to zero page equivalence class [ A#0 ]
+Added variable sub::D#0 to zero page equivalence class [ sub::D#0 ]
+Complete equivalence classes
+[ A#0 ]
+[ sub::D#0 ]
+Allocated zp ZP_BYTE:2 [ A#0 ]
+Allocated zp ZP_BYTE:3 [ sub::D#0 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests that constants are identified early
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+  .label A = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [0] (byte) A#0 ← (byte) 'a' -- vbuz1=vbuc1 
+  // Not an early constant (address-of is used)
+  lda #'a'
+  sta A
+//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG6 @2
+b2:
+//SEG7 [2] call main 
+  jsr main
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .const B = 'b'
+    .label addrA = A
+  //SEG11 [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
+    lda A
+    sta SCREEN
+  //SEG12 [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
+    lda #B
+    sta SCREEN+1
+  //SEG13 [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda addrA
+    sta SCREEN+2
+  //SEG14 [7] call sub 
+    jsr sub
+    jmp breturn
+  //SEG15 main::@return
+  breturn:
+  //SEG16 [8] return 
+    rts
+}
+//SEG17 sub
+sub: {
+    .const C = 'c'
+    .label D = 3
+  //SEG18 [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
+    lda #C
+    sta SCREEN+3
+  //SEG19 [10] (byte) sub::D#0 ← (byte) A#0 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_plus_1 
+    ldy A
+    iny
+    sty D
+  //SEG20 [11] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuz1 
+    lda D
+    sta SCREEN+4
+    jmp breturn
+  //SEG21 sub::@return
+  breturn:
+  //SEG22 [12] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] (byte) A#0 ← (byte) 'a' [ A#0 ] ( ) always clobbers reg byte a 
+Statement [4] *((const byte*) SCREEN#0) ← (byte) A#0 [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::B#0 [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← *((const byte*) main::addrA#0) [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (const byte) sub::C#0 [ A#0 ] ( main:2::sub:7 [ A#0 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ A#0 ] : zp ZP_BYTE:2 , 
+Potential registers zp ZP_BYTE:3 [ sub::D#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [sub] 4: zp ZP_BYTE:3 [ sub::D#0 ] 
+Uplift Scope [] 1: zp ZP_BYTE:2 [ A#0 ] 
+Uplift Scope [main] 
+
+Uplifting [sub] best 77 combination reg byte x [ sub::D#0 ] 
+Uplifting [] best 77 combination zp ZP_BYTE:2 [ A#0 ] 
+Uplifting [main] best 77 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ A#0 ]
+Uplifting [] best 77 combination zp ZP_BYTE:2 [ A#0 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests that constants are identified early
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+  .label A = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [0] (byte) A#0 ← (byte) 'a' -- vbuz1=vbuc1 
+  // Not an early constant (address-of is used)
+  lda #'a'
+  sta A
+//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
+b2_from_bbegin:
+  jmp b2
+//SEG6 @2
+b2:
+//SEG7 [2] call main 
+  jsr main
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .const B = 'b'
+    .label addrA = A
+  //SEG11 [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
+    lda A
+    sta SCREEN
+  //SEG12 [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
+    lda #B
+    sta SCREEN+1
+  //SEG13 [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda addrA
+    sta SCREEN+2
+  //SEG14 [7] call sub 
+    jsr sub
+    jmp breturn
+  //SEG15 main::@return
+  breturn:
+  //SEG16 [8] return 
+    rts
+}
+//SEG17 sub
+sub: {
+    .const C = 'c'
+  //SEG18 [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
+    lda #C
+    sta SCREEN+3
+  //SEG19 [10] (byte) sub::D#0 ← (byte) A#0 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuz1_plus_1 
+    ldx A
+    inx
+  //SEG20 [11] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
+    stx SCREEN+4
+    jmp breturn
+  //SEG21 sub::@return
+  breturn:
+  //SEG22 [12] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b2_from_bbegin:
+Removing instruction bend_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b2:
+Removing instruction bend:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @2
+(label) @begin
+(label) @end
+(byte) A
+(byte) A#0 A zp ZP_BYTE:2 1.0
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(void()) main()
+(label) main::@return
+(byte) main::B
+(const byte) main::B#0 B = (byte) 'b'
+(byte*) main::addrA
+(const byte*) main::addrA#0 addrA = &(byte) A#0
+(void()) sub()
+(label) sub::@return
+(byte) sub::C
+(const byte) sub::C#0 C = (byte) 'c'
+(byte) sub::D
+(byte) sub::D#0 reg byte x 4.0
+
+zp ZP_BYTE:2 [ A#0 ]
+reg byte x [ sub::D#0 ]
+
+
+FINAL ASSEMBLER
+Score: 65
+
+//SEG0 File Comments
+// Tests that constants are identified early
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+  .label A = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [0] (byte) A#0 ← (byte) 'a' -- vbuz1=vbuc1 
+  // Not an early constant (address-of is used)
+  lda #'a'
+  sta A
+//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
+//SEG6 @2
+//SEG7 [2] call main 
+  jsr main
+//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+//SEG9 @end
+//SEG10 main
+main: {
+    .const B = 'b'
+    .label addrA = A
+  //SEG11 [4] *((const byte*) SCREEN#0) ← (byte) A#0 -- _deref_pbuc1=vbuz1 
+    lda A
+    sta SCREEN
+  //SEG12 [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::B#0 -- _deref_pbuc1=vbuc2 
+    lda #B
+    sta SCREEN+1
+  //SEG13 [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda addrA
+    sta SCREEN+2
+  //SEG14 [7] call sub 
+    jsr sub
+  //SEG15 main::@return
+  //SEG16 [8] return 
+    rts
+}
+//SEG17 sub
+sub: {
+    .const C = 'c'
+  //SEG18 [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (const byte) sub::C#0 -- _deref_pbuc1=vbuc2 
+    lda #C
+    sta SCREEN+3
+  //SEG19 [10] (byte) sub::D#0 ← (byte) A#0 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuz1_plus_1 
+    ldx A
+    inx
+  //SEG20 [11] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
+    stx SCREEN+4
+  //SEG21 sub::@return
+  //SEG22 [12] return 
+    rts
+}
+

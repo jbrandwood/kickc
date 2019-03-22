@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -69,12 +70,12 @@ public class ControlFlowGraph {
     * @param variable The variable to find the assignment for
     * @return The assignment. null if the variable is not assigned. The variable is assigned by a Phi-statement instead.
     */
-   public StatementAssignment getAssignment(VariableRef variable) {
+   public StatementLValue getAssignment(VariableRef variable) {
       for(ControlFlowBlock block : getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               if(assignment.getlValue().equals(variable)) {
+            if(statement instanceof StatementLValue) {
+               StatementLValue assignment = (StatementLValue) statement;
+               if(variable.equals(assignment.getlValue())) {
                   return assignment;
                }
             }

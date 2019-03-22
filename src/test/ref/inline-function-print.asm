@@ -8,25 +8,25 @@ main: {
     ldx #0
     ldy #0
   print1_b1:
-    lda print1_msg,y
+    lda hello,y
     sta screen,x
     inx
     inx
     iny
-    lda print1_msg,y
+    lda hello,y
     cmp #'@'
     bne print1_b1
     ldx #0
     ldy #0
   print2_b1:
-    lda print1_msg,y
+    lda hello,y
     sta print2_at,x
     inx
     inx
     iny
-    lda print1_msg,y
+    lda hello,y
     cmp #'@'
     bne print2_b1
     rts
-    print1_msg: .text "hello world!@"
+    hello: .text "hello world!@"
 }

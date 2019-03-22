@@ -1,3 +1,4 @@
+Identified constant variable (byte) a
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -5,21 +6,18 @@ CONTROL FLOW GRAPH SSA
   (byte) a#0 ← (byte) 'a'
   to:@2
 main: scope:[main]  from @2
-  (byte) a#2 ← phi( @2/(byte) a#4 )
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) main::b#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@3/(byte) main::b#1 )
-  (byte) a#1 ← phi( main/(byte) a#2 main::@3/(byte) a#3 )
-  (byte) sum::a#0 ← (byte) a#1
+  (byte) sum::a#0 ← (byte) a#0
   (byte) sum::b#0 ← (byte) main::b#2
   call sum 
   (byte) sum::return#0 ← (byte) sum::return#2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  (byte) a#3 ← phi( main::@1/(byte) a#1 )
   (byte) main::b#3 ← phi( main::@1/(byte) main::b#2 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
   (byte) sum::return#3 ← phi( main::@1/(byte) sum::return#0 )
@@ -46,7 +44,6 @@ sum::@return: scope:[sum]  from sum
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte) a#4 ← phi( @begin/(byte) a#0 )
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -62,10 +59,6 @@ SYMBOL TABLE SSA
 (byte*) SCREEN#0
 (byte) a
 (byte) a#0
-(byte) a#1
-(byte) a#2
-(byte) a#3
-(byte) a#4
 (void()) main()
 (byte~) main::$0
 (bool~) main::$1
@@ -105,18 +98,12 @@ Successful SSA optimization Pass2CullEmptyBlocks
 Alias (byte) sum::return#0 = (byte) sum::return#3 
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte) main::b#2 = (byte) main::b#3 
-Alias (byte) a#1 = (byte) a#3 
 Alias (byte) sum::return#1 = (byte) sum::r#0 (byte~) sum::$0 (byte) sum::return#4 (byte) sum::return#2 
-Alias (byte) a#0 = (byte) a#4 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte) a#1
-Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte) a#2 (byte) a#0
-Redundant Phi (byte) a#1 (byte) a#2
 Redundant Phi (byte) sum::a#1 (byte) sum::a#0
 Redundant Phi (byte) sum::b#1 (byte) sum::b#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$1 [16] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$1 [15] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = ((byte*))$400
 Constant (const byte) a#0 = 'a'

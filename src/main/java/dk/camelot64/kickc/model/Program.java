@@ -4,9 +4,11 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /** A KickC Intermediate Compiler Language (ICL) Program */
@@ -61,6 +63,9 @@ public class Program {
    private RegisterPotentials registerPotentials;
    /** Separation of live range equivalence classes into scopes - used for register uplift */
    private RegisterUpliftProgram registerUpliftProgram;
+
+   /** Constants identified during pass 1. */
+   private Collection<VariableRef> earlyIdentifiedConstants;
 
    public Program() {
       this.scope = new ProgramScope();
@@ -228,6 +233,14 @@ public class Program {
 
    public void setRegisterUpliftProgram(RegisterUpliftProgram registerUpliftProgram) {
       this.registerUpliftProgram = registerUpliftProgram;
+   }
+
+   public Collection<VariableRef> getEarlyIdentifiedConstants() {
+      return earlyIdentifiedConstants;
+   }
+
+   public void setEarlyIdentifiedConstants(Collection<VariableRef> earlyIdentifiedConstants) {
+      this.earlyIdentifiedConstants = earlyIdentifiedConstants;
    }
 
    public CompileLog getLog() {

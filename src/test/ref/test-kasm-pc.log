@@ -1,32 +1,28 @@
+Identified constant variable (byte*) TABLE
+Identified constant variable (byte*) main::BORDERCOL
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) TABLE#0 ← ((byte*)) (word/signed word/dword/signed dword) $2000
   to:@1
 main: scope:[main]  from @1
-  (byte*) TABLE#4 ← phi( @1/(byte*) TABLE#2 )
   (byte*) main::BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) main::BORDERCOL#2 ← phi( main/(byte*) main::BORDERCOL#0 main::@2/(byte*) main::BORDERCOL#1 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (byte*) TABLE#3 ← phi( main/(byte*) TABLE#4 main::@2/(byte*) TABLE#1 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*) main::BORDERCOL#1 ← phi( main::@1/(byte*) main::BORDERCOL#2 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
-  (byte*) TABLE#1 ← phi( main::@1/(byte*) TABLE#3 )
-  *((byte*) main::BORDERCOL#1) ← *((byte*) TABLE#1 + (byte) main::i#2)
+  *((byte*) main::BORDERCOL#0) ← *((byte*) TABLE#0 + (byte) main::i#2)
   (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) TABLE#2 ← phi( @begin/(byte*) TABLE#0 )
-  kickasm(location (byte*) TABLE#2) {{ .byte 1, 2, 3
+  kickasm(location (byte*) TABLE#0) {{ .byte 1, 2, 3
  }}
   call main 
   to:@2
@@ -41,18 +37,12 @@ SYMBOL TABLE SSA
 (label) @end
 (byte*) TABLE
 (byte*) TABLE#0
-(byte*) TABLE#1
-(byte*) TABLE#2
-(byte*) TABLE#3
-(byte*) TABLE#4
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (byte*) main::BORDERCOL
 (byte*) main::BORDERCOL#0
-(byte*) main::BORDERCOL#1
-(byte*) main::BORDERCOL#2
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -61,18 +51,8 @@ SYMBOL TABLE SSA
 
 Culled Empty Block (label) @2
 Successful SSA optimization Pass2CullEmptyBlocks
-Alias (byte*) TABLE#1 = (byte*) TABLE#3 
 Alias (byte) main::i#2 = (byte) main::i#3 
-Alias (byte*) main::BORDERCOL#1 = (byte*) main::BORDERCOL#2 
-Alias (byte*) TABLE#0 = (byte*) TABLE#2 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte*) TABLE#1
-Self Phi Eliminated (byte*) main::BORDERCOL#1
-Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) TABLE#4 (byte*) TABLE#0
-Redundant Phi (byte*) TABLE#1 (byte*) TABLE#4
-Redundant Phi (byte*) main::BORDERCOL#1 (byte*) main::BORDERCOL#0
-Successful SSA optimization Pass2RedundantPhiElimination
 Constant (const byte*) TABLE#0 = ((byte*))$2000
 Constant (const byte*) main::BORDERCOL#0 = ((byte*))$d020
 Constant (const byte) main::i#0 = 0

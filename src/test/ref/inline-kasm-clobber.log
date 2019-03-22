@@ -1,29 +1,26 @@
+Identified constant variable (byte*) SCREEN
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   to:@1
 main: scope:[main]  from @1
-  (byte*) SCREEN#5 ← phi( @1/(byte*) SCREEN#7 )
   (byte) main::k#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@5
   (byte) main::k#6 ← phi( main/(byte) main::k#0 main::@5/(byte) main::k#1 )
-  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#5 main::@5/(byte*) SCREEN#6 )
   (byte) main::l#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@4
   (byte) main::k#5 ← phi( main::@1/(byte) main::k#6 main::@4/(byte) main::k#3 )
   (byte) main::l#4 ← phi( main::@1/(byte) main::l#0 main::@4/(byte) main::l#1 )
-  (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 main::@4/(byte*) SCREEN#4 )
   (byte) main::m#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
   (byte) main::k#4 ← phi( main::@2/(byte) main::k#5 main::@3/(byte) main::k#4 )
   (byte) main::l#3 ← phi( main::@2/(byte) main::l#4 main::@3/(byte) main::l#3 )
   (byte) main::m#2 ← phi( main::@2/(byte) main::m#0 main::@3/(byte) main::m#1 )
-  (byte*) SCREEN#1 ← phi( main::@2/(byte*) SCREEN#2 main::@3/(byte*) SCREEN#1 )
-  kickasm( uses SCREEN#1) {{ lda #0
+  kickasm( uses SCREEN#0) {{ lda #0
                     ldx #0
                     sta SCREEN,x
                  }}
@@ -32,7 +29,6 @@ main::@3: scope:[main]  from main::@2 main::@3
   if((bool~) main::$0) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  (byte*) SCREEN#4 ← phi( main::@3/(byte*) SCREEN#1 )
   (byte) main::k#3 ← phi( main::@3/(byte) main::k#4 )
   (byte) main::l#2 ← phi( main::@3/(byte) main::l#3 )
   (byte) main::l#1 ← (byte) main::l#2 + rangenext(0,$a)
@@ -40,7 +36,6 @@ main::@4: scope:[main]  from main::@3
   if((bool~) main::$1) goto main::@2
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  (byte*) SCREEN#6 ← phi( main::@4/(byte*) SCREEN#4 )
   (byte) main::k#2 ← phi( main::@4/(byte) main::k#3 )
   (byte) main::k#1 ← (byte) main::k#2 + rangenext(0,$a)
   (bool~) main::$2 ← (byte) main::k#1 != rangelast(0,$a)
@@ -50,7 +45,6 @@ main::@return: scope:[main]  from main::@5
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#7 ← phi( @begin/(byte*) SCREEN#0 )
   call main 
   to:@2
 @2: scope:[]  from @1
@@ -64,13 +58,6 @@ SYMBOL TABLE SSA
 (label) @end
 (byte*) SCREEN
 (byte*) SCREEN#0
-(byte*) SCREEN#1
-(byte*) SCREEN#2
-(byte*) SCREEN#3
-(byte*) SCREEN#4
-(byte*) SCREEN#5
-(byte*) SCREEN#6
-(byte*) SCREEN#7
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -104,21 +91,16 @@ Culled Empty Block (label) @2
 Successful SSA optimization Pass2CullEmptyBlocks
 Alias (byte) main::l#2 = (byte) main::l#3 
 Alias (byte) main::k#2 = (byte) main::k#3 (byte) main::k#4 
-Alias (byte*) SCREEN#1 = (byte*) SCREEN#4 (byte*) SCREEN#6 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#7 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte*) SCREEN#1
 Self Phi Eliminated (byte) main::l#2
 Self Phi Eliminated (byte) main::k#2
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) SCREEN#5 (byte*) SCREEN#0
-Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#2
 Redundant Phi (byte) main::l#2 (byte) main::l#4
 Redundant Phi (byte) main::k#2 (byte) main::k#5
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$0 [11] if((byte) main::m#1!=rangelast(0,$a)) goto main::@3
-Simple Condition (bool~) main::$1 [15] if((byte) main::l#1!=rangelast(0,$a)) goto main::@2
-Simple Condition (bool~) main::$2 [19] if((byte) main::k#1!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$0 [10] if((byte) main::m#1!=rangelast(0,$a)) goto main::@3
+Simple Condition (bool~) main::$1 [14] if((byte) main::l#1!=rangelast(0,$a)) goto main::@2
+Simple Condition (bool~) main::$2 [18] if((byte) main::k#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = ((byte*))$400
 Constant (const byte) main::k#0 = 0
@@ -131,15 +113,9 @@ Resolved ranged next value main::l#1 ← ++ main::l#4 to ++
 Resolved ranged comparison value if(main::l#1!=rangelast(0,$a)) goto main::@2 to (byte/signed byte/word/signed word/dword/signed dword) $b
 Resolved ranged next value main::k#1 ← ++ main::k#5 to ++
 Resolved ranged comparison value if(main::k#1!=rangelast(0,$a)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $b
-Self Phi Eliminated (byte*) SCREEN#2
 Self Phi Eliminated (byte) main::k#5
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) SCREEN#2 (byte*) SCREEN#3
 Redundant Phi (byte) main::k#5 (byte) main::k#6
-Successful SSA optimization Pass2RedundantPhiElimination
-Self Phi Eliminated (byte*) SCREEN#3
-Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) SCREEN#3 (const byte*) SCREEN#0
 Successful SSA optimization Pass2RedundantPhiElimination
 Inlining constant with var siblings (const byte) main::k#0
 Inlining constant with var siblings (const byte) main::l#0

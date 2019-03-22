@@ -1,21 +1,20 @@
+Identified constant variable (byte*) screen
+Identified constant variable (byte*) main::hello
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   to:@2
 main: scope:[main]  from @2
-  (byte*) screen#1 ← phi( @2/(byte*) screen#3 )
   (byte*) main::hello#0 ← (const string) main::$3
-  (byte*) print2::at#0 ← (byte*) screen#1
+  (byte*) print2::at#0 ← (byte*) screen#0
   (byte*) print2::msg#0 ← (byte*) main::hello#0
   call print2 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*) main::hello#1 ← phi( main/(byte*) main::hello#0 )
-  (byte*) screen#2 ← phi( main/(byte*) screen#1 )
-  (byte*~) main::$1 ← (byte*) screen#2 + (byte/signed byte/word/signed word/dword/signed dword) $50
+  (byte*~) main::$1 ← (byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) $50
   (byte*) print2::at#1 ← (byte*~) main::$1
-  (byte*) print2::msg#1 ← (byte*) main::hello#1
+  (byte*) print2::msg#1 ← (byte*) main::hello#0
   call print2 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -44,7 +43,6 @@ print2::@return: scope:[print2]  from print2::@1
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) screen#3 ← phi( @begin/(byte*) screen#0 )
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -64,7 +62,6 @@ SYMBOL TABLE SSA
 (label) main::@return
 (byte*) main::hello
 (byte*) main::hello#0
-(byte*) main::hello#1
 (void()) print2((byte*) print2::at , (byte*) print2::msg)
 (bool~) print2::$0
 (label) print2::@1
@@ -89,26 +86,19 @@ SYMBOL TABLE SSA
 (byte*) print2::msg#3
 (byte*) screen
 (byte*) screen#0
-(byte*) screen#1
-(byte*) screen#2
-(byte*) screen#3
 
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @3
 Successful SSA optimization Pass2CullEmptyBlocks
-Alias (byte*) screen#1 = (byte*) screen#2 
-Alias (byte*) main::hello#0 = (byte*) main::hello#1 
 Alias (byte*) print2::at#1 = (byte*~) main::$1 
-Alias (byte*) screen#0 = (byte*) screen#3 
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (byte*) print2::msg#2
 Self Phi Eliminated (byte*) print2::at#2
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) screen#1 (byte*) screen#0
 Redundant Phi (byte*) print2::msg#2 (byte*) print2::msg#3
 Redundant Phi (byte*) print2::at#2 (byte*) print2::at#3
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) print2::$0 [20] if(*((byte*) print2::msg#3 + (byte) print2::i#1)!=(byte) '@') goto print2::@1
+Simple Condition (bool~) print2::$0 [18] if(*((byte*) print2::msg#3 + (byte) print2::i#1)!=(byte) '@') goto print2::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) screen#0 = ((byte*))$400
 Constant (const byte*) main::hello#0 = main::$3

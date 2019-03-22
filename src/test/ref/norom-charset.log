@@ -1,3 +1,6 @@
+Identified constant variable (byte*) VIC_MEMORY
+Identified constant variable (byte*) SCREEN
+Identified constant variable (byte*) CHARSET
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -7,17 +10,11 @@ CONTROL FLOW GRAPH SSA
   (word[]) charset_spec_row#0 ← { (word/dword/signed dword) $f7da, (word/dword/signed dword) $f7de, (word/dword/signed dword) $f24e, (word/dword/signed dword) $d6de }
   to:@2
 main: scope:[main]  from @2
-  (byte*) VIC_MEMORY#4 ← phi( @2/(byte*) VIC_MEMORY#5 )
-  (byte*) SCREEN#4 ← phi( @2/(byte*) SCREEN#5 )
-  (byte*) CHARSET#1 ← phi( @2/(byte*) CHARSET#3 )
-  (byte*~) main::$0 ← (byte*) CHARSET#1 + (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte*~) main::$0 ← (byte*) CHARSET#0 + (byte/signed byte/word/signed word/dword/signed dword) 8
   (byte*) main::charset#0 ← (byte*~) main::$0
   (byte) main::c#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte*) VIC_MEMORY#3 ← phi( main/(byte*) VIC_MEMORY#4 main::@3/(byte*) VIC_MEMORY#2 )
-  (byte*) CHARSET#5 ← phi( main/(byte*) CHARSET#1 main::@3/(byte*) CHARSET#4 )
-  (byte*) SCREEN#3 ← phi( main/(byte*) SCREEN#4 main::@3/(byte*) SCREEN#2 )
   (byte) main::c#2 ← phi( main/(byte) main::c#0 main::@3/(byte) main::c#1 )
   (byte*) main::charset#2 ← phi( main/(byte*) main::charset#0 main::@3/(byte*) main::charset#1 )
   (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
@@ -25,9 +22,6 @@ main::@1: scope:[main]  from main main::@3
   call gen_char3 
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  (byte*) VIC_MEMORY#2 ← phi( main::@1/(byte*) VIC_MEMORY#3 )
-  (byte*) CHARSET#4 ← phi( main::@1/(byte*) CHARSET#5 )
-  (byte*) SCREEN#2 ← phi( main::@1/(byte*) SCREEN#3 )
   (byte) main::c#3 ← phi( main::@1/(byte) main::c#2 )
   (byte*) main::charset#3 ← phi( main::@1/(byte*) main::charset#2 )
   (byte*~) main::$2 ← (byte*) main::charset#3 + (byte/signed byte/word/signed word/dword/signed dword) 8
@@ -38,16 +32,13 @@ main::@3: scope:[main]  from main::@1
   if((bool~) main::$4) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@3
-  (byte*) VIC_MEMORY#1 ← phi( main::@3/(byte*) VIC_MEMORY#2 )
-  (byte*) CHARSET#2 ← phi( main::@3/(byte*) CHARSET#4 )
-  (byte*) SCREEN#1 ← phi( main::@3/(byte*) SCREEN#2 )
-  (word~) main::$5 ← ((word)) (byte*) SCREEN#1
+  (word~) main::$5 ← ((word)) (byte*) SCREEN#0
   (word/signed dword/dword~) main::$6 ← (word~) main::$5 / (byte/signed byte/word/signed word/dword/signed dword) $40
-  (word~) main::$7 ← ((word)) (byte*) CHARSET#2
+  (word~) main::$7 ← ((word)) (byte*) CHARSET#0
   (word/signed dword/dword~) main::$8 ← (word~) main::$7 / (word/signed word/dword/signed dword) $400
   (word/dword~) main::$9 ← (word/signed dword/dword~) main::$6 | (word/signed dword/dword~) main::$8
   (byte~) main::$10 ← ((byte)) (word/dword~) main::$9
-  *((byte*) VIC_MEMORY#1) ← (byte~) main::$10
+  *((byte*) VIC_MEMORY#0) ← (byte~) main::$10
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -113,9 +104,6 @@ gen_char3::@return: scope:[gen_char3]  from gen_char3::@5
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) VIC_MEMORY#5 ← phi( @begin/(byte*) VIC_MEMORY#0 )
-  (byte*) SCREEN#5 ← phi( @begin/(byte*) SCREEN#0 )
-  (byte*) CHARSET#3 ← phi( @begin/(byte*) CHARSET#0 )
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -129,25 +117,10 @@ SYMBOL TABLE SSA
 (label) @end
 (byte*) CHARSET
 (byte*) CHARSET#0
-(byte*) CHARSET#1
-(byte*) CHARSET#2
-(byte*) CHARSET#3
-(byte*) CHARSET#4
-(byte*) CHARSET#5
 (byte*) SCREEN
 (byte*) SCREEN#0
-(byte*) SCREEN#1
-(byte*) SCREEN#2
-(byte*) SCREEN#3
-(byte*) SCREEN#4
-(byte*) SCREEN#5
 (byte*) VIC_MEMORY
 (byte*) VIC_MEMORY#0
-(byte*) VIC_MEMORY#1
-(byte*) VIC_MEMORY#2
-(byte*) VIC_MEMORY#3
-(byte*) VIC_MEMORY#4
-(byte*) VIC_MEMORY#5
 (word[]) charset_spec_row
 (word[]) charset_spec_row#0
 (void()) gen_char3((byte*) gen_char3::dst , (word) gen_char3::spec)
@@ -233,14 +206,11 @@ SYMBOL TABLE SSA
 
 Culled Empty Block (label) @3
 Successful SSA optimization Pass2CullEmptyBlocks
-Inversing boolean not [37] (bool~) gen_char3::$3 ← (byte~) gen_char3::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [36] (bool~) gen_char3::$2 ← (byte~) gen_char3::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not [35] (bool~) gen_char3::$3 ← (byte~) gen_char3::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [34] (bool~) gen_char3::$2 ← (byte~) gen_char3::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) main::charset#0 = (byte*~) main::$0 
 Alias (byte*) main::charset#2 = (byte*) main::charset#3 
 Alias (byte) main::c#2 = (byte) main::c#3 
-Alias (byte*) SCREEN#1 = (byte*) SCREEN#2 (byte*) SCREEN#3 
-Alias (byte*) CHARSET#2 = (byte*) CHARSET#4 (byte*) CHARSET#5 
-Alias (byte*) VIC_MEMORY#1 = (byte*) VIC_MEMORY#2 (byte*) VIC_MEMORY#3 
 Alias (byte*) main::charset#1 = (byte*~) main::$2 
 Alias (byte) main::c#1 = (byte/signed word/word/dword/signed dword~) main::$3 
 Alias (byte) gen_char3::b#1 = (byte~) gen_char3::$5 (byte) gen_char3::b#5 
@@ -253,36 +223,24 @@ Alias (byte) gen_char3::r#4 = (byte) gen_char3::r#5
 Alias (byte) gen_char3::b#2 = (byte/word/dword~) gen_char3::$4 
 Alias (byte*) gen_char3::dst#1 = (byte*) gen_char3::dst#2 
 Alias (byte) gen_char3::r#2 = (byte) gen_char3::r#3 
-Alias (byte*) CHARSET#0 = (byte*) CHARSET#3 
-Alias (byte*) SCREEN#0 = (byte*) SCREEN#5 
-Alias (byte*) VIC_MEMORY#0 = (byte*) VIC_MEMORY#5 
 Successful SSA optimization Pass2AliasElimination
 Alias (word) gen_char3::spec#2 = (word) gen_char3::spec#3 
 Alias (byte) gen_char3::c#2 = (byte) gen_char3::c#3 
 Alias (byte*) gen_char3::dst#1 = (byte*) gen_char3::dst#3 
 Alias (byte) gen_char3::r#2 = (byte) gen_char3::r#4 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte*) SCREEN#1
-Self Phi Eliminated (byte*) CHARSET#2
-Self Phi Eliminated (byte*) VIC_MEMORY#1
 Self Phi Eliminated (byte*) gen_char3::dst#1
 Self Phi Eliminated (byte) gen_char3::r#2
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) CHARSET#1 (byte*) CHARSET#0
-Redundant Phi (byte*) SCREEN#4 (byte*) SCREEN#0
-Redundant Phi (byte*) VIC_MEMORY#4 (byte*) VIC_MEMORY#0
-Redundant Phi (byte*) SCREEN#1 (byte*) SCREEN#4
-Redundant Phi (byte*) CHARSET#2 (byte*) CHARSET#1
-Redundant Phi (byte*) VIC_MEMORY#1 (byte*) VIC_MEMORY#4
 Redundant Phi (word) gen_char3::spec#6 (word) gen_char3::spec#0
 Redundant Phi (byte*) gen_char3::dst#6 (byte*) gen_char3::dst#0
 Redundant Phi (byte*) gen_char3::dst#1 (byte*) gen_char3::dst#5
 Redundant Phi (byte) gen_char3::r#2 (byte) gen_char3::r#6
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$4 [18] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto main::@1
-Simple Condition (bool~) gen_char3::$3 [38] if((byte~) gen_char3::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto gen_char3::@3
-Simple Condition (bool~) gen_char3::$7 [46] if((byte) gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2
-Simple Condition (bool~) gen_char3::$8 [54] if((byte) gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1
+Simple Condition (bool~) main::$4 [17] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) 6) goto main::@1
+Simple Condition (bool~) gen_char3::$3 [36] if((byte~) gen_char3::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto gen_char3::@3
+Simple Condition (bool~) gen_char3::$7 [44] if((byte) gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2
+Simple Condition (bool~) gen_char3::$8 [52] if((byte) gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) VIC_MEMORY#0 = ((byte*))$d018
 Constant (const byte*) SCREEN#0 = ((byte*))$400

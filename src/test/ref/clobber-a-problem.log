@@ -267,10 +267,9 @@ irq: {
     lda #DARK_GREY
     sta BORDERCOL
   //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 -- vbuz1=vbuz2_plus_vbuc1 
-    lda #$15
-    clc
-    adc irq_raster_next
-    sta irq_raster_next_1
+    lax irq_raster_next
+    axs #-$15
+    stx irq_raster_next_1
   //SEG19 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuz1=vbuz2 
     // Setup next interrupt
     lda irq_raster_next_1
@@ -318,19 +317,10 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( ) always clobbers reg byte a 
 Statement [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 [ irq_raster_next#0 ] (  [ irq_raster_next#0 ] ) always clobbers reg byte a 
-Statement [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
-Statement [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ irq::raster_next#0 irq::$0 ] (  [ irq::raster_next#0 irq::$0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ]
+Statement [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a reg byte x 
 Statement [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [16] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [1] (byte) irq_raster_next#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( ) always clobbers reg byte a 
-Statement [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 [ irq_raster_next#0 ] (  [ irq_raster_next#0 ] ) always clobbers reg byte a 
-Statement [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 [ irq_raster_next#1 ] (  [ irq_raster_next#1 ] ) always clobbers reg byte a 
-Statement [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ irq::raster_next#0 irq::$0 ] (  [ irq::raster_next#0 irq::$0 ] ) always clobbers reg byte a 
-Statement [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [16] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Potential registers zp ZP_BYTE:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ irq_raster_next#0 ] : zp ZP_BYTE:3 , 
 Potential registers zp ZP_BYTE:4 [ irq_raster_next#1 ] : zp ZP_BYTE:4 , 
 Potential registers zp ZP_BYTE:5 [ irq::$0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
@@ -340,16 +330,16 @@ Uplift Scope [irq] 12.67: zp ZP_BYTE:2 [ irq::raster_next#2 irq::raster_next#0 i
 Uplift Scope [] 4: zp ZP_BYTE:3 [ irq_raster_next#0 ] 4: zp ZP_BYTE:4 [ irq_raster_next#1 ] 
 Uplift Scope [main] 
 
-Uplifting [irq] best 248 combination reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] reg byte a [ irq::$0 ] 
-Uplifting [] best 248 combination zp ZP_BYTE:3 [ irq_raster_next#0 ] zp ZP_BYTE:4 [ irq_raster_next#1 ] 
-Uplifting [main] best 248 combination 
+Uplifting [irq] best 246 combination reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] reg byte a [ irq::$0 ] 
+Uplifting [] best 246 combination zp ZP_BYTE:3 [ irq_raster_next#0 ] zp ZP_BYTE:4 [ irq_raster_next#1 ] 
+Uplifting [main] best 246 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ irq_raster_next#0 ]
-Uplifting [] best 248 combination zp ZP_BYTE:3 [ irq_raster_next#0 ] 
+Uplifting [] best 246 combination zp ZP_BYTE:3 [ irq_raster_next#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ irq_raster_next#1 ]
-Uplifting [] best 248 combination zp ZP_BYTE:4 [ irq_raster_next#1 ] 
+Uplifting [] best 246 combination zp ZP_BYTE:4 [ irq_raster_next#1 ] 
 Coalescing zero page register with common assignment [ zp ZP_BYTE:3 [ irq_raster_next#0 ] ] with [ zp ZP_BYTE:4 [ irq_raster_next#1 ] ] - score: 1
 Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ irq_raster_next#0 irq_raster_next#1 ]
-Interrupt procedure irq clobbers AXCNZV
+Interrupt procedure irq clobbers AXCNZ
 Removing interrupt register storage sty regy+1 in SEG16 entry interrupt(HARDWARE_CLOBBER)
 Removing interrupt register storage regy: in SEG30 [16] return  - exit interrupt(HARDWARE_CLOBBER)
 Removing interrupt register storage ldy #00 in SEG30 [16] return  - exit interrupt(HARDWARE_CLOBBER)
@@ -409,10 +399,9 @@ irq: {
     lda #DARK_GREY
     sta BORDERCOL
   //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 -- vbuz1=vbuz1_plus_vbuc1 
-    lda #$15
-    clc
-    adc irq_raster_next
-    sta irq_raster_next
+    lax irq_raster_next
+    axs #-$15
+    stx irq_raster_next
   //SEG19 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
     // Setup next interrupt
     ldx irq_raster_next
@@ -459,7 +448,8 @@ Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction ldx irq_raster_next with TAX
+Removing instruction ldx irq_raster_next
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_irq with b1
 Removing instruction b1:
 Removing instruction b2_from_b1:
@@ -510,7 +500,7 @@ reg byte a [ irq::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 157
+Score: 153
 
 //SEG0 File Comments
 //SEG1 Basic Upstart
@@ -556,13 +546,11 @@ irq: {
     lda #DARK_GREY
     sta BORDERCOL
   //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 -- vbuz1=vbuz1_plus_vbuc1 
-    lda #$15
-    clc
-    adc irq_raster_next
-    sta irq_raster_next
+    lax irq_raster_next
+    axs #-$15
+    stx irq_raster_next
   //SEG19 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuxx=vbuz1 
-    // Setup next interrupt
-    tax
+  // Setup next interrupt
   //SEG20 [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7

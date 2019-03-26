@@ -118,14 +118,12 @@ main: {
     sta SPRITES_COLS,y
     lda #toSpritePtr2_return
     sta PLAYFIELD_SPRITE_PTRS_1,y
-    lda #$18
-    clc
-    adc xpos
-    sta xpos
-    lda #$18
-    clc
-    adc ypos
-    sta ypos
+    lax xpos
+    axs #-$18
+    stx xpos
+    lax ypos
+    axs #-$18
+    stx ypos
     iny
     cpy #8
     bne b1
@@ -134,31 +132,27 @@ main: {
     rts
 }
 loop: {
-    .label _1 = 9
-    .label idx = 3
+    .label s = 3
     lda #0
     sta sin_idx
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
-    lda sin_idx
-    sta idx
-    ldx #4
+    ldx sin_idx
+    lda #4
+    sta s
   b5:
-    txa
+    lda s
     asl
-    sta _1
-    ldy idx
-    lda SIN,y
-    ldy _1
+    tay
+    lda SIN,x
     sta SPRITES_YPOS,y
-    lda #$a
-    clc
-    adc idx
-    sta idx
-    inx
-    cpx #8
+    txa
+    axs #-$a
+    inc s
+    lda #8
+    cmp s
     bne b5
     inc sin_idx
     jmp b4
@@ -179,8 +173,8 @@ sprites_irq_init: {
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
     // Set raster line
-    lda VIC_CONTROL
-    and #$7f
+    lda #$7f
+    and VIC_CONTROL
     sta VIC_CONTROL
     lda #IRQ_RASTER_FIRST
     sta RASTER
@@ -206,21 +200,20 @@ sprites_init: {
     sta SPRITES_EXPAND_X
     lda #$18+$f*8
     sta xpos
-    ldx #0
+    ldy #0
   b1:
-    txa
+    tya
     asl
-    tay
+    tax
     lda xpos
-    sta SPRITES_XPOS,y
+    sta SPRITES_XPOS,x
     lda #BLACK
-    sta SPRITES_COLS,x
-    lda #$18
-    clc
-    adc xpos
-    sta xpos
-    inx
-    cpx #4
+    sta SPRITES_COLS,y
+    lax xpos
+    axs #-$18
+    stx xpos
+    iny
+    cpy #4
     bne b1
     rts
 }
@@ -229,7 +222,7 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
-    .label raster_sprite_gfx_modify = $a
+    .label raster_sprite_gfx_modify = 9
     sta rega+1
     stx regx+1
     //(*BGCOL)++;
@@ -254,9 +247,8 @@ sprites_irq: {
     cmp #0
     beq b2
     stx PLAYFIELD_SPRITE_PTRS_2
+    inx
     txa
-    clc
-    adc #1
     sta PLAYFIELD_SPRITE_PTRS_2+1
     sta PLAYFIELD_SPRITE_PTRS_2+2
     clc
@@ -264,23 +256,21 @@ sprites_irq: {
     sta PLAYFIELD_SPRITE_PTRS_2+3
   b3:
     inc irq_cnt
-    lda irq_cnt
-    cmp #9
+    lda #9
+    cmp irq_cnt
     beq b4
-    cmp #$a
+    lda #$a
+    cmp irq_cnt
     beq b5
-    lda #$14
-    clc
-    adc irq_raster_next
-    sta irq_raster_next
-    lda #$15
-    clc
-    adc irq_sprite_ypos
-    sta irq_sprite_ypos
-    lda #3
-    clc
-    adc irq_sprite_ptr
-    sta irq_sprite_ptr
+    lax irq_raster_next
+    axs #-$14
+    stx irq_raster_next
+    lax irq_sprite_ypos
+    axs #-$15
+    stx irq_sprite_ypos
+    lax irq_sprite_ptr
+    axs #-3
+    stx irq_sprite_ptr
   b7:
     // Setup next interrupt
     lda irq_raster_next
@@ -298,20 +288,17 @@ sprites_irq: {
     sta irq_cnt
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next
-    lda #$15
-    clc
-    adc irq_sprite_ypos
-    sta irq_sprite_ypos
-    lda #3
-    clc
-    adc irq_sprite_ptr
-    sta irq_sprite_ptr
+    lax irq_sprite_ypos
+    axs #-$15
+    stx irq_sprite_ypos
+    lax irq_sprite_ptr
+    axs #-3
+    stx irq_sprite_ptr
     jmp b7
   b4:
-    lda #$15
-    clc
-    adc irq_raster_next
-    sta irq_raster_next
+    lax irq_raster_next
+    axs #-$15
+    stx irq_raster_next
     lda #SPRITES_FIRST_YPOS
     sta irq_sprite_ypos
     lda #toSpritePtr2_return
@@ -319,13 +306,11 @@ sprites_irq: {
     jmp b7
   b2:
     stx PLAYFIELD_SPRITE_PTRS_1
+    inx
+    stx PLAYFIELD_SPRITE_PTRS_1+1
+    stx PLAYFIELD_SPRITE_PTRS_1+2
+    inx
     txa
-    clc
-    adc #1
-    sta PLAYFIELD_SPRITE_PTRS_1+1
-    sta PLAYFIELD_SPRITE_PTRS_1+2
-    clc
-    adc #1
     sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }

@@ -71,11 +71,12 @@ main: {
     clc
     adc #2
     sta i
-    cmp #8
+    lda #8
+    cmp i
     bne b1
   b5:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b5
     inc BORDERCOL
     jmp b5
@@ -218,8 +219,8 @@ point_init: {
     sta y_cur,y
     lda _18+1
     sta y_cur+1,y
-    ldy point_idx1
     lda #DELAY
+    ldy point_idx1
     sta delay,y
     rts
   b1:
@@ -246,8 +247,8 @@ point_init: {
     jmp b2
   b3:
     // x add = -1.0
-    ldy point_idx
     lda #-$10
+    ldy point_idx
     sta x_add,y
     jmp b4
   abs16s2_b1:
@@ -442,8 +443,8 @@ screen_fill: {
     cpx #$28
     bne b2
     inc y
-    lda y
-    cmp #$19
+    lda #$19
+    cmp y
     bne b1
     rts
 }
@@ -472,8 +473,8 @@ bitmap_clear: {
     cpx #$c8
     bne b2
     inc y
-    lda y
-    cmp #$28
+    lda #$28
+    cmp y
     bne b1
     rts
 }
@@ -498,9 +499,8 @@ bitmap_init: {
     sta yoffs+1
     ldx #0
   b3:
-    txa
-    and #7
-    sta _3
+    lda #7
+    sax _3
     lda yoffs
     ora _3
     sta bitmap_plot_ylo,x

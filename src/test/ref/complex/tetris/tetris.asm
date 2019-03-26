@@ -152,11 +152,14 @@
   .label render_screen_render_33 = 9
   .label current_xpos_59 = $a
   .label current_piece_gfx_64 = 5
+  .label current_piece_char_68 = $b
   .label render_screen_render_69 = 9
   .label current_xpos_128 = $a
   .label current_xpos_129 = $a
   .label current_piece_gfx_118 = 5
   .label current_piece_gfx_119 = 5
+  .label current_piece_char_106 = $b
+  .label current_piece_char_107 = $b
   .label current_piece_98 = 5
   .label current_piece_99 = 5
   .label current_piece_100 = 5
@@ -194,18 +197,19 @@ main: {
     jsr play_spawn_current
     ldx #$40
     jsr render_playfield
-    ldy current_ypos
+    ldx current_ypos
     lda current_xpos
     sta current_xpos_128
     lda current_piece_gfx
     sta current_piece_gfx_118
     lda current_piece_gfx+1
     sta current_piece_gfx_118+1
-    ldx current_piece_char
+    lda current_piece_char
+    sta current_piece_char_106
     lda #$40
     sta render_screen_render_33
     jsr render_moving
-    ldy play_spawn_current.piece_idx
+    ldx play_spawn_current.piece_idx
     lda #$40
     jsr render_next
     ldy play_spawn_current._0
@@ -232,8 +236,8 @@ main: {
   b1:
   // Wait for a frame to pass
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     jsr render_show
     jsr keyboard_event_scan
@@ -252,7 +256,7 @@ main: {
     beq b1
     ldx render_screen_render
     jsr render_playfield
-    ldy current_ypos
+    ldx current_ypos
     lda render_screen_render
     sta render_screen_render_69
     lda current_xpos
@@ -261,10 +265,11 @@ main: {
     sta current_piece_gfx_119
     lda current_piece_gfx+1
     sta current_piece_gfx_119+1
-    ldx current_piece_char
+    lda current_piece_char
+    sta current_piece_char_107
     jsr render_moving
     lda render_screen_render
-    ldy next_piece_idx
+    ldx next_piece_idx
     jsr render_next
     jsr render_score
     jsr render_screen_swap
@@ -413,14 +418,14 @@ render_next: {
     lda #>PLAYFIELD_SCREEN_1+next_area_offset
     sta screen_next_area+1
   b2:
-    tya
+    txa
     asl
-    tax
-    lda PIECES_NEXT_CHARS,y
+    tay
+    lda PIECES_NEXT_CHARS,x
     sta next_piece_char
-    lda PIECES,x
+    lda PIECES,y
     sta next_piece_gfx
-    lda PIECES+1,x
+    lda PIECES+1,y
     sta next_piece_gfx+1
     lda #0
     sta l
@@ -454,8 +459,8 @@ render_next: {
     inc screen_next_area+1
   !:
     inc l
-    lda l
-    cmp #4
+    lda #4
+    cmp l
     bne b3
     rts
   b5:
@@ -467,36 +472,32 @@ render_next: {
 // Render the current moving piece at position (current_xpos, current_ypos)
 // Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
 render_moving: {
-    .label ypos2 = $b
+    .label ypos2 = $c
     .label screen_line = 7
-    .label xpos = $e
-    .label i = $d
-    .label l = $c
-    .label c = $f
-    tya
+    .label xpos = $f
+    .label i = $e
+    .label l = $d
+    txa
     asl
     sta ypos2
     lda #0
     sta l
     sta i
   b1:
-    lda ypos2
-    cmp #2
-    beq !+
-    bcs b2
-  !:
-    lda #4
-    clc
-    adc i
-    sta i
+    lda #2
+    cmp ypos2
+    bcc b2
+    lax i
+    axs #-4
+    stx i
   b3:
     lda ypos2
     clc
     adc #2
     sta ypos2
     inc l
-    lda l
-    cmp #4
+    lda #4
+    cmp l
     bne b1
     rts
   b2:
@@ -510,22 +511,20 @@ render_moving: {
     sta screen_line+1
     lda current_xpos_59
     sta xpos
-    lda #0
-    sta c
+    ldx #0
   b4:
     ldy i
     lda (current_piece_gfx_64),y
     inc i
     cmp #0
     beq b5
+    lda current_piece_char_68
     ldy xpos
-    txa
     sta (screen_line),y
   b5:
     inc xpos
-    inc c
-    lda c
-    cmp #4
+    inx
+    cpx #4
     bne b4
     jmp b3
 }
@@ -563,12 +562,12 @@ render_playfield: {
   !:
     inc i
     inc c
-    lda c
-    cmp #PLAYFIELD_COLS-1+1
+    lda #PLAYFIELD_COLS-1+1
+    cmp c
     bne b2
     inc l
-    lda l
-    cmp #PLAYFIELD_LINES-1+1
+    lda #PLAYFIELD_LINES-1+1
+    cmp l
     bne b1
     rts
 }
@@ -618,11 +617,10 @@ play_move_rotate: {
   breturn:
     rts
   b2:
-    lda #$10
-    clc
-    adc current_orientation
-    and #$3f
-    sta orientation
+    lax current_orientation
+    axs #-$10
+    lda #$3f
+    sax orientation
   b4:
     lda current_xpos
     sta play_collision.xpos
@@ -647,11 +645,10 @@ play_move_rotate: {
     lda #1
     jmp breturn
   b1:
-    lda current_orientation
-    sec
-    sbc #$10
-    and #$3f
-    sta orientation
+    lax current_orientation
+    axs #$10
+    lda #$3f
+    sax orientation
     jmp b4
 }
 // Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
@@ -734,8 +731,8 @@ play_collision: {
     adc #2
     sta ypos2
     inc l
-    lda l
-    cmp #4
+    lda #4
+    cmp l
     bne b20
     lda #COLLISION_NONE
     jmp breturn
@@ -902,8 +899,8 @@ play_spawn_current: {
     lda #7
     sta piece_idx
   b2:
-    lda piece_idx
-    cmp #7
+    lda #7
+    cmp piece_idx
     beq b3
     rts
   b3:
@@ -974,11 +971,9 @@ play_update_score: {
 play_increase_level: {
     inc level
     // Update speed of moving tetrominos down
-    lda level
-    cmp #$1d
-    beq !+
-    bcs b1
-  !:
+    lda #$1d
+    cmp level
+    bcc b1
     ldy level
     lda MOVEDOWN_SLOW_SPEEDS,y
     sta current_movedown_slow
@@ -993,10 +988,9 @@ play_increase_level: {
     cmp #$a
     bne b3
     // If level low nybble hits $a change to $10
-    lda #6
-    clc
-    adc level_bcd
-    sta level_bcd
+    lax level_bcd
+    axs #-6
+    stx level_bcd
   b3:
     // Increase the score values gained
     sed
@@ -1059,21 +1053,19 @@ play_remove_lines: {
     sta playfield,x
     dex
     inc x
-    lda x
-    cmp #PLAYFIELD_COLS-1+1
+    lda #PLAYFIELD_COLS-1+1
+    cmp x
     bne b2
-    lda full
-    cmp #1
+    lda #1
+    cmp full
     bne b4
     txa
-    clc
-    adc #PLAYFIELD_COLS
-    tax
+    axs #-PLAYFIELD_COLS
     inc removed
   b4:
     inc y
-    lda y
-    cmp #PLAYFIELD_LINES-1+1
+    lda #PLAYFIELD_LINES-1+1
+    cmp y
     bne b1
   b5:
   // Write zeros in the rest of the lines
@@ -1131,8 +1123,8 @@ play_lock_current: {
     adc #2
     sta ypos2
     inc l
-    lda l
-    cmp #4
+    lda #4
+    cmp l
     bne b7
     rts
   b7:
@@ -1198,14 +1190,13 @@ keyboard_event_scan: {
     ldy row
     cmp keyboard_scan_values,y
     bne b6
-    lda #8
-    clc
-    adc keycode
-    sta keycode
+    lax keycode
+    axs #-8
+    stx keycode
   b3:
     inc row
-    lda row
-    cmp #8
+    lda #8
+    cmp row
     bne b1
     lda #KEY_LSHIFT
     sta keyboard_event_pressed.keycode
@@ -1254,8 +1245,8 @@ keyboard_event_scan: {
     and keyboard_matrix_col_bitmask,x
     cmp #0
     beq b5
-    lda keyboard_events_size
-    cmp #8
+    lda #8
+    cmp keyboard_events_size
     beq b5
     lda keyboard_matrix_col_bitmask,x
     and row_scan
@@ -1330,17 +1321,17 @@ play_init: {
     sta pli
     lda #>playfield
     sta pli+1
-    ldx #0
+    ldy #0
   b1:
-    txa
+    tya
     asl
-    tay
+    tax
     lda pli
-    sta playfield_lines,y
+    sta playfield_lines,x
     lda pli+1
-    sta playfield_lines+1,y
+    sta playfield_lines+1,x
     lda idx
-    sta playfield_lines_idx,x
+    sta playfield_lines_idx,y
     lda #PLAYFIELD_COLS
     clc
     adc pli
@@ -1348,12 +1339,11 @@ play_init: {
     bcc !+
     inc pli+1
   !:
-    lda #PLAYFIELD_COLS
-    clc
-    adc idx
-    sta idx
-    inx
-    cpx #PLAYFIELD_LINES-1+1
+    lax idx
+    axs #-PLAYFIELD_COLS
+    stx idx
+    iny
+    cpy #PLAYFIELD_LINES-1+1
     bne b1
     lda #PLAYFIELD_COLS*PLAYFIELD_LINES
     sta playfield_lines_idx+PLAYFIELD_LINES
@@ -1396,8 +1386,8 @@ sprites_irq_init: {
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
     // Set raster line
-    lda VIC_CONTROL
-    and #$7f
+    lda #$7f
+    and VIC_CONTROL
     sta VIC_CONTROL
     lda #IRQ_RASTER_FIRST
     sta RASTER
@@ -1423,21 +1413,20 @@ sprites_init: {
     sta SPRITES_EXPAND_X
     lda #$18+$f*8
     sta xpos
-    ldx #0
+    ldy #0
   b1:
-    txa
+    tya
     asl
-    tay
+    tax
     lda xpos
-    sta SPRITES_XPOS,y
+    sta SPRITES_XPOS,x
     lda #BLACK
-    sta SPRITES_COLS,x
-    lda #$18
-    clc
-    adc xpos
-    sta xpos
-    inx
-    cpx #4
+    sta SPRITES_COLS,y
+    lax xpos
+    axs #-$18
+    stx xpos
+    iny
+    cpy #4
     bne b1
     rts
 }
@@ -1604,8 +1593,8 @@ render_screen_original: {
     cpx #$28
     bne b4
     inc y
-    lda y
-    cmp #$19
+    lda #$19
+    cmp y
     bne b1
     rts
 }
@@ -1649,9 +1638,8 @@ sprites_irq: {
     cmp #0
     beq b2
     stx PLAYFIELD_SPRITE_PTRS_2
+    inx
     txa
-    clc
-    adc #1
     sta PLAYFIELD_SPRITE_PTRS_2+1
     sta PLAYFIELD_SPRITE_PTRS_2+2
     clc
@@ -1659,23 +1647,21 @@ sprites_irq: {
     sta PLAYFIELD_SPRITE_PTRS_2+3
   b3:
     inc irq_cnt
-    lda irq_cnt
-    cmp #9
+    lda #9
+    cmp irq_cnt
     beq b4
-    cmp #$a
+    lda #$a
+    cmp irq_cnt
     beq b5
-    lda #$14
-    clc
-    adc irq_raster_next
-    sta irq_raster_next
-    lda #$15
-    clc
-    adc irq_sprite_ypos
-    sta irq_sprite_ypos
-    lda #3
-    clc
-    adc irq_sprite_ptr
-    sta irq_sprite_ptr
+    lax irq_raster_next
+    axs #-$14
+    stx irq_raster_next
+    lax irq_sprite_ypos
+    axs #-$15
+    stx irq_sprite_ypos
+    lax irq_sprite_ptr
+    axs #-3
+    stx irq_sprite_ptr
   b7:
     // Setup next interrupt
     lda irq_raster_next
@@ -1693,20 +1679,17 @@ sprites_irq: {
     sta irq_cnt
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next
-    lda #$15
-    clc
-    adc irq_sprite_ypos
-    sta irq_sprite_ypos
-    lda #3
-    clc
-    adc irq_sprite_ptr
-    sta irq_sprite_ptr
+    lax irq_sprite_ypos
+    axs #-$15
+    stx irq_sprite_ypos
+    lax irq_sprite_ptr
+    axs #-3
+    stx irq_sprite_ptr
     jmp b7
   b4:
-    lda #$15
-    clc
-    adc irq_raster_next
-    sta irq_raster_next
+    lax irq_raster_next
+    axs #-$15
+    stx irq_raster_next
     lda #SPRITES_FIRST_YPOS
     sta irq_sprite_ypos
     lda #toSpritePtr2_return
@@ -1714,13 +1697,11 @@ sprites_irq: {
     jmp b7
   b2:
     stx PLAYFIELD_SPRITE_PTRS_1
+    inx
+    stx PLAYFIELD_SPRITE_PTRS_1+1
+    stx PLAYFIELD_SPRITE_PTRS_1+2
+    inx
     txa
-    clc
-    adc #1
-    sta PLAYFIELD_SPRITE_PTRS_1+1
-    sta PLAYFIELD_SPRITE_PTRS_1+2
-    clc
-    adc #1
     sta PLAYFIELD_SPRITE_PTRS_1+3
     jmp b3
 }

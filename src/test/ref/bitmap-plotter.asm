@@ -23,8 +23,8 @@ main: {
     jsr init_screen
     jsr init_plot_tables
   b2:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b2
     inc BGCOL
     jsr plots
@@ -108,9 +108,8 @@ init_plot_tables: {
     sta yoffs+1
     tax
   b3:
-    txa
-    and #7
-    sta _6
+    lda #7
+    sax _6
     lda yoffs
     ora _6
     sta plot_ylo,x

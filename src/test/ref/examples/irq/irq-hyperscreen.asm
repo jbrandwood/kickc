@@ -29,8 +29,8 @@ main: {
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
     // Set raster line to $fa
-    lda VIC_CONTROL
-    and #$7f
+    lda #$7f
+    and VIC_CONTROL
     sta VIC_CONTROL
     lda #$fa
     sta RASTER
@@ -50,8 +50,8 @@ irq_bottom_2: {
     lda #WHITE
     sta BORDERCOL
     // Set screen height back to 25 lines (preparing for the next screen)
-    lda VIC_CONTROL
-    ora #VIC_RSEL
+    lda #VIC_RSEL
+    ora VIC_CONTROL
     sta VIC_CONTROL
     // Acknowledge the IRQ
     lda #IRQ_RASTER
@@ -72,8 +72,8 @@ irq_bottom_1: {
     lda #WHITE
     sta BORDERCOL
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
-    lda VIC_CONTROL
-    and #$ff^VIC_RSEL
+    lda #$ff^VIC_RSEL
+    and VIC_CONTROL
     sta VIC_CONTROL
     // Acknowledge the IRQ
     lda #IRQ_RASTER

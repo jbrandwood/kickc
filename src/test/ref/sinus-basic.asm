@@ -63,8 +63,8 @@ main: {
     jsr print_word
     jsr print_ln
     inc i
-    lda i
-    cmp #$1a
+    lda #$1a
+    cmp i
     bne b17
     rts
   b17:
@@ -119,10 +119,9 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    txa
-    and #$f
-    tay
-    lda print_hextab,y
+    lda #$f
+    axs #0
+    lda print_hextab,x
     jsr print_char
     rts
 }

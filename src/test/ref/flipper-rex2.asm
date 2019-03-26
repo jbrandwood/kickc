@@ -8,12 +8,12 @@ main: {
   b1:
     ldx #$19
   b3:
-    lda RASTER
-    cmp #$fe
+    lda #$fe
+    cmp RASTER
     bne b3
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     dex
     cpx #0
@@ -71,9 +71,7 @@ flip: {
     sta buffer2,x
     iny
     txa
-    clc
-    adc #$10
-    tax
+    axs #-$10
     dec c
     lda c
     cmp #0

@@ -9,8 +9,8 @@ main: {
   b1:
     jsr $e544
     inc i
-    lda i
-    cmp #$b
+    lda #$b
+    cmp i
     bne b1
     rts
 }

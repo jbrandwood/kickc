@@ -174,11 +174,9 @@ main: {
     lda #>op8
     sta printu.op+1
     jsr printu
-    lda a
-    cmp #$37
-    beq !+
-    bcs b32
-  !:
+    lda #$37
+    cmp a
+    bcc b32
     ldx #'+'
     jmp b11
   b32:
@@ -310,8 +308,8 @@ main: {
     lda #>op16
     sta printu.op+1
     jsr printu
-    lda a
-    cmp #$37
+    lda #$37
+    cmp a
     bne b40
     ldx #'+'
     jmp b19
@@ -358,13 +356,12 @@ main: {
     sta printu.op+1
     jsr printu
     jsr print_ln
-    lda #$30
-    clc
-    adc a
-    sta a
+    lax a
+    axs #-$30
+    stx a
     inc i
-    lda i
-    cmp #5
+    lda #5
+    cmp i
     bne b71
   b22:
     jmp b22

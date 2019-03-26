@@ -22,12 +22,11 @@ main: {
     cpy #$b
     bne b3
     inc l
-    lda l
-    cmp #$b
+    lda #$b
+    cmp l
     bne b2
     inc k
-    lda k
-    cmp #$b
+    cmp k
     bne b1
     rts
 }

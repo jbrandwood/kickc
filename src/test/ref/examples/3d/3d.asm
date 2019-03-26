@@ -85,19 +85,19 @@ anim: {
   //signed byte xmin = 0;
   //signed byte xmax = 0;
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
   b7:
-    lda RASTER
-    cmp #$fe
+    lda #$fe
+    cmp RASTER
     bne b7
   b10:
-    lda RASTER
-    cmp #$fd
+    lda #$fd
+    cmp RASTER
     bne b10
     inc BORDERCOL
-    ldx sx
+    ldy sx
     jsr calculate_matrix
     jsr store_matrix
     lda #0
@@ -138,8 +138,8 @@ anim: {
     adc yp
     sta SPRITES_YPOS,x
     inc i
-    lda i
-    cmp #8
+    lda #8
+    cmp i
     bne b13
     lda #LIGHT_GREY
     sta BORDERCOL
@@ -189,8 +189,7 @@ debug_print: {
     lda #>print_line_cursor+print_sbyte_pos1_row*$28+print_sbyte_pos1_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
-    lda sy
-    tax
+    ldx sy
     lda #<print_line_cursor+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
     sta print_sbyte_at.at
     lda #>print_line_cursor+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
@@ -202,8 +201,7 @@ debug_print: {
     sta print_sbyte_at.at+1
     ldx #sz
     jsr print_sbyte_at
-    lda rotation_matrix
-    tax
+    ldx rotation_matrix
     lda #<print_line_cursor+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
     sta print_sbyte_at.at
     lda #>print_line_cursor+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
@@ -322,13 +320,12 @@ debug_print: {
     ldy i
     ldx yps,y
     jsr print_sbyte_at
-    lda #4
-    clc
-    adc c
-    sta c
+    lax c
+    axs #-4
+    stx c
     inc i
-    lda i
-    cmp #8
+    lda #8
+    cmp i
     beq !b1+
     jmp b1
   !b1:
@@ -384,9 +381,8 @@ print_byte_at: {
     lda print_hextab,y
     sta print_char_at.ch
     jsr print_char_at
-    txa
-    and #$f
-    tax
+    lda #$f
+    axs #0
     inc print_char_at.at
     bne !+
     inc print_char_at.at+1
@@ -543,7 +539,7 @@ store_matrix: {
 // Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-// calculate_matrix(signed byte register(X) sx, signed byte zeropage(3) sy)
+// calculate_matrix(signed byte register(Y) sx, signed byte zeropage(3) sy)
 calculate_matrix: {
     .label sy = 3
     .label t1 = 4
@@ -555,19 +551,16 @@ calculate_matrix: {
     .label t8 = $e
     .label t9 = $f
     .label t10 = $10
-    lda sy
-    sec
-    sbc #sz
-    sta t1
-    lda #sz
-    clc
-    adc sy
-    tay
-    txa
+    lax sy
+    axs #sz
+    stx t1
+    lax sy
+    axs #-sz
+    tya
     clc
     adc #sz
     sta t3
-    txa
+    tya
     sec
     sbc #sz
     sta t4
@@ -576,36 +569,36 @@ calculate_matrix: {
     clc
     adc $ff
     sta t5
-    txa
+    tya
     sec
     sbc t1
     sta t6
-    txa
+    tya
     clc
     adc t1
     sta t7
-    tya
-    stx $ff
+    txa
+    sty $ff
     sec
     sbc $ff
     sta t8
-    txa
+    tya
     eor #$ff
     sec
     adc sy
     sta t9
-    txa
+    tya
     clc
     adc sy
     sta t10
-    ldx t1
+    ldy t1
     clc
     lda COSH,x
     adc COSH,y
     sta rotation_matrix
     sec
-    lda SINH,x
-    sbc SINH,y
+    lda SINH,y
+    sbc SINH,x
     sta rotation_matrix+1
     ldy sy
     clc
@@ -719,7 +712,7 @@ debug_print_init: {
     .label _88 = 6
     .label _91 = 6
     .label _92 = 6
-    .label col = 4
+    .label j = 4
     .label c = 2
     .label i = 3
     jsr print_cls
@@ -866,12 +859,11 @@ debug_print_init: {
     ldy i
     ldx zs,y
     jsr print_sbyte_at
-    ldx #0
+    lda #0
+    sta j
   b2:
-    lda #8
-    clc
-    adc i
-    sta col
+    lax i
+    axs #-8
     lda c
     clc
     adc #<at_cols
@@ -879,14 +871,14 @@ debug_print_init: {
     lda #>at_cols
     adc #0
     sta _59+1
-    txa
+    lda j
     clc
     adc _60
     sta _60
     bcc !+
     inc _60+1
   !:
-    lda col
+    txa
     ldy #0
     sta (_60),y
     lda c
@@ -896,14 +888,14 @@ debug_print_init: {
     lda #>at_cols+$28*1
     adc #0
     sta _63+1
-    txa
+    lda j
     clc
     adc _64
     sta _64
     bcc !+
     inc _64+1
   !:
-    lda col
+    txa
     ldy #0
     sta (_64),y
     lda c
@@ -913,14 +905,14 @@ debug_print_init: {
     lda #>at_cols+$28*2
     adc #0
     sta _67+1
-    txa
+    lda j
     clc
     adc _68
     sta _68
     bcc !+
     inc _68+1
   !:
-    lda col
+    txa
     ldy #0
     sta (_68),y
     lda c
@@ -930,14 +922,14 @@ debug_print_init: {
     lda #>at_cols+$28*3
     adc #0
     sta _71+1
-    txa
+    lda j
     clc
     adc _72
     sta _72
     bcc !+
     inc _72+1
   !:
-    lda col
+    txa
     ldy #0
     sta (_72),y
     lda c
@@ -947,14 +939,14 @@ debug_print_init: {
     lda #>at_cols+$28*4
     adc #0
     sta _75+1
-    txa
+    lda j
     clc
     adc _76
     sta _76
     bcc !+
     inc _76+1
   !:
-    lda col
+    txa
     ldy #0
     sta (_76),y
     lda c
@@ -964,14 +956,14 @@ debug_print_init: {
     lda #>at_cols+$28*5
     adc #0
     sta _79+1
-    txa
+    lda j
     clc
     adc _80
     sta _80
     bcc !+
     inc _80+1
   !:
-    lda col
+    txa
     ldy #0
     sta (_80),y
     lda c
@@ -981,14 +973,14 @@ debug_print_init: {
     lda #>at_cols+$28*6
     adc #0
     sta _83+1
-    txa
+    lda j
     clc
     adc _84
     sta _84
     bcc !+
     inc _84+1
   !:
-    lda col
+    txa
     ldy #0
     sta (_84),y
     lda c
@@ -998,14 +990,14 @@ debug_print_init: {
     lda #>at_cols+$28*7
     adc #0
     sta _87+1
-    txa
+    lda j
     clc
     adc _88
     sta _88
     bcc !+
     inc _88+1
   !:
-    lda col
+    txa
     ldy #0
     sta (_88),y
     lda c
@@ -1015,28 +1007,28 @@ debug_print_init: {
     lda #>at_cols+$28*8
     adc #0
     sta _91+1
-    txa
+    lda j
     clc
     adc _92
     sta _92
     bcc !+
     inc _92+1
   !:
-    lda col
+    txa
     ldy #0
     sta (_92),y
-    inx
-    cpx #4
+    inc j
+    lda #4
+    cmp j
     beq !b2+
     jmp b2
   !b2:
-    lda #4
-    clc
-    adc c
-    sta c
+    lax c
+    axs #-4
+    stx c
     inc i
-    lda i
-    cmp #8
+    lda #8
+    cmp i
     beq !b1+
     jmp b1
   !b1:

@@ -159,14 +159,14 @@ main: {
     sbc i
     sta _0
   //SEG17 [7] *((const byte[$100]) table#0 + (byte/word/signed word/dword/signed dword~) main::$0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy _0
     lda #0
+    ldy _0
     sta table,y
   //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
   //SEG19 [9] if((byte) main::i#1!=(byte/word/signed word/dword/signed dword) $81) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda i
-    cmp #$81
+    lda #$81
+    cmp i
     bne b1_from_b1
     jmp breturn
   //SEG20 main::@return
@@ -189,8 +189,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:3 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 363 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] 
-Uplifting [] best 363 combination 
+Uplifting [main] best 343 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::$0 ] 
+Uplifting [] best 343 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -221,8 +221,8 @@ bend:
 main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
     jmp b1
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
@@ -230,19 +230,18 @@ main: {
     jmp b1
   //SEG15 main::@1
   b1:
-  //SEG16 [6] (byte/word/signed word/dword/signed dword~) main::$0 ← (byte/word/signed word/dword/signed dword) $ff - (byte) main::i#2 -- vbuaa=vbuc1_minus_vbuxx 
-    txa
+  //SEG16 [6] (byte/word/signed word/dword/signed dword~) main::$0 ← (byte/word/signed word/dword/signed dword) $ff - (byte) main::i#2 -- vbuxx=vbuc1_minus_vbuyy 
+    tya
     eor #$ff
-    clc
-    adc #$ff+1
-  //SEG17 [7] *((const byte[$100]) table#0 + (byte/word/signed word/dword/signed dword~) main::$0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- pbuc1_derefidx_vbuaa=vbuc2 
-    tay
+    tax
+    axs #$ff+1
+  //SEG17 [7] *((const byte[$100]) table#0 + (byte/word/signed word/dword/signed dword~) main::$0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
-    sta table,y
-  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG19 [9] if((byte) main::i#1!=(byte/word/signed word/dword/signed dword) $81) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$81
+    sta table,x
+  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG19 [9] if((byte) main::i#1!=(byte/word/signed word/dword/signed dword) $81) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$81
     bne b1_from_b1
     jmp breturn
   //SEG20 main::@return
@@ -282,21 +281,21 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (void()) main()
-(byte/word/signed word/dword/signed dword~) main::$0 reg byte a 22.0
+(byte/word/signed word/dword/signed dword~) main::$0 reg byte x 22.0
 (label) main::@1
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte x 16.5
-(byte) main::i#2 reg byte x 11.0
+(byte) main::i#1 reg byte y 16.5
+(byte) main::i#2 reg byte y 11.0
 (byte[$100]) table
 (const byte[$100]) table#0 table = { fill( $100, 0) }
 
-reg byte x [ main::i#2 main::i#1 ]
-reg byte a [ main::$0 ]
+reg byte y [ main::i#2 main::i#1 ]
+reg byte x [ main::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 261
+Score: 241
 
 //SEG0 File Comments
 // java.lang.NullPointerException during Pass2TypeInference.java
@@ -316,25 +315,24 @@ Score: 261
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/2) and g(x) = f(1-x) 
 main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
   //SEG15 main::@1
   b1:
-  //SEG16 [6] (byte/word/signed word/dword/signed dword~) main::$0 ← (byte/word/signed word/dword/signed dword) $ff - (byte) main::i#2 -- vbuaa=vbuc1_minus_vbuxx 
-    txa
+  //SEG16 [6] (byte/word/signed word/dword/signed dword~) main::$0 ← (byte/word/signed word/dword/signed dword) $ff - (byte) main::i#2 -- vbuxx=vbuc1_minus_vbuyy 
+    tya
     eor #$ff
-    clc
-    adc #$ff+1
-  //SEG17 [7] *((const byte[$100]) table#0 + (byte/word/signed word/dword/signed dword~) main::$0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- pbuc1_derefidx_vbuaa=vbuc2 
-    tay
+    tax
+    axs #$ff+1
+  //SEG17 [7] *((const byte[$100]) table#0 + (byte/word/signed word/dword/signed dword~) main::$0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
-    sta table,y
-  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG19 [9] if((byte) main::i#1!=(byte/word/signed word/dword/signed dword) $81) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
-    cpx #$81
+    sta table,x
+  //SEG18 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG19 [9] if((byte) main::i#1!=(byte/word/signed word/dword/signed dword) $81) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$81
     bne b1
   //SEG20 main::@return
   //SEG21 [10] return 

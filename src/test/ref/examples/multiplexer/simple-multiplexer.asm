@@ -41,21 +41,19 @@ loop: {
     lda #0
     sta sin_idx
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     inc BORDERCOL
-    ldy sin_idx
-    ldx #0
+    ldx sin_idx
+    ldy #0
   b7:
-    lda YSIN,y
-    sta PLEX_YPOS,x
-    tya
-    clc
-    adc #8
-    tay
-    inx
-    cpx #PLEX_COUNT-1+1
+    lda YSIN,x
+    sta PLEX_YPOS,y
+    txa
+    axs #-8
+    iny
+    cpy #PLEX_COUNT-1+1
     bne b7
     inc sin_idx
     inc BORDERCOL
@@ -63,8 +61,8 @@ loop: {
     lda #BLACK
     sta BORDERCOL
   b8:
-    lda D011
-    and #VIC_RST8
+    lda #VIC_RST8
+    and D011
     cmp #0
     bne b8
     lda #0
@@ -89,8 +87,8 @@ loop: {
     inc BORDERCOL
     jsr plexShowSprite
     inc ss
-    lda ss
-    cmp #PLEX_COUNT-1+1
+    lda #PLEX_COUNT-1+1
+    cmp ss
     bne b11
     lda #BLACK
     sta BORDERCOL
@@ -112,11 +110,11 @@ plexShowSprite: {
     adc #$15
     ldy plex_free_next
     sta PLEX_FREE_YPOS,y
-    tya
-    clc
-    adc #1
-    and #7
-    sta plex_free_next
+    ldx plex_free_next
+    inx
+    lda #7
+    sax plex_free_next
+    ldx plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
     ldx plex_sprite_idx
@@ -136,11 +134,10 @@ plexShowSprite: {
     and SPRITES_XMSB
     sta SPRITES_XMSB
   b2:
-    lda plex_sprite_idx
-    clc
-    adc #1
-    and #7
-    sta plex_sprite_idx
+    ldx plex_sprite_idx
+    inx
+    lda #7
+    sax plex_sprite_idx
     inc plex_show_idx
     asl plex_sprite_msb
     lda plex_sprite_msb
@@ -194,8 +191,8 @@ plexSort: {
     sta PLEX_SORTED_IDX,x
   b2:
     inc m
-    lda m
-    cmp #PLEX_COUNT-2+1
+    lda #PLEX_COUNT-2+1
+    cmp m
     bne b1
     ldx #0
   plexFreePrepare1_b1:

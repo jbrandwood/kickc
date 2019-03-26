@@ -9,16 +9,17 @@
   .const a = 'a'
 // The program entry point
 main: {
-    ldx #0
     ldy #0
+    ldx #0
   // Do some sums
   b1:
+    txa
     jsr sum
     // Output the result on the screen
-    sta SCREEN,x
-    inx
+    sta SCREEN,y
     iny
-    cpy #$b
+    inx
+    cpx #$b
     bne b1
     rts
 }
@@ -26,9 +27,8 @@ main: {
 // a - the first byte
 // b - the second byte
 // Returns the sum pf the two bytes
-// sum(byte register(Y) b)
+// sum(byte register(A) b)
 sum: {
-    tya
     clc
     adc #a
     rts

@@ -67,12 +67,11 @@ mul8s_compare: {
     rts
   b5:
     inc b
-    lda b
-    cmp #-$80
+    lda #-$80
+    cmp b
     bne b2
     inc a
-    lda a
-    cmp #-$80
+    cmp a
     bne b1
     lda print_line_cursor
     sta print_char_cursor
@@ -228,10 +227,9 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    txa
-    and #$f
-    tay
-    lda print_hextab,y
+    lda #$f
+    axs #0
+    lda print_hextab,x
     jsr print_char
     rts
 }

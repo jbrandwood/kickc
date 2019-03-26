@@ -4,17 +4,16 @@
 .pc = $80d "Program"
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/2) and g(x) = f(1-x) 
 main: {
-    ldx #0
+    ldy #0
   b1:
-    txa
+    tya
     eor #$ff
-    clc
-    adc #$ff+1
-    tay
+    tax
+    axs #$ff+1
     lda #0
-    sta table,y
-    inx
-    cpx #$81
+    sta table,x
+    iny
+    cpy #$81
     bne b1
     rts
 }

@@ -4,34 +4,35 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    ldx #0
+    ldy #0
   b1:
+    tya
+    tax
     jsr line
-    inx
-    cpx #9
+    iny
+    cpy #9
     bne b1
-    ldx #$a
+    ldy #$a
   b2:
+    tya
+    tax
     jsr line
-    inx
-    cpx #$13
+    iny
+    cpy #$13
     bne b2
     rts
 }
 // line(byte register(X) l)
 line: {
-    txa
     jsr plot
     txa
-    clc
-    adc #$14
+    axs #-$14
     jsr plot
     rts
 }
-// plot(byte register(A) x)
+// plot(byte register(X) x)
 plot: {
-    tay
     lda #'*'
-    sta SCREEN,y
+    sta SCREEN,x
     rts
 }

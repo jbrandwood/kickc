@@ -48,8 +48,8 @@ main: {
     inc colors+1
   !:
     inc row
-    lda row
-    cmp #8
+    lda #8
+    cmp row
     bne b1
     rts
 }

@@ -8,9 +8,8 @@ main: {
     ldy #0
   b1:
     tya
-    clc
-    adc #$c
     tax
+    axs #-$c
     lda #'a'
     sta screen,x
     lda #BLACK

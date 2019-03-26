@@ -219,10 +219,9 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    txa
-    and #$f
-    tay
-    lda print_hextab,y
+    lda #$f
+    axs #0
+    lda print_hextab,x
     jsr print_char
     rts
 }

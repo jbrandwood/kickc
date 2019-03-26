@@ -176,23 +176,22 @@ main: {
   //SEG15 main::@1
   b1:
   //SEG16 [6] (byte) main::y#0 ← (byte) main::x#2 + (byte/signed byte/word/signed word/dword/signed dword) $c -- vbuz1=vbuz2_plus_vbuc1 
-    lda #$c
-    clc
-    adc x
-    sta y
+    lax x
+    axs #-$c
+    stx y
   //SEG17 [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy y
     lda #'a'
+    ldy y
     sta screen,y
   //SEG18 [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy y
     lda #BLACK
+    ldy y
     sta cols,y
   //SEG19 [9] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
     inc x
   //SEG20 [10] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda x
-    cmp #$b
+    lda #$b
+    cmp x
     bne b1_from_b1
     jmp breturn
   //SEG21 main::@return
@@ -202,9 +201,8 @@ main: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte) main::y#0 ← (byte) main::x#2 + (byte/signed byte/word/signed word/dword/signed dword) $c [ main::x#2 main::y#0 ] ( main:2 [ main::x#2 main::y#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::x#2 main::x#1 ]
 Statement [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' [ main::x#2 main::y#0 ] ( main:2 [ main::x#2 main::y#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::x#2 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::y#0 ]
 Statement [8] *((const byte*) main::cols#0 + (byte) main::y#0) ← (const byte) main::BLACK#0 [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
 Statement [6] (byte) main::y#0 ← (byte) main::x#2 + (byte/signed byte/word/signed word/dword/signed dword) $c [ main::x#2 main::y#0 ] ( main:2 [ main::x#2 main::y#0 ] ) always clobbers reg byte a 
@@ -217,8 +215,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 24.75: zp ZP_BYTE:2 [ main::x#2 main::x#1 ] 16.5: zp ZP_BYTE:3 [ main::y#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 413 combination reg byte y [ main::x#2 main::x#1 ] reg byte x [ main::y#0 ] 
-Uplifting [] best 413 combination 
+Uplifting [main] best 393 combination reg byte y [ main::x#2 main::x#1 ] reg byte x [ main::y#0 ] 
+Uplifting [] best 393 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -261,9 +259,8 @@ main: {
   b1:
   //SEG16 [6] (byte) main::y#0 ← (byte) main::x#2 + (byte/signed byte/word/signed word/dword/signed dword) $c -- vbuxx=vbuyy_plus_vbuc1 
     tya
-    clc
-    adc #$c
     tax
+    axs #-$c
   //SEG17 [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta screen,x
@@ -331,7 +328,7 @@ reg byte x [ main::y#0 ]
 
 
 FINAL ASSEMBLER
-Score: 311
+Score: 291
 
 //SEG0 File Comments
 //SEG1 Basic Upstart
@@ -360,9 +357,8 @@ main: {
   b1:
   //SEG16 [6] (byte) main::y#0 ← (byte) main::x#2 + (byte/signed byte/word/signed word/dword/signed dword) $c -- vbuxx=vbuyy_plus_vbuc1 
     tya
-    clc
-    adc #$c
     tax
+    axs #-$c
   //SEG17 [7] *((const byte*) main::screen#0 + (byte) main::y#0) ← (byte) 'a' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'a'
     sta screen,x

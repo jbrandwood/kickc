@@ -23,12 +23,10 @@ irq: {
     stx regx+1
     lda #DARK_GREY
     sta BORDERCOL
-    lda #$15
-    clc
-    adc irq_raster_next
-    sta irq_raster_next
-    // Setup next interrupt
-    tax
+    lax irq_raster_next
+    axs #-$15
+    stx irq_raster_next
+  // Setup next interrupt
     txa
     and #7
     cmp #0

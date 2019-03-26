@@ -159,8 +159,8 @@ main: {
     lda #0
     sta BORDERCOL
   b5:
-    lda RASTER
-    cmp #$42
+    lda #$42
+    cmp RASTER
     bne b5
     nop
     nop
@@ -275,8 +275,8 @@ gfx_init_plane_charset8: {
     cpx #8
     bne b3
     inc cr
-    lda cr
-    cmp #8
+    lda #8
+    cmp cr
     bne b2
     inc ch
     lda ch
@@ -335,8 +335,8 @@ gfx_init_screen0: {
     cpx #$28
     bne b2
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b1
     rts
 }

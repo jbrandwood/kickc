@@ -361,8 +361,8 @@ mode_8bppchunkybmm: {
     cmp #<$140
     bne b3
     inc y
-    lda y
-    cmp #$c8
+    lda #$c8
+    cmp y
     bne b2
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
@@ -376,8 +376,8 @@ mode_ctrl: {
   b1:
   // Wait for the raster
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     ldy #KEY_SPACE
     jsr keyboard_key_pressed
@@ -586,8 +586,8 @@ mode_8bpppixelcell: {
     cpx #$28
     bne b3
     inc ay
-    lda ay
-    cmp #$19
+    lda #$19
+    cmp ay
     bne b2
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     lda #PROCPORT_RAM_CHARROM
@@ -637,8 +637,8 @@ mode_8bpppixelcell: {
     cpx #8
     bne b6
     inc cr
-    lda cr
-    cmp #8
+    lda #8
+    cmp cr
     bne b5
     inc ch
     lda ch
@@ -737,8 +737,8 @@ mode_sixsfred: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     lda #<PLANEA
     sta gfxa
@@ -764,8 +764,8 @@ mode_sixsfred: {
     cpx #$28
     bne b5
     inc ay
-    lda ay
-    cmp #$c8
+    lda #$c8
+    cmp ay
     bne b4
     lda #0
     sta by
@@ -787,8 +787,8 @@ mode_sixsfred: {
     cpx #$28
     bne b7
     inc by
-    lda by
-    cmp #$c8
+    lda #$c8
+    cmp by
     bne b6
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta dtv_control
@@ -897,8 +897,8 @@ mode_twoplanebitmap: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     lda #<PLANEA
     sta gfxa
@@ -925,8 +925,8 @@ mode_twoplanebitmap: {
     cpx #$28
     bne b5
     inc ay
-    lda ay
-    cmp #$c8
+    lda #$c8
+    cmp ay
     bne b4
     lda #0
     sta by
@@ -948,8 +948,8 @@ mode_twoplanebitmap: {
     cpx #$28
     bne b9
     inc by
-    lda by
-    cmp #$c8
+    lda #$c8
+    cmp by
     bne b8
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta dtv_control
@@ -1058,8 +1058,8 @@ mode_sixsfred2: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     lda #<PLANEA
     sta gfxa
@@ -1085,8 +1085,8 @@ mode_sixsfred2: {
     cpx #$28
     bne b5
     inc ay
-    lda ay
-    cmp #$c8
+    lda #$c8
+    cmp ay
     bne b4
     lda #0
     sta by
@@ -1108,8 +1108,8 @@ mode_sixsfred2: {
     cpx #$28
     bne b7
     inc by
-    lda by
-    cmp #$c8
+    lda #$c8
+    cmp by
     bne b6
     lda #DTV_LINEAR
     sta dtv_control
@@ -1219,8 +1219,8 @@ mode_hicolmcchar: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     lda #DTV_HIGHCOLOR
     sta dtv_control
@@ -1330,8 +1330,8 @@ mode_hicolecmchar: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     lda #DTV_HIGHCOLOR
     sta dtv_control
@@ -1430,8 +1430,8 @@ mode_hicolstdchar: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     lda #DTV_HIGHCOLOR
     sta dtv_control
@@ -1520,8 +1520,8 @@ mode_stdbitmap: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     jsr bitmap_init
     jsr bitmap_clear
@@ -1845,8 +1845,8 @@ bitmap_clear: {
     cpx #$c8
     bne b2
     inc y
-    lda y
-    cmp #$28
+    lda #$28
+    cmp y
     bne b1
     rts
 }
@@ -1879,9 +1879,8 @@ bitmap_init: {
     sta yoffs+1
     tax
   b3:
-    txa
-    and #7
-    sta _6
+    lda #7
+    sax _6
     lda yoffs
     ora _6
     sta bitmap_plot_ylo,x
@@ -2009,8 +2008,8 @@ mode_mcchar: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     lda #0
     sta dtv_control
@@ -2122,8 +2121,8 @@ mode_ecmchar: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     lda #0
     sta dtv_control
@@ -2225,8 +2224,8 @@ mode_stdchar: {
     cpx #$28
     bne b3
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b2
     lda #0
     sta dtv_control

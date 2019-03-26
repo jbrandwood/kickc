@@ -40,12 +40,11 @@ main: {
     cpx #$b
     bne b3
     inc i
-    lda i
-    cmp #$b
+    lda #$b
+    cmp i
     bne b2
     inc j
-    lda j
-    cmp #$b
+    cmp j
     bne b1
     rts
 }

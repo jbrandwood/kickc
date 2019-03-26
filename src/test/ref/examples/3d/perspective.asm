@@ -146,10 +146,9 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    txa
-    and #$f
-    tay
-    lda print_hextab,y
+    lda #$f
+    axs #0
+    lda print_hextab,x
     jsr print_char
     rts
 }
@@ -255,16 +254,14 @@ mulf_init: {
     sta mulf_sqr1+$100,x
     txa
     eor #$ff
-    clc
-    adc #1
     tay
+    iny
     lda val
     sta mulf_sqr1,y
     txa
     eor #$ff
-    clc
-    adc #1
     tay
+    iny
     lda val
     sta mulf_sqr1+$100,y
     sta mulf_sqr2+1,x

@@ -32,9 +32,7 @@ main: {
     inc cursor+1
   !:
     txa
-    clc
-    adc #yd
-    tax
+    axs #-yd
     cpx #xd
     bcc b2
     inc y
@@ -46,9 +44,7 @@ main: {
     inc cursor+1
   !:
     txa
-    sec
-    sbc #xd
-    tax
+    axs #xd
   b2:
     lda x
     cmp #x1+1

@@ -16,12 +16,12 @@ main: {
     ldx #7
   // Wait for raster
   b2:
-    lda RASTER
-    cmp #$fe
+    lda #$fe
+    cmp RASTER
     bne b2
   b3:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b3
     inc BGCOL
     dex

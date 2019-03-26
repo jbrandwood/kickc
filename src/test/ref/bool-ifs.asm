@@ -13,9 +13,9 @@ bool_complex: {
     .label screen = $478
     ldy #0
   b1:
+    ldx #1
     tya
-    and #1
-    tax
+    axs #0
     tya
     and #1
     cpy #$a

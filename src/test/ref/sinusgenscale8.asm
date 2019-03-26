@@ -108,9 +108,8 @@ sin8u_table: {
     tay
     jsr mul8su
     lda sinx_sc+1
-    clc
-    adc #mid
     tax
+    axs #-mid
     txa
     ldy #0
     sta (sintab),y

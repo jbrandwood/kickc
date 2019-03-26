@@ -7,12 +7,12 @@
 main: {
     sei
   b2:
-    lda RASTER
-    cmp #$a
+    lda #$a
+    cmp RASTER
     bne b2
   b3:
-    lda RASTER
-    cmp #$b
+    lda #$b
+    cmp RASTER
     bne b3
     jsr raster
     jmp b2

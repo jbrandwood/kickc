@@ -59,8 +59,8 @@ main: {
     sta compare.w1+1
     jsr compare
     inc s
-    lda s
-    cmp #3
+    lda #3
+    cmp s
     bne b4
     jsr print_ln
     lda print_line_cursor
@@ -74,12 +74,11 @@ main: {
     cpx #6
     bne b3
     inc j
-    lda j
-    cmp #3
+    lda #3
+    cmp j
     bne b2
     inc i
-    lda i
-    cmp #3
+    cmp i
     bne b1
   b6:
     jmp b6

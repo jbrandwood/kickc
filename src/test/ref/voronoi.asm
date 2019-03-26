@@ -18,8 +18,8 @@ animate: {
     ldx XPOS
     inx
     stx XPOS
-    txa
-    cmp #$28
+    lda #$28
+    cmp XPOS
     bne b1
     lda #0
     sta XPOS
@@ -27,8 +27,8 @@ animate: {
     ldx YPOS
     inx
     stx YPOS
-    txa
-    cmp #$19
+    lda #$19
+    cmp YPOS
     bne b2
     lda #0
     sta YPOS
@@ -37,7 +37,8 @@ animate: {
     sec
     sbc #1
     sta XPOS+1
-    cmp #$ff
+    lda #$ff
+    cmp XPOS+1
     bne b3
     lda #$28
     sta XPOS+1
@@ -46,7 +47,8 @@ animate: {
     clc
     adc #1
     sta YPOS+2
-    cmp #$19
+    lda #$19
+    cmp YPOS+2
     bne b4
     lda #0
     sta YPOS+2
@@ -54,14 +56,14 @@ animate: {
     ldx YPOS+3
     dex
     stx YPOS+3
-    txa
-    cmp #$ff
+    lda #$ff
+    cmp YPOS+3
     bne breturn
     lda #$19
     sta YPOS+3
-    lda XPOS+3
+    lda #7
     clc
-    adc #7
+    adc XPOS+3
     sta XPOS+3
     cmp #$28
     bcc breturn
@@ -90,10 +92,9 @@ render: {
     ldy x
     sta (colline),y
     inc x
-    lda x
-    cmp #$28
-    bne b2
     lda #$28
+    cmp x
+    bne b2
     clc
     adc colline
     sta colline
@@ -101,8 +102,8 @@ render: {
     inc colline+1
   !:
     inc y
-    lda y
-    cmp #$19
+    lda #$19
+    cmp y
     bne b1
     rts
 }

@@ -15,8 +15,8 @@ main: {
     adc a
     jsr print
     inc a
-    lda a
-    cmp #$65
+    lda #$65
+    cmp a
     bne b3
     inx
     cpx #$65

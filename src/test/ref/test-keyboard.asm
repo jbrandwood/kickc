@@ -89,8 +89,8 @@ main: {
   !:
     jsr keyboard_init
   b5:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b5
     lda #<$400
     sta screen
@@ -126,8 +126,8 @@ main: {
     inc screen+1
   !:
     inc row
-    lda row
-    cmp #8
+    lda #8
+    cmp row
     bne b6
     lda #$28
     clc
@@ -155,8 +155,8 @@ main: {
     inx
   b11:
     inc ch
-    lda ch
-    cmp #$40
+    lda #$40
+    cmp ch
     bne b10
   b2:
   // Add some spaces

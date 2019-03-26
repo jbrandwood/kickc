@@ -12,8 +12,8 @@ main: {
     inx
     inx
     iny
-    lda hello,y
-    cmp #'@'
+    lda #'@'
+    cmp hello,y
     bne print21_b1
     ldx #0
     ldy #0
@@ -23,8 +23,8 @@ main: {
     inx
     inx
     iny
-    lda hello,y
-    cmp #'@'
+    lda #'@'
+    cmp hello,y
     bne print22_b1
     rts
     hello: .text "hello world!@"

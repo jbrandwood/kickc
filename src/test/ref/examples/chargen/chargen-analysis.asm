@@ -137,8 +137,8 @@ main: {
     lda #$20
     jsr plot_chargen
     inc i
-    lda i
-    cmp #4
+    lda #4
+    cmp i
     bne b2
     lda #0
     sta cur_pos
@@ -204,8 +204,8 @@ main: {
     jsr plot_chargen
   b12:
     inc ch
-    lda ch
-    cmp #$40
+    lda #$40
+    cmp ch
     bne b10
     jmp b3
     str: .text "f1@"
@@ -297,8 +297,8 @@ plot_chargen: {
     inc sc+1
   !:
     inc y
-    lda y
-    cmp #8
+    lda #8
+    cmp y
     bne b2
     lda #$37
     sta PROCPORT

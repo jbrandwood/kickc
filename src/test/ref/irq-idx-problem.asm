@@ -31,8 +31,8 @@ main: {
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
     // Set raster line to $60
-    lda VIC_CONTROL
-    and #$7f
+    lda #$7f
+    and VIC_CONTROL
     sta VIC_CONTROL
     lda #$60
     sta RASTER

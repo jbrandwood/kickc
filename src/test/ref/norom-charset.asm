@@ -32,7 +32,8 @@ main: {
     clc
     adc #2
     sta c
-    cmp #6
+    lda #6
+    cmp c
     bne b1
     lda #SCREEN/$40|CHARSET/$400
     sta VIC_MEMORY
@@ -71,8 +72,8 @@ gen_char3: {
     ldy r
     sta (dst),y
     inc r
-    lda r
-    cmp #5
+    lda #5
+    cmp r
     bne b1
     rts
 }

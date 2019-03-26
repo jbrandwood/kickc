@@ -18,8 +18,8 @@
 main: {
     jsr keyboard_init
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     jsr keyboard_key_pressed
     cmp #0

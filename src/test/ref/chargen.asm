@@ -51,8 +51,8 @@ main: {
     inc sc+1
   !:
     inc y
-    lda y
-    cmp #8
+    lda #8
+    cmp y
     bne b1
     lda #$37
     sta PROCPORT

@@ -22,8 +22,8 @@ main: {
     cpx #8
     bne b2
     inc h
-    lda h
-    cmp #3
+    lda #3
+    cmp h
     bne b1
     rts
     his: .byte >SCREEN, >SCREEN+$100, >SCREEN+$200

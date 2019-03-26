@@ -15,8 +15,8 @@ main: {
     jsr music.init
   // Wait for the RASTER
   b2:
-    lda RASTER
-    cmp #$fd
+    lda #$fd
+    cmp RASTER
     bne b2
     inc BORDERCOL
     // Play the music

@@ -3790,10 +3790,9 @@ sin8u_table: {
     lda sinx_sc+1
     sta _21
   //SEG108 [44] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$21 -- vbuz1=vbuc1_plus_vbuz2 
-    lda #mid
-    clc
-    adc _21
-    sta sinx_tr
+    lax _21
+    axs #-mid
+    stx sinx_tr
   //SEG109 [45] *((byte*) sin8u_table::sintab#2) ← (byte) sin8u_table::sinx_tr#0 -- _deref_pbuz1=vbuz2 
     lda sinx_tr
     ldy #0
@@ -4302,10 +4301,9 @@ mul8su: {
     lda m+1
     sta _6
   //SEG277 [123] (byte~) mul8su::$10 ← (byte~) mul8su::$6 - ((byte))(const byte) mul8su::b#0 -- vbuz1=vbuz2_minus_vbuc1 
-    lda _6
-    sec
-    sbc #b
-    sta _10
+    lax _6
+    axs #b
+    stx _10
   //SEG278 [124] (word) mul8su::m#1 ← (word) mul8su::m#0 hi= (byte~) mul8su::$10 -- vwuz1=vwuz1_sethi_vbuz2 
     lda _10
     sta m+1
@@ -4894,8 +4892,8 @@ divr16u: {
   //SEG448 [209] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuz1=_inc_vbuz1 
     inc i
   //SEG449 [210] if((byte) divr16u::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $10) goto divr16u::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda i
-    cmp #$10
+    lda #$10
+    cmp i
     bne b1_from_b3
     jmp b6
   //SEG450 divr16u::@6
@@ -4962,7 +4960,6 @@ Statement [35] (word) sin8s::x#2 ← (word) sin8u_table::x#10 [ sin8u_table::ste
 Statement [41] (signed word) mul8su::return#2 ← (signed word)(word) mul8su::m#2 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 mul8su::return#2 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 mul8su::return#2 print_line_cursor#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:51 [ sin8u_table::sinx#0 ]
 Statement [42] (signed word) sin8u_table::sinx_sc#0 ← (signed word) mul8su::return#2 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 print_line_cursor#1 ] ) always clobbers reg byte a 
-Statement [44] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$21 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [45] *((byte*) sin8u_table::sintab#2) ← (byte) sin8u_table::sinx_tr#0 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:51 [ sin8u_table::sinx#0 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:58 [ sin8u_table::sinx_tr#0 ]
@@ -4992,7 +4989,6 @@ Statement [119] (word) mul8u::return#2 ← (word) mul8u::res#2 [ mul8su::a#0 mul
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:52 [ mul8su::a#0 ]
 Statement [120] (word) mul8su::m#0 ← (word) mul8u::return#2 [ mul8su::a#0 mul8su::m#0 ] ( main:2::sin8u_table:7::mul8su:40 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::a#0 mul8su::m#0 ] ) always clobbers reg byte a 
 Statement [122] (byte~) mul8su::$6 ← > (word) mul8su::m#0 [ mul8su::m#0 mul8su::$6 ] ( main:2::sin8u_table:7::mul8su:40 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::m#0 mul8su::$6 ] ) always clobbers reg byte a 
-Statement [123] (byte~) mul8su::$10 ← (byte~) mul8su::$6 - ((byte))(const byte) mul8su::b#0 [ mul8su::m#0 mul8su::$10 ] ( main:2::sin8u_table:7::mul8su:40 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::m#0 mul8su::$10 ] ) always clobbers reg byte a 
 Statement [128] (word) mul8u::mb#0 ← ((word)) (byte) mul8u::b#2 [ mul8u::a#6 mul8u::mb#0 ] ( main:2::sin8u_table:7::mul8su:40::mul8u:118 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::a#0 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:148::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:153::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:157::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:163::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:168::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:24 [ mul8u::a#3 mul8u::a#6 mul8u::a#8 mul8u::a#2 mul8u::a#0 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:29 [ sin8s::isUpper#10 ]
@@ -5020,7 +5016,6 @@ Statement [192] (word) divr16u::return#2 ← (word) divr16u::return#0 [ divr16u:
 Statement [193] (word) div16u::return#0 ← (word) divr16u::return#2 [ div16u::return#0 ] ( main:2::sin8u_table:7::div16u:10 [ div16u::return#0 ] ) always clobbers reg byte a 
 Statement [198] (byte~) divr16u::$1 ← > (word) divr16u::dividend#2 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:43 [ divr16u::i#2 divr16u::i#1 ]
-Statement [199] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte/word/signed word/dword/signed dword) $80 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$2 ] ) always clobbers reg byte a 
 Statement [201] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ) always clobbers reg byte a 
 Statement [205] if((word) divr16u::rem#5<(const word) main::tabsize#0) goto divr16u::@3 [ divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ) always clobbers reg byte a 
 Statement [207] (word) divr16u::rem#2 ← (word) divr16u::rem#5 - (const word) main::tabsize#0 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
@@ -5033,7 +5028,6 @@ Statement [14] (word) print_word::w#1 ← (word) sin8u_table::step#0 [ sin8u_tab
 Statement [35] (word) sin8s::x#2 ← (word) sin8u_table::x#10 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8s::x#2 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8s::x#2 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [41] (signed word) mul8su::return#2 ← (signed word)(word) mul8su::m#2 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 mul8su::return#2 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 mul8su::return#2 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [42] (signed word) sin8u_table::sinx_sc#0 ← (signed word) mul8su::return#2 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 print_line_cursor#1 ] ) always clobbers reg byte a 
-Statement [44] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$21 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [45] *((byte*) sin8u_table::sintab#2) ← (byte) sin8u_table::sinx_tr#0 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 ] ) always clobbers reg byte a reg byte y 
 Statement [47] (byte*~) print_char_cursor#126 ← (byte*) print_line_cursor#1 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::i#10 sin8u_table::sintab#1 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_char_cursor#126 print_line_cursor#1 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::i#10 sin8u_table::sintab#1 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_char_cursor#126 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [49] (word) print_word::w#2 ← (word) sin8u_table::x#10 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::i#10 sin8u_table::sintab#1 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 print_word::w#2 print_char_cursor#2 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::i#10 sin8u_table::sintab#1 sin8u_table::sinx#0 sin8u_table::sinx_sc#0 sin8u_table::sinx_tr#0 print_line_cursor#1 print_word::w#2 print_char_cursor#2 ] ) always clobbers reg byte a 
@@ -5056,7 +5050,6 @@ Statement [116] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::
 Statement [119] (word) mul8u::return#2 ← (word) mul8u::res#2 [ mul8su::a#0 mul8u::return#2 ] ( main:2::sin8u_table:7::mul8su:40 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::a#0 mul8u::return#2 ] ) always clobbers reg byte a 
 Statement [120] (word) mul8su::m#0 ← (word) mul8u::return#2 [ mul8su::a#0 mul8su::m#0 ] ( main:2::sin8u_table:7::mul8su:40 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::a#0 mul8su::m#0 ] ) always clobbers reg byte a 
 Statement [122] (byte~) mul8su::$6 ← > (word) mul8su::m#0 [ mul8su::m#0 mul8su::$6 ] ( main:2::sin8u_table:7::mul8su:40 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::m#0 mul8su::$6 ] ) always clobbers reg byte a 
-Statement [123] (byte~) mul8su::$10 ← (byte~) mul8su::$6 - ((byte))(const byte) mul8su::b#0 [ mul8su::m#0 mul8su::$10 ] ( main:2::sin8u_table:7::mul8su:40 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::m#0 mul8su::$10 ] ) always clobbers reg byte a 
 Statement [128] (word) mul8u::mb#0 ← ((word)) (byte) mul8u::b#2 [ mul8u::a#6 mul8u::mb#0 ] ( main:2::sin8u_table:7::mul8su:40::mul8u:118 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::a#0 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:148::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:153::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:157::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:163::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:168::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#6 mul8u::mb#0 ] ) always clobbers reg byte a 
 Statement [132] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] ( main:2::sin8u_table:7::mul8su:40::mul8u:118 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::a#0 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:148::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:153::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:157::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:163::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:168::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] ) always clobbers reg byte a 
 Statement [134] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ( main:2::sin8u_table:7::mul8su:40::mul8u:118 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 sin8u_table::sinx#0 print_line_cursor#1 mul8su::a#0 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:148::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:153::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 mulu8_sel::select#5 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:157::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 sin8s::x3#0 mulu8_sel::select#5 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:163::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::x1#0 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] main:2::sin8u_table:7::sin8s:36::mulu8_sel:168::mul8u:184 [ sin8u_table::step#0 sin8u_table::x#10 sin8u_table::sintab#2 sin8u_table::i#10 print_line_cursor#1 sin8s::isUpper#10 sin8s::usinx#0 mulu8_sel::select#5 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
@@ -5077,7 +5070,6 @@ Statement [188] (byte) mulu8_sel::return#12 ← > (word~) mulu8_sel::$1 [ mulu8_
 Statement [192] (word) divr16u::return#2 ← (word) divr16u::return#0 [ divr16u::return#2 ] ( main:2::sin8u_table:7::div16u:10 [ divr16u::return#2 ] ) always clobbers reg byte a 
 Statement [193] (word) div16u::return#0 ← (word) divr16u::return#2 [ div16u::return#0 ] ( main:2::sin8u_table:7::div16u:10 [ div16u::return#0 ] ) always clobbers reg byte a 
 Statement [198] (byte~) divr16u::$1 ← > (word) divr16u::dividend#2 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$1 ] ) always clobbers reg byte a 
-Statement [199] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte/word/signed word/dword/signed dword) $80 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#0 divr16u::$2 ] ) always clobbers reg byte a 
 Statement [201] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte/signed byte/word/signed word/dword/signed dword) 1 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ) always clobbers reg byte a 
 Statement [205] if((word) divr16u::rem#5<(const word) main::tabsize#0) goto divr16u::@3 [ divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ) always clobbers reg byte a 
 Statement [207] (word) divr16u::rem#2 ← (word) divr16u::rem#5 - (const word) main::tabsize#0 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::sin8u_table:7::div16u:10::divr16u:191 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
@@ -5170,59 +5162,59 @@ Uplift Scope [div16u] 4: zp ZP_WORD:46 [ div16u::return#2 ] 1.33: zp ZP_WORD:90 
 Uplift Scope [print_ln] 
 Uplift Scope [main] 
 
-Uplifting [mul8u] best 24293 combination zp ZP_WORD:25 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:27 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#8 mul8u::a#2 mul8u::a#0 ] reg byte a [ mul8u::b#2 mul8u::b#1 ] zp ZP_WORD:61 [ mul8u::return#2 ] zp ZP_WORD:81 [ mul8u::return#3 ] 
-Uplifting [] best 24293 combination zp ZP_WORD:8 [ print_line_cursor#12 print_line_cursor#23 print_line_cursor#1 ] zp ZP_WORD:16 [ print_char_cursor#94 print_char_cursor#105 print_char_cursor#64 print_char_cursor#100 print_char_cursor#18 print_char_cursor#99 print_char_cursor#2 print_char_cursor#126 print_char_cursor#1 ] zp ZP_WORD:94 [ rem16u#1 ] 
-Uplifting [print_str] best 24293 combination zp ZP_WORD:12 [ print_str::str#10 print_str::str#12 print_str::str#0 ] 
-Uplifting [divr16u] best 24083 combination zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:39 [ divr16u::dividend#2 divr16u::dividend#0 ] zp ZP_WORD:88 [ divr16u::return#2 ] 
-Uplifting [sin8s] best 23978 combination zp ZP_WORD:30 [ sin8s::x#6 sin8s::x#4 sin8s::x#2 sin8s::x#0 sin8s::x#1 ] reg byte a [ sin8s::return#2 ] reg byte a [ sin8s::return#0 sin8s::return#5 sin8s::sinx#1 ] reg byte x [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] zp ZP_WORD:66 [ sin8s::$6 ] zp ZP_BYTE:70 [ sin8s::x2#0 ] zp ZP_BYTE:74 [ sin8s::x3_6#0 ] zp ZP_BYTE:77 [ sin8s::x4#0 ] zp ZP_BYTE:79 [ sin8s::x5#0 ] zp ZP_BYTE:80 [ sin8s::x5_128#0 ] zp ZP_BYTE:72 [ sin8s::x3#0 ] zp ZP_BYTE:68 [ sin8s::x1#0 ] zp ZP_BYTE:75 [ sin8s::usinx#0 ] zp ZP_BYTE:29 [ sin8s::isUpper#10 ] 
+Uplifting [mul8u] best 24271 combination zp ZP_WORD:25 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:27 [ mul8u::mb#2 mul8u::mb#0 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#8 mul8u::a#2 mul8u::a#0 ] reg byte a [ mul8u::b#2 mul8u::b#1 ] zp ZP_WORD:61 [ mul8u::return#2 ] zp ZP_WORD:81 [ mul8u::return#3 ] 
+Uplifting [] best 24271 combination zp ZP_WORD:8 [ print_line_cursor#12 print_line_cursor#23 print_line_cursor#1 ] zp ZP_WORD:16 [ print_char_cursor#94 print_char_cursor#105 print_char_cursor#64 print_char_cursor#100 print_char_cursor#18 print_char_cursor#99 print_char_cursor#2 print_char_cursor#126 print_char_cursor#1 ] zp ZP_WORD:94 [ rem16u#1 ] 
+Uplifting [print_str] best 24271 combination zp ZP_WORD:12 [ print_str::str#10 print_str::str#12 print_str::str#0 ] 
+Uplifting [divr16u] best 24061 combination zp ZP_WORD:37 [ divr16u::rem#4 divr16u::rem#10 divr16u::rem#5 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:39 [ divr16u::dividend#2 divr16u::dividend#0 ] zp ZP_WORD:88 [ divr16u::return#2 ] 
+Uplifting [sin8s] best 23956 combination zp ZP_WORD:30 [ sin8s::x#6 sin8s::x#4 sin8s::x#2 sin8s::x#0 sin8s::x#1 ] reg byte a [ sin8s::return#2 ] reg byte a [ sin8s::return#0 sin8s::return#5 sin8s::sinx#1 ] reg byte x [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] zp ZP_WORD:66 [ sin8s::$6 ] zp ZP_BYTE:70 [ sin8s::x2#0 ] zp ZP_BYTE:74 [ sin8s::x3_6#0 ] zp ZP_BYTE:77 [ sin8s::x4#0 ] zp ZP_BYTE:79 [ sin8s::x5#0 ] zp ZP_BYTE:80 [ sin8s::x5_128#0 ] zp ZP_BYTE:72 [ sin8s::x3#0 ] zp ZP_BYTE:68 [ sin8s::x1#0 ] zp ZP_BYTE:75 [ sin8s::usinx#0 ] zp ZP_BYTE:29 [ sin8s::isUpper#10 ] 
 Limited combination testing to 100 combinations of 5308416 possible.
-Uplifting [mulu8_sel] best 23932 combination reg byte x [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ] reg byte y [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ] reg byte a [ mulu8_sel::return#0 ] reg byte a [ mulu8_sel::return#1 ] zp ZP_BYTE:73 [ mulu8_sel::return#2 ] zp ZP_BYTE:76 [ mulu8_sel::return#10 ] zp ZP_BYTE:78 [ mulu8_sel::return#11 ] zp ZP_WORD:83 [ mulu8_sel::$0 ] zp ZP_WORD:85 [ mulu8_sel::$1 ] zp ZP_BYTE:87 [ mulu8_sel::return#12 ] zp ZP_BYTE:36 [ mulu8_sel::select#5 ] 
+Uplifting [mulu8_sel] best 23910 combination reg byte x [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ] reg byte y [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ] reg byte a [ mulu8_sel::return#0 ] reg byte a [ mulu8_sel::return#1 ] zp ZP_BYTE:73 [ mulu8_sel::return#2 ] zp ZP_BYTE:76 [ mulu8_sel::return#10 ] zp ZP_BYTE:78 [ mulu8_sel::return#11 ] zp ZP_WORD:83 [ mulu8_sel::$0 ] zp ZP_WORD:85 [ mulu8_sel::$1 ] zp ZP_BYTE:87 [ mulu8_sel::return#12 ] zp ZP_BYTE:36 [ mulu8_sel::select#5 ] 
 Limited combination testing to 100 combinations of 196608 possible.
-Uplifting [sin8u_table] best 23822 combination reg byte a [ sin8u_table::$21 ] zp ZP_WORD:6 [ sin8u_table::i#10 sin8u_table::i#1 ] zp ZP_WORD:2 [ sin8u_table::x#10 sin8u_table::x#1 ] zp ZP_WORD:4 [ sin8u_table::sintab#2 sin8u_table::sintab#1 ] zp ZP_BYTE:51 [ sin8u_table::sinx#0 ] zp ZP_WORD:55 [ sin8u_table::sinx_sc#0 ] reg byte x [ sin8u_table::sinx_tr#0 ] zp ZP_WORD:48 [ sin8u_table::step#0 ] 
-Uplifting [print_byte] best 23814 combination zp ZP_BYTE:10 [ print_byte::b#8 print_byte::b#10 print_byte::b#1 print_byte::b#2 print_byte::b#7 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
-Uplifting [mul8su] best 23770 combination zp ZP_WORD:53 [ mul8su::return#2 ] zp ZP_WORD:21 [ mul8su::m#2 mul8su::m#1 mul8su::m#0 ] reg byte a [ mul8su::$6 ] reg byte a [ mul8su::$10 ] reg byte y [ mul8su::a#0 ] 
-Uplifting [print_word] best 23770 combination zp ZP_WORD:18 [ print_word::w#3 print_word::w#5 print_word::w#2 print_word::w#1 ] 
-Uplifting [print_cls] best 23770 combination zp ZP_WORD:44 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [print_char] best 23752 combination reg byte a [ print_char::ch#5 print_char::ch#3 print_char::ch#4 ] 
-Uplifting [print_sword] best 23752 combination zp ZP_WORD:14 [ print_sword::w#3 print_sword::w#1 print_sword::w#0 ] 
-Uplifting [print_sbyte] best 23752 combination zp ZP_BYTE:20 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] 
-Uplifting [div16u] best 23752 combination zp ZP_WORD:46 [ div16u::return#2 ] zp ZP_WORD:90 [ div16u::return#0 ] 
-Uplifting [print_ln] best 23752 combination 
-Uplifting [main] best 23752 combination 
+Uplifting [sin8u_table] best 23800 combination reg byte a [ sin8u_table::$21 ] zp ZP_WORD:6 [ sin8u_table::i#10 sin8u_table::i#1 ] zp ZP_WORD:2 [ sin8u_table::x#10 sin8u_table::x#1 ] zp ZP_WORD:4 [ sin8u_table::sintab#2 sin8u_table::sintab#1 ] zp ZP_BYTE:51 [ sin8u_table::sinx#0 ] zp ZP_WORD:55 [ sin8u_table::sinx_sc#0 ] reg byte x [ sin8u_table::sinx_tr#0 ] zp ZP_WORD:48 [ sin8u_table::step#0 ] 
+Uplifting [print_byte] best 23792 combination zp ZP_BYTE:10 [ print_byte::b#8 print_byte::b#10 print_byte::b#1 print_byte::b#2 print_byte::b#7 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
+Uplifting [mul8su] best 23750 combination zp ZP_WORD:53 [ mul8su::return#2 ] zp ZP_WORD:21 [ mul8su::m#2 mul8su::m#1 mul8su::m#0 ] reg byte a [ mul8su::$6 ] reg byte a [ mul8su::$10 ] reg byte y [ mul8su::a#0 ] 
+Uplifting [print_word] best 23750 combination zp ZP_WORD:18 [ print_word::w#3 print_word::w#5 print_word::w#2 print_word::w#1 ] 
+Uplifting [print_cls] best 23750 combination zp ZP_WORD:44 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [print_char] best 23732 combination reg byte a [ print_char::ch#5 print_char::ch#3 print_char::ch#4 ] 
+Uplifting [print_sword] best 23732 combination zp ZP_WORD:14 [ print_sword::w#3 print_sword::w#1 print_sword::w#0 ] 
+Uplifting [print_sbyte] best 23732 combination zp ZP_BYTE:20 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] 
+Uplifting [div16u] best 23732 combination zp ZP_WORD:46 [ div16u::return#2 ] zp ZP_WORD:90 [ div16u::return#0 ] 
+Uplifting [print_ln] best 23732 combination 
+Uplifting [main] best 23732 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:10 [ print_byte::b#8 print_byte::b#10 print_byte::b#1 print_byte::b#2 print_byte::b#7 ]
-Uplifting [print_byte] best 23752 combination zp ZP_BYTE:10 [ print_byte::b#8 print_byte::b#10 print_byte::b#1 print_byte::b#2 print_byte::b#7 ] 
+Uplifting [print_byte] best 23732 combination zp ZP_BYTE:10 [ print_byte::b#8 print_byte::b#10 print_byte::b#1 print_byte::b#2 print_byte::b#7 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ]
-Uplifting [print_sbyte] best 23752 combination zp ZP_BYTE:20 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] 
+Uplifting [print_sbyte] best 23732 combination zp ZP_BYTE:20 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:70 [ sin8s::x2#0 ]
-Uplifting [sin8s] best 23748 combination reg byte a [ sin8s::x2#0 ] 
+Uplifting [sin8s] best 23728 combination reg byte a [ sin8s::x2#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:73 [ mulu8_sel::return#2 ]
-Uplifting [mulu8_sel] best 23742 combination reg byte a [ mulu8_sel::return#2 ] 
+Uplifting [mulu8_sel] best 23722 combination reg byte a [ mulu8_sel::return#2 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:74 [ sin8s::x3_6#0 ]
-Uplifting [sin8s] best 23738 combination reg byte a [ sin8s::x3_6#0 ] 
+Uplifting [sin8s] best 23718 combination reg byte a [ sin8s::x3_6#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:76 [ mulu8_sel::return#10 ]
-Uplifting [mulu8_sel] best 23732 combination reg byte a [ mulu8_sel::return#10 ] 
+Uplifting [mulu8_sel] best 23712 combination reg byte a [ mulu8_sel::return#10 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:77 [ sin8s::x4#0 ]
-Uplifting [sin8s] best 23728 combination reg byte a [ sin8s::x4#0 ] 
+Uplifting [sin8s] best 23708 combination reg byte a [ sin8s::x4#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:78 [ mulu8_sel::return#11 ]
-Uplifting [mulu8_sel] best 23722 combination reg byte a [ mulu8_sel::return#11 ] 
+Uplifting [mulu8_sel] best 23702 combination reg byte a [ mulu8_sel::return#11 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:79 [ sin8s::x5#0 ]
-Uplifting [sin8s] best 23716 combination reg byte a [ sin8s::x5#0 ] 
+Uplifting [sin8s] best 23696 combination reg byte a [ sin8s::x5#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:80 [ sin8s::x5_128#0 ]
-Uplifting [sin8s] best 23710 combination reg byte a [ sin8s::x5_128#0 ] 
+Uplifting [sin8s] best 23690 combination reg byte a [ sin8s::x5_128#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:51 [ sin8u_table::sinx#0 ]
-Uplifting [sin8u_table] best 23710 combination zp ZP_BYTE:51 [ sin8u_table::sinx#0 ] 
+Uplifting [sin8u_table] best 23690 combination zp ZP_BYTE:51 [ sin8u_table::sinx#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:87 [ mulu8_sel::return#12 ]
-Uplifting [mulu8_sel] best 23692 combination reg byte a [ mulu8_sel::return#12 ] 
+Uplifting [mulu8_sel] best 23672 combination reg byte a [ mulu8_sel::return#12 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:72 [ sin8s::x3#0 ]
-Uplifting [sin8s] best 23692 combination zp ZP_BYTE:72 [ sin8s::x3#0 ] 
+Uplifting [sin8s] best 23672 combination zp ZP_BYTE:72 [ sin8s::x3#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:68 [ sin8s::x1#0 ]
-Uplifting [sin8s] best 23692 combination zp ZP_BYTE:68 [ sin8s::x1#0 ] 
+Uplifting [sin8s] best 23672 combination zp ZP_BYTE:68 [ sin8s::x1#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:36 [ mulu8_sel::select#5 ]
-Uplifting [mulu8_sel] best 23692 combination zp ZP_BYTE:36 [ mulu8_sel::select#5 ] 
+Uplifting [mulu8_sel] best 23672 combination zp ZP_BYTE:36 [ mulu8_sel::select#5 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:75 [ sin8s::usinx#0 ]
-Uplifting [sin8s] best 23692 combination zp ZP_BYTE:75 [ sin8s::usinx#0 ] 
+Uplifting [sin8s] best 23672 combination zp ZP_BYTE:75 [ sin8s::usinx#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:29 [ sin8s::isUpper#10 ]
-Uplifting [sin8s] best 23692 combination zp ZP_BYTE:29 [ sin8s::isUpper#10 ] 
+Uplifting [sin8s] best 23672 combination zp ZP_BYTE:29 [ sin8s::isUpper#10 ] 
 Coalescing zero page register with common assignment [ zp ZP_BYTE:10 [ print_byte::b#8 print_byte::b#10 print_byte::b#1 print_byte::b#2 print_byte::b#7 ] ] with [ zp ZP_BYTE:20 [ print_sbyte::b#4 print_sbyte::b#0 print_sbyte::b#1 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:14 [ print_sword::w#3 print_sword::w#1 print_sword::w#0 ] ] with [ zp ZP_WORD:18 [ print_word::w#3 print_word::w#5 print_word::w#2 print_word::w#1 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:21 [ mul8su::m#2 mul8su::m#1 mul8su::m#0 ] ] with [ zp ZP_WORD:53 [ mul8su::return#2 ] ] - score: 1
@@ -5544,9 +5536,8 @@ sin8u_table: {
   //SEG107 [43] (byte~) sin8u_table::$21 ← > (signed word) sin8u_table::sinx_sc#0 -- vbuaa=_hi_vwsz1 
     lda sinx_sc+1
   //SEG108 [44] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$21 -- vbuxx=vbuc1_plus_vbuaa 
-    clc
-    adc #mid
     tax
+    axs #-mid
   //SEG109 [45] *((byte*) sin8u_table::sintab#2) ← (byte) sin8u_table::sinx_tr#0 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
@@ -6852,8 +6843,8 @@ Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [173] bcc b1 to bcs
-Fixing long branch [179] bcc b1 to bcs
+Fixing long branch [172] bcc b1 to bcs
+Fixing long branch [178] bcc b1 to bcs
 
 FINAL SYMBOL TABLE
 (label) @41
@@ -7230,7 +7221,7 @@ reg byte a [ divr16u::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 19474
+Score: 19454
 
 //SEG0 File Comments
 //SEG1 Basic Upstart
@@ -7451,9 +7442,8 @@ sin8u_table: {
   //SEG107 [43] (byte~) sin8u_table::$21 ← > (signed word) sin8u_table::sinx_sc#0 -- vbuaa=_hi_vwsz1 
     lda sinx_sc+1
   //SEG108 [44] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$21 -- vbuxx=vbuc1_plus_vbuaa 
-    clc
-    adc #mid
     tax
+    axs #-mid
   //SEG109 [45] *((byte*) sin8u_table::sintab#2) ← (byte) sin8u_table::sinx_tr#0 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0

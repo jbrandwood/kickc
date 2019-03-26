@@ -28,8 +28,8 @@ main: {
     ldy i
     sta SCREEN2,y
     inc i
-    lda i
-    cmp #$b
+    lda #$b
+    cmp i
     bne b1
     rts
 }

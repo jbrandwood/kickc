@@ -31,9 +31,8 @@ w: {
     ldy #0
   b1:
     tya
-    clc
-    adc #$578-$546
     tax
+    axs #-$578-$546
     lda #b
     sta SCREEN3,y
     txa

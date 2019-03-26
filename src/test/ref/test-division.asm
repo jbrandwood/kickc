@@ -72,8 +72,11 @@ test_16s: {
     clc
     adc #2
     sta i
-    cmp #$c
-    bne b1
+    lda #$c
+    cmp i
+    beq !b1+
+    jmp b1
+  !b1:
     rts
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
     divisors: .word 5, -7, $b, -$d, -$11, $13
@@ -391,8 +394,8 @@ test_8s: {
     jsr print_sbyte
     jsr print_ln
     inc i
-    lda i
-    cmp #6
+    lda #6
+    cmp i
     bne b1
     rts
     dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
@@ -589,7 +592,8 @@ test_16u: {
     clc
     adc #2
     sta i
-    cmp #$c
+    lda #$c
+    cmp i
     bne b1
     rts
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
@@ -665,8 +669,8 @@ test_8u: {
     jsr print_byte
     jsr print_ln
     inc i
-    lda i
-    cmp #6
+    lda #6
+    cmp i
     bne b12
     rts
   b12:

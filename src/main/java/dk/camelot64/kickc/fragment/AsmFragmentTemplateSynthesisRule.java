@@ -248,6 +248,8 @@ class AsmFragmentTemplateSynthesisRule {
       String rvalYy = ".*=.*yy.*|.*_.*yy.*|...yy_(lt|gt|le|ge|eq|neq)_.*";
       String rvalZ1 = ".*=.*z1.*|.*_.*z1.*|...z1_(lt|gt|le|ge|eq|neq)_.*";
       String rvalZ2 = ".*=.*z2.*|.*_.*z2.*|...z2_(lt|gt|le|ge|eq|neq)_.*";
+      String lvalC1 = ".*c1.*=.*";
+      String lvalC2 = ".*c2.*=.*";
       String lvalDerefZ1 = ".*_deref_...z1=.*";
       String lvalDerefC1 = ".*_deref_...c1=.*";
       String lvalDerefIdxAa = ".*_derefidx_...aa=.*";
@@ -434,6 +436,25 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite _deref_pb.z1_ to _vb.aa_ (if other Z1)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_pb(.)z1(.*z1.*)", rvalAa+"|"+rvalYy+"|"+ lvalDerefZ1, "ldy #0\n"+"lda ({z1}),y", "$1vb$2aa$3", null, null));
 
+      // Replace VB*C1 with AA (only one)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)", lvalC1+"|"+rvalAa+"|"+twoC1, "lda #{c1}", "$1vb$2aa$3", null, mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)_then_(.*)", rvalAa+"|"+twoC1, "lda #{c1}", "$1vb$2aa$3_then_$4", null, mapC));
+      // Replace VB*C1 with XX (only one)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)", lvalC1+"|"+rvalXx+"|"+twoC1, "ldx #{c1}", "$1vb$2xx$3", null, mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)_then_(.*)", rvalXx+"|"+twoC1, "ldx #{c1}", "$1vb$2xx$3_then_$4", null, mapC));
+      // Replace VB*C1 with XX (only one)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)", lvalC1+"|"+rvalYy+"|"+twoC1, "ldy #{c1}", "$1vb$2yy$3", null, mapC));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)_then_(.*)", rvalYy+"|"+twoC1, "ldy #{c1}", "$1vb$2yy$3_then_$4", null, mapC));
+      // Replace VB*C2 with AA (only one)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c2(.*)", lvalC2+"|"+rvalAa+"|"+twoC2, "lda #{c2}", "$1vb$2aa$3", null, mapC3));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c2(.*)_then_(.*)", rvalAa+"|"+twoC2, "lda #{c2}", "$1vb$2aa$3_then_$4", null, mapC3));
+      // Replace VB*C2 with XX (only one)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c2(.*)", lvalC2+"|"+rvalXx+"|"+twoC2, "ldx #{c2}", "$1vb$2xx$3", null, mapC3));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c2(.*)_then_(.*)", rvalXx+"|"+twoC2, "ldx #{c2}", "$1vb$2xx$3_then_$4", null, mapC3));
+      // Replace VB*C2 with YY (only one)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c2(.*)", lvalC2+"|"+rvalYy+"|"+twoC2, "ldy #{c2}", "$1vb$2yy$3", null, mapC3));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c2(.*)_then_(.*)", rvalYy+"|"+twoC2, "ldy #{c2}", "$1vb$2yy$3_then_$4", null, mapC3));
+
       // Rewrite *C1 to AA (if no other C1s)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_pb(.)c1(.*)", rvalAa+"|"+twoC1+"|"+lvalDerefC1, "lda {c1}", "$1vb$2aa$3", null, mapC));
       // Rewrite *C1 to AA (if other C1s)
@@ -452,7 +473,6 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_pb(.)c1(.*c1.*)", rvalYy+"|"+lvalDerefC1, "ldy {c1}", "$1vb$2yy$3", null, null));
       // Rewrite *C1 to YY (if other C1s)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*c1.*)_deref_pb(.)c1(.*)", rvalYy+"|"+lvalDerefC1, "ldy {c1}", "$1vb$2yy$3", null, null));
-
       // Rewrite (Z1),y to AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)pb(.)z1_derefidx_vbuyy(.*)_then_(.*)", twoZ1+"|"+rvalAa, "lda ({z1}),y\n" , "$1vb$2aa$3_then_$4", null, mapZ));
 

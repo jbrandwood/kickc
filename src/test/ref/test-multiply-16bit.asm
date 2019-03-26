@@ -106,8 +106,8 @@ mul16s_compare: {
     cpy #$10
     bne b2
     inc i
-    lda i
-    cmp #$10
+    lda #$10
+    cmp i
     beq !b1+
     jmp b1
   !b1:
@@ -298,10 +298,9 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    txa
-    and #$f
-    tay
-    lda print_hextab,y
+    lda #$f
+    axs #0
+    lda print_hextab,x
     jsr print_char
     rts
 }
@@ -828,8 +827,8 @@ mul16u_compare: {
     cpy #$10
     bne b2
     inc i
-    lda i
-    cmp #$10
+    lda #$10
+    cmp i
     beq !b1+
     jmp b1
   !b1:

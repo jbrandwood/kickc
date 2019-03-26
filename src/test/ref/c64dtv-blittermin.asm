@@ -139,8 +139,8 @@ main: {
     ldx #0
   // wait til blitter is ready
   b2:
-    lda DTV_BLITTER_CONTROL2
-    and #DTV_BLIT_STATUS_BUSY
+    lda #DTV_BLIT_STATUS_BUSY
+    and DTV_BLITTER_CONTROL2
     cmp #0
     bne b2
     // restart

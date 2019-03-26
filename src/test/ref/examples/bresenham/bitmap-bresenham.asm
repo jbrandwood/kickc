@@ -357,8 +357,8 @@ bitmap_clear: {
     cpx #$c8
     bne b2
     inc y
-    lda y
-    cmp #$28
+    lda #$28
+    cmp y
     bne b1
     rts
 }
@@ -391,9 +391,8 @@ bitmap_init: {
     sta yoffs+1
     tax
   b3:
-    txa
-    and #7
-    sta _6
+    lda #7
+    sax _6
     lda yoffs
     ora _6
     sta bitmap_plot_ylo,x

@@ -99,8 +99,8 @@ scrollup2: {
     cpx #$28
     bne b2
     inc l
-    lda l
-    cmp #$18
+    lda #$18
+    cmp l
     bne b1
     rts
 }

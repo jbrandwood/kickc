@@ -98,12 +98,11 @@ main: {
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     inc j
-    lda j
-    cmp #9
+    lda #9
+    cmp j
     bne b3
     inc i
-    lda i
-    cmp #9
+    cmp i
     bne b2
     rts
 }

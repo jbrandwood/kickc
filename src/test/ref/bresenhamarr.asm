@@ -14,8 +14,8 @@ main: {
     .label y = 4
     lda #y0
     sta y
-    ldy #yd/2
-    ldx #x0
+    ldx #yd/2
+    ldy #x0
     lda #x0+y0*$28
     sta idx
     lda #0
@@ -31,16 +31,14 @@ main: {
     lda #STAR
   !:
     sta screen
-    inx
+    iny
     inc idx
     bne !+
     inc idx+1
   !:
-    tya
-    clc
-    adc #yd
-    tay
-    cpy #xd
+    txa
+    axs #-yd
+    cpx #xd
     bcc b2
     beq b2
     inc y
@@ -51,12 +49,10 @@ main: {
     bcc !+
     inc idx+1
   !:
-    tya
-    sec
-    sbc #xd
-    tay
+    txa
+    axs #xd
   b2:
-    cpx #x1+1
+    cpy #x1+1
     bcc b1
     rts
 }

@@ -24,8 +24,8 @@ main: {
     bne b3
   b2:
     inc i
-    lda i
-    cmp #6
+    lda #6
+    cmp i
     bne b7
     rts
   b7:

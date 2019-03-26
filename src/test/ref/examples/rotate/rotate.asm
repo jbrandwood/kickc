@@ -44,8 +44,8 @@ anim: {
     lda #0
     sta angle
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     inc BORDERCOL
     lda #0
@@ -136,8 +136,8 @@ anim: {
     tya
     sta SPRITES_YPOS,x
     inc i
-    lda i
-    cmp #8
+    lda #8
+    cmp i
     beq !b7+
     jmp b7
   !b7:

@@ -1735,12 +1735,12 @@ Uplift Scope [print_ln]
 
 Uplifting [] best 8947 combination zp ZP_WORD:6 [ print_line_cursor#9 print_line_cursor#19 print_line_cursor#1 ] zp ZP_WORD:10 [ print_char_cursor#44 print_char_cursor#67 print_char_cursor#12 print_char_cursor#65 print_char_cursor#69 print_char_cursor#72 ] 
 Uplifting [main] best 8947 combination zp ZP_WORD:16 [ main::$2 ] zp ZP_WORD:18 [ main::$32 ] zp ZP_WORD:24 [ main::$5 ] zp ZP_WORD:26 [ main::$33 ] zp ZP_WORD:36 [ main::$15 ] zp ZP_WORD:38 [ main::$19 ] zp ZP_WORD:40 [ main::$23 ] zp ZP_WORD:42 [ main::$27 ] zp ZP_DWORD:2 [ main::dw#10 main::dw#1 ] zp ZP_DWORD:20 [ main::dw2#1 ] zp ZP_DWORD:28 [ main::dw2#10 ] 
-Uplifting [print_byte] best 8895 combination reg byte x [ print_byte::b#6 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
-Uplifting [print_word] best 8895 combination zp ZP_WORD:12 [ print_word::w#4 print_word::w#2 print_word::w#3 print_word::w#0 print_word::w#1 ] 
-Uplifting [print_cls] best 8895 combination zp ZP_WORD:14 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [print_char] best 8868 combination reg byte a [ print_char::ch#8 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [print_dword] best 8868 combination zp ZP_DWORD:32 [ print_dword::dw#0 ] 
-Uplifting [print_ln] best 8868 combination 
+Uplifting [print_byte] best 8893 combination reg byte x [ print_byte::b#6 print_byte::b#3 print_byte::b#4 print_byte::b#5 print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
+Uplifting [print_word] best 8893 combination zp ZP_WORD:12 [ print_word::w#4 print_word::w#2 print_word::w#3 print_word::w#0 print_word::w#1 ] 
+Uplifting [print_cls] best 8893 combination zp ZP_WORD:14 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [print_char] best 8866 combination reg byte a [ print_char::ch#8 print_char::ch#0 print_char::ch#1 ] 
+Uplifting [print_dword] best 8866 combination zp ZP_DWORD:32 [ print_dword::dw#0 ] 
+Uplifting [print_ln] best 8866 combination 
 Coalescing zero page register with common assignment [ zp ZP_WORD:16 [ main::$2 ] ] with [ zp ZP_WORD:18 [ main::$32 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_DWORD:20 [ main::dw2#1 ] ] with [ zp ZP_DWORD:28 [ main::dw2#10 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:24 [ main::$5 ] ] with [ zp ZP_WORD:26 [ main::$33 ] ] - score: 1
@@ -2140,12 +2140,11 @@ print_byte: {
     jmp b1
   //SEG132 print_byte::@1
   b1:
-  //SEG133 [58] (byte~) print_byte::$2 ← (byte) print_byte::b#6 & (byte/signed byte/word/signed word/dword/signed dword) $f -- vbuaa=vbuxx_band_vbuc1 
-    txa
-    and #$f
-  //SEG134 [59] (byte) print_char::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda print_hextab,y
+  //SEG133 [58] (byte~) print_byte::$2 ← (byte) print_byte::b#6 & (byte/signed byte/word/signed word/dword/signed dword) $f -- vbuxx=vbuxx_band_vbuc1 
+    lda #$f
+    axs #0
+  //SEG134 [59] (byte) print_char::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    lda print_hextab,x
   //SEG135 [60] call print_char 
   //SEG136 [62] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   print_char_from_b1:
@@ -2434,7 +2433,7 @@ FINAL SYMBOL TABLE
 (dword) main::dw2#10 dw2 zp ZP_DWORD:12 3.142857142857143
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0 reg byte a 4.0
-(byte~) print_byte::$2 reg byte a 4.0
+(byte~) print_byte::$2 reg byte x 4.0
 (label) print_byte::@1
 (label) print_byte::@return
 (byte) print_byte::b
@@ -2497,11 +2496,11 @@ zp ZP_WORD:8 [ print_char_cursor#44 print_char_cursor#67 print_char_cursor#12 pr
 zp ZP_WORD:10 [ print_word::w#4 print_word::w#2 print_word::w#3 print_word::w#0 print_word::w#1 main::$2 main::$32 main::$5 main::$33 main::$15 main::$19 main::$23 main::$27 ]
 zp ZP_DWORD:12 [ main::dw2#1 main::dw2#10 print_dword::dw#0 ]
 reg byte a [ print_byte::$0 ]
-reg byte a [ print_byte::$2 ]
+reg byte x [ print_byte::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 7434
+Score: 7432
 
 //SEG0 File Comments
 //SEG1 Basic Upstart
@@ -2813,12 +2812,11 @@ print_byte: {
   //SEG131 [62] phi (byte) print_char::ch#8 = (byte) print_char::ch#0 [phi:print_byte->print_char#1] -- register_copy 
     jsr print_char
   //SEG132 print_byte::@1
-  //SEG133 [58] (byte~) print_byte::$2 ← (byte) print_byte::b#6 & (byte/signed byte/word/signed word/dword/signed dword) $f -- vbuaa=vbuxx_band_vbuc1 
-    txa
-    and #$f
-  //SEG134 [59] (byte) print_char::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda print_hextab,y
+  //SEG133 [58] (byte~) print_byte::$2 ← (byte) print_byte::b#6 & (byte/signed byte/word/signed word/dword/signed dword) $f -- vbuxx=vbuxx_band_vbuc1 
+    lda #$f
+    axs #0
+  //SEG134 [59] (byte) print_char::ch#1 ← *((const byte[]) print_hextab#0 + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    lda print_hextab,x
   //SEG135 [60] call print_char 
   //SEG136 [62] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
   //SEG137 [62] phi (byte*) print_char_cursor#44 = (byte*) print_char_cursor#12 [phi:print_byte::@1->print_char#0] -- register_copy 

@@ -137,8 +137,8 @@ main: {
     lda #0
     sta BORDERCOL
   b5:
-    lda RASTER
-    cmp #$42
+    lda #$42
+    cmp RASTER
     bne b5
     nop
     nop
@@ -248,8 +248,8 @@ gfx_init_chunky: {
     cmp #<$140
     bne b2
     inc y
-    lda y
-    cmp #$33
+    lda #$33
+    cmp y
     bne b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1

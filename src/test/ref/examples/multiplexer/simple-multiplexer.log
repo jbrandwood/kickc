@@ -2453,8 +2453,8 @@ loop: {
   //SEG25 loop::@4
   b4:
   //SEG26 [13] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $ff) goto loop::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     jmp b6
   //SEG27 loop::@6
@@ -2484,15 +2484,14 @@ loop: {
     ldy sy
     sta PLEX_YPOS,y
   //SEG38 [18] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte/signed byte/word/signed word/dword/signed dword) 8 -- vbuz1=vbuz1_plus_vbuc1 
-    lda #8
-    clc
-    adc y_idx
-    sta y_idx
+    lax y_idx
+    axs #-8
+    stx y_idx
   //SEG39 [19] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuz1=_inc_vbuz1 
     inc sy
   //SEG40 [20] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto loop::@7 -- vbuz1_neq_vbuc1_then_la1 
-    lda sy
-    cmp #PLEX_COUNT-1+1
+    lda #PLEX_COUNT-1+1
+    cmp sy
     bne b7_from_b7
     jmp b20
   //SEG41 loop::@20
@@ -2515,8 +2514,8 @@ loop: {
   //SEG48 loop::@8
   b8:
   //SEG49 [25] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_RST8#0 -- vbuz1=_deref_pbuc1_band_vbuc2 
-    lda D011
-    and #VIC_RST8
+    lda #VIC_RST8
+    and D011
     sta _4
   //SEG50 [26] if((byte~) loop::$4!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto loop::@8 -- vbuz1_neq_0_then_la1 
     lda _4
@@ -2581,8 +2580,8 @@ loop: {
   //SEG73 [33] (byte) loop::ss#1 ← ++ (byte) loop::ss#6 -- vbuz1=_inc_vbuz1 
     inc ss
   //SEG74 [34] if((byte) loop::ss#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto loop::@11 -- vbuz1_neq_vbuc1_then_la1 
-    lda ss
-    cmp #PLEX_COUNT-1+1
+    lda #PLEX_COUNT-1+1
+    cmp ss
     bne b11_from_b31
     jmp b27
   //SEG75 loop::@27
@@ -2625,10 +2624,9 @@ plexShowSprite: {
   //SEG83 plexShowSprite::plexFreeAdd1
   plexFreeAdd1:
   //SEG84 [39] (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$0#0 ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 -- vbuz1=vbuz2_plus_vbuc1 
-    lda #$15
-    clc
-    adc plexFreeAdd1_ypos
-    sta plexFreeAdd1__0
+    lax plexFreeAdd1_ypos
+    axs #-$15
+    stx plexFreeAdd1__0
   //SEG85 [40] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) ← (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$0#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda plexFreeAdd1__0
     ldy plex_free_next
@@ -2791,8 +2789,8 @@ plexSort: {
   //SEG129 [68] (byte) plexSort::s#1 ← -- (byte) plexSort::s#3 -- vbuz1=_dec_vbuz1 
     dec s
   //SEG130 [69] if((byte) plexSort::s#1!=(byte/word/signed word/dword/signed dword) $ff) goto plexSort::@8 -- vbuz1_neq_vbuc1_then_la1 
-    lda s
-    cmp #$ff
+    lda #$ff
+    cmp s
     bne b8
     jmp b5
   //SEG131 plexSort::@5
@@ -2811,8 +2809,8 @@ plexSort: {
   //SEG135 [72] (byte) plexSort::m#1 ← ++ (byte) plexSort::m#2 -- vbuz1=_inc_vbuz1 
     inc m
   //SEG136 [73] if((byte) plexSort::m#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto plexSort::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda m
-    cmp #PLEX_COUNT-2+1
+    lda #PLEX_COUNT-2+1
+    cmp m
     bne b1_from_b2
   //SEG137 [74] phi from plexSort::@2 to plexSort::plexFreePrepare1 [phi:plexSort::@2->plexSort::plexFreePrepare1]
   plexFreePrepare1_from_b2:
@@ -2832,14 +2830,14 @@ plexSort: {
   //SEG143 plexSort::plexFreePrepare1_@1
   plexFreePrepare1_b1:
   //SEG144 [76] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plexSort::plexFreePrepare1_s#2) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy plexFreePrepare1_s
     lda #0
+    ldy plexFreePrepare1_s
     sta PLEX_FREE_YPOS,y
   //SEG145 [77] (byte) plexSort::plexFreePrepare1_s#1 ← ++ (byte) plexSort::plexFreePrepare1_s#2 -- vbuz1=_inc_vbuz1 
     inc plexFreePrepare1_s
   //SEG146 [78] if((byte) plexSort::plexFreePrepare1_s#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto plexSort::plexFreePrepare1_@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda plexFreePrepare1_s
-    cmp #8
+    lda #8
+    cmp plexFreePrepare1_s
     bne plexFreePrepare1_b1_from_plexFreePrepare1_b1
     jmp breturn
   //SEG147 plexSort::@return
@@ -2889,8 +2887,8 @@ init: {
   //SEG161 init::@1
   b1:
   //SEG162 [84] *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + (byte) init::sx#2) ← ((byte))(const byte*) SPRITE#0/(byte/signed byte/word/signed word/dword/signed dword) $40 -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy sx
     lda #$ff&SPRITE/$40
+    ldy sx
     sta PLEX_PTR,y
   //SEG163 [85] (byte~) init::$6 ← (byte) init::sx#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_rol_1 
     lda sx
@@ -2913,8 +2911,8 @@ init: {
   //SEG166 [88] (byte) init::sx#1 ← ++ (byte) init::sx#2 -- vbuz1=_inc_vbuz1 
     inc sx
   //SEG167 [89] if((byte) init::sx#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto init::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda sx
-    cmp #PLEX_COUNT-1+1
+    lda #PLEX_COUNT-1+1
+    cmp sx
     bne b1_from_b1
     jmp b3
   //SEG168 init::@3
@@ -2936,14 +2934,14 @@ init: {
   //SEG174 init::@2
   b2:
   //SEG175 [92] *((const byte*) SPRITES_COLS#0 + (byte) init::ss#2) ← (const byte) GREEN#0 -- pbuc1_derefidx_vbuz1=vbuc2 
-    ldy ss
     lda #GREEN
+    ldy ss
     sta SPRITES_COLS,y
   //SEG176 [93] (byte) init::ss#1 ← ++ (byte) init::ss#2 -- vbuz1=_inc_vbuz1 
     inc ss
   //SEG177 [94] if((byte) init::ss#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto init::@2 -- vbuz1_neq_vbuc1_then_la1 
-    lda ss
-    cmp #8
+    lda #8
+    cmp ss
     bne b2_from_b2
     jmp breturn
   //SEG178 init::@return
@@ -2979,8 +2977,8 @@ plexInit: {
   //SEG189 [100] (byte) plexInit::i#1 ← ++ (byte) plexInit::i#2 -- vbuz1=_inc_vbuz1 
     inc i
   //SEG190 [101] if((byte) plexInit::i#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto plexInit::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda i
-    cmp #PLEX_COUNT-1+1
+    lda #PLEX_COUNT-1+1
+    cmp i
     bne b1_from_b1
     jmp breturn
   //SEG191 plexInit::@return
@@ -3029,17 +3027,14 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ pl
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ loop::ss#6 loop::ss#1 ]
 Statement [35] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ loop::sin_idx#1 ] ( main:4::loop:9 [ loop::sin_idx#1 ] ) always clobbers reg byte a 
 Statement [36] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#44 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plexShowSprite::plex_sprite_idx2#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plexShowSprite::plex_sprite_idx2#0 ] ) always clobbers reg byte a 
-Statement [39] (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$0#0 ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 [ plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::plexFreeAdd1_$0#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::plexFreeAdd1_$0#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ]
-Statement [42] (byte) plex_free_next#13 ← (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 ] ) always clobbers reg byte a 
 Statement [43] *((const byte*) PLEX_SCREEN_PTR#1 + (byte) plex_sprite_idx#44) ← *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#44)) [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ]
 Statement [44] (byte) plexShowSprite::xpos_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#44) << (byte/signed byte/word/signed word/dword/signed dword) 1 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] ) always clobbers reg byte a 
 Statement [45] (byte~) plexShowSprite::$3 ← < *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte) plexShowSprite::xpos_idx#0) [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 plexShowSprite::$3 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 plexShowSprite::$3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:24 [ plexShowSprite::xpos_idx#0 ]
 Statement [47] (byte~) plexShowSprite::$4 ← > *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte) plexShowSprite::xpos_idx#0) [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::$4 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::$4 ] ) always clobbers reg byte a 
 Statement [49] (byte/word/dword~) plexShowSprite::$6 ← (byte/word/signed word/dword/signed dword) $ff ^ (byte) plex_sprite_msb#44 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::$6 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::$6 ] ) always clobbers reg byte a 
 Statement [50] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte/word/dword~) plexShowSprite::$6 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 ] ) always clobbers reg byte a 
-Statement [52] (byte) plex_sprite_idx#15 ← (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plex_sprite_idx#15 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plex_sprite_idx#15 ] ) always clobbers reg byte a 
 Statement [59] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) plex_sprite_msb#44 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 ] ) always clobbers reg byte a 
 Statement [67] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) plexSort::s#3) ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#3) [ plexSort::m#2 plexSort::nxt_idx#0 plexSort::nxt_y#0 plexSort::s#3 ] ( main:4::loop:9::plexSort:23 [ loop::sin_idx#1 plexSort::m#2 plexSort::nxt_idx#0 plexSort::nxt_y#0 plexSort::s#3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ plexSort::m#2 plexSort::m#1 ]
@@ -3067,15 +3062,12 @@ Statement [25] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_R
 Statement [28] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ loop::sin_idx#1 plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 loop::ss#6 ] ( main:4::loop:9 [ loop::sin_idx#1 plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 loop::ss#6 ] ) always clobbers reg byte a 
 Statement [35] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ loop::sin_idx#1 ] ( main:4::loop:9 [ loop::sin_idx#1 ] ) always clobbers reg byte a 
 Statement [36] (byte) plexShowSprite::plex_sprite_idx2#0 ← (byte) plex_sprite_idx#44 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plexShowSprite::plex_sprite_idx2#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plexShowSprite::plex_sprite_idx2#0 ] ) always clobbers reg byte a 
-Statement [39] (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$0#0 ← (byte) plexShowSprite::plexFreeAdd1_ypos#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 [ plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::plexFreeAdd1_$0#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_free_next#17 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::plexFreeAdd1_$0#0 ] ) always clobbers reg byte a 
-Statement [42] (byte) plex_free_next#13 ← (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 ] ) always clobbers reg byte a 
 Statement [43] *((const byte*) PLEX_SCREEN_PTR#1 + (byte) plex_sprite_idx#44) ← *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#44)) [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 ] ) always clobbers reg byte a 
 Statement [44] (byte) plexShowSprite::xpos_idx#0 ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#44) << (byte/signed byte/word/signed word/dword/signed dword) 1 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 ] ) always clobbers reg byte a 
 Statement [45] (byte~) plexShowSprite::$3 ← < *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte) plexShowSprite::xpos_idx#0) [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 plexShowSprite::$3 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::plex_sprite_idx2#0 plexShowSprite::xpos_idx#0 plexShowSprite::$3 ] ) always clobbers reg byte a 
 Statement [47] (byte~) plexShowSprite::$4 ← > *((const word[PLEX_COUNT#0]) PLEX_XPOS#0 + (byte) plexShowSprite::xpos_idx#0) [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::$4 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::$4 ] ) always clobbers reg byte a 
 Statement [49] (byte/word/dword~) plexShowSprite::$6 ← (byte/word/signed word/dword/signed dword) $ff ^ (byte) plex_sprite_msb#44 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::$6 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plexShowSprite::$6 ] ) always clobbers reg byte a 
 Statement [50] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte/word/dword~) plexShowSprite::$6 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 ] ) always clobbers reg byte a 
-Statement [52] (byte) plex_sprite_idx#15 ← (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plex_sprite_idx#15 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 plex_sprite_idx#15 ] ) always clobbers reg byte a 
 Statement [59] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte) plex_sprite_msb#44 [ plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 ] ( main:4::loop:9::plexShowSprite:32 [ loop::sin_idx#1 loop::ss#6 plex_sprite_idx#44 plex_show_idx#44 plex_sprite_msb#44 plex_free_next#13 ] ) always clobbers reg byte a 
 Statement [64] if((byte) plexSort::nxt_y#0>=*((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))) goto plexSort::@2 [ plexSort::m#2 plexSort::nxt_idx#0 plexSort::nxt_y#0 ] ( main:4::loop:9::plexSort:23 [ loop::sin_idx#1 plexSort::m#2 plexSort::nxt_idx#0 plexSort::nxt_y#0 ] ) always clobbers reg byte a 
 Statement [67] *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (byte) plexSort::s#3) ← *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#3) [ plexSort::m#2 plexSort::nxt_idx#0 plexSort::nxt_y#0 plexSort::s#3 ] ( main:4::loop:9::plexSort:23 [ loop::sin_idx#1 plexSort::m#2 plexSort::nxt_idx#0 plexSort::nxt_y#0 plexSort::s#3 ] ) always clobbers reg byte a 
@@ -3129,60 +3121,60 @@ Uplift Scope [plexInit] 38.5: zp ZP_BYTE:17 [ plexInit::i#2 plexInit::i#1 ]
 Uplift Scope [plexShowSprite] 4: zp ZP_BYTE:22 [ plexShowSprite::plexFreeAdd1_$0#0 ] 4: zp ZP_BYTE:23 [ plexShowSprite::plexFreeAdd1_$1#0 ] 4: zp ZP_BYTE:25 [ plexShowSprite::$3 ] 4: zp ZP_BYTE:26 [ plexShowSprite::$4 ] 4: zp ZP_BYTE:27 [ plexShowSprite::$6 ] 4: zp ZP_BYTE:28 [ plexShowSprite::$7 ] 3: zp ZP_BYTE:21 [ plexShowSprite::plexFreeAdd1_ypos#0 ] 2: zp ZP_BYTE:24 [ plexShowSprite::xpos_idx#0 ] 0.6: zp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ] 
 Uplift Scope [main] 
 
-Uplifting [plexSort] best 82580 combination reg byte x [ plexSort::s#3 plexSort::s#1 plexSort::s#6 ] reg byte x [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ] zp ZP_BYTE:31 [ plexSort::s#2 ] zp ZP_BYTE:10 [ plexSort::m#2 plexSort::m#1 ] zp ZP_BYTE:30 [ plexSort::nxt_y#0 ] zp ZP_BYTE:29 [ plexSort::nxt_idx#0 ] 
+Uplifting [plexSort] best 82378 combination reg byte x [ plexSort::s#3 plexSort::s#1 plexSort::s#6 ] reg byte x [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ] zp ZP_BYTE:31 [ plexSort::s#2 ] zp ZP_BYTE:10 [ plexSort::m#2 plexSort::m#1 ] zp ZP_BYTE:30 [ plexSort::nxt_y#0 ] zp ZP_BYTE:29 [ plexSort::nxt_idx#0 ] 
 Limited combination testing to 10 combinations of 972 possible.
-Uplifting [loop] best 81380 combination zp ZP_BYTE:19 [ loop::plexFreeNextYpos1_return#0 ] reg byte x [ loop::sy#2 loop::sy#1 ] zp ZP_BYTE:3 [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ] zp ZP_BYTE:18 [ loop::$4 ] zp ZP_BYTE:9 [ loop::ss#6 loop::ss#1 ] zp ZP_BYTE:2 [ loop::sin_idx#6 loop::sin_idx#1 ] 
+Uplifting [loop] best 81178 combination zp ZP_BYTE:19 [ loop::plexFreeNextYpos1_return#0 ] reg byte y [ loop::sy#2 loop::sy#1 ] zp ZP_BYTE:3 [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ] zp ZP_BYTE:18 [ loop::$4 ] zp ZP_BYTE:9 [ loop::ss#6 loop::ss#1 ] zp ZP_BYTE:2 [ loop::sin_idx#6 loop::sin_idx#1 ] 
 Limited combination testing to 10 combinations of 1296 possible.
-Uplifting [init] best 81130 combination reg byte x [ init::ss#2 init::ss#1 ] reg byte x [ init::sx#2 init::sx#1 ] zp ZP_BYTE:32 [ init::$6 ] zp ZP_WORD:14 [ init::xp#2 init::xp#1 ] 
+Uplifting [init] best 80928 combination reg byte x [ init::ss#2 init::ss#1 ] reg byte x [ init::sx#2 init::sx#1 ] zp ZP_BYTE:32 [ init::$6 ] zp ZP_WORD:14 [ init::xp#2 init::xp#1 ] 
 Limited combination testing to 10 combinations of 36 possible.
-Uplifting [] best 81130 combination zp ZP_BYTE:8 [ plex_sprite_msb#44 plex_sprite_msb#16 plex_sprite_msb#25 ] zp ZP_BYTE:5 [ plex_free_next#17 plex_free_next#13 ] zp ZP_BYTE:7 [ plex_show_idx#44 plex_show_idx#15 ] zp ZP_BYTE:6 [ plex_sprite_idx#44 plex_sprite_idx#15 ] 
+Uplifting [] best 80928 combination zp ZP_BYTE:8 [ plex_sprite_msb#44 plex_sprite_msb#16 plex_sprite_msb#25 ] zp ZP_BYTE:5 [ plex_free_next#17 plex_free_next#13 ] zp ZP_BYTE:7 [ plex_show_idx#44 plex_show_idx#15 ] zp ZP_BYTE:6 [ plex_sprite_idx#44 plex_sprite_idx#15 ] 
 Limited combination testing to 10 combinations of 81 possible.
-Uplifting [plexInit] best 81010 combination reg byte x [ plexInit::i#2 plexInit::i#1 ] 
-Uplifting [plexShowSprite] best 81000 combination reg byte a [ plexShowSprite::plexFreeAdd1_$0#0 ] reg byte a [ plexShowSprite::plexFreeAdd1_$1#0 ] zp ZP_BYTE:25 [ plexShowSprite::$3 ] zp ZP_BYTE:26 [ plexShowSprite::$4 ] zp ZP_BYTE:27 [ plexShowSprite::$6 ] zp ZP_BYTE:28 [ plexShowSprite::$7 ] zp ZP_BYTE:21 [ plexShowSprite::plexFreeAdd1_ypos#0 ] zp ZP_BYTE:24 [ plexShowSprite::xpos_idx#0 ] zp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ] 
+Uplifting [plexInit] best 80808 combination reg byte x [ plexInit::i#2 plexInit::i#1 ] 
+Uplifting [plexShowSprite] best 80798 combination reg byte a [ plexShowSprite::plexFreeAdd1_$0#0 ] reg byte x [ plexShowSprite::plexFreeAdd1_$1#0 ] zp ZP_BYTE:25 [ plexShowSprite::$3 ] zp ZP_BYTE:26 [ plexShowSprite::$4 ] zp ZP_BYTE:27 [ plexShowSprite::$6 ] zp ZP_BYTE:28 [ plexShowSprite::$7 ] zp ZP_BYTE:21 [ plexShowSprite::plexFreeAdd1_ypos#0 ] zp ZP_BYTE:24 [ plexShowSprite::xpos_idx#0 ] zp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ] 
 Limited combination testing to 10 combinations of 147456 possible.
-Uplifting [main] best 81000 combination 
+Uplifting [main] best 80798 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:19 [ loop::plexFreeNextYpos1_return#0 ]
-Uplifting [loop] best 81000 combination zp ZP_BYTE:19 [ loop::plexFreeNextYpos1_return#0 ] 
+Uplifting [loop] best 80798 combination zp ZP_BYTE:19 [ loop::plexFreeNextYpos1_return#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ]
-Uplifting [loop] best 80470 combination reg byte y [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ] 
+Uplifting [loop] best 80068 combination reg byte x [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:18 [ loop::$4 ]
-Uplifting [loop] best 79870 combination reg byte a [ loop::$4 ] 
+Uplifting [loop] best 79468 combination reg byte a [ loop::$4 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:31 [ plexSort::s#2 ]
-Uplifting [plexSort] best 79270 combination reg byte x [ plexSort::s#2 ] 
+Uplifting [plexSort] best 78868 combination reg byte x [ plexSort::s#2 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:10 [ plexSort::m#2 plexSort::m#1 ]
-Uplifting [plexSort] best 79270 combination zp ZP_BYTE:10 [ plexSort::m#2 plexSort::m#1 ] 
+Uplifting [plexSort] best 78868 combination zp ZP_BYTE:10 [ plexSort::m#2 plexSort::m#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:9 [ loop::ss#6 loop::ss#1 ]
-Uplifting [loop] best 79270 combination zp ZP_BYTE:9 [ loop::ss#6 loop::ss#1 ] 
+Uplifting [loop] best 78868 combination zp ZP_BYTE:9 [ loop::ss#6 loop::ss#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:30 [ plexSort::nxt_y#0 ]
-Uplifting [plexSort] best 79270 combination zp ZP_BYTE:30 [ plexSort::nxt_y#0 ] 
+Uplifting [plexSort] best 78868 combination zp ZP_BYTE:30 [ plexSort::nxt_y#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:29 [ plexSort::nxt_idx#0 ]
-Uplifting [plexSort] best 79270 combination zp ZP_BYTE:29 [ plexSort::nxt_idx#0 ] 
+Uplifting [plexSort] best 78868 combination zp ZP_BYTE:29 [ plexSort::nxt_idx#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:8 [ plex_sprite_msb#44 plex_sprite_msb#16 plex_sprite_msb#25 ]
-Uplifting [] best 79270 combination zp ZP_BYTE:8 [ plex_sprite_msb#44 plex_sprite_msb#16 plex_sprite_msb#25 ] 
+Uplifting [] best 78868 combination zp ZP_BYTE:8 [ plex_sprite_msb#44 plex_sprite_msb#16 plex_sprite_msb#25 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ plex_free_next#17 plex_free_next#13 ]
-Uplifting [] best 79270 combination zp ZP_BYTE:5 [ plex_free_next#17 plex_free_next#13 ] 
+Uplifting [] best 78868 combination zp ZP_BYTE:5 [ plex_free_next#17 plex_free_next#13 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:32 [ init::$6 ]
-Uplifting [init] best 79230 combination reg byte a [ init::$6 ] 
+Uplifting [init] best 78828 combination reg byte a [ init::$6 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:7 [ plex_show_idx#44 plex_show_idx#15 ]
-Uplifting [] best 79230 combination zp ZP_BYTE:7 [ plex_show_idx#44 plex_show_idx#15 ] 
+Uplifting [] best 78828 combination zp ZP_BYTE:7 [ plex_show_idx#44 plex_show_idx#15 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ plex_sprite_idx#44 plex_sprite_idx#15 ]
-Uplifting [] best 79230 combination zp ZP_BYTE:6 [ plex_sprite_idx#44 plex_sprite_idx#15 ] 
+Uplifting [] best 78828 combination zp ZP_BYTE:6 [ plex_sprite_idx#44 plex_sprite_idx#15 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ loop::sin_idx#6 loop::sin_idx#1 ]
-Uplifting [loop] best 79230 combination zp ZP_BYTE:2 [ loop::sin_idx#6 loop::sin_idx#1 ] 
+Uplifting [loop] best 78828 combination zp ZP_BYTE:2 [ loop::sin_idx#6 loop::sin_idx#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:25 [ plexShowSprite::$3 ]
-Uplifting [plexShowSprite] best 79224 combination reg byte a [ plexShowSprite::$3 ] 
+Uplifting [plexShowSprite] best 78822 combination reg byte a [ plexShowSprite::$3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:26 [ plexShowSprite::$4 ]
-Uplifting [plexShowSprite] best 79218 combination reg byte a [ plexShowSprite::$4 ] 
+Uplifting [plexShowSprite] best 78816 combination reg byte a [ plexShowSprite::$4 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:27 [ plexShowSprite::$6 ]
-Uplifting [plexShowSprite] best 79212 combination reg byte a [ plexShowSprite::$6 ] 
+Uplifting [plexShowSprite] best 78810 combination reg byte a [ plexShowSprite::$6 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:28 [ plexShowSprite::$7 ]
-Uplifting [plexShowSprite] best 79208 combination reg byte a [ plexShowSprite::$7 ] 
+Uplifting [plexShowSprite] best 78804 combination reg byte x [ plexShowSprite::$7 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:21 [ plexShowSprite::plexFreeAdd1_ypos#0 ]
-Uplifting [plexShowSprite] best 79199 combination reg byte a [ plexShowSprite::plexFreeAdd1_ypos#0 ] 
+Uplifting [plexShowSprite] best 78795 combination reg byte a [ plexShowSprite::plexFreeAdd1_ypos#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:24 [ plexShowSprite::xpos_idx#0 ]
-Uplifting [plexShowSprite] best 79192 combination reg byte x [ plexShowSprite::xpos_idx#0 ] 
+Uplifting [plexShowSprite] best 78788 combination reg byte x [ plexShowSprite::xpos_idx#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ]
-Uplifting [plexShowSprite] best 79192 combination zp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ] 
+Uplifting [plexShowSprite] best 78788 combination zp ZP_BYTE:20 [ plexShowSprite::plex_sprite_idx2#0 ] 
 Coalescing zero page register [ zp ZP_BYTE:5 [ plex_free_next#17 plex_free_next#13 ] ] with [ zp ZP_BYTE:10 [ plexSort::m#2 plexSort::m#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:6 [ plex_sprite_idx#44 plex_sprite_idx#15 ] ] with [ zp ZP_BYTE:29 [ plexSort::nxt_idx#0 ] ]
 Coalescing zero page register [ zp ZP_BYTE:7 [ plex_show_idx#44 plex_show_idx#15 ] ] with [ zp ZP_BYTE:30 [ plexSort::nxt_y#0 ] ]
@@ -3286,20 +3278,20 @@ loop: {
   //SEG25 loop::@4
   b4:
   //SEG26 [13] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $ff) goto loop::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     jmp b6
   //SEG27 loop::@6
   b6:
   //SEG28 [14] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  //SEG29 [15] (byte~) loop::y_idx#3 ← (byte) loop::sin_idx#6 -- vbuyy=vbuz1 
-    ldy sin_idx
+  //SEG29 [15] (byte~) loop::y_idx#3 ← (byte) loop::sin_idx#6 -- vbuxx=vbuz1 
+    ldx sin_idx
   //SEG30 [16] phi from loop::@6 to loop::@7 [phi:loop::@6->loop::@7]
   b7_from_b6:
-  //SEG31 [16] phi (byte) loop::sy#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:loop::@6->loop::@7#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG31 [16] phi (byte) loop::sy#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:loop::@6->loop::@7#0] -- vbuyy=vbuc1 
+    ldy #0
   //SEG32 [16] phi (byte) loop::y_idx#2 = (byte~) loop::y_idx#3 [phi:loop::@6->loop::@7#1] -- register_copy 
     jmp b7
   //SEG33 [16] phi from loop::@7 to loop::@7 [phi:loop::@7->loop::@7]
@@ -3309,18 +3301,16 @@ loop: {
     jmp b7
   //SEG36 loop::@7
   b7:
-  //SEG37 [17] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte*) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
-    lda YSIN,y
-    sta PLEX_YPOS,x
-  //SEG38 [18] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte/signed byte/word/signed word/dword/signed dword) 8 -- vbuyy=vbuyy_plus_vbuc1 
-    tya
-    clc
-    adc #8
-    tay
-  //SEG39 [19] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG40 [20] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto loop::@7 -- vbuxx_neq_vbuc1_then_la1 
-    cpx #PLEX_COUNT-1+1
+  //SEG37 [17] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte*) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    lda YSIN,x
+    sta PLEX_YPOS,y
+  //SEG38 [18] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte/signed byte/word/signed word/dword/signed dword) 8 -- vbuxx=vbuxx_plus_vbuc1 
+    txa
+    axs #-8
+  //SEG39 [19] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG40 [20] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto loop::@7 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #PLEX_COUNT-1+1
     bne b7_from_b7
     jmp b20
   //SEG41 loop::@20
@@ -3343,8 +3333,8 @@ loop: {
   //SEG48 loop::@8
   b8:
   //SEG49 [25] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_RST8#0 -- vbuaa=_deref_pbuc1_band_vbuc2 
-    lda D011
-    and #VIC_RST8
+    lda #VIC_RST8
+    and D011
   //SEG50 [26] if((byte~) loop::$4!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto loop::@8 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b8
@@ -3407,8 +3397,8 @@ loop: {
   //SEG73 [33] (byte) loop::ss#1 ← ++ (byte) loop::ss#6 -- vbuz1=_inc_vbuz1 
     inc ss
   //SEG74 [34] if((byte) loop::ss#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto loop::@11 -- vbuz1_neq_vbuc1_then_la1 
-    lda ss
-    cmp #PLEX_COUNT-1+1
+    lda #PLEX_COUNT-1+1
+    cmp ss
     bne b11_from_b31
     jmp b27
   //SEG75 loop::@27
@@ -3446,13 +3436,12 @@ plexShowSprite: {
   //SEG85 [40] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) ← (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$0#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy plex_free_next
     sta PLEX_FREE_YPOS,y
-  //SEG86 [41] (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_plus_1 
-    lda plex_free_next
-    clc
-    adc #1
-  //SEG87 [42] (byte) plex_free_next#13 ← (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuaa_band_vbuc1 
-    and #7
-    sta plex_free_next
+  //SEG86 [41] (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuz1_plus_1 
+    ldx plex_free_next
+    inx
+  //SEG87 [42] (byte) plex_free_next#13 ← (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuxx_band_vbuc1 
+    lda #7
+    sax plex_free_next
     jmp b7
   //SEG88 plexShowSprite::@7
   b7:
@@ -3489,13 +3478,12 @@ plexShowSprite: {
     jmp b2
   //SEG98 plexShowSprite::@2
   b2:
-  //SEG99 [51] (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 ← (byte) plex_sprite_idx#44 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_plus_1 
-    lda plex_sprite_idx
-    clc
-    adc #1
-  //SEG100 [52] (byte) plex_sprite_idx#15 ← (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuaa_band_vbuc1 
-    and #7
-    sta plex_sprite_idx
+  //SEG99 [51] (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 ← (byte) plex_sprite_idx#44 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuz1_plus_1 
+    ldx plex_sprite_idx
+    inx
+  //SEG100 [52] (byte) plex_sprite_idx#15 ← (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuxx_band_vbuc1 
+    lda #7
+    sax plex_sprite_idx
   //SEG101 [53] (byte) plex_show_idx#15 ← ++ (byte) plex_show_idx#44 -- vbuz1=_inc_vbuz1 
     inc plex_show_idx
   //SEG102 [54] (byte) plex_sprite_msb#25 ← (byte) plex_sprite_msb#44 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_rol_1 
@@ -3605,8 +3593,8 @@ plexSort: {
   //SEG135 [72] (byte) plexSort::m#1 ← ++ (byte) plexSort::m#2 -- vbuz1=_inc_vbuz1 
     inc m
   //SEG136 [73] if((byte) plexSort::m#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto plexSort::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda m
-    cmp #PLEX_COUNT-2+1
+    lda #PLEX_COUNT-2+1
+    cmp m
     bne b1_from_b2
   //SEG137 [74] phi from plexSort::@2 to plexSort::plexFreePrepare1 [phi:plexSort::@2->plexSort::plexFreePrepare1]
   plexFreePrepare1_from_b2:
@@ -3831,7 +3819,6 @@ Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Removing instruction lda #0
-Replacing instruction lda plex_free_next with TYA
 Replacing instruction ldy nxt_idx with TAY
 Removing instruction lda nxt_y
 Replacing instruction ldx #0 with TAX
@@ -3913,7 +3900,6 @@ Removing instruction jmp b1
 Removing instruction jmp b2
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction ldx plex_show_idx
 Removing instruction ldx m
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction bbegin:
@@ -4079,12 +4065,12 @@ FINAL SYMBOL TABLE
 (byte) loop::ss#1 ss zp ZP_BYTE:7 151.5
 (byte) loop::ss#6 ss zp ZP_BYTE:7 33.666666666666664
 (byte) loop::sy
-(byte) loop::sy#1 reg byte x 151.5
-(byte) loop::sy#2 reg byte x 101.0
+(byte) loop::sy#1 reg byte y 151.5
+(byte) loop::sy#2 reg byte y 101.0
 (byte) loop::y_idx
-(byte) loop::y_idx#1 reg byte y 67.33333333333333
-(byte) loop::y_idx#2 reg byte y 157.0
-(byte~) loop::y_idx#3 reg byte y 22.0
+(byte) loop::y_idx#1 reg byte x 67.33333333333333
+(byte) loop::y_idx#2 reg byte x 157.0
+(byte~) loop::y_idx#3 reg byte x 22.0
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -4102,7 +4088,7 @@ FINAL SYMBOL TABLE
 (byte~) plexShowSprite::$3 reg byte a 4.0
 (byte~) plexShowSprite::$4 reg byte a 4.0
 (byte/word/dword~) plexShowSprite::$6 reg byte a 4.0
-(byte/signed word/word/dword/signed dword~) plexShowSprite::$7 reg byte a 4.0
+(byte/signed word/word/dword/signed dword~) plexShowSprite::$7 reg byte x 4.0
 (label) plexShowSprite::@1
 (label) plexShowSprite::@2
 (label) plexShowSprite::@4
@@ -4113,7 +4099,7 @@ FINAL SYMBOL TABLE
 (byte/signed word/word/dword/signed dword~) plexShowSprite::plexFreeAdd1_$0
 (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$0#0 reg byte a 4.0
 (byte/signed word/word/dword/signed dword~) plexShowSprite::plexFreeAdd1_$1
-(byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 reg byte a 4.0
+(byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 reg byte x 4.0
 (byte/word/dword~) plexShowSprite::plexFreeAdd1_$2
 (byte) plexShowSprite::plexFreeAdd1_ypos
 (byte) plexShowSprite::plexFreeAdd1_ypos#0 reg byte a 3.0
@@ -4163,8 +4149,8 @@ FINAL SYMBOL TABLE
 (byte) plex_sprite_msb#44 plex_sprite_msb zp ZP_BYTE:6 4.458333333333332
 
 zp ZP_BYTE:2 [ loop::sin_idx#6 loop::sin_idx#1 ]
-reg byte y [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ]
-reg byte x [ loop::sy#2 loop::sy#1 ]
+reg byte x [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ]
+reg byte y [ loop::sy#2 loop::sy#1 ]
 zp ZP_BYTE:3 [ plex_free_next#17 plex_free_next#13 plexSort::m#2 plexSort::m#1 ]
 zp ZP_BYTE:4 [ plex_sprite_idx#44 plex_sprite_idx#15 plexSort::nxt_idx#0 ]
 zp ZP_BYTE:5 [ plex_show_idx#44 plex_show_idx#15 plexSort::nxt_y#0 ]
@@ -4180,18 +4166,18 @@ reg byte a [ loop::$4 ]
 zp ZP_BYTE:10 [ loop::plexFreeNextYpos1_return#0 plexShowSprite::plex_sprite_idx2#0 ]
 reg byte a [ plexShowSprite::plexFreeAdd1_ypos#0 ]
 reg byte a [ plexShowSprite::plexFreeAdd1_$0#0 ]
-reg byte a [ plexShowSprite::plexFreeAdd1_$1#0 ]
+reg byte x [ plexShowSprite::plexFreeAdd1_$1#0 ]
 reg byte x [ plexShowSprite::xpos_idx#0 ]
 reg byte a [ plexShowSprite::$3 ]
 reg byte a [ plexShowSprite::$4 ]
 reg byte a [ plexShowSprite::$6 ]
-reg byte a [ plexShowSprite::$7 ]
+reg byte x [ plexShowSprite::$7 ]
 reg byte x [ plexSort::s#2 ]
 reg byte a [ init::$6 ]
 
 
 FINAL ASSEMBLER
-Score: 63550
+Score: 63150
 
 //SEG0 File Comments
 // A simple usage of the flexible sprite multiplexer routine
@@ -4263,35 +4249,33 @@ loop: {
   //SEG25 loop::@4
   b4:
   //SEG26 [13] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $ff) goto loop::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
   //SEG27 loop::@6
   //SEG28 [14] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-  //SEG29 [15] (byte~) loop::y_idx#3 ← (byte) loop::sin_idx#6 -- vbuyy=vbuz1 
-    ldy sin_idx
+  //SEG29 [15] (byte~) loop::y_idx#3 ← (byte) loop::sin_idx#6 -- vbuxx=vbuz1 
+    ldx sin_idx
   //SEG30 [16] phi from loop::@6 to loop::@7 [phi:loop::@6->loop::@7]
-  //SEG31 [16] phi (byte) loop::sy#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:loop::@6->loop::@7#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG31 [16] phi (byte) loop::sy#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:loop::@6->loop::@7#0] -- vbuyy=vbuc1 
+    ldy #0
   //SEG32 [16] phi (byte) loop::y_idx#2 = (byte~) loop::y_idx#3 [phi:loop::@6->loop::@7#1] -- register_copy 
   //SEG33 [16] phi from loop::@7 to loop::@7 [phi:loop::@7->loop::@7]
   //SEG34 [16] phi (byte) loop::sy#2 = (byte) loop::sy#1 [phi:loop::@7->loop::@7#0] -- register_copy 
   //SEG35 [16] phi (byte) loop::y_idx#2 = (byte) loop::y_idx#1 [phi:loop::@7->loop::@7#1] -- register_copy 
   //SEG36 loop::@7
   b7:
-  //SEG37 [17] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte*) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
-    lda YSIN,y
-    sta PLEX_YPOS,x
-  //SEG38 [18] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte/signed byte/word/signed word/dword/signed dword) 8 -- vbuyy=vbuyy_plus_vbuc1 
-    tya
-    clc
-    adc #8
-    tay
-  //SEG39 [19] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG40 [20] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto loop::@7 -- vbuxx_neq_vbuc1_then_la1 
-    cpx #PLEX_COUNT-1+1
+  //SEG37 [17] *((const byte[PLEX_COUNT#0]) PLEX_YPOS#0 + (byte) loop::sy#2) ← *((const byte*) YSIN#0 + (byte) loop::y_idx#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    lda YSIN,x
+    sta PLEX_YPOS,y
+  //SEG38 [18] (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (byte/signed byte/word/signed word/dword/signed dword) 8 -- vbuxx=vbuxx_plus_vbuc1 
+    txa
+    axs #-8
+  //SEG39 [19] (byte) loop::sy#1 ← ++ (byte) loop::sy#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG40 [20] if((byte) loop::sy#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto loop::@7 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #PLEX_COUNT-1+1
     bne b7
   //SEG41 loop::@20
   //SEG42 [21] (byte) loop::sin_idx#1 ← (byte) loop::sin_idx#6 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_plus_1 
@@ -4308,8 +4292,8 @@ loop: {
   //SEG48 loop::@8
   b8:
   //SEG49 [25] (byte~) loop::$4 ← *((const byte*) D011#0) & (const byte) VIC_RST8#0 -- vbuaa=_deref_pbuc1_band_vbuc2 
-    lda D011
-    and #VIC_RST8
+    lda #VIC_RST8
+    and D011
   //SEG50 [26] if((byte~) loop::$4!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto loop::@8 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b8
@@ -4359,8 +4343,8 @@ loop: {
   //SEG73 [33] (byte) loop::ss#1 ← ++ (byte) loop::ss#6 -- vbuz1=_inc_vbuz1 
     inc ss
   //SEG74 [34] if((byte) loop::ss#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 1+(byte/signed byte/word/signed word/dword/signed dword) 1) goto loop::@11 -- vbuz1_neq_vbuc1_then_la1 
-    lda ss
-    cmp #PLEX_COUNT-1+1
+    lda #PLEX_COUNT-1+1
+    cmp ss
     bne b11
   //SEG75 loop::@27
   //SEG76 [35] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
@@ -4393,15 +4377,15 @@ plexShowSprite: {
   //SEG85 [40] *((const byte[8]) PLEX_FREE_YPOS#0 + (byte) plex_free_next#17) ← (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$0#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy plex_free_next
     sta PLEX_FREE_YPOS,y
-  //SEG86 [41] (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_plus_1 
-    tya
-    clc
-    adc #1
-  //SEG87 [42] (byte) plex_free_next#13 ← (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuaa_band_vbuc1 
-    and #7
-    sta plex_free_next
+  //SEG86 [41] (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 ← (byte) plex_free_next#17 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuz1_plus_1 
+    ldx plex_free_next
+    inx
+  //SEG87 [42] (byte) plex_free_next#13 ← (byte/signed word/word/dword/signed dword) plexShowSprite::plexFreeAdd1_$1#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuxx_band_vbuc1 
+    lda #7
+    sax plex_free_next
   //SEG88 plexShowSprite::@7
   //SEG89 [43] *((const byte*) PLEX_SCREEN_PTR#1 + (byte) plex_sprite_idx#44) ← *((const byte[PLEX_COUNT#0]) PLEX_PTR#0 + *((const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plex_show_idx#44)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_pbuc3_derefidx_vbuz2 
+    ldx plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
     ldx plex_sprite_idx
@@ -4430,13 +4414,12 @@ plexShowSprite: {
     sta SPRITES_XMSB
   //SEG98 plexShowSprite::@2
   b2:
-  //SEG99 [51] (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 ← (byte) plex_sprite_idx#44 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_plus_1 
-    lda plex_sprite_idx
-    clc
-    adc #1
-  //SEG100 [52] (byte) plex_sprite_idx#15 ← (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuaa_band_vbuc1 
-    and #7
-    sta plex_sprite_idx
+  //SEG99 [51] (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 ← (byte) plex_sprite_idx#44 + (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuz1_plus_1 
+    ldx plex_sprite_idx
+    inx
+  //SEG100 [52] (byte) plex_sprite_idx#15 ← (byte/signed word/word/dword/signed dword~) plexShowSprite::$7 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuxx_band_vbuc1 
+    lda #7
+    sax plex_sprite_idx
   //SEG101 [53] (byte) plex_show_idx#15 ← ++ (byte) plex_show_idx#44 -- vbuz1=_inc_vbuz1 
     inc plex_show_idx
   //SEG102 [54] (byte) plex_sprite_msb#25 ← (byte) plex_sprite_msb#44 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_rol_1 
@@ -4526,8 +4509,8 @@ plexSort: {
   //SEG135 [72] (byte) plexSort::m#1 ← ++ (byte) plexSort::m#2 -- vbuz1=_inc_vbuz1 
     inc m
   //SEG136 [73] if((byte) plexSort::m#1!=(const byte) PLEX_COUNT#0-(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto plexSort::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda m
-    cmp #PLEX_COUNT-2+1
+    lda #PLEX_COUNT-2+1
+    cmp m
     bne b1
   //SEG137 [74] phi from plexSort::@2 to plexSort::plexFreePrepare1 [phi:plexSort::@2->plexSort::plexFreePrepare1]
   //SEG138 plexSort::plexFreePrepare1

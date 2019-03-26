@@ -16,8 +16,8 @@ main: {
     lda #>$400
     sta print_char_cursor+1
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     inc BORDERCOL
     jsr mulf16u
@@ -73,10 +73,9 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    txa
-    and #$f
-    tay
-    lda print_hextab,y
+    lda #$f
+    axs #0
+    lda print_hextab,x
     jsr print_char
     rts
 }

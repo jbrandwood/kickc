@@ -42,8 +42,8 @@ main: {
     lda #0
     sta yvel_12+1
   b2:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b2
     jsr anim
     jmp b2

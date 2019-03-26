@@ -29,8 +29,8 @@ main: {
     lda l
     sta SCREEN,y
     inc l
-    lda l
-    cmp #$65
+    lda #$65
+    cmp l
     bne b4
     iny
     cpy #$65

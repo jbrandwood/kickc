@@ -11,6 +11,10 @@ vbuaa=_neg_vbuxx < vbuaa=_neg_vbuaa - clobber:A   cycles:8.0
   eor #$ff
   clc
   adc #$01
+*vbuaa=_neg_vbuxx - clobber:A X   cycles:6.0
+  dex
+  txa
+  eor #$ff
 vbuaa=_bnot_vbuyy < vbuaa=_bnot_vbuaa - clobber:A   cycles:4.0
   tya
   eor #$ff
@@ -19,6 +23,10 @@ vbuaa=_neg_vbuyy < vbuaa=_neg_vbuaa - clobber:A   cycles:8.0
   eor #$ff
   clc
   adc #$01
+*vbuaa=_neg_vbuyy - clobber:A Y  cycles:6.0
+  dey
+  tya
+  eor #$ff
 vbuaa=_dec_vbuz1 < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A   cycles:7.0
   lda {z1}
   sec
@@ -94,7 +102,16 @@ vbuaa=_neg_pbuc1_derefidx_vbuz1 < vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_v
   adc #$01
 CANNOT SYNTHESIZE vbuaa=_dec_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE vbuaa=_neg_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE vbuaa=_dec_pbuc1_derefidx_vbuc2
+vbuaa=_dec_pbuc1_derefidx_vbuc2 < vbuaa=_dec_pbuc1_derefidx_vbuxx < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A X   cycles:10.5
+  ldx #{c2}
+  lda {c1},x
+  sec
+  sbc #1
+vbuaa=_dec_pbuc1_derefidx_vbuc2 < vbuaa=_dec_pbuc1_derefidx_vbuyy < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A Y  cycles:10.5
+  ldy #{c2}
+  lda {c1},y
+  sec
+  sbc #1
 CANNOT SYNTHESIZE vbuaa=_pos_pbuc1_derefidx_vbuc2
 vbuaa=_dec_vbuc1 < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A   cycles:6.0
   lda #{c1}
@@ -111,34 +128,31 @@ vbuxx=_bnot_vbuyy < vbuxx=_bnot_vbuaa < vbuaa=_bnot_vbuaa - clobber:A X   cycles
   tya
   eor #$ff
   tax
-vbuxx=_neg_vbuyy < vbuxx=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A X   cycles:10.0
+vbuxx=_neg_vbuyy < vbuxx=_neg_vbuaa - clobber:A X   cycles:8.0
   tya
   eor #$ff
-  clc
-  adc #$01
   tax
+  inx
 vbuxx=_bnot_vbuz1 < vbuxx=_bnot_vbuaa < vbuaa=_bnot_vbuaa - clobber:A X   cycles:7.0
   lda {z1}
   eor #$ff
   tax
-vbuxx=_neg_vbuz1 < vbuxx=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A X   cycles:11.0
+vbuxx=_neg_vbuz1 < vbuxx=_neg_vbuaa - clobber:A X   cycles:9.0
   lda {z1}
   eor #$ff
-  clc
-  adc #$01
   tax
+  inx
 vbuxx=_dec__deref_pbuz1 < vbuxx=_dec_vbuaa < vbuxx=_dec_vbuxx - clobber:A X Y  cycles:11.5
   ldy #0
   lda ({z1}),y
   tax
   dex
-vbuxx=_neg__deref_pbuz1 < vbuaa=_neg__deref_pbuz1 < vbuaa=_neg_vbuaa - clobber:A X Y  cycles:15.5
+vbuxx=_neg__deref_pbuz1 < vbuxx=_neg_vbuaa - clobber:A X Y  cycles:13.5
   ldy #0
   lda ({z1}),y
   eor #$ff
-  clc
-  adc #$01
   tax
+  inx
 vbuxx=_dec__deref_pbuc1 < vbuxx=_dec_vbuxx - clobber:X   cycles:6.0
   ldx {c1}
   dex
@@ -188,8 +202,17 @@ vbuxx=_inc_pbuc1_derefidx_vbuz1 < vbuxx=_inc_pbuc1_derefidx_vbuyy < vbuxx=_inc_v
   inx
 CANNOT SYNTHESIZE vbuxx=_bnot_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE vbuxx=_neg_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE vbuxx=_bnot_pbuc1_derefidx_vbuc2
-CANNOT SYNTHESIZE vbuxx=_neg_pbuc1_derefidx_vbuc2
+vbuxx=_bnot_pbuc1_derefidx_vbuc2 < vbuaa=_bnot_pbuc1_derefidx_vbuc2 < vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_vbuaa - clobber:A X   cycles:10.5
+  ldx #{c2}
+  lda {c1},x
+  eor #$ff
+  tax
+vbuxx=_neg_pbuc1_derefidx_vbuc2 < vbuxx=_neg_pbuc1_derefidx_vbuxx < vbuxx=_neg_vbuaa - clobber:A X   cycles:12.5
+  ldx #{c2}
+  lda {c1},x
+  eor #$ff
+  tax
+  inx
 vbuxx=_dec_vbuc1 < vbuxx=_dec_vbuxx - clobber:X   cycles:4.0
   ldx #{c1}
   dex
@@ -217,22 +240,20 @@ vbuyy=_bnot__deref_pbuz1 < vbuaa=_bnot__deref_pbuz1 < vbuaa=_bnot_vbuaa - clobbe
   lda ({z1}),y
   eor #$ff
   tay
-vbuyy=_neg__deref_pbuz1 < vbuaa=_neg__deref_pbuz1 < vbuaa=_neg_vbuaa - clobber:A Y  cycles:15.5
+vbuyy=_neg__deref_pbuz1 < vbuyy=_neg_vbuaa - clobber:A Y  cycles:13.5
   ldy #0
   lda ({z1}),y
   eor #$ff
-  clc
-  adc #$01
   tay
+  iny
 vbuyy=_dec__deref_pbuc1 < vbuyy=_dec_vbuyy - clobber:Y  cycles:6.0
   ldy {c1}
   dey
-vbuyy=_neg__deref_pbuc1 < vbuaa=_neg__deref_pbuc1 < vbuaa=_neg_vbuaa - clobber:A Y  cycles:12.0
+vbuyy=_neg__deref_pbuc1 < vbuyy=_neg_vbuaa - clobber:A Y  cycles:10.0
   lda {c1}
   eor #$ff
-  clc
-  adc #$01
   tay
+  iny
 CANNOT SYNTHESIZE vbuyy=_dec_pbuz1_derefidx_vbuaa
 CANNOT SYNTHESIZE vbuyy=_pos_pbuz1_derefidx_vbuaa
 CANNOT SYNTHESIZE vbuyy=_dec_pbuz1_derefidx_vbuxx
@@ -253,13 +274,12 @@ vbuyy=_dec_pbuc1_derefidx_vbuaa < vbuyy=_dec_pbuc1_derefidx_vbuxx < vbuyy=_dec_v
   tax
   ldy {c1},x
   dey
-vbuyy=_neg_pbuc1_derefidx_vbuaa < vbuyy=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_vbuaa - clobber:A Y  cycles:14.5
+vbuyy=_neg_pbuc1_derefidx_vbuaa < vbuyy=_neg_pbuc1_derefidx_vbuyy < vbuyy=_neg_vbuaa - clobber:A Y  cycles:12.5
   tay
   lda {c1},y
   eor #$ff
-  clc
-  adc #$01
   tay
+  iny
 vbuyy=_dec_pbuc1_derefidx_vbuxx < vbuyy=_dec_vbuyy - clobber:Y  cycles:6.5
   ldy {c1},x
   dey
@@ -280,18 +300,26 @@ vbuyy=_inc_pbuc1_derefidx_vbuz1 < vbuyy=_inc_pbuc1_derefidx_vbuxx < vbuyy=_inc_v
   iny
 CANNOT SYNTHESIZE vbuyy=_bnot_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE vbuyy=_inc_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE vbuyy=_bnot_pbuc1_derefidx_vbuc2
-CANNOT SYNTHESIZE vbuyy=_neg_pbuc1_derefidx_vbuc2
+vbuyy=_bnot_pbuc1_derefidx_vbuc2 < vbuaa=_bnot_pbuc1_derefidx_vbuc2 < vbuaa=_bnot_pbuc1_derefidx_vbuyy < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:10.5
+  ldy #{c2}
+  lda {c1},y
+  eor #$ff
+  tay
+vbuyy=_neg_pbuc1_derefidx_vbuc2 < vbuyy=_neg_pbuc1_derefidx_vbuyy < vbuyy=_neg_vbuaa - clobber:A Y  cycles:12.5
+  ldy #{c2}
+  lda {c1},y
+  eor #$ff
+  tay
+  iny
 vbuyy=_bnot_vbuc1 < vbuaa=_bnot_vbuc1 < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:6.0
   lda #{c1}
   eor #$ff
   tay
-vbuyy=_neg_vbuc1 < vbuaa=_neg_vbuc1 < vbuaa=_neg_vbuaa - clobber:A Y  cycles:10.0
+vbuyy=_neg_vbuc1 < vbuyy=_neg_vbuaa - clobber:A Y  cycles:8.0
   lda #{c1}
   eor #$ff
-  clc
-  adc #$01
   tay
+  iny
 vbuz1=_dec_vbuaa < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A   cycles:7.0
   sec
   sbc #1
@@ -491,8 +519,37 @@ vbuz1=_neg_pbuc1_derefidx_vbuz2 < vbuaa=_neg_pbuc1_derefidx_vbuz1 < vbuaa=_neg_p
   sta {z1}
 CANNOT SYNTHESIZE vbuz1=_bnot_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE vbuz1=_neg_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE vbuz1=_dec_pbuc1_derefidx_vbuc2
-CANNOT SYNTHESIZE vbuz1=_neg_pbuc1_derefidx_vbuc2
+vbuz1=_dec_pbuc1_derefidx_vbuc2 < vbuaa=_dec_pbuc1_derefidx_vbuc2 < vbuaa=_dec_pbuc1_derefidx_vbuxx < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A X   cycles:13.5
+  ldx #{c2}
+  lda {c1},x
+  sec
+  sbc #1
+  sta {z1}
+vbuz1=_dec_pbuc1_derefidx_vbuc2 < vbuaa=_dec_pbuc1_derefidx_vbuc2 < vbuaa=_dec_pbuc1_derefidx_vbuyy < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A Y  cycles:13.5
+  ldy #{c2}
+  lda {c1},y
+  sec
+  sbc #1
+  sta {z1}
+vbuz1=_dec_pbuc1_derefidx_vbuc2 < vbuyy=_dec_pbuc1_derefidx_vbuc2 < vbuyy=_dec_pbuc1_derefidx_vbuxx < vbuyy=_dec_vbuyy - clobber:X Y  cycles:11.5
+  ldx #{c2}
+  ldy {c1},x
+  dey
+  sty {z1}
+vbuz1=_neg_pbuc1_derefidx_vbuc2 < vbuaa=_neg_pbuc1_derefidx_vbuc2 < vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_vbuaa - clobber:A X   cycles:15.5
+  ldx #{c2}
+  lda {c1},x
+  eor #$ff
+  clc
+  adc #$01
+  sta {z1}
+vbuz1=_neg_pbuc1_derefidx_vbuc2 < vbuaa=_neg_pbuc1_derefidx_vbuc2 < vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_vbuaa - clobber:A Y  cycles:15.5
+  ldy #{c2}
+  lda {c1},y
+  eor #$ff
+  clc
+  adc #$01
+  sta {z1}
 vbuz1=_dec_vbuc1 < vbuaa=_dec_vbuc1 < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A   cycles:9.0
   lda #{c1}
   sec
@@ -513,6 +570,11 @@ _deref_pbuz1=_inc_vbuaa < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  c
   ldy #0
   sta ({z1}),y
 CANNOT SYNTHESIZE _deref_pbuz1=_pos_vbuaa
+_deref_pbuz1=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=vbuxx_plus_1 - clobber:A X Y  cycles:12.0
+  inx
+  txa
+  ldy #0
+  sta ({z1}),y
 _deref_pbuz1=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:14.0
   txa
   clc
@@ -524,10 +586,9 @@ _deref_pbuz1=_bnot_vbuyy < _deref_pbuz1=_bnot_vbuaa < vbuaa=_bnot_vbuaa - clobbe
   eor #$ff
   ldy #0
   sta ({z1}),y
-_deref_pbuz1=_inc_vbuyy < vbuaa=_inc_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:14.0
+_deref_pbuz1=_inc_vbuyy < vbuaa=_inc_vbuyy < vbuaa=vbuyy_plus_1 - clobber:A Y  cycles:12.0
+  iny
   tya
-  clc
-  adc #1
   ldy #0
   sta ({z1}),y
 _deref_pbuz1=_bnot_vbuz1 < _deref_pbuz1=_bnot_vbuaa < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:13.0
@@ -662,7 +723,13 @@ _deref_pbuz1=_neg_pbuc1_derefidx_vbuz2 < _deref_pbuz1=_neg_pbuc1_derefidx_vbuyy 
   sta ({z1}),y
 CANNOT SYNTHESIZE _deref_pbuz1=_dec_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE _deref_pbuz1=_pos_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE _deref_pbuz1=_inc_pbuc1_derefidx_vbuc2
+_deref_pbuz1=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:18.5
+  ldy #{c2}
+  lda {c1},y
+  clc
+  adc #1
+  ldy #0
+  sta ({z1}),y
 CANNOT SYNTHESIZE _deref_pbuz1=_pos_pbuc1_derefidx_vbuc2
 _deref_pbuz1=_inc_vbuc1 < vbuaa=_inc_vbuc1 < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:14.0
   lda #{c1}
@@ -687,6 +754,11 @@ _deref_pbuc1=_neg_vbuxx < _deref_pbuc1=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A
   clc
   adc #$01
   sta {c1}
+_deref_pbuc1=_neg_vbuxx < vbuaa=_neg_vbuxx - clobber:A X   cycles:10.0
+  dex
+  txa
+  eor #$ff
+  sta {c1}
 _deref_pbuc1=_bnot_vbuyy < vbuaa=_bnot_vbuyy < vbuaa=_bnot_vbuaa - clobber:A   cycles:8.0
   tya
   eor #$ff
@@ -696,6 +768,11 @@ _deref_pbuc1=_neg_vbuyy < vbuaa=_neg_vbuyy < vbuaa=_neg_vbuaa - clobber:A   cycl
   eor #$ff
   clc
   adc #$01
+  sta {c1}
+_deref_pbuc1=_neg_vbuyy < vbuaa=_neg_vbuyy - clobber:A Y  cycles:10.0
+  dey
+  tya
+  eor #$ff
   sta {c1}
 _deref_pbuc1=_dec_vbuz1 < _deref_pbuc1=_dec_vbuaa < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A   cycles:11.0
   lda {z1}
@@ -791,7 +868,18 @@ _deref_pbuc1=_dec_pbuc1_derefidx_vbuz1 < _deref_pbuc1=_dec_pbuc1_derefidx_vbuyy 
 CANNOT SYNTHESIZE _deref_pbuc1=_pos_pbuc1_derefidx_vbuz1
 CANNOT SYNTHESIZE _deref_pbuc1=_dec_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE _deref_pbuc1=_pos_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE _deref_pbuc1=_inc_pbuc1_derefidx_vbuc2
+_deref_pbuc1=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuxx < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A X   cycles:14.5
+  ldx #{c2}
+  lda {c1},x
+  clc
+  adc #1
+  sta {c1}
+_deref_pbuc1=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:14.5
+  ldy #{c2}
+  lda {c1},y
+  clc
+  adc #1
+  sta {c1}
 _deref_pbuc1=_bnot_pbuc2_derefidx_vbuaa < _deref_pbuc1=_bnot_pbuc2_derefidx_vbuxx < vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_vbuaa - clobber:A X   cycles:12.5
   tax
   lda {c2},x
@@ -875,7 +963,18 @@ _deref_pbuc1=_dec_pbuc2_derefidx_vbuc1 < vbuaa=_dec_pbuc2_derefidx_vbuc1 < vbuaa
 CANNOT SYNTHESIZE _deref_pbuc1=_pos_pbuc2_derefidx_vbuc1
 CANNOT SYNTHESIZE _deref_pbuc1=_inc_pbuc2_derefidx_vbuc2
 CANNOT SYNTHESIZE _deref_pbuc1=_pos_pbuc2_derefidx_vbuc2
-CANNOT SYNTHESIZE _deref_pbuc1=_inc_pbuc2_derefidx_vbuc3
+_deref_pbuc1=_inc_pbuc2_derefidx_vbuc3 < vbuaa=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuxx < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A X   cycles:14.5
+  ldx #{c3}
+  lda {c2},x
+  clc
+  adc #1
+  sta {c1}
+_deref_pbuc1=_inc_pbuc2_derefidx_vbuc3 < vbuaa=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:14.5
+  ldy #{c3}
+  lda {c2},y
+  clc
+  adc #1
+  sta {c1}
 _deref_pbuc1=_bnot_vbuc1 < vbuaa=_bnot_vbuc1 < vbuaa=_bnot_vbuaa - clobber:A   cycles:8.0
   lda #{c1}
   eor #$ff
@@ -920,19 +1019,17 @@ pbuz1_derefidx_vbuaa=_dec_vbuyy < vbuaa=_dec_vbuyy < vbuaa=vbuyy_minus_1 < vbuaa
   ldy $ff
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuaa=_pos_vbuyy
-pbuz1_derefidx_vbuaa=_inc_vbuz1 < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A X Y  cycles:17.0
+pbuz1_derefidx_vbuaa=_inc_vbuz1 < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=vbuxx_plus_1 - clobber:A X Y  cycles:15.0
   ldx {z1}
   tay
+  inx
   txa
-  clc
-  adc #1
   sta ({z1}),y
-pbuz1_derefidx_vbuaa=_inc_vbuz1 < pbuz1_derefidx_vbuaa=_inc_vbuyy < vbuaa=_inc_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:21.0
+pbuz1_derefidx_vbuaa=_inc_vbuz1 < pbuz1_derefidx_vbuaa=_inc_vbuyy < vbuaa=_inc_vbuyy < vbuaa=vbuyy_plus_1 - clobber:A Y  cycles:19.0
   ldy {z1}
   sta $ff
+  iny
   tya
-  clc
-  adc #1
   ldy $ff
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuaa=_pos_vbuz1
@@ -1051,12 +1148,11 @@ pbuz1_derefidx_vbuaa=_dec_pbuc1_derefidx_vbuxx < vbuaa=_dec_pbuc1_derefidx_vbuxx
   sbc #1
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuaa=_pos_pbuc1_derefidx_vbuxx
-pbuz1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A X Y  cycles:18.5
+pbuz1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=vbuxx_plus_1 - clobber:A X Y  cycles:16.5
   ldx {c1},y
   tay
+  inx
   txa
-  clc
-  adc #1
   sta ({z1}),y
 pbuz1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuyy < vbuaa=_inc_pbuc1_derefidx_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:20.5
   sta $ff
@@ -1111,8 +1207,36 @@ pbuz1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuz2 < pbuz1_derefidx_vbuaa=_inc_pbuc1
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuc2
-CANNOT SYNTHESIZE pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuc2
+pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_vbuaa - clobber:A X Y  cycles:16.5
+  ldx #{c2}
+  tay
+  lda {c1},x
+  eor #$ff
+  sta ({z1}),y
+pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuyy < vbuaa=_bnot_pbuc1_derefidx_vbuyy < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:20.5
+  ldy #{c2}
+  sta $ff
+  lda {c1},y
+  eor #$ff
+  ldy $ff
+  sta ({z1}),y
+pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_vbuaa - clobber:A X Y  cycles:20.5
+  ldx #{c2}
+  tay
+  lda {c1},x
+  eor #$ff
+  clc
+  adc #$01
+  sta ({z1}),y
+pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_vbuaa - clobber:A Y  cycles:24.5
+  ldy #{c2}
+  sta $ff
+  lda {c1},y
+  eor #$ff
+  clc
+  adc #$01
+  ldy $ff
+  sta ({z1}),y
 pbuz1_derefidx_vbuaa=_dec_vbuc1 < vbuaa=_dec_vbuc1 < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A Y  cycles:14.0
   tay
   lda #{c1}
@@ -1134,11 +1258,10 @@ pbuz1_derefidx_vbuxx=_inc_vbuxx < pbuz1_derefidx_vbuaa=_inc_vbuaa < vbuaa=_inc_v
   adc #1
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuxx=_pos_vbuxx
-pbuz1_derefidx_vbuxx=_inc_vbuyy < vbuaa=_inc_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:18.0
+pbuz1_derefidx_vbuxx=_inc_vbuyy < vbuaa=_inc_vbuyy < vbuaa=vbuyy_plus_1 - clobber:A Y  cycles:16.0
   stx $ff
+  iny
   tya
-  clc
-  adc #1
   ldy $ff
   sta ({z1}),y
 pbuz1_derefidx_vbuxx=_bnot_vbuz1 < pbuz1_derefidx_vbuxx=_bnot_vbuaa < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:17.0
@@ -1146,6 +1269,13 @@ pbuz1_derefidx_vbuxx=_bnot_vbuz1 < pbuz1_derefidx_vbuxx=_bnot_vbuaa < vbuaa=_bno
   stx $ff
   eor #$ff
   ldy $ff
+  sta ({z1}),y
+pbuz1_derefidx_vbuxx=_inc_vbuz1 < pbuz1_derefidx_vbuaa=_inc_vbuz1 < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=vbuxx_plus_1 - clobber:A X Y  cycles:17.0
+  txa
+  ldx {z1}
+  tay
+  inx
+  txa
   sta ({z1}),y
 pbuz1_derefidx_vbuxx=_inc_vbuz1 < pbuz1_derefidx_vbuxx=_inc_vbuaa < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:19.0
   lda {z1}
@@ -1226,6 +1356,14 @@ CANNOT SYNTHESIZE pbuz1_derefidx_vbuxx=_dec_pbuz2_derefidx_vbuz3
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuxx=_neg_pbuz2_derefidx_vbuz3
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuxx=_dec_pbuz2_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuxx=_pos_pbuz2_derefidx_vbuc1
+pbuz1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuaa < pbuz1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=vbuxx_plus_1 - clobber:A X Y  cycles:20.5
+  tay
+  txa
+  ldx {c1},y
+  tay
+  inx
+  txa
+  sta ({z1}),y
 pbuz1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuaa < vbuaa=_inc_pbuc1_derefidx_vbuaa < vbuaa=_inc_pbuc1_derefidx_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:22.5
   stx $ff
   tay
@@ -1248,6 +1386,13 @@ pbuz1_derefidx_vbuxx=_bnot_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuxx=_bnot_vbu
   eor #$ff
   ldy $ff
   sta ({z1}),y
+pbuz1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=vbuxx_plus_1 - clobber:A X Y  cycles:18.5
+  txa
+  ldx {c1},y
+  tay
+  inx
+  txa
+  sta ({z1}),y
 pbuz1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuxx=_inc_vbuaa < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:20.5
   lda {c1},y
   stx $ff
@@ -1269,14 +1414,14 @@ pbuz1_derefidx_vbuxx=_bnot_pbuc1_derefidx_vbuz1 < pbuz1_derefidx_vbuxx=_bnot_pbu
   eor #$ff
   ldy $ff
   sta ({z1}),y
-pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuz1 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuz1 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_vbuaa - clobber:A X Y  cycles:23.5
+pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuz1 < pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_neg_vbuxx < vbuaa=_neg_vbuxx - clobber:A X Y  cycles:23.5
+  ldy {z1}
   txa
-  ldx {z1}
+  ldx {c1},y
   tay
-  lda {c1},x
+  dex
+  txa
   eor #$ff
-  clc
-  adc #$01
   sta ({z1}),y
 pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuz1 < pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuxx=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A Y  cycles:25.5
   ldy {z1}
@@ -1301,14 +1446,14 @@ pbuz1_derefidx_vbuxx=_bnot_pbuc1_derefidx_vbuz2 < pbuz1_derefidx_vbuxx=_bnot_pbu
   eor #$ff
   ldy $ff
   sta ({z1}),y
-pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuz2 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuz2 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_vbuaa - clobber:A X Y  cycles:23.5
+pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuz2 < pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuaa=_neg_vbuxx < vbuaa=_neg_vbuxx - clobber:A X Y  cycles:23.5
+  ldy {z2}
   txa
-  ldx {z2}
+  ldx {c1},y
   tay
-  lda {c1},x
+  dex
+  txa
   eor #$ff
-  clc
-  adc #$01
   sta ({z1}),y
 pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuz2 < pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuxx=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A Y  cycles:25.5
   ldy {z2}
@@ -1321,7 +1466,22 @@ pbuz1_derefidx_vbuxx=_neg_pbuc1_derefidx_vbuz2 < pbuz1_derefidx_vbuxx=_neg_pbuc1
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuxx=_dec_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuxx=_pos_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE pbuz1_derefidx_vbuxx=_dec_pbuc1_derefidx_vbuc2
+pbuz1_derefidx_vbuxx=_dec_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_dec_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_dec_pbuc1_derefidx_vbuxx < vbuaa=_dec_pbuc1_derefidx_vbuxx < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A X Y  cycles:20.5
+  txa
+  ldx #{c2}
+  tay
+  lda {c1},x
+  sec
+  sbc #1
+  sta ({z1}),y
+pbuz1_derefidx_vbuxx=_dec_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuxx=_dec_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuxx=_dec_vbuaa < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A Y  cycles:22.5
+  ldy #{c2}
+  lda {c1},y
+  stx $ff
+  sec
+  sbc #1
+  ldy $ff
+  sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuxx=_pos_pbuc1_derefidx_vbuc2
 pbuz1_derefidx_vbuxx=_inc_vbuc1 < pbuz1_derefidx_vbuaa=_inc_vbuc1 < vbuaa=_inc_vbuc1 < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:16.0
   txa
@@ -1343,6 +1503,12 @@ pbuz1_derefidx_vbuyy=_bnot_vbuxx < pbuz1_derefidx_vbuaa=_bnot_vbuxx < vbuaa=_bno
   tay
   txa
   eor #$ff
+  sta ({z1}),y
+pbuz1_derefidx_vbuyy=_inc_vbuxx < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=vbuxx_plus_1 - clobber:A X Y  cycles:14.0
+  tya
+  tay
+  inx
+  txa
   sta ({z1}),y
 pbuz1_derefidx_vbuyy=_inc_vbuxx < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:16.0
   tya
@@ -1370,6 +1536,14 @@ pbuz1_derefidx_vbuyy=_dec_vbuz1 < pbuz1_derefidx_vbuyy=_dec_vbuaa < vbuaa=_dec_v
   sec
   sbc #1
   ldy $ff
+  sta ({z1}),y
+pbuz1_derefidx_vbuyy=_neg_vbuz1 < pbuz1_derefidx_vbuyy=_neg_vbuxx < pbuz1_derefidx_vbuaa=_neg_vbuxx < vbuaa=_neg_vbuxx - clobber:A X Y  cycles:19.0
+  ldx {z1}
+  tya
+  tay
+  dex
+  txa
+  eor #$ff
   sta ({z1}),y
 pbuz1_derefidx_vbuyy=_neg_vbuz1 < pbuz1_derefidx_vbuyy=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A Y  cycles:21.0
   lda {z1}
@@ -1493,6 +1667,14 @@ pbuz1_derefidx_vbuyy=_bnot_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuyy=_bnot_vbu
   eor #$ff
   ldy $ff
   sta ({z1}),y
+pbuz1_derefidx_vbuyy=_neg_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuyy=_neg_vbuxx < pbuz1_derefidx_vbuaa=_neg_vbuxx < vbuaa=_neg_vbuxx - clobber:A X Y  cycles:20.5
+  ldx {c1},y
+  tya
+  tay
+  dex
+  txa
+  eor #$ff
+  sta ({z1}),y
 pbuz1_derefidx_vbuyy=_neg_pbuc1_derefidx_vbuyy < pbuz1_derefidx_vbuyy=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A Y  cycles:22.5
   lda {c1},y
   sty $ff
@@ -1541,7 +1723,23 @@ pbuz1_derefidx_vbuyy=_dec_pbuc1_derefidx_vbuz2 < vbuaa=_dec_pbuc1_derefidx_vbuz1
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuyy=_pos_pbuc1_derefidx_vbuz2
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuyy=_inc_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuyy=_pos_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE pbuz1_derefidx_vbuyy=_inc_pbuc1_derefidx_vbuc2
+pbuz1_derefidx_vbuyy=_inc_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuyy=_inc_pbuc1_derefidx_vbuxx < pbuz1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuxx < vbuaa=_inc_pbuc1_derefidx_vbuxx < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A X Y  cycles:20.5
+  ldx #{c2}
+  tya
+  tay
+  lda {c1},x
+  clc
+  adc #1
+  sta ({z1}),y
+pbuz1_derefidx_vbuyy=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:22.5
+  sty $ff
+  
+  ldy #{c2}
+  lda {c1},y
+  clc
+  adc #1
+  ldy $ff
+  sta ({z1}),y
 pbuz1_derefidx_vbuyy=_bnot_vbuc1 < pbuz1_derefidx_vbuaa=_bnot_vbuc1 < vbuaa=_bnot_vbuc1 < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:14.0
   tya
   tay
@@ -1562,6 +1760,14 @@ pbuz1_derefidx_vbuz1=_bnot_vbuaa < pbuz1_derefidx_vbuyy=_bnot_vbuaa < vbuaa=_bno
   eor #$ff
   ldy $ff
   sta ({z1}),y
+pbuz1_derefidx_vbuz1=_neg_vbuaa < pbuz1_derefidx_vbuz1=_neg_vbuxx < pbuz1_derefidx_vbuaa=_neg_vbuxx < vbuaa=_neg_vbuxx - clobber:A X Y  cycles:19.0
+  tax
+  lda {z1}
+  tay
+  dex
+  txa
+  eor #$ff
+  sta ({z1}),y
 pbuz1_derefidx_vbuz1=_neg_vbuaa < pbuz1_derefidx_vbuyy=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A Y  cycles:21.0
   ldy {z1}
   sty $ff
@@ -1577,6 +1783,13 @@ pbuz1_derefidx_vbuz1=_dec_vbuxx < pbuz1_derefidx_vbuaa=_dec_vbuxx < vbuaa=_dec_v
   txa
   sec
   sbc #1
+  sta ({z1}),y
+pbuz1_derefidx_vbuz1=_neg_vbuxx < pbuz1_derefidx_vbuaa=_neg_vbuxx < vbuaa=_neg_vbuxx - clobber:A X Y  cycles:17.0
+  lda {z1}
+  tay
+  dex
+  txa
+  eor #$ff
   sta ({z1}),y
 pbuz1_derefidx_vbuz1=_neg_vbuxx < pbuz1_derefidx_vbuaa=_neg_vbuxx < vbuaa=_neg_vbuxx < vbuaa=_neg_vbuaa - clobber:A Y  cycles:19.0
   lda {z1}
@@ -1621,6 +1834,15 @@ pbuz1_derefidx_vbuz1=_inc_vbuz2 < pbuz1_derefidx_vbuaa=_inc_vbuz2 < vbuaa=_inc_v
   adc #1
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuz1=_pos_vbuz2
+pbuz1_derefidx_vbuz1=_inc__deref_pbuz1 < pbuz1_derefidx_vbuz1=_inc_vbuaa < pbuz1_derefidx_vbuz1=_inc_vbuxx < pbuz1_derefidx_vbuaa=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=vbuxx_plus_1 - clobber:A X Y  cycles:24.5
+  ldy #0
+  lda ({z1}),y
+  tax
+  lda {z1}
+  tay
+  inx
+  txa
+  sta ({z1}),y
 pbuz1_derefidx_vbuz1=_inc__deref_pbuz1 < pbuz1_derefidx_vbuz1=_inc_vbuaa < pbuz1_derefidx_vbuyy=_inc_vbuaa < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:26.5
   ldy #0
   lda ({z1}),y
@@ -1786,8 +2008,40 @@ pbuz1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz2 < pbuz1_derefidx_vbuaa=_inc_pbuc1
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuz1=_bnot_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE pbuz1_derefidx_vbuz1=_bnot_pbuc1_derefidx_vbuc2
-CANNOT SYNTHESIZE pbuz1_derefidx_vbuz1=_neg_pbuc1_derefidx_vbuc2
+pbuz1_derefidx_vbuz1=_bnot_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_vbuaa - clobber:A X Y  cycles:19.5
+  lda {z1}
+  ldx #{c2}
+  tay
+  lda {c1},x
+  eor #$ff
+  sta ({z1}),y
+pbuz1_derefidx_vbuz1=_bnot_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_bnot_pbuc1_derefidx_vbuyy < vbuaa=_bnot_pbuc1_derefidx_vbuyy < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:23.5
+  lda {z1}
+  ldy #{c2}
+  sta $ff
+  lda {c1},y
+  eor #$ff
+  ldy $ff
+  sta ({z1}),y
+pbuz1_derefidx_vbuz1=_neg_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_vbuaa - clobber:A X Y  cycles:23.5
+  lda {z1}
+  ldx #{c2}
+  tay
+  lda {c1},x
+  eor #$ff
+  clc
+  adc #$01
+  sta ({z1}),y
+pbuz1_derefidx_vbuz1=_neg_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_vbuaa - clobber:A Y  cycles:27.5
+  lda {z1}
+  ldy #{c2}
+  sta $ff
+  lda {c1},y
+  eor #$ff
+  clc
+  adc #$01
+  ldy $ff
+  sta ({z1}),y
 pbuz1_derefidx_vbuz1=_dec_vbuc1 < pbuz1_derefidx_vbuaa=_dec_vbuc1 < vbuaa=_dec_vbuc1 < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A Y  cycles:17.0
   lda {z1}
   tay
@@ -1816,10 +2070,9 @@ pbuz1_derefidx_vbuz2=_dec_vbuxx < vbuaa=_dec_vbuxx < vbuaa=vbuxx_minus_1 < vbuaa
   ldy {z2}
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuz2=_pos_vbuxx
-pbuz1_derefidx_vbuz2=_inc_vbuyy < pbuz1_derefidx_vbuz2=_inc_vbuaa < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:15.0
+pbuz1_derefidx_vbuz2=_inc_vbuyy < vbuaa=_inc_vbuyy < vbuaa=vbuyy_plus_1 - clobber:A Y  cycles:13.0
+  iny
   tya
-  clc
-  adc #1
   ldy {z2}
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuz2=_pos_vbuyy
@@ -1997,8 +2250,20 @@ pbuz1_derefidx_vbuz2=_inc_pbuc1_derefidx_vbuz3 < pbuz1_derefidx_vbuz2=_inc_pbuc1
   sta ({z1}),y
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuz2=_bnot_pbuc1_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuz1_derefidx_vbuz2=_neg_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE pbuz1_derefidx_vbuz2=_bnot_pbuc1_derefidx_vbuc2
-CANNOT SYNTHESIZE pbuz1_derefidx_vbuz2=_neg_pbuc1_derefidx_vbuc2
+pbuz1_derefidx_vbuz2=_bnot_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuz2=_bnot_pbuc1_derefidx_vbuyy < vbuaa=_bnot_pbuc1_derefidx_vbuyy < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:17.5
+  ldy #{c2}
+  lda {c1},y
+  eor #$ff
+  ldy {z2}
+  sta ({z1}),y
+pbuz1_derefidx_vbuz2=_neg_pbuc1_derefidx_vbuc2 < pbuz1_derefidx_vbuz2=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_vbuaa - clobber:A Y  cycles:21.5
+  ldy #{c2}
+  lda {c1},y
+  eor #$ff
+  clc
+  adc #$01
+  ldy {z2}
+  sta ({z1}),y
 pbuz1_derefidx_vbuz2=_dec_vbuc1 < pbuz1_derefidx_vbuz2=_dec_vbuaa < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A Y  cycles:15.0
   lda #{c1}
   sec
@@ -2101,6 +2366,11 @@ pbuc1_derefidx_vbuaa=_dec_vbuaa < pbuc1_derefidx_vbuyy=_dec_vbuyy < vbuaa=_dec_v
   sbc #1
   sta {c1},y
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuaa=_pos_vbuaa
+pbuc1_derefidx_vbuaa=_inc_vbuxx < pbuc1_derefidx_vbuyy=_inc_vbuxx < vbuaa=_inc_vbuxx < vbuaa=vbuxx_plus_1 - clobber:A X Y  cycles:11.0
+  tay
+  inx
+  txa
+  sta {c1},y
 pbuc1_derefidx_vbuaa=_inc_vbuxx < pbuc1_derefidx_vbuyy=_inc_vbuxx < pbuc1_derefidx_vbuyy=_inc_vbuaa < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:13.0
   tay
   txa
@@ -2113,6 +2383,11 @@ pbuc1_derefidx_vbuaa=_inc_vbuyy < pbuc1_derefidx_vbuxx=_inc_vbuyy < pbuc1_derefi
   tya
   clc
   adc #1
+  sta {c1},x
+pbuc1_derefidx_vbuaa=_inc_vbuyy < pbuc1_derefidx_vbuxx=_inc_vbuyy < vbuaa=_inc_vbuyy < vbuaa=vbuyy_plus_1 - clobber:A X Y  cycles:11.0
+  tax
+  iny
+  tya
   sta {c1},x
 pbuc1_derefidx_vbuaa=_bnot_vbuz1 < pbuc1_derefidx_vbuxx=_bnot_vbuz1 < pbuc1_derefidx_vbuxx=_bnot_vbuaa < vbuaa=_bnot_vbuaa - clobber:A X   cycles:12.0
   tax
@@ -2324,17 +2599,43 @@ CANNOT SYNTHESIZE pbuc1_derefidx_vbuaa=_bnot_pbuc2_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuaa=_neg_pbuc2_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuaa=_dec_pbuc2_derefidx_vbuc2
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuaa=_neg_pbuc2_derefidx_vbuc2
-CANNOT SYNTHESIZE pbuc1_derefidx_vbuaa=_dec_pbuc2_derefidx_vbuc3
+pbuc1_derefidx_vbuaa=_dec_pbuc2_derefidx_vbuc3 < pbuc1_derefidx_vbuxx=_dec_pbuc2_derefidx_vbuc3 < vbuaa=_dec_pbuc1_derefidx_vbuc2 < vbuaa=_dec_pbuc1_derefidx_vbuxx < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A X   cycles:23.5
+  tax
+  stx $ff
+  
+  ldx #{c3}
+  lda {c2},x
+  sec
+  sbc #1
+  ldx $ff
+  sta {c1},x
+pbuc1_derefidx_vbuaa=_dec_pbuc2_derefidx_vbuc3 < pbuc1_derefidx_vbuxx=_dec_pbuc2_derefidx_vbuc3 < vbuaa=_dec_pbuc1_derefidx_vbuc2 < vbuaa=_dec_pbuc1_derefidx_vbuyy < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A X Y  cycles:17.5
+  tax
+  ldy #{c3}
+  lda {c2},y
+  sec
+  sbc #1
+  sta {c1},x
+pbuc1_derefidx_vbuaa=_dec_pbuc2_derefidx_vbuc3 < pbuc1_derefidx_vbuyy=_dec_pbuc2_derefidx_vbuc3 < vbuaa=_dec_pbuc1_derefidx_vbuc2 < vbuaa=_dec_pbuc1_derefidx_vbuyy < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A Y  cycles:23.5
+  tay
+  sty $ff
+  
+  ldy #{c3}
+  lda {c2},y
+  sec
+  sbc #1
+  ldy $ff
+  sta {c1},y
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuaa=_pos_pbuc2_derefidx_vbuc3
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuaa=_dec_vbuc1
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuaa=_pos_vbuc1
-pbuc1_derefidx_vbuaa=_inc_vbuc2 < pbuc1_derefidx_vbuxx=_inc_vbuc2 < vbuaa=_inc_vbuc1 < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A X   cycles:13.0
+pbuc1_derefidx_vbuaa=_inc_vbuc2 < pbuc1_derefidx_vbuxx=_inc_vbuc2 < pbuc1_derefidx_vbuxx=_inc_vbuaa < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A X   cycles:13.0
   tax
   lda #{c2}
   clc
   adc #1
   sta {c1},x
-pbuc1_derefidx_vbuaa=_inc_vbuc2 < pbuc1_derefidx_vbuyy=_inc_vbuc2 < vbuaa=_inc_vbuc1 < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:13.0
+pbuc1_derefidx_vbuaa=_inc_vbuc2 < pbuc1_derefidx_vbuyy=_inc_vbuc2 < pbuc1_derefidx_vbuyy=_inc_vbuaa < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:13.0
   tay
   lda #{c2}
   clc
@@ -2364,6 +2665,11 @@ pbuc1_derefidx_vbuxx=_neg_vbuyy < vbuaa=_neg_vbuyy < vbuaa=_neg_vbuaa - clobber:
   eor #$ff
   clc
   adc #$01
+  sta {c1},x
+pbuc1_derefidx_vbuxx=_neg_vbuyy < vbuaa=_neg_vbuyy - clobber:A Y  cycles:11.0
+  dey
+  tya
+  eor #$ff
   sta {c1},x
 pbuc1_derefidx_vbuxx=_dec_vbuz1 < pbuc1_derefidx_vbuxx=_dec_vbuaa < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A   cycles:12.0
   lda {z1}
@@ -2489,14 +2795,28 @@ CANNOT SYNTHESIZE pbuc1_derefidx_vbuxx=_dec_pbuc2_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuxx=_pos_pbuc2_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuxx=_dec_pbuc2_derefidx_vbuc2
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuxx=_pos_pbuc2_derefidx_vbuc2
-CANNOT SYNTHESIZE pbuc1_derefidx_vbuxx=_inc_pbuc2_derefidx_vbuc3
+pbuc1_derefidx_vbuxx=_inc_pbuc2_derefidx_vbuc3 < vbuaa=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuxx < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A X   cycles:21.5
+  stx $ff
+  
+  ldx #{c3}
+  lda {c2},x
+  clc
+  adc #1
+  ldx $ff
+  sta {c1},x
+pbuc1_derefidx_vbuxx=_inc_pbuc2_derefidx_vbuc3 < vbuaa=_inc_pbuc1_derefidx_vbuc2 < vbuaa=_inc_pbuc1_derefidx_vbuyy < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:15.5
+  ldy #{c3}
+  lda {c2},y
+  clc
+  adc #1
+  sta {c1},x
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuxx=_pos_pbuc2_derefidx_vbuc3
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuxx=_inc_vbuc1
-pbuc1_derefidx_vbuxx=_bnot_vbuc2 < vbuaa=_bnot_vbuc1 < vbuaa=_bnot_vbuaa - clobber:A   cycles:9.0
+pbuc1_derefidx_vbuxx=_bnot_vbuc2 < pbuc1_derefidx_vbuxx=_bnot_vbuaa < vbuaa=_bnot_vbuaa - clobber:A   cycles:9.0
   lda #{c2}
   eor #$ff
   sta {c1},x
-pbuc1_derefidx_vbuxx=_neg_vbuc2 < vbuaa=_neg_vbuc1 < vbuaa=_neg_vbuaa - clobber:A   cycles:13.0
+pbuc1_derefidx_vbuxx=_neg_vbuc2 < pbuc1_derefidx_vbuxx=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A   cycles:13.0
   lda #{c2}
   eor #$ff
   clc
@@ -2520,6 +2840,11 @@ pbuc1_derefidx_vbuyy=_neg_vbuxx < vbuaa=_neg_vbuxx < vbuaa=_neg_vbuaa - clobber:
   eor #$ff
   clc
   adc #$01
+  sta {c1},y
+pbuc1_derefidx_vbuyy=_neg_vbuxx < vbuaa=_neg_vbuxx - clobber:A X   cycles:11.0
+  dex
+  txa
+  eor #$ff
   sta {c1},y
 pbuc1_derefidx_vbuyy=_dec_vbuyy < vbuaa=_dec_vbuyy < vbuaa=vbuyy_minus_1 < vbuaa=vbuaa_minus_1 - clobber:A   cycles:11.0
   tya
@@ -2662,16 +2987,44 @@ CANNOT SYNTHESIZE pbuc1_derefidx_vbuyy=_pos_pbuc2_derefidx_vbuz1
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuyy=_inc_pbuc2_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuyy=_pos_pbuc2_derefidx_vbuc1
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuyy=_inc_pbuc2_derefidx_vbuc2
-CANNOT SYNTHESIZE pbuc1_derefidx_vbuyy=_bnot_pbuc2_derefidx_vbuc3
-CANNOT SYNTHESIZE pbuc1_derefidx_vbuyy=_neg_pbuc2_derefidx_vbuc3
+pbuc1_derefidx_vbuyy=_bnot_pbuc2_derefidx_vbuc3 < vbuaa=_bnot_pbuc1_derefidx_vbuc2 < vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_vbuaa - clobber:A X   cycles:13.5
+  ldx #{c3}
+  lda {c2},x
+  eor #$ff
+  sta {c1},y
+pbuc1_derefidx_vbuyy=_bnot_pbuc2_derefidx_vbuc3 < vbuaa=_bnot_pbuc1_derefidx_vbuc2 < vbuaa=_bnot_pbuc1_derefidx_vbuyy < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:19.5
+  sty $ff
+  
+  ldy #{c3}
+  lda {c2},y
+  eor #$ff
+  ldy $ff
+  sta {c1},y
+pbuc1_derefidx_vbuyy=_neg_pbuc2_derefidx_vbuc3 < vbuaa=_neg_pbuc1_derefidx_vbuc2 < vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_vbuaa - clobber:A X   cycles:17.5
+  ldx #{c3}
+  lda {c2},x
+  eor #$ff
+  clc
+  adc #$01
+  sta {c1},y
+pbuc1_derefidx_vbuyy=_neg_pbuc2_derefidx_vbuc3 < vbuaa=_neg_pbuc1_derefidx_vbuc2 < vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_vbuaa - clobber:A Y  cycles:23.5
+  sty $ff
+  
+  ldy #{c3}
+  lda {c2},y
+  eor #$ff
+  clc
+  adc #$01
+  ldy $ff
+  sta {c1},y
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuyy=_bnot_vbuc1
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuyy=_neg_vbuc1
-pbuc1_derefidx_vbuyy=_dec_vbuc2 < vbuaa=_dec_vbuc1 < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A   cycles:11.0
+pbuc1_derefidx_vbuyy=_dec_vbuc2 < pbuc1_derefidx_vbuyy=_dec_vbuaa < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A   cycles:11.0
   lda #{c2}
   sec
   sbc #1
   sta {c1},y
-pbuc1_derefidx_vbuyy=_neg_vbuc2 < vbuaa=_neg_vbuc1 < vbuaa=_neg_vbuaa - clobber:A   cycles:13.0
+pbuc1_derefidx_vbuyy=_neg_vbuc2 < pbuc1_derefidx_vbuyy=_neg_vbuaa < vbuaa=_neg_vbuaa - clobber:A   cycles:13.0
   lda #{c2}
   eor #$ff
   clc
@@ -2706,6 +3059,11 @@ pbuc1_derefidx_vbuz1=_inc_vbuyy < pbuc1_derefidx_vbuxx=_inc_vbuyy < pbuc1_derefi
   tya
   clc
   adc #1
+  sta {c1},x
+pbuc1_derefidx_vbuz1=_inc_vbuyy < vbuaa=_inc_vbuyy < vbuaa=vbuyy_plus_1 - clobber:A X Y  cycles:12.0
+  iny
+  tya
+  ldx {z1}
   sta {c1},x
 pbuc1_derefidx_vbuz1=_inc_vbuyy < pbuc1_derefidx_vbuz1=_inc_vbuaa < pbuc1_derefidx_vbuyy=_inc_vbuaa < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A Y  cycles:14.0
   tya
@@ -2914,8 +3272,19 @@ pbuc1_derefidx_vbuz1=_dec_pbuc1_derefidx_vbuz2 < pbuc1_derefidx_vbuz1=_dec_pbuc1
   sta {c1},x
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuz1=_pos_pbuc1_derefidx_vbuz2
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuc1
-CANNOT SYNTHESIZE pbuc1_derefidx_vbuz1=_bnot_pbuc1_derefidx_vbuc2
-CANNOT SYNTHESIZE pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuc2
+pbuc1_derefidx_vbuz1=_bnot_pbuc1_derefidx_vbuc2 < pbuc1_derefidx_vbuz1=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_vbuaa - clobber:A X   cycles:16.5
+  ldx #{c2}
+  lda {c1},x
+  eor #$ff
+  ldx {z1}
+  sta {c1},x
+pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuc2 < pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuxx < vbuaa=_inc_pbuc1_derefidx_vbuxx < vbuaa=_inc_vbuaa < vbuaa=vbuaa_plus_1 - clobber:A X   cycles:18.5
+  ldx #{c2}
+  lda {c1},x
+  clc
+  adc #1
+  ldx {z1}
+  sta {c1},x
 pbuc1_derefidx_vbuz1=_bnot_pbuc2_derefidx_vbuaa < pbuc1_derefidx_vbuz1=_bnot_pbuc2_derefidx_vbuxx < vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_vbuaa - clobber:A X   cycles:16.5
   tax
   lda {c2},x
@@ -3031,8 +3400,40 @@ pbuc1_derefidx_vbuz1=_inc_pbuc2_derefidx_vbuc1 < vbuaa=_inc_pbuc2_derefidx_vbuc1
   sta {c1},x
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuz1=_bnot_pbuc2_derefidx_vbuc2
 CANNOT SYNTHESIZE pbuc1_derefidx_vbuz1=_inc_pbuc2_derefidx_vbuc2
-CANNOT SYNTHESIZE pbuc1_derefidx_vbuz1=_bnot_pbuc2_derefidx_vbuc3
-CANNOT SYNTHESIZE pbuc1_derefidx_vbuz1=_neg_pbuc2_derefidx_vbuc3
+pbuc1_derefidx_vbuz1=_bnot_pbuc2_derefidx_vbuc3 < vbuaa=_bnot_pbuc1_derefidx_vbuc2 < vbuaa=_bnot_pbuc1_derefidx_vbuxx < vbuaa=_bnot_vbuaa - clobber:A X   cycles:16.5
+  ldx #{c3}
+  lda {c2},x
+  eor #$ff
+  ldx {z1}
+  sta {c1},x
+pbuc1_derefidx_vbuz1=_bnot_pbuc2_derefidx_vbuc3 < pbuc1_derefidx_vbuyy=_bnot_pbuc2_derefidx_vbuc3 < vbuaa=_bnot_pbuc1_derefidx_vbuc2 < vbuaa=_bnot_pbuc1_derefidx_vbuyy < vbuaa=_bnot_vbuaa - clobber:A Y  cycles:22.5
+  ldy {z1}
+  sty $ff
+  
+  ldy #{c3}
+  lda {c2},y
+  eor #$ff
+  ldy $ff
+  sta {c1},y
+pbuc1_derefidx_vbuz1=_neg_pbuc2_derefidx_vbuc3 < vbuaa=_neg_pbuc1_derefidx_vbuc2 < vbuaa=_neg_pbuc1_derefidx_vbuxx < vbuaa=_neg_vbuaa - clobber:A X   cycles:20.5
+  ldx #{c3}
+  lda {c2},x
+  eor #$ff
+  clc
+  adc #$01
+  ldx {z1}
+  sta {c1},x
+pbuc1_derefidx_vbuz1=_neg_pbuc2_derefidx_vbuc3 < pbuc1_derefidx_vbuyy=_neg_pbuc2_derefidx_vbuc3 < vbuaa=_neg_pbuc1_derefidx_vbuc2 < vbuaa=_neg_pbuc1_derefidx_vbuyy < vbuaa=_neg_vbuaa - clobber:A Y  cycles:26.5
+  ldy {z1}
+  sty $ff
+  
+  ldy #{c3}
+  lda {c2},y
+  eor #$ff
+  clc
+  adc #$01
+  ldy $ff
+  sta {c1},y
 pbuc1_derefidx_vbuz1=_bnot_vbuc1 < vbuaa=_bnot_vbuc1 < vbuaa=_bnot_vbuaa - clobber:A X   cycles:12.0
   lda #{c1}
   eor #$ff
@@ -3045,15 +3446,15 @@ pbuc1_derefidx_vbuz1=_neg_vbuc1 < vbuaa=_neg_vbuc1 < vbuaa=_neg_vbuaa - clobber:
   adc #$01
   ldx {z1}
   sta {c1},x
-pbuc1_derefidx_vbuz1=_dec_vbuc2 < vbuaa=_dec_vbuc1 < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A X   cycles:14.0
+pbuc1_derefidx_vbuz1=_dec_vbuc2 < pbuc1_derefidx_vbuz1=_dec_vbuaa < pbuc1_derefidx_vbuxx=_dec_vbuaa < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A X   cycles:14.0
   lda #{c2}
+  ldx {z1}
   sec
   sbc #1
-  ldx {z1}
   sta {c1},x
-pbuc1_derefidx_vbuz1=_dec_vbuc2 < pbuc1_derefidx_vbuyy=_dec_vbuc2 < vbuaa=_dec_vbuc1 < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A Y  cycles:14.0
-  ldy {z1}
+pbuc1_derefidx_vbuz1=_dec_vbuc2 < pbuc1_derefidx_vbuz1=_dec_vbuaa < pbuc1_derefidx_vbuyy=_dec_vbuaa < vbuaa=_dec_vbuaa < vbuaa=vbuaa_minus_1 - clobber:A Y  cycles:14.0
   lda #{c2}
+  ldy {z1}
   sec
   sbc #1
   sta {c1},y

@@ -21,8 +21,8 @@ main: {
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
   b4:
-    lda RASTER
-    cmp #$40
+    lda #$40
+    cmp RASTER
     bne b4
     // Create rasterbars
     lda #0

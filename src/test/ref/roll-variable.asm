@@ -20,8 +20,8 @@ main: {
     ldy b
     sta screen,y
     inc b
-    lda b
-    cmp #8
+    lda #8
+    cmp b
     bne b1
     rts
 }

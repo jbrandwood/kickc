@@ -32,8 +32,8 @@ main: {
     cpy #$b
     bne b6
     inc y
-    lda y
-    cmp #$b
+    lda #$b
+    cmp y
     bne b5
     inx
     cpx #$b

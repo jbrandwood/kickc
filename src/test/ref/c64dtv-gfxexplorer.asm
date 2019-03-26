@@ -455,8 +455,8 @@ gfx_mode: {
     cpx #$28
     bne b11
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b10
     // Background colors
     lda #0
@@ -502,8 +502,8 @@ gfx_mode: {
     cpx #$10
     bne b13
   b19:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b19
     jsr keyboard_event_scan
     jsr keyboard_event_get
@@ -555,14 +555,13 @@ keyboard_event_scan: {
     ldy row
     cmp keyboard_scan_values,y
     bne b6
-    lda #8
-    clc
-    adc keycode
-    sta keycode
+    lax keycode
+    axs #-8
+    stx keycode
   b3:
     inc row
-    lda row
-    cmp #8
+    lda #8
+    cmp row
     bne b1
     lda #KEY_LSHIFT
     sta keyboard_event_pressed.keycode
@@ -612,8 +611,8 @@ keyboard_event_scan: {
     and keyboard_matrix_col_bitmask,x
     cmp #0
     beq b5
-    lda keyboard_events_size
-    cmp #8
+    lda #8
+    cmp keyboard_events_size
     beq b5
     lda keyboard_matrix_col_bitmask,x
     and row_scan
@@ -1015,8 +1014,8 @@ form_mode: {
     sta preset_current
   // Let the user change values in the form
   b5:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b5
     jsr form_control
     txa
@@ -1355,8 +1354,8 @@ form_control: {
     cmp #0
     beq b5
     dec form_field_idx
-    lda form_field_idx
-    cmp #$ff
+    lda #$ff
+    cmp form_field_idx
     bne b7
     lda #form_fields_cnt-1
     sta form_field_idx
@@ -1368,8 +1367,8 @@ form_control: {
     rts
   b5:
     inc form_field_idx
-    lda form_field_idx
-    cmp #form_fields_cnt
+    lda #form_fields_cnt
+    cmp form_field_idx
     bne b7
     lda #0
     sta form_field_idx
@@ -1383,9 +1382,9 @@ form_control: {
     beq b10
     ldx form_field_idx
     dec form_fields_val,x
+    lda #$ff
     ldy form_field_idx
-    lda form_fields_val,y
-    cmp #$ff
+    cmp form_fields_val,y
     bne b12
     lda form_fields_max,y
     sta form_fields_val,y
@@ -1649,8 +1648,8 @@ gfx_init_plane_fill: {
     cpx #$28
     bne b2
     inc by
-    lda by
-    cmp #$c8
+    lda #$c8
+    cmp by
     bne b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
@@ -1730,8 +1729,8 @@ gfx_init_plane_horisontal2: {
     cpx #$28
     bne b2
     inc ay
-    lda ay
-    cmp #$c8
+    lda #$c8
+    cmp ay
     bne b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
@@ -1765,8 +1764,8 @@ gfx_init_plane_vertical: {
     cpx #$28
     bne b2
     inc by
-    lda by
-    cmp #$c8
+    lda #$c8
+    cmp by
     bne b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
@@ -1804,8 +1803,8 @@ gfx_init_plane_horisontal: {
     cpx #$28
     bne b2
     inc ay
-    lda ay
-    cmp #$c8
+    lda #$c8
+    cmp ay
     bne b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
@@ -1878,8 +1877,8 @@ gfx_init_plane_charset8: {
     cpx #8
     bne b3
     inc cr
-    lda cr
-    cmp #8
+    lda #8
+    cmp cr
     bne b2
     inc ch
     lda ch
@@ -1950,8 +1949,8 @@ gfx_init_plane_8bppchunky: {
     cmp #<$140
     bne b2
     inc y
-    lda y
-    cmp #$c8
+    lda #$c8
+    cmp y
     bne b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
@@ -2280,8 +2279,8 @@ bitmap_clear: {
     cpx #$c8
     bne b2
     inc y
-    lda y
-    cmp #$28
+    lda #$28
+    cmp y
     bne b1
     rts
 }
@@ -2314,9 +2313,8 @@ bitmap_init: {
     sta yoffs+1
     tax
   b3:
-    txa
-    and #7
-    sta _6
+    lda #7
+    sax _6
     lda yoffs
     ora _6
     sta bitmap_plot_ylo,x
@@ -2404,8 +2402,8 @@ gfx_init_screen4: {
     cpx #$28
     bne b2
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b1
     rts
 }
@@ -2443,8 +2441,8 @@ gfx_init_screen3: {
     cpx #$28
     bne b2
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b1
     rts
 }
@@ -2488,8 +2486,8 @@ gfx_init_screen2: {
     cpx #$28
     bne b2
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b1
     rts
 }
@@ -2520,8 +2518,8 @@ gfx_init_screen1: {
     cpx #$28
     bne b2
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b1
     rts
 }
@@ -2559,8 +2557,8 @@ gfx_init_screen0: {
     cpx #$28
     bne b2
     inc cy
-    lda cy
-    cmp #$19
+    lda #$19
+    cmp cy
     bne b1
     rts
 }

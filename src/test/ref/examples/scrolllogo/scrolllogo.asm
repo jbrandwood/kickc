@@ -64,16 +64,16 @@ main: {
     rts
 }
 loop: {
-    .label _1 = 8
-    .label xpos = 8
+    .label _1 = 9
+    .label xpos = 9
     lda #0
     sta xsin_idx
     sta xsin_idx+1
   b1:
   // Wait for the raster to reach the bottom of the screen
   b4:
-    lda RASTER
-    cmp #$ff
+    lda #$ff
+    cmp RASTER
     bne b4
     inc BORDERCOL
     lda xsin_idx
@@ -111,11 +111,12 @@ loop: {
     dec BORDERCOL
     jmp b1
 }
-// render_logo(signed word zeropage(8) xpos)
+// render_logo(signed word zeropage(9) xpos)
 render_logo: {
-    .label _3 = $e
-    .label xpos = 8
-    .label x_char = $16
+    .label _3 = $f
+    .label xpos = 9
+    .label x_char = 4
+    .label logo_idx = 4
     lda xpos
     and #7
     ora #VIC_MCM
@@ -139,101 +140,103 @@ render_logo: {
     sta x_char
     lda xpos+1
     bmi b1
-    ldx #0
-  b2:
-    cpx x_char
-    bne b5
     ldy #0
+  b2:
+    cpy x_char
+    bne b5
+    lda #0
+    sta logo_idx
   b6:
-    cpx #$28
+    cpy #$28
     bne b9
   breturn:
     rts
   b9:
-    tya
-    sta SCREEN,x
-    tya
+    lda logo_idx
+    sta SCREEN,y
+    lda #$28*1
     clc
-    adc #$28*1
-    sta SCREEN+$28*1,x
-    tya
+    adc logo_idx
+    sta SCREEN+$28*1,y
+    lda #$28*2
     clc
-    adc #$28*2
-    sta SCREEN+$28*2,x
-    tya
+    adc logo_idx
+    sta SCREEN+$28*2,y
+    lda #$28*3
     clc
-    adc #$28*3
-    sta SCREEN+$28*3,x
-    tya
+    adc logo_idx
+    sta SCREEN+$28*3,y
+    lda #$28*4
     clc
-    adc #$28*4
-    sta SCREEN+$28*4,x
-    tya
+    adc logo_idx
+    sta SCREEN+$28*4,y
+    lda #$28*5
     clc
-    adc #$28*5
-    sta SCREEN+$28*5,x
-    inx
+    adc logo_idx
+    sta SCREEN+$28*5,y
     iny
+    inc logo_idx
     jmp b6
   b5:
     lda #0
-    sta SCREEN,x
-    sta SCREEN+$28*1,x
-    sta SCREEN+$28*2,x
-    sta SCREEN+$28*3,x
-    sta SCREEN+$28*4,x
-    sta SCREEN+$28*5,x
-    inx
+    sta SCREEN,y
+    sta SCREEN+$28*1,y
+    sta SCREEN+$28*2,y
+    sta SCREEN+$28*3,y
+    sta SCREEN+$28*4,y
+    sta SCREEN+$28*5,y
+    iny
     jmp b2
   b1:
     lda x_char
     eor #$ff
     clc
     adc #1
-    tay
-    ldx #0
+    sta logo_idx
+    ldy #0
   b11:
-    cpy #$28
+    lda #$28
+    cmp logo_idx
     bne b14
   b15:
-    cpx #$28
+    cpy #$28
     bne b18
     jmp breturn
   b18:
     lda #0
-    sta SCREEN,x
-    sta SCREEN+$28*1,x
-    sta SCREEN+$28*2,x
-    sta SCREEN+$28*3,x
-    sta SCREEN+$28*4,x
-    sta SCREEN+$28*5,x
-    inx
+    sta SCREEN,y
+    sta SCREEN+$28*1,y
+    sta SCREEN+$28*2,y
+    sta SCREEN+$28*3,y
+    sta SCREEN+$28*4,y
+    sta SCREEN+$28*5,y
+    iny
     jmp b15
   b14:
-    tya
-    sta SCREEN,x
-    tya
+    lda logo_idx
+    sta SCREEN,y
+    lda #$28*1
     clc
-    adc #$28*1
-    sta SCREEN+$28*1,x
-    tya
+    adc logo_idx
+    sta SCREEN+$28*1,y
+    lda #$28*2
     clc
-    adc #$28*2
-    sta SCREEN+$28*2,x
-    tya
+    adc logo_idx
+    sta SCREEN+$28*2,y
+    lda #$28*3
     clc
-    adc #$28*3
-    sta SCREEN+$28*3,x
-    tya
+    adc logo_idx
+    sta SCREEN+$28*3,y
+    lda #$28*4
     clc
-    adc #$28*4
-    sta SCREEN+$28*4,x
-    tya
+    adc logo_idx
+    sta SCREEN+$28*4,y
+    lda #$28*5
     clc
-    adc #$28*5
-    sta SCREEN+$28*5,x
-    inx
+    adc logo_idx
+    sta SCREEN+$28*5,y
     iny
+    inc logo_idx
     jmp b11
 }
 // Generate signed word sinus table - with values in the range min-max.
@@ -245,13 +248,13 @@ sin16s_gen2: {
     .const max = $140
     .label ampl = max-min
     .const offs = min+(ampl>>1)
-    .label _5 = $a
-    .label _6 = $e
-    .label _8 = $e
+    .label _5 = $b
+    .label _6 = $f
+    .label _8 = $f
     .label step = $1b
     .label sintab = 2
-    .label x = 4
-    .label i = 8
+    .label x = 5
+    .label i = 9
     jsr div32u16u
     lda #0
     sta i
@@ -332,10 +335,10 @@ sin16s_gen2: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage($17) a)
 mul16s: {
-    .label _6 = $e
-    .label _16 = $e
-    .label m = $a
-    .label return = $a
+    .label _6 = $f
+    .label _16 = $f
+    .label m = $b
+    .label return = $b
     .label a = $17
     lda a
     sta mul16u.a
@@ -367,13 +370,13 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($10) a, word zeropage($e) b)
+// mul16u(word zeropage($11) a, word zeropage($f) b)
 mul16u: {
-    .label mb = $12
-    .label a = $10
-    .label res = $a
-    .label return = $a
-    .label b = $e
+    .label mb = $13
+    .label a = $11
+    .label res = $b
+    .label return = $b
+    .label b = $f
     lda b
     sta mb
     lda b+1
@@ -422,21 +425,21 @@ mul16u: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zeropage($a) x)
+// sin16s(dword zeropage($b) x)
 sin16s: {
-    .label _6 = $a
-    .label x = $a
+    .label _6 = $b
+    .label x = $b
     .label return = $17
     .label x1 = $1f
     .label x2 = $19
     .label x3 = $19
-    .label x3_6 = $e
+    .label x3_6 = $f
     .label usinx = $17
     .label x4 = $19
-    .label x5 = $e
-    .label x5_128 = $e
+    .label x5 = $f
+    .label x5_128 = $f
     .label sinx = $17
-    .label isUpper = $16
+    .label isUpper = 4
     lda x+3
     cmp #>PI_u4f28>>$10
     bcc b4
@@ -598,13 +601,13 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($19) v1, word zeropage($e) v2, byte register(X) select)
+// mulu16_sel(word zeropage($19) v1, word zeropage($f) v2, byte register(X) select)
 mulu16_sel: {
-    .label _0 = $a
-    .label _1 = $a
+    .label _0 = $b
+    .label _1 = $b
     .label v1 = $19
-    .label v2 = $e
-    .label return = $e
+    .label v2 = $f
+    .label return = $f
     .label return_1 = $19
     .label return_10 = $19
     lda v1
@@ -631,8 +634,8 @@ mulu16_sel: {
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
-    .label quotient_hi = $10
-    .label quotient_lo = $e
+    .label quotient_hi = $11
+    .label quotient_lo = $f
     .label return = $1b
     lda #<PI2_u4f28>>$10
     sta divr16u.dividend
@@ -665,12 +668,12 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(8) dividend, word zeropage(2) rem)
+// divr16u(word zeropage(9) dividend, word zeropage(2) rem)
 divr16u: {
     .label rem = 2
-    .label dividend = 8
-    .label quotient = $e
-    .label return = $e
+    .label dividend = 9
+    .label quotient = $f
+    .label return = $f
     ldx #0
     txa
     sta quotient
@@ -718,7 +721,7 @@ divr16u: {
 // Fill some memory with a value
 // fill(byte register(X) val)
 fill: {
-    .label end = 8
+    .label end = 9
     .label addr = 2
     lda addr
     clc

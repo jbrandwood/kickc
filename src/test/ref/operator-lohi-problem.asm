@@ -6,12 +6,18 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const DVAL = $20000
   .label SCREEN = $400
 main: {
-    lda #DVAL/$400
+    .const dw = $2000
+    .const w1 = dw&$ffff
+    .const w2 = <dw+1
+    lda #<w1
     sta SCREEN
-    lda #0
+    lda #>w1
     sta SCREEN+1
+    lda #<w2
+    sta SCREEN+3
+    lda #>w2
+    sta SCREEN+4
     rts
 }

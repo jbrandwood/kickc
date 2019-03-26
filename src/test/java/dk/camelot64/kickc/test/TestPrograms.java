@@ -32,6 +32,17 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+
+   @Test
+   public void testMusicIrq() throws IOException, URISyntaxException {
+      compileAndCompare("examples/music/music_irq");
+   }
+
+   @Test
+   public void testMusic() throws IOException, URISyntaxException {
+      compileAndCompare("examples/music/music");
+   }
+
    @Test
    public void testConstEarlyIdentification() throws IOException, URISyntaxException {
       compileAndCompare("const-early-identification");

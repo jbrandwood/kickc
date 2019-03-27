@@ -54,7 +54,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
                potentials.add(Registers.getRegisterX());
                potentials.add(Registers.getRegisterY());
             }
-            if(registerType.equals(Registers.RegisterType.ZP_BOOL) && !varRefExtracted(equivalenceClass)) {
+            if(registerType.equals(Registers.RegisterType.ZP_BOOL) && !varRefExtracted(equivalenceClass) &&!varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
             }
             registerPotentials.setPotentialRegisters(equivalenceClass, potentials);

@@ -1,0 +1,96 @@
+// A simple usage of the flexible sprite multiplexer routine
+import "c64"
+import "multiplexer-irq"
+// Location of screen & sprites
+byte* SCREEN = $400;
+byte* SPRITE = $2000;
+byte* YSIN = $2100;
+
+kickasm(pc YSIN) {{
+    .var min = 50
+    .var max = 250-21
+    .var ampl = max-min;
+    .for(var i=0;i<256;i++)
+        .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
+}}
+
+kickasm(pc SPRITE, resource "balloon.png") {{
+    .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+}}
+
+void main() {
+    asm { sei }
+    init();
+    loop();
+}
+
+// Initialize the program
+void init() {
+    *D011 = VIC_DEN | VIC_RSEL | 3;
+    // Initialize the multiplexer
+    plexInit(SCREEN);
+    // Set the x-positions & pointers
+    word xp = 32;
+    for(byte sx: 0..PLEX_COUNT-1) {
+        PLEX_PTR[sx] = (byte)(SPRITE/$40);
+        PLEX_XPOS[sx<<1] = xp;
+        xp += 9;
+    }
+    // Enable & initialize sprites
+    *SPRITES_ENABLE = $ff;
+    for(byte ss: 0..7) {
+        SPRITES_COLS[ss] = GREEN;
+    }
+    // enable the interrupt
+    asm { sei }
+    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    *IRQ_ENABLE = IRQ_RASTER;
+    *IRQ_STATUS = IRQ_RASTER;
+    *KERNEL_IRQ = &plex_irq;
+    asm { cli }
+}
+
+volatile bool framedone = true;
+
+interrupt(kernel_min) void plex_irq() {
+    byte rasterY;
+    *BORDERCOL = WHITE;
+    do {
+        plexShowSprite();
+        rasterY = plexFreeNextYpos();
+    } while (plex_show_idx < PLEX_COUNT && rasterY < *RASTER+2);
+    *IRQ_STATUS = IRQ_RASTER;
+    if (plex_show_idx<PLEX_COUNT) {
+        *RASTER = rasterY;
+    } else {
+        framedone = true;
+    }
+    *BORDERCOL = 0; 
+}
+
+// The raster loop
+void loop() {
+// The current index into the y-sinus
+    volatile byte sin_idx = 0; // without volatile gives wrong asm
+    while(true) {
+        while(!framedone) { }
+        *BORDERCOL = RED;
+        // Assign sinus positions
+        volatile byte y_idx = sin_idx; // without volatile gives wrong asm
+        for(byte sy: 0..PLEX_COUNT-1) {
+            PLEX_YPOS[sy] = YSIN[y_idx];
+            y_idx += 8;
+        }
+        sin_idx +=1;
+        // Sort the sprites by y-position
+        (*BORDERCOL)++;
+        plexSort();
+        *BORDERCOL = GREEN;
+        framedone = false;
+        *VIC_CONTROL &=$7f;
+        *RASTER = $0;
+    }
+}

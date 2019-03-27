@@ -1,0 +1,675 @@
+Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
+Resolved forward reference framedone to (bool) framedone
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (void()**) KERNEL_IRQ#0 ← ((void()**)) (word/signed word/dword/signed dword) $314
+  (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) $d012
+  (byte*) VIC_CONTROL#0 ← ((byte*)) (word/dword/signed dword) $d011
+  (byte*) IRQ_STATUS#0 ← ((byte*)) (word/dword/signed dword) $d019
+  (byte*) IRQ_ENABLE#0 ← ((byte*)) (word/dword/signed dword) $d01a
+  (byte) IRQ_RASTER#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
+  (byte*) CIA1_INTERRUPT#0 ← ((byte*)) (word/dword/signed dword) $dc0d
+  (byte) CIA_INTERRUPT_CLEAR#0 ← (byte/signed byte/word/signed word/dword/signed dword) $7f
+  to:@1
+main: scope:[main]  from @2
+  (bool) framedone#12 ← phi( @2/(bool) framedone#11 )
+  asm { sei  }
+  *((byte*) CIA1_INTERRUPT#0) ← (byte) CIA_INTERRUPT_CLEAR#0
+  *((byte*) VIC_CONTROL#0) ← *((byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) $7f
+  *((byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) $fd
+  *((byte*) IRQ_ENABLE#0) ← (byte) IRQ_RASTER#0
+  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
+  *((void()**) KERNEL_IRQ#0) ← (void()*~) main::$0
+  asm { cli  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@4 main::@7
+  (bool) framedone#9 ← phi( main/(bool) framedone#12 main::@4/(bool) framedone#13 main::@7/(bool) framedone#0 )
+  if(true) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (bool) framedone#15 ← phi( main::@1/(bool) framedone#9 )
+  (bool~) main::$1 ← *((byte*) RASTER#0) < (byte/signed byte/word/signed word/dword/signed dword) $14
+  (bool~) main::$2 ← ! (bool~) main::$1
+  if((bool~) main::$2) goto main::@4
+  to:main::@7
+main::@4: scope:[main]  from main::@2
+  (bool) framedone#13 ← phi( main::@2/(bool) framedone#15 )
+  to:main::@1
+main::@7: scope:[main]  from main::@2
+  (bool) framedone#0 ← true
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  (bool) framedone#6 ← phi( main::@1/(bool) framedone#9 )
+  (bool) framedone#1 ← (bool) framedone#6
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (bool) framedone#2 ← false
+  to:@2
+irq: scope:[irq]  from
+  (bool) framedone#14 ← phi( @2/(bool) framedone#11 )
+  *((byte*) BGCOL#0) ← ++ *((byte*) BGCOL#0)
+  *((byte*) IRQ_STATUS#0) ← (byte) IRQ_RASTER#0
+  (bool~) irq::$0 ← *((byte*) RASTER#0) > (byte/signed byte/word/signed word/dword/signed dword) $32
+  (bool~) irq::$1 ← ! (bool~) irq::$0
+  if((bool~) irq::$1) goto irq::@1
+  to:irq::@2
+irq::@1: scope:[irq]  from irq irq::@2
+  (bool) framedone#10 ← phi( irq/(bool) framedone#14 irq::@2/(bool) framedone#3 )
+  *((byte*) BGCOL#0) ← -- *((byte*) BGCOL#0)
+  to:irq::@return
+irq::@2: scope:[irq]  from irq
+  (bool) framedone#3 ← false
+  to:irq::@1
+irq::@return: scope:[irq]  from irq::@1
+  (bool) framedone#7 ← phi( irq::@1/(bool) framedone#10 )
+  (bool) framedone#4 ← (bool) framedone#7
+  return 
+  to:@return
+@2: scope:[]  from @1
+  (bool) framedone#11 ← phi( @1/(bool) framedone#2 )
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  (bool) framedone#8 ← phi( @2/(bool) framedone#1 )
+  (bool) framedone#5 ← (bool) framedone#8
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(byte*) BGCOL#0
+(byte*) CIA1_INTERRUPT
+(byte*) CIA1_INTERRUPT#0
+(byte) CIA_INTERRUPT_CLEAR
+(byte) CIA_INTERRUPT_CLEAR#0
+(byte*) IRQ_ENABLE
+(byte*) IRQ_ENABLE#0
+(byte) IRQ_RASTER
+(byte) IRQ_RASTER#0
+(byte*) IRQ_STATUS
+(byte*) IRQ_STATUS#0
+(void()**) KERNEL_IRQ
+(void()**) KERNEL_IRQ#0
+(byte*) RASTER
+(byte*) RASTER#0
+(byte*) VIC_CONTROL
+(byte*) VIC_CONTROL#0
+(bool) framedone
+(bool) framedone#0
+(bool) framedone#1
+(bool) framedone#10
+(bool) framedone#11
+(bool) framedone#12
+(bool) framedone#13
+(bool) framedone#14
+(bool) framedone#15
+(bool) framedone#2
+(bool) framedone#3
+(bool) framedone#4
+(bool) framedone#5
+(bool) framedone#6
+(bool) framedone#7
+(bool) framedone#8
+(bool) framedone#9
+interrupt(KERNEL_MIN)(void()) irq()
+(bool~) irq::$0
+(bool~) irq::$1
+(label) irq::@1
+(label) irq::@2
+(label) irq::@return
+(void()) main()
+(void()*~) main::$0
+(bool~) main::$1
+(bool~) main::$2
+(label) main::@1
+(label) main::@2
+(label) main::@4
+(label) main::@7
+(label) main::@return
+
+Inversing boolean not [22] (bool~) main::$2 ← *((byte*) RASTER#0) >= (byte/signed byte/word/signed word/dword/signed dword) $14 from [21] (bool~) main::$1 ← *((byte*) RASTER#0) < (byte/signed byte/word/signed word/dword/signed dword) $14
+Inversing boolean not [34] (bool~) irq::$1 ← *((byte*) RASTER#0) <= (byte/signed byte/word/signed word/dword/signed dword) $32 from [33] (bool~) irq::$0 ← *((byte*) RASTER#0) > (byte/signed byte/word/signed word/dword/signed dword) $32
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias (bool) framedone#1 = (bool) framedone#15 (bool) framedone#9 (bool) framedone#13 (bool) framedone#6 
+Alias (bool) framedone#10 = (bool) framedone#7 (bool) framedone#4 
+Alias (bool) framedone#11 = (bool) framedone#2 
+Alias (bool) framedone#5 = (bool) framedone#8 
+Successful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (bool) framedone#1
+Successful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (bool) framedone#12 (bool) framedone#11
+Redundant Phi (bool) framedone#14 (bool) framedone#11
+Redundant Phi (bool) framedone#5 (bool) framedone#1
+Successful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) main::$2 [23] if(*((byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@4
+Simple Condition (bool~) irq::$1 [35] if(*((byte*) RASTER#0)<=(byte/signed byte/word/signed word/dword/signed dword) $32) goto irq::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const void()**) KERNEL_IRQ#0 = ((void()**))$314
+Constant (const byte*) RASTER#0 = ((byte*))$d012
+Constant (const byte*) VIC_CONTROL#0 = ((byte*))$d011
+Constant (const byte*) IRQ_STATUS#0 = ((byte*))$d019
+Constant (const byte*) IRQ_ENABLE#0 = ((byte*))$d01a
+Constant (const byte) IRQ_RASTER#0 = 1
+Constant (const byte*) BGCOL#0 = ((byte*))$d020
+Constant (const byte*) CIA1_INTERRUPT#0 = ((byte*))$dc0d
+Constant (const byte) CIA_INTERRUPT_CLEAR#0 = $7f
+Constant (const void()*) main::$0 = &irq
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [8] if(true) goto main::@2
+Successful SSA optimization Pass2ConstantIfs
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) @3
+Successful SSA optimization Pass2CullEmptyBlocks
+Culled Empty Block (label) main::@1
+Successful SSA optimization Pass2CullEmptyBlocks
+Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:3 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] (bool) framedone#11 ← false
+  to:@2
+@2: scope:[]  from @1
+  [2] phi()
+  [3] call main 
+  to:@end
+@end: scope:[]  from @2
+  [4] phi()
+main: scope:[main]  from @2
+  asm { sei  }
+  [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0
+  [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) $7f
+  [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) $fd
+  [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0
+  [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
+  asm { cli  }
+  to:main::@2
+main::@2: scope:[main]  from main main::@2 main::@7
+  [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2
+  to:main::@7
+main::@7: scope:[main]  from main::@2
+  [13] (bool) framedone#0 ← true
+  to:main::@2
+irq: scope:[irq]  from
+  [14] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
+  [16] if(*((const byte*) RASTER#0)<=(byte/signed byte/word/signed word/dword/signed dword) $32) goto irq::@1
+  to:irq::@2
+irq::@2: scope:[irq]  from irq
+  [17] (bool) framedone#3 ← false
+  to:irq::@1
+irq::@1: scope:[irq]  from irq irq::@2
+  [18] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
+  to:irq::@return
+irq::@return: scope:[irq]  from irq::@1
+  [19] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) BGCOL
+(byte*) CIA1_INTERRUPT
+(byte) CIA_INTERRUPT_CLEAR
+(byte*) IRQ_ENABLE
+(byte) IRQ_RASTER
+(byte*) IRQ_STATUS
+(void()**) KERNEL_IRQ
+(byte*) RASTER
+(byte*) VIC_CONTROL
+(bool) framedone
+(bool) framedone#0 110.0
+(bool) framedone#11 20.0
+(bool) framedone#3 20.0
+interrupt(KERNEL_MIN)(void()) irq()
+(void()) main()
+
+Initial phi equivalence classes
+Added variable framedone#11 to zero page equivalence class [ framedone#11 ]
+Added variable framedone#0 to zero page equivalence class [ framedone#0 ]
+Added variable framedone#3 to zero page equivalence class [ framedone#3 ]
+Complete equivalence classes
+[ framedone#11 ]
+[ framedone#0 ]
+[ framedone#3 ]
+Allocated zp ZP_BOOL:2 [ framedone#11 ]
+Allocated zp ZP_BOOL:3 [ framedone#0 ]
+Allocated zp ZP_BOOL:4 [ framedone#3 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
+// because it is assigned to the A register
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label KERNEL_IRQ = $314
+  .label RASTER = $d012
+  .label VIC_CONTROL = $d011
+  .label IRQ_STATUS = $d019
+  .label IRQ_ENABLE = $d01a
+  .const IRQ_RASTER = 1
+  .label BGCOL = $d020
+  .label CIA1_INTERRUPT = $dc0d
+  .const CIA_INTERRUPT_CLEAR = $7f
+  .label framedone = 3
+  .label framedone_3 = 4
+  .label framedone_11 = 2
+//SEG3 @begin
+bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [1] (bool) framedone#11 ← false -- vboz1=vboc1 
+  lda #0
+  sta framedone_11
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG7 @2
+b2:
+//SEG8 [3] call main 
+  jsr main
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG10 @end
+bend:
+//SEG11 main
+main: {
+  //SEG12 asm { sei  }
+    sei
+  //SEG13 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1_INTERRUPT
+  //SEG14 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // Set raster line to $0fd
+    lda #$7f
+    and VIC_CONTROL
+    sta VIC_CONTROL
+  //SEG15 [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) $fd -- _deref_pbuc1=vbuc2 
+    lda #$fd
+    sta RASTER
+  //SEG16 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+  //SEG17 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // Set the IRQ routine
+    lda #<irq
+    sta KERNEL_IRQ
+    lda #>irq
+    sta KERNEL_IRQ+1
+  //SEG18 asm { cli  }
+    cli
+    jmp b2
+  //SEG19 main::@2
+  b2:
+  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    lda RASTER
+    cmp #$14
+    bcs b2
+    jmp b7
+  //SEG21 main::@7
+  b7:
+  //SEG22 [13] (bool) framedone#0 ← true -- vboz1=vboc1 
+    lda #1
+    sta framedone
+    jmp b2
+}
+//SEG23 irq
+irq: {
+  //SEG24 entry interrupt(KERNEL_MIN)
+  //SEG25 [14] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BGCOL
+  //SEG26 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+  //SEG27 [16] if(*((const byte*) RASTER#0)<=(byte/signed byte/word/signed word/dword/signed dword) $32) goto irq::@1 -- _deref_pbuc1_le_vbuc2_then_la1 
+    lda RASTER
+    cmp #$32
+    bcc b1
+    beq b1
+    jmp b2
+  //SEG28 irq::@2
+  b2:
+  //SEG29 [17] (bool) framedone#3 ← false -- vboz1=vboc1 
+    lda #0
+    sta framedone_3
+    jmp b1
+  //SEG30 irq::@1
+  b1:
+  //SEG31 [18] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BGCOL
+    jmp breturn
+  //SEG32 irq::@return
+  breturn:
+  //SEG33 [19] return  - exit interrupt(KERNEL_MIN)
+    jmp $ea81
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] (bool) framedone#11 ← false [ ] ( ) always clobbers reg byte a 
+Statement [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) $7f [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) $fd [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2 [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [13] (bool) framedone#0 ← true [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [16] if(*((const byte*) RASTER#0)<=(byte/signed byte/word/signed word/dword/signed dword) $32) goto irq::@1 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [17] (bool) framedone#3 ← false [ ] (  [ ] ) always clobbers reg byte a 
+Potential registers zp ZP_BOOL:2 [ framedone#11 ] : zp ZP_BOOL:2 , 
+Potential registers zp ZP_BOOL:3 [ framedone#0 ] : zp ZP_BOOL:3 , 
+Potential registers zp ZP_BOOL:4 [ framedone#3 ] : zp ZP_BOOL:4 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 110: zp ZP_BOOL:3 [ framedone#0 ] 20: zp ZP_BOOL:2 [ framedone#11 ] 20: zp ZP_BOOL:4 [ framedone#3 ] 
+Uplift Scope [main] 
+Uplift Scope [irq] 
+
+Uplifting [] best 1370 combination zp ZP_BOOL:3 [ framedone#0 ] zp ZP_BOOL:2 [ framedone#11 ] zp ZP_BOOL:4 [ framedone#3 ] 
+Uplifting [main] best 1370 combination 
+Uplifting [irq] best 1370 combination 
+Coalescing zero page register [ zp ZP_BOOL:2 [ framedone#11 ] ] with [ zp ZP_BOOL:3 [ framedone#0 ] ]
+Coalescing zero page register [ zp ZP_BOOL:2 [ framedone#11 framedone#0 ] ] with [ zp ZP_BOOL:4 [ framedone#3 ] ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
+// because it is assigned to the A register
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label KERNEL_IRQ = $314
+  .label RASTER = $d012
+  .label VIC_CONTROL = $d011
+  .label IRQ_STATUS = $d019
+  .label IRQ_ENABLE = $d01a
+  .const IRQ_RASTER = 1
+  .label BGCOL = $d020
+  .label CIA1_INTERRUPT = $dc0d
+  .const CIA_INTERRUPT_CLEAR = $7f
+  .label framedone = 2
+//SEG3 @begin
+bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [1] (bool) framedone#11 ← false -- vboz1=vboc1 
+  lda #0
+  sta framedone
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG7 @2
+b2:
+//SEG8 [3] call main 
+  jsr main
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG10 @end
+bend:
+//SEG11 main
+main: {
+  //SEG12 asm { sei  }
+    sei
+  //SEG13 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1_INTERRUPT
+  //SEG14 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // Set raster line to $0fd
+    lda #$7f
+    and VIC_CONTROL
+    sta VIC_CONTROL
+  //SEG15 [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) $fd -- _deref_pbuc1=vbuc2 
+    lda #$fd
+    sta RASTER
+  //SEG16 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+  //SEG17 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // Set the IRQ routine
+    lda #<irq
+    sta KERNEL_IRQ
+    lda #>irq
+    sta KERNEL_IRQ+1
+  //SEG18 asm { cli  }
+    cli
+    jmp b2
+  //SEG19 main::@2
+  b2:
+  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    lda RASTER
+    cmp #$14
+    bcs b2
+    jmp b7
+  //SEG21 main::@7
+  b7:
+  //SEG22 [13] (bool) framedone#0 ← true -- vboz1=vboc1 
+    lda #1
+    sta framedone
+    jmp b2
+}
+//SEG23 irq
+irq: {
+  //SEG24 entry interrupt(KERNEL_MIN)
+  //SEG25 [14] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BGCOL
+  //SEG26 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+  //SEG27 [16] if(*((const byte*) RASTER#0)<=(byte/signed byte/word/signed word/dword/signed dword) $32) goto irq::@1 -- _deref_pbuc1_le_vbuc2_then_la1 
+    lda RASTER
+    cmp #$32
+    bcc b1
+    beq b1
+    jmp b2
+  //SEG28 irq::@2
+  b2:
+  //SEG29 [17] (bool) framedone#3 ← false -- vboz1=vboc1 
+    lda #0
+    sta framedone
+    jmp b1
+  //SEG30 irq::@1
+  b1:
+  //SEG31 [18] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BGCOL
+    jmp breturn
+  //SEG32 irq::@return
+  breturn:
+  //SEG33 [19] return  - exit interrupt(KERNEL_MIN)
+    jmp $ea81
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp b2
+Removing instruction jmp b7
+Removing instruction jmp b2
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1:
+Removing instruction b2_from_b1:
+Removing instruction bend_from_b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b2:
+Removing instruction bend:
+Removing instruction b7:
+Removing instruction b2:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(const byte*) BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) $d020
+(byte*) CIA1_INTERRUPT
+(const byte*) CIA1_INTERRUPT#0 CIA1_INTERRUPT = ((byte*))(word/dword/signed dword) $dc0d
+(byte) CIA_INTERRUPT_CLEAR
+(const byte) CIA_INTERRUPT_CLEAR#0 CIA_INTERRUPT_CLEAR = (byte/signed byte/word/signed word/dword/signed dword) $7f
+(byte*) IRQ_ENABLE
+(const byte*) IRQ_ENABLE#0 IRQ_ENABLE = ((byte*))(word/dword/signed dword) $d01a
+(byte) IRQ_RASTER
+(const byte) IRQ_RASTER#0 IRQ_RASTER = (byte/signed byte/word/signed word/dword/signed dword) 1
+(byte*) IRQ_STATUS
+(const byte*) IRQ_STATUS#0 IRQ_STATUS = ((byte*))(word/dword/signed dword) $d019
+(void()**) KERNEL_IRQ
+(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = ((void()**))(word/signed word/dword/signed dword) $314
+(byte*) RASTER
+(const byte*) RASTER#0 RASTER = ((byte*))(word/dword/signed dword) $d012
+(byte*) VIC_CONTROL
+(const byte*) VIC_CONTROL#0 VIC_CONTROL = ((byte*))(word/dword/signed dword) $d011
+(bool) framedone
+(bool) framedone#0 framedone zp ZP_BOOL:2 110.0
+(bool) framedone#11 framedone zp ZP_BOOL:2 20.0
+(bool) framedone#3 framedone zp ZP_BOOL:2 20.0
+interrupt(KERNEL_MIN)(void()) irq()
+(label) irq::@1
+(label) irq::@2
+(label) irq::@return
+(void()) main()
+(label) main::@2
+(label) main::@7
+
+zp ZP_BOOL:2 [ framedone#11 framedone#0 framedone#3 ]
+
+
+FINAL ASSEMBLER
+Score: 1022
+
+//SEG0 File Comments
+// Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
+// because it is assigned to the A register
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label KERNEL_IRQ = $314
+  .label RASTER = $d012
+  .label VIC_CONTROL = $d011
+  .label IRQ_STATUS = $d019
+  .label IRQ_ENABLE = $d01a
+  .const IRQ_RASTER = 1
+  .label BGCOL = $d020
+  .label CIA1_INTERRUPT = $dc0d
+  .const CIA_INTERRUPT_CLEAR = $7f
+  .label framedone = 2
+//SEG3 @begin
+bbegin:
+//SEG4 @1
+//SEG5 [1] (bool) framedone#11 ← false -- vboz1=vboc1 
+  lda #0
+  sta framedone
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+//SEG7 @2
+//SEG8 [3] call main 
+  jsr main
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+//SEG10 @end
+//SEG11 main
+main: {
+  //SEG12 asm { sei  }
+    sei
+  //SEG13 [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 -- _deref_pbuc1=vbuc2 
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1_INTERRUPT
+  //SEG14 [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // Set raster line to $0fd
+    lda #$7f
+    and VIC_CONTROL
+    sta VIC_CONTROL
+  //SEG15 [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) $fd -- _deref_pbuc1=vbuc2 
+    lda #$fd
+    sta RASTER
+  //SEG16 [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+  //SEG17 [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // Set the IRQ routine
+    lda #<irq
+    sta KERNEL_IRQ
+    lda #>irq
+    sta KERNEL_IRQ+1
+  //SEG18 asm { cli  }
+    cli
+  //SEG19 main::@2
+  b2:
+  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    lda RASTER
+    cmp #$14
+    bcs b2
+  //SEG21 main::@7
+  //SEG22 [13] (bool) framedone#0 ← true -- vboz1=vboc1 
+    lda #1
+    sta framedone
+    jmp b2
+}
+//SEG23 irq
+irq: {
+  //SEG24 entry interrupt(KERNEL_MIN)
+  //SEG25 [14] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BGCOL
+  //SEG26 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+  //SEG27 [16] if(*((const byte*) RASTER#0)<=(byte/signed byte/word/signed word/dword/signed dword) $32) goto irq::@1 -- _deref_pbuc1_le_vbuc2_then_la1 
+    lda RASTER
+    cmp #$32
+    bcc b1
+    beq b1
+  //SEG28 irq::@2
+  //SEG29 [17] (bool) framedone#3 ← false -- vboz1=vboc1 
+    lda #0
+    sta framedone
+  //SEG30 irq::@1
+  b1:
+  //SEG31 [18] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BGCOL
+  //SEG32 irq::@return
+  //SEG33 [19] return  - exit interrupt(KERNEL_MIN)
+    jmp $ea81
+}
+

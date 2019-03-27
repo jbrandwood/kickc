@@ -32,6 +32,15 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testMultiplexerIrq() throws IOException, URISyntaxException {
+      compileAndCompare("multiplexer-irq/simple-multiplexer-irq", 10);
+   }
+
+   @Test
+   public void testIrqVolatileProblem() throws IOException, URISyntaxException {
+      compileAndCompare("irq-volatile-bool-problem");
+   }
 
    @Test
    public void testMusicIrq() throws IOException, URISyntaxException {

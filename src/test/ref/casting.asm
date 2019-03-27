@@ -32,7 +32,7 @@ w: {
   b1:
     tya
     tax
-    axs #-$578-$546
+    axs #-[$578-$546]
     lda #b
     sta SCREEN3,y
     txa

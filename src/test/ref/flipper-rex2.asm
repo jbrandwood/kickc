@@ -71,7 +71,7 @@ flip: {
     sta buffer2,x
     iny
     txa
-    axs #-$10
+    axs #-[$10]
     dec c
     lda c
     cmp #0

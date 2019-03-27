@@ -357,7 +357,7 @@ main: {
     jsr printu
     jsr print_ln
     lax a
-    axs #-$30
+    axs #-[$30]
     stx a
     inc i
     lda #5

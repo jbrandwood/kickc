@@ -556,7 +556,7 @@ keyboard_event_scan: {
     cmp keyboard_scan_values,y
     bne b6
     lax keycode
-    axs #-8
+    axs #-[8]
     stx keycode
   b3:
     inc row

@@ -26,7 +26,7 @@ main: {
 line: {
     jsr plot
     txa
-    axs #-$14
+    axs #-[$14]
     jsr plot
     rts
 }

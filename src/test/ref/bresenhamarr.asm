@@ -37,7 +37,7 @@ main: {
     inc idx+1
   !:
     txa
-    axs #-yd
+    axs #-[yd]
     cpx #xd
     bcc b2
     beq b2

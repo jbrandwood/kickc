@@ -488,7 +488,7 @@ render_moving: {
     cmp ypos2
     bcc b2
     lax i
-    axs #-4
+    axs #-[4]
     stx i
   b3:
     lda ypos2
@@ -618,7 +618,7 @@ play_move_rotate: {
     rts
   b2:
     lax current_orientation
-    axs #-$10
+    axs #-[$10]
     lda #$3f
     sax orientation
   b4:
@@ -989,7 +989,7 @@ play_increase_level: {
     bne b3
     // If level low nybble hits $a change to $10
     lax level_bcd
-    axs #-6
+    axs #-[6]
     stx level_bcd
   b3:
     // Increase the score values gained
@@ -1060,7 +1060,7 @@ play_remove_lines: {
     cmp full
     bne b4
     txa
-    axs #-PLAYFIELD_COLS
+    axs #-[PLAYFIELD_COLS]
     inc removed
   b4:
     inc y
@@ -1191,7 +1191,7 @@ keyboard_event_scan: {
     cmp keyboard_scan_values,y
     bne b6
     lax keycode
-    axs #-8
+    axs #-[8]
     stx keycode
   b3:
     inc row
@@ -1340,7 +1340,7 @@ play_init: {
     inc pli+1
   !:
     lax idx
-    axs #-PLAYFIELD_COLS
+    axs #-[PLAYFIELD_COLS]
     stx idx
     iny
     cpy #PLAYFIELD_LINES-1+1
@@ -1423,7 +1423,7 @@ sprites_init: {
     lda #BLACK
     sta SPRITES_COLS,y
     lax xpos
-    axs #-$18
+    axs #-[$18]
     stx xpos
     iny
     cpy #4
@@ -1654,13 +1654,13 @@ sprites_irq: {
     cmp irq_cnt
     beq b5
     lax irq_raster_next
-    axs #-$14
+    axs #-[$14]
     stx irq_raster_next
     lax irq_sprite_ypos
-    axs #-$15
+    axs #-[$15]
     stx irq_sprite_ypos
     lax irq_sprite_ptr
-    axs #-3
+    axs #-[3]
     stx irq_sprite_ptr
   b7:
     // Setup next interrupt
@@ -1680,15 +1680,15 @@ sprites_irq: {
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next
     lax irq_sprite_ypos
-    axs #-$15
+    axs #-[$15]
     stx irq_sprite_ypos
     lax irq_sprite_ptr
-    axs #-3
+    axs #-[3]
     stx irq_sprite_ptr
     jmp b7
   b4:
     lax irq_raster_next
-    axs #-$15
+    axs #-[$15]
     stx irq_raster_next
     lda #SPRITES_FIRST_YPOS
     sta irq_sprite_ypos

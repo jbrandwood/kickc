@@ -119,10 +119,10 @@ main: {
     lda #toSpritePtr2_return
     sta PLAYFIELD_SPRITE_PTRS_1,y
     lax xpos
-    axs #-$18
+    axs #-[$18]
     stx xpos
     lax ypos
-    axs #-$18
+    axs #-[$18]
     stx ypos
     iny
     cpy #8
@@ -149,7 +149,7 @@ loop: {
     lda SIN,x
     sta SPRITES_YPOS,y
     txa
-    axs #-$a
+    axs #-[$a]
     inc s
     lda #8
     cmp s
@@ -210,7 +210,7 @@ sprites_init: {
     lda #BLACK
     sta SPRITES_COLS,y
     lax xpos
-    axs #-$18
+    axs #-[$18]
     stx xpos
     iny
     cpy #4
@@ -263,13 +263,13 @@ sprites_irq: {
     cmp irq_cnt
     beq b5
     lax irq_raster_next
-    axs #-$14
+    axs #-[$14]
     stx irq_raster_next
     lax irq_sprite_ypos
-    axs #-$15
+    axs #-[$15]
     stx irq_sprite_ypos
     lax irq_sprite_ptr
-    axs #-3
+    axs #-[3]
     stx irq_sprite_ptr
   b7:
     // Setup next interrupt
@@ -289,15 +289,15 @@ sprites_irq: {
     lda #IRQ_RASTER_FIRST
     sta irq_raster_next
     lax irq_sprite_ypos
-    axs #-$15
+    axs #-[$15]
     stx irq_sprite_ypos
     lax irq_sprite_ptr
-    axs #-3
+    axs #-[3]
     stx irq_sprite_ptr
     jmp b7
   b4:
     lax irq_raster_next
-    axs #-$15
+    axs #-[$15]
     stx irq_raster_next
     lda #SPRITES_FIRST_YPOS
     sta irq_sprite_ypos

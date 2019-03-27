@@ -51,7 +51,7 @@ loop: {
     lda YSIN,x
     sta PLEX_YPOS,y
     txa
-    axs #-8
+    axs #-[8]
     iny
     cpy #PLEX_COUNT-1+1
     bne b7

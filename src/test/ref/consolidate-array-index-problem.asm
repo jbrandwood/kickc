@@ -9,7 +9,7 @@ main: {
   b1:
     tya
     tax
-    axs #-$c
+    axs #-[$c]
     lda #'a'
     sta screen,x
     lda #BLACK

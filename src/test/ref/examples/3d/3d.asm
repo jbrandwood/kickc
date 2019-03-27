@@ -321,7 +321,7 @@ debug_print: {
     ldx yps,y
     jsr print_sbyte_at
     lax c
-    axs #-4
+    axs #-[4]
     stx c
     inc i
     lda #8
@@ -555,7 +555,7 @@ calculate_matrix: {
     axs #sz
     stx t1
     lax sy
-    axs #-sz
+    axs #-[sz]
     tya
     clc
     adc #sz
@@ -863,7 +863,7 @@ debug_print_init: {
     sta j
   b2:
     lax i
-    axs #-8
+    axs #-[8]
     lda c
     clc
     adc #<at_cols
@@ -1024,7 +1024,7 @@ debug_print_init: {
     jmp b2
   !b2:
     lax c
-    axs #-4
+    axs #-[4]
     stx c
     inc i
     lda #8

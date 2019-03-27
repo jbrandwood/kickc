@@ -24,7 +24,7 @@ irq: {
     lda #DARK_GREY
     sta BORDERCOL
     lax irq_raster_next
-    axs #-$15
+    axs #-[$15]
     stx irq_raster_next
   // Setup next interrupt
     txa

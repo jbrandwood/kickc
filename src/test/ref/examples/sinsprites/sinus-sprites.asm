@@ -78,7 +78,7 @@ anim: {
     ldy j2
     sta SPRITES_YPOS,y
     lax xidx
-    axs #-$a
+    axs #-[$a]
     stx xidx
     txa
     cmp #sinlen_x
@@ -88,7 +88,7 @@ anim: {
     stx xidx
   b2:
     lax yidx
-    axs #-8
+    axs #-[8]
     stx yidx
     txa
     cmp #sinlen_y
@@ -612,7 +612,7 @@ place_sprites: {
     ldy j
     sta SPRITES_COLS,y
     lax spr_x
-    axs #-$20
+    axs #-[$20]
     stx spr_x
     lda col
     eor #7^5

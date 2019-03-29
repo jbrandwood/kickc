@@ -4,11 +4,11 @@
 .pc = $80d "Program"
 main: {
     lda #1
-    jmp b4
+    jmp b6
   b1:
     lda #0
-  b4:
+  b6:
     cmp #0
     bne b1
-    jmp b4
+    jmp b6
 }

@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.Value;
 
 import java.util.ListIterator;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class AliasReplacer implements ProgramValueHandler {
    @Override
    public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       if(programValue.get() != null) {
-         RValue replacement = getReplacement(programValue.get(), aliases);
+         Value replacement = getReplacement(programValue.get(), aliases);
          if(replacement != null) {
             // System.out.println("Replacing "+programValue.get() + " with " +replacement + " in " +currentStmt);
             programValue.set(replacement);
@@ -54,7 +55,7 @@ public class AliasReplacer implements ProgramValueHandler {
     * @param rValue The RValue to find an alias for
     * @return The alias to use. Null if no alias exists.
     */
-   private static RValue getReplacement(RValue rValue, Map<? extends SymbolRef, ? extends RValue> aliases) {
+   private static RValue getReplacement(Value rValue, Map<? extends SymbolRef, ? extends RValue> aliases) {
       if(rValue instanceof SymbolRef) {
          RValue alias = aliases.get(rValue);
          if(alias != null) {

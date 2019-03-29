@@ -25,7 +25,7 @@ main: {
     sta sw
     lda #>-$7fff
     sta sw+1
-  b2:
+  b3:
     lda sw
     sta SCREEN+3
     lda sw+1
@@ -36,9 +36,9 @@ main: {
   !:
     lda sw+1
     cmp #>$7fff
-    bne b2
+    bne b3
     lda sw
     cmp #<$7fff
-    bne b2
+    bne b3
     rts
 }

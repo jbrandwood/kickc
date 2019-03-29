@@ -358,7 +358,7 @@ mul8u: {
     txa
     and #1
     cmp #0
-    beq b4
+    beq b8
     lda res
     clc
     adc mb
@@ -366,7 +366,7 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  b4:
+  b8:
     txa
     lsr
     tax
@@ -381,7 +381,7 @@ mul8u: {
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label _6 = $b
+    .label _4 = $b
     .label x = $b
     .label x1 = $14
     .label x3 = $15
@@ -425,13 +425,13 @@ sin8s: {
     sbc x+1
     sta x+1
   b2:
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    asl _6
-    rol _6+1
-    lda _6+1
+    asl _4
+    rol _4+1
+    asl _4
+    rol _4+1
+    asl _4
+    rol _4+1
+    lda _4+1
     sta x1
     tax
     tay

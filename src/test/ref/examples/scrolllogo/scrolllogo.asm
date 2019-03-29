@@ -71,10 +71,10 @@ loop: {
     sta xsin_idx+1
   b1:
   // Wait for the raster to reach the bottom of the screen
-  b4:
+  b6:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne b6
     inc BORDERCOL
     lda xsin_idx
     clc
@@ -100,14 +100,14 @@ loop: {
   !:
     lda xsin_idx+1
     cmp #>XSIN_SIZE*2
-    bne b7
+    bne b9
     lda xsin_idx
     cmp #<XSIN_SIZE*2
-    bne b7
+    bne b9
     lda #0
     sta xsin_idx
     sta xsin_idx+1
-  b7:
+  b9:
     dec BORDERCOL
     jmp b1
 }
@@ -141,17 +141,17 @@ render_logo: {
     lda xpos+1
     bmi b1
     ldy #0
-  b2:
+  b4:
     cpy x_char
-    bne b5
+    bne b7
     lda #0
     sta logo_idx
-  b6:
+  b10:
     cpy #$28
-    bne b9
+    bne b13
   breturn:
     rts
-  b9:
+  b13:
     lda logo_idx
     sta SCREEN,y
     lda #$28*1
@@ -176,8 +176,8 @@ render_logo: {
     sta SCREEN+$28*5,y
     iny
     inc logo_idx
-    jmp b6
-  b5:
+    jmp b10
+  b7:
     lda #0
     sta SCREEN,y
     sta SCREEN+$28*1,y
@@ -186,7 +186,7 @@ render_logo: {
     sta SCREEN+$28*4,y
     sta SCREEN+$28*5,y
     iny
-    jmp b2
+    jmp b4
   b1:
     lda x_char
     eor #$ff
@@ -194,15 +194,15 @@ render_logo: {
     adc #1
     sta logo_idx
     ldy #0
-  b11:
+  b21:
     lda #$28
     cmp logo_idx
-    bne b14
-  b15:
+    bne b24
+  b27:
     cpy #$28
-    bne b18
+    bne b30
     jmp breturn
-  b18:
+  b30:
     lda #0
     sta SCREEN,y
     sta SCREEN+$28*1,y
@@ -211,8 +211,8 @@ render_logo: {
     sta SCREEN+$28*4,y
     sta SCREEN+$28*5,y
     iny
-    jmp b15
-  b14:
+    jmp b27
+  b24:
     lda logo_idx
     sta SCREEN,y
     lda #$28*1
@@ -237,7 +237,7 @@ render_logo: {
     sta SCREEN+$28*5,y
     iny
     inc logo_idx
-    jmp b11
+    jmp b21
 }
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
@@ -335,7 +335,7 @@ sin16s_gen2: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage($17) a)
 mul16s: {
-    .label _6 = $f
+    .label _9 = $f
     .label _16 = $f
     .label m = $b
     .label return = $b
@@ -352,9 +352,9 @@ mul16s: {
     lda a+1
     bpl b2
     lda m+2
-    sta _6
+    sta _9
     lda m+3
-    sta _6+1
+    sta _9+1
     lda _16
     sec
     sbc #<sin16s_gen2.ampl
@@ -398,7 +398,7 @@ mul16u: {
     lda a
     and #1
     cmp #0
-    beq b4
+    beq b8
     lda res
     clc
     adc mb
@@ -412,7 +412,7 @@ mul16u: {
     lda res+3
     adc mb+3
     sta res+3
-  b4:
+  b8:
     clc
     ror a+1
     ror a
@@ -427,7 +427,7 @@ mul16u: {
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zeropage($b) x)
 sin16s: {
-    .label _6 = $b
+    .label _4 = $b
     .label x = $b
     .label return = $17
     .label x1 = $1f
@@ -508,15 +508,15 @@ sin16s: {
   b2:
     ldy #3
   !:
-    asl _6
-    rol _6+1
-    rol _6+2
-    rol _6+3
+    asl _4
+    rol _4+1
+    rol _4+2
+    rol _4+3
     dey
     bne !-
-    lda _6+2
+    lda _4+2
     sta x1
-    lda _6+3
+    lda _4+3
     sta x1+1
     lda x1
     sta mulu16_sel.v1

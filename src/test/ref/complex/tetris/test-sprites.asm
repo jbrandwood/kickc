@@ -135,14 +135,14 @@ loop: {
     .label s = 3
     lda #0
     sta sin_idx
-  b4:
+  b6:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne b6
     ldx sin_idx
     lda #4
     sta s
-  b5:
+  b8:
     lda s
     asl
     tay
@@ -153,9 +153,9 @@ loop: {
     inc s
     lda #8
     cmp s
-    bne b5
+    bne b8
     inc sin_idx
-    jmp b4
+    jmp b6
 }
 // Setup the IRQ
 sprites_irq_init: {
@@ -238,14 +238,14 @@ sprites_irq: {
     inx
     // Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
-  b1:
+  b11:
     lda RASTER
     cmp raster_sprite_gfx_modify
-    bcc b1
+    bcc b11
     ldx irq_sprite_ptr
     lda render_screen_showing
     cmp #0
-    beq b2
+    beq b1
     stx PLAYFIELD_SPRITE_PTRS_2
     inx
     txa
@@ -254,14 +254,14 @@ sprites_irq: {
     clc
     adc #1
     sta PLAYFIELD_SPRITE_PTRS_2+3
-  b3:
+  b2:
     inc irq_cnt
     lda #9
     cmp irq_cnt
-    beq b4
+    beq b3
     lda #$a
     cmp irq_cnt
-    beq b5
+    beq b4
     lax irq_raster_next
     axs #-[$14]
     stx irq_raster_next
@@ -271,7 +271,7 @@ sprites_irq: {
     lax irq_sprite_ptr
     axs #-[3]
     stx irq_sprite_ptr
-  b7:
+  b6:
     // Setup next interrupt
     lda irq_raster_next
     sta RASTER
@@ -283,7 +283,7 @@ sprites_irq: {
   regx:
     ldx #00
     rti
-  b5:
+  b4:
     lda #0
     sta irq_cnt
     lda #IRQ_RASTER_FIRST
@@ -294,8 +294,8 @@ sprites_irq: {
     lax irq_sprite_ptr
     axs #-[3]
     stx irq_sprite_ptr
-    jmp b7
-  b4:
+    jmp b6
+  b3:
     lax irq_raster_next
     axs #-[$15]
     stx irq_raster_next
@@ -303,8 +303,8 @@ sprites_irq: {
     sta irq_sprite_ypos
     lda #toSpritePtr2_return
     sta irq_sprite_ptr
-    jmp b7
-  b2:
+    jmp b6
+  b1:
     stx PLAYFIELD_SPRITE_PTRS_1
     inx
     stx PLAYFIELD_SPRITE_PTRS_1+1
@@ -312,7 +312,7 @@ sprites_irq: {
     inx
     txa
     sta PLAYFIELD_SPRITE_PTRS_1+3
-    jmp b3
+    jmp b2
 }
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
   .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))

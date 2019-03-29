@@ -238,7 +238,7 @@ public class Pass1ProcedureInline extends Pass1Base {
 
       @Override
       public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-         RValue rValue = programValue.get();
+         Value rValue = programValue.get();
          if(rValue instanceof VariableRef) {
             VariableRef procVarRef = (VariableRef) rValue;
             Variable procVar = Pass1ProcedureInline.this.getScope().getVariable(procVarRef);

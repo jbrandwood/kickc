@@ -48,10 +48,10 @@ main: {
     tay
     lda bits_count,y
     cmp #2
-    bcc b7
+    bcc b6
     lda #1
     jmp b2
-  b7:
+  b6:
     lda #0
   b2:
     asl
@@ -139,12 +139,12 @@ main: {
     sta PROCPORT
     cli
     ldx #0
-  b6:
+  b11:
     txa
     sta SCREEN,x
     inx
     cpx #0
-    bne b6
+    bne b11
     lda #$19
     sta D018
     rts

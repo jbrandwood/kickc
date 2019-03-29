@@ -340,8 +340,8 @@ print_sword: {
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mulf16s: {
-    .label _6 = 9
-    .label _12 = 9
+    .label _9 = 9
+    .label _13 = 9
     .label _16 = 9
     .label _17 = 9
     .label m = $11
@@ -360,9 +360,9 @@ mulf16s: {
     lda a+1
     bpl b1
     lda m+2
-    sta _6
+    sta _9
     lda m+3
-    sta _6+1
+    sta _9+1
     lda _16
     sec
     sbc b
@@ -378,9 +378,9 @@ mulf16s: {
     lda b+1
     bpl b2
     lda m+2
-    sta _12
+    sta _13
     lda m+3
-    sta _12+1
+    sta _13+1
     lda _17
     sec
     sbc a
@@ -519,8 +519,8 @@ mulf16u: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mul16s: {
-    .label _6 = 9
-    .label _12 = 9
+    .label _9 = 9
+    .label _13 = 9
     .label _16 = 9
     .label _17 = 9
     .label m = $19
@@ -539,9 +539,9 @@ mul16s: {
     lda a+1
     bpl b1
     lda m+2
-    sta _6
+    sta _9
     lda m+3
-    sta _6+1
+    sta _9+1
     lda _16
     sec
     sbc b
@@ -557,9 +557,9 @@ mul16s: {
     lda b+1
     bpl b2
     lda m+2
-    sta _12
+    sta _13
     lda m+3
-    sta _12+1
+    sta _13+1
     lda _17
     sec
     sbc a
@@ -603,7 +603,7 @@ mul16u: {
     lda a
     and #1
     cmp #0
-    beq b4
+    beq b8
     lda res
     clc
     adc mb
@@ -617,7 +617,7 @@ mul16u: {
     lda res+3
     adc mb+3
     sta res+3
-  b4:
+  b8:
     clc
     ror a+1
     ror a
@@ -638,7 +638,7 @@ muls16s: {
     .label a = 3
     .label b = 5
     lda a+1
-    bmi b6
+    bmi b4
     bmi b2
     bne !+
     lda a
@@ -651,7 +651,7 @@ muls16s: {
     sta m+1
     sta m+2
     sta m+3
-  b3:
+  b8:
     lda b+1
     ora #$7f
     bmi !+
@@ -677,20 +677,20 @@ muls16s: {
   !:
     lda j+1
     cmp a+1
-    bne b3
+    bne b8
     lda j
     cmp a
-    bne b3
-    jmp b4
+    bne b8
+    jmp b3
   b2:
     lda #0
     sta return
     sta return+1
     sta return+2
     sta return+3
-  b4:
+  b3:
     rts
-  b6:
+  b4:
     lda #0
     sta i
     sta i+1
@@ -698,7 +698,7 @@ muls16s: {
     sta m+1
     sta m+2
     sta m+3
-  b5:
+  b10:
     lda b+1
     ora #$7f
     bmi !+
@@ -725,11 +725,11 @@ muls16s: {
     dec i
     lda i+1
     cmp a+1
-    bne b5
+    bne b10
     lda i
     cmp a
-    bne b5
-    jmp b4
+    bne b10
+    jmp b3
 }
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
@@ -927,7 +927,7 @@ muls16u: {
     lda a
     bne !+
     lda a+1
-    beq b3
+    beq b2
   !:
     lda #0
     sta i
@@ -936,7 +936,7 @@ muls16u: {
     sta m+1
     sta m+2
     sta m+3
-  b2:
+  b4:
     lda m
     clc
     adc b
@@ -956,12 +956,12 @@ muls16u: {
   !:
     lda i+1
     cmp a+1
-    bne b2
+    bne b4
     lda i
     cmp a
-    bne b2
+    bne b4
     jmp b1
-  b3:
+  b2:
     lda #0
     sta return
     sta return+1
@@ -1042,7 +1042,7 @@ mulf_init: {
     lda #>mulf_sqr2_lo
     sta sqr2_lo+1
     ldx #-1
-  b3:
+  b5:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -1057,20 +1057,20 @@ mulf_init: {
     adc dir
     tax
     cpx #0
-    bne b4
+    bne b6
     lda #1
     sta dir
-  b4:
+  b6:
     inc sqr2_lo
     bne !+
     inc sqr2_lo+1
   !:
     lda sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b3
+    bne b5
     lda sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b3
+    bne b5
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff

@@ -52,8 +52,8 @@ main: {
     lda x
     cmp #$10
     bcc b1
-  b3:
-    jmp b3
+  b5:
+    jmp b5
 }
 // draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
 draw_block: {
@@ -187,7 +187,7 @@ mul8u: {
     txa
     and #1
     cmp #0
-    beq b4
+    beq b8
     lda res
     clc
     adc mb
@@ -195,7 +195,7 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  b4:
+  b8:
     txa
     lsr
     tax

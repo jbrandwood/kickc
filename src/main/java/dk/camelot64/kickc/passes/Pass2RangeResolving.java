@@ -30,7 +30,7 @@ public class Pass2RangeResolving extends Pass2SsaOptimization {
       boolean modified = false;
 
       ProgramValueIterator.execute(getProgram().getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
-         RValue value = programValue.get();
+         Value value = programValue.get();
          if(value instanceof RangeValue) {
             RangeValue rangeValue = (RangeValue) value;
             if(rangeValue.getRangeFirst() instanceof ConstantValue && rangeValue.getRangeLast() instanceof ConstantValue) {

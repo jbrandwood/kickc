@@ -81,6 +81,10 @@ public class ProgramValueIterator {
          Statement statement = statementsIt.next();
          execute(statement, handler, statementsIt, block);
       }
+      execute(new ProgramValue.BlockLabel(block), handler, null, null, block);
+      execute(new ProgramValue.BlockDefaultSuccessor(block), handler, null, null, block);
+      execute(new ProgramValue.BlockConditionalSuccessor(block), handler, null, null, block);
+      execute(new ProgramValue.BlockCallSuccessor(block), handler, null, null, block);
    }
 
    /**
@@ -107,6 +111,7 @@ public class ProgramValueIterator {
       } else if(statement instanceof StatementConditionalJump) {
          execute(new ProgramValue.CondRValue1((StatementConditionalJump) statement), handler, statement, statementsIt, block);
          execute(new ProgramValue.CondRValue2((StatementConditionalJump) statement), handler, statement, statementsIt, block);
+         execute(new ProgramValue.CondLabel((StatementConditionalJump) statement), handler, statement, statementsIt, block);
       } else if(statement instanceof StatementReturn) {
          execute(new ProgramValue.Return((StatementReturn) statement), handler, statement, statementsIt, block);
       } else if(statement instanceof StatementPhiBlock) {
@@ -163,7 +168,7 @@ public class ProgramValueIterator {
     * @param value The RValue
     * @return The sub-values of the RValue (only one level down, recursion is needed to get all contained sub-values)
     */
-   private static Collection<ProgramValue> getSubValues(RValue value) {
+   private static Collection<ProgramValue> getSubValues(Value value) {
       ArrayList<ProgramValue> subValues = new ArrayList<>();
       if(value instanceof PointerDereferenceIndexed) {
          subValues.add(new ProgramValue.Pointer((PointerDereference) value));
@@ -200,12 +205,14 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ArrayFilledSize((ArrayFilled) value));
       } else if(value instanceof ConstantArrayFilled) {
          subValues.add(new ProgramValue.ConstantArrayFilledSize((ConstantArrayFilled) value));
+      } else if(value instanceof LvalueIntermediate) {
+         subValues.add(new ProgramValue.LValueIntermediateVariable((LvalueIntermediate) value));
       } else if(value == null ||
             value instanceof VariableRef ||
             value instanceof ProcedureRef ||
             value instanceof ConstantLiteral ||
             value instanceof ConstantRef ||
-            value instanceof LvalueIntermediate
+            value instanceof LabelRef
             ) {
          // No sub values
       } else {

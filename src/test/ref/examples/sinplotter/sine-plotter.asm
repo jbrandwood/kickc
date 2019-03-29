@@ -334,7 +334,7 @@ sin16s_gen2: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage($17) a)
 mul16s: {
-    .label _6 = 6
+    .label _9 = 6
     .label _16 = 6
     .label m = $c
     .label return = $c
@@ -351,9 +351,9 @@ mul16s: {
     lda a+1
     bpl b2
     lda m+2
-    sta _6
+    sta _9
     lda m+3
-    sta _6+1
+    sta _9+1
     lda _16
     sec
     sbc #<sin16s_gen2.ampl
@@ -397,7 +397,7 @@ mul16u: {
     lda a
     and #1
     cmp #0
-    beq b4
+    beq b8
     lda res
     clc
     adc mb
@@ -411,7 +411,7 @@ mul16u: {
     lda res+3
     adc mb+3
     sta res+3
-  b4:
+  b8:
     clc
     ror a+1
     ror a
@@ -426,7 +426,7 @@ mul16u: {
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zeropage($c) x)
 sin16s: {
-    .label _6 = $c
+    .label _4 = $c
     .label x = $c
     .label return = $17
     .label x1 = $1f
@@ -507,15 +507,15 @@ sin16s: {
   b2:
     ldy #3
   !:
-    asl _6
-    rol _6+1
-    rol _6+2
-    rol _6+3
+    asl _4
+    rol _4+1
+    rol _4+2
+    rol _4+3
     dey
     bne !-
-    lda _6+2
+    lda _4+2
     sta x1
-    lda _6+3
+    lda _4+3
     sta x1+1
     lda x1
     sta mulu16_sel.v1
@@ -768,7 +768,7 @@ bitmap_init: {
     lda #>BITMAP
     sta yoffs+1
     ldx #0
-  b3:
+  b5:
     lda #7
     sax _3
     lda yoffs
@@ -779,7 +779,7 @@ bitmap_init: {
     txa
     and #7
     cmp #7
-    bne b4
+    bne b6
     clc
     lda yoffs
     adc #<$28*8
@@ -787,10 +787,10 @@ bitmap_init: {
     lda yoffs+1
     adc #>$28*8
     sta yoffs+1
-  b4:
+  b6:
     inx
     cpx #0
-    bne b3
+    bne b5
     rts
 }
 // Fill some memory with a value

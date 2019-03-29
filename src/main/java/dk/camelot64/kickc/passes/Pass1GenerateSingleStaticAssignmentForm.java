@@ -90,7 +90,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          // New phi functions introduced in the block to create versions of variables.
          Map<VariableUnversioned, VariableVersion> blockNewPhis = new LinkedHashMap<>();
          ProgramValueIterator.execute(block, (programValue, currentStmt, stmtIt, currentBlock) -> {
-            RValue value = programValue.get();
+            Value value = programValue.get();
             VariableVersion version = findOrCreateVersion(value, blockVersions, blockNewPhis);
             if(version != null) {
                programValue.set(version.getRef());
@@ -142,7 +142,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * @return Null if the rValue does not need versioning. The versioned symbol to use if it does.
     */
    private VariableVersion findOrCreateVersion(
-         RValue rValue,
+         Value rValue,
          Map<VariableUnversioned, VariableVersion> blockVersions,
          Map<VariableUnversioned, VariableVersion> blockNewPhis) {
       Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();

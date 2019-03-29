@@ -18,26 +18,13 @@ public abstract class Scope implements Symbol {
    private HashMap<String, Symbol> symbols;
    private int intermediateVarCount = 0;
    private int intermediateLabelCount = 1;
+   private int blockCount = 1;
    private Scope parentScope;
 
    public Scope(String name, Scope parentScope) {
       this.name = name;
       this.parentScope = parentScope;
       this.symbols = new LinkedHashMap<>();
-   }
-
-   public Scope(
-         String name,
-         HashMap<String, Symbol> symbols,
-         int intermediateVarCount,
-         int intermediateLabelCount) {
-      this.name = name;
-      this.symbols = symbols;
-      this.intermediateVarCount = intermediateVarCount;
-      this.intermediateLabelCount = intermediateLabelCount;
-      for(Symbol symbol : symbols.values()) {
-         symbol.setScope(this);
-      }
    }
 
    public Scope() {
@@ -172,6 +159,10 @@ public abstract class Scope implements Symbol {
       }
    }
 
+   public Symbol getLocalSymbol(String name) {
+      return symbols.get(name);
+   }
+
    public Variable getVariable(String name) {
       return (Variable) getSymbol(name);
    }
@@ -269,6 +260,17 @@ public abstract class Scope implements Symbol {
 
    public Label getLabel(LabelRef labelRef) {
       return (Label) getSymbol(labelRef);
+   }
+
+   public BlockScope addBlockScope() {
+      String name = ":" + blockCount++;
+      BlockScope blockScope = new BlockScope(name, this);
+      add(blockScope);
+      return blockScope;
+   }
+
+   public BlockScope getBlockScope(String name) {
+      return (BlockScope) getSymbol(name);
    }
 
    public Procedure addProcedure(String name, SymbolType type) {

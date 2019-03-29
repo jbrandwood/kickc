@@ -20,15 +20,15 @@ main: {
     sta DTV_FEATURE
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
-  b4:
+  b6:
     lda #$40
     cmp RASTER
-    bne b4
+    bne b6
     // Create rasterbars
     lda #0
     sta BGCOL
     ldx #$31
-  b7:
+  b9:
     nop
     nop
     nop
@@ -57,16 +57,16 @@ main: {
     inc BGCOL
     inx
     cpx #0
-    bne b7
+    bne b9
     ldx #0
   // Rotate palette
-  b8:
+  b11:
     lda palette,x
     sta DTV_PALETTE,x
     inc palette,x
     inx
     cpx #$10
-    bne b8
-    jmp b4
+    bne b11
+    jmp b6
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }

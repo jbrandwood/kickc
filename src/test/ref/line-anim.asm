@@ -55,7 +55,7 @@ main: {
     sta rem16u
     sta rem16u+1
     sta i
-  b1:
+  b6:
     jsr point_init
     lda i
     lsr
@@ -73,13 +73,13 @@ main: {
     sta i
     lda #8
     cmp i
-    bne b1
-  b5:
+    bne b6
+  b8:
     lda #$ff
     cmp RASTER
-    bne b5
+    bne b8
     inc BORDERCOL
-    jmp b5
+    jmp b8
 }
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(5) x, byte register(Y) y)
@@ -118,9 +118,9 @@ bitmap_plot: {
 point_init: {
     .label _4 = $e
     .label _5 = 5
-    .label _16 = 5
-    .label _17 = 5
-    .label _18 = 5
+    .label _10 = 5
+    .label _11 = 5
+    .label _12 = 5
     .label point_idx = 2
     .label point_idx1 = $d
     .label y_diff = $e
@@ -186,38 +186,38 @@ point_init: {
   b2:
     ldy point_idx
     lda x_start,y
-    sta _16
+    sta _10
     lda x_start+1,y
-    sta _16+1
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
-    asl _16
-    rol _16+1
-    lda _16
+    sta _10+1
+    asl _10
+    rol _10+1
+    asl _10
+    rol _10+1
+    asl _10
+    rol _10+1
+    asl _10
+    rol _10+1
+    lda _10
     sta x_cur,y
-    lda _16+1
+    lda _10+1
     sta x_cur+1,y
     ldy point_idx1
     lda y_start,y
-    sta _17
+    sta _11
     lda #0
-    sta _17+1
-    asl _18
-    rol _18+1
-    asl _18
-    rol _18+1
-    asl _18
-    rol _18+1
-    asl _18
-    rol _18+1
+    sta _11+1
+    asl _12
+    rol _12+1
+    asl _12
+    rol _12+1
+    asl _12
+    rol _12+1
+    asl _12
+    rol _12+1
     ldy point_idx
-    lda _18
+    lda _12
     sta y_cur,y
-    lda _18+1
+    lda _12+1
     sta y_cur+1,y
     lda #DELAY
     ldy point_idx1
@@ -226,12 +226,12 @@ point_init: {
   b1:
     // X is driver - abs(y/x) is < 1
     lda x_diff+1
-    bmi b3
+    bmi b7
     // x add = 1.0
     ldy point_idx
     lda #$10
     sta x_add,y
-  b4:
+  b8:
     lda y_diff
     sta divr16s.rem
     lda y_diff+1
@@ -245,12 +245,12 @@ point_init: {
     ldy point_idx1
     sta y_add,y
     jmp b2
-  b3:
+  b7:
     // x add = -1.0
     lda #-$10
     ldy point_idx
     sta x_add,y
-    jmp b4
+    jmp b8
   abs16s2_b1:
     sec
     lda y_diff
@@ -282,8 +282,8 @@ point_init: {
 // divr16s(signed word zeropage($b) divisor, signed word zeropage(9) rem)
 divr16s: {
     .const dividend = 0
-    .label _7 = 9
-    .label _11 = $b
+    .label _10 = 9
+    .label _13 = $b
     .label resultu = 5
     .label return = 5
     .label divisor = $b
@@ -333,28 +333,28 @@ divr16s: {
     jmp breturn
   b3:
     sec
-    lda _11
+    lda _13
     eor #$ff
     adc #0
-    sta _11
-    lda _11+1
+    sta _13
+    lda _13+1
     eor #$ff
     adc #0
-    sta _11+1
+    sta _13+1
     tya
     eor #1
     tay
     jmp b4
   b1:
     sec
-    lda _7
+    lda _10
     eor #$ff
     adc #0
-    sta _7
-    lda _7+1
+    sta _10
+    lda _10+1
     eor #$ff
     adc #0
-    sta _7+1
+    sta _10+1
     lda #-dividend
     sta dividendu
     lda #0
@@ -498,7 +498,7 @@ bitmap_init: {
     lda #>BITMAP
     sta yoffs+1
     ldx #0
-  b3:
+  b5:
     lda #7
     sax _3
     lda yoffs
@@ -509,7 +509,7 @@ bitmap_init: {
     txa
     and #7
     cmp #7
-    bne b4
+    bne b6
     clc
     lda yoffs
     adc #<$28*8
@@ -517,10 +517,10 @@ bitmap_init: {
     lda yoffs+1
     adc #>$28*8
     sta yoffs+1
-  b4:
+  b6:
     inx
     cpx #0
-    bne b3
+    bne b5
     rts
 }
   // The coordinates of the lines to animate

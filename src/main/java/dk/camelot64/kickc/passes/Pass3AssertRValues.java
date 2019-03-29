@@ -3,8 +3,8 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.RangeValue;
+import dk.camelot64.kickc.model.values.Value;
 import dk.camelot64.kickc.model.values.ValueList;
 
 /**
@@ -22,7 +22,7 @@ public class Pass3AssertRValues extends Pass2SsaAssertion {
    @Override
    public void check() throws AssertionFailed {
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
-         RValue value = programValue.get();
+         Value value = programValue.get();
          if(value instanceof ValueList) {
             throw new CompileError(
                   "Error! Value list not resolved to word constructor or array initializer" +

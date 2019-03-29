@@ -145,25 +145,25 @@ main::@10: scope:[main]  from main::@9
   to:main::@11
 main::@11: scope:[main]  from main::@10
   (byte) main::ch#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@11
-  (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@11/(byte) main::ch#0 )
+  to:main::@7
+main::@7: scope:[main]  from main::@11 main::@7
+  (byte) main::ch#2 ← phi( main::@11/(byte) main::ch#0 main::@7/(byte) main::ch#1 )
   *((byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2
   (byte) main::ch#1 ← (byte) main::ch#2 + rangenext(0,$ef)
   (bool~) main::$7 ← (byte) main::ch#1 != rangelast(0,$ef)
-  if((bool~) main::$7) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1 main::@3
-  if(true) goto main::@3
+  if((bool~) main::$7) goto main::@7
+  to:main::@1
+main::@1: scope:[main]  from main::@2 main::@7
+  if(true) goto main::@2
   to:main::@return
-main::@3: scope:[main]  from main::@2
+main::@2: scope:[main]  from main::@1
   (byte*~) main::$8 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) $3e7
   (byte*~) main::$9 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) $3e7
   (byte*~) main::$10 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) $3e7
   *((byte*~) main::$10) ← ++ *((byte*~) main::$10)
   kickasm() {{ inc $d020  }}
-  to:main::@2
-main::@return: scope:[main]  from main::@2
+  to:main::@1
+main::@return: scope:[main]  from main::@1
   return 
   to:@return
 fill: scope:[fill]  from main::@10 main::@9
@@ -402,7 +402,7 @@ SYMBOL TABLE SSA
 (label) main::@10
 (label) main::@11
 (label) main::@2
-(label) main::@3
+(label) main::@7
 (label) main::@9
 (label) main::@return
 (byte) main::ch
@@ -458,7 +458,7 @@ Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte) fill::val#2 (byte) fill::val#3
 Redundant Phi (byte*) fill::end#1 (byte*) fill::end#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$7 [124] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
+Simple Condition (bool~) main::$7 [124] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@7
 Simple Condition (bool~) fill::$1 [140] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) PROCPORT_DDR#0 = ((byte*))0
@@ -573,16 +573,16 @@ Constant (const byte) main::toD0181_$7#0 = main::toD0181_$6#0&$f
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) main::toD0181_return#0 = main::toD0181_$3#0|main::toD0181_$7#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [13] if(true) goto main::@3
+if() condition always true - replacing block destination [13] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Resolved ranged next value main::ch#1 ← ++ main::ch#2 to ++
-Resolved ranged comparison value if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (byte/word/signed word/dword/signed dword) $f0
+Resolved ranged comparison value if(main::ch#1!=rangelast(0,$ef)) goto main::@7 to (byte/word/signed word/dword/signed dword) $f0
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@11
-Culled Empty Block (label) main::@2
+Culled Empty Block (label) main::@1
 Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte) main::ch#0
 Inlining constant with var siblings (const word) fill::size#0
@@ -611,7 +611,7 @@ Constant inlined main::toD0181_$4#0 = ((word))(const byte*) LOGO#0
 Constant inlined main::toD0181_$5#0 = >((word))(const byte*) LOGO#0
 Constant inlined main::ch#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@12(between main::@1 and main::@1)
+Added new block during phi lifting main::@12(between main::@7 and main::@7)
 Added new block during phi lifting fill::@3(between fill::@1 and fill::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @6
@@ -670,17 +670,17 @@ main::@9: scope:[main]  from main::toD0181
 main::@10: scope:[main]  from main::@9
   [13] phi()
   [14] call fill 
-  to:main::@1
-main::@1: scope:[main]  from main::@1 main::@10
-  [15] (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@10/(byte/signed byte/word/signed word/dword/signed dword) 0 )
+  to:main::@7
+main::@7: scope:[main]  from main::@10 main::@7
+  [15] (byte) main::ch#2 ← phi( main::@10/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@7/(byte) main::ch#1 )
   [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2
   [17] (byte) main::ch#1 ← ++ (byte) main::ch#2
-  [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@1
-  to:main::@3
-main::@3: scope:[main]  from main::@1 main::@3
+  [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@7
+  to:main::@2
+main::@2: scope:[main]  from main::@2 main::@7
   [19] *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) ← ++ *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7)
   kickasm() {{ inc $d020  }}
-  to:main::@3
+  to:main::@2
 fill: scope:[fill]  from main::@10 main::@9
   [21] (byte) fill::val#3 ← phi( main::@10/(const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8 main::@9/(const byte) BLACK#0 )
   [21] (word) fill::size#2 ← phi( main::@10/(byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 main::@9/(byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 )
@@ -937,36 +937,36 @@ main: {
     lda #>COLS
     sta fill.addr+1
     jsr fill
-  //SEG33 [15] phi from main::@10 to main::@1 [phi:main::@10->main::@1]
-  b1_from_b10:
-  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@10->main::@1#0] -- vbuz1=vbuc1 
+  //SEG33 [15] phi from main::@10 to main::@7 [phi:main::@10->main::@7]
+  b7_from_b10:
+  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@10->main::@7#0] -- vbuz1=vbuc1 
     lda #0
     sta ch
-    jmp b1
-  //SEG35 [15] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
-  //SEG37 main::@1
-  b1:
+    jmp b7
+  //SEG35 [15] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
+  b7_from_b7:
+  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@7->main::@7#0] -- register_copy 
+    jmp b7
+  //SEG37 main::@7
+  b7:
   //SEG38 [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy ch
     tya
     sta SCREEN,y
   //SEG39 [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #$f0
     cmp ch
-    bne b1_from_b1
-    jmp b3
-  //SEG41 main::@3
-  b3:
+    bne b7_from_b7
+    jmp b2
+  //SEG41 main::@2
+  b2:
   //SEG42 [19] *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) ← ++ *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
   //SEG43 kickasm() {{ inc $d020  }}
     inc $d020 
-    jmp b3
+    jmp b2
 }
 //SEG44 fill
 // Fill some memory with a value
@@ -1167,33 +1167,33 @@ main: {
     lda #>COLS
     sta fill.addr+1
     jsr fill
-  //SEG33 [15] phi from main::@10 to main::@1 [phi:main::@10->main::@1]
-  b1_from_b10:
-  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@10->main::@1#0] -- vbuxx=vbuc1 
+  //SEG33 [15] phi from main::@10 to main::@7 [phi:main::@10->main::@7]
+  b7_from_b10:
+  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@10->main::@7#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
-  //SEG35 [15] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
-  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
-  //SEG37 main::@1
-  b1:
+    jmp b7
+  //SEG35 [15] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
+  b7_from_b7:
+  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@7->main::@7#0] -- register_copy 
+    jmp b7
+  //SEG37 main::@7
+  b7:
   //SEG38 [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
   //SEG39 [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@7 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$f0
-    bne b1_from_b1
-    jmp b3
-  //SEG41 main::@3
-  b3:
+    bne b7_from_b7
+    jmp b2
+  //SEG41 main::@2
+  b2:
   //SEG42 [19] *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) ← ++ *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
   //SEG43 kickasm() {{ inc $d020  }}
     inc $d020 
-    jmp b3
+    jmp b2
 }
 //SEG44 fill
 // Fill some memory with a value
@@ -1254,14 +1254,14 @@ Removing instruction jmp bend
 Removing instruction jmp toD0181
 Removing instruction jmp b9
 Removing instruction jmp b10
-Removing instruction jmp b1
-Removing instruction jmp b3
+Removing instruction jmp b7
+Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda BGCOL2
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
+Replacing label b7_from_b7 with b7
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Removing instruction b4:
@@ -1272,7 +1272,7 @@ Removing instruction toD0181_from_main:
 Removing instruction toD0181:
 Removing instruction b10_from_b9:
 Removing instruction fill_from_b10:
-Removing instruction b1_from_b1:
+Removing instruction b7_from_b7:
 Removing instruction b1_from_fill:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
@@ -1280,13 +1280,13 @@ Removing instruction bend:
 Removing instruction b9:
 Removing instruction fill_from_b9:
 Removing instruction b10:
-Removing instruction b1_from_b10:
+Removing instruction b7_from_b10:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp b7
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -1406,9 +1406,9 @@ FINAL SYMBOL TABLE
 (byte) fill::val
 (byte) fill::val#3 reg byte x 1.8333333333333333
 (void()) main()
-(label) main::@1
 (label) main::@10
-(label) main::@3
+(label) main::@2
+(label) main::@7
 (label) main::@9
 (byte) main::ch
 (byte) main::ch#1 reg byte x 16.5
@@ -1522,28 +1522,28 @@ main: {
     lda #>COLS
     sta fill.addr+1
     jsr fill
-  //SEG33 [15] phi from main::@10 to main::@1 [phi:main::@10->main::@1]
-  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@10->main::@1#0] -- vbuxx=vbuc1 
+  //SEG33 [15] phi from main::@10 to main::@7 [phi:main::@10->main::@7]
+  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@10->main::@7#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG35 [15] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG37 main::@1
-  b1:
+  //SEG35 [15] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
+  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@7->main::@7#0] -- register_copy 
+  //SEG37 main::@7
+  b7:
   //SEG38 [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
   //SEG39 [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@7 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$f0
-    bne b1
-  //SEG41 main::@3
-  b3:
+    bne b7
+  //SEG41 main::@2
+  b2:
   //SEG42 [19] *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) ← ++ *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
   //SEG43 kickasm() {{ inc $d020  }}
     inc $d020 
-    jmp b3
+    jmp b2
 }
 //SEG44 fill
 // Fill some memory with a value

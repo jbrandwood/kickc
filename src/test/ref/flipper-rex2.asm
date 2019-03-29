@@ -11,10 +11,10 @@ main: {
     lda #$fe
     cmp RASTER
     bne b3
-  b4:
+  b5:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne b5
     dex
     cpx #0
     bne b3
@@ -82,12 +82,12 @@ flip: {
     cmp #0
     bne b1
     ldx #0
-  b3:
+  b5:
     lda buffer2,x
     sta buffer1,x
     inx
     cpx #0
-    bne b3
+    bne b5
     rts
 }
 // Prepare buffer

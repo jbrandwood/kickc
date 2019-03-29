@@ -84,25 +84,25 @@ anim: {
     sta sx
   //signed byte xmin = 0;
   //signed byte xmax = 0;
-  b4:
+  b6:
     lda #$ff
     cmp RASTER
-    bne b4
-  b7:
+    bne b6
+  b9:
     lda #$fe
     cmp RASTER
-    bne b7
-  b10:
+    bne b9
+  b12:
     lda #$fd
     cmp RASTER
-    bne b10
+    bne b12
     inc BORDERCOL
     ldy sx
     jsr calculate_matrix
     jsr store_matrix
     lda #0
     sta i
-  b13:
+  b15:
     inc BORDERCOL
     ldy i
     ldx xs,y
@@ -140,7 +140,7 @@ anim: {
     inc i
     lda #8
     cmp i
-    bne b13
+    bne b15
     lda #LIGHT_GREY
     sta BORDERCOL
     jsr debug_print
@@ -153,7 +153,7 @@ anim: {
     sec
     sbc #3
     sta sy
-    jmp b4
+    jmp b6
 }
 debug_print: {
     .const print_sbyte_pos1_row = 0

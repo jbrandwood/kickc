@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.values.ForwardVariableRef;
 import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.Value;
 
 /** Pass that resolves all forward variable references - and fails if they cannot be resolved*/
 public class Pass1ResolveForwardReferences extends Pass1Base {
@@ -18,7 +19,7 @@ public class Pass1ResolveForwardReferences extends Pass1Base {
    @Override
    public boolean step() {
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
-         RValue rValue = programValue.get();
+         Value rValue = programValue.get();
          if(rValue instanceof ForwardVariableRef) {
             String varName = ((ForwardVariableRef) rValue).getName();
             Scope currentScope = getScope().getScope(currentBlock.getScope());

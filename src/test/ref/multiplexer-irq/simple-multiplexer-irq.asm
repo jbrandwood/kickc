@@ -72,12 +72,12 @@ loop: {
     sta sin_idx
   b1:
   // without volatile gives wrong asm
-  b4:
+  b6:
     lda framedone
     cmp #0
-    bne b6
-    jmp b4
-  b6:
+    bne b8
+    jmp b6
+  b8:
     lda #RED
     sta BORDERCOL
     // Assign sinus positions
@@ -85,7 +85,7 @@ loop: {
     sta y_idx
     ldy #0
   // without volatile gives wrong asm
-  b7:
+  b9:
     ldx y_idx
     lda YSIN,x
     sta PLEX_YPOS,y
@@ -94,7 +94,7 @@ loop: {
     stx y_idx
     iny
     cpy #PLEX_COUNT-1+1
-    bne b7
+    bne b9
     inc sin_idx
     inc BORDERCOL
     jsr plexSort
@@ -141,7 +141,7 @@ plexSort: {
     dex
     cpx #$ff
     bne b8
-  b5:
+  b4:
     inx
     lda nxt_idx
     sta PLEX_SORTED_IDX,x
@@ -170,7 +170,7 @@ plexSort: {
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcc b3
-    jmp b5
+    jmp b4
 }
 // Initialize the program
 init: {
@@ -207,12 +207,12 @@ init: {
     lda #$ff
     sta SPRITES_ENABLE
     ldx #0
-  b2:
+  b3:
     lda #GREEN
     sta SPRITES_COLS,x
     inx
     cpx #8
-    bne b2
+    bne b3
     // enable the interrupt
     sei
     lda #CIA_INTERRUPT_CLEAR
@@ -239,17 +239,17 @@ plexInit: {
     rts
 }
 plex_irq: {
-    .label _3 = $10
+    .label _4 = 5
     lda #WHITE
     sta BORDERCOL
-  b1:
+  b3:
     jsr plexShowSprite
     ldy plexShowSprite.plexFreeAdd1__2
     ldx PLEX_FREE_YPOS,y
     lda RASTER
     clc
     adc #2
-    sta _3
+    sta _4
     lda plex_show_idx
     cmp #PLEX_COUNT
     bcc b9
@@ -258,26 +258,26 @@ plex_irq: {
     sta IRQ_STATUS
     lda plex_show_idx
     cmp #PLEX_COUNT
-    bcc b2
+    bcc b1
     lda #1
     sta framedone
-  b3:
+  b2:
     lda #0
     sta BORDERCOL
     jmp $ea81
-  b2:
+  b1:
     stx RASTER
-    jmp b3
+    jmp b2
   b9:
-    cpx _3
-    bcc b1
+    cpx _4
+    bcc b3
     jmp b4
 }
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label _8 = 8
-    .label plex_sprite_idx2 = $10
+    .label _7 = 8
+    .label plex_sprite_idx2 = 5
     .label plexFreeAdd1__2 = $a
     lda plex_sprite_idx
     asl
@@ -318,7 +318,7 @@ plexShowSprite: {
     ldx plex_sprite_idx
     inx
     lda #7
-    sax _8
+    sax _7
     inc plex_show_idx
     asl plex_sprite_msb
     lda plex_sprite_msb

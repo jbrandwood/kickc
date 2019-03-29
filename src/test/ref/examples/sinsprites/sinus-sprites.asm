@@ -40,7 +40,7 @@ main: {
     jmp b2
 }
 anim: {
-    .label _2 = 5
+    .label _6 = 5
     .label xidx = 4
     .label yidx = 7
     .label x = 9
@@ -58,7 +58,7 @@ anim: {
     sta j2
     lda #0
     sta x_msb
-  b1:
+  b4:
     ldy xidx
     lda sintab_x,y
     clc
@@ -67,7 +67,7 @@ anim: {
     lda #>$1e
     adc #0
     sta x+1
-    asl _2
+    asl _6
     ora x_msb
     sta x_msb
     lda x
@@ -82,43 +82,43 @@ anim: {
     stx xidx
     txa
     cmp #sinlen_x
-    bcc b2
+    bcc b5
     lax xidx
     axs #sinlen_x
     stx xidx
-  b2:
+  b5:
     lax yidx
     axs #-[8]
     stx yidx
     txa
     cmp #sinlen_y
-    bcc b3
+    bcc b6
     lax yidx
     axs #sinlen_y
     stx yidx
-  b3:
+  b6:
     dec j2
     dec j2
     inc j
     lda #7
     cmp j
-    bne b1
+    bne b4
     lda x_msb
     sta SPRITES_XMSB
     inc sin_idx_x
     lda sin_idx_x
     cmp #sinlen_x
-    bcc b4
+    bcc b1
     lda #0
     sta sin_idx_x
-  b4:
+  b1:
     inc sin_idx_y
     lda sin_idx_y
     cmp #sinlen_y
-    bcc b5
+    bcc b2
     lda #0
     sta sin_idx_y
-  b5:
+  b2:
     dec BORDERCOL
     rts
 }

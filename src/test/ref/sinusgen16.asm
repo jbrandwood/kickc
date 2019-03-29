@@ -250,7 +250,7 @@ sin16s_gen: {
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zeropage($f) x)
 sin16s: {
-    .label _6 = $f
+    .label _4 = $f
     .label x = $f
     .label return = 6
     .label x1 = $1f
@@ -331,15 +331,15 @@ sin16s: {
   b2:
     ldy #3
   !:
-    asl _6
-    rol _6+1
-    rol _6+2
-    rol _6+3
+    asl _4
+    rol _4+1
+    rol _4+2
+    rol _4+3
     dey
     bne !-
-    lda _6+2
+    lda _4+2
     sta x1
-    lda _6+3
+    lda _4+3
     sta x1+1
     lda x1
     sta mulu16_sel.v1
@@ -483,7 +483,7 @@ mul16u: {
     lda a
     and #1
     cmp #0
-    beq b4
+    beq b8
     lda res
     clc
     adc mb
@@ -497,7 +497,7 @@ mul16u: {
     lda res+3
     adc mb+3
     sta res+3
-  b4:
+  b8:
     clc
     ror a+1
     ror a

@@ -62,6 +62,10 @@ public class ControlFlowBlock {
       return label;
    }
 
+   public void setLabel(LabelRef label) {
+      this.label = label;
+   }
+
    public ScopeRef getScope() {
       return scope;
    }

@@ -235,20 +235,20 @@ main: {
     sta render_screen_show
   b1:
   // Wait for a frame to pass
-  b4:
+  b6:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne b6
     jsr render_show
     jsr keyboard_event_scan
     jsr keyboard_event_get
     lda game_over
     cmp #0
-    beq b7
-  b9:
+    beq b9
+  b11:
     inc BORDERCOL
-    jmp b9
-  b7:
+    jmp b11
+  b9:
     stx play_movement.key_event
     jsr play_movement
     lda play_movement.return
@@ -429,9 +429,9 @@ render_next: {
     sta next_piece_gfx+1
     lda #0
     sta l
-  b3:
+  b5:
     ldx #0
-  b4:
+  b6:
     ldy #0
     lda (next_piece_gfx),y
     inc next_piece_gfx
@@ -439,18 +439,18 @@ render_next: {
     inc next_piece_gfx+1
   !:
     cmp #0
-    bne b5
+    bne b7
     lda #0
     tay
     sta (screen_next_area),y
-  b6:
+  b8:
     inc screen_next_area
     bne !+
     inc screen_next_area+1
   !:
     inx
     cpx #4
-    bne b4
+    bne b6
     lda #$24
     clc
     adc screen_next_area
@@ -461,13 +461,13 @@ render_next: {
     inc l
     lda #4
     cmp l
-    bne b3
+    bne b5
     rts
-  b5:
+  b7:
     lda next_piece_char
     ldy #0
     sta (screen_next_area),y
-    jmp b6
+    jmp b8
 }
 // Render the current moving piece at position (current_xpos, current_ypos)
 // Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
@@ -798,10 +798,10 @@ play_move_leftright: {
 play_move_down: {
     inc current_movedown_counter
     cmp #KEY_SPACE
-    bne b3
+    bne b4
     ldx #1
     jmp b1
-  b3:
+  b4:
     ldx #0
   b1:
     lda #KEY_SPACE
@@ -816,9 +816,9 @@ play_move_down: {
   b2:
     lda current_movedown_counter
     cmp current_movedown_slow
-    bcc b4
+    bcc b3
     inx
-  b4:
+  b3:
     cpx #0
     beq b5
     ldy current_ypos
@@ -833,7 +833,7 @@ play_move_down: {
     sta current_piece_98+1
     jsr play_collision
     cmp #COLLISION_NONE
-    beq b6
+    beq b14
     jsr play_lock_current
     jsr play_remove_lines
     lda play_remove_lines.removed
@@ -847,7 +847,7 @@ play_move_down: {
     sta current_piece+1
     lda #0
     sta current_orientation
-  b7:
+  b15:
     lda #0
     sta current_movedown_counter
     ldx #1
@@ -856,9 +856,9 @@ play_move_down: {
     ldx #0
   breturn:
     rts
-  b6:
+  b14:
     inc current_ypos
-    jmp b7
+    jmp b15
 }
 // Spawn a new piece
 // Moves the next piece into the current and spawns a new next piece
@@ -995,7 +995,7 @@ play_increase_level: {
     // Increase the score values gained
     sed
     ldx #0
-  b4:
+  b7:
     txa
     asl
     asl
@@ -1015,7 +1015,7 @@ play_increase_level: {
     sta score_add_bcd+3,y
     inx
     cpx #5
-    bne b4
+    bne b7
     cld
     rts
 }
@@ -1035,48 +1035,48 @@ play_remove_lines: {
     ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
     ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
   // Read all lines and rewrite them
-  b1:
+  b8:
     lda #1
     sta full
     lda #0
     sta x
-  b2:
+  b9:
     lda playfield,y
     sta c
     dey
     cmp #0
-    bne b3
+    bne b10
     lda #0
     sta full
-  b3:
+  b10:
     lda c
     sta playfield,x
     dex
     inc x
     lda #PLAYFIELD_COLS-1+1
     cmp x
-    bne b2
+    bne b9
     lda #1
     cmp full
-    bne b4
+    bne b14
     txa
     axs #-[PLAYFIELD_COLS]
     inc removed
-  b4:
+  b14:
     inc y
     lda #PLAYFIELD_LINES-1+1
     cmp y
-    bne b1
-  b5:
+    bne b8
+  b1:
   // Write zeros in the rest of the lines
     cpx #$ff
-    bne b6
+    bne b2
     rts
-  b6:
+  b2:
     lda #0
     sta playfield,x
     dex
-    jmp b5
+    jmp b1
 }
 // Lock the current piece onto the playfield
 play_lock_current: {
@@ -1183,7 +1183,7 @@ keyboard_event_scan: {
     lda #0
     sta keycode
     sta row
-  b1:
+  b8:
     ldx row
     jsr keyboard_matrix_read
     sta row_scan
@@ -1193,39 +1193,39 @@ keyboard_event_scan: {
     lax keycode
     axs #-[8]
     stx keycode
-  b3:
+  b10:
     inc row
     lda #8
     cmp row
-    bne b1
+    bne b8
     lda #KEY_LSHIFT
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b2
+    beq b4
     ldx #0|KEY_MODIFIER_LSHIFT
-    jmp b9
-  b2:
+    jmp b1
+  b4:
     ldx #0
-  b9:
+  b1:
     lda #KEY_RSHIFT
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b10
+    beq b2
     txa
     ora #KEY_MODIFIER_RSHIFT
     tax
-  b10:
+  b2:
     lda #KEY_CTRL
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b11
+    beq b3
     txa
     ora #KEY_MODIFIER_CTRL
     tax
-  b11:
+  b3:
     lda #KEY_COMMODORE
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
@@ -1238,43 +1238,43 @@ keyboard_event_scan: {
   // Something has changed on the keyboard row - check each column
   b6:
     ldx #0
-  b4:
+  b11:
     lda row_scan
     ldy row
     eor keyboard_scan_values,y
     and keyboard_matrix_col_bitmask,x
     cmp #0
-    beq b5
+    beq b12
     lda #8
     cmp keyboard_events_size
-    beq b5
+    beq b12
     lda keyboard_matrix_col_bitmask,x
     and row_scan
     cmp #0
-    beq b7
+    beq b14
     // Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
     inc keyboard_events_size
-  b5:
+  b12:
     inc keycode
     inx
     cpx #8
-    bne b4
+    bne b11
     // Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
-    jmp b3
-  b7:
+    jmp b10
+  b14:
     lda #$40
     ora keycode
     // Key released
     ldy keyboard_events_size
     sta keyboard_events,y
     inc keyboard_events_size
-    jmp b5
+    jmp b12
 }
 // Read a single row of the keyboard matrix
 // The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
@@ -1352,7 +1352,7 @@ play_init: {
     sta current_movedown_slow
     ldx #0
   // Set the initial score add values
-  b2:
+  b3:
     txa
     asl
     asl
@@ -1367,7 +1367,7 @@ play_init: {
     sta score_add_bcd+3,y
     inx
     cpx #5
-    bne b2
+    bne b3
     rts
 }
 // Setup the IRQ
@@ -1548,7 +1548,7 @@ render_screen_original: {
     inx
     cpx #4
     bne b2
-  b3:
+  b4:
     ldy #0
     lda (oscr),y
     sta (screen),y
@@ -1573,8 +1573,8 @@ render_screen_original: {
   !:
     inx
     cpx #$24
-    bne b3
-  b4:
+    bne b4
+  b6:
     lda #SPACE
     ldy #0
     sta (screen),y
@@ -1591,7 +1591,7 @@ render_screen_original: {
   !:
     inx
     cpx #$28
-    bne b4
+    bne b6
     inc y
     lda #$19
     cmp y
@@ -1629,14 +1629,14 @@ sprites_irq: {
     inx
     // Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
-  b1:
+  b11:
     lda RASTER
     cmp raster_sprite_gfx_modify
-    bcc b1
+    bcc b11
     ldx irq_sprite_ptr
     lda render_screen_showing
     cmp #0
-    beq b2
+    beq b1
     stx PLAYFIELD_SPRITE_PTRS_2
     inx
     txa
@@ -1645,14 +1645,14 @@ sprites_irq: {
     clc
     adc #1
     sta PLAYFIELD_SPRITE_PTRS_2+3
-  b3:
+  b2:
     inc irq_cnt
     lda #9
     cmp irq_cnt
-    beq b4
+    beq b3
     lda #$a
     cmp irq_cnt
-    beq b5
+    beq b4
     lax irq_raster_next
     axs #-[$14]
     stx irq_raster_next
@@ -1662,7 +1662,7 @@ sprites_irq: {
     lax irq_sprite_ptr
     axs #-[3]
     stx irq_sprite_ptr
-  b7:
+  b6:
     // Setup next interrupt
     lda irq_raster_next
     sta RASTER
@@ -1674,7 +1674,7 @@ sprites_irq: {
   regx:
     ldx #00
     rti
-  b5:
+  b4:
     lda #0
     sta irq_cnt
     lda #IRQ_RASTER_FIRST
@@ -1685,8 +1685,8 @@ sprites_irq: {
     lax irq_sprite_ptr
     axs #-[3]
     stx irq_sprite_ptr
-    jmp b7
-  b4:
+    jmp b6
+  b3:
     lax irq_raster_next
     axs #-[$15]
     stx irq_raster_next
@@ -1694,8 +1694,8 @@ sprites_irq: {
     sta irq_sprite_ypos
     lda #toSpritePtr2_return
     sta irq_sprite_ptr
-    jmp b7
-  b2:
+    jmp b6
+  b1:
     stx PLAYFIELD_SPRITE_PTRS_1
     inx
     stx PLAYFIELD_SPRITE_PTRS_1+1
@@ -1703,7 +1703,7 @@ sprites_irq: {
     inx
     txa
     sta PLAYFIELD_SPRITE_PTRS_1+3
-    jmp b3
+    jmp b2
 }
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f

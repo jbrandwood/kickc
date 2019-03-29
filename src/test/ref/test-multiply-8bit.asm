@@ -311,7 +311,7 @@ mul8u: {
     txa
     and #1
     cmp #0
-    beq b4
+    beq b8
     lda res
     clc
     adc mb
@@ -319,7 +319,7 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  b4:
+  b8:
     txa
     lsr
     tax
@@ -409,14 +409,14 @@ muls8s: {
     .label return = 8
     .label a = 2
     lda a
-    bmi b6
+    bmi b4
     cmp #1
     bmi b2
     lda #0
     tay
     sta m
     sta m+1
-  b3:
+  b8:
     txa
     sta $fe
     ora #$7f
@@ -433,20 +433,20 @@ muls8s: {
     sta m+1
     iny
     cpy a
-    bne b3
-    jmp b4
+    bne b8
+    jmp b3
   b2:
     lda #0
     sta return
     sta return+1
-  b4:
+  b3:
     rts
-  b6:
+  b4:
     lda #0
     tay
     sta m
     sta m+1
-  b5:
+  b10:
     txa
     sta $fe
     ora #$7f
@@ -463,8 +463,8 @@ muls8s: {
     sta m+1
     dey
     cpy a
-    bne b5
-    jmp b4
+    bne b10
+    jmp b3
 }
 // Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
@@ -600,12 +600,12 @@ muls8u: {
     .label a = 2
     lda a
     cmp #0
-    beq b3
+    beq b2
     ldy #0
     tya
     sta m
     sta m+1
-  b2:
+  b4:
     txa
     clc
     adc m
@@ -615,9 +615,9 @@ muls8u: {
   !:
     iny
     cpy a
-    bne b2
+    bne b4
     jmp b1
-  b3:
+  b2:
     lda #0
     sta return
     sta return+1
@@ -835,7 +835,7 @@ mulf_init: {
     lda #>mulf_sqr2_lo
     sta sqr2_lo+1
     ldx #-1
-  b3:
+  b5:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -850,20 +850,20 @@ mulf_init: {
     adc dir
     tax
     cpx #0
-    bne b4
+    bne b6
     lda #1
     sta dir
-  b4:
+  b6:
     inc sqr2_lo
     bne !+
     inc sqr2_lo+1
   !:
     lda sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b3
+    bne b5
     lda sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b3
+    bne b5
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff

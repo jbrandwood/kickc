@@ -71,7 +71,7 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
       for(SymbolVariable referencingVar : allSymbolVariables) {
          ProgramValueIterator.execute(referencingVar,
                (programValue, currentStmt, stmtIt, currentBlock) -> {
-                  RValue rValue = programValue.get();
+                  Value rValue = programValue.get();
                   if(rValue instanceof SymbolVariableRef) {
                      SymbolVariableRef referencedVar = (SymbolVariableRef) rValue;
                      symbolVarReferences.putIfAbsent(referencedVar, new ArrayList<>());

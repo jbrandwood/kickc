@@ -107,7 +107,7 @@ init_plot_tables: {
     sta yoffs
     sta yoffs+1
     tax
-  b3:
+  b5:
     lda #7
     sax _6
     lda yoffs
@@ -118,7 +118,7 @@ init_plot_tables: {
     txa
     and #7
     cmp #7
-    bne b4
+    bne b6
     clc
     lda yoffs
     adc #<$28*8
@@ -126,10 +126,10 @@ init_plot_tables: {
     lda yoffs+1
     adc #>$28*8
     sta yoffs+1
-  b4:
+  b6:
     inx
     cpx #0
-    bne b3
+    bne b5
     rts
 }
 init_screen: {
@@ -157,7 +157,7 @@ init_screen: {
     sta c
     lda #>SCREEN
     sta c+1
-  b2:
+  b3:
     lda #$14
     ldy #0
     sta (c),y
@@ -167,10 +167,10 @@ init_screen: {
   !:
     lda c+1
     cmp #>SCREEN+$400
-    bne b2
+    bne b3
     lda c
     cmp #<SCREEN+$400
-    bne b2
+    bne b3
     rts
 }
   plots_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28

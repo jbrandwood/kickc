@@ -19,41 +19,41 @@ main: {
     lda #$fe
     cmp RASTER
     bne b2
-  b3:
+  b4:
     lda #$ff
     cmp RASTER
-    bne b3
+    bne b4
     inc BGCOL
     dex
     cpx #$ff
-    bne b4
+    bne b7
     ldx #0
   // Hard scroll
-  b5:
+  b8:
     lda line+1,x
     sta line,x
     inx
     cpx #$27
-    bne b5
+    bne b8
     // Render next char
     ldy #0
     lda (nxt),y
     tax
     cpx #'@'
-    bne b6
+    bne b11
     ldx TEXT
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  b6:
+  b11:
     stx line+$27
     inc nxt
     bne !+
     inc nxt+1
   !:
     ldx #7
-  b4:
+  b7:
     stx SCROLL
     dec BGCOL
     jmp b2

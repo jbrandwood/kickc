@@ -6,7 +6,7 @@ CONTROL FLOW GRAPH SSA
   to:@1
 main: scope:[main]  from @1
   to:main::@1
-main::@1: scope:[main]  from main main::@4
+main::@1: scope:[main]  from main main::@7
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
@@ -15,15 +15,15 @@ main::@2: scope:[main]  from main::@1
   (bool~) main::$1 ← (byte) main::key#0 < (byte/signed byte/word/signed word/dword/signed dword) $40
   (bool~) main::$2 ← (bool~) main::$0 || (bool~) main::$1
   (bool~) main::$3 ← ! (bool~) main::$2
-  if((bool~) main::$3) goto main::@4
-  to:main::@7
-main::@4: scope:[main]  from main::@2 main::@7
-  (byte) main::key#2 ← phi( main::@2/(byte) main::key#0 main::@7/(byte) main::key#1 )
+  if((bool~) main::$3) goto main::@7
+  to:main::@6
+main::@7: scope:[main]  from main::@2 main::@6
+  (byte) main::key#2 ← phi( main::@2/(byte) main::key#0 main::@6/(byte) main::key#1 )
   *((byte*) SCREEN#0) ← (byte) main::key#2
   to:main::@1
-main::@7: scope:[main]  from main::@2
+main::@6: scope:[main]  from main::@2
   (byte) main::key#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@4
+  to:main::@7
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
@@ -50,7 +50,7 @@ SYMBOL TABLE SSA
 (bool~) main::$3
 (label) main::@1
 (label) main::@2
-(label) main::@4
+(label) main::@6
 (label) main::@7
 (label) main::@return
 (byte) main::key
@@ -74,18 +74,18 @@ Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Culled Empty Block (label) main::@1
 Successful SSA optimization Pass2CullEmptyBlocks
-Simple Condition (bool~) main::$0 [3] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@7
-Simple Condition (bool~) main::$1 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@7
+Simple Condition (bool~) main::$0 [3] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@6
+Simple Condition (bool~) main::$1 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@6
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Inlining constant with var siblings (const byte) main::key#1
 Constant inlined main::key#1 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@10(between main::@9 and main::@4)
+Added new block during phi lifting main::@10(between main::@9 and main::@7)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@7
+Adding NOP phi() at start of main::@6
 CALL GRAPH
 Calls in [] to main:2 
 
@@ -97,7 +97,7 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@7
+Adding NOP phi() at start of main::@6
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -112,20 +112,20 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   to:main::@2
-main::@2: scope:[main]  from main main::@4
+main::@2: scope:[main]  from main main::@7
   [5] (byte) main::key#0 ← *((const byte*) RASTER#0)
-  [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@7
+  [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@6
   to:main::@9
 main::@9: scope:[main]  from main::@2
-  [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@7
-  to:main::@4
-main::@4: scope:[main]  from main::@7 main::@9
-  [8] (byte) main::key#2 ← phi( main::@9/(byte) main::key#0 main::@7/(byte/signed byte/word/signed word/dword/signed dword) 0 )
+  [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@6
+  to:main::@7
+main::@7: scope:[main]  from main::@6 main::@9
+  [8] (byte) main::key#2 ← phi( main::@9/(byte) main::key#0 main::@6/(byte/signed byte/word/signed word/dword/signed dword) 0 )
   [9] *((const byte*) SCREEN#0) ← (byte) main::key#2
   to:main::@2
-main::@7: scope:[main]  from main::@2 main::@9
+main::@6: scope:[main]  from main::@2 main::@9
   [10] phi()
-  to:main::@4
+  to:main::@7
 
 
 VARIABLE REGISTER WEIGHTS
@@ -177,39 +177,39 @@ main: {
   //SEG12 [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuz1=_deref_pbuc1 
     lda RASTER
     sta key
-  //SEG13 [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@7 -- vbuz1_gt_vbuc1_then_la1 
+  //SEG13 [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@6 -- vbuz1_gt_vbuc1_then_la1 
     lda #$20
     cmp key
-    bcc b7_from_b2
+    bcc b6_from_b2
     jmp b9
   //SEG14 main::@9
   b9:
-  //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@7 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@6 -- vbuz1_lt_vbuc1_then_la1 
     lda key
     cmp #$40
-    bcc b7_from_b9
-  //SEG16 [8] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
-  b4_from_b9:
-  //SEG17 [8] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@9->main::@4#0] -- register_copy 
-    jmp b4
-  //SEG18 main::@4
-  b4:
+    bcc b6_from_b9
+  //SEG16 [8] phi from main::@9 to main::@7 [phi:main::@9->main::@7]
+  b7_from_b9:
+  //SEG17 [8] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@9->main::@7#0] -- register_copy 
+    jmp b7
+  //SEG18 main::@7
+  b7:
   //SEG19 [9] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuz1 
     lda key
     sta SCREEN
     jmp b2
-  //SEG20 [10] phi from main::@2 main::@9 to main::@7 [phi:main::@2/main::@9->main::@7]
-  b7_from_b2:
-  b7_from_b9:
-    jmp b7
-  //SEG21 main::@7
-  b7:
-  //SEG22 [8] phi from main::@7 to main::@4 [phi:main::@7->main::@4]
-  b4_from_b7:
-  //SEG23 [8] phi (byte) main::key#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@4#0] -- vbuz1=vbuc1 
+  //SEG20 [10] phi from main::@2 main::@9 to main::@6 [phi:main::@2/main::@9->main::@6]
+  b6_from_b2:
+  b6_from_b9:
+    jmp b6
+  //SEG21 main::@6
+  b6:
+  //SEG22 [8] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
+  b7_from_b6:
+  //SEG23 [8] phi (byte) main::key#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@6->main::@7#0] -- vbuz1=vbuc1 
     lda #0
     sta key
-    jmp b4
+    jmp b7
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -255,37 +255,37 @@ main: {
   b2:
   //SEG12 [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
     lda RASTER
-  //SEG13 [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@7 -- vbuaa_gt_vbuc1_then_la1 
+  //SEG13 [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@6 -- vbuaa_gt_vbuc1_then_la1 
     cmp #$20
     beq !+
-    bcs b7_from_b2
+    bcs b6_from_b2
   !:
     jmp b9
   //SEG14 main::@9
   b9:
-  //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@7 -- vbuaa_lt_vbuc1_then_la1 
+  //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@6 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$40
-    bcc b7_from_b9
-  //SEG16 [8] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
-  b4_from_b9:
-  //SEG17 [8] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@9->main::@4#0] -- register_copy 
-    jmp b4
-  //SEG18 main::@4
-  b4:
+    bcc b6_from_b9
+  //SEG16 [8] phi from main::@9 to main::@7 [phi:main::@9->main::@7]
+  b7_from_b9:
+  //SEG17 [8] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@9->main::@7#0] -- register_copy 
+    jmp b7
+  //SEG18 main::@7
+  b7:
   //SEG19 [9] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     jmp b2
-  //SEG20 [10] phi from main::@2 main::@9 to main::@7 [phi:main::@2/main::@9->main::@7]
-  b7_from_b2:
-  b7_from_b9:
-    jmp b7
-  //SEG21 main::@7
-  b7:
-  //SEG22 [8] phi from main::@7 to main::@4 [phi:main::@7->main::@4]
-  b4_from_b7:
-  //SEG23 [8] phi (byte) main::key#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@4#0] -- vbuaa=vbuc1 
+  //SEG20 [10] phi from main::@2 main::@9 to main::@6 [phi:main::@2/main::@9->main::@6]
+  b6_from_b2:
+  b6_from_b9:
+    jmp b6
+  //SEG21 main::@6
+  b6:
+  //SEG22 [8] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
+  b7_from_b6:
+  //SEG23 [8] phi (byte) main::key#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@6->main::@7#0] -- vbuaa=vbuc1 
     lda #0
-    jmp b4
+    jmp b7
 }
 
 ASSEMBLER OPTIMIZATIONS
@@ -293,19 +293,19 @@ Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b2
 Removing instruction jmp b9
-Removing instruction jmp b4
 Removing instruction jmp b7
+Removing instruction jmp b6
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b7_from_b2 with b7
-Replacing label b7_from_b9 with b7
+Replacing label b6_from_b2 with b6
+Replacing label b6_from_b9 with b6
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
-Removing instruction b4_from_b9:
-Removing instruction b7_from_b2:
 Removing instruction b7_from_b9:
-Removing instruction b4_from_b7:
+Removing instruction b6_from_b2:
+Removing instruction b6_from_b9:
+Removing instruction b7_from_b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b9:
@@ -326,7 +326,7 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (void()) main()
 (label) main::@2
-(label) main::@4
+(label) main::@6
 (label) main::@7
 (label) main::@9
 (byte) main::key
@@ -361,28 +361,28 @@ main: {
   b2:
   //SEG12 [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
     lda RASTER
-  //SEG13 [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@7 -- vbuaa_gt_vbuc1_then_la1 
+  //SEG13 [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@6 -- vbuaa_gt_vbuc1_then_la1 
     cmp #$20
     beq !+
-    bcs b7
+    bcs b6
   !:
   //SEG14 main::@9
-  //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@7 -- vbuaa_lt_vbuc1_then_la1 
+  //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@6 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$40
-    bcc b7
-  //SEG16 [8] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
-  //SEG17 [8] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@9->main::@4#0] -- register_copy 
-  //SEG18 main::@4
-  b4:
+    bcc b6
+  //SEG16 [8] phi from main::@9 to main::@7 [phi:main::@9->main::@7]
+  //SEG17 [8] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@9->main::@7#0] -- register_copy 
+  //SEG18 main::@7
+  b7:
   //SEG19 [9] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     jmp b2
-  //SEG20 [10] phi from main::@2 main::@9 to main::@7 [phi:main::@2/main::@9->main::@7]
-  //SEG21 main::@7
-  b7:
-  //SEG22 [8] phi from main::@7 to main::@4 [phi:main::@7->main::@4]
-  //SEG23 [8] phi (byte) main::key#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@4#0] -- vbuaa=vbuc1 
+  //SEG20 [10] phi from main::@2 main::@9 to main::@6 [phi:main::@2/main::@9->main::@6]
+  //SEG21 main::@6
+  b6:
+  //SEG22 [8] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
+  //SEG23 [8] phi (byte) main::key#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@6->main::@7#0] -- vbuaa=vbuc1 
     lda #0
-    jmp b4
+    jmp b7
 }
 

@@ -88,13 +88,13 @@ main: {
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
-  b1:
+  b6:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b1
-  b3:
+    bne b6
+  b2:
     // Stabilize Raster
     ldx #$ff
   rff:
@@ -136,10 +136,10 @@ main: {
     sta VIC_CONTROL
     lda #0
     sta BORDERCOL
-  b5:
+  b8:
     lda #$42
     cmp RASTER
-    bne b5
+    bne b8
     nop
     nop
     nop
@@ -158,7 +158,7 @@ main: {
     nop
     nop
     nop
-  b8:
+  b11:
     ldx RASTER
     txa
     and #7
@@ -186,12 +186,12 @@ main: {
     nop
     nop
     cpx #$f2
-    bne b8
-    jmp b3
+    bne b11
+    jmp b2
 }
 // Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
-    .label _6 = 7
+    .label _9 = 7
     .label gfxb = 5
     .label x = 3
     .label y = 2
@@ -226,11 +226,11 @@ gfx_init_chunky: {
     lda y
     clc
     adc x
-    sta _6
+    sta _9
     lda #0
     adc x+1
-    sta _6+1
-    lda _6
+    sta _9+1
+    lda _9
     ldy #0
     sta (gfxb),y
     inc gfxb

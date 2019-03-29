@@ -38,13 +38,13 @@ main: {
   b1:
     lda #0
     sta i
-  b4:
+  b6:
     lda #0
     sta j
-  b5:
+  b7:
     lda #0
     sta k
-  b6:
+  b8:
     lda i
     clc
     adc j
@@ -55,13 +55,13 @@ main: {
     inc k
     lda #$b
     cmp k
-    bne b6
+    bne b8
     inc j
     cmp j
-    bne b5
+    bne b7
     inc i
     cmp i
-    bne b4
+    bne b6
     jmp b1
 }
 sub_main: {
@@ -93,9 +93,9 @@ sub_main: {
     rts
 }
 irq: {
-    .label k = 8
-    .label j = 7
-    .label i = 6
+    .label k = 4
+    .label j = 3
+    .label i = 2
     inc BGCOL
     lda #0
     sta i
@@ -129,7 +129,7 @@ irq: {
     jmp $ea81
 }
 sub_irq: {
-    .label i = 9
+    .label i = 5
     lda #0
     sta i
   b1:

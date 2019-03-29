@@ -49,8 +49,8 @@ main: {
     jmp b2
 }
 anim: {
-    .label _10 = $c
-    .label _12 = $e
+    .label _5 = $c
+    .label _7 = $e
     .label sprite_x = $c
     .label sprite_y = $e
     lda ypos+1
@@ -78,12 +78,12 @@ anim: {
     bvc !+
     eor #$80
   !:
-    bpl b2
+    bpl b4
     lda #$c8
     sta yvel
     lda #0
     sta yvel+1
-  b2:
+  b4:
     lda yvel
     sta yvel_22
     lda yvel+1
@@ -118,16 +118,16 @@ anim: {
     lda xpos
     sta $ff
     lda xpos+1
-    sta _10
+    sta _5
     lda #0
     bit xpos+1
     bpl !+
     lda #$ff
   !:
-    sta _10+1
+    sta _5+1
     rol $ff
-    rol _10
-    rol _10+1
+    rol _5
+    rol _5+1
     clc
     lda sprite_x
     adc #<$a0
@@ -138,22 +138,22 @@ anim: {
     lda ypos
     sta $ff
     lda ypos+1
-    sta _12
+    sta _7
     lda #0
     bit ypos+1
     bpl !+
     lda #$ff
   !:
-    sta _12+1
+    sta _7+1
     rol $ff
-    rol _12
-    rol _12+1
+    rol _7
+    rol _7+1
     rol $ff
-    rol _12
-    rol _12+1
+    rol _7
+    rol _7+1
     rol $ff
-    rol _12
-    rol _12+1
+    rol _7
+    rol _7+1
     lda #<$e6
     sec
     sbc sprite_y
@@ -203,11 +203,11 @@ init: {
     cmp #<SCREEN+$3e8
     bne b1
     ldx #0
-  b2:
+  b3:
     lda #$ff
     sta SPRITE,x
     inx
     cpx #$40
-    bne b2
+    bne b3
     rts
 }

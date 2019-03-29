@@ -10,10 +10,10 @@ main: {
     lda #$a
     cmp RASTER
     bne b2
-  b3:
+  b4:
     lda #$b
     cmp RASTER
-    bne b3
+    bne b4
     jsr raster
     jmp b2
 }

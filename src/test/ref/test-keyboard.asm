@@ -71,7 +71,7 @@ main: {
     lda #>$400
     sta sc+1
   // Clear screen
-  b1:
+  b6:
     lda #' '
     ldy #0
     sta (sc),y
@@ -81,17 +81,17 @@ main: {
   !:
     lda sc+1
     cmp #>$400+$3e8
-    bcc b1
+    bcc b6
     bne !+
     lda sc
     cmp #<$400+$3e8
-    bcc b1
+    bcc b6
   !:
     jsr keyboard_init
-  b5:
+  b8:
     lda #$ff
     cmp RASTER
-    bne b5
+    bne b8
     lda #<$400
     sta screen
     lda #>$400
@@ -99,25 +99,25 @@ main: {
     lda #0
     sta row
   // Read & print keyboard matrix
-  b6:
+  b10:
     ldy row
     jsr keyboard_matrix_read
     tax
     ldy #0
-  b7:
+  b11:
     txa
     and #$80
     cmp #0
-    bne b8
+    bne b12
     lda #'0'
     sta (screen),y
-  b9:
+  b13:
     txa
     asl
     tax
     iny
     cpy #8
-    bne b7
+    bne b11
     lda #$28
     clc
     adc screen
@@ -128,7 +128,7 @@ main: {
     inc row
     lda #8
     cmp row
-    bne b6
+    bne b10
     lda #$28
     clc
     adc screen
@@ -139,26 +139,26 @@ main: {
     ldx #0
     txa
     sta ch
-  b10:
+  b18:
     ldy ch
     jsr keyboard_get_keycode
     cmp #$3f
-    beq b11
+    beq b19
     tay
     jsr keyboard_key_pressed
     cmp #0
-    beq b11
+    beq b19
     txa
     tay
     lda ch
     sta (screen),y
     inx
-  b11:
+  b19:
     inc ch
     lda #$40
     cmp ch
-    bne b10
-  b2:
+    bne b18
+  b1:
   // Add some spaces
     txa
     tay
@@ -166,12 +166,12 @@ main: {
     sta (screen),y
     inx
     cpx #5
-    bcc b2
-    jmp b5
-  b8:
+    bcc b1
+    jmp b8
+  b12:
     lda #'1'
     sta (screen),y
-    jmp b9
+    jmp b13
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)

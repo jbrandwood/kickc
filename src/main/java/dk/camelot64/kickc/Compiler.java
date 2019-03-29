@@ -150,6 +150,8 @@ public class Compiler {
 
       new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1ResolveForwardReferences(program).execute();
+      new Pass1UnwindBlockScopes(program).execute();
+
       new Pass1TypeInference(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
@@ -159,14 +161,10 @@ public class Compiler {
 
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
-
       new Pass1AddTypePromotions(program).execute();
-
       new Pass1EarlyConstantIdentification(program).execute();
-
       new PassNStatementIndices(program).step();
       new PassNCallGraphAnalysis(program).step();
-      
       new Pass1AssertNoRecursion(program).execute();
       new Pass1AssertInterrupts(program).execute();
 
@@ -177,9 +175,7 @@ public class Compiler {
 
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
-
       new Pass1ProcedureInline(program).execute();
-
       new Pass1EliminateUncalledProcedures(program).execute();
       new PassNEliminateUnusedVars(program).execute();
       new Pass1ExtractInlineStrings(program).execute();

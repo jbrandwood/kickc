@@ -20,10 +20,10 @@ main: {
     bne b1
     ldy #0
   // Then loop with clobbering A&X
-  b3:
+  b5:
     lda #0
     sta l
-  b4:
+  b6:
     eor #$55
     tax
     lda l
@@ -31,9 +31,9 @@ main: {
     inc l
     lda #$65
     cmp l
-    bne b4
+    bne b6
     iny
     cpy #$65
-    bne b3
+    bne b5
     rts
 }

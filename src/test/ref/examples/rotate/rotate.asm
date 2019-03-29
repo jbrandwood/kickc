@@ -43,15 +43,15 @@ anim: {
     .label angle = 2
     lda #0
     sta angle
-  b4:
+  b6:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne b6
     inc BORDERCOL
     lda #0
     sta sprite_msb
     sta i
-  b7:
+  b9:
     ldy i
     lda xs,y
     sta x
@@ -119,11 +119,11 @@ anim: {
     sta xpos+1
     lsr sprite_msb
     cmp #0
-    beq b8
+    beq b10
     lda #$80
     ora sprite_msb
     sta sprite_msb
-  b8:
+  b10:
     lda yr+1
     clc
     adc #$59+$33
@@ -138,15 +138,15 @@ anim: {
     inc i
     lda #8
     cmp i
-    beq !b7+
-    jmp b7
-  !b7:
+    beq !b9+
+    jmp b9
+  !b9:
     lda sprite_msb
     sta SPRITES_XMSB
     inc angle
     lda #LIGHT_BLUE
     sta BORDERCOL
-    jmp b4
+    jmp b6
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
@@ -299,7 +299,7 @@ mulf_init: {
     lda #>mulf_sqr2_lo
     sta sqr2_lo+1
     ldx #-1
-  b3:
+  b5:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -314,20 +314,20 @@ mulf_init: {
     adc dir
     tax
     cpx #0
-    bne b4
+    bne b6
     lda #1
     sta dir
-  b4:
+  b6:
     inc sqr2_lo
     bne !+
     inc sqr2_lo+1
   !:
     lda sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b3
+    bne b5
     lda sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b3
+    bne b5
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff

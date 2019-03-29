@@ -235,14 +235,14 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
       RValue rValueCopy = copyValue(rValue);
       ProgramValue.GenericValue genericValue = new ProgramValue.GenericValue(rValueCopy);
       ProgramValueIterator.execute(genericValue, (programValue, currentStmt, stmtIt, currentBlock) -> {
-         RValue rVal = programValue.get();
+         Value rVal = programValue.get();
          if(rVal instanceof VariableRef) {
             if(definedToNewVar.get(rVal) != null) {
                programValue.set(definedToNewVar.get(rVal));
             }
          }
       }, null, null, null);
-      return genericValue.get();
+      return (RValue) genericValue.get();
    }
 
    /**
@@ -255,7 +255,7 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
       if(rValue == null) return null;
       ProgramValue.GenericValue genericValue = new ProgramValue.GenericValue(rValue);
       ProgramValueIterator.execute(genericValue, (programValue, currentStmt, stmtIt, currentBlock) -> {
-         RValue rVal = programValue.get();
+         Value rVal = programValue.get();
          if(rVal instanceof PointerDereferenceSimple) {
             programValue.set(new PointerDereferenceSimple(((PointerDereferenceSimple) rVal).getPointer()));
          } else if(rVal instanceof PointerDereferenceIndexed) {
@@ -266,7 +266,7 @@ public class Pass2LoopUnroll extends Pass2SsaOptimization {
             programValue.set(new ValueList(new ArrayList<>(((ValueList) rVal).getList())));
          }
       }, null, null, null);
-      return genericValue.get();
+      return (RValue) genericValue.get();
    }
 
    /**

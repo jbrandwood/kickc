@@ -13,11 +13,11 @@ main: {
     cpx #0
     bne b1
     ldx #$64
-  b2:
+  b3:
     txa
     sta SCREEN2,x
     dex
     cpx #$ff
-    bne b2
+    bne b3
     rts
 }

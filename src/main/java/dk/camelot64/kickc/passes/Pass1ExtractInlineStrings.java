@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.Value;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             }
          }
          Scope blockScope = Pass1ExtractInlineStrings.this.getProgram().getScope().getScope(currentBlock.getScope());
-         RValue value = programValue.get();
+         Value value = programValue.get();
          if(value instanceof ConstantString) {
             ConstantVar strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(blockScope, (ConstantString) programValue.get(), nameHint);
             programValue.set(strConst.getRef());

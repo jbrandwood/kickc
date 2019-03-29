@@ -576,7 +576,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Void visitStmtBlock(KickCParser.StmtBlockContext ctx) {
       if(ctx.stmtSeq() != null) {
+         BlockScope blockScope = getCurrentSymbols().addBlockScope();
+         scopeStack.push(blockScope);
          this.visit(ctx.stmtSeq());
+         scopeStack.pop();
       }
       return null;
    }
@@ -657,12 +660,27 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Void visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx) {
+
+      // Create the block scope early - to keep all statements of the loop inside it
+      if(ctx.stmt() != null && ctx.stmt() instanceof KickCParser.StmtBlockContext) {
+         BlockScope blockScope = getCurrentSymbols().addBlockScope();
+         scopeStack.push(blockScope);
+      }
+
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
       Label beginJumpLabel = getCurrentSymbols().addLabelIntermediate();
       StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef(), new StatementSource(ctx), comments);
       sequence.addStatement(beginJumpTarget);
       if(ctx.stmt() != null) {
-         this.visit(ctx.stmt());
+         if(ctx.stmt() instanceof KickCParser.StmtBlockContext) {
+            // Skip the block creation by going straight to the sequence
+            KickCParser.StmtBlockContext stmtBlockContext = (KickCParser.StmtBlockContext) ctx.stmt();
+            if(stmtBlockContext.stmtSeq()!=null) {
+               this.visit(stmtBlockContext.stmtSeq());
+            }
+         }  else {
+            this.visit(ctx.stmt());
+         }
       }
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
@@ -670,6 +688,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJmpStmt);
       addDirectives(doJmpStmt, ctx.directive());
+      scopeStack.pop();
       return null;
    }
 
@@ -686,6 +705,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitForClassic(KickCParser.ForClassicContext ctx) {
+      BlockScope blockScope = getCurrentSymbols().addBlockScope();
+      scopeStack.push(blockScope);
+
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
       KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
       // Create and assign declared loop variable
@@ -701,7 +723,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       sequence.addStatement(repeatTarget);
       // Add body
       if(stmtForCtx.stmt() != null) {
-         this.visit(stmtForCtx.stmt());
+         if(stmtForCtx.stmt() instanceof KickCParser.StmtBlockContext) {
+            // Skip the block context and reuse the one created by the for() itself
+            KickCParser.StmtBlockContext stmtBlockContext = (KickCParser.StmtBlockContext) stmtForCtx.stmt();
+            if(stmtBlockContext.stmtSeq()!=null) {
+               this.visit(stmtBlockContext.stmtSeq());
+            }
+         }  else {
+            this.visit(stmtForCtx.stmt());
+         }
       }
       // Add increment
       if(ctx.expr(1) != null) {
@@ -717,11 +747,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, repeatLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJmpStmt);
       addDirectives(doJmpStmt, stmtForCtx.directive());
+      scopeStack.pop();
       return null;
    }
 
    @Override
    public Object visitForRange(KickCParser.ForRangeContext ctx) {
+      BlockScope blockScope = getCurrentSymbols().addBlockScope();
+      scopeStack.push(blockScope);
+
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
       KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
       // Create declared loop variable
@@ -740,7 +774,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       sequence.addStatement(repeatTarget);
       // Add body
       if(stmtForCtx.stmt() != null) {
-         this.visit(stmtForCtx.stmt());
+         if(stmtForCtx.stmt() instanceof KickCParser.StmtBlockContext) {
+            // Skip the block context and reuse the one created by the for() itself
+            KickCParser.StmtBlockContext stmtBlockContext = (KickCParser.StmtBlockContext) stmtForCtx.stmt();
+            if(stmtBlockContext.stmtSeq()!=null) {
+               this.visit(stmtBlockContext.stmtSeq());
+            }
+         }  else {
+            this.visit(stmtForCtx.stmt());
+         }
       }
       // Add increment
       Statement stmtNxt = new StatementAssignment(lValue.getRef(), lValue.getRef(), Operators.PLUS, new RangeNext(rangeFirstValue, rangeLastValue), new StatementSource(ctx), Comment.NO_COMMENTS);
@@ -755,6 +797,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       StatementConditionalJump doJmpStmt = new StatementConditionalJump(tmpVarRef, repeatLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJmpStmt);
       addDirectives(doJmpStmt, stmtForCtx.directive());
+      scopeStack.pop();
       return null;
    }
 

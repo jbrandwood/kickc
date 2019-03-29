@@ -4,7 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.values.ForwardVariableRef;
-import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.Value;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 /** Asserts that the program does not contain any RValues that are forward-reference or unversioned */
@@ -17,7 +17,7 @@ public class Pass2AssertRValues extends Pass2SsaAssertion {
    @Override
    public void check() throws AssertionFailed {
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
-         RValue rValue = programValue.get();
+         Value rValue = programValue.get();
          if(rValue instanceof ForwardVariableRef) {
             throw new CompileError("No forward references allowed "+currentStmt.toString(getProgram(), false), currentStmt.getSource());
          }

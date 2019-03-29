@@ -1,13 +1,13 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.Comment;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.ValueList;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Scope;
@@ -16,6 +16,8 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypeInteger;
+import dk.camelot64.kickc.model.values.Value;
+import dk.camelot64.kickc.model.values.ValueList;
 
 import java.util.ListIterator;
 
@@ -83,7 +85,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
 
       @Override
       public void execute(ProgramValue programValue, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-         RValue rValue = programValue.get();
+         Value rValue = programValue.get();
          if(rValue instanceof ValueList) {
             ValueList list = (ValueList) rValue;
             if(list.getList().size() == 2) {

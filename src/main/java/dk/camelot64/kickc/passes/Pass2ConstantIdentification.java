@@ -374,7 +374,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    public static boolean isAddressOfUsed(SymbolRef symbolRef, Program program) {
       final boolean[] found = {false};
       ProgramValueIterator.execute(program, (programValue, currentStmt, stmtIt, currentBlock) -> {
-         RValue value = programValue.get();
+         Value value = programValue.get();
          if(value instanceof ConstantSymbolPointer) {
             ConstantSymbolPointer constantSymbolPointer = (ConstantSymbolPointer) value;
             if(constantSymbolPointer.getToSymbol().equals(symbolRef)) {

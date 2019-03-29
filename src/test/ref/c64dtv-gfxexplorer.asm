@@ -195,20 +195,20 @@ main: {
 }
 // Change graphics mode to show the selected graphics mode
 gfx_mode: {
-    .label _31 = 9
-    .label _33 = 3
-    .label _35 = 3
-    .label _37 = 3
-    .label _45 = 9
-    .label _47 = 3
-    .label _49 = 3
-    .label _51 = 3
-    .label _61 = 3
-    .label _63 = 3
-    .label _64 = 3
-    .label _65 = 2
-    .label _66 = 3
-    .label _68 = 3
+    .label _22 = 9
+    .label _24 = 3
+    .label _26 = 3
+    .label _28 = 3
+    .label _36 = 9
+    .label _38 = 3
+    .label _40 = 3
+    .label _42 = 3
+    .label _52 = 3
+    .label _54 = 3
+    .label _55 = 3
+    .label _56 = 2
+    .label _57 = 3
+    .label _59 = 3
     .label plane_a = 9
     .label plane_b = 9
     .label vic_colors = 3
@@ -216,10 +216,10 @@ gfx_mode: {
     .label cy = 2
     lda form_ctrl_line
     cmp #0
-    beq b12
+    beq b10
     ldx #0|DTV_LINEAR
     jmp b1
-  b12:
+  b10:
     ldx #0
   b1:
     lda form_ctrl_borof
@@ -260,10 +260,10 @@ gfx_mode: {
     stx DTV_CONTROL
     lda form_ctrl_ecm
     cmp #0
-    beq b14
+    beq b11
     ldx #VIC_DEN|VIC_RSEL|3|VIC_ECM
     jmp b7
-  b14:
+  b11:
     ldx #VIC_DEN|VIC_RSEL|3
   b7:
     lda form_ctrl_bmm
@@ -276,10 +276,10 @@ gfx_mode: {
     stx VIC_CONTROL
     lda form_ctrl_mcm
     cmp #0
-    beq b16
+    beq b12
     lda #VIC_CSEL|VIC_MCM
     jmp b9
-  b16:
+  b12:
     lda #VIC_CSEL
   b9:
     sta VIC_CONTROL2
@@ -306,21 +306,21 @@ gfx_mode: {
     adc #0
     sta plane_a+3
     lda plane_a
-    sta _33
+    sta _24
     lda plane_a+1
-    sta _33+1
-    lda _33
+    sta _24+1
+    lda _24
     sta DTV_PLANEA_START_LO
     lda plane_a
-    sta _35
+    sta _26
     lda plane_a+1
-    sta _35+1
+    sta _26+1
     sta DTV_PLANEA_START_MI
     lda plane_a+2
-    sta _37
+    sta _28
     lda plane_a+3
-    sta _37+1
-    lda _37
+    sta _28+1
+    lda _28
     sta DTV_PLANEA_START_HI
     lda form_a_step_hi
     asl
@@ -361,21 +361,21 @@ gfx_mode: {
     adc #0
     sta plane_b+3
     lda plane_b
-    sta _47
+    sta _38
     lda plane_b+1
-    sta _47+1
-    lda _47
+    sta _38+1
+    lda _38
     sta DTV_PLANEB_START_LO
     lda plane_b
-    sta _49
+    sta _40
     lda plane_b+1
-    sta _49+1
+    sta _40+1
     sta DTV_PLANEB_START_MI
     lda plane_b+2
-    sta _51
+    sta _42
     lda plane_b+3
-    sta _51+1
-    lda _51
+    sta _42+1
+    lda _42
     sta DTV_PLANEB_START_HI
     lda form_b_step_hi
     asl
@@ -401,31 +401,31 @@ gfx_mode: {
     sta CIA2_PORT_A
     lda form_vic_screen
     jsr get_vic_screen
-    lda _63
+    lda _54
     and #<$3fff
-    sta _63
-    lda _63+1
+    sta _54
+    lda _54+1
     and #>$3fff
-    sta _63+1
+    sta _54+1
     ldy #6
   !:
-    lsr _64+1
-    ror _64
+    lsr _55+1
+    ror _55
     dey
     bne !-
-    lda _64
-    sta _65
+    lda _55
+    sta _56
     lda form_vic_gfx
     jsr get_vic_charset
-    lda _68
+    lda _59
     and #<$3fff
-    sta _68
-    lda _68+1
+    sta _59
+    lda _59+1
     and #>$3fff
-    sta _68+1
+    sta _59+1
     lsr
     lsr
-    ora _65
+    ora _56
     // Set VIC Bank
     // VIC memory
     sta VIC_MEMORY
@@ -437,9 +437,9 @@ gfx_mode: {
     sta col
     lda #>COLS
     sta col+1
-  b10:
+  b26:
     ldx #0
-  b11:
+  b27:
     ldy #0
     lda (vic_colors),y
     sta (col),y
@@ -453,11 +453,11 @@ gfx_mode: {
   !:
     inx
     cpx #$28
-    bne b11
+    bne b27
     inc cy
     lda #$19
     cmp cy
-    bne b10
+    bne b26
     // Background colors
     lda #0
     sta BORDERCOL
@@ -492,34 +492,34 @@ gfx_mode: {
     // DTV Palette
     lda form_dtv_palet
     cmp #0
-    beq b18
+    beq b13
     ldx #0
   // DTV Palette - Grey Tones
-  b13:
+  b31:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b13
-  b19:
+    bne b31
+  b36:
     lda #$ff
     cmp RASTER
-    bne b19
+    bne b36
     jsr keyboard_event_scan
     jsr keyboard_event_get
     cmp #KEY_SPACE
-    bne b19
+    bne b36
     rts
   // DTV Palette - default
-  b18:
+  b13:
     ldx #0
-  b15:
+  b34:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b15
-    jmp b19
+    bne b34
+    jmp b36
 }
 // Get the next event from the keyboard event buffer.
 // Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
@@ -548,7 +548,7 @@ keyboard_event_scan: {
     lda #0
     sta keycode
     sta row
-  b1:
+  b8:
     ldx row
     jsr keyboard_matrix_read
     sta row_scan
@@ -558,39 +558,39 @@ keyboard_event_scan: {
     lax keycode
     axs #-[8]
     stx keycode
-  b3:
+  b10:
     inc row
     lda #8
     cmp row
-    bne b1
+    bne b8
     lda #KEY_LSHIFT
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b2
+    beq b4
     ldx #0|KEY_MODIFIER_LSHIFT
-    jmp b9
-  b2:
+    jmp b1
+  b4:
     ldx #0
-  b9:
+  b1:
     lda #KEY_RSHIFT
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b10
+    beq b2
     txa
     ora #KEY_MODIFIER_RSHIFT
     tax
-  b10:
+  b2:
     lda #KEY_CTRL
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b11
+    beq b3
     txa
     ora #KEY_MODIFIER_CTRL
     tax
-  b11:
+  b3:
     lda #KEY_COMMODORE
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
@@ -604,43 +604,43 @@ keyboard_event_scan: {
   // Something has changed on the keyboard row - check each column
   b6:
     ldx #0
-  b4:
+  b11:
     lda row_scan
     ldy row
     eor keyboard_scan_values,y
     and keyboard_matrix_col_bitmask,x
     cmp #0
-    beq b5
+    beq b12
     lda #8
     cmp keyboard_events_size
-    beq b5
+    beq b12
     lda keyboard_matrix_col_bitmask,x
     and row_scan
     cmp #0
-    beq b7
+    beq b14
     // Key pressed
     lda keycode
     ldy keyboard_events_size
     sta keyboard_events,y
     inc keyboard_events_size
-  b5:
+  b12:
     inc keycode
     inx
     cpx #8
-    bne b4
+    bne b11
     // Store the current keyboard status for the row to debounce
     lda row_scan
     ldy row
     sta keyboard_scan_values,y
-    jmp b3
-  b7:
+    jmp b10
+  b14:
     lda #$40
     ora keycode
     // Key released
     ldy keyboard_events_size
     sta keyboard_events,y
     inc keyboard_events_size
-    jmp b5
+    jmp b12
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
@@ -1000,12 +1000,12 @@ form_mode: {
     sta DTV_PLANEA_START_HI
     tax
   // DTV Palette - default
-  b1:
+  b7:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b1
+    bne b7
     // Screen colors
     lda #0
     sta BGCOL
@@ -1013,26 +1013,26 @@ form_mode: {
     lda form_fields_val
     sta preset_current
   // Let the user change values in the form
-  b5:
+  b9:
     lda #$ff
     cmp RASTER
-    bne b5
+    bne b9
     jsr form_control
     txa
     cmp #0
-    beq b8
+    beq b12
     rts
-  b8:
+  b12:
     lda form_fields_val
     cmp preset_current
-    beq b5
+    beq b9
     jsr apply_preset
     lda form_fields_val
     sta preset_current
     jsr form_render_values
     lda form_fields_val
     jsr render_preset_name
-    jmp b5
+    jmp b9
 }
 // Render form preset name in the form
 // idx is the ID of the preset
@@ -1216,7 +1216,7 @@ form_field_ptr: {
 apply_preset: {
     .label preset = 3
     cmp #0
-    beq b34
+    beq b33
     cmp #1
     beq b1
     cmp #2
@@ -1237,7 +1237,7 @@ apply_preset: {
     beq b9
     cmp #$a
     beq b10
-  b34:
+  b33:
     lda #<preset_stdchar
     sta preset
     lda #>preset_stdchar
@@ -1305,12 +1305,12 @@ apply_preset: {
   b22:
     ldy #0
   // Copy preset values into the fields
-  b23:
+  b45:
     lda (preset),y
     sta form_fields_val,y
     iny
     cpy #form_fields_cnt
-    bne b23
+    bne b45
     rts
 }
 // Reads keyboard and allows the user to navigate and change the fields of the form
@@ -1352,43 +1352,43 @@ form_control: {
     txa
     and #KEY_MODIFIER_SHIFT
     cmp #0
-    beq b5
+    beq b19
     dec form_field_idx
     lda #$ff
     cmp form_field_idx
-    bne b7
+    bne b22
     lda #form_fields_cnt-1
     sta form_field_idx
-  b7:
+  b22:
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
     ldx #0
   breturn:
     rts
-  b5:
+  b19:
     inc form_field_idx
     lda #form_fields_cnt
     cmp form_field_idx
-    bne b7
+    bne b22
     lda #0
     sta form_field_idx
-    jmp b7
+    jmp b22
   b4:
     cmp #KEY_CRSR_RIGHT
-    bne b9
+    bne b5
     txa
     and #KEY_MODIFIER_SHIFT
     cmp #0
-    beq b10
+    beq b26
     ldx form_field_idx
     dec form_fields_val,x
     lda #$ff
     ldy form_field_idx
     cmp form_fields_val,y
-    bne b12
+    bne b29
     lda form_fields_max,y
     sta form_fields_val,y
-  b12:
+  b29:
     // Render field value
     ldx form_field_idx
     ldy form_fields_val,x
@@ -1398,18 +1398,18 @@ form_control: {
   b6:
     ldx #0
     jmp breturn
-  b10:
+  b26:
     ldx form_field_idx
     inc form_fields_val,x
     ldy form_field_idx
     lda form_fields_val,y
     cmp form_fields_max,y
-    bcc b12
-    beq b12
+    bcc b29
+    beq b29
     lda #0
     sta form_fields_val,y
-    jmp b12
-  b9:
+    jmp b29
+  b5:
     cmp #KEY_SPACE
     bne b6
     ldx #$ff
@@ -1460,9 +1460,9 @@ print_str_lines: {
     ldy #0
     lda (str),y
     cmp #'@'
-    bne b4
+    bne b6
     rts
-  b4:
+  b6:
     ldy #0
     lda (str),y
     inc str
@@ -1470,16 +1470,16 @@ print_str_lines: {
     inc str+1
   !:
     cmp #'@'
-    beq b5
+    beq b7
     ldy #0
     sta (print_char_cursor),y
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  b5:
+  b7:
     cmp #'@'
-    bne b4
+    bne b6
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -1892,7 +1892,7 @@ gfx_init_plane_charset8: {
 }
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
-    .label _6 = $10
+    .label _9 = $10
     .label gfxb = 5
     .label x = 3
     .label y = 2
@@ -1927,11 +1927,11 @@ gfx_init_plane_8bppchunky: {
     lda y
     clc
     adc x
-    sta _6
+    sta _9
     lda #0
     adc x+1
-    sta _6+1
-    lda _6
+    sta _9+1
+    lda _9
     ldy #0
     sta (gfxb),y
     inc gfxb
@@ -2001,12 +2001,12 @@ bitmap_line: {
     sta xd
     lda y0
     cmp y1
-    bcc b2
+    bcc b10
     sec
     sbc y1
     tay
     cpy xd
-    bcc b3
+    bcc b11
     lda y1
     sta bitmap_line_ydxi.y
     lda y0
@@ -2015,20 +2015,20 @@ bitmap_line: {
     jsr bitmap_line_ydxi
   breturn:
     rts
-  b3:
+  b11:
     stx bitmap_line_xdyi.x
     lda y1
     sta bitmap_line_xdyi.y
     sty bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     jmp breturn
-  b2:
+  b10:
     lda y1
     sec
     sbc y0
     tay
     cpy xd
-    bcc b6
+    bcc b15
     lda y0
     sta bitmap_line_ydxd.y
     ldx x0
@@ -2037,7 +2037,7 @@ bitmap_line: {
     sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     jmp breturn
-  b6:
+  b15:
     stx bitmap_line_xdyd.x
     lda y1
     sta bitmap_line_xdyd.y
@@ -2051,38 +2051,38 @@ bitmap_line: {
     sta xd
     lda y0
     cmp y1
-    bcc b9
+    bcc b20
     sec
     sbc y1
     tay
     cpy xd
-    bcc b10
+    bcc b21
     lda y1
     sta bitmap_line_ydxd.y
     sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     jmp breturn
-  b10:
+  b21:
     lda x0
     sta bitmap_line_xdyd.x
     stx bitmap_line_xdyd.x1
     sty bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     jmp breturn
-  b9:
+  b20:
     lda y1
     sec
     sbc y0
     tay
     cpy xd
-    bcc b13
+    bcc b25
     lda y0
     sta bitmap_line_ydxi.y
     ldx x0
     sty bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
     jmp breturn
-  b13:
+  b25:
     lda x0
     sta bitmap_line_xdyi.x
     stx bitmap_line_xdyi.x1
@@ -2312,7 +2312,7 @@ bitmap_init: {
     sta yoffs
     sta yoffs+1
     tax
-  b3:
+  b5:
     lda #7
     sax _6
     lda yoffs
@@ -2323,7 +2323,7 @@ bitmap_init: {
     txa
     and #7
     cmp #7
-    bne b4
+    bne b6
     clc
     lda yoffs
     adc #<$28*8
@@ -2331,10 +2331,10 @@ bitmap_init: {
     lda yoffs+1
     adc #>$28*8
     sta yoffs+1
-  b4:
+  b6:
     inx
     cpx #0
-    bne b3
+    bne b5
     rts
 }
 gfx_init_charset: {

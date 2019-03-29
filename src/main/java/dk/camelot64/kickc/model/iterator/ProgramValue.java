@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.iterator;
 
+import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
@@ -15,9 +16,9 @@ import dk.camelot64.kickc.model.values.*;
  */
 public abstract class ProgramValue {
 
-   public abstract RValue get();
+   public abstract Value get();
 
-   public abstract void set(RValue value);
+   public abstract void set(Value value);
 
    public static class ConstantVariableValue extends ProgramValue {
       private final ConstantVar constantVar;
@@ -27,12 +28,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return constantVar.getValue();
       }
 
       @Override
-      public void set(RValue val) {
+      public void set(Value val) {
          constantVar.setValue((ConstantValue) val);
       }
 
@@ -47,13 +48,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return array.getSize();
       }
 
       @Override
-      public void set(RValue val) {
-         array.setSize(val);
+      public void set(Value val) {
+         array.setSize((RValue) val);
       }
 
    }
@@ -67,13 +68,33 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return array.getSize();
       }
 
       @Override
-      public void set(RValue val) {
-         array.setSize(val);
+      public void set(Value val) {
+         array.setSize((RValue) val);
+      }
+
+   }
+
+   /** Value inside an intermediate LValue. */
+   public static class LValueIntermediateVariable  extends ProgramValue {
+      private final LvalueIntermediate intermediate;
+
+      LValueIntermediateVariable(LvalueIntermediate intermediate) {
+         this.intermediate = intermediate;
+      }
+
+      @Override
+      public Value get() {
+         return intermediate.getVariable();
+      }
+
+      @Override
+      public void set(Value val) {
+         intermediate.setVariable((VariableRef) val);
       }
 
    }
@@ -87,12 +108,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return array.getSize();
       }
 
       @Override
-      public void set(RValue val) {
+      public void set(Value val) {
          array.setSize((ConstantValue) val);
       }
 
@@ -107,12 +128,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return unary.getOperand();
       }
 
       @Override
-      public void set(RValue val) {
+      public void set(Value val) {
          unary.setOperand((ConstantValue) val);
       }
 
@@ -127,12 +148,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return binary.getLeft();
       }
 
       @Override
-      public void set(RValue val) {
+      public void set(Value val) {
          binary.setLeft((ConstantValue) val);
       }
 
@@ -147,12 +168,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return binary.getRight();
       }
 
       @Override
-      public void set(RValue val) {
+      public void set(Value val) {
          binary.setRight((ConstantValue) val);
       }
 
@@ -169,13 +190,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return range.getRangeFirst();
       }
 
       @Override
-      public void set(RValue val) {
-         range.setRangeFirst(val);
+      public void set(Value val) {
+         range.setRangeFirst((RValue) val);
       }
 
    }
@@ -191,13 +212,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return range.getRangeLast();
       }
 
       @Override
-      public void set(RValue val) {
-         range.setRangeLast(val);
+      public void set(Value val) {
+         range.setRangeLast((RValue) val);
       }
 
    }
@@ -213,12 +234,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statementAsm.getReferenced().get(label);
       }
 
       @Override
-      public void set(RValue value) {
+      public void set(Value value) {
          statementAsm.getReferenced().put(label, (SymbolVariableRef) value);
       }
    }
@@ -234,13 +255,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statementKickAsm.getLocation();
       }
 
       @Override
-      public void set(RValue value) {
-         statementKickAsm.setLocation(value);
+      public void set(Value value) {
+         statementKickAsm.setLocation((RValue) value);
       }
 
    }
@@ -256,13 +277,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statementKickAsm.getBytes();
       }
 
       @Override
-      public void set(RValue value) {
-         statementKickAsm.setBytes(value);
+      public void set(Value value) {
+         statementKickAsm.setBytes((RValue) value);
       }
 
    }
@@ -278,13 +299,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statementKickAsm.getCycles();
       }
 
       @Override
-      public void set(RValue value) {
-         statementKickAsm.setCycles(value);
+      public void set(Value value) {
+         statementKickAsm.setCycles((RValue) value);
       }
 
    }
@@ -300,12 +321,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statement.getlValue();
       }
 
       @Override
-      public void set(RValue value) {
+      public void set(Value value) {
          statement.setlValue((dk.camelot64.kickc.model.values.LValue) value);
       }
 
@@ -322,13 +343,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return pointer.getPointer();
       }
 
       @Override
-      public void set(RValue val) {
-         pointer.setPointer(val);
+      public void set(Value val) {
+         pointer.setPointer((RValue) val);
       }
 
    }
@@ -345,13 +366,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return castValue.getValue();
       }
 
       @Override
-      public void set(RValue val) {
-         castValue.setValue(val);
+      public void set(Value val) {
+         castValue.setValue((RValue) val);
       }
 
    }
@@ -368,12 +389,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return castValue.getValue();
       }
 
       @Override
-      public void set(RValue val) {
+      public void set(Value val) {
          castValue.setValue((ConstantValue) val);
       }
 
@@ -391,12 +412,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return (RValue) varPointer.getToSymbol();
       }
 
       @Override
-      public void set(RValue val) {
+      public void set(Value val) {
          varPointer.setToSymbol((VariableRef) val);
       }
 
@@ -412,12 +433,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return arrayList.getElements().get(idx);
       }
 
       @Override
-      public void set(RValue value) {
+      public void set(Value value) {
          arrayList.getElements().set(idx, (ConstantValue) value);
       }
    }
@@ -432,13 +453,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return list.getList().get(idx);
       }
 
       @Override
-      public void set(RValue value) {
-         list.getList().set(idx, value);
+      public void set(Value value) {
+         list.getList().set(idx, (RValue) value);
       }
 
    }
@@ -454,13 +475,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return pointer.getIndex();
       }
 
       @Override
-      public void set(RValue val) {
-         pointer.setIndex(val);
+      public void set(Value val) {
+         pointer.setIndex((RValue) val);
       }
 
    }
@@ -473,13 +494,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statement.getrValue1();
       }
 
       @Override
-      public void set(RValue value) {
-         statement.setrValue1(value);
+      public void set(Value value) {
+         statement.setrValue1((RValue) value);
       }
    }
 
@@ -491,13 +512,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statement.getrValue2();
       }
 
       @Override
-      public void set(RValue value) {
-         statement.setrValue2(value);
+      public void set(Value value) {
+         statement.setrValue2((RValue) value);
       }
    }
 
@@ -511,13 +532,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return call.getParameters().get(i);
       }
 
       @Override
-      public void set(RValue value) {
-         call.getParameters().set(i, value);
+      public void set(Value value) {
+         call.getParameters().set(i, (RValue) value);
       }
    }
 
@@ -529,13 +550,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statement.getrValue1();
       }
 
       @Override
-      public void set(RValue value) {
-         statement.setrValue1(value);
+      public void set(Value value) {
+         statement.setrValue1((RValue) value);
       }
    }
 
@@ -547,13 +568,31 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statement.getrValue2();
       }
 
       @Override
-      public void set(RValue value) {
-         statement.setrValue2(value);
+      public void set(Value value) {
+         statement.setrValue2((RValue) value);
+      }
+   }
+
+   public static class CondLabel extends ProgramValue {
+      private final StatementConditionalJump statement;
+
+      public CondLabel(StatementConditionalJump statement) {
+         this.statement = statement;
+      }
+
+      @Override
+      public Value get() {
+         return statement.getDestination();
+      }
+
+      @Override
+      public void set(Value value) {
+         statement.setDestination((LabelRef) value);
       }
    }
 
@@ -565,13 +604,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statement.getValue();
       }
 
       @Override
-      public void set(RValue value) {
-         statement.setValue(value);
+      public void set(Value value) {
+         statement.setValue((RValue) value);
       }
    }
 
@@ -585,13 +624,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return phiVariable.getValues().get(i).getrValue();
       }
 
       @Override
-      public void set(RValue value) {
-         phiVariable.getValues().get(i).setrValue(value);
+      public void set(Value value) {
+         phiVariable.getValues().get(i).setrValue((RValue) value);
       }
    }
 
@@ -606,12 +645,12 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return phiVariable.getVariable();
       }
 
       @Override
-      public void set(RValue value) {
+      public void set(Value value) {
          phiVariable.setVariable((VariableRef) value);
       }
 
@@ -626,13 +665,13 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return rValue;
       }
 
       @Override
-      public void set(RValue value) {
-         this.rValue = value;
+      public void set(Value value) {
+         this.rValue = (RValue) value;
       }
    }
 
@@ -647,15 +686,96 @@ public abstract class ProgramValue {
       }
 
       @Override
-      public RValue get() {
+      public Value get() {
          return statementKickAsm.getUses().get(idx);
       }
 
       @Override
-      public void set(RValue value) {
+      public void set(Value value) {
          statementKickAsm.getUses().set(idx, (SymbolVariableRef) value);
 
       }
 
    }
+
+   public static class BlockLabel extends ProgramValue {
+
+      private final ControlFlowBlock block;
+
+      BlockLabel(ControlFlowBlock block) {
+         this.block = block;
+      }
+
+      @Override
+      public Value get() {
+         return block.getLabel();
+      }
+
+      @Override
+      public void set(Value val) {
+         block.setLabel((LabelRef) val);
+      }
+
+   }
+
+   public static class BlockDefaultSuccessor extends ProgramValue {
+
+      private final ControlFlowBlock block;
+
+      BlockDefaultSuccessor(ControlFlowBlock block) {
+         this.block = block;
+      }
+
+      @Override
+      public Value get() {
+         return block.getDefaultSuccessor();
+      }
+
+      @Override
+      public void set(Value val) {
+         block.setDefaultSuccessor((LabelRef) val);
+      }
+
+   }
+
+   public static class BlockConditionalSuccessor extends ProgramValue {
+
+      private final ControlFlowBlock block;
+
+      BlockConditionalSuccessor(ControlFlowBlock block) {
+         this.block = block;
+      }
+
+      @Override
+      public Value get() {
+         return block.getConditionalSuccessor();
+      }
+
+      @Override
+      public void set(Value val) {
+         block.setConditionalSuccessor((LabelRef) val);
+      }
+
+   }
+
+   public static class BlockCallSuccessor extends ProgramValue {
+
+      private final ControlFlowBlock block;
+
+      BlockCallSuccessor(ControlFlowBlock block) {
+         this.block = block;
+      }
+
+      @Override
+      public Value get() {
+         return block.getCallSuccessor();
+      }
+
+      @Override
+      public void set(Value val) {
+         block.setCallSuccessor((LabelRef) val);
+      }
+
+   }
+
 }

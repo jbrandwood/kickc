@@ -11,20 +11,20 @@ main: scope:[main]  from @2
   (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
   *((void()**) KERNEL_IRQ#0) ← (void()*~) main::$0
   to:main::@1
-main::@1: scope:[main]  from main main::@4 main::@7
-  (byte) col#14 ← phi( main/(byte) col#16 main::@4/(byte) col#17 main::@7/(byte) col#1 )
+main::@1: scope:[main]  from main main::@6 main::@7
+  (byte) col#14 ← phi( main/(byte) col#16 main::@6/(byte) col#1 main::@7/(byte) col#17 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) col#7 ← phi( main::@1/(byte) col#14 )
   (bool~) main::$1 ← (byte) col#7 > (byte/signed byte/word/signed word/dword/signed dword) $a
   (bool~) main::$2 ← ! (bool~) main::$1
-  if((bool~) main::$2) goto main::@4
-  to:main::@7
-main::@4: scope:[main]  from main::@2
+  if((bool~) main::$2) goto main::@7
+  to:main::@6
+main::@7: scope:[main]  from main::@2
   (byte) col#17 ← phi( main::@2/(byte) col#7 )
   to:main::@1
-main::@7: scope:[main]  from main::@2
+main::@6: scope:[main]  from main::@2
   (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -101,7 +101,7 @@ interrupt(KERNEL_MIN)(void()) irq()
 (bool~) main::$2
 (label) main::@1
 (label) main::@2
-(label) main::@4
+(label) main::@6
 (label) main::@7
 (label) main::@return
 
@@ -119,7 +119,7 @@ Redundant Phi (byte) col#16 (byte) col#0
 Redundant Phi (byte) col#10 (byte) col#0
 Redundant Phi (byte) col#13 (byte) col#14
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$2 [11] if((byte) col#14<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@4
+Simple Condition (bool~) main::$2 [11] if((byte) col#14<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@7
 Simple Condition (bool~) irq::$0 [21] if((byte) col#0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const void()**) KERNEL_IRQ#0 = ((void()**))$314
@@ -131,7 +131,7 @@ Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@7
 Culled Empty Block (label) @3
 Successful SSA optimization Pass2CullEmptyBlocks
 Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
@@ -161,13 +161,13 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @2
   [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
-main::@1: scope:[main]  from main main::@2 main::@7
-  [5] (byte) col#14 ← phi( main/(byte) col#0 main::@7/(byte) col#1 )
+main::@1: scope:[main]  from main main::@2 main::@6
+  [5] (byte) col#14 ← phi( main/(byte) col#0 main::@6/(byte) col#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [6] if((byte) col#14<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1
-  to:main::@7
-main::@7: scope:[main]  from main::@2
+  to:main::@6
+main::@6: scope:[main]  from main::@2
   [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 irq: scope:[irq]  from
@@ -248,10 +248,10 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 [5] phi from main main::@7 to main::@1 [phi:main/main::@7->main::@1]
+  //SEG12 [5] phi from main main::@6 to main::@1 [phi:main/main::@6->main::@1]
   b1_from_main:
-  b1_from_b7:
-  //SEG13 [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@7->main::@1#0] -- register_copy 
+  b1_from_b6:
+  //SEG13 [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@6->main::@1#0] -- register_copy 
     jmp b1
   //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -265,13 +265,13 @@ main: {
     lda #$a
     cmp col
     bcs b1_from_b2
-    jmp b7
-  //SEG18 main::@7
-  b7:
+    jmp b6
+  //SEG18 main::@6
+  b6:
   //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
-    jmp b1_from_b7
+    jmp b1_from_b6
 }
 //SEG20 irq
 irq: {
@@ -374,10 +374,10 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 [5] phi from main main::@7 to main::@1 [phi:main/main::@7->main::@1]
+  //SEG12 [5] phi from main main::@6 to main::@1 [phi:main/main::@6->main::@1]
   b1_from_main:
-  b1_from_b7:
-  //SEG13 [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@7->main::@1#0] -- register_copy 
+  b1_from_b6:
+  //SEG13 [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@6->main::@1#0] -- register_copy 
     jmp b1
   //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -391,13 +391,13 @@ main: {
     lda #$a
     cmp col
     bcs b1_from_b2
-    jmp b7
-  //SEG18 main::@7
-  b7:
+    jmp b6
+  //SEG18 main::@6
+  b6:
   //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
-    jmp b1_from_b7
+    jmp b1_from_b6
 }
 //SEG20 irq
 irq: {
@@ -436,7 +436,7 @@ Removing instruction jmp b2
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b7
+Removing instruction jmp b6
 Removing instruction jmp b3
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
@@ -450,13 +450,13 @@ Removing instruction b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b2:
 Removing instruction bend:
-Removing instruction b7:
+Removing instruction b6:
 Removing instruction b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Skipping double jump to b2 in jmp b1_from_b7
+Skipping double jump to b2 in jmp b1_from_b6
 Skipping double jump to $ea81 in jmp breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label b1_from_b7 to b1
+Relabelling long label b1_from_b6 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
@@ -488,7 +488,7 @@ interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 (label) main::@1
 (label) main::@2
-(label) main::@7
+(label) main::@6
 
 zp ZP_BYTE:2 [ col#14 col#0 col#1 col#4 col#3 ]
 
@@ -525,8 +525,8 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 [5] phi from main main::@7 to main::@1 [phi:main/main::@7->main::@1]
-  //SEG13 [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@7->main::@1#0] -- register_copy 
+  //SEG12 [5] phi from main main::@6 to main::@1 [phi:main/main::@6->main::@1]
+  //SEG13 [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@6->main::@1#0] -- register_copy 
   //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   //SEG15 main::@1
   //SEG16 main::@2
@@ -535,7 +535,7 @@ main: {
     lda #$a
     cmp col
     bcs b2
-  //SEG18 main::@7
+  //SEG18 main::@6
   //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta col

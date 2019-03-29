@@ -13,20 +13,20 @@ main: {
     inx
     cpx #$28
     bne b1
-  b2:
+  b3:
     jsr line
-    jmp b2
+    jmp b3
 }
 line: {
     .const x0 = 0
     .const x1 = $a
     ldy #x0
-  b3:
+  b5:
     jsr plot
     iny
     cpy #x1
-    bcc b3
-    beq b3
+    bcc b5
+    beq b5
     rts
 }
 // plot(byte register(Y) x)

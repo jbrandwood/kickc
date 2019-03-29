@@ -33,6 +33,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNoLocalScope() throws IOException, URISyntaxException {
+      compileAndCompare("localscope-loops");
+   }
+
+   @Test
+   public void testLocalScopeSimple() throws IOException, URISyntaxException {
+      compileAndCompare("localscope-simple");
+   }
+
+   @Test
    public void testIrqLocalVarOverlap() throws IOException, URISyntaxException {
       compileAndCompare("irq-local-var-overlap-problem");
    }
@@ -190,11 +200,6 @@ public class TestPrograms {
    @Test
    public void testCastNotNeeded() throws IOException, URISyntaxException {
       compileAndCompare("cast-not-needed");
-   }
-
-   @Test
-   public void testNoLocalScope() throws IOException, URISyntaxException {
-      assertError("nolocalscope", "Symbol already declared");
    }
 
    @Test

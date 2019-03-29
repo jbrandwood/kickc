@@ -27,10 +27,10 @@ main: {
     sta b
     lda a
     cmp b
-    bcs b23
+    bcs b22
     ldx #'+'
     jmp b2
-  b23:
+  b22:
     ldx #'-'
   b2:
     lda b
@@ -42,10 +42,10 @@ main: {
     jsr printu
     lda a
     cmp #$37
-    bcs b24
+    bcs b23
     ldx #'+'
     jmp b3
-  b24:
+  b23:
     ldx #'-'
   b3:
     lda #$37
@@ -58,10 +58,10 @@ main: {
     lda a
     ldy i
     cmp cs,y
-    bcs b25
+    bcs b24
     ldx #'+'
     jmp b4
-  b25:
+  b24:
     ldx #'-'
   b4:
     ldy i
@@ -74,10 +74,10 @@ main: {
     jsr printu
     lda a
     cmp a
-    bcs b26
+    bcs b25
     ldx #'+'
     jmp b5
-  b26:
+  b25:
     ldx #'-'
   b5:
     lda a
@@ -90,10 +90,10 @@ main: {
     jsr print_ln
     lda b
     cmp a
-    bcs b27
+    bcs b26
     ldx #'+'
     jmp b6
-  b27:
+  b26:
     ldx #'-'
   b6:
     lda b
@@ -109,10 +109,10 @@ main: {
     jsr printu
     lda #$37
     cmp a
-    bcs b28
+    bcs b27
     ldx #'+'
     jmp b7
-  b28:
+  b27:
     ldx #'-'
   b7:
     lda #$37
@@ -125,10 +125,10 @@ main: {
     ldy i
     lda cs,y
     cmp a
-    bcs b29
+    bcs b28
     ldx #'+'
     jmp b8
-  b29:
+  b28:
     ldx #'-'
   b8:
     ldy i
@@ -141,10 +141,10 @@ main: {
     jsr printu
     lda a
     cmp a
-    bcs b30
+    bcs b29
     ldx #'+'
     jmp b9
-  b30:
+  b29:
     ldx #'-'
   b9:
     lda a
@@ -157,10 +157,10 @@ main: {
     jsr print_ln
     lda b
     cmp a
-    bcc b31
+    bcc b30
     ldx #'+'
     jmp b10
-  b31:
+  b30:
     ldx #'-'
   b10:
     lda b
@@ -176,10 +176,10 @@ main: {
     jsr printu
     lda #$37
     cmp a
-    bcc b32
+    bcc b31
     ldx #'+'
     jmp b11
-  b32:
+  b31:
     ldx #'-'
   b11:
     lda #$37
@@ -192,10 +192,10 @@ main: {
     ldy i
     lda cs,y
     cmp a
-    bcc b33
+    bcc b32
     ldx #'+'
     jmp b12
-  b33:
+  b32:
     ldx #'-'
   b12:
     ldy i
@@ -208,10 +208,10 @@ main: {
     jsr printu
     lda a
     cmp a
-    bcc b34
+    bcc b33
     ldx #'+'
     jmp b13
-  b34:
+  b33:
     ldx #'-'
   b13:
     lda a
@@ -224,10 +224,10 @@ main: {
     jsr print_ln
     lda a
     cmp b
-    bcc b35
+    bcc b34
     ldx #'+'
     jmp b14
-  b35:
+  b34:
     ldx #'-'
   b14:
     lda b
@@ -243,10 +243,10 @@ main: {
     jsr printu
     lda a
     cmp #$37
-    bcc b36
+    bcc b35
     ldx #'+'
     jmp b15
-  b36:
+  b35:
     ldx #'-'
   b15:
     lda #$37
@@ -259,10 +259,10 @@ main: {
     lda a
     ldy i
     cmp cs,y
-    bcc b37
+    bcc b36
     ldx #'+'
     jmp b16
-  b37:
+  b36:
     ldx #'-'
   b16:
     ldy i
@@ -275,10 +275,10 @@ main: {
     jsr printu
     lda a
     cmp a
-    bcc b38
+    bcc b37
     ldx #'+'
     jmp b17
-  b38:
+  b37:
     ldx #'-'
   b17:
     lda a
@@ -291,10 +291,10 @@ main: {
     jsr print_ln
     lda a
     cmp b
-    bne b39
+    bne b38
     ldx #'+'
     jmp b18
-  b39:
+  b38:
     ldx #'-'
   b18:
     lda b
@@ -310,10 +310,10 @@ main: {
     jsr printu
     lda #$37
     cmp a
-    bne b40
+    bne b39
     ldx #'+'
     jmp b19
-  b40:
+  b39:
     ldx #'-'
   b19:
     lda #$37
@@ -326,10 +326,10 @@ main: {
     lda a
     ldy i
     cmp cs,y
-    bne b41
+    bne b40
     ldx #'+'
     jmp b20
-  b41:
+  b40:
     ldx #'-'
   b20:
     ldy i
@@ -342,10 +342,10 @@ main: {
     jsr printu
     lda a
     cmp a
-    bne b42
+    bne b41
     ldx #'+'
     jmp b21
-  b42:
+  b41:
     ldx #'-'
   b21:
     lda a
@@ -363,8 +363,8 @@ main: {
     lda #5
     cmp i
     bne b71
-  b22:
-    jmp b22
+  b43:
+    jmp b43
   b71:
     lda print_line_cursor
     sta print_char_cursor

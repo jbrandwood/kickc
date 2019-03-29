@@ -29,10 +29,10 @@ main: {
     lda #$fe
     cmp RASTER
     bne b2
-  b3:
+  b4:
     lda #$ff
     cmp RASTER
-    bne b3
+    bne b4
     inc BGCOL
     jsr scroll_soft
     dec BGCOL
@@ -49,7 +49,7 @@ scroll_soft: {
     rts
 }
 scroll_bit: {
-    .label _4 = 3
+    .label _7 = 3
     .label c = 3
     .label sc = 5
     lsr current_bit
@@ -61,12 +61,12 @@ scroll_bit: {
     sta c
     lda #0
     sta c+1
-    asl _4
-    rol _4+1
-    asl _4
-    rol _4+1
-    asl _4
-    rol _4+1
+    asl _7
+    rol _7+1
+    asl _7
+    rol _7+1
+    asl _7
+    rol _7+1
     clc
     lda current_chargen
     adc #<CHARGEN
@@ -86,18 +86,18 @@ scroll_bit: {
     lda #>SCREEN+$28+$27
     sta sc+1
     ldx #0
-  b2:
+  b3:
     txa
     tay
     lda (current_chargen),y
     and current_bit
     cmp #0
-    beq b4
+    beq b2
     lda #$80+' '
-    jmp b3
-  b4:
+    jmp b4
+  b2:
     lda #' '
-  b3:
+  b4:
     ldy #0
     sta (sc),y
     lda #$28
@@ -109,7 +109,7 @@ scroll_bit: {
   !:
     inx
     cpx #8
-    bne b2
+    bne b3
     lda #$37
     sta PROCPORT
     cli

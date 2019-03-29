@@ -17,20 +17,20 @@
   .const KEY_SPACE = $3c
 main: {
     jsr keyboard_init
-  b4:
+  b6:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne b6
     jsr keyboard_key_pressed
     cmp #0
-    bne b5
+    bne b10
     lda #BLUE
     sta BGCOL
-    jmp b4
-  b5:
+    jmp b6
+  b10:
     lda #GREEN
     sta BGCOL
-    jmp b4
+    jmp b6
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)

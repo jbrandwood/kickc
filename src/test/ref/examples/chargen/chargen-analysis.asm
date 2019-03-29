@@ -131,7 +131,7 @@ main: {
     jsr print_str_at
     lda #0
     sta i
-  b2:
+  b3:
     ldy i
     ldx #0
     lda #$20
@@ -139,75 +139,75 @@ main: {
     inc i
     lda #4
     cmp i
-    bne b2
+    bne b3
     lda #0
     sta cur_pos
-  b3:
+  b5:
     ldx #KEY_F1
     jsr keyboard_key_pressed
     cmp #0
-    beq b4
+    beq b6
     lda #0
     sta cur_pos
-  b4:
+  b6:
     ldx #KEY_F3
     jsr keyboard_key_pressed
     cmp #0
-    beq b5
+    beq b7
     lda #1
     sta cur_pos
-  b5:
+  b7:
     ldx #KEY_F5
     jsr keyboard_key_pressed
     cmp #0
-    beq b6
+    beq b8
     lda #2
     sta cur_pos
-  b6:
+  b8:
     ldx #KEY_F7
     jsr keyboard_key_pressed
     cmp #0
-    beq b7
+    beq b9
     lda #3
     sta cur_pos
-  b7:
+  b9:
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
     cmp #0
-    bne b8
+    bne b2
     lda #0
     sta shift
-    jmp b9
-  b8:
+    jmp b11
+  b2:
     lda #1
     sta shift
-  b9:
+  b11:
     lda #0
     sta ch
   // Check for key presses - and plot char if found
-  b10:
+  b12:
     ldx ch
     jsr keyboard_get_keycode
     cmp #$3f
-    beq b13
+    beq b4
     tax
     jsr keyboard_key_pressed
-    jmp b11
-  b13:
+    jmp b13
+  b4:
     lda #0
-  b11:
+  b13:
     cmp #0
-    beq b12
+    beq b14
     ldy cur_pos
     lda ch
     ldx shift
     jsr plot_chargen
-  b12:
+  b14:
     inc ch
     lda #$40
     cmp ch
-    bne b10
-    jmp b3
+    bne b12
+    jmp b5
     str: .text "f1@"
     str1: .text "f3@"
     str2: .text "f5@"
@@ -218,7 +218,7 @@ main: {
 plot_chargen: {
     .label _0 = 2
     .label _1 = 2
-    .label _8 = 9
+    .label _7 = 9
     .label chargen = 2
     .label sc = 9
     .label bits = 8
@@ -264,21 +264,21 @@ plot_chargen: {
     sta sc+1
     lda #0
     sta y
-  b2:
+  b3:
     ldy y
     lda (chargen),y
     sta bits
     ldx #0
-  b3:
+  b4:
     lda #$80
     and bits
     cmp #0
-    beq b5
+    beq b2
     lda #'*'
-    jmp b4
-  b5:
+    jmp b5
+  b2:
     lda #'.'
-  b4:
+  b5:
     ldy #0
     sta (sc),y
     inc sc
@@ -288,7 +288,7 @@ plot_chargen: {
     asl bits
     inx
     cpx #8
-    bne b3
+    bne b4
     lda #$20
     clc
     adc sc
@@ -299,7 +299,7 @@ plot_chargen: {
     inc y
     lda #8
     cmp y
-    bne b2
+    bne b3
     lda #$37
     sta PROCPORT
     cli
@@ -326,7 +326,7 @@ mul8u: {
     txa
     and #1
     cmp #0
-    beq b4
+    beq b8
     lda res
     clc
     adc mb
@@ -334,7 +334,7 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  b4:
+  b8:
     txa
     lsr
     tax

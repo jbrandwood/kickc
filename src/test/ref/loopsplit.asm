@@ -13,11 +13,11 @@ main: {
   b2:
     cmp #$32
     beq !+
-    bcs b4
+    bcs b8
   !:
     dex
     jmp b1
-  b4:
+  b8:
     inx
     jmp b1
 }

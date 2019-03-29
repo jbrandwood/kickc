@@ -40,31 +40,31 @@ loop: {
     .label ss = 7
     lda #0
     sta sin_idx
-  b4:
+  b6:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne b6
     inc BORDERCOL
     ldx sin_idx
     ldy #0
-  b7:
+  b9:
     lda YSIN,x
     sta PLEX_YPOS,y
     txa
     axs #-[8]
     iny
     cpy #PLEX_COUNT-1+1
-    bne b7
+    bne b9
     inc sin_idx
     inc BORDERCOL
     jsr plexSort
     lda #BLACK
     sta BORDERCOL
-  b8:
+  b11:
     lda #VIC_RST8
     and D011
     cmp #0
-    bne b8
+    bne b11
     lda #0
     sta ss
     lda #1
@@ -74,25 +74,25 @@ loop: {
     sta plex_sprite_idx
     sta plex_free_next
   // Show the sprites
-  b11:
+  b14:
     lda #BLACK
     sta BORDERCOL
     ldy plex_free_next
     lda PLEX_FREE_YPOS,y
     sta plexFreeNextYpos1_return
-  b12:
+  b15:
     lda RASTER
     cmp plexFreeNextYpos1_return
-    bcc b12
+    bcc b15
     inc BORDERCOL
     jsr plexShowSprite
     inc ss
     lda #PLEX_COUNT-1+1
     cmp ss
-    bne b11
+    bne b14
     lda #BLACK
     sta BORDERCOL
-    jmp b4
+    jmp b6
 }
 // Show the next sprite.
 // plexSort() prepares showing the sprites
@@ -185,7 +185,7 @@ plexSort: {
     dex
     cpx #$ff
     bne b8
-  b5:
+  b4:
     inx
     lda nxt_idx
     sta PLEX_SORTED_IDX,x
@@ -207,7 +207,7 @@ plexSort: {
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcc b3
-    jmp b5
+    jmp b4
 }
 // Initialize the program
 init: {
@@ -244,12 +244,12 @@ init: {
     lda #$ff
     sta SPRITES_ENABLE
     ldx #0
-  b2:
+  b3:
     lda #GREEN
     sta SPRITES_COLS,x
     inx
     cpx #8
-    bne b2
+    bne b3
     rts
 }
 // Initialize the multiplexer data structures

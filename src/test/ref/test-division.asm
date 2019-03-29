@@ -218,8 +218,8 @@ div16s: {
 // divr16s(signed word zeropage(8) dividend, signed word zeropage($c) divisor)
 divr16s: {
     .const rem = 0
-    .label _5 = 8
-    .label _11 = $c
+    .label _8 = 8
+    .label _13 = $c
     .label resultu = $e
     .label return = $e
     .label dividend = 8
@@ -263,28 +263,28 @@ divr16s: {
     rts
   b3:
     sec
-    lda _11
+    lda _13
     eor #$ff
     adc #0
-    sta _11
-    lda _11+1
+    sta _13
+    lda _13+1
     eor #$ff
     adc #0
-    sta _11+1
+    sta _13+1
     tya
     eor #1
     tay
     jmp b4
   b1:
     sec
-    lda _5
+    lda _8
     eor #$ff
     adc #0
-    sta _5
-    lda _5+1
+    sta _8
+    lda _8+1
     eor #$ff
     adc #0
-    sta _5+1
+    sta _8+1
     lda #-rem
     sta remu
     lda #0

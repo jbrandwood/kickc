@@ -17,40 +17,40 @@ main::@7: scope:[main]  from main::@1
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,$a)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$1) goto main::@1
-  to:main::@4
-main::@4: scope:[main]  from main::@7
-  (byte) main::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@2
-main::@2: scope:[main]  from main::@4 main::@8
-  (byte) main::j#2 ← phi( main::@4/(byte) main::j#0 main::@8/(byte) main::j#1 )
+main::@2: scope:[main]  from main::@7
+  (byte) main::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@8
+  (byte) main::j#2 ← phi( main::@2/(byte) main::j#0 main::@8/(byte) main::j#1 )
   (byte) plot::x#1 ← (byte) main::j#2
   call plot 
   to:main::@8
-main::@8: scope:[main]  from main::@2
-  (byte) main::j#3 ← phi( main::@2/(byte) main::j#2 )
+main::@8: scope:[main]  from main::@3
+  (byte) main::j#3 ← phi( main::@3/(byte) main::j#2 )
   (byte) main::j#1 ← (byte) main::j#3 + rangenext(0,$a)
   (bool~) main::$3 ← (byte) main::j#1 != rangelast(0,$a)
-  if((bool~) main::$3) goto main::@2
-  to:main::@5
-main::@5: scope:[main]  from main::@8
+  if((bool~) main::$3) goto main::@3
+  to:main::@4
+main::@4: scope:[main]  from main::@8
   (byte) main::k#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@3
-main::@3: scope:[main]  from main::@5 main::@9
-  (byte) main::k#2 ← phi( main::@5/(byte) main::k#0 main::@9/(byte) main::k#1 )
+  to:main::@5
+main::@5: scope:[main]  from main::@4 main::@9
+  (byte) main::k#2 ← phi( main::@4/(byte) main::k#0 main::@9/(byte) main::k#1 )
   (byte) plot::x#2 ← (byte) main::k#2
   call plot 
   to:main::@9
-main::@9: scope:[main]  from main::@3
-  (byte) main::k#3 ← phi( main::@3/(byte) main::k#2 )
+main::@9: scope:[main]  from main::@5
+  (byte) main::k#3 ← phi( main::@5/(byte) main::k#2 )
   (byte) main::k#1 ← (byte) main::k#3 + rangenext(0,$a)
   (bool~) main::$5 ← (byte) main::k#1 != rangelast(0,$a)
-  if((bool~) main::$5) goto main::@3
+  if((bool~) main::$5) goto main::@5
   to:main::@return
 main::@return: scope:[main]  from main::@9
   return 
   to:@return
-plot: scope:[plot]  from main::@1 main::@2 main::@3
-  (byte) plot::x#3 ← phi( main::@1/(byte) plot::x#0 main::@2/(byte) plot::x#1 main::@3/(byte) plot::x#2 )
+plot: scope:[plot]  from main::@1 main::@3 main::@5
+  (byte) plot::x#3 ← phi( main::@1/(byte) plot::x#0 main::@3/(byte) plot::x#1 main::@5/(byte) plot::x#2 )
   *((byte*) SCREEN#0 + (byte) plot::x#3) ← (byte) '*'
   to:plot::@return
 plot::@return: scope:[plot]  from plot
@@ -113,8 +113,8 @@ Alias (byte) main::j#2 = (byte) main::j#3
 Alias (byte) main::k#2 = (byte) main::k#3 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [8] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
-Simple Condition (bool~) main::$3 [16] if((byte) main::j#1!=rangelast(0,$a)) goto main::@2
-Simple Condition (bool~) main::$5 [24] if((byte) main::k#1!=rangelast(0,$a)) goto main::@3
+Simple Condition (bool~) main::$3 [16] if((byte) main::j#1!=rangelast(0,$a)) goto main::@3
+Simple Condition (bool~) main::$5 [24] if((byte) main::k#1!=rangelast(0,$a)) goto main::@5
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = ((byte*))$400
 Constant (const byte) main::i#0 = 0
@@ -124,11 +124,11 @@ Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value if(main::i#1!=rangelast(0,$a)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $b
 Resolved ranged next value main::j#1 ← ++ main::j#2 to ++
-Resolved ranged comparison value if(main::j#1!=rangelast(0,$a)) goto main::@2 to (byte/signed byte/word/signed word/dword/signed dword) $b
+Resolved ranged comparison value if(main::j#1!=rangelast(0,$a)) goto main::@3 to (byte/signed byte/word/signed word/dword/signed dword) $b
 Resolved ranged next value main::k#1 ← ++ main::k#2 to ++
-Resolved ranged comparison value if(main::k#1!=rangelast(0,$a)) goto main::@3 to (byte/signed byte/word/signed word/dword/signed dword) $b
+Resolved ranged comparison value if(main::k#1!=rangelast(0,$a)) goto main::@5 to (byte/signed byte/word/signed word/dword/signed dword) $b
+Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@4
-Culled Empty Block (label) main::@5
 Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::j#0
@@ -138,8 +138,8 @@ Constant inlined main::k#0 = (byte/signed byte/word/signed word/dword/signed dwo
 Constant inlined main::j#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@10(between main::@7 and main::@1)
-Added new block during phi lifting main::@11(between main::@8 and main::@2)
-Added new block during phi lifting main::@12(between main::@9 and main::@3)
+Added new block during phi lifting main::@11(between main::@8 and main::@3)
+Added new block during phi lifting main::@12(between main::@9 and main::@5)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -185,30 +185,30 @@ main::@1: scope:[main]  from main main::@7
 main::@7: scope:[main]  from main::@1
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
   [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@7 main::@8
+  to:main::@3
+main::@3: scope:[main]  from main::@7 main::@8
   [10] (byte) main::j#2 ← phi( main::@7/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@8/(byte) main::j#1 )
   [11] (byte) plot::x#1 ← (byte) main::j#2
   [12] call plot 
   to:main::@8
-main::@8: scope:[main]  from main::@2
+main::@8: scope:[main]  from main::@3
   [13] (byte) main::j#1 ← ++ (byte) main::j#2
-  [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@2
-  to:main::@3
-main::@3: scope:[main]  from main::@8 main::@9
+  [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@3
+  to:main::@5
+main::@5: scope:[main]  from main::@8 main::@9
   [15] (byte) main::k#2 ← phi( main::@8/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@9/(byte) main::k#1 )
   [16] (byte) plot::x#2 ← (byte) main::k#2
   [17] call plot 
   to:main::@9
-main::@9: scope:[main]  from main::@3
+main::@9: scope:[main]  from main::@5
   [18] (byte) main::k#1 ← ++ (byte) main::k#2
-  [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@3
+  [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@5
   to:main::@return
 main::@return: scope:[main]  from main::@9
   [20] return 
   to:@return
-plot: scope:[plot]  from main::@1 main::@2 main::@3
-  [21] (byte) plot::x#3 ← phi( main::@1/(byte) plot::x#0 main::@2/(byte) plot::x#1 main::@3/(byte) plot::x#2 )
+plot: scope:[plot]  from main::@1 main::@3 main::@5
+  [21] (byte) plot::x#3 ← phi( main::@1/(byte) plot::x#0 main::@3/(byte) plot::x#1 main::@5/(byte) plot::x#2 )
   [22] *((const byte*) SCREEN#0 + (byte) plot::x#3) ← (byte) '*'
   to:plot::@return
 plot::@return: scope:[plot]  from plot
@@ -310,64 +310,64 @@ main: {
     lda #$b
     cmp i
     bne b1_from_b7
-  //SEG23 [10] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
-  b2_from_b7:
-  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@2#0] -- vbuz1=vbuc1 
+  //SEG23 [10] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
+  b3_from_b7:
+  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta j
-    jmp b2
-  //SEG25 [10] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
-  b2_from_b8:
-  //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@2#0] -- register_copy 
-    jmp b2
-  //SEG27 main::@2
-  b2:
+    jmp b3
+  //SEG25 [10] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
+  b3_from_b8:
+  //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@3#0] -- register_copy 
+    jmp b3
+  //SEG27 main::@3
+  b3:
   //SEG28 [11] (byte) plot::x#1 ← (byte) main::j#2 -- vbuz1=vbuz2 
     lda j
     sta plot.x
   //SEG29 [12] call plot 
-  //SEG30 [21] phi from main::@2 to plot [phi:main::@2->plot]
-  plot_from_b2:
-  //SEG31 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@2->plot#0] -- register_copy 
+  //SEG30 [21] phi from main::@3 to plot [phi:main::@3->plot]
+  plot_from_b3:
+  //SEG31 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@3->plot#0] -- register_copy 
     jsr plot
     jmp b8
   //SEG32 main::@8
   b8:
   //SEG33 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
     inc j
-  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp j
-    bne b2_from_b8
-  //SEG35 [15] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
-  b3_from_b8:
-  //SEG36 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@3#0] -- vbuz1=vbuc1 
+    bne b3_from_b8
+  //SEG35 [15] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
+  b5_from_b8:
+  //SEG36 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta k
-    jmp b3
-  //SEG37 [15] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
-  b3_from_b9:
-  //SEG38 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@3#0] -- register_copy 
-    jmp b3
-  //SEG39 main::@3
-  b3:
+    jmp b5
+  //SEG37 [15] phi from main::@9 to main::@5 [phi:main::@9->main::@5]
+  b5_from_b9:
+  //SEG38 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@5#0] -- register_copy 
+    jmp b5
+  //SEG39 main::@5
+  b5:
   //SEG40 [16] (byte) plot::x#2 ← (byte) main::k#2 -- vbuz1=vbuz2 
     lda k
     sta plot.x
   //SEG41 [17] call plot 
-  //SEG42 [21] phi from main::@3 to plot [phi:main::@3->plot]
-  plot_from_b3:
-  //SEG43 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@3->plot#0] -- register_copy 
+  //SEG42 [21] phi from main::@5 to plot [phi:main::@5->plot]
+  plot_from_b5:
+  //SEG43 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@5->plot#0] -- register_copy 
     jsr plot
     jmp b9
   //SEG44 main::@9
   b9:
   //SEG45 [18] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuz1=_inc_vbuz1 
     inc k
-  //SEG46 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG46 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp k
-    bne b3_from_b9
+    bne b5_from_b9
     jmp breturn
   //SEG47 main::@return
   breturn:
@@ -462,56 +462,56 @@ main: {
   //SEG22 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1_from_b7
-  //SEG23 [10] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
-  b2_from_b7:
-  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@2#0] -- vbuxx=vbuc1 
+  //SEG23 [10] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
+  b3_from_b7:
+  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@3#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b2
-  //SEG25 [10] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
-  b2_from_b8:
-  //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@2#0] -- register_copy 
-    jmp b2
-  //SEG27 main::@2
-  b2:
+    jmp b3
+  //SEG25 [10] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
+  b3_from_b8:
+  //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@3#0] -- register_copy 
+    jmp b3
+  //SEG27 main::@3
+  b3:
   //SEG28 [11] (byte) plot::x#1 ← (byte) main::j#2
   //SEG29 [12] call plot 
-  //SEG30 [21] phi from main::@2 to plot [phi:main::@2->plot]
-  plot_from_b2:
-  //SEG31 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@2->plot#0] -- register_copy 
+  //SEG30 [21] phi from main::@3 to plot [phi:main::@3->plot]
+  plot_from_b3:
+  //SEG31 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@3->plot#0] -- register_copy 
     jsr plot
     jmp b8
   //SEG32 main::@8
   b8:
   //SEG33 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    bne b2_from_b8
-  //SEG35 [15] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
-  b3_from_b8:
-  //SEG36 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@3#0] -- vbuxx=vbuc1 
+    bne b3_from_b8
+  //SEG35 [15] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
+  b5_from_b8:
+  //SEG36 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@5#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b3
-  //SEG37 [15] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
-  b3_from_b9:
-  //SEG38 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@3#0] -- register_copy 
-    jmp b3
-  //SEG39 main::@3
-  b3:
+    jmp b5
+  //SEG37 [15] phi from main::@9 to main::@5 [phi:main::@9->main::@5]
+  b5_from_b9:
+  //SEG38 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@5#0] -- register_copy 
+    jmp b5
+  //SEG39 main::@5
+  b5:
   //SEG40 [16] (byte) plot::x#2 ← (byte) main::k#2
   //SEG41 [17] call plot 
-  //SEG42 [21] phi from main::@3 to plot [phi:main::@3->plot]
-  plot_from_b3:
-  //SEG43 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@3->plot#0] -- register_copy 
+  //SEG42 [21] phi from main::@5 to plot [phi:main::@5->plot]
+  plot_from_b5:
+  //SEG43 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@5->plot#0] -- register_copy 
     jsr plot
     jmp b9
   //SEG44 main::@9
   b9:
   //SEG45 [18] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG46 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG46 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@5 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    bne b3_from_b9
+    bne b5_from_b9
     jmp breturn
   //SEG47 main::@return
   breturn:
@@ -536,33 +536,33 @@ Removing instruction jmp b2
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b7
-Removing instruction jmp b2
-Removing instruction jmp b8
 Removing instruction jmp b3
+Removing instruction jmp b8
+Removing instruction jmp b5
 Removing instruction jmp b9
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b7 with b1
-Replacing label b2_from_b8 with b2
-Replacing label b3_from_b9 with b3
+Replacing label b3_from_b8 with b3
+Replacing label b5_from_b9 with b5
 Removing instruction b2_from_bbegin:
 Removing instruction b2:
 Removing instruction main_from_b2:
 Removing instruction bend_from_b2:
 Removing instruction b1_from_b7:
 Removing instruction plot_from_b1:
-Removing instruction b2_from_b8:
-Removing instruction plot_from_b2:
-Removing instruction b3_from_b9:
+Removing instruction b3_from_b8:
 Removing instruction plot_from_b3:
+Removing instruction b5_from_b9:
+Removing instruction plot_from_b5:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b7:
-Removing instruction b2_from_b7:
+Removing instruction b3_from_b7:
 Removing instruction b8:
-Removing instruction b3_from_b8:
+Removing instruction b5_from_b8:
 Removing instruction b9:
 Removing instruction breturn:
 Removing instruction breturn:
@@ -571,8 +571,8 @@ Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b1
-Removing instruction jmp b2
 Removing instruction jmp b3
+Removing instruction jmp b5
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -585,8 +585,8 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (void()) main()
 (label) main::@1
-(label) main::@2
 (label) main::@3
+(label) main::@5
 (label) main::@7
 (label) main::@8
 (label) main::@9
@@ -653,42 +653,42 @@ main: {
   //SEG22 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne b1
-  //SEG23 [10] phi from main::@7 to main::@2 [phi:main::@7->main::@2]
-  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@2#0] -- vbuxx=vbuc1 
+  //SEG23 [10] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
+  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@7->main::@3#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG25 [10] phi from main::@8 to main::@2 [phi:main::@8->main::@2]
-  //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@2#0] -- register_copy 
-  //SEG27 main::@2
-  b2:
+  //SEG25 [10] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
+  //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@8->main::@3#0] -- register_copy 
+  //SEG27 main::@3
+  b3:
   //SEG28 [11] (byte) plot::x#1 ← (byte) main::j#2
   //SEG29 [12] call plot 
-  //SEG30 [21] phi from main::@2 to plot [phi:main::@2->plot]
-  //SEG31 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@2->plot#0] -- register_copy 
+  //SEG30 [21] phi from main::@3 to plot [phi:main::@3->plot]
+  //SEG31 [21] phi (byte) plot::x#3 = (byte) plot::x#1 [phi:main::@3->plot#0] -- register_copy 
     jsr plot
   //SEG32 main::@8
   //SEG33 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    bne b2
-  //SEG35 [15] phi from main::@8 to main::@3 [phi:main::@8->main::@3]
-  //SEG36 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@3#0] -- vbuxx=vbuc1 
+    bne b3
+  //SEG35 [15] phi from main::@8 to main::@5 [phi:main::@8->main::@5]
+  //SEG36 [15] phi (byte) main::k#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@8->main::@5#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG37 [15] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
-  //SEG38 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@3#0] -- register_copy 
-  //SEG39 main::@3
-  b3:
+  //SEG37 [15] phi from main::@9 to main::@5 [phi:main::@9->main::@5]
+  //SEG38 [15] phi (byte) main::k#2 = (byte) main::k#1 [phi:main::@9->main::@5#0] -- register_copy 
+  //SEG39 main::@5
+  b5:
   //SEG40 [16] (byte) plot::x#2 ← (byte) main::k#2
   //SEG41 [17] call plot 
-  //SEG42 [21] phi from main::@3 to plot [phi:main::@3->plot]
-  //SEG43 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@3->plot#0] -- register_copy 
+  //SEG42 [21] phi from main::@5 to plot [phi:main::@5->plot]
+  //SEG43 [21] phi (byte) plot::x#3 = (byte) plot::x#2 [phi:main::@5->plot#0] -- register_copy 
     jsr plot
   //SEG44 main::@9
   //SEG45 [18] (byte) main::k#1 ← ++ (byte) main::k#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG46 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@3 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG46 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@5 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    bne b3
+    bne b5
   //SEG47 main::@return
   //SEG48 [20] return 
     rts

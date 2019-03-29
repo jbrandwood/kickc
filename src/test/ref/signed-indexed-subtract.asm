@@ -29,7 +29,7 @@ main: {
     lda #>$400
     sta print_char_cursor+1
     ldx #0
-  b2:
+  b3:
     txa
     asl
     tay
@@ -48,7 +48,7 @@ main: {
     sta print_char_cursor
     lda print_line_cursor+1
     sta print_char_cursor+1
-    jmp b2
+    jmp b3
 }
 // Print a newline
 print_ln: {

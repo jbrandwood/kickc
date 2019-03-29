@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
 
@@ -172,13 +173,12 @@ public class ControlFlowGraph {
    public ControlFlowBlock getMainBlock() {
       for(ControlFlowBlock block : getAllBlocks()) {
          LabelRef label = block.getLabel();
-         if(label.getFullName().equals("main")) {
+         if(label.getFullName().equals(SymbolRef.MAIN_PROC_NAME)) {
             return block;
          }
       }
       return null;
    }
-
 
    /**
     * Get all blocks that are program entry points. This is the main-block and any blocks referenced by the address-off operator (&)

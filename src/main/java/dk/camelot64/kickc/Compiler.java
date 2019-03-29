@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.StatementSequence;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
@@ -126,7 +127,7 @@ public class Compiler {
          loadAndParseFile(fileName, program, currentPath.toPath());
 
          StatementSequence sequence = program.getStatementSequence();
-         sequence.addStatement(new StatementCall(null, "main", new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         sequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
          program.setStatementSequence(sequence);
 
          pass1GenerateSSA();

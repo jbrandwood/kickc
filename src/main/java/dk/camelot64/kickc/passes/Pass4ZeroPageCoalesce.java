@@ -1,10 +1,15 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.symbols.VariableUnversioned;
 import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.VariableRef;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -21,9 +26,10 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
    public void coalesce() {
       LinkedHashSet<String> unknownFragments = new LinkedHashSet<>();
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
+      Collection<ScopeRef> threads = getThreadHeads(getSymbols());
       boolean change;
       do {
-         change = coalesce(liveRangeEquivalenceClassSet, unknownFragments);
+         change = coalesce(liveRangeEquivalenceClassSet, threads, unknownFragments);
       } while(change);
 
       if(unknownFragments.size() > 0) {
@@ -36,17 +42,37 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
    }
 
    /**
+    * Get all functions that represents a separate thread in the program.
+    * Each interrupt function and the main() function are threads.
+    *
+    * @return The threads.
+    */
+   public static Collection<ScopeRef> getThreadHeads(ProgramScope programScope) {
+      ArrayList<ScopeRef> threadHeads = new ArrayList<>();
+      Collection<Procedure> procedures = programScope.getAllProcedures(true);
+      for(Procedure procedure : procedures) {
+         if(procedure.getInterruptType() != null) {
+            threadHeads.add(procedure.getRef());
+         }
+         if(procedure.getFullName().equals(SymbolRef.MAIN_PROC_NAME)) {
+            threadHeads.add(procedure.getRef());
+         }
+      }
+      return threadHeads;
+   }
+
+   /**
     * Find two equivalence classes that can be coalesced into one - and perform the coalescence.
     *
     * @param liveRangeEquivalenceClassSet The set of live range equivalence classes
     * @param unknownFragments Receives information about any unknown fragments encountered during ASM generation
     * @return true if any classes were coalesced. False otherwise.
     */
-   private boolean coalesce(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet, Set<String> unknownFragments) {
+   private boolean coalesce(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet, Collection<ScopeRef> threadHeads, Set<String> unknownFragments) {
       for(LiveRangeEquivalenceClass thisEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(LiveRangeEquivalenceClass otherEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
             if(!thisEquivalenceClass.equals(otherEquivalenceClass)) {
-               if(canCoalesce(thisEquivalenceClass, otherEquivalenceClass, unknownFragments, getProgram())) {
+               if(canCoalesce(thisEquivalenceClass, otherEquivalenceClass, threadHeads, unknownFragments, getProgram())) {
                   getLog().append("Coalescing zero page register [ " + thisEquivalenceClass + " ] with [ " + otherEquivalenceClass + " ]");
                   liveRangeEquivalenceClassSet.consolidate(thisEquivalenceClass, otherEquivalenceClass);
                   // Reset the program register allocation
@@ -68,8 +94,56 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
     * @param program The program
     * @return True if the two equivalence classes can be coalesced into one without problems.
     */
-   public static boolean canCoalesce(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Set<String> unknownFragments, Program program) {
-      return canCoalesceVolatile(ec1, ec2, program) && canCoalesceClobber(ec1, ec2, unknownFragments, program);
+   static boolean canCoalesce(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Collection<ScopeRef> threadHeads, Set<String> unknownFragments, Program program) {
+      return canCoalesceVolatile(ec1, ec2, program) && canCoalesceThreads(ec1, ec2, threadHeads, program) && canCoalesceClobber(ec1, ec2, unknownFragments, program);
+   }
+
+   /**
+    * Determines if two live range equivalence classes can be coalesced without cross-thread clobber.
+    * This is possible if they are both only called from the same thread head.
+    *
+    * @param ec1 One equivalence class
+    * @param ec2 Another equivalence class
+    * @param threadHeads The heads (in the call graph) from each thread in the program
+    * @param program The program
+    * @return True if the two equivalence classes can be coalesced into one without problems.
+    */
+   private static boolean canCoalesceThreads(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Collection<ScopeRef> threadHeads, Program program) {
+      CallGraph callGraph = program.getCallGraph();
+
+      Collection<ScopeRef> threads1 = getEquivalenceClassThreads(ec1, program, threadHeads, callGraph);
+      Collection<ScopeRef> threads2 = getEquivalenceClassThreads(ec2, program, threadHeads, callGraph);
+
+      if(threads1.isEmpty() || threads2.isEmpty()) {
+         return true;
+      }
+      return threads1.equals(threads2);
+   }
+
+   /**
+    * Find the threads for the variables in an equivalence class.
+    *
+    * @param equivalenceClass The equivalence class
+    * @param program The program
+    * @param threadHeads The threads (heads)
+    * @param callGraph The call graph
+    * @return All threads containing variables in the equivalence class.
+    */
+   private static Collection<ScopeRef> getEquivalenceClassThreads(LiveRangeEquivalenceClass equivalenceClass, Program program, Collection<ScopeRef> threadHeads, CallGraph callGraph) {
+      Collection<ScopeRef> threads = new ArrayList<>();
+      for(VariableRef varRef : equivalenceClass.getVariables()) {
+         Variable variable = program.getScope().getVariable(varRef);
+         ScopeRef scopeRef = variable.getScope().getRef();
+         Collection<ScopeRef> recursiveCallers = callGraph.getRecursiveCallers(scopeRef);
+         for(ScopeRef threadHead : threadHeads) {
+            if(recursiveCallers.contains(threadHead)) {
+               if(!threads.contains(threadHead)) {
+                  threads.add(threadHead);
+               }
+            }
+         }
+      }
+      return threads;
    }
 
    /**
@@ -96,7 +170,8 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
    }
 
    /**
-    * Determines if any volatile varialbes prevents coalescing two equivalence classes
+    * Determines if any volatile variables prevents coalescing two equivalence classes
+    *
     * @param ec1 One equivalence class
     * @param ec2 Another equivalence class
     * @param program The program
@@ -107,7 +182,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
       if(ec1.hasVolatile(program) || ec2.hasVolatile(program)) {
          Variable baseVar1 = ec1.getSingleVariableBase(program);
          Variable baseVar2 = ec2.getSingleVariableBase(program);
-         if(baseVar1==null || baseVar2==null) {
+         if(baseVar1 == null || baseVar2 == null) {
             // One of the equivalence classes have different base variables inside
             return false;
          }

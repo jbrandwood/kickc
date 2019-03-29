@@ -239,7 +239,7 @@ plexInit: {
     rts
 }
 plex_irq: {
-    .label _3 = 5
+    .label _3 = $10
     lda #WHITE
     sta BORDERCOL
   b1:
@@ -277,7 +277,7 @@ plex_irq: {
 // plexSort() prepares showing the sprites
 plexShowSprite: {
     .label _8 = 8
-    .label plex_sprite_idx2 = 5
+    .label plex_sprite_idx2 = $10
     .label plexFreeAdd1__2 = $a
     lda plex_sprite_idx
     asl

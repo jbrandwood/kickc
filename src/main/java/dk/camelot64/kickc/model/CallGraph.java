@@ -107,8 +107,6 @@ public class CallGraph {
     * This includes the recursive closure of calls (ie. sub-calls and their sub-calls).
     * @param scopeRef The scope (procedure/root) to examine
     * @param found The scopes already found
-    *
-    * @return All scopes called in the closure of calls
     */
    private void addRecursiveCalls(ScopeRef scopeRef, Collection<ScopeRef> found) {
       if(found.contains(scopeRef)) {
@@ -123,8 +121,6 @@ public class CallGraph {
          }
       }
    }
-
-
 
    @Override
    public String toString() {
@@ -152,6 +148,55 @@ public class CallGraph {
       }
       return callers;
    }
+
+   /**
+    * Get all procedures containing calls of a specific procedure
+    *
+    * @param label The label of the procedure
+    * @return All calls
+    */
+   public Collection<ScopeRef> getCallerProcs(ScopeRef label) {
+      Collection<ScopeRef> callers = new ArrayList<>();
+      for(CallBlock callBlock : callBlocks) {
+         for(CallBlock.Call call : callBlock.getCalls()) {
+            if(call.getProcedure().equals(label)) {
+               callers.add(callBlock.getScopeLabel());
+            }
+         }
+      }
+      return callers;
+   }
+
+   /**
+    * Get the closure of all procedures calling a specific scope.
+    * This includes the recursive closure of callers (ie. callers and their callers).
+    * @param scopeRef The scope (procedure/root) to examine
+    * @return All scopes calling the passed scope (potentially through other callers)
+    */
+   public Collection<ScopeRef> getRecursiveCallers(ScopeRef scopeRef) {
+      ArrayList<ScopeRef> closure = new ArrayList<>();
+      addRecursiveCallers(scopeRef, closure);
+      return closure;
+   }
+
+   /**
+    * Get the closure of all procedures calling a specific scope.
+    * This includes the recursive closure of callers (ie. callers and their callers).
+    * @param scopeRef The scope (procedure/root) to examine
+    * @param found The scopes already found
+    * */
+   private void addRecursiveCallers(ScopeRef scopeRef, Collection<ScopeRef> found) {
+      if(found.contains(scopeRef)) {
+         // Recursion detected - stop here
+         return;
+      }
+      found.add(scopeRef);
+      Collection<ScopeRef> callerProcs = getCallerProcs(scopeRef);
+      for(ScopeRef callerProc : callerProcs) {
+         addRecursiveCallers(callerProc, found);
+      }
+   }
+
 
    /**
     * A block in the call graph, matching a scope in the program.

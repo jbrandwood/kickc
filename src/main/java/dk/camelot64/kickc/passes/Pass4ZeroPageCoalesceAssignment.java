@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
 
@@ -19,6 +20,7 @@ public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
    public void coalesce() {
       CoalesceVarScores coalesceVarScores = new CoalesceVarScores(getProgram());
       LinkedHashSet<String> unknownFragments = new LinkedHashSet<>();
+      Collection<ScopeRef> threadHeads = Pass4ZeroPageCoalesce.getThreadHeads(getSymbols());
 
       boolean change;
       do {
@@ -28,7 +30,7 @@ public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
          List<LiveRangeEquivalenceClassCoalesceCandidate> coalesceCandidates =
                equivalenceClassScores.getCoalesceCandidates();
          for(LiveRangeEquivalenceClassCoalesceCandidate candidate : coalesceCandidates) {
-            change |= attemptCoalesce(candidate, unknownFragments);
+            change |= attemptCoalesce(candidate, threadHeads, unknownFragments);
          }
       } while(change);
 
@@ -40,12 +42,12 @@ public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
       }
    }
 
-   private boolean attemptCoalesce(LiveRangeEquivalenceClassCoalesceCandidate candidate, LinkedHashSet<String> unknownFragments) {
+   private boolean attemptCoalesce(LiveRangeEquivalenceClassCoalesceCandidate candidate, Collection<ScopeRef> threadHeads, LinkedHashSet<String> unknownFragments) {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       List<LiveRangeEquivalenceClass> equivalenceClasses = liveRangeEquivalenceClassSet.getEquivalenceClasses();
       if(equivalenceClasses.contains(candidate.getEc1()) && equivalenceClasses.contains(candidate.getEc2())) {
          // Both equivalence classes still exist
-         if(Pass4ZeroPageCoalesce.canCoalesce(candidate.getEc1(), candidate.getEc2(), unknownFragments, getProgram())) {
+         if(Pass4ZeroPageCoalesce.canCoalesce(candidate.getEc1(), candidate.getEc2(), threadHeads, unknownFragments, getProgram())) {
             getLog().append("Coalescing zero page register with common assignment [ " + candidate.getEc1() + " ] with [ " + candidate.getEc2()+ " ] - score: "+candidate.getScore());
             liveRangeEquivalenceClassSet.consolidate(candidate.getEc1(), candidate.getEc2());
             // Reset the program register allocation

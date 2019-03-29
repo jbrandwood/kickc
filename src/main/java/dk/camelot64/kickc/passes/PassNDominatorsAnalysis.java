@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class PassNDominatorsAnalysis extends Pass2SsaOptimization {
       for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
          LabelRef firstBlock = entryPointBlock.getLabel();
          // Skip main-block, as it will be called by @begin anyways
-         if(firstBlock.getFullName().equals("main")) continue;
+         if(firstBlock.getFullName().equals(SymbolRef.MAIN_PROC_NAME)) continue;
          DominatorsBlock firstDominators = dominatorsGraph.addDominators(firstBlock);
          firstDominators.add(firstBlock);
          firstBlocks.add(firstBlock);

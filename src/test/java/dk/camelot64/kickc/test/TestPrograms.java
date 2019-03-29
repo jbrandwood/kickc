@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIrqLocalVarOverlap() throws IOException, URISyntaxException {
+      compileAndCompare("irq-local-var-overlap-problem");
+   }
+
+   @Test
    public void testMultiplexerIrq() throws IOException, URISyntaxException {
       compileAndCompare("multiplexer-irq/simple-multiplexer-irq", 10);
    }

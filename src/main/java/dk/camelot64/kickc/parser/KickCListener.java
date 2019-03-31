@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -297,6 +297,30 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStmtReturn(KickCParser.StmtReturnContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtBreak}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtBreak(KickCParser.StmtBreakContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtBreak}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtBreak(KickCParser.StmtBreakContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code stmtContinue}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtContinue(KickCParser.StmtContinueContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtContinue}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtContinue(KickCParser.StmtContinueContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code stmtAsm}
 	 * labeled alternative in {@link KickCParser#stmt}.

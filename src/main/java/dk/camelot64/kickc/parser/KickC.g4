@@ -64,6 +64,8 @@ stmt
     | directive* 'do' stmt 'while' '(' expr ')' ';' #stmtDoWhile
     | directive* 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
     | 'return' expr? ';' #stmtReturn
+    | 'break' ';' #stmtBreak
+    | 'continue' ';' #stmtContinue
     | 'asm' asmDirectives? '{' asmLines '}' #stmtAsm
     | declKasm #stmtDeclKasm
     ;

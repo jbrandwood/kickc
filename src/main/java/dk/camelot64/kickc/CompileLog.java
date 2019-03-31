@@ -65,6 +65,10 @@ public class CompileLog {
    /** Should comments be output as part of the intermediate SSA prints. */
    private boolean verboseComments = false;
 
+   /**
+    * Should the statement sequence be verbose.
+    */
+   private boolean verboseStatementSequence = false;
 
    /**
     * Should the log be output to System.out while being built
@@ -85,6 +89,18 @@ public class CompileLog {
 
    public StringBuilder getLog() {
       return log;
+   }
+
+   public boolean isVerboseCreateSsa() {
+      return verboseCreateSsa;
+   }
+
+   public boolean isVerboseStatementSequence() {
+      return verboseStatementSequence;
+   }
+
+   public void setVerboseStatementSequence(boolean verboseStatementSequence) {
+      this.verboseStatementSequence = verboseStatementSequence;
    }
 
    public void setVerboseComments(boolean verboseComments) {

@@ -145,8 +145,10 @@ public class Compiler {
 
    private Program pass1GenerateSSA() {
 
-      //getLog().append("\nSTATEMENTS");
-      //getLog().append(program.getStatementSequence().toString(program));
+      if(getLog().isVerboseStatementSequence()) {
+         getLog().append("\nSTATEMENTS");
+         getLog().append(program.getStatementSequence().toString(program));
+      }
 
       new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1ResolveForwardReferences(program).execute();

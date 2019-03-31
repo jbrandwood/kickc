@@ -637,6 +637,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       /** The label after the loop that a break will jump to. Null if no break has been encountered. */
       Label breakLabel;
 
+      /** The label that a continue will jump to. Null if no continue has been encountered. */
+      Label continueLabel;
+
       public Loop(Scope loopScope) {
          this.loopScope = loopScope;
       }
@@ -651,6 +654,22 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          }
          return breakLabel;
       }
+
+      public Label getContinueLabel() {
+         return continueLabel;
+      }
+
+      public void setContinueLabel(Label continueLabel) {
+         this.continueLabel = continueLabel;
+      }
+
+      public Label getOrCreateContinueLabel() {
+         if(continueLabel==null) {
+            continueLabel = loopScope.addLabelIntermediate();
+         }
+         return continueLabel;
+      }
+
    }
 
    /** The loops being generated. */
@@ -677,6 +696,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       sequence.addStatement(endJmpStmt);
       StatementLabel doJumpTarget = new StatementLabel(doJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJumpTarget);
+      // Reuse the begin jump target for continue.
+      loopStack.peek().setContinueLabel(beginJumpLabel);
       addLoopBody(ctx.stmt());
       Statement beginJmpStmt = new StatementJump(beginJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(beginJmpStmt);
@@ -700,6 +721,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef(), new StatementSource(ctx), comments);
       sequence.addStatement(beginJumpTarget);
       addLoopBody(ctx.stmt());
+      addLoopContinueLabel(loopStack.peek(), ctx);
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
       PrePostModifierHandler.addPostModifiers(this, ctx.expr());
@@ -742,6 +764,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       sequence.addStatement(repeatTarget);
       // Add body
       addLoopBody(stmtForCtx.stmt());
+      addLoopContinueLabel(loopStack.peek(), ctx);
       // Add increment
       if(ctx.expr(1) != null) {
          PrePostModifierHandler.addPreModifiers(this, ctx.expr(1));
@@ -784,6 +807,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       sequence.addStatement(repeatTarget);
       // Add body
       addLoopBody(stmtForCtx.stmt());
+      addLoopContinueLabel(loopStack.peek(), ctx);
       // Add increment
       Statement stmtNxt = new StatementAssignment(lValue.getRef(), lValue.getRef(), Operators.PLUS, new RangeNext(rangeFirstValue, rangeLastValue), new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(stmtNxt);
@@ -806,6 +830,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(loop.getBreakLabel()!=null) {
          StatementLabel breakTarget = new StatementLabel(loop.getBreakLabel().getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
          sequence.addStatement(breakTarget);
+      }
+   }
+
+   private void addLoopContinueLabel(Loop loop, ParserRuleContext ctx) {
+      if(loop.getContinueLabel()!=null) {
+         StatementLabel continueTarget = new StatementLabel(loop.getContinueLabel().getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
+         sequence.addStatement(continueTarget);
       }
    }
 
@@ -864,7 +895,14 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitStmtContinue(KickCParser.StmtContinueContext ctx) {
-      return super.visitStmtContinue(ctx);
+      if(loopStack.isEmpty()) {
+         throw new CompileError("Continue not inside a loop! ", new StatementSource(ctx));
+      }
+      Loop currentLoop = loopStack.peek();
+      Label continueLabel = currentLoop.getOrCreateContinueLabel();
+      Statement continueJmpStmt = new StatementJump(continueLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
+      sequence.addStatement(continueJmpStmt);
+      return null;
    }
 
    @Override

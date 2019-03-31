@@ -160,6 +160,9 @@ Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@12
 Culled Empty Block (label) main::@9
 Culled Empty Block (label) main::@10
+Renumbering block main::@5 to main::@4
+Renumbering block main::@6 to main::@5
+Renumbering block main::@7 to main::@6
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -190,22 +193,22 @@ main::@2: scope:[main]  from main::@1 main::@2
 main::@3: scope:[main]  from main::@2
   [10] (byte) main::i#1 ← ++ (byte) main::i#4
   [11] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1
+  to:main::@4
+main::@4: scope:[main]  from main::@3 main::@6
+  [12] (byte) main::k#4 ← phi( main::@3/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@6/(byte) main::k#1 )
   to:main::@5
-main::@5: scope:[main]  from main::@3 main::@7
-  [12] (byte) main::k#4 ← phi( main::@3/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@7/(byte) main::k#1 )
-  to:main::@6
-main::@6: scope:[main]  from main::@5 main::@6
-  [13] (byte) main::l#2 ← phi( main::@5/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@6/(byte) main::l#1 )
+main::@5: scope:[main]  from main::@4 main::@5
+  [13] (byte) main::l#2 ← phi( main::@4/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@5/(byte) main::l#1 )
   asm { eor#$55 tax  }
   [15] *((const byte*) SCREEN#0 + (byte) main::k#4) ← (byte) main::l#2
   [16] (byte) main::l#1 ← ++ (byte) main::l#2
-  [17] if((byte) main::l#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@6
-  to:main::@7
-main::@7: scope:[main]  from main::@6
+  [17] if((byte) main::l#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@5
+  to:main::@6
+main::@6: scope:[main]  from main::@5
   [18] (byte) main::k#1 ← ++ (byte) main::k#4
-  [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@5
+  [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@4
   to:main::@return
-main::@return: scope:[main]  from main::@7
+main::@return: scope:[main]  from main::@6
   [20] return 
   to:@return
 
@@ -316,31 +319,31 @@ main: {
     lda #$65
     cmp i
     bne b1_from_b3
-  //SEG27 [12] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
-  b5_from_b3:
-  //SEG28 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@3->main::@5#0] -- vbuz1=vbuc1 
+  //SEG27 [12] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  b4_from_b3:
+  //SEG28 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@3->main::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta k
-    jmp b5
+    jmp b4
   // Then loop with clobbering A&X
-  //SEG29 [12] phi from main::@7 to main::@5 [phi:main::@7->main::@5]
-  b5_from_b7:
-  //SEG30 [12] phi (byte) main::k#4 = (byte) main::k#1 [phi:main::@7->main::@5#0] -- register_copy 
-    jmp b5
-  //SEG31 main::@5
-  b5:
-  //SEG32 [13] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
-  b6_from_b5:
-  //SEG33 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#0] -- vbuz1=vbuc1 
+  //SEG29 [12] phi from main::@6 to main::@4 [phi:main::@6->main::@4]
+  b4_from_b6:
+  //SEG30 [12] phi (byte) main::k#4 = (byte) main::k#1 [phi:main::@6->main::@4#0] -- register_copy 
+    jmp b4
+  //SEG31 main::@4
+  b4:
+  //SEG32 [13] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  b5_from_b4:
+  //SEG33 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta l
-    jmp b6
-  //SEG34 [13] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
-  b6_from_b6:
-  //SEG35 [13] phi (byte) main::l#2 = (byte) main::l#1 [phi:main::@6->main::@6#0] -- register_copy 
-    jmp b6
-  //SEG36 main::@6
-  b6:
+    jmp b5
+  //SEG34 [13] phi from main::@5 to main::@5 [phi:main::@5->main::@5]
+  b5_from_b5:
+  //SEG35 [13] phi (byte) main::l#2 = (byte) main::l#1 [phi:main::@5->main::@5#0] -- register_copy 
+    jmp b5
+  //SEG36 main::@5
+  b5:
   //SEG37 asm { eor#$55 tax  }
     eor #$55
     tax
@@ -350,19 +353,19 @@ main: {
     sta SCREEN,y
   //SEG39 [16] (byte) main::l#1 ← ++ (byte) main::l#2 -- vbuz1=_inc_vbuz1 
     inc l
-  //SEG40 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG40 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
     cmp l
-    bne b6_from_b6
-    jmp b7
-  //SEG41 main::@7
-  b7:
+    bne b5_from_b5
+    jmp b6
+  //SEG41 main::@6
+  b6:
   //SEG42 [18] (byte) main::k#1 ← ++ (byte) main::k#4 -- vbuz1=_inc_vbuz1 
     inc k
-  //SEG43 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG43 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
     cmp k
-    bne b5_from_b7
+    bne b4_from_b6
     jmp breturn
   //SEG44 main::@return
   breturn:
@@ -461,30 +464,30 @@ main: {
   //SEG26 [11] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
     bne b1_from_b3
-  //SEG27 [12] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
-  b5_from_b3:
-  //SEG28 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@3->main::@5#0] -- vbuyy=vbuc1 
+  //SEG27 [12] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  b4_from_b3:
+  //SEG28 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@3->main::@4#0] -- vbuyy=vbuc1 
     ldy #0
-    jmp b5
+    jmp b4
   // Then loop with clobbering A&X
-  //SEG29 [12] phi from main::@7 to main::@5 [phi:main::@7->main::@5]
-  b5_from_b7:
-  //SEG30 [12] phi (byte) main::k#4 = (byte) main::k#1 [phi:main::@7->main::@5#0] -- register_copy 
-    jmp b5
-  //SEG31 main::@5
-  b5:
-  //SEG32 [13] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
-  b6_from_b5:
-  //SEG33 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#0] -- vbuz1=vbuc1 
+  //SEG29 [12] phi from main::@6 to main::@4 [phi:main::@6->main::@4]
+  b4_from_b6:
+  //SEG30 [12] phi (byte) main::k#4 = (byte) main::k#1 [phi:main::@6->main::@4#0] -- register_copy 
+    jmp b4
+  //SEG31 main::@4
+  b4:
+  //SEG32 [13] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  b5_from_b4:
+  //SEG33 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta l
-    jmp b6
-  //SEG34 [13] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
-  b6_from_b6:
-  //SEG35 [13] phi (byte) main::l#2 = (byte) main::l#1 [phi:main::@6->main::@6#0] -- register_copy 
-    jmp b6
-  //SEG36 main::@6
-  b6:
+    jmp b5
+  //SEG34 [13] phi from main::@5 to main::@5 [phi:main::@5->main::@5]
+  b5_from_b5:
+  //SEG35 [13] phi (byte) main::l#2 = (byte) main::l#1 [phi:main::@5->main::@5#0] -- register_copy 
+    jmp b5
+  //SEG36 main::@5
+  b5:
   //SEG37 asm { eor#$55 tax  }
     eor #$55
     tax
@@ -493,18 +496,18 @@ main: {
     sta SCREEN,y
   //SEG39 [16] (byte) main::l#1 ← ++ (byte) main::l#2 -- vbuz1=_inc_vbuz1 
     inc l
-  //SEG40 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG40 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
     cmp l
-    bne b6_from_b6
-    jmp b7
-  //SEG41 main::@7
-  b7:
+    bne b5_from_b5
+    jmp b6
+  //SEG41 main::@6
+  b6:
   //SEG42 [18] (byte) main::k#1 ← ++ (byte) main::k#4 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG43 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@5 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG43 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@4 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$65
-    bne b5_from_b7
+    bne b4_from_b6
     jmp breturn
   //SEG44 main::@return
   breturn:
@@ -518,15 +521,15 @@ Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
 Removing instruction jmp b3
+Removing instruction jmp b4
 Removing instruction jmp b5
 Removing instruction jmp b6
-Removing instruction jmp b7
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b2_from_b2 with b2
 Replacing label b1_from_b3 with b1
-Replacing label b6_from_b6 with b6
-Replacing label b5_from_b7 with b5
+Replacing label b5_from_b5 with b5
+Replacing label b4_from_b6 with b4
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -534,15 +537,15 @@ Removing instruction bend_from_b1:
 Removing instruction b1_from_b3:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b2:
-Removing instruction b5_from_b7:
-Removing instruction b6_from_b5:
-Removing instruction b6_from_b6:
+Removing instruction b4_from_b6:
+Removing instruction b5_from_b4:
+Removing instruction b5_from_b5:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b3:
-Removing instruction b5_from_b3:
-Removing instruction b7:
+Removing instruction b4_from_b3:
+Removing instruction b6:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
@@ -550,8 +553,8 @@ Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp b1
 Removing instruction jmp b2
+Removing instruction jmp b4
 Removing instruction jmp b5
-Removing instruction jmp b6
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -566,9 +569,9 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@3
+(label) main::@4
 (label) main::@5
 (label) main::@6
-(label) main::@7
 (label) main::@return
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
@@ -639,22 +642,22 @@ main: {
   //SEG26 [11] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
     bne b1
-  //SEG27 [12] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
-  //SEG28 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@3->main::@5#0] -- vbuyy=vbuc1 
+  //SEG27 [12] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  //SEG28 [12] phi (byte) main::k#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@3->main::@4#0] -- vbuyy=vbuc1 
     ldy #0
   // Then loop with clobbering A&X
-  //SEG29 [12] phi from main::@7 to main::@5 [phi:main::@7->main::@5]
-  //SEG30 [12] phi (byte) main::k#4 = (byte) main::k#1 [phi:main::@7->main::@5#0] -- register_copy 
-  //SEG31 main::@5
-  b5:
-  //SEG32 [13] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
-  //SEG33 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->main::@6#0] -- vbuz1=vbuc1 
+  //SEG29 [12] phi from main::@6 to main::@4 [phi:main::@6->main::@4]
+  //SEG30 [12] phi (byte) main::k#4 = (byte) main::k#1 [phi:main::@6->main::@4#0] -- register_copy 
+  //SEG31 main::@4
+  b4:
+  //SEG32 [13] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  //SEG33 [13] phi (byte) main::l#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta l
-  //SEG34 [13] phi from main::@6 to main::@6 [phi:main::@6->main::@6]
-  //SEG35 [13] phi (byte) main::l#2 = (byte) main::l#1 [phi:main::@6->main::@6#0] -- register_copy 
-  //SEG36 main::@6
-  b6:
+  //SEG34 [13] phi from main::@5 to main::@5 [phi:main::@5->main::@5]
+  //SEG35 [13] phi (byte) main::l#2 = (byte) main::l#1 [phi:main::@5->main::@5#0] -- register_copy 
+  //SEG36 main::@5
+  b5:
   //SEG37 asm { eor#$55 tax  }
     eor #$55
     tax
@@ -663,16 +666,16 @@ main: {
     sta SCREEN,y
   //SEG39 [16] (byte) main::l#1 ← ++ (byte) main::l#2 -- vbuz1=_inc_vbuz1 
     inc l
-  //SEG40 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG40 [17] if((byte) main::l#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
     cmp l
-    bne b6
-  //SEG41 main::@7
+    bne b5
+  //SEG41 main::@6
   //SEG42 [18] (byte) main::k#1 ← ++ (byte) main::k#4 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG43 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@5 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG43 [19] if((byte) main::k#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@4 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$65
-    bne b5
+    bne b4
   //SEG44 main::@return
   //SEG45 [20] return 
     rts

@@ -221,25 +221,28 @@ Coalesced (already) [17] screen#26 ← screen#18
 Coalesced [24] print::msg#6 ← print::msg#1
 Coalesced [25] screen#27 ← screen#6
 Coalesced down to 4 phi equivalence classes
+Renumbering block @3 to @1
+Renumbering block print_msg::@2 to print_msg::@1
+Renumbering block print_msg::@3 to print_msg::@2
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
-Adding NOP phi() at start of print_msg::@3
+Adding NOP phi() at start of print_msg::@2
 Adding NOP phi() at start of print
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@3
-@3: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @3
+main: scope:[main]  from @1
   [4] phi()
   [5] call print_msg 
   to:main::@1
@@ -253,20 +256,20 @@ main::@return: scope:[main]  from main::@1
 print_msg: scope:[print_msg]  from main main::@1
   [9] (byte*) screen#18 ← phi( main/((byte*))(word/signed word/dword/signed dword) $400 main::@1/(byte*) screen#14 )
   [9] (byte) print_msg::idx#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 1 main::@1/(byte/signed byte/word/signed word/dword/signed dword) 2 )
-  [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2
-  to:print_msg::@3
-print_msg::@3: scope:[print_msg]  from print_msg
-  [11] phi()
+  [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1
   to:print_msg::@2
-print_msg::@2: scope:[print_msg]  from print_msg print_msg::@3
-  [12] (byte*) print_msg::msg#3 ← phi( print_msg/(const byte*) print_msg::msg#1 print_msg::@3/(const byte*) print_msg::msg#2 )
+print_msg::@2: scope:[print_msg]  from print_msg
+  [11] phi()
+  to:print_msg::@1
+print_msg::@1: scope:[print_msg]  from print_msg print_msg::@2
+  [12] (byte*) print_msg::msg#3 ← phi( print_msg/(const byte*) print_msg::msg#1 print_msg::@2/(const byte*) print_msg::msg#2 )
   [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   [14] call print 
   to:print_msg::@return
-print_msg::@return: scope:[print_msg]  from print_msg::@2
+print_msg::@return: scope:[print_msg]  from print_msg::@1
   [15] return 
   to:@return
-print: scope:[print]  from print_msg::@2
+print: scope:[print]  from print_msg::@1
   [16] phi()
   to:print::@1
 print::@1: scope:[print]  from print print::@2
@@ -327,17 +330,17 @@ INITIAL ASM
   .label screen = 3
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG5 @3
-b3:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @3 to main [phi:@3->main]
-main_from_b3:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -379,41 +382,41 @@ main: {
 print_msg: {
     .label idx = 2
     .label msg = 5
-  //SEG24 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 -- vbuz1_eq_vbuc1_then_la1 
+  //SEG24 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1 -- vbuz1_eq_vbuc1_then_la1 
     lda #1
     cmp idx
-    beq b2_from_print_msg
-  //SEG25 [11] phi from print_msg to print_msg::@3 [phi:print_msg->print_msg::@3]
-  b3_from_print_msg:
-    jmp b3
-  //SEG26 print_msg::@3
-  b3:
-  //SEG27 [12] phi from print_msg::@3 to print_msg::@2 [phi:print_msg::@3->print_msg::@2]
-  b2_from_b3:
-  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@3->print_msg::@2#0] -- pbuz1=pbuc1 
+    beq b1_from_print_msg
+  //SEG25 [11] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
+  b2_from_print_msg:
+    jmp b2
+  //SEG26 print_msg::@2
+  b2:
+  //SEG27 [12] phi from print_msg::@2 to print_msg::@1 [phi:print_msg::@2->print_msg::@1]
+  b1_from_b2:
+  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@2->print_msg::@1#0] -- pbuz1=pbuc1 
     lda #<msg_2
     sta msg
     lda #>msg_2
     sta msg+1
-    jmp b2
-  //SEG29 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
-  b2_from_print_msg:
-  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
+    jmp b1
+  //SEG29 [12] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
+  b1_from_print_msg:
+  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@1#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
-    jmp b2
-  //SEG31 print_msg::@2
-  b2:
+    jmp b1
+  //SEG31 print_msg::@1
+  b1:
   //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3 -- pbuz1=pbuz2 
     lda msg
     sta print.msg
     lda msg+1
     sta print.msg+1
   //SEG33 [14] call print 
-  //SEG34 [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
-  print_from_b2:
+  //SEG34 [16] phi from print_msg::@1 to print [phi:print_msg::@1->print]
+  print_from_b1:
     jsr print
     jmp breturn
   //SEG35 print_msg::@return
@@ -499,17 +502,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label screen = 2
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG5 @3
-b3:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @3 to main [phi:@3->main]
-main_from_b3:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -548,36 +551,36 @@ main: {
 // print_msg(byte register(X) idx)
 print_msg: {
     .label msg = 4
-  //SEG24 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 -- vbuxx_eq_vbuc1_then_la1 
+  //SEG24 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
-    beq b2_from_print_msg
-  //SEG25 [11] phi from print_msg to print_msg::@3 [phi:print_msg->print_msg::@3]
-  b3_from_print_msg:
-    jmp b3
-  //SEG26 print_msg::@3
-  b3:
-  //SEG27 [12] phi from print_msg::@3 to print_msg::@2 [phi:print_msg::@3->print_msg::@2]
-  b2_from_b3:
-  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@3->print_msg::@2#0] -- pbuz1=pbuc1 
+    beq b1_from_print_msg
+  //SEG25 [11] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
+  b2_from_print_msg:
+    jmp b2
+  //SEG26 print_msg::@2
+  b2:
+  //SEG27 [12] phi from print_msg::@2 to print_msg::@1 [phi:print_msg::@2->print_msg::@1]
+  b1_from_b2:
+  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@2->print_msg::@1#0] -- pbuz1=pbuc1 
     lda #<msg_2
     sta msg
     lda #>msg_2
     sta msg+1
-    jmp b2
-  //SEG29 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
-  b2_from_print_msg:
-  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
+    jmp b1
+  //SEG29 [12] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
+  b1_from_print_msg:
+  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@1#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
-    jmp b2
-  //SEG31 print_msg::@2
-  b2:
+    jmp b1
+  //SEG31 print_msg::@1
+  b1:
   //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   //SEG33 [14] call print 
-  //SEG34 [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
-  print_from_b2:
+  //SEG34 [16] phi from print_msg::@1 to print [phi:print_msg::@1->print]
+  print_from_b1:
     jsr print
     jmp breturn
   //SEG35 print_msg::@return
@@ -630,12 +633,12 @@ print: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b3
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
-Removing instruction jmp b3
 Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
@@ -643,15 +646,15 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b2 with b1
-Removing instruction b3_from_bbegin:
-Removing instruction b3:
-Removing instruction main_from_b3:
-Removing instruction bend_from_b3:
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction print_msg_from_b1:
-Removing instruction b3_from_print_msg:
-Removing instruction b2_from_b3:
-Removing instruction print_from_b2:
+Removing instruction b2_from_print_msg:
+Removing instruction b1_from_b2:
+Removing instruction print_from_b1:
 Removing instruction b1_from_print:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
@@ -659,20 +662,20 @@ Removing instruction bend:
 Removing instruction print_msg_from_main:
 Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b3:
+Removing instruction b2:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Relabelling long label b2_from_print_msg to b1
+Relabelling long label b1_from_print_msg to b2
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @3
+(label) @1
 (label) @begin
 (label) @end
 (void()) main()
@@ -687,8 +690,8 @@ FINAL SYMBOL TABLE
 (byte*) print::msg#1 msg zp ZP_WORD:4 22.0
 (byte*) print::msg#2 msg zp ZP_WORD:4 11.5
 (void()) print_msg((byte) print_msg::idx)
+(label) print_msg::@1
 (label) print_msg::@2
-(label) print_msg::@3
 (label) print_msg::@return
 (byte) print_msg::idx
 (byte) print_msg::idx#2 reg byte x 2.0
@@ -718,11 +721,11 @@ Score: 612
 //SEG2 Global Constants & labels
   .label screen = 2
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-//SEG5 @3
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [4] phi from @3 to main [phi:@3->main]
-//SEG8 [3] phi from @3 to @end [phi:@3->@end]
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main
 main: {
@@ -752,30 +755,30 @@ main: {
 // print_msg(byte register(X) idx)
 print_msg: {
     .label msg = 4
-  //SEG24 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@2 -- vbuxx_eq_vbuc1_then_la1 
+  //SEG24 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
-    beq b1
-  //SEG25 [11] phi from print_msg to print_msg::@3 [phi:print_msg->print_msg::@3]
-  //SEG26 print_msg::@3
-  //SEG27 [12] phi from print_msg::@3 to print_msg::@2 [phi:print_msg::@3->print_msg::@2]
-  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@3->print_msg::@2#0] -- pbuz1=pbuc1 
+    beq b2
+  //SEG25 [11] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
+  //SEG26 print_msg::@2
+  //SEG27 [12] phi from print_msg::@2 to print_msg::@1 [phi:print_msg::@2->print_msg::@1]
+  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@2->print_msg::@1#0] -- pbuz1=pbuc1 
     lda #<msg_2
     sta msg
     lda #>msg_2
     sta msg+1
-    jmp b2
-  //SEG29 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
-  b1:
-  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
+    jmp b1
+  //SEG29 [12] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
+  b2:
+  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@1#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
-  //SEG31 print_msg::@2
-  b2:
+  //SEG31 print_msg::@1
+  b1:
   //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   //SEG33 [14] call print 
-  //SEG34 [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
+  //SEG34 [16] phi from print_msg::@1 to print [phi:print_msg::@1->print]
     jsr print
   //SEG35 print_msg::@return
   //SEG36 [15] return 

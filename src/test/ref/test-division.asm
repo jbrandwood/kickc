@@ -444,7 +444,7 @@ div8s: {
     tay
     lda neg
     cmp #0
-    beq b18
+    beq b9
     txa
     eor #$ff
     clc
@@ -456,7 +456,7 @@ div8s: {
     adc #1
   breturn:
     rts
-  b18:
+  b9:
     tya
     jmp breturn
   b3:
@@ -671,9 +671,9 @@ test_8u: {
     inc i
     lda #6
     cmp i
-    bne b12
+    bne b11
     rts
-  b12:
+  b11:
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1

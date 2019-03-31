@@ -110,13 +110,13 @@ main: {
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
-  b6:
+  b2:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b6
-  b2:
+    bne b2
+  b1:
     // Stabilize Raster
     ldx #$ff
   rff:
@@ -158,10 +158,10 @@ main: {
     sta VIC_CONTROL
     lda #0
     sta BORDERCOL
-  b8:
+  b3:
     lda #$42
     cmp RASTER
-    bne b8
+    bne b3
     nop
     nop
     nop
@@ -180,7 +180,7 @@ main: {
     nop
     nop
     nop
-  b11:
+  b5:
     ldx RASTER
     txa
     and #7
@@ -208,8 +208,8 @@ main: {
     nop
     nop
     cpx #$f2
-    bne b11
-    jmp b2
+    bne b5
+    jmp b1
 }
 // Initialize the different graphics in the memory
 gfx_init: {

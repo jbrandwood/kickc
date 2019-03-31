@@ -476,18 +476,26 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite (Z1),y to AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)pb(.)z1_derefidx_vbuyy(.*)_then_(.*)", twoZ1+"|"+rvalAa, "lda ({z1}),y\n" , "$1vb$2aa$3_then_$4", null, mapZ));
 
-      // Rewrite (Z1),y to save and reload YY from $FF
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZ1, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
+      // Rewrite left-size (Z1),y to use AA and a STA (Z1),y
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", twoC1, null, "vb$1aa=$2", "sta {c1},y", mapC, "yy"));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*c1.*)", null, null, "vb$1aa=$2", "sta {c1},y", null, "yy"));
       // Rewrite C1,y to save and reload YY from $FF
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", twoC1, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta {c1},y", mapC));
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", twoC1, "stx $ff\n" , "vb$1aa=$2", "ldx $ff\nsta {c1},x", mapC));
+      // Rewrite (Z1),y to save and reload YY from $FF
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZ1, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
 
-      // Rewrite (Z1),a to save A to $FF and reload it into YY
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1, "sta $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
-      // Rewrite (Z1),x to save A to $FF and reload it into YY
+      // Rewrite left-size (Z1),x to use AA and a STA (Z1),x
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", twoC1, null, "vb$1aa=$2", "sta {c1},x", mapC, "xx"));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*c1.*)", null, null, "vb$1aa=$2", "sta {c1},x", null, "xx"));
+      // Rewrite C1,x to save and reload XX from $FF
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", twoC1, "stx $ff\n" , "vb$1aa=$2", "ldx $ff\nsta {c1},x", mapC));
+      // Rewrite (Z1),x to save Y to $FF and reload it into YY
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuxx=(.*)", twoZ1, "stx $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
+
       // Rewrite (Z1),a to use TAY prefix
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1+"|"+rvalYy, "tay" , "vb$1aa=$2", "sta ({z1}),y", mapZ, "yy"));
+      // Rewrite (Z1),a to save A to $FF and reload it into YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1, "sta $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
 
       /* Removed awaiting optimization
       // Rewrite any zeropage pointer as an unsigned word zeropage values
@@ -518,8 +526,6 @@ class AsmFragmentTemplateSynthesisRule {
       // OLD STYLE REWRITES - written when only one rule could be taken
 
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*)", twoZ1+"|"+twoC1, null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x", mapZC));
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", twoC1, null, "vb$1aa=$2", "sta {c1},y", mapC, "yy"));
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", twoC1, null, "vb$1aa=$2", "sta {c1},x", mapC, "xx"));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuz2=(.*)", twoZ1+"|"+twoZ2, null, "vb$1aa=$2", "ldy {z2}\n" + "sta ({z1}),y", mapZ2));
 
       // Convert array indexing with A register to X/Y register by prefixing tax/tay (..._derefidx_vbuaa... -> ..._derefidx_vbuxx... /... _derefidx_vbuyy... )

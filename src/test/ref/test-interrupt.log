@@ -75,26 +75,28 @@ Calls in [] to main:2
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Renumbering block @2 to @1
+Renumbering block main::@2 to main::@1
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@2
-@2: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
-  to:main::@2
-main::@2: scope:[main]  from main main::@2
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
   [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0)
-  to:main::@2
+  to:main::@1
 irq: scope:[irq]  from
   [6] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
   asm { lda$dc0d  }
@@ -126,15 +128,15 @@ INITIAL ASM
   .label FGCOL = $d021
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG5 @2
-b2:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG8 @end
 bend:
@@ -145,12 +147,12 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    jmp b2
-  //SEG11 main::@2
-  b2:
+    jmp b1
+  //SEG11 main::@1
+  b1:
   //SEG12 [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
-    jmp b2
+    jmp b1
 }
 //SEG13 irq
 irq: {
@@ -191,15 +193,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label FGCOL = $d021
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG5 @2
-b2:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
   jsr main
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG8 @end
 bend:
@@ -210,12 +212,12 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    jmp b2
-  //SEG11 main::@2
-  b2:
+    jmp b1
+  //SEG11 main::@1
+  b1:
   //SEG12 [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
-    jmp b2
+    jmp b1
 }
 //SEG13 irq
 irq: {
@@ -232,14 +234,14 @@ irq: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp bend
-Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b2_from_bbegin:
-Removing instruction b2:
-Removing instruction bend_from_b2:
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction breturn:
@@ -251,7 +253,7 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @2
+(label) @1
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -263,7 +265,7 @@ FINAL SYMBOL TABLE
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
-(label) main::@2
+(label) main::@1
 
 
 
@@ -280,10 +282,10 @@ Score: 115
   .label BGCOL = $d020
   .label FGCOL = $d021
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG5 @2
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [3] phi from @2 to @end [phi:@2->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 //SEG8 @end
 //SEG9 main
 main: {
@@ -292,11 +294,11 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG11 main::@2
-  b2:
+  //SEG11 main::@1
+  b1:
   //SEG12 [5] *((const byte*) FGCOL#0) ← ++ *((const byte*) FGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
-    jmp b2
+    jmp b1
 }
 //SEG13 irq
 irq: {

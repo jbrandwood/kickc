@@ -19,8 +19,8 @@ bool_complex: {
     tya
     and #1
     cpy #$a
-    bcc b8
-  b7:
+    bcc b6
+  b5:
     cpy #$a
     bcc b4
     cmp #0
@@ -37,10 +37,10 @@ bool_complex: {
     lda #' '
     sta screen,y
     jmp b3
-  b8:
+  b6:
     cpx #0
     beq b2
-    jmp b7
+    jmp b5
 }
 bool_not: {
     .label screen = $450
@@ -93,7 +93,7 @@ bool_and: {
     txa
     and #1
     cpx #$a
-    bcc b7
+    bcc b5
   b4:
     lda #' '
     sta screen,x
@@ -102,7 +102,7 @@ bool_and: {
     cpx #$15
     bne b1
     rts
-  b7:
+  b5:
     cmp #0
     beq b2
     jmp b4

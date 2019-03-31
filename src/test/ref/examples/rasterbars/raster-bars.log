@@ -439,35 +439,39 @@ Coalesced [20] raster::col#4 ← raster::col#1
 Coalesced [21] raster::i#3 ← raster::i#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) raster::@3
+Renumbering block @6 to @1
+Renumbering block main::@2 to main::@1
+Renumbering block main::@4 to main::@2
+Renumbering block main::@5 to main::@3
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @6
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main::@5
+Adding NOP phi() at start of main::@3
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@6
-@6: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @6
+main: scope:[main]  from @1
   asm { sei  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@1 main::@3
+  [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1
   to:main::@2
-main::@2: scope:[main]  from main main::@2 main::@5
-  [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@2
-  to:main::@4
-main::@4: scope:[main]  from main::@2 main::@4
-  [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@4
-  to:main::@5
-main::@5: scope:[main]  from main::@4
+main::@2: scope:[main]  from main::@1 main::@2
+  [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
   [7] phi()
   [8] call raster 
-  to:main::@2
-raster: scope:[raster]  from main::@5
+  to:main::@1
+raster: scope:[raster]  from main::@3
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   [10] (byte) raster::col#0 ← *((const byte[]) rastercols#0)
   to:raster::@1
@@ -598,15 +602,15 @@ INITIAL ASM
   .label BGCOL = $d021
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
-b6_from_bbegin:
-  jmp b6
-//SEG5 @6
-b6:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
   jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG8 @end
 bend:
@@ -614,28 +618,28 @@ bend:
 main: {
   //SEG10 asm { sei  }
     sei
-    jmp b2
-  //SEG11 main::@2
-  b2:
-  //SEG12 [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    jmp b1
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$a
     cmp RASTER
-    bne b2
-    jmp b4
-  //SEG13 main::@4
-  b4:
-  //SEG14 [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    bne b1
+    jmp b2
+  //SEG13 main::@2
+  b2:
+  //SEG14 [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$b
     cmp RASTER
-    bne b4
-  //SEG15 [7] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  b5_from_b4:
-    jmp b5
-  //SEG16 main::@5
-  b5:
+    bne b2
+  //SEG15 [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+    jmp b3
+  //SEG16 main::@3
+  b3:
   //SEG17 [8] call raster 
     jsr raster
-    jmp b2
+    jmp b1
 }
 //SEG18 raster
 raster: {
@@ -726,8 +730,8 @@ raster: {
   rastercols: .byte $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@4 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ raster::col#2 raster::col#0 raster::col#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ raster::i#2 raster::i#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -752,15 +756,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d021
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
-b6_from_bbegin:
-  jmp b6
-//SEG5 @6
-b6:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
   jsr main
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG8 @end
 bend:
@@ -768,28 +772,28 @@ bend:
 main: {
   //SEG10 asm { sei  }
     sei
-    jmp b2
-  //SEG11 main::@2
-  b2:
-  //SEG12 [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    jmp b1
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$a
     cmp RASTER
-    bne b2
-    jmp b4
-  //SEG13 main::@4
-  b4:
-  //SEG14 [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    bne b1
+    jmp b2
+  //SEG13 main::@2
+  b2:
+  //SEG14 [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$b
     cmp RASTER
-    bne b4
-  //SEG15 [7] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  b5_from_b4:
-    jmp b5
-  //SEG16 main::@5
-  b5:
+    bne b2
+  //SEG15 [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  b3_from_b2:
+    jmp b3
+  //SEG16 main::@3
+  b3:
   //SEG17 [8] call raster 
     jsr raster
-    jmp b2
+    jmp b1
 }
 //SEG18 raster
 raster: {
@@ -871,23 +875,23 @@ raster: {
   rastercols: .byte $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b6
+Removing instruction jmp b1
 Removing instruction jmp bend
+Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b4
-Removing instruction jmp b5
+Removing instruction jmp b3
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
-Removing instruction b6_from_bbegin:
-Removing instruction b6:
-Removing instruction bend_from_b6:
-Removing instruction b5_from_b4:
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Removing instruction b3_from_b2:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
-Removing instruction b5:
+Removing instruction b3:
 Removing instruction b1_from_raster:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -900,7 +904,7 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @6
+(label) @1
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -986,9 +990,9 @@ FINAL SYMBOL TABLE
 (byte) WHITE
 (byte) YELLOW
 (void()) main()
+(label) main::@1
 (label) main::@2
-(label) main::@4
-(label) main::@5
+(label) main::@3
 (void()) raster()
 (label) raster::@1
 (label) raster::@return
@@ -1019,32 +1023,32 @@ Score: 8340
   .label BORDERCOL = $d020
   .label BGCOL = $d021
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
-//SEG5 @6
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [3] phi from @6 to @end [phi:@6->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 //SEG8 @end
 //SEG9 main
 main: {
   //SEG10 asm { sei  }
     sei
-  //SEG11 main::@2
-  b2:
-  //SEG12 [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$a
     cmp RASTER
-    bne b2
-  //SEG13 main::@4
-  b4:
-  //SEG14 [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    bne b1
+  //SEG13 main::@2
+  b2:
+  //SEG14 [6] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $b) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$b
     cmp RASTER
-    bne b4
-  //SEG15 [7] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  //SEG16 main::@5
+    bne b2
+  //SEG15 [7] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  //SEG16 main::@3
   //SEG17 [8] call raster 
     jsr raster
-    jmp b2
+    jmp b1
 }
 //SEG18 raster
 raster: {

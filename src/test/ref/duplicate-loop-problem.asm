@@ -13,9 +13,9 @@ main: {
     txa
     and #$1f
     cpx #0
-    beq b5
+    beq b3
     jmp b1
-  b5:
+  b3:
     cmp #$1f
     beq b2
     jmp b1

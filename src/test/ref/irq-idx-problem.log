@@ -535,25 +535,30 @@ Coalesced [14] irq_idx#14 ← irq_idx#0
 Coalesced [27] irq_idx#16 ← irq_idx#1
 Coalesced (already) [29] irq_idx#15 ← irq_idx#1
 Coalesced down to 1 phi equivalence classes
+Renumbering block @5 to @1
+Renumbering block @6 to @2
+Renumbering block table_driven_irq::@9 to table_driven_irq::@4
+Renumbering block table_driven_irq::@10 to table_driven_irq::@5
+Renumbering block table_driven_irq::@11 to table_driven_irq::@6
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @6
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of table_driven_irq
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@5
-@5: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] (byte) irq_idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@6
-@6: scope:[]  from @5
+  to:@2
+@2: scope:[]  from @1
   [2] phi()
   [3] call main 
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @2
   [4] phi()
-main: scope:[main]  from @6
+main: scope:[main]  from @2
   asm { sei  }
   [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0
   [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte/signed byte/word/signed word/dword/signed dword) $7f
@@ -575,22 +580,22 @@ table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driv
   [17] (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL#0 + (byte) irq_idx#4)
   [18] (byte) irq_idx#1 ← ++ (byte) irq_idx#4
   [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE#0) goto table_driven_irq::@2
-  to:table_driven_irq::@9
-table_driven_irq::@9: scope:[table_driven_irq]  from table_driven_irq::@1
+  to:table_driven_irq::@4
+table_driven_irq::@4: scope:[table_driven_irq]  from table_driven_irq::@1
   [20] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE#0+(byte/signed byte/word/signed word/dword/signed dword) 8) goto table_driven_irq::@3
-  to:table_driven_irq::@10
-table_driven_irq::@10: scope:[table_driven_irq]  from table_driven_irq::@9
+  to:table_driven_irq::@5
+table_driven_irq::@5: scope:[table_driven_irq]  from table_driven_irq::@4
   [21] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
   [22] *((const byte*) RASTER#0) ← (byte) table_driven_irq::val#0
   [23] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER#0)) goto table_driven_irq::@return
-  to:table_driven_irq::@11
-table_driven_irq::@11: scope:[table_driven_irq]  from table_driven_irq::@10
+  to:table_driven_irq::@6
+table_driven_irq::@6: scope:[table_driven_irq]  from table_driven_irq::@5
   [24] (byte) irq_idx#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:table_driven_irq::@return
-table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@10 table_driven_irq::@11
+table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@5 table_driven_irq::@6
   [25] return 
   to:@return
-table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@9
+table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@4
   [26] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word/signed word/dword/signed dword) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
   to:table_driven_irq::@1
 table_driven_irq::@2: scope:[table_driven_irq]  from table_driven_irq::@1
@@ -741,21 +746,21 @@ INITIAL ASM
   .label irq_idx_2 = 5
 //SEG3 @begin
 bbegin:
-  jmp b5
-//SEG4 @5
-b5:
+  jmp b1
+//SEG4 @1
+b1:
 //SEG5 [1] (byte) irq_idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta irq_idx
-//SEG6 [2] phi from @5 to @6 [phi:@5->@6]
-b6_from_b5:
-  jmp b6
-//SEG7 @6
-b6:
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG7 @2
+b2:
 //SEG8 [3] call main 
   jsr main
-//SEG9 [4] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
   jmp bend
 //SEG10 @end
 bend:
@@ -824,16 +829,16 @@ table_driven_irq: {
     lda idx
     cmp #VIC_SIZE
     bcc b2
-    jmp b9
-  //SEG31 table_driven_irq::@9
-  b9:
+    jmp b4
+  //SEG31 table_driven_irq::@4
+  b4:
   //SEG32 [20] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE#0+(byte/signed byte/word/signed word/dword/signed dword) 8) goto table_driven_irq::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda idx
     cmp #VIC_SIZE+8
     bcc b3
-    jmp b10
-  //SEG33 table_driven_irq::@10
-  b10:
+    jmp b5
+  //SEG33 table_driven_irq::@5
+  b5:
   //SEG34 [21] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -846,9 +851,9 @@ table_driven_irq: {
     sta $ff
     cpy $ff
     bcs breturn
-    jmp b11
-  //SEG37 table_driven_irq::@11
-  b11:
+    jmp b6
+  //SEG37 table_driven_irq::@6
+  b6:
   //SEG38 [24] (byte) irq_idx#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta irq_idx_2
@@ -952,21 +957,21 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label irq_idx = 2
 //SEG3 @begin
 bbegin:
-  jmp b5
-//SEG4 @5
-b5:
+  jmp b1
+//SEG4 @1
+b1:
 //SEG5 [1] (byte) irq_idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta irq_idx
-//SEG6 [2] phi from @5 to @6 [phi:@5->@6]
-b6_from_b5:
-  jmp b6
-//SEG7 @6
-b6:
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG7 @2
+b2:
 //SEG8 [3] call main 
   jsr main
-//SEG9 [4] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
   jmp bend
 //SEG10 @end
 bend:
@@ -1030,15 +1035,15 @@ table_driven_irq: {
   //SEG30 [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE#0) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE
     bcc b2
-    jmp b9
-  //SEG31 table_driven_irq::@9
-  b9:
+    jmp b4
+  //SEG31 table_driven_irq::@4
+  b4:
   //SEG32 [20] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE#0+(byte/signed byte/word/signed word/dword/signed dword) 8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE+8
     bcc b3
-    jmp b10
-  //SEG33 table_driven_irq::@10
-  b10:
+    jmp b5
+  //SEG33 table_driven_irq::@5
+  b5:
   //SEG34 [21] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -1049,9 +1054,9 @@ table_driven_irq: {
     sty $ff
     cpx $ff
     bcs breturn
-    jmp b11
-  //SEG37 table_driven_irq::@11
-  b11:
+    jmp b6
+  //SEG37 table_driven_irq::@6
+  b6:
   //SEG38 [24] (byte) irq_idx#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta irq_idx
@@ -1079,14 +1084,14 @@ table_driven_irq: {
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b5
-Removing instruction jmp b6
+Removing instruction jmp b1
+Removing instruction jmp b2
 Removing instruction jmp bend
 Removing instruction jmp breturn
 Removing instruction jmp b1
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp b11
+Removing instruction jmp b4
+Removing instruction jmp b5
+Removing instruction jmp b6
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #IRQ_RASTER
@@ -1094,19 +1099,19 @@ Removing instruction ldy irq_idx
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b3 with b1
 Replacing label b1_from_b2 with b1
-Removing instruction b5:
-Removing instruction b6_from_b5:
-Removing instruction bend_from_b6:
+Removing instruction b1:
+Removing instruction b2_from_b1:
+Removing instruction bend_from_b2:
 Removing instruction b1_from_table_driven_irq:
 Removing instruction b1_from_b2:
 Removing instruction b1_from_b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b6:
+Removing instruction b2:
 Removing instruction bend:
 Removing instruction breturn:
-Removing instruction b9:
-Removing instruction b10:
-Removing instruction b11:
+Removing instruction b4:
+Removing instruction b5:
+Removing instruction b6:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Skipping double jump to $ea81 in bcs breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
@@ -1115,8 +1120,8 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Fixing long branch [67] bcs $ea81 to bcc
 
 FINAL SYMBOL TABLE
-(label) @5
-(label) @6
+(label) @1
+(label) @2
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -1227,11 +1232,11 @@ FINAL SYMBOL TABLE
 (label) main::@return
 interrupt(KERNEL_MIN)(void()) table_driven_irq()
 (label) table_driven_irq::@1
-(label) table_driven_irq::@10
-(label) table_driven_irq::@11
 (label) table_driven_irq::@2
 (label) table_driven_irq::@3
-(label) table_driven_irq::@9
+(label) table_driven_irq::@4
+(label) table_driven_irq::@5
+(label) table_driven_irq::@6
 (label) table_driven_irq::@return
 (byte) table_driven_irq::idx
 (byte) table_driven_irq::idx#0 reg byte a 11.0
@@ -1274,15 +1279,15 @@ Score: 598
   .label irq_idx = 2
 //SEG3 @begin
 bbegin:
-//SEG4 @5
+//SEG4 @1
 //SEG5 [1] (byte) irq_idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta irq_idx
-//SEG6 [2] phi from @5 to @6 [phi:@5->@6]
-//SEG7 @6
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+//SEG7 @2
 //SEG8 [3] call main 
   jsr main
-//SEG9 [4] phi from @6 to @end [phi:@6->@end]
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
 //SEG10 @end
 //SEG11 main
 main: {
@@ -1336,11 +1341,11 @@ table_driven_irq: {
   //SEG30 [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE#0) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE
     bcc b2
-  //SEG31 table_driven_irq::@9
+  //SEG31 table_driven_irq::@4
   //SEG32 [20] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE#0+(byte/signed byte/word/signed word/dword/signed dword) 8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE+8
     bcc b3
-  //SEG33 table_driven_irq::@10
+  //SEG33 table_driven_irq::@5
   //SEG34 [21] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -1353,7 +1358,7 @@ table_driven_irq: {
     bcc !_ea81+
     jmp $ea81
   !_ea81:
-  //SEG37 table_driven_irq::@11
+  //SEG37 table_driven_irq::@6
   //SEG38 [24] (byte) irq_idx#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta irq_idx

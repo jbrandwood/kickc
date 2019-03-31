@@ -14,15 +14,15 @@ main: {
     // Initialize the music
     jsr music.init
   // Wait for the RASTER
-  b2:
+  b1:
     lda #$fd
     cmp RASTER
-    bne b2
+    bne b1
     inc BORDERCOL
     // Play the music
     jsr music.play
     dec BORDERCOL
-    jmp b2
+    jmp b1
 }
 .pc = MUSIC "MUSIC"
   .fill music.size, music.getData(i)

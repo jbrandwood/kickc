@@ -196,26 +196,29 @@ Coalesced [8] a#25 ← a#12
 Coalesced (already) [13] a#26 ← a#1
 Coalesced [17] a#27 ← a#5
 Coalesced down to 1 phi equivalence classes
+Renumbering block @3 to @1
+Renumbering block menu::@2 to menu::@1
+Renumbering block mode::@6 to mode::@3
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of menu
-Adding NOP phi() at start of menu::@2
+Adding NOP phi() at start of menu::@1
 Adding NOP phi() at start of mode
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@3
-@3: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @3
+main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -227,24 +230,24 @@ main::@2: scope:[main]  from main::@1
   to:main::@1
 menu: scope:[menu]  from main::@2
   [8] phi()
-  to:menu::@2
-menu::@2: scope:[menu]  from menu
+  to:menu::@1
+menu::@1: scope:[menu]  from menu
   [9] phi()
   [10] call mode 
   to:menu::@return
-menu::@return: scope:[menu]  from menu::@2
+menu::@return: scope:[menu]  from menu::@1
   [11] return 
   to:@return
-mode: scope:[mode]  from menu::@2
+mode: scope:[mode]  from menu::@1
   [12] phi()
   to:mode::@1
-mode::@1: scope:[mode]  from mode mode::@2 mode::@6
-  [13] (byte) a#12 ← phi( mode/(byte) a#1 mode::@6/(byte) a#5 )
+mode::@1: scope:[mode]  from mode mode::@2 mode::@3
+  [13] (byte) a#12 ← phi( mode/(byte) a#1 mode::@3/(byte) a#5 )
   to:mode::@2
 mode::@2: scope:[mode]  from mode::@1
   [14] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@1
-  to:mode::@6
-mode::@6: scope:[mode]  from mode::@2
+  to:mode::@3
+mode::@3: scope:[mode]  from mode::@2
   [15] (byte) a#5 ← *((const byte*) B#0)
   to:mode::@1
 
@@ -277,17 +280,17 @@ INITIAL ASM
   .label a = 2
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG5 @3
-b3:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @3 to main [phi:@3->main]
-main_from_b3:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -317,14 +320,14 @@ main: {
 }
 //SEG20 menu
 menu: {
-  //SEG21 [9] phi from menu to menu::@2 [phi:menu->menu::@2]
-  b2_from_menu:
-    jmp b2
-  //SEG22 menu::@2
-  b2:
+  //SEG21 [9] phi from menu to menu::@1 [phi:menu->menu::@1]
+  b1_from_menu:
+    jmp b1
+  //SEG22 menu::@1
+  b1:
   //SEG23 [10] call mode 
-  //SEG24 [12] phi from menu::@2 to mode [phi:menu::@2->mode]
-  mode_from_b2:
+  //SEG24 [12] phi from menu::@1 to mode [phi:menu::@1->mode]
+  mode_from_b1:
     jsr mode
     jmp breturn
   //SEG25 menu::@return
@@ -334,10 +337,10 @@ menu: {
 }
 //SEG27 mode
 mode: {
-  //SEG28 [13] phi from mode mode::@6 to mode::@1 [phi:mode/mode::@6->mode::@1]
+  //SEG28 [13] phi from mode mode::@3 to mode::@1 [phi:mode/mode::@3->mode::@1]
   b1_from_mode:
-  b1_from_b6:
-  //SEG29 [13] phi (byte) a#12 = (byte) a#1 [phi:mode/mode::@6->mode::@1#0] -- register_copy 
+  b1_from_b3:
+  //SEG29 [13] phi (byte) a#12 = (byte) a#1 [phi:mode/mode::@3->mode::@1#0] -- register_copy 
     jmp b1
   //SEG30 [13] phi from mode::@2 to mode::@1 [phi:mode::@2->mode::@1]
   b1_from_b2:
@@ -351,13 +354,13 @@ mode: {
     lda B
     cmp #0
     bne b1_from_b2
-    jmp b6
-  //SEG34 mode::@6
-  b6:
+    jmp b3
+  //SEG34 mode::@3
+  b3:
   //SEG35 [15] (byte) a#5 ← *((const byte*) B#0) -- vbuz1=_deref_pbuc1 
     lda B
     sta a
-    jmp b1_from_b6
+    jmp b1_from_b3
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -386,17 +389,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label B = $1000
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG5 @3
-b3:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @3 to main [phi:@3->main]
-main_from_b3:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -425,14 +428,14 @@ main: {
 }
 //SEG20 menu
 menu: {
-  //SEG21 [9] phi from menu to menu::@2 [phi:menu->menu::@2]
-  b2_from_menu:
-    jmp b2
-  //SEG22 menu::@2
-  b2:
+  //SEG21 [9] phi from menu to menu::@1 [phi:menu->menu::@1]
+  b1_from_menu:
+    jmp b1
+  //SEG22 menu::@1
+  b1:
   //SEG23 [10] call mode 
-  //SEG24 [12] phi from menu::@2 to mode [phi:menu::@2->mode]
-  mode_from_b2:
+  //SEG24 [12] phi from menu::@1 to mode [phi:menu::@1->mode]
+  mode_from_b1:
     jsr mode
     jmp breturn
   //SEG25 menu::@return
@@ -442,10 +445,10 @@ menu: {
 }
 //SEG27 mode
 mode: {
-  //SEG28 [13] phi from mode mode::@6 to mode::@1 [phi:mode/mode::@6->mode::@1]
+  //SEG28 [13] phi from mode mode::@3 to mode::@1 [phi:mode/mode::@3->mode::@1]
   b1_from_mode:
-  b1_from_b6:
-  //SEG29 [13] phi (byte) a#12 = (byte) a#1 [phi:mode/mode::@6->mode::@1#0] -- register_copy 
+  b1_from_b3:
+  //SEG29 [13] phi (byte) a#12 = (byte) a#1 [phi:mode/mode::@3->mode::@1#0] -- register_copy 
     jmp b1
   //SEG30 [13] phi from mode::@2 to mode::@1 [phi:mode::@2->mode::@1]
   b1_from_b2:
@@ -459,37 +462,37 @@ mode: {
     lda B
     cmp #0
     bne b1_from_b2
-    jmp b6
-  //SEG34 mode::@6
-  b6:
+    jmp b3
+  //SEG34 mode::@3
+  b3:
   //SEG35 [15] (byte) a#5 ← *((const byte*) B#0) -- vbuaa=_deref_pbuc1 
     lda B
-    jmp b1_from_b6
+    jmp b1_from_b3
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b3
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b6
+Removing instruction jmp b3
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1 with b2
 Replacing label b1 with b2
 Replacing label b1_from_b2 with b2
-Removing instruction b3_from_bbegin:
-Removing instruction b3:
-Removing instruction main_from_b3:
-Removing instruction bend_from_b3:
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
 Removing instruction b1:
 Removing instruction b2_from_b1:
 Removing instruction menu_from_b2:
-Removing instruction b2_from_menu:
-Removing instruction mode_from_b2:
+Removing instruction b1_from_menu:
+Removing instruction mode_from_b1:
 Removing instruction b1_from_mode:
 Removing instruction b1_from_b2:
 Removing instruction b1:
@@ -497,16 +500,16 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b1_from_b2:
-Removing instruction b2:
+Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b6:
+Removing instruction b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Skipping double jump to b2 in jmp b1_from_b6
+Skipping double jump to b2 in jmp b1_from_b3
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label b1_from_b6 to b1
+Relabelling long label b1_from_b3 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
@@ -518,7 +521,7 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @3
+(label) @1
 (label) @begin
 (label) @end
 (byte*) B
@@ -531,12 +534,12 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (void()) menu()
-(label) menu::@2
+(label) menu::@1
 (label) menu::@return
 (void()) mode()
 (label) mode::@1
 (label) mode::@2
-(label) mode::@6
+(label) mode::@3
 
 reg byte a [ a#1 a#12 a#5 ]
 
@@ -553,11 +556,11 @@ Score: 8868
 //SEG2 Global Constants & labels
   .label B = $1000
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-//SEG5 @3
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [4] phi from @3 to main [phi:@3->main]
-//SEG8 [3] phi from @3 to @end [phi:@3->@end]
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main
 main: {
@@ -577,10 +580,10 @@ main: {
 }
 //SEG20 menu
 menu: {
-  //SEG21 [9] phi from menu to menu::@2 [phi:menu->menu::@2]
-  //SEG22 menu::@2
+  //SEG21 [9] phi from menu to menu::@1 [phi:menu->menu::@1]
+  //SEG22 menu::@1
   //SEG23 [10] call mode 
-  //SEG24 [12] phi from menu::@2 to mode [phi:menu::@2->mode]
+  //SEG24 [12] phi from menu::@1 to mode [phi:menu::@1->mode]
     jsr mode
   //SEG25 menu::@return
   //SEG26 [11] return 
@@ -588,8 +591,8 @@ menu: {
 }
 //SEG27 mode
 mode: {
-  //SEG28 [13] phi from mode mode::@6 to mode::@1 [phi:mode/mode::@6->mode::@1]
-  //SEG29 [13] phi (byte) a#12 = (byte) a#1 [phi:mode/mode::@6->mode::@1#0] -- register_copy 
+  //SEG28 [13] phi from mode mode::@3 to mode::@1 [phi:mode/mode::@3->mode::@1]
+  //SEG29 [13] phi (byte) a#12 = (byte) a#1 [phi:mode/mode::@3->mode::@1#0] -- register_copy 
   //SEG30 [13] phi from mode::@2 to mode::@1 [phi:mode::@2->mode::@1]
   //SEG31 mode::@1
   //SEG32 mode::@2
@@ -598,7 +601,7 @@ mode: {
     lda B
     cmp #0
     bne b2
-  //SEG34 mode::@6
+  //SEG34 mode::@3
   //SEG35 [15] (byte) a#5 ← *((const byte*) B#0) -- vbuaa=_deref_pbuc1 
     jmp b2
 }

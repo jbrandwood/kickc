@@ -59,9 +59,9 @@ main: {
     jsr bitmap_clear
     jsr sin16s_gen2
     jsr render_sine
-  b2:
+  b1:
     inc BGCOL
-    jmp b2
+    jmp b1
 }
 render_sine: {
     .label _0 = 6
@@ -214,12 +214,12 @@ wrap_y: {
     eor #$80
   !:
     bpl b2
-  b4:
+  b3:
     lda y+1
-    bmi b5
+    bmi b4
     lda y
     rts
-  b5:
+  b4:
     clc
     lda y
     adc #<$c8
@@ -227,7 +227,7 @@ wrap_y: {
     lda y+1
     adc #>$c8
     sta y+1
-    jmp b4
+    jmp b3
   b2:
     sec
     lda y
@@ -397,7 +397,7 @@ mul16u: {
     lda a
     and #1
     cmp #0
-    beq b8
+    beq b4
     lda res
     clc
     adc mb
@@ -411,7 +411,7 @@ mul16u: {
     lda res+3
     adc mb+3
     sta res+3
-  b8:
+  b4:
     clc
     ror a+1
     ror a
@@ -768,7 +768,7 @@ bitmap_init: {
     lda #>BITMAP
     sta yoffs+1
     ldx #0
-  b5:
+  b3:
     lda #7
     sax _3
     lda yoffs
@@ -779,7 +779,7 @@ bitmap_init: {
     txa
     and #7
     cmp #7
-    bne b6
+    bne b4
     clc
     lda yoffs
     adc #<$28*8
@@ -787,10 +787,10 @@ bitmap_init: {
     lda yoffs+1
     adc #>$28*8
     sta yoffs+1
-  b6:
+  b4:
     inx
     cpx #0
-    bne b5
+    bne b3
     rts
 }
 // Fill some memory with a value

@@ -41,12 +41,12 @@ main: {
     sta yvel_12
     lda #0
     sta yvel_12+1
-  b2:
+  b1:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne b1
     jsr anim
-    jmp b2
+    jmp b1
 }
 anim: {
     .label _5 = $c
@@ -78,12 +78,12 @@ anim: {
     bvc !+
     eor #$80
   !:
-    bpl b4
+    bpl b3
     lda #$c8
     sta yvel
     lda #0
     sta yvel+1
-  b4:
+  b3:
     lda yvel
     sta yvel_22
     lda yvel+1
@@ -203,11 +203,11 @@ init: {
     cmp #<SCREEN+$3e8
     bne b1
     ldx #0
-  b3:
+  b2:
     lda #$ff
     sta SPRITE,x
     inx
     cpx #$40
-    bne b3
+    bne b2
     rts
 }

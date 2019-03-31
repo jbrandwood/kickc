@@ -33,8 +33,8 @@ public class TestPrograms {
    }
 
    @Test
-   public void testNoLocalScope() throws IOException, URISyntaxException {
-      compileAndCompare("localscope-loops");
+   public void testLocalScopeLoops() throws IOException, URISyntaxException {
+      compileAndCompare("localscope-loops", getLogSysout());
    }
 
    @Test

@@ -183,6 +183,8 @@ Calls in [] to main:3
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Renumbering block main::@2 to main::@1
+Renumbering block main::@6 to main::@2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -208,13 +210,13 @@ main: scope:[main]  from @2
   [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0
   [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
   asm { cli  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@1 main::@2
+  [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@1
   to:main::@2
-main::@2: scope:[main]  from main main::@2 main::@6
-  [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2
-  to:main::@6
-main::@6: scope:[main]  from main::@2
+main::@2: scope:[main]  from main::@1
   [13] (bool) framedone#0 ← true
-  to:main::@2
+  to:main::@1
 irq: scope:[irq]  from
   [14] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
   [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
@@ -329,20 +331,20 @@ main: {
     sta KERNEL_IRQ+1
   //SEG18 asm { cli  }
     cli
-    jmp b2
-  //SEG19 main::@2
-  b2:
-  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    jmp b1
+  //SEG19 main::@1
+  b1:
+  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
-    bcs b2
-    jmp b6
-  //SEG21 main::@6
-  b6:
+    bcs b1
+    jmp b2
+  //SEG21 main::@2
+  b2:
   //SEG22 [13] (bool) framedone#0 ← true -- vboz1=vboc1 
     lda #1
     sta framedone
-    jmp b2
+    jmp b1
 }
 //SEG23 irq
 irq: {
@@ -382,7 +384,7 @@ Statement [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) 
 Statement [8] *((const byte*) RASTER#0) ← (byte/word/signed word/dword/signed dword) $fd [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2 [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@1 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [13] (bool) framedone#0 ← true [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [16] if(*((const byte*) RASTER#0)<=(byte/signed byte/word/signed word/dword/signed dword) $32) goto irq::@1 [ ] (  [ ] ) always clobbers reg byte a 
@@ -469,20 +471,20 @@ main: {
     sta KERNEL_IRQ+1
   //SEG18 asm { cli  }
     cli
-    jmp b2
-  //SEG19 main::@2
-  b2:
-  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    jmp b1
+  //SEG19 main::@1
+  b1:
+  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
-    bcs b2
-    jmp b6
-  //SEG21 main::@6
-  b6:
+    bcs b1
+    jmp b2
+  //SEG21 main::@2
+  b2:
   //SEG22 [13] (bool) framedone#0 ← true -- vboz1=vboc1 
     lda #1
     sta framedone
-    jmp b2
+    jmp b1
 }
 //SEG23 irq
 irq: {
@@ -519,8 +521,8 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp b2
 Removing instruction jmp bend
+Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b6
 Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
@@ -531,7 +533,7 @@ Removing instruction bend_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b2:
 Removing instruction bend:
-Removing instruction b6:
+Removing instruction b2:
 Removing instruction b2:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -568,8 +570,8 @@ interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@2
 (label) irq::@return
 (void()) main()
+(label) main::@1
 (label) main::@2
-(label) main::@6
 
 zp ZP_BOOL:2 [ framedone#11 framedone#0 framedone#3 ]
 
@@ -635,17 +637,17 @@ main: {
     sta KERNEL_IRQ+1
   //SEG18 asm { cli  }
     cli
-  //SEG19 main::@2
-  b2:
-  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@2 -- _deref_pbuc1_ge_vbuc2_then_la1 
+  //SEG19 main::@1
+  b1:
+  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte/signed byte/word/signed word/dword/signed dword) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
-    bcs b2
-  //SEG21 main::@6
+    bcs b1
+  //SEG21 main::@2
   //SEG22 [13] (bool) framedone#0 ← true -- vboz1=vboc1 
     lda #1
     sta framedone
-    jmp b2
+    jmp b1
 }
 //SEG23 irq
 irq: {

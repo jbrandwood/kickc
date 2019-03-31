@@ -133,6 +133,7 @@ Coalesced (already) [12] rpc#12 ← rpc#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@7
+Renumbering block main::@5 to main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -151,16 +152,16 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@2 main::@5
-  [5] (byte) rpc#4 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) rpc#1 main::@5/(byte) rpc#1 )
+main::@1: scope:[main]  from main main::@2 main::@3
+  [5] (byte) rpc#4 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) rpc#1 main::@3/(byte) rpc#1 )
   [6] (byte) rpc#1 ← ++ (byte) rpc#4
   to:main::@2
-main::@2: scope:[main]  from main::@1 main::@5
+main::@2: scope:[main]  from main::@1 main::@3
   [7] (byte) key#1 ← *((const byte*) DC00#0)
   [8] (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f
-  [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5
+  [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@3
   to:main::@1
-main::@5: scope:[main]  from main::@2
+main::@3: scope:[main]  from main::@2
   [10] if((byte~) main::$1==(byte/signed byte/word/signed word/dword/signed dword) $1f) goto main::@2
   to:main::@1
 
@@ -238,22 +239,22 @@ main: {
     lda #$1f
     and key
     sta _1
-  //SEG18 [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuz1_eq_0_then_la1 
+  //SEG18 [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
     lda key
     cmp #0
-    beq b5
-  //SEG19 [5] phi from main::@2 main::@5 to main::@1 [phi:main::@2/main::@5->main::@1]
+    beq b3
+  //SEG19 [5] phi from main::@2 main::@3 to main::@1 [phi:main::@2/main::@3->main::@1]
   b1_from_b2:
-  b1_from_b5:
-  //SEG20 [5] phi (byte) rpc#4 = (byte) rpc#1 [phi:main::@2/main::@5->main::@1#0] -- register_copy 
+  b1_from_b3:
+  //SEG20 [5] phi (byte) rpc#4 = (byte) rpc#1 [phi:main::@2/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG21 main::@5
-  b5:
+  //SEG21 main::@3
+  b3:
   //SEG22 [10] if((byte~) main::$1==(byte/signed byte/word/signed word/dword/signed dword) $1f) goto main::@2 -- vbuz1_eq_vbuc1_then_la1 
     lda #$1f
     cmp _1
     beq b2
-    jmp b1_from_b5
+    jmp b1_from_b3
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -313,20 +314,20 @@ main: {
   //SEG17 [8] (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$1f
-  //SEG18 [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuxx_eq_0_then_la1 
+  //SEG18 [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@3 -- vbuxx_eq_0_then_la1 
     cpx #0
-    beq b5
-  //SEG19 [5] phi from main::@2 main::@5 to main::@1 [phi:main::@2/main::@5->main::@1]
+    beq b3
+  //SEG19 [5] phi from main::@2 main::@3 to main::@1 [phi:main::@2/main::@3->main::@1]
   b1_from_b2:
-  b1_from_b5:
-  //SEG20 [5] phi (byte) rpc#4 = (byte) rpc#1 [phi:main::@2/main::@5->main::@1#0] -- register_copy 
+  b1_from_b3:
+  //SEG20 [5] phi (byte) rpc#4 = (byte) rpc#1 [phi:main::@2/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG21 main::@5
-  b5:
+  //SEG21 main::@3
+  b3:
   //SEG22 [10] if((byte~) main::$1==(byte/signed byte/word/signed word/dword/signed dword) $1f) goto main::@2 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$1f
     beq b2
-    jmp b1_from_b5
+    jmp b1_from_b3
 }
 
 ASSEMBLER OPTIMIZATIONS
@@ -347,12 +348,12 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Skipping double jump to b1 in jmp b1_from_b5
+Skipping double jump to b1 in jmp b1_from_b3
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label b1_from_b5 to b3
+Relabelling long label b1_from_b3 to b4
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction bbegin:
-Removing instruction b3:
+Removing instruction b4:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -367,7 +368,7 @@ FINAL SYMBOL TABLE
 (byte~) main::$1 reg byte a 101.0
 (label) main::@1
 (label) main::@2
-(label) main::@5
+(label) main::@3
 (byte) rpc
 (byte) rpc#1 reg byte y 42.6
 (byte) rpc#4 reg byte y 213.0
@@ -412,14 +413,14 @@ main: {
   //SEG17 [8] (byte~) main::$1 ← (byte) key#1 & (byte/signed byte/word/signed word/dword/signed dword) $1f -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$1f
-  //SEG18 [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@5 -- vbuxx_eq_0_then_la1 
+  //SEG18 [9] if((byte) key#1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@3 -- vbuxx_eq_0_then_la1 
     cpx #0
-    beq b5
-  //SEG19 [5] phi from main::@2 main::@5 to main::@1 [phi:main::@2/main::@5->main::@1]
-  //SEG20 [5] phi (byte) rpc#4 = (byte) rpc#1 [phi:main::@2/main::@5->main::@1#0] -- register_copy 
+    beq b3
+  //SEG19 [5] phi from main::@2 main::@3 to main::@1 [phi:main::@2/main::@3->main::@1]
+  //SEG20 [5] phi (byte) rpc#4 = (byte) rpc#1 [phi:main::@2/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG21 main::@5
-  b5:
+  //SEG21 main::@3
+  b3:
   //SEG22 [10] if((byte~) main::$1==(byte/signed byte/word/signed word/dword/signed dword) $1f) goto main::@2 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$1f
     beq b2

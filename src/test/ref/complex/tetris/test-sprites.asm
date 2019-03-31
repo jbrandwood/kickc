@@ -135,14 +135,14 @@ loop: {
     .label s = 3
     lda #0
     sta sin_idx
-  b6:
+  b2:
     lda #$ff
     cmp RASTER
-    bne b6
+    bne b2
     ldx sin_idx
     lda #4
     sta s
-  b8:
+  b4:
     lda s
     asl
     tay
@@ -153,9 +153,9 @@ loop: {
     inc s
     lda #8
     cmp s
-    bne b8
+    bne b4
     inc sin_idx
-    jmp b6
+    jmp b2
 }
 // Setup the IRQ
 sprites_irq_init: {
@@ -238,10 +238,10 @@ sprites_irq: {
     inx
     // Wait for the y-position before changing sprite pointers
     stx raster_sprite_gfx_modify
-  b11:
+  b8:
     lda RASTER
     cmp raster_sprite_gfx_modify
-    bcc b11
+    bcc b8
     ldx irq_sprite_ptr
     lda render_screen_showing
     cmp #0
@@ -271,7 +271,7 @@ sprites_irq: {
     lax irq_sprite_ptr
     axs #-[3]
     stx irq_sprite_ptr
-  b6:
+  b5:
     // Setup next interrupt
     lda irq_raster_next
     sta RASTER
@@ -294,7 +294,7 @@ sprites_irq: {
     lax irq_sprite_ptr
     axs #-[3]
     stx irq_sprite_ptr
-    jmp b6
+    jmp b5
   b3:
     lax irq_raster_next
     axs #-[$15]
@@ -303,7 +303,7 @@ sprites_irq: {
     sta irq_sprite_ypos
     lda #toSpritePtr2_return
     sta irq_sprite_ptr
-    jmp b6
+    jmp b5
   b1:
     stx PLAYFIELD_SPRITE_PTRS_1
     inx

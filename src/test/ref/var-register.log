@@ -176,22 +176,24 @@ Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@9
 Culled Empty Block (label) main::@10
+Renumbering block @2 to @1
+Renumbering block main::@7 to main::@6
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@2
-@2: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@5
@@ -200,18 +202,18 @@ main::@1: scope:[main]  from main main::@5
 main::@2: scope:[main]  from main::@1 main::@4
   [6] (byte) main::y#4 ← phi( main::@1/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(byte) main::y#1 )
   to:main::@3
-main::@3: scope:[main]  from main::@2 main::@7
-  [7] (byte) main::a#2 ← phi( main::@2/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@7/(byte) main::a#1 )
+main::@3: scope:[main]  from main::@2 main::@6
+  [7] (byte) main::a#2 ← phi( main::@2/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@6/(byte) main::a#1 )
   [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#7
   [9] (byte) print::idx#0 ← (byte) main::y#4
   [10] (byte) print::val#0 ← (byte) main::val1#0
   [11] call print 
-  to:main::@7
-main::@7: scope:[main]  from main::@3
+  to:main::@6
+main::@6: scope:[main]  from main::@3
   [12] (byte) main::a#1 ← ++ (byte) main::a#2
   [13] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@3
   to:main::@4
-main::@4: scope:[main]  from main::@7
+main::@4: scope:[main]  from main::@6
   [14] (byte) main::y#1 ← ++ (byte) main::y#4
   [15] if((byte) main::y#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@2
   to:main::@5
@@ -277,17 +279,17 @@ INITIAL ASM
 //SEG2 Global Constants & labels
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG5 @2
-b2:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @2 to main [phi:@2->main]
-main_from_b2:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -324,9 +326,9 @@ main: {
     lda #0
     sta a
     jmp b3
-  //SEG23 [7] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
-  b3_from_b7:
-  //SEG24 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@7->main::@3#0] -- register_copy 
+  //SEG23 [7] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
+  b3_from_b6:
+  //SEG24 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@3#0] -- register_copy 
     jmp b3
   //SEG25 main::@3
   b3:
@@ -340,15 +342,15 @@ main: {
     sta print.val
   //SEG29 [11] call print 
     jsr print
-    jmp b7
-  //SEG30 main::@7
-  b7:
+    jmp b6
+  //SEG30 main::@6
+  b6:
   //SEG31 [12] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
     inc a
   //SEG32 [13] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
     cmp a
-    bne b3_from_b7
+    bne b3_from_b6
     jmp b4
   //SEG33 main::@4
   b4:
@@ -422,17 +424,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 //SEG2 Global Constants & labels
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG5 @2
-b2:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @2 to main [phi:@2->main]
-main_from_b2:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -467,9 +469,9 @@ main: {
     lda #0
     sta a
     jmp b3
-  //SEG23 [7] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
-  b3_from_b7:
-  //SEG24 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@7->main::@3#0] -- register_copy 
+  //SEG23 [7] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
+  b3_from_b6:
+  //SEG24 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@3#0] -- register_copy 
     jmp b3
   //SEG25 main::@3
   b3:
@@ -481,15 +483,15 @@ main: {
   //SEG28 [10] (byte) print::val#0 ← (byte) main::val1#0
   //SEG29 [11] call print 
     jsr print
-    jmp b7
-  //SEG30 main::@7
-  b7:
+    jmp b6
+  //SEG30 main::@6
+  b6:
   //SEG31 [12] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
     inc a
   //SEG32 [13] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
     cmp a
-    bne b3_from_b7
+    bne b3_from_b6
     jmp b4
   //SEG33 main::@4
   b4:
@@ -526,33 +528,33 @@ print: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
 Removing instruction jmp b3
-Removing instruction jmp b7
+Removing instruction jmp b6
 Removing instruction jmp b4
 Removing instruction jmp b5
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b3_from_b7 with b3
+Replacing label b3_from_b6 with b3
 Replacing label b2_from_b4 with b2
 Replacing label b1_from_b5 with b1
-Removing instruction b2_from_bbegin:
-Removing instruction b2:
-Removing instruction main_from_b2:
-Removing instruction bend_from_b2:
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
 Removing instruction b1_from_b5:
 Removing instruction b2_from_b1:
 Removing instruction b2_from_b4:
 Removing instruction b3_from_b2:
-Removing instruction b3_from_b7:
+Removing instruction b3_from_b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
-Removing instruction b7:
+Removing instruction b6:
 Removing instruction b4:
 Removing instruction b5:
 Removing instruction breturn:
@@ -569,7 +571,7 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @2
+(label) @1
 (label) @begin
 (label) @end
 (void()) main()
@@ -578,7 +580,7 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@4
 (label) main::@5
-(label) main::@7
+(label) main::@6
 (label) main::@return
 (byte) main::a
 (byte) main::a#1 a zp ZP_BYTE:2 1501.5
@@ -618,11 +620,11 @@ Score: 31452
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG5 @2
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [4] phi from @2 to main [phi:@2->main]
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main
 main: {
@@ -645,8 +647,8 @@ main: {
   //SEG22 [7] phi (byte) main::a#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta a
-  //SEG23 [7] phi from main::@7 to main::@3 [phi:main::@7->main::@3]
-  //SEG24 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@7->main::@3#0] -- register_copy 
+  //SEG23 [7] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
+  //SEG24 [7] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@6->main::@3#0] -- register_copy 
   //SEG25 main::@3
   b3:
   //SEG26 [8] (byte) main::val1#0 ← (byte) main::a#2 + (byte) main::x#7 -- vbuaa=vbuz1_plus_vbuyy 
@@ -657,7 +659,7 @@ main: {
   //SEG28 [10] (byte) print::val#0 ← (byte) main::val1#0
   //SEG29 [11] call print 
     jsr print
-  //SEG30 main::@7
+  //SEG30 main::@6
   //SEG31 [12] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
     inc a
   //SEG32 [13] if((byte) main::a#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 

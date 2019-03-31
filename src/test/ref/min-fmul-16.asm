@@ -15,10 +15,10 @@ main: {
     sta print_char_cursor
     lda #>$400
     sta print_char_cursor+1
-  b6:
+  b2:
     lda #$ff
     cmp RASTER
-    bne b6
+    bne b2
     inc BORDERCOL
     jsr mulf16u
     dec BORDERCOL
@@ -28,7 +28,7 @@ main: {
     sta print_char_cursor
     lda #>SCREEN
     sta print_char_cursor+1
-    jmp b6
+    jmp b2
 }
 // Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
@@ -279,7 +279,7 @@ mulf_init: {
     lda #>mulf_sqr2_lo
     sta sqr2_lo+1
     ldx #-1
-  b5:
+  b4:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -294,20 +294,20 @@ mulf_init: {
     adc dir
     tax
     cpx #0
-    bne b6
+    bne b5
     lda #1
     sta dir
-  b6:
+  b5:
     inc sqr2_lo
     bne !+
     inc sqr2_lo+1
   !:
     lda sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b5
+    bne b4
     lda sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b5
+    bne b4
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff

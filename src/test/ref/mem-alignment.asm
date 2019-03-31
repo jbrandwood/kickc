@@ -12,13 +12,13 @@ main: {
     bne b1
     ldy #0
     ldx #$ff
-  b3:
+  b2:
     lda bs,x
     sta cs,y
     dex
     iny
     cpy #0
-    bne b3
+    bne b2
     rts
     .align $100
     cs: .fill $100, 0

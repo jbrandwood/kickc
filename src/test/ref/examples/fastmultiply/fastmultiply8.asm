@@ -56,7 +56,7 @@ main: {
     sta at_line
     lda #>$400
     sta at_line+1
-  b3:
+  b2:
     lda #$28
     clc
     adc at
@@ -78,7 +78,7 @@ main: {
     sta at_12+1
     lda #0
     sta j
-  b4:
+  b3:
     lda #4
     clc
     adc at_3
@@ -100,10 +100,10 @@ main: {
     inc j
     lda #9
     cmp j
-    bne b4
+    bne b3
     inc i
     cmp i
-    bne b3
+    bne b2
     rts
 }
 // Print a signed byte as hex at a specific screen position
@@ -203,7 +203,7 @@ init_screen: {
     sta COLS
     lda #>$d800
     sta COLS+1
-  b3:
+  b2:
     lda #WHITE
     ldy #0
     sta (COLS),y
@@ -222,7 +222,7 @@ init_screen: {
   !:
     inx
     cpx #$19
-    bne b3
+    bne b2
     rts
 }
 // Clear the screen. Also resets current line/char cursor.

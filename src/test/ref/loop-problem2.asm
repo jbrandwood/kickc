@@ -9,17 +9,17 @@ main: {
     rts
 }
 mode_ctrl: {
-  b2:
+  b1:
     lda BORDERCOL
     cmp #$ff
-    beq b8
+    beq b3
     lda #3
     sta BORDERCOL
-    jmp b2
-  b8:
+    jmp b1
+  b3:
     lda #2
     sta BORDERCOL
-    jmp b2
+    jmp b1
 }
 print_cls: {
     .label sc = 2

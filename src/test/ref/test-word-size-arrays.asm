@@ -65,7 +65,7 @@ main: {
   !:
     ldx #0
   // Cleare the bottom line
-  b5:
+  b4:
     txa
     clc
     adc line
@@ -85,6 +85,6 @@ main: {
     sta screen
     inx
     cpx #$28
-    bcc b5
+    bcc b4
     rts
 }

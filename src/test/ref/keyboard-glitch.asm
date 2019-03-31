@@ -24,40 +24,40 @@
 main: {
     lda #GREEN
     sta BORDERCOL
-  b2:
+  b1:
     jsr menu
-    jmp b2
+    jmp b1
 }
 menu: {
-  b2:
+  b1:
     ldx #KEY_C
     jsr keyboard_key_pressed
     cmp #0
-    beq b8
+    beq b3
     jsr pressed
   breturn:
     rts
-  b8:
+  b3:
     ldx #KEY_I
     jsr keyboard_key_pressed
     cmp #0
-    beq b9
+    beq b4
     lda #RED
     sta BORDERCOL
     sei
     jmp breturn
-  b9:
+  b4:
     ldx #KEY_E
     jsr keyboard_key_pressed
     cmp #0
-    beq b10
+    beq b5
     lda #GREEN
     sta BORDERCOL
     cli
     jmp breturn
-  b10:
+  b5:
     inc SCREEN
-    jmp b2
+    jmp b1
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
@@ -92,11 +92,11 @@ keyboard_matrix_read: {
 }
 pressed: {
     inc BGCOL
-  b2:
+  b1:
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
     cmp #0
-    beq b2
+    beq b1
     rts
 }
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)

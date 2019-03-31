@@ -151,7 +151,6 @@ public class Compiler {
       new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1ResolveForwardReferences(program).execute();
       new Pass1UnwindBlockScopes(program).execute();
-
       new Pass1TypeInference(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
@@ -375,6 +374,7 @@ public class Compiler {
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program).step();
       new Pass2CullEmptyBlocks(program).step();
+      new PassNRenumberLabels(program).execute();
       new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).execute();

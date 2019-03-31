@@ -488,7 +488,7 @@ mul16u: {
     lda a
     and #1
     cmp #0
-    beq b8
+    beq b4
     lda res
     clc
     adc mb
@@ -502,7 +502,7 @@ mul16u: {
     lda res+3
     adc mb+3
     sta res+3
-  b8:
+  b4:
     clc
     ror a+1
     ror a
@@ -755,14 +755,14 @@ sin8s: {
   b3:
     lda isUpper
     cmp #0
-    beq b18
+    beq b14
     txa
     eor #$ff
     clc
     adc #1
   b4:
     rts
-  b18:
+  b14:
     txa
     jmp b4
 }
@@ -805,7 +805,7 @@ mul8u: {
     txa
     and #1
     cmp #0
-    beq b8
+    beq b4
     lda res
     clc
     adc mb
@@ -813,7 +813,7 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  b8:
+  b4:
     txa
     lsr
     tax

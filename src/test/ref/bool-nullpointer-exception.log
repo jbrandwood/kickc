@@ -105,6 +105,7 @@ Calls in [] to main:2
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
+Renumbering block main::@6 to main::@2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -123,12 +124,12 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@6
-  [5] (bool) framedone#2 ← phi( main/true main::@6/false )
-  to:main::@6
-main::@6: scope:[main]  from main::@1 main::@6
+main::@1: scope:[main]  from main main::@2
+  [5] (bool) framedone#2 ← phi( main/true main::@2/false )
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
   [6] if((bool) framedone#2) goto main::@1
-  to:main::@6
+  to:main::@2
 
 
 VARIABLE REGISTER WEIGHTS
@@ -175,22 +176,22 @@ main: {
     lda #1
     sta framedone
     jmp b1
-  //SEG13 [5] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-  b1_from_b6:
-  //SEG14 [5] phi (bool) framedone#2 = false [phi:main::@6->main::@1#0] -- vboz1=vboc1 
+  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG14 [5] phi (bool) framedone#2 = false [phi:main::@2->main::@1#0] -- vboz1=vboc1 
     lda #0
     sta framedone
     jmp b1
   //SEG15 main::@1
   b1:
-    jmp b6
-  //SEG16 main::@6
-  b6:
+    jmp b2
+  //SEG16 main::@2
+  b2:
   //SEG17 [6] if((bool) framedone#2) goto main::@1 -- vboz1_then_la1 
     lda framedone
     cmp #0
-    bne b1_from_b6
-    jmp b6
+    bne b1_from_b2
+    jmp b2
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -234,29 +235,29 @@ main: {
   //SEG12 [5] phi (bool) framedone#2 = true [phi:main->main::@1#0] -- vboaa=vboc1 
     lda #1
     jmp b1
-  //SEG13 [5] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-  b1_from_b6:
-  //SEG14 [5] phi (bool) framedone#2 = false [phi:main::@6->main::@1#0] -- vboaa=vboc1 
+  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG14 [5] phi (bool) framedone#2 = false [phi:main::@2->main::@1#0] -- vboaa=vboc1 
     lda #0
     jmp b1
   //SEG15 main::@1
   b1:
-    jmp b6
-  //SEG16 main::@6
-  b6:
+    jmp b2
+  //SEG16 main::@2
+  b2:
   //SEG17 [6] if((bool) framedone#2) goto main::@1 -- vboaa_then_la1 
     cmp #0
-    bne b1_from_b6
-    jmp b6
+    bne b1_from_b2
+    jmp b2
 }
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
-Removing instruction jmp b6
+Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1 with b6
+Replacing label b1 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -269,7 +270,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Relabelling long label b1_from_b6 to b1
+Relabelling long label b1_from_b2 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -282,7 +283,7 @@ FINAL SYMBOL TABLE
 (bool) framedone#2 reg byte a 50.5
 (void()) main()
 (label) main::@1
-(label) main::@6
+(label) main::@2
 
 reg byte a [ framedone#2 ]
 
@@ -309,17 +310,17 @@ main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   //SEG12 [5] phi (bool) framedone#2 = true [phi:main->main::@1#0] -- vboaa=vboc1 
     lda #1
-    jmp b6
-  //SEG13 [5] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
+    jmp b2
+  //SEG13 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1:
-  //SEG14 [5] phi (bool) framedone#2 = false [phi:main::@6->main::@1#0] -- vboaa=vboc1 
+  //SEG14 [5] phi (bool) framedone#2 = false [phi:main::@2->main::@1#0] -- vboaa=vboc1 
     lda #0
   //SEG15 main::@1
-  //SEG16 main::@6
-  b6:
+  //SEG16 main::@2
+  b2:
   //SEG17 [6] if((bool) framedone#2) goto main::@1 -- vboaa_then_la1 
     cmp #0
     bne b1
-    jmp b6
+    jmp b2
 }
 

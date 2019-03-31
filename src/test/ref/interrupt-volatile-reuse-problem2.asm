@@ -16,29 +16,29 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  b1:
+  b4:
     ldx #0
-  b6:
+  b1:
     lda #0
     sta y
-  b7:
+  b2:
     ldy #0
-  b8:
+  b3:
     tya
     clc
     adc y
     sta SCREEN,x
     iny
     cpy #$b
-    bne b8
+    bne b3
     inc y
     lda #$b
     cmp y
-    bne b7
+    bne b2
     inx
     cpx #$b
-    bne b6
-    jmp b1
+    bne b1
+    jmp b4
 }
 irq: {
     // Acknowledge the IRQ

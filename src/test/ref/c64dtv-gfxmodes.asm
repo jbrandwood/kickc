@@ -110,9 +110,9 @@ main: {
     // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-  b2:
+  b1:
     jsr menu
-    jmp b2
+    jmp b1
 }
 menu: {
     .label SCREEN = $8000
@@ -146,18 +146,18 @@ menu: {
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - default
-  b8:
+  b3:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b8
+    bne b3
     lda #<COLS
     sta c
     lda #>COLS
     sta c+1
   // Char Colors
-  b10:
+  b4:
     lda #LIGHT_GREEN
     ldy #0
     sta (c),y
@@ -167,10 +167,10 @@ menu: {
   !:
     lda c+1
     cmp #>COLS+$3e8
-    bne b10
+    bne b4
     lda c
     cmp #<COLS+$3e8
-    bne b10
+    bne b4
     // Screen colors
     lda #0
     sta BGCOL
@@ -178,91 +178,91 @@ menu: {
     jsr print_set_screen
     jsr print_cls
     jsr print_str_lines
-  b2:
+  b1:
     ldy #KEY_1
     jsr keyboard_key_pressed
     cmp #0
-    beq b12
+    beq b6
     jsr mode_stdchar
   breturn:
     rts
-  b12:
+  b6:
     ldy #KEY_2
     jsr keyboard_key_pressed
     cmp #0
-    beq b13
+    beq b7
     jsr mode_ecmchar
     jmp breturn
-  b13:
+  b7:
     ldy #KEY_3
     jsr keyboard_key_pressed
     cmp #0
-    beq b14
+    beq b8
     jsr mode_mcchar
     jmp breturn
-  b14:
+  b8:
     ldy #KEY_4
     jsr keyboard_key_pressed
     cmp #0
-    beq b15
+    beq b9
     jsr mode_stdbitmap
     jmp breturn
-  b15:
+  b9:
     ldy #KEY_6
     jsr keyboard_key_pressed
     cmp #0
-    beq b16
+    beq b10
     jsr mode_hicolstdchar
     jmp breturn
-  b16:
+  b10:
     ldy #KEY_7
     jsr keyboard_key_pressed
     cmp #0
-    beq b17
+    beq b11
     jsr mode_hicolecmchar
     jmp breturn
-  b17:
+  b11:
     ldy #KEY_8
     jsr keyboard_key_pressed
     cmp #0
-    beq b18
+    beq b12
     jsr mode_hicolmcchar
     jmp breturn
-  b18:
+  b12:
     ldy #KEY_A
     jsr keyboard_key_pressed
     cmp #0
-    beq b19
+    beq b13
     jsr mode_sixsfred2
     jmp breturn
-  b19:
+  b13:
     ldy #KEY_B
     jsr keyboard_key_pressed
     cmp #0
-    beq b20
+    beq b14
     jsr mode_twoplanebitmap
     jmp breturn
-  b20:
+  b14:
     ldy #KEY_C
     jsr keyboard_key_pressed
     cmp #0
-    beq b21
+    beq b15
     jsr mode_sixsfred
     jmp breturn
-  b21:
+  b15:
     ldy #KEY_D
     jsr keyboard_key_pressed
     cmp #0
-    beq b22
+    beq b16
     jsr mode_8bpppixelcell
     jmp breturn
-  b22:
+  b16:
     ldy #KEY_E
     jsr keyboard_key_pressed
     cmp #0
-    bne !b2+
-    jmp b2
-  !b2:
+    bne !b1+
+    jmp b1
+  !b1:
     jsr mode_8bppchunkybmm
     jmp breturn
 }
@@ -375,72 +375,72 @@ mode_8bppchunkybmm: {
 mode_ctrl: {
   b1:
   // Wait for the raster
-  b6:
+  b2:
     lda #$ff
     cmp RASTER
-    bne b6
+    bne b2
     ldy #KEY_SPACE
     jsr keyboard_key_pressed
     cmp #0
-    beq b9
+    beq b4
     rts
-  b9:
+  b4:
     // Read the current control byte
     ldx dtv_control
     ldy #KEY_L
     jsr keyboard_key_pressed
     cmp #0
-    beq b10
+    beq b5
     txa
     ora #DTV_LINEAR
     tax
-  b10:
+  b5:
     ldy #KEY_H
     jsr keyboard_key_pressed
     cmp #0
-    beq b11
+    beq b6
     txa
     ora #DTV_HIGHCOLOR
     tax
-  b11:
+  b6:
     ldy #KEY_O
     jsr keyboard_key_pressed
     cmp #0
-    beq b12
+    beq b7
     txa
     ora #DTV_OVERSCAN
     tax
-  b12:
+  b7:
     ldy #KEY_B
     jsr keyboard_key_pressed
     cmp #0
-    beq b13
+    beq b8
     txa
     ora #DTV_BORDER_OFF
     tax
-  b13:
+  b8:
     ldy #KEY_U
     jsr keyboard_key_pressed
     cmp #0
-    beq b14
+    beq b9
     txa
     ora #DTV_CHUNKY
     tax
-  b14:
+  b9:
     ldy #KEY_C
     jsr keyboard_key_pressed
     cmp #0
-    beq b15
+    beq b10
     txa
     ora #DTV_COLORRAM_OFF
     tax
-  b15:
+  b10:
     ldy #KEY_0
     jsr keyboard_key_pressed
     cmp #0
-    beq b16
+    beq b11
     ldx #0
-  b16:
+  b11:
     cpx dtv_control
     beq b1
     stx dtv_control
@@ -563,9 +563,9 @@ mode_8bpppixelcell: {
     sta gfxa+1
     lda #0
     sta ay
-  b3:
+  b2:
     ldx #0
-  b4:
+  b3:
     lda #$f
     and ay
     asl
@@ -584,11 +584,11 @@ mode_8bpppixelcell: {
   !:
     inx
     cpx #$28
-    bne b4
+    bne b3
     inc ay
     lda #$19
     cmp ay
-    bne b3
+    bne b2
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
@@ -603,10 +603,10 @@ mode_8bpppixelcell: {
     sta chargen
     lda #>CHARGEN
     sta chargen+1
-  b7:
+  b6:
     lda #0
     sta cr
-  b8:
+  b7:
     ldy #0
     lda (chargen),y
     sta bits
@@ -615,16 +615,16 @@ mode_8bpppixelcell: {
     inc chargen+1
   !:
     ldx #0
-  b9:
+  b8:
     lda #$80
     and bits
     cmp #0
-    beq b2
+    beq b4
     lda col
-    jmp b10
-  b2:
+    jmp b9
+  b4:
     lda #0
-  b10:
+  b9:
     ldy #0
     sta (gfxb),y
     inc gfxb
@@ -635,15 +635,15 @@ mode_8bpppixelcell: {
     inc col
     inx
     cpx #8
-    bne b9
+    bne b8
     inc cr
     lda #8
     cmp cr
-    bne b8
+    bne b7
     inc ch
     lda ch
     cmp #0
-    bne b7
+    bne b6
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
@@ -746,9 +746,9 @@ mode_sixsfred: {
     sta gfxa+1
     lda #0
     sta ay
-  b7:
+  b6:
     ldx #0
-  b8:
+  b7:
     lda ay
     lsr
     and #3
@@ -762,20 +762,20 @@ mode_sixsfred: {
   !:
     inx
     cpx #$28
-    bne b8
+    bne b7
     inc ay
     lda #$c8
     cmp ay
-    bne b7
+    bne b6
     lda #0
     sta by
     lda #<PLANEB
     sta gfxb
     lda #>PLANEB
     sta gfxb+1
-  b11:
+  b9:
     ldx #0
-  b12:
+  b10:
     lda #$1b
     ldy #0
     sta (gfxb),y
@@ -785,11 +785,11 @@ mode_sixsfred: {
   !:
     inx
     cpx #$28
-    bne b12
+    bne b10
     inc by
     lda #$c8
     cmp by
-    bne b11
+    bne b9
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta dtv_control
     jsr mode_ctrl
@@ -906,13 +906,13 @@ mode_twoplanebitmap: {
     sta gfxa+1
     lda #0
     sta ay
-  b7:
+  b6:
     ldx #0
-  b8:
+  b7:
     lda #4
     and ay
     cmp #0
-    beq b9
+    beq b8
     lda #$ff
     ldy #0
     sta (gfxa),y
@@ -920,23 +920,23 @@ mode_twoplanebitmap: {
     bne !+
     inc gfxa+1
   !:
-  b10:
+  b9:
     inx
     cpx #$28
-    bne b8
+    bne b7
     inc ay
     lda #$c8
     cmp ay
-    bne b7
+    bne b6
     lda #0
     sta by
     lda #<PLANEB
     sta gfxb
     lda #>PLANEB
     sta gfxb+1
-  b15:
+  b12:
     ldx #0
-  b16:
+  b13:
     lda #$f
     ldy #0
     sta (gfxb),y
@@ -946,16 +946,16 @@ mode_twoplanebitmap: {
   !:
     inx
     cpx #$28
-    bne b16
+    bne b13
     inc by
     lda #$c8
     cmp by
-    bne b15
+    bne b12
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta dtv_control
     jsr mode_ctrl
     rts
-  b9:
+  b8:
     lda #0
     tay
     sta (gfxa),y
@@ -963,7 +963,7 @@ mode_twoplanebitmap: {
     bne !+
     inc gfxa+1
   !:
-    jmp b10
+    jmp b9
 }
 // Sixs Fred Mode 2 - 8bpp Packed Bitmap - Generated from the two DTV linear graphics plane counters
 // Two Plane MultiColor Bitmap - 8bpp Packed Bitmap (CHUNK/COLDIS/HICOL = 0, ECM/BMM/MCM/LINEAR = 1)
@@ -1067,9 +1067,9 @@ mode_sixsfred2: {
     sta gfxa+1
     lda #0
     sta ay
-  b7:
+  b6:
     ldx #0
-  b8:
+  b7:
     lda ay
     lsr
     and #3
@@ -1083,20 +1083,20 @@ mode_sixsfred2: {
   !:
     inx
     cpx #$28
-    bne b8
+    bne b7
     inc ay
     lda #$c8
     cmp ay
-    bne b7
+    bne b6
     lda #0
     sta by
     lda #<PLANEB
     sta gfxb
     lda #>PLANEB
     sta gfxb+1
-  b11:
+  b9:
     ldx #0
-  b12:
+  b10:
     lda #$1b
     ldy #0
     sta (gfxb),y
@@ -1106,11 +1106,11 @@ mode_sixsfred2: {
   !:
     inx
     cpx #$28
-    bne b12
+    bne b10
     inc by
     lda #$c8
     cmp by
-    bne b11
+    bne b9
     lda #DTV_LINEAR
     sta dtv_control
     jsr mode_ctrl
@@ -1567,12 +1567,12 @@ bitmap_line: {
     sta xd
     lda y0
     cmp y1
-    bcc b10
+    bcc b7
     sec
     sbc y1
     tay
     cpy xd
-    bcc b11
+    bcc b8
     lda y1
     sta bitmap_line_ydxi.y
     lda y0
@@ -1581,20 +1581,20 @@ bitmap_line: {
     jsr bitmap_line_ydxi
   breturn:
     rts
-  b11:
+  b8:
     stx bitmap_line_xdyi.x
     lda y1
     sta bitmap_line_xdyi.y
     sty bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     jmp breturn
-  b10:
+  b7:
     lda y1
     sec
     sbc y0
     tay
     cpy xd
-    bcc b15
+    bcc b9
     lda y0
     sta bitmap_line_ydxd.y
     ldx x0
@@ -1603,7 +1603,7 @@ bitmap_line: {
     sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     jmp breturn
-  b15:
+  b9:
     stx bitmap_line_xdyd.x
     lda y1
     sta bitmap_line_xdyd.y
@@ -1617,38 +1617,38 @@ bitmap_line: {
     sta xd
     lda y0
     cmp y1
-    bcc b20
+    bcc b11
     sec
     sbc y1
     tay
     cpy xd
-    bcc b21
+    bcc b12
     lda y1
     sta bitmap_line_ydxd.y
     sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     jmp breturn
-  b21:
+  b12:
     lda x0
     sta bitmap_line_xdyd.x
     stx bitmap_line_xdyd.x1
     sty bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     jmp breturn
-  b20:
+  b11:
     lda y1
     sec
     sbc y0
     tay
     cpy xd
-    bcc b25
+    bcc b13
     lda y0
     sta bitmap_line_ydxi.y
     ldx x0
     sty bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
     jmp breturn
-  b25:
+  b13:
     lda x0
     sta bitmap_line_xdyi.x
     stx bitmap_line_xdyi.x1
@@ -1878,7 +1878,7 @@ bitmap_init: {
     sta yoffs
     sta yoffs+1
     tax
-  b5:
+  b3:
     lda #7
     sax _6
     lda yoffs
@@ -1889,7 +1889,7 @@ bitmap_init: {
     txa
     and #7
     cmp #7
-    bne b6
+    bne b4
     clc
     lda yoffs
     adc #<$28*8
@@ -1897,10 +1897,10 @@ bitmap_init: {
     lda yoffs+1
     adc #>$28*8
     sta yoffs+1
-  b6:
+  b4:
     inx
     cpx #0
-    bne b5
+    bne b3
     rts
 }
 // Multicolor Character Mode (LINEAR/HICOL/CHUNK/COLDIS/BMM/ECM = 0, MCM = 1)
@@ -2253,9 +2253,9 @@ print_str_lines: {
     ldy #0
     lda (str),y
     cmp #'@'
-    bne b6
+    bne b2
     rts
-  b6:
+  b2:
     ldy #0
     lda (str),y
     inc str
@@ -2263,16 +2263,16 @@ print_str_lines: {
     inc str+1
   !:
     cmp #'@'
-    beq b7
+    beq b3
     ldy #0
     sta (print_char_cursor),y
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  b7:
+  b3:
     cmp #'@'
-    bne b6
+    bne b2
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor

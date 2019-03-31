@@ -32,12 +32,12 @@ main: {
     lda #0
     sta sin_idx_y
     sta sin_idx_x
-  b2:
+  b1:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne b1
     jsr anim
-    jmp b2
+    jmp b1
 }
 anim: {
     .label _6 = 5
@@ -58,7 +58,7 @@ anim: {
     sta j2
     lda #0
     sta x_msb
-  b4:
+  b3:
     ldy xidx
     lda sintab_x,y
     clc
@@ -82,27 +82,27 @@ anim: {
     stx xidx
     txa
     cmp #sinlen_x
-    bcc b5
+    bcc b4
     lax xidx
     axs #sinlen_x
     stx xidx
-  b5:
+  b4:
     lax yidx
     axs #-[8]
     stx yidx
     txa
     cmp #sinlen_y
-    bcc b6
+    bcc b5
     lax yidx
     axs #sinlen_y
     stx yidx
-  b6:
+  b5:
     dec j2
     dec j2
     inc j
     lda #7
     cmp j
-    bne b4
+    bne b3
     lda x_msb
     sta SPRITES_XMSB
     inc sin_idx_x

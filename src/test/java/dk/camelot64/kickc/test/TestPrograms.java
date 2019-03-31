@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoopBreakContinue() throws IOException, URISyntaxException {
+      compileAndCompare("loop-break-continue");
+   }
+
+   @Test
    public void testLoopWhileContinue() throws IOException, URISyntaxException {
       compileAndCompare("loop-while-continue");
    }

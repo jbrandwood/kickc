@@ -9,14 +9,14 @@ main: {
     lda RASTER
     cmp #$20
     beq !+
-    bcs b2
+    bcs b3
   !:
     cmp #$40
-    bcc b2
-  b3:
+    bcc b3
+  b2:
     sta SCREEN
     jmp b1
-  b2:
+  b3:
     lda #0
-    jmp b3
+    jmp b2
 }

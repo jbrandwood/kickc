@@ -33,7 +33,7 @@ main: {
     sta print_char_cursor+1
     lda #0
     sta i
-  b2:
+  b1:
     lda i
     asl
     tay
@@ -43,7 +43,7 @@ main: {
     sta w1+1
     lda #0
     sta j
-  b3:
+  b2:
     lda j
     asl
     tay
@@ -52,7 +52,7 @@ main: {
     lda swords+1,y
     sta w2+1
     ldx #0
-  b4:
+  b3:
     lda w1
     sta compare.w1
     lda w1+1
@@ -61,7 +61,7 @@ main: {
     inc s
     lda #3
     cmp s
-    bne b5
+    bne b4
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -69,19 +69,19 @@ main: {
     sta print_char_cursor+1
     lda #0
     sta s
-  b5:
+  b4:
     inx
     cpx #6
-    bne b4
+    bne b3
     inc j
     lda #3
     cmp j
-    bne b3
+    bne b2
     inc i
     cmp i
-    bne b2
-  b1:
-    jmp b1
+    bne b1
+  b8:
+    jmp b8
 }
 // Print a newline
 print_ln: {

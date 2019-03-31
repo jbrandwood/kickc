@@ -170,8 +170,8 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
   (byte) keyboard_matrix_read::return#1 ← (byte) keyboard_matrix_read::return#3
   return 
   to:@return
-keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@7
-  (byte) keyboard_key_pressed::key#1 ← phi( main::@7/(byte) keyboard_key_pressed::key#0 )
+keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@5
+  (byte) keyboard_key_pressed::key#1 ← phi( main::@5/(byte) keyboard_key_pressed::key#0 )
   (byte~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (byte/signed byte/word/signed word/dword/signed dword) 7
   (byte) keyboard_key_pressed::colidx#0 ← (byte~) keyboard_key_pressed::$0
   (byte~) keyboard_key_pressed::$1 ← (byte) keyboard_key_pressed::key#1 >> (byte/signed byte/word/signed word/dword/signed dword) 3
@@ -209,30 +209,30 @@ main: scope:[main]  from @12
   to:main::@13
 main::@13: scope:[main]  from main
   to:main::@1
-main::@1: scope:[main]  from main::@10 main::@13 main::@8
+main::@1: scope:[main]  from main::@13 main::@6 main::@8
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  to:main::@6
-main::@6: scope:[main]  from main::@2 main::@6
+  to:main::@4
+main::@4: scope:[main]  from main::@2 main::@4
   (bool~) main::$1 ← *((byte*) RASTER#0) != (byte/word/signed word/dword/signed dword) $ff
-  if((bool~) main::$1) goto main::@6
-  to:main::@7
-main::@7: scope:[main]  from main::@6
+  if((bool~) main::$1) goto main::@4
+  to:main::@5
+main::@5: scope:[main]  from main::@4
   (byte) keyboard_key_pressed::key#0 ← (byte) KEY_SPACE#0
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#1
   to:main::@14
-main::@14: scope:[main]  from main::@7
-  (byte) keyboard_key_pressed::return#4 ← phi( main::@7/(byte) keyboard_key_pressed::return#2 )
+main::@14: scope:[main]  from main::@5
+  (byte) keyboard_key_pressed::return#4 ← phi( main::@5/(byte) keyboard_key_pressed::return#2 )
   (byte~) main::$2 ← (byte) keyboard_key_pressed::return#4
   (bool~) main::$3 ← (byte~) main::$2 != (byte/signed byte/word/signed word/dword/signed dword) 0
-  if((bool~) main::$3) goto main::@10
-  to:main::@8
-main::@10: scope:[main]  from main::@14
+  if((bool~) main::$3) goto main::@8
+  to:main::@6
+main::@8: scope:[main]  from main::@14
   *((byte*) BGCOL#0) ← (byte) GREEN#0
   to:main::@1
-main::@8: scope:[main]  from main::@14
+main::@6: scope:[main]  from main::@14
   *((byte*) BGCOL#0) ← (byte) BLUE#0
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -605,12 +605,12 @@ SYMBOL TABLE SSA
 (byte~) main::$2
 (bool~) main::$3
 (label) main::@1
-(label) main::@10
 (label) main::@13
 (label) main::@14
 (label) main::@2
+(label) main::@4
+(label) main::@5
 (label) main::@6
-(label) main::@7
 (label) main::@8
 (label) main::@return
 
@@ -629,8 +629,8 @@ Successful SSA optimization Pass2AliasElimination
 Redundant Phi (byte) keyboard_matrix_read::rowid#1 (byte) keyboard_matrix_read::rowid#0
 Redundant Phi (byte) keyboard_key_pressed::key#1 (byte) keyboard_key_pressed::key#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$1 [185] if(*((byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $ff) goto main::@6
-Simple Condition (bool~) main::$3 [192] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@10
+Simple Condition (bool~) main::$1 [185] if(*((byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $ff) goto main::@4
+Simple Condition (bool~) main::$3 [192] if((byte~) main::$2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) PROCPORT_DDR#0 = ((byte*))0
 Constant (const byte) PROCPORT_DDR_MEMORY_MASK#0 = 7
@@ -798,7 +798,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(keyboard_matrix_row_bitmask#0+keyboard_matrix_read::rowid#0)
 Consolidated array index constant in *(keyboard_matrix_col_bitmask#0+keyboard_key_pressed::colidx#0)
 Successful SSA optimization Pass2ConstantAdditionElimination
-if() condition always true - replacing block destination [12] if(true) goto main::@6
+if() condition always true - replacing block destination [12] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization PassNEliminateUnusedVars
 Successful SSA optimization PassNEliminateUnusedVars
@@ -815,7 +815,7 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @12
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@7
+Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of keyboard_key_pressed
 CALL GRAPH
 Calls in [] to main:2 
@@ -826,10 +826,10 @@ Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Renumbering block @12 to @1
 Renumbering block keyboard_key_pressed::@2 to keyboard_key_pressed::@1
-Renumbering block main::@6 to main::@1
-Renumbering block main::@7 to main::@2
-Renumbering block main::@8 to main::@3
-Renumbering block main::@10 to main::@4
+Renumbering block main::@4 to main::@1
+Renumbering block main::@5 to main::@2
+Renumbering block main::@6 to main::@3
+Renumbering block main::@8 to main::@4
 Renumbering block main::@14 to main::@5
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1

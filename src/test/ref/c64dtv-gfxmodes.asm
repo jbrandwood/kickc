@@ -146,18 +146,18 @@ menu: {
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - default
-  b3:
+  b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b3
+    bne b1
     lda #<COLS
     sta c
     lda #>COLS
     sta c+1
   // Char Colors
-  b4:
+  b2:
     lda #LIGHT_GREEN
     ldy #0
     sta (c),y
@@ -167,10 +167,10 @@ menu: {
   !:
     lda c+1
     cmp #>COLS+$3e8
-    bne b4
+    bne b2
     lda c
     cmp #<COLS+$3e8
-    bne b4
+    bne b2
     // Screen colors
     lda #0
     sta BGCOL
@@ -178,91 +178,91 @@ menu: {
     jsr print_set_screen
     jsr print_cls
     jsr print_str_lines
-  b1:
+  b4:
     ldy #KEY_1
     jsr keyboard_key_pressed
     cmp #0
-    beq b6
+    beq b5
     jsr mode_stdchar
   breturn:
     rts
-  b6:
+  b5:
     ldy #KEY_2
     jsr keyboard_key_pressed
     cmp #0
-    beq b7
+    beq b6
     jsr mode_ecmchar
     jmp breturn
-  b7:
+  b6:
     ldy #KEY_3
     jsr keyboard_key_pressed
     cmp #0
-    beq b8
+    beq b7
     jsr mode_mcchar
     jmp breturn
-  b8:
+  b7:
     ldy #KEY_4
     jsr keyboard_key_pressed
     cmp #0
-    beq b9
+    beq b8
     jsr mode_stdbitmap
     jmp breturn
-  b9:
+  b8:
     ldy #KEY_6
     jsr keyboard_key_pressed
     cmp #0
-    beq b10
+    beq b9
     jsr mode_hicolstdchar
     jmp breturn
-  b10:
+  b9:
     ldy #KEY_7
     jsr keyboard_key_pressed
     cmp #0
-    beq b11
+    beq b10
     jsr mode_hicolecmchar
     jmp breturn
-  b11:
+  b10:
     ldy #KEY_8
     jsr keyboard_key_pressed
     cmp #0
-    beq b12
+    beq b11
     jsr mode_hicolmcchar
     jmp breturn
-  b12:
+  b11:
     ldy #KEY_A
     jsr keyboard_key_pressed
     cmp #0
-    beq b13
+    beq b12
     jsr mode_sixsfred2
     jmp breturn
-  b13:
+  b12:
     ldy #KEY_B
     jsr keyboard_key_pressed
     cmp #0
-    beq b14
+    beq b13
     jsr mode_twoplanebitmap
     jmp breturn
-  b14:
+  b13:
     ldy #KEY_C
     jsr keyboard_key_pressed
     cmp #0
-    beq b15
+    beq b14
     jsr mode_sixsfred
     jmp breturn
-  b15:
+  b14:
     ldy #KEY_D
     jsr keyboard_key_pressed
     cmp #0
-    beq b16
+    beq b15
     jsr mode_8bpppixelcell
     jmp breturn
-  b16:
+  b15:
     ldy #KEY_E
     jsr keyboard_key_pressed
     cmp #0
-    bne !b1+
-    jmp b1
-  !b1:
+    bne !b4+
+    jmp b4
+  !b4:
     jsr mode_8bppchunkybmm
     jmp breturn
 }

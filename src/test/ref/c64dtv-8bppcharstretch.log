@@ -245,18 +245,18 @@ main::@17: scope:[main]  from main
   (byte~) main::$24 ← (byte~) main::$19 | (byte~) main::$23
   *((byte*) VIC_MEMORY#0) ← (byte~) main::$24
   (byte) main::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:main::@6
-main::@6: scope:[main]  from main::@17 main::@6
-  (byte) main::j#2 ← phi( main::@17/(byte) main::j#0 main::@6/(byte) main::j#1 )
+  to:main::@1
+main::@1: scope:[main]  from main::@1 main::@17
+  (byte) main::j#2 ← phi( main::@1/(byte) main::j#1 main::@17/(byte) main::j#0 )
   *((byte*) DTV_PALETTE#0 + (byte) main::j#2) ← (byte) main::j#2
   (byte) main::j#1 ← (byte) main::j#2 + rangenext(0,$f)
   (bool~) main::$25 ← (byte) main::j#1 != rangelast(0,$f)
-  if((bool~) main::$25) goto main::@6
-  to:main::@1
-main::@1: scope:[main]  from main::@11 main::@6
-  if(true) goto main::@2
+  if((bool~) main::$25) goto main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@1 main::@12
+  if(true) goto main::@4
   to:main::@return
-main::@2: scope:[main]  from main::@1
+main::@4: scope:[main]  from main::@3
   asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
   (byte~) main::$26 ← (byte) VIC_DEN#0 | (byte) VIC_ECM#0
   (byte~) main::$27 ← (byte~) main::$26 | (byte) VIC_RSEL#0
@@ -264,19 +264,19 @@ main::@2: scope:[main]  from main::@1
   *((byte*) VIC_CONTROL#0) ← (byte/word/dword~) main::$28
   *((byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) main::rst#0 ← (byte/signed byte/word/signed word/dword/signed dword) $42
-  to:main::@8
-main::@8: scope:[main]  from main::@2 main::@9
-  (byte) main::rst#2 ← phi( main::@2/(byte) main::rst#0 main::@9/(byte) main::rst#3 )
+  to:main::@6
+main::@6: scope:[main]  from main::@4 main::@7
+  (byte) main::rst#2 ← phi( main::@4/(byte) main::rst#0 main::@7/(byte) main::rst#3 )
   (bool~) main::$29 ← *((byte*) RASTER#0) != (byte) main::rst#2
-  if((bool~) main::$29) goto main::@9
-  to:main::@10
-main::@9: scope:[main]  from main::@8
-  (byte) main::rst#3 ← phi( main::@8/(byte) main::rst#2 )
+  if((bool~) main::$29) goto main::@7
   to:main::@8
-main::@10: scope:[main]  from main::@8
+main::@7: scope:[main]  from main::@6
+  (byte) main::rst#3 ← phi( main::@6/(byte) main::rst#2 )
+  to:main::@6
+main::@8: scope:[main]  from main::@6
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
-  to:main::@11
-main::@11: scope:[main]  from main::@10 main::@11
+  to:main::@12
+main::@12: scope:[main]  from main::@12 main::@8
   (byte) main::rst#1 ← *((byte*) RASTER#0)
   (byte~) main::$30 ← (byte) VIC_DEN#0 | (byte) VIC_ECM#0
   (byte~) main::$31 ← (byte~) main::$30 | (byte) VIC_RSEL#0
@@ -287,9 +287,9 @@ main::@11: scope:[main]  from main::@10 main::@11
   *((byte*) BORDERCOL#0) ← (byte~) main::$34
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   (bool~) main::$35 ← (byte) main::rst#1 != (byte/word/signed word/dword/signed dword) $f2
-  if((bool~) main::$35) goto main::@11
-  to:main::@1
-main::@return: scope:[main]  from main::@1
+  if((bool~) main::$35) goto main::@12
+  to:main::@3
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
 gfx_init: scope:[gfx_init]  from main
@@ -983,13 +983,13 @@ SYMBOL TABLE SSA
 (byte~) main::$8
 (byte~) main::$9
 (label) main::@1
-(label) main::@10
-(label) main::@11
+(label) main::@12
 (label) main::@17
-(label) main::@2
+(label) main::@3
+(label) main::@4
 (label) main::@6
+(label) main::@7
 (label) main::@8
-(label) main::@9
 (label) main::@return
 (byte) main::j
 (byte) main::j#0
@@ -1047,9 +1047,9 @@ Redundant Phi (byte) gfx_init_plane_charset8::cr#2 (byte) gfx_init_plane_charset
 Redundant Phi (byte*) gfx_init_plane_charset8::chargen#4 (byte*) gfx_init_plane_charset8::chargen#1
 Redundant Phi (byte) gfx_init_plane_charset8::ch#2 (byte) gfx_init_plane_charset8::ch#7
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$25 [233] if((byte) main::j#1!=rangelast(0,$f)) goto main::@6
-Simple Condition (bool~) main::$29 [244] if(*((byte*) RASTER#0)!=(byte) main::rst#0) goto main::@9
-Simple Condition (bool~) main::$35 [257] if((byte) main::rst#1!=(byte/word/signed word/dword/signed dword) $f2) goto main::@11
+Simple Condition (bool~) main::$25 [233] if((byte) main::j#1!=rangelast(0,$f)) goto main::@1
+Simple Condition (bool~) main::$29 [244] if(*((byte*) RASTER#0)!=(byte) main::rst#0) goto main::@7
+Simple Condition (bool~) main::$35 [257] if((byte) main::rst#1!=(byte/word/signed word/dword/signed dword) $f2) goto main::@12
 Simple Condition (bool~) gfx_init_screen0::$4 [275] if((byte) gfx_init_screen0::cx#1!=rangelast(0,$27)) goto gfx_init_screen0::@2
 Simple Condition (bool~) gfx_init_screen0::$5 [279] if((byte) gfx_init_screen0::cy#1!=rangelast(0,$18)) goto gfx_init_screen0::@1
 Simple Condition (bool~) gfx_init_plane_charset8::$12 [308] if((byte~) gfx_init_plane_charset8::$10==(byte/signed byte/word/signed word/dword/signed dword) 0) goto gfx_init_plane_charset8::@4
@@ -1290,13 +1290,13 @@ Constant (const byte*) gfx_init_plane_charset8::gfxa#0 = ((byte*))gfx_init_plane
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) main::$24 = main::$19|main::$23
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [31] if(true) goto main::@2
+if() condition always true - replacing block destination [31] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Resolved ranged next value main::j#1 ← ++ main::j#2 to ++
-Resolved ranged comparison value if(main::j#1!=rangelast(0,$f)) goto main::@6 to (byte/signed byte/word/signed word/dword/signed dword) $10
+Resolved ranged comparison value if(main::j#1!=rangelast(0,$f)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $10
 Resolved ranged next value gfx_init_screen0::cx#1 ← ++ gfx_init_screen0::cx#2 to ++
 Resolved ranged comparison value if(gfx_init_screen0::cx#1!=rangelast(0,$27)) goto gfx_init_screen0::@2 to (byte/signed byte/word/signed word/dword/signed dword) $28
 Resolved ranged next value gfx_init_screen0::cy#1 ← ++ gfx_init_screen0::cy#4 to ++
@@ -1309,8 +1309,8 @@ Resolved ranged next value gfx_init_plane_charset8::ch#1 ← ++ gfx_init_plane_c
 Resolved ranged comparison value if(gfx_init_plane_charset8::ch#1!=rangelast(0,$ff)) goto gfx_init_plane_charset8::@1 to (byte/signed byte/word/signed word/dword/signed dword) 0
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@9
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@7
 Successful SSA optimization Pass2CullEmptyBlocks
 Self Phi Eliminated (byte) gfx_init_plane_charset8::ch#7
 Successful SSA optimization Pass2SelfPhiElimination
@@ -1379,7 +1379,7 @@ Constant inlined main::$7 = (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0
 Constant inlined main::$8 = <(const byte*) SCREEN#0
 Constant inlined gfx_init_plane_charset8::$3 = ((word))(const byte*) CHARSET8#0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@18(between main::@6 and main::@6)
+Added new block during phi lifting main::@18(between main::@1 and main::@1)
 Added new block during phi lifting gfx_init_plane_charset8::@11(between gfx_init_plane_charset8::@7 and gfx_init_plane_charset8::@1)
 Added new block during phi lifting gfx_init_plane_charset8::@12(between gfx_init_plane_charset8::@6 and gfx_init_plane_charset8::@2)
 Added new block during phi lifting gfx_init_plane_charset8::@13(between gfx_init_plane_charset8::@4 and gfx_init_plane_charset8::@3)
@@ -1432,11 +1432,10 @@ Culled Empty Block (label) gfx_init_plane_charset8::@13
 Culled Empty Block (label) gfx_init_screen0::@5
 Culled Empty Block (label) gfx_init_screen0::@6
 Renumbering block @9 to @1
-Renumbering block main::@2 to main::@1
-Renumbering block main::@6 to main::@2
-Renumbering block main::@8 to main::@3
-Renumbering block main::@10 to main::@4
-Renumbering block main::@11 to main::@5
+Renumbering block main::@4 to main::@2
+Renumbering block main::@6 to main::@3
+Renumbering block main::@8 to main::@4
+Renumbering block main::@12 to main::@5
 Renumbering block main::@17 to main::@6
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -1482,19 +1481,19 @@ main::@6: scope:[main]  from main
   [24] *((const byte*) CIA2_PORT_A_DDR#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3
   [25] *((const byte*) CIA2_PORT_A#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3^((byte))((word))(const byte*) SCREEN#0/(word/signed word/dword/signed dword) $4000
   [26] *((const byte*) VIC_MEMORY#0) ← ((byte))((word))(const byte*) SCREEN#0&(word/signed word/dword/signed dword) $3fff>>(byte/signed byte/word/signed word/dword/signed dword) 6|>((word))(const byte*) SCREEN#0&(word/signed word/dword/signed dword) $3fff>>(byte/signed byte/word/signed word/dword/signed dword) 2
-  to:main::@2
-main::@2: scope:[main]  from main::@2 main::@6
-  [27] (byte) main::j#2 ← phi( main::@6/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::j#1 )
+  to:main::@1
+main::@1: scope:[main]  from main::@1 main::@6
+  [27] (byte) main::j#2 ← phi( main::@1/(byte) main::j#1 main::@6/(byte/signed byte/word/signed word/dword/signed dword) 0 )
   [28] *((const byte*) DTV_PALETTE#0 + (byte) main::j#2) ← (byte) main::j#2
   [29] (byte) main::j#1 ← ++ (byte) main::j#2
-  [30] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $10) goto main::@2
-  to:main::@1
-main::@1: scope:[main]  from main::@2 main::@5
+  [30] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $10) goto main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@5
   asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
   [32] *((const byte*) VIC_CONTROL#0) ← (const byte) VIC_DEN#0|(const byte) VIC_ECM#0|(const byte) VIC_RSEL#0|(byte/signed byte/word/signed word/dword/signed dword) 3
   [33] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@3
-main::@3: scope:[main]  from main::@1 main::@3
+main::@3: scope:[main]  from main::@2 main::@3
   [34] if(*((const byte*) RASTER#0)!=(byte/signed byte/word/signed word/dword/signed dword) $42) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -1509,7 +1508,7 @@ main::@5: scope:[main]  from main::@4 main::@5
   [41] *((const byte*) BORDERCOL#0) ← (byte~) main::$34
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   [43] if((byte) main::rst#1!=(byte/word/signed word/dword/signed dword) $f2) goto main::@5
-  to:main::@1
+  to:main::@2
 gfx_init: scope:[gfx_init]  from main
   [44] phi()
   [45] call gfx_init_screen0 
@@ -2088,32 +2087,32 @@ main: {
     // VIC memory
     lda #(SCREEN&$3fff)>>6|(>(SCREEN&$3fff))>>2
     sta VIC_MEMORY
-  //SEG35 [27] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  b2_from_b6:
-  //SEG36 [27] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@6->main::@2#0] -- vbuz1=vbuc1 
+  //SEG35 [27] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
+  b1_from_b6:
+  //SEG36 [27] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@6->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta j
-    jmp b2
+    jmp b1
   // DTV Palette - Grey Tones
-  //SEG37 [27] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
-  //SEG38 [27] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#0] -- register_copy 
-    jmp b2
-  //SEG39 main::@2
-  b2:
+  //SEG37 [27] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG38 [27] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG39 main::@1
+  b1:
   //SEG40 [28] *((const byte*) DTV_PALETTE#0 + (byte) main::j#2) ← (byte) main::j#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy j
     tya
     sta DTV_PALETTE,y
   //SEG41 [29] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
     inc j
-  //SEG42 [30] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $10) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG42 [30] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $10) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp j
-    bne b2_from_b2
-    jmp b1
-  //SEG43 main::@1
-  b1:
+    bne b1_from_b1
+    jmp b2
+  //SEG43 main::@2
+  b2:
   //SEG44 asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
     // Stabilize Raster
     ldx #$ff
@@ -2234,7 +2233,7 @@ main: {
     lda #$f2
     cmp rst
     bne b5
-    jmp b1
+    jmp b2
 }
 //SEG60 gfx_init
 // Initialize the different graphics in the memory
@@ -2865,29 +2864,29 @@ main: {
     // VIC memory
     lda #(SCREEN&$3fff)>>6|(>(SCREEN&$3fff))>>2
     sta VIC_MEMORY
-  //SEG35 [27] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  b2_from_b6:
-  //SEG36 [27] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@6->main::@2#0] -- vbuxx=vbuc1 
+  //SEG35 [27] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
+  b1_from_b6:
+  //SEG36 [27] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@6->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b2
+    jmp b1
   // DTV Palette - Grey Tones
-  //SEG37 [27] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
-  //SEG38 [27] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#0] -- register_copy 
-    jmp b2
-  //SEG39 main::@2
-  b2:
+  //SEG37 [27] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG38 [27] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG39 main::@1
+  b1:
   //SEG40 [28] *((const byte*) DTV_PALETTE#0 + (byte) main::j#2) ← (byte) main::j#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta DTV_PALETTE,x
   //SEG41 [29] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG42 [30] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $10) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG42 [30] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $10) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b2_from_b2
-    jmp b1
-  //SEG43 main::@1
-  b1:
+    bne b1_from_b1
+    jmp b2
+  //SEG43 main::@2
+  b2:
   //SEG44 asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
     // Stabilize Raster
     ldx #$ff
@@ -3000,7 +2999,7 @@ main: {
   //SEG59 [43] if((byte) main::rst#1!=(byte/word/signed word/dword/signed dword) $f2) goto main::@5 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$f2
     bne b5
-    jmp b1
+    jmp b2
 }
 //SEG60 gfx_init
 // Initialize the different graphics in the memory
@@ -3297,8 +3296,8 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b6
-Removing instruction jmp b2
 Removing instruction jmp b1
+Removing instruction jmp b2
 Removing instruction jmp b3
 Removing instruction jmp b4
 Removing instruction jmp b5
@@ -3326,7 +3325,7 @@ Removing instruction lda #0
 Removing instruction lda #0
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b2_from_b2 with b2
+Replacing label b1_from_b1 with b1
 Replacing label b3_from_b4 with b3
 Replacing label b2_from_b6 with b2
 Replacing label b1_from_b7 with b1
@@ -3335,7 +3334,7 @@ Replacing label b1_from_b3 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction bend_from_b1:
-Removing instruction b2_from_b2:
+Removing instruction b1_from_b1:
 Removing instruction b1_from_gfx_init:
 Removing instruction gfx_init_plane_charset8_from_b1:
 Removing instruction b1_from_b7:
@@ -3349,7 +3348,7 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction gfx_init_from_main:
 Removing instruction b6:
-Removing instruction b2_from_b6:
+Removing instruction b1_from_b6:
 Removing instruction b4:
 Removing instruction gfx_init_screen0_from_gfx_init:
 Removing instruction b1:
@@ -3375,7 +3374,7 @@ Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
 Relabelling long label b4_from_b3 to b5
 Succesful ASM optimization Pass5RelabelLongLabels
-Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp b1
 Removing instruction jmp b2
 Removing instruction jmp b3
@@ -3862,24 +3861,24 @@ main: {
     // VIC memory
     lda #(SCREEN&$3fff)>>6|(>(SCREEN&$3fff))>>2
     sta VIC_MEMORY
-  //SEG35 [27] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-  //SEG36 [27] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@6->main::@2#0] -- vbuxx=vbuc1 
+  //SEG35 [27] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
+  //SEG36 [27] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@6->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   // DTV Palette - Grey Tones
-  //SEG37 [27] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  //SEG38 [27] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@2->main::@2#0] -- register_copy 
-  //SEG39 main::@2
-  b2:
+  //SEG37 [27] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG38 [27] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG39 main::@1
+  b1:
   //SEG40 [28] *((const byte*) DTV_PALETTE#0 + (byte) main::j#2) ← (byte) main::j#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta DTV_PALETTE,x
   //SEG41 [29] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG42 [30] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $10) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG42 [30] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $10) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b2
-  //SEG43 main::@1
-  b1:
+    bne b1
+  //SEG43 main::@2
+  b2:
   //SEG44 asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
     // Stabilize Raster
     ldx #$ff
@@ -3988,7 +3987,7 @@ main: {
   //SEG59 [43] if((byte) main::rst#1!=(byte/word/signed word/dword/signed dword) $f2) goto main::@5 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$f2
     bne b5
-    jmp b1
+    jmp b2
 }
 //SEG60 gfx_init
 // Initialize the different graphics in the memory

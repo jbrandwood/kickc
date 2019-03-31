@@ -33,29 +33,29 @@ menu: {
     ldx #KEY_C
     jsr keyboard_key_pressed
     cmp #0
-    beq b3
+    beq b2
     jsr pressed
   breturn:
     rts
-  b3:
+  b2:
     ldx #KEY_I
     jsr keyboard_key_pressed
     cmp #0
-    beq b4
+    beq b3
     lda #RED
     sta BORDERCOL
     sei
     jmp breturn
-  b4:
+  b3:
     ldx #KEY_E
     jsr keyboard_key_pressed
     cmp #0
-    beq b5
+    beq b4
     lda #GREEN
     sta BORDERCOL
     cli
     jmp breturn
-  b5:
+  b4:
     inc SCREEN
     jmp b1
 }

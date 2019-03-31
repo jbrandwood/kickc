@@ -88,13 +88,13 @@ main: {
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
-  b2:
+  b1:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b2
-  b1:
+    bne b1
+  b2:
     // Stabilize Raster
     ldx #$ff
   rff:
@@ -187,7 +187,7 @@ main: {
     nop
     cpx #$f2
     bne b5
-    jmp b1
+    jmp b2
 }
 // Initialize Plane with 8bpp chunky
 gfx_init_chunky: {

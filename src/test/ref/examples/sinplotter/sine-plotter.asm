@@ -397,7 +397,7 @@ mul16u: {
     lda a
     and #1
     cmp #0
-    beq b4
+    beq b3
     lda res
     clc
     adc mb
@@ -411,7 +411,7 @@ mul16u: {
     lda res+3
     adc mb+3
     sta res+3
-  b4:
+  b3:
     clc
     ror a+1
     ror a

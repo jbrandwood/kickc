@@ -51,16 +51,16 @@ main: {
     sta fill.addr+1
     jsr fill
     ldx #0
-  b2:
+  b1:
     txa
     sta SCREEN,x
     inx
     cpx #$f0
-    bne b2
-  b1:
+    bne b1
+  b2:
     inc SCREEN+$3e7
     inc $d020 
-    jmp b1
+    jmp b2
 }
 // Fill some memory with a value
 // fill(word zeropage(2) size, byte register(X) val)

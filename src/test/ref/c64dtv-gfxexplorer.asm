@@ -994,12 +994,12 @@ form_mode: {
     sta DTV_PLANEA_START_HI
     tax
   // DTV Palette - default
-  b2:
+  b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b2
+    bne b1
     // Screen colors
     lda #0
     sta BGCOL

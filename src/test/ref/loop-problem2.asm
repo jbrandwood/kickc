@@ -12,11 +12,11 @@ mode_ctrl: {
   b1:
     lda BORDERCOL
     cmp #$ff
-    beq b3
+    beq b2
     lda #3
     sta BORDERCOL
     jmp b1
-  b3:
+  b2:
     lda #2
     sta BORDERCOL
     jmp b1

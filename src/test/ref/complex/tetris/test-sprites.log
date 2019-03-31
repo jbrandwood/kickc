@@ -522,36 +522,36 @@ main::@return: scope:[main]  from main::@8
 loop: scope:[loop]  from main::@7
   (byte) sin_idx#18 ← phi( main::@7/(byte) sin_idx#12 )
   to:loop::@1
-loop::@1: scope:[loop]  from loop loop::@9
-  (byte) sin_idx#15 ← phi( loop/(byte) sin_idx#18 loop::@9/(byte) sin_idx#3 )
+loop::@1: scope:[loop]  from loop loop::@7
+  (byte) sin_idx#15 ← phi( loop/(byte) sin_idx#18 loop::@7/(byte) sin_idx#3 )
   if(true) goto loop::@2
   to:loop::@return
 loop::@2: scope:[loop]  from loop::@1
   (byte) sin_idx#19 ← phi( loop::@1/(byte) sin_idx#15 )
-  to:loop::@6
-loop::@6: scope:[loop]  from loop::@2 loop::@6
-  (byte) sin_idx#13 ← phi( loop::@2/(byte) sin_idx#19 loop::@6/(byte) sin_idx#13 )
+  to:loop::@4
+loop::@4: scope:[loop]  from loop::@2 loop::@4
+  (byte) sin_idx#13 ← phi( loop::@2/(byte) sin_idx#19 loop::@4/(byte) sin_idx#13 )
   (bool~) loop::$0 ← *((byte*) RASTER#0) != (byte/word/signed word/dword/signed dword) $ff
-  if((bool~) loop::$0) goto loop::@6
-  to:loop::@7
-loop::@7: scope:[loop]  from loop::@6
-  (byte) sin_idx#8 ← phi( loop::@6/(byte) sin_idx#13 )
+  if((bool~) loop::$0) goto loop::@4
+  to:loop::@5
+loop::@5: scope:[loop]  from loop::@4
+  (byte) sin_idx#8 ← phi( loop::@4/(byte) sin_idx#13 )
   (byte) loop::idx#0 ← (byte) sin_idx#8
   (byte) loop::s#0 ← (byte/signed byte/word/signed word/dword/signed dword) 4
-  to:loop::@8
-loop::@8: scope:[loop]  from loop::@7 loop::@8
-  (byte) sin_idx#14 ← phi( loop::@7/(byte) sin_idx#8 loop::@8/(byte) sin_idx#14 )
-  (byte) loop::idx#2 ← phi( loop::@7/(byte) loop::idx#0 loop::@8/(byte) loop::idx#1 )
-  (byte) loop::s#2 ← phi( loop::@7/(byte) loop::s#0 loop::@8/(byte) loop::s#1 )
+  to:loop::@6
+loop::@6: scope:[loop]  from loop::@5 loop::@6
+  (byte) sin_idx#14 ← phi( loop::@5/(byte) sin_idx#8 loop::@6/(byte) sin_idx#14 )
+  (byte) loop::idx#2 ← phi( loop::@5/(byte) loop::idx#0 loop::@6/(byte) loop::idx#1 )
+  (byte) loop::s#2 ← phi( loop::@5/(byte) loop::s#0 loop::@6/(byte) loop::s#1 )
   (byte~) loop::$1 ← (byte) loop::s#2 << (byte/signed byte/word/signed word/dword/signed dword) 1
   *((byte*) SPRITES_YPOS#0 + (byte~) loop::$1) ← *((byte*) SIN#0 + (byte) loop::idx#2)
   (byte) loop::idx#1 ← (byte) loop::idx#2 + (byte/signed byte/word/signed word/dword/signed dword) $a
   (byte) loop::s#1 ← (byte) loop::s#2 + rangenext(4,7)
   (bool~) loop::$2 ← (byte) loop::s#1 != rangelast(4,7)
-  if((bool~) loop::$2) goto loop::@8
-  to:loop::@9
-loop::@9: scope:[loop]  from loop::@8
-  (byte) sin_idx#9 ← phi( loop::@8/(byte) sin_idx#14 )
+  if((bool~) loop::$2) goto loop::@6
+  to:loop::@7
+loop::@7: scope:[loop]  from loop::@6
+  (byte) sin_idx#9 ← phi( loop::@6/(byte) sin_idx#14 )
   (byte) sin_idx#3 ← ++ (byte) sin_idx#9
   to:loop::@1
 loop::@return: scope:[loop]  from loop::@1
@@ -888,10 +888,10 @@ SYMBOL TABLE SSA
 (bool~) loop::$2
 (label) loop::@1
 (label) loop::@2
+(label) loop::@4
+(label) loop::@5
 (label) loop::@6
 (label) loop::@7
-(label) loop::@8
-(label) loop::@9
 (label) loop::@return
 (byte) loop::idx
 (byte) loop::idx#0
@@ -1266,8 +1266,8 @@ Simple Condition (bool~) sprites_irq::$1 [173] if((byte) render_screen_showing#0
 Simple Condition (bool~) sprites_irq::$2 [191] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) 9) goto sprites_irq::@3
 Simple Condition (bool~) sprites_irq::$3 [208] if((byte) irq_cnt#1==(byte/signed byte/word/signed word/dword/signed dword) $a) goto sprites_irq::@4
 Simple Condition (bool~) main::$8 [296] if((byte) main::s#1!=rangelast(4,7)) goto main::@1
-Simple Condition (bool~) loop::$0 [312] if(*((byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $ff) goto loop::@6
-Simple Condition (bool~) loop::$2 [322] if((byte) loop::s#1!=rangelast(4,7)) goto loop::@8
+Simple Condition (bool~) loop::$0 [312] if(*((byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $ff) goto loop::@4
+Simple Condition (bool~) loop::$2 [322] if((byte) loop::s#1!=rangelast(4,7)) goto loop::@6
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) PROCPORT_DDR#0 = ((byte*))0
 Constant (const byte) PROCPORT_DDR_MEMORY_MASK#0 = 7
@@ -1448,7 +1448,7 @@ Resolved ranged comparison value if(sprites_init::s#1!=rangelast(0,3)) goto spri
 Resolved ranged next value main::s#1 ← ++ main::s#2 to ++
 Resolved ranged comparison value if(main::s#1!=rangelast(4,7)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 8
 Resolved ranged next value loop::s#1 ← ++ loop::s#2 to ++
-Resolved ranged comparison value if(loop::s#1!=rangelast(4,7)) goto loop::@8 to (byte/signed byte/word/signed word/dword/signed dword) 8
+Resolved ranged comparison value if(loop::s#1!=rangelast(4,7)) goto loop::@6 to (byte/signed byte/word/signed word/dword/signed dword) 8
 Culled Empty Block (label) toSpritePtr1_@return
 Culled Empty Block (label) sprites_irq::toSpritePtr2_@return
 Culled Empty Block (label) main::vicSelectGfxBank1_toDd001_@return
@@ -1512,7 +1512,7 @@ Simplifying constant plus zero SPRITES_YPOS#0+0
 Simplifying constant plus zero PLAYFIELD_SPRITE_PTRS_1#0+0
 Simplifying constant plus zero PLAYFIELD_SPRITE_PTRS_2#0+0
 Added new block during phi lifting main::@9(between main::@5 and main::@1)
-Added new block during phi lifting loop::@11(between loop::@8 and loop::@8)
+Added new block during phi lifting loop::@11(between loop::@6 and loop::@6)
 Added new block during phi lifting sprites_init::@3(between sprites_init::@1 and sprites_init::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of toSpritePtr1
@@ -1563,10 +1563,10 @@ Renumbering block main::@4 to main::@3
 Renumbering block main::@5 to main::@4
 Renumbering block main::@6 to main::@5
 Renumbering block main::@7 to main::@6
-Renumbering block loop::@6 to loop::@2
-Renumbering block loop::@7 to loop::@3
-Renumbering block loop::@8 to loop::@4
-Renumbering block loop::@9 to loop::@5
+Renumbering block loop::@4 to loop::@2
+Renumbering block loop::@5 to loop::@3
+Renumbering block loop::@6 to loop::@4
+Renumbering block loop::@7 to loop::@5
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of toSpritePtr1
 Adding NOP phi() at start of @4

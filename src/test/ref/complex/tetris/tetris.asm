@@ -1035,48 +1035,48 @@ play_remove_lines: {
     ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
     ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
   // Read all lines and rewrite them
-  b3:
+  b1:
     lda #1
     sta full
     lda #0
     sta x
-  b4:
+  b2:
     lda playfield,y
     sta c
     dey
     cmp #0
-    bne b5
+    bne b3
     lda #0
     sta full
-  b5:
+  b3:
     lda c
     sta playfield,x
     dex
     inc x
     lda #PLAYFIELD_COLS-1+1
     cmp x
-    bne b4
+    bne b2
     lda #1
     cmp full
-    bne b8
+    bne b6
     txa
     axs #-[PLAYFIELD_COLS]
     inc removed
-  b8:
+  b6:
     inc y
     lda #PLAYFIELD_LINES-1+1
     cmp y
-    bne b3
-  b1:
+    bne b1
+  b4:
   // Write zeros in the rest of the lines
     cpx #$ff
-    bne b2
+    bne b8
     rts
-  b2:
+  b8:
     lda #0
     sta playfield,x
     dex
-    jmp b1
+    jmp b4
 }
 // Lock the current piece onto the playfield
 play_lock_current: {

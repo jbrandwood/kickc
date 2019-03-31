@@ -33,16 +33,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testLoopBreakNested() throws IOException, URISyntaxException {
-      compileAndCompare("loop-break-nested");
-   }
-
-   @Test
-   public void testLoopBreak() throws IOException, URISyntaxException {
-      compileAndCompare("loop-break");
-   }
-
-   @Test
    public void testNoLocalScope() throws IOException, URISyntaxException {
       compileAndCompare("localscope-loops");
    }
@@ -76,6 +66,17 @@ public class TestPrograms {
    public void testMusic() throws IOException, URISyntaxException {
       compileAndCompare("examples/music/music");
    }
+
+   @Test
+   public void testLoopBreakNested() throws IOException, URISyntaxException {
+      compileAndCompare("loop-break-nested");
+   }
+
+   @Test
+   public void testLoopBreak() throws IOException, URISyntaxException {
+      compileAndCompare("loop-break");
+   }
+
 
    @Test
    public void testConstEarlyIdentification() throws IOException, URISyntaxException {

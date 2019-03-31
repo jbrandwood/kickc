@@ -143,6 +143,7 @@ public class TestFragments {
       testFragmentExists("pwsc1_derefidx_vbuyy=pwsc1_derefidx_vbuyy_minus_vwsc2");
       testFragmentExists("pwsc1_derefidx_vbuxx=pwsc1_derefidx_vbuxx_minus_vbuz1");
       testFragmentExists("pwsc1_derefidx_vbuyy=pwsc1_derefidx_vbuyy_minus_vbuz1");
+      testFragmentExists("pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_vbuaa");
    }
 
    /**

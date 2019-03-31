@@ -137,6 +137,10 @@ public class TestFragments {
 
    @Test
    public void testFragmentsExist() {
+
+      testFragmentExists("vbuaa=pbuc2_derefidx_vbuxx");
+
+
       testFragmentExists("pwsc1_derefidx_vbuxx=vwsc2");
       testFragmentExists("pwsc1_derefidx_vbuyy=vwsc2");
       testFragmentExists("pwsc1_derefidx_vbuxx=pwsc1_derefidx_vbuxx_minus_vwsc2");

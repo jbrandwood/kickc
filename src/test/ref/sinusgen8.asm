@@ -21,8 +21,8 @@ main: {
     sta print_char_cursor+1
     ldx #0
   b1:
-    sec
     lda sintab2,x
+    sec
     sbc sintabref,x
     sta sb
     bmi b2

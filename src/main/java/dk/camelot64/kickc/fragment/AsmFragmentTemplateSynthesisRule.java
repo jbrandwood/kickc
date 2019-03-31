@@ -476,7 +476,7 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite (Z1),y to AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)pb(.)z1_derefidx_vbuyy(.*)_then_(.*)", twoZ1+"|"+rvalAa, "lda ({z1}),y\n" , "$1vb$2aa$3_then_$4", null, mapZ));
 
-      // Rewrite left-size (Z1),y to use AA and a STA (Z1),y
+      // Rewrite left-size C1,y to use AA and a STA C1,y
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", twoC1, null, "vb$1aa=$2", "sta {c1},y", mapC, "yy"));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*c1.*)", null, null, "vb$1aa=$2", "sta {c1},y", null, "yy"));
       // Rewrite C1,y to save and reload YY from $FF
@@ -484,7 +484,7 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite (Z1),y to save and reload YY from $FF
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZ1, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
 
-      // Rewrite left-size (Z1),x to use AA and a STA (Z1),x
+      // Rewrite left-size C1,x to use AA and a STA C1,x
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", twoC1, null, "vb$1aa=$2", "sta {c1},x", mapC, "xx"));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*c1.*)", null, null, "vb$1aa=$2", "sta {c1},x", null, "xx"));
       // Rewrite C1,x to save and reload XX from $FF
@@ -497,13 +497,6 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite (Z1),a to save A to $FF and reload it into YY
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZ1, "sta $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZ));
 
-      /* Removed awaiting optimization
-      // Rewrite any zeropage pointer as an unsigned word zeropage values
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..z(.)(.*)", ".*p..z._deref.*", null , "$1vwuz$2$3", null, null));
-      // Rewrite any constant pointer as an constant unsigned word
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..c(.)(.*)", ".*p..z._deref.*", null , "$1vwuc$2$3", null, null));
-      */
-
       // Synthesize some constant pointers as constant words (remove when the above section can be included)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(lt|gt|le|ge|eq|neq)_p..([cz].)_then_(.*)", null, null, "$1_$2_vwu$3_then_$4", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)_(lt|gt|le|ge|eq|neq)_(.*)", null, null, "vwu$1_$2_$3", null, null));
@@ -514,7 +507,6 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([cz].)_(sethi|setlo|plus|minus)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)=_(inc|dec)_p..([cz].)", null, null, "vwu$1=_$2_vwu$3", null, null));
 
-
       // Synthesize constants using AA/XX/YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuc1(.*)", rvalAa+"|"+twoC1+"|"+ derefC1, "lda #{c1}", "$1=$2vbuaa$3", null, mapC));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbsc1(.*)", rvalAa+"|"+twoC1+"|"+ derefC1, "lda #{c1}", "$1=$2vbsaa$3", null, mapC));
@@ -522,6 +514,9 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbsc1(.*)", rvalYy+"|"+twoC1+"|"+ derefC1, "ldy #{c1}", "$1=$2vbsyy$3", null, mapC));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbuc1(.*)", rvalXx+"|"+twoC1+"|"+ derefC1, "ldx #{c1}", "$1=$2vbuxx$3", null, mapC));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)vbsc1(.*)", rvalXx+"|"+twoC1+"|"+ derefC1, "ldx #{c1}", "$1=$2vbsxx$3", null, mapC));
+
+      // Rewrite any signed dereference (.*_derefidx_vbs.*) to unsigned (.*_derefidx_vbu.*)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbs(.*)", null, null, "$1_derefidx_vbu$2", null, null));
 
       // OLD STYLE REWRITES - written when only one rule could be taken
 

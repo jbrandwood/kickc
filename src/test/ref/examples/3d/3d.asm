@@ -591,13 +591,13 @@ calculate_matrix: {
     clc
     adc sy
     sta t10
+    lda COSH,x
     ldy t1
     clc
-    lda COSH,x
     adc COSH,y
     sta rotation_matrix
-    sec
     lda SINH,y
+    sec
     sbc SINH,x
     sta rotation_matrix+1
     ldy sy
@@ -605,10 +605,10 @@ calculate_matrix: {
     lda SINH,y
     adc SINH,y
     sta rotation_matrix+2
-    ldx t3
+    ldy t3
+    lda SINH,y
     ldy t4
     sec
-    lda SINH,x
     sbc SINH,y
     ldy t6
     clc
@@ -623,9 +623,10 @@ calculate_matrix: {
     sec
     sbc COSQ,y
     sta rotation_matrix+3
+    ldy t3
+    lda COSH,y
     ldy t4
     clc
-    lda COSH,x
     adc COSH,y
     ldy t5
     clc
@@ -640,16 +641,16 @@ calculate_matrix: {
     sec
     sbc SINQ,y
     sta rotation_matrix+4
-    ldx t9
+    ldy t9
+    lda SINH,y
     ldy t10
     sec
-    lda SINH,x
     sbc SINH,y
     sta rotation_matrix+5
-    ldx t4
+    ldy t4
+    lda COSH,y
     ldy t3
     sec
-    lda COSH,x
     sbc COSH,y
     ldy t6
     clc
@@ -664,10 +665,10 @@ calculate_matrix: {
     sec
     sbc SINQ,y
     sta rotation_matrix+6
-    ldx t3
+    ldy t3
+    lda SINH,y
     ldy t4
     clc
-    lda SINH,x
     adc SINH,y
     ldy t6
     clc
@@ -682,10 +683,10 @@ calculate_matrix: {
     sec
     sbc COSQ,y
     sta rotation_matrix+7
-    ldx t9
+    ldy t9
+    lda COSH,y
     ldy t10
     clc
-    lda COSH,x
     adc COSH,y
     sta rotation_matrix+8
     rts

@@ -144,6 +144,31 @@ public class TestFragments {
       testFragmentExists("pwsc1_derefidx_vbuxx=pwsc1_derefidx_vbuxx_minus_vbuz1");
       testFragmentExists("pwsc1_derefidx_vbuyy=pwsc1_derefidx_vbuyy_minus_vbuz1");
       testFragmentExists("pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_vbuaa");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_minus_pbsc1_derefidx_vbsyy");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_minus_pbsc2_derefidx_vbsxx");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_minus_pbsc2_derefidx_vbsyy");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_plus_pbsc1_derefidx_vbsxx");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_plus_pbsc1_derefidx_vbsyy");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_plus_pbsc2_derefidx_vbsyy");
+
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_plus_pbsc2_derefidx_vbsyy");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsyy_minus_pbsc1_derefidx_vbsyy");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsyy_minus_pbsc2_derefidx_vbsxx");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsyy_minus_pbsc2_derefidx_vbsyy");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsyy_plus_pbsc2_derefidx_vbsxx");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsyy_plus_pbsc2_derefidx_vbsyy");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_minus_pbsc1_derefidx_vbsxx");
+      testFragmentExists("vbsaa=vbsaa_minus_pbsc1_derefidx_vbsyy");
+      testFragmentExists("vbsaa=vbsaa_plus_pbsc1_derefidx_vbsxx");
+
+      testFragmentExists("vwuz1=pbuc1_derefidx_vbsxx_word_pbuc2_derefidx_vbsxx");
+      testFragmentExists("vwuz1=pbuc1_derefidx_vbsyy_word_pbuc2_derefidx_vbsyy");
+
+      testFragmentExists("vwuz1=pbuc1_derefidx_vbsyy_word_pbuc2_derefidx_vbsyy");
+
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsz1_minus_pbsc1_derefidx_vbsz2");
+      testFragmentExists("vbsaa=pbsc1_derefidx_vbsxx_minus_pbsc1_derefidx_vbsyy");
+
    }
 
    /**
@@ -155,7 +180,7 @@ public class TestFragments {
       AsmFragmentTemplateSynthesizer.initialize("src/main/fragment/");
       CompileLog log = new CompileLog();
       log.setSysOut(true);
-      log.setVerboseFragmentLog(true);
+      //log.setVerboseFragmentLog(true);
       List<AsmFragmentTemplate> templates =
             new ArrayList<>(AsmFragmentTemplateSynthesizer.getFragmentTemplates(signature, log));
       if(templates.size() > 0) {

@@ -23,9 +23,9 @@ main: {
     sta txt+1
     inx
     cpx #$b
-    bne b6
+    bne b4
     rts
-  b6:
+  b4:
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1

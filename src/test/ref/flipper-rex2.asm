@@ -5,22 +5,22 @@
   .label SCREEN = $400
 main: {
     jsr prepare
-  b1:
-    ldx #$19
   b3:
+    ldx #$19
+  b1:
     lda #$fe
     cmp RASTER
-    bne b3
-  b5:
+    bne b1
+  b2:
     lda #$ff
     cmp RASTER
-    bne b5
+    bne b2
     dex
     cpx #0
-    bne b3
+    bne b1
     jsr flip
     jsr plot
-    jmp b1
+    jmp b3
 }
 // Plot buffer on screen
 plot: {
@@ -82,12 +82,12 @@ flip: {
     cmp #0
     bne b1
     ldx #0
-  b5:
+  b4:
     lda buffer2,x
     sta buffer1,x
     inx
     cpx #0
-    bne b5
+    bne b4
     rts
 }
 // Prepare buffer

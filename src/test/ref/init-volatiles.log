@@ -81,6 +81,7 @@ Coalesced [4] x#11 ← x#0
 Coalesced [10] x#12 ← x#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) main::@7
+Renumbering block main::@3 to main::@2
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
@@ -102,11 +103,11 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) x#5 ← phi( main/(byte) x#0 main::@1/(byte) x#1 )
   [6] (byte) x#1 ← ++ (byte) x#5
   [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   [8] (byte) x#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@return
-main::@return: scope:[main]  from main::@3
+main::@return: scope:[main]  from main::@2
   [9] return 
   to:@return
 
@@ -172,9 +173,9 @@ main: {
     lda x
     cmp #$32
     bcc b1_from_b1
-    jmp b3
-  //SEG17 main::@3
-  b3:
+    jmp b2
+  //SEG17 main::@2
+  b2:
   //SEG18 [8] (byte) x#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta x_2
@@ -247,9 +248,9 @@ main: {
     lda x
     cmp #$32
     bcc b1_from_b1
-    jmp b3
-  //SEG17 main::@3
-  b3:
+    jmp b2
+  //SEG17 main::@2
+  b2:
   //SEG18 [8] (byte) x#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta x
@@ -264,7 +265,7 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
-Removing instruction jmp b3
+Removing instruction jmp b2
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
@@ -276,7 +277,7 @@ Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b1:
 Removing instruction bend:
-Removing instruction b3:
+Removing instruction b2:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -286,7 +287,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@1
-(label) main::@3
+(label) main::@2
 (label) main::@return
 (byte) x
 (byte) x#0 x zp ZP_BYTE:2 1.3333333333333333
@@ -332,7 +333,7 @@ main: {
     lda x
     cmp #$32
     bcc b1
-  //SEG17 main::@3
+  //SEG17 main::@2
   //SEG18 [8] (byte) x#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta x

@@ -41,9 +41,9 @@ main: {
     jsr print_ln
     inx
     cpx #9
-    bne b12
+    bne b9
     rts
-  b12:
+  b9:
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1

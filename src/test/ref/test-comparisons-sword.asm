@@ -33,7 +33,7 @@ main: {
     sta print_char_cursor+1
     lda #0
     sta i
-  b7:
+  b2:
     lda i
     asl
     tay
@@ -43,7 +43,7 @@ main: {
     sta w1+1
     lda #0
     sta j
-  b8:
+  b3:
     lda j
     asl
     tay
@@ -52,7 +52,7 @@ main: {
     lda swords+1,y
     sta w2+1
     ldx #0
-  b9:
+  b4:
     lda w1
     sta compare.w1
     lda w1+1
@@ -61,7 +61,7 @@ main: {
     inc s
     lda #3
     cmp s
-    bne b10
+    bne b5
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -69,19 +69,19 @@ main: {
     sta print_char_cursor+1
     lda #0
     sta s
-  b10:
+  b5:
     inx
     cpx #6
-    bne b9
+    bne b4
     inc j
     lda #3
     cmp j
-    bne b8
+    bne b3
     inc i
     cmp i
-    bne b7
-  b2:
-    jmp b2
+    bne b2
+  b1:
+    jmp b1
 }
 // Print a newline
 print_ln: {
@@ -129,45 +129,45 @@ compare: {
     cpx #EQ
     beq b5
     cpx #NE
-    bne b7
+    bne b10
     lda w1
     cmp w2
     bne !+
     lda w1+1
     cmp w2+1
-    beq b6
+    beq b9
   !:
     lda #TT
     sta r
-    jmp b33
-  b6:
+    jmp b23
+  b9:
     lda #FF
     sta r
-  b33:
+  b23:
     lda #<ops_1
     sta ops
     lda #>ops_1
     sta ops+1
-    jmp b11
-  b7:
+    jmp b6
+  b10:
     lda #FF
     sta r
     lda #<0
     sta ops
     sta ops+1
-  b11:
+  b6:
     lda w1+1
-    bmi b12
+    bmi b7
     lda #' '
     jsr print_char
-  b12:
+  b7:
     jsr print_sword
     jsr print_str
     lda w2+1
-    bmi b13
+    bmi b8
     lda #' '
     jsr print_char
-  b13:
+  b8:
     lda w2
     sta print_sword.w
     lda w2+1
@@ -179,22 +179,22 @@ compare: {
   b5:
     lda w1+1
     cmp w2+1
-    bne b8
+    bne b11
     lda w1
     cmp w2
-    bne b8
+    bne b11
     lda #TT
     sta r
-    jmp b34
-  b8:
+    jmp b24
+  b11:
     lda #FF
     sta r
-  b34:
+  b24:
     lda #<ops_2
     sta ops
     lda #>ops_2
     sta ops+1
-    jmp b11
+    jmp b6
   b4:
     lda w2
     cmp w1
@@ -204,20 +204,20 @@ compare: {
     eor #$80
   !:
     beq !e+
-    bpl b9
+    bpl b12
   !e:
     lda #TT
     sta r
-    jmp b35
-  b9:
+    jmp b25
+  b12:
     lda #FF
     sta r
-  b35:
+  b25:
     lda #<ops_3
     sta ops
     lda #>ops_3
     sta ops+1
-    jmp b11
+    jmp b6
   b3:
     lda w2
     cmp w1
@@ -226,19 +226,19 @@ compare: {
     bvc !+
     eor #$80
   !:
-    bpl b10
+    bpl b13
     lda #TT
     sta r
-    jmp b36
-  b10:
+    jmp b26
+  b13:
     lda #FF
     sta r
-  b36:
+  b26:
     lda #<ops_4
     sta ops
     lda #>ops_4
     sta ops+1
-    jmp b11
+    jmp b6
   b2:
     lda w1
     cmp w2
@@ -252,16 +252,16 @@ compare: {
   !e:
     lda #TT
     sta r
-    jmp b37
+    jmp b27
   b14:
     lda #FF
     sta r
-  b37:
+  b27:
     lda #<ops_5
     sta ops
     lda #>ops_5
     sta ops+1
-    jmp b11
+    jmp b6
   b1:
     lda w1
     cmp w2
@@ -273,16 +273,16 @@ compare: {
     bpl b15
     lda #TT
     sta r
-    jmp b38
+    jmp b28
   b15:
     lda #FF
     sta r
-  b38:
+  b28:
     lda #<ops_6
     sta ops
     lda #>ops_6
     sta ops+1
-    jmp b11
+    jmp b6
     ops_1: .text "!=@"
     ops_2: .text "==@"
     ops_3: .text ">=@"

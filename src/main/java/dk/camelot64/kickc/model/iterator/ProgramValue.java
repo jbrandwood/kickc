@@ -634,6 +634,26 @@ public abstract class ProgramValue {
       }
    }
 
+   public static class PhiValuePredecessor extends ProgramValue {
+      private final StatementPhiBlock.PhiVariable phiVariable;
+      private final int i;
+
+      PhiValuePredecessor(StatementPhiBlock.PhiVariable phiVariable, int i) {
+         this.phiVariable = phiVariable;
+         this.i = i;
+      }
+
+      @Override
+      public Value get() {
+         return phiVariable.getValues().get(i).getPredecessor();
+      }
+
+      @Override
+      public void set(Value value) {
+         phiVariable.getValues().get(i).setPredecessor((LabelRef) value);
+      }
+   }
+
    /**
     * LValue as part of an assignment statement (or a call).
     */

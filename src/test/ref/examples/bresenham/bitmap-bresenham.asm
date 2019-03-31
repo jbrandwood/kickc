@@ -64,7 +64,7 @@ bitmap_line: {
     tya
     cmp y0
     beq !+
-    bcs b10
+    bcs b7
   !:
     tya
     eor #$ff
@@ -72,31 +72,31 @@ bitmap_line: {
     adc y0
     sta yd
     cmp xd
-    bcc b11
+    bcc b8
     sty bitmap_line_ydxi.y
     ldx x1
     jsr bitmap_line_ydxi
   breturn:
     rts
-  b11:
+  b8:
     ldx x1
     sty bitmap_line_xdyi.y
     jsr bitmap_line_xdyi
     jmp breturn
-  b10:
+  b7:
     tya
     sec
     sbc y0
     sta yd
     cmp xd
-    bcc b15
+    bcc b9
     lda y0
     sta bitmap_line_ydxd.y
     ldx x0
     sty bitmap_line_ydxd.y1
     jsr bitmap_line_ydxd
     jmp breturn
-  b15:
+  b9:
     ldx x1
     sty bitmap_line_xdyd.y
     lda x0
@@ -111,7 +111,7 @@ bitmap_line: {
     tya
     cmp y0
     beq !+
-    bcs b20
+    bcs b11
   !:
     tya
     eor #$ff
@@ -119,29 +119,29 @@ bitmap_line: {
     adc y0
     sta yd
     cmp xd
-    bcc b21
+    bcc b12
     sty bitmap_line_ydxd.y
     ldx x1
     jsr bitmap_line_ydxd
     jmp breturn
-  b21:
+  b12:
     ldx x0
     jsr bitmap_line_xdyd
     jmp breturn
-  b20:
+  b11:
     tya
     sec
     sbc y0
     sta yd
     cmp xd
-    bcc b25
+    bcc b13
     lda y0
     sta bitmap_line_ydxi.y
     ldx x0
     sty bitmap_line_ydxi.y1
     jsr bitmap_line_ydxi
     jmp breturn
-  b25:
+  b13:
     ldx x0
     lda x1
     sta bitmap_line_xdyi.x1
@@ -390,7 +390,7 @@ bitmap_init: {
     sta yoffs
     sta yoffs+1
     tax
-  b5:
+  b3:
     lda #7
     sax _6
     lda yoffs
@@ -401,7 +401,7 @@ bitmap_init: {
     txa
     and #7
     cmp #7
-    bne b6
+    bne b4
     clc
     lda yoffs
     adc #<$28*8
@@ -409,10 +409,10 @@ bitmap_init: {
     lda yoffs+1
     adc #>$28*8
     sta yoffs+1
-  b6:
+  b4:
     inx
     cpx #0
-    bne b5
+    bne b3
     rts
 }
   // Tables for the plotter - initialized by calling bitmap_draw_init();

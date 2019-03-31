@@ -13,13 +13,13 @@ main: {
     cpy #9
     bne b1
     ldy #$a
-  b3:
+  b2:
     tya
     tax
     jsr line
     iny
     cpy #$13
-    bne b3
+    bne b2
     rts
 }
 // line(byte register(X) l)

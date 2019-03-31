@@ -138,17 +138,17 @@ main: {
     sta DTV_BLITTER_CONTROL2
     ldx #0
   // wait til blitter is ready
-  b2:
+  b1:
     lda #DTV_BLIT_STATUS_BUSY
     and DTV_BLITTER_CONTROL2
     cmp #0
-    bne b2
+    bne b1
     // restart
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
     inx
     cpx #8
-    bne b2
+    bne b1
     rts
 }
   SRCA: .byte 'c', 'a', 'm', 'e', 'l', 'o', 't', '!', ' '

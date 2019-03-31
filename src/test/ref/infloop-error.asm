@@ -12,14 +12,14 @@ main: {
     adc #1
     stx $ff
     cmp $ff
-    bcs b7
+    bcs b4
     tax
-  b7:
+  b4:
     sta $ff
     cpy $ff
-    bcs b8
+    bcs b5
     tay
-  b8:
+  b5:
     stx SCREEN
     sty SCREEN+1
     sta SCREEN+2

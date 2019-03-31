@@ -125,8 +125,12 @@ Created 1 initial phi equivalence classes
 Coalesced [20] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) print_cls::@3
+Renumbering block @3 to @1
+Renumbering block mode_ctrl::@2 to mode_ctrl::@1
+Renumbering block mode_ctrl::@6 to mode_ctrl::@2
+Renumbering block mode_ctrl::@8 to mode_ctrl::@3
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -136,14 +140,14 @@ Adding NOP phi() at start of print_cls
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@3
-@3: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @3
+main: scope:[main]  from @1
   [4] phi()
   [5] call print_cls 
   to:main::@1
@@ -156,17 +160,17 @@ main::@return: scope:[main]  from main::@1
   to:@return
 mode_ctrl: scope:[mode_ctrl]  from main::@1
   [9] phi()
-  to:mode_ctrl::@2
-mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@6 mode_ctrl::@8
+  to:mode_ctrl::@1
+mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@2 mode_ctrl::@3
   [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0)
-  [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@8
-  to:mode_ctrl::@6
-mode_ctrl::@6: scope:[mode_ctrl]  from mode_ctrl::@2
+  [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@3
+  to:mode_ctrl::@2
+mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
   [12] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  to:mode_ctrl::@2
-mode_ctrl::@8: scope:[mode_ctrl]  from mode_ctrl::@2
+  to:mode_ctrl::@1
+mode_ctrl::@3: scope:[mode_ctrl]  from mode_ctrl::@1
   [13] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  to:mode_ctrl::@2
+  to:mode_ctrl::@1
 print_cls: scope:[print_cls]  from main
   [14] phi()
   to:print_cls::@1
@@ -213,17 +217,17 @@ INITIAL ASM
   .label SCREEN = $400
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG5 @3
-b3:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @3 to main [phi:@3->main]
-main_from_b3:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -251,29 +255,29 @@ main: {
 //SEG19 mode_ctrl
 mode_ctrl: {
     .label before = 4
-    jmp b2
-  //SEG20 mode_ctrl::@2
-  b2:
+    jmp b1
+  //SEG20 mode_ctrl::@1
+  b1:
   //SEG21 [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuz1=_deref_pbuc1 
     lda BORDERCOL
     sta before
-  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@8 -- vbuz1_eq_vbuc1_then_la1 
+  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@3 -- vbuz1_eq_vbuc1_then_la1 
     lda #$ff
     cmp before
-    beq b8
-    jmp b6
-  //SEG23 mode_ctrl::@6
-  b6:
+    beq b3
+    jmp b2
+  //SEG23 mode_ctrl::@2
+  b2:
   //SEG24 [12] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
-    jmp b2
-  //SEG25 mode_ctrl::@8
-  b8:
+    jmp b1
+  //SEG25 mode_ctrl::@3
+  b3:
   //SEG26 [13] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
-    jmp b2
+    jmp b1
 }
 //SEG27 print_cls
 print_cls: {
@@ -345,17 +349,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG5 @3
-b3:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @3 to main [phi:@3->main]
-main_from_b3:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -382,27 +386,27 @@ main: {
 }
 //SEG19 mode_ctrl
 mode_ctrl: {
-    jmp b2
-  //SEG20 mode_ctrl::@2
-  b2:
+    jmp b1
+  //SEG20 mode_ctrl::@1
+  b1:
   //SEG21 [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
     lda BORDERCOL
-  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@8 -- vbuaa_eq_vbuc1_then_la1 
+  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@3 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$ff
-    beq b8
-    jmp b6
-  //SEG23 mode_ctrl::@6
-  b6:
+    beq b3
+    jmp b2
+  //SEG23 mode_ctrl::@2
+  b2:
   //SEG24 [12] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
-    jmp b2
-  //SEG25 mode_ctrl::@8
-  b8:
+    jmp b1
+  //SEG25 mode_ctrl::@3
+  b3:
   //SEG26 [13] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
-    jmp b2
+    jmp b1
 }
 //SEG27 print_cls
 print_cls: {
@@ -445,21 +449,21 @@ print_cls: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b3
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
+Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b6
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
-Removing instruction b3_from_bbegin:
-Removing instruction b3:
-Removing instruction main_from_b3:
-Removing instruction bend_from_b3:
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction mode_ctrl_from_b1:
 Removing instruction b1_from_b1:
@@ -468,7 +472,7 @@ Removing instruction bend:
 Removing instruction print_cls_from_main:
 Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b6:
+Removing instruction b2:
 Removing instruction b1_from_print_cls:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -481,7 +485,7 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @3
+(label) @1
 (label) @begin
 (label) @end
 (byte*) BORDERCOL
@@ -492,9 +496,9 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@return
 (void()) mode_ctrl()
+(label) mode_ctrl::@1
 (label) mode_ctrl::@2
-(label) mode_ctrl::@6
-(label) mode_ctrl::@8
+(label) mode_ctrl::@3
 (byte) mode_ctrl::before
 (byte) mode_ctrl::before#0 reg byte a 22.0
 (void()) print_cls()
@@ -520,11 +524,11 @@ Score: 764
   .label BORDERCOL = $d020
   .label SCREEN = $400
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-//SEG5 @3
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [4] phi from @3 to main [phi:@3->main]
-//SEG8 [3] phi from @3 to @end [phi:@3->@end]
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main
 main: {
@@ -542,24 +546,24 @@ main: {
 }
 //SEG19 mode_ctrl
 mode_ctrl: {
-  //SEG20 mode_ctrl::@2
-  b2:
+  //SEG20 mode_ctrl::@1
+  b1:
   //SEG21 [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
     lda BORDERCOL
-  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@8 -- vbuaa_eq_vbuc1_then_la1 
+  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@3 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$ff
-    beq b8
-  //SEG23 mode_ctrl::@6
+    beq b3
+  //SEG23 mode_ctrl::@2
   //SEG24 [12] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
-    jmp b2
-  //SEG25 mode_ctrl::@8
-  b8:
+    jmp b1
+  //SEG25 mode_ctrl::@3
+  b3:
   //SEG26 [13] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
-    jmp b2
+    jmp b1
 }
 //SEG27 print_cls
 print_cls: {

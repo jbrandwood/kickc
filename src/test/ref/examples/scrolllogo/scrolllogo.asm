@@ -71,10 +71,10 @@ loop: {
     sta xsin_idx+1
   b1:
   // Wait for the raster to reach the bottom of the screen
-  b6:
+  b2:
     lda #$ff
     cmp RASTER
-    bne b6
+    bne b2
     inc BORDERCOL
     lda xsin_idx
     clc
@@ -100,14 +100,14 @@ loop: {
   !:
     lda xsin_idx+1
     cmp #>XSIN_SIZE*2
-    bne b9
+    bne b4
     lda xsin_idx
     cmp #<XSIN_SIZE*2
-    bne b9
+    bne b4
     lda #0
     sta xsin_idx
     sta xsin_idx+1
-  b9:
+  b4:
     dec BORDERCOL
     jmp b1
 }
@@ -141,17 +141,17 @@ render_logo: {
     lda xpos+1
     bmi b1
     ldy #0
-  b4:
+  b2:
     cpy x_char
-    bne b7
+    bne b3
     lda #0
     sta logo_idx
-  b10:
+  b5:
     cpy #$28
-    bne b13
+    bne b6
   breturn:
     rts
-  b13:
+  b6:
     lda logo_idx
     sta SCREEN,y
     lda #$28*1
@@ -176,8 +176,8 @@ render_logo: {
     sta SCREEN+$28*5,y
     iny
     inc logo_idx
-    jmp b10
-  b7:
+    jmp b5
+  b3:
     lda #0
     sta SCREEN,y
     sta SCREEN+$28*1,y
@@ -186,7 +186,7 @@ render_logo: {
     sta SCREEN+$28*4,y
     sta SCREEN+$28*5,y
     iny
-    jmp b4
+    jmp b2
   b1:
     lda x_char
     eor #$ff
@@ -194,15 +194,15 @@ render_logo: {
     adc #1
     sta logo_idx
     ldy #0
-  b21:
+  b8:
     lda #$28
     cmp logo_idx
-    bne b24
-  b27:
+    bne b9
+  b11:
     cpy #$28
-    bne b30
+    bne b12
     jmp breturn
-  b30:
+  b12:
     lda #0
     sta SCREEN,y
     sta SCREEN+$28*1,y
@@ -211,8 +211,8 @@ render_logo: {
     sta SCREEN+$28*4,y
     sta SCREEN+$28*5,y
     iny
-    jmp b27
-  b24:
+    jmp b11
+  b9:
     lda logo_idx
     sta SCREEN,y
     lda #$28*1
@@ -237,7 +237,7 @@ render_logo: {
     sta SCREEN+$28*5,y
     iny
     inc logo_idx
-    jmp b21
+    jmp b8
 }
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
@@ -398,7 +398,7 @@ mul16u: {
     lda a
     and #1
     cmp #0
-    beq b8
+    beq b4
     lda res
     clc
     adc mb
@@ -412,7 +412,7 @@ mul16u: {
     lda res+3
     adc mb+3
     sta res+3
-  b8:
+  b4:
     clc
     ror a+1
     ror a

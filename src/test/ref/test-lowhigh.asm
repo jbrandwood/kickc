@@ -126,18 +126,18 @@ main: {
   !:
     lda dw+3
     cmp #>$12345690>>$10
-    bne b18
+    bne b16
     lda dw+2
     cmp #<$12345690>>$10
-    bne b18
+    bne b16
     lda dw+1
     cmp #>$12345690
-    bne b18
+    bne b16
     lda dw
     cmp #<$12345690
-    bne b18
+    bne b16
     rts
-  b18:
+  b16:
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1

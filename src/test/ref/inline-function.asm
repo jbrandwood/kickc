@@ -13,21 +13,21 @@ main: {
     .const toD0181_return = screen/$40|charset1/$400
     .const toD0182_return = screen/$40|charset2/$400
     sei
-  b6:
+  b1:
     lda #$ff
     cmp RASTER
-    bne b6
+    bne b1
     lda #toD0181_return
     sta D018
     lda #6
     sta BGCOL
-  b9:
+  b2:
     lda #$62
     cmp RASTER
-    bne b9
+    bne b2
     lda #toD0182_return
     sta D018
     lda #$b
     sta BGCOL
-    jmp b6
+    jmp b1
 }

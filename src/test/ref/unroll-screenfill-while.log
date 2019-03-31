@@ -605,6 +605,8 @@ Created 1 initial phi equivalence classes
 Coalesced [34] main::x#6 ← main::x#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) main::@9
+Renumbering block main::@3 to main::@2
+Renumbering block main::@4 to main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -623,13 +625,13 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@4
-  [5] (byte) main::x#5 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(byte) main::x#1 )
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+main::@1: scope:[main]  from main main::@3
+  [5] (byte) main::x#5 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::x#1 )
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   [6] *((const byte*) main::SCREEN#0 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_1
-main::@3_1: scope:[main]  from main::@3
+main::@3_1: scope:[main]  from main::@2
   [7] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_2
 main::@3_2: scope:[main]  from main::@3_1
@@ -700,12 +702,12 @@ main::@3_23: scope:[main]  from main::@3_22
   to:main::@3_24
 main::@3_24: scope:[main]  from main::@3_23
   [30] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $18*(byte/signed byte/word/signed word/dword/signed dword) $28 + (byte) main::x#5) ← (byte) main::x#5
-  to:main::@4
-main::@4: scope:[main]  from main::@3_24
+  to:main::@3
+main::@3: scope:[main]  from main::@3_24
   [31] (byte) main::x#1 ← ++ (byte) main::x#5
   [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@4
+main::@return: scope:[main]  from main::@3
   [33] return 
   to:@return
 
@@ -758,15 +760,15 @@ main: {
     lda #0
     sta x
     jmp b1
-  //SEG13 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
-  //SEG14 [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG13 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+  //SEG14 [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp b1
   //SEG15 main::@1
   b1:
-    jmp b3
-  //SEG16 main::@3
-  b3:
+    jmp b2
+  //SEG16 main::@2
+  b2:
   //SEG17 [6] *((const byte*) main::SCREEN#0 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy x
     tya
@@ -939,15 +941,15 @@ main: {
     ldy x
     tya
     sta SCREEN+$18*$28,y
-    jmp b4
-  //SEG66 main::@4
-  b4:
+    jmp b3
+  //SEG66 main::@3
+  b3:
   //SEG67 [31] (byte) main::x#1 ← ++ (byte) main::x#5 -- vbuz1=_inc_vbuz1 
     inc x
   //SEG68 [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp x
-    bne b1_from_b4
+    bne b1_from_b3
     jmp breturn
   //SEG69 main::@return
   breturn:
@@ -997,15 +999,15 @@ main: {
   //SEG12 [5] phi (byte) main::x#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG13 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
-  //SEG14 [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG13 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+  //SEG14 [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp b1
   //SEG15 main::@1
   b1:
-    jmp b3
-  //SEG16 main::@3
-  b3:
+    jmp b2
+  //SEG16 main::@2
+  b2:
   //SEG17 [6] *((const byte*) main::SCREEN#0 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
@@ -1153,14 +1155,14 @@ main: {
   //SEG65 [30] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $18*(byte/signed byte/word/signed word/dword/signed dword) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$18*$28,x
-    jmp b4
-  //SEG66 main::@4
-  b4:
+    jmp b3
+  //SEG66 main::@3
+  b3:
   //SEG67 [31] (byte) main::x#1 ← ++ (byte) main::x#5 -- vbuxx=_inc_vbuxx 
     inx
   //SEG68 [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
-    bne b1_from_b4
+    bne b1_from_b3
     jmp breturn
   //SEG69 main::@return
   breturn:
@@ -1172,7 +1174,7 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
-Removing instruction jmp b3
+Removing instruction jmp b2
 Removing instruction jmp b3_1
 Removing instruction jmp b3_2
 Removing instruction jmp b3_3
@@ -1197,16 +1199,16 @@ Removing instruction jmp b3_21
 Removing instruction jmp b3_22
 Removing instruction jmp b3_23
 Removing instruction jmp b3_24
-Removing instruction jmp b4
+Removing instruction jmp b3
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1 with b3
-Replacing label b1_from_b4 with b3
+Replacing label b1 with b2
+Replacing label b1_from_b3 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
-Removing instruction b1_from_b4:
+Removing instruction b1_from_b3:
 Removing instruction b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
@@ -1235,13 +1237,13 @@ Removing instruction b3_21:
 Removing instruction b3_22:
 Removing instruction b3_23:
 Removing instruction b3_24:
-Removing instruction b4:
+Removing instruction b3:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b3
+Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -1252,6 +1254,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@1
+(label) main::@2
 (label) main::@3
 (label) main::@3_1
 (label) main::@3_10
@@ -1277,7 +1280,6 @@ FINAL SYMBOL TABLE
 (label) main::@3_7
 (label) main::@3_8
 (label) main::@3_9
-(label) main::@4
 (label) main::@return
 (byte*) main::SCREEN
 (const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
@@ -1312,11 +1314,11 @@ main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   //SEG12 [5] phi (byte) main::x#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG13 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  //SEG14 [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG13 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  //SEG14 [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
   //SEG15 main::@1
-  //SEG16 main::@3
-  b3:
+  //SEG16 main::@2
+  b2:
   //SEG17 [6] *((const byte*) main::SCREEN#0 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
@@ -1416,12 +1418,12 @@ main: {
   //SEG65 [30] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $18*(byte/signed byte/word/signed word/dword/signed dword) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$18*$28,x
-  //SEG66 main::@4
+  //SEG66 main::@3
   //SEG67 [31] (byte) main::x#1 ← ++ (byte) main::x#5 -- vbuxx=_inc_vbuxx 
     inx
   //SEG68 [32] if((byte) main::x#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
-    bne b3
+    bne b2
   //SEG69 main::@return
   //SEG70 [33] return 
     rts

@@ -137,40 +137,40 @@ findcol: {
     txa
     cmp x
     beq !+
-    bcs b4
+    bcs b3
   !:
     txa
     eor #$ff
     sec
     adc x
     tax
-  b5:
+  b4:
     lda y
     cmp yp
-    bcc b6
+    bcc b5
     sec
     sbc yp
     stx $ff
     clc
     adc $ff
     tax
-  b7:
+  b6:
     cpx mindiff
-    bcs b21
+    bcs b13
     lda COLS,y
     sta mincol
-  b8:
+  b7:
     iny
     cpy #numpoints
-    bcc b19
+    bcc b12
     jmp breturn
-  b19:
+  b12:
     stx mindiff
     jmp b1
-  b21:
+  b13:
     ldx mindiff
-    jmp b8
-  b6:
+    jmp b7
+  b5:
     lda yp
     sec
     sbc y
@@ -178,13 +178,13 @@ findcol: {
     clc
     adc $ff
     tax
-    jmp b7
-  b4:
+    jmp b6
+  b3:
     txa
     sec
     sbc x
     tax
-    jmp b5
+    jmp b4
 }
 initscreen: {
     .label screen = 3

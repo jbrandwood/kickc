@@ -25,18 +25,18 @@ main: {
     sta current_bit
     ldx #7
   // Wait for raster
-  b2:
+  b1:
     lda #$fe
     cmp RASTER
-    bne b2
-  b4:
+    bne b1
+  b2:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne b2
     inc BGCOL
     jsr scroll_soft
     dec BGCOL
-    jmp b2
+    jmp b1
 }
 scroll_soft: {
     dex

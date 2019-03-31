@@ -55,7 +55,7 @@ main: {
     sta rem16u
     sta rem16u+1
     sta i
-  b6:
+  b1:
     jsr point_init
     lda i
     lsr
@@ -73,13 +73,13 @@ main: {
     sta i
     lda #8
     cmp i
-    bne b6
-  b8:
+    bne b1
+  b2:
     lda #$ff
     cmp RASTER
-    bne b8
+    bne b2
     inc BORDERCOL
-    jmp b8
+    jmp b2
 }
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(5) x, byte register(Y) y)
@@ -174,7 +174,7 @@ point_init: {
     sta abs16s2_return
     lda y_diff+1
     sta abs16s2_return+1
-  b10:
+  b6:
     lda abs16s2_return+1
     cmp abs16s1_return+1
     bcc b1
@@ -226,12 +226,12 @@ point_init: {
   b1:
     // X is driver - abs(y/x) is < 1
     lda x_diff+1
-    bmi b7
+    bmi b4
     // x add = 1.0
     ldy point_idx
     lda #$10
     sta x_add,y
-  b8:
+  b5:
     lda y_diff
     sta divr16s.rem
     lda y_diff+1
@@ -245,12 +245,12 @@ point_init: {
     ldy point_idx1
     sta y_add,y
     jmp b2
-  b7:
+  b4:
     // x add = -1.0
     lda #-$10
     ldy point_idx
     sta x_add,y
-    jmp b8
+    jmp b5
   abs16s2_b1:
     sec
     lda y_diff
@@ -261,7 +261,7 @@ point_init: {
     eor #$ff
     adc #0
     sta abs16s2__2+1
-    jmp b10
+    jmp b6
   abs16s1_b1:
     sec
     lda x_diff
@@ -304,7 +304,7 @@ divr16s: {
   b4:
     jsr divr16u
     cpy #0
-    beq b19
+    beq b10
     sec
     lda divr16u.rem
     eor #$ff
@@ -325,7 +325,7 @@ divr16s: {
     sta return+1
   breturn:
     rts
-  b19:
+  b10:
     lda divr16u.rem
     sta rem16s
     lda divr16u.rem+1
@@ -498,7 +498,7 @@ bitmap_init: {
     lda #>BITMAP
     sta yoffs+1
     ldx #0
-  b5:
+  b3:
     lda #7
     sax _3
     lda yoffs
@@ -509,7 +509,7 @@ bitmap_init: {
     txa
     and #7
     cmp #7
-    bne b6
+    bne b4
     clc
     lda yoffs
     adc #<$28*8
@@ -517,10 +517,10 @@ bitmap_init: {
     lda yoffs+1
     adc #>$28*8
     sta yoffs+1
-  b6:
+  b4:
     inx
     cpx #0
-    bne b5
+    bne b3
     rts
 }
   // The coordinates of the lines to animate

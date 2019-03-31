@@ -59,6 +59,7 @@ Calls in [] to main:2
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Renumbering block main::@3 to main::@1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -76,11 +77,11 @@ FINAL CONTROL FLOW GRAPH
   [3] phi()
 main: scope:[main]  from @1
   [4] phi()
-  to:main::@3
-main::@3: scope:[main]  from main
+  to:main::@1
+main::@1: scope:[main]  from main
   [5] *((const byte*) main::SCREEN#0) ← (byte) '!'
   to:main::@return
-main::@return: scope:[main]  from main::@3
+main::@return: scope:[main]  from main::@1
   [6] return 
   to:@return
 
@@ -119,9 +120,9 @@ bend:
 //SEG10 main
 main: {
     .label SCREEN = $400
-    jmp b3
-  //SEG11 main::@3
-  b3:
+    jmp b1
+  //SEG11 main::@1
+  b1:
   //SEG12 [5] *((const byte*) main::SCREEN#0) ← (byte) '!' -- _deref_pbuc1=vbuc2 
     lda #'!'
     sta SCREEN
@@ -169,9 +170,9 @@ bend:
 //SEG10 main
 main: {
     .label SCREEN = $400
-    jmp b3
-  //SEG11 main::@3
-  b3:
+    jmp b1
+  //SEG11 main::@1
+  b1:
   //SEG12 [5] *((const byte*) main::SCREEN#0) ← (byte) '!' -- _deref_pbuc1=vbuc2 
     lda #'!'
     sta SCREEN
@@ -185,7 +186,7 @@ main: {
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
-Removing instruction jmp b3
+Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction b1_from_bbegin:
@@ -194,7 +195,7 @@ Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
-Removing instruction b3:
+Removing instruction b1:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
@@ -208,7 +209,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (void()) main()
-(label) main::@3
+(label) main::@1
 (label) main::@return
 (byte*) main::SCREEN
 (const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
@@ -235,7 +236,7 @@ Score: 12
 //SEG10 main
 main: {
     .label SCREEN = $400
-  //SEG11 main::@3
+  //SEG11 main::@1
   //SEG12 [5] *((const byte*) main::SCREEN#0) ← (byte) '!' -- _deref_pbuc1=vbuc2 
     lda #'!'
     sta SCREEN

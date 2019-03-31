@@ -142,72 +142,72 @@ main: {
     bne b3
     lda #0
     sta cur_pos
-  b5:
+  b4:
     ldx #KEY_F1
     jsr keyboard_key_pressed
     cmp #0
-    beq b6
+    beq b5
     lda #0
     sta cur_pos
-  b6:
+  b5:
     ldx #KEY_F3
     jsr keyboard_key_pressed
     cmp #0
-    beq b7
+    beq b6
     lda #1
     sta cur_pos
-  b7:
+  b6:
     ldx #KEY_F5
     jsr keyboard_key_pressed
     cmp #0
-    beq b8
+    beq b7
     lda #2
     sta cur_pos
-  b8:
+  b7:
     ldx #KEY_F7
     jsr keyboard_key_pressed
     cmp #0
-    beq b9
+    beq b8
     lda #3
     sta cur_pos
-  b9:
+  b8:
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
     cmp #0
     bne b2
     lda #0
     sta shift
-    jmp b11
+    jmp b9
   b2:
     lda #1
     sta shift
-  b11:
+  b9:
     lda #0
     sta ch
   // Check for key presses - and plot char if found
-  b12:
+  b10:
     ldx ch
     jsr keyboard_get_keycode
     cmp #$3f
-    beq b4
+    beq b13
     tax
     jsr keyboard_key_pressed
-    jmp b13
-  b4:
-    lda #0
+    jmp b11
   b13:
+    lda #0
+  b11:
     cmp #0
-    beq b14
+    beq b12
     ldy cur_pos
     lda ch
     ldx shift
     jsr plot_chargen
-  b14:
+  b12:
     inc ch
     lda #$40
     cmp ch
-    bne b12
-    jmp b5
+    bne b10
+    jmp b4
     str: .text "f1@"
     str1: .text "f3@"
     str2: .text "f5@"
@@ -326,7 +326,7 @@ mul8u: {
     txa
     and #1
     cmp #0
-    beq b8
+    beq b4
     lda res
     clc
     adc mb
@@ -334,7 +334,7 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  b8:
+  b4:
     txa
     lsr
     tax

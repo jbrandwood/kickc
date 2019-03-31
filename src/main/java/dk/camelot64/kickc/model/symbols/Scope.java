@@ -362,6 +362,14 @@ public abstract class Scope implements Symbol {
       return symbols.values();
    }
 
+   /**
+    * Set the value of the counter used to number intermediate labels
+    * @param intermediateLabelCount The new counter value
+    */
+   public void setIntermediateLabelCount(int intermediateLabelCount) {
+      this.intermediateLabelCount = intermediateLabelCount;
+   }
+
    @Override
    public boolean equals(Object o) {
       if(this == o) {

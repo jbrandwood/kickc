@@ -6,16 +6,16 @@
   .label BGCOL = $d021
 main: {
     sei
-  b2:
+  b1:
     lda #$a
     cmp RASTER
-    bne b2
-  b4:
+    bne b1
+  b2:
     lda #$b
     cmp RASTER
-    bne b4
+    bne b2
     jsr raster
-    jmp b2
+    jmp b1
 }
 raster: {
     nop

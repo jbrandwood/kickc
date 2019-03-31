@@ -457,37 +457,40 @@ Coalesced [13] main::s#4 ← main::s#1
 Coalesced [14] main::xpos#4 ← main::xpos#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) main::@4
+Renumbering block @6 to @1
+Renumbering block main::@3 to main::@2
+Renumbering block position_sprite::@3 to position_sprite::@2
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @6
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@6
-@6: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @6
+main: scope:[main]  from @1
   [4] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@3
-  [5] (word) main::xpos#2 ← phi( main/(byte/word/signed word/dword/signed dword) $c8 main::@3/(word) main::xpos#1 )
-  [5] (byte) main::s#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::s#1 )
+main::@1: scope:[main]  from main main::@2
+  [5] (word) main::xpos#2 ← phi( main/(byte/word/signed word/dword/signed dword) $c8 main::@2/(word) main::xpos#1 )
+  [5] (byte) main::s#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::s#1 )
   [6] (byte) position_sprite::spriteno#0 ← (byte) main::s#2
   [7] (word) position_sprite::x#0 ← (word) main::xpos#2
   [8] call position_sprite 
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte/signed byte/word/signed word/dword/signed dword) $a
   [10] (byte) main::s#1 ← ++ (byte) main::s#2
   [11] if((byte) main::s#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@3
+main::@return: scope:[main]  from main::@2
   [12] return 
   to:@return
 position_sprite: scope:[position_sprite]  from main::@1
@@ -497,13 +500,13 @@ position_sprite: scope:[position_sprite]  from main::@1
   [16] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0
   [17] *((const byte*) SPRITES_XPOS#0 + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2
   [18] if((word) position_sprite::x#0>(byte/word/signed word/dword/signed dword) $ff) goto position_sprite::@1
-  to:position_sprite::@3
-position_sprite::@3: scope:[position_sprite]  from position_sprite
+  to:position_sprite::@2
+position_sprite::@2: scope:[position_sprite]  from position_sprite
   [19] (byte/signed byte/word/signed word/dword/signed dword~) position_sprite::$4 ← (byte/signed byte/word/signed word/dword/signed dword) 1 << (byte) position_sprite::spriteno#0
   [20] (byte/word/dword~) position_sprite::$5 ← (byte/signed byte/word/signed word/dword/signed dword~) position_sprite::$4 ^ (byte/word/signed word/dword/signed dword) $ff
   [21] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte/word/dword~) position_sprite::$5
   to:position_sprite::@return
-position_sprite::@return: scope:[position_sprite]  from position_sprite::@1 position_sprite::@3
+position_sprite::@return: scope:[position_sprite]  from position_sprite::@1 position_sprite::@2
   [22] return 
   to:@return
 position_sprite::@1: scope:[position_sprite]  from position_sprite
@@ -658,17 +661,17 @@ INITIAL ASM
   .label SPRITES_XMSB = $d010
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
-b6_from_bbegin:
-  jmp b6
-//SEG5 @6
-b6:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @6 to main [phi:@6->main]
-main_from_b6:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -687,10 +690,10 @@ main: {
     lda #0
     sta s
     jmp b1
-  //SEG14 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
-  //SEG15 [5] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@3->main::@1#0] -- register_copy 
-  //SEG16 [5] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@3->main::@1#1] -- register_copy 
+  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG15 [5] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG16 [5] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
   //SEG17 main::@1
   b1:
@@ -704,9 +707,9 @@ main: {
     sta position_sprite.x+1
   //SEG20 [8] call position_sprite 
     jsr position_sprite
-    jmp b3
-  //SEG21 main::@3
-  b3:
+    jmp b2
+  //SEG21 main::@2
+  b2:
   //SEG22 [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte/signed byte/word/signed word/dword/signed dword) $a -- vwuz1=vwuz1_plus_vbuc1 
     lda #$a
     clc
@@ -720,7 +723,7 @@ main: {
   //SEG24 [11] if((byte) main::s#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp s
-    bne b1_from_b3
+    bne b1_from_b2
     jmp breturn
   //SEG25 main::@return
   breturn:
@@ -766,9 +769,9 @@ position_sprite: {
     beq !+
     bcs b1
   !:
-    jmp b3
-  //SEG34 position_sprite::@3
-  b3:
+    jmp b2
+  //SEG34 position_sprite::@2
+  b2:
   //SEG35 [19] (byte/signed byte/word/signed word/dword/signed dword~) position_sprite::$4 ← (byte/signed byte/word/signed word/dword/signed dword) 1 << (byte) position_sprite::spriteno#0 -- vbuz1=vbuc1_rol_vbuz2 
     lda #1
     ldy spriteno
@@ -884,17 +887,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_XMSB = $d010
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
-b6_from_bbegin:
-  jmp b6
-//SEG5 @6
-b6:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @6 to main [phi:@6->main]
-main_from_b6:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -911,10 +914,10 @@ main: {
   //SEG13 [5] phi (byte) main::s#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG14 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
-  //SEG15 [5] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@3->main::@1#0] -- register_copy 
-  //SEG16 [5] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@3->main::@1#1] -- register_copy 
+  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG15 [5] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG16 [5] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
   //SEG17 main::@1
   b1:
@@ -923,9 +926,9 @@ main: {
   //SEG19 [7] (word) position_sprite::x#0 ← (word) main::xpos#2
   //SEG20 [8] call position_sprite 
     jsr position_sprite
-    jmp b3
-  //SEG21 main::@3
-  b3:
+    jmp b2
+  //SEG21 main::@2
+  b2:
   //SEG22 [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte/signed byte/word/signed word/dword/signed dword) $a -- vwuz1=vwuz1_plus_vbuc1 
     lda #$a
     clc
@@ -938,7 +941,7 @@ main: {
     inx
   //SEG24 [11] if((byte) main::s#1!=(byte/signed byte/word/signed word/dword/signed dword) 8) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
-    bne b1_from_b3
+    bne b1_from_b2
     jmp breturn
   //SEG25 main::@return
   breturn:
@@ -974,9 +977,9 @@ position_sprite: {
     beq !+
     bcs b1
   !:
-    jmp b3
-  //SEG34 position_sprite::@3
-  b3:
+    jmp b2
+  //SEG34 position_sprite::@2
+  b2:
   //SEG35 [19] (byte/signed byte/word/signed word/dword/signed dword~) position_sprite::$4 ← (byte/signed byte/word/signed word/dword/signed dword) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
     ldy spriteno
@@ -1016,27 +1019,27 @@ position_sprite: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b6
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
-Removing instruction jmp b3
+Removing instruction jmp b2
 Removing instruction jmp breturn
-Removing instruction jmp b3
+Removing instruction jmp b2
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
-Replacing label b1_from_b3 with b1
-Removing instruction b6_from_bbegin:
-Removing instruction b6:
-Removing instruction main_from_b6:
-Removing instruction bend_from_b6:
-Removing instruction b1_from_b3:
+Replacing label b1_from_b2 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
-Removing instruction b3:
+Removing instruction b2:
 Removing instruction breturn:
-Removing instruction b3:
+Removing instruction b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
@@ -1047,7 +1050,7 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @6
+(label) @1
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -1134,7 +1137,7 @@ FINAL SYMBOL TABLE
 (byte) YELLOW
 (void()) main()
 (label) main::@1
-(label) main::@3
+(label) main::@2
 (label) main::@return
 (byte) main::s
 (byte) main::s#1 reg byte x 16.5
@@ -1150,7 +1153,7 @@ FINAL SYMBOL TABLE
 (byte/word/dword~) position_sprite::$5 reg byte a 4.0
 (byte/signed byte/word/signed word/dword/signed dword~) position_sprite::$6 reg byte a 4.0
 (label) position_sprite::@1
-(label) position_sprite::@3
+(label) position_sprite::@2
 (label) position_sprite::@return
 (byte) position_sprite::spriteno
 (byte) position_sprite::spriteno#0 spriteno zp ZP_BYTE:4 2.375
@@ -1184,11 +1187,11 @@ Score: 559
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @6 [phi:@begin->@6]
-//SEG5 @6
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [4] phi from @6 to main [phi:@6->main]
-//SEG8 [3] phi from @6 to @end [phi:@6->@end]
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main
 main: {
@@ -1201,9 +1204,9 @@ main: {
     sta xpos+1
   //SEG13 [5] phi (byte) main::s#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     tax
-  //SEG14 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  //SEG15 [5] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@3->main::@1#0] -- register_copy 
-  //SEG16 [5] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@3->main::@1#1] -- register_copy 
+  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG15 [5] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG16 [5] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG17 main::@1
   b1:
   //SEG18 [6] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuxx 
@@ -1211,7 +1214,7 @@ main: {
   //SEG19 [7] (word) position_sprite::x#0 ← (word) main::xpos#2
   //SEG20 [8] call position_sprite 
     jsr position_sprite
-  //SEG21 main::@3
+  //SEG21 main::@2
   //SEG22 [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte/signed byte/word/signed word/dword/signed dword) $a -- vwuz1=vwuz1_plus_vbuc1 
     lda #$a
     clc
@@ -1258,7 +1261,7 @@ position_sprite: {
     beq !+
     bcs b1
   !:
-  //SEG34 position_sprite::@3
+  //SEG34 position_sprite::@2
   //SEG35 [19] (byte/signed byte/word/signed word/dword/signed dword~) position_sprite::$4 ← (byte/signed byte/word/signed word/dword/signed dword) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
     ldy spriteno

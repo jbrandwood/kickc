@@ -118,6 +118,7 @@ public class ProgramValueIterator {
          for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
             int size = phiVariable.getValues().size();
             for(int i = 0; i < size; i++) {
+               execute(new ProgramValue.PhiValuePredecessor(phiVariable, i), handler, statement, statementsIt, block);
                execute(new ProgramValue.PhiValue(phiVariable, i), handler, statement, statementsIt, block);
             }
             execute(new ProgramValue.PhiVariable(phiVariable), handler, statement, statementsIt, block);

@@ -362,10 +362,10 @@ main: {
     inc i
     lda #5
     cmp i
-    bne b71
-  b43:
-    jmp b43
-  b71:
+    bne b68
+  b42:
+    jmp b42
+  b68:
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1

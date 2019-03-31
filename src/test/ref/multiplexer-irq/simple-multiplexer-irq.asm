@@ -72,12 +72,12 @@ loop: {
     sta sin_idx
   b1:
   // without volatile gives wrong asm
-  b6:
+  b2:
     lda framedone
     cmp #0
-    bne b8
-    jmp b6
-  b8:
+    bne b3
+    jmp b2
+  b3:
     lda #RED
     sta BORDERCOL
     // Assign sinus positions
@@ -85,7 +85,7 @@ loop: {
     sta y_idx
     ldy #0
   // without volatile gives wrong asm
-  b9:
+  b4:
     ldx y_idx
     lda YSIN,x
     sta PLEX_YPOS,y
@@ -94,7 +94,7 @@ loop: {
     stx y_idx
     iny
     cpy #PLEX_COUNT-1+1
-    bne b9
+    bne b4
     inc sin_idx
     inc BORDERCOL
     jsr plexSort
@@ -140,7 +140,7 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     dex
     cpx #$ff
-    bne b8
+    bne b6
   b4:
     inx
     lda nxt_idx
@@ -165,7 +165,7 @@ plexSort: {
     bne plexFreePrepare1_b1
     sta plex_free_next
     rts
-  b8:
+  b6:
     lda nxt_y
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
@@ -252,7 +252,7 @@ plex_irq: {
     sta _4
     lda plex_show_idx
     cmp #PLEX_COUNT
-    bcc b9
+    bcc b7
   b4:
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -268,7 +268,7 @@ plex_irq: {
   b1:
     stx RASTER
     jmp b2
-  b9:
+  b7:
     cpx _4
     bcc b3
     jmp b4

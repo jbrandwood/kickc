@@ -65,9 +65,9 @@ main: {
     inc i
     lda #$1a
     cmp i
-    bne b17
+    bne b15
     rts
-  b17:
+  b15:
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1

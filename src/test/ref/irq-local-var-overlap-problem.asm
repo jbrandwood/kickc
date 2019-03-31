@@ -35,16 +35,16 @@ main: {
     lda #>irq
     sta KERNEL_IRQ+1
     cli
-  b1:
+  b4:
     lda #0
     sta i
-  b6:
+  b1:
     lda #0
     sta j
-  b7:
+  b2:
     lda #0
     sta k
-  b8:
+  b3:
     lda i
     clc
     adc j
@@ -55,14 +55,14 @@ main: {
     inc k
     lda #$b
     cmp k
-    bne b8
+    bne b3
     inc j
     cmp j
-    bne b7
+    bne b2
     inc i
     cmp i
-    bne b6
-    jmp b1
+    bne b1
+    jmp b4
 }
 sub_main: {
     .label i = 5

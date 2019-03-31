@@ -40,31 +40,31 @@ loop: {
     .label ss = 7
     lda #0
     sta sin_idx
-  b6:
+  b2:
     lda #$ff
     cmp RASTER
-    bne b6
+    bne b2
     inc BORDERCOL
     ldx sin_idx
     ldy #0
-  b9:
+  b4:
     lda YSIN,x
     sta PLEX_YPOS,y
     txa
     axs #-[8]
     iny
     cpy #PLEX_COUNT-1+1
-    bne b9
+    bne b4
     inc sin_idx
     inc BORDERCOL
     jsr plexSort
     lda #BLACK
     sta BORDERCOL
-  b11:
+  b6:
     lda #VIC_RST8
     and D011
     cmp #0
-    bne b11
+    bne b6
     lda #0
     sta ss
     lda #1
@@ -74,25 +74,25 @@ loop: {
     sta plex_sprite_idx
     sta plex_free_next
   // Show the sprites
-  b14:
+  b7:
     lda #BLACK
     sta BORDERCOL
     ldy plex_free_next
     lda PLEX_FREE_YPOS,y
     sta plexFreeNextYpos1_return
-  b15:
+  b8:
     lda RASTER
     cmp plexFreeNextYpos1_return
-    bcc b15
+    bcc b8
     inc BORDERCOL
     jsr plexShowSprite
     inc ss
     lda #PLEX_COUNT-1+1
     cmp ss
-    bne b14
+    bne b7
     lda #BLACK
     sta BORDERCOL
-    jmp b6
+    jmp b2
 }
 // Show the next sprite.
 // plexSort() prepares showing the sprites
@@ -184,7 +184,7 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     dex
     cpx #$ff
-    bne b8
+    bne b5
   b4:
     inx
     lda nxt_idx
@@ -202,7 +202,7 @@ plexSort: {
     cpx #8
     bne plexFreePrepare1_b1
     rts
-  b8:
+  b5:
     lda nxt_y
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y

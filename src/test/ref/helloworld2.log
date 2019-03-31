@@ -141,8 +141,9 @@ Coalesced [16] print2::i#3 ← print2::i#1
 Coalesced [17] print2::j#3 ← print2::j#1
 Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) print2::@3
+Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -150,14 +151,14 @@ Adding NOP phi() at start of main::@1
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@2
-@2: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   [4] phi()
   [5] call print2 
   to:main::@1
@@ -221,17 +222,17 @@ INITIAL ASM
   .label screen = $400
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG5 @2
-b2:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @2 to main [phi:@2->main]
-main_from_b2:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -343,17 +344,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label screen = $400
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG5 @2
-b2:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @2 to main [phi:@2->main]
-main_from_b2:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -427,7 +428,7 @@ print2: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
@@ -435,10 +436,10 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
-Removing instruction b2_from_bbegin:
-Removing instruction b2:
-Removing instruction main_from_b2:
-Removing instruction bend_from_b2:
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction print2_from_b1:
 Removing instruction b1_from_b1:
@@ -459,7 +460,7 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @2
+(label) @1
 (label) @begin
 (label) @end
 (void()) main()
@@ -498,11 +499,11 @@ Score: 339
 //SEG2 Global Constants & labels
   .label screen = $400
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG5 @2
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [4] phi from @2 to main [phi:@2->main]
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main
 main: {

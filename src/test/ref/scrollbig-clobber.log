@@ -179,37 +179,39 @@ Coalesced [23] next_char::return#5 ← next_char::c#0
 Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) next_char::@4
+Renumbering block @2 to @1
+Renumbering block main::@3 to main::@2
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@2
-@2: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   [4] phi()
   to:main::@1
-main::@1: scope:[main]  from main main::@3
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::i#1 )
-  [5] (byte*) nxt#13 ← phi( main/(const byte*) TEXT#0 main::@3/(byte*) nxt#11 )
+main::@1: scope:[main]  from main main::@2
+  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::i#1 )
+  [5] (byte*) nxt#13 ← phi( main/(const byte*) TEXT#0 main::@2/(byte*) nxt#11 )
   [6] call next_char 
   [7] (byte) next_char::return#0 ← (byte) next_char::return#1
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   [8] (byte~) main::$0 ← (byte) next_char::return#0
   [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
   [11] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@3
+main::@return: scope:[main]  from main::@2
   [12] return 
   to:@return
 next_char: scope:[next_char]  from main::@1
@@ -278,17 +280,17 @@ INITIAL ASM
   .label nxt = 3
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG5 @2
-b2:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @2 to main [phi:@2->main]
-main_from_b2:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -308,10 +310,10 @@ main: {
     lda #>TEXT
     sta nxt+1
     jmp b1
-  //SEG14 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
-  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-  //SEG16 [5] phi (byte*) nxt#13 = (byte*) nxt#11 [phi:main::@3->main::@1#1] -- register_copy 
+  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG16 [5] phi (byte*) nxt#13 = (byte*) nxt#11 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
   //SEG17 main::@1
   b1:
@@ -320,9 +322,9 @@ main: {
   //SEG19 [7] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuz1=vbuz2 
     lda next_char.return_1
     sta next_char.return
-    jmp b3
-  //SEG20 main::@3
-  b3:
+    jmp b2
+  //SEG20 main::@2
+  b2:
   //SEG21 [8] (byte~) main::$0 ← (byte) next_char::return#0 -- vbuz1=vbuz2 
     lda next_char.return
     sta _0
@@ -335,7 +337,7 @@ main: {
   //SEG24 [11] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
     lda i
     cmp #0
-    bne b1_from_b3
+    bne b1_from_b2
     jmp breturn
   //SEG25 main::@return
   breturn:
@@ -423,17 +425,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label nxt = 2
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG5 @2
-b2:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @2 to main [phi:@2->main]
-main_from_b2:
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -450,10 +452,10 @@ main: {
     lda #>TEXT
     sta nxt+1
     jmp b1
-  //SEG14 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
-  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-  //SEG16 [5] phi (byte*) nxt#13 = (byte*) nxt#11 [phi:main::@3->main::@1#1] -- register_copy 
+  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG16 [5] phi (byte*) nxt#13 = (byte*) nxt#11 [phi:main::@2->main::@1#1] -- register_copy 
     jmp b1
   //SEG17 main::@1
   b1:
@@ -461,9 +463,9 @@ main: {
     jsr next_char
   //SEG19 [7] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuaa=vbuyy 
     tya
-    jmp b3
-  //SEG20 main::@3
-  b3:
+    jmp b2
+  //SEG20 main::@2
+  b2:
   //SEG21 [8] (byte~) main::$0 ← (byte) next_char::return#0
   //SEG22 [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
@@ -471,7 +473,7 @@ main: {
     inx
   //SEG24 [11] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1_from_b3
+    bne b1_from_b2
     jmp breturn
   //SEG25 main::@return
   breturn:
@@ -523,27 +525,27 @@ next_char: {
   TEXT: .text "cml @"
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
-Removing instruction jmp b3
+Removing instruction jmp b2
 Removing instruction jmp breturn
 Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b3 with b1
+Replacing label b1_from_b2 with b1
 Replacing label b1_from_next_char with b1
-Removing instruction b2_from_bbegin:
-Removing instruction b2:
-Removing instruction main_from_b2:
-Removing instruction bend_from_b2:
-Removing instruction b1_from_b3:
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b2:
 Removing instruction b1_from_next_char:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1_from_main:
-Removing instruction b3:
+Removing instruction b2:
 Removing instruction breturn:
 Removing instruction b2:
 Removing instruction b1_from_b2:
@@ -559,7 +561,7 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @2
+(label) @1
 (label) @begin
 (label) @end
 (byte*) TEXT
@@ -567,7 +569,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
 (label) main::@1
-(label) main::@3
+(label) main::@2
 (label) main::@return
 (byte*) main::SCREEN
 (const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
@@ -608,11 +610,11 @@ Score: 366
 //SEG2 Global Constants & labels
   .label nxt = 2
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG5 @2
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [4] phi from @2 to main [phi:@2->main]
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main
 main: {
@@ -625,16 +627,16 @@ main: {
     sta nxt
     lda #>TEXT
     sta nxt+1
-  //SEG14 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-  //SEG16 [5] phi (byte*) nxt#13 = (byte*) nxt#11 [phi:main::@3->main::@1#1] -- register_copy 
+  //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG15 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+  //SEG16 [5] phi (byte*) nxt#13 = (byte*) nxt#11 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG17 main::@1
   b1:
   //SEG18 [6] call next_char 
     jsr next_char
   //SEG19 [7] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuaa=vbuyy 
     tya
-  //SEG20 main::@3
+  //SEG20 main::@2
   //SEG21 [8] (byte~) main::$0 ← (byte) next_char::return#0
   //SEG22 [9] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x

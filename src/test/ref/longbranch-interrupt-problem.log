@@ -147,40 +147,43 @@ Created 1 initial phi equivalence classes
 Coalesced [5] col#17 ← col#0
 Coalesced [9] col#18 ← col#1
 Coalesced down to 1 phi equivalence classes
-Adding NOP phi() at start of @2
+Renumbering block @2 to @1
+Renumbering block main::@6 to main::@3
+Renumbering block irq::@2 to irq::@1
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  to:@2
-@2: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
-main::@1: scope:[main]  from main main::@2 main::@6
-  [5] (byte) col#12 ← phi( main/(byte) col#0 main::@6/(byte) col#1 )
+main::@1: scope:[main]  from main main::@2 main::@3
+  [5] (byte) col#12 ← phi( main/(byte) col#0 main::@3/(byte) col#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1
-  to:main::@6
-main::@6: scope:[main]  from main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
   [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 irq: scope:[irq]  from
   asm { lda$dc0d  }
   [9] *((const byte*) BGCOL#0) ← (byte) col#0
   [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return
-  to:irq::@2
-irq::@2: scope:[irq]  from irq
+  to:irq::@1
+irq::@1: scope:[irq]  from irq
   [11] (byte) col#3 ← ++ (byte) col#0
   to:irq::@return
-irq::@return: scope:[irq]  from irq irq::@2
+irq::@return: scope:[irq]  from irq irq::@1
   [12] return 
   to:@return
 
@@ -222,15 +225,15 @@ bbegin:
 //SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG6 @2
-b2:
+//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG6 @1
+b1:
 //SEG7 [2] call main 
   jsr main
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -241,10 +244,10 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 [5] phi from main main::@6 to main::@1 [phi:main/main::@6->main::@1]
+  //SEG12 [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
-  b1_from_b6:
-  //SEG13 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@6->main::@1#0] -- register_copy 
+  b1_from_b3:
+  //SEG13 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
   //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -258,13 +261,13 @@ main: {
     lda #$a
     cmp col
     bcs b1_from_b2
-    jmp b6
-  //SEG18 main::@6
-  b6:
+    jmp b3
+  //SEG18 main::@3
+  b3:
   //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
-    jmp b1_from_b6
+    jmp b1_from_b3
 }
 //SEG20 irq
 irq: {
@@ -278,9 +281,9 @@ irq: {
     lda col
     cmp #0
     beq breturn
-    jmp b2
-  //SEG25 irq::@2
-  b2:
+    jmp b1
+  //SEG25 irq::@1
+  b1:
   //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz2 
     ldy col
     iny
@@ -334,15 +337,15 @@ bbegin:
 //SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
-b2_from_bbegin:
-  jmp b2
-//SEG6 @2
-b2:
+//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG6 @1
+b1:
 //SEG7 [2] call main 
   jsr main
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG9 @end
 bend:
@@ -353,10 +356,10 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 [5] phi from main main::@6 to main::@1 [phi:main/main::@6->main::@1]
+  //SEG12 [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   b1_from_main:
-  b1_from_b6:
-  //SEG13 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@6->main::@1#0] -- register_copy 
+  b1_from_b3:
+  //SEG13 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
   //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1_from_b2:
@@ -370,13 +373,13 @@ main: {
     lda #$a
     cmp col
     bcs b1_from_b2
-    jmp b6
-  //SEG18 main::@6
-  b6:
+    jmp b3
+  //SEG18 main::@3
+  b3:
   //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
-    jmp b1_from_b6
+    jmp b1_from_b3
 }
 //SEG20 irq
 irq: {
@@ -390,9 +393,9 @@ irq: {
     lda col
     cmp #0
     beq breturn
-    jmp b2
-  //SEG25 irq::@2
-  b2:
+    jmp b1
+  //SEG25 irq::@1
+  b1:
   //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
     jmp breturn
@@ -403,31 +406,31 @@ irq: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b6
-Removing instruction jmp b2
+Removing instruction jmp b3
+Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1 with b2
 Replacing label b1_from_b2 with b2
-Removing instruction b2_from_bbegin:
-Removing instruction bend_from_b2:
+Removing instruction b1_from_bbegin:
+Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction b1_from_b2:
 Removing instruction b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
+Removing instruction b1:
 Removing instruction bend:
-Removing instruction b6:
-Removing instruction b2:
+Removing instruction b3:
+Removing instruction b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Skipping double jump to b2 in jmp b1_from_b6
+Skipping double jump to b2 in jmp b1_from_b3
 Skipping double jump to $ea81 in beq breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label b1_from_b6 to b1
+Relabelling long label b1_from_b3 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
@@ -438,7 +441,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Fixing long branch [30] beq $ea81 to bne
 
 FINAL SYMBOL TABLE
-(label) @2
+(label) @1
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -451,12 +454,12 @@ FINAL SYMBOL TABLE
 (byte) col#12 col zp ZP_BYTE:2 114.0
 (byte) col#3 col zp ZP_BYTE:2 20.0
 interrupt(KERNEL_MIN)(void()) irq()
-(label) irq::@2
+(label) irq::@1
 (label) irq::@return
 (void()) main()
 (label) main::@1
 (label) main::@2
-(label) main::@6
+(label) main::@3
 
 zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ]
 
@@ -479,11 +482,11 @@ bbegin:
 //SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
-//SEG5 [1] phi from @begin to @2 [phi:@begin->@2]
-//SEG6 @2
+//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG6 @1
 //SEG7 [2] call main 
   jsr main
-//SEG8 [3] phi from @2 to @end [phi:@2->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main
 main: {
@@ -492,8 +495,8 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  //SEG12 [5] phi from main main::@6 to main::@1 [phi:main/main::@6->main::@1]
-  //SEG13 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@6->main::@1#0] -- register_copy 
+  //SEG12 [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  //SEG13 [5] phi (byte) col#12 = (byte) col#0 [phi:main/main::@3->main::@1#0] -- register_copy 
   //SEG14 [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   //SEG15 main::@1
   //SEG16 main::@2
@@ -502,7 +505,7 @@ main: {
     lda #$a
     cmp col
     bcs b2
-  //SEG18 main::@6
+  //SEG18 main::@3
   //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
@@ -522,7 +525,7 @@ irq: {
     bne !_ea81+
     jmp $ea81
   !_ea81:
-  //SEG25 irq::@2
+  //SEG25 irq::@1
   //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
   //SEG27 irq::@return

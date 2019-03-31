@@ -15,48 +15,48 @@ main: {
     sta nxt+1
     ldx #7
   // Wait for raster
-  b2:
+  b1:
     lda #$fe
     cmp RASTER
-    bne b2
-  b4:
+    bne b1
+  b2:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne b2
     inc BGCOL
     dex
     cpx #$ff
-    bne b7
+    bne b4
     ldx #0
   // Hard scroll
-  b8:
+  b5:
     lda line+1,x
     sta line,x
     inx
     cpx #$27
-    bne b8
+    bne b5
     // Render next char
     ldy #0
     lda (nxt),y
     tax
     cpx #'@'
-    bne b11
+    bne b8
     ldx TEXT
     lda #<TEXT
     sta nxt
     lda #>TEXT
     sta nxt+1
-  b11:
+  b8:
     stx line+$27
     inc nxt
     bne !+
     inc nxt+1
   !:
     ldx #7
-  b7:
+  b4:
     stx SCROLL
     dec BGCOL
-    jmp b2
+    jmp b1
 }
 fillscreen: {
     .const fill = $20

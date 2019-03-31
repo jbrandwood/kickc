@@ -1358,6 +1358,8 @@ Coalesced down to 10 phi equivalence classes
 Culled Empty Block (label) print_ln::@3
 Culled Empty Block (label) print_cls::@3
 Culled Empty Block (label) mulf_init::@3
+Renumbering block @27 to @1
+Renumbering block print_sbyte::@5 to print_sbyte::@4
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@2
@@ -1381,8 +1383,8 @@ Adding NOP phi() at start of mulf_init
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@27
-@27: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   kickasm(location (const signed byte*) PERSP_Z#0) {{ {
     .var d = 256.0	
     .var z0 = 5.0	
@@ -1397,9 +1399,9 @@ FINAL CONTROL FLOW GRAPH
  }}
   [2] call main 
   to:@end
-@end: scope:[]  from @27
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @27
+main: scope:[main]  from @1
   asm { sei  }
   [5] call mulf_init 
   to:main::@1
@@ -1539,8 +1541,8 @@ print_sbyte::@3: scope:[print_sbyte]  from print_sbyte
   [70] phi()
   [71] call print_char 
   to:print_sbyte::@2
-print_sbyte::@2: scope:[print_sbyte]  from print_sbyte::@3 print_sbyte::@5
-  [72] (signed byte) print_sbyte::b#6 ← phi( print_sbyte::@5/(signed byte) print_sbyte::b#0 print_sbyte::@3/(signed byte) print_sbyte::b#4 )
+print_sbyte::@2: scope:[print_sbyte]  from print_sbyte::@3 print_sbyte::@4
+  [72] (signed byte) print_sbyte::b#6 ← phi( print_sbyte::@4/(signed byte) print_sbyte::b#0 print_sbyte::@3/(signed byte) print_sbyte::b#4 )
   [73] (byte~) print_byte::b#7 ← (byte)(signed byte) print_sbyte::b#6
   [74] call print_byte 
   to:print_sbyte::@return
@@ -1550,8 +1552,8 @@ print_sbyte::@return: scope:[print_sbyte]  from print_sbyte::@2
 print_sbyte::@1: scope:[print_sbyte]  from print_sbyte
   [76] phi()
   [77] call print_char 
-  to:print_sbyte::@5
-print_sbyte::@5: scope:[print_sbyte]  from print_sbyte::@1
+  to:print_sbyte::@4
+print_sbyte::@4: scope:[print_sbyte]  from print_sbyte::@1
   [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4
   to:print_sbyte::@2
 print_cls: scope:[print_cls]  from main::@1
@@ -1828,14 +1830,14 @@ INITIAL ASM
   .label print_line_cursor = 2
 //SEG3 @begin
 bbegin:
-  jmp b27
-//SEG4 @27
-b27:
+  jmp b1
+//SEG4 @1
+b1:
 //SEG5 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
 //SEG6 [2] call main 
   jsr main
-//SEG7 [3] phi from @27 to @end [phi:@27->@end]
-bend_from_b27:
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG8 @end
 bend:
@@ -2268,10 +2270,10 @@ print_sbyte: {
     lda #' '
     sta print_char.ch
     jsr print_char
-  //SEG153 [72] phi from print_sbyte::@3 print_sbyte::@5 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2]
+  //SEG153 [72] phi from print_sbyte::@3 print_sbyte::@4 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2]
   b2_from_b3:
-  b2_from_b5:
-  //SEG154 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2#0] -- register_copy 
+  b2_from_b4:
+  //SEG154 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2#0] -- register_copy 
     jmp b2
   //SEG155 print_sbyte::@2
   b2:
@@ -2302,16 +2304,16 @@ print_sbyte: {
     lda #'-'
     sta print_char.ch
     jsr print_char
-    jmp b5
-  //SEG169 print_sbyte::@5
-  b5:
+    jmp b4
+  //SEG169 print_sbyte::@4
+  b4:
   //SEG170 [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4 -- vbsz1=_neg_vbsz1 
     lda b
     eor #$ff
     clc
     adc #1
     sta b
-    jmp b2_from_b5
+    jmp b2_from_b4
 }
 //SEG171 print_cls
 // Clear the screen. Also resets current line/char cursor.
@@ -2647,14 +2649,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_line_cursor = 2
 //SEG3 @begin
 bbegin:
-  jmp b27
-//SEG4 @27
-b27:
+  jmp b1
+//SEG4 @1
+b1:
 //SEG5 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
 //SEG6 [2] call main 
   jsr main
-//SEG7 [3] phi from @27 to @end [phi:@27->@end]
-bend_from_b27:
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG8 @end
 bend:
@@ -3070,10 +3072,10 @@ print_sbyte: {
   //SEG152 [59] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuaa=vbuc1 
     lda #' '
     jsr print_char
-  //SEG153 [72] phi from print_sbyte::@3 print_sbyte::@5 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2]
+  //SEG153 [72] phi from print_sbyte::@3 print_sbyte::@4 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2]
   b2_from_b3:
-  b2_from_b5:
-  //SEG154 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2#0] -- register_copy 
+  b2_from_b4:
+  //SEG154 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2#0] -- register_copy 
     jmp b2
   //SEG155 print_sbyte::@2
   b2:
@@ -3101,16 +3103,16 @@ print_sbyte: {
   //SEG168 [59] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuaa=vbuc1 
     lda #'-'
     jsr print_char
-    jmp b5
-  //SEG169 print_sbyte::@5
-  b5:
+    jmp b4
+  //SEG169 print_sbyte::@4
+  b4:
   //SEG170 [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4 -- vbsxx=_neg_vbsxx 
     txa
     eor #$ff
     clc
     adc #1
     tax
-    jmp b2_from_b5
+    jmp b2_from_b4
 }
 //SEG171 print_cls
 // Clear the screen. Also resets current line/char cursor.
@@ -3288,7 +3290,7 @@ mulf_init: {
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b27
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
@@ -3318,7 +3320,7 @@ Removing instruction jmp b3
 Removing instruction jmp b2
 Removing instruction jmp breturn
 Removing instruction jmp b1
-Removing instruction jmp b5
+Removing instruction jmp b4
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b1
@@ -3338,12 +3340,12 @@ Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b2 with b1
 Replacing label b1_from_print_sbyte with b1
-Replacing label b2_from_b5 with b2
+Replacing label b2_from_b4 with b2
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
-Removing instruction b27:
-Removing instruction bend_from_b27:
+Removing instruction b1:
+Removing instruction bend_from_b1:
 Removing instruction b2_from_b1:
 Removing instruction do_perspective_from_b2:
 Removing instruction b1_from_do_perspective:
@@ -3371,7 +3373,7 @@ Removing instruction b1_from_b2:
 Removing instruction b3_from_print_sbyte:
 Removing instruction print_char_from_b3:
 Removing instruction b2_from_b3:
-Removing instruction b2_from_b5:
+Removing instruction b2_from_b4:
 Removing instruction print_byte_from_b2:
 Removing instruction b1_from_print_sbyte:
 Removing instruction print_char_from_b1:
@@ -3411,7 +3413,7 @@ Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction b3:
 Removing instruction breturn:
-Removing instruction b5:
+Removing instruction b4:
 Removing instruction b1_from_print_cls:
 Removing instruction breturn:
 Removing instruction b1_from_mulf_init:
@@ -3428,7 +3430,7 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @27
+(label) @1
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -3608,7 +3610,7 @@ FINAL SYMBOL TABLE
 (label) print_sbyte::@1
 (label) print_sbyte::@2
 (label) print_sbyte::@3
-(label) print_sbyte::@5
+(label) print_sbyte::@4
 (label) print_sbyte::@return
 (signed byte) print_sbyte::b
 (signed byte) print_sbyte::b#0 reg byte x 4.0
@@ -3674,10 +3676,10 @@ Score: 3739
   .label print_char_cursor = 4
   .label print_line_cursor = 2
 //SEG3 @begin
-//SEG4 @27
+//SEG4 @1
 //SEG5 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
 //SEG6 [2] call main 
-//SEG7 [3] phi from @27 to @end [phi:@27->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 //SEG8 @end
 //SEG9 main
 main: {
@@ -4006,8 +4008,8 @@ print_sbyte: {
   //SEG152 [59] phi (byte) print_char::ch#4 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuaa=vbuc1 
     lda #' '
     jsr print_char
-  //SEG153 [72] phi from print_sbyte::@3 print_sbyte::@5 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2]
-  //SEG154 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@5->print_sbyte::@2#0] -- register_copy 
+  //SEG153 [72] phi from print_sbyte::@3 print_sbyte::@4 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2]
+  //SEG154 [72] phi (signed byte) print_sbyte::b#6 = (signed byte) print_sbyte::b#4 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2#0] -- register_copy 
   //SEG155 print_sbyte::@2
   b2:
   //SEG156 [73] (byte~) print_byte::b#7 ← (byte)(signed byte) print_sbyte::b#6
@@ -4028,7 +4030,7 @@ print_sbyte: {
   //SEG168 [59] phi (byte) print_char::ch#4 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuaa=vbuc1 
     lda #'-'
     jsr print_char
-  //SEG169 print_sbyte::@5
+  //SEG169 print_sbyte::@4
   //SEG170 [78] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#4 -- vbsxx=_neg_vbsxx 
     txa
     eor #$ff

@@ -4,7 +4,7 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
-  b2:
+  b1:
     inc SCREEN
-    jmp b2
+    jmp b1
 }

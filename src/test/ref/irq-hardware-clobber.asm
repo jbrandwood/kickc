@@ -48,9 +48,9 @@ main: {
     lda #>irq
     sta HARDWARE_IRQ+1
     cli
-  b2:
+  b1:
     inc FGCOL
-    jmp b2
+    jmp b1
 }
 // Interrupt Routine
 irq: {

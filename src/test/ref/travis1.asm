@@ -26,9 +26,9 @@ main: {
     inc i
     lda #6
     cmp i
-    bne b7
+    bne b5
     rts
-  b7:
+  b5:
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1

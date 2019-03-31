@@ -12,17 +12,17 @@ main: {
     cpx #$b
     bne b1
     ldx #0
+  b2:
+    jsr plot
+    inx
+    cpx #$b
+    bne b2
+    ldx #0
   b3:
     jsr plot
     inx
     cpx #$b
     bne b3
-    ldx #0
-  b5:
-    jsr plot
-    inx
-    cpx #$b
-    bne b5
     rts
 }
 // plot(byte register(X) x)

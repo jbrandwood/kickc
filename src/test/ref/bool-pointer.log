@@ -78,6 +78,7 @@ Calls in [] to main:2
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Renumbering block main::@2 to main::@1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -96,12 +97,12 @@ main: scope:[main]  from @1
   [4] *(((bool*))(word/signed word/dword/signed dword) $400) ← true
   [5] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false
   [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true
-  [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2
+  [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main main::@2
+main::@return: scope:[main]  from main main::@1
   [8] return 
   to:@return
-main::@2: scope:[main]  from main
+main::@1: scope:[main]  from main
   [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true
   to:main::@return
 
@@ -146,17 +147,17 @@ main: {
   //SEG12 [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-  //SEG13 [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2 -- _deref_pboc1_then_la1 
+  //SEG13 [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1 -- _deref_pboc1_then_la1 
     lda $400+2
     cmp #0
-    bne b2
+    bne b1
     jmp breturn
   //SEG14 main::@return
   breturn:
   //SEG15 [8] return 
     rts
-  //SEG16 main::@2
-  b2:
+  //SEG16 main::@1
+  b1:
   //SEG17 [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2+1
@@ -167,7 +168,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *(((bool*))(word/signed word/dword/signed dword) $400) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [5] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -210,17 +211,17 @@ main: {
   //SEG12 [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-  //SEG13 [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2 -- _deref_pboc1_then_la1 
+  //SEG13 [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1 -- _deref_pboc1_then_la1 
     lda $400+2
     cmp #0
-    bne b2
+    bne b1
     jmp breturn
   //SEG14 main::@return
   breturn:
   //SEG15 [8] return 
     rts
-  //SEG16 main::@2
-  b2:
+  //SEG16 main::@1
+  b1:
   //SEG17 [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2+1
@@ -251,7 +252,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (void()) main()
-(label) main::@2
+(label) main::@1
 (label) main::@return
 (bool*) main::bscreen
 
@@ -284,15 +285,15 @@ main: {
   //SEG12 [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-  //SEG13 [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@2 -- _deref_pboc1_then_la1 
+  //SEG13 [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1 -- _deref_pboc1_then_la1 
     cmp #0
-    bne b2
+    bne b1
   //SEG14 main::@return
   breturn:
   //SEG15 [8] return 
     rts
-  //SEG16 main::@2
-  b2:
+  //SEG16 main::@1
+  b1:
   //SEG17 [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2+1

@@ -22,14 +22,14 @@ main: {
     sta D018
     jsr init_screen
     jsr init_plot_tables
-  b2:
+  b1:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne b1
     inc BGCOL
     jsr plots
     dec BGCOL
-    jmp b2
+    jmp b1
 }
 plots: {
     ldx #0
@@ -107,7 +107,7 @@ init_plot_tables: {
     sta yoffs
     sta yoffs+1
     tax
-  b5:
+  b3:
     lda #7
     sax _6
     lda yoffs
@@ -118,7 +118,7 @@ init_plot_tables: {
     txa
     and #7
     cmp #7
-    bne b6
+    bne b4
     clc
     lda yoffs
     adc #<$28*8
@@ -126,10 +126,10 @@ init_plot_tables: {
     lda yoffs+1
     adc #>$28*8
     sta yoffs+1
-  b6:
+  b4:
     inx
     cpx #0
-    bne b5
+    bne b3
     rts
 }
 init_screen: {
@@ -157,7 +157,7 @@ init_screen: {
     sta c
     lda #>SCREEN
     sta c+1
-  b3:
+  b2:
     lda #$14
     ldy #0
     sta (c),y
@@ -167,10 +167,10 @@ init_screen: {
   !:
     lda c+1
     cmp #>SCREEN+$400
-    bne b3
+    bne b2
     lda c
     cmp #<SCREEN+$400
-    bne b3
+    bne b2
     rts
 }
   plots_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28

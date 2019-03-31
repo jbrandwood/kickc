@@ -54,9 +54,9 @@ main: {
     lda #>irq
     sta HARDWARE_IRQ+1
     cli
-  b2:
+  b1:
     inc BORDERCOL
-    jmp b2
+    jmp b1
 }
 // Interrupt Routine
 irq: {

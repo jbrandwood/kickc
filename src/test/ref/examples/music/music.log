@@ -386,37 +386,41 @@ Calls in [] to main:4
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Renumbering block @4 to @1
+Renumbering block @5 to @2
+Renumbering block main::@2 to main::@1
+Renumbering block main::@3 to main::@2
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @5
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@4
-@4: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")
  }}
   kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)
  }}
-  to:@5
-@5: scope:[]  from @4
+  to:@2
+@2: scope:[]  from @1
   [3] phi()
   [4] call main 
   to:@end
-@end: scope:[]  from @5
+@end: scope:[]  from @2
   [5] phi()
-main: scope:[main]  from @5
+main: scope:[main]  from @2
   asm { jsrmusic.init  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@1 main::@2
+  [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@1
   to:main::@2
-main::@2: scope:[main]  from main main::@2 main::@3
-  [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@2
-  to:main::@3
-main::@3: scope:[main]  from main::@2
+main::@2: scope:[main]  from main::@1
   [8] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0)
   asm { jsrmusic.play  }
   [10] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0)
-  to:main::@2
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -518,24 +522,24 @@ INITIAL ASM
   .label MUSIC = $1000
 //SEG3 @begin
 bbegin:
-  jmp b4
-//SEG4 @4
-b4:
+  jmp b1
+//SEG4 @1
+b1:
 //SEG5 kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")  }}
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
 //SEG6 kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
-//SEG7 [3] phi from @4 to @5 [phi:@4->@5]
-b5_from_b4:
-  jmp b5
-//SEG8 @5
-b5:
+//SEG7 [3] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG8 @2
+b2:
 //SEG9 [4] call main 
   jsr main
-//SEG10 [5] phi from @5 to @end [phi:@5->@end]
-bend_from_b5:
+//SEG10 [5] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
   jmp bend
 //SEG11 @end
 bend:
@@ -545,17 +549,17 @@ main: {
   //SEG13 asm { jsrmusic.init  }
     // Initialize the music
     jsr music.init
-    jmp b2
+    jmp b1
   // Wait for the RASTER
-  //SEG14 main::@2
-  b2:
-  //SEG15 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG14 main::@1
+  b1:
+  //SEG15 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
-    bne b2
-    jmp b3
-  //SEG16 main::@3
-  b3:
+    bne b1
+    jmp b2
+  //SEG16 main::@2
+  b2:
   //SEG17 [8] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
   //SEG18 asm { jsrmusic.play  }
@@ -563,7 +567,7 @@ main: {
     jsr music.play
   //SEG19 [10] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
-    jmp b2
+    jmp b1
 }
 .pc = MUSIC "MUSIC"
   .fill music.size, music.getData(i)
@@ -571,7 +575,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { jsrmusic.init  } always clobbers reg byte a reg byte x reg byte y 
-Statement [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@2 [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@1 [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement asm { jsrmusic.play  } always clobbers reg byte a reg byte x reg byte y 
 
 REGISTER UPLIFT SCOPES
@@ -594,24 +598,24 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label MUSIC = $1000
 //SEG3 @begin
 bbegin:
-  jmp b4
-//SEG4 @4
-b4:
+  jmp b1
+//SEG4 @1
+b1:
 //SEG5 kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")  }}
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
 //SEG6 kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
-//SEG7 [3] phi from @4 to @5 [phi:@4->@5]
-b5_from_b4:
-  jmp b5
-//SEG8 @5
-b5:
+//SEG7 [3] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG8 @2
+b2:
 //SEG9 [4] call main 
   jsr main
-//SEG10 [5] phi from @5 to @end [phi:@5->@end]
-bend_from_b5:
+//SEG10 [5] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
   jmp bend
 //SEG11 @end
 bend:
@@ -621,17 +625,17 @@ main: {
   //SEG13 asm { jsrmusic.init  }
     // Initialize the music
     jsr music.init
-    jmp b2
+    jmp b1
   // Wait for the RASTER
-  //SEG14 main::@2
-  b2:
-  //SEG15 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG14 main::@1
+  b1:
+  //SEG15 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
-    bne b2
-    jmp b3
-  //SEG16 main::@3
-  b3:
+    bne b1
+    jmp b2
+  //SEG16 main::@2
+  b2:
   //SEG17 [8] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
   //SEG18 asm { jsrmusic.play  }
@@ -639,26 +643,26 @@ main: {
     jsr music.play
   //SEG19 [10] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
-    jmp b2
+    jmp b1
 }
 .pc = MUSIC "MUSIC"
   .fill music.size, music.getData(i)
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp bend
+Removing instruction jmp b1
 Removing instruction jmp b2
-Removing instruction jmp b3
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b4:
-Removing instruction b5_from_b4:
-Removing instruction bend_from_b5:
+Removing instruction b1:
+Removing instruction b2_from_b1:
+Removing instruction bend_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b5:
+Removing instruction b2:
 Removing instruction bend:
-Removing instruction b3:
+Removing instruction b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
@@ -667,8 +671,8 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @4
-(label) @5
+(label) @1
+(label) @2
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -755,8 +759,8 @@ FINAL SYMBOL TABLE
 (byte) WHITE
 (byte) YELLOW
 (void()) main()
+(label) main::@1
 (label) main::@2
-(label) main::@3
 
 
 
@@ -774,17 +778,17 @@ Score: 3882
   .label BORDERCOL = $d020
   .label MUSIC = $1000
 //SEG3 @begin
-//SEG4 @4
+//SEG4 @1
 //SEG5 kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")  }}
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
 //SEG6 kickasm(location (const byte*) MUSIC#0) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
-//SEG7 [3] phi from @4 to @5 [phi:@4->@5]
-//SEG8 @5
+//SEG7 [3] phi from @1 to @2 [phi:@1->@2]
+//SEG8 @2
 //SEG9 [4] call main 
-//SEG10 [5] phi from @5 to @end [phi:@5->@end]
+//SEG10 [5] phi from @2 to @end [phi:@2->@end]
 //SEG11 @end
 //SEG12 main
 // Play the music 
@@ -793,13 +797,13 @@ main: {
     // Initialize the music
     jsr music.init
   // Wait for the RASTER
-  //SEG14 main::@2
-  b2:
-  //SEG15 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+  //SEG14 main::@1
+  b1:
+  //SEG15 [7] if(*((const byte*) RASTER#0)!=(byte/word/signed word/dword/signed dword) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
-    bne b2
-  //SEG16 main::@3
+    bne b1
+  //SEG16 main::@2
   //SEG17 [8] *((const byte*) BORDERCOL#0) ← ++ *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
   //SEG18 asm { jsrmusic.play  }
@@ -807,7 +811,7 @@ main: {
     jsr music.play
   //SEG19 [10] *((const byte*) BORDERCOL#0) ← -- *((const byte*) BORDERCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
-    jmp b2
+    jmp b1
 }
 .pc = MUSIC "MUSIC"
   .fill music.size, music.getData(i)

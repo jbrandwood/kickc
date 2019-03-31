@@ -629,31 +629,37 @@ Coalesced [30] fill::addr#4 ← fill::addr#1
 Coalesced down to 4 phi equivalence classes
 Culled Empty Block (label) main::@12
 Culled Empty Block (label) fill::@3
+Renumbering block @4 to @1
+Renumbering block @6 to @2
+Renumbering block main::@2 to main::@1
+Renumbering block main::@7 to main::@2
+Renumbering block main::@9 to main::@3
+Renumbering block main::@10 to main::@4
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @6
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::toD0181
-Adding NOP phi() at start of main::@10
+Adding NOP phi() at start of main::@4
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@4
-@4: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
                 .byte logoPic.getMulticolorByte(x,cp+y*8)
  }}
-  to:@6
-@6: scope:[]  from @4
+  to:@2
+@2: scope:[]  from @1
   [2] phi()
   [3] call main 
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @2
   [4] phi()
-main: scope:[main]  from @6
+main: scope:[main]  from @2
   [5] *((const byte*) BORDERCOL#0) ← (const byte) WHITE#0
   [6] *((const byte*) BGCOL2#0) ← (const byte) DARK_GREY#0
   [7] *((const byte*) BGCOL#0) ← *((const byte*) BGCOL2#0)
@@ -661,30 +667,30 @@ main: scope:[main]  from @6
   to:main::toD0181
 main::toD0181: scope:[main]  from main
   [9] phi()
-  to:main::@9
-main::@9: scope:[main]  from main::toD0181
+  to:main::@3
+main::@3: scope:[main]  from main::toD0181
   [10] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0
   [11] *((const byte*) D016#0) ← (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0
   [12] call fill 
-  to:main::@10
-main::@10: scope:[main]  from main::@9
+  to:main::@4
+main::@4: scope:[main]  from main::@3
   [13] phi()
   [14] call fill 
-  to:main::@7
-main::@7: scope:[main]  from main::@10 main::@7
-  [15] (byte) main::ch#2 ← phi( main::@10/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@7/(byte) main::ch#1 )
+  to:main::@2
+main::@2: scope:[main]  from main::@2 main::@4
+  [15] (byte) main::ch#2 ← phi( main::@4/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::ch#1 )
   [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2
   [17] (byte) main::ch#1 ← ++ (byte) main::ch#2
-  [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@7
-  to:main::@2
-main::@2: scope:[main]  from main::@2 main::@7
+  [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@2
+  to:main::@1
+main::@1: scope:[main]  from main::@1 main::@2
   [19] *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) ← ++ *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7)
   kickasm() {{ inc $d020  }}
-  to:main::@2
-fill: scope:[fill]  from main::@10 main::@9
-  [21] (byte) fill::val#3 ← phi( main::@10/(const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8 main::@9/(const byte) BLACK#0 )
-  [21] (word) fill::size#2 ← phi( main::@10/(byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 main::@9/(byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 )
-  [21] (byte*) fill::addr#0 ← phi( main::@10/(const byte*) COLS#0 main::@9/(const byte*) SCREEN#0 )
+  to:main::@1
+fill: scope:[fill]  from main::@3 main::@4
+  [21] (byte) fill::val#3 ← phi( main::@4/(const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8 main::@3/(const byte) BLACK#0 )
+  [21] (word) fill::size#2 ← phi( main::@4/(byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 main::@3/(byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 )
+  [21] (byte*) fill::addr#0 ← phi( main::@4/(const byte*) COLS#0 main::@3/(const byte*) SCREEN#0 )
   [22] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word) fill::size#2
   to:fill::@1
 fill::@1: scope:[fill]  from fill fill::@1
@@ -852,19 +858,19 @@ INITIAL ASM
   .label LOGO = $2000
 //SEG3 @begin
 bbegin:
-  jmp b4
-//SEG4 @4
-b4:
+  jmp b1
+//SEG4 @1
+b1:
 //SEG5 kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
-//SEG6 [2] phi from @4 to @6 [phi:@4->@6]
-b6_from_b4:
-  jmp b6
-//SEG7 @6
-b6:
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG7 @2
+b2:
 //SEG8 [3] call main 
   jsr main
-//SEG9 [4] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
   jmp bend
 //SEG10 @end
 bend:
@@ -889,9 +895,9 @@ main: {
     jmp toD0181
   //SEG17 main::toD0181
   toD0181:
-    jmp b9
-  //SEG18 main::@9
-  b9:
+    jmp b3
+  //SEG18 main::@3
+  b3:
   //SEG19 [10] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
@@ -899,74 +905,74 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta D016
   //SEG21 [12] call fill 
-  //SEG22 [21] phi from main::@9 to fill [phi:main::@9->fill]
-  fill_from_b9:
-  //SEG23 [21] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:main::@9->fill#0] -- vbuz1=vbuc1 
+  //SEG22 [21] phi from main::@3 to fill [phi:main::@3->fill]
+  fill_from_b3:
+  //SEG23 [21] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:main::@3->fill#0] -- vbuz1=vbuc1 
     lda #BLACK
     sta fill.val
-  //SEG24 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@9->fill#1] -- vwuz1=vwuc1 
+  //SEG24 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@3->fill#1] -- vwuz1=vwuc1 
     lda #<$28*$19
     sta fill.size
     lda #>$28*$19
     sta fill.size+1
-  //SEG25 [21] phi (byte*) fill::addr#0 = (const byte*) SCREEN#0 [phi:main::@9->fill#2] -- pbuz1=pbuc1 
+  //SEG25 [21] phi (byte*) fill::addr#0 = (const byte*) SCREEN#0 [phi:main::@3->fill#2] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta fill.addr
     lda #>SCREEN
     sta fill.addr+1
     jsr fill
-  //SEG26 [13] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
-  b10_from_b9:
-    jmp b10
-  //SEG27 main::@10
-  b10:
+  //SEG26 [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  b4_from_b3:
+    jmp b4
+  //SEG27 main::@4
+  b4:
   //SEG28 [14] call fill 
-  //SEG29 [21] phi from main::@10 to fill [phi:main::@10->fill]
-  fill_from_b10:
-  //SEG30 [21] phi (byte) fill::val#3 = (const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8 [phi:main::@10->fill#0] -- vbuz1=vbuc1 
+  //SEG29 [21] phi from main::@4 to fill [phi:main::@4->fill]
+  fill_from_b4:
+  //SEG30 [21] phi (byte) fill::val#3 = (const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8 [phi:main::@4->fill#0] -- vbuz1=vbuc1 
     lda #WHITE|8
     sta fill.val
-  //SEG31 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@10->fill#1] -- vwuz1=vwuc1 
+  //SEG31 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@4->fill#1] -- vwuz1=vwuc1 
     lda #<$28*$19
     sta fill.size
     lda #>$28*$19
     sta fill.size+1
-  //SEG32 [21] phi (byte*) fill::addr#0 = (const byte*) COLS#0 [phi:main::@10->fill#2] -- pbuz1=pbuc1 
+  //SEG32 [21] phi (byte*) fill::addr#0 = (const byte*) COLS#0 [phi:main::@4->fill#2] -- pbuz1=pbuc1 
     lda #<COLS
     sta fill.addr
     lda #>COLS
     sta fill.addr+1
     jsr fill
-  //SEG33 [15] phi from main::@10 to main::@7 [phi:main::@10->main::@7]
-  b7_from_b10:
-  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@10->main::@7#0] -- vbuz1=vbuc1 
+  //SEG33 [15] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  b2_from_b4:
+  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta ch
-    jmp b7
-  //SEG35 [15] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
-  b7_from_b7:
-  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@7->main::@7#0] -- register_copy 
-    jmp b7
-  //SEG37 main::@7
-  b7:
+    jmp b2
+  //SEG35 [15] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@2->main::@2#0] -- register_copy 
+    jmp b2
+  //SEG37 main::@2
+  b2:
   //SEG38 [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy ch
     tya
     sta SCREEN,y
   //SEG39 [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc ch
-  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@7 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$f0
     cmp ch
-    bne b7_from_b7
-    jmp b2
-  //SEG41 main::@2
-  b2:
+    bne b2_from_b2
+    jmp b1
+  //SEG41 main::@1
+  b1:
   //SEG42 [19] *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) ← ++ *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
   //SEG43 kickasm() {{ inc $d020  }}
     inc $d020 
-    jmp b2
+    jmp b1
 }
 //SEG44 fill
 // Fill some memory with a value
@@ -1085,19 +1091,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label LOGO = $2000
 //SEG3 @begin
 bbegin:
-  jmp b4
-//SEG4 @4
-b4:
+  jmp b1
+//SEG4 @1
+b1:
 //SEG5 kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
-//SEG6 [2] phi from @4 to @6 [phi:@4->@6]
-b6_from_b4:
-  jmp b6
-//SEG7 @6
-b6:
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG7 @2
+b2:
 //SEG8 [3] call main 
   jsr main
-//SEG9 [4] phi from @6 to @end [phi:@6->@end]
-bend_from_b6:
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
   jmp bend
 //SEG10 @end
 bend:
@@ -1121,9 +1127,9 @@ main: {
     jmp toD0181
   //SEG17 main::toD0181
   toD0181:
-    jmp b9
-  //SEG18 main::@9
-  b9:
+    jmp b3
+  //SEG18 main::@3
+  b3:
   //SEG19 [10] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
@@ -1131,69 +1137,69 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta D016
   //SEG21 [12] call fill 
-  //SEG22 [21] phi from main::@9 to fill [phi:main::@9->fill]
-  fill_from_b9:
-  //SEG23 [21] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:main::@9->fill#0] -- vbuxx=vbuc1 
+  //SEG22 [21] phi from main::@3 to fill [phi:main::@3->fill]
+  fill_from_b3:
+  //SEG23 [21] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:main::@3->fill#0] -- vbuxx=vbuc1 
     ldx #BLACK
-  //SEG24 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@9->fill#1] -- vwuz1=vwuc1 
+  //SEG24 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@3->fill#1] -- vwuz1=vwuc1 
     lda #<$28*$19
     sta fill.size
     lda #>$28*$19
     sta fill.size+1
-  //SEG25 [21] phi (byte*) fill::addr#0 = (const byte*) SCREEN#0 [phi:main::@9->fill#2] -- pbuz1=pbuc1 
+  //SEG25 [21] phi (byte*) fill::addr#0 = (const byte*) SCREEN#0 [phi:main::@3->fill#2] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta fill.addr
     lda #>SCREEN
     sta fill.addr+1
     jsr fill
-  //SEG26 [13] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
-  b10_from_b9:
-    jmp b10
-  //SEG27 main::@10
-  b10:
+  //SEG26 [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  b4_from_b3:
+    jmp b4
+  //SEG27 main::@4
+  b4:
   //SEG28 [14] call fill 
-  //SEG29 [21] phi from main::@10 to fill [phi:main::@10->fill]
-  fill_from_b10:
-  //SEG30 [21] phi (byte) fill::val#3 = (const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8 [phi:main::@10->fill#0] -- vbuxx=vbuc1 
+  //SEG29 [21] phi from main::@4 to fill [phi:main::@4->fill]
+  fill_from_b4:
+  //SEG30 [21] phi (byte) fill::val#3 = (const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8 [phi:main::@4->fill#0] -- vbuxx=vbuc1 
     ldx #WHITE|8
-  //SEG31 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@10->fill#1] -- vwuz1=vwuc1 
+  //SEG31 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@4->fill#1] -- vwuz1=vwuc1 
     lda #<$28*$19
     sta fill.size
     lda #>$28*$19
     sta fill.size+1
-  //SEG32 [21] phi (byte*) fill::addr#0 = (const byte*) COLS#0 [phi:main::@10->fill#2] -- pbuz1=pbuc1 
+  //SEG32 [21] phi (byte*) fill::addr#0 = (const byte*) COLS#0 [phi:main::@4->fill#2] -- pbuz1=pbuc1 
     lda #<COLS
     sta fill.addr
     lda #>COLS
     sta fill.addr+1
     jsr fill
-  //SEG33 [15] phi from main::@10 to main::@7 [phi:main::@10->main::@7]
-  b7_from_b10:
-  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@10->main::@7#0] -- vbuxx=vbuc1 
+  //SEG33 [15] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  b2_from_b4:
+  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b7
-  //SEG35 [15] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
-  b7_from_b7:
-  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@7->main::@7#0] -- register_copy 
-    jmp b7
-  //SEG37 main::@7
-  b7:
+    jmp b2
+  //SEG35 [15] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  b2_from_b2:
+  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@2->main::@2#0] -- register_copy 
+    jmp b2
+  //SEG37 main::@2
+  b2:
   //SEG38 [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
   //SEG39 [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@7 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$f0
-    bne b7_from_b7
-    jmp b2
-  //SEG41 main::@2
-  b2:
+    bne b2_from_b2
+    jmp b1
+  //SEG41 main::@1
+  b1:
   //SEG42 [19] *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) ← ++ *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
   //SEG43 kickasm() {{ inc $d020  }}
     inc $d020 
-    jmp b2
+    jmp b1
 }
 //SEG44 fill
 // Fill some memory with a value
@@ -1248,52 +1254,52 @@ fill: {
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b4
-Removing instruction jmp b6
+Removing instruction jmp b1
+Removing instruction jmp b2
 Removing instruction jmp bend
 Removing instruction jmp toD0181
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp b7
+Removing instruction jmp b3
+Removing instruction jmp b4
 Removing instruction jmp b2
+Removing instruction jmp b1
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda BGCOL2
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b7_from_b7 with b7
+Replacing label b2_from_b2 with b2
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
-Removing instruction b4:
-Removing instruction b6_from_b4:
-Removing instruction b6:
-Removing instruction bend_from_b6:
+Removing instruction b1:
+Removing instruction b2_from_b1:
+Removing instruction b2:
+Removing instruction bend_from_b2:
 Removing instruction toD0181_from_main:
 Removing instruction toD0181:
-Removing instruction b10_from_b9:
-Removing instruction fill_from_b10:
-Removing instruction b7_from_b7:
+Removing instruction b4_from_b3:
+Removing instruction fill_from_b4:
+Removing instruction b2_from_b2:
 Removing instruction b1_from_fill:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
-Removing instruction b9:
-Removing instruction fill_from_b9:
-Removing instruction b10:
-Removing instruction b7_from_b10:
+Removing instruction b3:
+Removing instruction fill_from_b3:
+Removing instruction b4:
+Removing instruction b2_from_b4:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b7
+Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @4
-(label) @6
+(label) @1
+(label) @2
 (label) @begin
 (label) @end
 (byte*) BGCOL
@@ -1406,10 +1412,10 @@ FINAL SYMBOL TABLE
 (byte) fill::val
 (byte) fill::val#3 reg byte x 1.8333333333333333
 (void()) main()
-(label) main::@10
+(label) main::@1
 (label) main::@2
-(label) main::@7
-(label) main::@9
+(label) main::@3
+(label) main::@4
 (byte) main::ch
 (byte) main::ch#1 reg byte x 16.5
 (byte) main::ch#2 reg byte x 22.0
@@ -1460,12 +1466,12 @@ Score: 3572
   .label SCREEN = $400
   .label LOGO = $2000
 //SEG3 @begin
-//SEG4 @4
+//SEG4 @1
 //SEG5 kickasm(location (const byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
-//SEG6 [2] phi from @4 to @6 [phi:@4->@6]
-//SEG7 @6
+//SEG6 [2] phi from @1 to @2 [phi:@1->@2]
+//SEG7 @2
 //SEG8 [3] call main 
-//SEG9 [4] phi from @6 to @end [phi:@6->@end]
+//SEG9 [4] phi from @2 to @end [phi:@2->@end]
 //SEG10 @end
 //SEG11 main
 main: {
@@ -1483,7 +1489,7 @@ main: {
     sta BGCOL3
   //SEG16 [9] phi from main to main::toD0181 [phi:main->main::toD0181]
   //SEG17 main::toD0181
-  //SEG18 main::@9
+  //SEG18 main::@3
   //SEG19 [10] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
@@ -1491,59 +1497,59 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta D016
   //SEG21 [12] call fill 
-  //SEG22 [21] phi from main::@9 to fill [phi:main::@9->fill]
-  //SEG23 [21] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:main::@9->fill#0] -- vbuxx=vbuc1 
+  //SEG22 [21] phi from main::@3 to fill [phi:main::@3->fill]
+  //SEG23 [21] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:main::@3->fill#0] -- vbuxx=vbuc1 
     ldx #BLACK
-  //SEG24 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@9->fill#1] -- vwuz1=vwuc1 
+  //SEG24 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@3->fill#1] -- vwuz1=vwuc1 
     lda #<$28*$19
     sta fill.size
     lda #>$28*$19
     sta fill.size+1
-  //SEG25 [21] phi (byte*) fill::addr#0 = (const byte*) SCREEN#0 [phi:main::@9->fill#2] -- pbuz1=pbuc1 
+  //SEG25 [21] phi (byte*) fill::addr#0 = (const byte*) SCREEN#0 [phi:main::@3->fill#2] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta fill.addr
     lda #>SCREEN
     sta fill.addr+1
     jsr fill
-  //SEG26 [13] phi from main::@9 to main::@10 [phi:main::@9->main::@10]
-  //SEG27 main::@10
+  //SEG26 [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  //SEG27 main::@4
   //SEG28 [14] call fill 
-  //SEG29 [21] phi from main::@10 to fill [phi:main::@10->fill]
-  //SEG30 [21] phi (byte) fill::val#3 = (const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8 [phi:main::@10->fill#0] -- vbuxx=vbuc1 
+  //SEG29 [21] phi from main::@4 to fill [phi:main::@4->fill]
+  //SEG30 [21] phi (byte) fill::val#3 = (const byte) WHITE#0|(byte/signed byte/word/signed word/dword/signed dword) 8 [phi:main::@4->fill#0] -- vbuxx=vbuc1 
     ldx #WHITE|8
-  //SEG31 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@10->fill#1] -- vwuz1=vwuc1 
+  //SEG31 [21] phi (word) fill::size#2 = (byte/signed byte/word/signed word/dword/signed dword) $28*(byte/signed byte/word/signed word/dword/signed dword) $19 [phi:main::@4->fill#1] -- vwuz1=vwuc1 
     lda #<$28*$19
     sta fill.size
     lda #>$28*$19
     sta fill.size+1
-  //SEG32 [21] phi (byte*) fill::addr#0 = (const byte*) COLS#0 [phi:main::@10->fill#2] -- pbuz1=pbuc1 
+  //SEG32 [21] phi (byte*) fill::addr#0 = (const byte*) COLS#0 [phi:main::@4->fill#2] -- pbuz1=pbuc1 
     lda #<COLS
     sta fill.addr
     lda #>COLS
     sta fill.addr+1
     jsr fill
-  //SEG33 [15] phi from main::@10 to main::@7 [phi:main::@10->main::@7]
-  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@10->main::@7#0] -- vbuxx=vbuc1 
+  //SEG33 [15] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  //SEG34 [15] phi (byte) main::ch#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG35 [15] phi from main::@7 to main::@7 [phi:main::@7->main::@7]
-  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@7->main::@7#0] -- register_copy 
-  //SEG37 main::@7
-  b7:
+  //SEG35 [15] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
+  //SEG36 [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@2->main::@2#0] -- register_copy 
+  //SEG37 main::@2
+  b2:
   //SEG38 [16] *((const byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
   //SEG39 [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@7 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG40 [18] if((byte) main::ch#1!=(byte/word/signed word/dword/signed dword) $f0) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$f0
-    bne b7
-  //SEG41 main::@2
-  b2:
+    bne b2
+  //SEG41 main::@1
+  b1:
   //SEG42 [19] *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) ← ++ *((const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
   //SEG43 kickasm() {{ inc $d020  }}
     inc $d020 
-    jmp b2
+    jmp b1
 }
 //SEG44 fill
 // Fill some memory with a value

@@ -51,9 +51,9 @@ main: {
     jsr print_ln
     inx
     cpx #$b
-    bne b8
+    bne b6
     rts
-  b8:
+  b6:
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1

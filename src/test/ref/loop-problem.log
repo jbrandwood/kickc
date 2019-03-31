@@ -99,8 +99,10 @@ Created 1 initial phi equivalence classes
 Coalesced [15] b::i#4 ← b::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) b::@4
+Renumbering block @3 to @1
+Renumbering block b::@3 to b::@2
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of b
@@ -108,14 +110,14 @@ Adding NOP phi() at start of b
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] phi()
-  to:@3
-@3: scope:[]  from @begin
+  to:@1
+@1: scope:[]  from @begin
   [1] phi()
   [2] call main 
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @1
   [3] phi()
-main: scope:[main]  from @3
+main: scope:[main]  from @1
   [4] *((const byte*) SCREEN#0) ← (byte) '0'
   [5] call d 
   to:main::@1
@@ -129,15 +131,15 @@ main::@return: scope:[main]  from main::@1
 b: scope:[b]  from main::@1
   [9] phi()
   to:b::@1
-b::@1: scope:[b]  from b b::@3
-  [10] (byte) b::i#2 ← phi( b/(byte/signed byte/word/signed word/dword/signed dword) 0 b::@3/(byte) b::i#1 )
+b::@1: scope:[b]  from b b::@2
+  [10] (byte) b::i#2 ← phi( b/(byte/signed byte/word/signed word/dword/signed dword) 0 b::@2/(byte) b::i#1 )
   [11] call d 
-  to:b::@3
-b::@3: scope:[b]  from b::@1
+  to:b::@2
+b::@2: scope:[b]  from b::@1
   [12] (byte) b::i#1 ← ++ (byte) b::i#2
   [13] if((byte) b::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 4) goto b::@1
   to:b::@return
-b::@return: scope:[b]  from b::@3
+b::@return: scope:[b]  from b::@2
   [14] return 
   to:@return
 d: scope:[d]  from b::@1 main
@@ -147,7 +149,7 @@ d::@return: scope:[d]  from d
   [16] return 
   to:@return
 
-null depth in calling loop Loop head: b::@1 tails: b::@3 blocks: b::@3 b::@1  in scope d
+null depth in calling loop Loop head: b::@1 tails: b::@2 blocks: b::@2 b::@1  in scope d
 
 VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
@@ -175,15 +177,15 @@ INITIAL ASM
   .label SCREEN = $400
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG5 @3
-b3:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
   jsr main
-//SEG7 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG8 @end
 bend:
@@ -218,23 +220,23 @@ b: {
     lda #0
     sta i
     jmp b1
-  //SEG21 [10] phi from b::@3 to b::@1 [phi:b::@3->b::@1]
-  b1_from_b3:
-  //SEG22 [10] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@3->b::@1#0] -- register_copy 
+  //SEG21 [10] phi from b::@2 to b::@1 [phi:b::@2->b::@1]
+  b1_from_b2:
+  //SEG22 [10] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@2->b::@1#0] -- register_copy 
     jmp b1
   //SEG23 b::@1
   b1:
   //SEG24 [11] call d 
     jsr d
-    jmp b3
-  //SEG25 b::@3
-  b3:
+    jmp b2
+  //SEG25 b::@2
+  b2:
   //SEG26 [12] (byte) b::i#1 ← ++ (byte) b::i#2 -- vbuz1=_inc_vbuz1 
     inc i
   //SEG27 [13] if((byte) b::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 4) goto b::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp i
-    bne b1_from_b3
+    bne b1_from_b2
     jmp breturn
   //SEG28 b::@return
   breturn:
@@ -278,15 +280,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
 //SEG3 @begin
 bbegin:
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-b3_from_bbegin:
-  jmp b3
-//SEG5 @3
-b3:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
 //SEG6 [2] call main 
   jsr main
-//SEG7 [3] phi from @3 to @end [phi:@3->@end]
-bend_from_b3:
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
   jmp bend
 //SEG8 @end
 bend:
@@ -319,22 +321,22 @@ b: {
   //SEG20 [10] phi (byte) b::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:b->b::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
-  //SEG21 [10] phi from b::@3 to b::@1 [phi:b::@3->b::@1]
-  b1_from_b3:
-  //SEG22 [10] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@3->b::@1#0] -- register_copy 
+  //SEG21 [10] phi from b::@2 to b::@1 [phi:b::@2->b::@1]
+  b1_from_b2:
+  //SEG22 [10] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@2->b::@1#0] -- register_copy 
     jmp b1
   //SEG23 b::@1
   b1:
   //SEG24 [11] call d 
     jsr d
-    jmp b3
-  //SEG25 b::@3
-  b3:
+    jmp b2
+  //SEG25 b::@2
+  b2:
   //SEG26 [12] (byte) b::i#1 ← ++ (byte) b::i#2 -- vbuxx=_inc_vbuxx 
     inx
   //SEG27 [13] if((byte) b::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 4) goto b::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
-    bne b1_from_b3
+    bne b1_from_b2
     jmp breturn
   //SEG28 b::@return
   breturn:
@@ -353,28 +355,28 @@ d: {
 }
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b3
+Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp b1
-Removing instruction jmp b3
+Removing instruction jmp b2
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b3 with b1
-Removing instruction b3_from_bbegin:
-Removing instruction b3:
-Removing instruction bend_from_b3:
+Replacing label b1_from_b2 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction b_from_b1:
-Removing instruction b1_from_b3:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1:
 Removing instruction breturn:
 Removing instruction b1_from_b:
-Removing instruction b3:
+Removing instruction b2:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -387,14 +389,14 @@ Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @3
+(label) @1
 (label) @begin
 (label) @end
 (byte*) SCREEN
 (const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
 (void()) b()
 (label) b::@1
-(label) b::@3
+(label) b::@2
 (label) b::@return
 (byte) b::i
 (byte) b::i#1 reg byte x 16.5
@@ -420,10 +422,10 @@ Score: 187
 //SEG2 Global Constants & labels
   .label SCREEN = $400
 //SEG3 @begin
-//SEG4 [1] phi from @begin to @3 [phi:@begin->@3]
-//SEG5 @3
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [3] phi from @3 to @end [phi:@3->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 //SEG8 @end
 //SEG9 main
 main: {
@@ -446,13 +448,13 @@ b: {
   //SEG19 [10] phi from b to b::@1 [phi:b->b::@1]
   //SEG20 [10] phi (byte) b::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:b->b::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG21 [10] phi from b::@3 to b::@1 [phi:b::@3->b::@1]
-  //SEG22 [10] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@3->b::@1#0] -- register_copy 
+  //SEG21 [10] phi from b::@2 to b::@1 [phi:b::@2->b::@1]
+  //SEG22 [10] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@2->b::@1#0] -- register_copy 
   //SEG23 b::@1
   b1:
   //SEG24 [11] call d 
     jsr d
-  //SEG25 b::@3
+  //SEG25 b::@2
   //SEG26 [12] (byte) b::i#1 ← ++ (byte) b::i#2 -- vbuxx=_inc_vbuxx 
     inx
   //SEG27 [13] if((byte) b::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 4) goto b::@1 -- vbuxx_neq_vbuc1_then_la1 

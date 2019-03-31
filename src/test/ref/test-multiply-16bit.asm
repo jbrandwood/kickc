@@ -603,7 +603,7 @@ mul16u: {
     lda a
     and #1
     cmp #0
-    beq b8
+    beq b4
     lda res
     clc
     adc mb
@@ -617,7 +617,7 @@ mul16u: {
     lda res+3
     adc mb+3
     sta res+3
-  b8:
+  b4:
     clc
     ror a+1
     ror a
@@ -638,11 +638,11 @@ muls16s: {
     .label a = 3
     .label b = 5
     lda a+1
-    bmi b4
-    bmi b2
+    bmi b6
+    bmi b5
     bne !+
     lda a
-    beq b2
+    beq b5
   !:
     lda #0
     sta j
@@ -651,7 +651,7 @@ muls16s: {
     sta m+1
     sta m+2
     sta m+3
-  b8:
+  b3:
     lda b+1
     ora #$7f
     bmi !+
@@ -677,20 +677,20 @@ muls16s: {
   !:
     lda j+1
     cmp a+1
-    bne b8
+    bne b3
     lda j
     cmp a
-    bne b8
-    jmp b3
-  b2:
+    bne b3
+    jmp b1
+  b5:
     lda #0
     sta return
     sta return+1
     sta return+2
     sta return+3
-  b3:
+  b1:
     rts
-  b4:
+  b6:
     lda #0
     sta i
     sta i+1
@@ -698,7 +698,7 @@ muls16s: {
     sta m+1
     sta m+2
     sta m+3
-  b10:
+  b4:
     lda b+1
     ora #$7f
     bmi !+
@@ -725,11 +725,11 @@ muls16s: {
     dec i
     lda i+1
     cmp a+1
-    bne b10
+    bne b4
     lda i
     cmp a
-    bne b10
-    jmp b3
+    bne b4
+    jmp b1
 }
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
@@ -927,7 +927,7 @@ muls16u: {
     lda a
     bne !+
     lda a+1
-    beq b2
+    beq b3
   !:
     lda #0
     sta i
@@ -936,7 +936,7 @@ muls16u: {
     sta m+1
     sta m+2
     sta m+3
-  b4:
+  b2:
     lda m
     clc
     adc b
@@ -956,12 +956,12 @@ muls16u: {
   !:
     lda i+1
     cmp a+1
-    bne b4
+    bne b2
     lda i
     cmp a
-    bne b4
+    bne b2
     jmp b1
-  b2:
+  b3:
     lda #0
     sta return
     sta return+1
@@ -1042,7 +1042,7 @@ mulf_init: {
     lda #>mulf_sqr2_lo
     sta sqr2_lo+1
     ldx #-1
-  b5:
+  b4:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -1057,20 +1057,20 @@ mulf_init: {
     adc dir
     tax
     cpx #0
-    bne b6
+    bne b5
     lda #1
     sta dir
-  b6:
+  b5:
     inc sqr2_lo
     bne !+
     inc sqr2_lo+1
   !:
     lda sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b5
+    bne b4
     lda sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b5
+    bne b4
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff

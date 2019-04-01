@@ -40,9 +40,13 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
                if(currentLabel != null) {
                   AsmInstruction asmInstruction = (AsmInstruction) line;
                   AsmInstructionType jmpType = AsmInstructionSet.getInstructionType("jmp", AsmAddressingMode.ABS, false);
+                  AsmInstructionType rtsType = AsmInstructionSet.getInstructionType("rts", AsmAddressingMode.NON, false);
                   if(asmInstruction.getType().equals(jmpType)) {
                      immediateJumps.put(currentScope + "::" + currentLabel, asmInstruction.getParameter());
                   }
+                  if(asmInstruction.getType().equals(rtsType)) {
+                     immediateJumps.put(currentScope + "::" + currentLabel, "rts");
+                  }		  
                }
                currentLabel = null;
             } else {
@@ -59,13 +63,18 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
             } else if(line instanceof AsmScopeEnd) {
                currentScope = "";
             } else if(line instanceof AsmInstruction) {
-               AsmInstruction asmInstruction = (AsmInstruction) line;
+               AsmInstruction asmInstruction = (AsmInstruction) line;	       
                if(asmInstruction.getType().isJump()) {
                   String immediateJmpTarget = immediateJumps.get(currentScope + "::" + asmInstruction.getParameter());
-                  if(immediateJmpTarget != null && !immediateJmpTarget.equals(asmInstruction.getParameter())) {
-                     getLog().append("Skipping double jump to " + immediateJmpTarget + " in " + asmInstruction.toString());
-                     asmInstruction.setParameter(immediateJmpTarget);
-                     optimized = true;
+		  if (immediateJmpTarget == "rts" && asmInstruction.getType().getMnemnonic()=="jmp") {
+		    getLog().append("Replacing jump to rts with rts in " + asmInstruction.toString());
+		    AsmInstructionType rtsType = AsmInstructionSet.getInstructionType("rts", AsmAddressingMode.NON, false);
+		    asmInstruction.setType(rtsType);
+		    optimized = true;
+		  } else if(immediateJmpTarget != null && immediateJmpTarget != "rts" && !immediateJmpTarget.equals(asmInstruction.getParameter())) {
+		    getLog().append("Skipping double jump to " + immediateJmpTarget + " in " + asmInstruction.toString());
+		    asmInstruction.setParameter(immediateJmpTarget);
+		    optimized = true;
                   }
                }
             }

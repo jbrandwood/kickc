@@ -10,7 +10,7 @@ KickC is currently in beta, and crashes quite often resulting in cryptic errors.
 Feel free to test it and report any problems or errors you encounter, but do not expect it to produce production quality code.
 Also, be prepared that major breaking changes (to syntax, to semantics, etc.) may be implemented in the next versions.
 
-* [Download](https://gitlab.com/camelot/kickc/tags) the newest Releases 
+* [Download](https://gitlab.com/camelot/kickc/releases) the newest Releases 
 
 * [Read](https://docs.google.com/document/d/1JE-Lt5apM-g4tZN3LS4TDbPKYgXuBz294enS9Oc4HXM/edit?usp=sharing) the Reference Manual
 

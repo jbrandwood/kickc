@@ -3,7 +3,7 @@
 When contributing to this repository, please first discuss the change you wish to make via issue,
 email, or any other method with the owner of this repository before making a change. 
 
-#"" Building KickC
+## Building KickC
 
 The prerequisites for locally building KickC is Java JDK 8 and Apache Maven.
 

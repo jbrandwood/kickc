@@ -19,3 +19,5 @@ Also, be prepared that major breaking changes (to syntax, to semantics, etc.) ma
 * [Follow](https://gitlab.com/camelot/kickc/issues) the open/closed features being developed
 
 * [Discuss](https://www.facebook.com/groups/302286200587943/) the compiler and receive news on facebook
+
+* [Contribute](https://gitlab.com/camelot/kickc/blob/master/CONTRIBUTING.md) to the development of KickC 

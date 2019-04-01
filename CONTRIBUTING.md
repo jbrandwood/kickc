@@ -5,7 +5,7 @@ email, or any other method with the owner of this repository before making a cha
 
 ## Building KickC
 
-The prerequisites for locally building KickC is Java JDK 8 and Apache Maven.
+The prerequisites for locally building KickC is Java JDK 8+ and Apache Maven 3+.
 
 *  https://www.oracle.com/technetwork/java/javase
 *  https://maven.apache.org

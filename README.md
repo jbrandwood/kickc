@@ -4,7 +4,7 @@ KickC is a compiler for a C-family language creating optimized and readable 6502
 
 The KickC language is classic C with some limitations, some modifications and some extensions to ensure an optimal fit for creating 6502 assembler code. 
 
-* [Download](https://gitlab.com/camelot/kickc/releases) the newest Releases 
+* [Download](https://gitlab.com/camelot/kickc/releases) the newest Release 
 
 * [Read](https://docs.google.com/document/d/1JE-Lt5apM-g4tZN3LS4TDbPKYgXuBz294enS9Oc4HXM/edit?usp=sharing) the Reference Manual
 
@@ -18,6 +18,7 @@ The KickC language is classic C with some limitations, some modifications and so
 
 ## BETA
 
-KickC is currently in beta, and crashes quite often resulting in cryptic errors. Also it will some times create ASM code that does not work properly. 
+KickC is currently in beta, and crashes quite often resulting in cryptic errors. 
+Also it will at times create ASM code that does not work properly. 
 Feel free to test it and report any problems or errors you encounter, but do not expect it to produce production quality code.
 Also, be prepared that major breaking changes (to syntax, to semantics, etc.) may be implemented in the next versions.

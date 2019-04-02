@@ -109,7 +109,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
     * @return True if the two equivalence classes can be coalesced into one without problems.
     */
    private static boolean canCoalesceThreads(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Collection<ScopeRef> threadHeads, Program program) {
-      if(threadHeads.size()>=1) {
+      if(threadHeads.size()<=1) {
          return true;
       }
       CallGraph callGraph = program.getCallGraph();

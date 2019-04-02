@@ -20,10 +20,9 @@ main: {
     beq b1
     lda #2
     sta BGCOL
-  breturn:
     rts
   b1:
     lda #5
     sta BGCOL
-    jmp breturn
+    rts
 }

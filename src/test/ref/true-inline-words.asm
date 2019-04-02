@@ -17,11 +17,10 @@ main: {
     beq b1
     lda #2
     sta bgcol
-  breturn:
     rts
   b1:
     lda #5
     sta bgcol
-    jmp breturn
+    rts
     bs: .byte 'c', 'm'
 }

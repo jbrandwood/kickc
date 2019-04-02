@@ -14,7 +14,6 @@ main: {
     lda str,x
     cmp #'@'
     bne b2
-  breturn:
     rts
   b2:
     lda str,x
@@ -24,7 +23,7 @@ main: {
     inx
     cpx #0
     bne b1
-    jmp breturn
+    rts
   b3:
     lda str,x
     ldy #0

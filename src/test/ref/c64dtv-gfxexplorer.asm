@@ -531,10 +531,9 @@ keyboard_event_get: {
     dec keyboard_events_size
     ldy keyboard_events_size
     lda keyboard_events,y
-    jmp breturn
+    rts
   b1:
     lda #$ff
-  breturn:
     rts
 }
 // Scans the entire matrix to determine which keys have been pressed/depressed.
@@ -693,31 +692,30 @@ get_vic_screen: {
     sta return
     lda #>VIC_SCREEN4
     sta return+1
-    jmp breturn
+    rts
   b2:
     lda #<VIC_SCREEN0
     sta return
     lda #>VIC_SCREEN0
     sta return+1
-    jmp breturn
+    rts
   b3:
     lda #<VIC_SCREEN1
     sta return
     lda #>VIC_SCREEN1
     sta return+1
-    jmp breturn
+    rts
   b4:
     lda #<VIC_SCREEN2
     sta return
     lda #>VIC_SCREEN2
     sta return+1
-    jmp breturn
+    rts
   b5:
     lda #<VIC_SCREEN3
     sta return
     lda #>VIC_SCREEN3
     sta return+1
-  breturn:
     rts
 }
 // Get the VIC charset/bitmap address from the index
@@ -732,13 +730,12 @@ get_vic_charset: {
     sta return
     lda #>VIC_BITMAP
     sta return+1
-    jmp breturn
+    rts
   b2:
     lda #<VIC_CHARSET_ROM
     sta return
     lda #>VIC_CHARSET_ROM
     sta return+1
-  breturn:
     rts
 }
 // Get plane address from a plane index (from the form)
@@ -797,7 +794,7 @@ get_plane: {
     sta return+2
     lda #>PLANE_FULL>>$10
     sta return+3
-    jmp breturn
+    rts
   b2:
     lda #<$ffffffff&VIC_SCREEN0
     sta return
@@ -807,7 +804,7 @@ get_plane: {
     sta return+2
     lda #>$ffffffff&VIC_SCREEN0>>$10
     sta return+3
-    jmp breturn
+    rts
   b3:
     lda #<PLANE_HORISONTAL2
     sta return
@@ -817,7 +814,7 @@ get_plane: {
     sta return+2
     lda #>PLANE_HORISONTAL2>>$10
     sta return+3
-    jmp breturn
+    rts
   b4:
     lda #<PLANE_VERTICAL2
     sta return
@@ -827,7 +824,7 @@ get_plane: {
     sta return+2
     lda #>PLANE_VERTICAL2>>$10
     sta return+3
-    jmp breturn
+    rts
   b5:
     lda #<PLANE_CHARSET8
     sta return
@@ -837,7 +834,7 @@ get_plane: {
     sta return+2
     lda #>PLANE_CHARSET8>>$10
     sta return+3
-    jmp breturn
+    rts
   b6:
     lda #<PLANE_BLANK
     sta return
@@ -847,7 +844,7 @@ get_plane: {
     sta return+2
     lda #>PLANE_BLANK>>$10
     sta return+3
-    jmp breturn
+    rts
   b7:
     lda #<$ffffffff&VIC_SCREEN1
     sta return
@@ -857,7 +854,7 @@ get_plane: {
     sta return+2
     lda #>$ffffffff&VIC_SCREEN1>>$10
     sta return+3
-    jmp breturn
+    rts
   b8:
     lda #<$ffffffff&VIC_SCREEN2
     sta return
@@ -867,7 +864,7 @@ get_plane: {
     sta return+2
     lda #>$ffffffff&VIC_SCREEN2>>$10
     sta return+3
-    jmp breturn
+    rts
   b9:
     lda #<$ffffffff&VIC_SCREEN3
     sta return
@@ -877,7 +874,7 @@ get_plane: {
     sta return+2
     lda #>$ffffffff&VIC_SCREEN3>>$10
     sta return+3
-    jmp breturn
+    rts
   b10:
     lda #<$ffffffff&VIC_BITMAP
     sta return
@@ -887,7 +884,7 @@ get_plane: {
     sta return+2
     lda #>$ffffffff&VIC_BITMAP>>$10
     sta return+3
-    jmp breturn
+    rts
   b11:
     lda #<$ffffffff&VIC_CHARSET_ROM
     sta return
@@ -897,7 +894,7 @@ get_plane: {
     sta return+2
     lda #>$ffffffff&VIC_CHARSET_ROM>>$10
     sta return+3
-    jmp breturn
+    rts
   b12:
     lda #<PLANE_8BPP_CHUNKY
     sta return
@@ -907,7 +904,7 @@ get_plane: {
     sta return+2
     lda #>PLANE_8BPP_CHUNKY>>$10
     sta return+3
-    jmp breturn
+    rts
   b13:
     lda #<PLANE_HORISONTAL
     sta return
@@ -917,7 +914,7 @@ get_plane: {
     sta return+2
     lda #>PLANE_HORISONTAL>>$10
     sta return+3
-    jmp breturn
+    rts
   b14:
     lda #<PLANE_VERTICAL
     sta return
@@ -927,7 +924,6 @@ get_plane: {
     sta return+2
     lda #>PLANE_VERTICAL>>$10
     sta return+3
-  breturn:
     rts
 }
 // Show the form - and let the user change values
@@ -1357,7 +1353,6 @@ form_control: {
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
     ldx #0
-  breturn:
     rts
   b12:
     inc form_field_idx
@@ -1391,7 +1386,7 @@ form_control: {
     sta (field),y
   b6:
     ldx #0
-    jmp breturn
+    rts
   b14:
     ldx form_field_idx
     inc form_fields_val,x
@@ -1407,7 +1402,7 @@ form_control: {
     cmp #KEY_SPACE
     bne b6
     ldx #$ff
-    jmp breturn
+    rts
   b2:
     lda #$80
     ldy #0
@@ -2007,7 +2002,6 @@ bitmap_line: {
     sta bitmap_line_ydxi.y1
     sty bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
-  breturn:
     rts
   b8:
     stx bitmap_line_xdyi.x
@@ -2015,7 +2009,7 @@ bitmap_line: {
     sta bitmap_line_xdyi.y
     sty bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
-    jmp breturn
+    rts
   b7:
     lda y1
     sec
@@ -2030,14 +2024,14 @@ bitmap_line: {
     sta bitmap_line_ydxd.y1
     sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
-    jmp breturn
+    rts
   b9:
     stx bitmap_line_xdyd.x
     lda y1
     sta bitmap_line_xdyd.y
     sty bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
-    jmp breturn
+    rts
   b1:
     txa
     sec
@@ -2055,14 +2049,14 @@ bitmap_line: {
     sta bitmap_line_ydxd.y
     sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
-    jmp breturn
+    rts
   b12:
     lda x0
     sta bitmap_line_xdyd.x
     stx bitmap_line_xdyd.x1
     sty bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
-    jmp breturn
+    rts
   b11:
     lda y1
     sec
@@ -2075,14 +2069,14 @@ bitmap_line: {
     ldx x0
     sty bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
-    jmp breturn
+    rts
   b13:
     lda x0
     sta bitmap_line_xdyi.x
     stx bitmap_line_xdyi.x1
     sty bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
-    jmp breturn
+    rts
 }
 // bitmap_line_xdyi(byte zeropage($e) x, byte zeropage($f) y, byte zeropage($d) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyi: {

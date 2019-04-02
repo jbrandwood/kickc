@@ -1119,6 +1119,14 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
+
+      String procedureName;
+      if(ctx.expr() instanceof KickCParser.ExprIdContext) {
+         procedureName = ctx.expr().getText();
+      } else {
+         throw new CompileError("Function pointer calls not supported.", new StatementSource(ctx));
+      }
+
       List<RValue> parameters;
       KickCParser.ParameterListContext parameterList = ctx.parameterList();
       if(parameterList != null) {
@@ -1128,7 +1136,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
-      sequence.addStatement(new StatementCall(tmpVarRef, ctx.NAME().getText(), parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+      sequence.addStatement(new StatementCall(tmpVarRef, procedureName, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
       return tmpVarRef;
    }
 

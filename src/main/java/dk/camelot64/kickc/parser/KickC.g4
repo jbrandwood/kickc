@@ -90,7 +90,7 @@ typeDecl
 
 expr
     : '(' expr ')' #exprPar
-    | NAME '(' parameterList? ')' #exprCall
+    | expr '(' parameterList? ')' #exprCall
     | expr '[' expr ']' #exprArray
     | '(' typeDecl ')' expr #exprCast
     | ('--' | '++' ) expr #exprPreMod

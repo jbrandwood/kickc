@@ -33,6 +33,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFunctionPointerNoarg3() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-3");
+   }
+
+   @Test
+   public void testFunctionPointerNoarg2() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-2");
+   }
+
+   @Test
+   public void testFunctionPointerNoarg() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg");
+   }
+
+   @Test
    public void testLoopBreakContinue() throws IOException, URISyntaxException {
       compileAndCompare("loop-break-continue");
    }

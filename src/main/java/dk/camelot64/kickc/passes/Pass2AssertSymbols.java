@@ -1,10 +1,13 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.*;
-import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
+import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.VariableUnversioned;
+import dk.camelot64.kickc.model.values.SymbolRef;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 /** Asserts that the symbols in the symbol table match exactly the symbols in the program */
@@ -16,9 +19,16 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
 
    @Override
    public void check() throws AssertionFailed {
-      SymbolFinder symbolFinder = new SymbolFinder(getScope());
-      symbolFinder.visitGraph(getGraph());
-      HashSet<Symbol> codeSymbols = symbolFinder.getSymbols();
+
+      HashSet<Symbol> codeSymbols = new HashSet<>();
+      ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
+         if(programValue.get() instanceof SymbolRef) {
+            Symbol symbol = getScope().getSymbol((SymbolRef) programValue.get());
+            if(symbol != null)
+               codeSymbols.add(symbol);
+         }
+      });
+
       // Check that all symbols found in the code is also in the symbol table
       for(Symbol codeSymbol : codeSymbols) {
          if(codeSymbol.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) continue;
@@ -28,7 +38,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
          }
       }
       // Check that all symbols in the symbol table is also in the code
-      HashSet<Symbol> tableSymbols = getAllSymbols(getScope());
+      Collection<Symbol> tableSymbols = getScope().getAllSymbols(true);
       for(Symbol tableSymbol : tableSymbols) {
          if(tableSymbol instanceof VariableUnversioned) continue;
          if(tableSymbol instanceof ConstantVar) continue;
@@ -46,136 +56,4 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       }
    }
 
-   private HashSet<Symbol> getAllSymbols(Scope symbols) {
-      HashSet<Symbol> allSymbols = new HashSet<>();
-      for(Symbol symbol : symbols.getAllSymbols()) {
-         allSymbols.add(symbol);
-         if(symbol instanceof Scope) {
-            HashSet<Symbol> subSymbols = getAllSymbols((Scope) symbol);
-            allSymbols.addAll(subSymbols);
-         }
-      }
-      return allSymbols;
-   }
-
-   private static class SymbolFinder extends ControlFlowGraphBaseVisitor<Void> {
-
-      private ProgramScope programScope;
-      private HashSet<Symbol> symbols = new HashSet<>();
-
-      public SymbolFinder(ProgramScope programScope) {
-         this.programScope = programScope;
-      }
-
-      public HashSet<Symbol> getSymbols() {
-         return symbols;
-      }
-
-      private void addSymbol(Value symbol) {
-         if(symbol instanceof Symbol) {
-            symbols.add((Symbol) symbol);
-         } else if(symbol instanceof SymbolRef) {
-            addSymbol(programScope.getSymbol((SymbolRef) symbol));
-         } else if(symbol instanceof PointerDereferenceIndexed) {
-            addSymbol(((PointerDereferenceIndexed) symbol).getPointer());
-            addSymbol(((PointerDereferenceIndexed) symbol).getIndex());
-         } else if(symbol instanceof PointerDereferenceSimple) {
-            addSymbol(((PointerDereference) symbol).getPointer());
-         }
-      }
-
-      @Override
-      public Void visitBlock(ControlFlowBlock block) {
-         addSymbol(block.getLabel());
-         addSymbol(block.getDefaultSuccessor());
-         addSymbol(block.getConditionalSuccessor());
-         addSymbol(block.getCallSuccessor());
-         return super.visitBlock(block);
-      }
-
-      @Override
-      public Void visitProcedureBegin(StatementProcedureBegin procedureBegin) {
-         ProcedureRef procedureRef = procedureBegin.getProcedure();
-         Procedure procedure = programScope.getProcedure(procedureRef);
-         symbols.add(procedure);
-         return super.visitProcedureBegin(procedureBegin);
-      }
-
-      @Override
-      public Void visitProcedureEnd(StatementProcedureEnd procedureEnd) {
-         ProcedureRef procedureRef = procedureEnd.getProcedure();
-         Procedure procedure = programScope.getProcedure(procedureRef);
-         symbols.add(procedure);
-         return super.visitProcedureEnd(procedureEnd);
-      }
-
-      @Override
-      public Void visitReturn(StatementReturn aReturn) {
-         addSymbol(aReturn.getValue());
-         return super.visitReturn(aReturn);
-      }
-
-      @Override
-      public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-         addSymbol(conditionalJump.getrValue1());
-         addSymbol(conditionalJump.getrValue2());
-         addSymbol(conditionalJump.getDestination());
-         return super.visitConditionalJump(conditionalJump);
-      }
-
-      @Override
-      public Void visitAssignment(StatementAssignment assignment) {
-         addSymbol(assignment.getlValue());
-         addSymbol(assignment.getrValue1());
-         addSymbol(assignment.getrValue2());
-         return super.visitAssignment(assignment);
-      }
-
-      @Override
-      public Void visitJump(StatementJump jump) {
-         addSymbol(jump.getDestination());
-         return super.visitJump(jump);
-      }
-
-      @Override
-      public Void visitJumpTarget(StatementLabel jumpTarget) {
-         addSymbol(jumpTarget.getLabel());
-         return super.visitJumpTarget(jumpTarget);
-      }
-
-      @Override
-      public Void visitCall(StatementCall call) {
-         addSymbol(call.getlValue());
-         addSymbol(call.getProcedure());
-         if(call.getParameters() != null) {
-            for(RValue param : call.getParameters()) {
-               addSymbol(param);
-            }
-         }
-         return super.visitCall(call);
-      }
-
-      @Override
-      public Void visitCallPointer(StatementCallPointer call) {
-         addSymbol(call.getlValue());
-         addSymbol(call.getProcedure());
-         if(call.getParameters() != null) {
-            for(RValue param : call.getParameters()) {
-               addSymbol(param);
-            }
-         }
-         return super.visitCallPointer(call);
-      }
-
-      @Override
-      public Void visitPhiBlock(StatementPhiBlock phi) {
-         for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-            addSymbol(phiVariable.getVariable());
-            for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-               addSymbol(phiRValue.getrValue());
-            }
-         }
-         return super.visitPhiBlock(phi);
-      }
-   }
 }

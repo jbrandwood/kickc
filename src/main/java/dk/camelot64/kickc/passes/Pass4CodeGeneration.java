@@ -64,10 +64,7 @@ public class Pass4CodeGeneration {
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          if(!block.getScope().equals(currentScope)) {
             // The current block is in a different scope. End the old scope.
-            if(!ScopeRef.ROOT.equals(currentScope)) {
-               addData(asm, currentScope);
-               asm.addScopeEnd();
-            }
+            generateScopeEnding(asm, currentScope);
             currentScope = block.getScope();
             asm.startSegment(currentScope, null, block.getLabel().getFullName());
             // Add any procedure comments
@@ -121,10 +118,7 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      if(!ScopeRef.ROOT.equals(currentScope)) {
-         addData(asm, currentScope);
-         asm.addScopeEnd();
-      }
+      generateScopeEnding(asm, currentScope);
       addData(asm, ScopeRef.ROOT);
       // Add all absolutely placed inline KickAsm
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -143,8 +137,30 @@ public class Pass4CodeGeneration {
             }
          }
       }
-
       program.setAsm(asm);
+   }
+
+   /**
+    * ASM names of variables being used for indirect calls in the current scope (procedure).
+    * These will all be added as indirect JMP's at the end of the procedure scope.
+    */
+   private List<String> indirectCallAsmNames = new ArrayList<>();
+
+   /**
+    * Generate the end of a scope
+    * @param asm The assembler program being generated
+    * @param currentScope The current scope, which is ending here
+    */
+   private void generateScopeEnding(AsmProgram asm, ScopeRef currentScope) {
+      if(!ScopeRef.ROOT.equals(currentScope)) {
+         for(String indirectCallAsmName : indirectCallAsmNames) {
+            asm.addLabel("bi_"+indirectCallAsmName);
+            asm.addInstruction("jmp", AsmAddressingMode.IND, indirectCallAsmName, false);
+         }
+         indirectCallAsmNames = new ArrayList<>();
+         addData(asm, currentScope);
+         asm.addScopeEnd();
+      }
    }
 
    /**
@@ -563,8 +579,28 @@ public class Pass4CodeGeneration {
             if(statementKasm.getLocation() == null) {
                addKickAsm(asm, statementKasm);
             }
-            if(statementKasm.getDeclaredClobber()!=null) {
+            if(statementKasm.getDeclaredClobber() != null) {
                asm.getCurrentSegment().setClobberOverwrite(statementKasm.getDeclaredClobber());
+            }
+         } else if(statement instanceof StatementCallPointer) {
+            StatementCallPointer callPointer = (StatementCallPointer) statement;
+            RValue procedure = callPointer.getProcedure();
+            boolean supported = false;
+            if(procedure instanceof PointerDereferenceSimple) {
+               RValue pointer = ((PointerDereferenceSimple) procedure).getPointer();
+               if(pointer instanceof ConstantValue) {
+                  asm.addInstruction("jsr", AsmAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
+                  supported = true;
+               } else if(pointer instanceof VariableRef) {
+                  Variable variable = getScope().getVariable((VariableRef) pointer);
+                  String varAsmName = AsmFormat.getAsmParamName(variable, block.getScope());
+                  indirectCallAsmNames.add(varAsmName);
+                  asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_"+varAsmName,false);
+                  supported = true;
+               }
+            }
+            if(!supported) {
+               throw new RuntimeException("Call Pointer not supported " + statement);
             }
          } else {
             throw new RuntimeException("Statement not supported " + statement);

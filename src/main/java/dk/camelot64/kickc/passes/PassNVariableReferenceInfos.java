@@ -5,10 +5,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.values.*;
 
@@ -221,6 +218,12 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
          List<VariableRef> defined = new ArrayList<>();
          if(((StatementCall) stmt).getlValue() instanceof VariableRef) {
             defined.add((VariableRef) ((StatementCall) stmt).getlValue());
+         }
+         return defined;
+      } else if(stmt instanceof StatementCallPointer) {
+         List<VariableRef> defined = new ArrayList<>();
+         if(((StatementCallPointer) stmt).getlValue() instanceof VariableRef) {
+            defined.add((VariableRef) ((StatementCallPointer) stmt).getlValue());
          }
          return defined;
       }

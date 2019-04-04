@@ -19,7 +19,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       SymbolFinder symbolFinder = new SymbolFinder(getScope());
       symbolFinder.visitGraph(getGraph());
       HashSet<Symbol> codeSymbols = symbolFinder.getSymbols();
-      // Check that all symbols found in the code is also oin the symbol tabel
+      // Check that all symbols found in the code is also in the symbol table
       for(Symbol codeSymbol : codeSymbols) {
          if(codeSymbol.getFullName().equals(SymbolRef.PROCEXIT_BLOCK_NAME)) continue;
          Symbol tableSymbol = getScope().getSymbol(codeSymbol.getFullName());
@@ -153,6 +153,18 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
             }
          }
          return super.visitCall(call);
+      }
+
+      @Override
+      public Void visitCallPointer(StatementCallPointer call) {
+         addSymbol(call.getlValue());
+         addSymbol(call.getProcedure());
+         if(call.getParameters() != null) {
+            for(RValue param : call.getParameters()) {
+               addSymbol(param);
+            }
+         }
+         return super.visitCallPointer(call);
       }
 
       @Override

@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementCallPointer;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -44,7 +45,10 @@ public class Pass1TypeInference extends Pass1Base {
                   throw new CompileError("Wrong number of parameters in call. Expected " + procedure.getParameters().size() + ". " + statement.toString(), statement.getSource());
                }
                SymbolTypeInference.inferCallLValue(getProgram(), (StatementCall) statement, false);
+            } else if(statement instanceof StatementCallPointer) {
+               SymbolTypeInference.inferCallPointerLValue(getProgram(), (StatementCallPointer) statement, false);
             }
+
          }
       }
       return false;

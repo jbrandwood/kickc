@@ -229,7 +229,7 @@ public class AsmFormat {
     * @param boundVar The variable
     * @return The ASM parameter to use in the ASM code
     */
-   static String getAsmParamName(Variable boundVar, ScopeRef codeScopeRef) {
+   public static String getAsmParamName(Variable boundVar, ScopeRef codeScopeRef) {
       ScopeRef varScopeRef = boundVar.getScope().getRef();
       String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
       return getAsmParamName(varScopeRef, asmName, codeScopeRef);

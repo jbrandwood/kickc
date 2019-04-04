@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementCallPointer;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.*;
@@ -327,6 +328,21 @@ public class SymbolTypeInference {
       }
    }
 
+   public static void inferCallPointerLValue(Program program, StatementCallPointer call, boolean reinfer) {
+      ProgramScope programScope = program.getScope();
+      LValue lValue = call.getlValue();
+      if(lValue instanceof VariableRef) {
+         Variable symbol = programScope.getVariable((VariableRef) lValue);
+         if(SymbolType.VAR.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
+            SymbolType procedureType = inferType(programScope, call.getProcedure());
+            if(procedureType instanceof SymbolTypeProcedure) {
+               SymbolType returnType = ((SymbolTypeProcedure) procedureType).getReturnType();
+               setInferedType(program, call, symbol, returnType);
+            }
+         }
+      }
+   }
+
    public static void inferAssignmentLValue(Program program, StatementAssignment assignment, boolean reinfer) {
       ProgramScope programScope = program.getScope();
       LValue lValue = assignment.getlValue();
@@ -377,6 +393,8 @@ public class SymbolTypeInference {
          inferAssignmentLValue(program, (StatementAssignment) statementLValue, reinfer);
       } else if(statementLValue instanceof StatementCall) {
          inferCallLValue(program, (StatementCall) statementLValue, reinfer);
+      } else if(statementLValue instanceof StatementCallPointer) {
+         inferCallPointerLValue(program, (StatementCallPointer) statementLValue, reinfer);
       } else {
          throw new RuntimeException("LValue statement not implemented " + statementLValue);
       }

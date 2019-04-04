@@ -174,6 +174,14 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    }
 
    @Override
+   public Object visitCallPointer(StatementCallPointer orig) {
+      LValue lValue = orig.getlValue();
+      RValue procedure = orig.getProcedure();
+      List<RValue> parameters = orig.getParameters();
+      return new StatementCallPointer(lValue, procedure, parameters, orig.getSource(), orig.getComments());
+   }
+
+   @Override
    public StatementProcedureBegin visitProcedureBegin(StatementProcedureBegin orig) {
       return new StatementProcedureBegin(orig.getProcedure(), orig.getSource(), orig.getComments());
    }

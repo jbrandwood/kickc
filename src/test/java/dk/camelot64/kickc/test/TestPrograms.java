@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFunctionPointerNoargCall6() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-6");
+   }
+
+   @Test
    public void testFunctionPointerNoargCall5() throws IOException, URISyntaxException {
       compileAndCompare("function-pointer-noarg-call-5");
    }

@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -597,6 +598,17 @@ public class Pass4CodeGeneration {
                   indirectCallAsmNames.add(varAsmName);
                   asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_"+varAsmName,false);
                   supported = true;
+               }
+            } else if(procedure instanceof VariableRef) {
+               Variable procedureVariable = getScope().getVariable((VariableRef) procedure);
+               SymbolType procedureVariableType = procedureVariable.getType();
+               if(procedureVariableType instanceof SymbolTypePointer) {
+                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
+                     String varAsmName = AsmFormat.getAsmParamName(procedureVariable, block.getScope());
+                     indirectCallAsmNames.add(varAsmName);
+                     asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_"+varAsmName,false);
+                     supported = true;
+                  }
                }
             }
             if(!supported) {

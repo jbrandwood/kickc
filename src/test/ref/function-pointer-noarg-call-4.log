@@ -1,0 +1,472 @@
+Resolved forward reference fn1 to (void()) fn1()
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@3
+main: scope:[main]  from @3
+  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@7
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@7/(byte) main::i#4 )
+  if(true) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  (byte) getfn::b#0 ← (byte) main::i#1
+  call getfn 
+  (void()*) getfn::return#0 ← (void()*) getfn::return#2
+  to:main::@7
+main::@7: scope:[main]  from main::@2
+  (byte) main::i#4 ← phi( main::@2/(byte) main::i#1 )
+  (void()*) getfn::return#3 ← phi( main::@2/(void()*) getfn::return#0 )
+  (void()*~) main::$1 ← (void()*) getfn::return#3
+  call (void()*~) main::$1 
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+getfn: scope:[getfn]  from main::@2
+  (void()*~) getfn::$0 ← & (void()) fn1()
+  (void()*) getfn::return#1 ← (void()*~) getfn::$0
+  to:getfn::@return
+getfn::@return: scope:[getfn]  from getfn
+  (void()*) getfn::return#4 ← phi( getfn/(void()*) getfn::return#1 )
+  (void()*) getfn::return#2 ← (void()*) getfn::return#4
+  return 
+  to:@return
+fn1: scope:[fn1]  from
+  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
+  *((byte*) fn1::BORDERCOL#0) ← ++ *((byte*) fn1::BORDERCOL#0)
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
+  return 
+  to:@return
+@3: scope:[]  from @begin
+  call main 
+  to:@4
+@4: scope:[]  from @3
+  to:@end
+@end: scope:[]  from @4
+
+SYMBOL TABLE SSA
+(label) @3
+(label) @4
+(label) @begin
+(label) @end
+(void()) fn1()
+(label) fn1::@return
+(byte*) fn1::BORDERCOL
+(byte*) fn1::BORDERCOL#0
+(void()*()) getfn((byte) getfn::b)
+(void()*~) getfn::$0
+(label) getfn::@return
+(byte) getfn::b
+(byte) getfn::b#0
+(void()*) getfn::return
+(void()*) getfn::return#0
+(void()*) getfn::return#1
+(void()*) getfn::return#2
+(void()*) getfn::return#3
+(void()*) getfn::return#4
+(void()) main()
+(void()*~) main::$1
+(label) main::@1
+(label) main::@2
+(label) main::@7
+(label) main::@return
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+(byte) main::i#3
+(byte) main::i#4
+
+Culled Empty Block (label) @4
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (byte) main::i#2 = (byte) main::i#3 
+Alias (void()*) getfn::return#0 = (void()*) getfn::return#3 
+Alias (byte) main::i#1 = (byte) main::i#4 
+Alias (void()*) getfn::return#1 = (void()*~) getfn::$0 (void()*) getfn::return#4 (void()*) getfn::return#2 
+Successful SSA optimization Pass2AliasElimination
+Constant (const byte) main::i#0 = 0
+Constant (const void()*) getfn::return#1 = &fn1
+Constant (const byte*) fn1::BORDERCOL#0 = ((byte*))$d020
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const void()*) getfn::return#0 = getfn::return#1
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const void()*) main::$1 = getfn::return#0
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [1] if(true) goto main::@2
+Successful SSA optimization Pass2ConstantIfs
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with different constant siblings (const void()*) getfn::return#0
+Constant inlined main::$1 = (const void()*) getfn::return#1
+Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined getfn::return#0 = (const void()*) getfn::return#1
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of getfn
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to getfn:8 
+
+Created 1 initial phi equivalence classes
+Coalesced [10] main::i#5 ← main::i#1
+Coalesced down to 1 phi equivalence classes
+Renumbering block @3 to @1
+Renumbering block main::@7 to main::@3
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of getfn
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@3
+  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::i#1 )
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [6] (byte) main::i#1 ← ++ (byte) main::i#2
+  [7] (byte) getfn::b#0 ← (byte) main::i#1
+  [8] call getfn 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [9] call (const void()*) getfn::return#1 
+  to:main::@1
+getfn: scope:[getfn]  from main::@2
+  [10] phi()
+  to:getfn::@return
+getfn::@return: scope:[getfn]  from getfn
+  [11] return 
+  to:@return
+fn1: scope:[fn1]  from
+  [12] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0)
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
+  [13] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) fn1()
+(byte*) fn1::BORDERCOL
+(void()*()) getfn((byte) getfn::b)
+(byte) getfn::b
+(byte) getfn::b#0 110.0
+(void()*) getfn::return
+(void()) main()
+(byte) main::i
+(byte) main::i#1 8.25
+(byte) main::i#2 22.0
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Added variable getfn::b#0 to zero page equivalence class [ getfn::b#0 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ getfn::b#0 ]
+Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:3 [ getfn::b#0 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests creating, assigning returning and calling pointers to non-args no-return functions
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .label i = 2
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG13 main::@1
+  b1:
+    jmp b2
+  //SEG14 main::@2
+  b2:
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuz1=vbuz2 
+    lda i
+    sta getfn.b
+  //SEG17 [8] call getfn 
+  //SEG18 [10] phi from main::@2 to getfn [phi:main::@2->getfn]
+  getfn_from_b2:
+    jsr getfn
+    jmp b3
+  //SEG19 main::@3
+  b3:
+  //SEG20 [9] call (const void()*) getfn::return#1 
+    jsr getfn.return
+  //SEG21 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+  //SEG22 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+}
+//SEG23 getfn
+// getfn(byte zeropage(3) b)
+getfn: {
+    .label return = fn1
+    .label b = 3
+    jmp breturn
+  //SEG24 getfn::@return
+  breturn:
+  //SEG25 [11] return 
+    rts
+}
+//SEG26 fn1
+fn1: {
+    .label BORDERCOL = $d020
+  //SEG27 [12] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDERCOL
+    jmp breturn
+  //SEG28 fn1::@return
+  breturn:
+  //SEG29 [13] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ getfn::b#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [getfn] 110: zp ZP_BYTE:3 [ getfn::b#0 ] 
+Uplift Scope [main] 30.25: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [fn1] 
+Uplift Scope [] 
+
+Uplifting [getfn] best 352 combination reg byte a [ getfn::b#0 ] 
+Uplifting [main] best 282 combination reg byte a [ main::i#2 main::i#1 ] 
+Uplifting [fn1] best 282 combination 
+Uplifting [] best 282 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests creating, assigning returning and calling pointers to non-args no-return functions
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
+    lda #0
+    jmp b1
+  //SEG13 main::@1
+  b1:
+    jmp b2
+  //SEG14 main::@2
+  b2:
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuaa=_inc_vbuaa 
+    clc
+    adc #1
+  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1
+  //SEG17 [8] call getfn 
+  //SEG18 [10] phi from main::@2 to getfn [phi:main::@2->getfn]
+  getfn_from_b2:
+    jsr getfn
+    jmp b3
+  //SEG19 main::@3
+  b3:
+  //SEG20 [9] call (const void()*) getfn::return#1 
+    jsr getfn.return
+  //SEG21 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  b1_from_b3:
+  //SEG22 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b1
+}
+//SEG23 getfn
+// getfn(byte register(A) b)
+getfn: {
+    .label return = fn1
+    jmp breturn
+  //SEG24 getfn::@return
+  breturn:
+  //SEG25 [11] return 
+    rts
+}
+//SEG26 fn1
+fn1: {
+    .label BORDERCOL = $d020
+  //SEG27 [12] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDERCOL
+    jmp breturn
+  //SEG28 fn1::@return
+  breturn:
+  //SEG29 [13] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp b3
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1 with b2
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction getfn_from_b2:
+Removing instruction b3:
+Removing instruction b1_from_b3:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) fn1()
+(label) fn1::@return
+(byte*) fn1::BORDERCOL
+(const byte*) fn1::BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) $d020
+(void()*()) getfn((byte) getfn::b)
+(label) getfn::@return
+(byte) getfn::b
+(byte) getfn::b#0 reg byte a 110.0
+(void()*) getfn::return
+(const void()*) getfn::return#1 return = &(void()) fn1()
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(byte) main::i
+(byte) main::i#1 reg byte a 8.25
+(byte) main::i#2 reg byte a 22.0
+
+reg byte a [ main::i#2 main::i#1 ]
+reg byte a [ getfn::b#0 ]
+
+
+FINAL ASSEMBLER
+Score: 174
+
+//SEG0 File Comments
+// Tests creating, assigning returning and calling pointers to non-args no-return functions
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
+main: {
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
+    lda #0
+  //SEG13 main::@1
+  //SEG14 main::@2
+  b2:
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuaa=_inc_vbuaa 
+    clc
+    adc #1
+  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1
+  //SEG17 [8] call getfn 
+  //SEG18 [10] phi from main::@2 to getfn [phi:main::@2->getfn]
+    jsr getfn
+  //SEG19 main::@3
+  //SEG20 [9] call (const void()*) getfn::return#1 
+    jsr getfn.return
+  //SEG21 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+  //SEG22 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    jmp b2
+}
+//SEG23 getfn
+// getfn(byte register(A) b)
+getfn: {
+    .label return = fn1
+  //SEG24 getfn::@return
+  //SEG25 [11] return 
+    rts
+}
+//SEG26 fn1
+fn1: {
+    .label BORDERCOL = $d020
+  //SEG27 [12] *((const byte*) fn1::BORDERCOL#0) ← ++ *((const byte*) fn1::BORDERCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDERCOL
+  //SEG28 fn1::@return
+  //SEG29 [13] return 
+    rts
+}
+

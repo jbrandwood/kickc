@@ -610,6 +610,16 @@ public class Pass4CodeGeneration {
                      supported = true;
                   }
                }
+            } else if(procedure instanceof ConstantRef) {
+               ConstantVar procedureVariable = getScope().getConstant((ConstantRef) procedure);
+               SymbolType procedureVariableType = procedureVariable.getType();
+               if(procedureVariableType instanceof SymbolTypePointer) {
+                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
+                     String varAsmName = AsmFormat.getAsmParamName(procedureVariable, block.getScope());
+                     asm.addInstruction("jsr", AsmAddressingMode.ABS, varAsmName,false);
+                     supported = true;
+                  }
+               }
             }
             if(!supported) {
                throw new RuntimeException("Call Pointer not supported " + statement);

@@ -9,13 +9,13 @@ main: scope:[main]  from @2
   (byte*) main::cols#0 ← ((byte*)) (word/dword/signed dword) $d800
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte*) main::cols#3 ← phi( main/(byte*) main::cols#0 main::@1/(byte*) main::cols#2 )
+  (byte*) main::cols#2 ← phi( main/(byte*) main::cols#0 main::@1/(byte*) main::cols#1 )
   (void()*) main::cls#1 ← phi( main/(void()*) main::cls#0 main::@1/(void()*) main::cls#1 )
   call *((void()*) main::cls#1) 
-  (byte*) main::cols#1 ← ++ (byte*) main::cols#3
-  (byte*) main::cols#2 ← ++ (byte*) main::cols#1
+  *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2)
+  (byte*) main::cols#1 ← ++ (byte*) main::cols#2
   (word/dword/signed dword~) main::$2 ← (word/dword/signed dword) $d800 + (word/signed word/dword/signed dword) $3e8
-  (bool~) main::$3 ← (byte*) main::cols#2 < (word/dword/signed dword~) main::$2
+  (bool~) main::$3 ← (byte*) main::cols#1 < (word/dword/signed dword~) main::$2
   if((bool~) main::$3) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -69,7 +69,6 @@ SYMBOL TABLE SSA
 (byte*) main::cols#0
 (byte*) main::cols#1
 (byte*) main::cols#2
-(byte*) main::cols#3
 
 Culled Empty Block (label) @3
 Successful SSA optimization Pass2CullEmptyBlocks
@@ -79,7 +78,7 @@ Self Phi Eliminated (void()*) main::cls#1
 Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (void()*) main::cls#1 (void()*) main::cls#0
 Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$3 [9] if((byte*) main::cols#2<(word/dword/signed dword~) main::$2) goto main::@1
+Simple Condition (bool~) main::$3 [9] if((byte*) main::cols#1<(word/dword/signed dword~) main::$2) goto main::@1
 Simple Condition (bool~) fn1::$1 [17] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword~) fn1::$0) goto fn1::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const void()*) main::cls#0 = &fn1
@@ -106,7 +105,7 @@ CALL GRAPH
 Calls in [] to main:2 
 
 Created 2 initial phi equivalence classes
-Coalesced [11] main::cols#4 ← main::cols#2
+Coalesced [11] main::cols#3 ← main::cols#1
 Coalesced [18] fn1::screen#3 ← fn1::screen#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) main::@3
@@ -132,11 +131,11 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte*) main::cols#3 ← phi( main/((byte*))(word/dword/signed dword) $d800 main::@1/(byte*) main::cols#2 )
+  [5] (byte*) main::cols#2 ← phi( main/((byte*))(word/dword/signed dword) $d800 main::@1/(byte*) main::cols#1 )
   [6] call *((const void()*) main::cls#0) 
-  [7] (byte*) main::cols#1 ← ++ (byte*) main::cols#3
-  [8] (byte*) main::cols#2 ← ++ (byte*) main::cols#1
-  [9] if((byte*) main::cols#2<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1
+  [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2)
+  [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2
+  [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [10] return 
@@ -163,21 +162,17 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (void()*) main::cls
 (byte*) main::cols
-(byte*) main::cols#1 22.0
-(byte*) main::cols#2 16.5
-(byte*) main::cols#3 11.0
+(byte*) main::cols#1 16.5
+(byte*) main::cols#2 14.666666666666666
 
 Initial phi equivalence classes
-[ main::cols#3 main::cols#2 ]
+[ main::cols#2 main::cols#1 ]
 [ fn1::screen#2 fn1::screen#1 ]
-Added variable main::cols#1 to zero page equivalence class [ main::cols#1 ]
 Complete equivalence classes
-[ main::cols#3 main::cols#2 ]
+[ main::cols#2 main::cols#1 ]
 [ fn1::screen#2 fn1::screen#1 ]
-[ main::cols#1 ]
-Allocated zp ZP_WORD:2 [ main::cols#3 main::cols#2 ]
+Allocated zp ZP_WORD:2 [ main::cols#2 main::cols#1 ]
 Allocated zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ]
-Allocated zp ZP_WORD:6 [ main::cols#1 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -206,47 +201,41 @@ bend:
 //SEG10 main
 main: {
     .label cls = fn1
-    .label cols = 6
-    .label cols_2 = 2
-    .label cols_3 = 2
+    .label cols = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte*) main::cols#3 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG12 [5] phi (byte*) main::cols#2 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
-    sta cols_3
+    sta cols
     lda #>$d800
-    sta cols_3+1
+    sta cols+1
     jmp b1
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG14 [5] phi (byte*) main::cols#3 = (byte*) main::cols#2 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
   //SEG15 main::@1
   b1:
   //SEG16 [6] call *((const void()*) main::cls#0) 
     jsr cls
-  //SEG17 [7] (byte*) main::cols#1 ← ++ (byte*) main::cols#3 -- pbuz1=_inc_pbuz2 
-    lda cols_3
+  //SEG17 [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+    ldy #0
+    lda (cols),y
     clc
     adc #1
-    sta cols
-    lda cols_3+1
-    adc #0
-    sta cols+1
-  //SEG18 [8] (byte*) main::cols#2 ← ++ (byte*) main::cols#1 -- pbuz1=_inc_pbuz2 
-    lda cols
-    clc
-    adc #1
-    sta cols_2
+    ldy #0
+    sta (cols),y
+  //SEG18 [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
+    inc cols
+    bne !+
+    inc cols+1
+  !:
+  //SEG19 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
-    adc #0
-    sta cols_2+1
-  //SEG19 [9] if((byte*) main::cols#2<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
-    lda cols_2+1
     cmp #>$d800+$3e8
     bcc b1_from_b1
     bne !+
-    lda cols_2
+    lda cols
     cmp #<$d800+$3e8
     bcc b1_from_b1
   !:
@@ -302,24 +291,21 @@ fn1: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] (byte*) main::cols#1 ← ++ (byte*) main::cols#3 [ main::cols#1 ] ( main:2 [ main::cols#1 ] ) always clobbers reg byte a 
-Statement [8] (byte*) main::cols#2 ← ++ (byte*) main::cols#1 [ main::cols#2 ] ( main:2 [ main::cols#2 ] ) always clobbers reg byte a 
-Statement [9] if((byte*) main::cols#2<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 [ main::cols#2 ] ( main:2 [ main::cols#2 ] ) always clobbers reg byte a 
+Statement [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) [ main::cols#2 ] ( main:2 [ main::cols#2 ] ) always clobbers reg byte a reg byte y 
+Statement [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 [ main::cols#1 ] ( main:2 [ main::cols#1 ] ) always clobbers reg byte a 
 Statement [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) [ fn1::screen#2 ] ( ) always clobbers reg byte a reg byte y 
 Statement [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 [ fn1::screen#1 ] ( ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ main::cols#3 main::cols#2 ] : zp ZP_WORD:2 , 
+Potential registers zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ main::cols#1 ] : zp ZP_WORD:6 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp ZP_WORD:2 [ main::cols#3 main::cols#2 ] 22: zp ZP_WORD:6 [ main::cols#1 ] 
 Uplift Scope [fn1] 38.5: zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] 
+Uplift Scope [main] 31.17: zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1494 combination zp ZP_WORD:2 [ main::cols#3 main::cols#2 ] zp ZP_WORD:6 [ main::cols#1 ] 
-Uplifting [fn1] best 1494 combination zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] 
-Uplifting [] best 1494 combination 
-Coalescing zero page register with common assignment [ zp ZP_WORD:2 [ main::cols#3 main::cols#2 ] ] with [ zp ZP_WORD:6 [ main::cols#1 ] ] - score: 2
+Uplifting [fn1] best 1454 combination zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] 
+Uplifting [main] best 1454 combination zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] 
+Uplifting [] best 1454 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -351,7 +337,7 @@ main: {
     .label cols = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte*) main::cols#3 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG12 [5] phi (byte*) main::cols#2 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
@@ -359,23 +345,25 @@ main: {
     jmp b1
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   b1_from_b1:
-  //SEG14 [5] phi (byte*) main::cols#3 = (byte*) main::cols#2 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp b1
   //SEG15 main::@1
   b1:
   //SEG16 [6] call *((const void()*) main::cls#0) 
     jsr cls
-  //SEG17 [7] (byte*) main::cols#1 ← ++ (byte*) main::cols#3 -- pbuz1=_inc_pbuz1 
+  //SEG17 [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+    ldy #0
+    lda (cols),y
+    clc
+    adc #1
+    ldy #0
+    sta (cols),y
+  //SEG18 [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
     inc cols
     bne !+
     inc cols+1
   !:
-  //SEG18 [8] (byte*) main::cols#2 ← ++ (byte*) main::cols#1 -- pbuz1=_inc_pbuz1 
-    inc cols
-    bne !+
-    inc cols+1
-  !:
-  //SEG19 [9] if((byte*) main::cols#2<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG19 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b1_from_b1
@@ -444,6 +432,7 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
+Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
@@ -487,16 +476,15 @@ FINAL SYMBOL TABLE
 (void()*) main::cls
 (const void()*) main::cls#0 cls = &(void()) fn1()
 (byte*) main::cols
-(byte*) main::cols#1 cols zp ZP_WORD:2 22.0
-(byte*) main::cols#2 cols zp ZP_WORD:2 16.5
-(byte*) main::cols#3 cols zp ZP_WORD:2 11.0
+(byte*) main::cols#1 cols zp ZP_WORD:2 16.5
+(byte*) main::cols#2 cols zp ZP_WORD:2 14.666666666666666
 
-zp ZP_WORD:2 [ main::cols#3 main::cols#2 main::cols#1 ]
+zp ZP_WORD:2 [ main::cols#2 main::cols#1 ]
 zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ]
 
 
 FINAL ASSEMBLER
-Score: 1172
+Score: 1222
 
 //SEG0 File Comments
 // Tests calling into a function pointer with local variables
@@ -517,28 +505,29 @@ main: {
     .label cls = fn1
     .label cols = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte*) main::cols#3 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG12 [5] phi (byte*) main::cols#2 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
     sta cols+1
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG14 [5] phi (byte*) main::cols#3 = (byte*) main::cols#2 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG14 [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
   //SEG15 main::@1
   b1:
   //SEG16 [6] call *((const void()*) main::cls#0) 
     jsr cls
-  //SEG17 [7] (byte*) main::cols#1 ← ++ (byte*) main::cols#3 -- pbuz1=_inc_pbuz1 
+  //SEG17 [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+    ldy #0
+    lda (cols),y
+    clc
+    adc #1
+    sta (cols),y
+  //SEG18 [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
     inc cols
     bne !+
     inc cols+1
   !:
-  //SEG18 [8] (byte*) main::cols#2 ← ++ (byte*) main::cols#1 -- pbuz1=_inc_pbuz1 
-    inc cols
-    bne !+
-    inc cols+1
-  !:
-  //SEG19 [9] if((byte*) main::cols#2<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG19 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b1

@@ -11,10 +11,11 @@ main: {
     sta cols+1
   b1:
     jsr cls
-    inc cols
-    bne !+
-    inc cols+1
-  !:
+    ldy #0
+    lda (cols),y
+    clc
+    adc #1
+    sta (cols),y
     inc cols
     bne !+
     inc cols+1

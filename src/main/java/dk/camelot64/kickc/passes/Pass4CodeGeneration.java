@@ -154,6 +154,7 @@ public class Pass4CodeGeneration {
     */
    private void generateScopeEnding(AsmProgram asm, ScopeRef currentScope) {
       if(!ScopeRef.ROOT.equals(currentScope)) {
+         // Generate any indirect calls pending
          for(String indirectCallAsmName : indirectCallAsmNames) {
             asm.addLabel("bi_"+indirectCallAsmName);
             asm.addInstruction("jmp", AsmAddressingMode.IND, indirectCallAsmName, false);
@@ -163,6 +164,20 @@ public class Pass4CodeGeneration {
          asm.addScopeEnd();
       }
    }
+
+   /**
+    * Add an indirect call to the assembler program. Also queues ASM for the indirect jump to be added at the end of the block.
+    * @param asm The ASM program being built
+    * @param procedureVariable The variable containing the function pointer
+    * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
+    */
+   private void generateIndirectCall(AsmProgram asm, Variable procedureVariable, ScopeRef codeScopeRef) {
+      String varAsmName = AsmFormat.getAsmParamName(procedureVariable, codeScopeRef);
+      indirectCallAsmNames.add(varAsmName);
+      asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_" + varAsmName, false);
+   }
+
+
 
    /**
     * Generate a comment that describes the procedure signature and parameter transfer
@@ -601,9 +616,7 @@ public class Pass4CodeGeneration {
                   supported = true;
                } else if(pointer instanceof VariableRef) {
                   Variable variable = getScope().getVariable((VariableRef) pointer);
-                  String varAsmName = AsmFormat.getAsmParamName(variable, block.getScope());
-                  indirectCallAsmNames.add(varAsmName);
-                  asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_"+varAsmName,false);
+                  generateIndirectCall(asm, variable, block.getScope());
                   supported = true;
                }
             } else if(procedure instanceof VariableRef) {
@@ -611,9 +624,7 @@ public class Pass4CodeGeneration {
                SymbolType procedureVariableType = procedureVariable.getType();
                if(procedureVariableType instanceof SymbolTypePointer) {
                   if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
-                     String varAsmName = AsmFormat.getAsmParamName(procedureVariable, block.getScope());
-                     indirectCallAsmNames.add(varAsmName);
-                     asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_"+varAsmName,false);
+                     generateIndirectCall(asm, procedureVariable, block.getScope());
                      supported = true;
                   }
                }

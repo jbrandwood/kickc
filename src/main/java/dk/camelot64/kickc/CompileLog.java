@@ -123,8 +123,18 @@ public class CompileLog {
       this.verboseSequencePlan = verboseSequencePlan;
    }
 
+   public CompileLog verboseParse() {
+      setVerboseParse(true);
+      return this;
+   }
+
    public void setVerboseParse(boolean verboseParse) {
       this.verboseParse = verboseParse;
+   }
+
+   public CompileLog verboseCreateSsa() {
+      setVerboseCreateSsa(true);
+      return this;
    }
 
    public void setVerboseCreateSsa(boolean verboseCreateSsa) {
@@ -133,6 +143,11 @@ public class CompileLog {
 
    public boolean isVerboseUplift() {
       return verboseUplift;
+   }
+
+   public CompileLog verboseUplift() {
+      setVerboseUplift(true);
+      return this;
    }
 
    public void setVerboseUplift(boolean verboseUplift) {
@@ -166,6 +181,12 @@ public class CompileLog {
    public boolean isVerboseSSAOptimize() {
       return verboseSSAOptimize;
    }
+
+   public CompileLog setVerboseSSAOptimize() {
+      setVerboseSSAOptimize(true);
+      return this;
+   }
+
 
    public void setVerboseSSAOptimize(boolean verboseSSAOptimize) {
       this.verboseSSAOptimize = verboseSSAOptimize;

@@ -45,13 +45,26 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       for(VariableRef constRef : constVars) {
          Variable variable = getProgram().getScope().getVariable(constRef);
 
+         ConstantVariableValue constVarVal = constants.get(constRef);
+
          // Weed out all variables that are affected by the address-of operator
          if(isAddressOfUsed(constRef, getProgram())) {
+
+            // If the assignment has an operator then replace it with the single constant value
+            if(constVarVal.getAssignment() instanceof StatementAssignment) {
+               StatementAssignment assignment = (StatementAssignment) constVarVal.getAssignment();
+               if(assignment.getOperator()!=null) {
+                  getLog().append("Constant right-side identified " + assignment.toString(getProgram(), false));
+                  assignment.setOperator(null);
+                  assignment.setrValue1(null);
+                  assignment.setrValue2(constVarVal.getConstantValue());
+               }
+            }
+
+            // But do not remove the variable
             constants.remove(constRef);
             continue;
          }
-
-         ConstantVariableValue constVarVal = constants.get(constRef);
          Scope constScope = variable.getScope();
 
          ConstantValue constVal = constVarVal.getConstantValue();
@@ -80,7 +93,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                constVal);
          constantVar.setDeclaredAlignment(variable.getDeclaredAlignment());
          constantVar.setDeclaredRegister(variable.getDeclaredRegister());
-         if(variable.getComments().size()>0) {
+         if(variable.getComments().size() > 0) {
             constantVar.setComments(variable.getComments());
          } else {
             constantVar.setComments(constVarVal.getAssignment().getComments());
@@ -111,7 +124,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       /**
        * The statement that assigns the variable its value (the assignment will be removed at the end).
        * Either a {@link StatementAssignment} or a {@link StatementPhiBlock}.
-       * */
+       */
       private Statement assignment;
 
       public ConstantVariableValue(VariableRef variableRef, ConstantValue constantValue, Statement assignment) {
@@ -182,81 +195,83 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             // Volatile variables cannot be constant
             return;
          }
-         if(assignment.getrValue1() == null && getConstant(assignment.getrValue2()) != null) {
-            if(assignment.getOperator() == null) {
-               // Constant assignment
-               ConstantValue constant = getConstant(assignment.getrValue2());
-               if(constant != null) {
-                  constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
-               }
-            } else {
-               // Constant unary expression
-               ConstantValue constant = createUnary(
-                     (OperatorUnary) assignment.getOperator(),
-                     getConstant(assignment.getrValue2())
-               );
-               if(constant != null) {
-                  constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
-               }
-            }
-         } else if(getConstant(assignment.getrValue1()) != null && getConstant(assignment.getrValue2()) != null) {
-            // Constant binary expression
-            ConstantValue constant = createBinary(
-                  getConstant(assignment.getrValue1()),
-                  (OperatorBinary) assignment.getOperator(),
-                  getConstant(assignment.getrValue2()),
-                  getScope());
-            if(constant != null) {
-               constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
-            }
-         } else if(assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
-            // A candidate for a constant list - examine to confirm
-            Variable lVariable = getScope().getVariable((VariableRef) lValue);
-            if(lVariable.getType() instanceof SymbolTypeArray) {
-               ValueList valueList = (ValueList) assignment.getrValue2();
-               List<RValue> values = valueList.getList();
-               boolean allConstant = true;
-               // Type of the elements of the list (deducted from the type of all elements)
-               SymbolType listType = null;
-               List<ConstantValue> elements = new ArrayList<>();
-               for(RValue elmValue : values) {
-                  if(elmValue instanceof ConstantValue) {
-                     ConstantValue constantValue = (ConstantValue) elmValue;
-                     SymbolType elmType = constantValue.getType(getScope());
-                     if(listType == null) {
-                        listType = elmType;
-                     } else {
-                        if(!SymbolTypeInference.typeMatch(listType, elmType)) {
-                           SymbolType intersectType = SymbolTypeInference.intersectTypes(listType, elmType);
-                           if(intersectType == null) {
-                              // No overlap between list type and element type
-                              throw new RuntimeException("Array type " + listType + " does not match element type" + elmType + ". Array: " + valueList.toString(getProgram()));
-                           } else {
-                              listType = intersectType;
-                           }
-                        }
-                     }
-                     elements.add(constantValue);
-                  } else {
-                     allConstant = false;
-                     listType = null;
-                     break;
-                  }
-               }
-               if(allConstant && listType != null) {
-                  // Constant list confirmed!
-                  ConstantValue constant = new ConstantArrayList(elements, listType);
-                  constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
-               }
-            }
-         } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
-            // Constant address-of variable
-            if(assignment.getrValue2() instanceof SymbolRef) {
-               ConstantSymbolPointer constantSymbolPointer = new ConstantSymbolPointer((SymbolRef) assignment.getrValue2());
-               constants.put(variable, new ConstantVariableValue(variable, constantSymbolPointer, assignment));
-            }
+         ConstantValue constant = getConstantAssignmentValue(assignment, var.getType());
+         if(constant != null) {
+            constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
          }
       }
+   }
+
+   /**
+    * Examine the right side of an assignment and if it is constant then return the constant value.
+    * @param assignment The assignment to examine
+    * @param lValueType The type of the lvalue
+    * @return The constant value if the right side is constant
+    */
+   private ConstantValue getConstantAssignmentValue(StatementAssignment assignment, SymbolType lValueType) {
+      if(assignment.getrValue1() == null && getConstant(assignment.getrValue2()) != null) {
+         if(assignment.getOperator() == null) {
+            // Constant assignment
+            return getConstant(assignment.getrValue2());
+         } else {
+            // Constant unary expression
+            return createUnary(
+                  (OperatorUnary) assignment.getOperator(),
+                  getConstant(assignment.getrValue2())
+            );
+         }
+      } else if(getConstant(assignment.getrValue1()) != null && getConstant(assignment.getrValue2()) != null) {
+         // Constant binary expression
+         return createBinary(
+               getConstant(assignment.getrValue1()),
+               (OperatorBinary) assignment.getOperator(),
+               getConstant(assignment.getrValue2()),
+               getScope());
+      } else if(assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
+         // A candidate for a constant list - examine to confirm
+         if(lValueType instanceof SymbolTypeArray) {
+            ValueList valueList = (ValueList) assignment.getrValue2();
+            List<RValue> values = valueList.getList();
+            boolean allConstant = true;
+            // Type of the elements of the list (deducted from the type of all elements)
+            SymbolType listType = null;
+            List<ConstantValue> elements = new ArrayList<>();
+            for(RValue elmValue : values) {
+               if(elmValue instanceof ConstantValue) {
+                  ConstantValue constantValue = (ConstantValue) elmValue;
+                  SymbolType elmType = constantValue.getType(getScope());
+                  if(listType == null) {
+                     listType = elmType;
+                  } else {
+                     if(!SymbolTypeInference.typeMatch(listType, elmType)) {
+                        SymbolType intersectType = SymbolTypeInference.intersectTypes(listType, elmType);
+                        if(intersectType == null) {
+                           // No overlap between list type and element type
+                           throw new RuntimeException("Array type " + listType + " does not match element type" + elmType + ". Array: " + valueList.toString(getProgram()));
+                        } else {
+                           listType = intersectType;
+                        }
+                     }
+                  }
+                  elements.add(constantValue);
+               } else {
+                  allConstant = false;
+                  listType = null;
+                  break;
+               }
+            }
+            if(allConstant && listType != null) {
+               // Constant list confirmed!
+               return  new ConstantArrayList(elements, listType);
+            }
+         }
+      } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
+         // Constant address-of variable
+         if(assignment.getrValue2() instanceof SymbolRef) {
+            return new ConstantSymbolPointer((SymbolRef) assignment.getrValue2());
+         }
+      }
+      return null;
    }
 
    /**

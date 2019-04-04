@@ -33,6 +33,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPointerPointer2() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-pointer-2");
+   }
+
+   @Test
+   public void testPointerPointer1() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-pointer-1" );
+   }
+
+   @Test
    public void testFunctionPointerNoargCall6() throws IOException, URISyntaxException {
       compileAndCompare("function-pointer-noarg-call-6");
    }
@@ -109,7 +119,7 @@ public class TestPrograms {
 
    @Test
    public void testLocalScopeLoops() throws IOException, URISyntaxException {
-      compileAndCompare("localscope-loops", getLogSysout());
+      compileAndCompare("localscope-loops");
    }
 
    @Test
@@ -1470,11 +1480,11 @@ public class TestPrograms {
 
    @AfterClass
    public static void tearDown() {
-      CompileLog log = getLogSysout();
+      CompileLog log = log();
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
-   private static CompileLog getLogSysout() {
+   private static CompileLog log() {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
       return log;

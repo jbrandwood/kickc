@@ -207,7 +207,7 @@ public class ControlFlowBlock {
    @Override
    public int hashCode() {
       int result = label.hashCode();
-      result = 31 * result + (statements != null ? statements.hashCode() : 0);
+      result = 31 * result + statements.size();
       result = 31 * result + (defaultSuccessor != null ? defaultSuccessor.hashCode() : 0);
       result = 31 * result + (conditionalSuccessor != null ? conditionalSuccessor.hashCode() : 0);
       result = 31 * result + (callSuccessor != null ? callSuccessor.hashCode() : 0);

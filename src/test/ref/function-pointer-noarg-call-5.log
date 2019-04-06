@@ -275,10 +275,14 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] (byte~) main::$1 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#1 main::$1 ] ( main:2 [ main::i#1 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$1) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
+Statement [10] call *((void()*) main::f#0)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#1 main::$0 ] ( main:2 [ main::i#1 main::$0 ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$1 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#1 main::$1 ] ( main:2 [ main::i#1 main::$1 ] ) always clobbers reg byte a 
 Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$1) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Statement [10] call *((void()*) main::f#0)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ main::$0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ main::$1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:5 [ main::f#0 ] : zp ZP_WORD:5 , 
@@ -289,11 +293,13 @@ Uplift Scope [fn1]
 Uplift Scope [fn2] 
 Uplift Scope [] 
 
-Uplifting [main] best 512 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] zp ZP_WORD:5 [ main::f#0 ] 
-Uplifting [fn1] best 512 combination 
-Uplifting [fn2] best 512 combination 
-Uplifting [] best 512 combination 
-Allocated (was zp ZP_WORD:5) zp ZP_WORD:2 [ main::f#0 ]
+Uplifting [main] best 582 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] zp ZP_WORD:5 [ main::f#0 ] 
+Uplifting [fn1] best 582 combination 
+Uplifting [fn2] best 582 combination 
+Uplifting [] best 582 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 582 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Allocated (was zp ZP_WORD:5) zp ZP_WORD:3 [ main::f#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -321,22 +327,24 @@ bend_from_b1:
 bend:
 //SEG10 main
 main: {
-    .label f = 2
+    .label i = 2
+    .label f = 3
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
     jmp b1
   //SEG13 main::@1
   b1:
     jmp b2
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_band_vbuc1 
-    txa
-    and #1
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_band_vbuc1 
+    lda #1
+    and i
   //SEG17 [8] (byte~) main::$1 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuaa_rol_1 
     asl
   //SEG18 [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$1) -- pprz1=pptc1_derefidx_vbuaa 
@@ -425,19 +433,19 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (void()*) main::f
-(void()*) main::f#0 f zp ZP_WORD:2 11.0
+(void()*) main::f#0 f zp ZP_WORD:3 11.0
 (byte) main::i
-(byte) main::i#1 reg byte x 6.6000000000000005
-(byte) main::i#2 reg byte x 22.0
+(byte) main::i#1 i zp ZP_BYTE:2 6.6000000000000005
+(byte) main::i#2 i zp ZP_BYTE:2 22.0
 
-reg byte x [ main::i#2 main::i#1 ]
+zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 reg byte a [ main::$0 ]
 reg byte a [ main::$1 ]
-zp ZP_WORD:2 [ main::f#0 ]
+zp ZP_WORD:3 [ main::f#0 ]
 
 
 FINAL ASSEMBLER
-Score: 434
+Score: 504
 
 //SEG0 File Comments
 // Tests calling into arrays of pointers to non-args no-return functions
@@ -455,18 +463,20 @@ Score: 434
 //SEG9 @end
 //SEG10 main
 main: {
-    .label f = 2
+    .label i = 2
+    .label f = 3
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
   //SEG13 main::@1
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_band_vbuc1 
-    txa
-    and #1
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_band_vbuc1 
+    lda #1
+    and i
   //SEG17 [8] (byte~) main::$1 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuaa_rol_1 
     asl
   //SEG18 [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$1) -- pprz1=pptc1_derefidx_vbuaa 

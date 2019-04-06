@@ -17,9 +17,9 @@ public class StatementCall extends StatementBase implements StatementLValue {
 
    /** The variable being assigned a value by the call. Can be null. */
    private LValue lValue;
-   /** The name of the procedure called (if the call is simple). Null if the called procedure is calculated through an expression. */
+   /** The name of the procedure called */
    private String procedureName;
-   /** The procedure called (if the call is simple). Null if the called procedure is calculated through an expression. */
+   /** The procedure called. */
    private ProcedureRef procedure;
    /** The parameter values passed to the procedure. */
    private List<RValue> parameters;

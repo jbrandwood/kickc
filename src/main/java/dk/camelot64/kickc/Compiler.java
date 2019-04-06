@@ -249,6 +249,7 @@ public class Compiler {
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));
+//      optimizations.add(new Pass2ConstantCallPointerIdentification(program));
       pass2Execute(optimizations);
    }
 
@@ -487,6 +488,8 @@ public class Compiler {
       pass5Optimizations.add(new Pass5DoubleJumpElimination(program));
       pass5Optimizations.add(new Pass5UnreachableCodeElimination(program));
       pass5Optimizations.add(new Pass5RelabelLongLabels(program));
+      pass5Optimizations.add(new Pass5SkipBegin(program));
+      pass5Optimizations.add(new Pass5AddMainRts(program));
       boolean asmOptimized = true;
       while(asmOptimized) {
          asmOptimized = false;

@@ -183,6 +183,7 @@ bbegin:
   lda #0
   sta irq_cnt
   jsr main
+  rts
 main: {
     jsr sid_rnd_init
     sei

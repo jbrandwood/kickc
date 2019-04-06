@@ -12,6 +12,7 @@ bbegin:
   lda #8
   sta col2
   jsr main
+  rts
 main: {
     lda #<irq
     sta KERNEL_IRQ

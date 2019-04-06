@@ -84,6 +84,7 @@ bbegin:
   lda #0
   sta irq_cnt
   jsr main
+  rts
 main: {
     .const toSpritePtr2_return = SIN_SPRITE>>6
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)>>6

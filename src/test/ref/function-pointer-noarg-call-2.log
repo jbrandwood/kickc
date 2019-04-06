@@ -326,7 +326,13 @@ fn1: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Statement [11] call *((void()*) main::f#3)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#1 main::$0 ] ( main:2 [ main::i#1 main::$0 ] ) always clobbers reg byte a 
+Statement [11] call *((void()*) main::f#3)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_WORD:3 [ main::f#3 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ main::$0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
 
@@ -336,11 +342,12 @@ Uplift Scope [fn1]
 Uplift Scope [fn2] 
 Uplift Scope [] 
 
-Uplifting [main] best 657 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp ZP_WORD:3 [ main::f#3 ] 
-Uplifting [fn1] best 657 combination 
-Uplifting [fn2] best 657 combination 
-Uplifting [] best 657 combination 
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::f#3 ]
+Uplifting [main] best 727 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp ZP_WORD:3 [ main::f#3 ] 
+Uplifting [fn1] best 727 combination 
+Uplifting [fn2] best 727 combination 
+Uplifting [] best 727 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 727 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -368,22 +375,24 @@ bend_from_b1:
 bend:
 //SEG10 main
 main: {
-    .label f = 2
+    .label i = 2
+    .label f = 3
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
     jmp b1
   //SEG13 main::@1
   b1:
     jmp b2
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_band_vbuc1 
-    txa
-    and #1
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_band_vbuc1 
+    lda #1
+    and i
   //SEG17 [8] if((byte~) main::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
@@ -496,18 +505,18 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (byte*) main::SCREEN
 (void()*) main::f
-(void()*) main::f#3 f zp ZP_WORD:2
+(void()*) main::f#3 f zp ZP_WORD:3
 (byte) main::i
-(byte) main::i#1 reg byte x 5.5
-(byte) main::i#2 reg byte x 22.0
+(byte) main::i#1 i zp ZP_BYTE:2 5.5
+(byte) main::i#2 i zp ZP_BYTE:2 22.0
 
-reg byte x [ main::i#2 main::i#1 ]
-zp ZP_WORD:2 [ main::f#3 ]
+zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+zp ZP_WORD:3 [ main::f#3 ]
 reg byte a [ main::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 519
+Score: 589
 
 //SEG0 File Comments
 // Tests creating, assigning and calling pointers to non-args no-return functions
@@ -525,18 +534,20 @@ Score: 519
 //SEG9 @end
 //SEG10 main
 main: {
-    .label f = 2
+    .label i = 2
+    .label f = 3
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
   //SEG13 main::@1
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_band_vbuc1 
-    txa
-    and #1
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_band_vbuc1 
+    lda #1
+    and i
   //SEG17 [8] if((byte~) main::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b1

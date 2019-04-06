@@ -3,10 +3,12 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    .label i = 2
     lda #0
+    sta i
   b2:
-    clc
-    adc #1
+    inc i
+    lda i
     jsr getfn
     jsr getfn.return
     jmp b2

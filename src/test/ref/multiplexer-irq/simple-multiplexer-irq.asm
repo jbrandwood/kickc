@@ -57,6 +57,7 @@ bbegin:
   lda #1
   sta framedone
   jsr main
+  rts
 main: {
     sei
     jsr init

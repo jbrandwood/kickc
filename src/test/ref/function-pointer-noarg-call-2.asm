@@ -3,12 +3,14 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label f = 2
-    ldx #0
+    .label i = 2
+    .label f = 3
+    lda #0
+    sta i
   b2:
-    inx
-    txa
-    and #1
+    inc i
+    lda #1
+    and i
     cmp #0
     beq b1
     lda #<fn2

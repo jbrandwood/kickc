@@ -61,7 +61,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
       if(callPaths == null) {
          callPaths = new LiveRangeVariablesEffective.CallPaths(procedureRef);
 
-         if(procedure.getInterruptType()!=null) {
+         if(procedure.getInterruptType()!=null || Pass2ConstantIdentification.isAddressOfUsed(procedureRef, getProgram())) {
             // Interrupt is called outside procedure scope - create initial call-path.
             ArrayList<CallGraph.CallBlock.Call> rootPath = new ArrayList<>();
             ArrayList<VariableRef> rootAlive = new ArrayList<>();

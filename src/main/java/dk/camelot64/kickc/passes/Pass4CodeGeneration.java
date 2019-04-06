@@ -639,6 +639,9 @@ public class Pass4CodeGeneration {
                   }
                }
             }
+            if(supported) {
+               asm.getCurrentSegment().setClobberOverwrite(AsmClobber.CLOBBER_ALL);
+            }
             if(!supported) {
                throw new RuntimeException("Call Pointer not supported " + statement);
             }

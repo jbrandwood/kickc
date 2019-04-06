@@ -7,6 +7,7 @@ bbegin:
   lda #$c
   sta x
   jsr main
+  rts
 main: {
   b1:
     inc x

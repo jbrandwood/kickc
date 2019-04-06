@@ -267,7 +267,12 @@ fn1: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Statement [9] call (const void()*) getfn::return#1  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [9] call (const void()*) getfn::return#1  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ getfn::b#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -277,9 +282,11 @@ Uplift Scope [fn1]
 Uplift Scope [] 
 
 Uplifting [getfn] best 352 combination reg byte a [ getfn::b#0 ] 
-Uplifting [main] best 282 combination reg byte a [ main::i#2 main::i#1 ] 
-Uplifting [fn1] best 282 combination 
-Uplifting [] best 282 combination 
+Uplifting [main] best 352 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplifting [fn1] best 352 combination 
+Uplifting [] best 352 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 352 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -307,20 +314,22 @@ bend_from_b1:
 bend:
 //SEG10 main
 main: {
+    .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
+    sta i
     jmp b1
   //SEG13 main::@1
   b1:
     jmp b2
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuaa=_inc_vbuaa 
-    clc
-    adc #1
-  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuz1 
+    lda i
   //SEG17 [8] call getfn 
   //SEG18 [10] phi from main::@2 to getfn [phi:main::@2->getfn]
   getfn_from_b2:
@@ -406,15 +415,15 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@3
 (byte) main::i
-(byte) main::i#1 reg byte a 8.25
-(byte) main::i#2 reg byte a 22.0
+(byte) main::i#1 i zp ZP_BYTE:2 8.25
+(byte) main::i#2 i zp ZP_BYTE:2 22.0
 
-reg byte a [ main::i#2 main::i#1 ]
+zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 reg byte a [ getfn::b#0 ]
 
 
 FINAL ASSEMBLER
-Score: 174
+Score: 244
 
 //SEG0 File Comments
 // Tests creating, assigning returning and calling pointers to non-args no-return functions
@@ -432,16 +441,18 @@ Score: 174
 //SEG9 @end
 //SEG10 main
 main: {
+    .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuaa=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
+    sta i
   //SEG13 main::@1
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuaa=_inc_vbuaa 
-    clc
-    adc #1
-  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuz1 
+    lda i
   //SEG17 [8] call getfn 
   //SEG18 [10] phi from main::@2 to getfn [phi:main::@2->getfn]
     jsr getfn

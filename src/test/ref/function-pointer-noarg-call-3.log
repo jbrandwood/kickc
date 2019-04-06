@@ -390,9 +390,13 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 [ main::i#1 getfn::return#0 ] ( main:2 [ main::i#1 getfn::return#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [10] (void()*~) main::$1 ← (void()*) getfn::return#0 [ main::i#1 main::$1 ] ( main:2 [ main::i#1 main::$1 ] ) always clobbers reg byte a 
+Statement [11] call (void()*~) main::$1  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Statement [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 [ main::i#1 getfn::return#0 ] ( main:2 [ main::i#1 getfn::return#0 ] ) always clobbers reg byte a 
 Statement [10] (void()*~) main::$1 ← (void()*) getfn::return#0 [ main::i#1 main::$1 ] ( main:2 [ main::i#1 main::$1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Statement [11] call (void()*~) main::$1  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_WORD:3 [ getfn::return#3 ] : zp ZP_WORD:3 , 
 Potential registers zp ZP_BYTE:5 [ getfn::b#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:6 [ getfn::return#0 ] : zp ZP_WORD:6 , 
@@ -407,13 +411,14 @@ Uplift Scope [fn2]
 Uplift Scope [] 
 
 Uplifting [getfn] best 743 combination zp ZP_WORD:6 [ getfn::return#0 ] reg byte a [ getfn::b#0 ] reg byte a [ getfn::$0 ] zp ZP_WORD:3 [ getfn::return#3 ] 
-Uplifting [main] best 673 combination reg byte x [ main::i#2 main::i#1 ] zp ZP_WORD:8 [ main::$1 ] 
-Uplifting [fn1] best 673 combination 
-Uplifting [fn2] best 673 combination 
-Uplifting [] best 673 combination 
+Uplifting [main] best 743 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] zp ZP_WORD:8 [ main::$1 ] 
+Uplifting [fn1] best 743 combination 
+Uplifting [fn2] best 743 combination 
+Uplifting [] best 743 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 743 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:3 [ getfn::return#3 ] ] with [ zp ZP_WORD:6 [ getfn::return#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:3 [ getfn::return#3 getfn::return#0 ] ] with [ zp ZP_WORD:8 [ main::$1 ] ] - score: 1
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ getfn::return#3 getfn::return#0 main::$1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -441,21 +446,23 @@ bend_from_b1:
 bend:
 //SEG10 main
 main: {
-    .label _1 = 2
+    .label _1 = 3
+    .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
     jmp b1
   //SEG13 main::@1
   b1:
     jmp b2
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuxx 
-    txa
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuz1 
+    lda i
   //SEG17 [8] call getfn 
     jsr getfn
   //SEG18 [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3
@@ -475,7 +482,7 @@ main: {
 //SEG24 getfn
 // getfn(byte register(A) b)
 getfn: {
-    .label return = 2
+    .label return = 3
   //SEG25 [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuaa_band_vbuc1 
     and #1
   //SEG26 [13] if((byte~) getfn::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto getfn::@return -- vbuaa_eq_0_then_la1 
@@ -585,25 +592,25 @@ FINAL SYMBOL TABLE
 (byte) getfn::b
 (byte) getfn::b#0 reg byte a 13.0
 (void()*) getfn::return
-(void()*) getfn::return#0 return zp ZP_WORD:2 22.0
-(void()*) getfn::return#3 return zp ZP_WORD:2 3.6666666666666665
+(void()*) getfn::return#0 return zp ZP_WORD:3 22.0
+(void()*) getfn::return#3 return zp ZP_WORD:3 3.6666666666666665
 (void()) main()
-(void()*~) main::$1 $1 zp ZP_WORD:2 11.0
+(void()*~) main::$1 $1 zp ZP_WORD:3 11.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (byte) main::i
-(byte) main::i#1 reg byte x 5.5
-(byte) main::i#2 reg byte x 22.0
+(byte) main::i#1 i zp ZP_BYTE:2 5.5
+(byte) main::i#2 i zp ZP_BYTE:2 22.0
 
-reg byte x [ main::i#2 main::i#1 ]
-zp ZP_WORD:2 [ getfn::return#3 getfn::return#0 main::$1 ]
+zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+zp ZP_WORD:3 [ getfn::return#3 getfn::return#0 main::$1 ]
 reg byte a [ getfn::b#0 ]
 reg byte a [ getfn::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 319
+Score: 389
 
 //SEG0 File Comments
 // Tests creating, assigning returning and calling pointers to non-args no-return functions
@@ -621,17 +628,19 @@ Score: 319
 //SEG9 @end
 //SEG10 main
 main: {
-    .label _1 = 2
+    .label _1 = 3
+    .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
   //SEG13 main::@1
   //SEG14 main::@2
   b2:
-  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuxx 
-    txa
+  //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG16 [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuz1 
+    lda i
   //SEG17 [8] call getfn 
     jsr getfn
   //SEG18 [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3
@@ -648,7 +657,7 @@ main: {
 //SEG24 getfn
 // getfn(byte register(A) b)
 getfn: {
-    .label return = 2
+    .label return = 3
   //SEG25 [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuaa_band_vbuc1 
     and #1
   //SEG26 [13] if((byte~) getfn::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto getfn::@return -- vbuaa_eq_0_then_la1 

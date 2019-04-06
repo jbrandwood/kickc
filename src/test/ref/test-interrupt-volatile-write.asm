@@ -10,6 +10,7 @@ bbegin:
   lda #0
   sta col
   jsr main
+  rts
 main: {
     lda #<irq
     sta KERNEL_IRQ

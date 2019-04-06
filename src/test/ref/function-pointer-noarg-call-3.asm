@@ -3,11 +3,13 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label _1 = 2
-    ldx #0
+    .label _1 = 3
+    .label i = 2
+    lda #0
+    sta i
   b2:
-    inx
-    txa
+    inc i
+    lda i
     jsr getfn
     jsr bi__1
     jmp b2
@@ -16,7 +18,7 @@ main: {
 }
 // getfn(byte register(A) b)
 getfn: {
-    .label return = 2
+    .label return = 3
     and #1
     cmp #0
     beq b1

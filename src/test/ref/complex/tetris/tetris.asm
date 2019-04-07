@@ -128,10 +128,10 @@
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $23
   .label render_screen_showing = $25
-  .label irq_raster_next = $24
-  .label irq_sprite_ypos = $26
-  .label irq_sprite_ptr = $27
-  .label irq_cnt = $28
+  .label irq_raster_next = $26
+  .label irq_sprite_ypos = $27
+  .label irq_sprite_ptr = $28
+  .label irq_cnt = $29
   .label current_movedown_slow = $18
   .label current_ypos = $10
   .label current_xpos = $20
@@ -575,11 +575,11 @@ render_playfield: {
 // Perform any movement of the current piece
 // key_event is the next keyboard_event() og $ff if no keyboard event is pending
 // Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
-// play_movement(byte zeropage($29) key_event)
+// play_movement(byte zeropage($2a) key_event)
 play_movement: {
     .label render = 9
     .label return = 9
-    .label key_event = $29
+    .label key_event = $2a
     lda key_event
     jsr play_move_down
     txa
@@ -661,7 +661,7 @@ play_collision: {
     .label piece_gfx = 5
     .label ypos2 = $b
     .label playfield_line = 7
-    .label i = $2a
+    .label i = $2b
     .label col = $f
     .label l = $d
     .label i_2 = $e
@@ -920,7 +920,7 @@ sid_rnd: {
 // play_update_score(byte register(X) removed)
 play_update_score: {
     .label lines_before = 4
-    .label add_bcd = $2b
+    .label add_bcd = $2c
     cpx #0
     beq breturn
     lda lines_bcd
@@ -1614,7 +1614,7 @@ sid_rnd_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
-    .label raster_sprite_gfx_modify = $2f
+    .label raster_sprite_gfx_modify = $24
     sta rega+1
     stx regx+1
     //(*BGCOL)++;

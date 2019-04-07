@@ -3,23 +3,20 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label i = 2
     lda #0
-    sta i
   b2:
-    inc i
-    lda i
+    clc
+    adc #1
     jsr getfn
-    jsr getfn.return
+    jsr fn1
     jmp b2
-}
-// getfn(byte register(A) b)
-getfn: {
-    .label return = fn1
-    rts
 }
 fn1: {
     .label BORDERCOL = $d020
     inc BORDERCOL
+    rts
+}
+// getfn(byte register(A) b)
+getfn: {
     rts
 }

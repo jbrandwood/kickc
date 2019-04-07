@@ -299,22 +299,17 @@ Initial phi equivalence classes
 [ do10::i#2 do10::i#1 ]
 [ hello::i#2 hello::i#1 ]
 [ idx#3 idx#0 idx#1 ]
-Added variable msg#10 to zero page equivalence class [ msg#10 ]
-Added variable msg#0 to zero page equivalence class [ msg#0 ]
-Added variable msg#1 to zero page equivalence class [ msg#1 ]
+Coalescing volatile variable equivalence classes [ msg#0 ] and [ msg#1 ]
+Coalescing volatile variable equivalence classes [ msg#0 msg#1 ] and [ msg#10 ]
 Complete equivalence classes
 [ do10::i#2 do10::i#1 ]
 [ hello::i#2 hello::i#1 ]
 [ idx#3 idx#0 idx#1 ]
-[ msg#10 ]
-[ msg#0 ]
-[ msg#1 ]
+[ msg#0 msg#1 msg#10 ]
 Allocated zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
 Allocated zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ]
 Allocated zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ]
-Allocated zp ZP_WORD:5 [ msg#10 ]
-Allocated zp ZP_WORD:7 [ msg#0 ]
-Allocated zp ZP_WORD:9 [ msg#1 ]
+Allocated zp ZP_WORD:5 [ msg#0 msg#1 msg#10 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -325,10 +320,8 @@ INITIAL ASM
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
   .label SCREEN = $400
-  .label msg = 7
-  .label msg_1 = 9
+  .label msg = 5
   .label idx = 4
-  .label msg_10 = 5
 //SEG3 @begin
 bbegin:
   jmp b1
@@ -336,9 +329,9 @@ bbegin:
 b1:
 //SEG5 [1] (byte*) msg#10 ← (byte*) 0 -- pbuz1=pbuc1 
   lda #<0
-  sta msg_10
+  sta msg
   lda #>0
-  sta msg_10+1
+  sta msg+1
 //SEG6 [2] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
@@ -371,9 +364,9 @@ main: {
   b1:
   //SEG17 [8] (byte*) msg#1 ← (const byte[]) msg2#0 -- pbuz1=pbuc1 
     lda #<msg2
-    sta msg_1
+    sta msg
     lda #>msg2
-    sta msg_1+1
+    sta msg+1
   //SEG18 [9] call do10 
   //SEG19 [11] phi from main::@1 to do10 [phi:main::@1->do10]
   do10_from_b1:
@@ -433,7 +426,7 @@ hello: {
   //SEG41 [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuz3 
     ldx idx
     ldy i
-    lda (msg_10),y
+    lda (msg),y
     sta SCREEN,x
   //SEG42 [20] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
     inc idx
@@ -441,7 +434,7 @@ hello: {
     inc i
   //SEG44 [22] if(*((byte*) msg#10 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuz1_derefidx_vbuz2_neq_vbuc1_then_la1 
     ldy i
-    lda (msg_10),y
+    lda (msg),y
     cmp #'@'
     bne b1_from_b1
     jmp breturn
@@ -478,17 +471,15 @@ Statement [22] if(*((byte*) msg#10 + (byte) hello::i#1)!=(byte) '@') goto hello:
 Potential registers zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ] : zp ZP_BYTE:3 , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] : zp ZP_BYTE:4 , 
-Potential registers zp ZP_WORD:5 [ msg#10 ] : zp ZP_WORD:5 , 
-Potential registers zp ZP_WORD:7 [ msg#0 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_WORD:9 [ msg#1 ] : zp ZP_WORD:9 , 
+Potential registers zp ZP_WORD:5 [ msg#0 msg#1 msg#10 ] : zp ZP_WORD:5 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 28.83: zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] 20: zp ZP_WORD:7 [ msg#0 ] 20: zp ZP_WORD:9 [ msg#1 ] 4: zp ZP_WORD:5 [ msg#10 ] 
+Uplift Scope [] 44: zp ZP_WORD:5 [ msg#0 msg#1 msg#10 ] 28.83: zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] 
 Uplift Scope [do10] 27.5: zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
 Uplift Scope [hello] 27.5: zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ] 
 Uplift Scope [main] 
 
-Uplifting [] best 973 combination zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] zp ZP_WORD:7 [ msg#0 ] zp ZP_WORD:9 [ msg#1 ] zp ZP_WORD:5 [ msg#10 ] 
+Uplifting [] best 973 combination zp ZP_WORD:5 [ msg#0 msg#1 msg#10 ] zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] 
 Uplifting [do10] best 973 combination zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
 Uplifting [hello] best 853 combination reg byte y [ hello::i#2 hello::i#1 ] 
 Uplifting [main] best 853 combination 
@@ -496,10 +487,8 @@ Attempting to uplift remaining variables inzp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ]
 Uplifting [] best 853 combination zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
 Uplifting [do10] best 853 combination zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
-Coalescing zero page register [ zp ZP_WORD:5 [ msg#10 ] ] with [ zp ZP_WORD:7 [ msg#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:5 [ msg#10 msg#0 ] ] with [ zp ZP_WORD:9 [ msg#1 ] ]
 Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:3 [ idx#3 idx#0 idx#1 ]
-Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ msg#10 msg#0 msg#1 ]
+Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ msg#0 msg#1 msg#10 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -712,7 +701,7 @@ FINAL SYMBOL TABLE
 zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
 reg byte y [ hello::i#2 hello::i#1 ]
 zp ZP_BYTE:3 [ idx#3 idx#0 idx#1 ]
-zp ZP_WORD:4 [ msg#10 msg#0 msg#1 ]
+zp ZP_WORD:4 [ msg#0 msg#1 msg#10 ]
 
 
 FINAL ASSEMBLER

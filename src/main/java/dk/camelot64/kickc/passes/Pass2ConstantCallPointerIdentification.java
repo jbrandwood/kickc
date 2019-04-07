@@ -34,21 +34,19 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
                   RValue pointer = ((PointerDereferenceSimple) procedure).getPointer();
                   ProcedureRef constProcedureRef = findConstProcedure(pointer);
                   if(constProcedureRef != null) {
-                     statementsIt.remove();
-                     StatementCall call = new StatementCall(callPointer.getlValue(), constProcedureRef.getFullName(), callPointer.getParameters(), callPointer.getSource(), callPointer.getComments());
-                     call.setProcedure(constProcedureRef);
-                     call.setIndex(callPointer.getIndex());
-                     block.setCallSuccessor(constProcedureRef.getLabelRef());
-                     statementsIt.add(call);
-                     getLog().append("Replacing constant pointer function " + call.toString(getProgram(), false));
+                     replacePointerCall(callPointer, constProcedureRef, statementsIt, block);
+                     optimized = true;
                   }
                } else if(procedure instanceof ConstantRef) {
                   ConstantVar procedureVariable = getScope().getConstant((ConstantRef) procedure);
                   SymbolType procedureVariableType = procedureVariable.getType();
                   if(procedureVariableType instanceof SymbolTypePointer) {
                      if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
-                        optimized = true;
-                        throw new RuntimeException("not implemented!");
+                        ProcedureRef constProcedureRef = findConstProcedure(procedure);
+                        if(constProcedureRef != null) {
+                           replacePointerCall(callPointer, constProcedureRef, statementsIt, block);
+                           optimized = true;
+                        }
                      }
                   }
                }
@@ -58,6 +56,30 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
       return optimized;
    }
 
+   /**
+    * Replace a pointer-based call to a constant procedure with a classic procedure call
+    * @param callPointer The call to replace
+    * @param constProcedureRef The constant procedure pointed to
+    * @param statementsIt The statement iterator currently pointing to the pointer-based call
+    * @param block The block containing the call
+    */
+   private void replacePointerCall(StatementCallPointer callPointer, ProcedureRef constProcedureRef, ListIterator<Statement> statementsIt, ControlFlowBlock block) {
+      statementsIt.remove();
+      StatementCall call = new StatementCall(callPointer.getlValue(), constProcedureRef.getFullName(), callPointer.getParameters(), callPointer.getSource(), callPointer.getComments());
+      call.setProcedure(constProcedureRef);
+      call.setIndex(callPointer.getIndex());
+      block.setCallSuccessor(constProcedureRef.getLabelRef());
+      statementsIt.add(call);
+      getLog().append("Replacing constant pointer function " + call.toString(getProgram(), false));
+   }
+
+   /**
+    * Examine whither the passed RValue represents a constant procedure pointer.
+    * If it does returns the procedure pointed to
+    *
+    * @param procedurePointer The potential procedure pointer
+    * @return The procedure pointed to
+    */
    private ProcedureRef findConstProcedure(RValue procedurePointer) {
       if(procedurePointer instanceof ConstantRef) {
          ConstantVar constant = getScope().getConstant((ConstantRef) procedurePointer);

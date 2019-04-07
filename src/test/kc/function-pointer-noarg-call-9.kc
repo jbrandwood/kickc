@@ -1,0 +1,19 @@
+// Tests calling into a function pointer which modifies global volatile
+
+const byte* SCREEN = $0400;
+
+volatile byte idx = 0;
+
+void main() {
+    void()* f = &fn1;
+    (*f)();
+    SCREEN[idx] = 'a';
+    (*f)();
+    SCREEN[idx] = 'a';
+}
+
+void fn1() {
+    idx++;
+}
+
+

@@ -249,7 +249,7 @@ public class Compiler {
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));
-//      optimizations.add(new Pass2ConstantCallPointerIdentification(program));
+      optimizations.add(new Pass2ConstantCallPointerIdentification(program));
       pass2Execute(optimizations);
    }
 

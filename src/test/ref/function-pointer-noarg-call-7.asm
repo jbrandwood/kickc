@@ -10,7 +10,6 @@ bbegin:
   jsr main
   rts
 main: {
-    .label f = hello
     jsr do10
     rts
 }
@@ -19,7 +18,7 @@ do10: {
     lda #0
     sta i
   b1:
-    jsr main.f
+    jsr hello
     inc i
     lda #$a
     cmp i

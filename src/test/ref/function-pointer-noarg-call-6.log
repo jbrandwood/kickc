@@ -87,6 +87,9 @@ Constant (const word/dword/signed dword) main::$2 = $d800+$3e8
 Constant (const byte*) fn1::screen#0 = ((byte*))$400
 Constant (const word/signed word/dword/signed dword) fn1::$0 = $400+$3e8
 Successful SSA optimization Pass2ConstantIdentification
+Replacing constant pointer function call fn1 
+Successful SSA optimization Pass2ConstantCallPointerIdentification
+Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte*) main::cols#0
 Inlining constant with var siblings (const byte*) fn1::screen#0
 Constant inlined fn1::screen#0 = ((byte*))(word/signed word/dword/signed dword) $400
@@ -103,6 +106,7 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of fn1
 CALL GRAPH
 Calls in [] to main:2 
+Calls in [main] to fn1:6 
 
 Created 2 initial phi equivalence classes
 Coalesced [11] main::cols#3 ← main::cols#1
@@ -132,7 +136,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte*) main::cols#2 ← phi( main/((byte*))(word/dword/signed dword) $d800 main::@1/(byte*) main::cols#1 )
-  [6] call *((const void()*) main::cls#0) 
+  [6] call fn1 
   [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2)
   [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2
   [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1
@@ -140,7 +144,7 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   [10] return 
   to:@return
-fn1: scope:[fn1]  from
+fn1: scope:[fn1]  from main::@1
   [11] phi()
   to:fn1::@1
 fn1::@1: scope:[fn1]  from fn1 fn1::@1
@@ -157,8 +161,8 @@ fn1::@return: scope:[fn1]  from fn1::@1
 VARIABLE REGISTER WEIGHTS
 (void()) fn1()
 (byte*) fn1::screen
-(byte*) fn1::screen#1 16.5
-(byte*) fn1::screen#2 22.0
+(byte*) fn1::screen#1 151.5
+(byte*) fn1::screen#2 202.0
 (void()) main()
 (void()*) main::cls
 (byte*) main::cols
@@ -200,7 +204,6 @@ bend_from_b1:
 bend:
 //SEG10 main
 main: {
-    .label cls = fn1
     .label cols = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -216,21 +219,23 @@ main: {
     jmp b1
   //SEG15 main::@1
   b1:
-  //SEG16 [6] call *((const void()*) main::cls#0) 
-    jsr cls
-  //SEG17 [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+  //SEG16 [6] call fn1 
+  //SEG17 [11] phi from main::@1 to fn1 [phi:main::@1->fn1]
+  fn1_from_b1:
+    jsr fn1
+  //SEG18 [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
     lda (cols),y
     clc
     adc #1
     ldy #0
     sta (cols),y
-  //SEG18 [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
+  //SEG19 [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
     inc cols
     bne !+
     inc cols+1
   !:
-  //SEG19 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG20 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b1_from_b1
@@ -240,41 +245,41 @@ main: {
     bcc b1_from_b1
   !:
     jmp breturn
-  //SEG20 main::@return
+  //SEG21 main::@return
   breturn:
-  //SEG21 [10] return 
+  //SEG22 [10] return 
     rts
 }
-//SEG22 fn1
+//SEG23 fn1
 fn1: {
     .label screen = 4
-  //SEG23 [12] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
+  //SEG24 [12] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
   b1_from_fn1:
-  //SEG24 [12] phi (byte*) fn1::screen#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+  //SEG25 [12] phi (byte*) fn1::screen#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
     jmp b1
-  //SEG25 [12] phi from fn1::@1 to fn1::@1 [phi:fn1::@1->fn1::@1]
+  //SEG26 [12] phi from fn1::@1 to fn1::@1 [phi:fn1::@1->fn1::@1]
   b1_from_b1:
-  //SEG26 [12] phi (byte*) fn1::screen#2 = (byte*) fn1::screen#1 [phi:fn1::@1->fn1::@1#0] -- register_copy 
+  //SEG27 [12] phi (byte*) fn1::screen#2 = (byte*) fn1::screen#1 [phi:fn1::@1->fn1::@1#0] -- register_copy 
     jmp b1
-  //SEG27 fn1::@1
+  //SEG28 fn1::@1
   b1:
-  //SEG28 [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+  //SEG29 [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
     lda (screen),y
     clc
     adc #1
     ldy #0
     sta (screen),y
-  //SEG29 [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2 -- pbuz1=_inc_pbuz1 
+  //SEG30 [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG30 [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG31 [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda screen+1
     cmp #>$400+$3e8
     bcc b1_from_b1
@@ -284,29 +289,28 @@ fn1: {
     bcc b1_from_b1
   !:
     jmp breturn
-  //SEG31 fn1::@return
+  //SEG32 fn1::@return
   breturn:
-  //SEG32 [16] return 
+  //SEG33 [16] return 
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] call *((const void()*) main::cls#0)  [ main::cols#2 ] ( main:2 [ main::cols#2 ] ) always clobbers reg byte a reg byte x reg byte y 
 Statement [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) [ main::cols#2 ] ( main:2 [ main::cols#2 ] ) always clobbers reg byte a reg byte y 
 Statement [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 [ main::cols#1 ] ( main:2 [ main::cols#1 ] ) always clobbers reg byte a 
-Statement [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) [ fn1::screen#2 ] (  [ fn1::screen#2 ] ) always clobbers reg byte a reg byte y 
-Statement [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 [ fn1::screen#1 ] (  [ fn1::screen#1 ] ) always clobbers reg byte a 
+Statement [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) [ fn1::screen#2 ] ( main:2::fn1:6 [ main::cols#2 fn1::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 [ fn1::screen#1 ] ( main:2::fn1:6 [ main::cols#2 fn1::screen#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] : zp ZP_WORD:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [fn1] 38.5: zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] 
+Uplift Scope [fn1] 353.5: zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] 
 Uplift Scope [main] 31.17: zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] 
 Uplift Scope [] 
 
-Uplifting [fn1] best 1454 combination zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] 
-Uplifting [main] best 1454 combination zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] 
-Uplifting [] best 1454 combination 
+Uplifting [fn1] best 7565 combination zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] 
+Uplifting [main] best 7565 combination zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] 
+Uplifting [] best 7565 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -334,7 +338,6 @@ bend_from_b1:
 bend:
 //SEG10 main
 main: {
-    .label cls = fn1
     .label cols = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -350,21 +353,23 @@ main: {
     jmp b1
   //SEG15 main::@1
   b1:
-  //SEG16 [6] call *((const void()*) main::cls#0) 
-    jsr cls
-  //SEG17 [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+  //SEG16 [6] call fn1 
+  //SEG17 [11] phi from main::@1 to fn1 [phi:main::@1->fn1]
+  fn1_from_b1:
+    jsr fn1
+  //SEG18 [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
     lda (cols),y
     clc
     adc #1
     ldy #0
     sta (cols),y
-  //SEG18 [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
+  //SEG19 [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
     inc cols
     bne !+
     inc cols+1
   !:
-  //SEG19 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG20 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b1_from_b1
@@ -374,41 +379,41 @@ main: {
     bcc b1_from_b1
   !:
     jmp breturn
-  //SEG20 main::@return
+  //SEG21 main::@return
   breturn:
-  //SEG21 [10] return 
+  //SEG22 [10] return 
     rts
 }
-//SEG22 fn1
+//SEG23 fn1
 fn1: {
     .label screen = 4
-  //SEG23 [12] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
+  //SEG24 [12] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
   b1_from_fn1:
-  //SEG24 [12] phi (byte*) fn1::screen#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+  //SEG25 [12] phi (byte*) fn1::screen#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
     jmp b1
-  //SEG25 [12] phi from fn1::@1 to fn1::@1 [phi:fn1::@1->fn1::@1]
+  //SEG26 [12] phi from fn1::@1 to fn1::@1 [phi:fn1::@1->fn1::@1]
   b1_from_b1:
-  //SEG26 [12] phi (byte*) fn1::screen#2 = (byte*) fn1::screen#1 [phi:fn1::@1->fn1::@1#0] -- register_copy 
+  //SEG27 [12] phi (byte*) fn1::screen#2 = (byte*) fn1::screen#1 [phi:fn1::@1->fn1::@1#0] -- register_copy 
     jmp b1
-  //SEG27 fn1::@1
+  //SEG28 fn1::@1
   b1:
-  //SEG28 [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+  //SEG29 [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
     lda (screen),y
     clc
     adc #1
     ldy #0
     sta (screen),y
-  //SEG29 [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2 -- pbuz1=_inc_pbuz1 
+  //SEG30 [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG30 [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG31 [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda screen+1
     cmp #>$400+$3e8
     bcc b1_from_b1
@@ -418,9 +423,9 @@ fn1: {
     bcc b1_from_b1
   !:
     jmp breturn
-  //SEG31 fn1::@return
+  //SEG32 fn1::@return
   breturn:
-  //SEG32 [16] return 
+  //SEG33 [16] return 
     rts
 }
 
@@ -444,6 +449,7 @@ Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_b1:
+Removing instruction fn1_from_b1:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
@@ -469,13 +475,12 @@ FINAL SYMBOL TABLE
 (label) fn1::@1
 (label) fn1::@return
 (byte*) fn1::screen
-(byte*) fn1::screen#1 screen zp ZP_WORD:4 16.5
-(byte*) fn1::screen#2 screen zp ZP_WORD:4 22.0
+(byte*) fn1::screen#1 screen zp ZP_WORD:4 151.5
+(byte*) fn1::screen#2 screen zp ZP_WORD:4 202.0
 (void()) main()
 (label) main::@1
 (label) main::@return
 (void()*) main::cls
-(const void()*) main::cls#0 cls = &(void()) fn1()
 (byte*) main::cols
 (byte*) main::cols#1 cols zp ZP_WORD:2 16.5
 (byte*) main::cols#2 cols zp ZP_WORD:2 14.666666666666666
@@ -485,7 +490,7 @@ zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ]
 
 
 FINAL ASSEMBLER
-Score: 1222
+Score: 6343
 
 //SEG0 File Comments
 // Tests calling into a function pointer with local variables
@@ -503,7 +508,6 @@ Score: 1222
 //SEG9 @end
 //SEG10 main
 main: {
-    .label cls = fn1
     .label cols = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   //SEG12 [5] phi (byte*) main::cols#2 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
@@ -515,20 +519,21 @@ main: {
   //SEG14 [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
   //SEG15 main::@1
   b1:
-  //SEG16 [6] call *((const void()*) main::cls#0) 
-    jsr cls
-  //SEG17 [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+  //SEG16 [6] call fn1 
+  //SEG17 [11] phi from main::@1 to fn1 [phi:main::@1->fn1]
+    jsr fn1
+  //SEG18 [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
     lda (cols),y
     clc
     adc #1
     sta (cols),y
-  //SEG18 [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
+  //SEG19 [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2 -- pbuz1=_inc_pbuz1 
     inc cols
     bne !+
     inc cols+1
   !:
-  //SEG19 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG20 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b1
@@ -537,35 +542,35 @@ main: {
     cmp #<$d800+$3e8
     bcc b1
   !:
-  //SEG20 main::@return
-  //SEG21 [10] return 
+  //SEG21 main::@return
+  //SEG22 [10] return 
     rts
 }
-//SEG22 fn1
+//SEG23 fn1
 fn1: {
     .label screen = 4
-  //SEG23 [12] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
-  //SEG24 [12] phi (byte*) fn1::screen#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+  //SEG24 [12] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
+  //SEG25 [12] phi (byte*) fn1::screen#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG25 [12] phi from fn1::@1 to fn1::@1 [phi:fn1::@1->fn1::@1]
-  //SEG26 [12] phi (byte*) fn1::screen#2 = (byte*) fn1::screen#1 [phi:fn1::@1->fn1::@1#0] -- register_copy 
-  //SEG27 fn1::@1
+  //SEG26 [12] phi from fn1::@1 to fn1::@1 [phi:fn1::@1->fn1::@1]
+  //SEG27 [12] phi (byte*) fn1::screen#2 = (byte*) fn1::screen#1 [phi:fn1::@1->fn1::@1#0] -- register_copy 
+  //SEG28 fn1::@1
   b1:
-  //SEG28 [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) -- _deref_pbuz1=_inc__deref_pbuz1 
+  //SEG29 [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
     lda (screen),y
     clc
     adc #1
     sta (screen),y
-  //SEG29 [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2 -- pbuz1=_inc_pbuz1 
+  //SEG30 [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG30 [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG31 [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda screen+1
     cmp #>$400+$3e8
     bcc b1
@@ -574,8 +579,8 @@ fn1: {
     cmp #<$400+$3e8
     bcc b1
   !:
-  //SEG31 fn1::@return
-  //SEG32 [16] return 
+  //SEG32 fn1::@return
+  //SEG33 [16] return 
     rts
 }
 

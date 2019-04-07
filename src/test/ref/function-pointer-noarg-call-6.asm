@@ -3,14 +3,13 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label cls = fn1
     .label cols = 2
     lda #<$d800
     sta cols
     lda #>$d800
     sta cols+1
   b1:
-    jsr cls
+    jsr fn1
     ldy #0
     lda (cols),y
     clc

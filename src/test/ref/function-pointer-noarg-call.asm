@@ -3,8 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label f = fn1
-    jsr f
+    jsr fn1
     rts
 }
 fn1: {

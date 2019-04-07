@@ -251,16 +251,11 @@ interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 
 Initial phi equivalence classes
-Added variable framedone#11 to zero page equivalence class [ framedone#11 ]
-Added variable framedone#0 to zero page equivalence class [ framedone#0 ]
-Added variable framedone#3 to zero page equivalence class [ framedone#3 ]
+Coalescing volatile variable equivalence classes [ framedone#0 ] and [ framedone#3 ]
+Coalescing volatile variable equivalence classes [ framedone#0 framedone#3 ] and [ framedone#11 ]
 Complete equivalence classes
-[ framedone#11 ]
-[ framedone#0 ]
-[ framedone#3 ]
-Allocated zp ZP_BOOL:2 [ framedone#11 ]
-Allocated zp ZP_BOOL:3 [ framedone#0 ]
-Allocated zp ZP_BOOL:4 [ framedone#3 ]
+[ framedone#0 framedone#3 framedone#11 ]
+Allocated zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -280,9 +275,7 @@ INITIAL ASM
   .label BGCOL = $d020
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
-  .label framedone = 3
-  .label framedone_3 = 4
-  .label framedone_11 = 2
+  .label framedone = 2
 //SEG3 @begin
 bbegin:
   jmp b1
@@ -290,7 +283,7 @@ bbegin:
 b1:
 //SEG5 [1] (bool) framedone#11 ← false -- vboz1=vboc1 
   lda #0
-  sta framedone_11
+  sta framedone
 //SEG6 [2] phi from @1 to @2 [phi:@1->@2]
 b2_from_b1:
   jmp b2
@@ -364,7 +357,7 @@ irq: {
   b2:
   //SEG29 [17] (bool) framedone#3 ← false -- vboz1=vboc1 
     lda #0
-    sta framedone_3
+    sta framedone
     jmp b1
   //SEG30 irq::@1
   b1:
@@ -389,20 +382,16 @@ Statement [13] (bool) framedone#0 ← true [ ] ( main:3 [ ] ) always clobbers re
 Statement [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [16] if(*((const byte*) RASTER#0)<=(byte/signed byte/word/signed word/dword/signed dword) $32) goto irq::@1 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [17] (bool) framedone#3 ← false [ ] (  [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BOOL:2 [ framedone#11 ] : zp ZP_BOOL:2 , 
-Potential registers zp ZP_BOOL:3 [ framedone#0 ] : zp ZP_BOOL:3 , 
-Potential registers zp ZP_BOOL:4 [ framedone#3 ] : zp ZP_BOOL:4 , 
+Potential registers zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ] : zp ZP_BOOL:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 110: zp ZP_BOOL:3 [ framedone#0 ] 20: zp ZP_BOOL:2 [ framedone#11 ] 20: zp ZP_BOOL:4 [ framedone#3 ] 
+Uplift Scope [] 150: zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
 
-Uplifting [] best 1370 combination zp ZP_BOOL:3 [ framedone#0 ] zp ZP_BOOL:2 [ framedone#11 ] zp ZP_BOOL:4 [ framedone#3 ] 
+Uplifting [] best 1370 combination zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ] 
 Uplifting [main] best 1370 combination 
 Uplifting [irq] best 1370 combination 
-Coalescing zero page register [ zp ZP_BOOL:2 [ framedone#11 ] ] with [ zp ZP_BOOL:3 [ framedone#0 ] ]
-Coalescing zero page register [ zp ZP_BOOL:2 [ framedone#11 framedone#0 ] ] with [ zp ZP_BOOL:4 [ framedone#3 ] ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -575,7 +564,7 @@ interrupt(KERNEL_MIN)(void()) irq()
 (label) main::@1
 (label) main::@2
 
-zp ZP_BOOL:2 [ framedone#11 framedone#0 framedone#3 ]
+zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ]
 
 
 FINAL ASSEMBLER

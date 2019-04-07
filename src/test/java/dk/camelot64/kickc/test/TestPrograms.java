@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPointerPointer3() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-pointer-3");
+   }
+
+   @Test
    public void testPointerPointer2() throws IOException, URISyntaxException {
       compileAndCompare("pointer-pointer-2");
    }

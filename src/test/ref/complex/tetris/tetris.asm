@@ -154,17 +154,17 @@
   .label current_piece_gfx_64 = 5
   .label current_piece_char_68 = $b
   .label render_screen_render_69 = 9
-  .label current_xpos_128 = $a
-  .label current_xpos_129 = $a
-  .label current_piece_gfx_118 = 5
-  .label current_piece_gfx_119 = 5
-  .label current_piece_char_106 = $b
-  .label current_piece_char_107 = $b
-  .label current_piece_98 = 5
-  .label current_piece_99 = 5
+  .label current_xpos_130 = $a
+  .label current_xpos_131 = $a
+  .label current_piece_gfx_120 = 5
+  .label current_piece_gfx_121 = 5
+  .label current_piece_char_108 = $b
+  .label current_piece_char_109 = $b
   .label current_piece_100 = 5
   .label current_piece_101 = 5
   .label current_piece_102 = 5
+  .label current_piece_103 = 5
+  .label current_piece_104 = 5
 bbegin:
   // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
@@ -200,13 +200,13 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
-    sta current_xpos_128
+    sta current_xpos_130
     lda current_piece_gfx
-    sta current_piece_gfx_118
+    sta current_piece_gfx_120
     lda current_piece_gfx+1
-    sta current_piece_gfx_118+1
+    sta current_piece_gfx_120+1
     lda current_piece_char
-    sta current_piece_char_106
+    sta current_piece_char_108
     lda #$40
     sta render_screen_render_33
     jsr render_moving
@@ -261,13 +261,13 @@ main: {
     lda render_screen_render
     sta render_screen_render_69
     lda current_xpos
-    sta current_xpos_129
+    sta current_xpos_131
     lda current_piece_gfx
-    sta current_piece_gfx_119
+    sta current_piece_gfx_121
     lda current_piece_gfx+1
-    sta current_piece_gfx_119+1
+    sta current_piece_gfx_121+1
     lda current_piece_char
-    sta current_piece_char_107
+    sta current_piece_char_109
     jsr render_moving
     lda render_screen_render
     ldx next_piece_idx
@@ -278,11 +278,11 @@ main: {
 }
 // Swap rendering to the other screen (used for double buffering)
 render_screen_swap: {
-    lda render_screen_render
-    eor #$40
+    lda #$40
+    eor render_screen_render
     sta render_screen_render
-    lda render_screen_show
-    eor #$40
+    lda #$40
+    eor render_screen_show
     sta render_screen_show
     rts
 }
@@ -629,9 +629,9 @@ play_move_rotate: {
     sta play_collision.ypos
     ldx orientation
     lda current_piece
-    sta current_piece_101
+    sta current_piece_103
     lda current_piece+1
-    sta current_piece_101+1
+    sta current_piece_103+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b4
@@ -762,9 +762,9 @@ play_move_leftright: {
     sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_100
+    sta current_piece_102
     lda current_piece+1
-    sta current_piece_100+1
+    sta current_piece_102+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -784,9 +784,9 @@ play_move_leftright: {
     sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_99
+    sta current_piece_101
     lda current_piece+1
-    sta current_piece_99+1
+    sta current_piece_101+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -829,9 +829,9 @@ play_move_down: {
     sta play_collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_98
+    sta current_piece_100
     lda current_piece+1
-    sta current_piece_98+1
+    sta current_piece_100+1
     jsr play_collision
     cmp #COLLISION_NONE
     beq b10
@@ -887,9 +887,9 @@ play_spawn_current: {
     lda current_ypos
     sta play_collision.ypos
     lda PIECES,y
-    sta current_piece_102
+    sta current_piece_104
     lda PIECES+1,y
-    sta current_piece_102+1
+    sta current_piece_104+1
     ldx #0
     jsr play_collision
     cmp #COLLISION_PLAYFIELD
@@ -902,19 +902,13 @@ play_spawn_current: {
   b2:
     lda #7
     cmp piece_idx
-    beq b3
+    beq sid_rnd1
     rts
-  b3:
-    jsr sid_rnd
+  sid_rnd1:
+    lda SID_VOICE3_OSC
     and #7
     sta piece_idx
     jmp b2
-}
-// Get a random number from the SID voice 3,
-// Must be initialized with sid_rnd_init()
-sid_rnd: {
-    lda SID_VOICE3_OSC
-    rts
 }
 // Update the score based on the number of lines removed
 // play_update_score(byte register(X) removed)

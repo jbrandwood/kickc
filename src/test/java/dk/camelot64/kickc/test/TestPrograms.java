@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPlasma() throws IOException, URISyntaxException {
+      compileAndCompare("examples/plasma/plasma");
+   }
+
+   @Test
    public void testTernary3() throws IOException, URISyntaxException {
       compileAndCompare("ternary-3");
    }

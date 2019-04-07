@@ -465,8 +465,8 @@ div8s: {
     clc
     adc #1
     tax
-    lda neg
-    eor #1
+    lda #1
+    eor neg
     sta neg
     jmp b4
   b1:

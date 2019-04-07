@@ -18,7 +18,9 @@ vbuxx=vbuaa_plus_vbuyy < vbuxx=vbuyy_plus_vbuaa < vbuaa=vbuyy_plus_vbuaa < vbuaa
   clc
   adc $ff
   tax
-CANNOT SYNTHESIZE vbuxx=vbuaa_bxor_vbuz1
+vbuxx=vbuaa_bxor_vbuz1 < vbuxx=vbuz1_bxor_vbuaa < vbuaa=vbuz1_bxor_vbuaa < vbuaa=vbuaa_bxor_vbuz1 - clobber:A X   cycles:5.0
+  eor {z1}
+  tax
 vbuxx=vbuaa_plus_vbuz1 < vbuxx=vbuz1_plus_vbuaa < vbuaa=vbuz1_plus_vbuaa < vbuaa=vbuaa_plus_vbuz1 - clobber:A X   cycles:7.0
   clc
   adc {z1}
@@ -270,7 +272,10 @@ vbuxx=vbuyy_plus_vbuyy < vbuxx=vbuaa_plus_vbuaa < vbuaa=vbuaa_plus_vbuaa - clobb
   tya
   asl
   tax
-CANNOT SYNTHESIZE vbuxx=vbuyy_bxor_vbuz1
+vbuxx=vbuyy_bxor_vbuz1 < vbuaa=vbuyy_bxor_vbuz1 < vbuaa=vbuaa_bxor_vbuz1 - clobber:A X   cycles:7.0
+  tya
+  eor {z1}
+  tax
 vbuxx=vbuyy_band__deref_pbuz1 < vbuxx=vbuaa_band__deref_pbuz1 < vbuxx=_deref_pbuz1_band_vbuaa < vbuaa=_deref_pbuz1_band_vbuaa < vbuaa=vbuaa_band__deref_pbuz1 - clobber:A X Y  cycles:11.5
   tya
   ldy #0
@@ -376,7 +381,9 @@ vbuxx=vbuyy_plus_vbuc1 < vbuxx=vbuaa_plus_vbuc1 - clobber:A X   cycles:6.0
   tya
   tax
   axs #-[{c1}]
-CANNOT SYNTHESIZE vbuxx=vbuz1_bxor_vbuaa
+vbuxx=vbuz1_bxor_vbuaa < vbuaa=vbuz1_bxor_vbuaa < vbuaa=vbuaa_bxor_vbuz1 - clobber:A X   cycles:5.0
+  eor {z1}
+  tax
 vbuxx=vbuz1_band_vbuxx < vbuxx=vbuaa_band_vbuxx < vbuxx=vbuxx_band_vbuaa - clobber:A X   cycles:5.0
   lda {z1}
   axs #0
@@ -402,7 +409,10 @@ vbuxx=vbuz1_plus_vbuz1 < vbuxx=vbuaa_plus_vbuaa < vbuaa=vbuaa_plus_vbuaa - clobb
   lda {z1}
   asl
   tax
-CANNOT SYNTHESIZE vbuxx=vbuz1_bxor_vbuz2
+vbuxx=vbuz1_bxor_vbuz2 < vbuxx=vbuaa_bxor_vbuz1 < vbuxx=vbuz1_bxor_vbuaa < vbuaa=vbuz1_bxor_vbuaa < vbuaa=vbuaa_bxor_vbuz1 - clobber:A X   cycles:8.0
+  lda {z1}
+  eor {z2}
+  tax
 vbuxx=vbuz1_band__deref_pbuz1 < vbuxx=vbuaa_band__deref_pbuz1 < vbuxx=_deref_pbuz1_band_vbuaa < vbuaa=_deref_pbuz1_band_vbuaa < vbuaa=vbuaa_band__deref_pbuz1 - clobber:A X Y  cycles:12.5
   lda {z1}
   ldy #0
@@ -489,10 +499,10 @@ vbuxx=vbuz1_bor_pbuz2_derefidx_vbuc1 < vbuxx=vbuaa_bor_pbuz1_derefidx_vbuc1 < vb
   ora ({z2}),y
   tax
 CANNOT SYNTHESIZE vbuxx=vbuz1_plus_pbuz2_derefidx_vbuc1
-vbuxx=vbuz1_bxor_pbuc1_derefidx_vbuaa < vbuxx=vbuz1_bxor_pbuc1_derefidx_vbuxx < vbuxx=vbuaa_bxor_pbuc1_derefidx_vbuxx < vbuxx=pbuc1_derefidx_vbuxx_bxor_vbuaa < vbuaa=pbuc1_derefidx_vbuxx_bxor_vbuaa < vbuaa=vbuaa_bxor_pbuc1_derefidx_vbuxx - clobber:A X   cycles:11.5
+vbuxx=vbuz1_bxor_pbuc1_derefidx_vbuaa < vbuxx=vbuz1_bxor_pbuc1_derefidx_vbuxx < vbuxx=pbuc1_derefidx_vbuxx_bxor_vbuz1 < vbuaa=pbuc1_derefidx_vbuxx_bxor_vbuz1 < vbuaa=vbuz1_bxor_pbuc1_derefidx_vbuxx < vbuaa=vbuz1_bxor_vbuaa < vbuaa=vbuaa_bxor_vbuz1 - clobber:A X   cycles:11.5
   tax
-  lda {z1}
-  eor {c1},x
+  lda {c1},x
+  eor {z1}
   tax
 vbuxx=vbuz1_band_pbuc1_derefidx_vbuxx < vbuxx=pbuc1_derefidx_vbuxx_band_vbuz1 < vbuaa=pbuc1_derefidx_vbuxx_band_vbuz1 < vbuaa=vbuz1_band_pbuc1_derefidx_vbuxx < vbuaa=vbuz1_band_vbuaa < vbuaa=vbuaa_band_vbuz1 - clobber:A X   cycles:9.5
   lda {c1},x
@@ -1903,9 +1913,9 @@ vbuxx=pbuc1_derefidx_vbuxx_plus_vbuyy < vbuxx=vbuyy_plus_pbuc1_derefidx_vbuxx < 
   clc
   adc {c1},x
   tax
-vbuxx=pbuc1_derefidx_vbuxx_bxor_vbuz1 < vbuxx=pbuc1_derefidx_vbuxx_bxor_vbuaa < vbuaa=pbuc1_derefidx_vbuxx_bxor_vbuaa < vbuaa=vbuaa_bxor_pbuc1_derefidx_vbuxx - clobber:A X   cycles:9.5
-  lda {z1}
-  eor {c1},x
+vbuxx=pbuc1_derefidx_vbuxx_bxor_vbuz1 < vbuaa=pbuc1_derefidx_vbuxx_bxor_vbuz1 < vbuaa=vbuz1_bxor_pbuc1_derefidx_vbuxx < vbuaa=vbuz1_bxor_vbuaa < vbuaa=vbuaa_bxor_vbuz1 - clobber:A X   cycles:9.5
+  lda {c1},x
+  eor {z1}
   tax
 vbuxx=pbuc1_derefidx_vbuxx_plus_vbuz1 < vbuaa=pbuc1_derefidx_vbuxx_plus_vbuz1 < vbuaa=vbuz1_plus_pbuc1_derefidx_vbuxx < vbuaa=vbuz1_plus_vbuaa < vbuaa=vbuaa_plus_vbuz1 - clobber:A X   cycles:11.5
   lda {c1},x
@@ -2119,9 +2129,9 @@ vbuxx=pbuc1_derefidx_vbuyy_plus_vbuyy < vbuxx=pbuc1_derefidx_vbuyy_plus_vbuaa < 
   clc
   adc {c1},y
   tax
-vbuxx=pbuc1_derefidx_vbuyy_bxor_vbuz1 < vbuxx=pbuc1_derefidx_vbuyy_bxor_vbuaa < vbuxx=vbuaa_bxor_pbuc1_derefidx_vbuyy < vbuaa=vbuaa_bxor_pbuc1_derefidx_vbuyy - clobber:A X   cycles:9.5
-  lda {z1}
-  eor {c1},y
+vbuxx=pbuc1_derefidx_vbuyy_bxor_vbuz1 < vbuxx=vbuaa_bxor_vbuz1 < vbuxx=vbuz1_bxor_vbuaa < vbuaa=vbuz1_bxor_vbuaa < vbuaa=vbuaa_bxor_vbuz1 - clobber:A X   cycles:9.5
+  lda {c1},y
+  eor {z1}
   tax
 vbuxx=pbuc1_derefidx_vbuyy_plus_vbuz1 < vbuxx=vbuaa_plus_vbuz1 < vbuxx=vbuz1_plus_vbuaa < vbuaa=vbuz1_plus_vbuaa < vbuaa=vbuaa_plus_vbuz1 - clobber:A X   cycles:11.5
   lda {c1},y

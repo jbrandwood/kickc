@@ -614,8 +614,8 @@ place_sprites: {
     lax spr_x
     axs #-[$20]
     stx spr_x
-    lda col
-    eor #7^5
+    lda #7^5
+    eor col
     sta col
     ldx j2
     inx

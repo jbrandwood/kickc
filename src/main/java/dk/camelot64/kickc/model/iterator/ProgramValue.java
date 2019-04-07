@@ -656,7 +656,7 @@ public abstract class ProgramValue {
       private final StatementPhiBlock.PhiVariable phiVariable;
       private final int i;
 
-      PhiValue(StatementPhiBlock.PhiVariable phiVariable, int i) {
+      public PhiValue(StatementPhiBlock.PhiVariable phiVariable, int i) {
          this.phiVariable = phiVariable;
          this.i = i;
       }

@@ -3,10 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementCallPointer;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -31,6 +28,14 @@ public class Pass1TypeInference extends Pass1Base {
                   SymbolTypeInference.inferAssignmentLValue(getProgram(), assignment, false);
                } catch(CompileError e) {
                   throw new CompileError(e.getMessage(), statement.getSource());
+               }
+            } else if(statement instanceof StatementPhiBlock) {
+               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+                  try {
+                     SymbolTypeInference.inferPhiVariable(getProgram(), phiVariable, false);
+                  } catch(CompileError e) {
+                     throw new CompileError(e.getMessage(), statement.getSource());
+                  }
                }
             } else if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;

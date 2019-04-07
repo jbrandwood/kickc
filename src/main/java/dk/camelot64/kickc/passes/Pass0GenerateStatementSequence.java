@@ -594,10 +594,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Void visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
       KickCParser.StmtContext ifStmt = ctx.stmt(0);
       KickCParser.StmtContext elseStmt = ctx.stmt(1);
-
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
-
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
 
       if(elseStmt == null) {
@@ -1214,6 +1212,33 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
       sequence.addStatement(stmt);
       return tmpVarRef;
+   }
+
+   @Override
+   public RValue visitExprTernary(KickCParser.ExprTernaryContext ctx) {
+      RValue condValue = (RValue) this.visit(ctx.expr(0));
+      Label trueLabel = getCurrentScope().addLabelIntermediate();
+      Label falseLabel = getCurrentScope().addLabelIntermediate();
+      Label endJumpLabel = getCurrentScope().addLabelIntermediate();
+      sequence.addStatement(new StatementConditionalJump(condValue, trueLabel.getRef(), new StatementSource(ctx),  Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementLabel(falseLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      RValue falseValue = (RValue) this.visit(ctx.expr(2));
+      VariableRef falseVar = getCurrentScope().addVariableIntermediate().getRef();
+      sequence.addStatement(new StatementAssignment(falseVar, null, null, falseValue, new StatementSource(ctx), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementJump(endJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementLabel(trueLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      RValue trueValue = (RValue) this.visit(ctx.expr(1));
+      VariableRef trueVar = getCurrentScope().addVariableIntermediate().getRef();
+      sequence.addStatement(new StatementAssignment(trueVar, null, null, trueValue, new StatementSource(ctx), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementLabel(endJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      StatementPhiBlock phiBlock = new StatementPhiBlock(Comment.NO_COMMENTS);
+      phiBlock.setSource(new StatementSource(ctx));
+      VariableRef finalVar = getCurrentScope().addVariableIntermediate().getRef();
+      StatementPhiBlock.PhiVariable phiVariable = phiBlock.addPhiVariable(finalVar);
+      phiVariable.setrValue(trueLabel.getRef(), trueVar);
+      phiVariable.setrValue(falseLabel.getRef(), falseVar);
+      sequence.addStatement(phiBlock);
+      return finalVar;
    }
 
    @Override

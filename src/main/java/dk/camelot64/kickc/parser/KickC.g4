@@ -107,6 +107,7 @@ expr
     | expr ( '|' ) expr #exprBinary
     | expr ( '&&' )  expr #exprBinary
     | expr ( '||' )  expr #exprBinary
+    | expr '?'   expr ':' expr #exprTernary
     | <assoc=right> expr '=' expr  #exprAssignment
     | <assoc=right> expr ('+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|=' | '^=' ) expr  #exprAssignmentCompound
     | '{' expr (',' expr )* '}' #initList

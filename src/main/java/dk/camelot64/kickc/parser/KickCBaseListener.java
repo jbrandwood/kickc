@@ -664,6 +664,18 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExprTernary(KickCParser.ExprTernaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExprTernary(KickCParser.ExprTernaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExprAssignment(KickCParser.ExprAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}

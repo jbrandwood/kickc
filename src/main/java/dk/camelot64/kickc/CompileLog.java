@@ -103,6 +103,11 @@ public class CompileLog {
       this.verboseStatementSequence = verboseStatementSequence;
    }
 
+   public CompileLog verboseStatementSequence() {
+      setVerboseStatementSequence(true);
+      return this;
+   }
+
    public void setVerboseComments(boolean verboseComments) {
       this.verboseComments = verboseComments;
    }

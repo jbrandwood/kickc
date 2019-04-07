@@ -1,14 +1,22 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.SymbolRef;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.VariableReferenceInfos;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
+import dk.camelot64.kickc.model.values.VariableRef;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
@@ -29,7 +37,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
       ControlFlowBlock beginBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
-      assertUsedVars(beginBlock, referenceInfos, new LinkedHashSet<>(), new LinkedHashSet<>());
+      assertUsedVars(beginBlock, null, referenceInfos, new LinkedHashSet<>(), new LinkedHashSet<>());
       getProgram().setVariableReferenceInfos(null);
       new PassNStatementIndices(getProgram()).clearStatementIndices();
 
@@ -42,16 +50,23 @@ public class Pass1AssertUsedVars extends Pass1Base {
     * Follow the control flow of the graph recursively.
     *
     * @param block The block to examine
+    * @param predecessor The block jumping into this block (used for phi analysis)
     * @param referenceInfos Information about assigned/used variables in statements
     * @param defined Variables already assigned a value at the point of the first execution of the block
     * @param visited Blocks already visited
     */
-   public void assertUsedVars(ControlFlowBlock block, VariableReferenceInfos referenceInfos, Collection<VariableRef> defined, Collection<LabelRef> visited) {
+   public void assertUsedVars(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<VariableRef> defined, Collection<LabelRef> visited) {
+      // If the block has a phi statement it is always examined (to not skip any of the predecessor checks)
+      assertUsedVarsPhi(block, predecessor, referenceInfos, defined);
+      // If we have already visited the block - skip it
       if(visited.contains(block.getLabel())) {
          return;
       }
       visited.add(block.getLabel());
+      // Examine all statements (except the potential PHI)
       for(Statement statement : block.getStatements()) {
+         // PHI block has already been examined
+         if(statement instanceof StatementPhiBlock) continue;
          Collection<VariableRef> used = referenceInfos.getUsedVars(statement);
          for(VariableRef usedRef : used) {
             if(!defined.contains(usedRef)) {
@@ -70,16 +85,57 @@ public class Pass1AssertUsedVars extends Pass1Base {
             }
             ControlFlowBlock procedureStart = getProgram().getGraph().getBlock(call.getProcedure().getLabelRef());
 
-            assertUsedVars(procedureStart, referenceInfos, defined, visited);
+            assertUsedVars(procedureStart, block.getLabel(), referenceInfos, defined, visited);
          } else if(statement instanceof StatementConditionalJump) {
             StatementConditionalJump cond = (StatementConditionalJump) statement;
             ControlFlowBlock jumpTo = getProgram().getGraph().getBlock(cond.getDestination());
-            assertUsedVars(jumpTo, referenceInfos, defined, visited);
+            assertUsedVars(jumpTo, block.getLabel(), referenceInfos, defined, visited);
          }
       }
       ControlFlowBlock successor = getProgram().getGraph().getBlock(block.getDefaultSuccessor());
       if(successor != null) {
-         assertUsedVars(successor, referenceInfos, defined, visited);
+         assertUsedVars(successor, block.getLabel(), referenceInfos, defined, visited);
+      }
+   }
+
+   /**
+    * Assert that all used vars have been assigned values before the use - in a PHI block.
+    *
+    * @param block The block to examine
+    * @param predecessor The block jumping into this block (used for phi analysis)
+    * @param referenceInfos Information about assigned/used variables in statements
+    * @param defined Variables already assigned a value at the point of the first execution of the block
+    * @param visited Blocks already visited
+    */
+
+   private void assertUsedVarsPhi(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<VariableRef> defined) {
+      if(predecessor != null && block.hasPhiBlock()) {
+         StatementPhiBlock phiBlock = block.getPhiBlock();
+         ArrayList<SymbolVariableRef> used = new ArrayList<>();
+         for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
+            int i = 0;
+            for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+               if(predecessor.equals(phiRValue.getPredecessor())) {
+                  ProgramValueIterator.execute(new ProgramValue.PhiValue(phiVariable, i), (programValue, currentStmt, stmtIt, currentBlock) -> {
+                     if(programValue.get() instanceof SymbolVariableRef) {
+                        if(!used.contains(programValue.get())) used.add((SymbolVariableRef) programValue.get());
+                     }
+                  }, phiBlock, null, block);
+               }
+               i++;
+            }
+         }
+         // Found used variables - check that they are defined
+         for(SymbolVariableRef usedRef : used) {
+            if(!defined.contains(usedRef)) {
+               throw new CompileError("Error! Variable used before being defined " + usedRef.toString(getProgram()) + " in " + phiBlock.toString(getProgram(), false), phiBlock.getSource());
+            }
+         }
+         // Add all variables fefined by the PHI block
+         Collection<VariableRef> defd = referenceInfos.getDefinedVars(phiBlock);
+         for(VariableRef definedRef : defd) {
+            defined.add(definedRef);
+         }
       }
    }
 

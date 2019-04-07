@@ -1,17 +1,17 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.ProcedureRef;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementReturn;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /** Pass that modifies a control flow graph to call procedures by passing parameters through registers */
@@ -23,8 +23,25 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       this.program = program;
    }
 
+   private Map<LabelRef, LabelRef> splitBlockMap = new LinkedHashMap<>();
+
    public void generate() {
       ControlFlowGraph generated = visitGraph(program.getGraph());
+
+      // Fix phi predecessors for any blocks has a split block as predecessor
+      for(ControlFlowBlock block : generated.getAllBlocks()) {
+         if(block.hasPhiBlock()) {
+            for(StatementPhiBlock.PhiVariable phiVariable : block.getPhiBlock().getPhiVariables()) {
+               for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                  LabelRef splitBlockNew = splitBlockMap.get(phiRValue.getPredecessor());
+                  if(splitBlockNew !=null) {
+                     phiRValue.setPredecessor(splitBlockNew);
+                  }
+               }
+            }
+         }
+      }
+
       program.setGraph(generated);
    }
 
@@ -62,7 +79,9 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       } else {
          currentBlockScope = currentBlockSymbol.getScope();
       }
-      splitCurrentBlock(currentBlockScope.addLabelIntermediate().getRef());
+      LabelRef splitBlockNewLabelRef = currentBlockScope.addLabelIntermediate().getRef();
+      splitCurrentBlock(splitBlockNewLabelRef);
+      splitBlockMap.put(this.getOrigBlock().getLabel(), splitBlockNewLabelRef);
       if(!SymbolType.VOID.equals(procedure.getReturnType()) && origCall.getlValue() != null) {
          addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef, origCall.getSource(), Comment.NO_COMMENTS));
       } else {

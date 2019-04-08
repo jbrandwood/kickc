@@ -52,14 +52,13 @@ nexttext: {
     sta textp
     lda #>text2
     sta textp+1
-  breturn:
     rts
   b1:
     lda #<text1
     sta textp
     lda #>text1
     sta textp+1
-    jmp breturn
+    rts
 }
   text1: .text "camelot @"
   text2: .text "rex @"

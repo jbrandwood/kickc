@@ -583,8 +583,6 @@ play_movement: {
     lda key_event
     jsr play_move_down
     txa
-    clc
-    adc #0
     sta render
     lda game_over
     cmp #0

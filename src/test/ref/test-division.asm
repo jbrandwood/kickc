@@ -454,11 +454,10 @@ div8s: {
     eor #$ff
     clc
     adc #1
-  breturn:
     rts
   b9:
     tya
-    jmp breturn
+    rts
   b3:
     txa
     eor #$ff

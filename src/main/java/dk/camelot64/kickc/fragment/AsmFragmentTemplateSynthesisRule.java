@@ -11,8 +11,14 @@ class AsmFragmentTemplateSynthesisRule {
     * Contains matching groups (parenthesis) that are used in sigReplace to build the signature of the sub-fragment to synthesize from. */
    final String sigMatch;
 
+   /** Compiled regex for sigMatch */
+   Pattern sigMatchPattern = null;
+
    /** Regular expression that limits which fragments the synthesize rule can handle. */
    final String sigAvoid;
+
+   /** Compiled regex for sigAvoid */
+   Pattern sigAvoidPattern = null;
 
    /** ASM code prefixed to the sub-fragment when synthesizing. */
    final private String asmPrefix;
@@ -62,7 +68,20 @@ class AsmFragmentTemplateSynthesisRule {
     * @return true if the rule matches the signature
     */
    public boolean matches(String signature) {
-      return signature.matches(sigMatch) && (sigAvoid == null || !signature.matches(sigAvoid));
+      if (sigMatchPattern == null)
+         sigMatchPattern = Pattern.compile(sigMatch);
+      Matcher m = sigMatchPattern.matcher(signature);
+      if (m.matches()) {
+         if (sigAvoid == null)
+            return true;
+         else {
+            if (sigAvoidPattern == null)
+               sigAvoidPattern = Pattern.compile(sigAvoid);
+            Matcher ma = sigAvoidPattern.matcher(signature);
+            return !ma.matches();
+         }
+      }
+      return false;
    }
 
    /**
@@ -87,12 +106,12 @@ class AsmFragmentTemplateSynthesisRule {
    }
 
    public AsmFragmentTemplate synthesize(String signature, AsmFragmentTemplate subTemplate) {
-      if(!matches(signature)) {
-         throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching signature signature:"+signature+" match:"+sigMatch+" avoid:"+sigAvoid);
-      }
-      if(!subTemplate.getSignature().equals(getSubSignature(signature))) {
-         throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching sub template sub-signature:"+subTemplate.getSignature()+" expecting:"+getSubSignature(signature));
-      }
+//      if(!matches(signature)) {
+//         throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching signature signature:"+signature+" match:"+sigMatch+" avoid:"+sigAvoid);
+//      }
+//      if(!subTemplate.getSignature().equals(getSubSignature(signature))) {
+//         throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching sub template sub-signature:"+subTemplate.getSignature()+" expecting:"+getSubSignature(signature));
+//      }
       if(subDontClobber!=null) {
          if(subDontClobber.contains("aa") && subTemplate.getClobber().isClobberA()) return null;
          if(subDontClobber.contains("xx") && subTemplate.getClobber().isClobberX()) return null;

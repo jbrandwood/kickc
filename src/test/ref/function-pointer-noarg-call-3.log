@@ -568,9 +568,12 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Replacing jump to rts with rts in jmp breturn
+Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label breturn_from_getfn to b1
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction bbegin:
+Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -610,7 +613,7 @@ reg byte a [ getfn::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 389
+Score: 392
 
 //SEG0 File Comments
 // Tests creating, assigning returning and calling pointers to non-args no-return functions
@@ -671,7 +674,7 @@ getfn: {
     sta return
     lda #>fn2
     sta return+1
-    jmp breturn
+    rts
   //SEG31 [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
   b1:
   //SEG32 [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
@@ -680,7 +683,6 @@ getfn: {
     lda #>fn1
     sta return+1
   //SEG33 getfn::@return
-  breturn:
   //SEG34 [16] return 
     rts
 }

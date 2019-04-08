@@ -63,7 +63,6 @@ mul8s_compare: {
     sta BGCOL
     ldx a
     jsr mul8s_error
-  breturn:
     rts
   b5:
     inc b
@@ -83,7 +82,7 @@ mul8s_compare: {
     sta print_str.str+1
     jsr print_str
     jsr print_ln
-    jmp breturn
+    rts
     str: .text "signed multiply results match!@"
 }
 // Print a newline
@@ -434,12 +433,11 @@ muls8s: {
     iny
     cpy a
     bne b3
-    jmp b1
+    rts
   b5:
     lda #0
     sta return
     sta return+1
-  b1:
     rts
   b6:
     lda #0
@@ -464,7 +462,7 @@ muls8s: {
     dey
     cpy a
     bne b4
-    jmp b1
+    rts
 }
 // Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
@@ -514,7 +512,6 @@ mul8u_compare: {
     sta BGCOL
     ldx a
     jsr mul8u_error
-  breturn:
     rts
   b5:
     inc b
@@ -531,7 +528,7 @@ mul8u_compare: {
     sta print_str.str+1
     jsr print_str
     jsr print_ln
-    jmp breturn
+    rts
     str: .text "multiply results match!@"
 }
 // mul8u_error(byte register(X) a, byte zeropage(3) b, word zeropage(8) ms, word zeropage($c) mn, word zeropage($e) mf)
@@ -616,12 +613,11 @@ muls8u: {
     iny
     cpy a
     bne b2
-    jmp b1
+    rts
   b3:
     lda #0
     sta return
     sta return+1
-  b1:
     rts
 }
 // Compare the ASM-based mul tables with the KC-based mul tables
@@ -668,7 +664,6 @@ mulf_tables_cmp: {
     sta print_line_cursor
     lda #>$400
     sta print_line_cursor+1
-  breturn:
     rts
   b2:
     inc asm_sqr
@@ -705,7 +700,7 @@ mulf_tables_cmp: {
     sta print_char_cursor
     lda print_line_cursor+1
     sta print_char_cursor+1
-    jmp breturn
+    rts
     str: .text "multiply table mismatch at @"
     str1: .text " / @"
     str2: .text "multiply tables match!@"

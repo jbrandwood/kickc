@@ -35,7 +35,6 @@ menu: {
     cmp #0
     beq b2
     jsr pressed
-  breturn:
     rts
   b2:
     ldx #KEY_I
@@ -45,7 +44,7 @@ menu: {
     lda #RED
     sta BORDERCOL
     sei
-    jmp breturn
+    rts
   b3:
     ldx #KEY_E
     jsr keyboard_key_pressed
@@ -54,7 +53,7 @@ menu: {
     lda #GREEN
     sta BORDERCOL
     cli
-    jmp breturn
+    rts
   b4:
     inc SCREEN
     jmp b1

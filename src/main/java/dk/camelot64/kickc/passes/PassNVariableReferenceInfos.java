@@ -20,6 +20,9 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
       super(program);
    }
 
+   private LinkedHashMap<LabelRef, Collection<VariableRef>> blockDirectVarRefsMap = null;
+   private LinkedHashMap<LabelRef, Collection<VariableRef>> blockDirectUsedVarsMap = null;
+
    /** Create defined/referenced maps */
    @Override
    public boolean step() {
@@ -28,28 +31,40 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
       LinkedHashMap<Integer, Collection<VariableRef>> stmtReferenced = new LinkedHashMap<>();
       LinkedHashMap<Integer, Collection<VariableRef>> stmtDefined = new LinkedHashMap<>();
       Map<SymbolVariableRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> symbolVarReferences = new LinkedHashMap<>();
+      blockDirectVarRefsMap = new LinkedHashMap<>();
+      blockDirectUsedVarsMap = new LinkedHashMap<>();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         LabelRef blockLabel = block.getLabel();
-         blockReferencedVars.put(blockLabel, getReferencedVars(blockLabel, new ArrayList<>()));
-         blockUsedVars.put(blockLabel, getUsedVars(blockLabel, new ArrayList<>()));
+         LinkedHashSet<VariableRef> blockDirectVarRefs = new LinkedHashSet<>();;
+         LinkedHashSet<VariableRef> blockDirectUsedVars = new LinkedHashSet<>();;
          for(Statement statement : block.getStatements()) {
-            Collection<SymbolVariableRef> referenced = getReferenced(statement);
-            Collection<VariableRef> defined = getDefinedVars(statement);
+            LinkedHashSet<SymbolVariableRef> stmtSymbolVarRefs = new LinkedHashSet<>();
+            LinkedHashSet<VariableRef> stmtVarRefs = new LinkedHashSet<>();
+            LinkedHashSet<VariableRef> stmtUsedVars = new LinkedHashSet<>();
+            ProgramValueIterator.execute(statement,
+                  (programValue, currentStmt, stmtIt, currentBlock) -> {
+                     if(programValue.get() instanceof SymbolVariableRef)
+                        stmtSymbolVarRefs.add((SymbolVariableRef) programValue.get());
+                     if(programValue.get() instanceof VariableRef)
+                        stmtVarRefs.add((VariableRef) programValue.get());
+                  }
+                  , null, null);
+            Collection<VariableRef> stmtDefinedVars = getDefinedVars(statement);
+            stmtUsedVars.addAll(stmtVarRefs);
+            stmtUsedVars.removeAll(stmtDefinedVars);
+            blockDirectVarRefs.addAll(stmtVarRefs);
+            blockDirectUsedVars.addAll(stmtUsedVars);
+
             // Add variable definitions to the statement
-            stmtDefined.put(statement.getIndex(), defined);
+            stmtDefined.put(statement.getIndex(), stmtDefinedVars);
             // Identify statement defining variables
-            for(VariableRef variableRef : defined) {
+            for(VariableRef variableRef : stmtDefinedVars) {
                symbolVarReferences.putIfAbsent(variableRef, new ArrayList<>());
                Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(variableRef);
                references.add(new VariableReferenceInfos.ReferenceInStatement(statement.getIndex(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.DEFINE, variableRef));
             }
             // Gather statements referencing variables/constants
-            Collection<VariableRef> varRefs = new ArrayList<>();
-            for(SymbolVariableRef referencedVarRef : referenced) {
-               if(referencedVarRef instanceof VariableRef) {
-                  varRefs.add((VariableRef) referencedVarRef);
-               }
-               if(!defined.contains(referencedVarRef)) {
+            for(SymbolVariableRef referencedVarRef : stmtSymbolVarRefs) {
+               if(!stmtDefinedVars.contains(referencedVarRef)) {
                   symbolVarReferences.putIfAbsent(referencedVarRef, new ArrayList<>());
                   Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(referencedVarRef);
                   references.add(
@@ -60,8 +75,19 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
                }
             }
             // Add variable reference to the statement
-            stmtReferenced.put(statement.getIndex(), varRefs);
+            stmtReferenced.put(statement.getIndex(), stmtVarRefs);
          }
+         LabelRef blockLabel = block.getLabel();
+         blockDirectVarRefsMap.put(blockLabel, blockDirectVarRefs);
+         blockDirectUsedVarsMap.put(blockLabel, blockDirectUsedVars);
+      }
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         LabelRef blockLabel = block.getLabel();
+         LinkedHashSet<VariableRef> blockRecursiveVarRefs = new LinkedHashSet<>();
+         LinkedHashSet<VariableRef> blockRecursiveUsedVars = new LinkedHashSet<>();
+         addReferencedVars(block.getLabel(), block, blockRecursiveVarRefs, blockRecursiveUsedVars, new ArrayList<>());
+         blockReferencedVars.put(blockLabel, blockRecursiveVarRefs);
+         blockUsedVars.put(blockLabel, blockRecursiveUsedVars);
       }
       // Gather symbols in the symbol table referencing other variables/constants
       Collection<SymbolVariable> allSymbolVariables = getProgram().getScope().getAllSymbolVariables(true);
@@ -80,7 +106,6 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
       getProgram().setVariableReferenceInfos(new VariableReferenceInfos(blockReferencedVars, blockUsedVars, stmtReferenced, stmtDefined, symbolVarReferences));
       return false;
    }
-
 
    /**
     * Get all variables referenced in an rValue
@@ -131,67 +156,29 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
    }
 
    /**
-    * Get all variables used inside a block and its successors (including any called method)
+    * Recursively get all variables used or defined inside a block and its successors (including any called method)
     *
     * @param labelRef The block to examine
+    * @param block The block to examine (optional, saves lookup)
+    * @param referencedVars the set of referenced variables
+    * @param usedVars the set of referenced variables
     * @param visited The blocks already visited during the search. Used to stop infinite recursion
     * @return All used variables
     */
-   private Collection<VariableRef> getUsedVars(LabelRef labelRef, Collection<LabelRef> visited) {
-      if(labelRef == null) {
-         return new ArrayList<>();
-      }
-      if(visited.contains(labelRef)) {
-         return new ArrayList<>();
-      }
+   private void addReferencedVars(LabelRef labelRef, ControlFlowBlock block, LinkedHashSet<VariableRef> referencedVars, LinkedHashSet<VariableRef> usedVars, Collection<LabelRef> visited) {
+      if(labelRef == null || visited.contains(labelRef))
+         return;
       visited.add(labelRef);
-      ControlFlowBlock block = getProgram().getGraph().getBlock(labelRef);
       if(block == null) {
-         return new ArrayList<>();
+         block = getProgram().getGraph().getBlock(labelRef);
+         if(block == null)
+            return;
       }
-      LinkedHashSet<VariableRef> used = new LinkedHashSet<>();
-      for(Statement statement : block.getStatements()) {
-         used.addAll(getUsedVars(statement));
-         if(statement instanceof StatementCall) {
-            ProcedureRef procedure = ((StatementCall) statement).getProcedure();
-            used.addAll(getUsedVars(procedure.getLabelRef(), visited));
-         }
-      }
-      used.addAll(getUsedVars(block.getDefaultSuccessor(), visited));
-      used.addAll(getUsedVars(block.getConditionalSuccessor(), visited));
-      return used;
-   }
-
-   /**
-    * Get all variables used or defined inside a block and its successors (including any called method)
-    *
-    * @param labelRef The block to examine
-    * @param visited The blocks already visited during the search. Used to stop infinite recursion
-    * @return All used variables
-    */
-   private Collection<VariableRef> getReferencedVars(LabelRef labelRef, Collection<LabelRef> visited) {
-      if(labelRef == null) {
-         return new ArrayList<>();
-      }
-      if(visited.contains(labelRef)) {
-         return new ArrayList<>();
-      }
-      visited.add(labelRef);
-      ControlFlowBlock block = getProgram().getGraph().getBlock(labelRef);
-      if(block == null) {
-         return new ArrayList<>();
-      }
-      LinkedHashSet<VariableRef> referenced = new LinkedHashSet<>();
-      for(Statement statement : block.getStatements()) {
-         referenced.addAll(getReferencedVars(statement));
-         if(statement instanceof StatementCall) {
-            ProcedureRef procedure = ((StatementCall) statement).getProcedure();
-            referenced.addAll(getReferencedVars(procedure.getLabelRef(), visited));
-         }
-      }
-      referenced.addAll(getReferencedVars(block.getDefaultSuccessor(), visited));
-      referenced.addAll(getReferencedVars(block.getConditionalSuccessor(), visited));
-      return referenced;
+      referencedVars.addAll(blockDirectVarRefsMap.get(labelRef));
+      usedVars.addAll(blockDirectUsedVarsMap.get(labelRef));
+      addReferencedVars(block.getDefaultSuccessor(), null, referencedVars, usedVars, visited);
+      addReferencedVars(block.getConditionalSuccessor(), null, referencedVars, usedVars, visited);
+      addReferencedVars(block.getCallSuccessor(), null, referencedVars, usedVars, visited);
    }
 
    /**
@@ -229,51 +216,5 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
       }
       return new ArrayList<>();
    }
-
-   /**
-    * Get the variables used, but not defined, in a statement
-    *
-    * @param statement The statement to examine
-    * @return The used variables (not including defined variables)
-    */
-   private Collection<VariableRef> getUsedVars(Statement statement) {
-      LinkedHashSet<VariableRef> used = new LinkedHashSet<>();
-      used.addAll(getReferencedVars(statement));
-      used.removeAll(getDefinedVars(statement));
-      return used;
-   }
-
-   /**
-    * Get the variables referenced (used or defined) in a statement
-    *
-    * @param statement The statement to examine
-    * @return The referenced variables
-    */
-   private Collection<VariableRef> getReferencedVars(Statement statement) {
-      LinkedHashSet<VariableRef> referencedVars = new LinkedHashSet<>();
-      getReferenced(statement)
-            .stream()
-            .filter(symbolVariableRef -> symbolVariableRef instanceof VariableRef)
-            .forEach(symbolVariableRef -> referencedVars.add((VariableRef) symbolVariableRef));
-      return referencedVars;
-   }
-
-   /**
-    * Get the variables / constants referenced (used or defined) in a statement
-    *
-    * @param statement The statement to examine
-    * @return The referenced variables / constants (VariableRef / ConstantRef)
-    */
-   private Collection<SymbolVariableRef> getReferenced(Statement statement) {
-      LinkedHashSet<SymbolVariableRef> referenced = new LinkedHashSet<>();
-      ProgramValueIterator.execute(statement,
-            (programValue, currentStmt, stmtIt, currentBlock) -> {
-               if(programValue.get() instanceof SymbolVariableRef)
-                  referenced.add((SymbolVariableRef) programValue.get());
-            }
-            , null, null);
-      return referenced;
-   }
-
 
 }

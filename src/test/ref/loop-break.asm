@@ -9,7 +9,6 @@ main: {
     lda SCREEN,x
     cmp #'a'
     bne b2
-  breturn:
     rts
   b2:
     lda #'a'
@@ -17,5 +16,5 @@ main: {
     inx
     cpx #$28*6+1
     bne b1
-    jmp breturn
+    rts
 }

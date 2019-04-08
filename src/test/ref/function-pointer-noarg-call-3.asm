@@ -26,13 +26,12 @@ getfn: {
     sta return
     lda #>fn2
     sta return+1
-    jmp breturn
+    rts
   b1:
     lda #<fn1
     sta return
     lda #>fn1
     sta return+1
-  breturn:
     rts
 }
 fn2: {

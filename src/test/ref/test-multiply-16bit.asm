@@ -99,7 +99,6 @@ mul16s_compare: {
     lda #2
     sta BGCOL
     jsr mul16s_error
-  breturn:
     rts
   b5:
     iny
@@ -122,7 +121,7 @@ mul16s_compare: {
     sta print_str.str+1
     jsr print_str
     jsr print_ln
-    jmp breturn
+    rts
     str1: .text "signed word multiply results match!@"
 }
 // Print a newline
@@ -681,14 +680,13 @@ muls16s: {
     lda j
     cmp a
     bne b3
-    jmp b1
+    rts
   b5:
     lda #0
     sta return
     sta return+1
     sta return+2
     sta return+3
-  b1:
     rts
   b6:
     lda #0
@@ -729,7 +727,7 @@ muls16s: {
     lda i
     cmp a
     bne b4
-    jmp b1
+    rts
 }
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
@@ -820,7 +818,6 @@ mul16u_compare: {
     lda a+1
     sta mul16u_error.a+1
     jsr mul16u_error
-  breturn:
     rts
   b5:
     iny
@@ -847,7 +844,7 @@ mul16u_compare: {
     sta print_str.str+1
     jsr print_str
     jsr print_ln
-    jmp breturn
+    rts
     str1: .text "word multiply results match!@"
 }
 // mul16u_error(word zeropage(3) a, word zeropage($17) b, dword zeropage($b) ms, dword zeropage($19) mn, dword zeropage($11) mf)
@@ -960,14 +957,13 @@ muls16u: {
     lda i
     cmp a
     bne b2
-    jmp b1
+    rts
   b3:
     lda #0
     sta return
     sta return+1
     sta return+2
     sta return+3
-  b1:
     rts
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)

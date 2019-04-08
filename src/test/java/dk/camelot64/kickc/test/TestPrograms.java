@@ -33,6 +33,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPlus0() throws IOException, URISyntaxException {
+      compileAndCompare("plus-0");
+   }
+
+   @Test
+   public void testPlasma2() throws IOException, URISyntaxException {
+      compileAndCompare("examples/plasma/plasma-unroll");
+   }
+
+   @Test
    public void testPlasma() throws IOException, URISyntaxException {
       compileAndCompare("examples/plasma/plasma");
    }

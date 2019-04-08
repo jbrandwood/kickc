@@ -129,6 +129,14 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             assignment.setrValue1(new ConstantBinary(const1, Operators.PLUS, consolidated));
             getLog().append("Consolidated constant in assignment " + assignment.getlValue());
             return true;
+         } else {
+            // Check if the constant is zero
+            ConstantLiteral constantLiteral = ((ConstantValue) assignment.getrValue1()).calculateLiteral(getScope());
+            if(constantLiteral.getValue().equals(new Long(0))) {
+               getLog().append("Removed zero-constant in assignment " + assignment.getlValue());
+               assignment.setrValue1(null);
+               assignment.setOperator(null);
+            }
          }
       } else if(assignment.getrValue1() instanceof VariableRef && assignment.getrValue2() instanceof ConstantValue) {
          VariableRef variable = (VariableRef) assignment.getrValue1();
@@ -140,6 +148,15 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             // Handling of negative consolidated numbers?
             getLog().append("Consolidated constant in assignment " + assignment.getlValue());
             return true;
+         } else {
+            // Check if the constant is zero
+            ConstantLiteral constantLiteral = ((ConstantValue) assignment.getrValue2()).calculateLiteral(getScope());
+            if(constantLiteral.getValue().equals(new Long(0))) {
+               getLog().append("Removed zero-constant in assignment " + assignment.getlValue());
+               assignment.setrValue2(assignment.getrValue1());
+               assignment.setOperator(null);
+               assignment.setrValue1(null);
+            }
          }
       }
       return false;

@@ -1,0 +1,91 @@
+// A KickC version of the plasma routine from the CC65 samples
+// This version has an unrolled inner loop to reach ~50FPS
+// (w)2001 by groepaz/hitmen
+// Cleanup and porting to CC65 by Ullrich von Bassewitz.
+// Ported to KickC by Jesper Gravgaard.
+// Original source https://github.com/cc65/cc65/blob/master/samples/plasma.c
+
+import "c64"
+import "print"
+import "sid"
+
+const byte* SCREEN1 = $2800;
+const byte* CHARSET = $2000;
+const byte* SINTABLE = $1f00;
+
+kickasm(pc SINTABLE) {{
+    .for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*sin(toRadians(360*i/256)))
+}}
+
+void main() {
+    asm { sei }
+    *BORDERCOL = BLUE;
+    *BGCOL = BLUE;
+    for(byte* col : COLS..COLS+1000) *col = BLACK;
+    makecharset(CHARSET);
+    *D018 = toD018(SCREEN1, CHARSET);
+    while(true) {
+        // Show single-buffered plasma
+        doplasma(SCREEN1);
+    }
+}
+
+// Plasma state variables
+byte c1A = 0;
+byte c1B = 0;
+byte c2A = 0;
+byte c2B = 0;
+
+// Render plasma to the passed screen
+void doplasma(byte* screen) {
+
+    byte[40] xbuf;
+    byte[25] ybuf;
+
+    byte c1a = c1A;
+    byte c1b = c1B;
+    for (byte i = 0; i < 25; ++i) {
+        ybuf[i] = (SINTABLE[c1a] + SINTABLE[c1b]);
+        c1a += 4;
+        c1b += 9;
+    }
+    c1A += 3;
+    c1B -= 5;
+    byte c2a = c2A;
+    byte c2b = c2B;
+    for (byte i = 0; i < 40; ++i) {
+        xbuf[i] = (SINTABLE[c2a] + SINTABLE[c2b]);
+        c2a += 3;
+        c2b += 7;
+    }
+    c2A += 2;
+    c2B -= 3;
+    for (byte i = 0; i < 40; ++i) {
+        inline for (byte ii = 0; ii < 25; ++ii) {
+            (screen+ii*40)[i] = (xbuf[i] + ybuf[ii]);
+        }
+    }
+}
+
+// Make a plasma-friendly charset where the chars are randomly filled
+void makecharset(byte* charset) {
+    const byte[8] bittab = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
+    sid_rnd_init();
+    print_cls();
+    for (word c = 0; c < 0x100; ++c) {
+        byte s = SINTABLE[<c];
+        for ( byte i = 0; i < 8; ++i){
+            byte b = 0;
+            for (byte ii = 0; ii < 8; ++ii) {
+                if ((sid_rnd() & 0xFF) > s) {
+                    b |= bittab[ii];
+                }
+            }
+            charset[(c<<3) + i] = b;
+        }
+        if ((c & 0x07) == 0) {
+            print_char('.');
+        }
+    }
+}

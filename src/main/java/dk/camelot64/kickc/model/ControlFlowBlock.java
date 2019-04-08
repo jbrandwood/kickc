@@ -1,15 +1,17 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * A named/labelled sequence of SSA statements connected to other basic blocks.
@@ -43,6 +45,7 @@ public class ControlFlowBlock {
       this.label = label;
       this.scope = scope;
       this.statements = new ArrayList<>();
+      this.defaultSuccessor = null;
       this.conditionalSuccessor = null;
       this.comments = new ArrayList<>();
    }

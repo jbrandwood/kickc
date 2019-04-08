@@ -647,7 +647,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
 
       public Label getOrCreateBreakLabel() {
-         if(breakLabel==null) {
+         if(breakLabel == null) {
             breakLabel = loopScope.addLabelIntermediate();
          }
          return breakLabel;
@@ -662,7 +662,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
 
       public Label getOrCreateContinueLabel() {
-         if(continueLabel==null) {
+         if(continueLabel == null) {
             continueLabel = loopScope.addLabelIntermediate();
          }
          return continueLabel;
@@ -825,14 +825,14 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    private void addLoopBreakLabel(Loop loop, ParserRuleContext ctx) {
-      if(loop.getBreakLabel()!=null) {
+      if(loop.getBreakLabel() != null) {
          StatementLabel breakTarget = new StatementLabel(loop.getBreakLabel().getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
          sequence.addStatement(breakTarget);
       }
    }
 
    private void addLoopContinueLabel(Loop loop, ParserRuleContext ctx) {
-      if(loop.getContinueLabel()!=null) {
+      if(loop.getContinueLabel() != null) {
          StatementLabel continueTarget = new StatementLabel(loop.getContinueLabel().getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
          sequence.addStatement(continueTarget);
       }
@@ -1033,7 +1033,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public SymbolType visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
-      return SymbolType.get("signed " + ctx.SIMPLETYPE().getText());
+      String signedness = ctx.getChild(0).getText();
+      return SymbolType.get(signedness + " " + ctx.SIMPLETYPE().getText());
    }
 
    @Override
@@ -1220,7 +1221,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Label trueLabel = getCurrentScope().addLabelIntermediate();
       Label falseLabel = getCurrentScope().addLabelIntermediate();
       Label endJumpLabel = getCurrentScope().addLabelIntermediate();
-      sequence.addStatement(new StatementConditionalJump(condValue, trueLabel.getRef(), new StatementSource(ctx),  Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementConditionalJump(condValue, trueLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
       sequence.addStatement(new StatementLabel(falseLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
       RValue falseValue = (RValue) this.visit(ctx.expr(2));
       VariableRef falseVar = getCurrentScope().addVariableIntermediate().getRef();

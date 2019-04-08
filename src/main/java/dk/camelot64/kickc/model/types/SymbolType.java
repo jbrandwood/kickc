@@ -43,15 +43,45 @@ public interface SymbolType {
       switch(name) {
          case "byte":
             return BYTE;
+         case "unsigned byte":
+            return BYTE;
          case "signed byte":
+            return SBYTE;
+         case "char":
+            return SBYTE;
+         case "unsigned char":
+            return BYTE;
+         case "signed char":
             return SBYTE;
          case "word":
             return WORD;
+         case "unsigned word":
+            return WORD;
          case "signed word":
+            return SWORD;
+         case "short":
+            return SWORD;
+         case "unsigned short":
+            return WORD;
+         case "signed short":
+            return SWORD;
+         case "int":
+            return SWORD;
+         case "unsigned int":
+            return WORD;
+         case "signed int":
             return SWORD;
          case "dword":
             return DWORD;
+         case "unsigned dword":
+            return DWORD;
          case "signed dword":
+            return SDWORD;
+         case "long":
+            return SDWORD;
+         case "unsigned long":
+            return DWORD;
+         case "signed long":
             return SDWORD;
          case "string":
             return STRING;

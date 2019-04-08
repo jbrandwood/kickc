@@ -82,7 +82,7 @@ forIteration
 typeDecl
     : '(' typeDecl ')' #typePar
     | SIMPLETYPE  #typeSimple
-    | 'signed' SIMPLETYPE  #typeSignedSimple
+    | ('signed'|'unsigned') SIMPLETYPE  #typeSignedSimple
     | typeDecl '*' #typePtr
     | typeDecl '[' (expr)? ']' #typeArray
     | typeDecl '(' ')' #typeProcedure
@@ -194,7 +194,7 @@ MNEMONIC:
 
 
 KICKASM: '{{' .*? '}}';
-SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'void' ;
+SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
 STRING : '"' ('\\"' | ~'"')* '"';
 CHAR : '\''  ('\\\'' | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';

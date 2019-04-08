@@ -175,6 +175,11 @@ public class CompileLog {
       this.verboseFragmentLog = verboseFragmentLog;
    }
 
+   public CompileLog verboseFragmentLog() {
+      setVerboseFragmentLog(true);
+      return this;
+   }
+
    public boolean isVerboseAsmOptimize() {
       return verboseAsmOptimize;
    }

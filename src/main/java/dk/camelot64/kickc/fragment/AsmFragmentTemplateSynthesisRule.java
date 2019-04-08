@@ -425,9 +425,9 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite Assignments to *C1 from A
       synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)c1=(.*)", null, null, "vb$1aa=$2", "sta {c1}", null));
       // Rewrite Assignments to *Z1 from A
-      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*)", twoZ1, null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y", mapZ));
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)z1=(.*)", twoZ1, null, "vb$1aa=$2", "ldy #0\n" + "sta ({z1}),y", mapZ));
       // Rewrite Assignments to *Z1 from A
-      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*z1.*)", null, null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y", null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)z1=(.*z1.*)", null, null, "vb$1aa=$2", "ldy #0\n" + "sta ({z1}),y", null));
 
       // Rewrite _deref_pb.z1_ to _vb.aa_ (if no other Z1s)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_pb(.)z1(.*)", twoZ1+"|"+rvalAa+"|"+rvalYy+"|"+ lvalDerefZ1, "ldy #0\n"+"lda ({z1}),y", "$1vb$2aa$3", null, mapZ));

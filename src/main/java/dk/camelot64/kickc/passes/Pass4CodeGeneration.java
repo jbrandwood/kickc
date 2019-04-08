@@ -652,27 +652,30 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Generate ASM code for an ASM fragment instance ()
+    * Generate ASM code for an ASM fragment instance
     * @param asm The ASM program to generate into
     * @param asmFragmentInstanceSpecFactory The ASM fragment instance specification factory
     */
    private void generateAsm(AsmProgram asm, AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory) {
+      String initialSignature = asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec().getSignature();
       AsmFragmentInstanceSpec asmFragmentInstanceSpec = asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec();
       AsmFragmentInstance asmFragmentInstance = null;
+      StringBuffer fragmentVariationsTried = new StringBuffer();
       while(asmFragmentInstance==null) {
          try {
             asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
          } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
             // Unknown fragment - keep looking through alternative ASM fragment instance specs until we have tried them all
+            String signature = asmFragmentInstanceSpec.getSignature();
+            fragmentVariationsTried.append(signature).append(" ");
             if(asmFragmentInstanceSpec.hasNextVariation()) {
-               String signature = asmFragmentInstanceSpec.getSignature();
                asmFragmentInstanceSpec.nextVariation();
                if(program.getLog().isVerboseFragmentLog()) {
                   program.getLog().append("Fragment not found "+signature+". Attempting another variation "+asmFragmentInstanceSpec.getSignature());
                }
             } else {
                // No more variations available - fail with an error
-               throw e;
+               throw new AsmFragmentTemplateSynthesizer.UnknownFragmentException("Fragment not found "+initialSignature+". Attempted variations "+fragmentVariationsTried);
             }
          }
       }

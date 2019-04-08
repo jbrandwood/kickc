@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFire() throws IOException, URISyntaxException {
+      compileAndCompare("examples/fire/fire");
+   }
+
+   @Test
    public void testCTypes() throws IOException, URISyntaxException {
       compileAndCompare("c-types");
    }

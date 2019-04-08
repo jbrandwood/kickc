@@ -22,6 +22,8 @@ public class OperatorCastPtr extends OperatorUnary {
    public ConstantLiteral calculateLiteral(ConstantLiteral value) {
       if(value instanceof ConstantInteger) {
          return new ConstantPointer(((ConstantInteger) value).getInteger(), elementType);
+      } else if(value instanceof ConstantPointer) {
+         return new ConstantPointer(((ConstantPointer) value).getLocation(), elementType);
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + value);
    }

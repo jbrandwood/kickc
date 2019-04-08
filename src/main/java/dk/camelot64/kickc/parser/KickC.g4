@@ -39,7 +39,9 @@ parameterListDecl
     : parameterDecl (',' parameterDecl)* ;
 
 parameterDecl
-    : directive* typeDecl directive* NAME ;
+    : directive* typeDecl directive* NAME #parameterDeclType
+    | SIMPLETYPE #parameterDeclVoid
+    ;
 
 directive
     : 'const' #directiveConst

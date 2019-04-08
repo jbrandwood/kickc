@@ -150,19 +150,38 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
       ArrayList<Variable> parameterDecls = new ArrayList<>();
       for(KickCParser.ParameterDeclContext parameterDeclCtx : ctx.parameterDecl()) {
-         Variable parameterDecl = (Variable) this.visit(parameterDeclCtx);
-         parameterDecls.add(parameterDecl);
+         Object parameterDecl = this.visit(parameterDeclCtx);
+         if(parameterDecl.equals(SymbolType.VOID)) {
+            if(ctx.parameterDecl().size() == 1) {
+               // A single void parameter decl - equals zero parameters
+               return new ArrayList<>();
+            } else {
+               throw new CompileError("Illegal void parameter." , new StatementSource(ctx));
+            }
+         } else if(parameterDecl instanceof Variable) {
+            parameterDecls.add((Variable) parameterDecl);
+         } else {
+            throw new CompileError("Unknown parameter " + ctx.getText(), new StatementSource(ctx));
+         }
       }
       return parameterDecls;
    }
 
    @Override
-   public Variable visitParameterDecl(KickCParser.ParameterDeclContext ctx) {
+   public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
       SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
       VariableUnversioned param = new VariableUnversioned(ctx.NAME().getText(), getCurrentScope(), type);
       // Add directives
       addDirectives(type, param, ctx.directive());
       return param;
+   }
+
+   @Override
+   public Object visitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx) {
+      if(!SymbolType.VOID.getTypeName().equals(ctx.SIMPLETYPE().getText())) {
+         throw new CompileError("Illegal unnamed parameter " + ctx.SIMPLETYPE().getText(), new StatementSource(ctx));
+      }
+      return SymbolType.VOID;
    }
 
    @Override

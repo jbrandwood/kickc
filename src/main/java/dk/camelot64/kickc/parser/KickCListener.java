@@ -98,15 +98,29 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitParameterListDecl(KickCParser.ParameterListDeclContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#parameterDecl}.
+	 * Enter a parse tree produced by the {@code parameterDeclType}
+	 * labeled alternative in {@link KickCParser#parameterDecl}.
 	 * @param ctx the parse tree
 	 */
-	void enterParameterDecl(KickCParser.ParameterDeclContext ctx);
+	void enterParameterDeclType(KickCParser.ParameterDeclTypeContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#parameterDecl}.
+	 * Exit a parse tree produced by the {@code parameterDeclType}
+	 * labeled alternative in {@link KickCParser#parameterDecl}.
 	 * @param ctx the parse tree
 	 */
-	void exitParameterDecl(KickCParser.ParameterDeclContext ctx);
+	void exitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code parameterDeclVoid}
+	 * labeled alternative in {@link KickCParser#parameterDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code parameterDeclVoid}
+	 * labeled alternative in {@link KickCParser#parameterDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.

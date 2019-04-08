@@ -65,11 +65,19 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParameterListDecl(KickCParser.ParameterListDeclContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#parameterDecl}.
+	 * Visit a parse tree produced by the {@code parameterDeclType}
+	 * labeled alternative in {@link KickCParser#parameterDecl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitParameterDecl(KickCParser.ParameterDeclContext ctx);
+	T visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code parameterDeclVoid}
+	 * labeled alternative in {@link KickCParser#parameterDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.

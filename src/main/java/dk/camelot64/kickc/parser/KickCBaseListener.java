@@ -124,13 +124,25 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParameterDecl(KickCParser.ParameterDeclContext ctx) { }
+	@Override public void enterParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitParameterDecl(KickCParser.ParameterDeclContext ctx) { }
+	@Override public void exitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -33,6 +33,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIllegalVoidParameter() throws IOException, URISyntaxException {
+      assertError("illegal-void-parameter", "Illegal void parameter");
+   }
+
+   @Test
+   public void testIllegalUnnamedParameter() throws IOException, URISyntaxException {
+      assertError("illegal-unnamed-parameter", "Illegal unnamed parameter");
+   }
+
+   @Test
    public void testFire() throws IOException, URISyntaxException {
       compileAndCompare("examples/fire/fire");
    }

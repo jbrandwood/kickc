@@ -2,10 +2,10 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
-  .const char = 'a'
+  .const ch = 'a'
   .const num = 1
 main: {
-    lda #char
+    lda #ch
     sta SCREEN
     lda #num
     sta SCREEN+2

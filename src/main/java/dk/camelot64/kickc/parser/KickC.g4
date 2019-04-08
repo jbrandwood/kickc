@@ -39,7 +39,9 @@ parameterListDecl
     : parameterDecl (',' parameterDecl)* ;
 
 parameterDecl
-    : directive* typeDecl directive* NAME ;
+    : directive* typeDecl directive* NAME #parameterDeclType
+    | SIMPLETYPE #parameterDeclVoid
+    ;
 
 directive
     : 'const' #directiveConst
@@ -82,7 +84,7 @@ forIteration
 typeDecl
     : '(' typeDecl ')' #typePar
     | SIMPLETYPE  #typeSimple
-    | 'signed' SIMPLETYPE  #typeSignedSimple
+    | ('signed'|'unsigned') SIMPLETYPE  #typeSignedSimple
     | typeDecl '*' #typePtr
     | typeDecl '[' (expr)? ']' #typeArray
     | typeDecl '(' ')' #typeProcedure
@@ -90,7 +92,7 @@ typeDecl
 
 expr
     : '(' expr ')' #exprPar
-    | NAME '(' parameterList? ')' #exprCall
+    | expr '(' parameterList? ')' #exprCall
     | expr '[' expr ']' #exprArray
     | '(' typeDecl ')' expr #exprCast
     | ('--' | '++' ) expr #exprPreMod
@@ -107,6 +109,7 @@ expr
     | expr ( '|' ) expr #exprBinary
     | expr ( '&&' )  expr #exprBinary
     | expr ( '||' )  expr #exprBinary
+    | expr '?'   expr ':' expr #exprTernary
     | <assoc=right> expr '=' expr  #exprAssignment
     | <assoc=right> expr ('+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|=' | '^=' ) expr  #exprAssignmentCompound
     | '{' expr (',' expr )* '}' #initList
@@ -193,7 +196,7 @@ MNEMONIC:
 
 
 KICKASM: '{{' .*? '}}';
-SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'void' ;
+SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
 STRING : '"' ('\\"' | ~'"')* '"';
 CHAR : '\''  ('\\\'' | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';

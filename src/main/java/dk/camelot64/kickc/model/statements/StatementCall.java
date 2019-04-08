@@ -15,12 +15,13 @@ import java.util.List;
  */
 public class StatementCall extends StatementBase implements StatementLValue {
 
-   /**
-    * The variable being assigned a value by the call. Can be null.
-    */
+   /** The variable being assigned a value by the call. Can be null. */
    private LValue lValue;
+   /** The name of the procedure called */
    private String procedureName;
+   /** The procedure called. */
    private ProcedureRef procedure;
+   /** The parameter values passed to the procedure. */
    private List<RValue> parameters;
 
    public StatementCall(LValue lValue, String procedureName, List<RValue> parameters, StatementSource source, List<Comment> comments) {

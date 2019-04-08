@@ -150,19 +150,38 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
       ArrayList<Variable> parameterDecls = new ArrayList<>();
       for(KickCParser.ParameterDeclContext parameterDeclCtx : ctx.parameterDecl()) {
-         Variable parameterDecl = (Variable) this.visit(parameterDeclCtx);
-         parameterDecls.add(parameterDecl);
+         Object parameterDecl = this.visit(parameterDeclCtx);
+         if(parameterDecl.equals(SymbolType.VOID)) {
+            if(ctx.parameterDecl().size() == 1) {
+               // A single void parameter decl - equals zero parameters
+               return new ArrayList<>();
+            } else {
+               throw new CompileError("Illegal void parameter." , new StatementSource(ctx));
+            }
+         } else if(parameterDecl instanceof Variable) {
+            parameterDecls.add((Variable) parameterDecl);
+         } else {
+            throw new CompileError("Unknown parameter " + ctx.getText(), new StatementSource(ctx));
+         }
       }
       return parameterDecls;
    }
 
    @Override
-   public Variable visitParameterDecl(KickCParser.ParameterDeclContext ctx) {
+   public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
       SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
       VariableUnversioned param = new VariableUnversioned(ctx.NAME().getText(), getCurrentScope(), type);
       // Add directives
       addDirectives(type, param, ctx.directive());
       return param;
+   }
+
+   @Override
+   public Object visitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx) {
+      if(!SymbolType.VOID.getTypeName().equals(ctx.SIMPLETYPE().getText())) {
+         throw new CompileError("Illegal unnamed parameter " + ctx.SIMPLETYPE().getText(), new StatementSource(ctx));
+      }
+      return SymbolType.VOID;
    }
 
    @Override
@@ -594,10 +613,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Void visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
       KickCParser.StmtContext ifStmt = ctx.stmt(0);
       KickCParser.StmtContext elseStmt = ctx.stmt(1);
-
       PrePostModifierHandler.addPreModifiers(this, ctx.expr());
       RValue rValue = (RValue) this.visit(ctx.expr());
-
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
 
       if(elseStmt == null) {
@@ -649,7 +666,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
 
       public Label getOrCreateBreakLabel() {
-         if(breakLabel==null) {
+         if(breakLabel == null) {
             breakLabel = loopScope.addLabelIntermediate();
          }
          return breakLabel;
@@ -664,7 +681,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
 
       public Label getOrCreateContinueLabel() {
-         if(continueLabel==null) {
+         if(continueLabel == null) {
             continueLabel = loopScope.addLabelIntermediate();
          }
          return continueLabel;
@@ -827,14 +844,14 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    private void addLoopBreakLabel(Loop loop, ParserRuleContext ctx) {
-      if(loop.getBreakLabel()!=null) {
+      if(loop.getBreakLabel() != null) {
          StatementLabel breakTarget = new StatementLabel(loop.getBreakLabel().getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
          sequence.addStatement(breakTarget);
       }
    }
 
    private void addLoopContinueLabel(Loop loop, ParserRuleContext ctx) {
-      if(loop.getContinueLabel()!=null) {
+      if(loop.getContinueLabel() != null) {
          StatementLabel continueTarget = new StatementLabel(loop.getContinueLabel().getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
          sequence.addStatement(continueTarget);
       }
@@ -1035,7 +1052,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public SymbolType visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
-      return SymbolType.get("signed " + ctx.SIMPLETYPE().getText());
+      String signedness = ctx.getChild(0).getText();
+      return SymbolType.get(signedness + " " + ctx.SIMPLETYPE().getText());
    }
 
    @Override
@@ -1119,6 +1137,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
+
       List<RValue> parameters;
       KickCParser.ParameterListContext parameterList = ctx.parameterList();
       if(parameterList != null) {
@@ -1128,7 +1147,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       }
       VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
-      sequence.addStatement(new StatementCall(tmpVarRef, ctx.NAME().getText(), parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+
+      String procedureName;
+      if(ctx.expr() instanceof KickCParser.ExprIdContext) {
+         procedureName = ctx.expr().getText();
+         sequence.addStatement(new StatementCall(tmpVarRef, procedureName, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+      } else {
+         RValue procedurePointer = (RValue) this.visit(ctx.expr());
+         sequence.addStatement(new StatementCallPointer(tmpVarRef, procedurePointer, parameters, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+      }
       return tmpVarRef;
    }
 
@@ -1205,6 +1232,33 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
       sequence.addStatement(stmt);
       return tmpVarRef;
+   }
+
+   @Override
+   public RValue visitExprTernary(KickCParser.ExprTernaryContext ctx) {
+      RValue condValue = (RValue) this.visit(ctx.expr(0));
+      Label trueLabel = getCurrentScope().addLabelIntermediate();
+      Label falseLabel = getCurrentScope().addLabelIntermediate();
+      Label endJumpLabel = getCurrentScope().addLabelIntermediate();
+      sequence.addStatement(new StatementConditionalJump(condValue, trueLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementLabel(falseLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      RValue falseValue = (RValue) this.visit(ctx.expr(2));
+      VariableRef falseVar = getCurrentScope().addVariableIntermediate().getRef();
+      sequence.addStatement(new StatementAssignment(falseVar, null, null, falseValue, new StatementSource(ctx), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementJump(endJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementLabel(trueLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      RValue trueValue = (RValue) this.visit(ctx.expr(1));
+      VariableRef trueVar = getCurrentScope().addVariableIntermediate().getRef();
+      sequence.addStatement(new StatementAssignment(trueVar, null, null, trueValue, new StatementSource(ctx), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementLabel(endJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      StatementPhiBlock phiBlock = new StatementPhiBlock(Comment.NO_COMMENTS);
+      phiBlock.setSource(new StatementSource(ctx));
+      VariableRef finalVar = getCurrentScope().addVariableIntermediate().getRef();
+      StatementPhiBlock.PhiVariable phiVariable = phiBlock.addPhiVariable(finalVar);
+      phiVariable.setrValue(trueLabel.getRef(), trueVar);
+      phiVariable.setrValue(falseLabel.getRef(), falseVar);
+      sequence.addStatement(phiBlock);
+      return finalVar;
    }
 
    @Override

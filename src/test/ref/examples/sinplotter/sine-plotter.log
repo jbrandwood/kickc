@@ -2240,6 +2240,7 @@ Constant (const byte) main::toD0181_return#0 = main::toD0181_$3#0|main::toD0181_
 Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(bitmap_plot_yhi#0+0)
 Consolidated array index constant in *(bitmap_plot_ylo#0+0)
+Removed zero-constant in assignment sin16s_gen2::$8
 Successful SSA optimization Pass2ConstantAdditionElimination
 if() condition always true - replacing block destination [44] if((const signed word) mul16s::b#0>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul16s::@2
 if() condition always true - replacing block destination [182] if(true) goto main::@2
@@ -2248,6 +2249,7 @@ Fixing inline constructor with bitmap_clear::$3 ← *(bitmap_plot_yhi#0+0) w= *(
 Fixing inline constructor with bitmap_plot::$3 ← *(bitmap_plot_yhi#0 + bitmap_plot::y#2) w= *(bitmap_plot_ylo#0 + bitmap_plot::y#2)
 Fixing inline constructor with div32u16u::$4 ← div32u16u::quotient_hi#0 dw= div32u16u::quotient_lo#0
 Successful SSA optimization Pass2FixInlineConstructors
+Successful SSA optimization PassNEliminateUnusedVars
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating Noop Cast (word) mul16u::a#1 ← ((word)) (signed word) mul16s::a#0
 Eliminating Noop Cast (word~) mul16s::$14 ← ((word)) (signed word) mul16s::a#0
@@ -2350,7 +2352,6 @@ Constant inlined divr16u::i#0 = (byte/signed byte/word/signed word/dword/signed 
 Constant inlined div32u16u::dividend#0 = (const dword) PI2_u4f28#0
 Constant inlined bitmap_init::bits#0 = (byte/word/signed word/dword/signed dword) $80
 Constant inlined render_sine::xpos#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined sin16s_gen2::$1 = (const signed word) sin16s_gen2::ampl#0>>(byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined bitmap_init::bits#2 = (byte/word/signed word/dword/signed dword) $80
 Constant inlined divr16u::quotient#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Constant inlined sin16s_gen2::x#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -2734,7 +2735,7 @@ sin16s_gen2::@3: scope:[sin16s_gen2]  from sin16s_gen2::@1
 sin16s_gen2::@4: scope:[sin16s_gen2]  from sin16s_gen2::@3
   [81] (signed dword~) sin16s_gen2::$5 ← (signed dword) mul16s::return#2
   [82] (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5
-  [83] (signed word~) sin16s_gen2::$8 ← (const signed word) sin16s_gen2::offs#0 + (signed word)(word~) sin16s_gen2::$6
+  [83] (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$6
   [84] *((signed word*) sin16s_gen2::sintab#2) ← (signed word~) sin16s_gen2::$8
   [85] (signed word*) sin16s_gen2::sintab#0 ← (signed word*) sin16s_gen2::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
   [86] (dword) sin16s_gen2::x#1 ← (dword) sin16s_gen2::x#2 + (dword) sin16s_gen2::step#0
@@ -4141,7 +4142,6 @@ sin16s_gen2: {
     .const min = -$140
     .const max = $140
     .label ampl = max-min
-    .const offs = min+(ampl>>1)
     .label _5 = $69
     .label _6 = $6d
     .label _8 = $6f
@@ -4255,13 +4255,10 @@ sin16s_gen2: {
     sta _6
     lda _5+3
     sta _6+1
-  //SEG152 [83] (signed word~) sin16s_gen2::$8 ← (const signed word) sin16s_gen2::offs#0 + (signed word)(word~) sin16s_gen2::$6 -- vwsz1=vwsc1_plus_vwsz2 
+  //SEG152 [83] (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$6 -- vwsz1=vwsz2 
     lda _6
-    clc
-    adc #<offs
     sta _8
     lda _6+1
-    adc #>offs
     sta _8+1
   //SEG153 [84] *((signed word*) sin16s_gen2::sintab#2) ← (signed word~) sin16s_gen2::$8 -- _deref_pwsz1=vwsz2 
     ldy #0
@@ -5455,7 +5452,7 @@ Statement [78] (signed word) mul16s::a#0 ← (signed word) sin16s::return#0 [ si
 Statement [80] (signed dword) mul16s::return#2 ← (signed dword) mul16s::return#0 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::return#2 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::return#2 ] ) always clobbers reg byte a 
 Statement [81] (signed dword~) sin16s_gen2::$5 ← (signed dword) mul16s::return#2 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$5 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$5 ] ) always clobbers reg byte a 
 Statement [82] (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$6 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$6 ] ) always clobbers reg byte a 
-Statement [83] (signed word~) sin16s_gen2::$8 ← (const signed word) sin16s_gen2::offs#0 + (signed word)(word~) sin16s_gen2::$6 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ) always clobbers reg byte a 
+Statement [83] (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$6 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ) always clobbers reg byte a 
 Statement [84] *((signed word*) sin16s_gen2::sintab#2) ← (signed word~) sin16s_gen2::$8 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [85] (signed word*) sin16s_gen2::sintab#0 ← (signed word*) sin16s_gen2::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::i#2 sin16s_gen2::sintab#0 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::i#2 sin16s_gen2::sintab#0 ] ) always clobbers reg byte a 
 Statement [86] (dword) sin16s_gen2::x#1 ← (dword) sin16s_gen2::x#2 + (dword) sin16s_gen2::step#0 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#1 sin16s_gen2::sintab#0 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#1 sin16s_gen2::sintab#0 ] ) always clobbers reg byte a 
@@ -5571,7 +5568,7 @@ Statement [78] (signed word) mul16s::a#0 ← (signed word) sin16s::return#0 [ si
 Statement [80] (signed dword) mul16s::return#2 ← (signed dword) mul16s::return#0 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::return#2 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::return#2 ] ) always clobbers reg byte a 
 Statement [81] (signed dword~) sin16s_gen2::$5 ← (signed dword) mul16s::return#2 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$5 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$5 ] ) always clobbers reg byte a 
 Statement [82] (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$6 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$6 ] ) always clobbers reg byte a 
-Statement [83] (signed word~) sin16s_gen2::$8 ← (const signed word) sin16s_gen2::offs#0 + (signed word)(word~) sin16s_gen2::$6 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ) always clobbers reg byte a 
+Statement [83] (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$6 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ) always clobbers reg byte a 
 Statement [84] *((signed word*) sin16s_gen2::sintab#2) ← (signed word~) sin16s_gen2::$8 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [85] (signed word*) sin16s_gen2::sintab#0 ← (signed word*) sin16s_gen2::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::i#2 sin16s_gen2::sintab#0 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::i#2 sin16s_gen2::sintab#0 ] ) always clobbers reg byte a 
 Statement [86] (dword) sin16s_gen2::x#1 ← (dword) sin16s_gen2::x#2 + (dword) sin16s_gen2::step#0 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#1 sin16s_gen2::sintab#0 ] ( main:3::sin16s_gen2:21 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#1 sin16s_gen2::sintab#0 ] ) always clobbers reg byte a 
@@ -5753,34 +5750,34 @@ Uplift Scope [div32u16u] 4: zp ZP_DWORD:89 [ div32u16u::return#2 ] 4: zp ZP_WORD
 Uplift Scope [] 0.8: zp ZP_WORD:186 [ rem16u#1 ] 
 Uplift Scope [main] 
 
-Uplifting [mul16u] best 36944 combination zp ZP_DWORD:27 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp ZP_DWORD:31 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp ZP_WORD:25 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ] zp ZP_WORD:23 [ mul16u::b#2 mul16u::b#1 ] zp ZP_DWORD:113 [ mul16u::return#2 ] zp ZP_DWORD:158 [ mul16u::return#3 ] 
-Uplifting [wrap_y] best 36761 combination zp ZP_WORD:9 [ wrap_y::y#6 wrap_y::y#4 wrap_y::y#9 wrap_y::y#0 wrap_y::y#1 wrap_y::y#2 wrap_y::y#3 ] reg byte a [ wrap_y::return#0 ] reg byte a [ wrap_y::return#1 ] reg byte a [ wrap_y::return#2 ] 
-Uplifting [bitmap_clear] best 35861 combination zp ZP_WORD:55 [ bitmap_clear::bitmap#2 bitmap_clear::bitmap#3 bitmap_clear::bitmap#5 bitmap_clear::bitmap#1 ] reg byte x [ bitmap_clear::x#2 bitmap_clear::x#1 ] zp ZP_BYTE:54 [ bitmap_clear::y#4 bitmap_clear::y#1 ] zp ZP_WORD:188 [ bitmap_clear::$3 ] 
-Uplifting [divr16u] best 35651 combination zp ZP_WORD:47 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:51 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:49 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 ] zp ZP_WORD:172 [ divr16u::return#2 ] zp ZP_WORD:176 [ divr16u::return#3 ] 
-Uplifting [bitmap_init] best 35111 combination zp ZP_WORD:61 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ] reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ] reg byte a [ bitmap_init::$4 ] zp ZP_BYTE:192 [ bitmap_init::$5 ] zp ZP_BYTE:193 [ bitmap_init::$6 ] zp ZP_BYTE:194 [ bitmap_init::$7 ] zp ZP_BYTE:190 [ bitmap_init::$3 ] 
+Uplifting [mul16u] best 36884 combination zp ZP_DWORD:27 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp ZP_DWORD:31 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp ZP_WORD:25 [ mul16u::a#3 mul16u::a#6 mul16u::a#8 mul16u::a#2 mul16u::a#0 ] zp ZP_WORD:23 [ mul16u::b#2 mul16u::b#1 ] zp ZP_DWORD:113 [ mul16u::return#2 ] zp ZP_DWORD:158 [ mul16u::return#3 ] 
+Uplifting [wrap_y] best 36701 combination zp ZP_WORD:9 [ wrap_y::y#6 wrap_y::y#4 wrap_y::y#9 wrap_y::y#0 wrap_y::y#1 wrap_y::y#2 wrap_y::y#3 ] reg byte a [ wrap_y::return#0 ] reg byte a [ wrap_y::return#1 ] reg byte a [ wrap_y::return#2 ] 
+Uplifting [bitmap_clear] best 35801 combination zp ZP_WORD:55 [ bitmap_clear::bitmap#2 bitmap_clear::bitmap#3 bitmap_clear::bitmap#5 bitmap_clear::bitmap#1 ] reg byte x [ bitmap_clear::x#2 bitmap_clear::x#1 ] zp ZP_BYTE:54 [ bitmap_clear::y#4 bitmap_clear::y#1 ] zp ZP_WORD:188 [ bitmap_clear::$3 ] 
+Uplifting [divr16u] best 35591 combination zp ZP_WORD:47 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:51 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:49 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 ] zp ZP_WORD:172 [ divr16u::return#2 ] zp ZP_WORD:176 [ divr16u::return#3 ] 
+Uplifting [bitmap_init] best 35051 combination zp ZP_WORD:61 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ] reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ] reg byte a [ bitmap_init::$4 ] zp ZP_BYTE:192 [ bitmap_init::$5 ] zp ZP_BYTE:193 [ bitmap_init::$6 ] zp ZP_BYTE:194 [ bitmap_init::$7 ] zp ZP_BYTE:190 [ bitmap_init::$3 ] 
 Limited combination testing to 100 combinations of 61440 possible.
-Uplifting [render_sine] best 35031 combination zp ZP_WORD:65 [ render_sine::$0 ] zp ZP_WORD:67 [ render_sine::$1 ] zp ZP_WORD:69 [ render_sine::sin_val#0 ] zp ZP_WORD:73 [ render_sine::$4 ] zp ZP_WORD:75 [ render_sine::$5 ] zp ZP_WORD:77 [ render_sine::sin2_val#0 ] zp ZP_WORD:4 [ render_sine::xpos#3 render_sine::xpos#8 render_sine::xpos#1 ] zp ZP_WORD:2 [ render_sine::sin_idx#2 render_sine::sin_idx#1 ] reg byte x [ render_sine::ypos#0 ] reg byte x [ render_sine::ypos2#0 ] 
-Uplifting [bitmap_plot] best 34964 combination reg byte x [ bitmap_plot::y#2 bitmap_plot::y#0 bitmap_plot::y#1 ] zp ZP_WORD:7 [ bitmap_plot::x#2 bitmap_plot::x#0 bitmap_plot::x#1 ] zp ZP_WORD:83 [ bitmap_plot::$1 ] reg byte a [ bitmap_plot::$2 ] zp ZP_WORD:85 [ bitmap_plot::plotter#1 ] zp ZP_WORD:81 [ bitmap_plot::$3 ] 
-Uplifting [sin16s_gen2] best 34964 combination zp ZP_DWORD:105 [ sin16s_gen2::$5 ] zp ZP_WORD:111 [ sin16s_gen2::$8 ] zp ZP_WORD:17 [ sin16s_gen2::i#2 sin16s_gen2::i#1 ] zp ZP_WORD:109 [ sin16s_gen2::$6 ] zp ZP_DWORD:11 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ] zp ZP_WORD:15 [ sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ] zp ZP_DWORD:93 [ sin16s_gen2::step#0 ] 
-Uplifting [sin16s] best 34964 combination zp ZP_DWORD:36 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] zp ZP_WORD:97 [ sin16s::return#0 ] zp ZP_WORD:40 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 ] zp ZP_DWORD:126 [ sin16s::$4 ] zp ZP_WORD:134 [ sin16s::x2#0 ] zp ZP_WORD:142 [ sin16s::x3_6#0 ] zp ZP_WORD:148 [ sin16s::x4#0 ] zp ZP_WORD:152 [ sin16s::x5#0 ] zp ZP_WORD:154 [ sin16s::x5_128#0 ] zp ZP_WORD:138 [ sin16s::x3#0 ] zp ZP_WORD:156 [ sin16s::usinx#1 ] zp ZP_WORD:130 [ sin16s::x1#0 ] zp ZP_WORD:144 [ sin16s::usinx#0 ] zp ZP_BYTE:35 [ sin16s::isUpper#2 ] 
-Uplifting [mulu16_sel] best 34948 combination zp ZP_WORD:42 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] zp ZP_WORD:44 [ mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] zp ZP_WORD:132 [ mulu16_sel::return#0 ] zp ZP_WORD:136 [ mulu16_sel::return#1 ] zp ZP_WORD:140 [ mulu16_sel::return#2 ] zp ZP_WORD:146 [ mulu16_sel::return#10 ] zp ZP_WORD:150 [ mulu16_sel::return#11 ] zp ZP_DWORD:162 [ mulu16_sel::$0 ] zp ZP_DWORD:166 [ mulu16_sel::$1 ] zp ZP_WORD:170 [ mulu16_sel::return#12 ] reg byte x [ mulu16_sel::select#5 ] 
-Uplifting [mul16s] best 34948 combination zp ZP_DWORD:101 [ mul16s::return#2 ] zp ZP_DWORD:19 [ mul16s::m#4 mul16s::m#1 mul16s::m#0 ] zp ZP_DWORD:121 [ mul16s::return#0 ] zp ZP_WORD:117 [ mul16s::$9 ] zp ZP_WORD:119 [ mul16s::$16 ] zp ZP_WORD:99 [ mul16s::a#0 ] 
-Uplifting [fill] best 34948 combination zp ZP_WORD:63 [ fill::addr#2 fill::addr#1 ] 
-Uplifting [div32u16u] best 34948 combination zp ZP_DWORD:89 [ div32u16u::return#2 ] zp ZP_WORD:178 [ div32u16u::quotient_lo#0 ] zp ZP_DWORD:180 [ div32u16u::return#0 ] zp ZP_WORD:174 [ div32u16u::quotient_hi#0 ] 
-Uplifting [] best 34948 combination zp ZP_WORD:186 [ rem16u#1 ] 
-Uplifting [main] best 34948 combination 
+Uplifting [render_sine] best 34971 combination zp ZP_WORD:65 [ render_sine::$0 ] zp ZP_WORD:67 [ render_sine::$1 ] zp ZP_WORD:69 [ render_sine::sin_val#0 ] zp ZP_WORD:73 [ render_sine::$4 ] zp ZP_WORD:75 [ render_sine::$5 ] zp ZP_WORD:77 [ render_sine::sin2_val#0 ] zp ZP_WORD:4 [ render_sine::xpos#3 render_sine::xpos#8 render_sine::xpos#1 ] zp ZP_WORD:2 [ render_sine::sin_idx#2 render_sine::sin_idx#1 ] reg byte x [ render_sine::ypos#0 ] reg byte x [ render_sine::ypos2#0 ] 
+Uplifting [bitmap_plot] best 34904 combination reg byte x [ bitmap_plot::y#2 bitmap_plot::y#0 bitmap_plot::y#1 ] zp ZP_WORD:7 [ bitmap_plot::x#2 bitmap_plot::x#0 bitmap_plot::x#1 ] zp ZP_WORD:83 [ bitmap_plot::$1 ] reg byte a [ bitmap_plot::$2 ] zp ZP_WORD:85 [ bitmap_plot::plotter#1 ] zp ZP_WORD:81 [ bitmap_plot::$3 ] 
+Uplifting [sin16s_gen2] best 34904 combination zp ZP_DWORD:105 [ sin16s_gen2::$5 ] zp ZP_WORD:111 [ sin16s_gen2::$8 ] zp ZP_WORD:17 [ sin16s_gen2::i#2 sin16s_gen2::i#1 ] zp ZP_WORD:109 [ sin16s_gen2::$6 ] zp ZP_DWORD:11 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ] zp ZP_WORD:15 [ sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ] zp ZP_DWORD:93 [ sin16s_gen2::step#0 ] 
+Uplifting [sin16s] best 34904 combination zp ZP_DWORD:36 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] zp ZP_WORD:97 [ sin16s::return#0 ] zp ZP_WORD:40 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 ] zp ZP_DWORD:126 [ sin16s::$4 ] zp ZP_WORD:134 [ sin16s::x2#0 ] zp ZP_WORD:142 [ sin16s::x3_6#0 ] zp ZP_WORD:148 [ sin16s::x4#0 ] zp ZP_WORD:152 [ sin16s::x5#0 ] zp ZP_WORD:154 [ sin16s::x5_128#0 ] zp ZP_WORD:138 [ sin16s::x3#0 ] zp ZP_WORD:156 [ sin16s::usinx#1 ] zp ZP_WORD:130 [ sin16s::x1#0 ] zp ZP_WORD:144 [ sin16s::usinx#0 ] zp ZP_BYTE:35 [ sin16s::isUpper#2 ] 
+Uplifting [mulu16_sel] best 34888 combination zp ZP_WORD:42 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] zp ZP_WORD:44 [ mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] zp ZP_WORD:132 [ mulu16_sel::return#0 ] zp ZP_WORD:136 [ mulu16_sel::return#1 ] zp ZP_WORD:140 [ mulu16_sel::return#2 ] zp ZP_WORD:146 [ mulu16_sel::return#10 ] zp ZP_WORD:150 [ mulu16_sel::return#11 ] zp ZP_DWORD:162 [ mulu16_sel::$0 ] zp ZP_DWORD:166 [ mulu16_sel::$1 ] zp ZP_WORD:170 [ mulu16_sel::return#12 ] reg byte x [ mulu16_sel::select#5 ] 
+Uplifting [mul16s] best 34888 combination zp ZP_DWORD:101 [ mul16s::return#2 ] zp ZP_DWORD:19 [ mul16s::m#4 mul16s::m#1 mul16s::m#0 ] zp ZP_DWORD:121 [ mul16s::return#0 ] zp ZP_WORD:117 [ mul16s::$9 ] zp ZP_WORD:119 [ mul16s::$16 ] zp ZP_WORD:99 [ mul16s::a#0 ] 
+Uplifting [fill] best 34888 combination zp ZP_WORD:63 [ fill::addr#2 fill::addr#1 ] 
+Uplifting [div32u16u] best 34888 combination zp ZP_DWORD:89 [ div32u16u::return#2 ] zp ZP_WORD:178 [ div32u16u::quotient_lo#0 ] zp ZP_DWORD:180 [ div32u16u::return#0 ] zp ZP_WORD:174 [ div32u16u::quotient_hi#0 ] 
+Uplifting [] best 34888 combination zp ZP_WORD:186 [ rem16u#1 ] 
+Uplifting [main] best 34888 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:192 [ bitmap_init::$5 ]
-Uplifting [bitmap_init] best 34888 combination reg byte a [ bitmap_init::$5 ] 
+Uplifting [bitmap_init] best 34828 combination reg byte a [ bitmap_init::$5 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:193 [ bitmap_init::$6 ]
-Uplifting [bitmap_init] best 34828 combination reg byte a [ bitmap_init::$6 ] 
+Uplifting [bitmap_init] best 34768 combination reg byte a [ bitmap_init::$6 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:194 [ bitmap_init::$7 ]
-Uplifting [bitmap_init] best 34788 combination reg byte a [ bitmap_init::$7 ] 
+Uplifting [bitmap_init] best 34728 combination reg byte a [ bitmap_init::$7 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:54 [ bitmap_clear::y#4 bitmap_clear::y#1 ]
-Uplifting [bitmap_clear] best 34788 combination zp ZP_BYTE:54 [ bitmap_clear::y#4 bitmap_clear::y#1 ] 
+Uplifting [bitmap_clear] best 34728 combination zp ZP_BYTE:54 [ bitmap_clear::y#4 bitmap_clear::y#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:190 [ bitmap_init::$3 ]
-Uplifting [bitmap_init] best 34788 combination zp ZP_BYTE:190 [ bitmap_init::$3 ] 
+Uplifting [bitmap_init] best 34728 combination zp ZP_BYTE:190 [ bitmap_init::$3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:35 [ sin16s::isUpper#2 ]
-Uplifting [sin16s] best 34788 combination zp ZP_BYTE:35 [ sin16s::isUpper#2 ] 
+Uplifting [sin16s] best 34728 combination zp ZP_BYTE:35 [ sin16s::isUpper#2 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:4 [ render_sine::xpos#3 render_sine::xpos#8 render_sine::xpos#1 ] ] with [ zp ZP_WORD:7 [ bitmap_plot::x#2 bitmap_plot::x#0 bitmap_plot::x#1 ] ] - score: 2
 Coalescing zero page register with common assignment [ zp ZP_WORD:40 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 ] ] with [ zp ZP_WORD:156 [ sin16s::usinx#1 ] ] - score: 2
 Coalescing zero page register with common assignment [ zp ZP_WORD:42 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] ] with [ zp ZP_WORD:138 [ sin16s::x3#0 ] ] - score: 2
@@ -6308,7 +6305,6 @@ sin16s_gen2: {
     .const min = -$140
     .const max = $140
     .label ampl = max-min
-    .const offs = min+(ampl>>1)
     .label _5 = $c
     .label _6 = 6
     .label _8 = 6
@@ -6382,14 +6378,7 @@ sin16s_gen2: {
     sta _6
     lda _5+3
     sta _6+1
-  //SEG152 [83] (signed word~) sin16s_gen2::$8 ← (const signed word) sin16s_gen2::offs#0 + (signed word)(word~) sin16s_gen2::$6 -- vwsz1=vwsc1_plus_vwsz1 
-    clc
-    lda _8
-    adc #<offs
-    sta _8
-    lda _8+1
-    adc #>offs
-    sta _8+1
+  //SEG152 [83] (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$6
   //SEG153 [84] *((signed word*) sin16s_gen2::sintab#2) ← (signed word~) sin16s_gen2::$8 -- _deref_pwsz1=vwsz2 
     ldy #0
     lda _8
@@ -8072,7 +8061,6 @@ FINAL SYMBOL TABLE
 (signed word) sin16s_gen2::min
 (const signed word) sin16s_gen2::min#0 min = -(word/signed word/dword/signed dword) $140
 (signed word) sin16s_gen2::offs
-(const signed word) sin16s_gen2::offs#0 offs = (const signed word) sin16s_gen2::min#0+(const signed word) sin16s_gen2::ampl#0>>(byte/signed byte/word/signed word/dword/signed dword) 1
 (signed word*) sin16s_gen2::sintab
 (signed word*) sin16s_gen2::sintab#0 sintab zp ZP_WORD:2 5.5
 (signed word*) sin16s_gen2::sintab#2 sintab zp ZP_WORD:2 3.0
@@ -8139,7 +8127,7 @@ reg byte a [ bitmap_init::$7 ]
 
 
 FINAL ASSEMBLER
-Score: 28458
+Score: 28278
 
 //SEG0 File Comments
 // Generate a big sinus and plot it on a bitmap
@@ -8517,7 +8505,6 @@ sin16s_gen2: {
     .const min = -$140
     .const max = $140
     .label ampl = max-min
-    .const offs = min+(ampl>>1)
     .label _5 = $c
     .label _6 = 6
     .label _8 = 6
@@ -8578,14 +8565,7 @@ sin16s_gen2: {
     sta _6
     lda _5+3
     sta _6+1
-  //SEG152 [83] (signed word~) sin16s_gen2::$8 ← (const signed word) sin16s_gen2::offs#0 + (signed word)(word~) sin16s_gen2::$6 -- vwsz1=vwsc1_plus_vwsz1 
-    clc
-    lda _8
-    adc #<offs
-    sta _8
-    lda _8+1
-    adc #>offs
-    sta _8+1
+  //SEG152 [83] (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$6
   //SEG153 [84] *((signed word*) sin16s_gen2::sintab#2) ← (signed word~) sin16s_gen2::$8 -- _deref_pwsz1=vwsz2 
     ldy #0
     lda _8

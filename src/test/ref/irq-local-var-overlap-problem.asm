@@ -93,9 +93,9 @@ sub_main: {
     rts
 }
 irq: {
-    .label k = 4
-    .label j = 3
-    .label i = 2
+    .label k = 8
+    .label j = 7
+    .label i = 6
     inc BGCOL
     lda #0
     sta i
@@ -129,7 +129,7 @@ irq: {
     jmp $ea81
 }
 sub_irq: {
-    .label i = 5
+    .label i = 9
     lda #0
     sta i
   b1:

@@ -241,6 +241,19 @@ public abstract class Scope implements Symbol {
       return procedures;
    }
 
+   public Collection<Symbol> getAllSymbols(boolean includeSubscopes) {
+      ArrayList<Symbol> allSymbols = new ArrayList<>();
+      for(Symbol symbol : symbols.values()) {
+         allSymbols.add(symbol);
+         if(symbol instanceof Scope && includeSubscopes) {
+            allSymbols.addAll(((Scope) symbol).getAllSymbols(true));
+         }
+      }
+      return allSymbols;
+   }
+
+
+
    public Label addLabel(String name) {
       Label symbol = new Label(name, this, false);
       add(symbol);

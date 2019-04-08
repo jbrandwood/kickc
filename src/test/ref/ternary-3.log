@@ -1,0 +1,886 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@4
+main: scope:[main]  from @4
+  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
+  (byte) cond::b#0 ← (byte) main::i#2
+  call cond 
+  (bool) cond::return#0 ← (bool) cond::return#2
+  to:main::@8
+main::@8: scope:[main]  from main::@1
+  (byte) main::i#6 ← phi( main::@1/(byte) main::i#2 )
+  (bool) cond::return#3 ← phi( main::@1/(bool) cond::return#0 )
+  (bool~) main::$0 ← (bool) cond::return#3
+  if((bool~) main::$0) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@8
+  (byte) main::i#3 ← phi( main::@8/(byte) main::i#6 )
+  (byte) m1::i#0 ← (byte) main::i#3
+  call m1 
+  (byte) m1::return#0 ← (byte) m1::return#2
+  to:main::@9
+main::@9: scope:[main]  from main::@2
+  (byte) main::i#8 ← phi( main::@2/(byte) main::i#3 )
+  (byte) m1::return#3 ← phi( main::@2/(byte) m1::return#0 )
+  (byte~) main::$3 ← (byte) m1::return#3
+  (byte~) main::$4 ← (byte~) main::$3
+  to:main::@4
+main::@3: scope:[main]  from main::@8
+  (byte) main::i#4 ← phi( main::@8/(byte) main::i#6 )
+  (byte) m2::i#0 ← (byte) main::i#4
+  call m2 
+  (byte) m2::return#0 ← (byte) m2::return#2
+  to:main::@10
+main::@10: scope:[main]  from main::@3
+  (byte) main::i#7 ← phi( main::@3/(byte) main::i#4 )
+  (byte) m2::return#3 ← phi( main::@3/(byte) m2::return#0 )
+  (byte~) main::$1 ← (byte) m2::return#3
+  (byte~) main::$2 ← (byte~) main::$1
+  to:main::@4
+main::@4: scope:[main]  from main::@10 main::@9
+  (byte) main::i#5 ← phi( main::@10/(byte) main::i#7 main::@9/(byte) main::i#8 )
+  (byte~) main::$5 ← phi( main::@9/(byte~) main::$4 main::@10/(byte~) main::$2 )
+  *((byte*) main::SCREEN#0 + (byte) main::i#5) ← (byte~) main::$5
+  (byte) main::i#1 ← (byte) main::i#5 + rangenext(0,9)
+  (bool~) main::$6 ← (byte) main::i#1 != rangelast(0,9)
+  if((bool~) main::$6) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  return 
+  to:@return
+cond: scope:[cond]  from main::@1
+  (byte) cond::b#1 ← phi( main::@1/(byte) cond::b#0 )
+  (bool~) cond::$0 ← (byte) cond::b#1 < (byte/signed byte/word/signed word/dword/signed dword) 5
+  (bool) cond::return#1 ← (bool~) cond::$0
+  to:cond::@return
+cond::@return: scope:[cond]  from cond
+  (bool) cond::return#4 ← phi( cond/(bool) cond::return#1 )
+  (bool) cond::return#2 ← (bool) cond::return#4
+  return 
+  to:@return
+m1: scope:[m1]  from main::@2
+  (byte) m1::i#1 ← phi( main::@2/(byte) m1::i#0 )
+  (byte/signed word/word/dword/signed dword~) m1::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) m1::i#1
+  (byte) m1::return#1 ← (byte/signed word/word/dword/signed dword~) m1::$0
+  to:m1::@return
+m1::@return: scope:[m1]  from m1
+  (byte) m1::return#4 ← phi( m1/(byte) m1::return#1 )
+  (byte) m1::return#2 ← (byte) m1::return#4
+  return 
+  to:@return
+m2: scope:[m2]  from main::@3
+  (byte) m2::i#1 ← phi( main::@3/(byte) m2::i#0 )
+  (byte/signed word/word/dword/signed dword~) m2::$0 ← (byte/signed byte/word/signed word/dword/signed dword) $a + (byte) m2::i#1
+  (byte) m2::return#1 ← (byte/signed word/word/dword/signed dword~) m2::$0
+  to:m2::@return
+m2::@return: scope:[m2]  from m2
+  (byte) m2::return#4 ← phi( m2/(byte) m2::return#1 )
+  (byte) m2::return#2 ← (byte) m2::return#4
+  return 
+  to:@return
+@4: scope:[]  from @begin
+  call main 
+  to:@5
+@5: scope:[]  from @4
+  to:@end
+@end: scope:[]  from @5
+
+SYMBOL TABLE SSA
+(label) @4
+(label) @5
+(label) @begin
+(label) @end
+(bool()) cond((byte) cond::b)
+(bool~) cond::$0
+(label) cond::@return
+(byte) cond::b
+(byte) cond::b#0
+(byte) cond::b#1
+(bool) cond::return
+(bool) cond::return#0
+(bool) cond::return#1
+(bool) cond::return#2
+(bool) cond::return#3
+(bool) cond::return#4
+(byte()) m1((byte) m1::i)
+(byte/signed word/word/dword/signed dword~) m1::$0
+(label) m1::@return
+(byte) m1::i
+(byte) m1::i#0
+(byte) m1::i#1
+(byte) m1::return
+(byte) m1::return#0
+(byte) m1::return#1
+(byte) m1::return#2
+(byte) m1::return#3
+(byte) m1::return#4
+(byte()) m2((byte) m2::i)
+(byte/signed word/word/dword/signed dword~) m2::$0
+(label) m2::@return
+(byte) m2::i
+(byte) m2::i#0
+(byte) m2::i#1
+(byte) m2::return
+(byte) m2::return#0
+(byte) m2::return#1
+(byte) m2::return#2
+(byte) m2::return#3
+(byte) m2::return#4
+(void()) main()
+(bool~) main::$0
+(byte~) main::$1
+(byte~) main::$2
+(byte~) main::$3
+(byte~) main::$4
+(byte~) main::$5
+(bool~) main::$6
+(label) main::@1
+(label) main::@10
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@8
+(label) main::@9
+(label) main::@return
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+(byte) main::i#3
+(byte) main::i#4
+(byte) main::i#5
+(byte) main::i#6
+(byte) main::i#7
+(byte) main::i#8
+
+Culled Empty Block (label) @5
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (bool) cond::return#0 = (bool) cond::return#3 
+Alias (byte) main::i#2 = (byte) main::i#6 (byte) main::i#3 (byte) main::i#8 (byte) main::i#4 (byte) main::i#7 
+Alias (byte) m1::return#0 = (byte) m1::return#3 
+Alias (byte~) main::$4 = (byte~) main::$3 
+Alias (byte) m2::return#0 = (byte) m2::return#3 
+Alias (byte~) main::$2 = (byte~) main::$1 
+Alias (bool) cond::return#1 = (bool~) cond::$0 (bool) cond::return#4 (bool) cond::return#2 
+Alias (byte) m1::return#1 = (byte/signed word/word/dword/signed dword~) m1::$0 (byte) m1::return#4 (byte) m1::return#2 
+Alias (byte) m2::return#1 = (byte/signed word/word/dword/signed dword~) m2::$0 (byte) m2::return#4 (byte) m2::return#2 
+Successful SSA optimization Pass2AliasElimination
+Alias (byte) main::i#2 = (byte) main::i#5 
+Successful SSA optimization Pass2AliasElimination
+Redundant Phi (byte) cond::b#1 (byte) cond::b#0
+Redundant Phi (byte) m1::i#1 (byte) m1::i#0
+Redundant Phi (byte) m2::i#1 (byte) m2::i#0
+Successful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) main::$6 [27] if((byte) main::i#1!=rangelast(0,9)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) main::SCREEN#0 = ((byte*))$400
+Constant (const byte) main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value if(main::i#1!=rangelast(0,9)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $a
+Inlining constant with var siblings (const byte) main::i#0
+Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@11(between main::@4 and main::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @4
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to cond:7 m2:12 m1:23 
+
+Created 2 initial phi equivalence classes
+Coalesced [15] main::$8 ← main::$2
+Coalesced [21] main::i#9 ← main::i#1
+Coalesced [26] main::$7 ← main::$4
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) main::@11
+Renumbering block @4 to @1
+Renumbering block main::@8 to main::@5
+Renumbering block main::@9 to main::@6
+Renumbering block main::@10 to main::@7
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(byte) main::i#1 )
+  [6] (byte) cond::b#0 ← (byte) main::i#2
+  [7] call cond 
+  [8] (bool) cond::return#0 ← (bool) cond::return#1
+  to:main::@5
+main::@5: scope:[main]  from main::@1
+  [9] (bool~) main::$0 ← (bool) cond::return#0
+  [10] if((bool~) main::$0) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@5
+  [11] (byte) m2::i#0 ← (byte) main::i#2
+  [12] call m2 
+  [13] (byte) m2::return#0 ← (byte) m2::return#1
+  to:main::@7
+main::@7: scope:[main]  from main::@3
+  [14] (byte~) main::$2 ← (byte) m2::return#0
+  to:main::@4
+main::@4: scope:[main]  from main::@6 main::@7
+  [15] (byte~) main::$5 ← phi( main::@6/(byte~) main::$4 main::@7/(byte~) main::$2 )
+  [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5
+  [17] (byte) main::i#1 ← ++ (byte) main::i#2
+  [18] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@4
+  [19] return 
+  to:@return
+main::@2: scope:[main]  from main::@5
+  [20] (byte) m1::i#0 ← (byte) main::i#2
+  [21] call m1 
+  [22] (byte) m1::return#0 ← (byte) m1::return#1
+  to:main::@6
+main::@6: scope:[main]  from main::@2
+  [23] (byte~) main::$4 ← (byte) m1::return#0
+  to:main::@4
+m1: scope:[m1]  from main::@2
+  [24] (byte) m1::return#1 ← (byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) m1::i#0
+  to:m1::@return
+m1::@return: scope:[m1]  from m1
+  [25] return 
+  to:@return
+m2: scope:[m2]  from main::@3
+  [26] (byte) m2::return#1 ← (byte/signed byte/word/signed word/dword/signed dword) $a + (byte) m2::i#0
+  to:m2::@return
+m2::@return: scope:[m2]  from m2
+  [27] return 
+  to:@return
+cond: scope:[cond]  from main::@1
+  [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte/signed byte/word/signed word/dword/signed dword) 5
+  to:cond::@return
+cond::@return: scope:[cond]  from cond
+  [29] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(bool()) cond((byte) cond::b)
+(byte) cond::b
+(byte) cond::b#0 13.0
+(bool) cond::return
+(bool) cond::return#0 22.0
+(bool) cond::return#1 4.333333333333333
+(byte()) m1((byte) m1::i)
+(byte) m1::i
+(byte) m1::i#0 13.0
+(byte) m1::return
+(byte) m1::return#0 22.0
+(byte) m1::return#1 4.333333333333333
+(byte()) m2((byte) m2::i)
+(byte) m2::i
+(byte) m2::i#0 13.0
+(byte) m2::return
+(byte) m2::return#0 22.0
+(byte) m2::return#1 4.333333333333333
+(void()) main()
+(bool~) main::$0 22.0
+(byte~) main::$2 22.0
+(byte~) main::$4 22.0
+(byte~) main::$5 33.0
+(byte*) main::SCREEN
+(byte) main::i
+(byte) main::i#1 16.5
+(byte) main::i#2 4.125
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::$5 main::$4 main::$2 ]
+Added variable cond::b#0 to zero page equivalence class [ cond::b#0 ]
+Added variable cond::return#0 to zero page equivalence class [ cond::return#0 ]
+Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable m2::i#0 to zero page equivalence class [ m2::i#0 ]
+Added variable m2::return#0 to zero page equivalence class [ m2::return#0 ]
+Added variable m1::i#0 to zero page equivalence class [ m1::i#0 ]
+Added variable m1::return#0 to zero page equivalence class [ m1::return#0 ]
+Added variable m1::return#1 to zero page equivalence class [ m1::return#1 ]
+Added variable m2::return#1 to zero page equivalence class [ m2::return#1 ]
+Added variable cond::return#1 to zero page equivalence class [ cond::return#1 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::$5 main::$4 main::$2 ]
+[ cond::b#0 ]
+[ cond::return#0 ]
+[ main::$0 ]
+[ m2::i#0 ]
+[ m2::return#0 ]
+[ m1::i#0 ]
+[ m1::return#0 ]
+[ m1::return#1 ]
+[ m2::return#1 ]
+[ cond::return#1 ]
+Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_BYTE:3 [ main::$5 main::$4 main::$2 ]
+Allocated zp ZP_BYTE:4 [ cond::b#0 ]
+Allocated zp ZP_BOOL:5 [ cond::return#0 ]
+Allocated zp ZP_BOOL:6 [ main::$0 ]
+Allocated zp ZP_BYTE:7 [ m2::i#0 ]
+Allocated zp ZP_BYTE:8 [ m2::return#0 ]
+Allocated zp ZP_BYTE:9 [ m1::i#0 ]
+Allocated zp ZP_BYTE:10 [ m1::return#0 ]
+Allocated zp ZP_BYTE:11 [ m1::return#1 ]
+Allocated zp ZP_BYTE:12 [ m2::return#1 ]
+Allocated zp ZP_BOOL:13 [ cond::return#1 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests the ternary operator - when the condition is constant
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .label SCREEN = $400
+    .label _0 = 6
+    .label _2 = 3
+    .label _4 = 3
+    .label _5 = 3
+    .label i = 2
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG13 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  b1_from_b4:
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG15 main::@1
+  b1:
+  //SEG16 [6] (byte) cond::b#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+    lda i
+    sta cond.b
+  //SEG17 [7] call cond 
+    jsr cond
+  //SEG18 [8] (bool) cond::return#0 ← (bool) cond::return#1 -- vboz1=vboz2 
+    lda cond.return_1
+    sta cond.return
+    jmp b5
+  //SEG19 main::@5
+  b5:
+  //SEG20 [9] (bool~) main::$0 ← (bool) cond::return#0 -- vboz1=vboz2 
+    lda cond.return
+    sta _0
+  //SEG21 [10] if((bool~) main::$0) goto main::@2 -- vboz1_then_la1 
+    lda _0
+    cmp #0
+    bne b2
+    jmp b3
+  //SEG22 main::@3
+  b3:
+  //SEG23 [11] (byte) m2::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+    lda i
+    sta m2.i
+  //SEG24 [12] call m2 
+    jsr m2
+  //SEG25 [13] (byte) m2::return#0 ← (byte) m2::return#1 -- vbuz1=vbuz2 
+    lda m2.return_1
+    sta m2.return
+    jmp b7
+  //SEG26 main::@7
+  b7:
+  //SEG27 [14] (byte~) main::$2 ← (byte) m2::return#0 -- vbuz1=vbuz2 
+    lda m2.return
+    sta _2
+  //SEG28 [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
+  b4_from_b6:
+  b4_from_b7:
+  //SEG29 [15] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@6/main::@7->main::@4#0] -- register_copy 
+    jmp b4
+  //SEG30 main::@4
+  b4:
+  //SEG31 [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
+    lda _5
+    ldy i
+    sta SCREEN,y
+  //SEG32 [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG33 [18] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$a
+    cmp i
+    bne b1_from_b4
+    jmp breturn
+  //SEG34 main::@return
+  breturn:
+  //SEG35 [19] return 
+    rts
+  //SEG36 main::@2
+  b2:
+  //SEG37 [20] (byte) m1::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
+    lda i
+    sta m1.i
+  //SEG38 [21] call m1 
+    jsr m1
+  //SEG39 [22] (byte) m1::return#0 ← (byte) m1::return#1 -- vbuz1=vbuz2 
+    lda m1.return_1
+    sta m1.return
+    jmp b6
+  //SEG40 main::@6
+  b6:
+  //SEG41 [23] (byte~) main::$4 ← (byte) m1::return#0 -- vbuz1=vbuz2 
+    lda m1.return
+    sta _4
+    jmp b4_from_b6
+}
+//SEG42 m1
+// m1(byte zeropage(9) i)
+m1: {
+    .label i = 9
+    .label return = $a
+    .label return_1 = $b
+  //SEG43 [24] (byte) m1::return#1 ← (byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) m1::i#0 -- vbuz1=vbuc1_plus_vbuz2 
+    lax i
+    axs #-[5]
+    stx return_1
+    jmp breturn
+  //SEG44 m1::@return
+  breturn:
+  //SEG45 [25] return 
+    rts
+}
+//SEG46 m2
+// m2(byte zeropage(7) i)
+m2: {
+    .label i = 7
+    .label return = 8
+    .label return_1 = $c
+  //SEG47 [26] (byte) m2::return#1 ← (byte/signed byte/word/signed word/dword/signed dword) $a + (byte) m2::i#0 -- vbuz1=vbuc1_plus_vbuz2 
+    lax i
+    axs #-[$a]
+    stx return_1
+    jmp breturn
+  //SEG48 m2::@return
+  breturn:
+  //SEG49 [27] return 
+    rts
+}
+//SEG50 cond
+// cond(byte zeropage(4) b)
+cond: {
+    .label b = 4
+    .label return = 5
+    .label return_1 = $d
+  //SEG51 [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte/signed byte/word/signed word/dword/signed dword) 5 -- vboz1=vbuz2_lt_vbuc1 
+    lda b
+    cmp #5
+    lda #0
+    rol
+    eor #1
+    sta return_1
+    jmp breturn
+  //SEG52 cond::@return
+  breturn:
+  //SEG53 [29] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte/signed byte/word/signed word/dword/signed dword) 5 [ cond::return#1 ] ( main:2::cond:7 [ main::i#2 cond::return#1 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte/signed byte/word/signed word/dword/signed dword) 5 [ cond::return#1 ] ( main:2::cond:7 [ main::i#2 cond::return#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ main::$5 main::$4 main::$2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ cond::b#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BOOL:5 [ cond::return#0 ] : zp ZP_BOOL:5 , reg byte a , 
+Potential registers zp ZP_BOOL:6 [ main::$0 ] : zp ZP_BOOL:6 , reg byte a , 
+Potential registers zp ZP_BYTE:7 [ m2::i#0 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:8 [ m2::return#0 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:9 [ m1::i#0 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:10 [ m1::return#0 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:11 [ m1::return#1 ] : zp ZP_BYTE:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:12 [ m2::return#1 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BOOL:13 [ cond::return#1 ] : zp ZP_BOOL:13 , reg byte a , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 77: zp ZP_BYTE:3 [ main::$5 main::$4 main::$2 ] 22: zp ZP_BOOL:6 [ main::$0 ] 20.62: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [cond] 22: zp ZP_BOOL:5 [ cond::return#0 ] 13: zp ZP_BYTE:4 [ cond::b#0 ] 4.33: zp ZP_BOOL:13 [ cond::return#1 ] 
+Uplift Scope [m1] 22: zp ZP_BYTE:10 [ m1::return#0 ] 13: zp ZP_BYTE:9 [ m1::i#0 ] 4.33: zp ZP_BYTE:11 [ m1::return#1 ] 
+Uplift Scope [m2] 22: zp ZP_BYTE:8 [ m2::return#0 ] 13: zp ZP_BYTE:7 [ m2::i#0 ] 4.33: zp ZP_BYTE:12 [ m2::return#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 1065 combination reg byte a [ main::$5 main::$4 main::$2 ] reg byte a [ main::$0 ] reg byte y [ main::i#2 main::i#1 ] 
+Uplifting [cond] best 939 combination reg byte a [ cond::return#0 ] reg byte y [ cond::b#0 ] reg byte a [ cond::return#1 ] 
+Uplifting [m1] best 817 combination reg byte a [ m1::return#0 ] reg byte y [ m1::i#0 ] reg byte a [ m1::return#1 ] 
+Uplifting [m2] best 695 combination reg byte a [ m2::return#0 ] reg byte y [ m2::i#0 ] reg byte a [ m2::return#1 ] 
+Uplifting [] best 695 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests the ternary operator - when the condition is constant
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .label SCREEN = $400
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    jmp b1
+  //SEG13 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  b1_from_b4:
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG15 main::@1
+  b1:
+  //SEG16 [6] (byte) cond::b#0 ← (byte) main::i#2
+  //SEG17 [7] call cond 
+    jsr cond
+  //SEG18 [8] (bool) cond::return#0 ← (bool) cond::return#1
+    jmp b5
+  //SEG19 main::@5
+  b5:
+  //SEG20 [9] (bool~) main::$0 ← (bool) cond::return#0
+  //SEG21 [10] if((bool~) main::$0) goto main::@2 -- vboaa_then_la1 
+    cmp #0
+    bne b2
+    jmp b3
+  //SEG22 main::@3
+  b3:
+  //SEG23 [11] (byte) m2::i#0 ← (byte) main::i#2
+  //SEG24 [12] call m2 
+    jsr m2
+  //SEG25 [13] (byte) m2::return#0 ← (byte) m2::return#1
+    jmp b7
+  //SEG26 main::@7
+  b7:
+  //SEG27 [14] (byte~) main::$2 ← (byte) m2::return#0
+  //SEG28 [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
+  b4_from_b6:
+  b4_from_b7:
+  //SEG29 [15] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@6/main::@7->main::@4#0] -- register_copy 
+    jmp b4
+  //SEG30 main::@4
+  b4:
+  //SEG31 [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuyy=vbuaa 
+    sta SCREEN,y
+  //SEG32 [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG33 [18] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$a
+    bne b1_from_b4
+    jmp breturn
+  //SEG34 main::@return
+  breturn:
+  //SEG35 [19] return 
+    rts
+  //SEG36 main::@2
+  b2:
+  //SEG37 [20] (byte) m1::i#0 ← (byte) main::i#2
+  //SEG38 [21] call m1 
+    jsr m1
+  //SEG39 [22] (byte) m1::return#0 ← (byte) m1::return#1
+    jmp b6
+  //SEG40 main::@6
+  b6:
+  //SEG41 [23] (byte~) main::$4 ← (byte) m1::return#0
+    jmp b4_from_b6
+}
+//SEG42 m1
+// m1(byte register(Y) i)
+m1: {
+  //SEG43 [24] (byte) m1::return#1 ← (byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuyy 
+    tya
+    clc
+    adc #5
+    jmp breturn
+  //SEG44 m1::@return
+  breturn:
+  //SEG45 [25] return 
+    rts
+}
+//SEG46 m2
+// m2(byte register(Y) i)
+m2: {
+  //SEG47 [26] (byte) m2::return#1 ← (byte/signed byte/word/signed word/dword/signed dword) $a + (byte) m2::i#0 -- vbuaa=vbuc1_plus_vbuyy 
+    tya
+    clc
+    adc #$a
+    jmp breturn
+  //SEG48 m2::@return
+  breturn:
+  //SEG49 [27] return 
+    rts
+}
+//SEG50 cond
+// cond(byte register(Y) b)
+cond: {
+  //SEG51 [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte/signed byte/word/signed word/dword/signed dword) 5 -- vboaa=vbuyy_lt_vbuc1 
+    cpy #5
+    lda #0
+    rol
+    eor #1
+    jmp breturn
+  //SEG52 cond::@return
+  breturn:
+  //SEG53 [29] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b5
+Removing instruction jmp b3
+Removing instruction jmp b7
+Removing instruction jmp b4
+Removing instruction jmp breturn
+Removing instruction jmp b6
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b4 with b1
+Replacing label b4_from_b6 with b4
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b4:
+Removing instruction b7:
+Removing instruction b4_from_b6:
+Removing instruction b4_from_b7:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b5:
+Removing instruction b3:
+Removing instruction breturn:
+Removing instruction b6:
+Removing instruction breturn:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(bool()) cond((byte) cond::b)
+(label) cond::@return
+(byte) cond::b
+(byte) cond::b#0 reg byte y 13.0
+(bool) cond::return
+(bool) cond::return#0 reg byte a 22.0
+(bool) cond::return#1 reg byte a 4.333333333333333
+(byte()) m1((byte) m1::i)
+(label) m1::@return
+(byte) m1::i
+(byte) m1::i#0 reg byte y 13.0
+(byte) m1::return
+(byte) m1::return#0 reg byte a 22.0
+(byte) m1::return#1 reg byte a 4.333333333333333
+(byte()) m2((byte) m2::i)
+(label) m2::@return
+(byte) m2::i
+(byte) m2::i#0 reg byte y 13.0
+(byte) m2::return
+(byte) m2::return#0 reg byte a 22.0
+(byte) m2::return#1 reg byte a 4.333333333333333
+(void()) main()
+(bool~) main::$0 reg byte a 22.0
+(byte~) main::$2 reg byte a 22.0
+(byte~) main::$4 reg byte a 22.0
+(byte~) main::$5 reg byte a 33.0
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@7
+(label) main::@return
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(byte) main::i
+(byte) main::i#1 reg byte y 16.5
+(byte) main::i#2 reg byte y 4.125
+
+reg byte y [ main::i#2 main::i#1 ]
+reg byte a [ main::$5 main::$4 main::$2 ]
+reg byte y [ cond::b#0 ]
+reg byte a [ cond::return#0 ]
+reg byte a [ main::$0 ]
+reg byte y [ m2::i#0 ]
+reg byte a [ m2::return#0 ]
+reg byte y [ m1::i#0 ]
+reg byte a [ m1::return#0 ]
+reg byte a [ m1::return#1 ]
+reg byte a [ m2::return#1 ]
+reg byte a [ cond::return#1 ]
+
+
+FINAL ASSEMBLER
+Score: 434
+
+//SEG0 File Comments
+// Tests the ternary operator - when the condition is constant
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
+main: {
+    .label SCREEN = $400
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+  //SEG13 [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+  //SEG15 main::@1
+  b1:
+  //SEG16 [6] (byte) cond::b#0 ← (byte) main::i#2
+  //SEG17 [7] call cond 
+    jsr cond
+  //SEG18 [8] (bool) cond::return#0 ← (bool) cond::return#1
+  //SEG19 main::@5
+  //SEG20 [9] (bool~) main::$0 ← (bool) cond::return#0
+  //SEG21 [10] if((bool~) main::$0) goto main::@2 -- vboaa_then_la1 
+    cmp #0
+    bne b2
+  //SEG22 main::@3
+  //SEG23 [11] (byte) m2::i#0 ← (byte) main::i#2
+  //SEG24 [12] call m2 
+    jsr m2
+  //SEG25 [13] (byte) m2::return#0 ← (byte) m2::return#1
+  //SEG26 main::@7
+  //SEG27 [14] (byte~) main::$2 ← (byte) m2::return#0
+  //SEG28 [15] phi from main::@6 main::@7 to main::@4 [phi:main::@6/main::@7->main::@4]
+  //SEG29 [15] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@6/main::@7->main::@4#0] -- register_copy 
+  //SEG30 main::@4
+  b4:
+  //SEG31 [16] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuyy=vbuaa 
+    sta SCREEN,y
+  //SEG32 [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG33 [18] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$a
+    bne b1
+  //SEG34 main::@return
+  //SEG35 [19] return 
+    rts
+  //SEG36 main::@2
+  b2:
+  //SEG37 [20] (byte) m1::i#0 ← (byte) main::i#2
+  //SEG38 [21] call m1 
+    jsr m1
+  //SEG39 [22] (byte) m1::return#0 ← (byte) m1::return#1
+  //SEG40 main::@6
+  //SEG41 [23] (byte~) main::$4 ← (byte) m1::return#0
+    jmp b4
+}
+//SEG42 m1
+// m1(byte register(Y) i)
+m1: {
+  //SEG43 [24] (byte) m1::return#1 ← (byte/signed byte/word/signed word/dword/signed dword) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuyy 
+    tya
+    clc
+    adc #5
+  //SEG44 m1::@return
+  //SEG45 [25] return 
+    rts
+}
+//SEG46 m2
+// m2(byte register(Y) i)
+m2: {
+  //SEG47 [26] (byte) m2::return#1 ← (byte/signed byte/word/signed word/dword/signed dword) $a + (byte) m2::i#0 -- vbuaa=vbuc1_plus_vbuyy 
+    tya
+    clc
+    adc #$a
+  //SEG48 m2::@return
+  //SEG49 [27] return 
+    rts
+}
+//SEG50 cond
+// cond(byte register(Y) b)
+cond: {
+  //SEG51 [28] (bool) cond::return#1 ← (byte) cond::b#0 < (byte/signed byte/word/signed word/dword/signed dword) 5 -- vboaa=vbuyy_lt_vbuc1 
+    cpy #5
+    lda #0
+    rol
+    eor #1
+  //SEG52 cond::@return
+  //SEG53 [29] return 
+    rts
+}
+

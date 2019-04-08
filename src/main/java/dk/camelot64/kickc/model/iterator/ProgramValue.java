@@ -542,6 +542,44 @@ public abstract class ProgramValue {
       }
    }
 
+   public static class CallPointerProcedure extends ProgramValue {
+      private final StatementCallPointer call;
+
+      CallPointerProcedure(StatementCallPointer call) {
+         this.call = call;
+      }
+
+      @Override
+      public Value get() {
+         return call.getProcedure();
+      }
+
+      @Override
+      public void set(Value value) {
+         call.setProcedure((RValue) value);
+      }
+   }
+
+   public static class CallPointerParameter extends ProgramValue {
+      private final StatementCallPointer call;
+      private final int i;
+
+      CallPointerParameter(StatementCallPointer call, int i) {
+         this.call = call;
+         this.i = i;
+      }
+
+      @Override
+      public Value get() {
+         return call.getParameters().get(i);
+      }
+
+      @Override
+      public void set(Value value) {
+         call.getParameters().set(i, (RValue) value);
+      }
+   }
+
    public static class CondRValue1 extends ProgramValue {
       private final StatementConditionalJump statement;
 
@@ -618,7 +656,7 @@ public abstract class ProgramValue {
       private final StatementPhiBlock.PhiVariable phiVariable;
       private final int i;
 
-      PhiValue(StatementPhiBlock.PhiVariable phiVariable, int i) {
+      public PhiValue(StatementPhiBlock.PhiVariable phiVariable, int i) {
          this.phiVariable = phiVariable;
          this.i = i;
       }

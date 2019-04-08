@@ -9,6 +9,7 @@ bbegin:
   lda #'a'
   sta A
   jsr main
+  rts
 main: {
     .const B = 'b'
     .label addrA = A

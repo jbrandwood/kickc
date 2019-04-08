@@ -201,12 +201,10 @@ interrupt(KERNEL_MIN)(void()) irq()
 
 Initial phi equivalence classes
 [ col#12 col#0 col#1 ]
-Added variable col#3 to zero page equivalence class [ col#3 ]
+Coalescing volatile variable equivalence classes [ col#12 col#0 col#1 ] and [ col#3 ]
 Complete equivalence classes
-[ col#12 col#0 col#1 ]
-[ col#3 ]
-Allocated zp ZP_BYTE:2 [ col#12 col#0 col#1 ]
-Allocated zp ZP_BYTE:3 [ col#3 ]
+[ col#12 col#0 col#1 col#3 ]
+Allocated zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -219,7 +217,6 @@ INITIAL ASM
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-  .label col_3 = 3
 //SEG3 @begin
 bbegin:
 //SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
@@ -284,10 +281,8 @@ irq: {
     jmp b1
   //SEG25 irq::@1
   b1:
-  //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz2 
-    ldy col
-    iny
-    sty col_3
+  //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+    inc col
     jmp breturn
   //SEG27 irq::@return
   breturn:
@@ -303,23 +298,18 @@ Statement [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed d
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 Statement [9] *((const byte*) BGCOL#0) ← (byte) col#0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
 Statement [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
-Statement [11] (byte) col#3 ← ++ (byte) col#0 [ ] (  [ ] ) always clobbers reg byte y 
-Potential registers zp ZP_BYTE:2 [ col#12 col#0 col#1 ] : zp ZP_BYTE:2 , 
-Potential registers zp ZP_BYTE:3 [ col#3 ] : zp ZP_BYTE:3 , 
+Potential registers zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ] : zp ZP_BYTE:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 137.67: zp ZP_BYTE:2 [ col#12 col#0 col#1 ] 20: zp ZP_BYTE:3 [ col#3 ] 
+Uplift Scope [] 157.67: zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
 
-Uplifting [] best 1824 combination zp ZP_BYTE:2 [ col#12 col#0 col#1 ] zp ZP_BYTE:3 [ col#3 ] 
-Uplifting [main] best 1824 combination 
-Uplifting [irq] best 1824 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ col#12 col#0 col#1 ]
-Uplifting [] best 1824 combination zp ZP_BYTE:2 [ col#12 col#0 col#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ col#3 ]
-Uplifting [] best 1824 combination zp ZP_BYTE:3 [ col#3 ] 
-Coalescing zero page register with common assignment [ zp ZP_BYTE:2 [ col#12 col#0 col#1 ] ] with [ zp ZP_BYTE:3 [ col#3 ] ] - score: 1
+Uplifting [] best 1821 combination zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ] 
+Uplifting [main] best 1821 combination 
+Uplifting [irq] best 1821 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ]
+Uplifting [] best 1821 combination zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -432,13 +422,15 @@ Skipping double jump to $ea81 in beq breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label b1_from_b3 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [30] beq $ea81 to bne
+Fixing long branch [31] beq $ea81 to bne
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -465,7 +457,7 @@ zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ]
 
 
 FINAL ASSEMBLER
-Score: 882
+Score: 888
 
 //SEG0 File Comments
 // Tests that long branch fixing works with interrupt exits (to $ea81)
@@ -486,6 +478,7 @@ bbegin:
 //SEG6 @1
 //SEG7 [2] call main 
   jsr main
+  rts
 //SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main

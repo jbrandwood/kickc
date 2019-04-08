@@ -703,18 +703,16 @@ interrupt(KERNEL_MIN)(void()) table_driven_irq()
 
 Initial phi equivalence classes
 [ irq_idx#4 irq_idx#0 irq_idx#1 ]
+Coalescing volatile variable equivalence classes [ irq_idx#4 irq_idx#0 irq_idx#1 ] and [ irq_idx#2 ]
 Added variable table_driven_irq::idx#0 to zero page equivalence class [ table_driven_irq::idx#0 ]
 Added variable table_driven_irq::val#0 to zero page equivalence class [ table_driven_irq::val#0 ]
-Added variable irq_idx#2 to zero page equivalence class [ irq_idx#2 ]
 Complete equivalence classes
-[ irq_idx#4 irq_idx#0 irq_idx#1 ]
+[ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
 [ table_driven_irq::idx#0 ]
 [ table_driven_irq::val#0 ]
-[ irq_idx#2 ]
-Allocated zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 ]
+Allocated zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
 Allocated zp ZP_BYTE:3 [ table_driven_irq::idx#0 ]
 Allocated zp ZP_BYTE:4 [ table_driven_irq::val#0 ]
-Allocated zp ZP_BYTE:5 [ irq_idx#2 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -743,7 +741,6 @@ INITIAL ASM
   .const VIC_SIZE = $30
   .const IRQ_CHANGE_NEXT = $7f
   .label irq_idx = 2
-  .label irq_idx_2 = 5
 //SEG3 @begin
 bbegin:
   jmp b1
@@ -856,7 +853,7 @@ table_driven_irq: {
   b6:
   //SEG38 [24] (byte) irq_idx#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
-    sta irq_idx_2
+    sta irq_idx
     jmp breturn
   //SEG39 table_driven_irq::@return
   breturn:
@@ -909,24 +906,20 @@ Statement [21] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ tab
 Statement [24] (byte) irq_idx#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [26] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word/signed word/dword/signed dword) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
 Statement [27] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 ] : zp ZP_BYTE:2 , 
+Potential registers zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ table_driven_irq::idx#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , 
 Potential registers zp ZP_BYTE:4 [ table_driven_irq::val#0 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ irq_idx#2 ] : zp ZP_BYTE:5 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 29.6: zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 ] 20: zp ZP_BYTE:5 [ irq_idx#2 ] 
+Uplift Scope [] 49.6: zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
 Uplift Scope [table_driven_irq] 11: zp ZP_BYTE:3 [ table_driven_irq::idx#0 ] 6.17: zp ZP_BYTE:4 [ table_driven_irq::val#0 ] 
 Uplift Scope [main] 
 
-Uplifting [] best 928 combination zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 ] zp ZP_BYTE:5 [ irq_idx#2 ] 
+Uplifting [] best 928 combination zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
 Uplifting [table_driven_irq] best 762 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
 Uplifting [main] best 762 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 ]
-Uplifting [] best 762 combination zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:5 [ irq_idx#2 ]
-Uplifting [] best 762 combination zp ZP_BYTE:5 [ irq_idx#2 ] 
-Coalescing zero page register [ zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 ] ] with [ zp ZP_BYTE:5 [ irq_idx#2 ] ]
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
+Uplifting [] best 762 combination zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -1115,9 +1108,11 @@ Removing instruction b6:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Skipping double jump to $ea81 in bcs breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [67] bcs $ea81 to bcc
+Fixing long branch [68] bcs $ea81 to bcc
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -1249,7 +1244,7 @@ reg byte x [ table_driven_irq::val#0 ]
 
 
 FINAL ASSEMBLER
-Score: 598
+Score: 604
 
 //SEG0 File Comments
 // Test interrupt routine using a variable between calls (irq_idx)
@@ -1287,6 +1282,7 @@ bbegin:
 //SEG7 @2
 //SEG8 [3] call main 
   jsr main
+  rts
 //SEG9 [4] phi from @2 to @end [phi:@2->@end]
 //SEG10 @end
 //SEG11 main

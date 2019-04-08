@@ -203,15 +203,11 @@ interrupt(KERNEL_MIN)(void()) irq()
 
 Initial phi equivalence classes
 [ col#14 col#0 col#1 ]
-Added variable col#4 to zero page equivalence class [ col#4 ]
-Added variable col#3 to zero page equivalence class [ col#3 ]
+Coalescing volatile variable equivalence classes [ col#14 col#0 col#1 ] and [ col#3 ]
+Coalescing volatile variable equivalence classes [ col#14 col#0 col#1 col#3 ] and [ col#4 ]
 Complete equivalence classes
-[ col#14 col#0 col#1 ]
-[ col#4 ]
-[ col#3 ]
-Allocated zp ZP_BYTE:2 [ col#14 col#0 col#1 ]
-Allocated zp ZP_BYTE:3 [ col#4 ]
-Allocated zp ZP_BYTE:4 [ col#3 ]
+[ col#14 col#0 col#1 col#3 col#4 ]
+Allocated zp ZP_BYTE:2 [ col#14 col#0 col#1 col#3 col#4 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -225,8 +221,6 @@ INITIAL ASM
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-  .label col_3 = 4
-  .label col_4 = 3
 //SEG3 @begin
 bbegin:
 //SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
@@ -291,11 +285,11 @@ irq: {
     jmp b2
   //SEG25 irq::@2
   b2:
-  //SEG26 [11] (byte) col#4 ← (byte) col#0 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuz1=vbuz2_plus_2 
+  //SEG26 [11] (byte) col#4 ← (byte) col#0 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuz1=vbuz1_plus_2 
     lda col
     clc
     adc #2
-    sta col_4
+    sta col
     jmp breturn
   //SEG27 irq::@return
   breturn:
@@ -303,10 +297,8 @@ irq: {
     jmp $ea81
   //SEG29 irq::@1
   b1:
-  //SEG30 [13] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz2 
-    ldy col
-    iny
-    sty col_3
+  //SEG30 [13] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+    inc col
     jmp breturn
 }
 
@@ -319,27 +311,18 @@ Statement asm { lda$dc0d  } always clobbers reg byte a
 Statement [9] *((const byte*) BGCOL#0) ← (byte) col#0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
 Statement [10] if((byte) col#0!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
 Statement [11] (byte) col#4 ← (byte) col#0 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [13] (byte) col#3 ← ++ (byte) col#0 [ ] (  [ ] ) always clobbers reg byte y 
-Potential registers zp ZP_BYTE:2 [ col#14 col#0 col#1 ] : zp ZP_BYTE:2 , 
-Potential registers zp ZP_BYTE:3 [ col#4 ] : zp ZP_BYTE:3 , 
-Potential registers zp ZP_BYTE:4 [ col#3 ] : zp ZP_BYTE:4 , 
+Potential registers zp ZP_BYTE:2 [ col#14 col#0 col#1 col#3 col#4 ] : zp ZP_BYTE:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 138: zp ZP_BYTE:2 [ col#14 col#0 col#1 ] 20: zp ZP_BYTE:3 [ col#4 ] 20: zp ZP_BYTE:4 [ col#3 ] 
+Uplift Scope [] 178: zp ZP_BYTE:2 [ col#14 col#0 col#1 col#3 col#4 ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
 
-Uplifting [] best 1837 combination zp ZP_BYTE:2 [ col#14 col#0 col#1 ] zp ZP_BYTE:3 [ col#4 ] zp ZP_BYTE:4 [ col#3 ] 
-Uplifting [main] best 1837 combination 
-Uplifting [irq] best 1837 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ col#14 col#0 col#1 ]
-Uplifting [] best 1837 combination zp ZP_BYTE:2 [ col#14 col#0 col#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ col#4 ]
-Uplifting [] best 1837 combination zp ZP_BYTE:3 [ col#4 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:4 [ col#3 ]
-Uplifting [] best 1837 combination zp ZP_BYTE:4 [ col#3 ] 
-Coalescing zero page register with common assignment [ zp ZP_BYTE:2 [ col#14 col#0 col#1 ] ] with [ zp ZP_BYTE:3 [ col#4 ] ] - score: 1
-Coalescing zero page register with common assignment [ zp ZP_BYTE:2 [ col#14 col#0 col#1 col#4 ] ] with [ zp ZP_BYTE:4 [ col#3 ] ] - score: 1
+Uplifting [] best 1834 combination zp ZP_BYTE:2 [ col#14 col#0 col#1 col#3 col#4 ] 
+Uplifting [main] best 1834 combination 
+Uplifting [irq] best 1834 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ col#14 col#0 col#1 col#3 col#4 ]
+Uplifting [] best 1834 combination zp ZP_BYTE:2 [ col#14 col#0 col#1 col#3 col#4 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -461,6 +444,8 @@ Skipping double jump to $ea81 in jmp breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label b1_from_b3 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda col
@@ -493,11 +478,11 @@ interrupt(KERNEL_MIN)(void()) irq()
 (label) main::@2
 (label) main::@3
 
-zp ZP_BYTE:2 [ col#14 col#0 col#1 col#4 col#3 ]
+zp ZP_BYTE:2 [ col#14 col#0 col#1 col#3 col#4 ]
 
 
 FINAL ASSEMBLER
-Score: 889
+Score: 895
 
 //SEG0 File Comments
 // Tests that volatile variables can be both read & written inside & outside interrupts
@@ -519,6 +504,7 @@ bbegin:
 //SEG6 @1
 //SEG7 [2] call main 
   jsr main
+  rts
 //SEG8 [3] phi from @1 to @end [phi:@1->@end]
 //SEG9 @end
 //SEG10 main

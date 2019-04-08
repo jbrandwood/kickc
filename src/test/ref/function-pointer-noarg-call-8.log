@@ -1,0 +1,812 @@
+Resolved forward reference hello to (void()) hello()
+Resolved forward reference msg1 to (byte[]) msg1
+Resolved forward reference msg to (byte*) msg
+Resolved forward reference msg2 to (byte[]) msg2
+Resolved forward reference msg to (byte*) msg
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @3
+  (void()*~) main::$0 ← & (void()) hello()
+  (void()*) main::f#0 ← (void()*~) main::$0
+  (byte*) msg#0 ← (byte[]) msg1#0
+  (void()*) do10::fn#0 ← (void()*) main::f#0
+  call do10 
+  to:main::@1
+main::@1: scope:[main]  from main
+  (void()*) main::f#1 ← phi( main/(void()*) main::f#0 )
+  (byte*) msg#1 ← (byte[]) msg2#0
+  (void()*) do10::fn#1 ← (void()*) main::f#1
+  call do10 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte*) msg#8 ← phi( main::@1/(byte*) msg#1 )
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  (byte*) msg#5 ← phi( main::@2/(byte*) msg#8 )
+  (byte*) msg#2 ← (byte*) msg#5
+  return 
+  to:@return
+do10: scope:[do10]  from main main::@1
+  (void()*) do10::fn#3 ← phi( main/(void()*) do10::fn#0 main::@1/(void()*) do10::fn#1 )
+  (byte) do10::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:do10::@1
+do10::@1: scope:[do10]  from do10 do10::@1
+  (byte) do10::i#2 ← phi( do10/(byte) do10::i#0 do10::@1/(byte) do10::i#1 )
+  (void()*) do10::fn#2 ← phi( do10/(void()*) do10::fn#3 do10::@1/(void()*) do10::fn#2 )
+  call *((void()*) do10::fn#2) 
+  (byte) do10::i#1 ← (byte) do10::i#2 + rangenext(0,9)
+  (bool~) do10::$1 ← (byte) do10::i#1 != rangelast(0,9)
+  if((bool~) do10::$1) goto do10::@1
+  to:do10::@return
+do10::@return: scope:[do10]  from do10::@1
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte[]) msg1#0 ← (const string) $0
+  (byte[]) msg2#0 ← (const string) $1
+  (byte*) msg#3 ← (byte*) 0
+  (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:@3
+hello: scope:[hello]  from
+  (byte) idx#5 ← phi( @3/(byte) idx#6 )
+  (byte*) msg#9 ← phi( @3/(byte*) msg#10 )
+  (byte) hello::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:hello::@1
+hello::@1: scope:[hello]  from hello hello::@1
+  (byte) idx#3 ← phi( hello/(byte) idx#5 hello::@1/(byte) idx#1 )
+  (byte) hello::i#2 ← phi( hello/(byte) hello::i#0 hello::@1/(byte) hello::i#1 )
+  (byte*) msg#6 ← phi( hello/(byte*) msg#9 hello::@1/(byte*) msg#6 )
+  *((byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#6 + (byte) hello::i#2)
+  (byte) idx#1 ← ++ (byte) idx#3
+  (byte) hello::i#1 ← ++ (byte) hello::i#2
+  (bool~) hello::$0 ← *((byte*) msg#6 + (byte) hello::i#1) != (byte) '@'
+  if((bool~) hello::$0) goto hello::@1
+  to:hello::@return
+hello::@return: scope:[hello]  from hello::@1
+  (byte) idx#4 ← phi( hello::@1/(byte) idx#1 )
+  (byte) idx#2 ← (byte) idx#4
+  return 
+  to:@return
+@3: scope:[]  from @2
+  (byte) idx#6 ← phi( @2/(byte) idx#0 )
+  (byte*) msg#10 ← phi( @2/(byte*) msg#3 )
+  call main 
+  to:@4
+@4: scope:[]  from @3
+  (byte*) msg#7 ← phi( @3/(byte*) msg#2 )
+  (byte*) msg#4 ← (byte*) msg#7
+  to:@end
+@end: scope:[]  from @4
+
+SYMBOL TABLE SSA
+(const string) $0 = (string) "hello @"
+(const string) $1 = (string) "world @"
+(label) @2
+(label) @3
+(label) @4
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) do10((void()*) do10::fn)
+(bool~) do10::$1
+(label) do10::@1
+(label) do10::@return
+(void()*) do10::fn
+(void()*) do10::fn#0
+(void()*) do10::fn#1
+(void()*) do10::fn#2
+(void()*) do10::fn#3
+(byte) do10::i
+(byte) do10::i#0
+(byte) do10::i#1
+(byte) do10::i#2
+(void()) hello()
+(bool~) hello::$0
+(label) hello::@1
+(label) hello::@return
+(byte) hello::i
+(byte) hello::i#0
+(byte) hello::i#1
+(byte) hello::i#2
+(byte) idx
+(byte) idx#0
+(byte) idx#1
+(byte) idx#2
+(byte) idx#3
+(byte) idx#4
+(byte) idx#5
+(byte) idx#6
+(void()) main()
+(void()*~) main::$0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(void()*) main::f
+(void()*) main::f#0
+(void()*) main::f#1
+(byte*) msg
+(byte*) msg#0
+(byte*) msg#1
+(byte*) msg#10
+(byte*) msg#2
+(byte*) msg#3
+(byte*) msg#4
+(byte*) msg#5
+(byte*) msg#6
+(byte*) msg#7
+(byte*) msg#8
+(byte*) msg#9
+(byte[]) msg1
+(byte[]) msg1#0
+(byte[]) msg2
+(byte[]) msg2#0
+
+Alias (void()*) main::f#0 = (void()*~) main::$0 (void()*) main::f#1 
+Alias (byte*) msg#1 = (byte*) msg#8 (byte*) msg#5 (byte*) msg#2 
+Alias (byte) idx#1 = (byte) idx#4 (byte) idx#2 
+Alias (byte*) msg#10 = (byte*) msg#3 
+Alias (byte) idx#0 = (byte) idx#6 
+Alias (byte*) msg#4 = (byte*) msg#7 
+Successful SSA optimization Pass2AliasElimination
+Self Phi Eliminated (void()*) do10::fn#2
+Self Phi Eliminated (byte*) msg#6
+Successful SSA optimization Pass2SelfPhiElimination
+Redundant Phi (void()*) do10::fn#2 (void()*) do10::fn#3
+Redundant Phi (byte*) msg#9 (byte*) msg#10
+Redundant Phi (byte) idx#5 (byte) idx#0
+Redundant Phi (byte*) msg#6 (byte*) msg#9
+Redundant Phi (byte*) msg#4 (byte*) msg#1
+Successful SSA optimization Pass2RedundantPhiElimination
+Simple Condition (bool~) do10::$1 [19] if((byte) do10::i#1!=rangelast(0,9)) goto do10::@1
+Simple Condition (bool~) hello::$0 [33] if(*((byte*) msg#10 + (byte) hello::i#1)!=(byte) '@') goto hello::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const void()*) main::f#0 = &hello
+Constant (const byte) do10::i#0 = 0
+Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte[]) msg1#0 = $0
+Constant (const byte[]) msg2#0 = $1
+Constant (const byte) hello::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const void()*) do10::fn#0 = main::f#0
+Constant (const void()*) do10::fn#1 = main::f#0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value do10::i#1 ← ++ do10::i#2 to ++
+Resolved ranged comparison value if(do10::i#1!=rangelast(0,9)) goto do10::@1 to (byte/signed byte/word/signed word/dword/signed dword) $a
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) @4
+Successful SSA optimization Pass2CullEmptyBlocks
+Inlining constant with var siblings (const byte) do10::i#0
+Inlining constant with var siblings (const void()*) do10::fn#0
+Inlining constant with var siblings (const void()*) do10::fn#1
+Inlining constant with var siblings (const byte) hello::i#0
+Constant inlined hello::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined do10::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined do10::fn#1 = (const void()*) main::f#0
+Constant inlined do10::fn#0 = (const void()*) main::f#0
+Constant inlined $0 = (const byte[]) msg1#0
+Constant inlined $1 = (const byte[]) msg2#0
+Successful SSA optimization Pass2ConstantInlining
+Identical Phi Values (void()*) do10::fn#3 (const void()*) main::f#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Added new block during phi lifting do10::@3(between do10::@1 and do10::@1)
+Added new block during phi lifting hello::@3(between hello::@1 and hello::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of do10
+CALL GRAPH
+Calls in [] to main:4 
+Calls in [main] to do10:7 do10:9 
+
+Created 3 initial phi equivalence classes
+Coalesced [17] do10::i#3 ← do10::i#1
+Coalesced [18] idx#7 ← idx#0
+Coalesced [25] hello::i#3 ← hello::i#1
+Coalesced [26] idx#8 ← idx#1
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block (label) do10::@3
+Culled Empty Block (label) hello::@3
+Renumbering block @2 to @1
+Renumbering block @3 to @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of do10
+Adding NOP phi() at start of hello
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] (byte*) msg#10 ← (byte*) 0
+  [2] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:@2
+@2: scope:[]  from @1
+  [3] phi()
+  [4] call main 
+  to:@end
+@end: scope:[]  from @2
+  [5] phi()
+main: scope:[main]  from @2
+  [6] (byte*) msg#0 ← (const byte[]) msg1#0
+  [7] call do10 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [8] (byte*) msg#1 ← (const byte[]) msg2#0
+  [9] call do10 
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [10] return 
+  to:@return
+do10: scope:[do10]  from main main::@1
+  [11] phi()
+  to:do10::@1
+do10::@1: scope:[do10]  from do10 do10::@1
+  [12] (byte) do10::i#2 ← phi( do10/(byte/signed byte/word/signed word/dword/signed dword) 0 do10::@1/(byte) do10::i#1 )
+  [13] call *((const void()*) main::f#0) 
+  [14] (byte) do10::i#1 ← ++ (byte) do10::i#2
+  [15] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1
+  to:do10::@return
+do10::@return: scope:[do10]  from do10::@1
+  [16] return 
+  to:@return
+hello: scope:[hello]  from
+  [17] phi()
+  to:hello::@1
+hello::@1: scope:[hello]  from hello hello::@1
+  [18] (byte) idx#3 ← phi( hello/(byte) idx#0 hello::@1/(byte) idx#1 )
+  [18] (byte) hello::i#2 ← phi( hello/(byte/signed byte/word/signed word/dword/signed dword) 0 hello::@1/(byte) hello::i#1 )
+  [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2)
+  [20] (byte) idx#1 ← ++ (byte) idx#3
+  [21] (byte) hello::i#1 ← ++ (byte) hello::i#2
+  [22] if(*((byte*) msg#10 + (byte) hello::i#1)!=(byte) '@') goto hello::@1
+  to:hello::@return
+hello::@return: scope:[hello]  from hello::@1
+  [23] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(void()) do10((void()*) do10::fn)
+(void()*) do10::fn
+(byte) do10::i
+(byte) do10::i#1 16.5
+(byte) do10::i#2 11.0
+(void()) hello()
+(byte) hello::i
+(byte) hello::i#1 16.5
+(byte) hello::i#2 11.0
+(byte) idx
+(byte) idx#0 4.0
+(byte) idx#1 7.333333333333333
+(byte) idx#3 17.5
+(void()) main()
+(void()*) main::f
+(byte*) msg
+(byte*) msg#0 20.0
+(byte*) msg#1 20.0
+(byte*) msg#10 4.0
+(byte[]) msg1
+(byte[]) msg2
+
+Initial phi equivalence classes
+[ do10::i#2 do10::i#1 ]
+[ hello::i#2 hello::i#1 ]
+[ idx#3 idx#0 idx#1 ]
+Coalescing volatile variable equivalence classes [ msg#0 ] and [ msg#1 ]
+Coalescing volatile variable equivalence classes [ msg#0 msg#1 ] and [ msg#10 ]
+Complete equivalence classes
+[ do10::i#2 do10::i#1 ]
+[ hello::i#2 hello::i#1 ]
+[ idx#3 idx#0 idx#1 ]
+[ msg#0 msg#1 msg#10 ]
+Allocated zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
+Allocated zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ]
+Allocated zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ]
+Allocated zp ZP_WORD:5 [ msg#0 msg#1 msg#10 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests calling into a function pointer with local variables
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+  .label msg = 5
+  .label idx = 4
+//SEG3 @begin
+bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [1] (byte*) msg#10 ← (byte*) 0 -- pbuz1=pbuc1 
+  lda #<0
+  sta msg
+  lda #>0
+  sta msg+1
+//SEG6 [2] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta idx
+//SEG7 [3] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG8 @2
+b2:
+//SEG9 [4] call main 
+  jsr main
+//SEG10 [5] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG11 @end
+bend:
+//SEG12 main
+main: {
+    .label f = hello
+  //SEG13 [6] (byte*) msg#0 ← (const byte[]) msg1#0 -- pbuz1=pbuc1 
+    lda #<msg1
+    sta msg
+    lda #>msg1
+    sta msg+1
+  //SEG14 [7] call do10 
+  //SEG15 [11] phi from main to do10 [phi:main->do10]
+  do10_from_main:
+    jsr do10
+    jmp b1
+  //SEG16 main::@1
+  b1:
+  //SEG17 [8] (byte*) msg#1 ← (const byte[]) msg2#0 -- pbuz1=pbuc1 
+    lda #<msg2
+    sta msg
+    lda #>msg2
+    sta msg+1
+  //SEG18 [9] call do10 
+  //SEG19 [11] phi from main::@1 to do10 [phi:main::@1->do10]
+  do10_from_b1:
+    jsr do10
+    jmp breturn
+  //SEG20 main::@return
+  breturn:
+  //SEG21 [10] return 
+    rts
+}
+//SEG22 do10
+do10: {
+    .label i = 2
+  //SEG23 [12] phi from do10 to do10::@1 [phi:do10->do10::@1]
+  b1_from_do10:
+  //SEG24 [12] phi (byte) do10::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG25 [12] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+  b1_from_b1:
+  //SEG26 [12] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    jmp b1
+  //SEG27 do10::@1
+  b1:
+  //SEG28 [13] call *((const void()*) main::f#0) 
+    jsr main.f
+  //SEG29 [14] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG30 [15] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$a
+    cmp i
+    bne b1_from_b1
+    jmp breturn
+  //SEG31 do10::@return
+  breturn:
+  //SEG32 [16] return 
+    rts
+}
+//SEG33 hello
+hello: {
+    .label i = 3
+  //SEG34 [18] phi from hello to hello::@1 [phi:hello->hello::@1]
+  b1_from_hello:
+  //SEG35 [18] phi (byte) idx#3 = (byte) idx#0 [phi:hello->hello::@1#0] -- register_copy 
+  //SEG36 [18] phi (byte) hello::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:hello->hello::@1#1] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG37 [18] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
+  b1_from_b1:
+  //SEG38 [18] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 
+  //SEG39 [18] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#1] -- register_copy 
+    jmp b1
+  //SEG40 hello::@1
+  b1:
+  //SEG41 [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuz3 
+    ldx idx
+    ldy i
+    lda (msg),y
+    sta SCREEN,x
+  //SEG42 [20] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
+    inc idx
+  //SEG43 [21] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG44 [22] if(*((byte*) msg#10 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuz1_derefidx_vbuz2_neq_vbuc1_then_la1 
+    ldy i
+    lda (msg),y
+    cmp #'@'
+    bne b1_from_b1
+    jmp breturn
+  //SEG45 hello::@return
+  breturn:
+  //SEG46 [23] return 
+    rts
+}
+  msg1: .text "hello @"
+  msg2: .text "world @"
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] (byte*) msg#10 ← (byte*) 0 [ ] ( ) always clobbers reg byte a 
+Statement [2] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( ) always clobbers reg byte a 
+Statement [6] (byte*) msg#0 ← (const byte[]) msg1#0 [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [8] (byte*) msg#1 ← (const byte[]) msg2#0 [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [13] call *((const void()*) main::f#0)  [ do10::i#2 ] ( main:4::do10:7 [ do10::i#2 ] main:4::do10:9 [ do10::i#2 ] ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
+Statement [15] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1 [ do10::i#1 ] ( main:4::do10:7 [ do10::i#1 ] main:4::do10:9 [ do10::i#1 ] ) always clobbers reg byte a 
+Statement [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2) [ msg#10 hello::i#2 idx#3 ] (  [ msg#10 hello::i#2 idx#3 ] ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ]
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ]
+Statement [22] if(*((byte*) msg#10 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 [ msg#10 hello::i#1 idx#1 ] (  [ msg#10 hello::i#1 idx#1 ] ) always clobbers reg byte a 
+Statement [1] (byte*) msg#10 ← (byte*) 0 [ ] ( ) always clobbers reg byte a 
+Statement [2] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( ) always clobbers reg byte a 
+Statement [6] (byte*) msg#0 ← (const byte[]) msg1#0 [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [8] (byte*) msg#1 ← (const byte[]) msg2#0 [ ] ( main:4 [ ] ) always clobbers reg byte a 
+Statement [13] call *((const void()*) main::f#0)  [ do10::i#2 ] ( main:4::do10:7 [ do10::i#2 ] main:4::do10:9 [ do10::i#2 ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [15] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1 [ do10::i#1 ] ( main:4::do10:7 [ do10::i#1 ] main:4::do10:9 [ do10::i#1 ] ) always clobbers reg byte a 
+Statement [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2) [ msg#10 hello::i#2 idx#3 ] (  [ msg#10 hello::i#2 idx#3 ] ) always clobbers reg byte a reg byte x 
+Statement [22] if(*((byte*) msg#10 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 [ msg#10 hello::i#1 idx#1 ] (  [ msg#10 hello::i#1 idx#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] : zp ZP_BYTE:2 , 
+Potential registers zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ] : zp ZP_BYTE:3 , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] : zp ZP_BYTE:4 , 
+Potential registers zp ZP_WORD:5 [ msg#0 msg#1 msg#10 ] : zp ZP_WORD:5 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 44: zp ZP_WORD:5 [ msg#0 msg#1 msg#10 ] 28.83: zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] 
+Uplift Scope [do10] 27.5: zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
+Uplift Scope [hello] 27.5: zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ] 
+Uplift Scope [main] 
+
+Uplifting [] best 973 combination zp ZP_WORD:5 [ msg#0 msg#1 msg#10 ] zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] 
+Uplifting [do10] best 973 combination zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
+Uplifting [hello] best 853 combination reg byte y [ hello::i#2 hello::i#1 ] 
+Uplifting [main] best 853 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ]
+Uplifting [] best 853 combination zp ZP_BYTE:4 [ idx#3 idx#0 idx#1 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
+Uplifting [do10] best 853 combination zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] 
+Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:3 [ idx#3 idx#0 idx#1 ]
+Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ msg#0 msg#1 msg#10 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests calling into a function pointer with local variables
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+  .label msg = 4
+  .label idx = 3
+//SEG3 @begin
+bbegin:
+  jmp b1
+//SEG4 @1
+b1:
+//SEG5 [1] (byte*) msg#10 ← (byte*) 0 -- pbuz1=pbuc1 
+  lda #<0
+  sta msg
+  lda #>0
+  sta msg+1
+//SEG6 [2] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta idx
+//SEG7 [3] phi from @1 to @2 [phi:@1->@2]
+b2_from_b1:
+  jmp b2
+//SEG8 @2
+b2:
+//SEG9 [4] call main 
+  jsr main
+//SEG10 [5] phi from @2 to @end [phi:@2->@end]
+bend_from_b2:
+  jmp bend
+//SEG11 @end
+bend:
+//SEG12 main
+main: {
+    .label f = hello
+  //SEG13 [6] (byte*) msg#0 ← (const byte[]) msg1#0 -- pbuz1=pbuc1 
+    lda #<msg1
+    sta msg
+    lda #>msg1
+    sta msg+1
+  //SEG14 [7] call do10 
+  //SEG15 [11] phi from main to do10 [phi:main->do10]
+  do10_from_main:
+    jsr do10
+    jmp b1
+  //SEG16 main::@1
+  b1:
+  //SEG17 [8] (byte*) msg#1 ← (const byte[]) msg2#0 -- pbuz1=pbuc1 
+    lda #<msg2
+    sta msg
+    lda #>msg2
+    sta msg+1
+  //SEG18 [9] call do10 
+  //SEG19 [11] phi from main::@1 to do10 [phi:main::@1->do10]
+  do10_from_b1:
+    jsr do10
+    jmp breturn
+  //SEG20 main::@return
+  breturn:
+  //SEG21 [10] return 
+    rts
+}
+//SEG22 do10
+do10: {
+    .label i = 2
+  //SEG23 [12] phi from do10 to do10::@1 [phi:do10->do10::@1]
+  b1_from_do10:
+  //SEG24 [12] phi (byte) do10::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG25 [12] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+  b1_from_b1:
+  //SEG26 [12] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    jmp b1
+  //SEG27 do10::@1
+  b1:
+  //SEG28 [13] call *((const void()*) main::f#0) 
+    jsr main.f
+  //SEG29 [14] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG30 [15] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$a
+    cmp i
+    bne b1_from_b1
+    jmp breturn
+  //SEG31 do10::@return
+  breturn:
+  //SEG32 [16] return 
+    rts
+}
+//SEG33 hello
+hello: {
+  //SEG34 [18] phi from hello to hello::@1 [phi:hello->hello::@1]
+  b1_from_hello:
+  //SEG35 [18] phi (byte) idx#3 = (byte) idx#0 [phi:hello->hello::@1#0] -- register_copy 
+  //SEG36 [18] phi (byte) hello::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:hello->hello::@1#1] -- vbuyy=vbuc1 
+    ldy #0
+    jmp b1
+  //SEG37 [18] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
+  b1_from_b1:
+  //SEG38 [18] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 
+  //SEG39 [18] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#1] -- register_copy 
+    jmp b1
+  //SEG40 hello::@1
+  b1:
+  //SEG41 [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuyy 
+    lda (msg),y
+    ldx idx
+    sta SCREEN,x
+  //SEG42 [20] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
+    inc idx
+  //SEG43 [21] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG44 [22] if(*((byte*) msg#10 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuz1_derefidx_vbuyy_neq_vbuc1_then_la1 
+    lda (msg),y
+    cmp #'@'
+    bne b1_from_b1
+    jmp breturn
+  //SEG45 hello::@return
+  breturn:
+  //SEG46 [23] return 
+    rts
+}
+  msg1: .text "hello @"
+  msg2: .text "world @"
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #>0
+Removing instruction lda #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label b1_from_b1 with b1
+Replacing label b1_from_b1 with b1
+Removing instruction b1:
+Removing instruction b2_from_b1:
+Removing instruction bend_from_b2:
+Removing instruction b1_from_b1:
+Removing instruction b1_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b2:
+Removing instruction bend:
+Removing instruction do10_from_main:
+Removing instruction b1:
+Removing instruction do10_from_b1:
+Removing instruction breturn:
+Removing instruction b1_from_do10:
+Removing instruction breturn:
+Removing instruction b1_from_hello:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
+Removing instruction jmp b1
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(void()) do10((void()*) do10::fn)
+(label) do10::@1
+(label) do10::@return
+(void()*) do10::fn
+(byte) do10::i
+(byte) do10::i#1 i zp ZP_BYTE:2 16.5
+(byte) do10::i#2 i zp ZP_BYTE:2 11.0
+(void()) hello()
+(label) hello::@1
+(label) hello::@return
+(byte) hello::i
+(byte) hello::i#1 reg byte y 16.5
+(byte) hello::i#2 reg byte y 11.0
+(byte) idx
+(byte) idx#0 idx zp ZP_BYTE:3 4.0
+(byte) idx#1 idx zp ZP_BYTE:3 7.333333333333333
+(byte) idx#3 idx zp ZP_BYTE:3 17.5
+(void()) main()
+(label) main::@1
+(label) main::@return
+(void()*) main::f
+(const void()*) main::f#0 f = &(void()) hello()
+(byte*) msg
+(byte*) msg#0 msg zp ZP_WORD:4 20.0
+(byte*) msg#1 msg zp ZP_WORD:4 20.0
+(byte*) msg#10 msg zp ZP_WORD:4 4.0
+(byte[]) msg1
+(const byte[]) msg1#0 msg1 = (string) "hello @"
+(byte[]) msg2
+(const byte[]) msg2#0 msg2 = (string) "world @"
+
+zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
+reg byte y [ hello::i#2 hello::i#1 ]
+zp ZP_BYTE:3 [ idx#3 idx#0 idx#1 ]
+zp ZP_WORD:4 [ msg#0 msg#1 msg#10 ]
+
+
+FINAL ASSEMBLER
+Score: 633
+
+//SEG0 File Comments
+// Tests calling into a function pointer with local variables
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+  .label msg = 4
+  .label idx = 3
+//SEG3 @begin
+bbegin:
+//SEG4 @1
+//SEG5 [1] (byte*) msg#10 ← (byte*) 0 -- pbuz1=pbuc1 
+  lda #<0
+  sta msg
+  sta msg+1
+//SEG6 [2] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  sta idx
+//SEG7 [3] phi from @1 to @2 [phi:@1->@2]
+//SEG8 @2
+//SEG9 [4] call main 
+  jsr main
+  rts
+//SEG10 [5] phi from @2 to @end [phi:@2->@end]
+//SEG11 @end
+//SEG12 main
+main: {
+    .label f = hello
+  //SEG13 [6] (byte*) msg#0 ← (const byte[]) msg1#0 -- pbuz1=pbuc1 
+    lda #<msg1
+    sta msg
+    lda #>msg1
+    sta msg+1
+  //SEG14 [7] call do10 
+  //SEG15 [11] phi from main to do10 [phi:main->do10]
+    jsr do10
+  //SEG16 main::@1
+  //SEG17 [8] (byte*) msg#1 ← (const byte[]) msg2#0 -- pbuz1=pbuc1 
+    lda #<msg2
+    sta msg
+    lda #>msg2
+    sta msg+1
+  //SEG18 [9] call do10 
+  //SEG19 [11] phi from main::@1 to do10 [phi:main::@1->do10]
+    jsr do10
+  //SEG20 main::@return
+  //SEG21 [10] return 
+    rts
+}
+//SEG22 do10
+do10: {
+    .label i = 2
+  //SEG23 [12] phi from do10 to do10::@1 [phi:do10->do10::@1]
+  //SEG24 [12] phi (byte) do10::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+  //SEG25 [12] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+  //SEG26 [12] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+  //SEG27 do10::@1
+  b1:
+  //SEG28 [13] call *((const void()*) main::f#0) 
+    jsr main.f
+  //SEG29 [14] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG30 [15] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$a
+    cmp i
+    bne b1
+  //SEG31 do10::@return
+  //SEG32 [16] return 
+    rts
+}
+//SEG33 hello
+hello: {
+  //SEG34 [18] phi from hello to hello::@1 [phi:hello->hello::@1]
+  //SEG35 [18] phi (byte) idx#3 = (byte) idx#0 [phi:hello->hello::@1#0] -- register_copy 
+  //SEG36 [18] phi (byte) hello::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:hello->hello::@1#1] -- vbuyy=vbuc1 
+    ldy #0
+  //SEG37 [18] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
+  //SEG38 [18] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 
+  //SEG39 [18] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#1] -- register_copy 
+  //SEG40 hello::@1
+  b1:
+  //SEG41 [19] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((byte*) msg#10 + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuyy 
+    lda (msg),y
+    ldx idx
+    sta SCREEN,x
+  //SEG42 [20] (byte) idx#1 ← ++ (byte) idx#3 -- vbuz1=_inc_vbuz1 
+    inc idx
+  //SEG43 [21] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+  //SEG44 [22] if(*((byte*) msg#10 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 -- pbuz1_derefidx_vbuyy_neq_vbuc1_then_la1 
+    lda (msg),y
+    cmp #'@'
+    bne b1
+  //SEG45 hello::@return
+  //SEG46 [23] return 
+    rts
+}
+  msg1: .text "hello @"
+  msg2: .text "world @"
+

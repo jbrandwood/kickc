@@ -1189,7 +1189,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
       String text = ctx.getText();
-      return new ConstantString(text.substring(1, text.length() - 1));
+      String stringValue;
+      if(text.endsWith("z")) {
+         stringValue = text.substring(1, text.length() - 2);
+      }  else {
+         stringValue = text.substring(1, text.length() - 1)+"@";
+      }
+      return new ConstantString(stringValue);
    }
 
    @Override

@@ -197,7 +197,7 @@ MNEMONIC:
 
 KICKASM: '{{' .*? '}}';
 SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
-STRING : '"' ('\\"' | ~'"')* '"';
+STRING : '"' ('\\"' | ~'"')* '"' 'z'?;
 CHAR : '\''  ('\\\'' | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';
 NUMBER : NUMFLOAT | NUMINT ;

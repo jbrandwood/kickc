@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLiteralStrings() throws IOException, URISyntaxException {
+      compileAndCompare("literal-strings");
+   }
+
+   @Test
    public void testIllegalVoidParameter() throws IOException, URISyntaxException {
       assertError("illegal-void-parameter", "Illegal void parameter");
    }

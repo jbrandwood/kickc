@@ -66,11 +66,10 @@ test: {
     beq b1
     lda #RED
     sta cols,x
-  breturn:
     rts
   b1:
     lda #GREEN
     sta cols,x
-    jmp breturn
+    rts
 }
   ref: .byte 3, 4, 3, $12, 9, 1, 4, 2, 4, 5, 1, 0

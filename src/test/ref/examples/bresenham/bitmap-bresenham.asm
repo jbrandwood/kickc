@@ -76,13 +76,12 @@ bitmap_line: {
     sty bitmap_line_ydxi.y
     ldx x1
     jsr bitmap_line_ydxi
-  breturn:
     rts
   b8:
     ldx x1
     sty bitmap_line_xdyi.y
     jsr bitmap_line_xdyi
-    jmp breturn
+    rts
   b7:
     tya
     sec
@@ -95,14 +94,14 @@ bitmap_line: {
     ldx x0
     sty bitmap_line_ydxd.y1
     jsr bitmap_line_ydxd
-    jmp breturn
+    rts
   b9:
     ldx x1
     sty bitmap_line_xdyd.y
     lda x0
     sta bitmap_line_xdyd.x1
     jsr bitmap_line_xdyd
-    jmp breturn
+    rts
   b1:
     lda x1
     sec
@@ -123,11 +122,11 @@ bitmap_line: {
     sty bitmap_line_ydxd.y
     ldx x1
     jsr bitmap_line_ydxd
-    jmp breturn
+    rts
   b12:
     ldx x0
     jsr bitmap_line_xdyd
-    jmp breturn
+    rts
   b11:
     tya
     sec
@@ -140,13 +139,13 @@ bitmap_line: {
     ldx x0
     sty bitmap_line_ydxi.y1
     jsr bitmap_line_ydxi
-    jmp breturn
+    rts
   b13:
     ldx x0
     lda x1
     sta bitmap_line_xdyi.x1
     jsr bitmap_line_xdyi
-    jmp breturn
+    rts
 }
 // bitmap_line_xdyi(byte register(X) x, byte zeropage(6) y, byte zeropage(5) x1, byte zeropage(4) xd, byte zeropage(3) yd)
 bitmap_line_xdyi: {

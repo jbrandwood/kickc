@@ -149,7 +149,6 @@ render_logo: {
   b5:
     cpy #$28
     bne b6
-  breturn:
     rts
   b6:
     lda logo_idx
@@ -201,7 +200,7 @@ render_logo: {
   b11:
     cpy #$28
     bne b12
-    jmp breturn
+    rts
   b12:
     lda #0
     sta SCREEN,y

@@ -131,7 +131,6 @@ findcol: {
     bne b2
     lda #0
     sta return
-  breturn:
     rts
   b2:
     txa
@@ -163,7 +162,7 @@ findcol: {
     iny
     cpy #numpoints
     bcc b12
-    jmp breturn
+    rts
   b12:
     stx mindiff
     jmp b1

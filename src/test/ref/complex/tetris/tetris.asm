@@ -587,7 +587,6 @@ play_movement: {
     lda game_over
     cmp #0
     beq b1
-  breturn:
     rts
   b1:
     lda key_event
@@ -600,7 +599,7 @@ play_movement: {
     clc
     adc return
     sta return
-    jmp breturn
+    rts
 }
 // Rotate the current piece  based on key-presses
 // Return non-zero if a render is needed
@@ -613,7 +612,6 @@ play_move_rotate: {
     beq b2
   b4:
     lda #0
-  breturn:
     rts
   b2:
     lax current_orientation
@@ -642,7 +640,7 @@ play_move_rotate: {
     adc current_piece+1
     sta current_piece_gfx+1
     lda #1
-    jmp breturn
+    rts
   b1:
     lax current_orientation
     axs #$10
@@ -698,7 +696,6 @@ play_collision: {
     cmp #2*PLAYFIELD_LINES
     bcc b4
     lda #COLLISION_BOTTOM
-  breturn:
     rts
   b4:
     lda #$80
@@ -706,20 +703,20 @@ play_collision: {
     cmp #0
     beq b5
     lda #COLLISION_LEFT
-    jmp breturn
+    rts
   b5:
     lda col
     cmp #PLAYFIELD_COLS
     bcc b6
     lda #COLLISION_RIGHT
-    jmp breturn
+    rts
   b6:
     ldy col
     lda (playfield_line),y
     cmp #0
     beq b3
     lda #COLLISION_PLAYFIELD
-    jmp breturn
+    rts
   b3:
     inc col
     inx
@@ -734,7 +731,7 @@ play_collision: {
     cmp l
     bne b9
     lda #COLLISION_NONE
-    jmp breturn
+    rts
   b9:
     lda i
     sta i_11
@@ -769,10 +766,9 @@ play_move_leftright: {
     inc current_xpos
   b2:
     lda #1
-    jmp breturn
+    rts
   b3:
     lda #0
-  breturn:
     rts
   b1:
     ldx current_xpos
@@ -850,10 +846,9 @@ play_move_down: {
     lda #0
     sta current_movedown_counter
     ldx #1
-    jmp breturn
+    rts
   b5:
     ldx #0
-  breturn:
     rts
   b10:
     inc current_ypos
@@ -1159,10 +1154,9 @@ keyboard_event_get: {
     dec keyboard_events_size
     ldy keyboard_events_size
     ldx keyboard_events,y
-    jmp breturn
+    rts
   b1:
     ldx #$ff
-  breturn:
     rts
 }
 // Scans the entire matrix to determine which keys have been pressed/depressed.

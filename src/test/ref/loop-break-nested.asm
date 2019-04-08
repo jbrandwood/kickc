@@ -13,7 +13,6 @@ main: {
     lda (line),y
     cmp #'a'
     bne b5
-  breturn:
     rts
   b5:
     ldy #0
@@ -37,7 +36,7 @@ main: {
     cmp #<$400+$28*$19
     bcc b1
   !:
-    jmp breturn
+    rts
   b3:
     lda #'a'
     sta (line),y

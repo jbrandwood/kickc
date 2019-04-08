@@ -32,8 +32,11 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
       LinkedHashMap<Integer, Collection<VariableRef>> stmtDefined = new LinkedHashMap<>();
       Map<SymbolVariableRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> symbolVarReferences = new LinkedHashMap<>();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
+         block.setReferencedVars();
+      }
+      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          LabelRef blockLabel = block.getLabel();
-         blockReferencedVars.put(blockLabel, getReferencedVars(blockLabel, new ArrayList<>()));
+         blockReferencedVars.put(blockLabel, getReferencedVars(block));
          blockUsedVars.put(blockLabel, getUsedVars(blockLabel, new ArrayList<>()));
          for(Statement statement : block.getStatements()) {
             Collection<SymbolVariableRef> referenced = getReferenced(statement);
@@ -168,33 +171,37 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
    /**
     * Get all variables used or defined inside a block and its successors (including any called method)
     *
+    * @param block The block to examine
+    * @return All used variables
+    */
+   private Collection<VariableRef> getReferencedVars(ControlFlowBlock block) {
+      LinkedHashSet<VariableRef> referencedVars = new LinkedHashSet<>();
+      addReferencedVars(block.getLabel(), block, referencedVars, new ArrayList<>());
+      return referencedVars;
+   }
+
+   /**
+    * Recursively get all variables used or defined inside a block and its successors (including any called method)
+    *
     * @param labelRef The block to examine
+    * @param block The block to examine (optional, saves lookup)
+    * @param referencedVars the set of referenced variables
     * @param visited The blocks already visited during the search. Used to stop infinite recursion
     * @return All used variables
     */
-   private Collection<VariableRef> getReferencedVars(LabelRef labelRef, Collection<LabelRef> visited) {
-      if(labelRef == null) {
-         return new ArrayList<>();
-      }
-      if(visited.contains(labelRef)) {
-         return new ArrayList<>();
-      }
+   private void addReferencedVars(LabelRef labelRef, ControlFlowBlock block, LinkedHashSet<VariableRef> referencedVars, Collection<LabelRef> visited) {
+      if(labelRef == null || visited.contains(labelRef))
+         return;
       visited.add(labelRef);
-      ControlFlowBlock block = getProgram().getGraph().getBlock(labelRef);
       if(block == null) {
-         return new ArrayList<>();
+         block = getProgram().getGraph().getBlock(labelRef);
+         if(block == null)
+            return;
       }
-      LinkedHashSet<VariableRef> referenced = new LinkedHashSet<>();
-      for(Statement statement : block.getStatements()) {
-         referenced.addAll(getReferencedVars(statement));
-         if(statement instanceof StatementCall) {
-            ProcedureRef procedure = ((StatementCall) statement).getProcedure();
-            referenced.addAll(getReferencedVars(procedure.getLabelRef(), visited));
-         }
-      }
-      referenced.addAll(getReferencedVars(block.getDefaultSuccessor(), visited));
-      referenced.addAll(getReferencedVars(block.getConditionalSuccessor(), visited));
-      return referenced;
+      referencedVars.addAll(block.getReferencedVars());
+      addReferencedVars(block.getDefaultSuccessor(), null, referencedVars, visited);
+      addReferencedVars(block.getConditionalSuccessor(), null, referencedVars, visited);
+      addReferencedVars(block.getCallSuccessor(), null, referencedVars, visited);
    }
 
    /**

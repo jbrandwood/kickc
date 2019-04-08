@@ -1,17 +1,14 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * A named/labelled sequence of SSA statements connected to other basic blocks.
@@ -41,6 +38,9 @@ public class ControlFlowBlock {
    /** The comments for the block. */
    private List<Comment> comments;
 
+   /** The variables referenced in this block.  Set by setReferencedVars().  */
+   private LinkedHashSet<VariableRef> referencedVars = null;
+
    public ControlFlowBlock(LabelRef label, ScopeRef scope) {
       this.label = label;
       this.scope = scope;
@@ -48,6 +48,7 @@ public class ControlFlowBlock {
       this.defaultSuccessor = null;
       this.conditionalSuccessor = null;
       this.comments = new ArrayList<>();
+      this.referencedVars = null;
    }
 
    public List<Comment> getComments() {
@@ -120,6 +121,22 @@ public class ControlFlowBlock {
 
    public List<Statement> getStatements() {
       return statements;
+   }
+
+   public void setReferencedVars() {
+      referencedVars = new LinkedHashSet<>();
+      for(Statement statement : this.getStatements()) {
+         ProgramValueIterator.execute(statement,
+               (programValue, currentStmt, stmtIt, currentBlock) -> {
+                  if(programValue.get() instanceof VariableRef)
+                     referencedVars.add((VariableRef) programValue.get());
+               }
+               , null, null);
+      }
+   }
+
+   public LinkedHashSet<VariableRef> getReferencedVars() {
+      return referencedVars;
    }
 
    /**

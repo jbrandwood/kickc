@@ -37,7 +37,7 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          LabelRef blockLabel = block.getLabel();
          blockReferencedVars.put(blockLabel, getReferencedVars(block));
-         blockUsedVars.put(blockLabel, getUsedVars(blockLabel, new ArrayList<>()));
+         blockUsedVars.put(blockLabel, getUsedVars(block));
          for(Statement statement : block.getStatements()) {
             Collection<SymbolVariableRef> referenced = getReferenced(statement);
             Collection<VariableRef> defined = getDefinedVars(statement);
@@ -137,38 +137,6 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
    }
 
    /**
-    * Get all variables used inside a block and its successors (including any called method)
-    *
-    * @param labelRef The block to examine
-    * @param visited The blocks already visited during the search. Used to stop infinite recursion
-    * @return All used variables
-    */
-   private Collection<VariableRef> getUsedVars(LabelRef labelRef, Collection<LabelRef> visited) {
-      if(labelRef == null) {
-         return new ArrayList<>();
-      }
-      if(visited.contains(labelRef)) {
-         return new ArrayList<>();
-      }
-      visited.add(labelRef);
-      ControlFlowBlock block = getProgram().getGraph().getBlock(labelRef);
-      if(block == null) {
-         return new ArrayList<>();
-      }
-      LinkedHashSet<VariableRef> used = new LinkedHashSet<>();
-      for(Statement statement : block.getStatements()) {
-         used.addAll(getUsedVars(statement));
-         if(statement instanceof StatementCall) {
-            ProcedureRef procedure = ((StatementCall) statement).getProcedure();
-            used.addAll(getUsedVars(procedure.getLabelRef(), visited));
-         }
-      }
-      used.addAll(getUsedVars(block.getDefaultSuccessor(), visited));
-      used.addAll(getUsedVars(block.getConditionalSuccessor(), visited));
-      return used;
-   }
-
-   /**
     * Get all variables used or defined inside a block and its successors (including any called method)
     *
     * @param block The block to examine
@@ -204,6 +172,43 @@ public class PassNVariableReferenceInfos extends Pass2SsaOptimization {
       addReferencedVars(block.getCallSuccessor(), null, referencedVars, visited);
    }
 
+   /**
+    * Get all variables used or defined inside a block and its successors (including any called method)
+    *
+    * @param block The block to examine
+    * @return All used variables
+    */
+   private Collection<VariableRef> getUsedVars(ControlFlowBlock block) {
+      LinkedHashSet<VariableRef> usedVars = new LinkedHashSet<>();
+      addUsedVars(block.getLabel(), block, usedVars, new ArrayList<>());
+      return usedVars;
+   }
+
+   /**
+    * Recursively get all variables used or defined inside a block and its successors (including any called method)
+    *
+    * @param labelRef The block to examine
+    * @param block The block to examine (optional, saves lookup)
+    * @param usedVars the set of referenced variables
+    * @param visited The blocks already visited during the search. Used to stop infinite recursion
+    * @return All used variables
+    */
+   private void addUsedVars(LabelRef labelRef, ControlFlowBlock block, LinkedHashSet<VariableRef> usedVars, Collection<LabelRef> visited) {
+      if(labelRef == null || visited.contains(labelRef))
+         return;
+      visited.add(labelRef);
+      if(block == null) {
+         block = getProgram().getGraph().getBlock(labelRef);
+         if(block == null)
+            return;
+      }
+      usedVars.addAll(block.getUsedVars());
+      addUsedVars(block.getDefaultSuccessor(), null, usedVars, visited);
+      addUsedVars(block.getConditionalSuccessor(), null, usedVars, visited);
+      addUsedVars(block.getCallSuccessor(), null, usedVars, visited);
+   }
+   
+   
    /**
     * Get the variables defined by a statement
     *

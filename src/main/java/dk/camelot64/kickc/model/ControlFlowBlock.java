@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -41,14 +42,17 @@ public class ControlFlowBlock {
    /** The variables referenced in this block.  Set by setReferencedVars().  */
    private LinkedHashSet<VariableRef> referencedVars = null;
 
+   /** The variables used in this block.  Set by setReferencedVars().  */
+   private LinkedHashSet<VariableRef> usedVars = null;
+
    public ControlFlowBlock(LabelRef label, ScopeRef scope) {
       this.label = label;
       this.scope = scope;
       this.statements = new ArrayList<>();
-      this.defaultSuccessor = null;
       this.conditionalSuccessor = null;
       this.comments = new ArrayList<>();
       this.referencedVars = null;
+      this.usedVars = null;
    }
 
    public List<Comment> getComments() {
@@ -123,20 +127,57 @@ public class ControlFlowBlock {
       return statements;
    }
 
+   private Collection<VariableRef> getDefinedVars(Statement stmt) {
+      if(stmt instanceof StatementAssignment) {
+         StatementAssignment assignment = (StatementAssignment) stmt;
+         LValue lValue = assignment.getlValue();
+         if(lValue instanceof VariableRef) {
+            return Arrays.asList((VariableRef) lValue);
+         }
+      } else if(stmt instanceof StatementPhiBlock) {
+         List<VariableRef> defined = new ArrayList<>();
+         StatementPhiBlock phi = (StatementPhiBlock) stmt;
+         for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+            defined.add(phiVariable.getVariable());
+         }
+         return defined;
+      } else if(stmt instanceof StatementCall) {
+         List<VariableRef> defined = new ArrayList<>();
+         if(((StatementCall) stmt).getlValue() instanceof VariableRef) {
+            defined.add((VariableRef) ((StatementCall) stmt).getlValue());
+         }
+         return defined;
+      }
+      return new ArrayList<>();
+   }
+
+
    public void setReferencedVars() {
       referencedVars = new LinkedHashSet<>();
+      usedVars = new LinkedHashSet<>();
       for(Statement statement : this.getStatements()) {
+         LinkedHashSet<VariableRef> stmtReferencedVars = new LinkedHashSet<>();
+         LinkedHashSet<VariableRef> stmtUsedVars = new LinkedHashSet<>();
          ProgramValueIterator.execute(statement,
                (programValue, currentStmt, stmtIt, currentBlock) -> {
                   if(programValue.get() instanceof VariableRef)
-                     referencedVars.add((VariableRef) programValue.get());
+                     stmtReferencedVars.add((VariableRef) programValue.get());
                }
                , null, null);
+         Collection<VariableRef> stmtDefinedVars = getDefinedVars(statement);
+         stmtUsedVars.addAll(stmtReferencedVars);
+         stmtUsedVars.removeAll(stmtDefinedVars);
+         referencedVars.addAll(stmtReferencedVars);
+         usedVars.addAll(stmtUsedVars);
       }
    }
 
    public LinkedHashSet<VariableRef> getReferencedVars() {
       return referencedVars;
+   }
+
+   public LinkedHashSet<VariableRef> getUsedVars() {
+      return usedVars;
    }
 
    /**

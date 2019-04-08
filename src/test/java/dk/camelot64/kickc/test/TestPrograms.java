@@ -789,6 +789,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testDeepNesting() throws IOException, URISyntaxException {
+      compileAndCompare("deep-nesting");
+   }
+
+   @Test
    public void testHelloWorld() throws IOException, URISyntaxException {
       compileAndCompare("examples/helloworld/helloworld");
    }

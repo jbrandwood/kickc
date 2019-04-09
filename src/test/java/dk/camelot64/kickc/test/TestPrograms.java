@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPointerCast() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-cast");
+   }
+
+   @Test
    public void testLiteralStrings() throws IOException, URISyntaxException {
       compileAndCompare("literal-strings");
    }

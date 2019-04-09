@@ -153,7 +153,16 @@ public class Pass2ConditionalAndOrRewriting extends Pass2SsaOptimization {
 
       ControlFlowBlock conditionalDestBlock = getGraph().getBlock(conditional.getDestination());
       if(conditionalDestBlock.hasPhiBlock()) {
-         throw new RuntimeException("TODO: Fix phi-values inside the conditional destination phi-block!");
+         StatementPhiBlock conditionalDestPhiBlock = conditionalDestBlock.getPhiBlock();
+         for(StatementPhiBlock.PhiVariable phiVariable : conditionalDestPhiBlock.getPhiVariables()) {
+            for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+               if(phiRValue.getPredecessor().equals(block.getLabel())) {
+                  // Found phi-variable with current block as predecessor - copy the phivalue for the new block
+                  phiVariable.setrValue(newBlockLabel.getRef(), phiRValue.getrValue());
+                  break;
+               }
+            }
+         }
       }
 
    }

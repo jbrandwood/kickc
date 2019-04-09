@@ -32,6 +32,16 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   //@Test
+   //public void testPointerCast3() throws IOException, URISyntaxException {
+   //   compileAndCompare("pointer-cast-3");
+   //}
+
+   @Test
+   public void testPointerCast2() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-cast-2");
+   }
+
    @Test
    public void testPointerCast() throws IOException, URISyntaxException {
       compileAndCompare("pointer-cast");
@@ -489,7 +499,7 @@ public class TestPrograms {
 
    //@Test
    //public void testRobozzle64() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/robozzle64/robozzle64");
+   //   compileAndCompare("complex/robozzle_c64/robozzle64_1", log());
    //}
 
    //@Test

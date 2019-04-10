@@ -41,12 +41,21 @@ public abstract class SymbolVariable implements Symbol {
    /** Comments preceding the procedure in the source code. */
    private List<Comment> comments;
 
+   /** Full name of variable (scope::name or name) */
+   private String fullName;
+
    public SymbolVariable(String name, Scope scope, SymbolType type) {
       this.name = name;
       this.scope = scope;
       this.type = type;
       this.inferredType = false;
       this.comments = new ArrayList<>();
+      setFullName();
+   }
+
+   private void setFullName() {
+      String scopeName = (scope == null) ? "" : scope.getFullName();
+      fullName = (scopeName.length() > 0) ? scopeName + "::" + name : name;
    }
 
    @Override
@@ -56,7 +65,7 @@ public abstract class SymbolVariable implements Symbol {
 
    @Override
    public String getFullName() {
-      return Scope.getFullName(this);
+      return this.fullName;
    }
 
    public SymbolType getType() {
@@ -86,6 +95,7 @@ public abstract class SymbolVariable implements Symbol {
 
    public void setName(String name) {
       this.name = name;
+      setFullName();
    }
 
    public String getAsmName() {
@@ -102,6 +112,7 @@ public abstract class SymbolVariable implements Symbol {
 
    public void setScope(Scope scope) {
       this.scope = scope;
+      setFullName();
    }
 
    @Override

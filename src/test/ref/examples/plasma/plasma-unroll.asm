@@ -136,112 +136,114 @@ doplasma: {
     axs #3
     stx c2B
     ldx #0
-  b6:
-    lda xbuf,x
+  b5:
+    ldy xbuf,x
+  // Use experimental loop unrolling to increase the speed
+    tya
     clc
     adc ybuf
     sta SCREEN1,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+1
     sta SCREEN1+1*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+2
     sta SCREEN1+2*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+3
     sta SCREEN1+3*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+4
     sta SCREEN1+4*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+5
     sta SCREEN1+5*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+6
     sta SCREEN1+6*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+7
     sta SCREEN1+7*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+8
     sta SCREEN1+8*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+9
     sta SCREEN1+9*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$a
     sta SCREEN1+$a*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$b
     sta SCREEN1+$b*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$c
     sta SCREEN1+$c*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$d
     sta SCREEN1+$d*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$e
     sta SCREEN1+$e*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$f
     sta SCREEN1+$f*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$10
     sta SCREEN1+$10*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$11
     sta SCREEN1+$11*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$12
     sta SCREEN1+$12*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$13
     sta SCREEN1+$13*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$14
     sta SCREEN1+$14*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$15
     sta SCREEN1+$15*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$16
     sta SCREEN1+$16*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$17
     sta SCREEN1+$17*$28,x
-    lda xbuf,x
+    tya
     clc
     adc ybuf+$18
     sta SCREEN1+$18*$28,x
     inx
     cpx #$28
-    bcs !b6+
-    jmp b6
-  !b6:
+    bcs !b5+
+    jmp b5
+  !b5:
     rts
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0

@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testComparisonRewriting() throws IOException, URISyntaxException {
+      compileAndCompare("comparison-rewriting", getLogSysout());
+   }
+
+   @Test
    public void testLoopBreakContinue() throws IOException, URISyntaxException {
       compileAndCompare("loop-break-continue");
    }

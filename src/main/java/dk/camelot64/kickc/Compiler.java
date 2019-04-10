@@ -249,6 +249,7 @@ public class Compiler {
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));
+      optimizations.add(new Pass2ComparisonOptimization(program));
       pass2Execute(optimizations);
    }
 
@@ -306,14 +307,7 @@ public class Compiler {
             boolean stepOptimized = true;
             while(stepOptimized) {
                stepOptimized = optimization.step();
-               if(stepOptimized) {
-                  getLog().append("Successful SSA optimization " + optimization.getClass().getSimpleName() + "");
-                  ssaOptimized = true;
-                  if(getLog().isVerboseSSAOptimize()) {
-                     getLog().append("CONTROL FLOW GRAPH");
-                     getLog().append(program.getGraph().toString(program));
-                  }
-               }
+               ssaOptimized = pass2LogOptimization(ssaOptimized, optimization, stepOptimized);
             }
          }
       }
@@ -330,20 +324,24 @@ public class Compiler {
       for(Pass2SsaOptimization optimization : optimizations) {
          pass2AssertSSA();
          boolean stepOptimized = optimization.step();
-         if(stepOptimized) {
-            getLog().append("Successful SSA optimization " + optimization.getClass().getSimpleName() + "");
-            ssaOptimized = true;
-            if(getLog().isVerboseSSAOptimize()) {
-               getLog().append("CONTROL FLOW GRAPH");
-               getLog().append(program.getGraph().toString(program));
-            }
+         ssaOptimized = pass2LogOptimization(ssaOptimized, optimization, stepOptimized);
+      }
+      return ssaOptimized;
+   }
+
+   private boolean pass2LogOptimization(boolean ssaOptimized, Pass2SsaOptimization optimization, boolean stepOptimized) {
+      if(stepOptimized) {
+         getLog().append("Successful SSA optimization " + optimization.getClass().getSimpleName() + "");
+         ssaOptimized = true;
+         if(getLog().isVerboseSSAOptimize()) {
+            getLog().append("CONTROL FLOW GRAPH");
+            getLog().append(program.getGraph().toString(program));
          }
       }
       return ssaOptimized;
    }
 
    private void pass3Analysis() {
-
       new Pass3AssertRValues(program).check();
       new Pass3AssertConstants(program).check();
       new Pass3AssertArrayLengths(program).check();

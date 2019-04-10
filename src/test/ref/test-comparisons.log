@@ -2085,6 +2085,8 @@ Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Resolved ranged next value main::i#1 ← ++ main::i#10 to ++
 Resolved ranged comparison value if(main::i#1!=rangelast(0,4)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 5
+Rewriting conditional comparison if((byte) main::a#10<=(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@7
+Rewriting conditional comparison if((byte) main::a#10>(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@11
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) @12
 Culled Empty Block (label) print_byte::@2
@@ -2546,7 +2548,7 @@ main::@6: scope:[main]  from main::@26 main::@47
   [44] call printu 
   to:main::@48
 main::@48: scope:[main]  from main::@6
-  [45] if((byte) main::a#10<=(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@7
+  [45] if((byte) main::a#10<(byte/signed byte/word/signed word/dword/signed dword) $37+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@7
   to:main::@27
 main::@27: scope:[main]  from main::@48
   [46] phi()
@@ -2602,7 +2604,7 @@ main::@10: scope:[main]  from main::@30 main::@52
   [74] call printu 
   to:main::@53
 main::@53: scope:[main]  from main::@10
-  [75] if((byte) main::a#10>(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@11
+  [75] if((byte) main::a#10>=(byte/signed byte/word/signed word/dword/signed dword) $37+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@11
   to:main::@31
 main::@31: scope:[main]  from main::@53
   [76] phi()
@@ -3446,10 +3448,10 @@ main: {
     jmp b48
   //SEG119 main::@48
   b48:
-  //SEG120 [45] if((byte) main::a#10<=(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@7 -- vbuz1_le_vbuc1_then_la1 
-    lda #$37
-    cmp a
-    bcs b7_from_b48
+  //SEG120 [45] if((byte) main::a#10<(byte/signed byte/word/signed word/dword/signed dword) $37+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@7 -- vbuz1_lt_vbuc1_then_la1 
+    lda a
+    cmp #$37+1
+    bcc b7_from_b48
   //SEG121 [46] phi from main::@48 to main::@27 [phi:main::@48->main::@27]
   b27_from_b48:
     jmp b27
@@ -3654,10 +3656,10 @@ main: {
     jmp b53
   //SEG200 main::@53
   b53:
-  //SEG201 [75] if((byte) main::a#10>(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@11 -- vbuz1_gt_vbuc1_then_la1 
-    lda #$37
-    cmp a
-    bcc b11_from_b53
+  //SEG201 [75] if((byte) main::a#10>=(byte/signed byte/word/signed word/dword/signed dword) $37+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@11 -- vbuz1_ge_vbuc1_then_la1 
+    lda a
+    cmp #$37+1
+    bcs b11_from_b53
   //SEG202 [76] phi from main::@53 to main::@31 [phi:main::@53->main::@31]
   b31_from_b53:
     jmp b31
@@ -4543,7 +4545,6 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:30 [ p
 Statement [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [58] if((byte) main::a#10<=(byte) main::a#10) goto main::@9 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [73] (byte*~) print_char_cursor#143 ← (byte*) print_line_cursor#1 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 print_char_cursor#143 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 print_char_cursor#143 ] ) always clobbers reg byte a 
-Statement [75] if((byte) main::a#10>(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@11 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [88] if((byte) main::a#10>(byte) main::a#10) goto main::@13 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [103] (byte*~) print_char_cursor#147 ← (byte*) print_line_cursor#1 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 print_char_cursor#147 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 print_char_cursor#147 ] ) always clobbers reg byte a 
@@ -4579,7 +4580,6 @@ Statement [43] (byte*~) print_char_cursor#159 ← (byte*) print_line_cursor#1 [ 
 Statement [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@8 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [58] if((byte) main::a#10<=(byte) main::a#10) goto main::@9 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [73] (byte*~) print_char_cursor#143 ← (byte*) print_line_cursor#1 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 print_char_cursor#143 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 print_char_cursor#143 ] ) always clobbers reg byte a 
-Statement [75] if((byte) main::a#10>(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@11 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [88] if((byte) main::a#10>(byte) main::a#10) goto main::@13 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [103] (byte*~) print_char_cursor#147 ← (byte*) print_line_cursor#1 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 print_char_cursor#147 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#12 printu::b#12 printu::res#12 print_char_cursor#147 ] ) always clobbers reg byte a 
@@ -4613,7 +4613,6 @@ Statement [55] (byte) printu::b#6 ← *((const byte[5]) main::cs#0 + (byte) main
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:10 [ main::r#47 ]
 Statement [58] if((byte) main::a#10<=(byte) main::a#10) goto main::@9 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [73] (byte*~) print_char_cursor#143 ← (byte*) print_line_cursor#1 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 print_char_cursor#143 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 print_char_cursor#143 ] ) always clobbers reg byte a 
-Statement [75] if((byte) main::a#10>(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@11 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a reg byte y 
 Statement [85] (byte) printu::b#10 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 main::r#51 printu::a#10 printu::b#10 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 main::r#51 printu::a#10 printu::b#10 print_char_cursor#55 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:14 [ main::r#51 ]
@@ -4650,7 +4649,6 @@ Statement [51] if((byte) main::a#10<=*((const byte[5]) main::cs#0 + (byte) main:
 Statement [55] (byte) printu::b#6 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 main::r#47 printu::a#6 printu::b#6 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 main::r#47 printu::a#6 printu::b#6 print_char_cursor#55 ] ) always clobbers reg byte y 
 Statement [58] if((byte) main::a#10<=(byte) main::a#10) goto main::@9 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [73] (byte*~) print_char_cursor#143 ← (byte*) print_line_cursor#1 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 print_char_cursor#143 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 printu::a#8 printu::b#8 printu::res#8 print_char_cursor#143 ] ) always clobbers reg byte a 
-Statement [75] if((byte) main::a#10>(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@11 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
 Statement [81] if((byte) main::a#10>*((const byte[5]) main::cs#0 + (byte) main::i#10)) goto main::@12 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a reg byte y 
 Statement [85] (byte) printu::b#10 ← *((const byte[5]) main::cs#0 + (byte) main::i#10) [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 main::r#51 printu::a#10 printu::b#10 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 main::r#51 printu::a#10 printu::b#10 print_char_cursor#55 ] ) always clobbers reg byte y 
 Statement [88] if((byte) main::a#10>(byte) main::a#10) goto main::@13 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ( main:2 [ main::a#10 main::i#10 print_line_cursor#1 main::b#0 print_char_cursor#55 ] ) always clobbers reg byte a 
@@ -5079,10 +5077,10 @@ main: {
     jmp b48
   //SEG119 main::@48
   b48:
-  //SEG120 [45] if((byte) main::a#10<=(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@7 -- vbuz1_le_vbuc1_then_la1 
-    lda #$37
-    cmp a
-    bcs b7_from_b48
+  //SEG120 [45] if((byte) main::a#10<(byte/signed byte/word/signed word/dword/signed dword) $37+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@7 -- vbuz1_lt_vbuc1_then_la1 
+    lda a
+    cmp #$37+1
+    bcc b7_from_b48
   //SEG121 [46] phi from main::@48 to main::@27 [phi:main::@48->main::@27]
   b27_from_b48:
     jmp b27
@@ -5263,10 +5261,10 @@ main: {
     jmp b53
   //SEG200 main::@53
   b53:
-  //SEG201 [75] if((byte) main::a#10>(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@11 -- vbuz1_gt_vbuc1_then_la1 
-    lda #$37
-    cmp a
-    bcc b11_from_b53
+  //SEG201 [75] if((byte) main::a#10>=(byte/signed byte/word/signed word/dword/signed dword) $37+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@11 -- vbuz1_ge_vbuc1_then_la1 
+    lda a
+    cmp #$37+1
+    bcs b11_from_b53
   //SEG202 [76] phi from main::@53 to main::@31 [phi:main::@53->main::@31]
   b31_from_b53:
     jmp b31
@@ -6833,10 +6831,10 @@ main: {
   //SEG118 [167] phi (byte*) print_char_cursor#95 = (byte*~) print_char_cursor#159 [phi:main::@6->printu#4] -- register_copy 
     jsr printu
   //SEG119 main::@48
-  //SEG120 [45] if((byte) main::a#10<=(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@7 -- vbuz1_le_vbuc1_then_la1 
-    lda #$37
-    cmp a
-    bcs b27
+  //SEG120 [45] if((byte) main::a#10<(byte/signed byte/word/signed word/dword/signed dword) $37+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@7 -- vbuz1_lt_vbuc1_then_la1 
+    lda a
+    cmp #$37+1
+    bcc b27
   //SEG121 [46] phi from main::@48 to main::@27 [phi:main::@48->main::@27]
   //SEG122 main::@27
   //SEG123 [47] phi from main::@27 to main::@7 [phi:main::@27->main::@7]
@@ -6981,10 +6979,10 @@ main: {
   //SEG199 [167] phi (byte*) print_char_cursor#95 = (byte*~) print_char_cursor#143 [phi:main::@10->printu#4] -- register_copy 
     jsr printu
   //SEG200 main::@53
-  //SEG201 [75] if((byte) main::a#10>(byte/signed byte/word/signed word/dword/signed dword) $37) goto main::@11 -- vbuz1_gt_vbuc1_then_la1 
-    lda #$37
-    cmp a
-    bcc b31
+  //SEG201 [75] if((byte) main::a#10>=(byte/signed byte/word/signed word/dword/signed dword) $37+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@11 -- vbuz1_ge_vbuc1_then_la1 
+    lda a
+    cmp #$37+1
+    bcs b31
   //SEG202 [76] phi from main::@53 to main::@31 [phi:main::@53->main::@31]
   //SEG203 main::@31
   //SEG204 [77] phi from main::@31 to main::@11 [phi:main::@31->main::@11]

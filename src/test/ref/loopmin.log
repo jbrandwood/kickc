@@ -79,6 +79,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = $a
 Constant (const byte) main::s#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
+Rewriting conditional comparison if((byte) main::i#2<=(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@2
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::s#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) $a
@@ -122,7 +123,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::s#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::s#4 )
   [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) $a main::@2/(byte) main::i#1 )
-  [6] if((byte) main::i#2<=(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@2
+  [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
   [7] (byte) main::s#1 ← (byte) main::s#2 + (byte) main::i#2
@@ -199,10 +200,10 @@ main: {
     jmp b1
   //SEG17 main::@1
   b1:
-  //SEG18 [6] if((byte) main::i#2<=(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@2 -- vbuz1_le_vbuc1_then_la1 
-    lda #5
-    cmp i
-    bcs b2_from_b1
+  //SEG18 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda i
+    cmp #5+1
+    bcc b2_from_b1
     jmp b3
   //SEG19 main::@3
   b3:
@@ -241,8 +242,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 49.5: zp ZP_BYTE:3 [ main::s#2 main::s#4 main::s#1 ] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 423 combination reg byte a [ main::s#2 main::s#4 main::s#1 ] reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 423 combination 
+Uplifting [main] best 398 combination reg byte a [ main::s#2 main::s#4 main::s#1 ] reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 398 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -283,10 +284,9 @@ main: {
     jmp b1
   //SEG17 main::@1
   b1:
-  //SEG18 [6] if((byte) main::i#2<=(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@2 -- vbuxx_le_vbuc1_then_la1 
-    cpx #5
+  //SEG18 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #5+1
     bcc b2_from_b1
-    beq b2_from_b1
     jmp b3
   //SEG19 main::@3
   b3:
@@ -321,7 +321,6 @@ Removing instruction jmp b3
 Removing instruction jmp b2
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b2_from_b1 with b2
 Replacing label b2_from_b1 with b2
 Replacing label b1_from_b2 with b1
 Removing instruction b1_from_bbegin:
@@ -367,7 +366,7 @@ reg byte a [ main::s#2 main::s#4 main::s#1 ]
 
 
 FINAL ASSEMBLER
-Score: 261
+Score: 236
 
 //SEG0 File Comments
 //SEG1 Basic Upstart
@@ -394,10 +393,9 @@ main: {
   //SEG16 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
   //SEG17 main::@1
   b1:
-  //SEG18 [6] if((byte) main::i#2<=(byte/signed byte/word/signed word/dword/signed dword) 5) goto main::@2 -- vbuxx_le_vbuc1_then_la1 
-    cpx #5
+  //SEG18 [6] if((byte) main::i#2<(byte/signed byte/word/signed word/dword/signed dword) 5+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #5+1
     bcc b2
-    beq b2
   //SEG19 main::@3
   //SEG20 [7] (byte) main::s#1 ← (byte) main::s#2 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx $ff

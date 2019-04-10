@@ -7,10 +7,8 @@
 main: {
   b1:
     lda RASTER
-    cmp #$20
-    beq !+
+    cmp #$20+1
     bcs b3
-  !:
     cmp #$40
     bcc b3
   b2:

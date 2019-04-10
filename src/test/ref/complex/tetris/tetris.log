@@ -9186,6 +9186,8 @@ Resolved ranged next value play_remove_lines::y#1 ← ++ play_remove_lines::y#8 
 Resolved ranged comparison value if(play_remove_lines::y#1!=rangelast(0,play_remove_lines::$4)) goto play_remove_lines::@1 to (const byte/signed word/word/dword/signed dword) play_remove_lines::$4+(byte/signed byte/word/signed word/dword/signed dword) 1
 Resolved ranged next value play_increase_level::b#1 ← ++ play_increase_level::b#2 to ++
 Resolved ranged comparison value if(play_increase_level::b#1!=rangelast(0,4)) goto play_increase_level::@7 to (byte/signed byte/word/signed word/dword/signed dword) 5
+Rewriting conditional comparison if((byte) render_moving::ypos2#2>(byte/signed byte/word/signed word/dword/signed dword) 2) goto render_moving::@2
+Rewriting conditional comparison if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) $1d) goto play_increase_level::@1
 Culled Empty Block (label) @5
 Culled Empty Block (label) @9
 Culled Empty Block (label) keyboard_event_scan::@9
@@ -10512,7 +10514,7 @@ render_moving::@1: scope:[render_moving]  from render_moving render_moving::@3
   [131] (byte) render_moving::l#4 ← phi( render_moving/(byte/signed byte/word/signed word/dword/signed dword) 0 render_moving::@3/(byte) render_moving::l#1 )
   [131] (byte) render_moving::i#3 ← phi( render_moving/(byte/signed byte/word/signed word/dword/signed dword) 0 render_moving::@3/(byte) render_moving::i#8 )
   [131] (byte) render_moving::ypos2#2 ← phi( render_moving/(byte) render_moving::ypos2#0 render_moving::@3/(byte) render_moving::ypos2#1 )
-  [132] if((byte) render_moving::ypos2#2>(byte/signed byte/word/signed word/dword/signed dword) 2) goto render_moving::@2
+  [132] if((byte) render_moving::ypos2#2>=(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto render_moving::@2
   to:render_moving::@7
 render_moving::@7: scope:[render_moving]  from render_moving::@1
   [133] (byte) render_moving::i#1 ← (byte) render_moving::i#3 + (byte/signed byte/word/signed word/dword/signed dword) 4
@@ -10907,7 +10909,7 @@ play_update_score::@return: scope:[play_update_score]  from play_update_score pl
   to:@return
 play_increase_level: scope:[play_increase_level]  from play_update_score::@2
   [321] (byte) level#21 ← ++ (byte) level#10
-  [322] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) $1d) goto play_increase_level::@1
+  [322] if((byte) level#21>=(byte/signed byte/word/signed word/dword/signed dword) $1d+(byte/signed byte/word/signed word/dword/signed dword) 1) goto play_increase_level::@1
   to:play_increase_level::@3
 play_increase_level::@3: scope:[play_increase_level]  from play_increase_level
   [323] (byte) current_movedown_slow#10 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0 + (byte) level#21)
@@ -13931,10 +13933,10 @@ render_moving: {
     jmp b1
   //SEG330 render_moving::@1
   b1:
-  //SEG331 [132] if((byte) render_moving::ypos2#2>(byte/signed byte/word/signed word/dword/signed dword) 2) goto render_moving::@2 -- vbuz1_gt_vbuc1_then_la1 
-    lda #2
-    cmp ypos2
-    bcc b2
+  //SEG331 [132] if((byte) render_moving::ypos2#2>=(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto render_moving::@2 -- vbuz1_ge_vbuc1_then_la1 
+    lda ypos2
+    cmp #2+1
+    bcs b2
     jmp b7
   //SEG332 render_moving::@7
   b7:
@@ -15142,11 +15144,11 @@ play_increase_level: {
     .label b = $4c
   //SEG760 [321] (byte) level#21 ← ++ (byte) level#10 -- vbuz1=_inc_vbuz1 
     inc level
-  //SEG761 [322] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) $1d) goto play_increase_level::@1 -- vbuz1_gt_vbuc1_then_la1 
+  //SEG761 [322] if((byte) level#21>=(byte/signed byte/word/signed word/dword/signed dword) $1d+(byte/signed byte/word/signed word/dword/signed dword) 1) goto play_increase_level::@1 -- vbuz1_ge_vbuc1_then_la1 
     // Update speed of moving tetrominos down
-    lda #$1d
-    cmp level
-    bcc b1_from_play_increase_level
+    lda level
+    cmp #$1d+1
+    bcs b1_from_play_increase_level
     jmp b3
   //SEG762 play_increase_level::@3
   b3:
@@ -16996,7 +16998,6 @@ Statement [309] (dword) play_update_score::add_bcd#0 ← *((const dword[5]) scor
 Statement [311] (word) lines_bcd#30 ← (word) lines_bcd#19 + (byte) play_update_score::removed#0 [ current_movedown_slow#14 score_bcd#18 level#10 level_bcd#11 play_update_score::lines_before#0 play_update_score::add_bcd#0 lines_bcd#30 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 current_movedown_slow#14 score_bcd#18 level#10 level_bcd#11 play_update_score::lines_before#0 play_update_score::add_bcd#0 lines_bcd#30 ] ) always clobbers reg byte a 
 Statement [312] (dword) score_bcd#30 ← (dword) score_bcd#18 + (dword) play_update_score::add_bcd#0 [ current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 ] ) always clobbers reg byte a 
 Statement [314] (byte~) play_update_score::$5 ← < (word) lines_bcd#30 [ current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 play_update_score::$5 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 play_update_score::$5 ] ) always clobbers reg byte a 
-Statement [322] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) $1d) goto play_increase_level::@1 [ level_bcd#11 level#21 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level_bcd#11 level#21 ] ) always clobbers reg byte a 
 Statement [326] (byte~) play_increase_level::$1 ← (byte) level_bcd#21 & (byte/signed byte/word/signed word/dword/signed dword) $f [ level#21 current_movedown_slow#69 level_bcd#21 play_increase_level::$1 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level#21 current_movedown_slow#69 level_bcd#21 play_increase_level::$1 ] ) always clobbers reg byte a 
 Statement [328] (byte) level_bcd#8 ← (byte) level_bcd#21 + (byte/signed byte/word/signed word/dword/signed dword) 6 [ level#21 current_movedown_slow#69 level_bcd#8 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level#21 current_movedown_slow#69 level_bcd#8 ] ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ render_screen_show#16 render_screen_show#13 ]
@@ -17171,7 +17172,6 @@ Statement [120] *((byte*) render_next::screen_next_area#5) ← (byte/signed byte
 Statement [124] (byte*) render_next::screen_next_area#4 ← (byte*) render_next::screen_next_area#3 + (byte/signed byte/word/signed word/dword/signed dword) $24 [ render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#4 ] ( main:12::render_next:36 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#4 ] main:12::render_next:65 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#4 ] ) always clobbers reg byte a 
 Statement [128] *((byte*) render_next::screen_next_area#5) ← (byte) render_next::next_piece_char#0 [ render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#5 render_next::c#2 ] ( main:12::render_next:36 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#5 render_next::c#2 ] main:12::render_next:65 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#5 render_next::c#2 ] ) always clobbers reg byte a reg byte y 
 Statement [130] (byte) render_moving::ypos2#0 ← (byte) current_ypos#13 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#0 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#0 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#0 ] ) always clobbers reg byte a 
-Statement [132] if((byte) render_moving::ypos2#2>(byte/signed byte/word/signed word/dword/signed dword) 2) goto render_moving::@2 [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 ] ) always clobbers reg byte a 
 Statement [133] (byte) render_moving::i#1 ← (byte) render_moving::i#3 + (byte/signed byte/word/signed word/dword/signed dword) 4 [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::l#4 render_moving::i#1 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::l#4 render_moving::i#1 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::l#4 render_moving::i#1 ] ) always clobbers reg byte a 
 Statement [139] (byte~) render_moving::$2 ← (byte) render_screen_render#33 + (byte) render_moving::ypos2#2 [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::$2 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::$2 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::$2 ] ) always clobbers reg byte a 
 Statement [140] (byte*) render_moving::screen_line#0 ← *((const byte*[PLAYFIELD_LINES#0]) screen_lines_1#0 + (byte~) render_moving::$2) [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::screen_line#0 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::screen_line#0 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::screen_line#0 ] ) always clobbers reg byte a 
@@ -17209,7 +17209,7 @@ Statement [309] (dword) play_update_score::add_bcd#0 ← *((const dword[5]) scor
 Statement [311] (word) lines_bcd#30 ← (word) lines_bcd#19 + (byte) play_update_score::removed#0 [ current_movedown_slow#14 score_bcd#18 level#10 level_bcd#11 play_update_score::lines_before#0 play_update_score::add_bcd#0 lines_bcd#30 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 current_movedown_slow#14 score_bcd#18 level#10 level_bcd#11 play_update_score::lines_before#0 play_update_score::add_bcd#0 lines_bcd#30 ] ) always clobbers reg byte a 
 Statement [312] (dword) score_bcd#30 ← (dword) score_bcd#18 + (dword) play_update_score::add_bcd#0 [ current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 ] ) always clobbers reg byte a 
 Statement [314] (byte~) play_update_score::$5 ← < (word) lines_bcd#30 [ current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 play_update_score::$5 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 play_update_score::$5 ] ) always clobbers reg byte a 
-Statement [322] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) $1d) goto play_increase_level::@1 [ level_bcd#11 level#21 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level_bcd#11 level#21 ] ) always clobbers reg byte a 
+Statement [322] if((byte) level#21>=(byte/signed byte/word/signed word/dword/signed dword) $1d+(byte/signed byte/word/signed word/dword/signed dword) 1) goto play_increase_level::@1 [ level_bcd#11 level#21 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level_bcd#11 level#21 ] ) always clobbers reg byte a 
 Statement [323] (byte) current_movedown_slow#10 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0 + (byte) level#21) [ level_bcd#11 level#21 current_movedown_slow#10 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level_bcd#11 level#21 current_movedown_slow#10 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:126 [ play_movement::key_event#0 ]
 Statement [326] (byte~) play_increase_level::$1 ← (byte) level_bcd#21 & (byte/signed byte/word/signed word/dword/signed dword) $f [ level#21 current_movedown_slow#69 level_bcd#21 play_increase_level::$1 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level#21 current_movedown_slow#69 level_bcd#21 play_increase_level::$1 ] ) always clobbers reg byte a 
@@ -17353,7 +17353,6 @@ Statement [120] *((byte*) render_next::screen_next_area#5) ← (byte/signed byte
 Statement [124] (byte*) render_next::screen_next_area#4 ← (byte*) render_next::screen_next_area#3 + (byte/signed byte/word/signed word/dword/signed dword) $24 [ render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#4 ] ( main:12::render_next:36 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#4 ] main:12::render_next:65 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#4 ] ) always clobbers reg byte a 
 Statement [128] *((byte*) render_next::screen_next_area#5) ← (byte) render_next::next_piece_char#0 [ render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#5 render_next::c#2 ] ( main:12::render_next:36 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#5 render_next::c#2 ] main:12::render_next:65 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_next::next_piece_char#0 render_next::l#7 render_next::next_piece_gfx#1 render_next::screen_next_area#5 render_next::c#2 ] ) always clobbers reg byte a reg byte y 
 Statement [130] (byte) render_moving::ypos2#0 ← (byte) current_ypos#13 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#0 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#0 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#0 ] ) always clobbers reg byte a 
-Statement [132] if((byte) render_moving::ypos2#2>(byte/signed byte/word/signed word/dword/signed dword) 2) goto render_moving::@2 [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 ] ) always clobbers reg byte a 
 Statement [133] (byte) render_moving::i#1 ← (byte) render_moving::i#3 + (byte/signed byte/word/signed word/dword/signed dword) 4 [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::l#4 render_moving::i#1 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::l#4 render_moving::i#1 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::l#4 render_moving::i#1 ] ) always clobbers reg byte a 
 Statement [139] (byte~) render_moving::$2 ← (byte) render_screen_render#33 + (byte) render_moving::ypos2#2 [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::$2 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::$2 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::$2 ] ) always clobbers reg byte a 
 Statement [140] (byte*) render_moving::screen_line#0 ← *((const byte*[PLAYFIELD_LINES#0]) screen_lines_1#0 + (byte~) render_moving::$2) [ render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::screen_line#0 ] ( main:12::render_moving:34 [ current_ypos#6 current_xpos#103 current_piece_gfx#74 current_piece_char#5 play_spawn_current::piece_idx#2 play_spawn_current::$0 current_movedown_slow#1 game_over#52 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::screen_line#0 ] main:12::render_moving:62 [ render_screen_show#16 render_screen_render#18 current_movedown_slow#21 current_piece#15 current_piece_char#16 current_orientation#17 current_piece_gfx#18 current_xpos#19 current_ypos#19 game_over#15 next_piece_idx#16 keyboard_events_size#16 current_movedown_counter#14 lines_bcd#15 score_bcd#14 level#17 level_bcd#17 render_screen_render#33 current_xpos#59 current_piece_gfx#64 current_piece_char#68 render_moving::ypos2#2 render_moving::i#3 render_moving::l#4 render_moving::screen_line#0 ] ) always clobbers reg byte a 
@@ -17396,7 +17395,7 @@ Statement [309] (dword) play_update_score::add_bcd#0 ← *((const dword[5]) scor
 Statement [311] (word) lines_bcd#30 ← (word) lines_bcd#19 + (byte) play_update_score::removed#0 [ current_movedown_slow#14 score_bcd#18 level#10 level_bcd#11 play_update_score::lines_before#0 play_update_score::add_bcd#0 lines_bcd#30 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 current_movedown_slow#14 score_bcd#18 level#10 level_bcd#11 play_update_score::lines_before#0 play_update_score::add_bcd#0 lines_bcd#30 ] ) always clobbers reg byte a 
 Statement [312] (dword) score_bcd#30 ← (dword) score_bcd#18 + (dword) play_update_score::add_bcd#0 [ current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 ] ) always clobbers reg byte a 
 Statement [314] (byte~) play_update_score::$5 ← < (word) lines_bcd#30 [ current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 play_update_score::$5 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 current_movedown_slow#14 level#10 level_bcd#11 play_update_score::lines_before#0 lines_bcd#30 score_bcd#30 play_update_score::$5 ] ) always clobbers reg byte a 
-Statement [322] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) $1d) goto play_increase_level::@1 [ level_bcd#11 level#21 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level_bcd#11 level#21 ] ) always clobbers reg byte a 
+Statement [322] if((byte) level#21>=(byte/signed byte/word/signed word/dword/signed dword) $1d+(byte/signed byte/word/signed word/dword/signed dword) 1) goto play_increase_level::@1 [ level_bcd#11 level#21 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level_bcd#11 level#21 ] ) always clobbers reg byte a 
 Statement [323] (byte) current_movedown_slow#10 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0 + (byte) level#21) [ level_bcd#11 level#21 current_movedown_slow#10 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level_bcd#11 level#21 current_movedown_slow#10 ] ) always clobbers reg byte a reg byte y 
 Statement [326] (byte~) play_increase_level::$1 ← (byte) level_bcd#21 & (byte/signed byte/word/signed word/dword/signed dword) $f [ level#21 current_movedown_slow#69 level_bcd#21 play_increase_level::$1 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level#21 current_movedown_slow#69 level_bcd#21 play_increase_level::$1 ] ) always clobbers reg byte a 
 Statement [328] (byte) level_bcd#8 ← (byte) level_bcd#21 + (byte/signed byte/word/signed word/dword/signed dword) 6 [ level#21 current_movedown_slow#69 level_bcd#8 ] ( main:12::play_movement:51::play_move_down:165::play_update_score:276::play_increase_level:318 [ render_screen_show#16 render_screen_render#18 keyboard_events_size#16 play_movement::key_event#0 game_over#10 next_piece_idx#10 lines_bcd#30 score_bcd#30 level#21 current_movedown_slow#69 level_bcd#8 ] ) always clobbers reg byte a reg byte x 
@@ -19025,10 +19024,10 @@ render_moving: {
     jmp b1
   //SEG330 render_moving::@1
   b1:
-  //SEG331 [132] if((byte) render_moving::ypos2#2>(byte/signed byte/word/signed word/dword/signed dword) 2) goto render_moving::@2 -- vbuz1_gt_vbuc1_then_la1 
-    lda #2
-    cmp ypos2
-    bcc b2
+  //SEG331 [132] if((byte) render_moving::ypos2#2>=(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto render_moving::@2 -- vbuz1_ge_vbuc1_then_la1 
+    lda ypos2
+    cmp #2+1
+    bcs b2
     jmp b7
   //SEG332 render_moving::@7
   b7:
@@ -20088,11 +20087,11 @@ play_update_score: {
 play_increase_level: {
   //SEG760 [321] (byte) level#21 ← ++ (byte) level#10 -- vbuz1=_inc_vbuz1 
     inc level
-  //SEG761 [322] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) $1d) goto play_increase_level::@1 -- vbuz1_gt_vbuc1_then_la1 
+  //SEG761 [322] if((byte) level#21>=(byte/signed byte/word/signed word/dword/signed dword) $1d+(byte/signed byte/word/signed word/dword/signed dword) 1) goto play_increase_level::@1 -- vbuz1_ge_vbuc1_then_la1 
     // Update speed of moving tetrominos down
-    lda #$1d
-    cmp level
-    bcc b1_from_play_increase_level
+    lda level
+    cmp #$1d+1
+    bcs b1_from_play_increase_level
     jmp b3
   //SEG762 play_increase_level::@3
   b3:
@@ -22263,6 +22262,7 @@ Removing instruction jmp b1
 Removing instruction jmp b1
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction ldy level with TAY
 Removing instruction breturn:
 Removing instruction breturn:
 Removing instruction breturn:
@@ -23607,7 +23607,7 @@ reg byte a [ sprites_irq::ptr#2 ]
 
 
 FINAL ASSEMBLER
-Score: 3348891
+Score: 3348890
 
 //SEG0 File Comments
 // Tetris Game for the Commodore 64
@@ -24427,10 +24427,10 @@ render_moving: {
   //SEG329 [131] phi (byte) render_moving::ypos2#2 = (byte) render_moving::ypos2#1 [phi:render_moving::@3->render_moving::@1#2] -- register_copy 
   //SEG330 render_moving::@1
   b1:
-  //SEG331 [132] if((byte) render_moving::ypos2#2>(byte/signed byte/word/signed word/dword/signed dword) 2) goto render_moving::@2 -- vbuz1_gt_vbuc1_then_la1 
-    lda #2
-    cmp ypos2
-    bcc b2
+  //SEG331 [132] if((byte) render_moving::ypos2#2>=(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto render_moving::@2 -- vbuz1_ge_vbuc1_then_la1 
+    lda ypos2
+    cmp #2+1
+    bcs b2
   //SEG332 render_moving::@7
   //SEG333 [133] (byte) render_moving::i#1 ← (byte) render_moving::i#3 + (byte/signed byte/word/signed word/dword/signed dword) 4 -- vbuz1=vbuz1_plus_vbuc1 
     lax i
@@ -25330,14 +25330,14 @@ play_update_score: {
 play_increase_level: {
   //SEG760 [321] (byte) level#21 ← ++ (byte) level#10 -- vbuz1=_inc_vbuz1 
     inc level
-  //SEG761 [322] if((byte) level#21>(byte/signed byte/word/signed word/dword/signed dword) $1d) goto play_increase_level::@1 -- vbuz1_gt_vbuc1_then_la1 
+  //SEG761 [322] if((byte) level#21>=(byte/signed byte/word/signed word/dword/signed dword) $1d+(byte/signed byte/word/signed word/dword/signed dword) 1) goto play_increase_level::@1 -- vbuz1_ge_vbuc1_then_la1 
     // Update speed of moving tetrominos down
-    lda #$1d
-    cmp level
-    bcc b3
+    lda level
+    cmp #$1d+1
+    bcs b3
   //SEG762 play_increase_level::@3
   //SEG763 [323] (byte) current_movedown_slow#10 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS#0 + (byte) level#21) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy level
+    tay
     lda MOVEDOWN_SLOW_SPEEDS,y
     sta current_movedown_slow
   //SEG764 [324] phi from play_increase_level::@3 to play_increase_level::@1 [phi:play_increase_level::@3->play_increase_level::@1]

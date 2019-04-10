@@ -16,9 +16,9 @@ main: {
     lda #>irq
     sta KERNEL_IRQ+1
   b2:
-    lda #$a
-    cmp col
-    bcs b2
+    lda col
+    cmp #$a+1
+    bcc b2
     lda #0
     sta col
     jmp b2

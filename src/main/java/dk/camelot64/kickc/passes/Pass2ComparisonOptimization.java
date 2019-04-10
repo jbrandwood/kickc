@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
@@ -41,10 +42,17 @@ public class Pass2ComparisonOptimization extends Pass2SsaOptimization {
                if(conditionalJump.getrValue2() instanceof ConstantValue) {
                   SymbolType valueType = SymbolTypeInference.inferType(getScope(), conditionalJump.getrValue1());
                   ConstantValue constantValue = (ConstantValue) conditionalJump.getrValue2();
-                  ConstantLiteral constantLiteral = constantValue.calculateLiteral(getScope());
+                  ConstantLiteral constantLiteral = null;
+                  try {
+                     constantLiteral = constantValue.calculateLiteral(getScope());
+                  } catch(ConstantNotLiteral e) {
+                     System.out.println(e);
+                     // Ignore
+                  }
                   if(Operators.GT.equals(operator) && valueType instanceof SymbolTypeInteger && constantLiteral instanceof ConstantInteger) {
                      // Found > C - rewrite to >= C+1 if possible
-                     if(((Long) constantLiteral.getValue()) < ((SymbolTypeInteger) valueType).getMaxValue()) {
+                     Long longValue = (Long) constantLiteral.getValue();
+                     if(longValue < ((SymbolTypeInteger) valueType).getMaxValue() && longValue != 0L) {
                         // Rewrite is possible - do it
                         getLog().append("Rewriting conditional comparison " + statement.toString(getProgram(), false));
                         conditionalJump.setOperator(Operators.GE);
@@ -53,7 +61,8 @@ public class Pass2ComparisonOptimization extends Pass2SsaOptimization {
                   }
                   if(Operators.LE.equals(operator) && valueType instanceof SymbolTypeInteger && constantLiteral instanceof ConstantInteger) {
                      // Found <= C - rewrite to < C+1 if possible
-                     if(((Long) constantLiteral.getValue()) < ((SymbolTypeInteger) valueType).getMaxValue()) {
+                     Long longValue = (Long) constantLiteral.getValue();
+                     if(longValue < ((SymbolTypeInteger) valueType).getMaxValue() && longValue != 0L) {
                         // Rewrite is possible - do it
                         getLog().append("Rewriting conditional comparison " + statement.toString(getProgram(), false));
                         conditionalJump.setOperator(Operators.LT);

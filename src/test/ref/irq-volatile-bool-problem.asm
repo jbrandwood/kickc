@@ -51,9 +51,8 @@ irq: {
     lda #IRQ_RASTER
     sta IRQ_STATUS
     lda RASTER
-    cmp #$32
+    cmp #$32+1
     bcc b1
-    beq b1
     lda #0
     sta framedone
   b1:

@@ -148,9 +148,8 @@ fire: {
     adc (buffer),y
     lsr
     lsr
-    cmp #2
+    cmp #2+1
     bcc b4
-    beq b4
     sec
     sbc #3
   b4:
@@ -236,9 +235,8 @@ makecharset: {
     clc
     adc c
     tax
-    cpx #$3f
+    cpx #$3f+1
     bcc b6
-    beq b6
     txa
     axs #$40
     lda #1

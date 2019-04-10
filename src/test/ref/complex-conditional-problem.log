@@ -77,6 +77,7 @@ Successful SSA optimization Pass2CullEmptyBlocks
 Simple Condition (bool~) main::$0 [3] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@7
 Simple Condition (bool~) main::$1 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@7
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Rewriting conditional comparison if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@7
 Inlining constant with var siblings (const byte) main::key#1
 Constant inlined main::key#1 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -118,7 +119,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::key#0 ← *((const byte*) RASTER#0)
-  [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@3
+  [6] if((byte) main::key#0>=(byte/signed byte/word/signed word/dword/signed dword) $20+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@1
   [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@3
@@ -181,10 +182,10 @@ main: {
   //SEG12 [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuz1=_deref_pbuc1 
     lda RASTER
     sta key
-  //SEG13 [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@3 -- vbuz1_gt_vbuc1_then_la1 
-    lda #$20
-    cmp key
-    bcc b3_from_b1
+  //SEG13 [6] if((byte) main::key#0>=(byte/signed byte/word/signed word/dword/signed dword) $20+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3 -- vbuz1_ge_vbuc1_then_la1 
+    lda key
+    cmp #$20+1
+    bcs b3_from_b1
     jmp b4
   //SEG14 main::@4
   b4:
@@ -223,8 +224,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 36.67: zp ZP_BYTE:2 [ main::key#2 main::key#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 407 combination reg byte a [ main::key#2 main::key#0 ] 
-Uplifting [] best 407 combination 
+Uplifting [main] best 382 combination reg byte a [ main::key#2 main::key#0 ] 
+Uplifting [] best 382 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -259,11 +260,9 @@ main: {
   b1:
   //SEG12 [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
     lda RASTER
-  //SEG13 [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@3 -- vbuaa_gt_vbuc1_then_la1 
-    cmp #$20
-    beq !+
+  //SEG13 [6] if((byte) main::key#0>=(byte/signed byte/word/signed word/dword/signed dword) $20+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3 -- vbuaa_ge_vbuc1_then_la1 
+    cmp #$20+1
     bcs b3_from_b1
-  !:
     jmp b4
   //SEG14 main::@4
   b4:
@@ -341,7 +340,7 @@ reg byte a [ main::key#2 main::key#0 ]
 
 
 FINAL ASSEMBLER
-Score: 275
+Score: 250
 
 //SEG0 File Comments
 // Test to provoke Exception when using complex || condition
@@ -365,11 +364,9 @@ main: {
   b1:
   //SEG12 [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
     lda RASTER
-  //SEG13 [6] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@3 -- vbuaa_gt_vbuc1_then_la1 
-    cmp #$20
-    beq !+
+  //SEG13 [6] if((byte) main::key#0>=(byte/signed byte/word/signed word/dword/signed dword) $20+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3 -- vbuaa_ge_vbuc1_then_la1 
+    cmp #$20+1
     bcs b3
-  !:
   //SEG14 main::@4
   //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@3 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$40

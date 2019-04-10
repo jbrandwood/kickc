@@ -24,9 +24,8 @@ line: {
   b1:
     jsr plot
     iny
-    cpy #x1
+    cpy #x1+1
     bcc b1
-    beq b1
     rts
 }
 // plot(byte register(Y) x)

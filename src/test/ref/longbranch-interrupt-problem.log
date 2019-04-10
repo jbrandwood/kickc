@@ -132,6 +132,7 @@ Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Rewriting conditional comparison if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@4
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) irq::@1
 Culled Empty Block (label) @3
@@ -170,7 +171,7 @@ main::@1: scope:[main]  from main main::@2 main::@3
   [5] (byte) col#12 ← phi( main/(byte) col#0 main::@3/(byte) col#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1
+  [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -254,10 +255,10 @@ main: {
     jmp b2
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 -- vbuz1_le_vbuc1_then_la1 
-    lda #$a
-    cmp col
-    bcs b1_from_b2
+  //SEG17 [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    lda col
+    cmp #$a+1
+    bcc b1_from_b2
     jmp b3
   //SEG18 main::@3
   b3:
@@ -293,7 +294,7 @@ irq: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ col#0 ] ( ) always clobbers reg byte a 
 Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) always clobbers reg byte a 
-Statement [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ col#1 ] ( main:2 [ col#1 ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 Statement [9] *((const byte*) BGCOL#0) ← (byte) col#0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
@@ -359,10 +360,10 @@ main: {
     jmp b2
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 -- vbuz1_le_vbuc1_then_la1 
-    lda #$a
-    cmp col
-    bcs b1_from_b2
+  //SEG17 [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    lda col
+    cmp #$a+1
+    bcc b1_from_b2
     jmp b3
   //SEG18 main::@3
   b3:
@@ -494,10 +495,10 @@ main: {
   //SEG15 main::@1
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@1 -- vbuz1_le_vbuc1_then_la1 
-    lda #$a
-    cmp col
-    bcs b2
+  //SEG17 [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    lda col
+    cmp #$a+1
+    bcc b2
   //SEG18 main::@3
   //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0

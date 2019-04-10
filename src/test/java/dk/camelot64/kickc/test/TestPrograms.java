@@ -189,7 +189,7 @@ public class TestPrograms {
 
    @Test
    public void testComparisonRewriting() throws IOException, URISyntaxException {
-      compileAndCompare("comparison-rewriting", getLogSysout());
+      compileAndCompare("comparison-rewriting");
    }
 
    @Test

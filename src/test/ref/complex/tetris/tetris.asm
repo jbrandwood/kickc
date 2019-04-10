@@ -485,9 +485,9 @@ render_moving: {
     sta l
     sta i
   b1:
-    lda #2
-    cmp ypos2
-    bcc b2
+    lda ypos2
+    cmp #2+1
+    bcs b2
     lax i
     axs #-[4]
     stx i
@@ -959,10 +959,10 @@ play_update_score: {
 play_increase_level: {
     inc level
     // Update speed of moving tetrominos down
-    lda #$1d
-    cmp level
-    bcc b3
-    ldy level
+    lda level
+    cmp #$1d+1
+    bcs b3
+    tay
     lda MOVEDOWN_SLOW_SPEEDS,y
     sta current_movedown_slow
     jmp b1

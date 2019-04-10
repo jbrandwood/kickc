@@ -5,9 +5,8 @@ main: {
     lda #0
     ldx #$a
   b1:
-    cpx #5
+    cpx #5+1
     bcc b2
-    beq b2
     stx $ff
     clc
     adc $ff

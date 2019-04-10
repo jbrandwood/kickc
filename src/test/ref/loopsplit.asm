@@ -2,22 +2,19 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    ldx #0
-    lda #$64
+    ldy #0
+    ldx #$64
   b1:
-    sec
-    sbc #1
-    cmp #0
+    dex
+    cpx #0
     bne b2
     rts
   b2:
-    cmp #$32
-    beq !+
+    cpx #$32+1
     bcs b3
-  !:
-    dex
+    dey
     jmp b1
   b3:
-    inx
+    iny
     jmp b1
 }

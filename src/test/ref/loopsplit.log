@@ -79,6 +79,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = $64
 Constant (const byte) main::s#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
+Rewriting conditional comparison if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@4
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::s#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) $64
@@ -127,7 +128,7 @@ main::@return: scope:[main]  from main::@1
   [8] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@3
+  [9] if((byte) main::i#1>=(byte/signed byte/word/signed word/dword/signed dword) $32+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@2
   [10] (byte) main::s#2 ← -- (byte) main::s#3
@@ -206,10 +207,10 @@ main: {
     rts
   //SEG19 main::@2
   b2:
-  //SEG20 [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@3 -- vbuz1_gt_vbuc1_then_la1 
-    lda #$32
-    cmp i
-    bcc b3
+  //SEG20 [9] if((byte) main::i#1>=(byte/signed byte/word/signed word/dword/signed dword) $32+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3 -- vbuz1_ge_vbuc1_then_la1 
+    lda i
+    cmp #$32+1
+    bcs b3
     jmp b4
   //SEG21 main::@4
   b4:
@@ -236,8 +237,8 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 55: zp ZP_BYTE:3 [ main::s#3 main::s#1 main::s#2 ] 44: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 403 combination reg byte x [ main::s#3 main::s#1 main::s#2 ] reg byte a [ main::i#2 main::i#1 ] 
-Uplifting [] best 403 combination 
+Uplifting [main] best 358 combination reg byte y [ main::s#3 main::s#1 main::s#2 ] reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 358 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -266,18 +267,17 @@ bend:
 main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::s#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG13 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) $64 [phi:main->main::@1#1] -- vbuaa=vbuc1 
-    lda #$64
+  //SEG12 [5] phi (byte) main::s#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+  //SEG13 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) $64 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    ldx #$64
     jmp b1
   //SEG14 main::@1
   b1:
-  //SEG15 [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuaa=_dec_vbuaa 
-    sec
-    sbc #1
-  //SEG16 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 -- vbuaa_gt_0_then_la1 
-    cmp #0
+  //SEG15 [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuxx=_dec_vbuxx 
+    dex
+  //SEG16 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 -- vbuxx_gt_0_then_la1 
+    cpx #0
     bne b2
     jmp breturn
   //SEG17 main::@return
@@ -286,16 +286,14 @@ main: {
     rts
   //SEG19 main::@2
   b2:
-  //SEG20 [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@3 -- vbuaa_gt_vbuc1_then_la1 
-    cmp #$32
-    beq !+
+  //SEG20 [9] if((byte) main::i#1>=(byte/signed byte/word/signed word/dword/signed dword) $32+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3 -- vbuxx_ge_vbuc1_then_la1 
+    cpx #$32+1
     bcs b3
-  !:
     jmp b4
   //SEG21 main::@4
   b4:
-  //SEG22 [10] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuxx=_dec_vbuxx 
-    dex
+  //SEG22 [10] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuyy=_dec_vbuyy 
+    dey
   //SEG23 [5] phi from main::@3 main::@4 to main::@1 [phi:main::@3/main::@4->main::@1]
   b1_from_b3:
   b1_from_b4:
@@ -304,8 +302,8 @@ main: {
     jmp b1
   //SEG26 main::@3
   b3:
-  //SEG27 [11] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuxx=_inc_vbuxx 
-    inx
+  //SEG27 [11] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuyy=_inc_vbuyy 
+    iny
     jmp b1_from_b3
 }
 
@@ -350,19 +348,19 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte a 11.0
-(byte) main::i#2 reg byte a 33.0
+(byte) main::i#1 reg byte x 11.0
+(byte) main::i#2 reg byte x 33.0
 (byte) main::s
-(byte) main::s#1 reg byte x 22.0
-(byte) main::s#2 reg byte x 22.0
-(byte) main::s#3 reg byte x 11.0
+(byte) main::s#1 reg byte y 22.0
+(byte) main::s#2 reg byte y 22.0
+(byte) main::s#3 reg byte y 11.0
 
-reg byte a [ main::i#2 main::i#1 ]
-reg byte x [ main::s#3 main::s#1 main::s#2 ]
+reg byte x [ main::i#2 main::i#1 ]
+reg byte y [ main::s#3 main::s#1 main::s#2 ]
 
 
 FINAL ASSEMBLER
-Score: 301
+Score: 256
 
 //SEG0 File Comments
 //SEG1 Basic Upstart
@@ -380,39 +378,36 @@ Score: 301
 //SEG10 main
 main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::s#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-  //SEG13 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) $64 [phi:main->main::@1#1] -- vbuaa=vbuc1 
-    lda #$64
+  //SEG12 [5] phi (byte) main::s#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+  //SEG13 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) $64 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    ldx #$64
   //SEG14 main::@1
   b1:
-  //SEG15 [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuaa=_dec_vbuaa 
-    sec
-    sbc #1
-  //SEG16 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 -- vbuaa_gt_0_then_la1 
-    cmp #0
+  //SEG15 [6] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuxx=_dec_vbuxx 
+    dex
+  //SEG16 [7] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 -- vbuxx_gt_0_then_la1 
+    cpx #0
     bne b2
   //SEG17 main::@return
   //SEG18 [8] return 
     rts
   //SEG19 main::@2
   b2:
-  //SEG20 [9] if((byte) main::i#1>(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@3 -- vbuaa_gt_vbuc1_then_la1 
-    cmp #$32
-    beq !+
+  //SEG20 [9] if((byte) main::i#1>=(byte/signed byte/word/signed word/dword/signed dword) $32+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3 -- vbuxx_ge_vbuc1_then_la1 
+    cpx #$32+1
     bcs b3
-  !:
   //SEG21 main::@4
-  //SEG22 [10] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuxx=_dec_vbuxx 
-    dex
+  //SEG22 [10] (byte) main::s#2 ← -- (byte) main::s#3 -- vbuyy=_dec_vbuyy 
+    dey
   //SEG23 [5] phi from main::@3 main::@4 to main::@1 [phi:main::@3/main::@4->main::@1]
   //SEG24 [5] phi (byte) main::s#3 = (byte) main::s#1 [phi:main::@3/main::@4->main::@1#0] -- register_copy 
   //SEG25 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3/main::@4->main::@1#1] -- register_copy 
     jmp b1
   //SEG26 main::@3
   b3:
-  //SEG27 [11] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuxx=_inc_vbuxx 
-    inx
+  //SEG27 [11] (byte) main::s#1 ← ++ (byte) main::s#3 -- vbuyy=_inc_vbuyy 
+    iny
     jmp b1
 }
 

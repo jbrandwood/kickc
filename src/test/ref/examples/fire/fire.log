@@ -1165,6 +1165,8 @@ Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Resolved ranged next value fillscreen::i#1 ← ++ fillscreen::i#2 to ++
 Resolved ranged comparison value if(fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1 to (word/signed word/dword/signed dword) $3e8
+Rewriting conditional comparison if((byte) fire::c#0<=(byte/signed byte/word/signed word/dword/signed dword) 2) goto fire::@4
+Rewriting conditional comparison if((byte) makecharset::bc#1<=(byte/signed byte/word/signed word/dword/signed dword) $3f) goto makecharset::@8
 Culled Empty Block (label) @4
 Culled Empty Block (label) @6
 Culled Empty Block (label) main::@1
@@ -1447,7 +1449,7 @@ fire::@2: scope:[fire]  from fire::@1
   [44] (byte~) fire::$10 ← (byte~) fire::$9 + *((byte*) fire::buffer#4 + (byte/signed byte/word/signed word/dword/signed dword) $28)
   [45] (byte~) fire::$11 ← (byte~) fire::$10 + *((byte*) fire::buffer#4 + (byte/signed byte/word/signed word/dword/signed dword) $29)
   [46] (byte) fire::c#0 ← (byte~) fire::$11 >> (byte/signed byte/word/signed word/dword/signed dword) 2
-  [47] if((byte) fire::c#0<=(byte/signed byte/word/signed word/dword/signed dword) 2) goto fire::@4
+  [47] if((byte) fire::c#0<(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto fire::@4
   to:fire::@5
 fire::@5: scope:[fire]  from fire::@2
   [48] (byte) fire::c#1 ← (byte) fire::c#0 - (byte/signed byte/word/signed word/dword/signed dword) 3
@@ -1492,7 +1494,7 @@ makecharset::@5: scope:[makecharset]  from makecharset::@4 makecharset::@6
   [67] (byte) makecharset::ii#2 ← phi( makecharset::@4/(byte/signed byte/word/signed word/dword/signed dword) 0 makecharset::@6/(byte) makecharset::ii#1 )
   [67] (byte) makecharset::bc#3 ← phi( makecharset::@4/(byte) makecharset::bc#5 makecharset::@6/(byte) makecharset::bc#6 )
   [68] (byte) makecharset::bc#1 ← (byte) makecharset::bc#3 + (byte) makecharset::c#7
-  [69] if((byte) makecharset::bc#1<=(byte/signed byte/word/signed word/dword/signed dword) $3f) goto makecharset::@6
+  [69] if((byte) makecharset::bc#1<(byte/signed byte/word/signed word/dword/signed dword) $3f+(byte/signed byte/word/signed word/dword/signed dword) 1) goto makecharset::@6
   to:makecharset::@7
 makecharset::@7: scope:[makecharset]  from makecharset::@5
   [70] (byte) makecharset::bc#2 ← (byte) makecharset::bc#1 - (byte/signed byte/word/signed word/dword/signed dword) $40
@@ -2172,10 +2174,10 @@ fire: {
     lsr
     lsr
     sta c
-  //SEG94 [47] if((byte) fire::c#0<=(byte/signed byte/word/signed word/dword/signed dword) 2) goto fire::@4 -- vbuz1_le_vbuc1_then_la1 
-    lda #2
-    cmp c
-    bcs b4_from_b2
+  //SEG94 [47] if((byte) fire::c#0<(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto fire::@4 -- vbuz1_lt_vbuc1_then_la1 
+    lda c
+    cmp #2+1
+    bcc b4_from_b2
     jmp b5
   //SEG95 fire::@5
   b5:
@@ -2357,10 +2359,10 @@ makecharset: {
     clc
     adc c
     sta bc
-  //SEG150 [69] if((byte) makecharset::bc#1<=(byte/signed byte/word/signed word/dword/signed dword) $3f) goto makecharset::@6 -- vbuz1_le_vbuc1_then_la1 
-    lda #$3f
-    cmp bc
-    bcs b6_from_b5
+  //SEG150 [69] if((byte) makecharset::bc#1<(byte/signed byte/word/signed word/dword/signed dword) $3f+(byte/signed byte/word/signed word/dword/signed dword) 1) goto makecharset::@6 -- vbuz1_lt_vbuc1_then_la1 
+    lda bc
+    cmp #$3f+1
+    bcc b6_from_b5
     jmp b7
   //SEG151 makecharset::@7
   b7:
@@ -2650,29 +2652,29 @@ Uplift Scope [sid_rnd_init]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [makecharset] best 128195 combination reg byte x [ makecharset::bc#3 makecharset::bc#5 makecharset::bc#6 makecharset::bc#1 makecharset::bc#2 ] reg byte y [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] reg byte a [ makecharset::$11 ] reg byte a [ makecharset::$12 ] zp ZP_BYTE:37 [ makecharset::$13 ] zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] zp ZP_WORD:38 [ makecharset::$17 ] zp ZP_WORD:40 [ makecharset::$18 ] zp ZP_WORD:42 [ makecharset::$19 ] zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] 
+Uplifting [makecharset] best 125695 combination reg byte x [ makecharset::bc#3 makecharset::bc#5 makecharset::bc#6 makecharset::bc#1 makecharset::bc#2 ] reg byte y [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] reg byte a [ makecharset::$11 ] reg byte a [ makecharset::$12 ] zp ZP_BYTE:37 [ makecharset::$13 ] zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] zp ZP_WORD:38 [ makecharset::$17 ] zp ZP_WORD:40 [ makecharset::$18 ] zp ZP_WORD:42 [ makecharset::$19 ] zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] 
 Limited combination testing to 100 combinations of 15552 possible.
-Uplifting [fire] best 125545 combination reg byte a [ fire::c#2 fire::c#0 fire::c#1 ] zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] zp ZP_WORD:8 [ fire::buffer#10 fire::buffer#3 ] reg byte a [ fire::$18 ] reg byte a [ fire::$19 ] reg byte a [ fire::$20 ] zp ZP_BYTE:31 [ fire::$9 ] zp ZP_BYTE:32 [ fire::$10 ] zp ZP_BYTE:33 [ fire::$11 ] zp ZP_WORD:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] zp ZP_WORD:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] zp ZP_WORD:2 [ fire::screen#0 ] 
+Uplifting [fire] best 122795 combination reg byte a [ fire::c#2 fire::c#0 fire::c#1 ] zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] zp ZP_WORD:8 [ fire::buffer#10 fire::buffer#3 ] reg byte a [ fire::$18 ] reg byte a [ fire::$19 ] reg byte a [ fire::$20 ] zp ZP_BYTE:31 [ fire::$9 ] zp ZP_BYTE:32 [ fire::$10 ] zp ZP_BYTE:33 [ fire::$11 ] zp ZP_WORD:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] zp ZP_WORD:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] zp ZP_WORD:2 [ fire::screen#0 ] 
 Limited combination testing to 100 combinations of 16384 possible.
-Uplifting [sid_rnd] best 124642 combination reg byte a [ sid_rnd::return#2 ] reg byte a [ sid_rnd::return#0 ] 
-Uplifting [fillscreen] best 124620 combination zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] reg byte x [ fillscreen::fill#5 ] 
-Uplifting [sid_rnd_init] best 124620 combination 
-Uplifting [main] best 124620 combination 
-Uplifting [] best 124620 combination 
+Uplifting [sid_rnd] best 121892 combination reg byte a [ sid_rnd::return#2 ] reg byte a [ sid_rnd::return#0 ] 
+Uplifting [fillscreen] best 121870 combination zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] reg byte x [ fillscreen::fill#5 ] 
+Uplifting [sid_rnd_init] best 121870 combination 
+Uplifting [main] best 121870 combination 
+Uplifting [] best 121870 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:37 [ makecharset::$13 ]
-Uplifting [makecharset] best 124620 combination zp ZP_BYTE:37 [ makecharset::$13 ] 
+Uplifting [makecharset] best 121870 combination zp ZP_BYTE:37 [ makecharset::$13 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ]
-Uplifting [makecharset] best 124620 combination zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] 
+Uplifting [makecharset] best 121870 combination zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ]
-Uplifting [makecharset] best 124620 combination zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] 
+Uplifting [makecharset] best 121870 combination zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:31 [ fire::$9 ]
-Uplifting [fire] best 124020 combination reg byte a [ fire::$9 ] 
+Uplifting [fire] best 121270 combination reg byte a [ fire::$9 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:32 [ fire::$10 ]
-Uplifting [fire] best 123420 combination reg byte a [ fire::$10 ] 
+Uplifting [fire] best 120670 combination reg byte a [ fire::$10 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:33 [ fire::$11 ]
-Uplifting [fire] best 122820 combination reg byte a [ fire::$11 ] 
+Uplifting [fire] best 120070 combination reg byte a [ fire::$11 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ]
-Uplifting [makecharset] best 122820 combination zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] 
+Uplifting [makecharset] best 120070 combination zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:2 [ fire::screen#0 ] ] with [ zp ZP_WORD:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:38 [ makecharset::$17 ] ] with [ zp ZP_WORD:40 [ makecharset::$18 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:38 [ makecharset::$17 makecharset::$18 ] ] with [ zp ZP_WORD:42 [ makecharset::$19 ] ] - score: 1
@@ -2992,10 +2994,9 @@ fire: {
   //SEG93 [46] (byte) fire::c#0 ← (byte~) fire::$11 >> (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuaa=vbuaa_ror_2 
     lsr
     lsr
-  //SEG94 [47] if((byte) fire::c#0<=(byte/signed byte/word/signed word/dword/signed dword) 2) goto fire::@4 -- vbuaa_le_vbuc1_then_la1 
-    cmp #2
+  //SEG94 [47] if((byte) fire::c#0<(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto fire::@4 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #2+1
     bcc b4_from_b2
-    beq b4_from_b2
     jmp b5
   //SEG95 fire::@5
   b5:
@@ -3166,10 +3167,9 @@ makecharset: {
     clc
     adc c
     tax
-  //SEG150 [69] if((byte) makecharset::bc#1<=(byte/signed byte/word/signed word/dword/signed dword) $3f) goto makecharset::@6 -- vbuxx_le_vbuc1_then_la1 
-    cpx #$3f
+  //SEG150 [69] if((byte) makecharset::bc#1<(byte/signed byte/word/signed word/dword/signed dword) $3f+(byte/signed byte/word/signed word/dword/signed dword) 1) goto makecharset::@6 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$3f+1
     bcc b6_from_b5
-    beq b6_from_b5
     jmp b7
   //SEG151 makecharset::@7
   b7:
@@ -3382,12 +3382,10 @@ Replacing label b1_from_b3 with b1
 Replacing label b7_from_b6 with b7
 Replacing label b7_from_b6 with b7
 Replacing label b4_from_b2 with b4
-Replacing label b4_from_b2 with b4
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b2_from_b2 with b2
 Replacing label b2_from_b2 with b2
-Replacing label b6_from_b5 with b6
 Replacing label b6_from_b5 with b6
 Replacing label b5_from_b6 with b5
 Replacing label b4_from_b8 with b4
@@ -3744,7 +3742,7 @@ zp ZP_BYTE:11 [ makecharset::$13 ]
 
 
 FINAL ASSEMBLER
-Score: 102365
+Score: 99615
 
 //SEG0 File Comments
 // A KickC version of the fire routine from the CC65 samples
@@ -3990,10 +3988,9 @@ fire: {
   //SEG93 [46] (byte) fire::c#0 ← (byte~) fire::$11 >> (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuaa=vbuaa_ror_2 
     lsr
     lsr
-  //SEG94 [47] if((byte) fire::c#0<=(byte/signed byte/word/signed word/dword/signed dword) 2) goto fire::@4 -- vbuaa_le_vbuc1_then_la1 
-    cmp #2
+  //SEG94 [47] if((byte) fire::c#0<(byte/signed byte/word/signed word/dword/signed dword) 2+(byte/signed byte/word/signed word/dword/signed dword) 1) goto fire::@4 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #2+1
     bcc b4
-    beq b4
   //SEG95 fire::@5
   //SEG96 [48] (byte) fire::c#1 ← (byte) fire::c#0 - (byte/signed byte/word/signed word/dword/signed dword) 3 -- vbuaa=vbuaa_minus_vbuc1 
     sec
@@ -4134,10 +4131,9 @@ makecharset: {
     clc
     adc c
     tax
-  //SEG150 [69] if((byte) makecharset::bc#1<=(byte/signed byte/word/signed word/dword/signed dword) $3f) goto makecharset::@6 -- vbuxx_le_vbuc1_then_la1 
-    cpx #$3f
+  //SEG150 [69] if((byte) makecharset::bc#1<(byte/signed byte/word/signed word/dword/signed dword) $3f+(byte/signed byte/word/signed word/dword/signed dword) 1) goto makecharset::@6 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$3f+1
     bcc b6
-    beq b6
   //SEG151 makecharset::@7
   //SEG152 [70] (byte) makecharset::bc#2 ← (byte) makecharset::bc#1 - (byte/signed byte/word/signed word/dword/signed dword) $40 -- vbuxx=vbuxx_minus_vbuc1 
     txa

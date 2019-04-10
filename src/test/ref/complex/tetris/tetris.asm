@@ -128,10 +128,10 @@
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label keyboard_events_size = $23
   .label render_screen_showing = $25
-  .label irq_raster_next = $24
-  .label irq_sprite_ypos = $26
-  .label irq_sprite_ptr = $27
-  .label irq_cnt = $28
+  .label irq_raster_next = $26
+  .label irq_sprite_ypos = $27
+  .label irq_sprite_ptr = $28
+  .label irq_cnt = $29
   .label current_movedown_slow = $18
   .label current_ypos = $10
   .label current_xpos = $20
@@ -154,17 +154,17 @@
   .label current_piece_gfx_64 = 5
   .label current_piece_char_68 = $b
   .label render_screen_render_69 = 9
-  .label current_xpos_128 = $a
-  .label current_xpos_129 = $a
-  .label current_piece_gfx_118 = 5
-  .label current_piece_gfx_119 = 5
-  .label current_piece_char_106 = $b
-  .label current_piece_char_107 = $b
-  .label current_piece_98 = 5
-  .label current_piece_99 = 5
+  .label current_xpos_130 = $a
+  .label current_xpos_131 = $a
+  .label current_piece_gfx_120 = 5
+  .label current_piece_gfx_121 = 5
+  .label current_piece_char_108 = $b
+  .label current_piece_char_109 = $b
   .label current_piece_100 = 5
   .label current_piece_101 = 5
   .label current_piece_102 = 5
+  .label current_piece_103 = 5
+  .label current_piece_104 = 5
 bbegin:
   // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
   lda #0
@@ -183,6 +183,7 @@ bbegin:
   lda #0
   sta irq_cnt
   jsr main
+  rts
 main: {
     jsr sid_rnd_init
     sei
@@ -199,13 +200,13 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
-    sta current_xpos_128
+    sta current_xpos_130
     lda current_piece_gfx
-    sta current_piece_gfx_118
+    sta current_piece_gfx_120
     lda current_piece_gfx+1
-    sta current_piece_gfx_118+1
+    sta current_piece_gfx_120+1
     lda current_piece_char
-    sta current_piece_char_106
+    sta current_piece_char_108
     lda #$40
     sta render_screen_render_33
     jsr render_moving
@@ -260,13 +261,13 @@ main: {
     lda render_screen_render
     sta render_screen_render_69
     lda current_xpos
-    sta current_xpos_129
+    sta current_xpos_131
     lda current_piece_gfx
-    sta current_piece_gfx_119
+    sta current_piece_gfx_121
     lda current_piece_gfx+1
-    sta current_piece_gfx_119+1
+    sta current_piece_gfx_121+1
     lda current_piece_char
-    sta current_piece_char_107
+    sta current_piece_char_109
     jsr render_moving
     lda render_screen_render
     ldx next_piece_idx
@@ -277,11 +278,11 @@ main: {
 }
 // Swap rendering to the other screen (used for double buffering)
 render_screen_swap: {
-    lda render_screen_render
-    eor #$40
+    lda #$40
+    eor render_screen_render
     sta render_screen_render
-    lda render_screen_show
-    eor #$40
+    lda #$40
+    eor render_screen_show
     sta render_screen_show
     rts
 }
@@ -574,21 +575,18 @@ render_playfield: {
 // Perform any movement of the current piece
 // key_event is the next keyboard_event() og $ff if no keyboard event is pending
 // Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
-// play_movement(byte zeropage($29) key_event)
+// play_movement(byte zeropage($2a) key_event)
 play_movement: {
     .label render = 9
     .label return = 9
-    .label key_event = $29
+    .label key_event = $2a
     lda key_event
     jsr play_move_down
     txa
-    clc
-    adc #0
     sta render
     lda game_over
     cmp #0
     beq b1
-  breturn:
     rts
   b1:
     lda key_event
@@ -601,7 +599,7 @@ play_movement: {
     clc
     adc return
     sta return
-    jmp breturn
+    rts
 }
 // Rotate the current piece  based on key-presses
 // Return non-zero if a render is needed
@@ -614,7 +612,6 @@ play_move_rotate: {
     beq b2
   b4:
     lda #0
-  breturn:
     rts
   b2:
     lax current_orientation
@@ -628,9 +625,9 @@ play_move_rotate: {
     sta play_collision.ypos
     ldx orientation
     lda current_piece
-    sta current_piece_101
+    sta current_piece_103
     lda current_piece+1
-    sta current_piece_101+1
+    sta current_piece_103+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b4
@@ -643,7 +640,7 @@ play_move_rotate: {
     adc current_piece+1
     sta current_piece_gfx+1
     lda #1
-    jmp breturn
+    rts
   b1:
     lax current_orientation
     axs #$10
@@ -660,7 +657,7 @@ play_collision: {
     .label piece_gfx = 5
     .label ypos2 = $b
     .label playfield_line = 7
-    .label i = $2a
+    .label i = $2b
     .label col = $f
     .label l = $d
     .label i_2 = $e
@@ -699,7 +696,6 @@ play_collision: {
     cmp #2*PLAYFIELD_LINES
     bcc b4
     lda #COLLISION_BOTTOM
-  breturn:
     rts
   b4:
     lda #$80
@@ -707,20 +703,20 @@ play_collision: {
     cmp #0
     beq b5
     lda #COLLISION_LEFT
-    jmp breturn
+    rts
   b5:
     lda col
     cmp #PLAYFIELD_COLS
     bcc b6
     lda #COLLISION_RIGHT
-    jmp breturn
+    rts
   b6:
     ldy col
     lda (playfield_line),y
     cmp #0
     beq b3
     lda #COLLISION_PLAYFIELD
-    jmp breturn
+    rts
   b3:
     inc col
     inx
@@ -735,7 +731,7 @@ play_collision: {
     cmp l
     bne b9
     lda #COLLISION_NONE
-    jmp breturn
+    rts
   b9:
     lda i
     sta i_11
@@ -761,19 +757,18 @@ play_move_leftright: {
     sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_100
+    sta current_piece_102
     lda current_piece+1
-    sta current_piece_100+1
+    sta current_piece_102+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
     inc current_xpos
   b2:
     lda #1
-    jmp breturn
+    rts
   b3:
     lda #0
-  breturn:
     rts
   b1:
     ldx current_xpos
@@ -783,9 +778,9 @@ play_move_leftright: {
     sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_99
+    sta current_piece_101
     lda current_piece+1
-    sta current_piece_99+1
+    sta current_piece_101+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -828,9 +823,9 @@ play_move_down: {
     sta play_collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_98
+    sta current_piece_100
     lda current_piece+1
-    sta current_piece_98+1
+    sta current_piece_100+1
     jsr play_collision
     cmp #COLLISION_NONE
     beq b10
@@ -851,10 +846,9 @@ play_move_down: {
     lda #0
     sta current_movedown_counter
     ldx #1
-    jmp breturn
+    rts
   b5:
     ldx #0
-  breturn:
     rts
   b10:
     inc current_ypos
@@ -886,9 +880,9 @@ play_spawn_current: {
     lda current_ypos
     sta play_collision.ypos
     lda PIECES,y
-    sta current_piece_102
+    sta current_piece_104
     lda PIECES+1,y
-    sta current_piece_102+1
+    sta current_piece_104+1
     ldx #0
     jsr play_collision
     cmp #COLLISION_PLAYFIELD
@@ -901,25 +895,19 @@ play_spawn_current: {
   b2:
     lda #7
     cmp piece_idx
-    beq b3
+    beq sid_rnd1
     rts
-  b3:
-    jsr sid_rnd
+  sid_rnd1:
+    lda SID_VOICE3_OSC
     and #7
     sta piece_idx
     jmp b2
-}
-// Get a random number from the SID voice 3,
-// Must be initialized with sid_rnd_init()
-sid_rnd: {
-    lda SID_VOICE3_OSC
-    rts
 }
 // Update the score based on the number of lines removed
 // play_update_score(byte register(X) removed)
 play_update_score: {
     .label lines_before = 4
-    .label add_bcd = $2b
+    .label add_bcd = $2c
     cpx #0
     beq breturn
     lda lines_bcd
@@ -1166,10 +1154,9 @@ keyboard_event_get: {
     dec keyboard_events_size
     ldy keyboard_events_size
     ldx keyboard_events,y
-    jmp breturn
+    rts
   b1:
     ldx #$ff
-  breturn:
     rts
 }
 // Scans the entire matrix to determine which keys have been pressed/depressed.
@@ -1613,7 +1600,7 @@ sid_rnd_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
-    .label raster_sprite_gfx_modify = $2f
+    .label raster_sprite_gfx_modify = $24
     sta rega+1
     stx regx+1
     //(*BGCOL)++;

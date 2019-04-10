@@ -108,6 +108,16 @@ public class ProgramValueIterator {
             }
          }
          execute(new ProgramValue.LValue((StatementLValue) statement), handler, statement, statementsIt, block);
+      } else if(statement instanceof StatementCallPointer) {
+         StatementCallPointer call = (StatementCallPointer) statement;
+         execute(new ProgramValue.CallPointerProcedure((StatementCallPointer) statement), handler, statement, statementsIt, block);
+         if(call.getParameters() != null) {
+            int size = call.getParameters().size();
+            for(int i = 0; i < size; i++) {
+               execute(new ProgramValue.CallPointerParameter(call, i), handler, statement, statementsIt, block);
+            }
+         }
+         execute(new ProgramValue.LValue((StatementLValue) statement), handler, statement, statementsIt, block);
       } else if(statement instanceof StatementConditionalJump) {
          execute(new ProgramValue.CondRValue1((StatementConditionalJump) statement), handler, statement, statementsIt, block);
          execute(new ProgramValue.CondRValue2((StatementConditionalJump) statement), handler, statement, statementsIt, block);

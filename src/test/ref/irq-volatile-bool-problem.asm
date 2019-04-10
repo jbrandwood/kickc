@@ -17,6 +17,7 @@ bbegin:
   lda #0
   sta framedone
   jsr main
+  rts
 main: {
     sei
     // Disable CIA 1 Timer IRQ

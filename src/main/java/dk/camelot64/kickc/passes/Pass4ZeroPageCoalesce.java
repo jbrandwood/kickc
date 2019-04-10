@@ -26,7 +26,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
    public void coalesce() {
       LinkedHashSet<String> unknownFragments = new LinkedHashSet<>();
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
-      Collection<ScopeRef> threads = getThreadHeads(getSymbols());
+      Collection<ScopeRef> threads = getThreadHeads(getProgram());
       boolean change;
       do {
          change = coalesce(liveRangeEquivalenceClassSet, threads, unknownFragments);
@@ -47,14 +47,15 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
     *
     * @return The threads.
     */
-   public static Collection<ScopeRef> getThreadHeads(ProgramScope programScope) {
+   public static Collection<ScopeRef> getThreadHeads(Program program) {
       ArrayList<ScopeRef> threadHeads = new ArrayList<>();
-      Collection<Procedure> procedures = programScope.getAllProcedures(true);
+      Collection<Procedure> procedures = program.getScope().getAllProcedures(true);
       for(Procedure procedure : procedures) {
-         if(procedure.getInterruptType() != null) {
-            threadHeads.add(procedure.getRef());
-         }
          if(procedure.getFullName().equals(SymbolRef.MAIN_PROC_NAME)) {
+            threadHeads.add(procedure.getRef());
+            continue;
+         }
+         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
             threadHeads.add(procedure.getRef());
          }
       }
@@ -109,7 +110,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
     * @return True if the two equivalence classes can be coalesced into one without problems.
     */
    private static boolean canCoalesceThreads(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Collection<ScopeRef> threadHeads, Program program) {
-      if(threadHeads.size()>=1) {
+      if(threadHeads.size()<=1) {
          return true;
       }
       CallGraph callGraph = program.getCallGraph();

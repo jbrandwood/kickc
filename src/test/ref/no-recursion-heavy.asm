@@ -108,6 +108,7 @@ f0: {
     jsr fa
     lda #0
     sta bb
+    rts
   breturn:
     rts
 }
@@ -182,6 +183,7 @@ fa: {
     sta bc
     jsr fb
     ldx #0
+    rts
   breturn:
     rts
 }
@@ -255,6 +257,7 @@ fb: {
     lda #0
     jsr fc
     ldy #0
+    rts
   breturn:
     rts
 }

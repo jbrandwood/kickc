@@ -20,7 +20,7 @@ public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
    public void coalesce() {
       CoalesceVarScores coalesceVarScores = new CoalesceVarScores(getProgram());
       LinkedHashSet<String> unknownFragments = new LinkedHashSet<>();
-      Collection<ScopeRef> threadHeads = Pass4ZeroPageCoalesce.getThreadHeads(getSymbols());
+      Collection<ScopeRef> threadHeads = Pass4ZeroPageCoalesce.getThreadHeads(getProgram());
 
       boolean change;
       do {

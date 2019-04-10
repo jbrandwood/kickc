@@ -149,7 +149,6 @@ render_logo: {
   b5:
     cpy #$28
     bne b6
-  breturn:
     rts
   b6:
     lda logo_idx
@@ -201,7 +200,7 @@ render_logo: {
   b11:
     cpy #$28
     bne b12
-    jmp breturn
+    rts
   b12:
     lda #0
     sta SCREEN,y
@@ -247,7 +246,6 @@ sin16s_gen2: {
     .const min = -$140
     .const max = $140
     .label ampl = max-min
-    .const offs = min+(ampl>>1)
     .label _5 = $b
     .label _6 = $f
     .label _8 = $f
@@ -284,13 +282,6 @@ sin16s_gen2: {
     sta _6
     lda _5+3
     sta _6+1
-    clc
-    lda _8
-    adc #<offs
-    sta _8
-    lda _8+1
-    adc #>offs
-    sta _8+1
     ldy #0
     lda _8
     sta (sintab),y

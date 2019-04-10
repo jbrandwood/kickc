@@ -11,6 +11,7 @@ bbegin:
   lda #0
   sta irq_raster_next
   jsr main
+  rts
 main: {
     lda #<irq
     sta KERNEL_IRQ

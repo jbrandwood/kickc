@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.VariableVersion;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -27,6 +28,28 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
       for(LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          getLog().append(liveRangeEquivalenceClass.toString());
       }
+
+
+      // Add all versions of volatile variables to the same equivalence class
+      for(Variable variable : getSymbols().getAllVariables(true)) {
+         if(variable.isVersioned() && variable.isDeclaredVolatile()) {
+            // Found a volatile non-versioned variable
+            for(Variable otherVariable : variable.getScope().getAllVariables(false)) {
+               if(otherVariable.isVersioned()) {
+                  if(((VariableVersion)otherVariable).getVersionOf().equals(((VariableVersion)variable).getVersionOf())) {
+                     // They share the same main variable
+                     LiveRangeEquivalenceClass varEC = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(variable.getRef());
+                     LiveRangeEquivalenceClass otherEC = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(otherVariable.getRef());
+                     if(!varEC.equals(otherEC)) {
+                        getLog().append("Coalescing volatile variable equivalence classes " + varEC.toString() + " and " + otherEC.toString());
+                        liveRangeEquivalenceClassSet.consolidate(varEC, otherEC);
+                     }
+                  }
+               }
+            }
+         }
+      }
+
 
       // Add all other variables one by one to an available equivalence class - or create a new one
       EquivalenceClassAdder equivalenceClassAdder = new EquivalenceClassAdder(liveRangeEquivalenceClassSet);

@@ -454,19 +454,18 @@ div8s: {
     eor #$ff
     clc
     adc #1
-  breturn:
     rts
   b9:
     tya
-    jmp breturn
+    rts
   b3:
     txa
     eor #$ff
     clc
     adc #1
     tax
-    lda neg
-    eor #1
+    lda #1
+    eor neg
     sta neg
     jmp b4
   b1:

@@ -760,11 +760,10 @@ sin8s: {
     eor #$ff
     clc
     adc #1
-  b4:
     rts
   b14:
     txa
-    jmp b4
+    rts
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip

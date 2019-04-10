@@ -156,7 +156,6 @@ anim: {
     jmp b2
 }
 debug_print: {
-    .const print_sbyte_pos1_row = 0
     .const print_sbyte_pos1_col = $25
     .const print_sbyte_pos2_row = 1
     .const print_sbyte_pos2_col = $25
@@ -184,9 +183,9 @@ debug_print: {
     .label c = 4
     .label i = 5
     ldx sx
-    lda #<print_line_cursor+print_sbyte_pos1_row*$28+print_sbyte_pos1_col
+    lda #<print_line_cursor+print_sbyte_pos1_col
     sta print_sbyte_at.at
-    lda #>print_line_cursor+print_sbyte_pos1_row*$28+print_sbyte_pos1_col
+    lda #>print_line_cursor+print_sbyte_pos1_col
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
     ldx sy
@@ -554,12 +553,8 @@ calculate_matrix: {
     lax sy
     axs #sz
     stx t1
-    lax sy
-    axs #-[sz]
-    tya
-    clc
-    adc #sz
-    sta t3
+    ldx sy
+    sty t3
     tya
     sec
     sbc #sz

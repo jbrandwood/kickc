@@ -13,12 +13,21 @@ public class Label implements Symbol {
    /** The containing scope */
    private Scope scope;
 
+   /** Full name of label (scope::name or name) */
+   private String fullName;
+
    private boolean intermediate;
 
    public Label(String name, Scope scope, boolean intermediate) {
       this.name = name;
       this.scope = scope;
       this.intermediate = intermediate;
+      setFullName();
+   }
+
+   private void setFullName() {
+      String scopeName = (scope == null) ? "" : scope.getFullName();
+      fullName = (scopeName.length() > 0) ? scopeName + "::" + name : name;
    }
 
    @Override
@@ -47,7 +56,7 @@ public class Label implements Symbol {
 
    @Override
    public String getFullName() {
-      return Scope.getFullName(this);
+      return fullName;
    }
 
    public boolean isIntermediate() {

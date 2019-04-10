@@ -10,6 +10,7 @@ bbegin:
   lda #0
   sta col1
   jsr main
+  rts
 main: {
     .label y = 2
     lda #<irq

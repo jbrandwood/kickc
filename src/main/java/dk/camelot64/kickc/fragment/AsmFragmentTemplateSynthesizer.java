@@ -549,11 +549,11 @@ public class AsmFragmentTemplateSynthesizer {
 
    }
 
-   public class UnknownFragmentException extends RuntimeException {
+   public static class UnknownFragmentException extends RuntimeException {
 
       private String signature;
 
-      UnknownFragmentException(String signature) {
+      public UnknownFragmentException(String signature) {
          super("Fragment not found " + signature);
          this.signature = signature;
       }

@@ -249,7 +249,8 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       List<ControlFlowBlock> predecessors = getGraph().getPredecessors(block);
       Symbol symbol = getScope().getSymbol(block.getLabel());
       if(symbol instanceof Procedure) {
-         if(((Procedure) symbol).getInterruptType()!=null) {
+         Procedure procedure = (Procedure) symbol;
+         if(procedure.getInterruptType()!=null || Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
             // Find all root-level predecessors to the main block
             ControlFlowBlock mainBlock = getGraph().getBlock(new LabelRef(SymbolRef.MAIN_PROC_NAME));
             List<ControlFlowBlock> mainPredecessors = getGraph().getPredecessors(mainBlock);

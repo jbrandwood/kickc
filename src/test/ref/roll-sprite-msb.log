@@ -784,8 +784,8 @@ position_sprite: {
   !e:
     sta _4
   //SEG36 [20] (byte/word/dword~) position_sprite::$5 ← (byte/signed byte/word/signed word/dword/signed dword~) position_sprite::$4 ^ (byte/word/signed word/dword/signed dword) $ff -- vbuz1=vbuz2_bxor_vbuc1 
-    lda _4
-    eor #$ff
+    lda #$ff
+    eor _4
     sta _5
   //SEG37 [21] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) & (byte/word/dword~) position_sprite::$5 -- _deref_pbuc1=_deref_pbuc1_band_vbuz1 
     lda SPRITES_XMSB
@@ -1044,9 +1044,12 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Replacing jump to rts with rts in jmp breturn
+Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction jmp b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
+Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -1174,7 +1177,7 @@ reg byte a [ position_sprite::$6 ]
 
 
 FINAL ASSEMBLER
-Score: 559
+Score: 562
 
 //SEG0 File Comments
 // Tests rolling sprite MSB by variable amount
@@ -1278,7 +1281,6 @@ position_sprite: {
     and SPRITES_XMSB
     sta SPRITES_XMSB
   //SEG38 position_sprite::@return
-  breturn:
   //SEG39 [22] return 
     rts
   //SEG40 position_sprite::@1
@@ -1296,6 +1298,6 @@ position_sprite: {
   //SEG42 [24] *((const byte*) SPRITES_XMSB#0) ← *((const byte*) SPRITES_XMSB#0) | (byte/signed byte/word/signed word/dword/signed dword~) position_sprite::$6 -- _deref_pbuc1=_deref_pbuc1_bor_vbuaa 
     ora SPRITES_XMSB
     sta SPRITES_XMSB
-    jmp breturn
+    rts
 }
 

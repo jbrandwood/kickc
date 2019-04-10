@@ -11,8 +11,14 @@ class AsmFragmentTemplateSynthesisRule {
     * Contains matching groups (parenthesis) that are used in sigReplace to build the signature of the sub-fragment to synthesize from. */
    final String sigMatch;
 
+   /** Compiled regex for sigMatch */
+   Pattern sigMatchPattern = null;
+
    /** Regular expression that limits which fragments the synthesize rule can handle. */
    final String sigAvoid;
+
+   /** Compiled regex for sigAvoid */
+   Pattern sigAvoidPattern = null;
 
    /** ASM code prefixed to the sub-fragment when synthesizing. */
    final private String asmPrefix;
@@ -62,7 +68,20 @@ class AsmFragmentTemplateSynthesisRule {
     * @return true if the rule matches the signature
     */
    public boolean matches(String signature) {
-      return signature.matches(sigMatch) && (sigAvoid == null || !signature.matches(sigAvoid));
+      if (sigMatchPattern == null)
+         sigMatchPattern = Pattern.compile(sigMatch);
+      Matcher m = sigMatchPattern.matcher(signature);
+      if (m.matches()) {
+         if (sigAvoid == null)
+            return true;
+         else {
+            if (sigAvoidPattern == null)
+               sigAvoidPattern = Pattern.compile(sigAvoid);
+            Matcher ma = sigAvoidPattern.matcher(signature);
+            return !ma.matches();
+         }
+      }
+      return false;
    }
 
    /**
@@ -87,12 +106,12 @@ class AsmFragmentTemplateSynthesisRule {
    }
 
    public AsmFragmentTemplate synthesize(String signature, AsmFragmentTemplate subTemplate) {
-      if(!matches(signature)) {
-         throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching signature signature:"+signature+" match:"+sigMatch+" avoid:"+sigAvoid);
-      }
-      if(!subTemplate.getSignature().equals(getSubSignature(signature))) {
-         throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching sub template sub-signature:"+subTemplate.getSignature()+" expecting:"+getSubSignature(signature));
-      }
+//      if(!matches(signature)) {
+//         throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching signature signature:"+signature+" match:"+sigMatch+" avoid:"+sigAvoid);
+//      }
+//      if(!subTemplate.getSignature().equals(getSubSignature(signature))) {
+//         throw new RuntimeException("Synthesis error! Attempting to synthesize on non-matching sub template sub-signature:"+subTemplate.getSignature()+" expecting:"+getSubSignature(signature));
+//      }
       if(subDontClobber!=null) {
          if(subDontClobber.contains("aa") && subTemplate.getClobber().isClobberA()) return null;
          if(subDontClobber.contains("xx") && subTemplate.getClobber().isClobberX()) return null;
@@ -425,9 +444,9 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite Assignments to *C1 from A
       synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)c1=(.*)", null, null, "vb$1aa=$2", "sta {c1}", null));
       // Rewrite Assignments to *Z1 from A
-      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*)", twoZ1, null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y", mapZ));
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)z1=(.*)", twoZ1, null, "vb$1aa=$2", "ldy #0\n" + "sta ({z1}),y", mapZ));
       // Rewrite Assignments to *Z1 from A
-      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pbuz1=(.*z1.*)", null, null, "vbuaa=$1", "ldy #0\n" + "sta ({z1}),y", null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)z1=(.*z1.*)", null, null, "vb$1aa=$2", "ldy #0\n" + "sta ({z1}),y", null));
 
       // Rewrite _deref_pb.z1_ to _vb.aa_ (if no other Z1s)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_pb(.)z1(.*)", twoZ1+"|"+rvalAa+"|"+rvalYy+"|"+ lvalDerefZ1, "ldy #0\n"+"lda ({z1}),y", "$1vb$2aa$3", null, mapZ));

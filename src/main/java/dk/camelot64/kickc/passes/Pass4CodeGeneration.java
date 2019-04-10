@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -64,10 +65,7 @@ public class Pass4CodeGeneration {
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          if(!block.getScope().equals(currentScope)) {
             // The current block is in a different scope. End the old scope.
-            if(!ScopeRef.ROOT.equals(currentScope)) {
-               addData(asm, currentScope);
-               asm.addScopeEnd();
-            }
+            generateScopeEnding(asm, currentScope);
             currentScope = block.getScope();
             asm.startSegment(currentScope, null, block.getLabel().getFullName());
             // Add any procedure comments
@@ -121,10 +119,7 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      if(!ScopeRef.ROOT.equals(currentScope)) {
-         addData(asm, currentScope);
-         asm.addScopeEnd();
-      }
+      generateScopeEnding(asm, currentScope);
       addData(asm, ScopeRef.ROOT);
       // Add all absolutely placed inline KickAsm
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -143,9 +138,46 @@ public class Pass4CodeGeneration {
             }
          }
       }
-
       program.setAsm(asm);
    }
+
+   /**
+    * ASM names of variables being used for indirect calls in the current scope (procedure).
+    * These will all be added as indirect JMP's at the end of the procedure scope.
+    */
+   private List<String> indirectCallAsmNames = new ArrayList<>();
+
+   /**
+    * Generate the end of a scope
+    * @param asm The assembler program being generated
+    * @param currentScope The current scope, which is ending here
+    */
+   private void generateScopeEnding(AsmProgram asm, ScopeRef currentScope) {
+      if(!ScopeRef.ROOT.equals(currentScope)) {
+         // Generate any indirect calls pending
+         for(String indirectCallAsmName : indirectCallAsmNames) {
+            asm.addLabel("bi_"+indirectCallAsmName);
+            asm.addInstruction("jmp", AsmAddressingMode.IND, indirectCallAsmName, false);
+         }
+         indirectCallAsmNames = new ArrayList<>();
+         addData(asm, currentScope);
+         asm.addScopeEnd();
+      }
+   }
+
+   /**
+    * Add an indirect call to the assembler program. Also queues ASM for the indirect jump to be added at the end of the block.
+    * @param asm The ASM program being built
+    * @param procedureVariable The variable containing the function pointer
+    * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
+    */
+   private void generateIndirectCall(AsmProgram asm, Variable procedureVariable, ScopeRef codeScopeRef) {
+      String varAsmName = AsmFormat.getAsmParamName(procedureVariable, codeScopeRef);
+      indirectCallAsmNames.add(varAsmName);
+      asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_" + varAsmName, false);
+   }
+
+
 
    /**
     * Generate a comment that describes the procedure signature and parameter transfer
@@ -362,6 +394,13 @@ public class Pass4CodeGeneration {
                } else if(SymbolType.isDWord(elementType) || SymbolType.isSDWord(elementType)) {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmElements);
                   added.add(asmName);
+               } else if(elementType instanceof SymbolTypePointer) {
+                  if(((SymbolTypePointer) elementType).getElementType() instanceof SymbolTypeProcedure) {
+                     asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmElements);
+                     added.add(asmName);
+                  } else {
+                     throw new RuntimeException("Unhandled constant array element type " + constantArrayList.toString(program));
+                  }
                } else {
                   throw new RuntimeException("Unhandled constant array element type " + constantArrayList.toString(program));
                }
@@ -563,8 +602,48 @@ public class Pass4CodeGeneration {
             if(statementKasm.getLocation() == null) {
                addKickAsm(asm, statementKasm);
             }
-            if(statementKasm.getDeclaredClobber()!=null) {
+            if(statementKasm.getDeclaredClobber() != null) {
                asm.getCurrentSegment().setClobberOverwrite(statementKasm.getDeclaredClobber());
+            }
+         } else if(statement instanceof StatementCallPointer) {
+            StatementCallPointer callPointer = (StatementCallPointer) statement;
+            RValue procedure = callPointer.getProcedure();
+            boolean supported = false;
+            if(procedure instanceof PointerDereferenceSimple) {
+               RValue pointer = ((PointerDereferenceSimple) procedure).getPointer();
+               if(pointer instanceof ConstantValue) {
+                  asm.addInstruction("jsr", AsmAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
+                  supported = true;
+               } else if(pointer instanceof VariableRef) {
+                  Variable variable = getScope().getVariable((VariableRef) pointer);
+                  generateIndirectCall(asm, variable, block.getScope());
+                  supported = true;
+               }
+            } else if(procedure instanceof VariableRef) {
+               Variable procedureVariable = getScope().getVariable((VariableRef) procedure);
+               SymbolType procedureVariableType = procedureVariable.getType();
+               if(procedureVariableType instanceof SymbolTypePointer) {
+                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
+                     generateIndirectCall(asm, procedureVariable, block.getScope());
+                     supported = true;
+                  }
+               }
+            } else if(procedure instanceof ConstantRef) {
+               ConstantVar procedureVariable = getScope().getConstant((ConstantRef) procedure);
+               SymbolType procedureVariableType = procedureVariable.getType();
+               if(procedureVariableType instanceof SymbolTypePointer) {
+                  if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
+                     String varAsmName = AsmFormat.getAsmParamName(procedureVariable, block.getScope());
+                     asm.addInstruction("jsr", AsmAddressingMode.ABS, varAsmName,false);
+                     supported = true;
+                  }
+               }
+            }
+            if(supported) {
+               asm.getCurrentSegment().setClobberOverwrite(AsmClobber.CLOBBER_ALL);
+            }
+            if(!supported) {
+               throw new RuntimeException("Call Pointer not supported " + statement);
             }
          } else {
             throw new RuntimeException("Statement not supported " + statement);
@@ -573,27 +652,30 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Generate ASM code for an ASM fragment instance ()
+    * Generate ASM code for an ASM fragment instance
     * @param asm The ASM program to generate into
     * @param asmFragmentInstanceSpecFactory The ASM fragment instance specification factory
     */
    private void generateAsm(AsmProgram asm, AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory) {
+      String initialSignature = asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec().getSignature();
       AsmFragmentInstanceSpec asmFragmentInstanceSpec = asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec();
       AsmFragmentInstance asmFragmentInstance = null;
+      StringBuffer fragmentVariationsTried = new StringBuffer();
       while(asmFragmentInstance==null) {
          try {
             asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
          } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
             // Unknown fragment - keep looking through alternative ASM fragment instance specs until we have tried them all
+            String signature = asmFragmentInstanceSpec.getSignature();
+            fragmentVariationsTried.append(signature).append(" ");
             if(asmFragmentInstanceSpec.hasNextVariation()) {
-               String signature = asmFragmentInstanceSpec.getSignature();
                asmFragmentInstanceSpec.nextVariation();
                if(program.getLog().isVerboseFragmentLog()) {
                   program.getLog().append("Fragment not found "+signature+". Attempting another variation "+asmFragmentInstanceSpec.getSignature());
                }
             } else {
                // No more variations available - fail with an error
-               throw e;
+               throw new AsmFragmentTemplateSynthesizer.UnknownFragmentException("Fragment not found "+initialSignature+". Attempted variations "+fragmentVariationsTried);
             }
          }
       }

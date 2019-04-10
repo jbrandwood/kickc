@@ -1,0 +1,357 @@
+Resolved forward reference fn1 to (void()) fn1()
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:@2
+main: scope:[main]  from @2
+  (byte) idx#3 ← phi( @2/(byte) idx#6 )
+  (void()*~) main::$0 ← & (void()) fn1()
+  (void()*) main::f#0 ← (void()*~) main::$0
+  call *((void()*) main::f#0) 
+  *((byte*) SCREEN#0 + (byte) idx#3) ← (byte) 'a'
+  call *((void()*) main::f#0) 
+  *((byte*) SCREEN#0 + (byte) idx#3) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+fn1: scope:[fn1]  from
+  (byte) idx#4 ← phi( @2/(byte) idx#6 )
+  (byte) idx#1 ← ++ (byte) idx#4
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
+  (byte) idx#5 ← phi( fn1/(byte) idx#1 )
+  (byte) idx#2 ← (byte) idx#5
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  (byte) idx#6 ← phi( @begin/(byte) idx#0 )
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(void()) fn1()
+(label) fn1::@return
+(byte) idx
+(byte) idx#0
+(byte) idx#1
+(byte) idx#2
+(byte) idx#3
+(byte) idx#4
+(byte) idx#5
+(byte) idx#6
+(void()) main()
+(void()*~) main::$0
+(label) main::@return
+(void()*) main::f
+(void()*) main::f#0
+
+Culled Empty Block (label) @3
+Successful SSA optimization Pass2CullEmptyBlocks
+Alias (void()*) main::f#0 = (void()*~) main::$0 
+Alias (byte) idx#1 = (byte) idx#5 (byte) idx#2 
+Alias (byte) idx#0 = (byte) idx#6 
+Successful SSA optimization Pass2AliasElimination
+Redundant Phi (byte) idx#3 (byte) idx#0
+Redundant Phi (byte) idx#4 (byte) idx#0
+Successful SSA optimization Pass2RedundantPhiElimination
+Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const void()*) main::f#0 = &fn1
+Successful SSA optimization Pass2ConstantIdentification
+Replacing constant pointer function call fn1 
+Replacing constant pointer function call fn1 
+Successful SSA optimization Pass2ConstantCallPointerIdentification
+Successful SSA optimization PassNEliminateUnusedVars
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to fn1:5 fn1:7 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Renumbering block @2 to @1
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  [5] call fn1 
+  [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a'
+  [7] call fn1 
+  [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [9] return 
+  to:@return
+fn1: scope:[fn1]  from main
+  [10] (byte) idx#1 ← ++ (byte) idx#0
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
+  [11] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(void()) fn1()
+(byte) idx
+(byte) idx#0 1.0
+(byte) idx#1 20.0
+(void()) main()
+(void()*) main::f
+
+Initial phi equivalence classes
+Coalescing volatile variable equivalence classes [ idx#0 ] and [ idx#1 ]
+Complete equivalence classes
+[ idx#0 idx#1 ]
+Allocated zp ZP_BYTE:2 [ idx#0 idx#1 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests calling into a function pointer which modifies global volatile
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+  .label idx = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [0] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta idx
+//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG6 @1
+b1:
+//SEG7 [2] call main 
+//SEG8 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG9 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG10 @end
+bend:
+//SEG11 main
+main: {
+  //SEG12 [5] call fn1 
+    jsr fn1
+  //SEG13 [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'a'
+    ldy idx
+    sta SCREEN,y
+  //SEG14 [7] call fn1 
+    jsr fn1
+  //SEG15 [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'a'
+    ldy idx
+    sta SCREEN,y
+    jmp breturn
+  //SEG16 main::@return
+  breturn:
+  //SEG17 [9] return 
+    rts
+}
+//SEG18 fn1
+fn1: {
+  //SEG19 [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
+    inc idx
+    jmp breturn
+  //SEG20 fn1::@return
+  breturn:
+  //SEG21 [11] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ idx#0 ] ( ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' [ idx#0 ] ( main:2 [ idx#0 ] ) always clobbers reg byte a reg byte y 
+Statement [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Potential registers zp ZP_BYTE:2 [ idx#0 idx#1 ] : zp ZP_BYTE:2 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 21: zp ZP_BYTE:2 [ idx#0 idx#1 ] 
+Uplift Scope [main] 
+Uplift Scope [fn1] 
+
+Uplifting [] best 72 combination zp ZP_BYTE:2 [ idx#0 idx#1 ] 
+Uplifting [main] best 72 combination 
+Uplifting [fn1] best 72 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ idx#0 idx#1 ]
+Uplifting [] best 72 combination zp ZP_BYTE:2 [ idx#0 idx#1 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests calling into a function pointer which modifies global volatile
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+  .label idx = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [0] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta idx
+//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG6 @1
+b1:
+//SEG7 [2] call main 
+//SEG8 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG9 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG10 @end
+bend:
+//SEG11 main
+main: {
+  //SEG12 [5] call fn1 
+    jsr fn1
+  //SEG13 [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'a'
+    ldy idx
+    sta SCREEN,y
+  //SEG14 [7] call fn1 
+    jsr fn1
+  //SEG15 [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'a'
+    ldy idx
+    sta SCREEN,y
+    jmp breturn
+  //SEG16 main::@return
+  breturn:
+  //SEG17 [9] return 
+    rts
+}
+//SEG18 fn1
+fn1: {
+  //SEG19 [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
+    inc idx
+    jmp breturn
+  //SEG20 fn1::@return
+  breturn:
+  //SEG21 [11] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(void()) fn1()
+(label) fn1::@return
+(byte) idx
+(byte) idx#0 idx zp ZP_BYTE:2 1.0
+(byte) idx#1 idx zp ZP_BYTE:2 20.0
+(void()) main()
+(label) main::@return
+(void()*) main::f
+
+zp ZP_BYTE:2 [ idx#0 idx#1 ]
+
+
+FINAL ASSEMBLER
+Score: 66
+
+//SEG0 File Comments
+// Tests calling into a function pointer which modifies global volatile
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+  .label idx = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [0] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta idx
+//SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG6 @1
+//SEG7 [2] call main 
+//SEG8 [4] phi from @1 to main [phi:@1->main]
+  jsr main
+  rts
+//SEG9 [3] phi from @1 to @end [phi:@1->@end]
+//SEG10 @end
+//SEG11 main
+main: {
+  //SEG12 [5] call fn1 
+    jsr fn1
+  //SEG13 [6] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'a'
+    ldy idx
+    sta SCREEN,y
+  //SEG14 [7] call fn1 
+    jsr fn1
+  //SEG15 [8] *((const byte*) SCREEN#0 + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'a'
+    ldy idx
+    sta SCREEN,y
+  //SEG16 main::@return
+  //SEG17 [9] return 
+    rts
+}
+//SEG18 fn1
+fn1: {
+  //SEG19 [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
+    inc idx
+  //SEG20 fn1::@return
+  //SEG21 [11] return 
+    rts
+}
+

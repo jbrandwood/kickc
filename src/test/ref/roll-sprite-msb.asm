@@ -61,7 +61,6 @@ position_sprite: {
     eor #$ff
     and SPRITES_XMSB
     sta SPRITES_XMSB
-  breturn:
     rts
   b1:
     lda #1
@@ -75,5 +74,5 @@ position_sprite: {
   !e:
     ora SPRITES_XMSB
     sta SPRITES_XMSB
-    jmp breturn
+    rts
 }

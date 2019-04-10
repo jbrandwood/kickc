@@ -129,8 +129,8 @@ plexShowSprite: {
     lda PLEX_XPOS+1,x
     cmp #0
     bne b1
-    lda plex_sprite_msb
-    eor #$ff
+    lda #$ff
+    eor plex_sprite_msb
     and SPRITES_XMSB
     sta SPRITES_XMSB
   b2:

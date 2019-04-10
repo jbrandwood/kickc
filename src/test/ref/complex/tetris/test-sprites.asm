@@ -62,10 +62,10 @@
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
   .label render_screen_showing = 5
-  .label irq_raster_next = 4
-  .label irq_sprite_ypos = 6
-  .label irq_sprite_ptr = 7
-  .label irq_cnt = 8
+  .label irq_raster_next = 6
+  .label irq_sprite_ypos = 7
+  .label irq_sprite_ptr = 8
+  .label irq_cnt = 9
   .label sin_idx = 2
 bbegin:
   // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
@@ -84,6 +84,7 @@ bbegin:
   lda #0
   sta irq_cnt
   jsr main
+  rts
 main: {
     .const toSpritePtr2_return = SIN_SPRITE>>6
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)>>6
@@ -222,7 +223,7 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
-    .label raster_sprite_gfx_modify = 9
+    .label raster_sprite_gfx_modify = 4
     sta rega+1
     stx regx+1
     //(*BGCOL)++;

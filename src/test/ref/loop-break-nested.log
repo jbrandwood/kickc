@@ -452,12 +452,15 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Replacing jump to rts with rts in jmp breturn
+Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label b2_from_b1 to b5
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp b1
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
+Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -483,7 +486,7 @@ reg byte y [ main::i#2 main::i#1 ]
 
 
 FINAL ASSEMBLER
-Score: 3556
+Score: 3586
 
 //SEG0 File Comments
 // Tests break statement in a simple loop
@@ -518,7 +521,6 @@ main: {
     cmp #'a'
     bne b5
   //SEG17 main::@return
-  breturn:
   //SEG18 [7] return 
     rts
   //SEG19 [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -552,7 +554,7 @@ main: {
     cmp #<$400+$28*$19
     bcc b1
   !:
-    jmp breturn
+    rts
   //SEG28 main::@3
   b3:
   //SEG29 [12] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuyy=vbuc1 

@@ -195,18 +195,15 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 
 Initial phi equivalence classes
 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ]
-Added variable irq_raster_next#0 to zero page equivalence class [ irq_raster_next#0 ]
-Added variable irq_raster_next#1 to zero page equivalence class [ irq_raster_next#1 ]
+Coalescing volatile variable equivalence classes [ irq_raster_next#0 ] and [ irq_raster_next#1 ]
 Added variable irq::$0 to zero page equivalence class [ irq::$0 ]
 Complete equivalence classes
 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ]
-[ irq_raster_next#0 ]
-[ irq_raster_next#1 ]
+[ irq_raster_next#0 irq_raster_next#1 ]
 [ irq::$0 ]
 Allocated zp ZP_BYTE:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ]
-Allocated zp ZP_BYTE:3 [ irq_raster_next#0 ]
-Allocated zp ZP_BYTE:4 [ irq_raster_next#1 ]
-Allocated zp ZP_BYTE:5 [ irq::$0 ]
+Allocated zp ZP_BYTE:3 [ irq_raster_next#0 irq_raster_next#1 ]
+Allocated zp ZP_BYTE:4 [ irq::$0 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -221,7 +218,6 @@ INITIAL ASM
   .const BLACK = 0
   .label KERNEL_IRQ = $314
   .label irq_raster_next = 3
-  .label irq_raster_next_1 = 4
 //SEG3 @begin
 bbegin:
   jmp b1
@@ -257,7 +253,7 @@ main: {
 }
 //SEG15 irq
 irq: {
-    .label _0 = 5
+    .label _0 = 4
     .label raster_next = 2
   //SEG16 entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
@@ -266,13 +262,13 @@ irq: {
   //SEG17 [7] *((const byte*) BORDERCOL#0) ← (const byte) DARK_GREY#0 -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta BORDERCOL
-  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 -- vbuz1=vbuz2_plus_vbuc1 
+  //SEG18 [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/signed byte/word/signed word/dword/signed dword) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax irq_raster_next
     axs #-[$15]
-    stx irq_raster_next_1
+    stx irq_raster_next
   //SEG19 [9] (byte) irq::raster_next#0 ← (byte) irq_raster_next#1 -- vbuz1=vbuz2 
     // Setup next interrupt
-    lda irq_raster_next_1
+    lda irq_raster_next
     sta raster_next
   //SEG20 [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
@@ -321,23 +317,19 @@ Statement [8] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte/sign
 Statement [15] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [16] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp ZP_BYTE:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ irq_raster_next#0 ] : zp ZP_BYTE:3 , 
-Potential registers zp ZP_BYTE:4 [ irq_raster_next#1 ] : zp ZP_BYTE:4 , 
-Potential registers zp ZP_BYTE:5 [ irq::$0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ irq_raster_next#0 irq_raster_next#1 ] : zp ZP_BYTE:3 , 
+Potential registers zp ZP_BYTE:4 [ irq::$0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [irq] 12.67: zp ZP_BYTE:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] 4: zp ZP_BYTE:5 [ irq::$0 ] 
-Uplift Scope [] 4: zp ZP_BYTE:3 [ irq_raster_next#0 ] 4: zp ZP_BYTE:4 [ irq_raster_next#1 ] 
+Uplift Scope [irq] 12.67: zp ZP_BYTE:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] 4: zp ZP_BYTE:4 [ irq::$0 ] 
+Uplift Scope [] 8: zp ZP_BYTE:3 [ irq_raster_next#0 irq_raster_next#1 ] 
 Uplift Scope [main] 
 
 Uplifting [irq] best 246 combination reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] reg byte a [ irq::$0 ] 
-Uplifting [] best 246 combination zp ZP_BYTE:3 [ irq_raster_next#0 ] zp ZP_BYTE:4 [ irq_raster_next#1 ] 
+Uplifting [] best 246 combination zp ZP_BYTE:3 [ irq_raster_next#0 irq_raster_next#1 ] 
 Uplifting [main] best 246 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ irq_raster_next#0 ]
-Uplifting [] best 246 combination zp ZP_BYTE:3 [ irq_raster_next#0 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:4 [ irq_raster_next#1 ]
-Uplifting [] best 246 combination zp ZP_BYTE:4 [ irq_raster_next#1 ] 
-Coalescing zero page register with common assignment [ zp ZP_BYTE:3 [ irq_raster_next#0 ] ] with [ zp ZP_BYTE:4 [ irq_raster_next#1 ] ] - score: 1
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ irq_raster_next#0 irq_raster_next#1 ]
+Uplifting [] best 246 combination zp ZP_BYTE:3 [ irq_raster_next#0 irq_raster_next#1 ] 
 Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ irq_raster_next#0 irq_raster_next#1 ]
 Interrupt procedure irq clobbers AXCNZ
 Removing interrupt register storage sty regy+1 in SEG16 entry interrupt(HARDWARE_CLOBBER)
@@ -463,6 +455,8 @@ Removing instruction bend:
 Removing instruction breturn:
 Removing instruction b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -500,7 +494,7 @@ reg byte a [ irq::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 153
+Score: 159
 
 //SEG0 File Comments
 //SEG1 Basic Upstart
@@ -524,6 +518,7 @@ bbegin:
 //SEG7 @2
 //SEG8 [3] call main 
   jsr main
+  rts
 //SEG9 [4] phi from @2 to @end [phi:@2->@end]
 //SEG10 @end
 //SEG11 main

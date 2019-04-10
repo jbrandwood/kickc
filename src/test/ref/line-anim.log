@@ -3747,8 +3747,8 @@ divr16s: {
     adc #0
     sta _13+1
   //SEG160 [91] (byte) divr16s::neg#2 ← (byte) divr16s::neg#3 ^ (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_bxor_vbuc1 
-    lda neg
-    eor #1
+    lda #1
+    eor neg
     sta neg
   //SEG161 [92] (word~) divr16s::divisoru#4 ← (word)(signed word~) divr16s::$13 -- vwuz1=vwuz2 
     lda _13
@@ -5679,6 +5679,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Replacing jump to rts with rts in jmp breturn
 Skipping double jump to b2 in bne b6
 Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction jmp b1
@@ -5691,6 +5692,7 @@ Removing instruction jmp b1
 Removing instruction jmp b3
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
+Removing instruction breturn:
 Removing instruction b6:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction jmp b2
@@ -6107,7 +6109,7 @@ reg byte a [ bitmap_init::$7 ]
 
 
 FINAL ASSEMBLER
-Score: 21644
+Score: 21647
 
 //SEG0 File Comments
 // Animated lines drawn on a single color bitmap
@@ -6588,7 +6590,6 @@ divr16s: {
   //SEG151 [86] phi (signed word) rem16s#3 = (signed word~) rem16s#57 [phi:divr16s::@10/divr16s::@5->divr16s::@return#0] -- register_copy 
   //SEG152 [86] phi (signed word) divr16s::return#2 = (signed word~) divr16s::return#7 [phi:divr16s::@10/divr16s::@5->divr16s::@return#1] -- register_copy 
   //SEG153 divr16s::@return
-  breturn:
   //SEG154 [87] return 
     rts
   //SEG155 divr16s::@10
@@ -6599,7 +6600,7 @@ divr16s: {
     sta rem16s
     lda divr16u.rem+1
     sta rem16s+1
-    jmp breturn
+    rts
   //SEG158 divr16s::@3
   b3:
   //SEG159 [90] (signed word~) divr16s::$13 ← - (signed word) divr16s::divisor#0 -- vwsz1=_neg_vwsz1 

@@ -20,27 +20,25 @@ public abstract class Scope implements Symbol {
    private int intermediateLabelCount = 1;
    private int blockCount = 1;
    private Scope parentScope;
+   private String fullName;
 
    public Scope(String name, Scope parentScope) {
       this.name = name;
       this.parentScope = parentScope;
       this.symbols = new LinkedHashMap<>();
+      setFullName();
    }
 
    public Scope() {
       this.name = "";
       this.parentScope = null;
       this.symbols = new LinkedHashMap<>();
+      setFullName();
    }
 
-   public static String getFullName(Symbol symbol) {
-      if(symbol.getScope() != null) {
-         String scopeName = symbol.getScope().getFullName();
-         if(scopeName.length() > 0) {
-            return scopeName + "::" + symbol.getLocalName();
-         }
-      }
-      return symbol.getLocalName();
+   private void setFullName() {
+      String scopeName = (parentScope == null) ? "" : parentScope.getFullName();
+      fullName = (scopeName.length() > 0) ? scopeName + "::" + name : name;
    }
 
    public HashMap<String, Symbol> getSymbols() {
@@ -54,7 +52,7 @@ public abstract class Scope implements Symbol {
 
    @Override
    public String getFullName() {
-      return getFullName(this);
+      return fullName;
    }
 
    public ScopeRef getRef() {
@@ -69,6 +67,7 @@ public abstract class Scope implements Symbol {
    @Override
    public void setScope(Scope scope) {
       this.parentScope = scope;
+      setFullName();
    }
 
    @Override
@@ -240,6 +239,19 @@ public abstract class Scope implements Symbol {
       }
       return procedures;
    }
+
+   public Collection<Symbol> getAllSymbols(boolean includeSubscopes) {
+      ArrayList<Symbol> allSymbols = new ArrayList<>();
+      for(Symbol symbol : symbols.values()) {
+         allSymbols.add(symbol);
+         if(symbol instanceof Scope && includeSubscopes) {
+            allSymbols.addAll(((Scope) symbol).getAllSymbols(true));
+         }
+      }
+      return allSymbols;
+   }
+
+
 
    public Label addLabel(String name) {
       Label symbol = new Label(name, this, false);

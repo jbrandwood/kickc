@@ -1,10 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.ConstantSymbolPointer;
-import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.ArrayList;
@@ -49,12 +46,12 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
             Registers.RegisterType registerType = defaultRegister.getType();
             List<Registers.Register> potentials = new ArrayList<>();
             potentials.add(defaultRegister);
-            if(registerType.equals(Registers.RegisterType.ZP_BYTE) && !varRefExtracted(equivalenceClass) &&!varVolatile(equivalenceClass)) {
+            if(registerType.equals(Registers.RegisterType.ZP_BYTE) && !isAddressOfUsed(equivalenceClass) &&!varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
                potentials.add(Registers.getRegisterX());
                potentials.add(Registers.getRegisterY());
             }
-            if(registerType.equals(Registers.RegisterType.ZP_BOOL) && !varRefExtracted(equivalenceClass) &&!varVolatile(equivalenceClass)) {
+            if(registerType.equals(Registers.RegisterType.ZP_BOOL) && !isAddressOfUsed(equivalenceClass) &&!varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
             }
             registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
@@ -83,14 +80,10 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
     * @param equivalenceClass The equivalence class
     * @return true if a variable reference is extracted
     */
-   private boolean varRefExtracted(LiveRangeEquivalenceClass equivalenceClass) {
-      Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
-      for(ConstantVar allConstant : allConstants) {
-         if(allConstant.getValue() instanceof ConstantSymbolPointer) {
-            SymbolRef toSym = ((ConstantSymbolPointer) allConstant.getValue()).getToSymbol();
-            if(equivalenceClass.getVariables().contains(toSym)) {
-               return true;
-            }
+   private boolean isAddressOfUsed(LiveRangeEquivalenceClass equivalenceClass) {
+      for(VariableRef variableRef : equivalenceClass.getVariables()) {
+         if(Pass2ConstantIdentification.isAddressOfUsed(variableRef, getProgram())) {
+            return true;
          }
       }
       return false;

@@ -32,6 +32,161 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   //@Test
+   //public void testPointerCast3() throws IOException, URISyntaxException {
+   //   compileAndCompare("pointer-cast-3");
+   //}
+
+   @Test
+   public void testPointerCast2() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-cast-2");
+   }
+
+   @Test
+   public void testPointerCast() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-cast");
+   }
+
+   @Test
+   public void testLiteralStrings() throws IOException, URISyntaxException {
+      compileAndCompare("literal-strings");
+   }
+
+   @Test
+   public void testIllegalVoidParameter() throws IOException, URISyntaxException {
+      assertError("illegal-void-parameter", "Illegal void parameter");
+   }
+
+   @Test
+   public void testIllegalUnnamedParameter() throws IOException, URISyntaxException {
+      assertError("illegal-unnamed-parameter", "Illegal unnamed parameter");
+   }
+
+   @Test
+   public void testFire() throws IOException, URISyntaxException {
+      compileAndCompare("examples/fire/fire");
+   }
+
+   @Test
+   public void testCTypes() throws IOException, URISyntaxException {
+      compileAndCompare("c-types");
+   }
+
+   @Test
+   public void testPlus0() throws IOException, URISyntaxException {
+      compileAndCompare("plus-0");
+   }
+
+   @Test
+   public void testPlasma2() throws IOException, URISyntaxException {
+      compileAndCompare("examples/plasma/plasma-unroll");
+   }
+
+   @Test
+   public void testPlasma() throws IOException, URISyntaxException {
+      compileAndCompare("examples/plasma/plasma");
+   }
+
+   @Test
+   public void testTernary3() throws IOException, URISyntaxException {
+      compileAndCompare("ternary-3");
+   }
+
+   @Test
+   public void testTernary2() throws IOException, URISyntaxException {
+      compileAndCompare("ternary-2");
+   }
+
+   @Test
+   public void testTernary1() throws IOException, URISyntaxException {
+      compileAndCompare("ternary-1");
+   }
+
+   @Test
+   public void testPointerPointer3() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-pointer-3");
+   }
+
+   @Test
+   public void testPointerPointer2() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-pointer-2");
+   }
+
+   @Test
+   public void testPointerPointer1() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-pointer-1" );
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall10() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-10");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall9() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-9");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall8() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-8");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall7() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-7");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall6() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-6");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall5() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-5");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall4() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-4");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall3() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-3");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall2() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-2");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call");
+   }
+
+   @Test
+   public void testFunctionPointerReturn() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-return");
+   }
+
+   @Test
+   public void testFunctionPointerNoarg3() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-3");
+   }
+
+   @Test
+   public void testFunctionPointerNoarg2() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-2");
+   }
+
+   @Test
+   public void testFunctionPointerNoarg() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg");
+   }
+
    @Test
    public void testComparisonRewriting() throws IOException, URISyntaxException {
       compileAndCompare("comparison-rewriting", getLogSysout());
@@ -64,7 +219,7 @@ public class TestPrograms {
 
    @Test
    public void testLocalScopeLoops() throws IOException, URISyntaxException {
-      compileAndCompare("localscope-loops", getLogSysout());
+      compileAndCompare("localscope-loops");
    }
 
    @Test
@@ -349,7 +504,7 @@ public class TestPrograms {
 
    //@Test
    //public void testRobozzle64() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/robozzle64/robozzle64");
+   //   compileAndCompare("complex/robozzle_c64/robozzle64_1", log());
    //}
 
    //@Test
@@ -656,6 +811,11 @@ public class TestPrograms {
    @Test
    public void testConstParam() throws IOException, URISyntaxException {
       compileAndCompare("const-param");
+   }
+
+   @Test
+   public void testDeepNesting() throws IOException, URISyntaxException {
+      compileAndCompare("deep-nesting");
    }
 
    @Test
@@ -1425,11 +1585,11 @@ public class TestPrograms {
 
    @AfterClass
    public static void tearDown() {
-      CompileLog log = getLogSysout();
+      CompileLog log = log();
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
    }
 
-   private static CompileLog getLogSysout() {
+   private static CompileLog log() {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
       return log;

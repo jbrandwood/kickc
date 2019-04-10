@@ -6,9 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementLValue;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.*;
 
@@ -327,6 +325,47 @@ public class SymbolTypeInference {
       }
    }
 
+   public static void inferCallPointerLValue(Program program, StatementCallPointer call, boolean reinfer) {
+      ProgramScope programScope = program.getScope();
+      LValue lValue = call.getlValue();
+      if(lValue instanceof VariableRef) {
+         Variable symbol = programScope.getVariable((VariableRef) lValue);
+         if(SymbolType.VAR.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
+            SymbolType procedureType = inferType(programScope, call.getProcedure());
+            if(procedureType instanceof SymbolTypeProcedure) {
+               SymbolType returnType = ((SymbolTypeProcedure) procedureType).getReturnType();
+               setInferedType(program, call, symbol, returnType);
+            }
+         }
+      }
+   }
+
+   public static void inferPhiVariable(Program program, StatementPhiBlock.PhiVariable phiVariable, boolean reinfer) {
+      ProgramScope programScope = program.getScope();
+
+      Variable symbol = programScope.getVariable(phiVariable.getVariable());
+      if(SymbolType.VAR.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
+         SymbolType type = null;
+         for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+            RValue rValue = phiRValue.getrValue();
+            SymbolType valueType = inferType(programScope, rValue);
+            if(type == null) {
+               type = valueType;
+            } else {
+               SymbolType newType = intersectTypes(type, valueType);
+               if(newType == null) {
+                  throw new CompileError("Types not compatible " + type + " and " + valueType);
+               }
+               type = newType;
+            }
+         }
+         if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
+            program.getLog().append("Inferred type updated to " + type + " for " + symbol.toString(program));
+         }
+         symbol.setTypeInferred(type);
+      }
+   }
+
    public static void inferAssignmentLValue(Program program, StatementAssignment assignment, boolean reinfer) {
       ProgramScope programScope = program.getScope();
       LValue lValue = assignment.getlValue();
@@ -365,9 +404,9 @@ public class SymbolTypeInference {
       }
    }
 
-   private static void setInferedType(Program program, StatementLValue statementLValue, Variable symbol, SymbolType type) {
+   private static void setInferedType(Program program, Statement statement, Variable symbol, SymbolType type) {
       if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
-         program.getLog().append("Inferred type updated to " + type + " in " + statementLValue.toString(program, false));
+         program.getLog().append("Inferred type updated to " + type + " in " + statement.toString(program, false));
       }
       symbol.setTypeInferred(type);
    }
@@ -377,6 +416,8 @@ public class SymbolTypeInference {
          inferAssignmentLValue(program, (StatementAssignment) statementLValue, reinfer);
       } else if(statementLValue instanceof StatementCall) {
          inferCallLValue(program, (StatementCall) statementLValue, reinfer);
+      } else if(statementLValue instanceof StatementCallPointer) {
+         inferCallPointerLValue(program, (StatementCallPointer) statementLValue, reinfer);
       } else {
          throw new RuntimeException("LValue statement not implemented " + statementLValue);
       }

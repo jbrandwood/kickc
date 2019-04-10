@@ -10189,8 +10189,12 @@ Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
 Skipping double jump to b4 in beq b15
+Replacing jump to rts with rts in jmp breturn
+Replacing jump to rts with rts in jmp b1
 Skipping double jump to b1 in jmp b1_from_b4
 Skipping double jump to b4 in beq b15
+Replacing jump to rts with rts in jmp breturn
+Replacing jump to rts with rts in jmp b1
 Skipping double jump to b5 in bne b7
 Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label b3_from_b12 to b6
@@ -10215,17 +10219,24 @@ Removing instruction lda #0
 Removing instruction lda a+1
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction bbegin:
+Removing instruction breturn:
 Removing instruction b15:
 Removing instruction b2:
+Removing instruction breturn:
 Removing instruction b15:
+Removing instruction b1:
 Removing instruction b7:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Replacing jump to rts with rts in jmp b1
+Succesful ASM optimization Pass5DoubleJumpElimination
 Removing unreachable instruction jmp b4
 Removing unreachable instruction jmp b4
 Removing unreachable instruction jmp b5
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [110] bne b1 to beq
-Fixing long branch [831] bne b1 to beq
+Removing instruction b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Fixing long branch [109] bne b1 to beq
+Fixing long branch [828] bne b1 to beq
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -10685,7 +10696,7 @@ reg byte a [ mulf_init::$12 ]
 
 
 FINAL ASSEMBLER
-Score: 436908
+Score: 439920
 
 //SEG0 File Comments
 // Test the fast multiplication library
@@ -10883,7 +10894,6 @@ mul16s_compare: {
   //SEG93 [71] phi from mul16s_compare::@7 to mul16s_error [phi:mul16s_compare::@7->mul16s_error]
     jsr mul16s_error
   //SEG94 mul16s_compare::@return
-  breturn:
   //SEG95 [47] return 
     rts
   //SEG96 mul16s_compare::@5
@@ -10931,7 +10941,7 @@ mul16s_compare: {
   //SEG118 [59] phi (byte*) print_char_cursor#129 = (byte*) print_char_cursor#128 [phi:mul16s_compare::@14->print_ln#0] -- register_copy 
   //SEG119 [59] phi (byte*) print_line_cursor#43 = (byte*) print_line_cursor#1 [phi:mul16s_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
-    jmp breturn
+    rts
   //SEG120 [58] phi from mul16s_compare::@3 to mul16s_compare::@15 [phi:mul16s_compare::@3->mul16s_compare::@15]
   //SEG121 mul16s_compare::@15
   //SEG122 [38] phi from mul16s_compare::@15 to mul16s_compare::@4 [phi:mul16s_compare::@15->mul16s_compare::@4]
@@ -11772,7 +11782,7 @@ muls16s: {
     bne b3
   //SEG400 [193] phi from muls16s::@3 muls16s::@4 to muls16s::@1 [phi:muls16s::@3/muls16s::@4->muls16s::@1]
   //SEG401 [193] phi (signed dword) muls16s::return#0 = (signed dword) muls16s::m#1 [phi:muls16s::@3/muls16s::@4->muls16s::@1#0] -- register_copy 
-    jmp b1
+    rts
   //SEG402 [193] phi from muls16s::@2 to muls16s::@1 [phi:muls16s::@2->muls16s::@1]
   b5:
   //SEG403 [193] phi (signed dword) muls16s::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16s::@2->muls16s::@1#0] -- vdsz1=vbsc1 
@@ -11782,7 +11792,6 @@ muls16s: {
     sta return+2
     sta return+3
   //SEG404 muls16s::@1
-  b1:
   //SEG405 muls16s::@return
   //SEG406 [194] return 
     rts
@@ -11835,7 +11844,7 @@ muls16s: {
     lda i
     cmp a
     bne b4
-    jmp b1
+    rts
 }
 //SEG417 mul16u_compare
 // Perform many possible word multiplications (slow and fast) and compare the results
@@ -12000,7 +12009,6 @@ mul16u_compare: {
   //SEG489 [245] phi from mul16u_compare::@7 to mul16u_error [phi:mul16u_compare::@7->mul16u_error]
     jsr mul16u_error
   //SEG490 mul16u_compare::@return
-  breturn:
   //SEG491 [233] return 
     rts
   //SEG492 mul16u_compare::@5
@@ -12052,7 +12060,7 @@ mul16u_compare: {
   //SEG514 [59] phi (byte*) print_char_cursor#129 = (byte*) print_char_cursor#128 [phi:mul16u_compare::@14->print_ln#0] -- register_copy 
   //SEG515 [59] phi (byte*) print_line_cursor#43 = (byte*) print_line_cursor#1 [phi:mul16u_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
-    jmp breturn
+    rts
   //SEG516 [244] phi from mul16u_compare::@3 to mul16u_compare::@15 [phi:mul16u_compare::@3->mul16u_compare::@15]
   //SEG517 mul16u_compare::@15
   //SEG518 [224] phi from mul16u_compare::@15 to mul16u_compare::@4 [phi:mul16u_compare::@15->mul16u_compare::@4]
@@ -12250,7 +12258,7 @@ muls16u: {
     bne b2
   //SEG599 [273] phi from muls16u::@2 to muls16u::@1 [phi:muls16u::@2->muls16u::@1]
   //SEG600 [273] phi (dword) muls16u::return#0 = (dword) muls16u::m#1 [phi:muls16u::@2->muls16u::@1#0] -- register_copy 
-    jmp b1
+    rts
   //SEG601 [273] phi from muls16u to muls16u::@1 [phi:muls16u->muls16u::@1]
   b3:
   //SEG602 [273] phi (dword) muls16u::return#0 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:muls16u->muls16u::@1#0] -- vduz1=vbuc1 
@@ -12260,7 +12268,6 @@ muls16u: {
     sta return+2
     sta return+3
   //SEG603 muls16u::@1
-  b1:
   //SEG604 muls16u::@return
   //SEG605 [274] return 
     rts

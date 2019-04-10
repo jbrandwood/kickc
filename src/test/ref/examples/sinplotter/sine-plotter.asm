@@ -246,7 +246,6 @@ sin16s_gen2: {
     .const min = -$140
     .const max = $140
     .label ampl = max-min
-    .const offs = min+(ampl>>1)
     .label _5 = $c
     .label _6 = 6
     .label _8 = 6
@@ -283,13 +282,6 @@ sin16s_gen2: {
     sta _6
     lda _5+3
     sta _6+1
-    clc
-    lda _8
-    adc #<offs
-    sta _8
-    lda _8+1
-    adc #>offs
-    sta _8+1
     ldy #0
     lda _8
     sta (sintab),y

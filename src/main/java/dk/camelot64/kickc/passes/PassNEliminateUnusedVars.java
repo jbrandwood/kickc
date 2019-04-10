@@ -3,10 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LValue;
@@ -52,6 +49,20 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                }
             } else if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
+               LValue lValue = call.getlValue();
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
+                  if(getLog().isVerbosePass1CreateSsa() || getLog().isVerboseSSAOptimize()) {
+                     getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
+                  }
+                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  if(variable != null) {
+                     variable.getScope().remove(variable);
+                  }
+                  call.setlValue(null);
+                  modified = true;
+               }
+            } else if(statement instanceof StatementCallPointer) {
+               StatementCallPointer call = (StatementCallPointer) statement;
                LValue lValue = call.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
                   if(getLog().isVerbosePass1CreateSsa() || getLog().isVerboseSSAOptimize()) {

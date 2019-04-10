@@ -11,10 +11,9 @@ main: {
     sta $400+2
     cmp #0
     bne b1
-  breturn:
     rts
   b1:
     lda #1
     sta $400+2+1
-    jmp breturn
+    rts
 }

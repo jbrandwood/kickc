@@ -323,14 +323,13 @@ divr16s: {
     eor #$ff
     adc #0
     sta return+1
-  breturn:
     rts
   b10:
     lda divr16u.rem
     sta rem16s
     lda divr16u.rem+1
     sta rem16s+1
-    jmp breturn
+    rts
   b3:
     sec
     lda _13

@@ -184,7 +184,6 @@ menu: {
     cmp #0
     beq b5
     jsr mode_stdchar
-  breturn:
     rts
   b5:
     ldy #KEY_2
@@ -192,70 +191,70 @@ menu: {
     cmp #0
     beq b6
     jsr mode_ecmchar
-    jmp breturn
+    rts
   b6:
     ldy #KEY_3
     jsr keyboard_key_pressed
     cmp #0
     beq b7
     jsr mode_mcchar
-    jmp breturn
+    rts
   b7:
     ldy #KEY_4
     jsr keyboard_key_pressed
     cmp #0
     beq b8
     jsr mode_stdbitmap
-    jmp breturn
+    rts
   b8:
     ldy #KEY_6
     jsr keyboard_key_pressed
     cmp #0
     beq b9
     jsr mode_hicolstdchar
-    jmp breturn
+    rts
   b9:
     ldy #KEY_7
     jsr keyboard_key_pressed
     cmp #0
     beq b10
     jsr mode_hicolecmchar
-    jmp breturn
+    rts
   b10:
     ldy #KEY_8
     jsr keyboard_key_pressed
     cmp #0
     beq b11
     jsr mode_hicolmcchar
-    jmp breturn
+    rts
   b11:
     ldy #KEY_A
     jsr keyboard_key_pressed
     cmp #0
     beq b12
     jsr mode_sixsfred2
-    jmp breturn
+    rts
   b12:
     ldy #KEY_B
     jsr keyboard_key_pressed
     cmp #0
     beq b13
     jsr mode_twoplanebitmap
-    jmp breturn
+    rts
   b13:
     ldy #KEY_C
     jsr keyboard_key_pressed
     cmp #0
     beq b14
     jsr mode_sixsfred
-    jmp breturn
+    rts
   b14:
     ldy #KEY_D
     jsr keyboard_key_pressed
     cmp #0
     beq b15
     jsr mode_8bpppixelcell
-    jmp breturn
+    rts
   b15:
     ldy #KEY_E
     jsr keyboard_key_pressed
@@ -264,7 +263,7 @@ menu: {
     jmp b4
   !b4:
     jsr mode_8bppchunkybmm
-    jmp breturn
+    rts
 }
 //Chunky 8bpp Bitmap Mode (BMM = 0, ECM/MCM/HICOL/LINEAR/CHUNK/COLDIS = 1)
 // Resolution: 320x200
@@ -1579,7 +1578,6 @@ bitmap_line: {
     sta bitmap_line_ydxi.y1
     sty bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
-  breturn:
     rts
   b8:
     stx bitmap_line_xdyi.x
@@ -1587,7 +1585,7 @@ bitmap_line: {
     sta bitmap_line_xdyi.y
     sty bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
-    jmp breturn
+    rts
   b7:
     lda y1
     sec
@@ -1602,14 +1600,14 @@ bitmap_line: {
     sta bitmap_line_ydxd.y1
     sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
-    jmp breturn
+    rts
   b9:
     stx bitmap_line_xdyd.x
     lda y1
     sta bitmap_line_xdyd.y
     sty bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
-    jmp breturn
+    rts
   b1:
     txa
     sec
@@ -1627,14 +1625,14 @@ bitmap_line: {
     sta bitmap_line_ydxd.y
     sty bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
-    jmp breturn
+    rts
   b12:
     lda x0
     sta bitmap_line_xdyd.x
     stx bitmap_line_xdyd.x1
     sty bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
-    jmp breturn
+    rts
   b11:
     lda y1
     sec
@@ -1647,14 +1645,14 @@ bitmap_line: {
     ldx x0
     sty bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
-    jmp breturn
+    rts
   b13:
     lda x0
     sta bitmap_line_xdyi.x
     stx bitmap_line_xdyi.x1
     sty bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
-    jmp breturn
+    rts
 }
 // bitmap_line_xdyi(byte zeropage($a) x, byte zeropage($b) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
 bitmap_line_xdyi: {

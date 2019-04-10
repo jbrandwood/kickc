@@ -25,6 +25,7 @@ bbegin:
   lda #0
   sta irq_idx
   jsr main
+  rts
 main: {
     sei
     // Disable CIA 1 Timer IRQ

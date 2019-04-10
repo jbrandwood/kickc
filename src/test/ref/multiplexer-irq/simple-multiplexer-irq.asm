@@ -34,14 +34,11 @@
   .label YSIN = $2100
   // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
-  .label plex_show_idx = 9
-  .label plex_sprite_idx = 8
-  .label plex_sprite_msb = $b
-  .label plex_sprite_idx_1 = $e
-  .label plex_free_next = $f
-  .label framedone = 2
-  .label plex_free_next_27 = $a
-  .label plex_free_next_31 = $a
+  .label plex_show_idx = 7
+  .label plex_sprite_idx = 6
+  .label plex_sprite_msb = 8
+  .label plex_free_next = 9
+  .label framedone = $a
 bbegin:
   // The index in the PLEX tables of the next sprite to show
   lda #0
@@ -53,10 +50,11 @@ bbegin:
   sta plex_sprite_msb
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   lda #0
-  sta plex_free_next_31
+  sta plex_free_next
   lda #1
   sta framedone
   jsr main
+  rts
 main: {
     sei
     jsr init
@@ -65,13 +63,9 @@ main: {
 }
 // The raster loop
 loop: {
-    .label sin_idx = 3
-    .label y_idx = 4
-    // The current index into the y-sinus
+    .label sin_idx = 2
     lda #0
     sta sin_idx
-  b1:
-  // without volatile gives wrong asm
   b2:
     lda framedone
     cmp #0
@@ -80,18 +74,13 @@ loop: {
   b3:
     lda #RED
     sta BORDERCOL
-    // Assign sinus positions
-    lda sin_idx
-    sta y_idx
+    ldx sin_idx
     ldy #0
-  // without volatile gives wrong asm
   b4:
-    ldx y_idx
     lda YSIN,x
     sta PLEX_YPOS,y
-    lax y_idx
+    txa
     axs #-[8]
-    stx y_idx
     iny
     cpy #PLEX_COUNT-1+1
     bne b4
@@ -107,7 +96,7 @@ loop: {
     sta VIC_CONTROL
     lda #0
     sta RASTER
-    jmp b1
+    jmp b2
 }
 // Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
 // Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
@@ -119,9 +108,9 @@ loop: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $c
-    .label nxt_y = $d
-    .label m = 5
+    .label nxt_idx = $b
+    .label nxt_y = $c
+    .label m = 3
     lda #0
     sta m
   b1:
@@ -153,7 +142,7 @@ plexSort: {
     // Prepare for showing the sprites
     lda #0
     sta plex_show_idx
-    sta plex_sprite_idx_1
+    sta plex_sprite_idx
     lda #1
     sta plex_sprite_msb
     ldx #0
@@ -174,7 +163,7 @@ plexSort: {
 }
 // Initialize the program
 init: {
-    .label xp = 6
+    .label xp = 4
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
     jsr plexInit
@@ -239,7 +228,7 @@ plexInit: {
     rts
 }
 plex_irq: {
-    .label _4 = 5
+    .label _4 = $d
     lda #WHITE
     sta BORDERCOL
   b3:
@@ -276,9 +265,9 @@ plex_irq: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label _7 = 8
-    .label plex_sprite_idx2 = 5
-    .label plexFreeAdd1__2 = $a
+    .label _7 = 6
+    .label plex_sprite_idx2 = $d
+    .label plexFreeAdd1__2 = 9
     lda plex_sprite_idx
     asl
     sta plex_sprite_idx2
@@ -289,9 +278,9 @@ plexShowSprite: {
     sta SPRITES_YPOS,y
     clc
     adc #$15
-    ldy plex_free_next_27
+    ldy plex_free_next
     sta PLEX_FREE_YPOS,y
-    ldx plex_free_next_27
+    ldx plex_free_next
     inx
     lda #7
     sax plexFreeAdd1__2
@@ -310,8 +299,8 @@ plexShowSprite: {
     lda PLEX_XPOS+1,x
     cmp #0
     bne b1
-    lda plex_sprite_msb
-    eor #$ff
+    lda #$ff
+    eor plex_sprite_msb
     and SPRITES_XMSB
     sta SPRITES_XMSB
   b2:

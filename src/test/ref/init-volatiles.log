@@ -122,12 +122,10 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ x#5 x#0 x#1 ]
-Added variable x#2 to zero page equivalence class [ x#2 ]
+Coalescing volatile variable equivalence classes [ x#5 x#0 x#1 ] and [ x#2 ]
 Complete equivalence classes
-[ x#5 x#0 x#1 ]
-[ x#2 ]
-Allocated zp ZP_BYTE:2 [ x#5 x#0 x#1 ]
-Allocated zp ZP_BYTE:3 [ x#2 ]
+[ x#5 x#0 x#1 x#2 ]
+Allocated zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -138,7 +136,6 @@ INITIAL ASM
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
   .label x = 2
-  .label x_2 = 3
 //SEG3 @begin
 bbegin:
 //SEG4 [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) $c -- vbuz1=vbuc1 
@@ -178,7 +175,7 @@ main: {
   b2:
   //SEG18 [8] (byte) x#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
     lda #0
-    sta x_2
+    sta x
     jmp breturn
   //SEG19 main::@return
   breturn:
@@ -190,20 +187,16 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) x#0 ← (byte/signed byte/word/signed word/dword/signed dword) $c [ x#0 ] ( ) always clobbers reg byte a 
 Statement [7] if((byte) x#1<(byte/signed byte/word/signed word/dword/signed dword) $32) goto main::@1 [ x#1 ] ( main:2 [ x#1 ] ) always clobbers reg byte a 
 Statement [8] (byte) x#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ x#5 x#0 x#1 ] : zp ZP_BYTE:2 , 
-Potential registers zp ZP_BYTE:3 [ x#2 ] : zp ZP_BYTE:3 , 
+Potential registers zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ] : zp ZP_BYTE:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 41.83: zp ZP_BYTE:2 [ x#5 x#0 x#1 ] 20: zp ZP_BYTE:3 [ x#2 ] 
+Uplift Scope [] 61.83: zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ] 
 Uplift Scope [main] 
 
-Uplifting [] best 216 combination zp ZP_BYTE:2 [ x#5 x#0 x#1 ] zp ZP_BYTE:3 [ x#2 ] 
+Uplifting [] best 216 combination zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ] 
 Uplifting [main] best 216 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ x#5 x#0 x#1 ]
-Uplifting [] best 216 combination zp ZP_BYTE:2 [ x#5 x#0 x#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ x#2 ]
-Uplifting [] best 216 combination zp ZP_BYTE:3 [ x#2 ] 
-Coalescing zero page register [ zp ZP_BYTE:2 [ x#5 x#0 x#1 ] ] with [ zp ZP_BYTE:3 [ x#2 ] ]
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ]
+Uplifting [] best 216 combination zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -280,6 +273,8 @@ Removing instruction bend:
 Removing instruction b2:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -299,7 +294,7 @@ zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ]
 
 
 FINAL ASSEMBLER
-Score: 147
+Score: 153
 
 //SEG0 File Comments
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
@@ -319,6 +314,7 @@ bbegin:
 //SEG7 [2] call main 
 //SEG8 [4] phi from @1 to main [phi:@1->main]
   jsr main
+  rts
 //SEG9 [3] phi from @1 to @end [phi:@1->@end]
 //SEG10 @end
 //SEG11 main

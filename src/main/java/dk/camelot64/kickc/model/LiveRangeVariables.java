@@ -1,13 +1,12 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.passes.Pass3LiveRangesAnalysis;
-import dk.camelot64.kickc.passes.PassNCallGraphAnalysis;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Live ranges for all variables.
@@ -28,16 +27,16 @@ public class LiveRangeVariables {
     * Add a single statement to the live range of a variable.
     *
     * @param variable The variable
-    * @param statement The statement to add
+    * @param statementIdx Index of the statement to add
     * @return true if a live range was modified by the addition
     */
-   public boolean addAlive(VariableRef variable, Statement statement) {
+   public boolean addAlive(VariableRef variable, int statementIdx) {
       LiveRange liveRange = liveRanges.get(variable);
       if(liveRange == null) {
          liveRange = new LiveRange();
          liveRanges.put(variable, liveRange);
       }
-      return liveRange.add(statement);
+      return liveRange.add(statementIdx);
    }
 
    /**
@@ -56,15 +55,14 @@ public class LiveRangeVariables {
    /**
     * Get all variables alive at a specific statement
     *
-    * @param statement The statement
+    * @param statementIdx Index of the statement
     * @return List of all live variables.
     */
-   public List<VariableRef> getAlive(Statement statement) {
+   public List<VariableRef> getAlive(int statementIdx) {
       ArrayList<VariableRef> aliveVars = new ArrayList<>();
-      for(VariableRef variable : liveRanges.keySet()) {
-         LiveRange liveRange = liveRanges.get(variable);
-         if(liveRange.contains(statement)) {
-            aliveVars.add(variable);
+      for(Map.Entry<VariableRef,LiveRange> entry : liveRanges.entrySet()) {
+         if(entry.getValue().contains(statementIdx)) {
+            aliveVars.add(entry.getKey());
          }
       }
       return aliveVars;

@@ -80,7 +80,7 @@ public abstract class StatementBase implements Statement {
       }
       LiveRangeVariables liveRanges = program.getLiveRangeVariables();
       StringBuilder alive = new StringBuilder();
-      alive.append(getAliveString(liveRanges.getAlive(this)));
+      alive.append(getAliveString(liveRanges.getAlive(index)));
       LiveRangeVariablesEffective liveRangeVariablesEffective = program.getLiveRangeVariablesEffective();
       if(liveRangeVariablesEffective != null) {
          LiveRangeVariablesEffective.AliveCombinations aliveCombinations = liveRangeVariablesEffective.getAliveCombinations(this);

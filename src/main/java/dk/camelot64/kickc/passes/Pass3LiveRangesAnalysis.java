@@ -65,7 +65,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
       boolean modified = false;
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for(Statement stmt : block.getStatements()) {
-            List<VariableRef> aliveNextStmt = liveRanges.getAlive(stmt);
+            List<VariableRef> aliveNextStmt = liveRanges.getAlive(stmt.getIndex());
             Collection<VariableRef> definedNextStmt = referenceInfo.getDefinedVars(stmt);
             initLiveRange(liveRanges, definedNextStmt);
             Collection<PreviousStatement> previousStmts = getPreviousStatements(stmt);
@@ -76,7 +76,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   // Add all vars alive in the next statement
                   for(VariableRef aliveVar : aliveNextStmt) {
                      if(!definedNextStmt.contains(aliveVar)) {
-                        boolean addAlive = liveRanges.addAlive(aliveVar, previousStmt.getStatement());
+                        boolean addAlive = liveRanges.addAlive(aliveVar, previousStmt.getStatementIdx());
                         modified |= addAlive;
                         if(addAlive && getLog().isVerboseLiveRanges()) {
                            getLog().append("Propagated alive var " + aliveVar + " to " + previousStmt.getStatement());
@@ -92,7 +92,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   for(VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are not used inside the method
                      if(procUsed.contains(aliveVar)) {
-                        boolean addUsedVar = liveRanges.addAlive(aliveVar, previousStmt.getStatement());
+                        boolean addUsedVar = liveRanges.addAlive(aliveVar, previousStmt.getStatementIdx());
                         modified |= addUsedVar;
                         if(addUsedVar && getLog().isVerboseLiveRanges()) {
                            getLog().append("Propagated alive var used in method into method " + aliveVar + " to " + previousStmt.getStatement());
@@ -108,7 +108,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                   for(VariableRef aliveVar : aliveNextStmt) {
                      // Add all variables to previous that are not used inside the method
                      if(!procUsed.contains(aliveVar)) {
-                        boolean addSkipVar = liveRanges.addAlive(aliveVar, previousStmt.getStatement());
+                        boolean addSkipVar = liveRanges.addAlive(aliveVar, previousStmt.getStatementIdx());
                         modified |= addSkipVar;
                         if(addSkipVar && getLog().isVerboseLiveRanges()) {
                            getLog().append("Propagated alive var unused in method by skipping call " + aliveVar + " to " + previousStmt.getStatement());
@@ -127,7 +127,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
                      // Add all variables to previous that are used inside the method
                      if(procUsed.contains(aliveVar)) {
                         if(!definedNextStmt.contains(aliveVar)) {
-                           boolean usedVar = liveRanges.addAlive(aliveVar, previousStmt.getStatement());
+                           boolean usedVar = liveRanges.addAlive(aliveVar, previousStmt.getStatementIdx());
                            modified |= usedVar;
                            if(usedVar && getLog().isVerboseLiveRanges()) {
                               getLog().append("Propagated alive used in method out of method " + aliveVar + " to " + previousStmt.getStatement());
@@ -164,13 +164,13 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
          // If current statement is a phi add the used variables to previous based on the phi entries
          StatementPhiBlock phi = (StatementPhiBlock) stmt;
          ControlFlowBlock previousBlock =
-               getProgram().getStatementInfos().getBlock(previousStmt.getStatement());
+               getProgram().getStatementInfos().getBlock(previousStmt.getStatementIdx());
          for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
             for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                if(phiRValue.getPredecessor().equals(previousBlock.getLabel())) {
                   if(phiRValue.getrValue() instanceof VariableRef) {
                      VariableRef usedVar = (VariableRef) phiRValue.getrValue();
-                     boolean addUsed = liveRanges.addAlive(usedVar, previousStmt.getStatement());
+                     boolean addUsed = liveRanges.addAlive(usedVar, previousStmt.getStatementIdx());
                      modified |= addUsed;
                      if(addUsed && getLog().isVerboseLiveRanges()) {
                         getLog().append("Adding used phi var " + usedVar + " to " + previousStmt.getStatement());
@@ -182,7 +182,7 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
       } else {
          // Not a phi block - add used vars to all previous blocks
          for(VariableRef usedVar : usedNextStmt) {
-            boolean addUsed = liveRanges.addAlive(usedVar, previousStmt.getStatement());
+            boolean addUsed = liveRanges.addAlive(usedVar, previousStmt.getStatementIdx());
             modified |= addUsed;
             if(addUsed && getLog().isVerboseLiveRanges()) {
                getLog().append("Adding used var " + usedVar + " to " + previousStmt.getStatement());
@@ -344,6 +344,10 @@ public class Pass3LiveRangesAnalysis extends Pass2Base {
 
       public Statement getStatement() {
          return statement;
+      }
+
+      public int getStatementIdx() {
+         return statement.getIndex();
       }
 
       public Type getType() {

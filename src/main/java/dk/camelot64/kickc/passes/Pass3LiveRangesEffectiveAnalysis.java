@@ -75,9 +75,8 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
                getProgram().getCallGraph().getCallers(procedure.getRef());
          for(CallGraph.CallBlock.Call caller : callers) {
             // Each caller creates its own call-paths
-            StatementCall callStatement =
-                  (StatementCall) getProgram().getStatementInfos().getStatement(caller.getCallStatementIdx());
-            ControlFlowBlock callBlock = getProgram().getStatementInfos().getBlock(callStatement);
+            int callStatementIdx = caller.getCallStatementIdx();
+            ControlFlowBlock callBlock = getProgram().getStatementInfos().getBlock(callStatementIdx);
             ScopeRef callScopeRef = callBlock.getScope();
             Scope callScope = getProgram().getScope().getScope(callScopeRef);
             if(callScope instanceof Procedure) {
@@ -95,7 +94,7 @@ public class Pass3LiveRangesEffectiveAnalysis extends Pass2Base {
                   Collection<VariableRef> alive = new LinkedHashSet<>();
                   alive.addAll(callerPath.getAlive());
                   alive.removeAll(referencedInCaller);
-                  alive.addAll(liveRangeVariables.getAlive(callStatement));
+                  alive.addAll(liveRangeVariables.getAlive(callStatementIdx));
                   Pass2AliasElimination.Aliases innerAliases = getCallAliases(procedure, callBlock);
                   Pass2AliasElimination.Aliases pathAliases = new Pass2AliasElimination.Aliases();
                   pathAliases.addAll(callerPath.getPathAliases());

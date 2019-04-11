@@ -5,7 +5,6 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementInfos;
-import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.LinkedHashMap;
 
@@ -24,11 +23,11 @@ public class PassNStatementInfos extends Pass2SsaOptimization {
     */
    @Override
    public boolean step() {
-      LinkedHashMap<Integer, LabelRef> stmtBlocks = new LinkedHashMap<>();
+      LinkedHashMap<Integer, ControlFlowBlock> stmtBlocks = new LinkedHashMap<>();
       LinkedHashMap<Integer, Statement> stmtIdx = new LinkedHashMap<>();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            stmtBlocks.put(statement.getIndex(), block.getLabel());
+            stmtBlocks.put(statement.getIndex(), block);
             stmtIdx.put(statement.getIndex(), statement);
          }
       }

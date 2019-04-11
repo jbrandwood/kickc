@@ -174,7 +174,8 @@ public class AsmFormat {
       }
    }
 
-   private static String shortNumberStrings[] = {
+   /** String format for all numbers < $100 for speeding up the compilation. */
+   private static String SHORT_ASM_NUMBERS[] = {
          "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "$a", "$b", "$c", "$d", "$e", "$f",
          "$10", "$11", "$12", "$13", "$14", "$15", "$16", "$17", "$18", "$19", "$1a", "$1b", "$1c", "$1d", "$1e", "$1f",
          "$20", "$21", "$22", "$23", "$24", "$25", "$26", "$27", "$28", "$29", "$2a", "$2b", "$2c", "$2d", "$2e", "$2f",
@@ -195,8 +196,9 @@ public class AsmFormat {
 
    public static String getAsmNumber(Number number) {
       if(number instanceof Long || number instanceof Integer) {
+         // Use cached small numbers. */
          if(number.longValue() >= 0L && number.longValue() <= 255L) {
-            return shortNumberStrings[number.intValue()];
+            return SHORT_ASM_NUMBERS[number.intValue()];
          } else {
             return String.format("$%x", number.longValue());
          }

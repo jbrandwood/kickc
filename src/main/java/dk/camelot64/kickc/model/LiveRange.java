@@ -23,24 +23,6 @@ public class LiveRange {
    }
 
    /**
-    * Add a statement to the live range
-    *
-    * @param statement The statement to add
-    * @return true if the live range was modified by the addition. false otherwise
-    */
-   public boolean add(Statement statement) {
-      return add(getIndex(statement));
-   }
-
-   private Integer getIndex(Statement statement) {
-      Integer index = statement.getIndex();
-      if(index == null) {
-         throw new RuntimeException("Statement index not defined! Live Ranges only work after defining statement indexes (Pass3LiveRangesAnalysis.generateStatementIndices).");
-      }
-      return index;
-   }
-
-   /**
     * Get the number of statements in the live range.
     *
     * @return The number of statements in the live range.
@@ -126,22 +108,12 @@ public class LiveRange {
    }
 
    /**
-    * Determines if the live range contains a statement
-    *
-    * @param statement The statement to examine
-    * @return true if the live range contains the statement
-    */
-   public boolean contains(Statement statement) {
-      return contains(getIndex(statement));
-   }
-
-   /**
     * Determines if the live range contains an index
     *
     * @param index
     * @return true if the live range contains the index
     */
-   private boolean contains(int index) {
+   public boolean contains(int index) {
       for(LiveInterval interval : intervals) {
          if(interval.lastStatementIdx >= index) {
             if(interval.firstStatementIdx <= index) {

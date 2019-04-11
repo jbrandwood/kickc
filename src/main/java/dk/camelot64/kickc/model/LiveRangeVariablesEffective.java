@@ -43,7 +43,7 @@ public class LiveRangeVariablesEffective {
       this.statementLiveVariables = new LinkedHashMap<>();
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            statementLiveVariables.put(statement.getIndex(), liveRangeVariables.getAlive(statement));
+            statementLiveVariables.put(statement.getIndex(), liveRangeVariables.getAlive(statement.getIndex()));
          }
       }
    }
@@ -276,9 +276,8 @@ public class LiveRangeVariablesEffective {
        * @return All variables effectively alive at the statement on the call-path
        */
       public Collection<VariableRef> getEffectiveAliveAtStmt(CallPath callPath) {
-         LinkedHashSet<VariableRef> effectiveAlive = new LinkedHashSet<>();
          // Add alive at call
-         effectiveAlive.addAll(callPath.getAlive());
+         LinkedHashSet<VariableRef> effectiveAlive = new LinkedHashSet<>(callPath.getAlive());
          // Clear out any variables referenced in the method
          effectiveAlive.removeAll(referencedInProcedure);
          // Add alive at statement

@@ -14,12 +14,12 @@ public class StatementInfos {
    private ControlFlowGraph graph;
 
    /** Maps statement index to block label. */
-   private Map<Integer, LabelRef> stmtBlocks;
+   private Map<Integer, ControlFlowBlock> stmtBlocks;
 
    /** Maps statement index to statement. */
    private Map<Integer, Statement> stmtIdx;
 
-   public StatementInfos(Program program, Map<Integer, LabelRef> stmtBlocks, Map<Integer, Statement> stmtIdx) {
+   public StatementInfos(Program program, Map<Integer, ControlFlowBlock> stmtBlocks, Map<Integer, Statement> stmtIdx) {
       this.graph = program.getGraph();
       this.stmtBlocks = stmtBlocks;
       this.stmtIdx = stmtIdx;
@@ -32,7 +32,7 @@ public class StatementInfos {
     * @return The block label
     */
    public LabelRef getBlockRef(Integer stmtIdx) {
-      return stmtBlocks.get(stmtIdx);
+      return stmtBlocks.get(stmtIdx).getLabel();
    }
 
    /**
@@ -42,7 +42,7 @@ public class StatementInfos {
     * @return The block label
     */
    public LabelRef getBlockRef(Statement stmt) {
-      return stmtBlocks.get(stmt.getIndex());
+      return stmtBlocks.get(stmt.getIndex()).getLabel();
    }
 
    /**
@@ -52,7 +52,7 @@ public class StatementInfos {
     * @return The containing block
     */
    public ControlFlowBlock getBlock(Statement stmt) {
-      return graph.getBlock(getBlockRef(stmt));
+      return stmtBlocks.get(stmt.getIndex());
    }
 
    /**

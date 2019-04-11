@@ -43,7 +43,7 @@ public class LiveRangeVariablesEffective {
       this.statementLiveVariables = new LinkedHashMap<>();
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            statementLiveVariables.put(statement.getIndex(), liveRangeVariables.getAlive(statement));
+            statementLiveVariables.put(statement.getIndex(), liveRangeVariables.getAlive(statement.getIndex()));
          }
       }
    }

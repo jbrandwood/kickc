@@ -276,9 +276,8 @@ public class LiveRangeVariablesEffective {
        * @return All variables effectively alive at the statement on the call-path
        */
       public Collection<VariableRef> getEffectiveAliveAtStmt(CallPath callPath) {
-         LinkedHashSet<VariableRef> effectiveAlive = new LinkedHashSet<>();
          // Add alive at call
-         effectiveAlive.addAll(callPath.getAlive());
+         LinkedHashSet<VariableRef> effectiveAlive = new LinkedHashSet<>(callPath.getAlive());
          // Clear out any variables referenced in the method
          effectiveAlive.removeAll(referencedInProcedure);
          // Add alive at statement

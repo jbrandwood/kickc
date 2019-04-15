@@ -31,7 +31,7 @@ void main() {
     }
 }
 
-// Animate the fire on the passe screen. Uses BUFFER to store the current values.
+// Animate the fire on the passed screen. Uses BUFFER to store the current values.
 void fire(unsigned char* screenbase) {
 
     // Average characters from below the current character (24 lines)
@@ -49,8 +49,8 @@ void fire(unsigned char* screenbase) {
     // Add one new random line at the bottom
     screen = (screenbase + (24 * 40));
     buffer = (BUFFER + (24 * 40));
-    while(buffer != (BUFFER+(25*40))) {
-        *screen++ = *buffer++ = 0x30 + (sid_rnd())/$10;
+    for(; buffer != (BUFFER+(25*40)); ++screen, ++buffer) {
+        *screen = *buffer = 0x30 + (sid_rnd())/$10;
     }
 }
 
@@ -62,8 +62,7 @@ void makecharset(byte* charset) {
     for (unsigned char *font = (charset+(64*8)); font != (charset+(256*8)); ++font)
         *font = 0xff;
     for (unsigned char c = 0; c < 0x40; ++c) {
-        unsigned char bc = 0;
-        for (unsigned char i = 0; i < 8; i++){
+        for (unsigned char bc = 0, i = 0; i < 8; i++){
             unsigned char b = 0;
             for (unsigned char ii = 0; ii < 8; ii++) {
                 bc += c;

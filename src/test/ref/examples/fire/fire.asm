@@ -73,17 +73,17 @@ main: {
     sta D018
     jmp b1
 }
-// Animate the fire on the passe screen. Uses BUFFER to store the current values.
+// Animate the fire on the passed screen. Uses BUFFER to store the current values.
 fire: {
     .label screen = 2
     .label screen_2 = 6
     .label buffer = 4
     .label screen_4 = 6
-    .label screen_11 = 6
+    .label screen_10 = 6
     lda screen
-    sta screen_11
+    sta screen_10
     lda screen+1
-    sta screen_11+1
+    sta screen_10+1
     lda #<BUFFER
     sta buffer
     lda #>BUFFER
@@ -107,14 +107,6 @@ fire: {
     lda #>BUFFER+$18*$28
     sta buffer+1
   b6:
-    lda buffer+1
-    cmp #>BUFFER+$19*$28
-    bne b7
-    lda buffer
-    cmp #<BUFFER+$19*$28
-    bne b7
-    rts
-  b7:
     jsr sid_rnd
     lsr
     lsr
@@ -134,7 +126,13 @@ fire: {
     bne !+
     inc buffer+1
   !:
-    jmp b6
+    lda buffer+1
+    cmp #>BUFFER+$19*$28
+    bne b6
+    lda buffer
+    cmp #<BUFFER+$19*$28
+    bne b6
+    rts
   b2:
     ldy #$28-1
     clc

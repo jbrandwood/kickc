@@ -13,7 +13,7 @@ import dk.camelot64.kickc.model.values.*;
 
 import java.util.ListIterator;
 
-/** Pass that identified indirect calls to constant function pointers */
+/** Pass that identifies indirect calls to constant function pointers */
 public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization {
 
    public Pass2ConstantCallPointerIdentification(Program program) {

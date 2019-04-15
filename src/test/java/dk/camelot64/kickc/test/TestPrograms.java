@@ -38,6 +38,16 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testDivide2s() throws IOException, URISyntaxException {
+      compileAndCompare("divide-2s");
+   }
+
+   @Test
+   public void testMultiply2s() throws IOException, URISyntaxException {
+      compileAndCompare("multiply-2s");
+   }
+
+   @Test
    public void testPointerCast2() throws IOException, URISyntaxException {
       compileAndCompare("pointer-cast-2");
    }

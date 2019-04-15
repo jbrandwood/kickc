@@ -251,6 +251,7 @@ public class Compiler {
       optimizations.add(new Pass2RangeResolving(program));
       optimizations.add(new Pass2ComparisonOptimization(program));
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));
+      optimizations.add(new Pass2Multiply2sRewriting(program));
       pass2Execute(optimizations);
    }
 

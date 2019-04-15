@@ -60,7 +60,7 @@
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
-  .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
+  .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
   .label render_screen_showing = 5
   .label irq_raster_next = 6
   .label irq_sprite_ypos = 7
@@ -86,9 +86,9 @@ bbegin:
   jsr main
   rts
 main: {
-    .const toSpritePtr2_return = SIN_SPRITE>>6
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)>>6
-    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+    .const toSpritePtr2_return = SIN_SPRITE/$40
+    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)/$40
+    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
     .label xpos = 2
     .label ypos = 3
     lda #3
@@ -222,7 +222,7 @@ sprites_init: {
 // Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
-    .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
+    .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
     .label raster_sprite_gfx_modify = 4
     sta rega+1
     stx regx+1

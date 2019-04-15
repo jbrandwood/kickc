@@ -27,7 +27,7 @@
   .label rem16u = 2
   .label xsin_idx = 2
 main: {
-    .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>LOGO)>>2&$f
+    .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     sei
     lda #WHITE
     sta BORDERCOL

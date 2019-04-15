@@ -204,7 +204,7 @@ mul8u: {
     jmp b1
 }
 init: {
-    .const toD0181_return = (>(screen&$3fff)<<2)|(>charset)>>2&$f
+    .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
     jsr init_sprites
     ldx #0
     lda #<screen

@@ -30,8 +30,8 @@
   .label c2A = 6
   .label c2B = 7
 main: {
-    .const toD0181_return = (>(SCREEN1&$3fff)<<2)|(>CHARSET)>>2&$f
-    .const toD0182_return = (>(SCREEN2&$3fff)<<2)|(>CHARSET)>>2&$f
+    .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
+    .const toD0182_return = (>(SCREEN2&$3fff)*4)|(>CHARSET)/4&$f
     .label col = 2
     sei
     lda #BLUE

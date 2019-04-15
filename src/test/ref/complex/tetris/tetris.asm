@@ -125,7 +125,7 @@
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
-  .const toSpritePtr1_return = PLAYFIELD_SPRITES>>6
+  .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
   .label keyboard_events_size = $23
   .label render_screen_showing = $25
   .label irq_raster_next = $26
@@ -1278,8 +1278,8 @@ keyboard_matrix_read: {
 }
 // Update $D018 to show the current screen (used for double buffering)
 render_show: {
-    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
-    .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)<<2)|(>PLAYFIELD_CHARSET)>>2&$f
+    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
+    .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
     lda render_screen_show
     cmp #0
     beq toD0181
@@ -1419,7 +1419,7 @@ sprites_init: {
 }
 // Initialize rendering
 render_init: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)>>6
+    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)/$40
     .label li_1 = 5
     .label li_2 = 7
     lda #3
@@ -1599,7 +1599,7 @@ sid_rnd_init: {
 // Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
-    .const toSpritePtr2_return = PLAYFIELD_SPRITES>>6
+    .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
     .label raster_sprite_gfx_modify = $24
     sta rega+1
     stx regx+1

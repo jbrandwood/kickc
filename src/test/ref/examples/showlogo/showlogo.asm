@@ -18,7 +18,7 @@
   .label SCREEN = $400
   .label LOGO = $2000
 main: {
-    .const toD0181_return = (>(SCREEN&$3fff)<<2)|(>LOGO)>>2&$f
+    .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     lda #WHITE
     sta BORDERCOL
     lda #DARK_GREY

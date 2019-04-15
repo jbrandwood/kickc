@@ -28,7 +28,16 @@ decl
     ;
 
 declVariable
-    :  directive* typeDecl directive* NAME ('=' expr)? ';'
+    :  directive* typeDecl directive* declVariableList ';'
+    ;
+
+declVariableList
+    : declVariableInit
+    | declVariableList ',' declVariableInit
+    ;
+
+declVariableInit
+    : NAME ('=' expr)?
     ;
 
 declFunction
@@ -60,12 +69,12 @@ stmtSeq
 stmt
     : declVariable #stmtDeclVar
     | '{' stmtSeq? '}' #stmtBlock
-    | expr  ';' #stmtExpr
-    | 'if' '(' expr ')' stmt ( 'else' stmt )? #stmtIfElse
-    | directive* 'while' '(' expr ')' stmt  #stmtWhile
-    | directive* 'do' stmt 'while' '(' expr ')' ';' #stmtDoWhile
+    | commaExpr  ';' #stmtExpr
+    | 'if' '(' commaExpr ')' stmt ( 'else' stmt )? #stmtIfElse
+    | directive* 'while' '(' commaExpr ')' stmt  #stmtWhile
+    | directive* 'do' stmt 'while' '(' commaExpr ')' ';' #stmtDoWhile
     | directive* 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
-    | 'return' expr? ';' #stmtReturn
+    | 'return' commaExpr? ';' #stmtReturn
     | 'break' ';' #stmtBreak
     | 'continue' ';' #stmtContinue
     | 'asm' asmDirectives? '{' asmLines '}' #stmtAsm

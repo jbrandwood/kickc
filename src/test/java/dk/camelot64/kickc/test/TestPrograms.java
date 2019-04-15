@@ -38,14 +38,25 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testCommaDecl() throws IOException, URISyntaxException {
+      compileAndCompare("comma-decl");
+   }
+
+   @Test
    public void testCommaExprFor() throws IOException, URISyntaxException {
       compileAndCompare("comma-expr-for");
+   }
+
+   @Test
+   public void testCommaExpr2() throws IOException, URISyntaxException {
+      compileAndCompare("comma-expr-2");
    }
 
    @Test
    public void testCommaExpr1() throws IOException, URISyntaxException {
       compileAndCompare("comma-expr-1");
    }
+
    @Test
    public void testForRangedNoVar() throws IOException, URISyntaxException {
       assertError("for-ranged-novar", "Ranged for() must have iteration variable");

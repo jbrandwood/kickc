@@ -56,7 +56,7 @@ public class KickCLexer extends Lexer {
 	};
 
 	private static final String[] _LITERAL_NAMES = {
-		null, "'import'", "'='", "';'", "'('", "')'", "'{'", "'}'", "','", "'const'", 
+		null, "'import'", "';'", "','", "'='", "'('", "')'", "'{'", "'}'", "'const'", 
 		"'extern'", "'align'", "'register'", "'inline'", "'volatile'", "'interrupt'", 
 		"'if'", "'else'", "'while'", "'do'", "'for'", "'return'", "'break'", "'continue'", 
 		"'asm'", "':'", "'..'", "'signed'", "'unsigned'", "'*'", "'['", "']'", 
@@ -240,10 +240,10 @@ public class KickCLexer extends Lexer {
 		"\u038f\3\2\2\2\u00c1\u039c\3\2\2\2\u00c3\u03a2\3\2\2\2\u00c5\u03ad\3\2"+
 		"\2\2\u00c7\u00c8\7k\2\2\u00c8\u00c9\7o\2\2\u00c9\u00ca\7r\2\2\u00ca\u00cb"+
 		"\7q\2\2\u00cb\u00cc\7t\2\2\u00cc\u00cd\7v\2\2\u00cd\4\3\2\2\2\u00ce\u00cf"+
-		"\7?\2\2\u00cf\6\3\2\2\2\u00d0\u00d1\7=\2\2\u00d1\b\3\2\2\2\u00d2\u00d3"+
-		"\7*\2\2\u00d3\n\3\2\2\2\u00d4\u00d5\7+\2\2\u00d5\f\3\2\2\2\u00d6\u00d7"+
-		"\7}\2\2\u00d7\16\3\2\2\2\u00d8\u00d9\7\177\2\2\u00d9\20\3\2\2\2\u00da"+
-		"\u00db\7.\2\2\u00db\22\3\2\2\2\u00dc\u00dd\7e\2\2\u00dd\u00de\7q\2\2\u00de"+
+		"\7=\2\2\u00cf\6\3\2\2\2\u00d0\u00d1\7.\2\2\u00d1\b\3\2\2\2\u00d2\u00d3"+
+		"\7?\2\2\u00d3\n\3\2\2\2\u00d4\u00d5\7*\2\2\u00d5\f\3\2\2\2\u00d6\u00d7"+
+		"\7+\2\2\u00d7\16\3\2\2\2\u00d8\u00d9\7}\2\2\u00d9\20\3\2\2\2\u00da\u00db"+
+		"\7\177\2\2\u00db\22\3\2\2\2\u00dc\u00dd\7e\2\2\u00dd\u00de\7q\2\2\u00de"+
 		"\u00df\7p\2\2\u00df\u00e0\7u\2\2\u00e0\u00e1\7v\2\2\u00e1\24\3\2\2\2\u00e2"+
 		"\u00e3\7g\2\2\u00e3\u00e4\7z\2\2\u00e4\u00e5\7v\2\2\u00e5\u00e6\7g\2\2"+
 		"\u00e6\u00e7\7t\2\2\u00e7\u00e8\7p\2\2\u00e8\26\3\2\2\2\u00e9\u00ea\7"+

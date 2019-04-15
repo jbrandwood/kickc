@@ -7,23 +7,25 @@ main: {
     ldx #0
   b1:
     txa
-    asl
     sta SCREEN,x
     txa
     asl
+    sta SCREEN+1*$28,x
+    txa
     asl
-    sta SCREEN+$28,x
+    asl
+    sta SCREEN+2*$28,x
     txa
     asl
     asl
     asl
-    sta SCREEN+$50,x
+    sta SCREEN+3*$28,x
     txa
     eor #$ff
     clc
     adc #1
     asl
-    sta SCREEN+$a0,x
+    sta SCREEN+5*$28,x
     inx
     cpx #$b
     bne b1

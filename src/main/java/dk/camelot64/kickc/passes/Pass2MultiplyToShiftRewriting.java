@@ -17,10 +17,10 @@ import kickass.pass.expressions.expr.Constant;
 
 import java.util.ListIterator;
 
-/** Pass that replaces multiplications with factors of 2 with shifts */
-public class Pass2Multiply2sRewriting extends Pass2SsaOptimization {
+/** Pass that replaces multiplications / division with factors of 2 with shifts */
+public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
 
-   public Pass2Multiply2sRewriting(Program program) {
+   public Pass2MultiplyToShiftRewriting(Program program) {
       super(program);
    }
 
@@ -38,7 +38,14 @@ public class Pass2Multiply2sRewriting extends Pass2SsaOptimization {
                   if(constantLiteral instanceof ConstantInteger) {
                      Long constantInt = ((ConstantInteger)constantLiteral).getInteger();
                      double power2 = Math.log(constantInt) / Math.log(2);
-                     if(Math.round(power2)==power2) {
+                     if(power2==0.0) {
+                        // Found multiplication/division with 1 (ONE)
+                        getLog().append("Rewriting multiplication to remove identity multiply/divide "+statement.toString(getProgram(), false));
+                        assignment.setOperator(null);
+                        assignment.setrValue2(assignment.getrValue1());
+                        assignment.setrValue1(null);
+                        optimized = true;
+                     } else if(power2>0.0 && Math.round(power2)==power2 ) {
                         // Found a whole power of 2
                         if(Operators.MULTIPLY.equals(assignment.getOperator())) {
                            getLog().append("Rewriting multiplication to use shift "+statement.toString(getProgram(), false));

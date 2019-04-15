@@ -1,5 +1,6 @@
 // A KickC version of the plasma routine from the CC65 samples
-// This version has an unrolled inner loop to reach ~50FPS
+// This version has an unrolled inner loop to reach 50+FPS
+// This version also optimizes the inner loop by calculating the Y buffer as a set of differences
 // (w)2001 by groepaz/hitmen
 // Cleanup and porting to CC65 by Ullrich von Bassewitz.
 // Ported to KickC by Jesper Gravgaard.
@@ -70,6 +71,7 @@ main: {
 doplasma: {
     .label c1a = 8
     .label c1b = 9
+    .label yval = $d
     .label i = $a
     .label c2a = 8
     .label c2b = 9
@@ -78,35 +80,35 @@ doplasma: {
     sta c1a
     lda c1B
     sta c1b
+    lda #0
+    sta i
+    tax
+  // Calculate ybuff as a bunch of differences
+  b1:
     ldy c1a
     lda SINTABLE,y
     ldy c1b
     clc
     adc SINTABLE,y
-    sta ybuf
-    lda #1
-    sta i
-  // Calculate ybuff as a bunch of differences
-  b1:
+    sta yval
+    txa
+    eor #$ff
+    sec
+    adc yval
+    ldy i
+    sta ybuf,y
     lax c1a
     axs #-[4]
     stx c1a
     lax c1b
     axs #-[9]
     stx c1b
-    ldy c1a
-    lda SINTABLE,y
-    ldy c1b
-    clc
-    adc SINTABLE,y
-    ldy i
-    sec
-    sbc ybuf+-1,y
-    sta ybuf,y
     inc i
     lda i
     cmp #$19
-    bcc b1
+    bcs !b8+
+    jmp b8
+  !b8:
     lax c1A
     axs #-[3]
     stx c1A
@@ -146,12 +148,13 @@ doplasma: {
     stx c2B
     ldx #0
   b5:
+    // Find the first value on the row
     lda xbuf,x
+  // Calculate the next values as sums of diffs
+  // Use experimental loop unrolling to increase the speed
     clc
     adc ybuf
     sta SCREEN1,x
-  // Calculate the next values as sums of diffs
-  // Use experimental loop unrolling to increase the speed
     clc
     adc ybuf+1
     sta SCREEN1+1*$28,x
@@ -230,14 +233,17 @@ doplasma: {
     jmp b5
   !b5:
     rts
+  b8:
+    ldx yval
+    jmp b1
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0
 }
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
     .label _4 = 6
-    .label _8 = $d
-    .label _9 = $d
+    .label _8 = $e
+    .label _9 = $e
     .label s = 5
     .label i = 4
     .label c = 2

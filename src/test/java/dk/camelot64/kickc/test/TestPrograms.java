@@ -103,7 +103,7 @@ public class TestPrograms {
    }
 
    @Test
-   public void testPlasma2() throws IOException, URISyntaxException {
+   public void testPlasmaUnroll() throws IOException, URISyntaxException {
       compileAndCompare("examples/plasma/plasma-unroll");
    }
 

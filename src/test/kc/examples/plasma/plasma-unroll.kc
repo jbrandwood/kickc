@@ -1,5 +1,6 @@
 // A KickC version of the plasma routine from the CC65 samples
-// This version has an unrolled inner loop to reach ~50FPS
+// This version has an unrolled inner loop to reach 50+FPS
+// This version also optimizes the inner loop by calculating the Y buffer as a set of differences
 // (w)2001 by groepaz/hitmen
 // Cleanup and porting to CC65 by Ullrich von Bassewitz.
 // Ported to KickC by Jesper Gravgaard.
@@ -45,8 +46,12 @@ void doplasma(unsigned char* screen) {
 
     unsigned char c1a = c1A;
     unsigned char c1b = c1B;
+    unsigned char yprev = 0;
+    // Calculate ybuff as a bunch of differences
     for (unsigned char i = 0; i < 25; ++i) {
-        ybuf[i] = (SINTABLE[c1a] + SINTABLE[c1b]);
+        unsigned char yval = (SINTABLE[c1a] + SINTABLE[c1b]);
+        ybuf[i] = yval - yprev;
+        yprev = yval;
         c1a += 4;
         c1b += 9;
     }
@@ -62,10 +67,13 @@ void doplasma(unsigned char* screen) {
     c2A += 2;
     c2B -= 3;
     for (unsigned char i = 0; i < 40; ++i) {
-        unsigned char xval = xbuf[i];
+        // Find the first value on the row
+        unsigned char val =  xbuf[i];
+        // Calculate the next values as sums of diffs
         // Use experimental loop unrolling to increase the speed
         inline for (unsigned char ii = 0; ii < 25; ++ii) {
-            (screen+ii*40)[i] = xval + ybuf[ii];
+            val += ybuf[ii];
+            (screen+ii*40)[i] = val;
         }
     }
 }

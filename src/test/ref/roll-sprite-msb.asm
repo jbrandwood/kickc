@@ -43,11 +43,10 @@ position_sprite: {
     lda x
     sta SPRITES_XPOS,y
     lda x+1
-    cmp #>$ff+1
-    bcc !+
     bne b1
     lda x
-    cmp #<$ff+1
+    cmp #$ff
+    beq !+
     bcs b1
   !:
     lda #1

@@ -46,13 +46,12 @@ public class Pass2ComparisonOptimization extends Pass2SsaOptimization {
                   try {
                      constantLiteral = constantValue.calculateLiteral(getScope());
                   } catch(ConstantNotLiteral e) {
-                     System.out.println(e);
                      // Ignore
                   }
                   if(Operators.GT.equals(operator) && valueType instanceof SymbolTypeInteger && constantLiteral instanceof ConstantInteger) {
                      // Found > C - rewrite to >= C+1 if possible
                      Long longValue = (Long) constantLiteral.getValue();
-                     if(longValue < ((SymbolTypeInteger) valueType).getMaxValue() && longValue != 0L) {
+                     if(longValue > 0x00L && longValue < 0xffL) {
                         // Rewrite is possible - do it
                         getLog().append("Rewriting conditional comparison " + statement.toString(getProgram(), false));
                         conditionalJump.setOperator(Operators.GE);
@@ -62,7 +61,7 @@ public class Pass2ComparisonOptimization extends Pass2SsaOptimization {
                   if(Operators.LE.equals(operator) && valueType instanceof SymbolTypeInteger && constantLiteral instanceof ConstantInteger) {
                      // Found <= C - rewrite to < C+1 if possible
                      Long longValue = (Long) constantLiteral.getValue();
-                     if(longValue < ((SymbolTypeInteger) valueType).getMaxValue() && longValue != 0L) {
+                     if(longValue > 0x00L && longValue < 0xffL) {
                         // Rewrite is possible - do it
                         getLog().append("Rewriting conditional comparison " + statement.toString(getProgram(), false));
                         conditionalJump.setOperator(Operators.LT);

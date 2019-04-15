@@ -203,6 +203,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testComparisonRewritingPointer() throws IOException, URISyntaxException {
+      compileAndCompare("comparison-rewriting-pointer", log());
+   }
+
+   @Test
    public void testLoopBreakContinue() throws IOException, URISyntaxException {
       compileAndCompare("loop-break-continue");
    }

@@ -77,7 +77,7 @@ forDeclaration
     ;
 
 forIteration
-    : ';' expr ';' expr # forClassic
+    : ';' expr ';' expr? # forClassic
     | ':' expr ( '..' ) expr #forRange
     ;
 

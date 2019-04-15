@@ -38,6 +38,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testForEmptyIncrement() throws IOException, URISyntaxException {
+      compileAndCompare("for-empty-increment");
+   }
+
+   @Test
    public void testDivide2s() throws IOException, URISyntaxException {
       compileAndCompare("divide-2s");
    }

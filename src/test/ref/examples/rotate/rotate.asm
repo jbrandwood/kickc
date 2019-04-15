@@ -95,7 +95,7 @@ anim: {
     jsr mulf8s_prepared
     asl _12
     rol _12+1
-    // signed fixed[8.8] 
+    // signed fixed[8.8]
     lda yr
     clc
     adc _12

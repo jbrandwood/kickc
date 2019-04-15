@@ -332,30 +332,30 @@ void gfx_mode() {
     *VIC_CONTROL2 = vic_control2;
 
     // Linear Graphics Plane A Counter
-    byte plane_a_offs = *form_a_start_hi<<4|*form_a_start_lo;
+    byte plane_a_offs = *form_a_start_hi*$10|*form_a_start_lo;
     dword plane_a = get_plane(*form_a_pattern) + plane_a_offs;
     *DTV_PLANEA_START_LO = < < plane_a;
     *DTV_PLANEA_START_MI = > < plane_a;
     *DTV_PLANEA_START_HI = < > plane_a;
-    *DTV_PLANEA_STEP = *form_a_step_hi<<4|*form_a_step_lo;
-    *DTV_PLANEA_MODULO_LO = *form_a_mod_hi<<4|*form_a_mod_lo;
+    *DTV_PLANEA_STEP = *form_a_step_hi*$10|*form_a_step_lo;
+    *DTV_PLANEA_MODULO_LO = *form_a_mod_hi*$10|*form_a_mod_lo;
     *DTV_PLANEA_MODULO_HI = 0;
 
     // Linear Graphics Plane B Counter
-    byte plane_b_offs = *form_b_start_hi<<4|*form_b_start_lo;
+    byte plane_b_offs = *form_b_start_hi*$10|*form_b_start_lo;
     dword plane_b = get_plane(*form_b_pattern) + plane_b_offs;
     *DTV_PLANEB_START_LO = < < plane_b;
     *DTV_PLANEB_START_MI = > < plane_b;
     *DTV_PLANEB_START_HI = < > plane_b;
-    *DTV_PLANEB_STEP = *form_b_step_hi<<4|*form_b_step_lo;
-    *DTV_PLANEB_MODULO_LO = *form_b_mod_hi<<4|*form_b_mod_lo;
+    *DTV_PLANEB_STEP = *form_b_step_hi*$10|*form_b_step_lo;
+    *DTV_PLANEB_MODULO_LO = *form_b_mod_hi*$10|*form_b_mod_lo;
     *DTV_PLANEB_MODULO_HI = 0;
 
     // VIC Graphics Bank
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     *CIA2_PORT_A = %00000011 ^ (byte)((word)VIC_SCREEN0/$4000); // Set VIC Bank
     // VIC memory
-    *VIC_MEMORY = (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)>>6)  |   ((>((word)get_vic_charset(*form_vic_gfx)&$3fff))>>2);
+    *VIC_MEMORY = (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)/$40)  |   ((>((word)get_vic_charset(*form_vic_gfx)&$3fff))/4);
 
     // VIC Colors
     byte* vic_colors = get_vic_screen(*form_vic_cols);
@@ -368,10 +368,10 @@ void gfx_mode() {
 
     // Background colors
     *BORDERCOL = 0;
-    *BGCOL1 = *form_vic_bg0_hi<<4|*form_vic_bg0_lo;
-    *BGCOL2 = *form_vic_bg1_hi<<4|*form_vic_bg1_lo;
-    *BGCOL3 = *form_vic_bg2_hi<<4|*form_vic_bg2_lo;
-    *BGCOL4 = *form_vic_bg3_hi<<4|*form_vic_bg3_lo;
+    *BGCOL1 = *form_vic_bg0_hi*$10|*form_vic_bg0_lo;
+    *BGCOL2 = *form_vic_bg1_hi*$10|*form_vic_bg1_lo;
+    *BGCOL3 = *form_vic_bg2_hi*$10|*form_vic_bg2_lo;
+    *BGCOL4 = *form_vic_bg3_hi*$10|*form_vic_bg3_lo;
 
     // DTV Palette
     if(*form_dtv_palet==0) {
@@ -435,7 +435,7 @@ void gfx_init_screen0() {
     byte* ch=VIC_SCREEN0;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
-            *ch++ = (cy&$f)<<4|(cx&$f);
+            *ch++ = (cy&$f)*$10|(cx&$f);
         }
     }
 }
@@ -457,7 +457,7 @@ void gfx_init_screen2() {
         for(byte cx: 0..39) {
             byte col = (cx+cy)&$f;
             byte col2 = ($f-col);
-            *ch++ = col<<4 | col2;
+            *ch++ = col*$10 | col2;
         }
     }
 }
@@ -467,7 +467,7 @@ void gfx_init_screen3() {
     byte* ch=VIC_SCREEN3;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
-            *ch++ = (cx&3)<<4|(cy&3);
+            *ch++ = (cx&3)*$10|(cy&3);
         }
     }
 }
@@ -542,7 +542,7 @@ void gfx_init_plane_horisontal2() {
     byte[] row_bitmask = { %00000000, %01010101, %10101010, %11111111 };
     for(byte ay : 0..199) {
         for (byte ax : 0..39) {
-            byte row = (ay>>1) & 3;
+            byte row = (ay/2) & 3;
             *gfxa++ = row_bitmask[row];
         }
     }
@@ -582,7 +582,7 @@ void gfx_init_plane_charset8() {
                     c = col;
                 }
                 *gfxa++ = c;
-                bits = bits<<1;
+                bits = bits*2;
                 col++;
             }
         }
@@ -609,7 +609,7 @@ void gfx_init_plane_full() {
 
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
 void gfx_init_plane_fill(dword plane_addr, byte fill) {
-    byte gfxbCpuBank = < >(plane_addr<<2);
+    byte gfxbCpuBank = < >(plane_addr*4);
     dtvSetCpuBankSegment1(gfxbCpuBank++);
     byte* gfxb = $4000 + (<plane_addr & $3fff);
     for(byte by : 0..199) {

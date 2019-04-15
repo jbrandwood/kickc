@@ -23,9 +23,9 @@ main::@2: scope:[main]  from main::@1 main::@2
   (byte*) main::cur_item#2 ← phi( main::@1/(byte*) main::cur_item#4 main::@2/(byte*) main::cur_item#2 )
   (byte) main::sub#2 ← phi( main::@1/(byte) main::sub#0 main::@2/(byte) main::sub#1 )
   (byte) main::item#2 ← phi( main::@1/(byte) main::item#4 main::@2/(byte) main::item#2 )
-  (byte~) main::$2 ← (byte) main::item#2 << (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte~) main::$3 ← (byte~) main::$2 | (byte) main::sub#2
-  *((byte*) main::cur_item#2 + (byte) main::sub#2) ← (byte~) main::$3
+  (byte/signed word/word/dword/signed dword~) main::$2 ← (byte) main::item#2 * (byte/signed byte/word/signed word/dword/signed dword) $10
+  (byte/word/dword~) main::$3 ← (byte/signed word/word/dword/signed dword~) main::$2 | (byte) main::sub#2
+  *((byte*) main::cur_item#2 + (byte) main::sub#2) ← (byte/word/dword~) main::$3
   (byte) main::sub#1 ← (byte) main::sub#2 + rangenext(0,main::$1)
   (bool~) main::$4 ← (byte) main::sub#1 != rangelast(0,main::$1)
   if((bool~) main::$4) goto main::@2
@@ -63,8 +63,8 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte/signed word/word/dword/signed dword~) main::$0
 (byte/signed word/word/dword/signed dword~) main::$1
-(byte~) main::$2
-(byte~) main::$3
+(byte/signed word/word/dword/signed dword~) main::$2
+(byte/word/dword~) main::$3
 (bool~) main::$4
 (bool~) main::$5
 (label) main::@1
@@ -117,6 +117,10 @@ Resolved ranged next value main::sub#1 ← ++ main::sub#2 to ++
 Resolved ranged comparison value if(main::sub#1!=rangelast(0,main::$1)) goto main::@2 to (const byte/signed word/word/dword/signed dword) main::$1+(byte/signed byte/word/signed word/dword/signed dword) 1
 Resolved ranged next value main::item#1 ← ++ main::item#4 to ++
 Resolved ranged comparison value if(main::item#1!=rangelast(0,main::$0)) goto main::@1 to (const byte/signed word/word/dword/signed dword) main::$0+(byte/signed byte/word/signed word/dword/signed dword) 1
+Rewriting multiplication to use shift (byte/signed word/word/dword/signed dword~) main::$2 ← (byte) main::item#4 * (byte/signed byte/word/signed word/dword/signed dword) $10
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inferred type updated to byte in [2] (byte/signed word/word/dword/signed dword~) main::$2 ← (byte) main::item#4 << (byte/signed byte/word/signed word/dword/signed dword) 4
+Inferred type updated to byte in [3] (byte/word/dword~) main::$3 ← (byte~) main::$2 | (byte) main::sub#2
 Inlining constant with var siblings (const byte) main::item#0
 Inlining constant with var siblings (const byte) main::sub#0
 Inlining constant with var siblings (const byte*) main::cur_item#0

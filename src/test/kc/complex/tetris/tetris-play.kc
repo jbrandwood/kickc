@@ -48,7 +48,7 @@ void play_init() {
 	byte idx = 0;
 	byte* pli = playfield;
 	for(byte j:0..PLAYFIELD_LINES-1) {
-		playfield_lines[j<<1] = pli;
+		playfield_lines[j*2] = pli;
 		playfield_lines_idx[j] = idx;
 		pli += PLAYFIELD_COLS;
 		idx += PLAYFIELD_COLS;
@@ -59,7 +59,7 @@ void play_init() {
 	current_movedown_slow = MOVEDOWN_SLOW_SPEEDS[level];
 	// Set the initial score add values
     for(byte b: 0..4) {
-        byte b4 = b<<2;
+        byte b4 = b*4;
         score_add_bcd[b4] = SCORE_BASE_BCD[b4];
     }
 
@@ -174,7 +174,7 @@ const byte COLLISION_RIGHT = 8;
 byte play_collision(byte xpos, byte ypos, byte orientation) {
 	byte* piece_gfx = current_piece + orientation;
 	byte i = 0;
-	byte ypos2 = ypos<<1;
+	byte ypos2 = ypos*2;
 	for(byte l:0..3) {
 		byte* playfield_line = playfield_lines[ypos2];
 		byte col = xpos;
@@ -207,7 +207,7 @@ byte play_collision(byte xpos, byte ypos, byte orientation) {
 // Lock the current piece onto the playfield
 void play_lock_current() {
 	byte i = 0;
-	byte ypos2 = current_ypos<<1;
+	byte ypos2 = current_ypos*2;
 	for(byte l:0..3) {
 		byte* playfield_line = playfield_lines[ypos2];
 		byte col = current_xpos;
@@ -226,7 +226,7 @@ void play_lock_current() {
 void play_spawn_current() {
     // Move next piece into current
 	byte current_piece_idx = next_piece_idx;
-	current_piece = PIECES[current_piece_idx<<1];
+	current_piece = PIECES[current_piece_idx*2];
 	current_piece_char = PIECES_CHARS[current_piece_idx];
 	current_orientation = 0;
 	current_piece_gfx = current_piece + current_orientation;
@@ -285,7 +285,7 @@ byte play_remove_lines() {
 void play_update_score(byte removed) {
     if(removed!=0){
         byte lines_before = <lines_bcd&$f0;
-        dword add_bcd = score_add_bcd[removed<<2];
+        dword add_bcd = score_add_bcd[removed*4];
 
         asm { sed }
         lines_bcd += removed;
@@ -319,7 +319,7 @@ void play_increase_level() {
     // Increase the score values gained
  	asm { sed }
     for(byte b: 0..4) {
-        byte b4 = b<<2;
+        byte b4 = b*4;
         score_add_bcd[b4] += SCORE_BASE_BCD[b4];
     }
  	asm { cld }

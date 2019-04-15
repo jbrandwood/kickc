@@ -63,8 +63,8 @@ void render_init() {
 	byte* li_1 = PLAYFIELD_SCREEN_1 + 2*40 + 16;
 	byte* li_2 = PLAYFIELD_SCREEN_2 + 2*40 + 16;
 	for(byte i:0..PLAYFIELD_LINES-1) {
-		screen_lines_1[i<<1] = li_1;
-		screen_lines_2[i<<1] = li_2;
+		screen_lines_1[i*2] = li_1;
+		screen_lines_2[i*2] = li_2;
 		li_1 += 40;
 		li_2 += 40;
 	}
@@ -161,7 +161,7 @@ void render_playfield() {
 	// Do not render the top 2 lines.
 	byte i = PLAYFIELD_COLS*2;
 	for(byte l:2..PLAYFIELD_LINES-1) {
-		byte* screen_line = screen_lines_1[render_screen_render+l<<1];
+		byte* screen_line = screen_lines_1[render_screen_render+l*2];
 		for(byte c:0..PLAYFIELD_COLS-1) {
 			*(screen_line++) = playfield[i++];
 		}
@@ -172,7 +172,7 @@ void render_playfield() {
 // Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
 void render_moving() {
 	byte i = 0;
-	byte ypos2 = current_ypos<<1;
+	byte ypos2 = current_ypos*2;
 	for(byte l:0..3) {
 		if(ypos2>2) {
 			byte* screen_line = screen_lines_1[render_screen_render+ypos2];
@@ -204,7 +204,7 @@ void render_next() {
     }
 
     // Render the next piece
-	byte* next_piece_gfx = PIECES[next_piece_idx<<1];
+	byte* next_piece_gfx = PIECES[next_piece_idx*2];
 	byte next_piece_char = PIECES_NEXT_CHARS[next_piece_idx];
 	for(byte l:0..3) {
 	    for(byte c:0..3) {

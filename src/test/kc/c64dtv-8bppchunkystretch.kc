@@ -27,7 +27,7 @@ void main() {
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     *CIA2_PORT_A = %00000011 ^ (byte)((word)CHUNKY/$4000); // Set VIC Bank
     // VIC memory
-    *VIC_MEMORY = (byte)((((word)CHUNKY)&$3fff)>>6)  |   ((>(((word)CHUNKY)&$3fff))>>2);
+    *VIC_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((>(((word)CHUNKY)&$3fff))/4);
 
     // DTV Palette - Grey Tones
     for(byte j : 0..$f) {
@@ -58,7 +58,7 @@ void main() {
         do {
             rst = *RASTER;
             *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7);
-            *BORDERCOL = rst<<4;
+            *BORDERCOL = rst*$10;
             asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
         } while (rst!=$f2);
     }

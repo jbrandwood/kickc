@@ -245,8 +245,8 @@ fire::@2: scope:[fire]  from fire::@1
   (byte~) fire::$9 ← *((byte*) fire::buffer#5 + (byte/signed byte/word/signed word/dword/signed dword~) fire::$7) + *((byte*) fire::buffer#5 + (byte/signed byte/word/signed word/dword/signed dword~) fire::$8)
   (byte~) fire::$10 ← (byte~) fire::$9 + *((byte*) fire::buffer#5 + (byte/signed byte/word/signed word/dword/signed dword) $28)
   (byte~) fire::$11 ← (byte~) fire::$10 + *((byte*) fire::buffer#5 + (byte/signed byte/word/signed word/dword/signed dword) $29)
-  (byte~) fire::$12 ← (byte~) fire::$11 >> (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) fire::c#0 ← (byte~) fire::$12
+  (byte/signed word/word/dword/signed dword~) fire::$12 ← (byte~) fire::$11 / (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) fire::c#0 ← (byte/signed word/word/dword/signed dword~) fire::$12
   (bool~) fire::$13 ← (byte) fire::c#0 > (byte/signed byte/word/signed word/dword/signed dword) 2
   (bool~) fire::$14 ← ! (bool~) fire::$13
   if((bool~) fire::$14) goto fire::@4
@@ -296,8 +296,8 @@ fire::@15: scope:[fire]  from fire::@10
   (byte*) fire::buffer#8 ← phi( fire::@10/(byte*) fire::buffer#10 )
   (byte) sid_rnd::return#4 ← phi( fire::@10/(byte) sid_rnd::return#2 )
   (byte~) fire::$18 ← (byte) sid_rnd::return#4
-  (byte~) fire::$19 ← (byte~) fire::$18 >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (byte/signed word/word/dword/signed dword~) fire::$20 ← (byte/signed byte/word/signed word/dword/signed dword) $30 + (byte~) fire::$19
+  (byte/signed word/word/dword/signed dword~) fire::$19 ← (byte~) fire::$18 / (byte/signed byte/word/signed word/dword/signed dword) $10
+  (byte/signed word/word/dword/signed dword~) fire::$20 ← (byte/signed byte/word/signed word/dword/signed dword) $30 + (byte/signed word/word/dword/signed dword~) fire::$19
   *((byte*) fire::buffer#8) ← (byte/signed word/word/dword/signed dword~) fire::$20
   *((byte*) fire::screen#5) ← *((byte*) fire::buffer#8)
   (byte*) fire::screen#3 ← ++ (byte*) fire::screen#5
@@ -670,14 +670,14 @@ SYMBOL TABLE SSA
 (byte*~) fire::$1
 (byte~) fire::$10
 (byte~) fire::$11
-(byte~) fire::$12
+(byte/signed word/word/dword/signed dword~) fire::$12
 (bool~) fire::$13
 (bool~) fire::$14
 (word/signed word/dword/signed dword~) fire::$15
 (byte*~) fire::$16
 (bool~) fire::$17
 (byte~) fire::$18
-(byte~) fire::$19
+(byte/signed word/word/dword/signed dword~) fire::$19
 (word/signed word/dword/signed dword~) fire::$2
 (byte/signed word/word/dword/signed dword~) fire::$20
 (byte*~) fire::$3
@@ -939,7 +939,7 @@ Alias (byte*) fire::screen#0 = (byte*) fire::screenbase#2
 Alias (byte*) fire::buffer#4 = (byte*) fire::buffer#5 (byte*) fire::buffer#9 
 Alias (byte*) fire::screen#6 = (byte*) fire::screen#9 (byte*) fire::screen#7 
 Alias (byte*) fire::screenbase#3 = (byte*) fire::screenbase#6 (byte*) fire::screenbase#4 (byte*) fire::screenbase#7 
-Alias (byte) fire::c#0 = (byte~) fire::$12 (byte) fire::c#3 
+Alias (byte) fire::c#0 = (byte/signed word/word/dword/signed dword~) fire::$12 (byte) fire::c#3 
 Alias (byte*) fire::screen#1 = (byte*~) fire::$1 
 Alias (byte*) fire::buffer#1 = (byte*~) fire::$3 
 Alias (byte*) fire::buffer#10 = (byte*) fire::buffer#7 (byte*) fire::buffer#8 
@@ -1167,6 +1167,9 @@ Resolved ranged next value fillscreen::i#1 ← ++ fillscreen::i#2 to ++
 Resolved ranged comparison value if(fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1 to (word/signed word/dword/signed dword) $3e8
 Rewriting conditional comparison if((byte) fire::c#0<=(byte/signed byte/word/signed word/dword/signed dword) 2) goto fire::@4
 Rewriting conditional comparison if((byte) makecharset::bc#1<=(byte/signed byte/word/signed word/dword/signed dword) $3f) goto makecharset::@8
+Rewriting division to use shift (byte) fire::c#0 ← (byte~) fire::$11 / (byte/signed byte/word/signed word/dword/signed dword) 4
+Rewriting division to use shift (byte/signed word/word/dword/signed dword~) fire::$19 ← (byte~) fire::$18 / (byte/signed byte/word/signed word/dword/signed dword) $10
+Successful SSA optimization Pass2MultiplyToShiftRewriting
 Culled Empty Block (label) @4
 Culled Empty Block (label) @6
 Culled Empty Block (label) main::@1
@@ -1183,6 +1186,7 @@ Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte) makecharset::c#5 (byte) makecharset::c#7
 Redundant Phi (byte*) makecharset::charset#9 (byte*) makecharset::charset#10
 Successful SSA optimization Pass2RedundantPhiElimination
+Inferred type updated to byte in [38] (byte/signed word/word/dword/signed dword~) fire::$19 ← (byte~) fire::$18 >> (byte/signed byte/word/signed word/dword/signed dword) 4
 Self Phi Eliminated (byte*) makecharset::charset#10
 Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte*) makecharset::charset#10 (const byte*) makecharset::charset#0

@@ -74,7 +74,7 @@ void anim() {
     byte x_msb = 0;
     for( byte j : 0..6) {
         word x = (word)$1e + sintab_x[xidx];
-        x_msb = x_msb<<1 | >x;
+        x_msb = x_msb*2 | >x;
         SPRITES_XPOS[j2] = <x;
         SPRITES_YPOS[j2] = sintab_y[yidx];
         xidx = xidx+10;
@@ -133,7 +133,7 @@ void gen_sprites() {
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
 void gen_chargen_sprite(byte ch, byte* sprite) {
-    byte* chargen = CHARGEN+((word)ch)<<3;
+    byte* chargen = CHARGEN+((word)ch)*8;
     asm { sei }
     *PROCPORT = $32;
     for(byte y:0..7) {
@@ -151,7 +151,7 @@ void gen_chargen_sprite(byte ch, byte* sprite) {
         }
         // generate 3 pixels in the sprite byte (s_gen)
         for(byte b : 0..2){
-            s_gen = s_gen<<1 | c;
+            s_gen = s_gen*2 | c;
             if(++s_gen_cnt==8) {
                 // sprite byte filled - store and move to next byte
                 sprite[0] = s_gen;
@@ -163,7 +163,7 @@ void gen_chargen_sprite(byte ch, byte* sprite) {
             }
         }
         // move to next char pixel
-        bits = bits<<1;
+        bits = bits*2;
       }
       // move 3 lines down in the sprite (already moved 1 through ++)
       sprite = sprite + 6;

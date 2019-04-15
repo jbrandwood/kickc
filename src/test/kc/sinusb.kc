@@ -35,14 +35,14 @@ signed word sin16sb(word x) {
         x = PI_u4f12 - x;
     }
     // sinx = x - x^3/6 + x5/128;
-    word x1 = x<<3; // u[1.15]
+    word x1 = x*8; // u[1.15]
     word x2 = mulu16_sel(x1, x1, 0); // u[2.14] x^2
     word x3 = mulu16_sel(x2, x1, 1); // u[2.14] x^3
     word x3_6 = mulu16_sel(x3, $10000/6, 1);  // u[1.15] x^3/6;
     word usinx = x1 - x3_6; // u[1.15] x - x^3/6
     word x4 = mulu16_sel(x3, x1, 0); // u[3.13] x^4
     word x5 = mulu16_sel(x4, x1, 0); // u[4.12] x^5
-    word x5_128 = x5>>4; // // u[1.15] x^5/128 -- much more efficient than mul_u16_sel(x5, $10000/128, 3);
+    word x5_128 = x5/$10; // // u[1.15] x^5/128 -- much more efficient than mul_u16_sel(x5, $10000/128, 3);
     usinx = usinx + x5_128; // u[1.15] (first bit is always zero)
     signed word sinx = (signed word)usinx; // s[0.15]
     if(isUpper!=0) {

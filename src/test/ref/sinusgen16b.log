@@ -467,8 +467,8 @@ sin16sb::@4: scope:[sin16sb]  from sin16sb
 sin16sb::@2: scope:[sin16sb]  from sin16sb::@1 sin16sb::@5
   (byte) sin16sb::isUpper#7 ← phi( sin16sb::@1/(byte) sin16sb::isUpper#8 sin16sb::@5/(byte) sin16sb::isUpper#9 )
   (word) sin16sb::x#6 ← phi( sin16sb::@1/(word) sin16sb::x#4 sin16sb::@5/(word) sin16sb::x#2 )
-  (word~) sin16sb::$4 ← (word) sin16sb::x#6 << (byte/signed byte/word/signed word/dword/signed dword) 3
-  (word) sin16sb::x1#0 ← (word~) sin16sb::$4
+  (word/signed dword/dword~) sin16sb::$4 ← (word) sin16sb::x#6 * (byte/signed byte/word/signed word/dword/signed dword) 8
+  (word) sin16sb::x1#0 ← (word/signed dword/dword~) sin16sb::$4
   (word) mulu16_sel::v1#5 ← (word) sin16sb::x1#0
   (word) mulu16_sel::v2#5 ← (word) sin16sb::x1#0
   (byte) mulu16_sel::select#5 ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -534,8 +534,8 @@ sin16sb::@12: scope:[sin16sb]  from sin16sb::@11
   (word) mulu16_sel::return#22 ← phi( sin16sb::@11/(word) mulu16_sel::return#11 )
   (word~) sin16sb::$11 ← (word) mulu16_sel::return#22
   (word) sin16sb::x5#0 ← (word~) sin16sb::$11
-  (word~) sin16sb::$12 ← (word) sin16sb::x5#0 >> (byte/signed byte/word/signed word/dword/signed dword) 4
-  (word) sin16sb::x5_128#0 ← (word~) sin16sb::$12
+  (word/signed dword/dword~) sin16sb::$12 ← (word) sin16sb::x5#0 / (byte/signed byte/word/signed word/dword/signed dword) $10
+  (word) sin16sb::x5_128#0 ← (word/signed dword/dword~) sin16sb::$12
   (word~) sin16sb::$13 ← (word) sin16sb::usinx#2 + (word) sin16sb::x5_128#0
   (word) sin16sb::usinx#1 ← (word~) sin16sb::$13
   (signed word~) sin16sb::$14 ← ((signed word)) (word) sin16sb::usinx#1
@@ -1546,7 +1546,7 @@ SYMBOL TABLE SSA
 (bool~) sin16sb::$1
 (word~) sin16sb::$10
 (word~) sin16sb::$11
-(word~) sin16sb::$12
+(word/signed dword/dword~) sin16sb::$12
 (word~) sin16sb::$13
 (signed word~) sin16sb::$14
 (bool~) sin16sb::$15
@@ -1557,7 +1557,7 @@ SYMBOL TABLE SSA
 (bool~) sin16sb::$2
 (signed word~) sin16sb::$20
 (bool~) sin16sb::$3
-(word~) sin16sb::$4
+(word/signed dword/dword~) sin16sb::$4
 (word~) sin16sb::$5
 (word~) sin16sb::$6
 (word/signed word/dword/signed dword~) sin16sb::$7
@@ -1734,7 +1734,7 @@ Alias (signed word*) sin16s_genb::sintab#0 = (signed word*~) sin16s_genb::$3
 Alias (dword) sin16s_genb::x#1 = (dword~) sin16s_genb::$4 
 Alias (word) sin16sb::x#3 = (word) sin16sb::x#5 
 Alias (word) sin16sb::x#1 = (word~) sin16sb::$17 
-Alias (word) sin16sb::x1#0 = (word~) sin16sb::$4 (word) sin16sb::x1#1 (word) sin16sb::x1#4 (word) sin16sb::x1#2 (word) sin16sb::x1#3 
+Alias (word) sin16sb::x1#0 = (word/signed dword/dword~) sin16sb::$4 (word) sin16sb::x1#1 (word) sin16sb::x1#4 (word) sin16sb::x1#2 (word) sin16sb::x1#3 
 Alias (word) mulu16_sel::return#18 = (word) mulu16_sel::return#7 
 Alias (byte) sin16sb::isUpper#2 = (byte) sin16sb::isUpper#6 (byte) sin16sb::isUpper#7 (byte) sin16sb::isUpper#5 (byte) sin16sb::isUpper#4 (byte) sin16sb::isUpper#3 
 Alias (word) sin16sb::x2#0 = (word~) sin16sb::$5 
@@ -1748,7 +1748,7 @@ Alias (word) mulu16_sel::return#10 = (word) mulu16_sel::return#21
 Alias (word) sin16sb::x4#0 = (word~) sin16sb::$10 
 Alias (word) mulu16_sel::return#11 = (word) mulu16_sel::return#22 
 Alias (word) sin16sb::x5#0 = (word~) sin16sb::$11 
-Alias (word) sin16sb::x5_128#0 = (word~) sin16sb::$12 
+Alias (word) sin16sb::x5_128#0 = (word/signed dword/dword~) sin16sb::$12 
 Alias (word) sin16sb::usinx#1 = (word~) sin16sb::$13 (word) sin16sb::usinx#3 
 Alias (signed word) sin16sb::sinx#0 = (signed word~) sin16sb::$14 
 Alias (word) sin16sb::x#4 = (word) sin16sb::x#7 
@@ -1971,6 +1971,9 @@ Resolved ranged next value divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (byte/signed byte/word/signed word/dword/signed dword) $10
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value if(main::i#1!=rangelast(0,$77)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $78
+Rewriting multiplication to use shift (word) sin16sb::x1#0 ← (word) sin16sb::x#6 * (byte/signed byte/word/signed word/dword/signed dword) 8
+Rewriting division to use shift (word) sin16sb::x5_128#0 ← (word) sin16sb::x5#0 / (byte/signed byte/word/signed word/dword/signed dword) $10
+Successful SSA optimization Pass2MultiplyToShiftRewriting
 Culled Empty Block (label) @2
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6

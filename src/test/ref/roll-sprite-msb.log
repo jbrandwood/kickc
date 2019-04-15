@@ -109,11 +109,11 @@ position_sprite: scope:[position_sprite]  from main::@1
   (word) position_sprite::x#1 ← phi( main::@1/(word) position_sprite::x#0 )
   (byte) position_sprite::y#1 ← phi( main::@1/(byte) position_sprite::y#0 )
   (byte) position_sprite::spriteno#1 ← phi( main::@1/(byte) position_sprite::spriteno#0 )
-  (byte~) position_sprite::$0 ← (byte) position_sprite::spriteno#1 << (byte/signed byte/word/signed word/dword/signed dword) 1
-  *((byte*) SPRITES_YPOS#0 + (byte~) position_sprite::$0) ← (byte) position_sprite::y#1
-  (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#1 << (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte/signed word/word/dword/signed dword~) position_sprite::$0 ← (byte) position_sprite::spriteno#1 * (byte/signed byte/word/signed word/dword/signed dword) 2
+  *((byte*) SPRITES_YPOS#0 + (byte/signed word/word/dword/signed dword~) position_sprite::$0) ← (byte) position_sprite::y#1
+  (byte/signed word/word/dword/signed dword~) position_sprite::$1 ← (byte) position_sprite::spriteno#1 * (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte~) position_sprite::$2 ← < (word) position_sprite::x#1
-  *((byte*) SPRITES_XPOS#0 + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2
+  *((byte*) SPRITES_XPOS#0 + (byte/signed word/word/dword/signed dword~) position_sprite::$1) ← (byte~) position_sprite::$2
   (bool~) position_sprite::$3 ← (word) position_sprite::x#1 > (byte/word/signed word/dword/signed dword) $ff
   if((bool~) position_sprite::$3) goto position_sprite::@1
   to:position_sprite::@3
@@ -317,8 +317,8 @@ SYMBOL TABLE SSA
 (word) main::xpos#2
 (word) main::xpos#3
 (void()) position_sprite((byte) position_sprite::spriteno , (word) position_sprite::x , (byte) position_sprite::y)
-(byte~) position_sprite::$0
-(byte~) position_sprite::$1
+(byte/signed word/word/dword/signed dword~) position_sprite::$0
+(byte/signed word/word/dword/signed dword~) position_sprite::$1
 (byte~) position_sprite::$2
 (bool~) position_sprite::$3
 (byte/signed byte/word/signed word/dword/signed dword~) position_sprite::$4
@@ -438,6 +438,11 @@ Successful SSA optimization Pass2ConstantIdentification
 Successful SSA optimization PassNEliminateUnusedVars
 Resolved ranged next value main::s#1 ← ++ main::s#2 to ++
 Resolved ranged comparison value if(main::s#1!=rangelast(0,7)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 8
+Rewriting multiplication to use shift (byte/signed word/word/dword/signed dword~) position_sprite::$0 ← (byte) position_sprite::spriteno#0 * (byte/signed byte/word/signed word/dword/signed dword) 2
+Rewriting multiplication to use shift (byte/signed word/word/dword/signed dword~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 * (byte/signed byte/word/signed word/dword/signed dword) 2
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inferred type updated to byte in [8] (byte/signed word/word/dword/signed dword~) position_sprite::$0 ← (byte) position_sprite::spriteno#0 << (byte/signed byte/word/signed word/dword/signed dword) 1
+Inferred type updated to byte in [10] (byte/signed word/word/dword/signed dword~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte/signed byte/word/signed word/dword/signed dword) 1
 Inlining constant with var siblings (const word) main::xpos#0
 Inlining constant with var siblings (const byte) main::s#0
 Constant inlined main::xpos#0 = (byte/word/signed word/dword/signed dword) $c8

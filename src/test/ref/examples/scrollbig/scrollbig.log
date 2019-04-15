@@ -140,8 +140,8 @@ scroll_bit: scope:[scroll_bit]  from scroll_soft::@2
   (byte*) current_chargen#28 ← phi( scroll_soft::@2/(byte*) current_chargen#16 )
   (byte*) nxt#29 ← phi( scroll_soft::@2/(byte*) nxt#22 )
   (byte) current_bit#13 ← phi( scroll_soft::@2/(byte) current_bit#18 )
-  (byte~) scroll_bit::$0 ← (byte) current_bit#13 >> (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) current_bit#5 ← (byte~) scroll_bit::$0
+  (byte/signed word/word/dword/signed dword~) scroll_bit::$0 ← (byte) current_bit#13 / (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) current_bit#5 ← (byte/signed word/word/dword/signed dword~) scroll_bit::$0
   (bool~) scroll_bit::$1 ← (byte) current_bit#5 == (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) scroll_bit::$2 ← ! (bool~) scroll_bit::$1
   if((bool~) scroll_bit::$2) goto scroll_bit::@1
@@ -174,8 +174,8 @@ scroll_bit::@8: scope:[scroll_bit]  from scroll_bit::@2
   (byte~) scroll_bit::$6 ← (byte) next_char::return#3
   (byte*) nxt#4 ← (byte*) nxt#15
   (word) scroll_bit::c#0 ← ((word)) (byte~) scroll_bit::$6
-  (word~) scroll_bit::$7 ← (word) scroll_bit::c#0 << (byte/signed byte/word/signed word/dword/signed dword) 3
-  (byte*~) scroll_bit::$8 ← (byte*) CHARGEN#0 + (word~) scroll_bit::$7
+  (word/signed dword/dword~) scroll_bit::$7 ← (word) scroll_bit::c#0 * (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte*~) scroll_bit::$8 ← (byte*) CHARGEN#0 + (word/signed dword/dword~) scroll_bit::$7
   (byte*) current_chargen#5 ← (byte*~) scroll_bit::$8
   (byte) current_bit#6 ← (byte/word/signed word/dword/signed dword) $80
   to:scroll_bit::@1
@@ -556,7 +556,7 @@ SYMBOL TABLE SSA
 (byte) scroll#8
 (byte) scroll#9
 (void()) scroll_bit()
-(byte~) scroll_bit::$0
+(byte/signed word/word/dword/signed dword~) scroll_bit::$0
 (bool~) scroll_bit::$1
 (bool~) scroll_bit::$10
 (bool~) scroll_bit::$11
@@ -567,7 +567,7 @@ SYMBOL TABLE SSA
 (byte*~) scroll_bit::$4
 (byte*~) scroll_bit::$5
 (byte~) scroll_bit::$6
-(word~) scroll_bit::$7
+(word/signed dword/dword~) scroll_bit::$7
 (byte*~) scroll_bit::$8
 (byte~) scroll_bit::$9
 (label) scroll_bit::@1
@@ -685,7 +685,7 @@ Alias (byte*) nxt#14 = (byte*) nxt#23 (byte*) nxt#3
 Alias (byte*) current_chargen#11 = (byte*) current_chargen#17 (byte*) current_chargen#3 
 Alias (byte) scroll#15 = (byte) scroll#19 (byte) scroll#2 (byte) scroll#17 
 Alias (byte*) CHARGEN#0 = (byte*) current_chargen#4 (byte*) current_chargen#26 (byte*) current_chargen#21 
-Alias (byte) current_bit#5 = (byte~) scroll_bit::$0 
+Alias (byte) current_bit#5 = (byte/signed word/word/dword/signed dword~) scroll_bit::$0 
 Alias (byte*) current_chargen#19 = (byte*) current_chargen#24 
 Alias (byte) current_bit#21 = (byte) current_bit#26 
 Alias (byte*) nxt#36 = (byte*) nxt#38 
@@ -859,6 +859,9 @@ Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Resolved ranged next value scroll_bit::r#1 ← ++ scroll_bit::r#2 to ++
 Resolved ranged comparison value if(scroll_bit::r#1!=rangelast(0,7)) goto scroll_bit::@3 to (byte/signed byte/word/signed word/dword/signed dword) 8
+Rewriting division to use shift (byte) current_bit#5 ← (byte) current_bit#29 / (byte/signed byte/word/signed word/dword/signed dword) 2
+Rewriting multiplication to use shift (word/signed dword/dword~) scroll_bit::$7 ← (word) scroll_bit::c#0 * (byte/signed byte/word/signed word/dword/signed dword) 8
+Successful SSA optimization Pass2MultiplyToShiftRewriting
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) @1
@@ -869,6 +872,7 @@ Culled Empty Block (label) @7
 Successful SSA optimization Pass2CullEmptyBlocks
 Alias (byte) scroll_hard::i#2 = (byte~) scroll_hard::$4 (byte~) scroll_hard::$9 (byte~) scroll_hard::$14 (byte~) scroll_hard::$19 (byte~) scroll_hard::$24 (byte~) scroll_hard::$29 (byte~) scroll_hard::$34 (byte~) scroll_hard::$39 
 Successful SSA optimization Pass2AliasElimination
+Inferred type updated to word in [23] (word/signed dword/dword~) scroll_bit::$7 ← (word) scroll_bit::c#0 << (byte/signed byte/word/signed word/dword/signed dword) 3
 Inlining constant with var siblings (const byte) scroll_bit::r#0
 Inlining constant with var siblings (const byte) scroll_bit::b#0
 Inlining constant with var siblings (const byte) scroll_bit::b#1

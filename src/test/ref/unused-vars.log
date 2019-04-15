@@ -6,7 +6,7 @@ Identified constant variable (byte*) main::COLS
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte/signed byte/word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 2 >> (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte/signed byte/word/signed word/dword/signed dword~) $0 ← (byte/signed byte/word/signed word/dword/signed dword) 2 / (byte/signed byte/word/signed word/dword/signed dword) 2
   (byte) b#0 ← (byte/signed byte/word/signed word/dword/signed dword~) $0
   (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) $d021
   (byte[]) msg#0 ← (const string) $1
@@ -178,7 +178,7 @@ Successful SSA optimization Pass2RedundantPhiElimination
 Simple Condition (bool~) main::$8 [36] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SCREEN#0 = ((byte*))$400
-Constant (const byte) b#0 = 2>>1
+Constant (const byte) b#0 = 2/2
 Constant (const byte*) BGCOL#0 = ((byte*))$d021
 Constant (const byte[]) msg#0 = $1
 Constant (const byte[]) arr#0 = { 7, 8, 9 }
@@ -219,10 +219,10 @@ Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with different constant siblings (const byte) b#0
 Inlining constant with different constant siblings (const byte) b#11
 Inlining constant with different constant siblings (const byte) b#2
-Constant inlined b#2 = ++++(byte/signed byte/word/signed word/dword/signed dword) 2>>(byte/signed byte/word/signed word/dword/signed dword) 1
+Constant inlined b#2 = ++++(byte/signed byte/word/signed word/dword/signed dword) 2/(byte/signed byte/word/signed word/dword/signed dword) 2
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined b#11 = ++(byte/signed byte/word/signed word/dword/signed dword) 2>>(byte/signed byte/word/signed word/dword/signed dword) 1
-Constant inlined b#0 = (byte/signed byte/word/signed word/dword/signed dword) 2>>(byte/signed byte/word/signed word/dword/signed dword) 1
+Constant inlined b#11 = ++(byte/signed byte/word/signed word/dword/signed dword) 2/(byte/signed byte/word/signed word/dword/signed dword) 2
+Constant inlined b#0 = (byte/signed byte/word/signed word/dword/signed dword) 2/(byte/signed byte/word/signed word/dword/signed dword) 2
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@4(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
@@ -262,7 +262,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [6] (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main/(byte/signed byte/word/signed word/dword/signed dword) 0 )
   [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0
-  [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2>>(byte/signed byte/word/signed word/dword/signed dword) 1
+  [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2/(byte/signed byte/word/signed word/dword/signed dword) 2
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $65) goto main::@1
   to:main::@return
@@ -357,8 +357,8 @@ main: {
     lda #col
     ldy i
     sta COLS,y
-  //SEG19 [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2>>(byte/signed byte/word/signed word/dword/signed dword) 1 -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #(2>>1)+1+1
+  //SEG19 [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2/(byte/signed byte/word/signed word/dword/signed dword) 2 -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #2/2+1+1
     ldy i
     sta SCREEN,y
   //SEG20 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -385,9 +385,9 @@ s: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2>>(byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2/(byte/signed byte/word/signed word/dword/signed dword) 2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2>>(byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2/(byte/signed byte/word/signed word/dword/signed dword) 2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -447,8 +447,8 @@ main: {
   //SEG18 [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #col
     sta COLS,x
-  //SEG19 [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2>>(byte/signed byte/word/signed word/dword/signed dword) 1 -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #(2>>1)+1+1
+  //SEG19 [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2/(byte/signed byte/word/signed word/dword/signed dword) 2 -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #2/2+1+1
     sta SCREEN,x
   //SEG20 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -569,8 +569,8 @@ main: {
   //SEG18 [7] *((const byte*) main::COLS#0 + (byte) main::i#2) ← (const byte) main::col#0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #col
     sta COLS,x
-  //SEG19 [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2>>(byte/signed byte/word/signed word/dword/signed dword) 1 -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #(2>>1)+1+1
+  //SEG19 [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← ++++(byte/signed byte/word/signed word/dword/signed dword) 2/(byte/signed byte/word/signed word/dword/signed dword) 2 -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #2/2+1+1
     sta SCREEN,x
   //SEG20 [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx

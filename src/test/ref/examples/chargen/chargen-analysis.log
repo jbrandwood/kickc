@@ -511,8 +511,8 @@ plot_chargen: scope:[plot_chargen]  from main::@16 main::@3
   (byte) plot_chargen::ch#2 ← phi( main::@16/(byte) plot_chargen::ch#1 main::@3/(byte) plot_chargen::ch#0 )
   asm { sei  }
   (word~) plot_chargen::$0 ← ((word)) (byte) plot_chargen::ch#2
-  (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte/signed byte/word/signed word/dword/signed dword) 3
-  (byte*~) plot_chargen::$2 ← (byte*) CHARGEN#0 + (word~) plot_chargen::$1
+  (word/signed dword/dword~) plot_chargen::$1 ← (word~) plot_chargen::$0 * (byte/signed byte/word/signed word/dword/signed dword) 8
+  (byte*~) plot_chargen::$2 ← (byte*) CHARGEN#0 + (word/signed dword/dword~) plot_chargen::$1
   (byte*) plot_chargen::chargen#0 ← (byte*~) plot_chargen::$2
   (bool~) plot_chargen::$3 ← (byte) plot_chargen::shift#2 != (byte/signed byte/word/signed word/dword/signed dword) 0
   (bool~) plot_chargen::$4 ← ! (bool~) plot_chargen::$3
@@ -571,8 +571,8 @@ plot_chargen::@5: scope:[plot_chargen]  from plot_chargen::@4 plot_chargen::@6
   (byte) plot_chargen::c#2 ← phi( plot_chargen::@4/(byte) plot_chargen::c#0 plot_chargen::@6/(byte) plot_chargen::c#1 )
   *((byte*) plot_chargen::sc#3) ← (byte) plot_chargen::c#2
   (byte*) plot_chargen::sc#1 ← ++ (byte*) plot_chargen::sc#3
-  (byte~) plot_chargen::$13 ← (byte) plot_chargen::bits#3 << (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) plot_chargen::bits#1 ← (byte~) plot_chargen::$13
+  (byte/signed word/word/dword/signed dword~) plot_chargen::$13 ← (byte) plot_chargen::bits#3 * (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) plot_chargen::bits#1 ← (byte/signed word/word/dword/signed dword~) plot_chargen::$13
   (byte) plot_chargen::x#1 ← (byte) plot_chargen::x#2 + rangenext(0,7)
   (bool~) plot_chargen::$14 ← (byte) plot_chargen::x#1 != rangelast(0,7)
   if((bool~) plot_chargen::$14) goto plot_chargen::@4
@@ -1180,11 +1180,11 @@ SYMBOL TABLE SSA
 (word) mul8u::return#4
 (void()) plot_chargen((byte) plot_chargen::pos , (byte) plot_chargen::ch , (byte) plot_chargen::shift)
 (word~) plot_chargen::$0
-(word~) plot_chargen::$1
+(word/signed dword/dword~) plot_chargen::$1
 (byte~) plot_chargen::$10
 (bool~) plot_chargen::$11
 (bool~) plot_chargen::$12
-(byte~) plot_chargen::$13
+(byte/signed word/word/dword/signed dword~) plot_chargen::$13
 (bool~) plot_chargen::$14
 (byte*~) plot_chargen::$15
 (bool~) plot_chargen::$16
@@ -1348,7 +1348,7 @@ Alias (byte*) plot_chargen::chargen#5 = (byte*) plot_chargen::chargen#6
 Alias (byte*) plot_chargen::sc#0 = (byte*~) plot_chargen::$8 
 Alias (byte) plot_chargen::pos#3 = (byte) plot_chargen::pos#4 
 Alias (byte*) plot_chargen::chargen#1 = (byte*~) plot_chargen::$9 
-Alias (byte) plot_chargen::bits#1 = (byte~) plot_chargen::$13 
+Alias (byte) plot_chargen::bits#1 = (byte/signed word/word/dword/signed dword~) plot_chargen::$13 
 Alias (byte*) plot_chargen::sc#5 = (byte*) plot_chargen::sc#6 
 Alias (byte) plot_chargen::bits#2 = (byte) plot_chargen::bits#4 
 Alias (byte) plot_chargen::x#3 = (byte) plot_chargen::x#4 
@@ -1617,6 +1617,9 @@ Resolved ranged next value plot_chargen::x#1 ← ++ plot_chargen::x#2 to ++
 Resolved ranged comparison value if(plot_chargen::x#1!=rangelast(0,7)) goto plot_chargen::@4 to (byte/signed byte/word/signed word/dword/signed dword) 8
 Resolved ranged next value plot_chargen::y#1 ← ++ plot_chargen::y#2 to ++
 Resolved ranged comparison value if(plot_chargen::y#1!=rangelast(0,7)) goto plot_chargen::@3 to (byte/signed byte/word/signed word/dword/signed dword) 8
+Rewriting multiplication to use shift (word/signed dword/dword~) plot_chargen::$1 ← (word~) plot_chargen::$0 * (byte/signed byte/word/signed word/dword/signed dword) 8
+Rewriting multiplication to use shift (byte) plot_chargen::bits#1 ← (byte) plot_chargen::bits#2 * (byte/signed byte/word/signed word/dword/signed dword) 2
+Successful SSA optimization Pass2MultiplyToShiftRewriting
 Culled Empty Block (label) mul8u::@3
 Culled Empty Block (label) @9
 Culled Empty Block (label) @13
@@ -1631,6 +1634,7 @@ Self Phi Eliminated (byte*) plot_chargen::chargen#3
 Successful SSA optimization Pass2SelfPhiElimination
 Redundant Phi (byte*) plot_chargen::chargen#3 (byte*) plot_chargen::chargen#5
 Successful SSA optimization Pass2RedundantPhiElimination
+Inferred type updated to word in [90] (word/signed dword/dword~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte/signed byte/word/signed word/dword/signed dword) 3
 Inlining constant with var siblings (const word) mul8u::res#0
 Inlining constant with var siblings (const word) mul8u::mb#0
 Inlining constant with var siblings (const byte) keyboard_key_pressed::key#0

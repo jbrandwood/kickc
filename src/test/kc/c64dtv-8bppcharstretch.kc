@@ -36,7 +36,7 @@ void main() {
     *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     *CIA2_PORT_A = %00000011 ^ (byte)((word)SCREEN/$4000); // Set VIC Bank
     // VIC memory
-    *VIC_MEMORY = (byte)((((word)SCREEN)&$3fff)>>6)  |   ((>(((word)SCREEN)&$3fff))>>2);
+    *VIC_MEMORY = (byte)((((word)SCREEN)&$3fff)/$40)  |   ((>(((word)SCREEN)&$3fff))/4);
 
     // DTV Palette - Grey Tones
     for(byte j : 0..$f) {
@@ -67,7 +67,7 @@ void main() {
         do {
             rst = *RASTER;
             *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7);
-            *BORDERCOL = rst<<4;
+            *BORDERCOL = rst*$10;
             asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
         } while (rst!=$f2);
     }
@@ -85,7 +85,7 @@ void gfx_init_screen0() {
     byte* ch=SCREEN;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
-            *ch++ = (cy&$f)<<4|(cx&$f);
+            *ch++ = (cy&$f)*$10|(cx&$f);
         }
     }
 }
@@ -108,7 +108,7 @@ void gfx_init_plane_charset8() {
                     c = col;
                 }
                 *gfxa++ = c;
-                bits = bits<<1;
+                bits = bits*2;
                 col++;
             }
         }

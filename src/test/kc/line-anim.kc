@@ -42,7 +42,7 @@ void main() {
     screen_fill(SCREEN, $10);
     for( byte i=0; i!=8; i+=2) {
         point_init(i);
-        bitmap_plot(x_start[i], y_start[i>>1]);
+        bitmap_plot(x_start[i], y_start[i/2]);
     }
     while(true) {
         while(*RASTER!=$ff) {}
@@ -52,7 +52,7 @@ void main() {
 
 // Initialize the points to be animated
 void point_init(byte point_idx) {
-    byte point_idx1 = point_idx>>1;
+    byte point_idx1 = point_idx/2;
     signed word x_diff = ((signed word)x_end[point_idx])-((signed word)x_start[point_idx]);
     signed word y_diff = ((signed word)y_end[point_idx1])-((signed word)y_start[point_idx1]);
 
@@ -66,12 +66,12 @@ void point_init(byte point_idx) {
             x_add[point_idx] = $10;
         }
         signed word x_stepf = divr16s(0, x_diff, y_diff);
-        y_add[point_idx1] = (signed byte)((>x_stepf)>>4);
+        y_add[point_idx1] = (signed byte)((>x_stepf)/$10);
     } else {
         // X is driver - abs(x/y) is < 1
     }
-    x_cur[point_idx] = x_start[point_idx]<<4;
-    y_cur[point_idx] = ((word)y_start[point_idx1])<<4;
+    x_cur[point_idx] = x_start[point_idx]*$10;
+    y_cur[point_idx] = ((word)y_start[point_idx1])*$10;
     delay[point_idx1] = DELAY;
 }
 

@@ -28,7 +28,7 @@ sin8u_table: {
     .const max = $ff
     .label amplitude = max-min
     .const sum = min+max
-    .const mid = (sum>>1)+1
+    .const mid = sum/2+1
     .label step = $12
     .label sinx = $11
     .label sinx_sc = $f

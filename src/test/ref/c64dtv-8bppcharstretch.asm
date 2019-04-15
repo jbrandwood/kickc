@@ -106,7 +106,7 @@ main: {
     sta CIA2_PORT_A
     // Set VIC Bank
     // VIC memory
-    lda #(SCREEN&$3fff)>>6|(>(SCREEN&$3fff))>>2
+    lda #(SCREEN&$3fff)/$40|(>(SCREEN&$3fff))/4
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - Grey Tones

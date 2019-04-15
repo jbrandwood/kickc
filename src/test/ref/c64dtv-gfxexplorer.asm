@@ -1600,10 +1600,7 @@ gfx_init_plane_fill: {
     lda _0+3
     sta _1+1
     lda _1
-    tax
-    txa
     jsr dtvSetCpuBankSegment1
-    inx
     lda plane_addr
     sta _4
     lda plane_addr+1

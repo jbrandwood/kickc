@@ -6,6 +6,7 @@
   .label w1 = 4
   .label w2 = 2
 main: {
+    .label SCREEN = $400
     lda #0
     sta w1
     sta w1+1
@@ -16,6 +17,14 @@ main: {
     jsr incw2
     jsr incw1
     jsr incw2
+    lda w1
+    sta SCREEN
+    lda w1+1
+    sta SCREEN+1
+    lda w2
+    sta SCREEN+4
+    lda w2+1
+    sta SCREEN+4+1
     rts
 }
 incw2: {

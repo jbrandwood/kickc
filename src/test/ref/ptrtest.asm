@@ -34,7 +34,9 @@ lvaluevar: {
     jmp b1
 }
 rvaluevar: {
+    .label screen2 = $400
     .label screen = 2
+    ldy #0
     lda #<$400
     sta screen
     lda #>$400
@@ -43,10 +45,12 @@ rvaluevar: {
   b1:
     cpx #$a
     bcc b2
+    sty screen2
     rts
   b2:
     ldy #0
     lda (screen),y
+    tay
     inc screen
     bne !+
     inc screen+1
@@ -57,14 +61,14 @@ rvaluevar: {
 rvalue: {
     // A constant pointer
     .label SCREEN = $400
-    // RValue constant pointer
-    lda SCREEN
+    .label screen2 = $400
     // RValue constant array pointer constant index
     lda SCREEN+1
     ldx #2
   b1:
     cpx #$a
     bcc b2
+    sta screen2
     rts
   b2:
     lda SCREEN,x

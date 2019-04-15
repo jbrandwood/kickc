@@ -47,9 +47,6 @@
   .label PLAYFIELD_SPRITES = $2000
   // Address of the charset
   .label PLAYFIELD_CHARSET = $2800
-  // The size of the playfield
-  .const PLAYFIELD_LINES = $16
-  .const PLAYFIELD_COLS = $a
   // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
   .label SIN = $1400

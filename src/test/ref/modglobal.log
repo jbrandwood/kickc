@@ -37,6 +37,8 @@ main::@2: scope:[main]  from main::@1
   (byte) cnt2#2 ← (byte) cnt2#8
   (byte) cnt3#2 ← (byte) cnt3#8
   *((byte[$100]) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
+  *((byte[$100]) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) cnt2#2
+  *((byte[$100]) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) cnt3#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) cnt3#9 ← phi( main::@2/(byte) cnt3#2 )
@@ -195,6 +197,8 @@ Constant (const byte[$100]) SCREEN#0 = ((byte*))$400
 Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(SCREEN#0+0)
 Consolidated array index constant in *(SCREEN#0+1)
+Consolidated array index constant in *(SCREEN#0+2)
+Consolidated array index constant in *(SCREEN#0+3)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Culled Empty Block (label) @3
 Successful SSA optimization Pass2CullEmptyBlocks
@@ -250,21 +254,23 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   [12] (byte~) main::$1 ← (byte) inccnt::return#1
   [13] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
+  [14] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) cnt2#11
+  [15] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) cnt3#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [14] return 
+  [16] return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  [15] (byte) cnt3#10 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) cnt3#11 )
-  [15] (byte) cnt2#10 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) cnt2#11 )
-  [15] (byte) cnt#11 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) cnt#2 )
-  [16] (byte) cnt#12 ← ++ (byte) cnt#11
-  [17] (byte) cnt2#11 ← ++ (byte) cnt2#10
-  [18] (byte) cnt3#11 ← ++ (byte) cnt3#10
-  [19] (byte) inccnt::return#2 ← (byte) cnt#12
+  [17] (byte) cnt3#10 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) cnt3#11 )
+  [17] (byte) cnt2#10 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) cnt2#11 )
+  [17] (byte) cnt#11 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) cnt#2 )
+  [18] (byte) cnt#12 ← ++ (byte) cnt#11
+  [19] (byte) cnt2#11 ← ++ (byte) cnt2#10
+  [20] (byte) cnt3#11 ← ++ (byte) cnt3#10
+  [21] (byte) inccnt::return#2 ← (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
-  [20] return 
+  [22] return 
   to:@return
 
 
@@ -276,10 +282,10 @@ VARIABLE REGISTER WEIGHTS
 (byte) cnt#2 4.0
 (byte) cnt2
 (byte) cnt2#10 2.0
-(byte) cnt2#11 0.4444444444444444
+(byte) cnt2#11 0.46153846153846156
 (byte) cnt3
 (byte) cnt3#10 1.3333333333333333
-(byte) cnt3#11 0.5
+(byte) cnt3#11 0.46153846153846156
 (byte()) inccnt()
 (byte) inccnt::return
 (byte) inccnt::return#0 4.0
@@ -352,15 +358,15 @@ main: {
     .label _0 = 6
     .label _1 = 8
   //SEG11 [5] call inccnt 
-  //SEG12 [15] phi from main to inccnt [phi:main->inccnt]
+  //SEG12 [17] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
-  //SEG13 [15] phi (byte) cnt3#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#0] -- vbuz1=vbuc1 
+  //SEG13 [17] phi (byte) cnt3#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#0] -- vbuz1=vbuc1 
     lda #0
     sta cnt3
-  //SEG14 [15] phi (byte) cnt2#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#1] -- vbuz1=vbuc1 
+  //SEG14 [17] phi (byte) cnt2#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#1] -- vbuz1=vbuc1 
     lda #0
     sta cnt2
-  //SEG15 [15] phi (byte) cnt#11 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#2] -- vbuz1=vbuc1 
+  //SEG15 [17] phi (byte) cnt#11 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#2] -- vbuz1=vbuc1 
     lda #0
     sta cnt
     jsr inccnt
@@ -381,11 +387,11 @@ main: {
     iny
     sty cnt
   //SEG21 [10] call inccnt 
-  //SEG22 [15] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+  //SEG22 [17] phi from main::@1 to inccnt [phi:main::@1->inccnt]
   inccnt_from_b1:
-  //SEG23 [15] phi (byte) cnt3#10 = (byte) cnt3#11 [phi:main::@1->inccnt#0] -- register_copy 
-  //SEG24 [15] phi (byte) cnt2#10 = (byte) cnt2#11 [phi:main::@1->inccnt#1] -- register_copy 
-  //SEG25 [15] phi (byte) cnt#11 = (byte) cnt#2 [phi:main::@1->inccnt#2] -- register_copy 
+  //SEG23 [17] phi (byte) cnt3#10 = (byte) cnt3#11 [phi:main::@1->inccnt#0] -- register_copy 
+  //SEG24 [17] phi (byte) cnt2#10 = (byte) cnt2#11 [phi:main::@1->inccnt#1] -- register_copy 
+  //SEG25 [17] phi (byte) cnt#11 = (byte) cnt#2 [phi:main::@1->inccnt#2] -- register_copy 
     jsr inccnt
   //SEG26 [11] (byte) inccnt::return#1 ← (byte) inccnt::return#2 -- vbuz1=vbuz2 
     lda inccnt.return_2
@@ -399,32 +405,38 @@ main: {
   //SEG29 [13] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda _1
     sta SCREEN+1
+  //SEG30 [14] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuz1 
+    lda cnt2
+    sta SCREEN+2
+  //SEG31 [15] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuz1 
+    lda cnt3
+    sta SCREEN+3
     jmp breturn
-  //SEG30 main::@return
+  //SEG32 main::@return
   breturn:
-  //SEG31 [14] return 
+  //SEG33 [16] return 
     rts
 }
-//SEG32 inccnt
+//SEG34 inccnt
 inccnt: {
     .label return = 5
     .label return_1 = 7
     .label return_2 = $a
-  //SEG33 [16] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuz2 
+  //SEG35 [18] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuz2 
     ldy cnt
     iny
     sty cnt_12
-  //SEG34 [17] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuz1=_inc_vbuz1 
+  //SEG36 [19] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuz1=_inc_vbuz1 
     inc cnt2
-  //SEG35 [18] (byte) cnt3#11 ← ++ (byte) cnt3#10 -- vbuz1=_inc_vbuz1 
+  //SEG37 [20] (byte) cnt3#11 ← ++ (byte) cnt3#10 -- vbuz1=_inc_vbuz1 
     inc cnt3
-  //SEG36 [19] (byte) inccnt::return#2 ← (byte) cnt#12 -- vbuz1=vbuz2 
+  //SEG38 [21] (byte) inccnt::return#2 ← (byte) cnt#12 -- vbuz1=vbuz2 
     lda cnt_12
     sta return_2
     jmp breturn
-  //SEG37 inccnt::@return
+  //SEG39 inccnt::@return
   breturn:
-  //SEG38 [20] return 
+  //SEG40 [22] return 
     rts
 }
 
@@ -440,16 +452,16 @@ Potential registers zp ZP_BYTE:9 [ cnt#12 ] : zp ZP_BYTE:9 , reg byte a , reg by
 Potential registers zp ZP_BYTE:10 [ inccnt::return#2 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 8: zp ZP_BYTE:2 [ cnt#11 cnt#2 ] 2.44: zp ZP_BYTE:3 [ cnt2#10 cnt2#11 ] 1.83: zp ZP_BYTE:4 [ cnt3#10 cnt3#11 ] 0.67: zp ZP_BYTE:9 [ cnt#12 ] 
+Uplift Scope [] 8: zp ZP_BYTE:2 [ cnt#11 cnt#2 ] 2.46: zp ZP_BYTE:3 [ cnt2#10 cnt2#11 ] 1.79: zp ZP_BYTE:4 [ cnt3#10 cnt3#11 ] 0.67: zp ZP_BYTE:9 [ cnt#12 ] 
 Uplift Scope [inccnt] 4: zp ZP_BYTE:5 [ inccnt::return#0 ] 4: zp ZP_BYTE:7 [ inccnt::return#1 ] 1.5: zp ZP_BYTE:10 [ inccnt::return#2 ] 
 Uplift Scope [main] 4: zp ZP_BYTE:6 [ main::$0 ] 4: zp ZP_BYTE:8 [ main::$1 ] 
 
-Uplifting [] best 116 combination reg byte a [ cnt#11 cnt#2 ] reg byte y [ cnt2#10 cnt2#11 ] reg byte x [ cnt3#10 cnt3#11 ] zp ZP_BYTE:9 [ cnt#12 ] 
+Uplifting [] best 124 combination reg byte a [ cnt#11 cnt#2 ] reg byte y [ cnt2#10 cnt2#11 ] reg byte x [ cnt3#10 cnt3#11 ] zp ZP_BYTE:9 [ cnt#12 ] 
 Limited combination testing to 100 combinations of 256 possible.
-Uplifting [inccnt] best 95 combination reg byte a [ inccnt::return#0 ] reg byte a [ inccnt::return#1 ] reg byte a [ inccnt::return#2 ] 
-Uplifting [main] best 83 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
+Uplifting [inccnt] best 103 combination reg byte a [ inccnt::return#0 ] reg byte a [ inccnt::return#1 ] reg byte a [ inccnt::return#2 ] 
+Uplifting [main] best 91 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:9 [ cnt#12 ]
-Uplifting [] best 83 combination zp ZP_BYTE:9 [ cnt#12 ] 
+Uplifting [] best 91 combination zp ZP_BYTE:9 [ cnt#12 ] 
 Allocated (was zp ZP_BYTE:9) zp ZP_BYTE:2 [ cnt#12 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -480,13 +492,13 @@ bend:
 //SEG10 main
 main: {
   //SEG11 [5] call inccnt 
-  //SEG12 [15] phi from main to inccnt [phi:main->inccnt]
+  //SEG12 [17] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
-  //SEG13 [15] phi (byte) cnt3#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
+  //SEG13 [17] phi (byte) cnt3#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG14 [15] phi (byte) cnt2#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#1] -- vbuyy=vbuc1 
+  //SEG14 [17] phi (byte) cnt2#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#1] -- vbuyy=vbuc1 
     ldy #0
-  //SEG15 [15] phi (byte) cnt#11 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#2] -- vbuaa=vbuc1 
+  //SEG15 [17] phi (byte) cnt#11 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#2] -- vbuaa=vbuc1 
     lda #0
     jsr inccnt
   //SEG16 [6] (byte) inccnt::return#0 ← (byte) inccnt::return#2
@@ -501,11 +513,11 @@ main: {
     clc
     adc #1
   //SEG21 [10] call inccnt 
-  //SEG22 [15] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+  //SEG22 [17] phi from main::@1 to inccnt [phi:main::@1->inccnt]
   inccnt_from_b1:
-  //SEG23 [15] phi (byte) cnt3#10 = (byte) cnt3#11 [phi:main::@1->inccnt#0] -- register_copy 
-  //SEG24 [15] phi (byte) cnt2#10 = (byte) cnt2#11 [phi:main::@1->inccnt#1] -- register_copy 
-  //SEG25 [15] phi (byte) cnt#11 = (byte) cnt#2 [phi:main::@1->inccnt#2] -- register_copy 
+  //SEG23 [17] phi (byte) cnt3#10 = (byte) cnt3#11 [phi:main::@1->inccnt#0] -- register_copy 
+  //SEG24 [17] phi (byte) cnt2#10 = (byte) cnt2#11 [phi:main::@1->inccnt#1] -- register_copy 
+  //SEG25 [17] phi (byte) cnt#11 = (byte) cnt#2 [phi:main::@1->inccnt#2] -- register_copy 
     jsr inccnt
   //SEG26 [11] (byte) inccnt::return#1 ← (byte) inccnt::return#2
     jmp b2
@@ -514,28 +526,32 @@ main: {
   //SEG28 [12] (byte~) main::$1 ← (byte) inccnt::return#1
   //SEG29 [13] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
+  //SEG30 [14] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuyy 
+    sty SCREEN+2
+  //SEG31 [15] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuxx 
+    stx SCREEN+3
     jmp breturn
-  //SEG30 main::@return
+  //SEG32 main::@return
   breturn:
-  //SEG31 [14] return 
+  //SEG33 [16] return 
     rts
 }
-//SEG32 inccnt
+//SEG34 inccnt
 inccnt: {
-  //SEG33 [16] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuaa 
+  //SEG35 [18] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuaa 
     clc
     adc #1
     sta cnt
-  //SEG34 [17] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuyy=_inc_vbuyy 
+  //SEG36 [19] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG35 [18] (byte) cnt3#11 ← ++ (byte) cnt3#10 -- vbuxx=_inc_vbuxx 
+  //SEG37 [20] (byte) cnt3#11 ← ++ (byte) cnt3#10 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG36 [19] (byte) inccnt::return#2 ← (byte) cnt#12 -- vbuaa=vbuz1 
+  //SEG38 [21] (byte) inccnt::return#2 ← (byte) cnt#12 -- vbuaa=vbuz1 
     lda cnt
     jmp breturn
-  //SEG37 inccnt::@return
+  //SEG39 inccnt::@return
   breturn:
-  //SEG38 [20] return 
+  //SEG40 [22] return 
     rts
 }
 
@@ -581,10 +597,10 @@ FINAL SYMBOL TABLE
 (byte) cnt#2 reg byte a 4.0
 (byte) cnt2
 (byte) cnt2#10 reg byte y 2.0
-(byte) cnt2#11 reg byte y 0.4444444444444444
+(byte) cnt2#11 reg byte y 0.46153846153846156
 (byte) cnt3
 (byte) cnt3#10 reg byte x 1.3333333333333333
-(byte) cnt3#11 reg byte x 0.5
+(byte) cnt3#11 reg byte x 0.46153846153846156
 (byte()) inccnt()
 (label) inccnt::@return
 (byte) inccnt::return
@@ -610,7 +626,7 @@ reg byte a [ inccnt::return#2 ]
 
 
 FINAL ASSEMBLER
-Score: 56
+Score: 64
 
 //SEG0 File Comments
 //SEG1 Basic Upstart
@@ -630,12 +646,12 @@ Score: 56
 //SEG10 main
 main: {
   //SEG11 [5] call inccnt 
-  //SEG12 [15] phi from main to inccnt [phi:main->inccnt]
-  //SEG13 [15] phi (byte) cnt3#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
+  //SEG12 [17] phi from main to inccnt [phi:main->inccnt]
+  //SEG13 [17] phi (byte) cnt3#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG14 [15] phi (byte) cnt2#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#1] -- vbuyy=vbuc1 
+  //SEG14 [17] phi (byte) cnt2#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#1] -- vbuyy=vbuc1 
     ldy #0
-  //SEG15 [15] phi (byte) cnt#11 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#2] -- vbuaa=vbuc1 
+  //SEG15 [17] phi (byte) cnt#11 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#2] -- vbuaa=vbuc1 
     txa
     jsr inccnt
   //SEG16 [6] (byte) inccnt::return#0 ← (byte) inccnt::return#2
@@ -648,33 +664,37 @@ main: {
     clc
     adc #1
   //SEG21 [10] call inccnt 
-  //SEG22 [15] phi from main::@1 to inccnt [phi:main::@1->inccnt]
-  //SEG23 [15] phi (byte) cnt3#10 = (byte) cnt3#11 [phi:main::@1->inccnt#0] -- register_copy 
-  //SEG24 [15] phi (byte) cnt2#10 = (byte) cnt2#11 [phi:main::@1->inccnt#1] -- register_copy 
-  //SEG25 [15] phi (byte) cnt#11 = (byte) cnt#2 [phi:main::@1->inccnt#2] -- register_copy 
+  //SEG22 [17] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+  //SEG23 [17] phi (byte) cnt3#10 = (byte) cnt3#11 [phi:main::@1->inccnt#0] -- register_copy 
+  //SEG24 [17] phi (byte) cnt2#10 = (byte) cnt2#11 [phi:main::@1->inccnt#1] -- register_copy 
+  //SEG25 [17] phi (byte) cnt#11 = (byte) cnt#2 [phi:main::@1->inccnt#2] -- register_copy 
     jsr inccnt
   //SEG26 [11] (byte) inccnt::return#1 ← (byte) inccnt::return#2
   //SEG27 main::@2
   //SEG28 [12] (byte~) main::$1 ← (byte) inccnt::return#1
   //SEG29 [13] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
-  //SEG30 main::@return
-  //SEG31 [14] return 
+  //SEG30 [14] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuyy 
+    sty SCREEN+2
+  //SEG31 [15] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuxx 
+    stx SCREEN+3
+  //SEG32 main::@return
+  //SEG33 [16] return 
     rts
 }
-//SEG32 inccnt
+//SEG34 inccnt
 inccnt: {
-  //SEG33 [16] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuaa 
+  //SEG35 [18] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuaa 
     clc
     adc #1
     sta cnt
-  //SEG34 [17] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuyy=_inc_vbuyy 
+  //SEG36 [19] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG35 [18] (byte) cnt3#11 ← ++ (byte) cnt3#10 -- vbuxx=_inc_vbuxx 
+  //SEG37 [20] (byte) cnt3#11 ← ++ (byte) cnt3#10 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG36 [19] (byte) inccnt::return#2 ← (byte) cnt#12 -- vbuaa=vbuz1 
-  //SEG37 inccnt::@return
-  //SEG38 [20] return 
+  //SEG38 [21] (byte) inccnt::return#2 ← (byte) cnt#12 -- vbuaa=vbuz1 
+  //SEG39 inccnt::@return
+  //SEG40 [22] return 
     rts
 }
 

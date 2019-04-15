@@ -5,13 +5,10 @@
 main: {
     lda #$40
     jsr ln
-    tax
-    inx
     jsr ln
-    tax
-    inx
     jsr ln
     sta SCREEN
+    sta SCREEN+$28
     rts
 }
 ln: {

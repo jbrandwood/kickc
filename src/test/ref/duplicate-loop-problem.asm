@@ -5,10 +5,7 @@
 .pc = $80d "Program"
   .label DC00 = $dc00
 main: {
-    ldy #0
   b1:
-    iny
-  b2:
     ldx DC00
     txa
     and #$1f
@@ -17,6 +14,6 @@ main: {
     jmp b1
   b3:
     cmp #$1f
-    beq b2
+    beq b1
     jmp b1
 }

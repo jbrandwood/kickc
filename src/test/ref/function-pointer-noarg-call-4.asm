@@ -3,10 +3,9 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    lda #0
+    ldx #0
   b2:
-    clc
-    adc #1
+    inx
     jsr getfn
     jsr fn1
     jmp b2
@@ -16,7 +15,6 @@ fn1: {
     inc BORDERCOL
     rts
 }
-// getfn(byte register(A) b)
 getfn: {
     rts
 }

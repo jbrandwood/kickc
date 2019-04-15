@@ -25,8 +25,6 @@
   .label SCREEN = $8800
   // The delay between pixels
   .const DELAY = 8
-  .label rem16s = 3
-  .label rem16u = 9
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)/$40
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
@@ -50,10 +48,6 @@ main: {
     jsr bitmap_clear
     jsr screen_fill
     lda #0
-    sta rem16s
-    sta rem16s+1
-    sta rem16u
-    sta rem16u+1
     sta i
   b1:
     jsr point_init
@@ -82,12 +76,12 @@ main: {
     jmp b2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage(5) x, byte register(Y) y)
+// bitmap_plot(word zeropage(3) x, byte register(Y) y)
 bitmap_plot: {
-    .label _1 = $b
-    .label x = 5
-    .label plotter = 7
-    .label _3 = 7
+    .label _1 = 7
+    .label x = 3
+    .label plotter = 5
+    .label _3 = 5
     lda bitmap_plot_yhi,y
     sta _3+1
     lda bitmap_plot_ylo,y
@@ -116,20 +110,20 @@ bitmap_plot: {
 // Initialize the points to be animated
 // point_init(byte zeropage(2) point_idx)
 point_init: {
-    .label _4 = $e
-    .label _5 = 5
-    .label _10 = 5
-    .label _11 = 5
-    .label _12 = 5
+    .label _4 = 7
+    .label _5 = 3
+    .label _10 = 3
+    .label _11 = 3
+    .label _12 = 3
     .label point_idx = 2
-    .label point_idx1 = $d
-    .label y_diff = $e
-    .label abs16s1__2 = 5
-    .label abs16s1_return = 5
-    .label abs16s2__2 = 7
-    .label abs16s2_return = 7
+    .label point_idx1 = $b
+    .label y_diff = 7
+    .label abs16s1__2 = 3
+    .label abs16s1_return = 3
+    .label abs16s2__2 = 5
+    .label abs16s2_return = 5
     .label x_stepf = 5
-    .label x_diff = $b
+    .label x_diff = 9
     lda point_idx
     lsr
     sta point_idx1
@@ -232,10 +226,6 @@ point_init: {
     lda #$10
     sta x_add,y
   b5:
-    lda y_diff
-    sta divr16s.rem
-    lda y_diff+1
-    sta divr16s.rem+1
     jsr divr16s
     lda x_stepf+1
     lsr
@@ -279,18 +269,18 @@ point_init: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zeropage($b) divisor, signed word zeropage(9) rem)
+// divr16s(signed word zeropage(9) divisor, signed word zeropage(7) rem)
 divr16s: {
     .const dividend = 0
-    .label _10 = 9
-    .label _13 = $b
+    .label _10 = 7
+    .label _13 = 9
     .label resultu = 5
     .label return = 5
-    .label divisor = $b
-    .label rem = 9
+    .label divisor = 9
+    .label rem = 7
     .label dividendu = 3
-    .label divisoru = $b
-    .label remu = 9
+    .label divisoru = 9
+    .label remu = 7
     lda rem+1
     bmi b1
     lda #dividend
@@ -304,16 +294,7 @@ divr16s: {
   b4:
     jsr divr16u
     cpy #0
-    beq b10
-    sec
-    lda divr16u.rem
-    eor #$ff
-    adc #0
-    sta rem16s
-    lda divr16u.rem+1
-    eor #$ff
-    adc #0
-    sta rem16s+1
+    beq breturn
     sec
     lda return
     eor #$ff
@@ -323,12 +304,7 @@ divr16s: {
     eor #$ff
     adc #0
     sta return+1
-    rts
-  b10:
-    lda divr16u.rem
-    sta rem16s
-    lda divr16u.rem+1
-    sta rem16s+1
+  breturn:
     rts
   b3:
     sec
@@ -365,13 +341,13 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(3) dividend, word zeropage($b) divisor, word zeropage(9) rem)
+// divr16u(word zeropage(3) dividend, word zeropage(9) divisor, word zeropage(7) rem)
 divr16u: {
-    .label rem = 9
+    .label rem = 7
     .label dividend = 3
     .label quotient = 5
     .label return = 5
-    .label divisor = $b
+    .label divisor = 9
     ldx #0
     txa
     sta quotient

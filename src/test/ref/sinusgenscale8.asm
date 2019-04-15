@@ -7,7 +7,6 @@
   .const PI_u4f12 = $3244
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
-  .label rem16u = 2
   .label print_char_cursor = $d
   .label print_line_cursor = 8
 main: {

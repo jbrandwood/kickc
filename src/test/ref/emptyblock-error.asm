@@ -4,19 +4,18 @@
 .pc = $80d "Program"
   .label B = $1000
 main: {
-    lda #0
-  b2:
+  b1:
     jsr menu
-    jmp b2
+    jmp b1
 }
 menu: {
     jsr mode
     rts
 }
 mode: {
-  b2:
+  b1:
     lda B
     cmp #0
-    bne b2
-    jmp b2
+    bne b1
+    jmp b1
 }

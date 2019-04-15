@@ -6,8 +6,6 @@ CONTROL FLOW GRAPH SSA
   to:@1
 main: scope:[main]  from @1
   (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte*~) main::$0 ← (byte*) main::screen#0 + (byte/signed byte/word/signed word/dword/signed dword) $50
-  (byte) main::a#0 ← *((byte*~) main::$0)
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -43,15 +41,9 @@ main::@3: scope:[main]  from main::@2 main::@3
 main::@4: scope:[main]  from main::@3
   (byte*~) main::$5 ← ((byte*)) (word/dword/signed dword) $d020
   *((byte*~) main::$5) ← ++ *((byte*~) main::$5)
-  (byte*~) main::$6 ← ((byte*)) (word/dword/signed dword) $d020
-  (byte*~) main::$7 ← ((byte*)) (word/dword/signed dword) $d020
   (word/dword/signed dword~) main::$8 ← (word/dword/signed dword) $d000 + (byte/signed byte/word/signed word/dword/signed dword) $21
   (byte*~) main::$9 ← ((byte*)) (word/dword/signed dword~) main::$8
   *((byte*~) main::$9) ← -- *((byte*~) main::$9)
-  (word/dword/signed dword~) main::$10 ← (word/dword/signed dword) $d000 + (byte/signed byte/word/signed word/dword/signed dword) $21
-  (byte*~) main::$11 ← ((byte*)) (word/dword/signed dword~) main::$10
-  (word/dword/signed dword~) main::$12 ← (word/dword/signed dword) $d000 + (byte/signed byte/word/signed word/dword/signed dword) $21
-  (byte*~) main::$13 ← ((byte*)) (word/dword/signed dword~) main::$12
   (byte*) main::BGCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
   *((byte*) main::BGCOL#0) ← ++ *((byte*) main::BGCOL#0)
   to:main::@return
@@ -71,12 +63,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$0
 (byte*~) main::$1
-(word/dword/signed dword~) main::$10
-(byte*~) main::$11
-(word/dword/signed dword~) main::$12
-(byte*~) main::$13
 (byte*~) main::$14
 (byte*~) main::$15
 (bool~) main::$16
@@ -89,8 +76,6 @@ SYMBOL TABLE SSA
 (byte*~) main::$3
 (byte*~) main::$4
 (byte*~) main::$5
-(byte*~) main::$6
-(byte*~) main::$7
 (word/dword/signed dword~) main::$8
 (byte*~) main::$9
 (label) main::@1
@@ -100,8 +85,6 @@ SYMBOL TABLE SSA
 (label) main::@return
 (byte*) main::BGCOL
 (byte*) main::BGCOL#0
-(byte) main::a
-(byte) main::a#0
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -119,21 +102,16 @@ Culled Empty Block (label) @2
 Successful SSA optimization Pass2CullEmptyBlocks
 Alias (byte*) main::sc2#0 = (byte*~) main::$1 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$16 [10] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
-Simple Condition (bool~) main::$21 [27] if((byte) main::j#1!=rangelast(0,$a)) goto main::@3
+Simple Condition (bool~) main::$16 [8] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$21 [25] if((byte) main::j#1!=rangelast(0,$a)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::screen#0 = ((byte*))$400
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#0 = 0
 Constant (const byte*) main::$5 = ((byte*))$d020
-Constant (const byte*) main::$6 = ((byte*))$d020
-Constant (const byte*) main::$7 = ((byte*))$d020
 Constant (const word/dword/signed dword) main::$8 = $d000+$21
-Constant (const word/dword/signed dword) main::$10 = $d000+$21
-Constant (const word/dword/signed dword) main::$12 = $d000+$21
 Constant (const byte*) main::BGCOL#0 = ((byte*))$d020
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::$0 = main::screen#0+$50
 Constant (const byte*) main::$14 = main::screen#0+$28
 Constant (const byte*) main::sc2#0 = main::screen#0+$51
 Constant (const byte*) main::$2 = main::screen#0+$79
@@ -142,11 +120,7 @@ Constant (const byte*) main::$4 = main::screen#0+$7a
 Constant (const byte*) main::$17 = main::screen#0+$a0
 Constant (const byte*) main::$19 = main::screen#0+$c8
 Constant (const byte*) main::$9 = ((byte*))main::$8
-Constant (const byte*) main::$11 = ((byte*))main::$10
-Constant (const byte*) main::$13 = ((byte*))main::$12
 Successful SSA optimization Pass2ConstantIdentification
-Successful SSA optimization PassNEliminateUnusedVars
-Successful SSA optimization PassNEliminateUnusedVars
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value if(main::i#1!=rangelast(0,$a)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $b
 Resolved ranged next value main::j#1 ← ++ main::j#2 to ++
@@ -155,7 +129,6 @@ Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::j#0
 Constant inlined main::$2 = (const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) $79
 Constant inlined main::$17 = (const byte*) main::screen#0+(byte/word/signed word/dword/signed dword) $a0
-Constant inlined main::$0 = (const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50
 Constant inlined main::$19 = (const byte*) main::screen#0+(byte/word/signed word/dword/signed dword) $c8
 Constant inlined main::$5 = ((byte*))(word/dword/signed dword) $d020
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -171,6 +144,7 @@ Added new block during phi lifting main::@6(between main::@3 and main::@3)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
@@ -183,6 +157,7 @@ Culled Empty Block (label) main::@5
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -195,7 +170,7 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @1
   [3] phi()
 main: scope:[main]  from @1
-  [4] (byte) main::a#0 ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50)
+  [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) main::i#1 )
@@ -232,8 +207,6 @@ VARIABLE REGISTER WEIGHTS
 (byte*~) main::$18 11.0
 (byte*~) main::$20 22.0
 (byte*) main::BGCOL
-(byte) main::a
-(byte) main::a#0 20.0
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 14.666666666666666
@@ -246,23 +219,20 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::j#2 main::j#1 ]
-Added variable main::a#0 to zero page equivalence class [ main::a#0 ]
 Added variable main::$15 to zero page equivalence class [ main::$15 ]
 Added variable main::$18 to zero page equivalence class [ main::$18 ]
 Added variable main::$20 to zero page equivalence class [ main::$20 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::j#2 main::j#1 ]
-[ main::a#0 ]
 [ main::$15 ]
 [ main::$18 ]
 [ main::$20 ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::j#2 main::j#1 ]
-Allocated zp ZP_BYTE:4 [ main::a#0 ]
-Allocated zp ZP_WORD:5 [ main::$15 ]
-Allocated zp ZP_WORD:7 [ main::$18 ]
-Allocated zp ZP_WORD:9 [ main::$20 ]
+Allocated zp ZP_WORD:4 [ main::$15 ]
+Allocated zp ZP_WORD:6 [ main::$18 ]
+Allocated zp ZP_WORD:8 [ main::$20 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -280,28 +250,26 @@ b1_from_bbegin:
 //SEG5 @1
 b1:
 //SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
     // RValue pointer expression (constant)
     .label screen = $400
     // Increment on a const named pointer
     .label BGCOL = $d020
     .label sc2 = screen+$51
-    .label _15 = 5
-    .label _18 = 7
-    .label _20 = 9
-    .label a = 4
+    .label _15 = 4
+    .label _18 = 6
+    .label _20 = 8
     .label i = 2
     .label j = 3
-  //SEG10 [4] (byte) main::a#0 ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50) -- vbuz1=_deref_pbuc1 
-    lda screen+$50
-    sta a
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
   //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
@@ -421,20 +389,19 @@ Statement [14] (byte*~) main::$20 ← (const byte*) main::screen#0+(byte/word/si
 Statement [15] *((byte*~) main::$18) ← *((byte*~) main::$20) [ main::j#2 ] ( main:2 [ main::j#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ main::j#2 main::j#1 ] : zp ZP_BYTE:3 , reg byte x , 
-Potential registers zp ZP_BYTE:4 [ main::a#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:5 [ main::$15 ] : zp ZP_WORD:5 , 
-Potential registers zp ZP_WORD:7 [ main::$18 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_WORD:9 [ main::$20 ] : zp ZP_WORD:9 , 
+Potential registers zp ZP_WORD:4 [ main::$15 ] : zp ZP_WORD:4 , 
+Potential registers zp ZP_WORD:6 [ main::$18 ] : zp ZP_WORD:6 , 
+Potential registers zp ZP_WORD:8 [ main::$20 ] : zp ZP_WORD:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 31.17: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 27.5: zp ZP_BYTE:3 [ main::j#2 main::j#1 ] 22: zp ZP_WORD:5 [ main::$15 ] 22: zp ZP_WORD:9 [ main::$20 ] 20: zp ZP_BYTE:4 [ main::a#0 ] 11: zp ZP_WORD:7 [ main::$18 ] 
+Uplift Scope [main] 31.17: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 27.5: zp ZP_BYTE:3 [ main::j#2 main::j#1 ] 22: zp ZP_WORD:4 [ main::$15 ] 22: zp ZP_WORD:8 [ main::$20 ] 11: zp ZP_WORD:6 [ main::$18 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1169 combination reg byte x [ main::i#2 main::i#1 ] reg byte x [ main::j#2 main::j#1 ] zp ZP_WORD:5 [ main::$15 ] zp ZP_WORD:9 [ main::$20 ] reg byte a [ main::a#0 ] zp ZP_WORD:7 [ main::$18 ] 
-Uplifting [] best 1169 combination 
-Coalescing zero page register [ zp ZP_WORD:5 [ main::$15 ] ] with [ zp ZP_WORD:7 [ main::$18 ] ]
-Allocated (was zp ZP_WORD:5) zp ZP_WORD:2 [ main::$15 main::$18 ]
-Allocated (was zp ZP_WORD:9) zp ZP_WORD:4 [ main::$20 ]
+Uplifting [main] best 1165 combination reg byte x [ main::i#2 main::i#1 ] reg byte x [ main::j#2 main::j#1 ] zp ZP_WORD:4 [ main::$15 ] zp ZP_WORD:8 [ main::$20 ] zp ZP_WORD:6 [ main::$18 ] 
+Uplifting [] best 1165 combination 
+Coalescing zero page register [ zp ZP_WORD:4 [ main::$15 ] ] with [ zp ZP_WORD:6 [ main::$18 ] ]
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ main::$15 main::$18 ]
+Allocated (was zp ZP_WORD:8) zp ZP_WORD:4 [ main::$20 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -452,13 +419,15 @@ b1_from_bbegin:
 //SEG5 @1
 b1:
 //SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
   jsr main
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG8 @end
+//SEG9 @end
 bend:
-//SEG9 main
+//SEG10 main
 main: {
     // RValue pointer expression (constant)
     .label screen = $400
@@ -468,8 +437,6 @@ main: {
     .label _15 = 2
     .label _18 = 2
     .label _20 = 4
-  //SEG10 [4] (byte) main::a#0 ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50) -- vbuaa=_deref_pbuc1 
-    lda screen+$50
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
   //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
@@ -578,6 +545,7 @@ Replacing label b1_from_b1 with b1
 Replacing label b3_from_b3 with b3
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
+Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_b1:
 Removing instruction b3_from_b3:
@@ -613,8 +581,6 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (byte*) main::BGCOL
 (const byte*) main::BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) $d020
-(byte) main::a
-(byte) main::a#0 reg byte a 20.0
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 14.666666666666666
@@ -628,13 +594,12 @@ FINAL SYMBOL TABLE
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte x [ main::j#2 main::j#1 ]
-reg byte a [ main::a#0 ]
 zp ZP_WORD:2 [ main::$15 main::$18 ]
 zp ZP_WORD:4 [ main::$20 ]
 
 
 FINAL ASSEMBLER
-Score: 954
+Score: 950
 
 //SEG0 File Comments
 // Test some complex pointers
@@ -647,9 +612,10 @@ Score: 954
 //SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [3] phi from @1 to @end [phi:@1->@end]
-//SEG8 @end
-//SEG9 main
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
 main: {
     // RValue pointer expression (constant)
     .label screen = $400
@@ -659,8 +625,6 @@ main: {
     .label _15 = 2
     .label _18 = 2
     .label _20 = 4
-  //SEG10 [4] (byte) main::a#0 ← *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50) -- vbuaa=_deref_pbuc1 
-    lda screen+$50
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0

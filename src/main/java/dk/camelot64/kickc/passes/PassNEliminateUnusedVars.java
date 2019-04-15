@@ -34,7 +34,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                LValue lValue = assignment.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
                   if(variable==null || !variable.isDeclaredVolatile()) {
                      if(getLog().isVerbosePass1CreateSsa() || getLog().isVerboseSSAOptimize()) {

@@ -11,7 +11,6 @@ main: {
     .label _15 = 2
     .label _18 = 2
     .label _20 = 4
-    lda screen+$50
     ldx #0
   // RValue pointer expression (variable)
   b1:

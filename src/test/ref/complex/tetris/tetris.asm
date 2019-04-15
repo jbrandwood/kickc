@@ -77,14 +77,6 @@
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
-  // Left shift is pressed
-  .const KEY_MODIFIER_LSHIFT = 1
-  // Right shift is pressed
-  .const KEY_MODIFIER_RSHIFT = 2
-  // CTRL is pressed
-  .const KEY_MODIFIER_CTRL = 4
-  // Commodore is pressed
-  .const KEY_MODIFIER_COMMODORE = 8
   // SID registers for random number generation
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
@@ -393,10 +385,6 @@ render_bcd: {
     adc #ZERO_CHAR
     ldy #0
     sta (screen_pos),y
-    inc screen_pos
-    bne !+
-    inc screen_pos+1
-  !:
     rts
 }
 // Render the next tetromino in the "next" area
@@ -1176,7 +1164,7 @@ keyboard_event_scan: {
     sta row_scan
     ldy row
     cmp keyboard_scan_values,y
-    bne b6
+    bne b5
     lax keycode
     axs #-[8]
     stx keycode
@@ -1189,41 +1177,21 @@ keyboard_event_scan: {
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b4
-    ldx #0|KEY_MODIFIER_LSHIFT
-    jmp b1
-  b4:
-    ldx #0
-  b1:
     lda #KEY_RSHIFT
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b2
-    txa
-    ora #KEY_MODIFIER_RSHIFT
-    tax
-  b2:
     lda #KEY_CTRL
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b3
-    txa
-    ora #KEY_MODIFIER_CTRL
-    tax
-  b3:
     lda #KEY_COMMODORE
     sta keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq breturn
-    txa
-    ora #KEY_MODIFIER_COMMODORE
-  breturn:
     rts
   // Something has changed on the keyboard row - check each column
-  b6:
+  b5:
     ldx #0
   b9:
     lda row_scan

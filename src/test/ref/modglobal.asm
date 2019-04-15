@@ -14,6 +14,8 @@ main: {
     adc #1
     jsr inccnt
     sta SCREEN+1
+    sty SCREEN+2
+    stx SCREEN+3
     rts
 }
 inccnt: {

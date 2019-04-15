@@ -77,7 +77,7 @@ forDeclaration
     ;
 
 forIteration
-    : ';' expr ';' expr? # forClassic
+    : ';' commaExpr ';' commaExpr? # forClassic
     | ':' expr ( '..' ) expr #forRange
     ;
 
@@ -90,10 +90,15 @@ typeDecl
     | typeDecl '(' ')' #typeProcedure
     ;
 
+commaExpr
+    : expr #commaNone
+    | commaExpr ',' expr #commaSimple
+    ;
+
 expr
-    : '(' expr ')' #exprPar
+    : '(' commaExpr ')' #exprPar
     | expr '(' parameterList? ')' #exprCall
-    | expr '[' expr ']' #exprArray
+    | expr '[' commaExpr ']' #exprArray
     | '(' typeDecl ')' expr #exprCast
     | ('--' | '++' ) expr #exprPreMod
     | expr ('--' | '++' ) #exprPostMod

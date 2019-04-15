@@ -8,7 +8,6 @@
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
   .label print_line_cursor = $400
-  .label rem16u = 2
   .label print_char_cursor = 5
 main: {
     .label wavelength = $c0

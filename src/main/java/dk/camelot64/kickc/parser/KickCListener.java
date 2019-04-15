@@ -468,6 +468,30 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code commaNone}
+	 * labeled alternative in {@link KickCParser#commaExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterCommaNone(KickCParser.CommaNoneContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code commaNone}
+	 * labeled alternative in {@link KickCParser#commaExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitCommaNone(KickCParser.CommaNoneContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code commaSimple}
+	 * labeled alternative in {@link KickCParser#commaExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterCommaSimple(KickCParser.CommaSimpleContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code commaSimple}
+	 * labeled alternative in {@link KickCParser#commaExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitCommaSimple(KickCParser.CommaSimpleContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code exprPtr}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

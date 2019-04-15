@@ -281,6 +281,20 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code commaNone}
+	 * labeled alternative in {@link KickCParser#commaExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCommaNone(KickCParser.CommaNoneContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code commaSimple}
+	 * labeled alternative in {@link KickCParser#commaExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCommaSimple(KickCParser.CommaSimpleContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code exprPtr}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

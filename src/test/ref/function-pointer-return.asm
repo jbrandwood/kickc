@@ -30,12 +30,10 @@ main: {
 fn2: {
     .label BGCOL = $d021
     inc BGCOL
-    lda BGCOL
     rts
 }
 fn1: {
     .label BORDERCOL = $d020
     inc BORDERCOL
-    lda BORDERCOL
     rts
 }

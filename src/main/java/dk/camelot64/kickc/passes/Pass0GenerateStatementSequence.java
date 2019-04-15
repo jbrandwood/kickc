@@ -785,15 +785,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       addLoopBody(stmtForCtx.stmt());
       addLoopContinueLabel(loopStack.peek(), ctx);
       // Add increment
-      if(ctx.expr(1) != null) {
-         PrePostModifierHandler.addPreModifiers(this, ctx.expr(1));
-         this.visit(ctx.expr(1));
-         PrePostModifierHandler.addPostModifiers(this, ctx.expr(1));
+      if(ctx.commaExpr(1) != null) {
+         PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(1));
+         this.visit(ctx.commaExpr(1));
+         PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(1));
       }
       // Add condition
-      PrePostModifierHandler.addPreModifiers(this, ctx.expr(0));
-      RValue rValue = (RValue) this.visit(ctx.expr(0));
-      PrePostModifierHandler.addPostModifiers(this, ctx.expr(0));
+      PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(0));
+      RValue rValue = (RValue) this.visit(ctx.commaExpr(0));
+      PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(0));
       // Add jump if condition was met
       StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, repeatLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJmpStmt);
@@ -1176,8 +1176,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprArray(KickCParser.ExprArrayContext ctx) {
-      RValue array = (RValue) visit(ctx.expr(0));
-      RValue index = (RValue) visit(ctx.expr(1));
+      RValue array = (RValue) visit(ctx.expr());
+      RValue index = (RValue) visit(ctx.commaExpr());
       return new PointerDereferenceIndexed(array, index);
    }
 
@@ -1273,6 +1273,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitCommaNone(KickCParser.CommaNoneContext ctx) {
+      return this.visit(ctx.expr());
+   }
+
+   @Override
+   public Object visitCommaSimple(KickCParser.CommaSimpleContext ctx) {
+      this.visit(ctx.commaExpr());
+      return this.visit(ctx.expr());
+   }
+
+   @Override
    public Object visitExprPreMod(KickCParser.ExprPreModContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
       return child;
@@ -1286,7 +1297,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprPar(KickCParser.ExprParContext ctx) {
-      return (RValue) this.visit(ctx.expr());
+      return (RValue) this.visit(ctx.commaExpr());
    }
 
    @Override

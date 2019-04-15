@@ -768,11 +768,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       loopStack.push(new Loop(blockScope));
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
       KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
-      // Create and assign declared loop variable
-      Variable lValue = getForVariable(forDeclCtx);
-      KickCParser.ExprContext initializer = forDeclCtx.expr();
-      if(initializer != null) {
-         addInitialAssignment(initializer, lValue, Comment.NO_COMMENTS);
+      if(forDeclCtx!=null) {
+         // Create and assign declared loop variable
+         Variable lValue = getForVariable(forDeclCtx);
+         KickCParser.ExprContext initializer = forDeclCtx.expr();
+         if(initializer != null) {
+            addInitialAssignment(initializer, lValue, Comment.NO_COMMENTS);
+         }
       }
       // Add label
       Label repeatLabel = getCurrentScope().addLabelIntermediate();
@@ -808,6 +810,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       loopStack.push(new Loop(blockScope));
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
       KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
+      if(forDeclCtx==null) {
+         throw new CompileError("Ranged for() must have iteration variable.", new StatementSource(ctx));
+      }
       // Create declared loop variable
       Variable lValue = getForVariable(forDeclCtx);
       KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);

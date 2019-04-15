@@ -38,6 +38,16 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testForRangedNoVar() throws IOException, URISyntaxException {
+      assertError("for-ranged-novar", "Ranged for() must have iteration variable");
+   }
+
+   @Test
+   public void testForEmptyInit() throws IOException, URISyntaxException {
+      compileAndCompare("for-empty-init");
+   }
+
+   @Test
    public void testForEmptyIncrement() throws IOException, URISyntaxException {
       compileAndCompare("for-empty-increment");
    }

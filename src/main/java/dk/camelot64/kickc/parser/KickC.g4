@@ -22,13 +22,17 @@ declSeq
     ;
 
 decl
-    : declVariable
+    : declVariables ';'
     | declFunction
     | declKasm
     ;
 
-declVariable
-    :  directive* typeDecl directive* declVariableList ';'
+declTypes
+    : directive* typeDecl directive*
+    ;
+
+declVariables
+    : declTypes declVariableList
     ;
 
 declVariableList
@@ -41,14 +45,14 @@ declVariableInit
     ;
 
 declFunction
-    : directive* typeDecl directive* NAME '(' parameterListDecl? ')' '{' stmtSeq? '}'
+    : declTypes NAME '(' parameterListDecl? ')' '{' stmtSeq? '}'
     ;
 
 parameterListDecl
     : parameterDecl (',' parameterDecl)* ;
 
 parameterDecl
-    : directive* typeDecl directive* NAME #parameterDeclType
+    : declTypes NAME #parameterDeclType
     | SIMPLETYPE #parameterDeclVoid
     ;
 
@@ -67,13 +71,13 @@ stmtSeq
     ;
 
 stmt
-    : declVariable #stmtDeclVar
+    : declVariables ';' #stmtDeclVar
     | '{' stmtSeq? '}' #stmtBlock
     | commaExpr  ';' #stmtExpr
     | 'if' '(' commaExpr ')' stmt ( 'else' stmt )? #stmtIfElse
     | directive* 'while' '(' commaExpr ')' stmt  #stmtWhile
     | directive* 'do' stmt 'while' '(' commaExpr ')' ';' #stmtDoWhile
-    | directive* 'for' '(' forDeclaration? forIteration ')' stmt  #stmtFor
+    | directive* 'for' '(' forLoop ')' stmt  #stmtFor
     | 'return' commaExpr? ';' #stmtReturn
     | 'break' ';' #stmtBreak
     | 'continue' ';' #stmtContinue
@@ -81,13 +85,14 @@ stmt
     | declKasm #stmtDeclKasm
     ;
 
-forDeclaration
-    : directive* typeDecl? directive* NAME ('=' expr)? #forDecl
+forLoop
+    : forClassicInit ';' commaExpr ';' commaExpr? #forClassic
+    | declTypes? NAME ':' expr ( '..' ) expr #forRange
     ;
 
-forIteration
-    : ';' commaExpr ';' commaExpr? # forClassic
-    | ':' expr ( '..' ) expr #forRange
+forClassicInit
+    : declVariables? #forClassicInitDecl
+    | commaExpr      #forClassicInitExpr
     ;
 
 typeDecl

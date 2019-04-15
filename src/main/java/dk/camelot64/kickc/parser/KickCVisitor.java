@@ -47,11 +47,17 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDecl(KickCParser.DeclContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#declVariable}.
+	 * Visit a parse tree produced by {@link KickCParser#declTypes}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDeclVariable(KickCParser.DeclVariableContext ctx);
+	T visitDeclTypes(KickCParser.DeclTypesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#declVariables}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclVariables(KickCParser.DeclVariablesContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#declVariableList}.
 	 * @param ctx the parse tree
@@ -230,26 +236,33 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code forDecl}
-	 * labeled alternative in {@link KickCParser#forDeclaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitForDecl(KickCParser.ForDeclContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code forClassic}
-	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * labeled alternative in {@link KickCParser#forLoop}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitForClassic(KickCParser.ForClassicContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code forRange}
-	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * labeled alternative in {@link KickCParser#forLoop}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitForRange(KickCParser.ForRangeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code forClassicInitDecl}
+	 * labeled alternative in {@link KickCParser#forClassicInit}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForClassicInitDecl(KickCParser.ForClassicInitDeclContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code forClassicInitExpr}
+	 * labeled alternative in {@link KickCParser#forClassicInit}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForClassicInitExpr(KickCParser.ForClassicInitExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code typePar}
 	 * labeled alternative in {@link KickCParser#typeDecl}.

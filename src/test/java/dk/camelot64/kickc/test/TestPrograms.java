@@ -38,6 +38,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testCommaDeclFor() throws IOException, URISyntaxException {
+      compileAndCompare("comma-decl-for");
+   }
+
+   @Test
    public void testCommaDecl() throws IOException, URISyntaxException {
       compileAndCompare("comma-decl");
    }
@@ -59,7 +64,7 @@ public class TestPrograms {
 
    @Test
    public void testForRangedNoVar() throws IOException, URISyntaxException {
-      assertError("for-ranged-novar", "Ranged for() must have iteration variable");
+      assertError("for-ranged-novar", "extraneous input");
    }
 
    @Test

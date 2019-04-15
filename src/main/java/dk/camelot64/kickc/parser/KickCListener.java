@@ -68,15 +68,25 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitDecl(KickCParser.DeclContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#declVariable}.
+	 * Enter a parse tree produced by {@link KickCParser#declTypes}.
 	 * @param ctx the parse tree
 	 */
-	void enterDeclVariable(KickCParser.DeclVariableContext ctx);
+	void enterDeclTypes(KickCParser.DeclTypesContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#declVariable}.
+	 * Exit a parse tree produced by {@link KickCParser#declTypes}.
 	 * @param ctx the parse tree
 	 */
-	void exitDeclVariable(KickCParser.DeclVariableContext ctx);
+	void exitDeclTypes(KickCParser.DeclTypesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#declVariables}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclVariables(KickCParser.DeclVariablesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#declVariables}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclVariables(KickCParser.DeclVariablesContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#declVariableList}.
 	 * @param ctx the parse tree
@@ -380,41 +390,53 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code forDecl}
-	 * labeled alternative in {@link KickCParser#forDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterForDecl(KickCParser.ForDeclContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code forDecl}
-	 * labeled alternative in {@link KickCParser#forDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitForDecl(KickCParser.ForDeclContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code forClassic}
-	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * labeled alternative in {@link KickCParser#forLoop}.
 	 * @param ctx the parse tree
 	 */
 	void enterForClassic(KickCParser.ForClassicContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code forClassic}
-	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * labeled alternative in {@link KickCParser#forLoop}.
 	 * @param ctx the parse tree
 	 */
 	void exitForClassic(KickCParser.ForClassicContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code forRange}
-	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * labeled alternative in {@link KickCParser#forLoop}.
 	 * @param ctx the parse tree
 	 */
 	void enterForRange(KickCParser.ForRangeContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code forRange}
-	 * labeled alternative in {@link KickCParser#forIteration}.
+	 * labeled alternative in {@link KickCParser#forLoop}.
 	 * @param ctx the parse tree
 	 */
 	void exitForRange(KickCParser.ForRangeContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code forClassicInitDecl}
+	 * labeled alternative in {@link KickCParser#forClassicInit}.
+	 * @param ctx the parse tree
+	 */
+	void enterForClassicInitDecl(KickCParser.ForClassicInitDeclContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code forClassicInitDecl}
+	 * labeled alternative in {@link KickCParser#forClassicInit}.
+	 * @param ctx the parse tree
+	 */
+	void exitForClassicInitDecl(KickCParser.ForClassicInitDeclContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code forClassicInitExpr}
+	 * labeled alternative in {@link KickCParser#forClassicInit}.
+	 * @param ctx the parse tree
+	 */
+	void enterForClassicInitExpr(KickCParser.ForClassicInitExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code forClassicInitExpr}
+	 * labeled alternative in {@link KickCParser#forClassicInit}.
+	 * @param ctx the parse tree
+	 */
+	void exitForClassicInitExpr(KickCParser.ForClassicInitExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code typePar}
 	 * labeled alternative in {@link KickCParser#typeDecl}.

@@ -88,13 +88,25 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeclVariable(KickCParser.DeclVariableContext ctx) { }
+	@Override public void enterDeclTypes(KickCParser.DeclTypesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDeclVariable(KickCParser.DeclVariableContext ctx) { }
+	@Override public void exitDeclTypes(KickCParser.DeclTypesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclVariables(KickCParser.DeclVariablesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclVariables(KickCParser.DeclVariablesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -412,18 +424,6 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterForDecl(KickCParser.ForDeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitForDecl(KickCParser.ForDeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterForClassic(KickCParser.ForClassicContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -443,6 +443,30 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitForRange(KickCParser.ForRangeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterForClassicInitDecl(KickCParser.ForClassicInitDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForClassicInitDecl(KickCParser.ForClassicInitDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterForClassicInitExpr(KickCParser.ForClassicInitExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForClassicInitExpr(KickCParser.ForClassicInitExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

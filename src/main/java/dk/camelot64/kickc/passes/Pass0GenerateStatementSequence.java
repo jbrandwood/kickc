@@ -111,10 +111,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
-      SymbolType type = (SymbolType) visit(ctx.typeDecl());
+      this.visitDeclTypes(ctx.declTypes());
+      SymbolType type = declVarType;
+      List<Directive> directives = declVarDirectives;
+
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentScope().addProcedure(name, type);
-      addDirectives(procedure, ctx.directive());
+      addDirectives(procedure, directives, new StatementSource(ctx));
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
@@ -142,6 +145,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       sequence.addStatement(new StatementReturn(returnVarRef, new StatementSource(ctx), Comment.NO_COMMENTS));
       scopeStack.pop();
       sequence.addStatement(new StatementProcedureEnd(procedure.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
+      exitDeclTypes();
       return null;
    }
 
@@ -169,11 +173,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
-      SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
+      this.visitDeclTypes(ctx.declTypes());
+      SymbolType type = declVarType;
+      List<Directive> directives = declVarDirectives;
       VariableUnversioned param = new VariableUnversioned(ctx.NAME().getText(), getCurrentScope(), type);
       // Add directives
-      List<Directive> directives = getDirectives(ctx.directive());
       addDirectives(param, type, directives, new StatementSource(ctx));
+      exitDeclTypes();
       return param;
    }
 
@@ -415,16 +421,34 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    /** Holds the declared comments when descending into a Variable Declaration. */
    private List<Comment> declVarComments = null;
 
+   /**
+    * Visit the type/directive part of a declaration. Setup the local decl-variables
+    * @param ctx The declaration type & directives
+    * @return null
+    */
    @Override
-   public Object visitDeclVariable(KickCParser.DeclVariableContext ctx) {
+   public Object visitDeclTypes(KickCParser.DeclTypesContext ctx) {
       List<KickCParser.DirectiveContext> directive = ctx.directive();
       this.declVarType = (SymbolType) visit(ctx.typeDecl());
       this.declVarDirectives = getDirectives(directive);
-      this.declVarComments = getCommentsSymbol(ctx);
-      this.visit(ctx.declVariableList());
+      this.declVarComments = getCommentsSymbol(ctx.getParent());
+      return null;
+   }
+
+   /**
+    * Clear the local decl-variables
+    */
+   private void exitDeclTypes() {
       this.declVarType = null;
       this.declVarDirectives = null;
       this.declVarComments = null;
+   }
+
+   @Override
+   public Object visitDeclVariables(KickCParser.DeclVariablesContext ctx) {
+      this.visit(ctx.declTypes());
+      this.visit(ctx.declVariableList());
+      exitDeclTypes();
       return null;
    }
 
@@ -489,9 +513,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          }
 
       }
-
       return null;
-
    }
 
    /**
@@ -542,12 +564,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
     * Add declared directives to a procedure.
     *
     * @param procedure The procedure
-    * @param directivesCtx The directives to add
+    * @param directives The directives to add
     */
-   private void addDirectives(Procedure procedure, List<KickCParser.DirectiveContext> directivesCtx) {
-      List<Directive> directives = getDirectives(directivesCtx);
+   private void addDirectives(Procedure procedure, List<Directive> directives, StatementSource source) {
       for(Directive directive : directives) {
-         StatementSource source = new StatementSource(directivesCtx.get(0));
          if(directive instanceof DirectiveInline) {
             procedure.setDeclaredInline(true);
          } else if(directive instanceof DirectiveInterrupt) {
@@ -787,13 +807,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitStmtFor(KickCParser.StmtForContext ctx) {
-      this.visit(ctx.forIteration());
+      this.visit(ctx.forLoop());
       return null;
-   }
-
-   @Override
-   public Object visitForDecl(KickCParser.ForDeclContext ctx) {
-      return super.visitForDecl(ctx);
    }
 
    @Override
@@ -801,16 +816,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
       loopStack.push(new Loop(blockScope));
+      this.visit(ctx.forClassicInit());
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
-      KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
-      if(forDeclCtx!=null) {
-         // Create and assign declared loop variable
-         Variable lValue = getForVariable(forDeclCtx);
-         KickCParser.ExprContext initializer = forDeclCtx.expr();
-         if(initializer != null) {
-            addInitialAssignment(initializer, lValue, Comment.NO_COMMENTS);
-         }
-      }
       // Add label
       Label repeatLabel = getCurrentScope().addLabelIntermediate();
       List<Comment> comments = getCommentsSymbol(stmtForCtx);
@@ -839,17 +846,40 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitForClassicInitDecl(KickCParser.ForClassicInitDeclContext ctx) {
+      if(ctx.declVariables()!=null) {
+         this.visit(ctx.declVariables());
+      }
+      return null;
+   }
+
+   @Override
    public Object visitForRange(KickCParser.ForRangeContext ctx) {
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
       loopStack.push(new Loop(blockScope));
-      KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
-      KickCParser.ForDeclContext forDeclCtx = (KickCParser.ForDeclContext) stmtForCtx.forDeclaration();
-      if(forDeclCtx==null) {
-         throw new CompileError("Ranged for() must have iteration variable.", new StatementSource(ctx));
+
+      // Create / find declared loop variable
+      if(ctx.declTypes()!=null) {
+         this.visitDeclTypes(ctx.declTypes());
       }
-      // Create declared loop variable
-      Variable lValue = getForVariable(forDeclCtx);
+      SymbolType varType = declVarType;
+      List<Directive> varDirectives = declVarDirectives;
+      String varName = ctx.NAME().getText();
+      Variable lValue;
+      if(varType != null) {
+         try {
+            lValue = getCurrentScope().addVariable(varName, varType);
+         } catch(CompileError e) {
+            throw new CompileError(e.getMessage(), new StatementSource(ctx));
+         }
+         // Add directives
+         addDirectives(lValue, varType, varDirectives, new StatementSource(ctx));
+      } else {
+         lValue = getCurrentScope().getVariable(varName);
+      }
+      exitDeclTypes();
+      KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
       KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);
       KickCParser.ExprContext rangeLastCtx = ctx.expr(1);
       // Assign loop variable with first value
@@ -909,34 +939,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             this.visit(stmt);
          }
       }
-   }
-
-   /**
-    * Get the variable of a for-loop.
-    *
-    * @param forDeclCtx The variable declaration
-    * @return The variable of the for loop
-    */
-   private Variable getForVariable(KickCParser.ForDeclContext forDeclCtx) {
-      String varName = forDeclCtx.NAME().getText();
-      Variable lValue;
-      if(forDeclCtx.typeDecl() != null) {
-         SymbolType type = (SymbolType) visit(forDeclCtx.typeDecl());
-         try {
-            lValue = getCurrentScope().addVariable(varName, type);
-         } catch(CompileError e) {
-            throw new CompileError(e.getMessage(), new StatementSource(forDeclCtx));
-         }
-         // Add directives
-         List<Directive> directives = getDirectives(forDeclCtx.directive());
-         addDirectives(lValue, type, directives, new StatementSource(forDeclCtx));
-      } else {
-         lValue = getCurrentScope().getVariable(varName);
-      }
-      if(lValue == null) {
-         throw new CompileError("Unknown variable! " + varName, new StatementSource(forDeclCtx));
-      }
-      return lValue;
    }
 
    @Override

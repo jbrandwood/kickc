@@ -4,23 +4,30 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
-    .label w = 2
-    ldy #0
-    ldx #0
+    .label w = 3
+    .label idx = 2
+    lda #0
+    sta idx
+    tax
   b1:
-    lda words,x
+    txa
+    asl
+    tay
+    lda words,y
     sta w
-    lda words+1,x
+    lda words+1,y
     sta w+1
     lda w
+    ldy idx
     sta SCREEN,y
     iny
     lda w+1
     sta SCREEN,y
     iny
     tya
-    tay
-    iny
+    clc
+    adc #1
+    sta idx
     inx
     cpx #4
     bne b1

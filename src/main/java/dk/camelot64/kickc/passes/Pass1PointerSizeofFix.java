@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -12,6 +13,7 @@ import dk.camelot64.kickc.model.symbols.VariableIntermediate;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.ConstantRef;
+import dk.camelot64.kickc.model.values.PointerDereferenceIndexed;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ListIterator;
@@ -41,6 +43,29 @@ public class Pass1PointerSizeofFix extends Pass1Base {
             }
          }
       }
+
+      ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
+         if(programValue.get() instanceof PointerDereferenceIndexed) {
+            PointerDereferenceIndexed deref = (PointerDereferenceIndexed) programValue.get();
+            if(deref.getPointer() instanceof VariableRef) {
+               VariableRef varRef = (VariableRef) deref.getPointer();
+               Variable variable = getScope().getVariable(varRef);
+               SymbolTypePointer pointerType = (SymbolTypePointer) variable.getType();
+               if(pointerType.getElementType().getSizeBytes() > 1) {
+                  // Array-indexing into a non-byte pointer - multiply by sizeof()
+                  getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
+                  VariableIntermediate tmpVar = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
+                  tmpVar.setType(SymbolType.BYTE);
+                  stmtIt.remove();
+                  ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
+                  stmtIt.add(new StatementAssignment(tmpVar.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, currentStmt.getSource(), Comment.NO_COMMENTS));
+                  stmtIt.add(currentStmt);
+                  deref.setIndex(tmpVar.getRef());
+               }
+            }
+         }
+      });
+
       return false;
    }
 

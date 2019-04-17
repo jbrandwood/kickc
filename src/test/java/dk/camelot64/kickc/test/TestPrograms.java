@@ -63,6 +63,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testWordArray0() throws IOException, URISyntaxException {
+      compileAndCompare("word-array-0");
+   }
+
+   @Test
    public void testSizeofExpression() throws IOException, URISyntaxException {
       compileAndCompare("sizeof-expr");
    }

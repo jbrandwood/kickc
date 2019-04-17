@@ -5,6 +5,7 @@ import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -1179,30 +1180,24 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitExprSizeOfType(KickCParser.ExprSizeOfTypeContext ctx) {
-      SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
-      String typeConstName = getSizeofName(type);
-      ConstantVar typeSizeConstant = program.getScope().getConstant(typeConstName);
-      if(typeSizeConstant ==null) {
-         // Constant not found - create it
-         long typeSize = type.getSizeBytes();
-         typeSizeConstant = new ConstantVar(typeConstName, program.getScope(), SymbolType.BYTE, new ConstantInteger(typeSize));
-         program.getScope().add(typeSizeConstant);
-      }
-      return typeSizeConstant.getRef();
-   }
-
-   private String getSizeofName(SymbolType type) {
-      if(type instanceof SymbolTypePointer) {
-         return "SIZEOF_POINTER";
+   public Object visitExprSizeOf(KickCParser.ExprSizeOfContext ctx) {
+      if(ctx.typeDecl()!=null) {
+         // sizeof(type) - add directly
+         SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
+         return OperatorSizeOf.getSizeOfConstantVar(program.getScope(), type);
       } else {
-         return "SIZEOF_"+type.getTypeName().toUpperCase().replace(" ", "_");
+         // sizeof(expression) - add a unary expression to be resolved later
+         RValue child = (RValue) this.visit(ctx.expr());
+         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         VariableRef tmpVarRef = tmpVar.getRef();
+         Statement stmt = new StatementAssignment(tmpVarRef, Operators.SIZEOF, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
+         sequence.addStatement(stmt);
+         return tmpVarRef;
       }
    }
 
    @Override
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
-
       List<RValue> parameters;
       KickCParser.ParameterListContext parameterList = ctx.parameterList();
       if(parameterList != null) {

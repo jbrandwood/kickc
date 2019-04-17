@@ -652,18 +652,6 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExprSizeOfType(KickCParser.ExprSizeOfTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitExprSizeOfType(KickCParser.ExprSizeOfTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterInitList(KickCParser.InitListContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -707,6 +695,18 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExprPar(KickCParser.ExprParContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExprSizeOf(KickCParser.ExprSizeOfContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExprSizeOf(KickCParser.ExprSizeOfContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

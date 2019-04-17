@@ -26,7 +26,19 @@ public class SymbolTypeMulti implements SymbolType {
 
    @Override
    public int getSizeBytes() {
-      return -1;
+      // Find the minimal sizeof - and return that
+      Integer size = null;
+      for(SymbolType type : types) {
+         if(size==null) {
+            size = type.getSizeBytes();
+         }  else if(size>type.getSizeBytes()) {
+            size = type.getSizeBytes();
+         }
+      }
+      if(size==null) {
+         return -1;
+      }
+      return size;
    }
 
    @Override

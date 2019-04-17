@@ -252,6 +252,7 @@ public class Compiler {
       optimizations.add(new Pass2ComparisonOptimization(program));
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));
       optimizations.add(new Pass2MultiplyToShiftRewriting(program));
+      optimizations.add(new Pass2SizeOfSimplification(program));
       pass2Execute(optimizations);
    }
 

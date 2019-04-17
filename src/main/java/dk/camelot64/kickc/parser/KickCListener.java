@@ -618,18 +618,6 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitExprChar(KickCParser.ExprCharContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code exprSizeOfType}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprSizeOfType(KickCParser.ExprSizeOfTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code exprSizeOfType}
-	 * labeled alternative in {@link KickCParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprSizeOfType(KickCParser.ExprSizeOfTypeContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code initList}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree
@@ -677,6 +665,18 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExprPar(KickCParser.ExprParContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprSizeOf}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprSizeOf(KickCParser.ExprSizeOfContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprSizeOf}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprSizeOf(KickCParser.ExprSizeOfContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprString}
 	 * labeled alternative in {@link KickCParser#expr}.

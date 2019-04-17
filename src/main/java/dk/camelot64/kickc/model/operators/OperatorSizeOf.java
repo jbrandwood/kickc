@@ -1,0 +1,66 @@
+package dk.camelot64.kickc.model.operators;
+
+import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeMulti;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeSimple;
+import dk.camelot64.kickc.model.values.ConstantInteger;
+import dk.camelot64.kickc.model.values.ConstantLiteral;
+import dk.camelot64.kickc.model.values.ConstantRef;
+
+/** SizeOf operator sizeof(expr). Will be resolved into a constant as soon as the expression has been resolved enough. */
+public class OperatorSizeOf extends OperatorUnary {
+
+   public OperatorSizeOf(int precedence) {
+      super("sizeof ", "_sizeof_", precedence);
+   }
+
+   @Override
+   public ConstantLiteral calculateLiteral(ConstantLiteral operand, ProgramScope scope) {
+      SymbolType type = operand.getType(scope);
+      return new ConstantInteger((long)type.getSizeBytes());
+   }
+
+   @Override
+   public SymbolType inferType(SymbolTypeSimple operandType) {
+      return SymbolType.BYTE;
+   }
+
+   /**
+    * Get the constant variable containing the size of a specific type
+    * @param programScope The program scope (used for finding/adding the constant).
+    * @param type The type to get the variable for
+    * @return The constant variable
+    */
+   public static ConstantRef getSizeOfConstantVar(ProgramScope programScope, SymbolType type) {
+      String typeConstName = getSizeofConstantName(type);
+      ConstantVar typeSizeConstant = programScope.getConstant(typeConstName);
+      if(typeSizeConstant ==null) {
+         // Constant not found - create it
+         long typeSize = type.getSizeBytes();
+         typeSizeConstant = new ConstantVar(typeConstName, programScope, SymbolType.BYTE, new ConstantInteger(typeSize));
+         programScope.add(typeSizeConstant);
+      }
+      return typeSizeConstant.getRef();
+   }
+
+   /**
+    * Get the name of the constant variable containing the size of a specific type
+    * @param type The type to get the variable for
+    * @return The name of the constant
+    */
+   public static String getSizeofConstantName(SymbolType type) {
+      if(type instanceof SymbolTypeMulti) {
+         // Grab the first sub-type. It will be the smallest
+         SymbolType subType = ((SymbolTypeMulti) type).getTypes().iterator().next();
+         return getSizeofConstantName(subType);
+      } else if(type instanceof SymbolTypePointer) {
+         return "SIZEOF_POINTER";
+      } else {
+         return "SIZEOF_"+type.getTypeName().toUpperCase().replace(" ", "_");
+      }
+   }
+
+}

@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeSimple;
@@ -18,7 +19,7 @@ public class OperatorGetLow extends OperatorUnary {
    }
 
    @Override
-   public ConstantLiteral calculateLiteral(ConstantLiteral operand) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral operand, ProgramScope scope) {
       if(operand instanceof ConstantInteger) {
          ConstantInteger operandInt = (ConstantInteger) operand;
          if(SymbolType.isWord(operandInt.getType()) || SymbolType.isSWord(operandInt.getType())) {

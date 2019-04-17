@@ -38,6 +38,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testSizeofExpression() throws IOException, URISyntaxException {
+      compileAndCompare("sizeof-expr");
+   }
+
+   @Test
    public void testSizeofTypes() throws IOException, URISyntaxException {
       compileAndCompare("sizeof-types");
    }

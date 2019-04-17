@@ -21,7 +21,7 @@ public interface SymbolType {
    /** Signed double word (4 bytes, 32 bits). */
    SymbolTypeInteger SDWORD = new SymbolTypeInteger("signed dword", -2_147_483_648, 2_147_483_647, true, 32);
    /** String value (treated like byte* ). */
-   SymbolTypeNamed STRING = new SymbolTypeNamed("string", -1);
+   SymbolTypeNamed STRING = new SymbolTypeNamed("string", 99);
    /** Boolean value. */
    SymbolTypeNamed BOOLEAN = new SymbolTypeNamed("bool", 1);
    /** Numeric floating point value. */

@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.operators;
 
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
@@ -14,9 +15,10 @@ public abstract class OperatorUnary extends Operator {
    /**
     * Calculate the literal value of the operator applied to a constant operand
     * @param operand The constant operand
+    * @param scope
     * @return The literal value
     */
-   public abstract ConstantLiteral calculateLiteral(ConstantLiteral operand);
+   public abstract ConstantLiteral calculateLiteral(ConstantLiteral operand, ProgramScope scope);
 
    /**
     * Infer the type of the operator applied to an operand of a specific type

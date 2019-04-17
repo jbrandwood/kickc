@@ -4,10 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.operators.OperatorBinary;
-import dk.camelot64.kickc.model.operators.OperatorCastPtr;
-import dk.camelot64.kickc.model.operators.OperatorUnary;
-import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
@@ -302,39 +299,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    }
 
    static ConstantValue createUnary(OperatorUnary operator, ConstantValue c) {
-      if(operator instanceof OperatorCastPtr) {
-         return new ConstantUnary(operator, c);
+      if(Operators.DEREF.equals(operator)) {
+         // Pointer dereferencing is not constant
+         return null;
       }
-      switch(operator.getOperator()) {
-         case "-":
-         case "+":
-         case "++":
-         case "--":
-         case "<":
-         case ">":
-         case "((byte))":
-         case "((signed byte))":
-         case "((sbyte))":
-         case "((word))":
-         case "((signed word))":
-         case "((dword))":
-         case "((signed dword))":
-         case "((byte*))":
-         case "((signed byte*))":
-         case "((word*))":
-         case "((signed word*))":
-         case "((dword*))":
-         case "((signed dword*))":
-         case "((boolean*))":
-         case "!":
-         case "~":
-            return new ConstantUnary(operator, c);
-         case "*": { // pointer dereference - not constant
-            return null;
-         }
-         default:
-            throw new RuntimeException("Unhandled Unary Operator " + operator.getOperator());
-      }
+      return new ConstantUnary(operator, c);
    }
 
    static ConstantValue createBinary(ConstantValue c1, OperatorBinary operator, ConstantValue c2, ProgramScope programScope) {

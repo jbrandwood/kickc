@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantBool;
@@ -14,7 +15,7 @@ public class OperatorLogicNot extends OperatorUnary {
    }
 
    @Override
-   public ConstantLiteral calculateLiteral(ConstantLiteral left) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral left, ProgramScope scope) {
       if(left instanceof ConstantBool) {
          return new ConstantBool(!((ConstantBool) left).getBool() );
       }

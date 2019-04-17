@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeSimple;
@@ -19,7 +20,7 @@ public class OperatorCastPtr extends OperatorUnary {
    }
 
    @Override
-   public ConstantLiteral calculateLiteral(ConstantLiteral value) {
+   public ConstantLiteral calculateLiteral(ConstantLiteral value, ProgramScope scope) {
       if(value instanceof ConstantInteger) {
          return new ConstantPointer(((ConstantInteger) value).getInteger(), elementType);
       } else if(value instanceof ConstantPointer) {

@@ -34,7 +34,7 @@ public class SymbolTypeInference {
          try {
             ConstantValue constRValue = (ConstantValue) rValue;
             ConstantLiteral literalRValue = constRValue.calculateLiteral(programScope);
-            ConstantValue value = operator.calculateLiteral(literalRValue);
+            ConstantValue value = operator.calculateLiteral(literalRValue, programScope);
             return value.getType(programScope);
          } catch(ConstantNotLiteral e) {
             // Value literal cannot be calculated

@@ -26,6 +26,7 @@ public class Operators {
    public static final OperatorUnary CAST_DWORD = new OperatorCastDWord(2);
    public static final OperatorUnary CAST_SDWORD = new OperatorCastSDWord(2);
    public static final OperatorUnary CAST_BOOL= new OperatorCastBool(2);
+   public static final OperatorUnary SIZEOF = new OperatorSizeOf(2);
    public static final OperatorBinary MULTIPLY = new OperatorMultiply(3);
    public static final OperatorBinary DIVIDE = new OperatorDivide(3);
    public static final OperatorBinary MODULO = new OperatorModulo(3);

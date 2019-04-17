@@ -337,11 +337,11 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      Collection<ConstantRef> constRefConsts = program.getVariableReferenceInfos().getConstRefConsts(constantVar.getRef());
-      if(constRefConsts != null) {
-         for(ConstantRef constRefConst : constRefConsts) {
-            ConstantVar refConst = program.getScope().getConstant(constRefConst);
-            if(!refConst.getScope().getRef().equals(scopeRef)) {
+      Collection<SymbolVariableRef> symbolRefConsts = program.getVariableReferenceInfos().getSymbolRefConsts(constantVar.getRef());
+      if(symbolRefConsts != null) {
+         for(SymbolVariableRef symbolRefConst : symbolRefConsts) {
+            SymbolVariable symbolRefVar = (SymbolVariable) program.getScope().getSymbol(symbolRefConst);
+            if(!symbolRefVar.getScope().getRef().equals(scopeRef)) {
                // Used in constant in another scope - generate label
                useLabel = true;
                break;

@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.model.values;
 
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -34,7 +33,7 @@ public class ConstantCastValue implements ConstantValue {
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
       ConstantLiteral valueLiteral = value.calculateLiteral(scope);
       OperatorUnary castOperator = Operators.getCastUnary(toType);
-      return castOperator.calculateLiteral(valueLiteral);
+      return castOperator.calculateLiteral(valueLiteral, scope);
    }
 
    public SymbolType getToType() {

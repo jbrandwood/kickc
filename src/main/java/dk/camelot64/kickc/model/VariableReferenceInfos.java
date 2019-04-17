@@ -263,18 +263,18 @@ public class VariableReferenceInfos {
 
 
    /**
-    * Get all constatns referencing another constant
+    * Get all constants (or symbol definitions) referencing another constant
     *
     * @param constRef The constant to look for
-    * @return All constants that reference the constant in their value
+    * @return All constants (or symbol definitions) that reference the constant in their value
     */
-   public Collection<ConstantRef> getConstRefConsts(ConstantRef constRef) {
+   public Collection<SymbolVariableRef> getSymbolRefConsts(ConstantRef constRef) {
       Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(constRef);
-      LinkedHashSet<ConstantRef> constRefs = new LinkedHashSet<>();
+      LinkedHashSet<SymbolVariableRef> constRefs = new LinkedHashSet<>();
       refs.stream()
             .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()))
             .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInSymbol)
-            .forEach(referenceToSymbolVar -> constRefs.add((ConstantRef) ((ReferenceInSymbol) referenceToSymbolVar).getReferencingSymbol()));
+            .forEach(referenceToSymbolVar -> constRefs.add(((ReferenceInSymbol) referenceToSymbolVar).getReferencingSymbol()));
       return constRefs;
    }
 

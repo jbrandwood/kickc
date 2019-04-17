@@ -38,6 +38,26 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testWordPointerMath() throws IOException, URISyntaxException {
+      compileAndCompare("word-pointer-math");
+   }
+
+   @Test
+   public void testWordPointerIteration() throws IOException, URISyntaxException {
+      compileAndCompare("word-pointer-iteration");
+   }
+
+   @Test
+   public void testWordPointerIteration0() throws IOException, URISyntaxException {
+      compileAndCompare("word-pointer-iteration-0");
+   }
+
+   @Test
+   public void testWordArray() throws IOException, URISyntaxException {
+      compileAndCompare("word-array");
+   }
+
+   @Test
    public void testSizeofExpression() throws IOException, URISyntaxException {
       compileAndCompare("sizeof-expr");
    }

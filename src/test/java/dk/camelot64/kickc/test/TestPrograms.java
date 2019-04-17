@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testWordPointerMath0() throws IOException, URISyntaxException {
+      compileAndCompare("word-pointer-math-0");
+   }
+
+   @Test
    public void testWordPointerIteration() throws IOException, URISyntaxException {
       compileAndCompare("word-pointer-iteration");
    }

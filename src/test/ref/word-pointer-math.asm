@@ -12,6 +12,7 @@ main: {
     tax
   b1:
     txa
+    asl
     clc
     adc #<words
     sta _0

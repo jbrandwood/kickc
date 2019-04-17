@@ -2,6 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const SIZEOF_WORD = 2
 main: {
     .label SCREEN = $400
     .label w = 5
@@ -21,8 +22,11 @@ main: {
     iny
     lda (wp),y
     sta w+1
-    inc wp
-    bne !+
+    lda #SIZEOF_WORD
+    clc
+    adc wp
+    sta wp
+    bcc !+
     inc wp+1
   !:
     lda w

@@ -1,3 +1,4 @@
+Fixing pointer increment (word*) main::wp ← ++ (word*) main::wp
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -14,7 +15,7 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::idx#4 ← phi( main/(byte) main::idx#0 main::@1/(byte) main::idx#3 )
   (word*) main::wp#2 ← phi( main/(word*) main::wp#0 main::@1/(word*) main::wp#1 )
   (word) main::w#0 ← *((word*) main::wp#2)
-  (word*) main::wp#1 ← ++ (word*) main::wp#2
+  (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD
   (byte~) main::$0 ← < (word) main::w#0
   *((byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$0
   (byte) main::idx#1 ← ++ (byte) main::idx#4
@@ -41,6 +42,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
+(const byte) SIZEOF_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -123,7 +125,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) main::idx#4 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) main::idx#3 )
   [5] (word*) main::wp#2 ← phi( main/(const word[]) main::words#0 main::@1/(word*) main::wp#1 )
   [6] (word) main::w#0 ← *((word*) main::wp#2)
-  [7] (word*) main::wp#1 ← ++ (word*) main::wp#2
+  [7] (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD
   [8] (byte~) main::$0 ← < (word) main::w#0
   [9] *((const byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$0
   [10] (byte) main::idx#1 ← ++ (byte) main::idx#4
@@ -194,6 +196,7 @@ INITIAL ASM
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
 //SEG3 @begin
 bbegin:
 //SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -251,9 +254,12 @@ main: {
     iny
     lda (wp),y
     sta w+1
-  //SEG21 [7] (word*) main::wp#1 ← ++ (word*) main::wp#2 -- pwuz1=_inc_pwuz1 
-    inc wp
-    bne !+
+  //SEG21 [7] (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    lda #SIZEOF_WORD
+    clc
+    adc wp
+    sta wp
+    bcc !+
     inc wp+1
   !:
   //SEG22 [8] (byte~) main::$0 ← < (word) main::w#0 -- vbuz1=_lo_vwuz2 
@@ -303,10 +309,12 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ ma
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:5 [ main::i#2 main::i#1 ]
+Statement [7] (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD [ main::idx#4 main::i#2 main::wp#1 main::w#0 ] ( main:2 [ main::idx#4 main::i#2 main::wp#1 main::w#0 ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$0 ← < (word) main::w#0 [ main::idx#4 main::i#2 main::wp#1 main::w#0 main::$0 ] ( main:2 [ main::idx#4 main::i#2 main::wp#1 main::w#0 main::$0 ] ) always clobbers reg byte a 
 Statement [11] (byte~) main::$1 ← > (word) main::w#0 [ main::i#2 main::wp#1 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::wp#1 main::idx#1 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ main::idx#1 ]
 Statement [6] (word) main::w#0 ← *((word*) main::wp#2) [ main::wp#2 main::idx#4 main::i#2 main::w#0 ] ( main:2 [ main::wp#2 main::idx#4 main::i#2 main::w#0 ] ) always clobbers reg byte a reg byte y 
+Statement [7] (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD [ main::idx#4 main::i#2 main::wp#1 main::w#0 ] ( main:2 [ main::idx#4 main::i#2 main::wp#1 main::w#0 ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$0 ← < (word) main::w#0 [ main::idx#4 main::i#2 main::wp#1 main::w#0 main::$0 ] ( main:2 [ main::idx#4 main::i#2 main::wp#1 main::w#0 main::$0 ] ) always clobbers reg byte a 
 Statement [11] (byte~) main::$1 ← > (word) main::w#0 [ main::i#2 main::wp#1 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::wp#1 main::idx#1 main::$1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::wp#2 main::wp#1 ] : zp ZP_WORD:2 , 
@@ -322,13 +330,13 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 22: zp ZP_BYTE:8 [ main::$0 ] 22: zp ZP_BYTE:10 [ main::$1 ] 22: zp ZP_BYTE:11 [ main::idx#2 ] 18.7: zp ZP_WORD:2 [ main::wp#2 main::wp#1 ] 18.7: zp ZP_BYTE:5 [ main::i#2 main::i#1 ] 13.93: zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ] 11: zp ZP_BYTE:9 [ main::idx#1 ] 6.6: zp ZP_WORD:6 [ main::w#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1118 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::idx#2 ] zp ZP_WORD:2 [ main::wp#2 main::wp#1 ] reg byte x [ main::i#2 main::i#1 ] zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ] zp ZP_BYTE:9 [ main::idx#1 ] zp ZP_WORD:6 [ main::w#0 ] 
+Uplifting [main] best 1168 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::idx#2 ] zp ZP_WORD:2 [ main::wp#2 main::wp#1 ] reg byte x [ main::i#2 main::i#1 ] zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ] zp ZP_BYTE:9 [ main::idx#1 ] zp ZP_WORD:6 [ main::w#0 ] 
 Limited combination testing to 100 combinations of 768 possible.
-Uplifting [] best 1118 combination 
+Uplifting [] best 1168 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::idx#4 main::idx#3 ]
-Uplifting [main] best 1118 combination zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ] 
+Uplifting [main] best 1168 combination zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:9 [ main::idx#1 ]
-Uplifting [main] best 1028 combination reg byte y [ main::idx#1 ] 
+Uplifting [main] best 1078 combination reg byte y [ main::idx#1 ] 
 Allocated (was zp ZP_WORD:6) zp ZP_WORD:5 [ main::w#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -339,6 +347,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
 //SEG3 @begin
 bbegin:
 //SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -389,9 +398,12 @@ main: {
     iny
     lda (wp),y
     sta w+1
-  //SEG21 [7] (word*) main::wp#1 ← ++ (word*) main::wp#2 -- pwuz1=_inc_pwuz1 
-    inc wp
-    bne !+
+  //SEG21 [7] (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    lda #SIZEOF_WORD
+    clc
+    adc wp
+    sta wp
+    bcc !+
     inc wp+1
   !:
   //SEG22 [8] (byte~) main::$0 ← < (word) main::w#0 -- vbuaa=_lo_vwuz1 
@@ -459,6 +471,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
+(const byte) SIZEOF_WORD SIZEOF_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
 (byte~) main::$1 reg byte a 22.0
@@ -493,7 +506,7 @@ reg byte a [ main::idx#2 ]
 
 
 FINAL ASSEMBLER
-Score: 896
+Score: 946
 
 //SEG0 File Comments
 // Tests simple word pointer iteration
@@ -502,6 +515,7 @@ Score: 896
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
 //SEG3 @begin
 //SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG5 @1
@@ -539,9 +553,12 @@ main: {
     iny
     lda (wp),y
     sta w+1
-  //SEG21 [7] (word*) main::wp#1 ← ++ (word*) main::wp#2 -- pwuz1=_inc_pwuz1 
-    inc wp
-    bne !+
+  //SEG21 [7] (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    lda #SIZEOF_WORD
+    clc
+    adc wp
+    sta wp
+    bcc !+
     inc wp+1
   !:
   //SEG22 [8] (byte~) main::$0 ← < (word) main::w#0 -- vbuaa=_lo_vwuz1 

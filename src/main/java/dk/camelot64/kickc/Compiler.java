@@ -162,6 +162,7 @@ public class Compiler {
 
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
+      new Pass1PointerSizeofFix(program).execute();
       new Pass1AddTypePromotions(program).execute();
       new Pass1EarlyConstantIdentification(program).execute();
       new PassNStatementIndices(program).step();

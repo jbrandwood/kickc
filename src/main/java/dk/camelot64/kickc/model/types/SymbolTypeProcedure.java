@@ -11,6 +11,11 @@ public class SymbolTypeProcedure implements SymbolTypeSimple {
       this.returnType = returnType;
    }
 
+   @Override
+   public int getSizeBytes() {
+      return -1;
+   }
+
    public SymbolType getReturnType() {
       return returnType;
    }

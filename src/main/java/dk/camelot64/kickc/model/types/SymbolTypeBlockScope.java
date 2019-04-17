@@ -13,6 +13,11 @@ public class SymbolTypeBlockScope implements SymbolTypeSimple {
    }
 
    @Override
+   public int getSizeBytes() {
+      return -1;
+   }
+
+   @Override
    public int hashCode() {
       return 443;
    }

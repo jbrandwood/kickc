@@ -5,12 +5,20 @@ public class SymbolTypeNamed implements SymbolTypeSimple {
 
    private String typeName;
 
-   SymbolTypeNamed(String typeName) {
+   private int sizeBytes;
+
+   SymbolTypeNamed(String typeName, int sizeBytes) {
       this.typeName = typeName;
+      this.sizeBytes = sizeBytes;
    }
 
    public String getTypeName() {
       return typeName;
+   }
+
+   @Override
+   public int getSizeBytes() {
+      return sizeBytes;
    }
 
    @Override

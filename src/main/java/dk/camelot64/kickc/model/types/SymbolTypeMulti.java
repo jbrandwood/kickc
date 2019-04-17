@@ -25,6 +25,11 @@ public class SymbolTypeMulti implements SymbolType {
    }
 
    @Override
+   public int getSizeBytes() {
+      return -1;
+   }
+
+   @Override
    public String getTypeName() {
       StringBuilder name = new StringBuilder();
       boolean first = true;

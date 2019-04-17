@@ -21,17 +21,17 @@ public interface SymbolType {
    /** Signed double word (4 bytes, 32 bits). */
    SymbolTypeInteger SDWORD = new SymbolTypeInteger("signed dword", -2_147_483_648, 2_147_483_647, true, 32);
    /** String value (treated like byte* ). */
-   SymbolTypeNamed STRING = new SymbolTypeNamed("string");
+   SymbolTypeNamed STRING = new SymbolTypeNamed("string", -1);
    /** Boolean value. */
-   SymbolTypeNamed BOOLEAN = new SymbolTypeNamed("bool");
+   SymbolTypeNamed BOOLEAN = new SymbolTypeNamed("bool", 1);
    /** Numeric floating point value. */
-   SymbolTypeNamed DOUBLE = new SymbolTypeNamed("double");
+   SymbolTypeNamed DOUBLE = new SymbolTypeNamed("double", 1);
    /** A label. Name of functions of jump-targets. */
-   SymbolTypeNamed LABEL = new SymbolTypeNamed("label");
+   SymbolTypeNamed LABEL = new SymbolTypeNamed("label", 1);
    /** Void type representing no value. */
-   SymbolTypeNamed VOID = new SymbolTypeNamed("void");
+   SymbolTypeNamed VOID = new SymbolTypeNamed("void", 0);
    /** An unresolved type. Will be infered later. */
-   SymbolTypeNamed VAR = new SymbolTypeNamed("var");
+   SymbolTypeNamed VAR = new SymbolTypeNamed("var", -1);
 
    /**
     * Get a simple symbol type from the type name.
@@ -100,6 +100,14 @@ public interface SymbolType {
     * @return The type name
     */
    String getTypeName();
+
+   /**
+    * Get the size of the type (in bytes).
+    * @return The size
+    */
+   int getSizeBytes();
+
+
 
    /**
     * Is the type {@link #BYTE} or compatible {@link SymbolTypeMulti}

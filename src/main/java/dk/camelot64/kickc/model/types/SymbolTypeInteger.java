@@ -39,6 +39,11 @@ public class SymbolTypeInteger implements SymbolTypeSimple {
    }
 
    @Override
+   public int getSizeBytes() {
+      return bits/8;
+   }
+
+   @Override
    public String toString() {
       return getTypeName();
    }

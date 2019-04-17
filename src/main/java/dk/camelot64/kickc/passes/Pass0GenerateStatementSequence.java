@@ -1179,6 +1179,28 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitExprSizeOfType(KickCParser.ExprSizeOfTypeContext ctx) {
+      SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
+      String typeConstName = getSizeofName(type);
+      ConstantVar typeSizeConstant = program.getScope().getConstant(typeConstName);
+      if(typeSizeConstant ==null) {
+         // Constant not found - create it
+         long typeSize = type.getSizeBytes();
+         typeSizeConstant = new ConstantVar(typeConstName, program.getScope(), SymbolType.BYTE, new ConstantInteger(typeSize));
+         program.getScope().add(typeSizeConstant);
+      }
+      return typeSizeConstant.getRef();
+   }
+
+   private String getSizeofName(SymbolType type) {
+      if(type instanceof SymbolTypePointer) {
+         return "SIZEOF_POINTER";
+      } else {
+         return "SIZEOF_"+type.getTypeName().toUpperCase().replace(" ", "_");
+      }
+   }
+
+   @Override
    public Object visitExprCall(KickCParser.ExprCallContext ctx) {
 
       List<RValue> parameters;

@@ -112,6 +112,7 @@ commaExpr
 expr
     : '(' commaExpr ')' #exprPar
     | expr '(' parameterList? ')' #exprCall
+    | 'sizeof' '(' typeDecl ')' #exprSizeOfType
     | expr '[' commaExpr ']' #exprArray
     | '(' typeDecl ')' expr #exprCast
     | ('--' | '++' ) expr #exprPreMod

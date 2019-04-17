@@ -38,6 +38,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testSizeofTypes() throws IOException, URISyntaxException {
+      compileAndCompare("sizeof-types");
+   }
+
+   @Test
    public void testCommaDeclFor() throws IOException, URISyntaxException {
       compileAndCompare("comma-decl-for");
    }

@@ -23,14 +23,16 @@
   .label CIA2_PORT_A_DDR = $dd02
   .label BITMAP = $a000
   .label SCREEN = $8800
+  // The number of points
+  .const SIZE = 4
   // The delay between pixels
   .const DELAY = 8
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)/$40
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     .label i = 2
-    sei
     // Disable normal interrupt
+    sei
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
@@ -62,7 +64,7 @@ main: {
     ldx y_start,y
     jsr bitmap_plot
     inc i
-    lda #4
+    lda #SIZE-1+1
     cmp i
     bne b1
   b2:
@@ -508,17 +510,17 @@ bitmap_init: {
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
-  // Current x position fixed point [12.4]
-  x_cur: .fill 2*4, 0
-  // Current y position fixed point [12.4]
-  y_cur: .fill 2*4, 0
-  // X position addition per frame s[3.4]
-  x_add: .fill 4, 0
-  // Y position addition per frame s[3.4]
-  y_add: .fill 4, 0
-  // Frame delay (counted down to 0)
-  delay: .fill 4, 0
   // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
+  // Current x position fixed point [12.4]
+  x_cur: .fill 2*SIZE, 0
+  // Current y position fixed point [12.4]
+  y_cur: .fill 2*SIZE, 0
+  // X position addition per frame s[3.4]
+  x_add: .fill SIZE, 0
+  // Y position addition per frame s[3.4]
+  y_add: .fill SIZE, 0
+  // Frame delay (counted down to 0)
+  delay: .fill SIZE, 0

@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Scope;
@@ -8,9 +9,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Move register allocation from equivalence classes to RegisterAllocation.
@@ -23,8 +22,19 @@ public class Pass4RegistersFinalize extends Pass2Base {
     */
    private int currentZp = 2;
 
+   /** All reserved zeropage addresses not available for the compiler. */
+   private List<Number> reservedZp;
+
    public Pass4RegistersFinalize(Program program) {
       super(program);
+      this.reservedZp = new ArrayList<>();
+      this.reservedZp.addAll(program.getReservedZps());
+      for(Procedure procedure : getSymbols().getAllProcedures(true)) {
+         List<Number> procedureReservedZps = procedure.getReservedZps();
+         if(procedureReservedZps!=null) {
+            this.reservedZp.addAll(procedureReservedZps);
+         }
+      }
    }
 
    public void allocate(boolean reallocateZp) {
@@ -151,6 +161,32 @@ public class Pass4RegistersFinalize extends Pass2Base {
    }
 
    /**
+    * Allocate bytes on zeropage.
+    * Avoids reserved zero page addresses.
+    * @param size The number of bytes to allocate
+    * @return The address of the first byte.
+    */
+   private int allocateZp(int size) {
+      // Find a ZP sequence of size without any reserved ZP
+      boolean reserved;
+      do {
+         reserved = false;
+         int candidateZp = currentZp;
+         for(int i=0;i<size;i++) {
+            if(reservedZp.contains(new Long(candidateZp+i))) {
+               reserved = true;
+               currentZp++;
+               break;
+            }
+         }
+      } while(reserved);
+      // No reserved ZP
+      int allocated = currentZp;
+      currentZp += size;
+      return allocated;
+   }
+
+   /**
     * Create a new register for a specific variable type.
     *
     * @param variable The variable to create a register for.
@@ -160,38 +196,33 @@ public class Pass4RegistersFinalize extends Pass2Base {
    private Registers.Register allocateNewRegisterZp(Variable variable) {
       SymbolType varType = variable.getType();
       if(SymbolType.isByte(varType)) {
-         return new Registers.RegisterZpByte(currentZp++);
+         return new Registers.RegisterZpByte(allocateZp((1)));
       } else if(SymbolType.isSByte(varType)) {
-         return new Registers.RegisterZpByte(currentZp++);
+         return new Registers.RegisterZpByte(allocateZp(1));
       } else if(SymbolType.isWord(varType)) {
          Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(currentZp);
-         currentZp = currentZp + 2;
+               new Registers.RegisterZpWord(allocateZp(2));
          return registerZpWord;
       } else if(SymbolType.isSWord(varType)) {
          Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(currentZp);
-         currentZp = currentZp + 2;
+               new Registers.RegisterZpWord(allocateZp(2));
          return registerZpWord;
       } else if(SymbolType.isDWord(varType)) {
          Registers.RegisterZpDWord registerZpDWord =
-               new Registers.RegisterZpDWord(currentZp);
-         currentZp = currentZp + 4;
+               new Registers.RegisterZpDWord(allocateZp(4));
          return registerZpDWord;
       } else if(SymbolType.isSDWord(varType)) {
          Registers.RegisterZpDWord registerZpDWord =
-               new Registers.RegisterZpDWord(currentZp);
-         currentZp = currentZp + 4;
+               new Registers.RegisterZpDWord(allocateZp(4));
          return registerZpDWord;
       } else if(varType.equals(SymbolType.BOOLEAN)) {
-         return new Registers.RegisterZpBool(currentZp++);
+         return new Registers.RegisterZpBool(allocateZp(1));
       } else if(varType.equals(SymbolType.VOID)) {
          // No need to setRegister register for VOID value
          return null;
       } else if(varType instanceof SymbolTypePointer) {
          Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(currentZp);
-         currentZp = currentZp + 2;
+               new Registers.RegisterZpWord(allocateZp(2));
          return registerZpWord;
       } else {
          throw new RuntimeException("Unhandled variable type " + varType);

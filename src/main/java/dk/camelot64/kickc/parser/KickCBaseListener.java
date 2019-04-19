@@ -184,6 +184,18 @@ public class KickCBaseListener implements KickCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalDirective(KickCParser.GlobalDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirective(KickCParser.GlobalDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDirectiveConst(KickCParser.DirectiveConstContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -263,6 +275,30 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDirectiveReserve(KickCParser.DirectiveReserveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDirectiveReserve(KickCParser.DirectiveReserveContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

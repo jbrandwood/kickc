@@ -11,26 +11,27 @@ const byte SIZE = 4;
 const byte DELAY = 8;
 
 // The coordinates of the lines to animate
-word[4] x_start = { 10, 20, 30, 30 };
-byte[4] y_start = { 10, 10, 10, 20 };
-word[4] x_end =   { 20, 10, 20, 20 };
-byte[4] y_end =   { 20, 20, 10, 20 };
+word[SIZE] x_start = { 10, 20, 30, 30 };
+byte[SIZE] y_start = { 10, 10, 10, 20 };
+word[SIZE] x_end =   { 20, 10, 20, 20 };
+byte[SIZE] y_end =   { 20, 20, 10, 20 };
 
 // Current x position fixed point [12.4]
-word[4] x_cur;
+word[SIZE] x_cur;
 // Current y position fixed point [12.4]
-word[4] y_cur;
+word[SIZE] y_cur;
 // X position addition per frame s[3.4]
-signed byte[4] x_add;
+signed byte[SIZE] x_add;
 // Y position addition per frame s[3.4]
-signed byte[4] y_add;
+signed byte[SIZE] y_add;
 // Frame delay (counted down to 0)
-byte[4] delay;
+byte[SIZE] delay;
 // Frame number (counted down to 0)
-byte[4] frame;
+byte[SIZE] frame;
 
 void main() {
-    asm { sei }  // Disable normal interrupt
+    // Disable normal interrupt
+    asm { sei }
     // Disable kernal & basic
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_IO;
@@ -40,7 +41,7 @@ void main() {
     bitmap_init(BITMAP);
     bitmap_clear();
     screen_fill(SCREEN, $10);
-    for( byte i=0; i!=4; i++) {
+    for( byte i : 0..SIZE-1) {
         point_init(i);
         bitmap_plot(x_start[i], y_start[i]);
     }

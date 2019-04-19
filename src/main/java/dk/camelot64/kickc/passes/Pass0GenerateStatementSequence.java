@@ -111,6 +111,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitGlobalDirective(KickCParser.GlobalDirectiveContext ctx) {
+      DirectiveReserveZp reserveDirective = (DirectiveReserveZp) this.visit(ctx.directiveReserve());
+      if(reserveDirective!=null) {
+         program.addReservedZps(reserveDirective.getReservedZp());
+      }
+      return null;
+   }
+
+   @Override
    public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
@@ -573,6 +582,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             procedure.setDeclaredInline(true);
          } else if(directive instanceof DirectiveInterrupt) {
             procedure.setInterruptType(((DirectiveInterrupt) directive).interruptType);
+         } else if(directive instanceof DirectiveReserveZp) {
+            procedure.setReservedZps(((DirectiveReserveZp) directive).getReservedZp());
          } else {
             throw new CompileError("Unsupported function directive " + directive, source);
          }
@@ -596,7 +607,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          }
       }
    }
-
 
    @Override
    public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {
@@ -636,6 +646,16 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Directive visitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx) {
       return new DirectiveVolatile();
+   }
+
+   @Override
+   public Object visitDirectiveReserve(KickCParser.DirectiveReserveContext ctx) {
+      List<Number> reservedZps = new ArrayList<>();
+      for(TerminalNode reservedNum : ctx.NUMBER()) {
+         Number reservedZp = NumberParser.parseLiteral(reservedNum.getText());
+         reservedZps.add(reservedZp);
+      }
+      return new DirectiveReserveZp(reservedZps);
    }
 
    @Override
@@ -1540,6 +1560,20 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       public void setName(String name) {
          this.name = name;
       }
+   }
+
+   /** Reservation of zero-page addresses */
+   private static class DirectiveReserveZp implements Directive {
+      List<Number> reservedZp;
+
+      public DirectiveReserveZp(List<Number> reservedZp) {
+         this.reservedZp = reservedZp;
+      }
+
+      public List<Number> getReservedZp() {
+         return reservedZp;
+      }
+
    }
 
 

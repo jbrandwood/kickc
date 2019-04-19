@@ -38,6 +38,26 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testReserveZpGlobal() throws IOException, URISyntaxException {
+      compileAndCompare("reserve-zp-global");
+   }
+
+   @Test
+   public void testReserveZpProcedure3() throws IOException, URISyntaxException {
+      compileAndCompare("reserve-zp-procedure-3");
+   }
+
+   @Test
+   public void testReserveZpProcedure2() throws IOException, URISyntaxException {
+      compileAndCompare("reserve-zp-procedure-2");
+   }
+
+   @Test
+   public void testReserveZpProcedure1() throws IOException, URISyntaxException {
+      compileAndCompare("reserve-zp-procedure-1");
+   }
+
+   @Test
    public void testWordPointerCompound() throws IOException, URISyntaxException {
       compileAndCompare("word-pointer-compound");
    }

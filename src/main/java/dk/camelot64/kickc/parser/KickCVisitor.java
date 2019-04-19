@@ -97,6 +97,12 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalDirective(KickCParser.GlobalDirectiveContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -145,6 +151,19 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code directiveReserveZp}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#directiveReserve}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveReserve(KickCParser.DirectiveReserveContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree

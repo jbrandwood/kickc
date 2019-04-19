@@ -25,6 +25,7 @@ decl
     : declVariables ';'
     | declFunction
     | declKasm
+    | globalDirective
     ;
 
 declTypes
@@ -56,6 +57,10 @@ parameterDecl
     | SIMPLETYPE #parameterDeclVoid
     ;
 
+globalDirective
+    : directiveReserve ';'
+    ;
+
 directive
     : 'const' #directiveConst
     | 'extern' #directiveExtern
@@ -64,6 +69,11 @@ directive
     | 'inline' #directiveInline
     | 'volatile' #directiveVolatile
     | 'interrupt' ( '(' NAME ')' )? #directiveInterrupt
+    | directiveReserve  #directiveReserveZp
+    ;
+
+directiveReserve
+    :  'reserve' '(' NUMBER ( ',' NUMBER )* ')'
     ;
 
 stmtSeq

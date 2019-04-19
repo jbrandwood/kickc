@@ -152,6 +152,16 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalDirective(KickCParser.GlobalDirectiveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalDirective(KickCParser.GlobalDirectiveContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -235,6 +245,28 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveReserveZp}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveReserveZp}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#directiveReserve}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveReserve(KickCParser.DirectiveReserveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#directiveReserve}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveReserve(KickCParser.DirectiveReserveContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#stmtSeq}.
 	 * @param ctx the parse tree

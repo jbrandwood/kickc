@@ -63,9 +63,10 @@ public class Program {
    private RegisterPotentials registerPotentials;
    /** Separation of live range equivalence classes into scopes - used for register uplift */
    private RegisterUpliftProgram registerUpliftProgram;
-
    /** Constants identified during pass 1. */
    private Collection<VariableRef> earlyIdentifiedConstants;
+   /** Reserved ZP addresses that the compiler cannot use. */
+   private List<Number> reservedZps;
 
    public Program() {
       this.scope = new ProgramScope();
@@ -73,6 +74,7 @@ public class Program {
       this.importPaths = new ArrayList<>();
       this.imported = new ArrayList<>();
       this.asmResourceFiles = new ArrayList<>();
+      this.reservedZps = new ArrayList<>();
    }
 
    public List<Comment> getFileComments() {
@@ -280,4 +282,19 @@ public class Program {
       return fileName;
    }
 
+   /**
+    * Adds a bunch of reserved zero-page addresses that the compiler is not allowed to use.
+    * @param reservedZp addresses to reserve
+    */
+   public void addReservedZps(List<Number> reservedZp) {
+      for(Number zp : reservedZp) {
+         if(!this.reservedZps.contains(zp)) {
+            this.reservedZps.add(zp);
+         }
+      }
+   }
+
+   public List<Number> getReservedZps() {
+      return reservedZps;
+   }
 }

@@ -115,6 +115,13 @@ public class KickCBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitGlobalDirective(KickCParser.GlobalDirectiveContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitDirectiveConst(KickCParser.DirectiveConstContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -158,6 +165,20 @@ public class KickCBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitDirectiveReserve(KickCParser.DirectiveReserveContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

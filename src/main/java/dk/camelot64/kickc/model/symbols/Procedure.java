@@ -22,6 +22,8 @@ public class Procedure extends Scope {
    private InterruptType interruptType;
    /** Comments preceding the procedure in the source code. */
    private List<Comment> comments;
+   /** Reserved zeropage addresses. */
+   private List<Number> reservedZps;
 
    public Procedure(String name, SymbolType returnType, Scope parentScope) {
       super(name, parentScope);
@@ -100,6 +102,22 @@ public class Procedure extends Scope {
 
    public void setInterruptType(InterruptType interruptType) {
       this.interruptType = interruptType;
+   }
+
+   /**
+    * Sets any zero-page addresses reserved by the procedure. The KickC-compiler is not allowed to use these addresses.
+    * @return reserved addresses
+    */
+   public List<Number> getReservedZps() {
+      return reservedZps;
+   }
+
+   /**
+    * Gets any reserved zero-page addresses that the compiler is not allowed to use.
+    * @param reservedZp reserved addresses
+    */
+   public void setReservedZps(List<Number> reservedZps) {
+      this.reservedZps = reservedZps;
    }
 
    /** The different types of supported interrupts. */

@@ -14,9 +14,10 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.ConstantRef;
 import dk.camelot64.kickc.model.values.PointerDereferenceIndexed;
+import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
 
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * Fixes pointer math to use sizeof(type)
@@ -44,6 +45,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
          }
       }
 
+      // For each statement maps RValues used as index to the new *2 variable created
+      Map<Statement, Map<RValue, VariableRef>> handled = new LinkedHashMap<>();
+
       ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof PointerDereferenceIndexed) {
             PointerDereferenceIndexed deref = (PointerDereferenceIndexed) programValue.get();
@@ -54,13 +58,20 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                if(pointerType.getElementType().getSizeBytes() > 1) {
                   // Array-indexing into a non-byte pointer - multiply by sizeof()
                   getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
-                  VariableIntermediate tmpVar = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
-                  tmpVar.setType(SymbolType.BYTE);
-                  stmtIt.remove();
-                  ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
-                  stmtIt.add(new StatementAssignment(tmpVar.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, currentStmt.getSource(), Comment.NO_COMMENTS));
-                  stmtIt.add(currentStmt);
-                  deref.setIndex(tmpVar.getRef());
+                  VariableRef idx2VarRef = handled.getOrDefault(currentStmt, new LinkedHashMap<>()).get(deref.getIndex());
+                  if(idx2VarRef==null) {
+                     VariableIntermediate idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
+                     idx2Var.setType(SymbolType.BYTE);
+                     ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
+                     StatementAssignment idx2 = new StatementAssignment(idx2Var.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, currentStmt.getSource(), Comment.NO_COMMENTS);
+                     stmtIt.previous();
+                     stmtIt.add(idx2);
+                     stmtIt.next();
+                     idx2VarRef = idx2Var.getRef();
+                     handled.putIfAbsent(currentStmt, new LinkedHashMap<>());
+                     handled.get(currentStmt).put(deref.getIndex(), idx2VarRef);
+                  }
+                  deref.setIndex(idx2VarRef);
                }
             }
          }

@@ -1162,9 +1162,24 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
       Operator operator = Operators.getBinaryCompound(op);
       // Assignment with operator
-      Statement stmt = new StatementAssignment(lValue, lValue, operator, rValue, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
+      LValue rValue1 = copyLValue(lValue);
+      Statement stmt = new StatementAssignment(lValue, rValue1, operator, rValue, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
       sequence.addStatement(stmt);
       return lValue;
+   }
+
+   private LValue copyLValue(LValue lValue) {
+      if(lValue instanceof VariableRef) {
+         return new VariableRef(((VariableRef) lValue).getFullName());
+      } else if(lValue instanceof LvalueIntermediate) {
+         return new LvalueIntermediate((VariableRef) copyLValue(((LvalueIntermediate) lValue).getVariable()));
+      } else if(lValue instanceof PointerDereferenceSimple) {
+         return new PointerDereferenceSimple(((PointerDereferenceSimple) lValue).getPointer());
+      } else if(lValue instanceof PointerDereferenceIndexed) {
+         return new PointerDereferenceIndexed(((PointerDereferenceIndexed) lValue).getPointer(), ((PointerDereferenceIndexed) lValue).getIndex());
+      } else {
+         throw new CompileError("Unknown LValue type "+lValue);
+      }
    }
 
    @Override

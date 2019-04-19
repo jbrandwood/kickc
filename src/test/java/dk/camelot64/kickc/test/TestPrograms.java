@@ -38,6 +38,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testWordPointerCompound() throws IOException, URISyntaxException {
+      compileAndCompare("word-pointer-compound");
+   }
+
+   @Test
    public void testWordPointerMath() throws IOException, URISyntaxException {
       compileAndCompare("word-pointer-math");
    }

@@ -4,7 +4,7 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
-    .label i = 6
+    .label i = 4
     lda #0
     sta i
   b1:

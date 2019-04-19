@@ -1,3 +1,5 @@
+Fixing pointer array-indexing *((word[MAX_OBJECTS]) OBJ_WORLD_X + (byte) move_enemy::obj_slot)
+Fixing pointer array-indexing *((word[MAX_OBJECTS]) OBJ_WORLD_X + (byte) move_enemy::obj_slot)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -26,7 +28,8 @@ main::@return: scope:[main]  from main::@3
   to:@return
 move_enemy: scope:[move_enemy]  from main::@1
   (byte) move_enemy::obj_slot#1 ← phi( main::@1/(byte) move_enemy::obj_slot#0 )
-  *((word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#1) ← *((word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#1) - (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) move_enemy::$0 ← (byte) move_enemy::obj_slot#1 * (const byte) SIZEOF_WORD
+  *((word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) ← *((word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) - (byte/signed byte/word/signed word/dword/signed dword) 1
   (bool) move_enemy::return#1 ← true
   to:move_enemy::@return
 move_enemy::@return: scope:[move_enemy]  from move_enemy
@@ -51,6 +54,7 @@ SYMBOL TABLE SSA
 (byte) MAX_OBJECTS#0
 (word[MAX_OBJECTS#0]) OBJ_WORLD_X
 (word[MAX_OBJECTS#0]) OBJ_WORLD_X#0
+(const byte) SIZEOF_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
 (void()) main()
 (bool~) main::$1
 (label) main::@1
@@ -62,6 +66,7 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 (bool()) move_enemy((byte) move_enemy::obj_slot)
+(byte) move_enemy::$0
 (label) move_enemy::@return
 (byte) move_enemy::obj_slot
 (byte) move_enemy::obj_slot#0
@@ -92,8 +97,11 @@ Successful SSA optimization PassNEliminateUnusedVars
 Successful SSA optimization PassNEliminateUnusedVars
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value if(main::i#1!=rangelast(0,5)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 6
+Rewriting multiplication to use shift (byte) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 * (const byte) SIZEOF_WORD
+Successful SSA optimization Pass2MultiplyToShiftRewriting
 Culled Empty Block (label) @19
 Successful SSA optimization Pass2CullEmptyBlocks
+Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -143,10 +151,11 @@ main::@return: scope:[main]  from main::@2
   [10] return 
   to:@return
 move_enemy: scope:[move_enemy]  from main::@1
-  [11] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) - (byte/signed byte/word/signed word/dword/signed dword) 1
+  [11] (byte) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte/signed byte/word/signed word/dword/signed dword) 1
+  [12] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) - (byte/signed byte/word/signed word/dword/signed dword) 1
   to:move_enemy::@return
 move_enemy::@return: scope:[move_enemy]  from move_enemy
-  [12] return 
+  [13] return 
   to:@return
 
 
@@ -158,18 +167,22 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i#1 16.5
 (byte) main::i#2 11.0
 (bool()) move_enemy((byte) move_enemy::obj_slot)
+(byte) move_enemy::$0 6.0
 (byte) move_enemy::obj_slot
-(byte) move_enemy::obj_slot#0 15.0
+(byte) move_enemy::obj_slot#0 13.0
 (bool) move_enemy::return
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Added variable move_enemy::obj_slot#0 to zero page equivalence class [ move_enemy::obj_slot#0 ]
+Added variable move_enemy::$0 to zero page equivalence class [ move_enemy::$0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ move_enemy::obj_slot#0 ]
+[ move_enemy::$0 ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ move_enemy::obj_slot#0 ]
+Allocated zp ZP_BYTE:4 [ move_enemy::$0 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -234,37 +247,45 @@ main: {
 //SEG23 move_enemy
 // move_enemy(byte zeropage(3) obj_slot)
 move_enemy: {
+    .label _0 = 4
     .label obj_slot = 3
-  //SEG24 [11] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) - (byte/signed byte/word/signed word/dword/signed dword) 1 -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_minus_1 
-    ldx obj_slot
+  //SEG24 [11] (byte) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_rol_1 
+    lda obj_slot
+    asl
+    sta _0
+  //SEG25 [12] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) - (byte/signed byte/word/signed word/dword/signed dword) 1 -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_minus_1 
+    ldx _0
     lda OBJ_WORLD_X,x
     bne !+
     dec OBJ_WORLD_X+1,x
   !:
     dec OBJ_WORLD_X,x
     jmp breturn
-  //SEG25 move_enemy::@return
+  //SEG26 move_enemy::@return
   breturn:
-  //SEG26 [12] return 
+  //SEG27 [13] return 
     rts
 }
   OBJ_WORLD_X: .fill 2*MAX_OBJECTS, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [11] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) - (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::move_enemy:7 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [11] (byte) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ move_enemy::$0 ] ( main:2::move_enemy:7 [ main::i#2 move_enemy::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [11] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) - (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::move_enemy:7 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [12] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) - (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::move_enemy:7 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [11] (byte) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ move_enemy::$0 ] ( main:2::move_enemy:7 [ main::i#2 move_enemy::$0 ] ) always clobbers reg byte a 
+Statement [12] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) - (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::move_enemy:7 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ move_enemy::obj_slot#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:4 [ move_enemy::$0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [move_enemy] 15: zp ZP_BYTE:3 [ move_enemy::obj_slot#0 ] 
+Uplift Scope [move_enemy] 13: zp ZP_BYTE:3 [ move_enemy::obj_slot#0 ] 6: zp ZP_BYTE:4 [ move_enemy::$0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 346 combination reg byte y [ main::i#2 main::i#1 ] 
-Uplifting [move_enemy] best 317 combination reg byte y [ move_enemy::obj_slot#0 ] 
-Uplifting [] best 317 combination 
+Uplifting [main] best 354 combination reg byte y [ main::i#2 main::i#1 ] 
+Uplifting [move_enemy] best 319 combination reg byte y [ move_enemy::obj_slot#0 ] reg byte a [ move_enemy::$0 ] 
+Uplifting [] best 319 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -324,18 +345,20 @@ main: {
 //SEG23 move_enemy
 // move_enemy(byte register(Y) obj_slot)
 move_enemy: {
-  //SEG24 [11] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) - (byte/signed byte/word/signed word/dword/signed dword) 1 -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_minus_1 
-    sec
-    lda OBJ_WORLD_X,y
-    sbc #1
-    sta OBJ_WORLD_X,y
-    lda OBJ_WORLD_X+1,y
-    sbc #0
-    sta OBJ_WORLD_X+1,y
+  //SEG24 [11] (byte) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuyy_rol_1 
+    tya
+    asl
+  //SEG25 [12] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) - (byte/signed byte/word/signed word/dword/signed dword) 1 -- pwuc1_derefidx_vbuaa=pwuc1_derefidx_vbuaa_minus_1 
+    tax
+    lda OBJ_WORLD_X,x
+    bne !+
+    dec OBJ_WORLD_X+1,x
+  !:
+    dec OBJ_WORLD_X,x
     jmp breturn
-  //SEG25 move_enemy::@return
+  //SEG26 move_enemy::@return
   breturn:
-  //SEG26 [12] return 
+  //SEG27 [13] return 
     rts
 }
   OBJ_WORLD_X: .fill 2*MAX_OBJECTS, 0
@@ -385,17 +408,19 @@ FINAL SYMBOL TABLE
 (byte) main::i#1 reg byte y 16.5
 (byte) main::i#2 reg byte y 11.0
 (bool()) move_enemy((byte) move_enemy::obj_slot)
+(byte) move_enemy::$0 reg byte a 6.0
 (label) move_enemy::@return
 (byte) move_enemy::obj_slot
-(byte) move_enemy::obj_slot#0 reg byte y 15.0
+(byte) move_enemy::obj_slot#0 reg byte y 13.0
 (bool) move_enemy::return
 
 reg byte y [ main::i#2 main::i#1 ]
 reg byte y [ move_enemy::obj_slot#0 ]
+reg byte a [ move_enemy::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 182
+Score: 184
 
 //SEG0 File Comments
 // Adding a missing word-fragment for Travis Fisher
@@ -437,16 +462,18 @@ main: {
 //SEG23 move_enemy
 // move_enemy(byte register(Y) obj_slot)
 move_enemy: {
-  //SEG24 [11] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::obj_slot#0) - (byte/signed byte/word/signed word/dword/signed dword) 1 -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_minus_1 
-    sec
-    lda OBJ_WORLD_X,y
-    sbc #1
-    sta OBJ_WORLD_X,y
-    lda OBJ_WORLD_X+1,y
-    sbc #0
-    sta OBJ_WORLD_X+1,y
-  //SEG25 move_enemy::@return
-  //SEG26 [12] return 
+  //SEG24 [11] (byte) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuyy_rol_1 
+    tya
+    asl
+  //SEG25 [12] *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) ← *((const word[MAX_OBJECTS#0]) OBJ_WORLD_X#0 + (byte) move_enemy::$0) - (byte/signed byte/word/signed word/dword/signed dword) 1 -- pwuc1_derefidx_vbuaa=pwuc1_derefidx_vbuaa_minus_1 
+    tax
+    lda OBJ_WORLD_X,x
+    bne !+
+    dec OBJ_WORLD_X+1,x
+  !:
+    dec OBJ_WORLD_X,x
+  //SEG26 move_enemy::@return
+  //SEG27 [13] return 
     rts
 }
   OBJ_WORLD_X: .fill 2*MAX_OBJECTS, 0

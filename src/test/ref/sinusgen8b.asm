@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const SIZEOF_SIGNED_WORD = 2
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
   // PI in u[4.28] format
@@ -20,10 +21,9 @@ main: {
     .label wavelength = $c0
     .label _3 = 2
     .label _4 = 2
-    .label _5 = 2
+    .label _11 = 2
     .label sb = 4
     .label sw = $f
-    .label sd = 4
     jsr sin8s_gen
     jsr sin16s_gen
     jsr print_cls
@@ -39,44 +39,32 @@ main: {
     sta _3
     lda #0
     sta _3+1
-    asl _4
-    rol _4+1
+    asl _11
+    rol _11+1
     clc
-    lda _5
+    lda _4
     adc #<sintabw
-    sta _5
-    lda _5+1
+    sta _4
+    lda _4+1
     adc #>sintabw
-    sta _5+1
+    sta _4+1
     ldy #0
-    lda (_5),y
+    lda (_4),y
     sta sw
     iny
-    lda (_5),y
+    lda (_4),y
     sta sw+1
     eor #$ff
     sec
-    adc sd
-    sta sd
-    bmi b2
-    lda #<str1
-    sta print_str.str
-    lda #>str1
-    sta print_str.str+1
-    jsr print_str
-  b2:
+    adc sb
+    sta print_sbyte.b
     jsr print_sbyte
-    lda #<str
-    sta print_str.str
-    lda #>str
-    sta print_str.str+1
     jsr print_str
     inx
     cpx #$c0
     bne b1
     rts
     str: .text "  @"
-    str1: .text " @"
     sintabb: .fill $c0, 0
     sintabw: .fill 2*$c0, 0
 }
@@ -84,6 +72,10 @@ main: {
 // print_str(byte* zeropage(2) str)
 print_str: {
     .label str = 2
+    lda #<main.str
+    sta str
+    lda #>main.str
+    sta str+1
   b1:
     ldy #0
     lda (str),y
@@ -216,9 +208,9 @@ sin16s_gen: {
     iny
     lda _1+1
     sta (sintab),y
-    lda sintab
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc sintab
     sta sintab
     bcc !+
     inc sintab+1

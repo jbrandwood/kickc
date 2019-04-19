@@ -6,19 +6,21 @@
   .label SCREEN = $400
   .label CHARSET = $3000
 main: {
-    .label charset = 2
-    .label c = 4
-    lda #0
-    sta c
+    .label charset = 3
+    .label c = 2
     lda #<CHARSET+8
     sta charset
     lda #>CHARSET+8
     sta charset+1
+    lda #0
+    sta c
   b1:
-    ldy c
-    lda charset_spec_row,y
+    lda c
+    asl
+    tax
+    lda charset_spec_row,x
     sta gen_char3.spec
-    lda charset_spec_row+1,y
+    lda charset_spec_row+1,x
     sta gen_char3.spec+1
     jsr gen_char3
     lda #8
@@ -28,11 +30,8 @@ main: {
     bcc !+
     inc charset+1
   !:
-    lda c
-    clc
-    adc #2
-    sta c
-    lda #6
+    inc c
+    lda #4
     cmp c
     bne b1
     lda #SCREEN/$40|CHARSET/$400
@@ -41,9 +40,9 @@ main: {
 }
 // Generate one 5x3 character from a 16-bit char spec
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
-// gen_char3(byte* zeropage(2) dst, word zeropage(6) spec)
+// gen_char3(byte* zeropage(3) dst, word zeropage(6) spec)
 gen_char3: {
-    .label dst = 2
+    .label dst = 3
     .label spec = 6
     .label r = 5
     lda #0

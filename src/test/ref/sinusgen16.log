@@ -1,3 +1,7 @@
+Fixing pointer increment (signed word*) sin16s_gen::sintab ← ++ (signed word*) sin16s_gen::sintab
+Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*) sin16s_gen2::sintab
+Fixing pointer increment (signed word*) main::st1 ← ++ (signed word*) main::st1
+Fixing pointer addition (signed word*~) main::$7 ← (signed word[$78]) main::sintab1 + (word) main::wavelength
 Identified constant variable (word) main::wavelength
 
 CONTROL FLOW GRAPH SSA
@@ -220,13 +224,12 @@ sin16s_gen::@4: scope:[sin16s_gen]  from sin16s_gen::@1
   (signed word) sin16s::return#3 ← phi( sin16s_gen::@1/(signed word) sin16s::return#0 )
   (signed word~) sin16s_gen::$1 ← (signed word) sin16s::return#3
   *((signed word*) sin16s_gen::sintab#2) ← (signed word~) sin16s_gen::$1
-  (signed word*~) sin16s_gen::$2 ← (signed word*) sin16s_gen::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed word*) sin16s_gen::sintab#0 ← (signed word*~) sin16s_gen::$2
-  (dword~) sin16s_gen::$3 ← (dword) sin16s_gen::x#3 + (dword) sin16s_gen::step#1
-  (dword) sin16s_gen::x#1 ← (dword~) sin16s_gen::$3
+  (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (const byte) SIZEOF_SIGNED_WORD
+  (dword~) sin16s_gen::$2 ← (dword) sin16s_gen::x#3 + (dword) sin16s_gen::step#1
+  (dword) sin16s_gen::x#1 ← (dword~) sin16s_gen::$2
   (word) sin16s_gen::i#1 ← ++ (word) sin16s_gen::i#2
-  (bool~) sin16s_gen::$4 ← (word) sin16s_gen::i#1 < (word) sin16s_gen::wavelength#2
-  if((bool~) sin16s_gen::$4) goto sin16s_gen::@1
+  (bool~) sin16s_gen::$3 ← (word) sin16s_gen::i#1 < (word) sin16s_gen::wavelength#2
+  if((bool~) sin16s_gen::$3) goto sin16s_gen::@1
   to:sin16s_gen::@return
 sin16s_gen::@return: scope:[sin16s_gen]  from sin16s_gen::@4
   (word) rem16u#16 ← phi( sin16s_gen::@4/(word) rem16u#22 )
@@ -593,12 +596,11 @@ main::@8: scope:[main]  from main::@7
   (signed word*) main::st1#3 ← phi( main::@7/(signed word*) main::st1#4 )
   (byte*) print_char_cursor#38 ← phi( main::@7/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#18 ← (byte*) print_char_cursor#38
-  (signed word*~) main::$7 ← (signed word*) main::st1#3 + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed word*) main::st1#1 ← (signed word*~) main::$7
-  (word/signed dword/dword~) main::$8 ← (word) main::wavelength#0 * (byte/signed byte/word/signed word/dword/signed dword) 2
-  (signed word*~) main::$9 ← (signed word[$78]) main::sintab1#0 + (word/signed dword/dword~) main::$8
-  (bool~) main::$10 ← (signed word*) main::st1#1 < (signed word*~) main::$9
-  if((bool~) main::$10) goto main::@1
+  (signed word*) main::st1#1 ← (signed word*) main::st1#3 + (const byte) SIZEOF_SIGNED_WORD
+  (word) main::$9 ← (word) main::wavelength#0 * (const byte) SIZEOF_SIGNED_WORD
+  (signed word*~) main::$7 ← (signed word[$78]) main::sintab1#0 + (word) main::$9
+  (bool~) main::$8 ← (signed word*) main::st1#1 < (signed word*~) main::$7
+  if((bool~) main::$8) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
   (byte*) print_line_cursor#19 ← phi( main::@1/(byte*) print_line_cursor#17 )
@@ -659,6 +661,7 @@ SYMBOL TABLE SSA
 (dword) PI_HALF_u4f28#0
 (dword) PI_u4f28
 (dword) PI_u4f28#0
+(const byte) SIZEOF_SIGNED_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
 (dword()) div32u16u((dword) div32u16u::dividend , (word) div32u16u::divisor)
 (word~) div32u16u::$0
 (word~) div32u16u::$1
@@ -767,12 +770,11 @@ SYMBOL TABLE SSA
 (word) divr16u::return#5
 (word) divr16u::return#6
 (void()) main()
-(bool~) main::$10
 (bool~) main::$2
 (bool~) main::$3
 (signed word*~) main::$7
-(word/signed dword/dword~) main::$8
-(signed word*~) main::$9
+(bool~) main::$8
+(word) main::$9
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -1176,9 +1178,8 @@ SYMBOL TABLE SSA
 (void()) sin16s_gen((signed word*) sin16s_gen::sintab , (word) sin16s_gen::wavelength)
 (dword~) sin16s_gen::$0
 (signed word~) sin16s_gen::$1
-(signed word*~) sin16s_gen::$2
-(dword~) sin16s_gen::$3
-(bool~) sin16s_gen::$4
+(dword~) sin16s_gen::$2
+(bool~) sin16s_gen::$3
 (label) sin16s_gen::@1
 (label) sin16s_gen::@3
 (label) sin16s_gen::@4
@@ -1214,11 +1215,11 @@ SYMBOL TABLE SSA
 Inversing boolean not [10] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [9] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte/signed byte/word/signed word/dword/signed dword) 0
 Inversing boolean not [18] (bool~) divr16u::$9 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from [17] (bool~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
 Inversing boolean not [74] (bool~) mul16u::$3 ← (byte/word~) mul16u::$1 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [73] (bool~) mul16u::$2 ← (byte/word~) mul16u::$1 != (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not [124] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (dword) PI_u4f28#0 from [123] (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (dword) PI_u4f28#0
-Inversing boolean not [128] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (dword) PI_HALF_u4f28#0 from [127] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (dword) PI_HALF_u4f28#0
-Inversing boolean not [188] (bool~) sin16s::$17 ← (byte) sin16s::isUpper#2 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [187] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 != (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not [232] (bool~) print_sword::$1 ← (signed word) print_sword::w#2 >= (byte/signed byte/word/signed word/dword/signed dword) 0 from [231] (bool~) print_sword::$0 ← (signed word) print_sword::w#2 < (byte/signed byte/word/signed word/dword/signed dword) 0
-Inversing boolean not [317] (bool~) main::$3 ← (signed word) main::sw#0 < (byte/signed byte/word/signed word/dword/signed dword) 0 from [316] (bool~) main::$2 ← (signed word) main::sw#0 >= (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not [123] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (dword) PI_u4f28#0 from [122] (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (dword) PI_u4f28#0
+Inversing boolean not [127] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (dword) PI_HALF_u4f28#0 from [126] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (dword) PI_HALF_u4f28#0
+Inversing boolean not [187] (bool~) sin16s::$17 ← (byte) sin16s::isUpper#2 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [186] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 != (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not [231] (bool~) print_sword::$1 ← (signed word) print_sword::w#2 >= (byte/signed byte/word/signed word/dword/signed dword) 0 from [230] (bool~) print_sword::$0 ← (signed word) print_sword::w#2 < (byte/signed byte/word/signed word/dword/signed dword) 0
+Inversing boolean not [316] (bool~) main::$3 ← (signed word) main::sw#0 < (byte/signed byte/word/signed word/dword/signed dword) 0 from [315] (bool~) main::$2 ← (signed word) main::sw#0 >= (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -1265,8 +1266,7 @@ Alias (dword) sin16s_gen::step#1 = (dword) sin16s_gen::step#2
 Alias (word) sin16s_gen::i#2 = (word) sin16s_gen::i#3 
 Alias (word) sin16s_gen::wavelength#2 = (word) sin16s_gen::wavelength#3 
 Alias (word) rem16u#16 = (word) rem16u#22 (word) rem16u#26 (word) rem16u#7 
-Alias (signed word*) sin16s_gen::sintab#0 = (signed word*~) sin16s_gen::$2 
-Alias (dword) sin16s_gen::x#1 = (dword~) sin16s_gen::$3 
+Alias (dword) sin16s_gen::x#1 = (dword~) sin16s_gen::$2 
 Alias (dword) sin16s::x#3 = (dword) sin16s::x#5 
 Alias (dword) sin16s::x#1 = (dword~) sin16s::$18 
 Alias (word) sin16s::x1#0 = (word~) sin16s::$5 (word) sin16s::x1#1 (word) sin16s::x1#4 (word) sin16s::x1#2 (word) sin16s::x1#3 
@@ -1325,7 +1325,6 @@ Alias (word) rem16u#18 = (word) rem16u#27 (word) rem16u#30 (word) rem16u#24 (wor
 Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#14 (byte*) print_line_cursor#16 (byte*) print_line_cursor#8 (byte*) print_line_cursor#4 
 Alias (byte*) print_char_cursor#17 = (byte*) print_char_cursor#37 
 Alias (byte*) print_char_cursor#18 = (byte*) print_char_cursor#38 (byte*) print_char_cursor#40 (byte*) print_char_cursor#20 
-Alias (signed word*) main::st1#1 = (signed word*~) main::$7 
 Alias (byte*) print_char_cursor#49 = (byte*) print_char_cursor#54 
 Alias (signed word) main::sw#0 = (signed word) main::sw#3 (signed word) main::sw#2 
 Alias (signed word*) main::st1#2 = (signed word*) main::st1#7 (signed word*) main::st1#6 
@@ -1406,15 +1405,15 @@ Simple Condition (bool~) divr16u::$9 [19] if((word) divr16u::rem#6<(word) divr16
 Simple Condition (bool~) divr16u::$11 [26] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
 Simple Condition (bool~) mul16u::$0 [70] if((word) mul16u::a#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul16u::@2
 Simple Condition (bool~) mul16u::$3 [75] if((byte/word~) mul16u::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul16u::@4
-Simple Condition (bool~) sin16s_gen::$4 [117] if((word) sin16s_gen::i#1<(word) sin16s_gen::wavelength#0) goto sin16s_gen::@1
-Simple Condition (bool~) sin16s::$1 [125] if((dword) sin16s::x#0<(dword) PI_u4f28#0) goto sin16s::@1
-Simple Condition (bool~) sin16s::$3 [129] if((dword) sin16s::x#4<(dword) PI_HALF_u4f28#0) goto sin16s::@2
-Simple Condition (bool~) sin16s::$17 [189] if((byte) sin16s::isUpper#2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto sin16s::@3
-Simple Condition (bool~) print_str::$0 [222] if(*((byte*) print_str::str#3)!=(byte) '@') goto print_str::@2
-Simple Condition (bool~) print_sword::$1 [233] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1
-Simple Condition (bool~) print_cls::$1 [293] if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
-Simple Condition (bool~) main::$3 [318] if((signed word) main::sw#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2
-Simple Condition (bool~) main::$10 [333] if((signed word*) main::st1#1<(signed word*~) main::$9) goto main::@1
+Simple Condition (bool~) sin16s_gen::$3 [116] if((word) sin16s_gen::i#1<(word) sin16s_gen::wavelength#0) goto sin16s_gen::@1
+Simple Condition (bool~) sin16s::$1 [124] if((dword) sin16s::x#0<(dword) PI_u4f28#0) goto sin16s::@1
+Simple Condition (bool~) sin16s::$3 [128] if((dword) sin16s::x#4<(dword) PI_HALF_u4f28#0) goto sin16s::@2
+Simple Condition (bool~) sin16s::$17 [188] if((byte) sin16s::isUpper#2==(byte/signed byte/word/signed word/dword/signed dword) 0) goto sin16s::@3
+Simple Condition (bool~) print_str::$0 [221] if(*((byte*) print_str::str#3)!=(byte) '@') goto print_str::@2
+Simple Condition (bool~) print_sword::$1 [232] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1
+Simple Condition (bool~) print_cls::$1 [292] if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
+Simple Condition (bool~) main::$3 [317] if((signed word) main::sw#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2
+Simple Condition (bool~) main::$8 [331] if((signed word*) main::st1#1<(signed word*~) main::$7) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
@@ -1447,12 +1446,12 @@ Constant (const byte*) print_cls::sc#0 = print_line_cursor#0
 Constant (const byte*) print_cls::$0 = print_line_cursor#0+$3e8
 Constant (const signed word*) sin16s_gen::sintab#1 = main::sintab1#0
 Constant (const word) sin16s_gen::wavelength#0 = main::wavelength#0
-Constant (const word/signed dword/dword) main::$8 = main::wavelength#0*2
+Constant (const word) main::$9 = main::wavelength#0*SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::dividend#1 = >div32u16u::dividend#0
 Constant (const word) divr16u::dividend#2 = <div32u16u::dividend#0
 Constant (const word) div32u16u::divisor#0 = sin16s_gen::wavelength#0
-Constant (const signed word*) main::$9 = main::sintab1#0+main::$8
+Constant (const signed word*) main::$7 = main::sintab1#0+main::$9
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
 Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
@@ -1532,8 +1531,8 @@ Constant inlined sin16s_gen::x#0 = (byte/signed byte/word/signed word/dword/sign
 Constant inlined print_str::str#2 = (const string) main::str1
 Constant inlined div32u16u::divisor#0 = (const word) main::wavelength#0
 Constant inlined print_str::str#1 = (const string) main::str
-Constant inlined main::$9 = (const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2
-Constant inlined main::$8 = (const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2
+Constant inlined main::$9 = (const word) main::wavelength#0*(const byte) SIZEOF_SIGNED_WORD
+Constant inlined main::$7 = (const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) divr16u::divisor#6 (const word) main::wavelength#0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -1711,8 +1710,8 @@ main::@5: scope:[main]  from main::@2
   [17] call print_str 
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
-  [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2) goto main::@1
+  [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (const byte) SIZEOF_SIGNED_WORD
+  [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(const byte) SIZEOF_SIGNED_WORD) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@6
   [20] return 
@@ -1818,7 +1817,7 @@ sin16s_gen::@1: scope:[sin16s_gen]  from sin16s_gen::@2 sin16s_gen::@3
 sin16s_gen::@3: scope:[sin16s_gen]  from sin16s_gen::@1
   [66] (signed word~) sin16s_gen::$1 ← (signed word) sin16s::return#0
   [67] *((signed word*) sin16s_gen::sintab#2) ← (signed word~) sin16s_gen::$1
-  [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
+  [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (const byte) SIZEOF_SIGNED_WORD
   [69] (dword) sin16s_gen::x#1 ← (dword) sin16s_gen::x#2 + (dword) sin16s_gen::step#0
   [70] (word) sin16s_gen::i#1 ← ++ (word) sin16s_gen::i#2
   [71] if((word) sin16s_gen::i#1<(const word) main::wavelength#0) goto sin16s_gen::@1
@@ -2368,6 +2367,7 @@ INITIAL ASM
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_SIGNED_WORD = 2
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
   // PI in u[4.28] format
@@ -2488,21 +2488,21 @@ main: {
     jmp b6
   //SEG43 main::@6
   b6:
-  //SEG44 [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- pwsz1=pwsz1_plus_2 
-    lda st1
+  //SEG44 [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc st1
     sta st1
     bcc !+
     inc st1+1
   !:
-  //SEG45 [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2) goto main::@1 -- pwsz1_lt_pwsc1_then_la1 
+  //SEG45 [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(const byte) SIZEOF_SIGNED_WORD) goto main::@1 -- pwsz1_lt_pwsc1_then_la1 
     lda st1+1
-    cmp #>sintab1+wavelength*2
+    cmp #>sintab1+wavelength*SIZEOF_SIGNED_WORD
     bcc b1_from_b6
     bne !+
     lda st1
-    cmp #<sintab1+wavelength*2
+    cmp #<sintab1+wavelength*SIZEOF_SIGNED_WORD
     bcc b1_from_b6
   !:
     jmp breturn
@@ -2839,10 +2839,10 @@ sin16s_gen: {
     iny
     lda _1+1
     sta (sintab),y
-  //SEG144 [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- pwsz1=pwsz1_plus_2 
-    lda sintab
+  //SEG144 [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc sintab
     sta sintab
     bcc !+
     inc sintab+1
@@ -3620,8 +3620,8 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] (signed word) main::sw#0 ← *((signed word*) main::st1#2) [ main::st1#2 print_char_cursor#49 main::sw#0 ] ( main:2 [ main::st1#2 print_char_cursor#49 main::sw#0 ] ) always clobbers reg byte a reg byte y 
 Statement [10] if((signed word) main::sw#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::st1#2 print_char_cursor#49 main::sw#0 ] ( main:2 [ main::st1#2 print_char_cursor#49 main::sw#0 ] ) always clobbers reg byte a 
 Statement [14] (signed word) print_sword::w#1 ← (signed word) main::sw#0 [ main::st1#2 print_char_cursor#48 print_sword::w#1 ] ( main:2 [ main::st1#2 print_char_cursor#48 print_sword::w#1 ] ) always clobbers reg byte a 
-Statement [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ main::st1#1 print_char_cursor#2 ] ( main:2 [ main::st1#1 print_char_cursor#2 ] ) always clobbers reg byte a 
-Statement [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2) goto main::@1 [ main::st1#1 print_char_cursor#2 ] ( main:2 [ main::st1#1 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (const byte) SIZEOF_SIGNED_WORD [ main::st1#1 print_char_cursor#2 ] ( main:2 [ main::st1#1 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(const byte) SIZEOF_SIGNED_WORD) goto main::@1 [ main::st1#1 print_char_cursor#2 ] ( main:2 [ main::st1#1 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [23] if(*((byte*) print_str::str#3)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#3 ] ( main:2::print_str:12 [ main::st1#2 main::sw#0 print_char_cursor#2 print_str::str#3 ] main:2::print_str:17 [ main::st1#2 print_char_cursor#2 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [25] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#3) [ print_char_cursor#2 print_str::str#3 ] ( main:2::print_str:12 [ main::st1#2 main::sw#0 print_char_cursor#2 print_str::str#3 ] main:2::print_str:17 [ main::st1#2 print_char_cursor#2 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [28] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 [ print_char_cursor#48 print_sword::w#1 ] ( main:2::print_sword:15 [ main::st1#2 print_char_cursor#48 print_sword::w#1 ] ) always clobbers reg byte a 
@@ -3641,7 +3641,7 @@ Statement [63] (dword) sin16s::x#0 ← (dword) sin16s_gen::x#2 [ sin16s_gen::ste
 Statement [65] (signed word) sin16s::return#0 ← (signed word) sin16s::return#1 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s::return#0 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s::return#0 ] ) always clobbers reg byte a 
 Statement [66] (signed word~) sin16s_gen::$1 ← (signed word) sin16s::return#0 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s_gen::$1 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s_gen::$1 ] ) always clobbers reg byte a 
 Statement [67] *((signed word*) sin16s_gen::sintab#2) ← (signed word~) sin16s_gen::$1 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::i#2 sin16s_gen::sintab#0 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::i#2 sin16s_gen::sintab#0 ] ) always clobbers reg byte a 
+Statement [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (const byte) SIZEOF_SIGNED_WORD [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::i#2 sin16s_gen::sintab#0 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::i#2 sin16s_gen::sintab#0 ] ) always clobbers reg byte a 
 Statement [69] (dword) sin16s_gen::x#1 ← (dword) sin16s_gen::x#2 + (dword) sin16s_gen::step#0 [ sin16s_gen::step#0 sin16s_gen::i#2 sin16s_gen::x#1 sin16s_gen::sintab#0 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::i#2 sin16s_gen::x#1 sin16s_gen::sintab#0 ] ) always clobbers reg byte a 
 Statement [71] if((word) sin16s_gen::i#1<(const word) main::wavelength#0) goto sin16s_gen::@1 [ sin16s_gen::step#0 sin16s_gen::x#1 sin16s_gen::sintab#0 sin16s_gen::i#1 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#1 sin16s_gen::sintab#0 sin16s_gen::i#1 ] ) always clobbers reg byte a 
 Statement [73] if((dword) sin16s::x#0<(const dword) PI_u4f28#0) goto sin16s::@1 [ sin16s::x#0 ] ( main:2::sin16s_gen:5::sin16s:64 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s::x#0 ] ) always clobbers reg byte a 
@@ -3702,8 +3702,8 @@ Statement [158] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 r
 Statement [9] (signed word) main::sw#0 ← *((signed word*) main::st1#2) [ main::st1#2 print_char_cursor#49 main::sw#0 ] ( main:2 [ main::st1#2 print_char_cursor#49 main::sw#0 ] ) always clobbers reg byte a reg byte y 
 Statement [10] if((signed word) main::sw#0<(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@2 [ main::st1#2 print_char_cursor#49 main::sw#0 ] ( main:2 [ main::st1#2 print_char_cursor#49 main::sw#0 ] ) always clobbers reg byte a 
 Statement [14] (signed word) print_sword::w#1 ← (signed word) main::sw#0 [ main::st1#2 print_char_cursor#48 print_sword::w#1 ] ( main:2 [ main::st1#2 print_char_cursor#48 print_sword::w#1 ] ) always clobbers reg byte a 
-Statement [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ main::st1#1 print_char_cursor#2 ] ( main:2 [ main::st1#1 print_char_cursor#2 ] ) always clobbers reg byte a 
-Statement [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2) goto main::@1 [ main::st1#1 print_char_cursor#2 ] ( main:2 [ main::st1#1 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (const byte) SIZEOF_SIGNED_WORD [ main::st1#1 print_char_cursor#2 ] ( main:2 [ main::st1#1 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(const byte) SIZEOF_SIGNED_WORD) goto main::@1 [ main::st1#1 print_char_cursor#2 ] ( main:2 [ main::st1#1 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [23] if(*((byte*) print_str::str#3)!=(byte) '@') goto print_str::@2 [ print_char_cursor#2 print_str::str#3 ] ( main:2::print_str:12 [ main::st1#2 main::sw#0 print_char_cursor#2 print_str::str#3 ] main:2::print_str:17 [ main::st1#2 print_char_cursor#2 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [25] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#3) [ print_char_cursor#2 print_str::str#3 ] ( main:2::print_str:12 [ main::st1#2 main::sw#0 print_char_cursor#2 print_str::str#3 ] main:2::print_str:17 [ main::st1#2 print_char_cursor#2 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [28] if((signed word) print_sword::w#1>=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print_sword::@1 [ print_char_cursor#48 print_sword::w#1 ] ( main:2::print_sword:15 [ main::st1#2 print_char_cursor#48 print_sword::w#1 ] ) always clobbers reg byte a 
@@ -3721,7 +3721,7 @@ Statement [63] (dword) sin16s::x#0 ← (dword) sin16s_gen::x#2 [ sin16s_gen::ste
 Statement [65] (signed word) sin16s::return#0 ← (signed word) sin16s::return#1 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s::return#0 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s::return#0 ] ) always clobbers reg byte a 
 Statement [66] (signed word~) sin16s_gen::$1 ← (signed word) sin16s::return#0 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s_gen::$1 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s_gen::$1 ] ) always clobbers reg byte a 
 Statement [67] *((signed word*) sin16s_gen::sintab#2) ← (signed word~) sin16s_gen::$1 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::i#2 sin16s_gen::sintab#0 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::i#2 sin16s_gen::sintab#0 ] ) always clobbers reg byte a 
+Statement [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (const byte) SIZEOF_SIGNED_WORD [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::i#2 sin16s_gen::sintab#0 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::i#2 sin16s_gen::sintab#0 ] ) always clobbers reg byte a 
 Statement [69] (dword) sin16s_gen::x#1 ← (dword) sin16s_gen::x#2 + (dword) sin16s_gen::step#0 [ sin16s_gen::step#0 sin16s_gen::i#2 sin16s_gen::x#1 sin16s_gen::sintab#0 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::i#2 sin16s_gen::x#1 sin16s_gen::sintab#0 ] ) always clobbers reg byte a 
 Statement [71] if((word) sin16s_gen::i#1<(const word) main::wavelength#0) goto sin16s_gen::@1 [ sin16s_gen::step#0 sin16s_gen::x#1 sin16s_gen::sintab#0 sin16s_gen::i#1 ] ( main:2::sin16s_gen:5 [ sin16s_gen::step#0 sin16s_gen::x#1 sin16s_gen::sintab#0 sin16s_gen::i#1 ] ) always clobbers reg byte a 
 Statement [73] if((dword) sin16s::x#0<(const dword) PI_u4f28#0) goto sin16s::@1 [ sin16s::x#0 ] ( main:2::sin16s_gen:5::sin16s:64 [ sin16s_gen::step#0 sin16s_gen::x#2 sin16s_gen::sintab#2 sin16s_gen::i#2 sin16s::x#0 ] ) always clobbers reg byte a 
@@ -3923,6 +3923,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_SIGNED_WORD = 2
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
   // PI in u[4.28] format
@@ -4039,21 +4040,21 @@ main: {
     jmp b6
   //SEG43 main::@6
   b6:
-  //SEG44 [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- pwsz1=pwsz1_plus_2 
-    lda st1
+  //SEG44 [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc st1
     sta st1
     bcc !+
     inc st1+1
   !:
-  //SEG45 [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2) goto main::@1 -- pwsz1_lt_pwsc1_then_la1 
+  //SEG45 [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(const byte) SIZEOF_SIGNED_WORD) goto main::@1 -- pwsz1_lt_pwsc1_then_la1 
     lda st1+1
-    cmp #>sintab1+wavelength*2
+    cmp #>sintab1+wavelength*SIZEOF_SIGNED_WORD
     bcc b1_from_b6
     bne !+
     lda st1
-    cmp #<sintab1+wavelength*2
+    cmp #<sintab1+wavelength*SIZEOF_SIGNED_WORD
     bcc b1_from_b6
   !:
     jmp breturn
@@ -4355,10 +4356,10 @@ sin16s_gen: {
     iny
     lda _1+1
     sta (sintab),y
-  //SEG144 [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- pwsz1=pwsz1_plus_2 
-    lda sintab
+  //SEG144 [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc sintab
     sta sintab
     bcc !+
     inc sintab+1
@@ -5205,6 +5206,7 @@ FINAL SYMBOL TABLE
 (const dword) PI_HALF_u4f28#0 PI_HALF_u4f28 = (dword/signed dword) $1921fb54
 (dword) PI_u4f28
 (const dword) PI_u4f28#0 PI_u4f28 = (dword/signed dword) $3243f6a9
+(const byte) SIZEOF_SIGNED_WORD SIZEOF_SIGNED_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
 (dword()) div32u16u((dword) div32u16u::dividend , (word) div32u16u::divisor)
 (label) div32u16u::@1
 (label) div32u16u::@2
@@ -5480,6 +5482,7 @@ Score: 20861
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_SIGNED_WORD = 2
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
   // PI in u[4.28] format
@@ -5564,21 +5567,21 @@ main: {
     sta print_str.str+1
     jsr print_str
   //SEG43 main::@6
-  //SEG44 [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- pwsz1=pwsz1_plus_2 
-    lda st1
+  //SEG44 [18] (signed word*) main::st1#1 ← (signed word*) main::st1#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc st1
     sta st1
     bcc !+
     inc st1+1
   !:
-  //SEG45 [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(byte/signed byte/word/signed word/dword/signed dword) 2) goto main::@1 -- pwsz1_lt_pwsc1_then_la1 
+  //SEG45 [19] if((signed word*) main::st1#1<(const signed word[$78]) main::sintab1#0+(const word) main::wavelength#0*(const byte) SIZEOF_SIGNED_WORD) goto main::@1 -- pwsz1_lt_pwsc1_then_la1 
     lda st1+1
-    cmp #>sintab1+wavelength*2
+    cmp #>sintab1+wavelength*SIZEOF_SIGNED_WORD
     bcc b1
     bne !+
     lda st1
-    cmp #<sintab1+wavelength*2
+    cmp #<sintab1+wavelength*SIZEOF_SIGNED_WORD
     bcc b1
   !:
   //SEG46 main::@return
@@ -5830,10 +5833,10 @@ sin16s_gen: {
     iny
     lda _1+1
     sta (sintab),y
-  //SEG144 [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- pwsz1=pwsz1_plus_2 
-    lda sintab
+  //SEG144 [68] (signed word*) sin16s_gen::sintab#0 ← (signed word*) sin16s_gen::sintab#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc sintab
     sta sintab
     bcc !+
     inc sintab+1

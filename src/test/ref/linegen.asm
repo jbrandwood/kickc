@@ -3,11 +3,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const SIZEOF_WORD = 2
   .label rem16u = $f
   .label print_char_cursor = 7
-  .label print_line_cursor = 3
+  .label print_line_cursor = 2
 main: {
-    .label i = 2
     lda #<lintab1
     sta lin16u_gen.lintab
     lda #>lintab1
@@ -85,10 +85,9 @@ main: {
     lda #>$400
     sta print_line_cursor+1
     jsr print_ln
-    lda #0
-    sta i
+    ldx #0
   b1:
-    ldx i
+    stx print_byte.b
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -99,7 +98,9 @@ main: {
     lda #>str1
     sta print_str.str+1
     jsr print_str
-    ldy i
+    txa
+    asl
+    tay
     lda lintab1,y
     sta print_word.w
     lda lintab1+1,y
@@ -110,7 +111,9 @@ main: {
     lda #>str1
     sta print_str.str+1
     jsr print_str
-    ldy i
+    txa
+    asl
+    tay
     lda lintab2,y
     sta print_word.w
     lda lintab2+1,y
@@ -121,18 +124,17 @@ main: {
     lda #>str1
     sta print_str.str+1
     jsr print_str
-    ldy i
+    txa
+    asl
+    tay
     lda lintab3,y
     sta print_word.w
     lda lintab3+1,y
     sta print_word.w+1
     jsr print_word
     jsr print_ln
-    lda i
-    clc
-    adc #2
-    sta i
-    cmp #$14*2
+    inx
+    cpx #$14
     bcc b1
     lda print_line_cursor
     sta print_char_cursor
@@ -197,21 +199,22 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(5) w)
+// print_word(word zeropage(4) w)
 print_word: {
-    .label w = 5
+    .label w = 4
     lda w+1
-    tax
+    sta print_byte.b
     jsr print_byte
     lda w
-    tax
+    sta print_byte.b
     jsr print_byte
     rts
 }
 // Print a byte as HEX
-// print_byte(byte register(X) b)
+// print_byte(byte zeropage(6) b)
 print_byte: {
-    txa
+    .label b = 6
+    lda b
     lsr
     lsr
     lsr
@@ -220,8 +223,9 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    axs #0
-    lda print_hextab,x
+    and b
+    tay
+    lda print_hextab,y
     jsr print_char
     rts
 }
@@ -237,9 +241,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(5) str)
+// print_str(byte* zeropage(4) str)
 print_str: {
-    .label str = 5
+    .label str = 4
   b1:
     ldy #0
     lda (str),y
@@ -262,7 +266,7 @@ print_str: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 3
+    .label sc = 2
     lda #<$400
     sta sc
     lda #>$400
@@ -286,18 +290,18 @@ print_cls: {
 // Generate word linear table
 // lintab - the table to generate into
 // length - the number of points in a total sinus wavelength (the size of the table)
-// lin16u_gen(word zeropage(5) min, word zeropage(3) max, word* zeropage(7) lintab)
+// lin16u_gen(word zeropage(4) min, word zeropage(2) max, word* zeropage(7) lintab)
 lin16u_gen: {
-    .label _5 = 5
-    .label ampl = 3
+    .label _5 = 4
+    .label ampl = 2
     .label stepi = $13
     .label stepf = $11
     .label step = $15
     .label val = 9
     .label lintab = 7
-    .label i = 3
-    .label max = 3
-    .label min = 5
+    .label i = 2
+    .label max = 2
+    .label min = 4
     lda ampl
     sec
     sbc min
@@ -365,9 +369,9 @@ lin16u_gen: {
     lda val+3
     adc step+3
     sta val+3
-    lda lintab
+    lda #SIZEOF_WORD
     clc
-    adc #2
+    adc lintab
     sta lintab
     bcc !+
     inc lintab+1
@@ -390,10 +394,10 @@ lin16u_gen: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(3) dividend, word zeropage($d) divisor, word zeropage($f) rem)
+// divr16u(word zeropage(2) dividend, word zeropage($d) divisor, word zeropage($f) rem)
 divr16u: {
     .label rem = $f
-    .label dividend = 3
+    .label dividend = 2
     .label quotient = $11
     .label return = $11
     .label divisor = $d

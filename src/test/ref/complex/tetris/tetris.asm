@@ -158,7 +158,7 @@
   .label current_piece_103 = 5
   .label current_piece_104 = 5
 bbegin:
-  // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
+  // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
   sta render_screen_showing
 // Original Color Data
@@ -188,7 +188,7 @@ main: {
     sta next_piece_idx
     jsr play_spawn_current
     jsr play_spawn_current
-    ldx #$40
+    ldx #$20
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
@@ -199,13 +199,13 @@ main: {
     sta current_piece_gfx_120+1
     lda current_piece_char
     sta current_piece_char_108
-    lda #$40
+    lda #$20
     sta render_screen_render_33
     jsr render_moving
     ldx play_spawn_current.piece_idx
-    lda #$40
+    lda #$20
     jsr render_next
-    ldy play_spawn_current._0
+    ldy play_spawn_current._7
     lda PIECES,y
     sta current_piece
     lda PIECES+1,y
@@ -222,7 +222,7 @@ main: {
     sta current_movedown_counter
     sta keyboard_events_size
     sta current_orientation
-    lda #$40
+    lda #$20
     sta render_screen_render
     lda #0
     sta render_screen_show
@@ -270,10 +270,10 @@ main: {
 }
 // Swap rendering to the other screen (used for double buffering)
 render_screen_swap: {
-    lda #$40
+    lda #$20
     eor render_screen_render
     sta render_screen_render
-    lda #$40
+    lda #$20
     eor render_screen_show
     sta render_screen_show
     rts
@@ -461,29 +461,24 @@ render_next: {
 // Render the current moving piece at position (current_xpos, current_ypos)
 // Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
 render_moving: {
-    .label ypos2 = $c
+    .label ypos = $c
     .label screen_line = 7
     .label xpos = $f
     .label i = $e
     .label l = $d
-    txa
-    asl
-    sta ypos2
+    stx ypos
     lda #0
     sta l
     sta i
   b1:
-    lda ypos2
-    cmp #2+1
+    lda ypos
+    cmp #1+1
     bcs b2
     lax i
     axs #-[4]
     stx i
   b3:
-    lda ypos2
-    clc
-    adc #2
-    sta ypos2
+    inc ypos
     inc l
     lda #4
     cmp l
@@ -492,7 +487,8 @@ render_moving: {
   b2:
     lda render_screen_render_33
     clc
-    adc ypos2
+    adc ypos
+    asl
     tay
     lda screen_lines_1,y
     sta screen_line
@@ -528,11 +524,10 @@ render_playfield: {
     lda #2
     sta l
   b1:
-    lda l
-    asl
-    stx $ff
+    txa
     clc
-    adc $ff
+    adc l
+    asl
     tay
     lda screen_lines_1,y
     sta screen_line
@@ -638,15 +633,15 @@ play_move_rotate: {
 }
 // Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
 // Returns information about the type of the collision detected
-// play_collision(byte zeropage($c) xpos, byte zeropage($b) ypos, byte register(X) orientation)
+// play_collision(byte zeropage($b) xpos, byte zeropage($c) ypos, byte register(X) orientation)
 play_collision: {
-    .label xpos = $c
-    .label ypos = $b
+    .label xpos = $b
+    .label ypos = $c
     .label piece_gfx = 5
-    .label ypos2 = $b
+    .label yp = $c
     .label playfield_line = 7
     .label i = $2b
-    .label col = $f
+    .label xp = $f
     .label l = $d
     .label i_2 = $e
     .label i_3 = $e
@@ -659,18 +654,19 @@ play_collision: {
     bcc !+
     inc piece_gfx+1
   !:
-    asl ypos2
     lda #0
     sta l
     sta i_3
   b1:
-    ldy ypos2
+    lda yp
+    asl
+    tay
     lda playfield_lines,y
     sta playfield_line
     lda playfield_lines+1,y
     sta playfield_line+1
     lda xpos
-    sta col
+    sta xp
     ldx #0
   b2:
     ldy i_2
@@ -680,40 +676,37 @@ play_collision: {
     lda (piece_gfx),y
     cmp #0
     beq b3
-    lda ypos2
-    cmp #2*PLAYFIELD_LINES
+    lda yp
+    cmp #PLAYFIELD_LINES
     bcc b4
     lda #COLLISION_BOTTOM
     rts
   b4:
     lda #$80
-    and col
+    and xp
     cmp #0
     beq b5
     lda #COLLISION_LEFT
     rts
   b5:
-    lda col
+    lda xp
     cmp #PLAYFIELD_COLS
     bcc b6
     lda #COLLISION_RIGHT
     rts
   b6:
-    ldy col
+    ldy xp
     lda (playfield_line),y
     cmp #0
     beq b3
     lda #COLLISION_PLAYFIELD
     rts
   b3:
-    inc col
+    inc xp
     inx
     cpx #4
     bne b10
-    lda ypos2
-    clc
-    adc #2
-    sta ypos2
+    inc yp
     inc l
     lda #4
     cmp l
@@ -823,7 +816,7 @@ play_move_down: {
     tax
     jsr play_update_score
     jsr play_spawn_current
-    ldy play_spawn_current._0
+    ldy play_spawn_current._7
     lda PIECES,y
     sta current_piece
     lda PIECES+1,y
@@ -845,16 +838,16 @@ play_move_down: {
 // Spawn a new piece
 // Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
-    .label _0 = 4
+    .label _7 = 4
     .label piece_idx = $21
     // Move next piece into current
     ldx next_piece_idx
     txa
     asl
-    sta _0
+    sta _7
     lda PIECES_CHARS,x
     sta current_piece_char
-    ldy _0
+    ldy _7
     lda PIECES,y
     sta current_piece_gfx
     lda PIECES+1,y
@@ -1056,27 +1049,28 @@ play_remove_lines: {
 }
 // Lock the current piece onto the playfield
 play_lock_current: {
-    .label ypos2 = $10
+    .label yp = $10
     .label playfield_line = 5
-    .label col = $a
+    .label xp = $a
     .label i = $b
     .label l = 4
     .label i_2 = 9
     .label i_3 = 9
     .label i_7 = 9
     .label i_9 = 9
-    asl ypos2
     lda #0
     sta l
     sta i_3
   b1:
-    ldy ypos2
+    lda yp
+    asl
+    tay
     lda playfield_lines,y
     sta playfield_line
     lda playfield_lines+1,y
     sta playfield_line+1
     lda current_xpos
-    sta col
+    sta xp
     ldx #0
   b2:
     ldy i_2
@@ -1087,17 +1081,14 @@ play_lock_current: {
     cmp #0
     beq b3
     lda current_piece_char
-    ldy col
+    ldy xp
     sta (playfield_line),y
   b3:
-    inc col
+    inc xp
     inx
     cpx #4
     bne b7
-    lda ypos2
-    clc
-    adc #2
-    sta ypos2
+    inc yp
     inc l
     lda #4
     cmp l

@@ -48,7 +48,7 @@ void play_init() {
 	byte idx = 0;
 	byte* pli = playfield;
 	for(byte j:0..PLAYFIELD_LINES-1) {
-		playfield_lines[j*2] = pli;
+		playfield_lines[j] = pli;
 		playfield_lines_idx[j] = idx;
 		pli += PLAYFIELD_COLS;
 		idx += PLAYFIELD_COLS;
@@ -59,8 +59,7 @@ void play_init() {
 	current_movedown_slow = MOVEDOWN_SLOW_SPEEDS[level];
 	// Set the initial score add values
     for(byte b: 0..4) {
-        byte b4 = b*4;
-        score_add_bcd[b4] = SCORE_BASE_BCD[b4];
+        score_add_bcd[b] = SCORE_BASE_BCD[b];
     }
 
 }
@@ -174,32 +173,32 @@ const byte COLLISION_RIGHT = 8;
 byte play_collision(byte xpos, byte ypos, byte orientation) {
 	byte* piece_gfx = current_piece + orientation;
 	byte i = 0;
-	byte ypos2 = ypos*2;
+	byte yp = ypos;
 	for(byte l:0..3) {
-		byte* playfield_line = playfield_lines[ypos2];
-		byte col = xpos;
+		byte* playfield_line = playfield_lines[yp];
+		byte xp = xpos;
 		for(byte c:0..3) {
 			if(piece_gfx[i++]!=0) {
-				if(ypos2>=2*PLAYFIELD_LINES) {
+				if(yp>=PLAYFIELD_LINES) {
 					// Below the playfield bottom
 					return COLLISION_BOTTOM;
 				}
-				if((col&$80)!=0) {
+				if((xp&$80)!=0) {
 					// Beyond left side of the playfield
 					return COLLISION_LEFT;
 				}
-				if(col>=PLAYFIELD_COLS) {
+				if(xp>=PLAYFIELD_COLS) {
 					// Beyond left side of the playfield
 					return COLLISION_RIGHT;
 				}
-				if(playfield_line[col]!=0) {
+				if(playfield_line[xp]!=0) {
 					// Collision with a playfield cell
 					return COLLISION_PLAYFIELD;
 				}
 			}
-			col++;
+			xp++;
 		}
-		ypos2 += 2;
+		yp++;
 	}
 	return COLLISION_NONE;
 }
@@ -207,17 +206,17 @@ byte play_collision(byte xpos, byte ypos, byte orientation) {
 // Lock the current piece onto the playfield
 void play_lock_current() {
 	byte i = 0;
-	byte ypos2 = current_ypos*2;
+	byte yp = current_ypos;
 	for(byte l:0..3) {
-		byte* playfield_line = playfield_lines[ypos2];
-		byte col = current_xpos;
+		byte* playfield_line = playfield_lines[yp];
+		byte xp = current_xpos;
 		for(byte c:0..3) {
 			if(current_piece_gfx[i++]!=0) {
-				playfield_line[col] = current_piece_char;
+				playfield_line[xp] = current_piece_char;
 			}
-			col++;
+			xp++;
 		}
-		ypos2 += 2;
+		yp++;
 	}
 }
 
@@ -226,7 +225,7 @@ void play_lock_current() {
 void play_spawn_current() {
     // Move next piece into current
 	byte current_piece_idx = next_piece_idx;
-	current_piece = PIECES[current_piece_idx*2];
+	current_piece = PIECES[current_piece_idx];
 	current_piece_char = PIECES_CHARS[current_piece_idx];
 	current_orientation = 0;
 	current_piece_gfx = current_piece + current_orientation;
@@ -285,7 +284,7 @@ byte play_remove_lines() {
 void play_update_score(byte removed) {
     if(removed!=0){
         byte lines_before = <lines_bcd&$f0;
-        dword add_bcd = score_add_bcd[removed*4];
+        dword add_bcd = score_add_bcd[removed];
 
         asm { sed }
         lines_bcd += removed;
@@ -319,8 +318,7 @@ void play_increase_level() {
     // Increase the score values gained
  	asm { sed }
     for(byte b: 0..4) {
-        byte b4 = b*4;
-        score_add_bcd[b4] += SCORE_BASE_BCD[b4];
+        score_add_bcd[b] += SCORE_BASE_BCD[b];
     }
  	asm { cld }
 }

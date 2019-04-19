@@ -289,7 +289,7 @@ public class TestPrograms {
 
    @Test
    public void testComparisonRewritingPointer() throws IOException, URISyntaxException {
-      compileAndCompare("comparison-rewriting-pointer", log());
+      compileAndCompare("comparison-rewriting-pointer");
    }
 
    @Test

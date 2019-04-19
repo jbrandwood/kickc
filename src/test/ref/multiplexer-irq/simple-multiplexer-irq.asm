@@ -265,7 +265,7 @@ plex_irq: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label _7 = 6
+    .label _6 = 6
     .label plex_sprite_idx2 = $d
     .label plexFreeAdd1__2 = 9
     lda plex_sprite_idx
@@ -289,14 +289,18 @@ plexShowSprite: {
     lda PLEX_PTR,y
     ldx plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
-    ldx plex_show_idx
-    lda PLEX_SORTED_IDX,x
+    ldy plex_show_idx
+    ldx PLEX_SORTED_IDX,y
+    txa
     asl
-    tax
-    lda PLEX_XPOS,x
+    tay
+    lda PLEX_XPOS,y
     ldy plex_sprite_idx2
     sta SPRITES_XPOS,y
-    lda PLEX_XPOS+1,x
+    txa
+    asl
+    tay
+    lda PLEX_XPOS+1,y
     cmp #0
     bne b1
     lda #$ff
@@ -307,7 +311,7 @@ plexShowSprite: {
     ldx plex_sprite_idx
     inx
     lda #7
-    sax _7
+    sax _6
     inc plex_show_idx
     asl plex_sprite_msb
     lda plex_sprite_msb

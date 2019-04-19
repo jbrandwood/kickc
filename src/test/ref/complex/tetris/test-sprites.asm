@@ -65,7 +65,7 @@
   .label irq_cnt = 9
   .label sin_idx = 2
 bbegin:
-  // The screen currently being showed to the user. $00 for screen 1 / $40 for screen 2.
+  // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
   sta render_screen_showing
   // The raster line of the next IRQ

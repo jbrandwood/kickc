@@ -8,13 +8,13 @@ main: {
     ldy #0
   b1:
     tya
-    asl
-    tax
-    lda #$80
+    ldx #$80
     jsr sub
-    lda #$40
+    tya
+    ldx #$40
     jsr sub
-    lda #$40
+    tya
+    ldx #$40
     jsr sub
     iny
     cpy #9
@@ -154,16 +154,17 @@ print_cls: {
     bne b1
     rts
 }
-// sub(byte register(X) idx, byte register(A) s)
+// sub(byte register(A) idx, byte register(X) s)
 sub: {
-    clc
-    sbc words,x
-    eor #$ff
+    asl
+    sec
+    stx $ff
+    tax
+    lda words,x
+    sbc $ff
     sta words,x
-    bcc !+
-    lda words+1,x
-    sbc #1
-    sta words+1,x
+    bcs !+
+    dec words+1,x
   !:
     rts
 }

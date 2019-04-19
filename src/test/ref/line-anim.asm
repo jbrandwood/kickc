@@ -52,20 +52,17 @@ main: {
   b1:
     jsr point_init
     lda i
-    lsr
-    tax
-    ldy i
+    asl
+    tay
     lda x_start,y
     sta bitmap_plot.x
     lda x_start+1,y
     sta bitmap_plot.x+1
-    ldy y_start,x
+    ldy i
+    ldx y_start,y
     jsr bitmap_plot
-    lda i
-    clc
-    adc #2
-    sta i
-    lda #8
+    inc i
+    lda #4
     cmp i
     bne b1
   b2:
@@ -76,15 +73,15 @@ main: {
     jmp b2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage(3) x, byte register(Y) y)
+// bitmap_plot(word zeropage(3) x, byte register(X) y)
 bitmap_plot: {
     .label _1 = 7
     .label x = 3
     .label plotter = 5
     .label _3 = 5
-    lda bitmap_plot_yhi,y
+    lda bitmap_plot_yhi,x
     sta _3+1
-    lda bitmap_plot_ylo,y
+    lda bitmap_plot_ylo,x
     sta _3
     lda x
     and #<$fff8
@@ -110,13 +107,12 @@ bitmap_plot: {
 // Initialize the points to be animated
 // point_init(byte zeropage(2) point_idx)
 point_init: {
-    .label _4 = 7
-    .label _5 = 3
+    .label _3 = 7
+    .label _4 = 3
+    .label _9 = 3
     .label _10 = 3
     .label _11 = 3
-    .label _12 = 3
     .label point_idx = 2
-    .label point_idx1 = $b
     .label y_diff = 7
     .label abs16s1__2 = 3
     .label abs16s1_return = 3
@@ -125,31 +121,33 @@ point_init: {
     .label x_stepf = 5
     .label x_diff = 9
     lda point_idx
-    lsr
-    sta point_idx1
-    ldy point_idx
+    asl
+    tax
+    lda point_idx
+    asl
+    tay
     sec
-    lda x_end,y
+    lda x_end,x
     sbc x_start,y
     sta x_diff
-    lda x_end+1,y
+    lda x_end+1,x
     sbc x_start+1,y
     sta x_diff+1
-    ldy point_idx1
+    ldy point_idx
     lda y_end,y
+    sta _3
+    lda #0
+    sta _3+1
+    lda y_start,y
     sta _4
     lda #0
     sta _4+1
-    lda y_start,y
-    sta _5
-    lda #0
-    sta _5+1
     lda y_diff
     sec
-    sbc _5
+    sbc _4
     sta y_diff
     lda y_diff+1
-    sbc _5+1
+    sbc _4+1
     sta y_diff+1
     lda x_diff+1
     bpl !abs16s1_b1+
@@ -178,43 +176,50 @@ point_init: {
     bcc b1
   !:
   b2:
-    ldy point_idx
+    lda point_idx
+    asl
+    tay
     lda x_start,y
-    sta _10
+    sta _9
     lda x_start+1,y
-    sta _10+1
-    asl _10
-    rol _10+1
-    asl _10
-    rol _10+1
-    asl _10
-    rol _10+1
-    asl _10
-    rol _10+1
-    lda _10
+    sta _9+1
+    asl _9
+    rol _9+1
+    asl _9
+    rol _9+1
+    asl _9
+    rol _9+1
+    asl _9
+    rol _9+1
+    lda point_idx
+    asl
+    tay
+    lda _9
     sta x_cur,y
-    lda _10+1
+    lda _9+1
     sta x_cur+1,y
-    ldy point_idx1
-    lda y_start,y
-    sta _11
-    lda #0
-    sta _11+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
     ldy point_idx
-    lda _12
+    lda y_start,y
+    sta _10
+    lda #0
+    sta _10+1
+    asl _11
+    rol _11+1
+    asl _11
+    rol _11+1
+    asl _11
+    rol _11+1
+    asl _11
+    rol _11+1
+    tya
+    asl
+    tay
+    lda _11
     sta y_cur,y
-    lda _12+1
+    lda _11+1
     sta y_cur+1,y
     lda #DELAY
-    ldy point_idx1
+    ldy point_idx
     sta delay,y
     rts
   b1:
@@ -232,7 +237,7 @@ point_init: {
     lsr
     lsr
     lsr
-    ldy point_idx1
+    ldy point_idx
     sta y_add,y
     jmp b2
   b4:

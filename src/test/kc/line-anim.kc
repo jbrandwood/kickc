@@ -40,9 +40,9 @@ void main() {
     bitmap_init(BITMAP);
     bitmap_clear();
     screen_fill(SCREEN, $10);
-    for( byte i=0; i!=8; i+=2) {
+    for( byte i=0; i!=4; i++) {
         point_init(i);
-        bitmap_plot(x_start[i], y_start[i/2]);
+        bitmap_plot(x_start[i], y_start[i]);
     }
     while(true) {
         while(*RASTER!=$ff) {}
@@ -52,9 +52,8 @@ void main() {
 
 // Initialize the points to be animated
 void point_init(byte point_idx) {
-    byte point_idx1 = point_idx/2;
     signed word x_diff = ((signed word)x_end[point_idx])-((signed word)x_start[point_idx]);
-    signed word y_diff = ((signed word)y_end[point_idx1])-((signed word)y_start[point_idx1]);
+    signed word y_diff = ((signed word)y_end[point_idx])-((signed word)y_start[point_idx]);
 
     if(abs16s(x_diff)>abs16s(y_diff)) {
         // X is driver - abs(y/x) is < 1
@@ -66,13 +65,13 @@ void point_init(byte point_idx) {
             x_add[point_idx] = $10;
         }
         signed word x_stepf = divr16s(0, x_diff, y_diff);
-        y_add[point_idx1] = (signed byte)((>x_stepf)/$10);
+        y_add[point_idx] = (signed byte)((>x_stepf)/$10);
     } else {
         // X is driver - abs(x/y) is < 1
     }
     x_cur[point_idx] = x_start[point_idx]*$10;
-    y_cur[point_idx] = ((word)y_start[point_idx1])*$10;
-    delay[point_idx1] = DELAY;
+    y_cur[point_idx] = ((word)y_start[point_idx])*$10;
+    delay[point_idx] = DELAY;
 }
 
 // Return the absolute (unsigned) value of a word

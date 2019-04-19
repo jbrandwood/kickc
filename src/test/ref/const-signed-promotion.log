@@ -1,3 +1,5 @@
+Fixing pointer array-indexing *((signed word[3]) world + (byte) main::i)
+Fixing pointer array-indexing *((signed word[3]) world + (byte/signed byte/word/signed word/dword/signed dword) 0)
 Identified constant variable (signed word*) main::screen
 
 CONTROL FLOW GRAPH SSA
@@ -9,15 +11,16 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte/signed word/word/dword/signed dword~) main::$0 ← (byte) main::i#2 * (byte/signed byte/word/signed word/dword/signed dword) 2
-  *((signed word[3]) world#0 + (byte/signed word/word/dword/signed dword~) main::$0) ← (word/signed word/dword/signed dword) $190
+  (byte) main::$1 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
+  *((signed word[3]) world#0 + (byte) main::$1) ← (word/signed word/dword/signed dword) $190
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,2)
-  (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,2)
-  if((bool~) main::$1) goto main::@1
+  (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,2)
+  if((bool~) main::$0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (signed word*) main::screen#0 ← ((signed word*)) (word/signed word/dword/signed dword) $400
-  *((signed word*) main::screen#0) ← *((signed word[3]) world#0 + (byte/signed byte/word/signed word/dword/signed dword) 0)
+  (byte/signed byte/word/signed word/dword/signed dword) main::$2 ← (byte/signed byte/word/signed word/dword/signed dword) 0 * (const byte) SIZEOF_SIGNED_WORD
+  *((signed word*) main::screen#0) ← *((signed word[3]) world#0 + (byte/signed byte/word/signed word/dword/signed dword) main::$2)
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -34,9 +37,11 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
+(const byte) SIZEOF_SIGNED_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
 (void()) main()
-(byte/signed word/word/dword/signed dword~) main::$0
-(bool~) main::$1
+(bool~) main::$0
+(byte) main::$1
+(byte/signed byte/word/signed word/dword/signed dword) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@return
@@ -51,22 +56,24 @@ SYMBOL TABLE SSA
 
 Culled Empty Block (label) @2
 Successful SSA optimization Pass2CullEmptyBlocks
-Simple Condition (bool~) main::$1 [7] if((byte) main::i#1!=rangelast(0,2)) goto main::@1
+Simple Condition (bool~) main::$0 [7] if((byte) main::i#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const signed word[3]) world#0 = { fill( 3, 0) }
 Constant (const byte) main::i#0 = 0
 Constant (const signed word*) main::screen#0 = ((signed word*))$400
+Constant (const byte/signed byte/word/signed word/dword/signed dword) main::$2 = 0*SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(world#0+0)
+Consolidated array index constant in *(world#0+main::$2)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value if(main::i#1!=rangelast(0,2)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 3
-Rewriting multiplication to use shift (byte/signed word/word/dword/signed dword~) main::$0 ← (byte) main::i#2 * (byte/signed byte/word/signed word/dword/signed dword) 2
+Rewriting multiplication to use shift (byte) main::$1 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Inferred type updated to byte in [1] (byte/signed word/word/dword/signed dword~) main::$0 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$2 = (byte/signed byte/word/signed word/dword/signed dword) 0*(const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantInlining
+Simplifying constant multiply by zero 0*SIZEOF_SIGNED_WORD
 Simplifying constant plus zero world#0+0
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
@@ -100,8 +107,8 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) main::i#1 )
-  [6] (byte~) main::$0 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1
-  [7] *((const signed word[3]) world#0 + (byte~) main::$0) ← (word/signed word/dword/signed dword) $190
+  [6] (byte) main::$1 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1
+  [7] *((const signed word[3]) world#0 + (byte) main::$1) ← (word/signed word/dword/signed dword) $190
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
   [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto main::@1
   to:main::@2
@@ -115,7 +122,7 @@ main::@return: scope:[main]  from main::@2
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte~) main::$0 22.0
+(byte) main::$1 22.0
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 11.0
@@ -124,12 +131,12 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable main::$1 to zero page equivalence class [ main::$1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-[ main::$0 ]
+[ main::$1 ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ main::$0 ]
+Allocated zp ZP_BYTE:3 [ main::$1 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -139,6 +146,7 @@ INITIAL ASM
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_SIGNED_WORD = 2
 //SEG3 @begin
 bbegin:
 //SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -158,7 +166,7 @@ bend:
 //SEG10 main
 main: {
     .label screen = $400
-    .label _0 = 3
+    .label _1 = 3
     .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
@@ -172,12 +180,12 @@ main: {
     jmp b1
   //SEG15 main::@1
   b1:
-  //SEG16 [6] (byte~) main::$0 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_rol_1 
+  //SEG16 [6] (byte) main::$1 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_rol_1 
     lda i
     asl
-    sta _0
-  //SEG17 [7] *((const signed word[3]) world#0 + (byte~) main::$0) ← (word/signed word/dword/signed dword) $190 -- pwsc1_derefidx_vbuz1=vwsc2 
-    ldy _0
+    sta _1
+  //SEG17 [7] *((const signed word[3]) world#0 + (byte) main::$1) ← (word/signed word/dword/signed dword) $190 -- pwsc1_derefidx_vbuz1=vwsc2 
+    ldy _1
     lda #<$190
     sta world,y
     lda #>$190
@@ -205,21 +213,21 @@ main: {
   world: .fill 2*3, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte~) main::$0 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#2 main::$0 ] ( main:2 [ main::i#2 main::$0 ] ) always clobbers reg byte a 
+Statement [6] (byte) main::$1 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [7] *((const signed word[3]) world#0 + (byte~) main::$0) ← (word/signed word/dword/signed dword) $190 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [7] *((const signed word[3]) world#0 + (byte) main::$1) ← (word/signed word/dword/signed dword) $190 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [10] *((const signed word*) main::screen#0) ← *((const signed word[3]) world#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] (byte~) main::$0 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#2 main::$0 ] ( main:2 [ main::i#2 main::$0 ] ) always clobbers reg byte a 
-Statement [7] *((const signed word[3]) world#0 + (byte~) main::$0) ← (word/signed word/dword/signed dword) $190 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] (byte) main::$1 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
+Statement [7] *((const signed word[3]) world#0 + (byte) main::$1) ← (word/signed word/dword/signed dword) $190 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [10] *((const signed word*) main::screen#0) ← *((const signed word[3]) world#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::$0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:3 [ main::$1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:3 [ main::$0 ] 
+Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:3 [ main::$1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 412 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] 
+Uplifting [main] best 412 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] 
 Uplifting [] best 412 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -230,6 +238,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_SIGNED_WORD = 2
 //SEG3 @begin
 bbegin:
 //SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -260,10 +269,10 @@ main: {
     jmp b1
   //SEG15 main::@1
   b1:
-  //SEG16 [6] (byte~) main::$0 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_rol_1 
+  //SEG16 [6] (byte) main::$1 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  //SEG17 [7] *((const signed word[3]) world#0 + (byte~) main::$0) ← (word/signed word/dword/signed dword) $190 -- pwsc1_derefidx_vbuaa=vwsc2 
+  //SEG17 [7] *((const signed word[3]) world#0 + (byte) main::$1) ← (word/signed word/dword/signed dword) $190 -- pwsc1_derefidx_vbuaa=vwsc2 
     tay
     lda #<$190
     sta world,y
@@ -321,8 +330,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
+(const byte) SIZEOF_SIGNED_WORD SIZEOF_SIGNED_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
 (void()) main()
-(byte~) main::$0 reg byte a 22.0
+(byte) main::$1 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@return
@@ -335,7 +345,7 @@ FINAL SYMBOL TABLE
 (const signed word[3]) world#0 world = { fill( 3, 0) }
 
 reg byte x [ main::i#2 main::i#1 ]
-reg byte a [ main::$0 ]
+reg byte a [ main::$1 ]
 
 
 FINAL ASSEMBLER
@@ -348,6 +358,7 @@ Score: 307
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_SIGNED_WORD = 2
 //SEG3 @begin
 //SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG5 @1
@@ -365,10 +376,10 @@ main: {
   //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
   //SEG15 main::@1
   b1:
-  //SEG16 [6] (byte~) main::$0 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_rol_1 
+  //SEG16 [6] (byte) main::$1 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-  //SEG17 [7] *((const signed word[3]) world#0 + (byte~) main::$0) ← (word/signed word/dword/signed dword) $190 -- pwsc1_derefidx_vbuaa=vwsc2 
+  //SEG17 [7] *((const signed word[3]) world#0 + (byte) main::$1) ← (word/signed word/dword/signed dword) $190 -- pwsc1_derefidx_vbuaa=vwsc2 
     tay
     lda #<$190
     sta world,y

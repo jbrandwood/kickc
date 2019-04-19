@@ -20,6 +20,7 @@ import dk.camelot64.kickc.model.values.VariableRef;
 import java.util.LinkedHashMap;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Fixes pointer math to use sizeof(type)

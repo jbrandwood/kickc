@@ -1,3 +1,5 @@
+Fixing pointer array-indexing *((word*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0)
+Fixing pointer array-indexing *((word*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 2)
 Identified constant variable (word*) main::SCREEN
 
 CONTROL FLOW GRAPH SSA
@@ -33,8 +35,10 @@ main::@4: scope:[main]  from main::@3
   (word) w2#8 ← phi( main::@3/(word) w2#5 )
   (word) w2#2 ← (word) w2#8
   (word*) main::SCREEN#0 ← ((word*)) (word/signed word/dword/signed dword) $400
-  *((word*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (word) w1#9
-  *((word*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 4) ← (word) w2#2
+  (byte/signed byte/word/signed word/dword/signed dword) main::$4 ← (byte/signed byte/word/signed word/dword/signed dword) 0 * (const byte) SIZEOF_WORD
+  *((word*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) main::$4) ← (word) w1#9
+  (byte/signed byte/word/signed word/dword/signed dword) main::$5 ← (byte/signed byte/word/signed word/dword/signed dword) 2 * (const byte) SIZEOF_WORD
+  *((word*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) main::$5) ← (word) w2#2
   to:main::@return
 main::@return: scope:[main]  from main::@4
   (word) w2#9 ← phi( main::@4/(word) w2#2 )
@@ -79,11 +83,14 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
+(const byte) SIZEOF_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
 (void()) incw1()
 (label) incw1::@return
 (void()) incw2()
 (label) incw2::@return
 (void()) main()
+(byte/signed byte/word/signed word/dword/signed dword) main::$4
+(byte/signed byte/word/signed word/dword/signed dword) main::$5
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -152,17 +159,22 @@ Successful SSA optimization Pass2RedundantPhiElimination
 Constant (const word) w1#0 = 0
 Constant (const word) w2#0 = 0
 Constant (const word*) main::SCREEN#0 = ((word*))$400
+Constant (const byte/signed byte/word/signed word/dword/signed dword) main::$4 = 0*SIZEOF_WORD
+Constant (const byte/signed byte/word/signed word/dword/signed dword) main::$5 = 2*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(main::SCREEN#0+0)
-Consolidated array index constant in *(main::SCREEN#0+4)
+Consolidated array index constant in *(main::SCREEN#0+main::$4)
+Consolidated array index constant in *(main::SCREEN#0+main::$5)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Culled Empty Block (label) @4
 Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const word) w1#0
 Inlining constant with var siblings (const word) w2#0
+Constant inlined main::$5 = (byte/signed byte/word/signed word/dword/signed dword) 2*(const byte) SIZEOF_WORD
 Constant inlined w1#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$4 = (byte/signed byte/word/signed word/dword/signed dword) 0*(const byte) SIZEOF_WORD
 Constant inlined w2#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
 Successful SSA optimization Pass2ConstantInlining
+Simplifying constant multiply by zero 0*SIZEOF_WORD
 Simplifying constant plus zero main::SCREEN#0+0
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
@@ -214,7 +226,7 @@ main::@3: scope:[main]  from main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@3
   [12] *((const word*) main::SCREEN#0) ← (word) w1#12
-  [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (word) w2#11
+  [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2*(const byte) SIZEOF_WORD) ← (word) w2#11
   to:main::@return
 main::@return: scope:[main]  from main::@4
   [14] return 
@@ -265,6 +277,7 @@ INITIAL ASM
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
   .label w1 = 4
   .label w2 = 2
 //SEG3 @begin
@@ -337,11 +350,11 @@ main: {
     sta SCREEN
     lda w1+1
     sta SCREEN+1
-  //SEG31 [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
+  //SEG31 [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
     lda w2
-    sta SCREEN+4
+    sta SCREEN+2*SIZEOF_WORD
     lda w2+1
-    sta SCREEN+4+1
+    sta SCREEN+2*SIZEOF_WORD+1
     jmp breturn
   //SEG32 main::@return
   breturn:
@@ -377,7 +390,7 @@ incw1: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] *((const word*) main::SCREEN#0) ← (word) w1#12 [ w2#11 ] ( main:2 [ w2#11 ] ) always clobbers reg byte a 
-Statement [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (word) w2#11 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ w2#10 w2#11 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ w1#11 w1#12 ] : zp ZP_WORD:4 , 
 
@@ -401,6 +414,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
   .label w1 = 4
   .label w2 = 2
 //SEG3 @begin
@@ -473,11 +487,11 @@ main: {
     sta SCREEN
     lda w1+1
     sta SCREEN+1
-  //SEG31 [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
+  //SEG31 [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
     lda w2
-    sta SCREEN+4
+    sta SCREEN+2*SIZEOF_WORD
     lda w2+1
-    sta SCREEN+4+1
+    sta SCREEN+2*SIZEOF_WORD+1
     jmp breturn
   //SEG32 main::@return
   breturn:
@@ -556,6 +570,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
+(const byte) SIZEOF_WORD SIZEOF_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
 (void()) incw1()
 (label) incw1::@return
 (void()) incw2()
@@ -590,6 +605,7 @@ Score: 110
 :BasicUpstart(main)
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
   .label w1 = 4
   .label w2 = 2
 //SEG3 @begin
@@ -636,11 +652,11 @@ main: {
     sta SCREEN
     lda w1+1
     sta SCREEN+1
-  //SEG31 [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 4) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
+  //SEG31 [13] *((const word*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 -- _deref_pwuc1=vwuz1 
     lda w2
-    sta SCREEN+4
+    sta SCREEN+2*SIZEOF_WORD
     lda w2+1
-    sta SCREEN+4+1
+    sta SCREEN+2*SIZEOF_WORD+1
   //SEG32 main::@return
   //SEG33 [14] return 
     rts

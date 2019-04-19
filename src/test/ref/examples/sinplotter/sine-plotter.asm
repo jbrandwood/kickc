@@ -2,6 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const SIZEOF_SIGNED_WORD = 2
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -65,9 +66,9 @@ main: {
 }
 render_sine: {
     .label _0 = 6
-    .label _1 = 6
-    .label _4 = 6
-    .label _5 = 6
+    .label _3 = 6
+    .label _10 = 6
+    .label _11 = 6
     .label sin_val = 6
     .label sin2_val = 6
     .label xpos = 4
@@ -80,17 +81,17 @@ render_sine: {
   b1:
     lda sin_idx
     asl
-    sta _0
+    sta _10
     lda sin_idx+1
     rol
-    sta _0+1
+    sta _10+1
     clc
-    lda _1
+    lda _0
     adc #<sin
-    sta _1
-    lda _1+1
+    sta _0
+    lda _0+1
     adc #>sin
-    sta _1+1
+    sta _0+1
     ldy #0
     lda (sin_val),y
     tax
@@ -103,17 +104,17 @@ render_sine: {
     jsr bitmap_plot
     lda sin_idx
     asl
-    sta _4
+    sta _11
     lda sin_idx+1
     rol
-    sta _4+1
+    sta _11+1
     clc
-    lda _5
+    lda _3
     adc #<sin2
-    sta _5
-    lda _5+1
+    sta _3
+    lda _3+1
     adc #>sin2
-    sta _5+1
+    sta _3+1
     ldy #0
     lda (sin2_val),y
     tax
@@ -288,9 +289,9 @@ sin16s_gen2: {
     iny
     lda _8+1
     sta (sintab),y
-    lda sintab
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc sintab
     sta sintab
     bcc !+
     inc sintab+1

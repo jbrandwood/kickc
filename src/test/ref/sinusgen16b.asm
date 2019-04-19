@@ -2,6 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const SIZEOF_SIGNED_WORD = 2
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
   // PI in u[4.28] format
@@ -59,16 +60,16 @@ main: {
     lda #>str
     sta print_str.str+1
     jsr print_str
-    lda st1
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc st1
     sta st1
     bcc !+
     inc st1+1
   !:
-    lda st2
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc st2
     sta st2
     bcc !+
     inc st2+1
@@ -226,9 +227,9 @@ sin16s_genb: {
     iny
     lda _2+1
     sta (sintab),y
-    lda sintab
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc sintab
     sta sintab
     bcc !+
     inc sintab+1
@@ -618,9 +619,9 @@ sin16s_gen: {
     iny
     lda _1+1
     sta (sintab),y
-    lda sintab
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc sintab
     sta sintab
     bcc !+
     inc sintab+1

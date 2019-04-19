@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const SIZEOF_SIGNED_WORD = 2
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
@@ -65,6 +66,7 @@ main: {
 }
 loop: {
     .label _1 = 9
+    .label _5 = 9
     .label xpos = 9
     lda #0
     sta xsin_idx
@@ -77,10 +79,16 @@ loop: {
     bne b2
     inc BORDERCOL
     lda xsin_idx
+    asl
+    sta _5
+    lda xsin_idx+1
+    rol
+    sta _5+1
     clc
+    lda _1
     adc #<xsin
     sta _1
-    lda xsin_idx+1
+    lda _1+1
     adc #>xsin
     sta _1+1
     ldy #0
@@ -91,18 +99,15 @@ loop: {
     stx xpos
     sta xpos+1
     jsr render_logo
-    lda xsin_idx
-    clc
-    adc #2
-    sta xsin_idx
-    bcc !+
+    inc xsin_idx
+    bne !+
     inc xsin_idx+1
   !:
     lda xsin_idx+1
-    cmp #>XSIN_SIZE*2
+    cmp #>XSIN_SIZE
     bne b4
     lda xsin_idx
-    cmp #<XSIN_SIZE*2
+    cmp #<XSIN_SIZE
     bne b4
     lda #0
     sta xsin_idx
@@ -288,9 +293,9 @@ sin16s_gen2: {
     iny
     lda _8+1
     sta (sintab),y
-    lda sintab
+    lda #SIZEOF_SIGNED_WORD
     clc
-    adc #2
+    adc sintab
     sta sintab
     bcc !+
     inc sintab+1

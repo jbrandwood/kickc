@@ -10,14 +10,16 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableIntermediate;
-import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.ConstantRef;
 import dk.camelot64.kickc.model.values.PointerDereferenceIndexed;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * Fixes pointer math to use sizeof(type)
@@ -61,7 +63,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                   VariableRef idx2VarRef = handled.getOrDefault(currentStmt, new LinkedHashMap<>()).get(deref.getIndex());
                   if(idx2VarRef==null) {
                      VariableIntermediate idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
-                     idx2Var.setType(SymbolType.BYTE);
+                     idx2Var.setType(SymbolTypeInference.inferType(getScope(), deref.getIndex()));
                      ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
                      StatementAssignment idx2 = new StatementAssignment(idx2Var.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, currentStmt.getSource(), Comment.NO_COMMENTS);
                      stmtIt.previous();
@@ -97,7 +99,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                // Adding to a pointer - multiply by sizeof()
                getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
                VariableIntermediate tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
-               tmpVar.setType(SymbolType.BYTE);
+               tmpVar.setType(SymbolTypeInference.inferType(getScope(), assignment.getrValue2()));
                stmtIt.remove();
                ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
                stmtIt.add(new StatementAssignment(tmpVar.getRef(), assignment.getrValue2(), Operators.MULTIPLY, sizeOfTargetType, assignment.getSource(), Comment.NO_COMMENTS));

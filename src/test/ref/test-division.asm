@@ -22,11 +22,16 @@ test_16s: {
     lda #0
     sta i
   b1:
-    ldy i
+    lda i
+    asl
+    tay
     lda dividends,y
     sta dividend
     lda dividends+1,y
     sta dividend+1
+    lda i
+    asl
+    tay
     lda divisors,y
     sta divisor
     lda divisors+1,y
@@ -68,11 +73,8 @@ test_16s: {
     sta print_sword.w+1
     jsr print_sword
     jsr print_ln
-    lda i
-    clc
-    adc #2
-    sta i
-    lda #$c
+    inc i
+    lda #6
     cmp i
     beq !b1+
     jmp b1
@@ -541,11 +543,16 @@ test_16u: {
     lda #0
     sta i
   b1:
-    ldy i
+    lda i
+    asl
+    tay
     lda dividends,y
     sta dividend
     lda dividends+1,y
     sta dividend+1
+    lda i
+    asl
+    tay
     lda divisors,y
     sta divisor
     lda divisors+1,y
@@ -587,11 +594,8 @@ test_16u: {
     sta print_word.w+1
     jsr print_word
     jsr print_ln
-    lda i
-    clc
-    adc #2
-    sta i
-    lda #$c
+    inc i
+    lda #6
     cmp i
     bne b1
     rts

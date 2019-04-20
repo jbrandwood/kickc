@@ -38,6 +38,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testPointerPlus0() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-plus-0");
+   }
+
+   @Test
    public void testDerefToDerefIdx2() throws IOException, URISyntaxException {
       compileAndCompare("deref-to-derefidx-2");
    }

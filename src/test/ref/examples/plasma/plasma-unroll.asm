@@ -247,6 +247,7 @@ makecharset: {
     .label s = 5
     .label i = 4
     .label c = 2
+    .label _16 = $e
     jsr sid_rnd_init
     jsr print_cls
     lda #<print_line_cursor
@@ -297,19 +298,16 @@ makecharset: {
     bcc !+
     inc _9+1
   !:
-    tya
-    sta !v++1
-    lda #<CHARSET
     clc
-    adc _9
-    sta !a++1
-    lda #>CHARSET
-    adc _9+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta CHARSET
+    lda _16
+    adc #<CHARSET
+    sta _16
+    lda _16+1
+    adc #>CHARSET
+    sta _16+1
+    tya
+    ldy #0
+    sta (_16),y
     inc i
     lda i
     cmp #8
@@ -330,9 +328,7 @@ makecharset: {
     bne !+
     lda c
     cmp #<$100
-    bcs !b1+
-    jmp b1
-  !b1:
+    bcc b1
   !:
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80

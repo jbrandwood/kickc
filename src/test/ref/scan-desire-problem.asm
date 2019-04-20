@@ -61,6 +61,14 @@ draw_block: {
     .label x1 = 9
     .label z = 4
     .label z_1 = 9
+    .label _11 = 4
+    .label _12 = 4
+    .label _13 = 4
+    .label _14 = 4
+    .label _15 = 4
+    .label _16 = 4
+    .label _17 = 4
+    .label _18 = 9
     asl
     asl
     sta tileno
@@ -81,89 +89,80 @@ draw_block: {
     adc z+1
     sta z_1+1
     ldy tileno
-    lda tileset,y
-    sta !v++1
-    lda #<screen
+    ldx tileset,y
+    lda z_1
     clc
-    adc z_1
-    sta !a++1
-    lda #>screen
-    adc z_1+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta screen
-    lda #<colors
+    adc #<screen
+    sta _11
+    lda z_1+1
+    adc #>screen
+    sta _11+1
+    txa
+    ldy #0
+    sta (_11),y
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors
-    adc z_1+1
-    sta !++2
+    adc #<colors
+    sta _12
+    lda z_1+1
+    adc #>colors
+    sta _12+1
     lda #YELLOW
-  !:
-    sta colors
-    lda #<screen+1
+    sta (_12),y
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+1
-    adc z_1+1
-    sta !++2
+    adc #<screen+1
+    sta _13
+    lda z_1+1
+    adc #>screen+1
+    sta _13+1
     lda #1
-  !:
-    sta screen+1
-    lda #<colors+1
+    sta (_13),y
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+1
-    adc z_1+1
-    sta !++2
+    adc #<colors+1
+    sta _14
+    lda z_1+1
+    adc #>colors+1
+    sta _14+1
     lda #YELLOW
-  !:
-    sta colors+1
-    lda #<screen+$28
+    sta (_14),y
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+$28
-    adc z_1+1
-    sta !++2
+    adc #<screen+$28
+    sta _15
+    lda z_1+1
+    adc #>screen+$28
+    sta _15+1
     lda #2
-  !:
-    sta screen+$28
-    lda #<colors+$28
+    sta (_15),y
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+$28
-    adc z_1+1
-    sta !++2
+    adc #<colors+$28
+    sta _16
+    lda z_1+1
+    adc #>colors+$28
+    sta _16+1
     lda #YELLOW
-  !:
-    sta colors+$28
-    lda #<screen+$29
+    sta (_16),y
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+$29
-    adc z_1+1
-    sta !++2
+    adc #<screen+$29
+    sta _17
+    lda z_1+1
+    adc #>screen+$29
+    sta _17+1
     lda #3
-  !:
-    sta screen+$29
-    lda #<colors+$29
+    sta (_17),y
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+$29
-    adc z_1+1
-    sta !++2
+    lda _18
+    adc #<colors+$29
+    sta _18
+    lda _18+1
+    adc #>colors+$29
+    sta _18+1
     lda #YELLOW
-  !:
-    sta colors+$29
+    sta (_18),y
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word

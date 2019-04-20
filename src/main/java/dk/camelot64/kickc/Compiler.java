@@ -256,6 +256,7 @@ public class Compiler {
       optimizations.add(new Pass2MultiplyToShiftRewriting(program));
       optimizations.add(new Pass2SizeOfSimplification(program));
       optimizations.add(new Pass2InlineDerefIdx(program));
+      optimizations.add(new Pass2DeInlineWordDerefIdx(program));
       pass2Execute(optimizations);
    }
 

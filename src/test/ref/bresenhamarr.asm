@@ -10,28 +10,31 @@ main: {
     .const y1 = $18
     .const xd = x1-x0
     .const yd = y1-y0
+    .label x = 4
     .label idx = 2
-    .label y = 4
+    .label y = 5
+    .label _16 = 6
     lda #y0
     sta y
     ldx #yd/2
-    ldy #x0
+    lda #x0
+    sta x
     lda #x0+y0*$28
     sta idx
     lda #0
     sta idx+1
   b1:
-    lda #<screen
+    lda idx
     clc
-    adc idx
-    sta !++1
-    lda #>screen
-    adc idx+1
-    sta !++2
+    adc #<screen
+    sta _16
+    lda idx+1
+    adc #>screen
+    sta _16+1
     lda #STAR
-  !:
-    sta screen
-    iny
+    ldy #0
+    sta (_16),y
+    inc x
     inc idx
     bne !+
     inc idx+1
@@ -52,7 +55,8 @@ main: {
     txa
     axs #xd
   b2:
-    cpy #x1+1
+    lda x
+    cmp #x1+1
     bcc b1
     rts
 }

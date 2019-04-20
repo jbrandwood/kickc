@@ -1,0 +1,615 @@
+Fixing pointer array-indexing *((word[$100]) words + (word~) main::$1)
+Fixing pointer array-indexing *((word[$100]) words + (byte/word/signed word/dword/signed dword~) main::$0)
+Fixing pointer array-indexing *((word*) main::SCREEN + (byte/signed byte/word/signed word/dword/signed dword) 0)
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (word[$100]) words#0 ← { fill( $100, 0) }
+  to:@1
+main: scope:[main]  from @1
+  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
+  (word~) main::$1 ← ((word)) (byte) main::i#2
+  (word~) main::$2 ← ((word)) (byte) main::i#2
+  (word/signed dword/dword~) main::$3 ← (word~) main::$2 * (word/signed word/dword/signed dword) $100
+  (word/signed dword/dword~) main::$4 ← (word/signed dword/dword~) main::$3 + (byte) main::i#2
+  (word) main::$6 ← (word~) main::$1 * (const byte) SIZEOF_WORD
+  *((word[$100]) words#0 + (word) main::$6) ← (word/signed dword/dword~) main::$4
+  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$ff)
+  (bool~) main::$5 ← (byte) main::i#1 != rangelast(0,$ff)
+  if((bool~) main::$5) goto main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (word*) main::SCREEN#0 ← ((word*)) (word/signed word/dword/signed dword) $400
+  (byte/word/signed word/dword/signed dword~) main::$0 ← ((word)) (byte/word/signed word/dword/signed dword) $ff
+  (byte/word/signed word/dword/signed dword) main::$7 ← (byte/word/signed word/dword/signed dword~) main::$0 * (const byte) SIZEOF_WORD
+  (byte/signed byte/word/signed word/dword/signed dword) main::$8 ← (byte/signed byte/word/signed word/dword/signed dword) 0 * (const byte) SIZEOF_WORD
+  *((word*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) main::$8) ← *((word[$100]) words#0 + (byte/word/signed word/dword/signed dword) main::$7)
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(const byte) SIZEOF_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
+(void()) main()
+(byte/word/signed word/dword/signed dword~) main::$0
+(word~) main::$1
+(word~) main::$2
+(word/signed dword/dword~) main::$3
+(word/signed dword/dword~) main::$4
+(bool~) main::$5
+(word) main::$6
+(byte/word/signed word/dword/signed dword) main::$7
+(byte/signed byte/word/signed word/dword/signed dword) main::$8
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(word*) main::SCREEN
+(word*) main::SCREEN#0
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+(word[$100]) words
+(word[$100]) words#0
+
+Culled Empty Block (label) @2
+Successful SSA optimization Pass2CullEmptyBlocks
+Simple Condition (bool~) main::$5 [11] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const word[$100]) words#0 = { fill( $100, 0) }
+Constant (const byte) main::i#0 = 0
+Constant (const word*) main::SCREEN#0 = ((word*))$400
+Constant (const byte/word/signed word/dword/signed dword) main::$0 = ((word))$ff
+Constant (const byte/signed byte/word/signed word/dword/signed dword) main::$8 = 0*SIZEOF_WORD
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const word/signed word/dword/signed dword) main::$7 = main::$0*SIZEOF_WORD
+Successful SSA optimization Pass2ConstantIdentification
+Consolidated array index constant in *(words#0+main::$7)
+Consolidated array index constant in *(main::SCREEN#0+main::$8)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 0
+Rewriting multiplication to use shift (word/signed dword/dword~) main::$3 ← (word~) main::$2 * (word/signed word/dword/signed dword) $100
+Rewriting multiplication to use shift (word) main::$6 ← (word~) main::$1 * (const byte) SIZEOF_WORD
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+De-inlining pointer[w] to *(pointer+w)   *((const word[$100]) words#0 + (word) main::$6) ← (word/signed dword/dword~) main::$4
+Successful SSA optimization Pass2DeInlineWordDerefIdx
+Inferred type updated to word in [3] (word/signed dword/dword~) main::$3 ← (word~) main::$2 << (byte/signed byte/word/signed word/dword/signed dword) 8
+Inferred type updated to word in [4] (word/signed dword/dword~) main::$4 ← (word~) main::$3 + (byte) main::i#2
+Inlining constant with var siblings (const byte) main::i#0
+Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::$7 = ((word))(byte/word/signed word/dword/signed dword) $ff*(const byte) SIZEOF_WORD
+Constant inlined main::$0 = ((word))(byte/word/signed word/dword/signed dword) $ff
+Constant inlined main::$8 = (byte/signed byte/word/signed word/dword/signed dword) 0*(const byte) SIZEOF_WORD
+Successful SSA optimization Pass2ConstantInlining
+Simplifying constant multiply by zero 0*SIZEOF_WORD
+Simplifying constant plus zero main::SCREEN#0+0
+Added new block during phi lifting main::@3(between main::@1 and main::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 1 initial phi equivalence classes
+Coalesced [17] main::i#3 ← main::i#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) main::@3
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) main::i#1 )
+  [6] (word~) main::$1 ← ((word)) (byte) main::i#2
+  [7] (word~) main::$2 ← ((word)) (byte) main::i#2
+  [8] (word~) main::$3 ← (word~) main::$2 << (byte/signed byte/word/signed word/dword/signed dword) 8
+  [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2
+  [10] (word) main::$6 ← (word~) main::$1 << (byte/signed byte/word/signed word/dword/signed dword) 1
+  [11] (word*) main::$9 ← (const word[$100]) words#0 + (word) main::$6
+  [12] *((word*) main::$9) ← (word~) main::$4
+  [13] (byte) main::i#1 ← ++ (byte) main::i#2
+  [14] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+((word))(byte/word/signed word/dword/signed dword) $ff*(const byte) SIZEOF_WORD)
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [16] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(word~) main::$1 5.5
+(word~) main::$2 22.0
+(word~) main::$3 22.0
+(word~) main::$4 7.333333333333333
+(word) main::$6 22.0
+(word*) main::$9 22.0
+(word*) main::SCREEN
+(byte) main::i
+(byte) main::i#1 16.5
+(byte) main::i#2 6.875
+(word[$100]) words
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Added variable main::$1 to zero page equivalence class [ main::$1 ]
+Added variable main::$2 to zero page equivalence class [ main::$2 ]
+Added variable main::$3 to zero page equivalence class [ main::$3 ]
+Added variable main::$4 to zero page equivalence class [ main::$4 ]
+Added variable main::$6 to zero page equivalence class [ main::$6 ]
+Added variable main::$9 to zero page equivalence class [ main::$9 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::$1 ]
+[ main::$2 ]
+[ main::$3 ]
+[ main::$4 ]
+[ main::$6 ]
+[ main::$9 ]
+Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp ZP_WORD:3 [ main::$1 ]
+Allocated zp ZP_WORD:5 [ main::$2 ]
+Allocated zp ZP_WORD:7 [ main::$3 ]
+Allocated zp ZP_WORD:9 [ main::$4 ]
+Allocated zp ZP_WORD:11 [ main::$6 ]
+Allocated zp ZP_WORD:13 [ main::$9 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests a word-array with 128+ elements
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .label SCREEN = $400
+    .label _1 = 3
+    .label _2 = 5
+    .label _3 = 7
+    .label _4 = 9
+    .label _6 = $b
+    .label i = 2
+    .label _9 = $d
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta i
+    jmp b1
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG15 main::@1
+  b1:
+  //SEG16 [6] (word~) main::$1 ← ((word)) (byte) main::i#2 -- vwuz1=_word_vbuz2 
+    lda i
+    sta _1
+    lda #0
+    sta _1+1
+  //SEG17 [7] (word~) main::$2 ← ((word)) (byte) main::i#2 -- vwuz1=_word_vbuz2 
+    lda i
+    sta _2
+    lda #0
+    sta _2+1
+  //SEG18 [8] (word~) main::$3 ← (word~) main::$2 << (byte/signed byte/word/signed word/dword/signed dword) 8 -- vwuz1=vwuz2_rol_vbuc1 
+    ldy #8
+    lda _2
+    sta _3
+    lda _2+1
+    sta _3+1
+    cpy #0
+    beq !e+
+  !:
+    asl _3
+    rol _3+1
+    dey
+    bne !-
+  !e:
+  //SEG19 [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz2_plus_vbuz3 
+    lda i
+    clc
+    adc _3
+    sta _4
+    lda #0
+    adc _3+1
+    sta _4+1
+  //SEG20 [10] (word) main::$6 ← (word~) main::$1 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwuz1=vwuz2_rol_1 
+    lda _1
+    asl
+    sta _6
+    lda _1+1
+    rol
+    sta _6+1
+  //SEG21 [11] (word*) main::$9 ← (const word[$100]) words#0 + (word) main::$6 -- pwuz1=pwuc1_plus_vwuz2 
+    lda _6
+    clc
+    adc #<words
+    sta _9
+    lda _6+1
+    adc #>words
+    sta _9+1
+  //SEG22 [12] *((word*) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
+    ldy #0
+    lda _4
+    sta (_9),y
+    iny
+    lda _4+1
+    sta (_9),y
+  //SEG23 [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc i
+  //SEG24 [14] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
+    lda i
+    cmp #0
+    bne b1_from_b1
+    jmp b2
+  //SEG25 main::@2
+  b2:
+  //SEG26 [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+((word))(byte/word/signed word/dword/signed dword) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    lda words+$ff*SIZEOF_WORD
+    sta SCREEN
+    lda words+$ff*SIZEOF_WORD+1
+    sta SCREEN+1
+    jmp breturn
+  //SEG27 main::@return
+  breturn:
+  //SEG28 [16] return 
+    rts
+}
+  words: .fill 2*$100, 0
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [6] (word~) main::$1 ← ((word)) (byte) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [7] (word~) main::$2 ← ((word)) (byte) main::i#2 [ main::i#2 main::$1 main::$2 ] ( main:2 [ main::i#2 main::$1 main::$2 ] ) always clobbers reg byte a 
+Statement [8] (word~) main::$3 ← (word~) main::$2 << (byte/signed byte/word/signed word/dword/signed dword) 8 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 [ main::i#2 main::$1 main::$4 ] ( main:2 [ main::i#2 main::$1 main::$4 ] ) always clobbers reg byte a 
+Statement [10] (word) main::$6 ← (word~) main::$1 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#2 main::$4 main::$6 ] ( main:2 [ main::i#2 main::$4 main::$6 ] ) always clobbers reg byte a 
+Statement [11] (word*) main::$9 ← (const word[$100]) words#0 + (word) main::$6 [ main::i#2 main::$4 main::$9 ] ( main:2 [ main::i#2 main::$4 main::$9 ] ) always clobbers reg byte a 
+Statement [12] *((word*) main::$9) ← (word~) main::$4 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+((word))(byte/word/signed word/dword/signed dword) $ff*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] (word~) main::$1 ← ((word)) (byte) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
+Statement [7] (word~) main::$2 ← ((word)) (byte) main::i#2 [ main::i#2 main::$1 main::$2 ] ( main:2 [ main::i#2 main::$1 main::$2 ] ) always clobbers reg byte a 
+Statement [8] (word~) main::$3 ← (word~) main::$2 << (byte/signed byte/word/signed word/dword/signed dword) 8 [ main::i#2 main::$1 main::$3 ] ( main:2 [ main::i#2 main::$1 main::$3 ] ) always clobbers reg byte a reg byte y 
+Statement [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 [ main::i#2 main::$1 main::$4 ] ( main:2 [ main::i#2 main::$1 main::$4 ] ) always clobbers reg byte a 
+Statement [10] (word) main::$6 ← (word~) main::$1 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#2 main::$4 main::$6 ] ( main:2 [ main::i#2 main::$4 main::$6 ] ) always clobbers reg byte a 
+Statement [11] (word*) main::$9 ← (const word[$100]) words#0 + (word) main::$6 [ main::i#2 main::$4 main::$9 ] ( main:2 [ main::i#2 main::$4 main::$9 ] ) always clobbers reg byte a 
+Statement [12] *((word*) main::$9) ← (word~) main::$4 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+((word))(byte/word/signed word/dword/signed dword) $ff*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
+Potential registers zp ZP_WORD:3 [ main::$1 ] : zp ZP_WORD:3 , 
+Potential registers zp ZP_WORD:5 [ main::$2 ] : zp ZP_WORD:5 , 
+Potential registers zp ZP_WORD:7 [ main::$3 ] : zp ZP_WORD:7 , 
+Potential registers zp ZP_WORD:9 [ main::$4 ] : zp ZP_WORD:9 , 
+Potential registers zp ZP_WORD:11 [ main::$6 ] : zp ZP_WORD:11 , 
+Potential registers zp ZP_WORD:13 [ main::$9 ] : zp ZP_WORD:13 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 23.38: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_WORD:5 [ main::$2 ] 22: zp ZP_WORD:7 [ main::$3 ] 22: zp ZP_WORD:11 [ main::$6 ] 22: zp ZP_WORD:13 [ main::$9 ] 7.33: zp ZP_WORD:9 [ main::$4 ] 5.5: zp ZP_WORD:3 [ main::$1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 1482 combination reg byte x [ main::i#2 main::i#1 ] zp ZP_WORD:5 [ main::$2 ] zp ZP_WORD:7 [ main::$3 ] zp ZP_WORD:11 [ main::$6 ] zp ZP_WORD:13 [ main::$9 ] zp ZP_WORD:9 [ main::$4 ] zp ZP_WORD:3 [ main::$1 ] 
+Uplifting [] best 1482 combination 
+Coalescing zero page register with common assignment [ zp ZP_WORD:3 [ main::$1 ] ] with [ zp ZP_WORD:11 [ main::$6 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ main::$2 ] ] with [ zp ZP_WORD:7 [ main::$3 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:3 [ main::$1 main::$6 ] ] with [ zp ZP_WORD:13 [ main::$9 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ main::$2 main::$3 ] ] with [ zp ZP_WORD:9 [ main::$4 ] ] - score: 1
+Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::$1 main::$6 main::$9 ]
+Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ main::$2 main::$3 main::$4 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests a word-array with 128+ elements
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .label SCREEN = $400
+    .label _1 = 2
+    .label _2 = 4
+    .label _3 = 4
+    .label _4 = 4
+    .label _6 = 2
+    .label _9 = 2
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  b1_from_main:
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp b1
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  b1_from_b1:
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp b1
+  //SEG15 main::@1
+  b1:
+  //SEG16 [6] (word~) main::$1 ← ((word)) (byte) main::i#2 -- vwuz1=_word_vbuxx 
+    txa
+    sta _1
+    lda #0
+    sta _1+1
+  //SEG17 [7] (word~) main::$2 ← ((word)) (byte) main::i#2 -- vwuz1=_word_vbuxx 
+    txa
+    sta _2
+    lda #0
+    sta _2+1
+  //SEG18 [8] (word~) main::$3 ← (word~) main::$2 << (byte/signed byte/word/signed word/dword/signed dword) 8 -- vwuz1=vwuz1_rol_vbuc1 
+    ldy #8
+    cpy #0
+    beq !e+
+  !:
+    asl _3
+    rol _3+1
+    dey
+    bne !-
+  !e:
+  //SEG19 [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
+    txa
+    clc
+    adc _4
+    sta _4
+    bcc !+
+    inc _4+1
+  !:
+  //SEG20 [10] (word) main::$6 ← (word~) main::$1 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwuz1=vwuz1_rol_1 
+    asl _6
+    rol _6+1
+  //SEG21 [11] (word*) main::$9 ← (const word[$100]) words#0 + (word) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
+    clc
+    lda _9
+    adc #<words
+    sta _9
+    lda _9+1
+    adc #>words
+    sta _9+1
+  //SEG22 [12] *((word*) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
+    ldy #0
+    lda _4
+    sta (_9),y
+    iny
+    lda _4+1
+    sta (_9),y
+  //SEG23 [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG24 [14] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne b1_from_b1
+    jmp b2
+  //SEG25 main::@2
+  b2:
+  //SEG26 [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+((word))(byte/word/signed word/dword/signed dword) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    lda words+$ff*SIZEOF_WORD
+    sta SCREEN
+    lda words+$ff*SIZEOF_WORD+1
+    sta SCREEN+1
+    jmp breturn
+  //SEG27 main::@return
+  breturn:
+  //SEG28 [16] return 
+    rts
+}
+  words: .fill 2*$100, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp b2
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1_from_b1 with b1
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Removing instruction b1_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1_from_main:
+Removing instruction b2:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte) SIZEOF_WORD SIZEOF_WORD = (byte/signed byte/word/signed word/dword/signed dword) 2
+(void()) main()
+(word~) main::$1 $1 zp ZP_WORD:2 5.5
+(word~) main::$2 $2 zp ZP_WORD:4 22.0
+(word~) main::$3 $3 zp ZP_WORD:4 22.0
+(word~) main::$4 $4 zp ZP_WORD:4 7.333333333333333
+(word) main::$6 $6 zp ZP_WORD:2 22.0
+(word*) main::$9 $9 zp ZP_WORD:2 22.0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(word*) main::SCREEN
+(const word*) main::SCREEN#0 SCREEN = ((word*))(word/signed word/dword/signed dword) $400
+(byte) main::i
+(byte) main::i#1 reg byte x 16.5
+(byte) main::i#2 reg byte x 6.875
+(word[$100]) words
+(const word[$100]) words#0 words = { fill( $100, 0) }
+
+reg byte x [ main::i#2 main::i#1 ]
+zp ZP_WORD:2 [ main::$1 main::$6 main::$9 ]
+zp ZP_WORD:4 [ main::$2 main::$3 main::$4 ]
+
+
+FINAL ASSEMBLER
+Score: 1192
+
+//SEG0 File Comments
+// Tests a word-array with 128+ elements
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
+main: {
+    .label SCREEN = $400
+    .label _1 = 2
+    .label _2 = 4
+    .label _3 = 4
+    .label _4 = 4
+    .label _6 = 2
+    .label _9 = 2
+  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
+  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG15 main::@1
+  b1:
+  //SEG16 [6] (word~) main::$1 ← ((word)) (byte) main::i#2 -- vwuz1=_word_vbuxx 
+    txa
+    sta _1
+    lda #0
+    sta _1+1
+  //SEG17 [7] (word~) main::$2 ← ((word)) (byte) main::i#2 -- vwuz1=_word_vbuxx 
+    txa
+    sta _2
+    lda #0
+    sta _2+1
+  //SEG18 [8] (word~) main::$3 ← (word~) main::$2 << (byte/signed byte/word/signed word/dword/signed dword) 8 -- vwuz1=vwuz1_rol_vbuc1 
+    ldy #8
+    cpy #0
+    beq !e+
+  !:
+    asl _3
+    rol _3+1
+    dey
+    bne !-
+  !e:
+  //SEG19 [9] (word~) main::$4 ← (word~) main::$3 + (byte) main::i#2 -- vwuz1=vwuz1_plus_vbuxx 
+    txa
+    clc
+    adc _4
+    sta _4
+    bcc !+
+    inc _4+1
+  !:
+  //SEG20 [10] (word) main::$6 ← (word~) main::$1 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwuz1=vwuz1_rol_1 
+    asl _6
+    rol _6+1
+  //SEG21 [11] (word*) main::$9 ← (const word[$100]) words#0 + (word) main::$6 -- pwuz1=pwuc1_plus_vwuz1 
+    clc
+    lda _9
+    adc #<words
+    sta _9
+    lda _9+1
+    adc #>words
+    sta _9+1
+  //SEG22 [12] *((word*) main::$9) ← (word~) main::$4 -- _deref_pwuz1=vwuz2 
+    ldy #0
+    lda _4
+    sta (_9),y
+    iny
+    lda _4+1
+    sta (_9),y
+  //SEG23 [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+  //SEG24 [14] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne b1
+  //SEG25 main::@2
+  //SEG26 [15] *((const word*) main::SCREEN#0) ← *((const word[$100]) words#0+((word))(byte/word/signed word/dword/signed dword) $ff*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    lda words+$ff*SIZEOF_WORD
+    sta SCREEN
+    lda words+$ff*SIZEOF_WORD+1
+    sta SCREEN+1
+  //SEG27 main::@return
+  //SEG28 [16] return 
+    rts
+}
+  words: .fill 2*$100, 0
+

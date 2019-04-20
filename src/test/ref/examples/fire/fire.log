@@ -834,6 +834,8 @@ Rewriting conditional comparison if((byte) makecharset::bc#1<=(byte/signed byte/
 Rewriting division to use shift (byte) fire::c#0 ← (byte~) fire::$11 / (byte/signed byte/word/signed word/dword/signed dword) 4
 Rewriting division to use shift (byte/signed word/word/dword/signed dword~) fire::$16 ← (byte~) fire::$15 / (byte/signed byte/word/signed word/dword/signed dword) $10
 Successful SSA optimization Pass2MultiplyToShiftRewriting
+De-inlining pointer[w] to *(pointer+w)   *((byte*~) makecharset::$16 + (word~) makecharset::$19) ← (byte) makecharset::b#3
+Successful SSA optimization Pass2DeInlineWordDerefIdx
 Culled Empty Block (label) @4
 Culled Empty Block (label) @6
 Culled Empty Block (label) main::@1
@@ -968,19 +970,19 @@ Coalesced [59] fire::c#4 ← fire::c#0
 Coalesced [73] makecharset::bc#9 ← makecharset::bc#5
 Coalesced [82] makecharset::bc#12 ← makecharset::bc#2
 Coalesced [83] makecharset::b#8 ← makecharset::b#1
-Coalesced [96] makecharset::c#9 ← makecharset::c#1
-Coalesced [97] makecharset::bc#8 ← makecharset::bc#6
-Coalesced [98] makecharset::i#7 ← makecharset::i#1
-Coalesced (already) [99] makecharset::bc#10 ← makecharset::bc#6
-Coalesced [100] makecharset::ii#5 ← makecharset::ii#1
-Coalesced [101] makecharset::b#6 ← makecharset::b#3
-Coalesced [102] makecharset::bc#11 ← makecharset::bc#1
-Coalesced (already) [103] makecharset::b#7 ← makecharset::b#2
-Coalesced [104] makecharset::font1#3 ← makecharset::font1#1
-Coalesced [105] makecharset::font#3 ← makecharset::font#1
-Coalesced [110] fillscreen::screen#7 ← fillscreen::screen#6
-Coalesced [117] fillscreen::screen#8 ← fillscreen::screen#4
-Coalesced [118] fillscreen::i#3 ← fillscreen::i#1
+Coalesced [97] makecharset::c#9 ← makecharset::c#1
+Coalesced [98] makecharset::bc#8 ← makecharset::bc#6
+Coalesced [99] makecharset::i#7 ← makecharset::i#1
+Coalesced (already) [100] makecharset::bc#10 ← makecharset::bc#6
+Coalesced [101] makecharset::ii#5 ← makecharset::ii#1
+Coalesced [102] makecharset::b#6 ← makecharset::b#3
+Coalesced [103] makecharset::bc#11 ← makecharset::bc#1
+Coalesced (already) [104] makecharset::b#7 ← makecharset::b#2
+Coalesced [105] makecharset::font1#3 ← makecharset::font1#1
+Coalesced [106] makecharset::font#3 ← makecharset::font#1
+Coalesced [111] fillscreen::screen#7 ← fillscreen::screen#6
+Coalesced [118] fillscreen::screen#8 ← fillscreen::screen#4
+Coalesced [119] fillscreen::i#3 ← fillscreen::i#1
 Coalesced down to 16 phi equivalence classes
 Culled Empty Block (label) fire::@12
 Culled Empty Block (label) fire::@13
@@ -1177,38 +1179,39 @@ makecharset::@8: scope:[makecharset]  from makecharset::@6
   [77] (word~) makecharset::$17 ← ((word)) (byte) makecharset::c#7
   [78] (word~) makecharset::$18 ← (word~) makecharset::$17 << (byte/signed byte/word/signed word/dword/signed dword) 3
   [79] (word~) makecharset::$19 ← (word~) makecharset::$18 + (byte) makecharset::i#6
-  [80] *((const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19) ← (byte) makecharset::b#3
-  [81] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#6
-  [82] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4
+  [80] (byte*) makecharset::$22 ← (const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19
+  [81] *((byte*) makecharset::$22) ← (byte) makecharset::b#3
+  [82] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#6
+  [83] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4
   to:makecharset::@9
 makecharset::@9: scope:[makecharset]  from makecharset::@8
-  [83] (byte) makecharset::c#1 ← ++ (byte) makecharset::c#7
-  [84] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3
+  [84] (byte) makecharset::c#1 ← ++ (byte) makecharset::c#7
+  [85] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3
   to:makecharset::@return
 makecharset::@return: scope:[makecharset]  from makecharset::@9
-  [85] return 
+  [86] return 
   to:@return
 sid_rnd_init: scope:[sid_rnd_init]  from main::@7
-  [86] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff
-  [87] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0
+  [87] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff
+  [88] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0
   to:sid_rnd_init::@return
 sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
-  [88] return 
+  [89] return 
   to:@return
 fillscreen: scope:[fillscreen]  from main main::@4 main::@5 main::@6
-  [89] (byte*) fillscreen::screen#6 ← phi( main/(const byte*) BUFFER#0 main::@5/(const byte*) SCREEN2#0 main::@6/(const byte*) COLS#0 main::@4/(const byte*) SCREEN1#0 )
-  [89] (byte) fillscreen::fill#5 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@5/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@6/(const byte) YELLOW#0 main::@4/(byte/signed byte/word/signed word/dword/signed dword) 0 )
+  [90] (byte*) fillscreen::screen#6 ← phi( main/(const byte*) BUFFER#0 main::@5/(const byte*) SCREEN2#0 main::@6/(const byte*) COLS#0 main::@4/(const byte*) SCREEN1#0 )
+  [90] (byte) fillscreen::fill#5 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@5/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@6/(const byte) YELLOW#0 main::@4/(byte/signed byte/word/signed word/dword/signed dword) 0 )
   to:fillscreen::@1
 fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
-  [90] (word) fillscreen::i#2 ← phi( fillscreen/(byte/signed byte/word/signed word/dword/signed dword) 0 fillscreen::@1/(word) fillscreen::i#1 )
-  [90] (byte*) fillscreen::screen#5 ← phi( fillscreen/(byte*) fillscreen::screen#6 fillscreen::@1/(byte*) fillscreen::screen#4 )
-  [91] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5
-  [92] (byte*) fillscreen::screen#4 ← ++ (byte*) fillscreen::screen#5
-  [93] (word) fillscreen::i#1 ← ++ (word) fillscreen::i#2
-  [94] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1
+  [91] (word) fillscreen::i#2 ← phi( fillscreen/(byte/signed byte/word/signed word/dword/signed dword) 0 fillscreen::@1/(word) fillscreen::i#1 )
+  [91] (byte*) fillscreen::screen#5 ← phi( fillscreen/(byte*) fillscreen::screen#6 fillscreen::@1/(byte*) fillscreen::screen#4 )
+  [92] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5
+  [93] (byte*) fillscreen::screen#4 ← ++ (byte*) fillscreen::screen#5
+  [94] (word) fillscreen::i#1 ← ++ (word) fillscreen::i#2
+  [95] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1
   to:fillscreen::@return
 fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
-  [95] return 
+  [96] return 
   to:@return
 
 
@@ -1294,20 +1297,21 @@ VARIABLE REGISTER WEIGHTS
 (word~) makecharset::$17 202.0
 (word~) makecharset::$18 202.0
 (word~) makecharset::$19 202.0
+(byte*) makecharset::$22 202.0
 (byte) makecharset::b
 (byte) makecharset::b#1 2002.0
 (byte) makecharset::b#2 429.0
-(byte) makecharset::b#3 517.3333333333334
+(byte) makecharset::b#3 443.42857142857144
 (byte) makecharset::bc
 (byte) makecharset::bc#1 2002.0
 (byte) makecharset::bc#2 400.4
 (byte) makecharset::bc#3 2103.0
 (byte) makecharset::bc#5 202.0
-(byte) makecharset::bc#6 344.8888888888889
+(byte) makecharset::bc#6 310.4
 (byte[8]) makecharset::bittab
 (byte) makecharset::c
 (byte) makecharset::c#1 16.5
-(byte) makecharset::c#7 59.15789473684211
+(byte) makecharset::c#7 56.19999999999999
 (byte*) makecharset::charset
 (byte*) makecharset::font
 (byte*) makecharset::font#1 16.5
@@ -1317,7 +1321,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) makecharset::font1#2 16.5
 (byte) makecharset::i
 (byte) makecharset::i#1 151.5
-(byte) makecharset::i#6 81.5
+(byte) makecharset::i#6 76.70588235294117
 (byte) makecharset::ii
 (byte) makecharset::ii#1 1501.5
 (byte) makecharset::ii#2 333.6666666666667
@@ -1358,6 +1362,7 @@ Added variable makecharset::$13 to zero page equivalence class [ makecharset::$1
 Added variable makecharset::$17 to zero page equivalence class [ makecharset::$17 ]
 Added variable makecharset::$18 to zero page equivalence class [ makecharset::$18 ]
 Added variable makecharset::$19 to zero page equivalence class [ makecharset::$19 ]
+Added variable makecharset::$22 to zero page equivalence class [ makecharset::$22 ]
 Complete equivalence classes
 [ fire::screen#0 ]
 [ fire::buffer#4 fire::buffer#2 ]
@@ -1389,6 +1394,7 @@ Complete equivalence classes
 [ makecharset::$17 ]
 [ makecharset::$18 ]
 [ makecharset::$19 ]
+[ makecharset::$22 ]
 Allocated zp ZP_WORD:2 [ fire::screen#0 ]
 Allocated zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ]
 Allocated zp ZP_WORD:6 [ fire::screen#4 fire::screen#10 fire::screen#2 ]
@@ -1419,6 +1425,7 @@ Allocated zp ZP_BYTE:37 [ makecharset::$13 ]
 Allocated zp ZP_WORD:38 [ makecharset::$17 ]
 Allocated zp ZP_WORD:40 [ makecharset::$18 ]
 Allocated zp ZP_WORD:42 [ makecharset::$19 ]
+Allocated zp ZP_WORD:44 [ makecharset::$22 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -1476,14 +1483,14 @@ main: {
     lda #BLACK
     sta BGCOL
   //SEG13 [7] call fillscreen 
-  //SEG14 [89] phi from main to fillscreen [phi:main->fillscreen]
+  //SEG14 [90] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
-  //SEG15 [89] phi (byte*) fillscreen::screen#6 = (const byte*) BUFFER#0 [phi:main->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG15 [90] phi (byte*) fillscreen::screen#6 = (const byte*) BUFFER#0 [phi:main->fillscreen#0] -- pbuz1=pbuc1 
     lda #<BUFFER
     sta fillscreen.screen
     lda #>BUFFER
     sta fillscreen.screen+1
-  //SEG16 [89] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->fillscreen#1] -- vbuz1=vbuc1 
+  //SEG16 [90] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->fillscreen#1] -- vbuz1=vbuc1 
     lda #0
     sta fillscreen.fill
     jsr fillscreen
@@ -1493,14 +1500,14 @@ main: {
   //SEG18 main::@4
   b4:
   //SEG19 [9] call fillscreen 
-  //SEG20 [89] phi from main::@4 to fillscreen [phi:main::@4->fillscreen]
+  //SEG20 [90] phi from main::@4 to fillscreen [phi:main::@4->fillscreen]
   fillscreen_from_b4:
-  //SEG21 [89] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN1#0 [phi:main::@4->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG21 [90] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN1#0 [phi:main::@4->fillscreen#0] -- pbuz1=pbuc1 
     lda #<SCREEN1
     sta fillscreen.screen
     lda #>SCREEN1
     sta fillscreen.screen+1
-  //SEG22 [89] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->fillscreen#1] -- vbuz1=vbuc1 
+  //SEG22 [90] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->fillscreen#1] -- vbuz1=vbuc1 
     lda #0
     sta fillscreen.fill
     jsr fillscreen
@@ -1510,14 +1517,14 @@ main: {
   //SEG24 main::@5
   b5:
   //SEG25 [11] call fillscreen 
-  //SEG26 [89] phi from main::@5 to fillscreen [phi:main::@5->fillscreen]
+  //SEG26 [90] phi from main::@5 to fillscreen [phi:main::@5->fillscreen]
   fillscreen_from_b5:
-  //SEG27 [89] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN2#0 [phi:main::@5->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG27 [90] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN2#0 [phi:main::@5->fillscreen#0] -- pbuz1=pbuc1 
     lda #<SCREEN2
     sta fillscreen.screen
     lda #>SCREEN2
     sta fillscreen.screen+1
-  //SEG28 [89] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->fillscreen#1] -- vbuz1=vbuc1 
+  //SEG28 [90] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->fillscreen#1] -- vbuz1=vbuc1 
     lda #0
     sta fillscreen.fill
     jsr fillscreen
@@ -1527,14 +1534,14 @@ main: {
   //SEG30 main::@6
   b6:
   //SEG31 [13] call fillscreen 
-  //SEG32 [89] phi from main::@6 to fillscreen [phi:main::@6->fillscreen]
+  //SEG32 [90] phi from main::@6 to fillscreen [phi:main::@6->fillscreen]
   fillscreen_from_b6:
-  //SEG33 [89] phi (byte*) fillscreen::screen#6 = (const byte*) COLS#0 [phi:main::@6->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG33 [90] phi (byte*) fillscreen::screen#6 = (const byte*) COLS#0 [phi:main::@6->fillscreen#0] -- pbuz1=pbuc1 
     lda #<COLS
     sta fillscreen.screen
     lda #>COLS
     sta fillscreen.screen+1
-  //SEG34 [89] phi (byte) fillscreen::fill#5 = (const byte) YELLOW#0 [phi:main::@6->fillscreen#1] -- vbuz1=vbuc1 
+  //SEG34 [90] phi (byte) fillscreen::fill#5 = (const byte) YELLOW#0 [phi:main::@6->fillscreen#1] -- vbuz1=vbuc1 
     lda #YELLOW
     sta fillscreen.fill
     jsr fillscreen
@@ -1825,6 +1832,7 @@ makecharset: {
     .label b = $15
     .label i = $12
     .label c = $11
+    .label _22 = $2c
   //SEG110 [56] phi from makecharset to makecharset::@1 [phi:makecharset->makecharset::@1]
   b1_from_makecharset:
   //SEG111 [56] phi (byte*) makecharset::font#2 = (const byte*) CHARSET#0 [phi:makecharset->makecharset::@1#0] -- pbuz1=pbuc1 
@@ -2007,97 +2015,95 @@ makecharset: {
     lda #0
     adc _18+1
     sta _19+1
-  //SEG165 [80] *((const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19) ← (byte) makecharset::b#3 -- pbuc1_derefidx_vwuz1=vbuz2 
-    lda b
-    sta !v++1
-    lda #<CHARSET+1*8
+  //SEG165 [80] (byte*) makecharset::$22 ← (const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19 -- pbuz1=pbuc1_plus_vwuz2 
+    lda _19
     clc
-    adc _19
-    sta !a++1
-    lda #>CHARSET+1*8
-    adc _19+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta CHARSET+1*8
-  //SEG166 [81] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#6 -- vbuz1=_inc_vbuz1 
+    adc #<CHARSET+1*8
+    sta _22
+    lda _19+1
+    adc #>CHARSET+1*8
+    sta _22+1
+  //SEG166 [81] *((byte*) makecharset::$22) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuz2 
+    lda b
+    ldy #0
+    sta (_22),y
+  //SEG167 [82] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#6 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG167 [82] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG168 [83] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #8
     bcc b4_from_b8
     jmp b9
-  //SEG168 makecharset::@9
+  //SEG169 makecharset::@9
   b9:
-  //SEG169 [83] (byte) makecharset::c#1 ← ++ (byte) makecharset::c#7 -- vbuz1=_inc_vbuz1 
+  //SEG170 [84] (byte) makecharset::c#1 ← ++ (byte) makecharset::c#7 -- vbuz1=_inc_vbuz1 
     inc c
-  //SEG170 [84] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG171 [85] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda c
     cmp #$40
     bcc b3_from_b9
     jmp breturn
-  //SEG171 makecharset::@return
+  //SEG172 makecharset::@return
   breturn:
-  //SEG172 [85] return 
+  //SEG173 [86] return 
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-//SEG173 sid_rnd_init
+//SEG174 sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-  //SEG174 [86] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
+  //SEG175 [87] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
     sta SID_VOICE3_FREQ
     lda #>$ffff
     sta SID_VOICE3_FREQ+1
-  //SEG175 [87] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
+  //SEG176 [88] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
     sta SID_VOICE3_CONTROL
     jmp breturn
-  //SEG176 sid_rnd_init::@return
+  //SEG177 sid_rnd_init::@return
   breturn:
-  //SEG177 [88] return 
+  //SEG178 [89] return 
     rts
 }
-//SEG178 fillscreen
+//SEG179 fillscreen
 // Fill a screen (1000 bytes) with a specific byte
 // fillscreen(byte* zeropage($17) screen, byte zeropage($16) fill)
 fillscreen: {
     .label screen = $17
     .label i = $19
     .label fill = $16
-  //SEG179 [90] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+  //SEG180 [91] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  //SEG180 [90] phi (word) fillscreen::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fillscreen->fillscreen::@1#0] -- vwuz1=vbuc1 
+  //SEG181 [91] phi (word) fillscreen::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fillscreen->fillscreen::@1#0] -- vwuz1=vbuc1 
     lda #0
     sta i
     lda #0
     sta i+1
-  //SEG181 [90] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#6 [phi:fillscreen->fillscreen::@1#1] -- register_copy 
+  //SEG182 [91] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#6 [phi:fillscreen->fillscreen::@1#1] -- register_copy 
     jmp b1
-  //SEG182 [90] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+  //SEG183 [91] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   b1_from_b1:
-  //SEG183 [90] phi (word) fillscreen::i#2 = (word) fillscreen::i#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
-  //SEG184 [90] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#4 [phi:fillscreen::@1->fillscreen::@1#1] -- register_copy 
+  //SEG184 [91] phi (word) fillscreen::i#2 = (word) fillscreen::i#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+  //SEG185 [91] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#4 [phi:fillscreen::@1->fillscreen::@1#1] -- register_copy 
     jmp b1
-  //SEG185 fillscreen::@1
+  //SEG186 fillscreen::@1
   b1:
-  //SEG186 [91] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 -- _deref_pbuz1=vbuz2 
+  //SEG187 [92] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 -- _deref_pbuz1=vbuz2 
     lda fill
     ldy #0
     sta (screen),y
-  //SEG187 [92] (byte*) fillscreen::screen#4 ← ++ (byte*) fillscreen::screen#5 -- pbuz1=_inc_pbuz1 
+  //SEG188 [93] (byte*) fillscreen::screen#4 ← ++ (byte*) fillscreen::screen#5 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG188 [93] (word) fillscreen::i#1 ← ++ (word) fillscreen::i#2 -- vwuz1=_inc_vwuz1 
+  //SEG189 [94] (word) fillscreen::i#1 ← ++ (word) fillscreen::i#2 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-  //SEG189 [94] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 -- vwuz1_neq_vwuc1_then_la1 
+  //SEG190 [95] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 -- vwuz1_neq_vwuc1_then_la1 
     lda i+1
     cmp #>$3e8
     bne b1_from_b1
@@ -2105,9 +2111,9 @@ fillscreen: {
     cmp #<$3e8
     bne b1_from_b1
     jmp breturn
-  //SEG190 fillscreen::@return
+  //SEG191 fillscreen::@return
   breturn:
-  //SEG191 [95] return 
+  //SEG192 [96] return 
     rts
 }
 
@@ -2147,12 +2153,16 @@ Statement [73] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const by
 Statement [77] (word~) makecharset::$17 ← ((word)) (byte) makecharset::c#7 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$17 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$17 ] ) always clobbers reg byte a 
 Statement [78] (word~) makecharset::$18 ← (word~) makecharset::$17 << (byte/signed byte/word/signed word/dword/signed dword) 3 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$18 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$18 ] ) always clobbers reg byte a 
 Statement [79] (word~) makecharset::$19 ← (word~) makecharset::$18 + (byte) makecharset::i#6 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$19 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$19 ] ) always clobbers reg byte a 
-Statement [80] *((const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19) ← (byte) makecharset::b#3 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ) always clobbers reg byte a 
-Statement [86] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
-Statement [87] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
-Statement [91] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ) always clobbers reg byte y 
+Statement [80] (byte*) makecharset::$22 ← (const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$22 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$22 ] ) always clobbers reg byte a 
+Statement [81] *((byte*) makecharset::$22) ← (byte) makecharset::b#3 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:19 [ makecharset::bc#3 makecharset::bc#5 makecharset::bc#6 makecharset::bc#1 makecharset::bc#2 ]
+Statement [87] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
+Statement [88] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
+Statement [92] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:22 [ fillscreen::fill#5 ]
-Statement [94] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ) always clobbers reg byte a 
+Statement [95] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:22 [ fillscreen::fill#5 ]
 Statement [5] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -2177,18 +2187,63 @@ Statement [59] if((byte*) makecharset::font#1!=(const byte*) CHARSET#0+(byte/sig
 Statement [61] *((byte*) makecharset::font1#2) ← (byte/word/signed word/dword/signed dword) $ff [ makecharset::font1#2 ] ( main:2::makecharset:17 [ makecharset::font1#2 ] ) always clobbers reg byte a reg byte y 
 Statement [63] if((byte*) makecharset::font1#1!=(const byte*) CHARSET#0+(word/signed word/dword/signed dword) $100*(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2 [ makecharset::font1#1 ] ( main:2::makecharset:17 [ makecharset::font1#1 ] ) always clobbers reg byte a 
 Statement [67] (byte) makecharset::bc#1 ← (byte) makecharset::bc#3 + (byte) makecharset::c#7 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#1 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#1 ] ) always clobbers reg byte a 
-Statement [69] (byte) makecharset::bc#2 ← (byte) makecharset::bc#1 - (byte/signed byte/word/signed word/dword/signed dword) $40 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ) always clobbers reg byte a 
+Statement [69] (byte) makecharset::bc#2 ← (byte) makecharset::bc#1 - (byte/signed byte/word/signed word/dword/signed dword) $40 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ]
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ]
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ]
+Removing always clobbered register reg byte x as potential for zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ]
 Statement [70] (byte~) makecharset::$11 ← (byte) makecharset::i#6 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$11 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$11 ] ) always clobbers reg byte a 
 Statement [71] (byte~) makecharset::$12 ← (byte) makecharset::ii#2 + (byte~) makecharset::$11 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$12 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$12 ] ) always clobbers reg byte a 
 Statement [73] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte[8]) makecharset::bittab#0 + (byte~) makecharset::$13) [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ) always clobbers reg byte a 
 Statement [77] (word~) makecharset::$17 ← ((word)) (byte) makecharset::c#7 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$17 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$17 ] ) always clobbers reg byte a 
 Statement [78] (word~) makecharset::$18 ← (word~) makecharset::$17 << (byte/signed byte/word/signed word/dword/signed dword) 3 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$18 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$18 ] ) always clobbers reg byte a 
 Statement [79] (word~) makecharset::$19 ← (word~) makecharset::$18 + (byte) makecharset::i#6 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$19 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$19 ] ) always clobbers reg byte a 
-Statement [80] *((const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19) ← (byte) makecharset::b#3 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ) always clobbers reg byte a 
-Statement [86] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
-Statement [87] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
-Statement [91] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [94] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ) always clobbers reg byte a 
+Statement [80] (byte*) makecharset::$22 ← (const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$22 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$22 ] ) always clobbers reg byte a 
+Statement [81] *((byte*) makecharset::$22) ← (byte) makecharset::b#3 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ) always clobbers reg byte a reg byte y 
+Statement [83] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4 [ makecharset::c#7 makecharset::bc#6 makecharset::i#1 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::bc#6 makecharset::i#1 ] ) always clobbers reg byte a 
+Statement [85] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3 [ makecharset::c#1 ] ( main:2::makecharset:17 [ makecharset::c#1 ] ) always clobbers reg byte a 
+Statement [87] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
+Statement [88] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
+Statement [92] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [95] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [21] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [24] *((const byte*) D018#0) ← (const byte) main::toD0182_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [26] (byte*~) fire::screen#10 ← (byte*) fire::screen#0 [ fire::screen#0 fire::screen#10 ] ( main:2::fire:19 [ fire::screen#0 fire::screen#10 ] main:2::fire:22 [ fire::screen#0 fire::screen#10 ] ) always clobbers reg byte a 
+Statement [28] if((byte*) fire::buffer#4!=(const byte*) BUFFER#0+(byte/signed byte/word/signed word/dword/signed dword) $18*(byte/signed byte/word/signed word/dword/signed dword) $28) goto fire::@2 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ) always clobbers reg byte a 
+Statement [29] (byte*) fire::screen#1 ← (byte*) fire::screen#0 + (byte/signed byte/word/signed word/dword/signed dword) $18*(byte/signed byte/word/signed word/dword/signed dword) $28 [ fire::screen#1 ] ( main:2::fire:19 [ fire::screen#1 ] main:2::fire:22 [ fire::screen#1 ] ) always clobbers reg byte a 
+Statement [34] (byte~) fire::$16 ← (byte~) fire::$15 >> (byte/signed byte/word/signed word/dword/signed dword) 4 [ fire::buffer#7 fire::screen#5 fire::$16 ] ( main:2::fire:19 [ fire::buffer#7 fire::screen#5 fire::$16 ] main:2::fire:22 [ fire::buffer#7 fire::screen#5 fire::$16 ] ) always clobbers reg byte a 
+Statement [36] *((byte*) fire::buffer#7) ← (byte/signed word/word/dword/signed dword~) fire::$17 [ fire::buffer#7 fire::screen#5 ] ( main:2::fire:19 [ fire::buffer#7 fire::screen#5 ] main:2::fire:22 [ fire::buffer#7 fire::screen#5 ] ) always clobbers reg byte y 
+Statement [37] *((byte*) fire::screen#5) ← *((byte*) fire::buffer#7) [ fire::buffer#7 fire::screen#5 ] ( main:2::fire:19 [ fire::buffer#7 fire::screen#5 ] main:2::fire:22 [ fire::buffer#7 fire::screen#5 ] ) always clobbers reg byte a reg byte y 
+Statement [40] if((byte*) fire::buffer#3!=(const byte*) BUFFER#0+(byte/signed byte/word/signed word/dword/signed dword) $19*(byte/signed byte/word/signed word/dword/signed dword) $28) goto fire::@6 [ fire::buffer#3 fire::screen#3 ] ( main:2::fire:19 [ fire::buffer#3 fire::screen#3 ] main:2::fire:22 [ fire::buffer#3 fire::screen#3 ] ) always clobbers reg byte a 
+Statement [42] (byte~) fire::$9 ← *((byte*) fire::buffer#4 + (byte/signed byte/word/signed word/dword/signed dword) $28-(byte/signed byte/word/signed word/dword/signed dword) 1) + *((byte*) fire::buffer#4 + (byte/signed byte/word/signed word/dword/signed dword) $28-(byte/signed byte/word/signed word/dword/signed dword) 1) [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::$9 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::$9 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::$9 ] ) always clobbers reg byte a reg byte y 
+Statement [43] (byte~) fire::$10 ← (byte~) fire::$9 + *((byte*) fire::buffer#4 + (byte/signed byte/word/signed word/dword/signed dword) $28) [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::$10 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::$10 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::$10 ] ) always clobbers reg byte a reg byte y 
+Statement [44] (byte~) fire::$11 ← (byte~) fire::$10 + *((byte*) fire::buffer#4 + (byte/signed byte/word/signed word/dword/signed dword) $29) [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::$11 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::$11 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::$11 ] ) always clobbers reg byte a reg byte y 
+Statement [45] (byte) fire::c#0 ← (byte~) fire::$11 >> (byte/signed byte/word/signed word/dword/signed dword) 2 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::c#0 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::c#0 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::c#0 ] ) always clobbers reg byte a 
+Statement [47] (byte) fire::c#1 ← (byte) fire::c#0 - (byte/signed byte/word/signed word/dword/signed dword) 3 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::c#1 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::c#1 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 fire::c#1 ] ) always clobbers reg byte a 
+Statement [49] *((byte*) fire::buffer#4) ← (byte) fire::c#2 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ) always clobbers reg byte y 
+Statement [50] *((byte*) fire::screen#4) ← *((byte*) fire::buffer#4) [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ) always clobbers reg byte a reg byte y 
+Statement [57] *((byte*) makecharset::font#2) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ makecharset::font#2 ] ( main:2::makecharset:17 [ makecharset::font#2 ] ) always clobbers reg byte a reg byte y 
+Statement [59] if((byte*) makecharset::font#1!=(const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@1 [ makecharset::font#1 ] ( main:2::makecharset:17 [ makecharset::font#1 ] ) always clobbers reg byte a 
+Statement [61] *((byte*) makecharset::font1#2) ← (byte/word/signed word/dword/signed dword) $ff [ makecharset::font1#2 ] ( main:2::makecharset:17 [ makecharset::font1#2 ] ) always clobbers reg byte a reg byte y 
+Statement [63] if((byte*) makecharset::font1#1!=(const byte*) CHARSET#0+(word/signed word/dword/signed dword) $100*(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2 [ makecharset::font1#1 ] ( main:2::makecharset:17 [ makecharset::font1#1 ] ) always clobbers reg byte a 
+Statement [67] (byte) makecharset::bc#1 ← (byte) makecharset::bc#3 + (byte) makecharset::c#7 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#1 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#1 ] ) always clobbers reg byte a 
+Statement [69] (byte) makecharset::bc#2 ← (byte) makecharset::bc#1 - (byte/signed byte/word/signed word/dword/signed dword) $40 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ) always clobbers reg byte a reg byte x 
+Statement [70] (byte~) makecharset::$11 ← (byte) makecharset::i#6 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$11 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$11 ] ) always clobbers reg byte a 
+Statement [71] (byte~) makecharset::$12 ← (byte) makecharset::ii#2 + (byte~) makecharset::$11 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$12 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$12 ] ) always clobbers reg byte a 
+Statement [73] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte[8]) makecharset::bittab#0 + (byte~) makecharset::$13) [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ) always clobbers reg byte a 
+Statement [77] (word~) makecharset::$17 ← ((word)) (byte) makecharset::c#7 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$17 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$17 ] ) always clobbers reg byte a 
+Statement [78] (word~) makecharset::$18 ← (word~) makecharset::$17 << (byte/signed byte/word/signed word/dword/signed dword) 3 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$18 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$18 ] ) always clobbers reg byte a 
+Statement [79] (word~) makecharset::$19 ← (word~) makecharset::$18 + (byte) makecharset::i#6 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$19 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$19 ] ) always clobbers reg byte a 
+Statement [80] (byte*) makecharset::$22 ← (const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$22 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 makecharset::b#3 makecharset::$22 ] ) always clobbers reg byte a 
+Statement [81] *((byte*) makecharset::$22) ← (byte) makecharset::b#3 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::i#6 makecharset::bc#6 ] ) always clobbers reg byte a reg byte y 
+Statement [83] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4 [ makecharset::c#7 makecharset::bc#6 makecharset::i#1 ] ( main:2::makecharset:17 [ makecharset::c#7 makecharset::bc#6 makecharset::i#1 ] ) always clobbers reg byte a 
+Statement [85] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3 [ makecharset::c#1 ] ( main:2::makecharset:17 [ makecharset::c#1 ] ) always clobbers reg byte a 
+Statement [87] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
+Statement [88] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
+Statement [92] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [95] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ fire::screen#0 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] : zp ZP_WORD:4 , 
 Potential registers zp ZP_WORD:6 [ fire::screen#4 fire::screen#10 fire::screen#2 ] : zp ZP_WORD:6 , 
@@ -2197,11 +2252,11 @@ Potential registers zp ZP_WORD:10 [ fire::screen#5 fire::screen#3 fire::screen#1
 Potential registers zp ZP_BYTE:12 [ fire::c#2 fire::c#0 fire::c#1 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] : zp ZP_WORD:13 , 
 Potential registers zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] : zp ZP_WORD:15 , 
-Potential registers zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] : zp ZP_BYTE:17 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] : zp ZP_BYTE:18 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:19 [ makecharset::bc#3 makecharset::bc#5 makecharset::bc#6 makecharset::bc#1 makecharset::bc#2 ] : zp ZP_BYTE:19 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] : zp ZP_BYTE:20 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] : zp ZP_BYTE:21 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] : zp ZP_BYTE:17 , 
+Potential registers zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] : zp ZP_BYTE:18 , 
+Potential registers zp ZP_BYTE:19 [ makecharset::bc#3 makecharset::bc#5 makecharset::bc#6 makecharset::bc#1 makecharset::bc#2 ] : zp ZP_BYTE:19 , reg byte x , 
+Potential registers zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] : zp ZP_BYTE:20 , reg byte y , 
+Potential registers zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] : zp ZP_BYTE:21 , reg byte y , 
 Potential registers zp ZP_BYTE:22 [ fillscreen::fill#5 ] : zp ZP_BYTE:22 , reg byte x , 
 Potential registers zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] : zp ZP_WORD:23 , 
 Potential registers zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] : zp ZP_WORD:25 , 
@@ -2219,9 +2274,10 @@ Potential registers zp ZP_BYTE:37 [ makecharset::$13 ] : zp ZP_BYTE:37 , reg byt
 Potential registers zp ZP_WORD:38 [ makecharset::$17 ] : zp ZP_WORD:38 , 
 Potential registers zp ZP_WORD:40 [ makecharset::$18 ] : zp ZP_WORD:40 , 
 Potential registers zp ZP_WORD:42 [ makecharset::$19 ] : zp ZP_WORD:42 , 
+Potential registers zp ZP_WORD:44 [ makecharset::$22 ] : zp ZP_WORD:44 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [makecharset] 5,052.29: zp ZP_BYTE:19 [ makecharset::bc#3 makecharset::bc#5 makecharset::bc#6 makecharset::bc#1 makecharset::bc#2 ] 2,948.33: zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] 2,002: zp ZP_BYTE:35 [ makecharset::$11 ] 2,002: zp ZP_BYTE:36 [ makecharset::$12 ] 2,002: zp ZP_BYTE:37 [ makecharset::$13 ] 1,835.17: zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] 233: zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] 202: zp ZP_WORD:38 [ makecharset::$17 ] 202: zp ZP_WORD:40 [ makecharset::$18 ] 202: zp ZP_WORD:42 [ makecharset::$19 ] 75.66: zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] 33: zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] 33: zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] 
+Uplift Scope [makecharset] 5,017.8: zp ZP_BYTE:19 [ makecharset::bc#3 makecharset::bc#5 makecharset::bc#6 makecharset::bc#1 makecharset::bc#2 ] 2,874.43: zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] 2,002: zp ZP_BYTE:35 [ makecharset::$11 ] 2,002: zp ZP_BYTE:36 [ makecharset::$12 ] 2,002: zp ZP_BYTE:37 [ makecharset::$13 ] 1,835.17: zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] 228.21: zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] 202: zp ZP_WORD:38 [ makecharset::$17 ] 202: zp ZP_WORD:40 [ makecharset::$18 ] 202: zp ZP_WORD:42 [ makecharset::$19 ] 202: zp ZP_WORD:44 [ makecharset::$22 ] 72.7: zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] 33: zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] 33: zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] 
 Uplift Scope [fire] 707: zp ZP_BYTE:12 [ fire::c#2 fire::c#0 fire::c#1 ] 277.75: zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] 202: zp ZP_BYTE:28 [ fire::$15 ] 202: zp ZP_BYTE:29 [ fire::$16 ] 202: zp ZP_BYTE:30 [ fire::$17 ] 202: zp ZP_BYTE:31 [ fire::$9 ] 202: zp ZP_BYTE:32 [ fire::$10 ] 202: zp ZP_BYTE:33 [ fire::$11 ] 196.39: zp ZP_WORD:8 [ fire::buffer#7 fire::buffer#3 ] 132.73: zp ZP_WORD:6 [ fire::screen#4 fire::screen#10 fire::screen#2 ] 109.46: zp ZP_WORD:10 [ fire::screen#5 fire::screen#3 fire::screen#1 ] 0.27: zp ZP_WORD:2 [ fire::screen#0 ] 
 Uplift Scope [sid_rnd] 202: zp ZP_BYTE:27 [ sid_rnd::return#2 ] 34.33: zp ZP_BYTE:34 [ sid_rnd::return#0 ] 
 Uplift Scope [fillscreen] 26.83: zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] 23.83: zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] 1.83: zp ZP_BYTE:22 [ fillscreen::fill#5 ] 
@@ -2229,36 +2285,37 @@ Uplift Scope [sid_rnd_init]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [makecharset] best 125395 combination reg byte x [ makecharset::bc#3 makecharset::bc#5 makecharset::bc#6 makecharset::bc#1 makecharset::bc#2 ] reg byte y [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] reg byte a [ makecharset::$11 ] reg byte a [ makecharset::$12 ] zp ZP_BYTE:37 [ makecharset::$13 ] zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] zp ZP_WORD:38 [ makecharset::$17 ] zp ZP_WORD:40 [ makecharset::$18 ] zp ZP_WORD:42 [ makecharset::$19 ] zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] 
-Limited combination testing to 100 combinations of 15552 possible.
-Uplifting [fire] best 122495 combination reg byte a [ fire::c#2 fire::c#0 fire::c#1 ] zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] reg byte a [ fire::$15 ] reg byte a [ fire::$16 ] reg byte a [ fire::$17 ] zp ZP_BYTE:31 [ fire::$9 ] zp ZP_BYTE:32 [ fire::$10 ] zp ZP_BYTE:33 [ fire::$11 ] zp ZP_WORD:8 [ fire::buffer#7 fire::buffer#3 ] zp ZP_WORD:6 [ fire::screen#4 fire::screen#10 fire::screen#2 ] zp ZP_WORD:10 [ fire::screen#5 fire::screen#3 fire::screen#1 ] zp ZP_WORD:2 [ fire::screen#0 ] 
+Uplifting [makecharset] best 124995 combination reg byte x [ makecharset::bc#3 makecharset::bc#5 makecharset::bc#6 makecharset::bc#1 makecharset::bc#2 ] reg byte y [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] reg byte a [ makecharset::$11 ] reg byte a [ makecharset::$12 ] zp ZP_BYTE:37 [ makecharset::$13 ] zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] zp ZP_WORD:38 [ makecharset::$17 ] zp ZP_WORD:40 [ makecharset::$18 ] zp ZP_WORD:42 [ makecharset::$19 ] zp ZP_WORD:44 [ makecharset::$22 ] zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] 
+Limited combination testing to 100 combinations of 512 possible.
+Uplifting [fire] best 122095 combination reg byte a [ fire::c#2 fire::c#0 fire::c#1 ] zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] reg byte a [ fire::$15 ] reg byte a [ fire::$16 ] reg byte a [ fire::$17 ] zp ZP_BYTE:31 [ fire::$9 ] zp ZP_BYTE:32 [ fire::$10 ] zp ZP_BYTE:33 [ fire::$11 ] zp ZP_WORD:8 [ fire::buffer#7 fire::buffer#3 ] zp ZP_WORD:6 [ fire::screen#4 fire::screen#10 fire::screen#2 ] zp ZP_WORD:10 [ fire::screen#5 fire::screen#3 fire::screen#1 ] zp ZP_WORD:2 [ fire::screen#0 ] 
 Limited combination testing to 100 combinations of 16384 possible.
-Uplifting [sid_rnd] best 121592 combination reg byte a [ sid_rnd::return#2 ] reg byte a [ sid_rnd::return#0 ] 
-Uplifting [fillscreen] best 121570 combination zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] reg byte x [ fillscreen::fill#5 ] 
-Uplifting [sid_rnd_init] best 121570 combination 
-Uplifting [main] best 121570 combination 
-Uplifting [] best 121570 combination 
+Uplifting [sid_rnd] best 121192 combination reg byte a [ sid_rnd::return#2 ] reg byte a [ sid_rnd::return#0 ] 
+Uplifting [fillscreen] best 121170 combination zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] reg byte x [ fillscreen::fill#5 ] 
+Uplifting [sid_rnd_init] best 121170 combination 
+Uplifting [main] best 121170 combination 
+Uplifting [] best 121170 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:37 [ makecharset::$13 ]
-Uplifting [makecharset] best 121570 combination zp ZP_BYTE:37 [ makecharset::$13 ] 
+Uplifting [makecharset] best 121170 combination zp ZP_BYTE:37 [ makecharset::$13 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ]
-Uplifting [makecharset] best 121570 combination zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] 
+Uplifting [makecharset] best 121170 combination zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ]
-Uplifting [makecharset] best 121570 combination zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] 
+Uplifting [makecharset] best 121170 combination zp ZP_BYTE:18 [ makecharset::i#6 makecharset::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:31 [ fire::$9 ]
-Uplifting [fire] best 120970 combination reg byte a [ fire::$9 ] 
+Uplifting [fire] best 120570 combination reg byte a [ fire::$9 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:32 [ fire::$10 ]
-Uplifting [fire] best 120370 combination reg byte a [ fire::$10 ] 
+Uplifting [fire] best 119970 combination reg byte a [ fire::$10 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:33 [ fire::$11 ]
-Uplifting [fire] best 119770 combination reg byte a [ fire::$11 ] 
+Uplifting [fire] best 119370 combination reg byte a [ fire::$11 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ]
-Uplifting [makecharset] best 119770 combination zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] 
+Uplifting [makecharset] best 119370 combination zp ZP_BYTE:17 [ makecharset::c#7 makecharset::c#1 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:2 [ fire::screen#0 ] ] with [ zp ZP_WORD:10 [ fire::screen#5 fire::screen#3 fire::screen#1 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:38 [ makecharset::$17 ] ] with [ zp ZP_WORD:40 [ makecharset::$18 ] ] - score: 1
-Coalescing zero page register with common assignment [ zp ZP_WORD:38 [ makecharset::$17 makecharset::$18 ] ] with [ zp ZP_WORD:42 [ makecharset::$19 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:42 [ makecharset::$19 ] ] with [ zp ZP_WORD:44 [ makecharset::$22 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:38 [ makecharset::$17 makecharset::$18 ] ] with [ zp ZP_WORD:42 [ makecharset::$19 makecharset::$22 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:2 [ fire::screen#0 fire::screen#5 fire::screen#3 fire::screen#1 ] ] with [ zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:2 [ fire::screen#0 fire::screen#5 fire::screen#3 fire::screen#1 makecharset::font#2 makecharset::font#1 ] ] with [ zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:2 [ fire::screen#0 fire::screen#5 fire::screen#3 fire::screen#1 makecharset::font#2 makecharset::font#1 makecharset::font1#2 makecharset::font1#1 ] ] with [ zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] ]
-Coalescing zero page register [ zp ZP_WORD:2 [ fire::screen#0 fire::screen#5 fire::screen#3 fire::screen#1 makecharset::font#2 makecharset::font#1 makecharset::font1#2 makecharset::font1#1 fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] ] with [ zp ZP_WORD:38 [ makecharset::$17 makecharset::$18 makecharset::$19 ] ]
+Coalescing zero page register [ zp ZP_WORD:2 [ fire::screen#0 fire::screen#5 fire::screen#3 fire::screen#1 makecharset::font#2 makecharset::font#1 makecharset::font1#2 makecharset::font1#1 fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] ] with [ zp ZP_WORD:38 [ makecharset::$17 makecharset::$18 makecharset::$19 makecharset::$22 ] ]
 Coalescing zero page register [ zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] ] with [ zp ZP_WORD:8 [ fire::buffer#7 fire::buffer#3 ] ]
 Coalescing zero page register [ zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 fire::buffer#7 fire::buffer#3 ] ] with [ zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] ]
 Allocated (was zp ZP_BYTE:17) zp ZP_BYTE:8 [ makecharset::c#7 makecharset::c#1 ]
@@ -2322,14 +2379,14 @@ main: {
     lda #BLACK
     sta BGCOL
   //SEG13 [7] call fillscreen 
-  //SEG14 [89] phi from main to fillscreen [phi:main->fillscreen]
+  //SEG14 [90] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
-  //SEG15 [89] phi (byte*) fillscreen::screen#6 = (const byte*) BUFFER#0 [phi:main->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG15 [90] phi (byte*) fillscreen::screen#6 = (const byte*) BUFFER#0 [phi:main->fillscreen#0] -- pbuz1=pbuc1 
     lda #<BUFFER
     sta fillscreen.screen
     lda #>BUFFER
     sta fillscreen.screen+1
-  //SEG16 [89] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->fillscreen#1] -- vbuxx=vbuc1 
+  //SEG16 [90] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->fillscreen#1] -- vbuxx=vbuc1 
     ldx #0
     jsr fillscreen
   //SEG17 [8] phi from main to main::@4 [phi:main->main::@4]
@@ -2338,14 +2395,14 @@ main: {
   //SEG18 main::@4
   b4:
   //SEG19 [9] call fillscreen 
-  //SEG20 [89] phi from main::@4 to fillscreen [phi:main::@4->fillscreen]
+  //SEG20 [90] phi from main::@4 to fillscreen [phi:main::@4->fillscreen]
   fillscreen_from_b4:
-  //SEG21 [89] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN1#0 [phi:main::@4->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG21 [90] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN1#0 [phi:main::@4->fillscreen#0] -- pbuz1=pbuc1 
     lda #<SCREEN1
     sta fillscreen.screen
     lda #>SCREEN1
     sta fillscreen.screen+1
-  //SEG22 [89] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->fillscreen#1] -- vbuxx=vbuc1 
+  //SEG22 [90] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->fillscreen#1] -- vbuxx=vbuc1 
     ldx #0
     jsr fillscreen
   //SEG23 [10] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
@@ -2354,14 +2411,14 @@ main: {
   //SEG24 main::@5
   b5:
   //SEG25 [11] call fillscreen 
-  //SEG26 [89] phi from main::@5 to fillscreen [phi:main::@5->fillscreen]
+  //SEG26 [90] phi from main::@5 to fillscreen [phi:main::@5->fillscreen]
   fillscreen_from_b5:
-  //SEG27 [89] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN2#0 [phi:main::@5->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG27 [90] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN2#0 [phi:main::@5->fillscreen#0] -- pbuz1=pbuc1 
     lda #<SCREEN2
     sta fillscreen.screen
     lda #>SCREEN2
     sta fillscreen.screen+1
-  //SEG28 [89] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->fillscreen#1] -- vbuxx=vbuc1 
+  //SEG28 [90] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->fillscreen#1] -- vbuxx=vbuc1 
     ldx #0
     jsr fillscreen
   //SEG29 [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
@@ -2370,14 +2427,14 @@ main: {
   //SEG30 main::@6
   b6:
   //SEG31 [13] call fillscreen 
-  //SEG32 [89] phi from main::@6 to fillscreen [phi:main::@6->fillscreen]
+  //SEG32 [90] phi from main::@6 to fillscreen [phi:main::@6->fillscreen]
   fillscreen_from_b6:
-  //SEG33 [89] phi (byte*) fillscreen::screen#6 = (const byte*) COLS#0 [phi:main::@6->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG33 [90] phi (byte*) fillscreen::screen#6 = (const byte*) COLS#0 [phi:main::@6->fillscreen#0] -- pbuz1=pbuc1 
     lda #<COLS
     sta fillscreen.screen
     lda #>COLS
     sta fillscreen.screen+1
-  //SEG34 [89] phi (byte) fillscreen::fill#5 = (const byte) YELLOW#0 [phi:main::@6->fillscreen#1] -- vbuxx=vbuc1 
+  //SEG34 [90] phi (byte) fillscreen::fill#5 = (const byte) YELLOW#0 [phi:main::@6->fillscreen#1] -- vbuxx=vbuc1 
     ldx #YELLOW
     jsr fillscreen
   //SEG35 [14] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
@@ -2630,6 +2687,7 @@ makecharset: {
     .label ii = $a
     .label i = 9
     .label c = 8
+    .label _22 = 2
   //SEG110 [56] phi from makecharset to makecharset::@1 [phi:makecharset->makecharset::@1]
   b1_from_makecharset:
   //SEG111 [56] phi (byte*) makecharset::font#2 = (const byte*) CHARSET#0 [phi:makecharset->makecharset::@1#0] -- pbuz1=pbuc1 
@@ -2800,96 +2858,94 @@ makecharset: {
     bcc !+
     inc _19+1
   !:
-  //SEG165 [80] *((const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19) ← (byte) makecharset::b#3 -- pbuc1_derefidx_vwuz1=vbuyy 
-    tya
-    sta !v++1
-    lda #<CHARSET+1*8
+  //SEG165 [80] (byte*) makecharset::$22 ← (const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    adc _19
-    sta !a++1
-    lda #>CHARSET+1*8
-    adc _19+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta CHARSET+1*8
-  //SEG166 [81] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#6 -- vbuz1=_inc_vbuz1 
+    lda _22
+    adc #<CHARSET+1*8
+    sta _22
+    lda _22+1
+    adc #>CHARSET+1*8
+    sta _22+1
+  //SEG166 [81] *((byte*) makecharset::$22) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuyy 
+    tya
+    ldy #0
+    sta (_22),y
+  //SEG167 [82] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#6 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG167 [82] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG168 [83] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #8
     bcc b4_from_b8
     jmp b9
-  //SEG168 makecharset::@9
+  //SEG169 makecharset::@9
   b9:
-  //SEG169 [83] (byte) makecharset::c#1 ← ++ (byte) makecharset::c#7 -- vbuz1=_inc_vbuz1 
+  //SEG170 [84] (byte) makecharset::c#1 ← ++ (byte) makecharset::c#7 -- vbuz1=_inc_vbuz1 
     inc c
-  //SEG170 [84] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG171 [85] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda c
     cmp #$40
     bcc b3_from_b9
     jmp breturn
-  //SEG171 makecharset::@return
+  //SEG172 makecharset::@return
   breturn:
-  //SEG172 [85] return 
+  //SEG173 [86] return 
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-//SEG173 sid_rnd_init
+//SEG174 sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-  //SEG174 [86] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
+  //SEG175 [87] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
     sta SID_VOICE3_FREQ
     lda #>$ffff
     sta SID_VOICE3_FREQ+1
-  //SEG175 [87] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
+  //SEG176 [88] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
     sta SID_VOICE3_CONTROL
     jmp breturn
-  //SEG176 sid_rnd_init::@return
+  //SEG177 sid_rnd_init::@return
   breturn:
-  //SEG177 [88] return 
+  //SEG178 [89] return 
     rts
 }
-//SEG178 fillscreen
+//SEG179 fillscreen
 // Fill a screen (1000 bytes) with a specific byte
 // fillscreen(byte* zeropage(2) screen, byte register(X) fill)
 fillscreen: {
     .label screen = 2
     .label i = 4
-  //SEG179 [90] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+  //SEG180 [91] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  //SEG180 [90] phi (word) fillscreen::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fillscreen->fillscreen::@1#0] -- vwuz1=vbuc1 
+  //SEG181 [91] phi (word) fillscreen::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fillscreen->fillscreen::@1#0] -- vwuz1=vbuc1 
     lda #0
     sta i
     lda #0
     sta i+1
-  //SEG181 [90] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#6 [phi:fillscreen->fillscreen::@1#1] -- register_copy 
+  //SEG182 [91] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#6 [phi:fillscreen->fillscreen::@1#1] -- register_copy 
     jmp b1
-  //SEG182 [90] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+  //SEG183 [91] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   b1_from_b1:
-  //SEG183 [90] phi (word) fillscreen::i#2 = (word) fillscreen::i#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
-  //SEG184 [90] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#4 [phi:fillscreen::@1->fillscreen::@1#1] -- register_copy 
+  //SEG184 [91] phi (word) fillscreen::i#2 = (word) fillscreen::i#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+  //SEG185 [91] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#4 [phi:fillscreen::@1->fillscreen::@1#1] -- register_copy 
     jmp b1
-  //SEG185 fillscreen::@1
+  //SEG186 fillscreen::@1
   b1:
-  //SEG186 [91] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 -- _deref_pbuz1=vbuxx 
+  //SEG187 [92] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (screen),y
-  //SEG187 [92] (byte*) fillscreen::screen#4 ← ++ (byte*) fillscreen::screen#5 -- pbuz1=_inc_pbuz1 
+  //SEG188 [93] (byte*) fillscreen::screen#4 ← ++ (byte*) fillscreen::screen#5 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG188 [93] (word) fillscreen::i#1 ← ++ (word) fillscreen::i#2 -- vwuz1=_inc_vwuz1 
+  //SEG189 [94] (word) fillscreen::i#1 ← ++ (word) fillscreen::i#2 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-  //SEG189 [94] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 -- vwuz1_neq_vwuc1_then_la1 
+  //SEG190 [95] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 -- vwuz1_neq_vwuc1_then_la1 
     lda i+1
     cmp #>$3e8
     bne b1_from_b1
@@ -2897,9 +2953,9 @@ fillscreen: {
     cmp #<$3e8
     bne b1_from_b1
     jmp breturn
-  //SEG190 fillscreen::@return
+  //SEG191 fillscreen::@return
   breturn:
-  //SEG191 [95] return 
+  //SEG192 [96] return 
     rts
 }
 
@@ -3160,6 +3216,7 @@ FINAL SYMBOL TABLE
 (word~) makecharset::$17 $17 zp ZP_WORD:2 202.0
 (word~) makecharset::$18 $18 zp ZP_WORD:2 202.0
 (word~) makecharset::$19 $19 zp ZP_WORD:2 202.0
+(byte*) makecharset::$22 $22 zp ZP_WORD:2 202.0
 (label) makecharset::@1
 (label) makecharset::@2
 (label) makecharset::@3
@@ -3173,18 +3230,18 @@ FINAL SYMBOL TABLE
 (byte) makecharset::b
 (byte) makecharset::b#1 reg byte y 2002.0
 (byte) makecharset::b#2 reg byte y 429.0
-(byte) makecharset::b#3 reg byte y 517.3333333333334
+(byte) makecharset::b#3 reg byte y 443.42857142857144
 (byte) makecharset::bc
 (byte) makecharset::bc#1 reg byte x 2002.0
 (byte) makecharset::bc#2 reg byte x 400.4
 (byte) makecharset::bc#3 reg byte x 2103.0
 (byte) makecharset::bc#5 reg byte x 202.0
-(byte) makecharset::bc#6 reg byte x 344.8888888888889
+(byte) makecharset::bc#6 reg byte x 310.4
 (byte[8]) makecharset::bittab
 (const byte[8]) makecharset::bittab#0 bittab = { (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 2, (byte/signed byte/word/signed word/dword/signed dword) 4, (byte/signed byte/word/signed word/dword/signed dword) 8, (byte/signed byte/word/signed word/dword/signed dword) $10, (byte/signed byte/word/signed word/dword/signed dword) $20, (byte/signed byte/word/signed word/dword/signed dword) $40, (byte/word/signed word/dword/signed dword) $80 }
 (byte) makecharset::c
 (byte) makecharset::c#1 c zp ZP_BYTE:8 16.5
-(byte) makecharset::c#7 c zp ZP_BYTE:8 59.15789473684211
+(byte) makecharset::c#7 c zp ZP_BYTE:8 56.19999999999999
 (byte*) makecharset::charset
 (byte*) makecharset::font
 (byte*) makecharset::font#1 font zp ZP_WORD:2 16.5
@@ -3194,7 +3251,7 @@ FINAL SYMBOL TABLE
 (byte*) makecharset::font1#2 font1 zp ZP_WORD:2 16.5
 (byte) makecharset::i
 (byte) makecharset::i#1 i zp ZP_BYTE:9 151.5
-(byte) makecharset::i#6 i zp ZP_BYTE:9 81.5
+(byte) makecharset::i#6 i zp ZP_BYTE:9 76.70588235294117
 (byte) makecharset::ii
 (byte) makecharset::ii#1 ii zp ZP_BYTE:10 1501.5
 (byte) makecharset::ii#2 ii zp ZP_BYTE:10 333.6666666666667
@@ -3206,7 +3263,7 @@ FINAL SYMBOL TABLE
 (void()) sid_rnd_init()
 (label) sid_rnd_init::@return
 
-zp ZP_WORD:2 [ fire::screen#0 fire::screen#5 fire::screen#3 fire::screen#1 makecharset::font#2 makecharset::font#1 makecharset::font1#2 makecharset::font1#1 fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 makecharset::$17 makecharset::$18 makecharset::$19 ]
+zp ZP_WORD:2 [ fire::screen#0 fire::screen#5 fire::screen#3 fire::screen#1 makecharset::font#2 makecharset::font#1 makecharset::font1#2 makecharset::font1#1 fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 makecharset::$17 makecharset::$18 makecharset::$19 makecharset::$22 ]
 zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 fire::buffer#7 fire::buffer#3 fillscreen::i#2 fillscreen::i#1 ]
 zp ZP_WORD:6 [ fire::screen#4 fire::screen#10 fire::screen#2 ]
 reg byte a [ fire::c#2 fire::c#0 fire::c#1 ]
@@ -3230,7 +3287,7 @@ zp ZP_BYTE:11 [ makecharset::$13 ]
 
 
 FINAL ASSEMBLER
-Score: 99315
+Score: 98915
 
 //SEG0 File Comments
 // A KickC version of the fire routine from the CC65 samples
@@ -3278,49 +3335,49 @@ main: {
   //SEG12 [6] *((const byte*) BGCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     sta BGCOL
   //SEG13 [7] call fillscreen 
-  //SEG14 [89] phi from main to fillscreen [phi:main->fillscreen]
-  //SEG15 [89] phi (byte*) fillscreen::screen#6 = (const byte*) BUFFER#0 [phi:main->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG14 [90] phi from main to fillscreen [phi:main->fillscreen]
+  //SEG15 [90] phi (byte*) fillscreen::screen#6 = (const byte*) BUFFER#0 [phi:main->fillscreen#0] -- pbuz1=pbuc1 
     lda #<BUFFER
     sta fillscreen.screen
     lda #>BUFFER
     sta fillscreen.screen+1
-  //SEG16 [89] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->fillscreen#1] -- vbuxx=vbuc1 
+  //SEG16 [90] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->fillscreen#1] -- vbuxx=vbuc1 
     ldx #0
     jsr fillscreen
   //SEG17 [8] phi from main to main::@4 [phi:main->main::@4]
   //SEG18 main::@4
   //SEG19 [9] call fillscreen 
-  //SEG20 [89] phi from main::@4 to fillscreen [phi:main::@4->fillscreen]
-  //SEG21 [89] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN1#0 [phi:main::@4->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG20 [90] phi from main::@4 to fillscreen [phi:main::@4->fillscreen]
+  //SEG21 [90] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN1#0 [phi:main::@4->fillscreen#0] -- pbuz1=pbuc1 
     lda #<SCREEN1
     sta fillscreen.screen
     lda #>SCREEN1
     sta fillscreen.screen+1
-  //SEG22 [89] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->fillscreen#1] -- vbuxx=vbuc1 
+  //SEG22 [90] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@4->fillscreen#1] -- vbuxx=vbuc1 
     ldx #0
     jsr fillscreen
   //SEG23 [10] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
   //SEG24 main::@5
   //SEG25 [11] call fillscreen 
-  //SEG26 [89] phi from main::@5 to fillscreen [phi:main::@5->fillscreen]
-  //SEG27 [89] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN2#0 [phi:main::@5->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG26 [90] phi from main::@5 to fillscreen [phi:main::@5->fillscreen]
+  //SEG27 [90] phi (byte*) fillscreen::screen#6 = (const byte*) SCREEN2#0 [phi:main::@5->fillscreen#0] -- pbuz1=pbuc1 
     lda #<SCREEN2
     sta fillscreen.screen
     lda #>SCREEN2
     sta fillscreen.screen+1
-  //SEG28 [89] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->fillscreen#1] -- vbuxx=vbuc1 
+  //SEG28 [90] phi (byte) fillscreen::fill#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@5->fillscreen#1] -- vbuxx=vbuc1 
     ldx #0
     jsr fillscreen
   //SEG29 [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
   //SEG30 main::@6
   //SEG31 [13] call fillscreen 
-  //SEG32 [89] phi from main::@6 to fillscreen [phi:main::@6->fillscreen]
-  //SEG33 [89] phi (byte*) fillscreen::screen#6 = (const byte*) COLS#0 [phi:main::@6->fillscreen#0] -- pbuz1=pbuc1 
+  //SEG32 [90] phi from main::@6 to fillscreen [phi:main::@6->fillscreen]
+  //SEG33 [90] phi (byte*) fillscreen::screen#6 = (const byte*) COLS#0 [phi:main::@6->fillscreen#0] -- pbuz1=pbuc1 
     lda #<COLS
     sta fillscreen.screen
     lda #>COLS
     sta fillscreen.screen+1
-  //SEG34 [89] phi (byte) fillscreen::fill#5 = (const byte) YELLOW#0 [phi:main::@6->fillscreen#1] -- vbuxx=vbuc1 
+  //SEG34 [90] phi (byte) fillscreen::fill#5 = (const byte) YELLOW#0 [phi:main::@6->fillscreen#1] -- vbuxx=vbuc1 
     ldx #YELLOW
     jsr fillscreen
   //SEG35 [14] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
@@ -3526,6 +3583,7 @@ makecharset: {
     .label ii = $a
     .label i = 9
     .label c = 8
+    .label _22 = 2
   //SEG110 [56] phi from makecharset to makecharset::@1 [phi:makecharset->makecharset::@1]
   //SEG111 [56] phi (byte*) makecharset::font#2 = (const byte*) CHARSET#0 [phi:makecharset->makecharset::@1#0] -- pbuz1=pbuc1 
     lda #<CHARSET
@@ -3669,93 +3727,91 @@ makecharset: {
     bcc !+
     inc _19+1
   !:
-  //SEG165 [80] *((const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19) ← (byte) makecharset::b#3 -- pbuc1_derefidx_vwuz1=vbuyy 
-    tya
-    sta !v++1
-    lda #<CHARSET+1*8
+  //SEG165 [80] (byte*) makecharset::$22 ← (const byte*) CHARSET#0+(byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) 8 + (word~) makecharset::$19 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    adc _19
-    sta !a++1
-    lda #>CHARSET+1*8
-    adc _19+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta CHARSET+1*8
-  //SEG166 [81] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#6 -- vbuz1=_inc_vbuz1 
+    lda _22
+    adc #<CHARSET+1*8
+    sta _22
+    lda _22+1
+    adc #>CHARSET+1*8
+    sta _22+1
+  //SEG166 [81] *((byte*) makecharset::$22) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuyy 
+    tya
+    ldy #0
+    sta (_22),y
+  //SEG167 [82] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#6 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG167 [82] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG168 [83] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #8
     bcc b4
-  //SEG168 makecharset::@9
-  //SEG169 [83] (byte) makecharset::c#1 ← ++ (byte) makecharset::c#7 -- vbuz1=_inc_vbuz1 
+  //SEG169 makecharset::@9
+  //SEG170 [84] (byte) makecharset::c#1 ← ++ (byte) makecharset::c#7 -- vbuz1=_inc_vbuz1 
     inc c
-  //SEG170 [84] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG171 [85] if((byte) makecharset::c#1<(byte/signed byte/word/signed word/dword/signed dword) $40) goto makecharset::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda c
     cmp #$40
     bcc b3
-  //SEG171 makecharset::@return
-  //SEG172 [85] return 
+  //SEG172 makecharset::@return
+  //SEG173 [86] return 
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-//SEG173 sid_rnd_init
+//SEG174 sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-  //SEG174 [86] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
+  //SEG175 [87] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
     sta SID_VOICE3_FREQ
     lda #>$ffff
     sta SID_VOICE3_FREQ+1
-  //SEG175 [87] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
+  //SEG176 [88] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
     sta SID_VOICE3_CONTROL
-  //SEG176 sid_rnd_init::@return
-  //SEG177 [88] return 
+  //SEG177 sid_rnd_init::@return
+  //SEG178 [89] return 
     rts
 }
-//SEG178 fillscreen
+//SEG179 fillscreen
 // Fill a screen (1000 bytes) with a specific byte
 // fillscreen(byte* zeropage(2) screen, byte register(X) fill)
 fillscreen: {
     .label screen = 2
     .label i = 4
-  //SEG179 [90] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  //SEG180 [90] phi (word) fillscreen::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fillscreen->fillscreen::@1#0] -- vwuz1=vbuc1 
+  //SEG180 [91] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+  //SEG181 [91] phi (word) fillscreen::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fillscreen->fillscreen::@1#0] -- vwuz1=vbuc1 
     lda #0
     sta i
     sta i+1
-  //SEG181 [90] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#6 [phi:fillscreen->fillscreen::@1#1] -- register_copy 
-  //SEG182 [90] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
-  //SEG183 [90] phi (word) fillscreen::i#2 = (word) fillscreen::i#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
-  //SEG184 [90] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#4 [phi:fillscreen::@1->fillscreen::@1#1] -- register_copy 
-  //SEG185 fillscreen::@1
+  //SEG182 [91] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#6 [phi:fillscreen->fillscreen::@1#1] -- register_copy 
+  //SEG183 [91] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
+  //SEG184 [91] phi (word) fillscreen::i#2 = (word) fillscreen::i#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
+  //SEG185 [91] phi (byte*) fillscreen::screen#5 = (byte*) fillscreen::screen#4 [phi:fillscreen::@1->fillscreen::@1#1] -- register_copy 
+  //SEG186 fillscreen::@1
   b1:
-  //SEG186 [91] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 -- _deref_pbuz1=vbuxx 
+  //SEG187 [92] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (screen),y
-  //SEG187 [92] (byte*) fillscreen::screen#4 ← ++ (byte*) fillscreen::screen#5 -- pbuz1=_inc_pbuz1 
+  //SEG188 [93] (byte*) fillscreen::screen#4 ← ++ (byte*) fillscreen::screen#5 -- pbuz1=_inc_pbuz1 
     inc screen
     bne !+
     inc screen+1
   !:
-  //SEG188 [93] (word) fillscreen::i#1 ← ++ (word) fillscreen::i#2 -- vwuz1=_inc_vwuz1 
+  //SEG189 [94] (word) fillscreen::i#1 ← ++ (word) fillscreen::i#2 -- vwuz1=_inc_vwuz1 
     inc i
     bne !+
     inc i+1
   !:
-  //SEG189 [94] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 -- vwuz1_neq_vwuc1_then_la1 
+  //SEG190 [95] if((word) fillscreen::i#1!=(word/signed word/dword/signed dword) $3e8) goto fillscreen::@1 -- vwuz1_neq_vwuc1_then_la1 
     lda i+1
     cmp #>$3e8
     bne b1
     lda i
     cmp #<$3e8
     bne b1
-  //SEG190 fillscreen::@return
-  //SEG191 [95] return 
+  //SEG191 fillscreen::@return
+  //SEG192 [96] return 
     rts
 }
 

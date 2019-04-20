@@ -1289,6 +1289,8 @@ Resolved ranged next value main::col#1 ← ++ main::col#2 to ++
 Resolved ranged comparison value if(main::col#1!=rangelast(COLS#0,main::$2)) goto main::@1 to (byte*)(const byte*) main::$2+(byte/signed byte/word/signed word/dword/signed dword) 1
 Rewriting multiplication to use shift (word/signed dword/dword~) makecharset::$8 ← (word) makecharset::c#12 * (byte/signed byte/word/signed word/dword/signed dword) 8
 Successful SSA optimization Pass2MultiplyToShiftRewriting
+De-inlining pointer[w] to *(pointer+w)   *((byte*) makecharset::charset#6 + (word/signed dword/dword~) makecharset::$9) ← (byte) makecharset::b#3
+Successful SSA optimization Pass2DeInlineWordDerefIdx
 Culled Empty Block (label) @4
 Culled Empty Block (label) print_cls::@2
 Culled Empty Block (label) @23
@@ -1959,7 +1961,7 @@ Adding NOP phi() at start of print_cls
 CALL GRAPH
 Calls in [] to main:3 
 Calls in [main] to makecharset:13 doplasma:18 
-Calls in [makecharset] to sid_rnd_init:115 print_cls:117 sid_rnd:123 print_char:141 
+Calls in [makecharset] to sid_rnd_init:115 print_cls:117 sid_rnd:123 print_char:142 
 
 Created 21 initial phi equivalence classes
 Coalesced [19] c1A#28 ← c1A#3
@@ -1980,15 +1982,15 @@ Coalesced [111] doplasma::c1b#4 ← doplasma::c1b#1
 Not coalescing [112] doplasma::yprev#3 ← doplasma::yval#0
 Coalesced [113] doplasma::i#3 ← doplasma::i#1
 Coalesced [129] makecharset::b#9 ← makecharset::b#1
-Coalesced [142] print_char_cursor#46 ← print_char_cursor#1
-Coalesced [147] makecharset::c#13 ← makecharset::c#1
-Coalesced [148] print_char_cursor#45 ← print_char_cursor#18
-Coalesced (already) [149] print_char_cursor#47 ← print_char_cursor#44
-Coalesced [150] makecharset::i#8 ← makecharset::i#1
-Coalesced [151] makecharset::ii#6 ← makecharset::ii#1
-Coalesced [152] makecharset::b#7 ← makecharset::b#3
-Coalesced (already) [153] makecharset::b#8 ← makecharset::b#2
-Coalesced [165] print_cls::sc#3 ← print_cls::sc#1
+Coalesced [143] print_char_cursor#46 ← print_char_cursor#1
+Coalesced [148] makecharset::c#13 ← makecharset::c#1
+Coalesced [149] print_char_cursor#45 ← print_char_cursor#18
+Coalesced (already) [150] print_char_cursor#47 ← print_char_cursor#44
+Coalesced [151] makecharset::i#8 ← makecharset::i#1
+Coalesced [152] makecharset::ii#6 ← makecharset::ii#1
+Coalesced [153] makecharset::b#7 ← makecharset::b#3
+Coalesced (already) [154] makecharset::b#8 ← makecharset::b#2
+Coalesced [166] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 20 phi equivalence classes
 Culled Empty Block (label) main::@12
 Culled Empty Block (label) doplasma::@11
@@ -2253,57 +2255,58 @@ makecharset::@4: scope:[makecharset]  from makecharset::@11 makecharset::@5
 makecharset::@6: scope:[makecharset]  from makecharset::@4
   [116] (word~) makecharset::$8 ← (word) makecharset::c#2 << (byte/signed byte/word/signed word/dword/signed dword) 3
   [117] (word~) makecharset::$9 ← (word~) makecharset::$8 + (byte) makecharset::i#7
-  [118] *((const byte*) CHARSET#0 + (word~) makecharset::$9) ← (byte) makecharset::b#3
-  [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7
-  [120] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2
+  [118] (byte*) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9
+  [119] *((byte*) makecharset::$16) ← (byte) makecharset::b#3
+  [120] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7
+  [121] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2
   to:makecharset::@7
 makecharset::@7: scope:[makecharset]  from makecharset::@6
-  [121] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7
-  [122] if((byte/word~) makecharset::$11!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto makecharset::@9
+  [122] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7
+  [123] if((byte/word~) makecharset::$11!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto makecharset::@9
   to:makecharset::@8
 makecharset::@8: scope:[makecharset]  from makecharset::@7
-  [123] phi()
-  [124] call print_char 
+  [124] phi()
+  [125] call print_char 
   to:makecharset::@9
 makecharset::@9: scope:[makecharset]  from makecharset::@7 makecharset::@8
-  [125] (byte*) print_char_cursor#18 ← phi( makecharset::@8/(byte*) print_char_cursor#1 makecharset::@7/(byte*) print_char_cursor#44 )
-  [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2
-  [127] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1
+  [126] (byte*) print_char_cursor#18 ← phi( makecharset::@8/(byte*) print_char_cursor#1 makecharset::@7/(byte*) print_char_cursor#44 )
+  [127] (word) makecharset::c#1 ← ++ (word) makecharset::c#2
+  [128] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1
   to:makecharset::@return
 makecharset::@return: scope:[makecharset]  from makecharset::@9
-  [128] return 
+  [129] return 
   to:@return
 print_char: scope:[print_char]  from makecharset::@8
-  [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0
-  [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44
+  [130] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0
+  [131] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44
   to:print_char::@return
 print_char::@return: scope:[print_char]  from print_char
-  [131] return 
+  [132] return 
   to:@return
 sid_rnd: scope:[sid_rnd]  from makecharset::@3
-  [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0)
+  [133] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0)
   to:sid_rnd::@return
 sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
-  [133] return 
+  [134] return 
   to:@return
 print_cls: scope:[print_cls]  from makecharset::@10
-  [134] phi()
+  [135] phi()
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
-  [135] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) print_line_cursor#0 print_cls::@1/(byte*) print_cls::sc#1 )
-  [136] *((byte*) print_cls::sc#2) ← (byte) ' '
-  [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1
+  [136] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) print_line_cursor#0 print_cls::@1/(byte*) print_cls::sc#1 )
+  [137] *((byte*) print_cls::sc#2) ← (byte) ' '
+  [138] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
+  [139] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@1
-  [139] return 
+  [140] return 
   to:@return
 sid_rnd_init: scope:[sid_rnd_init]  from makecharset
-  [140] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff
-  [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0
+  [141] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff
+  [142] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0
   to:sid_rnd_init::@return
 sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
-  [142] return 
+  [143] return 
   to:@return
 
 
@@ -2415,6 +2418,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) main::toD0181_screen
 (void()) makecharset((byte*) makecharset::charset)
 (byte/word~) makecharset::$11 22.0
+(byte*) makecharset::$16 202.0
 (byte~) makecharset::$2 22.0
 (byte~) makecharset::$3 2002.0
 (byte~) makecharset::$4 2002.0
@@ -2423,26 +2427,26 @@ VARIABLE REGISTER WEIGHTS
 (byte) makecharset::b
 (byte) makecharset::b#1 2002.0
 (byte) makecharset::b#2 500.5
-(byte) makecharset::b#3 620.8
+(byte) makecharset::b#3 517.3333333333334
 (byte[8]) makecharset::bittab
 (word) makecharset::c
 (word) makecharset::c#1 16.5
-(word) makecharset::c#2 6.041666666666666
+(word) makecharset::c#2 5.800000000000001
 (byte*) makecharset::charset
 (byte) makecharset::i
 (byte) makecharset::i#1 151.5
-(byte) makecharset::i#7 21.642857142857142
+(byte) makecharset::i#7 20.2
 (byte) makecharset::ii
 (byte) makecharset::ii#1 1501.5
 (byte) makecharset::ii#2 375.375
 (byte) makecharset::s
-(byte) makecharset::s#0 59.529411764705884
+(byte) makecharset::s#0 56.22222222222223
 (void()) print_char((byte) print_char::ch)
 (byte) print_char::ch
 (byte*) print_char_cursor
 (byte*) print_char_cursor#1 4.333333333333333
 (byte*) print_char_cursor#18 11.0
-(byte*) print_char_cursor#44 1.1304347826086956
+(byte*) print_char_cursor#44 1.0833333333333333
 (void()) print_cls()
 (byte*) print_cls::sc
 (byte*) print_cls::sc#1 16.5
@@ -2511,6 +2515,7 @@ Added variable makecharset::$3 to zero page equivalence class [ makecharset::$3 
 Added variable makecharset::$4 to zero page equivalence class [ makecharset::$4 ]
 Added variable makecharset::$8 to zero page equivalence class [ makecharset::$8 ]
 Added variable makecharset::$9 to zero page equivalence class [ makecharset::$9 ]
+Added variable makecharset::$16 to zero page equivalence class [ makecharset::$16 ]
 Added variable makecharset::$11 to zero page equivalence class [ makecharset::$11 ]
 Added variable sid_rnd::return#0 to zero page equivalence class [ sid_rnd::return#0 ]
 Complete equivalence classes
@@ -2569,6 +2574,7 @@ Complete equivalence classes
 [ makecharset::$4 ]
 [ makecharset::$8 ]
 [ makecharset::$9 ]
+[ makecharset::$16 ]
 [ makecharset::$11 ]
 [ sid_rnd::return#0 ]
 Allocated zp ZP_WORD:2 [ main::col#2 main::col#1 ]
@@ -2626,8 +2632,9 @@ Allocated zp ZP_BYTE:57 [ makecharset::$3 ]
 Allocated zp ZP_BYTE:58 [ makecharset::$4 ]
 Allocated zp ZP_WORD:59 [ makecharset::$8 ]
 Allocated zp ZP_WORD:61 [ makecharset::$9 ]
-Allocated zp ZP_BYTE:63 [ makecharset::$11 ]
-Allocated zp ZP_BYTE:64 [ sid_rnd::return#0 ]
+Allocated zp ZP_WORD:63 [ makecharset::$16 ]
+Allocated zp ZP_BYTE:65 [ makecharset::$11 ]
+Allocated zp ZP_BYTE:66 [ sid_rnd::return#0 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -3293,12 +3300,13 @@ makecharset: {
     .label _4 = $3a
     .label _8 = $3b
     .label _9 = $3d
-    .label _11 = $3f
+    .label _11 = $41
     .label s = $37
     .label ii = $15
     .label b = $16
     .label i = $14
     .label c = $10
+    .label _16 = $3f
   //SEG178 [99] call sid_rnd_init 
     jsr sid_rnd_init
   //SEG179 [100] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
@@ -3307,7 +3315,7 @@ makecharset: {
   //SEG180 makecharset::@10
   b10:
   //SEG181 [101] call print_cls 
-  //SEG182 [134] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
+  //SEG182 [135] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
   print_cls_from_b10:
     jsr print_cls
   //SEG183 [102] phi from makecharset::@10 to makecharset::@1 [phi:makecharset::@10->makecharset::@1]
@@ -3427,57 +3435,55 @@ makecharset: {
     lda #0
     adc _8+1
     sta _9+1
-  //SEG220 [118] *((const byte*) CHARSET#0 + (word~) makecharset::$9) ← (byte) makecharset::b#3 -- pbuc1_derefidx_vwuz1=vbuz2 
-    lda b
-    sta !v++1
-    lda #<CHARSET
+  //SEG220 [118] (byte*) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 -- pbuz1=pbuc1_plus_vwuz2 
+    lda _9
     clc
-    adc _9
-    sta !a++1
-    lda #>CHARSET
-    adc _9+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta CHARSET
-  //SEG221 [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
+    adc #<CHARSET
+    sta _16
+    lda _9+1
+    adc #>CHARSET
+    sta _16+1
+  //SEG221 [119] *((byte*) makecharset::$16) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuz2 
+    lda b
+    ldy #0
+    sta (_16),y
+  //SEG222 [120] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG222 [120] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG223 [121] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #8
     bcc b2_from_b6
     jmp b7
-  //SEG223 makecharset::@7
+  //SEG224 makecharset::@7
   b7:
-  //SEG224 [121] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vwuz2_band_vbuc1 
+  //SEG225 [122] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vwuz2_band_vbuc1 
     lda c
     and #7
     sta _11
-  //SEG225 [122] if((byte/word~) makecharset::$11!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto makecharset::@9 -- vbuz1_neq_0_then_la1 
+  //SEG226 [123] if((byte/word~) makecharset::$11!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto makecharset::@9 -- vbuz1_neq_0_then_la1 
     lda _11
     cmp #0
     bne b9_from_b7
-  //SEG226 [123] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
+  //SEG227 [124] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
   b8_from_b7:
     jmp b8
-  //SEG227 makecharset::@8
+  //SEG228 makecharset::@8
   b8:
-  //SEG228 [124] call print_char 
+  //SEG229 [125] call print_char 
     jsr print_char
-  //SEG229 [125] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
+  //SEG230 [126] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
   b9_from_b7:
   b9_from_b8:
-  //SEG230 [125] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
+  //SEG231 [126] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
     jmp b9
-  //SEG231 makecharset::@9
+  //SEG232 makecharset::@9
   b9:
-  //SEG232 [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
+  //SEG233 [127] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
     inc c
     bne !+
     inc c+1
   !:
-  //SEG233 [127] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
+  //SEG234 [128] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
     lda c+1
     cmp #>$100
     bcc b1_from_b9
@@ -3487,74 +3493,74 @@ makecharset: {
     bcc b1_from_b9
   !:
     jmp breturn
-  //SEG234 makecharset::@return
+  //SEG235 makecharset::@return
   breturn:
-  //SEG235 [128] return 
+  //SEG236 [129] return 
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-//SEG236 print_char
+//SEG237 print_char
 // Print a single char
 print_char: {
     .const ch = '.'
-  //SEG237 [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
+  //SEG238 [130] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
     lda #ch
     ldy #0
     sta (print_char_cursor),y
-  //SEG238 [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
+  //SEG239 [131] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
     jmp breturn
-  //SEG239 print_char::@return
+  //SEG240 print_char::@return
   breturn:
-  //SEG240 [131] return 
+  //SEG241 [132] return 
     rts
 }
-//SEG241 sid_rnd
+//SEG242 sid_rnd
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-    .label return = $40
+    .label return = $42
     .label return_2 = $38
-  //SEG242 [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuz1=_deref_pbuc1 
+  //SEG243 [133] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuz1=_deref_pbuc1 
     lda SID_VOICE3_OSC
     sta return
     jmp breturn
-  //SEG243 sid_rnd::@return
+  //SEG244 sid_rnd::@return
   breturn:
-  //SEG244 [133] return 
+  //SEG245 [134] return 
     rts
 }
-//SEG245 print_cls
+//SEG246 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = $17
-  //SEG246 [135] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG247 [136] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  //SEG247 [135] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG248 [136] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor
     sta sc
     lda #>print_line_cursor
     sta sc+1
     jmp b1
-  //SEG248 [135] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG249 [136] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  //SEG249 [135] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG250 [136] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  //SEG250 print_cls::@1
+  //SEG251 print_cls::@1
   b1:
-  //SEG251 [136] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG252 [137] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG252 [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG253 [138] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG253 [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG254 [139] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>print_line_cursor+$3e8
     bne b1_from_b1
@@ -3562,26 +3568,26 @@ print_cls: {
     cmp #<print_line_cursor+$3e8
     bne b1_from_b1
     jmp breturn
-  //SEG254 print_cls::@return
+  //SEG255 print_cls::@return
   breturn:
-  //SEG255 [139] return 
+  //SEG256 [140] return 
     rts
 }
-//SEG256 sid_rnd_init
+//SEG257 sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-  //SEG257 [140] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
+  //SEG258 [141] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
     sta SID_VOICE3_FREQ
     lda #>$ffff
     sta SID_VOICE3_FREQ+1
-  //SEG258 [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
+  //SEG259 [142] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
     sta SID_VOICE3_CONTROL
     jmp breturn
-  //SEG259 sid_rnd_init::@return
+  //SEG260 sid_rnd_init::@return
   breturn:
-  //SEG260 [142] return 
+  //SEG261 [143] return 
     rts
 }
 .pc = SINTABLE "SINTABLE"
@@ -3651,14 +3657,17 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:21 [ m
 Statement [116] (word~) makecharset::$8 ← (word) makecharset::c#2 << (byte/signed byte/word/signed word/dword/signed dword) 3 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$8 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$8 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:22 [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ]
 Statement [117] (word~) makecharset::$9 ← (word~) makecharset::$8 + (byte) makecharset::i#7 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$9 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$9 ] ) always clobbers reg byte a 
-Statement [118] *((const byte*) CHARSET#0 + (word~) makecharset::$9) ← (byte) makecharset::b#3 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 ] ) always clobbers reg byte a 
-Statement [121] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ makecharset::c#2 print_char_cursor#44 makecharset::$11 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::$11 ] ) always clobbers reg byte a 
-Statement [127] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 [ makecharset::c#1 print_char_cursor#18 ] ( main:3::makecharset:13 [ makecharset::c#1 print_char_cursor#18 ] ) always clobbers reg byte a 
-Statement [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 [ print_char_cursor#44 ] ( main:3::makecharset:13::print_char:124 [ makecharset::c#2 print_char_cursor#44 ] ) always clobbers reg byte a reg byte y 
-Statement [136] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:3::makecharset:13::print_cls:101 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:3::makecharset:13::print_cls:101 [ print_cls::sc#1 ] ) always clobbers reg byte a 
-Statement [140] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff [ ] ( main:3::makecharset:13::sid_rnd_init:99 [ ] ) always clobbers reg byte a 
-Statement [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 [ ] ( main:3::makecharset:13::sid_rnd_init:99 [ ] ) always clobbers reg byte a 
+Statement [118] (byte*) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$16 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$16 ] ) always clobbers reg byte a 
+Statement [119] *((byte*) makecharset::$16) ← (byte) makecharset::b#3 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:55 [ makecharset::s#0 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ]
+Statement [122] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ makecharset::c#2 print_char_cursor#44 makecharset::$11 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::$11 ] ) always clobbers reg byte a 
+Statement [128] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 [ makecharset::c#1 print_char_cursor#18 ] ( main:3::makecharset:13 [ makecharset::c#1 print_char_cursor#18 ] ) always clobbers reg byte a 
+Statement [130] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 [ print_char_cursor#44 ] ( main:3::makecharset:13::print_char:125 [ makecharset::c#2 print_char_cursor#44 ] ) always clobbers reg byte a reg byte y 
+Statement [137] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:3::makecharset:13::print_cls:101 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
+Statement [139] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:3::makecharset:13::print_cls:101 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Statement [141] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff [ ] ( main:3::makecharset:13::sid_rnd_init:99 [ ] ) always clobbers reg byte a 
+Statement [142] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 [ ] ( main:3::makecharset:13::sid_rnd_init:99 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) BORDERCOL#0) ← (const byte) BLUE#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) BGCOL#0) ← (const byte) BLUE#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [9] *((byte*) main::col#2) ← (const byte) BLACK#0 [ main::col#2 ] ( main:3 [ main::col#2 ] ) always clobbers reg byte a reg byte y 
@@ -3703,14 +3712,15 @@ Statement [103] (byte~) makecharset::$2 ← < (word) makecharset::c#2 [ makechar
 Statement [112] (byte) makecharset::b#1 ← (byte) makecharset::b#2 | *((const byte[8]) makecharset::bittab#0 + (byte) makecharset::ii#2) [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::ii#2 makecharset::b#1 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::ii#2 makecharset::b#1 ] ) always clobbers reg byte a 
 Statement [116] (word~) makecharset::$8 ← (word) makecharset::c#2 << (byte/signed byte/word/signed word/dword/signed dword) 3 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$8 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$8 ] ) always clobbers reg byte a 
 Statement [117] (word~) makecharset::$9 ← (word~) makecharset::$8 + (byte) makecharset::i#7 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$9 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$9 ] ) always clobbers reg byte a 
-Statement [118] *((const byte*) CHARSET#0 + (word~) makecharset::$9) ← (byte) makecharset::b#3 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 ] ) always clobbers reg byte a 
-Statement [121] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ makecharset::c#2 print_char_cursor#44 makecharset::$11 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::$11 ] ) always clobbers reg byte a 
-Statement [127] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 [ makecharset::c#1 print_char_cursor#18 ] ( main:3::makecharset:13 [ makecharset::c#1 print_char_cursor#18 ] ) always clobbers reg byte a 
-Statement [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 [ print_char_cursor#44 ] ( main:3::makecharset:13::print_char:124 [ makecharset::c#2 print_char_cursor#44 ] ) always clobbers reg byte a reg byte y 
-Statement [136] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:3::makecharset:13::print_cls:101 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:3::makecharset:13::print_cls:101 [ print_cls::sc#1 ] ) always clobbers reg byte a 
-Statement [140] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff [ ] ( main:3::makecharset:13::sid_rnd_init:99 [ ] ) always clobbers reg byte a 
-Statement [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 [ ] ( main:3::makecharset:13::sid_rnd_init:99 [ ] ) always clobbers reg byte a 
+Statement [118] (byte*) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$16 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 makecharset::b#3 makecharset::$16 ] ) always clobbers reg byte a 
+Statement [119] *((byte*) makecharset::$16) ← (byte) makecharset::b#3 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::s#0 makecharset::i#7 ] ) always clobbers reg byte a reg byte y 
+Statement [122] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 [ makecharset::c#2 print_char_cursor#44 makecharset::$11 ] ( main:3::makecharset:13 [ makecharset::c#2 print_char_cursor#44 makecharset::$11 ] ) always clobbers reg byte a 
+Statement [128] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 [ makecharset::c#1 print_char_cursor#18 ] ( main:3::makecharset:13 [ makecharset::c#1 print_char_cursor#18 ] ) always clobbers reg byte a 
+Statement [130] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 [ print_char_cursor#44 ] ( main:3::makecharset:13::print_char:125 [ makecharset::c#2 print_char_cursor#44 ] ) always clobbers reg byte a reg byte y 
+Statement [137] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:3::makecharset:13::print_cls:101 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
+Statement [139] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:3::makecharset:13::print_cls:101 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Statement [141] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff [ ] ( main:3::makecharset:13::sid_rnd_init:99 [ ] ) always clobbers reg byte a 
+Statement [142] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 [ ] ( main:3::makecharset:13::sid_rnd_init:99 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::col#2 main::col#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ c1A#1 c1A#3 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:5 [ c1B#1 c1B#3 ] : zp ZP_BYTE:5 , reg byte x , reg byte y , 
@@ -3726,7 +3736,7 @@ Potential registers zp ZP_BYTE:14 [ doplasma::i1#2 doplasma::i1#1 ] : zp ZP_BYTE
 Potential registers zp ZP_BYTE:15 [ doplasma::i2#2 doplasma::i2#1 ] : zp ZP_BYTE:15 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:16 [ makecharset::c#2 makecharset::c#1 ] : zp ZP_WORD:16 , 
 Potential registers zp ZP_WORD:18 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ] : zp ZP_WORD:18 , 
-Potential registers zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] : zp ZP_BYTE:20 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] : zp ZP_BYTE:20 , reg byte x , 
 Potential registers zp ZP_BYTE:21 [ makecharset::ii#2 makecharset::ii#1 ] : zp ZP_BYTE:21 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:22 [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] : zp ZP_BYTE:22 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:23 [ print_cls::sc#2 print_cls::sc#1 ] : zp ZP_WORD:23 , 
@@ -3760,126 +3770,128 @@ Potential registers zp ZP_BYTE:51 [ doplasma::val#46 ] : zp ZP_BYTE:51 , reg byt
 Potential registers zp ZP_BYTE:52 [ doplasma::val#48 ] : zp ZP_BYTE:52 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:53 [ doplasma::val#50 ] : zp ZP_BYTE:53 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:54 [ makecharset::$2 ] : zp ZP_BYTE:54 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:55 [ makecharset::s#0 ] : zp ZP_BYTE:55 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:55 [ makecharset::s#0 ] : zp ZP_BYTE:55 , reg byte x , 
 Potential registers zp ZP_BYTE:56 [ sid_rnd::return#2 ] : zp ZP_BYTE:56 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:57 [ makecharset::$3 ] : zp ZP_BYTE:57 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:58 [ makecharset::$4 ] : zp ZP_BYTE:58 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:59 [ makecharset::$8 ] : zp ZP_WORD:59 , 
 Potential registers zp ZP_WORD:61 [ makecharset::$9 ] : zp ZP_WORD:61 , 
-Potential registers zp ZP_BYTE:63 [ makecharset::$11 ] : zp ZP_BYTE:63 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:64 [ sid_rnd::return#0 ] : zp ZP_BYTE:64 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:63 [ makecharset::$16 ] : zp ZP_WORD:63 , 
+Potential registers zp ZP_BYTE:65 [ makecharset::$11 ] : zp ZP_BYTE:65 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:66 [ sid_rnd::return#0 ] : zp ZP_BYTE:66 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [makecharset] 3,123.3: zp ZP_BYTE:22 [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] 2,002: zp ZP_BYTE:57 [ makecharset::$3 ] 2,002: zp ZP_BYTE:58 [ makecharset::$4 ] 1,876.88: zp ZP_BYTE:21 [ makecharset::ii#2 makecharset::ii#1 ] 202: zp ZP_WORD:59 [ makecharset::$8 ] 202: zp ZP_WORD:61 [ makecharset::$9 ] 173.14: zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] 59.53: zp ZP_BYTE:55 [ makecharset::s#0 ] 22.54: zp ZP_WORD:16 [ makecharset::c#2 makecharset::c#1 ] 22: zp ZP_BYTE:54 [ makecharset::$2 ] 22: zp ZP_BYTE:63 [ makecharset::$11 ] 
+Uplift Scope [makecharset] 3,019.83: zp ZP_BYTE:22 [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] 2,002: zp ZP_BYTE:57 [ makecharset::$3 ] 2,002: zp ZP_BYTE:58 [ makecharset::$4 ] 1,876.88: zp ZP_BYTE:21 [ makecharset::ii#2 makecharset::ii#1 ] 202: zp ZP_WORD:59 [ makecharset::$8 ] 202: zp ZP_WORD:61 [ makecharset::$9 ] 202: zp ZP_WORD:63 [ makecharset::$16 ] 171.7: zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] 56.22: zp ZP_BYTE:55 [ makecharset::s#0 ] 22.3: zp ZP_WORD:16 [ makecharset::c#2 makecharset::c#1 ] 22: zp ZP_BYTE:54 [ makecharset::$2 ] 22: zp ZP_BYTE:65 [ makecharset::$11 ] 
 Uplift Scope [doplasma] 303: zp ZP_BYTE:10 [ doplasma::yprev#2 doplasma::yprev#3 ] 212.1: zp ZP_BYTE:14 [ doplasma::i1#2 doplasma::i1#1 ] 205.88: zp ZP_BYTE:15 [ doplasma::i2#2 doplasma::i2#1 ] 202: zp ZP_BYTE:26 [ doplasma::$1 ] 202: zp ZP_BYTE:27 [ doplasma::$3 ] 202: zp ZP_BYTE:28 [ doplasma::val#0 ] 202: zp ZP_BYTE:53 [ doplasma::val#50 ] 154.17: zp ZP_BYTE:12 [ doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ] 151.5: zp ZP_BYTE:11 [ doplasma::i#2 doplasma::i#1 ] 151.5: zp ZP_BYTE:29 [ doplasma::val#1 ] 151.5: zp ZP_BYTE:30 [ doplasma::val#4 ] 151.5: zp ZP_BYTE:31 [ doplasma::val#6 ] 151.5: zp ZP_BYTE:32 [ doplasma::val#8 ] 151.5: zp ZP_BYTE:33 [ doplasma::val#10 ] 151.5: zp ZP_BYTE:34 [ doplasma::val#12 ] 151.5: zp ZP_BYTE:35 [ doplasma::val#14 ] 151.5: zp ZP_BYTE:36 [ doplasma::val#16 ] 151.5: zp ZP_BYTE:37 [ doplasma::val#18 ] 151.5: zp ZP_BYTE:38 [ doplasma::val#20 ] 151.5: zp ZP_BYTE:39 [ doplasma::val#22 ] 151.5: zp ZP_BYTE:40 [ doplasma::val#24 ] 151.5: zp ZP_BYTE:41 [ doplasma::val#26 ] 151.5: zp ZP_BYTE:42 [ doplasma::val#28 ] 151.5: zp ZP_BYTE:43 [ doplasma::val#30 ] 151.5: zp ZP_BYTE:44 [ doplasma::val#32 ] 151.5: zp ZP_BYTE:45 [ doplasma::val#34 ] 151.5: zp ZP_BYTE:46 [ doplasma::val#36 ] 151.5: zp ZP_BYTE:47 [ doplasma::val#38 ] 151.5: zp ZP_BYTE:48 [ doplasma::val#40 ] 151.5: zp ZP_BYTE:49 [ doplasma::val#42 ] 151.5: zp ZP_BYTE:50 [ doplasma::val#44 ] 151.5: zp ZP_BYTE:51 [ doplasma::val#46 ] 151.5: zp ZP_BYTE:52 [ doplasma::val#48 ] 147.58: zp ZP_BYTE:13 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ] 118.65: zp ZP_BYTE:8 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ] 115.5: zp ZP_BYTE:9 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ] 43.29: zp ZP_BYTE:25 [ doplasma::yval#0 ] 
-Uplift Scope [sid_rnd] 2,002: zp ZP_BYTE:56 [ sid_rnd::return#2 ] 334.33: zp ZP_BYTE:64 [ sid_rnd::return#0 ] 
+Uplift Scope [sid_rnd] 2,002: zp ZP_BYTE:56 [ sid_rnd::return#2 ] 334.33: zp ZP_BYTE:66 [ sid_rnd::return#0 ] 
 Uplift Scope [print_cls] 33: zp ZP_WORD:23 [ print_cls::sc#2 print_cls::sc#1 ] 
 Uplift Scope [main] 33: zp ZP_WORD:2 [ main::col#2 main::col#1 ] 
-Uplift Scope [] 16.46: zp ZP_WORD:18 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ] 1.34: zp ZP_BYTE:4 [ c1A#1 c1A#3 ] 1.26: zp ZP_BYTE:5 [ c1B#1 c1B#3 ] 0.85: zp ZP_BYTE:6 [ c2A#1 c2A#3 ] 0.83: zp ZP_BYTE:7 [ c2B#1 c2B#3 ] 
+Uplift Scope [] 16.42: zp ZP_WORD:18 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ] 1.34: zp ZP_BYTE:4 [ c1A#1 c1A#3 ] 1.26: zp ZP_BYTE:5 [ c1B#1 c1B#3 ] 0.85: zp ZP_BYTE:6 [ c2A#1 c2A#3 ] 0.83: zp ZP_BYTE:7 [ c2B#1 c2B#3 ] 
 Uplift Scope [print_char] 
 Uplift Scope [sid_rnd_init] 
 
-Uplifting [makecharset] best 165755 combination reg byte y [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] reg byte a [ makecharset::$3 ] zp ZP_BYTE:58 [ makecharset::$4 ] reg byte x [ makecharset::ii#2 makecharset::ii#1 ] zp ZP_WORD:59 [ makecharset::$8 ] zp ZP_WORD:61 [ makecharset::$9 ] zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] zp ZP_BYTE:55 [ makecharset::s#0 ] zp ZP_WORD:16 [ makecharset::c#2 makecharset::c#1 ] zp ZP_BYTE:54 [ makecharset::$2 ] zp ZP_BYTE:63 [ makecharset::$11 ] 
-Limited combination testing to 100 combinations of 20736 possible.
-Uplifting [sid_rnd] best 156752 combination reg byte a [ sid_rnd::return#2 ] reg byte a [ sid_rnd::return#0 ] 
-Uplifting [print_cls] best 156752 combination zp ZP_WORD:23 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [main] best 156752 combination zp ZP_WORD:2 [ main::col#2 main::col#1 ] 
-Uplifting [] best 156752 combination zp ZP_WORD:18 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ] zp ZP_BYTE:4 [ c1A#1 c1A#3 ] zp ZP_BYTE:5 [ c1B#1 c1B#3 ] zp ZP_BYTE:6 [ c2A#1 c2A#3 ] zp ZP_BYTE:7 [ c2B#1 c2B#3 ] 
-Uplifting [print_char] best 156752 combination 
-Uplifting [sid_rnd_init] best 156752 combination 
+Uplifting [makecharset] best 165355 combination reg byte y [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ] reg byte a [ makecharset::$3 ] zp ZP_BYTE:58 [ makecharset::$4 ] reg byte x [ makecharset::ii#2 makecharset::ii#1 ] zp ZP_WORD:59 [ makecharset::$8 ] zp ZP_WORD:61 [ makecharset::$9 ] zp ZP_WORD:63 [ makecharset::$16 ] zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] zp ZP_BYTE:55 [ makecharset::s#0 ] zp ZP_WORD:16 [ makecharset::c#2 makecharset::c#1 ] zp ZP_BYTE:54 [ makecharset::$2 ] zp ZP_BYTE:65 [ makecharset::$11 ] 
+Limited combination testing to 100 combinations of 9216 possible.
+Uplifting [sid_rnd] best 156352 combination reg byte a [ sid_rnd::return#2 ] reg byte a [ sid_rnd::return#0 ] 
+Uplifting [print_cls] best 156352 combination zp ZP_WORD:23 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [main] best 156352 combination zp ZP_WORD:2 [ main::col#2 main::col#1 ] 
+Uplifting [] best 156352 combination zp ZP_WORD:18 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ] zp ZP_BYTE:4 [ c1A#1 c1A#3 ] zp ZP_BYTE:5 [ c1B#1 c1B#3 ] zp ZP_BYTE:6 [ c2A#1 c2A#3 ] zp ZP_BYTE:7 [ c2B#1 c2B#3 ] 
+Uplifting [print_char] best 156352 combination 
+Uplifting [sid_rnd_init] best 156352 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:58 [ makecharset::$4 ]
-Uplifting [makecharset] best 156752 combination zp ZP_BYTE:58 [ makecharset::$4 ] 
+Uplifting [makecharset] best 156352 combination zp ZP_BYTE:58 [ makecharset::$4 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:10 [ doplasma::yprev#2 doplasma::yprev#3 ]
-Uplifting [doplasma] best 156252 combination reg byte x [ doplasma::yprev#2 doplasma::yprev#3 ] 
+Uplifting [doplasma] best 155852 combination reg byte x [ doplasma::yprev#2 doplasma::yprev#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:14 [ doplasma::i1#2 doplasma::i1#1 ]
-Uplifting [doplasma] best 156252 combination zp ZP_BYTE:14 [ doplasma::i1#2 doplasma::i1#1 ] 
+Uplifting [doplasma] best 155852 combination zp ZP_BYTE:14 [ doplasma::i1#2 doplasma::i1#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:15 [ doplasma::i2#2 doplasma::i2#1 ]
-Uplifting [doplasma] best 147552 combination reg byte x [ doplasma::i2#2 doplasma::i2#1 ] 
+Uplifting [doplasma] best 147152 combination reg byte x [ doplasma::i2#2 doplasma::i2#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:26 [ doplasma::$1 ]
-Uplifting [doplasma] best 146952 combination reg byte a [ doplasma::$1 ] 
+Uplifting [doplasma] best 146552 combination reg byte a [ doplasma::$1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:27 [ doplasma::$3 ]
-Uplifting [doplasma] best 146352 combination reg byte a [ doplasma::$3 ] 
+Uplifting [doplasma] best 145952 combination reg byte a [ doplasma::$3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:28 [ doplasma::val#0 ]
-Uplifting [doplasma] best 145752 combination reg byte a [ doplasma::val#0 ] 
+Uplifting [doplasma] best 145352 combination reg byte a [ doplasma::val#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:53 [ doplasma::val#50 ]
-Uplifting [doplasma] best 145152 combination reg byte a [ doplasma::val#50 ] 
+Uplifting [doplasma] best 144752 combination reg byte a [ doplasma::val#50 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ]
-Uplifting [makecharset] best 145152 combination zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] 
+Uplifting [makecharset] best 144752 combination zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:12 [ doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ]
-Uplifting [doplasma] best 145152 combination zp ZP_BYTE:12 [ doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ] 
+Uplifting [doplasma] best 144752 combination zp ZP_BYTE:12 [ doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:11 [ doplasma::i#2 doplasma::i#1 ]
-Uplifting [doplasma] best 145152 combination zp ZP_BYTE:11 [ doplasma::i#2 doplasma::i#1 ] 
+Uplifting [doplasma] best 144752 combination zp ZP_BYTE:11 [ doplasma::i#2 doplasma::i#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:29 [ doplasma::val#1 ]
-Uplifting [doplasma] best 144252 combination reg byte a [ doplasma::val#1 ] 
+Uplifting [doplasma] best 143852 combination reg byte a [ doplasma::val#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:30 [ doplasma::val#4 ]
-Uplifting [doplasma] best 143352 combination reg byte a [ doplasma::val#4 ] 
+Uplifting [doplasma] best 142952 combination reg byte a [ doplasma::val#4 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:31 [ doplasma::val#6 ]
-Uplifting [doplasma] best 142452 combination reg byte a [ doplasma::val#6 ] 
+Uplifting [doplasma] best 142052 combination reg byte a [ doplasma::val#6 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:32 [ doplasma::val#8 ]
-Uplifting [doplasma] best 141552 combination reg byte a [ doplasma::val#8 ] 
+Uplifting [doplasma] best 141152 combination reg byte a [ doplasma::val#8 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:33 [ doplasma::val#10 ]
-Uplifting [doplasma] best 140652 combination reg byte a [ doplasma::val#10 ] 
+Uplifting [doplasma] best 140252 combination reg byte a [ doplasma::val#10 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:34 [ doplasma::val#12 ]
-Uplifting [doplasma] best 139752 combination reg byte a [ doplasma::val#12 ] 
+Uplifting [doplasma] best 139352 combination reg byte a [ doplasma::val#12 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:35 [ doplasma::val#14 ]
-Uplifting [doplasma] best 138852 combination reg byte a [ doplasma::val#14 ] 
+Uplifting [doplasma] best 138452 combination reg byte a [ doplasma::val#14 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:36 [ doplasma::val#16 ]
-Uplifting [doplasma] best 137952 combination reg byte a [ doplasma::val#16 ] 
+Uplifting [doplasma] best 137552 combination reg byte a [ doplasma::val#16 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:37 [ doplasma::val#18 ]
-Uplifting [doplasma] best 137052 combination reg byte a [ doplasma::val#18 ] 
+Uplifting [doplasma] best 136652 combination reg byte a [ doplasma::val#18 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:38 [ doplasma::val#20 ]
-Uplifting [doplasma] best 136152 combination reg byte a [ doplasma::val#20 ] 
+Uplifting [doplasma] best 135752 combination reg byte a [ doplasma::val#20 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:39 [ doplasma::val#22 ]
-Uplifting [doplasma] best 135252 combination reg byte a [ doplasma::val#22 ] 
+Uplifting [doplasma] best 134852 combination reg byte a [ doplasma::val#22 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:40 [ doplasma::val#24 ]
-Uplifting [doplasma] best 134352 combination reg byte a [ doplasma::val#24 ] 
+Uplifting [doplasma] best 133952 combination reg byte a [ doplasma::val#24 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:41 [ doplasma::val#26 ]
-Uplifting [doplasma] best 133452 combination reg byte a [ doplasma::val#26 ] 
+Uplifting [doplasma] best 133052 combination reg byte a [ doplasma::val#26 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:42 [ doplasma::val#28 ]
-Uplifting [doplasma] best 132552 combination reg byte a [ doplasma::val#28 ] 
+Uplifting [doplasma] best 132152 combination reg byte a [ doplasma::val#28 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:43 [ doplasma::val#30 ]
-Uplifting [doplasma] best 131652 combination reg byte a [ doplasma::val#30 ] 
+Uplifting [doplasma] best 131252 combination reg byte a [ doplasma::val#30 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:44 [ doplasma::val#32 ]
-Uplifting [doplasma] best 130752 combination reg byte a [ doplasma::val#32 ] 
+Uplifting [doplasma] best 130352 combination reg byte a [ doplasma::val#32 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:45 [ doplasma::val#34 ]
-Uplifting [doplasma] best 129852 combination reg byte a [ doplasma::val#34 ] 
+Uplifting [doplasma] best 129452 combination reg byte a [ doplasma::val#34 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:46 [ doplasma::val#36 ]
-Uplifting [doplasma] best 128952 combination reg byte a [ doplasma::val#36 ] 
+Uplifting [doplasma] best 128552 combination reg byte a [ doplasma::val#36 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:47 [ doplasma::val#38 ]
-Uplifting [doplasma] best 128052 combination reg byte a [ doplasma::val#38 ] 
+Uplifting [doplasma] best 127652 combination reg byte a [ doplasma::val#38 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:48 [ doplasma::val#40 ]
-Uplifting [doplasma] best 127152 combination reg byte a [ doplasma::val#40 ] 
+Uplifting [doplasma] best 126752 combination reg byte a [ doplasma::val#40 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:49 [ doplasma::val#42 ]
-Uplifting [doplasma] best 126252 combination reg byte a [ doplasma::val#42 ] 
+Uplifting [doplasma] best 125852 combination reg byte a [ doplasma::val#42 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:50 [ doplasma::val#44 ]
-Uplifting [doplasma] best 125352 combination reg byte a [ doplasma::val#44 ] 
+Uplifting [doplasma] best 124952 combination reg byte a [ doplasma::val#44 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:51 [ doplasma::val#46 ]
-Uplifting [doplasma] best 124452 combination reg byte a [ doplasma::val#46 ] 
+Uplifting [doplasma] best 124052 combination reg byte a [ doplasma::val#46 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:52 [ doplasma::val#48 ]
-Uplifting [doplasma] best 123552 combination reg byte a [ doplasma::val#48 ] 
+Uplifting [doplasma] best 123152 combination reg byte a [ doplasma::val#48 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:13 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ]
-Uplifting [doplasma] best 123552 combination zp ZP_BYTE:13 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ] 
+Uplifting [doplasma] best 123152 combination zp ZP_BYTE:13 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:8 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ]
-Uplifting [doplasma] best 123552 combination zp ZP_BYTE:8 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ] 
+Uplifting [doplasma] best 123152 combination zp ZP_BYTE:8 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:9 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ]
-Uplifting [doplasma] best 123552 combination zp ZP_BYTE:9 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ] 
+Uplifting [doplasma] best 123152 combination zp ZP_BYTE:9 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:55 [ makecharset::s#0 ]
-Uplifting [makecharset] best 123552 combination zp ZP_BYTE:55 [ makecharset::s#0 ] 
+Uplifting [makecharset] best 123152 combination zp ZP_BYTE:55 [ makecharset::s#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:25 [ doplasma::yval#0 ]
-Uplifting [doplasma] best 123552 combination zp ZP_BYTE:25 [ doplasma::yval#0 ] 
+Uplifting [doplasma] best 123152 combination zp ZP_BYTE:25 [ doplasma::yval#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:54 [ makecharset::$2 ]
-Uplifting [makecharset] best 123512 combination reg byte a [ makecharset::$2 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:63 [ makecharset::$11 ]
-Uplifting [makecharset] best 123452 combination reg byte a [ makecharset::$11 ] 
+Uplifting [makecharset] best 123112 combination reg byte a [ makecharset::$2 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:65 [ makecharset::$11 ]
+Uplifting [makecharset] best 123052 combination reg byte a [ makecharset::$11 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ c1A#1 c1A#3 ]
-Uplifting [] best 123452 combination zp ZP_BYTE:4 [ c1A#1 c1A#3 ] 
+Uplifting [] best 123052 combination zp ZP_BYTE:4 [ c1A#1 c1A#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:5 [ c1B#1 c1B#3 ]
-Uplifting [] best 123452 combination zp ZP_BYTE:5 [ c1B#1 c1B#3 ] 
+Uplifting [] best 123052 combination zp ZP_BYTE:5 [ c1B#1 c1B#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ c2A#1 c2A#3 ]
-Uplifting [] best 123452 combination zp ZP_BYTE:6 [ c2A#1 c2A#3 ] 
+Uplifting [] best 123052 combination zp ZP_BYTE:6 [ c2A#1 c2A#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:7 [ c2B#1 c2B#3 ]
-Uplifting [] best 123452 combination zp ZP_BYTE:7 [ c2B#1 c2B#3 ] 
+Uplifting [] best 123052 combination zp ZP_BYTE:7 [ c2B#1 c2B#3 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:59 [ makecharset::$8 ] ] with [ zp ZP_WORD:61 [ makecharset::$9 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:59 [ makecharset::$8 makecharset::$9 ] ] with [ zp ZP_WORD:63 [ makecharset::$16 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:2 [ main::col#2 main::col#1 ] ] with [ zp ZP_WORD:16 [ makecharset::c#2 makecharset::c#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:2 [ main::col#2 main::col#1 makecharset::c#2 makecharset::c#1 ] ] with [ zp ZP_WORD:23 [ print_cls::sc#2 print_cls::sc#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:4 [ c1A#1 c1A#3 ] ] with [ zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] ]
@@ -3891,7 +3903,7 @@ Coalescing zero page register [ zp ZP_BYTE:11 [ doplasma::i#2 doplasma::i#1 ] ] 
 Allocated (was zp ZP_BYTE:11) zp ZP_BYTE:10 [ doplasma::i#2 doplasma::i#1 doplasma::i1#2 doplasma::i1#1 ]
 Allocated (was zp ZP_WORD:18) zp ZP_WORD:11 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ]
 Allocated (was zp ZP_BYTE:25) zp ZP_BYTE:13 [ doplasma::yval#0 ]
-Allocated (was zp ZP_WORD:59) zp ZP_WORD:14 [ makecharset::$8 makecharset::$9 ]
+Allocated (was zp ZP_WORD:59) zp ZP_WORD:14 [ makecharset::$8 makecharset::$9 makecharset::$16 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -4419,6 +4431,7 @@ makecharset: {
     .label s = 5
     .label i = 4
     .label c = 2
+    .label _16 = $e
   //SEG178 [99] call sid_rnd_init 
     jsr sid_rnd_init
   //SEG179 [100] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
@@ -4427,7 +4440,7 @@ makecharset: {
   //SEG180 makecharset::@10
   b10:
   //SEG181 [101] call print_cls 
-  //SEG182 [134] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
+  //SEG182 [135] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
   print_cls_from_b10:
     jsr print_cls
   //SEG183 [102] phi from makecharset::@10 to makecharset::@1 [phi:makecharset::@10->makecharset::@1]
@@ -4537,55 +4550,53 @@ makecharset: {
     bcc !+
     inc _9+1
   !:
-  //SEG220 [118] *((const byte*) CHARSET#0 + (word~) makecharset::$9) ← (byte) makecharset::b#3 -- pbuc1_derefidx_vwuz1=vbuyy 
-    tya
-    sta !v++1
-    lda #<CHARSET
+  //SEG220 [118] (byte*) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    adc _9
-    sta !a++1
-    lda #>CHARSET
-    adc _9+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta CHARSET
-  //SEG221 [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
+    lda _16
+    adc #<CHARSET
+    sta _16
+    lda _16+1
+    adc #>CHARSET
+    sta _16+1
+  //SEG221 [119] *((byte*) makecharset::$16) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuyy 
+    tya
+    ldy #0
+    sta (_16),y
+  //SEG222 [120] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG222 [120] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG223 [121] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #8
     bcc b2_from_b6
     jmp b7
-  //SEG223 makecharset::@7
+  //SEG224 makecharset::@7
   b7:
-  //SEG224 [121] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vwuz1_band_vbuc1 
+  //SEG225 [122] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vwuz1_band_vbuc1 
     lda c
     and #7
-  //SEG225 [122] if((byte/word~) makecharset::$11!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto makecharset::@9 -- vbuaa_neq_0_then_la1 
+  //SEG226 [123] if((byte/word~) makecharset::$11!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto makecharset::@9 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b9_from_b7
-  //SEG226 [123] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
+  //SEG227 [124] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
   b8_from_b7:
     jmp b8
-  //SEG227 makecharset::@8
+  //SEG228 makecharset::@8
   b8:
-  //SEG228 [124] call print_char 
+  //SEG229 [125] call print_char 
     jsr print_char
-  //SEG229 [125] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
+  //SEG230 [126] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
   b9_from_b7:
   b9_from_b8:
-  //SEG230 [125] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
+  //SEG231 [126] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
     jmp b9
-  //SEG231 makecharset::@9
+  //SEG232 makecharset::@9
   b9:
-  //SEG232 [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
+  //SEG233 [127] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
     inc c
     bne !+
     inc c+1
   !:
-  //SEG233 [127] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
+  //SEG234 [128] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
     lda c+1
     cmp #>$100
     bcc b1_from_b9
@@ -4595,71 +4606,71 @@ makecharset: {
     bcc b1_from_b9
   !:
     jmp breturn
-  //SEG234 makecharset::@return
+  //SEG235 makecharset::@return
   breturn:
-  //SEG235 [128] return 
+  //SEG236 [129] return 
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-//SEG236 print_char
+//SEG237 print_char
 // Print a single char
 print_char: {
     .const ch = '.'
-  //SEG237 [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
+  //SEG238 [130] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
     lda #ch
     ldy #0
     sta (print_char_cursor),y
-  //SEG238 [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
+  //SEG239 [131] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
     jmp breturn
-  //SEG239 print_char::@return
+  //SEG240 print_char::@return
   breturn:
-  //SEG240 [131] return 
+  //SEG241 [132] return 
     rts
 }
-//SEG241 sid_rnd
+//SEG242 sid_rnd
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-  //SEG242 [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
+  //SEG243 [133] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
     lda SID_VOICE3_OSC
     jmp breturn
-  //SEG243 sid_rnd::@return
+  //SEG244 sid_rnd::@return
   breturn:
-  //SEG244 [133] return 
+  //SEG245 [134] return 
     rts
 }
-//SEG245 print_cls
+//SEG246 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
-  //SEG246 [135] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG247 [136] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
-  //SEG247 [135] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG248 [136] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor
     sta sc
     lda #>print_line_cursor
     sta sc+1
     jmp b1
-  //SEG248 [135] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG249 [136] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
   b1_from_b1:
-  //SEG249 [135] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG250 [136] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
     jmp b1
-  //SEG250 print_cls::@1
+  //SEG251 print_cls::@1
   b1:
-  //SEG251 [136] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG252 [137] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG252 [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG253 [138] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG253 [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG254 [139] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>print_line_cursor+$3e8
     bne b1_from_b1
@@ -4667,26 +4678,26 @@ print_cls: {
     cmp #<print_line_cursor+$3e8
     bne b1_from_b1
     jmp breturn
-  //SEG254 print_cls::@return
+  //SEG255 print_cls::@return
   breturn:
-  //SEG255 [139] return 
+  //SEG256 [140] return 
     rts
 }
-//SEG256 sid_rnd_init
+//SEG257 sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-  //SEG257 [140] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
+  //SEG258 [141] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
     sta SID_VOICE3_FREQ
     lda #>$ffff
     sta SID_VOICE3_FREQ+1
-  //SEG258 [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
+  //SEG259 [142] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
     sta SID_VOICE3_CONTROL
     jmp breturn
-  //SEG259 sid_rnd_init::@return
+  //SEG260 sid_rnd_init::@return
   breturn:
-  //SEG260 [142] return 
+  //SEG261 [143] return 
     rts
 }
 .pc = SINTABLE "SINTABLE"
@@ -4868,7 +4879,6 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Fixing long branch [229] bcc b5 to bcs
-Fixing long branch [330] bcc b1 to bcs
 Fixing long branch [108] bcc b8 to bcs
 
 FINAL SYMBOL TABLE
@@ -5038,6 +5048,7 @@ FINAL SYMBOL TABLE
 (byte*) main::toD0181_screen
 (void()) makecharset((byte*) makecharset::charset)
 (byte/word~) makecharset::$11 reg byte a 22.0
+(byte*) makecharset::$16 $16 zp ZP_WORD:14 202.0
 (byte~) makecharset::$2 reg byte a 22.0
 (byte~) makecharset::$3 reg byte a 2002.0
 (byte~) makecharset::$4 $4 zp ZP_BYTE:6 2002.0
@@ -5058,21 +5069,21 @@ FINAL SYMBOL TABLE
 (byte) makecharset::b
 (byte) makecharset::b#1 reg byte y 2002.0
 (byte) makecharset::b#2 reg byte y 500.5
-(byte) makecharset::b#3 reg byte y 620.8
+(byte) makecharset::b#3 reg byte y 517.3333333333334
 (byte[8]) makecharset::bittab
 (const byte[8]) makecharset::bittab#0 bittab = { (byte/signed byte/word/signed word/dword/signed dword) 1, (byte/signed byte/word/signed word/dword/signed dword) 2, (byte/signed byte/word/signed word/dword/signed dword) 4, (byte/signed byte/word/signed word/dword/signed dword) 8, (byte/signed byte/word/signed word/dword/signed dword) $10, (byte/signed byte/word/signed word/dword/signed dword) $20, (byte/signed byte/word/signed word/dword/signed dword) $40, (byte/word/signed word/dword/signed dword) $80 }
 (word) makecharset::c
 (word) makecharset::c#1 c zp ZP_WORD:2 16.5
-(word) makecharset::c#2 c zp ZP_WORD:2 6.041666666666666
+(word) makecharset::c#2 c zp ZP_WORD:2 5.800000000000001
 (byte*) makecharset::charset
 (byte) makecharset::i
 (byte) makecharset::i#1 i zp ZP_BYTE:4 151.5
-(byte) makecharset::i#7 i zp ZP_BYTE:4 21.642857142857142
+(byte) makecharset::i#7 i zp ZP_BYTE:4 20.2
 (byte) makecharset::ii
 (byte) makecharset::ii#1 reg byte x 1501.5
 (byte) makecharset::ii#2 reg byte x 375.375
 (byte) makecharset::s
-(byte) makecharset::s#0 s zp ZP_BYTE:5 59.529411764705884
+(byte) makecharset::s#0 s zp ZP_BYTE:5 56.22222222222223
 (void()) print_char((byte) print_char::ch)
 (label) print_char::@return
 (byte) print_char::ch
@@ -5080,7 +5091,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor
 (byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:11 4.333333333333333
 (byte*) print_char_cursor#18 print_char_cursor zp ZP_WORD:11 11.0
-(byte*) print_char_cursor#44 print_char_cursor zp ZP_WORD:11 1.1304347826086956
+(byte*) print_char_cursor#44 print_char_cursor zp ZP_WORD:11 1.0833333333333333
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
@@ -5143,13 +5154,13 @@ reg byte a [ doplasma::val#50 ]
 reg byte a [ makecharset::$2 ]
 reg byte a [ sid_rnd::return#2 ]
 reg byte a [ makecharset::$3 ]
-zp ZP_WORD:14 [ makecharset::$8 makecharset::$9 ]
+zp ZP_WORD:14 [ makecharset::$8 makecharset::$9 makecharset::$16 ]
 reg byte a [ makecharset::$11 ]
 reg byte a [ sid_rnd::return#0 ]
 
 
 FINAL ASSEMBLER
-Score: 94400
+Score: 93970
 
 //SEG0 File Comments
 // A KickC version of the plasma routine from the CC65 samples
@@ -5578,12 +5589,13 @@ makecharset: {
     .label s = 5
     .label i = 4
     .label c = 2
+    .label _16 = $e
   //SEG178 [99] call sid_rnd_init 
     jsr sid_rnd_init
   //SEG179 [100] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
   //SEG180 makecharset::@10
   //SEG181 [101] call print_cls 
-  //SEG182 [134] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
+  //SEG182 [135] phi from makecharset::@10 to print_cls [phi:makecharset::@10->print_cls]
     jsr print_cls
   //SEG183 [102] phi from makecharset::@10 to makecharset::@1 [phi:makecharset::@10->makecharset::@1]
   //SEG184 [102] phi (byte*) print_char_cursor#44 = (const byte*) print_line_cursor#0 [phi:makecharset::@10->makecharset::@1#0] -- pbuz1=pbuc1 
@@ -5670,136 +5682,132 @@ makecharset: {
     bcc !+
     inc _9+1
   !:
-  //SEG220 [118] *((const byte*) CHARSET#0 + (word~) makecharset::$9) ← (byte) makecharset::b#3 -- pbuc1_derefidx_vwuz1=vbuyy 
-    tya
-    sta !v++1
-    lda #<CHARSET
+  //SEG220 [118] (byte*) makecharset::$16 ← (const byte*) CHARSET#0 + (word~) makecharset::$9 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    adc _9
-    sta !a++1
-    lda #>CHARSET
-    adc _9+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta CHARSET
-  //SEG221 [119] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
+    lda _16
+    adc #<CHARSET
+    sta _16
+    lda _16+1
+    adc #>CHARSET
+    sta _16+1
+  //SEG221 [119] *((byte*) makecharset::$16) ← (byte) makecharset::b#3 -- _deref_pbuz1=vbuyy 
+    tya
+    ldy #0
+    sta (_16),y
+  //SEG222 [120] (byte) makecharset::i#1 ← ++ (byte) makecharset::i#7 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG222 [120] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG223 [121] if((byte) makecharset::i#1<(byte/signed byte/word/signed word/dword/signed dword) 8) goto makecharset::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda i
     cmp #8
     bcc b2
-  //SEG223 makecharset::@7
-  //SEG224 [121] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vwuz1_band_vbuc1 
+  //SEG224 makecharset::@7
+  //SEG225 [122] (byte/word~) makecharset::$11 ← (word) makecharset::c#2 & (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuaa=vwuz1_band_vbuc1 
     lda c
     and #7
-  //SEG225 [122] if((byte/word~) makecharset::$11!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto makecharset::@9 -- vbuaa_neq_0_then_la1 
+  //SEG226 [123] if((byte/word~) makecharset::$11!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto makecharset::@9 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne b9
-  //SEG226 [123] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
-  //SEG227 makecharset::@8
-  //SEG228 [124] call print_char 
+  //SEG227 [124] phi from makecharset::@7 to makecharset::@8 [phi:makecharset::@7->makecharset::@8]
+  //SEG228 makecharset::@8
+  //SEG229 [125] call print_char 
     jsr print_char
-  //SEG229 [125] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
-  //SEG230 [125] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
-  //SEG231 makecharset::@9
+  //SEG230 [126] phi from makecharset::@7 makecharset::@8 to makecharset::@9 [phi:makecharset::@7/makecharset::@8->makecharset::@9]
+  //SEG231 [126] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#44 [phi:makecharset::@7/makecharset::@8->makecharset::@9#0] -- register_copy 
+  //SEG232 makecharset::@9
   b9:
-  //SEG232 [126] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
+  //SEG233 [127] (word) makecharset::c#1 ← ++ (word) makecharset::c#2 -- vwuz1=_inc_vwuz1 
     inc c
     bne !+
     inc c+1
   !:
-  //SEG233 [127] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
+  //SEG234 [128] if((word) makecharset::c#1<(word/signed word/dword/signed dword) $100) goto makecharset::@1 -- vwuz1_lt_vwuc1_then_la1 
     lda c+1
     cmp #>$100
     bcc b1
     bne !+
     lda c
     cmp #<$100
-    bcs !b1+
-    jmp b1
-  !b1:
+    bcc b1
   !:
-  //SEG234 makecharset::@return
-  //SEG235 [128] return 
+  //SEG235 makecharset::@return
+  //SEG236 [129] return 
     rts
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-//SEG236 print_char
+//SEG237 print_char
 // Print a single char
 print_char: {
     .const ch = '.'
-  //SEG237 [129] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
+  //SEG238 [130] *((byte*) print_char_cursor#44) ← (const byte) print_char::ch#0 -- _deref_pbuz1=vbuc1 
     lda #ch
     ldy #0
     sta (print_char_cursor),y
-  //SEG238 [130] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
+  //SEG239 [131] (byte*) print_char_cursor#1 ← ++ (byte*) print_char_cursor#44 -- pbuz1=_inc_pbuz1 
     inc print_char_cursor
     bne !+
     inc print_char_cursor+1
   !:
-  //SEG239 print_char::@return
-  //SEG240 [131] return 
+  //SEG240 print_char::@return
+  //SEG241 [132] return 
     rts
 }
-//SEG241 sid_rnd
+//SEG242 sid_rnd
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-  //SEG242 [132] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
+  //SEG243 [133] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC#0) -- vbuaa=_deref_pbuc1 
     lda SID_VOICE3_OSC
-  //SEG243 sid_rnd::@return
-  //SEG244 [133] return 
+  //SEG244 sid_rnd::@return
+  //SEG245 [134] return 
     rts
 }
-//SEG245 print_cls
+//SEG246 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     .label sc = 2
-  //SEG246 [135] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-  //SEG247 [135] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+  //SEG247 [136] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+  //SEG248 [136] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor
     sta sc
     lda #>print_line_cursor
     sta sc+1
-  //SEG248 [135] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
-  //SEG249 [135] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
-  //SEG250 print_cls::@1
+  //SEG249 [136] phi from print_cls::@1 to print_cls::@1 [phi:print_cls::@1->print_cls::@1]
+  //SEG250 [136] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@1->print_cls::@1#0] -- register_copy 
+  //SEG251 print_cls::@1
   b1:
-  //SEG251 [136] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+  //SEG252 [137] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-  //SEG252 [137] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+  //SEG253 [138] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc sc
     bne !+
     inc sc+1
   !:
-  //SEG253 [138] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG254 [139] if((byte*) print_cls::sc#1!=(const byte*) print_line_cursor#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>print_line_cursor+$3e8
     bne b1
     lda sc
     cmp #<print_line_cursor+$3e8
     bne b1
-  //SEG254 print_cls::@return
-  //SEG255 [139] return 
+  //SEG255 print_cls::@return
+  //SEG256 [140] return 
     rts
 }
-//SEG256 sid_rnd_init
+//SEG257 sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-  //SEG257 [140] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
+  //SEG258 [141] *((const word*) SID_VOICE3_FREQ#0) ← (word/dword/signed dword) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
     sta SID_VOICE3_FREQ
     lda #>$ffff
     sta SID_VOICE3_FREQ+1
-  //SEG258 [141] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
+  //SEG259 [142] *((const byte*) SID_VOICE3_CONTROL#0) ← (const byte) SID_CONTROL_NOISE#0 -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
     sta SID_VOICE3_CONTROL
-  //SEG259 sid_rnd_init::@return
-  //SEG260 [142] return 
+  //SEG260 sid_rnd_init::@return
+  //SEG261 [143] return 
     rts
 }
 .pc = SINTABLE "SINTABLE"

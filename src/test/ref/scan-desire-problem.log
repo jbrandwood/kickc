@@ -594,6 +594,15 @@ Eliminating unused constant (const byte) draw_block::color#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+De-inlining pointer[w] to *(pointer+w)   *((const byte*) screen#0 + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0
+De-inlining pointer[w] to *(pointer+w)   *((const byte*) colors#0 + (word) draw_block::z#1) ← (const byte) YELLOW#0
+De-inlining pointer[w] to *(pointer+w)   *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word~) draw_block::$5) ← (byte/signed byte/word/signed word/dword/signed dword) 1
+De-inlining pointer[w] to *(pointer+w)   *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word~) draw_block::$6) ← (const byte) YELLOW#0
+De-inlining pointer[w] to *(pointer+w)   *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word~) draw_block::$7) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+De-inlining pointer[w] to *(pointer+w)   *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word~) draw_block::$8) ← (const byte) YELLOW#0
+De-inlining pointer[w] to *(pointer+w)   *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word~) draw_block::$9) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+De-inlining pointer[w] to *(pointer+w)   *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word~) draw_block::$10) ← (const byte) YELLOW#0
+Successful SSA optimization Pass2DeInlineWordDerefIdx
 Culled Empty Block (label) mul8u::@3
 Culled Empty Block (label) @17
 Culled Empty Block (label) main::@7
@@ -650,19 +659,19 @@ CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to init:5 draw_block:13 
 Calls in [draw_block] to mul8u:26 
-Calls in [init] to init_sprites:56 fill:58 fill:60 
+Calls in [init] to init_sprites:64 fill:66 fill:68 
 
 Created 9 initial phi equivalence classes
 Coalesced [19] main::x#6 ← main::x#1
 Coalesced [20] main::y#4 ← main::y#1
-Coalesced [40] mul8u::a#7 ← mul8u::a#1
-Coalesced [47] mul8u::res#9 ← mul8u::res#1
-Coalesced [51] mul8u::a#8 ← mul8u::a#0
-Coalesced [52] mul8u::res#7 ← mul8u::res#6
-Coalesced [53] mul8u::mb#6 ← mul8u::mb#1
-Coalesced (already) [54] mul8u::res#8 ← mul8u::res#2
-Coalesced [72] fill::addr#3 ← fill::addr#0
-Coalesced [78] fill::addr#4 ← fill::addr#1
+Coalesced [48] mul8u::a#7 ← mul8u::a#1
+Coalesced [55] mul8u::res#9 ← mul8u::res#1
+Coalesced [59] mul8u::a#8 ← mul8u::a#0
+Coalesced [60] mul8u::res#7 ← mul8u::res#6
+Coalesced [61] mul8u::mb#6 ← mul8u::mb#1
+Coalesced (already) [62] mul8u::res#8 ← mul8u::res#2
+Coalesced [80] fill::addr#3 ← fill::addr#0
+Coalesced [86] fill::addr#4 ← fill::addr#1
 Coalesced down to 7 phi equivalence classes
 Culled Empty Block (label) main::@9
 Culled Empty Block (label) main::@10
@@ -734,93 +743,101 @@ draw_block::@1: scope:[draw_block]  from draw_block
   [26] (word) draw_block::z#0 ← (word) mul8u::return#2
   [27] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0
   [28] (byte) draw_block::drawtile#0 ← *((const byte*) tileset#0 + (byte) draw_block::tileno#1)
-  [29] *((const byte*) screen#0 + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0
-  [30] *((const byte*) colors#0 + (word) draw_block::z#1) ← (const byte) YELLOW#0
-  [31] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  [32] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (const byte) YELLOW#0
-  [33] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 2
-  [34] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (const byte) YELLOW#0
-  [35] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 3
-  [36] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (const byte) YELLOW#0
+  [29] (byte*) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1
+  [30] *((byte*) draw_block::$11) ← (byte) draw_block::drawtile#0
+  [31] (byte*) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1
+  [32] *((byte*) draw_block::$12) ← (const byte) YELLOW#0
+  [33] (byte*) draw_block::$13 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1
+  [34] *((byte*) draw_block::$13) ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  [35] (byte*) draw_block::$14 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1
+  [36] *((byte*) draw_block::$14) ← (const byte) YELLOW#0
+  [37] (byte*) draw_block::$15 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1
+  [38] *((byte*) draw_block::$15) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  [39] (byte*) draw_block::$16 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1
+  [40] *((byte*) draw_block::$16) ← (const byte) YELLOW#0
+  [41] (byte*) draw_block::$17 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1
+  [42] *((byte*) draw_block::$17) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  [43] (byte*) draw_block::$18 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1
+  [44] *((byte*) draw_block::$18) ← (const byte) YELLOW#0
   to:draw_block::@return
 draw_block::@return: scope:[draw_block]  from draw_block::@1
-  [37] return 
+  [45] return 
   to:@return
 mul8u: scope:[mul8u]  from draw_block
-  [38] phi()
+  [46] phi()
   to:mul8u::@1
 mul8u::@1: scope:[mul8u]  from mul8u mul8u::@3
-  [39] (word) mul8u::mb#2 ← phi( mul8u/((word))(const byte) mul8u::b#0 mul8u::@3/(word) mul8u::mb#1 )
-  [39] (word) mul8u::res#2 ← phi( mul8u/(byte/signed byte/word/signed word/dword/signed dword) 0 mul8u::@3/(word) mul8u::res#6 )
-  [39] (byte) mul8u::a#2 ← phi( mul8u/(byte) mul8u::a#1 mul8u::@3/(byte) mul8u::a#0 )
-  [40] if((byte) mul8u::a#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@2
+  [47] (word) mul8u::mb#2 ← phi( mul8u/((word))(const byte) mul8u::b#0 mul8u::@3/(word) mul8u::mb#1 )
+  [47] (word) mul8u::res#2 ← phi( mul8u/(byte/signed byte/word/signed word/dword/signed dword) 0 mul8u::@3/(word) mul8u::res#6 )
+  [47] (byte) mul8u::a#2 ← phi( mul8u/(byte) mul8u::a#1 mul8u::@3/(byte) mul8u::a#0 )
+  [48] if((byte) mul8u::a#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@2
   to:mul8u::@return
 mul8u::@return: scope:[mul8u]  from mul8u::@1
-  [41] return 
+  [49] return 
   to:@return
 mul8u::@2: scope:[mul8u]  from mul8u::@1
-  [42] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1
-  [43] if((byte~) mul8u::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@3
+  [50] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1
+  [51] if((byte~) mul8u::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@3
   to:mul8u::@4
 mul8u::@4: scope:[mul8u]  from mul8u::@2
-  [44] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2
+  [52] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2
   to:mul8u::@3
 mul8u::@3: scope:[mul8u]  from mul8u::@2 mul8u::@4
-  [45] (word) mul8u::res#6 ← phi( mul8u::@2/(word) mul8u::res#2 mul8u::@4/(word) mul8u::res#1 )
-  [46] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte/signed byte/word/signed word/dword/signed dword) 1
-  [47] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte/signed byte/word/signed word/dword/signed dword) 1
+  [53] (word) mul8u::res#6 ← phi( mul8u::@2/(word) mul8u::res#2 mul8u::@4/(word) mul8u::res#1 )
+  [54] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte/signed byte/word/signed word/dword/signed dword) 1
+  [55] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte/signed byte/word/signed word/dword/signed dword) 1
   to:mul8u::@1
 init: scope:[init]  from main
-  [48] phi()
-  [49] call init_sprites 
+  [56] phi()
+  [57] call init_sprites 
   to:init::@2
 init::@2: scope:[init]  from init
-  [50] phi()
-  [51] call fill 
+  [58] phi()
+  [59] call fill 
   to:init::@3
 init::@3: scope:[init]  from init::@2
-  [52] phi()
-  [53] call fill 
+  [60] phi()
+  [61] call fill 
   to:init::toD0181
 init::toD0181: scope:[init]  from init::@3
-  [54] phi()
+  [62] phi()
   to:init::@1
 init::@1: scope:[init]  from init::toD0181
-  [55] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0
+  [63] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0
   asm { lda#$5b sta$d011  }
-  [57] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0
-  [58] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0
-  [59] *((const byte*) BGCOL2#0) ← (const byte) RED#0
-  [60] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0
-  [61] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0
+  [65] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0
+  [66] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0
+  [67] *((const byte*) BGCOL2#0) ← (const byte) RED#0
+  [68] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0
+  [69] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0
   to:init::@return
 init::@return: scope:[init]  from init::@1
-  [62] return 
+  [70] return 
   to:@return
 fill: scope:[fill]  from init::@2 init::@3
-  [63] (byte) fill::val#3 ← phi( init::@2/(byte/signed byte/word/signed word/dword/signed dword) 0 init::@3/(const byte) BLACK#0 )
-  [63] (byte*) fill::addr#0 ← phi( init::@2/(const byte*) screen#0 init::@3/(const byte*) colors#0 )
-  [64] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8
+  [71] (byte) fill::val#3 ← phi( init::@2/(byte/signed byte/word/signed word/dword/signed dword) 0 init::@3/(const byte) BLACK#0 )
+  [71] (byte*) fill::addr#0 ← phi( init::@2/(const byte*) screen#0 init::@3/(const byte*) colors#0 )
+  [72] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8
   to:fill::@1
 fill::@1: scope:[fill]  from fill fill::@1
-  [65] (byte*) fill::addr#2 ← phi( fill/(byte*) fill::addr#0 fill::@1/(byte*) fill::addr#1 )
-  [66] *((byte*) fill::addr#2) ← (byte) fill::val#3
-  [67] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2
-  [68] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
+  [73] (byte*) fill::addr#2 ← phi( fill/(byte*) fill::addr#0 fill::@1/(byte*) fill::addr#1 )
+  [74] *((byte*) fill::addr#2) ← (byte) fill::val#3
+  [75] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2
+  [76] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
   to:fill::@return
 fill::@return: scope:[fill]  from fill::@1
-  [69] return 
+  [77] return 
   to:@return
 init_sprites: scope:[init_sprites]  from init
-  [70] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1
-  [71] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  [72] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  [73] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  [74] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0
-  [75] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  [78] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  [81] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0
+  [83] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0
   to:init_sprites::@return
 init_sprites::@return: scope:[init_sprites]  from init_sprites
-  [76] return 
+  [84] return 
   to:@return
 
 
@@ -847,9 +864,17 @@ VARIABLE REGISTER WEIGHTS
 (byte*) colors
 (void()) draw_block((byte) draw_block::tileno , (byte) draw_block::x , (byte) draw_block::y , (byte) draw_block::color)
 (byte~) draw_block::$1 4.0
+(byte*) draw_block::$11 4.0
+(byte*) draw_block::$12 4.0
+(byte*) draw_block::$13 4.0
+(byte*) draw_block::$14 4.0
+(byte*) draw_block::$15 4.0
+(byte*) draw_block::$16 4.0
+(byte*) draw_block::$17 4.0
+(byte*) draw_block::$18 4.0
 (byte) draw_block::color
 (byte) draw_block::drawtile
-(byte) draw_block::drawtile#0 4.0
+(byte) draw_block::drawtile#0 2.0
 (byte) draw_block::tileno
 (byte) draw_block::tileno#0 34.33333333333333
 (byte) draw_block::tileno#1 0.4444444444444444
@@ -862,7 +887,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) draw_block::y#1 4.0
 (word) draw_block::z
 (word) draw_block::z#0 4.0
-(word) draw_block::z#1 2.0000000000000004
+(word) draw_block::z#1 1.125
 (void()) fill((byte*) fill::start , (word) fill::size , (byte) fill::val)
 (byte*) fill::addr
 (byte*) fill::addr#0 2.0
@@ -940,6 +965,14 @@ Added variable mul8u::return#2 to zero page equivalence class [ mul8u::return#2 
 Added variable draw_block::z#0 to zero page equivalence class [ draw_block::z#0 ]
 Added variable draw_block::z#1 to zero page equivalence class [ draw_block::z#1 ]
 Added variable draw_block::drawtile#0 to zero page equivalence class [ draw_block::drawtile#0 ]
+Added variable draw_block::$11 to zero page equivalence class [ draw_block::$11 ]
+Added variable draw_block::$12 to zero page equivalence class [ draw_block::$12 ]
+Added variable draw_block::$13 to zero page equivalence class [ draw_block::$13 ]
+Added variable draw_block::$14 to zero page equivalence class [ draw_block::$14 ]
+Added variable draw_block::$15 to zero page equivalence class [ draw_block::$15 ]
+Added variable draw_block::$16 to zero page equivalence class [ draw_block::$16 ]
+Added variable draw_block::$17 to zero page equivalence class [ draw_block::$17 ]
+Added variable draw_block::$18 to zero page equivalence class [ draw_block::$18 ]
 Added variable mul8u::$1 to zero page equivalence class [ mul8u::$1 ]
 Added variable fill::end#0 to zero page equivalence class [ fill::end#0 ]
 Complete equivalence classes
@@ -963,6 +996,14 @@ Complete equivalence classes
 [ draw_block::z#0 ]
 [ draw_block::z#1 ]
 [ draw_block::drawtile#0 ]
+[ draw_block::$11 ]
+[ draw_block::$12 ]
+[ draw_block::$13 ]
+[ draw_block::$14 ]
+[ draw_block::$15 ]
+[ draw_block::$16 ]
+[ draw_block::$17 ]
+[ draw_block::$18 ]
 [ mul8u::$1 ]
 [ fill::end#0 ]
 Allocated zp ZP_BYTE:2 [ main::x#4 main::x#1 ]
@@ -985,8 +1026,16 @@ Allocated zp ZP_WORD:22 [ mul8u::return#2 ]
 Allocated zp ZP_WORD:24 [ draw_block::z#0 ]
 Allocated zp ZP_WORD:26 [ draw_block::z#1 ]
 Allocated zp ZP_BYTE:28 [ draw_block::drawtile#0 ]
-Allocated zp ZP_BYTE:29 [ mul8u::$1 ]
-Allocated zp ZP_WORD:30 [ fill::end#0 ]
+Allocated zp ZP_WORD:29 [ draw_block::$11 ]
+Allocated zp ZP_WORD:31 [ draw_block::$12 ]
+Allocated zp ZP_WORD:33 [ draw_block::$13 ]
+Allocated zp ZP_WORD:35 [ draw_block::$14 ]
+Allocated zp ZP_WORD:37 [ draw_block::$15 ]
+Allocated zp ZP_WORD:39 [ draw_block::$16 ]
+Allocated zp ZP_WORD:41 [ draw_block::$17 ]
+Allocated zp ZP_WORD:43 [ draw_block::$18 ]
+Allocated zp ZP_BYTE:45 [ mul8u::$1 ]
+Allocated zp ZP_WORD:46 [ fill::end#0 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -1043,7 +1092,7 @@ main: {
     .label y = 3
     .label x = 2
   //SEG11 [5] call init 
-  //SEG12 [48] phi from main to init [phi:main->init]
+  //SEG12 [56] phi from main to init [phi:main->init]
   init_from_main:
     jsr init
   //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -1129,6 +1178,14 @@ draw_block: {
     .label z = $18
     .label z_1 = $1a
     .label drawtile = $1c
+    .label _11 = $1d
+    .label _12 = $1f
+    .label _13 = $21
+    .label _14 = $23
+    .label _15 = $25
+    .label _16 = $27
+    .label _17 = $29
+    .label _18 = $2b
   //SEG38 [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuz1=vbuz2_rol_2 
     lda tileno
     asl
@@ -1151,7 +1208,7 @@ draw_block: {
     lda y_1
     sta mul8u.a
   //SEG43 [24] call mul8u 
-  //SEG44 [38] phi from draw_block to mul8u [phi:draw_block->mul8u]
+  //SEG44 [46] phi from draw_block to mul8u [phi:draw_block->mul8u]
   mul8u_from_draw_block:
     jsr mul8u
   //SEG45 [25] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
@@ -1179,152 +1236,157 @@ draw_block: {
     ldy tileno_1
     lda tileset,y
     sta drawtile
-  //SEG50 [29] *((const byte*) screen#0 + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0 -- pbuc1_derefidx_vwuz1=vbuz2 
+  //SEG50 [29] (byte*) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
+    clc
+    adc #<screen
+    sta _11
+    lda z_1+1
+    adc #>screen
+    sta _11+1
+  //SEG51 [30] *((byte*) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuz2 
     lda drawtile
-    sta !v++1
-    lda #<screen
+    ldy #0
+    sta (_11),y
+  //SEG52 [31] (byte*) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !a++1
-    lda #>screen
-    adc z_1+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta screen
-  //SEG51 [30] *((const byte*) colors#0 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors
-    clc
-    adc z_1
-    sta !++1
-    lda #>colors
-    adc z_1+1
-    sta !++2
+    adc #<colors
+    sta _12
+    lda z_1+1
+    adc #>colors
+    sta _12+1
+  //SEG53 [32] *((byte*) draw_block::$12) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors
-  //SEG52 [31] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<screen+1
+    ldy #0
+    sta (_12),y
+  //SEG54 [33] (byte*) draw_block::$13 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+1
-    adc z_1+1
-    sta !++2
+    adc #<screen+1
+    sta _13
+    lda z_1+1
+    adc #>screen+1
+    sta _13+1
+  //SEG55 [34] *((byte*) draw_block::$13) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuz1=vbuc1 
     lda #1
-  !:
-    sta screen+1
-  //SEG53 [32] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors+1
+    ldy #0
+    sta (_13),y
+  //SEG56 [35] (byte*) draw_block::$14 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+1
-    adc z_1+1
-    sta !++2
+    adc #<colors+1
+    sta _14
+    lda z_1+1
+    adc #>colors+1
+    sta _14+1
+  //SEG57 [36] *((byte*) draw_block::$14) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors+1
-  //SEG54 [33] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<screen+$28
+    ldy #0
+    sta (_14),y
+  //SEG58 [37] (byte*) draw_block::$15 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+$28
-    adc z_1+1
-    sta !++2
+    adc #<screen+$28
+    sta _15
+    lda z_1+1
+    adc #>screen+$28
+    sta _15+1
+  //SEG59 [38] *((byte*) draw_block::$15) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuz1=vbuc1 
     lda #2
-  !:
-    sta screen+$28
-  //SEG55 [34] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors+$28
+    ldy #0
+    sta (_15),y
+  //SEG60 [39] (byte*) draw_block::$16 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+$28
-    adc z_1+1
-    sta !++2
+    adc #<colors+$28
+    sta _16
+    lda z_1+1
+    adc #>colors+$28
+    sta _16+1
+  //SEG61 [40] *((byte*) draw_block::$16) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors+$28
-  //SEG56 [35] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<screen+$29
+    ldy #0
+    sta (_16),y
+  //SEG62 [41] (byte*) draw_block::$17 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+$29
-    adc z_1+1
-    sta !++2
+    adc #<screen+$29
+    sta _17
+    lda z_1+1
+    adc #>screen+$29
+    sta _17+1
+  //SEG63 [42] *((byte*) draw_block::$17) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuz1=vbuc1 
     lda #3
-  !:
-    sta screen+$29
-  //SEG57 [36] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors+$29
+    ldy #0
+    sta (_17),y
+  //SEG64 [43] (byte*) draw_block::$18 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+$29
-    adc z_1+1
-    sta !++2
+    adc #<colors+$29
+    sta _18
+    lda z_1+1
+    adc #>colors+$29
+    sta _18+1
+  //SEG65 [44] *((byte*) draw_block::$18) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors+$29
+    ldy #0
+    sta (_18),y
     jmp breturn
-  //SEG58 draw_block::@return
+  //SEG66 draw_block::@return
   breturn:
-  //SEG59 [37] return 
+  //SEG67 [45] return 
     rts
 }
-//SEG60 mul8u
+//SEG68 mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte zeropage(4) a)
 mul8u: {
     .const b = $28
-    .label _1 = $1d
+    .label _1 = $2d
     .label a = 4
     .label mb = 7
     .label res = 5
     .label return = $16
-  //SEG61 [39] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+  //SEG69 [47] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   b1_from_mul8u:
-  //SEG62 [39] phi (word) mul8u::mb#2 = ((word))(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
+  //SEG70 [47] phi (word) mul8u::mb#2 = ((word))(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #b
     sta mb
     lda #0
     sta mb+1
-  //SEG63 [39] phi (word) mul8u::res#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
+  //SEG71 [47] phi (word) mul8u::res#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #0
     sta res
     lda #0
     sta res+1
-  //SEG64 [39] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
+  //SEG72 [47] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
-  //SEG65 mul8u::@1
+  //SEG73 mul8u::@1
   b1:
-  //SEG66 [40] if((byte) mul8u::a#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
+  //SEG74 [48] if((byte) mul8u::a#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
     lda a
     cmp #0
     bne b2
     jmp breturn
-  //SEG67 mul8u::@return
+  //SEG75 mul8u::@return
   breturn:
-  //SEG68 [41] return 
+  //SEG76 [49] return 
     rts
-  //SEG69 mul8u::@2
+  //SEG77 mul8u::@2
   b2:
-  //SEG70 [42] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG78 [50] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and a
     sta _1
-  //SEG71 [43] if((byte~) mul8u::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
+  //SEG79 [51] if((byte~) mul8u::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
     lda _1
     cmp #0
     beq b3_from_b2
     jmp b4
-  //SEG72 mul8u::@4
+  //SEG80 mul8u::@4
   b4:
-  //SEG73 [44] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+  //SEG81 [52] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
     lda res
     clc
     adc mb
@@ -1332,107 +1394,107 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  //SEG74 [45] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+  //SEG82 [53] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
-  //SEG75 [45] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+  //SEG83 [53] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     jmp b3
-  //SEG76 mul8u::@3
+  //SEG84 mul8u::@3
   b3:
-  //SEG77 [46] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_ror_1 
+  //SEG85 [54] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz1_ror_1 
     lsr a
-  //SEG78 [47] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwuz1=vwuz1_rol_1 
+  //SEG86 [55] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwuz1=vwuz1_rol_1 
     asl mb
     rol mb+1
-  //SEG79 [39] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+  //SEG87 [47] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
-  //SEG80 [39] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-  //SEG81 [39] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-  //SEG82 [39] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+  //SEG88 [47] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+  //SEG89 [47] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+  //SEG90 [47] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
     jmp b1
 }
-//SEG83 init
+//SEG91 init
 init: {
     .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
-  //SEG84 [49] call init_sprites 
+  //SEG92 [57] call init_sprites 
     jsr init_sprites
-  //SEG85 [50] phi from init to init::@2 [phi:init->init::@2]
+  //SEG93 [58] phi from init to init::@2 [phi:init->init::@2]
   b2_from_init:
     jmp b2
-  //SEG86 init::@2
+  //SEG94 init::@2
   b2:
-  //SEG87 [51] call fill 
-  //SEG88 [63] phi from init::@2 to fill [phi:init::@2->fill]
+  //SEG95 [59] call fill 
+  //SEG96 [71] phi from init::@2 to fill [phi:init::@2->fill]
   fill_from_b2:
-  //SEG89 [63] phi (byte) fill::val#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:init::@2->fill#0] -- vbuz1=vbuc1 
+  //SEG97 [71] phi (byte) fill::val#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:init::@2->fill#0] -- vbuz1=vbuc1 
     lda #0
     sta fill.val
-  //SEG90 [63] phi (byte*) fill::addr#0 = (const byte*) screen#0 [phi:init::@2->fill#1] -- pbuz1=pbuc1 
+  //SEG98 [71] phi (byte*) fill::addr#0 = (const byte*) screen#0 [phi:init::@2->fill#1] -- pbuz1=pbuc1 
     lda #<screen
     sta fill.addr
     lda #>screen
     sta fill.addr+1
     jsr fill
-  //SEG91 [52] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
+  //SEG99 [60] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
   b3_from_b2:
     jmp b3
-  //SEG92 init::@3
+  //SEG100 init::@3
   b3:
-  //SEG93 [53] call fill 
-  //SEG94 [63] phi from init::@3 to fill [phi:init::@3->fill]
+  //SEG101 [61] call fill 
+  //SEG102 [71] phi from init::@3 to fill [phi:init::@3->fill]
   fill_from_b3:
-  //SEG95 [63] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:init::@3->fill#0] -- vbuz1=vbuc1 
+  //SEG103 [71] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:init::@3->fill#0] -- vbuz1=vbuc1 
     lda #BLACK
     sta fill.val
-  //SEG96 [63] phi (byte*) fill::addr#0 = (const byte*) colors#0 [phi:init::@3->fill#1] -- pbuz1=pbuc1 
+  //SEG104 [71] phi (byte*) fill::addr#0 = (const byte*) colors#0 [phi:init::@3->fill#1] -- pbuz1=pbuc1 
     lda #<colors
     sta fill.addr
     lda #>colors
     sta fill.addr+1
     jsr fill
-  //SEG97 [54] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
+  //SEG105 [62] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
   toD0181_from_b3:
     jmp toD0181
-  //SEG98 init::toD0181
+  //SEG106 init::toD0181
   toD0181:
     jmp b1
-  //SEG99 init::@1
+  //SEG107 init::@1
   b1:
-  //SEG100 [55] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+  //SEG108 [63] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  //SEG101 asm { lda#$5b sta$d011  }
+  //SEG109 asm { lda#$5b sta$d011  }
     lda #$5b
     sta $d011
-  //SEG102 [57] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG110 [65] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  //SEG103 [58] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG111 [66] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL1
-  //SEG104 [59] *((const byte*) BGCOL2#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG112 [67] *((const byte*) BGCOL2#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL2
-  //SEG105 [60] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+  //SEG113 [68] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL3
-  //SEG106 [61] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG114 [69] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL4
     jmp breturn
-  //SEG107 init::@return
+  //SEG115 init::@return
   breturn:
-  //SEG108 [62] return 
+  //SEG116 [70] return 
     rts
 }
-//SEG109 fill
+//SEG117 fill
 // Fill some memory with a value
 // fill(byte zeropage(9) val)
 fill: {
-    .label end = $1e
+    .label end = $2e
     .label addr = $a
     .label val = 9
-  //SEG110 [64] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
+  //SEG118 [72] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
     lda addr
     clc
     adc #<$3e8
@@ -1440,23 +1502,23 @@ fill: {
     lda addr+1
     adc #>$3e8
     sta end+1
-  //SEG111 [65] phi from fill fill::@1 to fill::@1 [phi:fill/fill::@1->fill::@1]
+  //SEG119 [73] phi from fill fill::@1 to fill::@1 [phi:fill/fill::@1->fill::@1]
   b1_from_fill:
   b1_from_b1:
-  //SEG112 [65] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@1->fill::@1#0] -- register_copy 
+  //SEG120 [73] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@1->fill::@1#0] -- register_copy 
     jmp b1
-  //SEG113 fill::@1
+  //SEG121 fill::@1
   b1:
-  //SEG114 [66] *((byte*) fill::addr#2) ← (byte) fill::val#3 -- _deref_pbuz1=vbuz2 
+  //SEG122 [74] *((byte*) fill::addr#2) ← (byte) fill::val#3 -- _deref_pbuz1=vbuz2 
     lda val
     ldy #0
     sta (addr),y
-  //SEG115 [67] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
+  //SEG123 [75] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
     inc addr
     bne !+
     inc addr+1
   !:
-  //SEG116 [68] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuz2_then_la1 
+  //SEG124 [76] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuz2_then_la1 
     lda addr+1
     cmp end+1
     bne b1_from_b1
@@ -1464,36 +1526,36 @@ fill: {
     cmp end
     bne b1_from_b1
     jmp breturn
-  //SEG117 fill::@return
+  //SEG125 fill::@return
   breturn:
-  //SEG118 [69] return 
+  //SEG126 [77] return 
     rts
 }
-//SEG119 init_sprites
+//SEG127 init_sprites
 init_sprites: {
-  //SEG120 [70] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG128 [78] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
-  //SEG121 [71] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG129 [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     // one sprite enabled
     lda #0
     sta SPRITES_EXPAND_X
-  //SEG122 [72] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG130 [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_EXPAND_Y
-  //SEG123 [73] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG131 [81] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_XMSB
-  //SEG124 [74] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG132 [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta SPRITES_COLS
-  //SEG125 [75] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG133 [83] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_MC
     jmp breturn
-  //SEG126 init_sprites::@return
+  //SEG134 init_sprites::@return
   breturn:
-  //SEG127 [76] return 
+  //SEG135 [84] return 
     rts
 }
 
@@ -1511,34 +1573,45 @@ Statement [22] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte/signed
 Statement [25] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ) always clobbers reg byte a 
 Statement [26] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ) always clobbers reg byte a 
 Statement [27] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [29] *((const byte*) screen#0 + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [30] *((const byte*) colors#0 + (word) draw_block::z#1) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [31] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [32] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [33] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [34] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [35] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [36] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (const byte) YELLOW#0 [ ] ( main:2::draw_block:13 [ main::x#4 main::y#2 ] ) always clobbers reg byte a 
-Statement [44] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::draw_block:13::mul8u:24 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
+Statement [29] (byte*) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:28 [ draw_block::drawtile#0 ]
+Statement [30] *((byte*) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::x#4 main::x#1 ]
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
+Statement [31] (byte*) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$12 ] ) always clobbers reg byte a 
+Statement [32] *((byte*) draw_block::$12) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [33] (byte*) draw_block::$13 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$13 ] ) always clobbers reg byte a 
+Statement [34] *((byte*) draw_block::$13) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [35] (byte*) draw_block::$14 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$14 ] ) always clobbers reg byte a 
+Statement [36] *((byte*) draw_block::$14) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [37] (byte*) draw_block::$15 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$15 ] ) always clobbers reg byte a 
+Statement [38] *((byte*) draw_block::$15) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [39] (byte*) draw_block::$16 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$16 ] ) always clobbers reg byte a 
+Statement [40] *((byte*) draw_block::$16) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [41] (byte*) draw_block::$17 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$17 ] ) always clobbers reg byte a 
+Statement [42] *((byte*) draw_block::$17) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [43] (byte*) draw_block::$18 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::$18 ] ) always clobbers reg byte a 
+Statement [44] *((byte*) draw_block::$18) ← (const byte) YELLOW#0 [ ] ( main:2::draw_block:13 [ main::x#4 main::y#2 ] ) always clobbers reg byte a reg byte y 
+Statement [52] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::draw_block:13::mul8u:24 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
-Statement [55] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [63] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement asm { lda#$5b sta$d011  } always clobbers reg byte a 
-Statement [57] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [58] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [59] *((const byte*) BGCOL2#0) ← (const byte) RED#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [60] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [61] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [64] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 [ fill::addr#0 fill::val#3 fill::end#0 ] ( main:2::init:5::fill:51 [ fill::addr#0 fill::val#3 fill::end#0 ] main:2::init:5::fill:53 [ fill::addr#0 fill::val#3 fill::end#0 ] ) always clobbers reg byte a 
+Statement [65] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [66] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [67] *((const byte*) BGCOL2#0) ← (const byte) RED#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [68] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [69] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [72] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 [ fill::addr#0 fill::val#3 fill::end#0 ] ( main:2::init:5::fill:59 [ fill::addr#0 fill::val#3 fill::end#0 ] main:2::init:5::fill:61 [ fill::addr#0 fill::val#3 fill::end#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ fill::val#3 ]
-Statement [66] *((byte*) fill::addr#2) ← (byte) fill::val#3 [ fill::val#3 fill::end#0 fill::addr#2 ] ( main:2::init:5::fill:51 [ fill::val#3 fill::end#0 fill::addr#2 ] main:2::init:5::fill:53 [ fill::val#3 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a reg byte y 
+Statement [74] *((byte*) fill::addr#2) ← (byte) fill::val#3 [ fill::val#3 fill::end#0 fill::addr#2 ] ( main:2::init:5::fill:59 [ fill::val#3 fill::end#0 fill::addr#2 ] main:2::init:5::fill:61 [ fill::val#3 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:9 [ fill::val#3 ]
-Statement [68] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 [ fill::val#3 fill::end#0 fill::addr#1 ] ( main:2::init:5::fill:51 [ fill::val#3 fill::end#0 fill::addr#1 ] main:2::init:5::fill:53 [ fill::val#3 fill::end#0 fill::addr#1 ] ) always clobbers reg byte a 
-Statement [70] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [71] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [72] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [73] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [74] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [75] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
+Statement [76] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 [ fill::val#3 fill::end#0 fill::addr#1 ] ( main:2::init:5::fill:59 [ fill::val#3 fill::end#0 fill::addr#1 ] main:2::init:5::fill:61 [ fill::val#3 fill::end#0 fill::addr#1 ] ) always clobbers reg byte a 
+Statement [78] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [81] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [83] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
 Statement [8] (byte) main::z#0 ← (byte) main::x#4 + (byte) main::y#2 [ main::x#4 main::y#2 main::z#0 ] ( main:2 [ main::x#4 main::y#2 main::z#0 ] ) always clobbers reg byte a 
 Statement [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte/signed byte/word/signed word/dword/signed dword) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ) always clobbers reg byte a 
 Statement [20] (byte~) draw_block::$1 ← (byte) draw_block::x#0 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::$1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::y#0 draw_block::tileno#1 draw_block::$1 ] ) always clobbers reg byte a 
@@ -1547,34 +1620,42 @@ Statement [22] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte/signed
 Statement [25] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ) always clobbers reg byte a 
 Statement [26] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ) always clobbers reg byte a 
 Statement [27] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [29] *((const byte*) screen#0 + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [30] *((const byte*) colors#0 + (word) draw_block::z#1) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [31] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [32] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [33] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [34] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [35] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a 
-Statement [36] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (const byte) YELLOW#0 [ ] ( main:2::draw_block:13 [ main::x#4 main::y#2 ] ) always clobbers reg byte a 
-Statement [42] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( main:2::draw_block:13::mul8u:24 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ) always clobbers reg byte a 
-Statement [44] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::draw_block:13::mul8u:24 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
-Statement [55] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [29] (byte*) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ) always clobbers reg byte a 
+Statement [30] *((byte*) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [31] (byte*) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$12 ] ) always clobbers reg byte a 
+Statement [32] *((byte*) draw_block::$12) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [33] (byte*) draw_block::$13 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$13 ] ) always clobbers reg byte a 
+Statement [34] *((byte*) draw_block::$13) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [35] (byte*) draw_block::$14 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$14 ] ) always clobbers reg byte a 
+Statement [36] *((byte*) draw_block::$14) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [37] (byte*) draw_block::$15 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$15 ] ) always clobbers reg byte a 
+Statement [38] *((byte*) draw_block::$15) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [39] (byte*) draw_block::$16 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$16 ] ) always clobbers reg byte a 
+Statement [40] *((byte*) draw_block::$16) ← (const byte) YELLOW#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [41] (byte*) draw_block::$17 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::$17 ] ) always clobbers reg byte a 
+Statement [42] *((byte*) draw_block::$17) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
+Statement [43] (byte*) draw_block::$18 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::$18 ] ) always clobbers reg byte a 
+Statement [44] *((byte*) draw_block::$18) ← (const byte) YELLOW#0 [ ] ( main:2::draw_block:13 [ main::x#4 main::y#2 ] ) always clobbers reg byte a reg byte y 
+Statement [50] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( main:2::draw_block:13::mul8u:24 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ) always clobbers reg byte a 
+Statement [52] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( main:2::draw_block:13::mul8u:24 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ) always clobbers reg byte a 
+Statement [63] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement asm { lda#$5b sta$d011  } always clobbers reg byte a 
-Statement [57] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [58] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [59] *((const byte*) BGCOL2#0) ← (const byte) RED#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [60] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [61] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [64] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 [ fill::addr#0 fill::val#3 fill::end#0 ] ( main:2::init:5::fill:51 [ fill::addr#0 fill::val#3 fill::end#0 ] main:2::init:5::fill:53 [ fill::addr#0 fill::val#3 fill::end#0 ] ) always clobbers reg byte a 
-Statement [66] *((byte*) fill::addr#2) ← (byte) fill::val#3 [ fill::val#3 fill::end#0 fill::addr#2 ] ( main:2::init:5::fill:51 [ fill::val#3 fill::end#0 fill::addr#2 ] main:2::init:5::fill:53 [ fill::val#3 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a reg byte y 
-Statement [68] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 [ fill::val#3 fill::end#0 fill::addr#1 ] ( main:2::init:5::fill:51 [ fill::val#3 fill::end#0 fill::addr#1 ] main:2::init:5::fill:53 [ fill::val#3 fill::end#0 fill::addr#1 ] ) always clobbers reg byte a 
-Statement [70] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [71] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [72] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [73] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [74] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Statement [75] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:49 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::x#4 main::x#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::y#2 main::y#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
+Statement [65] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [66] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [67] *((const byte*) BGCOL2#0) ← (const byte) RED#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [68] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [69] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
+Statement [72] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 [ fill::addr#0 fill::val#3 fill::end#0 ] ( main:2::init:5::fill:59 [ fill::addr#0 fill::val#3 fill::end#0 ] main:2::init:5::fill:61 [ fill::addr#0 fill::val#3 fill::end#0 ] ) always clobbers reg byte a 
+Statement [74] *((byte*) fill::addr#2) ← (byte) fill::val#3 [ fill::val#3 fill::end#0 fill::addr#2 ] ( main:2::init:5::fill:59 [ fill::val#3 fill::end#0 fill::addr#2 ] main:2::init:5::fill:61 [ fill::val#3 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a reg byte y 
+Statement [76] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 [ fill::val#3 fill::end#0 fill::addr#1 ] ( main:2::init:5::fill:59 [ fill::val#3 fill::end#0 fill::addr#1 ] main:2::init:5::fill:61 [ fill::val#3 fill::end#0 fill::addr#1 ] ) always clobbers reg byte a 
+Statement [78] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [81] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Statement [83] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( main:2::init:5::init_sprites:57 [ ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ main::x#4 main::x#1 ] : zp ZP_BYTE:2 , reg byte x , 
+Potential registers zp ZP_BYTE:3 [ main::y#2 main::y#1 ] : zp ZP_BYTE:3 , reg byte x , 
 Potential registers zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] : zp ZP_WORD:5 , 
 Potential registers zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] : zp ZP_WORD:7 , 
@@ -1592,47 +1673,62 @@ Potential registers zp ZP_BYTE:21 [ draw_block::y#1 ] : zp ZP_BYTE:21 , reg byte
 Potential registers zp ZP_WORD:22 [ mul8u::return#2 ] : zp ZP_WORD:22 , 
 Potential registers zp ZP_WORD:24 [ draw_block::z#0 ] : zp ZP_WORD:24 , 
 Potential registers zp ZP_WORD:26 [ draw_block::z#1 ] : zp ZP_WORD:26 , 
-Potential registers zp ZP_BYTE:28 [ draw_block::drawtile#0 ] : zp ZP_BYTE:28 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:29 [ mul8u::$1 ] : zp ZP_BYTE:29 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:30 [ fill::end#0 ] : zp ZP_WORD:30 , 
+Potential registers zp ZP_BYTE:28 [ draw_block::drawtile#0 ] : zp ZP_BYTE:28 , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:29 [ draw_block::$11 ] : zp ZP_WORD:29 , 
+Potential registers zp ZP_WORD:31 [ draw_block::$12 ] : zp ZP_WORD:31 , 
+Potential registers zp ZP_WORD:33 [ draw_block::$13 ] : zp ZP_WORD:33 , 
+Potential registers zp ZP_WORD:35 [ draw_block::$14 ] : zp ZP_WORD:35 , 
+Potential registers zp ZP_WORD:37 [ draw_block::$15 ] : zp ZP_WORD:37 , 
+Potential registers zp ZP_WORD:39 [ draw_block::$16 ] : zp ZP_WORD:39 , 
+Potential registers zp ZP_WORD:41 [ draw_block::$17 ] : zp ZP_WORD:41 , 
+Potential registers zp ZP_WORD:43 [ draw_block::$18 ] : zp ZP_WORD:43 , 
+Potential registers zp ZP_BYTE:45 [ mul8u::$1 ] : zp ZP_BYTE:45 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:46 [ fill::end#0 ] : zp ZP_WORD:46 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [mul8u] 3,503.83: zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 2,431: zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] 2,002: zp ZP_BYTE:29 [ mul8u::$1 ] 1,670.67: zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] 4: zp ZP_WORD:22 [ mul8u::return#2 ] 
+Uplift Scope [mul8u] 3,503.83: zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 2,431: zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] 2,002: zp ZP_BYTE:45 [ mul8u::$1 ] 1,670.67: zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] 4: zp ZP_WORD:22 [ mul8u::return#2 ] 
 Uplift Scope [main] 209.21: zp ZP_BYTE:3 [ main::y#2 main::y#1 ] 202: zp ZP_BYTE:12 [ main::z#0 ] 202: zp ZP_BYTE:13 [ main::tile#0 ] 38.9: zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
-Uplift Scope [draw_block] 34.33: zp ZP_BYTE:14 [ draw_block::tileno#0 ] 34.33: zp ZP_BYTE:15 [ draw_block::x#0 ] 25.75: zp ZP_BYTE:16 [ draw_block::y#0 ] 4: zp ZP_BYTE:18 [ draw_block::$1 ] 4: zp ZP_BYTE:21 [ draw_block::y#1 ] 4: zp ZP_WORD:24 [ draw_block::z#0 ] 4: zp ZP_BYTE:28 [ draw_block::drawtile#0 ] 2: zp ZP_WORD:26 [ draw_block::z#1 ] 0.67: zp ZP_WORD:19 [ draw_block::x1#0 ] 0.44: zp ZP_BYTE:17 [ draw_block::tileno#1 ] 
-Uplift Scope [fill] 36: zp ZP_WORD:10 [ fill::addr#2 fill::addr#0 fill::addr#1 ] 2.6: zp ZP_WORD:30 [ fill::end#0 ] 1.83: zp ZP_BYTE:9 [ fill::val#3 ] 
+Uplift Scope [draw_block] 34.33: zp ZP_BYTE:14 [ draw_block::tileno#0 ] 34.33: zp ZP_BYTE:15 [ draw_block::x#0 ] 25.75: zp ZP_BYTE:16 [ draw_block::y#0 ] 4: zp ZP_BYTE:18 [ draw_block::$1 ] 4: zp ZP_BYTE:21 [ draw_block::y#1 ] 4: zp ZP_WORD:24 [ draw_block::z#0 ] 4: zp ZP_WORD:29 [ draw_block::$11 ] 4: zp ZP_WORD:31 [ draw_block::$12 ] 4: zp ZP_WORD:33 [ draw_block::$13 ] 4: zp ZP_WORD:35 [ draw_block::$14 ] 4: zp ZP_WORD:37 [ draw_block::$15 ] 4: zp ZP_WORD:39 [ draw_block::$16 ] 4: zp ZP_WORD:41 [ draw_block::$17 ] 4: zp ZP_WORD:43 [ draw_block::$18 ] 2: zp ZP_BYTE:28 [ draw_block::drawtile#0 ] 1.12: zp ZP_WORD:26 [ draw_block::z#1 ] 0.67: zp ZP_WORD:19 [ draw_block::x1#0 ] 0.44: zp ZP_BYTE:17 [ draw_block::tileno#1 ] 
+Uplift Scope [fill] 36: zp ZP_WORD:10 [ fill::addr#2 fill::addr#0 fill::addr#1 ] 2.6: zp ZP_WORD:46 [ fill::end#0 ] 1.83: zp ZP_BYTE:9 [ fill::val#3 ] 
 Uplift Scope [init] 
 Uplift Scope [init_sprites] 
 Uplift Scope [] 
 
-Uplifting [mul8u] best 92818 combination zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp ZP_WORD:22 [ mul8u::return#2 ] 
-Uplifting [main] best 91818 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] reg byte a [ main::z#0 ] reg byte a [ main::tile#0 ] zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
-Limited combination testing to 100 combinations of 144 possible.
-Uplifting [draw_block] best 90907 combination reg byte a [ draw_block::tileno#0 ] reg byte y [ draw_block::x#0 ] reg byte x [ draw_block::y#0 ] reg byte a [ draw_block::$1 ] zp ZP_BYTE:21 [ draw_block::y#1 ] zp ZP_WORD:24 [ draw_block::z#0 ] zp ZP_BYTE:28 [ draw_block::drawtile#0 ] zp ZP_WORD:26 [ draw_block::z#1 ] zp ZP_WORD:19 [ draw_block::x1#0 ] zp ZP_BYTE:17 [ draw_block::tileno#1 ] 
-Limited combination testing to 100 combinations of 6912 possible.
-Uplifting [fill] best 90891 combination zp ZP_WORD:10 [ fill::addr#2 fill::addr#0 fill::addr#1 ] zp ZP_WORD:30 [ fill::end#0 ] reg byte x [ fill::val#3 ] 
-Uplifting [init] best 90891 combination 
-Uplifting [init_sprites] best 90891 combination 
-Uplifting [] best 90891 combination 
+Uplifting [mul8u] best 92828 combination zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp ZP_WORD:22 [ mul8u::return#2 ] 
+Uplifting [main] best 91828 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] reg byte a [ main::z#0 ] reg byte a [ main::tile#0 ] zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
+Uplifting [draw_block] best 90917 combination reg byte a [ draw_block::tileno#0 ] reg byte y [ draw_block::x#0 ] reg byte x [ draw_block::y#0 ] reg byte a [ draw_block::$1 ] zp ZP_BYTE:21 [ draw_block::y#1 ] zp ZP_WORD:24 [ draw_block::z#0 ] zp ZP_WORD:29 [ draw_block::$11 ] zp ZP_WORD:31 [ draw_block::$12 ] zp ZP_WORD:33 [ draw_block::$13 ] zp ZP_WORD:35 [ draw_block::$14 ] zp ZP_WORD:37 [ draw_block::$15 ] zp ZP_WORD:39 [ draw_block::$16 ] zp ZP_WORD:41 [ draw_block::$17 ] zp ZP_WORD:43 [ draw_block::$18 ] zp ZP_BYTE:28 [ draw_block::drawtile#0 ] zp ZP_WORD:26 [ draw_block::z#1 ] zp ZP_WORD:19 [ draw_block::x1#0 ] zp ZP_BYTE:17 [ draw_block::tileno#1 ] 
+Limited combination testing to 100 combinations of 5184 possible.
+Uplifting [fill] best 90901 combination zp ZP_WORD:10 [ fill::addr#2 fill::addr#0 fill::addr#1 ] zp ZP_WORD:46 [ fill::end#0 ] reg byte x [ fill::val#3 ] 
+Uplifting [init] best 90901 combination 
+Uplifting [init_sprites] best 90901 combination 
+Uplifting [] best 90901 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::y#2 main::y#1 ]
-Uplifting [main] best 90891 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] 
+Uplifting [main] best 90901 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::x#4 main::x#1 ]
-Uplifting [main] best 90891 combination zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
+Uplifting [main] best 90901 combination zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:21 [ draw_block::y#1 ]
-Uplifting [draw_block] best 90887 combination reg byte a [ draw_block::y#1 ] 
+Uplifting [draw_block] best 90897 combination reg byte a [ draw_block::y#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:28 [ draw_block::drawtile#0 ]
-Uplifting [draw_block] best 90881 combination reg byte a [ draw_block::drawtile#0 ] 
+Uplifting [draw_block] best 90893 combination reg byte x [ draw_block::drawtile#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:17 [ draw_block::tileno#1 ]
-Uplifting [draw_block] best 90881 combination zp ZP_BYTE:17 [ draw_block::tileno#1 ] 
+Uplifting [draw_block] best 90893 combination zp ZP_BYTE:17 [ draw_block::tileno#1 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] ] with [ zp ZP_WORD:22 [ mul8u::return#2 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:19 [ draw_block::x1#0 ] ] with [ zp ZP_WORD:26 [ draw_block::z#1 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 ] ] with [ zp ZP_WORD:24 [ draw_block::z#0 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:19 [ draw_block::x1#0 draw_block::z#1 ] ] with [ zp ZP_WORD:43 [ draw_block::$18 ] ] - score: 1
 Coalescing zero page register [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 ] ] with [ zp ZP_WORD:10 [ fill::addr#2 fill::addr#0 fill::addr#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] ] with [ zp ZP_WORD:30 [ fill::end#0 ] ]
-Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 ]
+Coalescing zero page register [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 ] ] with [ zp ZP_WORD:29 [ draw_block::$11 ] ]
+Coalescing zero page register [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 draw_block::$11 ] ] with [ zp ZP_WORD:31 [ draw_block::$12 ] ]
+Coalescing zero page register [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 draw_block::$11 draw_block::$12 ] ] with [ zp ZP_WORD:33 [ draw_block::$13 ] ]
+Coalescing zero page register [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 draw_block::$11 draw_block::$12 draw_block::$13 ] ] with [ zp ZP_WORD:35 [ draw_block::$14 ] ]
+Coalescing zero page register [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 draw_block::$11 draw_block::$12 draw_block::$13 draw_block::$14 ] ] with [ zp ZP_WORD:37 [ draw_block::$15 ] ]
+Coalescing zero page register [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 draw_block::$11 draw_block::$12 draw_block::$13 draw_block::$14 draw_block::$15 ] ] with [ zp ZP_WORD:39 [ draw_block::$16 ] ]
+Coalescing zero page register [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 draw_block::$11 draw_block::$12 draw_block::$13 draw_block::$14 draw_block::$15 draw_block::$16 ] ] with [ zp ZP_WORD:41 [ draw_block::$17 ] ]
+Coalescing zero page register [ zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] ] with [ zp ZP_WORD:46 [ fill::end#0 ] ]
+Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 draw_block::$11 draw_block::$12 draw_block::$13 draw_block::$14 draw_block::$15 draw_block::$16 draw_block::$17 ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:6 [ mul8u::mb#2 mul8u::mb#1 fill::end#0 ]
 Allocated (was zp ZP_BYTE:17) zp ZP_BYTE:8 [ draw_block::tileno#1 ]
-Allocated (was zp ZP_WORD:19) zp ZP_WORD:9 [ draw_block::x1#0 draw_block::z#1 ]
+Allocated (was zp ZP_WORD:19) zp ZP_WORD:9 [ draw_block::x1#0 draw_block::z#1 draw_block::$18 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -1687,7 +1783,7 @@ main: {
     .label y = 3
     .label x = 2
   //SEG11 [5] call init 
-  //SEG12 [48] phi from main to init [phi:main->init]
+  //SEG12 [56] phi from main to init [phi:main->init]
   init_from_main:
     jsr init
   //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -1761,6 +1857,14 @@ draw_block: {
     .label x1 = 9
     .label z = 4
     .label z_1 = 9
+    .label _11 = 4
+    .label _12 = 4
+    .label _13 = 4
+    .label _14 = 4
+    .label _15 = 4
+    .label _16 = 4
+    .label _17 = 4
+    .label _18 = 9
   //SEG38 [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuz1=vbuaa_rol_2 
     asl
     asl
@@ -1778,7 +1882,7 @@ draw_block: {
   //SEG42 [23] (byte) mul8u::a#1 ← (byte) draw_block::y#1 -- vbuxx=vbuaa 
     tax
   //SEG43 [24] call mul8u 
-  //SEG44 [38] phi from draw_block to mul8u [phi:draw_block->mul8u]
+  //SEG44 [46] phi from draw_block to mul8u [phi:draw_block->mul8u]
   mul8u_from_draw_block:
     jsr mul8u
   //SEG45 [25] (word) mul8u::return#2 ← (word) mul8u::res#2
@@ -1794,106 +1898,112 @@ draw_block: {
     lda z_1+1
     adc z+1
     sta z_1+1
-  //SEG49 [28] (byte) draw_block::drawtile#0 ← *((const byte*) tileset#0 + (byte) draw_block::tileno#1) -- vbuaa=pbuc1_derefidx_vbuz1 
+  //SEG49 [28] (byte) draw_block::drawtile#0 ← *((const byte*) tileset#0 + (byte) draw_block::tileno#1) -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy tileno
-    lda tileset,y
-  //SEG50 [29] *((const byte*) screen#0 + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0 -- pbuc1_derefidx_vwuz1=vbuaa 
-    sta !v++1
-    lda #<screen
+    ldx tileset,y
+  //SEG50 [29] (byte*) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !a++1
-    lda #>screen
-    adc z_1+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta screen
-  //SEG51 [30] *((const byte*) colors#0 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors
+    adc #<screen
+    sta _11
+    lda z_1+1
+    adc #>screen
+    sta _11+1
+  //SEG51 [30] *((byte*) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuxx 
+    txa
+    ldy #0
+    sta (_11),y
+  //SEG52 [31] (byte*) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors
-    adc z_1+1
-    sta !++2
+    adc #<colors
+    sta _12
+    lda z_1+1
+    adc #>colors
+    sta _12+1
+  //SEG53 [32] *((byte*) draw_block::$12) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors
-  //SEG52 [31] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<screen+1
+    ldy #0
+    sta (_12),y
+  //SEG54 [33] (byte*) draw_block::$13 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+1
-    adc z_1+1
-    sta !++2
+    adc #<screen+1
+    sta _13
+    lda z_1+1
+    adc #>screen+1
+    sta _13+1
+  //SEG55 [34] *((byte*) draw_block::$13) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuz1=vbuc1 
     lda #1
-  !:
-    sta screen+1
-  //SEG53 [32] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors+1
+    ldy #0
+    sta (_13),y
+  //SEG56 [35] (byte*) draw_block::$14 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+1
-    adc z_1+1
-    sta !++2
+    adc #<colors+1
+    sta _14
+    lda z_1+1
+    adc #>colors+1
+    sta _14+1
+  //SEG57 [36] *((byte*) draw_block::$14) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors+1
-  //SEG54 [33] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<screen+$28
+    ldy #0
+    sta (_14),y
+  //SEG58 [37] (byte*) draw_block::$15 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+$28
-    adc z_1+1
-    sta !++2
+    adc #<screen+$28
+    sta _15
+    lda z_1+1
+    adc #>screen+$28
+    sta _15+1
+  //SEG59 [38] *((byte*) draw_block::$15) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuz1=vbuc1 
     lda #2
-  !:
-    sta screen+$28
-  //SEG55 [34] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors+$28
+    ldy #0
+    sta (_15),y
+  //SEG60 [39] (byte*) draw_block::$16 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+$28
-    adc z_1+1
-    sta !++2
+    adc #<colors+$28
+    sta _16
+    lda z_1+1
+    adc #>colors+$28
+    sta _16+1
+  //SEG61 [40] *((byte*) draw_block::$16) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors+$28
-  //SEG56 [35] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<screen+$29
+    ldy #0
+    sta (_16),y
+  //SEG62 [41] (byte*) draw_block::$17 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+$29
-    adc z_1+1
-    sta !++2
+    adc #<screen+$29
+    sta _17
+    lda z_1+1
+    adc #>screen+$29
+    sta _17+1
+  //SEG63 [42] *((byte*) draw_block::$17) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuz1=vbuc1 
     lda #3
-  !:
-    sta screen+$29
-  //SEG57 [36] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors+$29
+    ldy #0
+    sta (_17),y
+  //SEG64 [43] (byte*) draw_block::$18 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+$29
-    adc z_1+1
-    sta !++2
+    lda _18
+    adc #<colors+$29
+    sta _18
+    lda _18+1
+    adc #>colors+$29
+    sta _18+1
+  //SEG65 [44] *((byte*) draw_block::$18) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors+$29
+    ldy #0
+    sta (_18),y
     jmp breturn
-  //SEG58 draw_block::@return
+  //SEG66 draw_block::@return
   breturn:
-  //SEG59 [37] return 
+  //SEG67 [45] return 
     rts
 }
-//SEG60 mul8u
+//SEG68 mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a)
 mul8u: {
@@ -1901,42 +2011,42 @@ mul8u: {
     .label mb = 6
     .label res = 4
     .label return = 4
-  //SEG61 [39] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+  //SEG69 [47] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   b1_from_mul8u:
-  //SEG62 [39] phi (word) mul8u::mb#2 = ((word))(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
+  //SEG70 [47] phi (word) mul8u::mb#2 = ((word))(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #b
     sta mb
     lda #0
     sta mb+1
-  //SEG63 [39] phi (word) mul8u::res#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
+  //SEG71 [47] phi (word) mul8u::res#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     lda #0
     sta res
     lda #0
     sta res+1
-  //SEG64 [39] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
+  //SEG72 [47] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp b1
-  //SEG65 mul8u::@1
+  //SEG73 mul8u::@1
   b1:
-  //SEG66 [40] if((byte) mul8u::a#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
+  //SEG74 [48] if((byte) mul8u::a#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b2
     jmp breturn
-  //SEG67 mul8u::@return
+  //SEG75 mul8u::@return
   breturn:
-  //SEG68 [41] return 
+  //SEG76 [49] return 
     rts
-  //SEG69 mul8u::@2
+  //SEG77 mul8u::@2
   b2:
-  //SEG70 [42] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG78 [50] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG71 [43] if((byte~) mul8u::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
+  //SEG79 [51] if((byte~) mul8u::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3_from_b2
     jmp b4
-  //SEG72 mul8u::@4
+  //SEG80 mul8u::@4
   b4:
-  //SEG73 [44] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+  //SEG81 [52] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
     lda res
     clc
     adc mb
@@ -1944,106 +2054,106 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  //SEG74 [45] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+  //SEG82 [53] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   b3_from_b2:
   b3_from_b4:
-  //SEG75 [45] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+  //SEG83 [53] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     jmp b3
-  //SEG76 mul8u::@3
+  //SEG84 mul8u::@3
   b3:
-  //SEG77 [46] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_ror_1 
+  //SEG85 [54] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_ror_1 
     txa
     lsr
     tax
-  //SEG78 [47] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwuz1=vwuz1_rol_1 
+  //SEG86 [55] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwuz1=vwuz1_rol_1 
     asl mb
     rol mb+1
-  //SEG79 [39] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+  //SEG87 [47] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   b1_from_b3:
-  //SEG80 [39] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-  //SEG81 [39] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-  //SEG82 [39] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+  //SEG88 [47] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+  //SEG89 [47] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+  //SEG90 [47] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
     jmp b1
 }
-//SEG83 init
+//SEG91 init
 init: {
     .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
-  //SEG84 [49] call init_sprites 
+  //SEG92 [57] call init_sprites 
     jsr init_sprites
-  //SEG85 [50] phi from init to init::@2 [phi:init->init::@2]
+  //SEG93 [58] phi from init to init::@2 [phi:init->init::@2]
   b2_from_init:
     jmp b2
-  //SEG86 init::@2
+  //SEG94 init::@2
   b2:
-  //SEG87 [51] call fill 
-  //SEG88 [63] phi from init::@2 to fill [phi:init::@2->fill]
+  //SEG95 [59] call fill 
+  //SEG96 [71] phi from init::@2 to fill [phi:init::@2->fill]
   fill_from_b2:
-  //SEG89 [63] phi (byte) fill::val#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:init::@2->fill#0] -- vbuxx=vbuc1 
+  //SEG97 [71] phi (byte) fill::val#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:init::@2->fill#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG90 [63] phi (byte*) fill::addr#0 = (const byte*) screen#0 [phi:init::@2->fill#1] -- pbuz1=pbuc1 
+  //SEG98 [71] phi (byte*) fill::addr#0 = (const byte*) screen#0 [phi:init::@2->fill#1] -- pbuz1=pbuc1 
     lda #<screen
     sta fill.addr
     lda #>screen
     sta fill.addr+1
     jsr fill
-  //SEG91 [52] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
+  //SEG99 [60] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
   b3_from_b2:
     jmp b3
-  //SEG92 init::@3
+  //SEG100 init::@3
   b3:
-  //SEG93 [53] call fill 
-  //SEG94 [63] phi from init::@3 to fill [phi:init::@3->fill]
+  //SEG101 [61] call fill 
+  //SEG102 [71] phi from init::@3 to fill [phi:init::@3->fill]
   fill_from_b3:
-  //SEG95 [63] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:init::@3->fill#0] -- vbuxx=vbuc1 
+  //SEG103 [71] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:init::@3->fill#0] -- vbuxx=vbuc1 
     ldx #BLACK
-  //SEG96 [63] phi (byte*) fill::addr#0 = (const byte*) colors#0 [phi:init::@3->fill#1] -- pbuz1=pbuc1 
+  //SEG104 [71] phi (byte*) fill::addr#0 = (const byte*) colors#0 [phi:init::@3->fill#1] -- pbuz1=pbuc1 
     lda #<colors
     sta fill.addr
     lda #>colors
     sta fill.addr+1
     jsr fill
-  //SEG97 [54] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
+  //SEG105 [62] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
   toD0181_from_b3:
     jmp toD0181
-  //SEG98 init::toD0181
+  //SEG106 init::toD0181
   toD0181:
     jmp b1
-  //SEG99 init::@1
+  //SEG107 init::@1
   b1:
-  //SEG100 [55] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+  //SEG108 [63] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  //SEG101 asm { lda#$5b sta$d011  }
+  //SEG109 asm { lda#$5b sta$d011  }
     lda #$5b
     sta $d011
-  //SEG102 [57] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG110 [65] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  //SEG103 [58] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG111 [66] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL1
-  //SEG104 [59] *((const byte*) BGCOL2#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG112 [67] *((const byte*) BGCOL2#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL2
-  //SEG105 [60] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+  //SEG113 [68] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL3
-  //SEG106 [61] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG114 [69] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL4
     jmp breturn
-  //SEG107 init::@return
+  //SEG115 init::@return
   breturn:
-  //SEG108 [62] return 
+  //SEG116 [70] return 
     rts
 }
-//SEG109 fill
+//SEG117 fill
 // Fill some memory with a value
 // fill(byte register(X) val)
 fill: {
     .label end = 6
     .label addr = 4
-  //SEG110 [64] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
+  //SEG118 [72] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
     lda addr
     clc
     adc #<$3e8
@@ -2051,23 +2161,23 @@ fill: {
     lda addr+1
     adc #>$3e8
     sta end+1
-  //SEG111 [65] phi from fill fill::@1 to fill::@1 [phi:fill/fill::@1->fill::@1]
+  //SEG119 [73] phi from fill fill::@1 to fill::@1 [phi:fill/fill::@1->fill::@1]
   b1_from_fill:
   b1_from_b1:
-  //SEG112 [65] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@1->fill::@1#0] -- register_copy 
+  //SEG120 [73] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@1->fill::@1#0] -- register_copy 
     jmp b1
-  //SEG113 fill::@1
+  //SEG121 fill::@1
   b1:
-  //SEG114 [66] *((byte*) fill::addr#2) ← (byte) fill::val#3 -- _deref_pbuz1=vbuxx 
+  //SEG122 [74] *((byte*) fill::addr#2) ← (byte) fill::val#3 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (addr),y
-  //SEG115 [67] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
+  //SEG123 [75] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
     inc addr
     bne !+
     inc addr+1
   !:
-  //SEG116 [68] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuz2_then_la1 
+  //SEG124 [76] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuz2_then_la1 
     lda addr+1
     cmp end+1
     bne b1_from_b1
@@ -2075,36 +2185,36 @@ fill: {
     cmp end
     bne b1_from_b1
     jmp breturn
-  //SEG117 fill::@return
+  //SEG125 fill::@return
   breturn:
-  //SEG118 [69] return 
+  //SEG126 [77] return 
     rts
 }
-//SEG119 init_sprites
+//SEG127 init_sprites
 init_sprites: {
-  //SEG120 [70] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG128 [78] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
-  //SEG121 [71] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG129 [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     // one sprite enabled
     lda #0
     sta SPRITES_EXPAND_X
-  //SEG122 [72] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG130 [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_EXPAND_Y
-  //SEG123 [73] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG131 [81] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_XMSB
-  //SEG124 [74] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG132 [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta SPRITES_COLS
-  //SEG125 [75] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG133 [83] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_MC
     jmp breturn
-  //SEG126 init_sprites::@return
+  //SEG134 init_sprites::@return
   breturn:
-  //SEG127 [76] return 
+  //SEG135 [84] return 
     rts
 }
 
@@ -2131,6 +2241,13 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
 Removing instruction lda #0
 Removing instruction lda #0
 Removing instruction lda #BLACK
@@ -2237,11 +2354,19 @@ FINAL SYMBOL TABLE
 (const byte*) colors#0 colors = ((byte*))(word/dword/signed dword) $d800
 (void()) draw_block((byte) draw_block::tileno , (byte) draw_block::x , (byte) draw_block::y , (byte) draw_block::color)
 (byte~) draw_block::$1 reg byte a 4.0
+(byte*) draw_block::$11 $11 zp ZP_WORD:4 4.0
+(byte*) draw_block::$12 $12 zp ZP_WORD:4 4.0
+(byte*) draw_block::$13 $13 zp ZP_WORD:4 4.0
+(byte*) draw_block::$14 $14 zp ZP_WORD:4 4.0
+(byte*) draw_block::$15 $15 zp ZP_WORD:4 4.0
+(byte*) draw_block::$16 $16 zp ZP_WORD:4 4.0
+(byte*) draw_block::$17 $17 zp ZP_WORD:4 4.0
+(byte*) draw_block::$18 $18 zp ZP_WORD:9 4.0
 (label) draw_block::@1
 (label) draw_block::@return
 (byte) draw_block::color
 (byte) draw_block::drawtile
-(byte) draw_block::drawtile#0 reg byte a 4.0
+(byte) draw_block::drawtile#0 reg byte x 2.0
 (byte) draw_block::tileno
 (byte) draw_block::tileno#0 reg byte a 34.33333333333333
 (byte) draw_block::tileno#1 tileno zp ZP_BYTE:8 0.4444444444444444
@@ -2254,7 +2379,7 @@ FINAL SYMBOL TABLE
 (byte) draw_block::y#1 reg byte a 4.0
 (word) draw_block::z
 (word) draw_block::z#0 z zp ZP_WORD:4 4.0
-(word) draw_block::z#1 z#1 zp ZP_WORD:9 2.0000000000000004
+(word) draw_block::z#1 z#1 zp ZP_WORD:9 1.125
 (void()) fill((byte*) fill::start , (word) fill::size , (byte) fill::val)
 (label) fill::@1
 (label) fill::@return
@@ -2337,7 +2462,7 @@ FINAL SYMBOL TABLE
 zp ZP_BYTE:2 [ main::x#4 main::x#1 ]
 zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
 reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
-zp ZP_WORD:4 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 ]
+zp ZP_WORD:4 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 fill::addr#2 fill::addr#0 fill::addr#1 draw_block::$11 draw_block::$12 draw_block::$13 draw_block::$14 draw_block::$15 draw_block::$16 draw_block::$17 ]
 zp ZP_WORD:6 [ mul8u::mb#2 mul8u::mb#1 fill::end#0 ]
 reg byte x [ fill::val#3 ]
 reg byte a [ main::z#0 ]
@@ -2347,14 +2472,14 @@ reg byte y [ draw_block::x#0 ]
 reg byte x [ draw_block::y#0 ]
 zp ZP_BYTE:8 [ draw_block::tileno#1 ]
 reg byte a [ draw_block::$1 ]
-zp ZP_WORD:9 [ draw_block::x1#0 draw_block::z#1 ]
+zp ZP_WORD:9 [ draw_block::x1#0 draw_block::z#1 draw_block::$18 ]
 reg byte a [ draw_block::y#1 ]
-reg byte a [ draw_block::drawtile#0 ]
+reg byte x [ draw_block::drawtile#0 ]
 reg byte a [ mul8u::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 73438
+Score: 73436
 
 //SEG0 File Comments
 // Illustrates a problem with a missing fragment - pbuc1_derefidx_vwuz1=vbuz2
@@ -2399,7 +2524,7 @@ main: {
     .label y = 3
     .label x = 2
   //SEG11 [5] call init 
-  //SEG12 [48] phi from main to init [phi:main->init]
+  //SEG12 [56] phi from main to init [phi:main->init]
     jsr init
   //SEG13 [6] phi from main to main::@1 [phi:main->main::@1]
   //SEG14 [6] phi (byte) main::x#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
@@ -2457,6 +2582,14 @@ draw_block: {
     .label x1 = 9
     .label z = 4
     .label z_1 = 9
+    .label _11 = 4
+    .label _12 = 4
+    .label _13 = 4
+    .label _14 = 4
+    .label _15 = 4
+    .label _16 = 4
+    .label _17 = 4
+    .label _18 = 9
   //SEG38 [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuz1=vbuaa_rol_2 
     asl
     asl
@@ -2474,7 +2607,7 @@ draw_block: {
   //SEG42 [23] (byte) mul8u::a#1 ← (byte) draw_block::y#1 -- vbuxx=vbuaa 
     tax
   //SEG43 [24] call mul8u 
-  //SEG44 [38] phi from draw_block to mul8u [phi:draw_block->mul8u]
+  //SEG44 [46] phi from draw_block to mul8u [phi:draw_block->mul8u]
     jsr mul8u
   //SEG45 [25] (word) mul8u::return#2 ← (word) mul8u::res#2
   //SEG46 draw_block::@1
@@ -2487,104 +2620,103 @@ draw_block: {
     lda z_1+1
     adc z+1
     sta z_1+1
-  //SEG49 [28] (byte) draw_block::drawtile#0 ← *((const byte*) tileset#0 + (byte) draw_block::tileno#1) -- vbuaa=pbuc1_derefidx_vbuz1 
+  //SEG49 [28] (byte) draw_block::drawtile#0 ← *((const byte*) tileset#0 + (byte) draw_block::tileno#1) -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy tileno
-    lda tileset,y
-  //SEG50 [29] *((const byte*) screen#0 + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0 -- pbuc1_derefidx_vwuz1=vbuaa 
-    sta !v++1
-    lda #<screen
+    ldx tileset,y
+  //SEG50 [29] (byte*) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !a++1
-    lda #>screen
-    adc z_1+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta screen
-  //SEG51 [30] *((const byte*) colors#0 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors
+    adc #<screen
+    sta _11
+    lda z_1+1
+    adc #>screen
+    sta _11+1
+  //SEG51 [30] *((byte*) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuxx 
+    txa
+    ldy #0
+    sta (_11),y
+  //SEG52 [31] (byte*) draw_block::$12 ← (const byte*) colors#0 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors
-    adc z_1+1
-    sta !++2
+    adc #<colors
+    sta _12
+    lda z_1+1
+    adc #>colors
+    sta _12+1
+  //SEG53 [32] *((byte*) draw_block::$12) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors
-  //SEG52 [31] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<screen+1
+    sta (_12),y
+  //SEG54 [33] (byte*) draw_block::$13 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+1
-    adc z_1+1
-    sta !++2
+    adc #<screen+1
+    sta _13
+    lda z_1+1
+    adc #>screen+1
+    sta _13+1
+  //SEG55 [34] *((byte*) draw_block::$13) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuz1=vbuc1 
     lda #1
-  !:
-    sta screen+1
-  //SEG53 [32] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors+1
+    sta (_13),y
+  //SEG56 [35] (byte*) draw_block::$14 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+1
-    adc z_1+1
-    sta !++2
+    adc #<colors+1
+    sta _14
+    lda z_1+1
+    adc #>colors+1
+    sta _14+1
+  //SEG57 [36] *((byte*) draw_block::$14) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors+1
-  //SEG54 [33] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<screen+$28
+    sta (_14),y
+  //SEG58 [37] (byte*) draw_block::$15 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+$28
-    adc z_1+1
-    sta !++2
+    adc #<screen+$28
+    sta _15
+    lda z_1+1
+    adc #>screen+$28
+    sta _15+1
+  //SEG59 [38] *((byte*) draw_block::$15) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuz1=vbuc1 
     lda #2
-  !:
-    sta screen+$28
-  //SEG55 [34] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors+$28
+    sta (_15),y
+  //SEG60 [39] (byte*) draw_block::$16 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+$28
-    adc z_1+1
-    sta !++2
+    adc #<colors+$28
+    sta _16
+    lda z_1+1
+    adc #>colors+$28
+    sta _16+1
+  //SEG61 [40] *((byte*) draw_block::$16) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors+$28
-  //SEG56 [35] *((const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<screen+$29
+    sta (_16),y
+  //SEG62 [41] (byte*) draw_block::$17 ← (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda z_1
     clc
-    adc z_1
-    sta !++1
-    lda #>screen+$29
-    adc z_1+1
-    sta !++2
+    adc #<screen+$29
+    sta _17
+    lda z_1+1
+    adc #>screen+$29
+    sta _17+1
+  //SEG63 [42] *((byte*) draw_block::$17) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuz1=vbuc1 
     lda #3
-  !:
-    sta screen+$29
-  //SEG57 [36] *((const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1) ← (const byte) YELLOW#0 -- pbuc1_derefidx_vwuz1=vbuc2 
-    lda #<colors+$29
+    sta (_17),y
+  //SEG64 [43] (byte*) draw_block::$18 ← (const byte*) colors#0+(byte/signed byte/word/signed word/dword/signed dword) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    adc z_1
-    sta !++1
-    lda #>colors+$29
-    adc z_1+1
-    sta !++2
+    lda _18
+    adc #<colors+$29
+    sta _18
+    lda _18+1
+    adc #>colors+$29
+    sta _18+1
+  //SEG65 [44] *((byte*) draw_block::$18) ← (const byte) YELLOW#0 -- _deref_pbuz1=vbuc1 
     lda #YELLOW
-  !:
-    sta colors+$29
-  //SEG58 draw_block::@return
-  //SEG59 [37] return 
+    sta (_18),y
+  //SEG66 draw_block::@return
+  //SEG67 [45] return 
     rts
 }
-//SEG60 mul8u
+//SEG68 mul8u
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a)
 mul8u: {
@@ -2592,34 +2724,34 @@ mul8u: {
     .label mb = 6
     .label res = 4
     .label return = 4
-  //SEG61 [39] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
-  //SEG62 [39] phi (word) mul8u::mb#2 = ((word))(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
+  //SEG69 [47] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+  //SEG70 [47] phi (word) mul8u::mb#2 = ((word))(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
     lda #b
     sta mb
     lda #0
     sta mb+1
-  //SEG63 [39] phi (word) mul8u::res#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
+  //SEG71 [47] phi (word) mul8u::res#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vbuc1 
     sta res
     sta res+1
-  //SEG64 [39] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
-  //SEG65 mul8u::@1
+  //SEG72 [47] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
+  //SEG73 mul8u::@1
   b1:
-  //SEG66 [40] if((byte) mul8u::a#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
+  //SEG74 [48] if((byte) mul8u::a#2!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b2
-  //SEG67 mul8u::@return
-  //SEG68 [41] return 
+  //SEG75 mul8u::@return
+  //SEG76 [49] return 
     rts
-  //SEG69 mul8u::@2
+  //SEG77 mul8u::@2
   b2:
-  //SEG70 [42] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_band_vbuc1 
+  //SEG78 [50] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-  //SEG71 [43] if((byte~) mul8u::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
+  //SEG79 [51] if((byte~) mul8u::$1==(byte/signed byte/word/signed word/dword/signed dword) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b3
-  //SEG72 mul8u::@4
-  //SEG73 [44] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+  //SEG80 mul8u::@4
+  //SEG81 [52] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
     lda res
     clc
     adc mb
@@ -2627,86 +2759,86 @@ mul8u: {
     lda res+1
     adc mb+1
     sta res+1
-  //SEG74 [45] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
-  //SEG75 [45] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
-  //SEG76 mul8u::@3
+  //SEG82 [53] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+  //SEG83 [53] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+  //SEG84 mul8u::@3
   b3:
-  //SEG77 [46] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_ror_1 
+  //SEG85 [54] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuxx=vbuxx_ror_1 
     txa
     lsr
     tax
-  //SEG78 [47] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwuz1=vwuz1_rol_1 
+  //SEG86 [55] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vwuz1=vwuz1_rol_1 
     asl mb
     rol mb+1
-  //SEG79 [39] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
-  //SEG80 [39] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-  //SEG81 [39] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-  //SEG82 [39] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+  //SEG87 [47] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+  //SEG88 [47] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+  //SEG89 [47] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+  //SEG90 [47] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
     jmp b1
 }
-//SEG83 init
+//SEG91 init
 init: {
     .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
-  //SEG84 [49] call init_sprites 
+  //SEG92 [57] call init_sprites 
     jsr init_sprites
-  //SEG85 [50] phi from init to init::@2 [phi:init->init::@2]
-  //SEG86 init::@2
-  //SEG87 [51] call fill 
-  //SEG88 [63] phi from init::@2 to fill [phi:init::@2->fill]
-  //SEG89 [63] phi (byte) fill::val#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:init::@2->fill#0] -- vbuxx=vbuc1 
+  //SEG93 [58] phi from init to init::@2 [phi:init->init::@2]
+  //SEG94 init::@2
+  //SEG95 [59] call fill 
+  //SEG96 [71] phi from init::@2 to fill [phi:init::@2->fill]
+  //SEG97 [71] phi (byte) fill::val#3 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:init::@2->fill#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG90 [63] phi (byte*) fill::addr#0 = (const byte*) screen#0 [phi:init::@2->fill#1] -- pbuz1=pbuc1 
+  //SEG98 [71] phi (byte*) fill::addr#0 = (const byte*) screen#0 [phi:init::@2->fill#1] -- pbuz1=pbuc1 
     lda #<screen
     sta fill.addr
     lda #>screen
     sta fill.addr+1
     jsr fill
-  //SEG91 [52] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
-  //SEG92 init::@3
-  //SEG93 [53] call fill 
-  //SEG94 [63] phi from init::@3 to fill [phi:init::@3->fill]
-  //SEG95 [63] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:init::@3->fill#0] -- vbuxx=vbuc1 
+  //SEG99 [60] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
+  //SEG100 init::@3
+  //SEG101 [61] call fill 
+  //SEG102 [71] phi from init::@3 to fill [phi:init::@3->fill]
+  //SEG103 [71] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:init::@3->fill#0] -- vbuxx=vbuc1 
     ldx #BLACK
-  //SEG96 [63] phi (byte*) fill::addr#0 = (const byte*) colors#0 [phi:init::@3->fill#1] -- pbuz1=pbuc1 
+  //SEG104 [71] phi (byte*) fill::addr#0 = (const byte*) colors#0 [phi:init::@3->fill#1] -- pbuz1=pbuc1 
     lda #<colors
     sta fill.addr
     lda #>colors
     sta fill.addr+1
     jsr fill
-  //SEG97 [54] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
-  //SEG98 init::toD0181
-  //SEG99 init::@1
-  //SEG100 [55] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+  //SEG105 [62] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
+  //SEG106 init::toD0181
+  //SEG107 init::@1
+  //SEG108 [63] *((const byte*) D018#0) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  //SEG101 asm { lda#$5b sta$d011  }
+  //SEG109 asm { lda#$5b sta$d011  }
     lda #$5b
     sta $d011
-  //SEG102 [57] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG110 [65] *((const byte*) BORDERCOL#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BORDERCOL
-  //SEG103 [58] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
+  //SEG111 [66] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 -- _deref_pbuc1=vbuc2 
     sta BGCOL1
-  //SEG104 [59] *((const byte*) BGCOL2#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
+  //SEG112 [67] *((const byte*) BGCOL2#0) ← (const byte) RED#0 -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL2
-  //SEG105 [60] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
+  //SEG113 [68] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL3
-  //SEG106 [61] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
+  //SEG114 [69] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL4
-  //SEG107 init::@return
-  //SEG108 [62] return 
+  //SEG115 init::@return
+  //SEG116 [70] return 
     rts
 }
-//SEG109 fill
+//SEG117 fill
 // Fill some memory with a value
 // fill(byte register(X) val)
 fill: {
     .label end = 6
     .label addr = 4
-  //SEG110 [64] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
+  //SEG118 [72] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word/signed word/dword/signed dword) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
     lda addr
     clc
     adc #<$3e8
@@ -2714,51 +2846,51 @@ fill: {
     lda addr+1
     adc #>$3e8
     sta end+1
-  //SEG111 [65] phi from fill fill::@1 to fill::@1 [phi:fill/fill::@1->fill::@1]
-  //SEG112 [65] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@1->fill::@1#0] -- register_copy 
-  //SEG113 fill::@1
+  //SEG119 [73] phi from fill fill::@1 to fill::@1 [phi:fill/fill::@1->fill::@1]
+  //SEG120 [73] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@1->fill::@1#0] -- register_copy 
+  //SEG121 fill::@1
   b1:
-  //SEG114 [66] *((byte*) fill::addr#2) ← (byte) fill::val#3 -- _deref_pbuz1=vbuxx 
+  //SEG122 [74] *((byte*) fill::addr#2) ← (byte) fill::val#3 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (addr),y
-  //SEG115 [67] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
+  //SEG123 [75] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
     inc addr
     bne !+
     inc addr+1
   !:
-  //SEG116 [68] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuz2_then_la1 
+  //SEG124 [76] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuz2_then_la1 
     lda addr+1
     cmp end+1
     bne b1
     lda addr
     cmp end
     bne b1
-  //SEG117 fill::@return
-  //SEG118 [69] return 
+  //SEG125 fill::@return
+  //SEG126 [77] return 
     rts
 }
-//SEG119 init_sprites
+//SEG127 init_sprites
 init_sprites: {
-  //SEG120 [70] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG128 [78] *((const byte*) SPRITES_ENABLE#0) ← (byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
-  //SEG121 [71] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG129 [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     // one sprite enabled
     lda #0
     sta SPRITES_EXPAND_X
-  //SEG122 [72] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG130 [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta SPRITES_EXPAND_Y
-  //SEG123 [73] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG131 [81] *((const byte*) SPRITES_XMSB#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     sta SPRITES_XMSB
-  //SEG124 [74] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG132 [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta SPRITES_COLS
-  //SEG125 [75] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
+  //SEG133 [83] *((const byte*) SPRITES_MC#0) ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_MC
-  //SEG126 init_sprites::@return
-  //SEG127 [76] return 
+  //SEG134 init_sprites::@return
+  //SEG135 [84] return 
     rts
 }
 

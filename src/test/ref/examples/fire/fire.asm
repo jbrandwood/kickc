@@ -182,6 +182,7 @@ makecharset: {
     .label ii = $a
     .label i = 9
     .label c = 8
+    .label _22 = 2
     lda #<CHARSET
     sta font
     lda #>CHARSET
@@ -270,19 +271,16 @@ makecharset: {
     bcc !+
     inc _19+1
   !:
-    tya
-    sta !v++1
-    lda #<CHARSET+1*8
     clc
-    adc _19
-    sta !a++1
-    lda #>CHARSET+1*8
-    adc _19+1
-    sta !a++2
-  !v:
-    lda #0
-  !a:
-    sta CHARSET+1*8
+    lda _22
+    adc #<CHARSET+1*8
+    sta _22
+    lda _22+1
+    adc #>CHARSET+1*8
+    sta _22+1
+    tya
+    ldy #0
+    sta (_22),y
     inc i
     lda i
     cmp #8

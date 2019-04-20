@@ -691,24 +691,14 @@ debug_print_init: {
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
     .label _59 = 6
-    .label _60 = 6
     .label _63 = 6
-    .label _64 = 6
     .label _67 = 6
-    .label _68 = 6
     .label _71 = 6
-    .label _72 = 6
     .label _75 = 6
-    .label _76 = 6
     .label _79 = 6
-    .label _80 = 6
     .label _83 = 6
-    .label _84 = 6
     .label _87 = 6
-    .label _88 = 6
     .label _91 = 6
-    .label _92 = 6
-    .label j = 4
     .label c = 2
     .label i = 3
     jsr print_cls
@@ -855,8 +845,7 @@ debug_print_init: {
     ldy i
     ldx zs,y
     jsr print_sbyte_at
-    lda #0
-    sta j
+    ldy #0
   b2:
     lax i
     axs #-[8]
@@ -867,16 +856,8 @@ debug_print_init: {
     lda #>at_cols
     adc #0
     sta _59+1
-    lda j
-    clc
-    adc _60
-    sta _60
-    bcc !+
-    inc _60+1
-  !:
     txa
-    ldy #0
-    sta (_60),y
+    sta (_59),y
     lda c
     clc
     adc #<at_cols+$28*1
@@ -884,16 +865,8 @@ debug_print_init: {
     lda #>at_cols+$28*1
     adc #0
     sta _63+1
-    lda j
-    clc
-    adc _64
-    sta _64
-    bcc !+
-    inc _64+1
-  !:
     txa
-    ldy #0
-    sta (_64),y
+    sta (_63),y
     lda c
     clc
     adc #<at_cols+$28*2
@@ -901,16 +874,8 @@ debug_print_init: {
     lda #>at_cols+$28*2
     adc #0
     sta _67+1
-    lda j
-    clc
-    adc _68
-    sta _68
-    bcc !+
-    inc _68+1
-  !:
     txa
-    ldy #0
-    sta (_68),y
+    sta (_67),y
     lda c
     clc
     adc #<at_cols+$28*3
@@ -918,16 +883,8 @@ debug_print_init: {
     lda #>at_cols+$28*3
     adc #0
     sta _71+1
-    lda j
-    clc
-    adc _72
-    sta _72
-    bcc !+
-    inc _72+1
-  !:
     txa
-    ldy #0
-    sta (_72),y
+    sta (_71),y
     lda c
     clc
     adc #<at_cols+$28*4
@@ -935,16 +892,8 @@ debug_print_init: {
     lda #>at_cols+$28*4
     adc #0
     sta _75+1
-    lda j
-    clc
-    adc _76
-    sta _76
-    bcc !+
-    inc _76+1
-  !:
     txa
-    ldy #0
-    sta (_76),y
+    sta (_75),y
     lda c
     clc
     adc #<at_cols+$28*5
@@ -952,16 +901,8 @@ debug_print_init: {
     lda #>at_cols+$28*5
     adc #0
     sta _79+1
-    lda j
-    clc
-    adc _80
-    sta _80
-    bcc !+
-    inc _80+1
-  !:
     txa
-    ldy #0
-    sta (_80),y
+    sta (_79),y
     lda c
     clc
     adc #<at_cols+$28*6
@@ -969,16 +910,8 @@ debug_print_init: {
     lda #>at_cols+$28*6
     adc #0
     sta _83+1
-    lda j
-    clc
-    adc _84
-    sta _84
-    bcc !+
-    inc _84+1
-  !:
     txa
-    ldy #0
-    sta (_84),y
+    sta (_83),y
     lda c
     clc
     adc #<at_cols+$28*7
@@ -986,16 +919,8 @@ debug_print_init: {
     lda #>at_cols+$28*7
     adc #0
     sta _87+1
-    lda j
-    clc
-    adc _88
-    sta _88
-    bcc !+
-    inc _88+1
-  !:
     txa
-    ldy #0
-    sta (_88),y
+    sta (_87),y
     lda c
     clc
     adc #<at_cols+$28*8
@@ -1003,19 +928,10 @@ debug_print_init: {
     lda #>at_cols+$28*8
     adc #0
     sta _91+1
-    lda j
-    clc
-    adc _92
-    sta _92
-    bcc !+
-    inc _92+1
-  !:
     txa
-    ldy #0
-    sta (_92),y
-    inc j
-    lda #4
-    cmp j
+    sta (_91),y
+    iny
+    cpy #4
     beq !b2+
     jmp b2
   !b2:

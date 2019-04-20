@@ -8,21 +8,10 @@ main: {
     // Increment on a const named pointer
     .label BGCOL = $d020
     .label sc2 = screen+$51
-    .label _15 = 2
-    .label _18 = 2
-    .label _20 = 4
     ldx #0
   // RValue pointer expression (variable)
   b1:
-    txa
-    clc
-    adc #<screen+$28
-    sta _15
-    lda #>screen+$28
-    adc #0
-    sta _15+1
-    ldy #0
-    lda (_15),y
+    lda screen+$28,x
     sta screen,x
     inx
     cpx #$b
@@ -35,23 +24,8 @@ main: {
     ldx #0
   // LValue pointer expression (variable - directly)
   b3:
-    txa
-    clc
-    adc #<screen+$a0
-    sta _18
-    lda #>screen+$a0
-    adc #0
-    sta _18+1
-    txa
-    clc
-    adc #<screen+$c8
-    sta _20
-    lda #>screen+$c8
-    adc #0
-    sta _20+1
-    ldy #0
-    lda (_20),y
-    sta (_18),y
+    lda screen+$c8,x
+    sta screen+$a0,x
     inx
     cpx #$b
     bne b3

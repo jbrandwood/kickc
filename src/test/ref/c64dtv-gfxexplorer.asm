@@ -1162,42 +1162,32 @@ print_str_at: {
 }
 // Render all form values from the form_fields_val array
 form_render_values: {
-    .label field = 3
-    .label idx = 2
-    lda #0
-    sta idx
+    ldx #0
   b1:
-    ldy idx
     jsr form_field_ptr
-    ldx idx
     ldy form_fields_val,x
     lda print_hextab,y
-    ldy #0
-    sta (field),y
-    inc idx
-    lda idx
-    cmp #form_fields_cnt
+    ldy form_field_ptr.x
+    sta (form_field_ptr._2),y
+    inx
+    cpx #form_fields_cnt
     bcc b1
     rts
 }
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
-// form_field_ptr(byte register(Y) field_idx)
+// form_field_ptr(byte register(X) field_idx)
 form_field_ptr: {
-    .label return = 3
+    .label x = $13
     .label _2 = 3
-    ldx form_fields_y,y
-    lda form_line_hi,x
+    lda form_fields_y,x
+    tay
+    lda form_line_hi,y
     sta _2+1
-    lda form_line_lo,x
+    lda form_line_lo,y
     sta _2
-    lda form_fields_x,y
-    clc
-    adc return
-    sta return
-    bcc !+
-    inc return+1
-  !:
+    lda form_fields_x,x
+    sta x
     rts
 }
 // Apply a form value preset to the form values
@@ -1306,8 +1296,7 @@ apply_preset: {
 // Reads keyboard and allows the user to navigate and change the fields of the form
 // Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
-    .label field = 3
-    ldy form_field_idx
+    ldx form_field_idx
     jsr form_field_ptr
     dec form_cursor_count
     lda form_cursor_count
@@ -1326,19 +1315,19 @@ form_control: {
     jmp b2
   !b2:
     lda #$7f
-    ldy #0
-    and (field),y
-    sta (field),y
+    ldy form_field_ptr.x
+    and (form_field_ptr._2),y
+    sta (form_field_ptr._2),y
   b3:
     jsr keyboard_event_scan
     jsr keyboard_event_get
     cmp #KEY_CRSR_DOWN
     bne b4
     lda #$7f
-    ldy #0
-    and (field),y
+    ldy form_field_ptr.x
+    and (form_field_ptr._2),y
     // Unblink the cursor
-    sta (field),y
+    sta (form_field_ptr._2),y
     txa
     and #KEY_MODIFIER_SHIFT
     cmp #0
@@ -1382,8 +1371,8 @@ form_control: {
     ldx form_field_idx
     ldy form_fields_val,x
     lda print_hextab,y
-    ldy #0
-    sta (field),y
+    ldy form_field_ptr.x
+    sta (form_field_ptr._2),y
   b6:
     ldx #0
     rts
@@ -1405,9 +1394,9 @@ form_control: {
     rts
   b2:
     lda #$80
-    ldy #0
-    ora (field),y
-    sta (field),y
+    ldy form_field_ptr.x
+    ora (form_field_ptr._2),y
+    sta (form_field_ptr._2),y
     jmp b3
 }
 // Set the screen to use for the form.
@@ -1570,7 +1559,7 @@ gfx_init_plane_full: {
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
 // gfx_init_plane_fill(dword zeropage(9) plane_addr, byte zeropage(2) fill)
 gfx_init_plane_fill: {
-    .label _0 = $13
+    .label _0 = $14
     .label _1 = 3
     .label _4 = 3
     .label _5 = 3

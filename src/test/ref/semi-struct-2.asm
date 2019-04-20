@@ -34,7 +34,7 @@
   // The maximal number of files
   .const MAX_FILES = $90
   .label print_char_cursor = 6
-  .label print_line_cursor = $b
+  .label print_line_cursor = $a
   .label print_line_cursor_32 = 2
   .label print_line_cursor_63 = 2
   .label print_line_cursor_159 = 2
@@ -61,8 +61,8 @@ main: {
     .const fileEntry2_idx = 2
     .label fileEntry1__0 = 4
     .label entry1 = 4
-    .label fileEntry2__0 = 9
-    .label entry2 = 9
+    .label fileEntry2__0 = 8
+    .label entry2 = 8
     jsr keyboard_init
     ldx #fileEntry1_idx
     jsr mul8u
@@ -90,15 +90,13 @@ main: {
     sta initEntry.entry
     lda entry1+1
     sta initEntry.entry+1
-    lda #0
-    sta initEntry.n
+    ldx #0
     jsr initEntry
     lda entry2
     sta initEntry.entry
     lda entry2+1
     sta initEntry.entry+1
-    lda #$80
-    sta initEntry.n
+    ldx #$11
     jsr initEntry
     jsr print_cls
     lda #<$400
@@ -304,23 +302,6 @@ print_ln: {
 printEntry: {
     .label entry = 4
     .label entryBufDisk1__0 = 4
-    .label entryBufDisk1_return = 2
-    .label entryBufEdit1__0 = 2
-    .label entryBufEdit1_return = 2
-    .label entryTsLen1__0 = 2
-    .label entryTsLen1_return = 2
-    .label entryTsOrder1__0 = 2
-    .label entryTsOrder1_return = 2
-    .label entryTLastLink1_return = 2
-    .label entrySLastLink1_return = 2
-    .label entryBFlag1_return = 2
-    .label entryBError1_return = 2
-    .label entryUCross1__0 = 2
-    .label entryUCross1_return = 2
-    .label entryBAddrLo1_return = 2
-    .label entryBAddrHi1_return = 2
-    .label entryTHi1_return = 2
-    .label entryTLo1_return = 4
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -330,17 +311,12 @@ printEntry: {
     lda #>str
     sta print_str.str+1
     jsr print_str
-    lda entryBufDisk1__0
-    sta entryBufDisk1_return
-    lda entryBufDisk1__0+1
-    sta entryBufDisk1_return+1
     ldy #0
-    lda (print_word.w),y
-    tax
+    lda (entryBufDisk1__0),y
+    sta print_word.w
     iny
-    lda (print_word.w),y
+    lda (entryBufDisk1__0),y
     sta print_word.w+1
-    stx print_word.w
     jsr print_word
     lda print_line_cursor
     sta print_line_cursor_163
@@ -356,20 +332,12 @@ printEntry: {
     lda #>str1
     sta print_str.str+1
     jsr print_str
-    lda entryBufDisk1__0
-    clc
-    adc #2
-    sta entryBufEdit1__0
-    lda entryBufDisk1__0+1
-    adc #0
-    sta entryBufEdit1__0+1
-    ldy #0
-    lda (print_word.w),y
-    tax
+    ldy #2
+    lda (entryBufDisk1__0),y
+    sta print_word.w
     iny
-    lda (print_word.w),y
+    lda (entryBufDisk1__0),y
     sta print_word.w+1
-    stx print_word.w
     jsr print_word
     lda print_line_cursor
     sta print_line_cursor_164
@@ -385,20 +353,12 @@ printEntry: {
     lda #>str2
     sta print_str.str+1
     jsr print_str
-    lda #4
-    clc
-    adc entryBufDisk1__0
-    sta entryTsLen1__0
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryTsLen1__0+1
-    ldy #0
-    lda (print_word.w),y
-    tax
+    ldy #4
+    lda (entryBufDisk1__0),y
+    sta print_word.w
     iny
-    lda (print_word.w),y
+    lda (entryBufDisk1__0),y
     sta print_word.w+1
-    stx print_word.w
     jsr print_word
     lda print_line_cursor
     sta print_line_cursor_165
@@ -414,20 +374,12 @@ printEntry: {
     lda #>str3
     sta print_str.str+1
     jsr print_str
-    lda #6
-    clc
-    adc entryBufDisk1__0
-    sta entryTsOrder1__0
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryTsOrder1__0+1
-    ldy #0
-    lda (print_word.w),y
-    tax
+    ldy #6
+    lda (entryBufDisk1__0),y
+    sta print_word.w
     iny
-    lda (print_word.w),y
+    lda (entryBufDisk1__0),y
     sta print_word.w+1
-    stx print_word.w
     jsr print_word
     lda print_line_cursor
     sta print_line_cursor_166
@@ -443,15 +395,8 @@ printEntry: {
     lda #>str4
     sta print_str.str+1
     jsr print_str
-    lda #8
-    clc
-    adc entryBufDisk1__0
-    sta entryTLastLink1_return
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryTLastLink1_return+1
-    ldy #0
-    lda (entryTLastLink1_return),y
+    ldy #8
+    lda (entryBufDisk1__0),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -468,15 +413,8 @@ printEntry: {
     lda #>str5
     sta print_str.str+1
     jsr print_str
-    lda #9
-    clc
-    adc entryBufDisk1__0
-    sta entrySLastLink1_return
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entrySLastLink1_return+1
-    ldy #0
-    lda (entrySLastLink1_return),y
+    ldy #9
+    lda (entryBufDisk1__0),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -493,15 +431,8 @@ printEntry: {
     lda #>str6
     sta print_str.str+1
     jsr print_str
-    lda #$a
-    clc
-    adc entryBufDisk1__0
-    sta entryBFlag1_return
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryBFlag1_return+1
-    ldy #0
-    lda (entryBFlag1_return),y
+    ldy #$a
+    lda (entryBufDisk1__0),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -518,15 +449,8 @@ printEntry: {
     lda #>str7
     sta print_str.str+1
     jsr print_str
-    lda #$b
-    clc
-    adc entryBufDisk1__0
-    sta entryBError1_return
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryBError1_return+1
-    ldy #0
-    lda (entryBError1_return),y
+    ldy #$b
+    lda (entryBufDisk1__0),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -543,20 +467,12 @@ printEntry: {
     lda #>str8
     sta print_str.str+1
     jsr print_str
-    lda #$c
-    clc
-    adc entryBufDisk1__0
-    sta entryUCross1__0
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryUCross1__0+1
-    ldy #0
-    lda (print_word.w),y
-    tax
+    ldy #$c
+    lda (entryBufDisk1__0),y
+    sta print_word.w
     iny
-    lda (print_word.w),y
+    lda (entryBufDisk1__0),y
     sta print_word.w+1
-    stx print_word.w
     jsr print_word
     lda print_line_cursor
     sta print_line_cursor_171
@@ -572,15 +488,8 @@ printEntry: {
     lda #>str9
     sta print_str.str+1
     jsr print_str
-    lda #$e
-    clc
-    adc entryBufDisk1__0
-    sta entryBAddrLo1_return
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryBAddrLo1_return+1
-    ldy #0
-    lda (entryBAddrLo1_return),y
+    ldy #$e
+    lda (entryBufDisk1__0),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -597,15 +506,8 @@ printEntry: {
     lda #>str10
     sta print_str.str+1
     jsr print_str
-    lda #$f
-    clc
-    adc entryBufDisk1__0
-    sta entryBAddrHi1_return
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryBAddrHi1_return+1
-    ldy #0
-    lda (entryBAddrHi1_return),y
+    ldy #$f
+    lda (entryBufDisk1__0),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -622,15 +524,8 @@ printEntry: {
     lda #>str11
     sta print_str.str+1
     jsr print_str
-    lda #$10
-    clc
-    adc entryBufDisk1__0
-    sta entryTHi1_return
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryTHi1_return+1
-    ldy #0
-    lda (entryTHi1_return),y
+    ldy #$10
+    lda (entryBufDisk1__0),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -647,15 +542,8 @@ printEntry: {
     lda #>str12
     sta print_str.str+1
     jsr print_str
-    lda #$11
-    clc
-    adc entryTLo1_return
-    sta entryTLo1_return
-    bcc !+
-    inc entryTLo1_return+1
-  !:
-    ldy #0
-    lda (entryTLo1_return),y
+    ldy #$11
+    lda (entryBufDisk1__0),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -720,198 +608,128 @@ print_word: {
 }
 // Set all values in the passed struct
 // Sets the values to n, n+1, n... to help test that everything works as intended
-// initEntry(byte* zeropage(2) entry, byte zeropage(8) n)
+// initEntry(byte* zeropage(2) entry, byte register(X) n)
 initEntry: {
+    .label _1 = 6
+    .label _3 = 6
+    .label _5 = 6
+    .label _7 = 6
+    .label _17 = 6
     .label entry = 2
     .label entryBufDisk1__0 = 2
-    .label entryBufDisk1_return = 6
-    .label entryBufEdit1__0 = 6
-    .label entryBufEdit1_return = 6
-    .label entryTsLen1__0 = 6
-    .label entryTsLen1_return = 6
-    .label entryTsOrder1__0 = 6
-    .label entryTsOrder1_return = 6
-    .label entryTLastLink1_return = 6
-    .label entrySLastLink1_return = 6
-    .label entryBFlag1_return = 6
-    .label entryBError1_return = 6
-    .label entryUCross1__0 = 6
-    .label entryUCross1_return = 6
-    .label entryBAddrLo1_return = 6
-    .label entryBAddrHi1_return = 6
-    .label entryTHi1_return = 6
-    .label entryTLo1_return = 2
-    .label n = 8
-    lda entryBufDisk1__0
-    sta entryBufDisk1_return
-    lda entryBufDisk1__0+1
-    sta entryBufDisk1_return+1
-    lda n
+    txa
     clc
-    adc #1
-    ldy #0
-    sta (entryBufDisk1_return),y
-    tya
-    iny
-    sta (entryBufDisk1_return),y
-    lda entryBufDisk1__0
-    clc
-    adc #2
-    sta entryBufEdit1__0
-    lda entryBufDisk1__0+1
+    adc #<$1111
+    sta _1
+    lda #>$1111
     adc #0
-    sta entryBufEdit1__0+1
-    lda n
-    clc
-    adc #2
+    sta _1+1
     ldy #0
-    sta (entryBufEdit1_return),y
-    tya
+    lda _1
+    sta (entryBufDisk1__0),y
     iny
-    sta (entryBufEdit1_return),y
-    lda #4
+    lda _1+1
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc entryBufDisk1__0
-    sta entryTsLen1__0
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryTsLen1__0+1
-    lda #3
-    clc
-    adc n
-    ldy #0
-    sta (entryTsLen1_return),y
-    tya
+    adc #<$2222
+    sta _3
+    lda #>$2222
+    adc #0
+    sta _3+1
+    ldy #2
+    lda _3
+    sta (entryBufDisk1__0),y
     iny
-    sta (entryTsLen1_return),y
-    lda #6
+    lda _3+1
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc entryBufDisk1__0
-    sta entryTsOrder1__0
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryTsOrder1__0+1
-    lda #4
-    clc
-    adc n
-    ldy #0
-    sta (entryTsOrder1_return),y
-    tya
+    adc #<$3333
+    sta _5
+    lda #>$3333
+    adc #0
+    sta _5+1
+    ldy #4
+    lda _5
+    sta (entryBufDisk1__0),y
     iny
-    sta (entryTsOrder1_return),y
-    lda #8
+    lda _5+1
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc entryBufDisk1__0
-    sta entryTLastLink1_return
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryTLastLink1_return+1
-    lda #5
-    clc
-    adc n
-    ldy #0
-    sta (entryTLastLink1_return),y
-    lda #9
-    clc
-    adc entryBufDisk1__0
-    sta entrySLastLink1_return
-    tya
-    adc entryBufDisk1__0+1
-    sta entrySLastLink1_return+1
-    lda #6
-    clc
-    adc n
-    sta (entrySLastLink1_return),y
-    lda #$a
-    clc
-    adc entryBufDisk1__0
-    sta entryBFlag1_return
-    tya
-    adc entryBufDisk1__0+1
-    sta entryBFlag1_return+1
-    lda #7
-    clc
-    adc n
-    sta (entryBFlag1_return),y
-    lda #$b
-    clc
-    adc entryBufDisk1__0
-    sta entryBError1_return
-    tya
-    adc entryBufDisk1__0+1
-    sta entryBError1_return+1
-    lda #8
-    clc
-    adc n
-    sta (entryBError1_return),y
-    lda #$c
-    clc
-    adc entryBufDisk1__0
-    sta entryUCross1__0
-    tya
-    adc entryBufDisk1__0+1
-    sta entryUCross1__0+1
-    lda #9
-    clc
-    adc n
-    sta (entryUCross1_return),y
-    tya
+    adc #<$4444
+    sta _7
+    lda #>$4444
+    adc #0
+    sta _7+1
+    ldy #6
+    lda _7
+    sta (entryBufDisk1__0),y
     iny
-    sta (entryUCross1_return),y
-    lda #$e
+    lda _7+1
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc entryBufDisk1__0
-    sta entryBAddrLo1_return
-    lda #0
-    adc entryBufDisk1__0+1
-    sta entryBAddrLo1_return+1
-    lda #$a
+    adc #$55
+    ldy #8
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc n
-    ldy #0
-    sta (entryBAddrLo1_return),y
-    lda #$f
+    adc #$66
+    ldy #9
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc entryBufDisk1__0
-    sta entryBAddrHi1_return
-    tya
-    adc entryBufDisk1__0+1
-    sta entryBAddrHi1_return+1
-    lda #$b
+    adc #$77
+    ldy #$a
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc n
-    sta (entryBAddrHi1_return),y
-    lda #$10
+    adc #$88
+    ldy #$b
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc entryBufDisk1__0
-    sta entryTHi1_return
-    tya
-    adc entryBufDisk1__0+1
-    sta entryTHi1_return+1
-    lda #$c
+    adc #<$9999
+    sta _17
+    lda #>$9999
+    adc #0
+    sta _17+1
+    ldy #$c
+    lda _17
+    sta (entryBufDisk1__0),y
+    iny
+    lda _17+1
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc n
-    sta (entryTHi1_return),y
-    lda #$11
+    adc #$aa
+    ldy #$e
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc entryTLo1_return
-    sta entryTLo1_return
-    bcc !+
-    inc entryTLo1_return+1
-  !:
-    lda #$d
+    adc #$bb
+    ldy #$f
+    sta (entryBufDisk1__0),y
+    txa
     clc
-    adc n
-    ldy #0
-    sta (entryTLo1_return),y
+    adc #$cc
+    ldy #$10
+    sta (entryBufDisk1__0),y
+    txa
+    clc
+    adc #$dd
+    ldy #$11
+    sta (entryBufDisk1__0),y
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a)
 mul8u: {
     .label mb = 2
-    .label res = 9
-    .label return = 9
+    .label res = 8
+    .label return = 8
     lda #SIZEOF_ENTRY
     sta mb
     lda #0

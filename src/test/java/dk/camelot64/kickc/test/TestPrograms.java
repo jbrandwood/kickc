@@ -38,6 +38,16 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testDerefToDerefIdx2() throws IOException, URISyntaxException {
+      compileAndCompare("deref-to-derefidx-2");
+   }
+
+   @Test
+   public void testDerefToDerefIdx() throws IOException, URISyntaxException {
+      compileAndCompare("deref-to-derefidx");
+   }
+
+   @Test
    public void testSemiStruct2() throws IOException, URISyntaxException {
       compileAndCompare("semi-struct-2");
    }
@@ -45,6 +55,11 @@ public class TestPrograms {
    @Test
    public void testSemiStruct1() throws IOException, URISyntaxException {
       compileAndCompare("semi-struct-1");
+   }
+
+   @Test
+   public void testStrip() throws IOException, URISyntaxException {
+      compileAndCompare("strip");
    }
 
    @Test

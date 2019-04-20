@@ -179,7 +179,7 @@ public class Compiler {
       new Pass1AssertUsedVars(program).execute();
       new Pass1ProcedureInline(program).execute();
       new Pass1EliminateUncalledProcedures(program).execute();
-      new PassNEliminateUnusedVars(program).execute();
+      new PassNEliminateUnusedVars(program, false).execute();
       new Pass1ExtractInlineStrings(program).execute();
       new Pass1EliminateEmptyBlocks(program).execute();
 
@@ -246,7 +246,7 @@ public class Compiler {
       optimizations.add(new Pass2ConstantStringConsolidation(program));
       optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new Pass2TypeInference(program));
-      optimizations.add(new PassNEliminateUnusedVars(program));
+      optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateRedundantCasts(program));
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
@@ -255,6 +255,7 @@ public class Compiler {
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));
       optimizations.add(new Pass2MultiplyToShiftRewriting(program));
       optimizations.add(new Pass2SizeOfSimplification(program));
+      optimizations.add(new Pass2InlineDerefIdx(program));
       pass2Execute(optimizations);
    }
 

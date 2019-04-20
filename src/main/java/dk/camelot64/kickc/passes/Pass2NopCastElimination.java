@@ -59,6 +59,9 @@ public class Pass2NopCastElimination extends Pass2SsaOptimization {
                   } else if(rValType instanceof SymbolTypePointer  && Operators.CAST_WORD.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.WORD;
+                  } else if(rValType instanceof SymbolTypePointer  && assignment.getOperator() instanceof OperatorCastPtr) {
+                     isNopCast = true;
+                     toType = new SymbolTypePointer(((OperatorCastPtr) assignment.getOperator()).getElementType());
                   }
                   if(isNopCast) {
                      getLog().append("Eliminating Noop Cast "+assignment.toString(getProgram(), false));

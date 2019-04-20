@@ -4,8 +4,7 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
-    .label _0 = 3
-    .label w = 5
+    .label w = 3
     .label idx = 2
     lda #0
     sta idx
@@ -13,17 +12,10 @@ main: {
   b1:
     txa
     asl
-    clc
-    adc #<words
-    sta _0
-    lda #>words
-    adc #0
-    sta _0+1
-    ldy #0
-    lda (_0),y
+    tay
+    lda words,y
     sta w
-    iny
-    lda (_0),y
+    lda words+1,y
     sta w+1
     lda w
     ldy idx

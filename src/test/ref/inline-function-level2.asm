@@ -13,9 +13,7 @@ main: {
     .const line2_ysize = $f
     .const line2_ch = '.'
     .label sc = 2
-    .label plot1__0 = 6
     .label line1_pos = 2
-    .label plot2__0 = 6
     .label line2_pos = 2
     lda #<$400
     sta sc
@@ -48,15 +46,9 @@ main: {
     sta line1_pos+1
   line1_b1:
     lda line1_pos+1
-    clc
-    adc cur_line
-    sta plot1__0
-    lda #0
-    adc cur_line+1
-    sta plot1__0+1
+    tay
     lda #line1_ch
-    ldy #0
-    sta (plot1__0),y
+    sta (cur_line),y
     lda #line1_xadd
     clc
     adc line1_pos
@@ -85,15 +77,9 @@ main: {
     sta line2_pos+1
   line2_b1:
     lda line2_pos+1
-    clc
-    adc cur_line
-    sta plot2__0
-    lda #0
-    adc cur_line+1
-    sta plot2__0+1
+    tay
     lda #line2_ch
-    ldy #0
-    sta (plot2__0),y
+    sta (cur_line),y
     lda #line2_xadd
     clc
     adc line2_pos

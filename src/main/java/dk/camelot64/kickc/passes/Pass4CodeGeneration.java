@@ -149,6 +149,7 @@ public class Pass4CodeGeneration {
 
    /**
     * Generate the end of a scope
+    *
     * @param asm The assembler program being generated
     * @param currentScope The current scope, which is ending here
     */
@@ -156,7 +157,7 @@ public class Pass4CodeGeneration {
       if(!ScopeRef.ROOT.equals(currentScope)) {
          // Generate any indirect calls pending
          for(String indirectCallAsmName : indirectCallAsmNames) {
-            asm.addLabel("bi_"+indirectCallAsmName);
+            asm.addLabel("bi_" + indirectCallAsmName);
             asm.addInstruction("jmp", AsmAddressingMode.IND, indirectCallAsmName, false);
          }
          indirectCallAsmNames = new ArrayList<>();
@@ -167,6 +168,7 @@ public class Pass4CodeGeneration {
 
    /**
     * Add an indirect call to the assembler program. Also queues ASM for the indirect jump to be added at the end of the block.
+    *
     * @param asm The ASM program being built
     * @param procedureVariable The variable containing the function pointer
     * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
@@ -178,9 +180,9 @@ public class Pass4CodeGeneration {
    }
 
 
-
    /**
     * Generate a comment that describes the procedure signature and parameter transfer
+    *
     * @param asm The assembler program being generated
     * @param procedure The procedure
     */
@@ -210,7 +212,7 @@ public class Pass4CodeGeneration {
          }
       }
       signature.append(")");
-      if(i>0) {
+      if(i > 0) {
          asm.addComment(signature.toString(), false);
       }
    }
@@ -395,12 +397,8 @@ public class Pass4CodeGeneration {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmElements);
                   added.add(asmName);
                } else if(elementType instanceof SymbolTypePointer) {
-                  if(((SymbolTypePointer) elementType).getElementType() instanceof SymbolTypeProcedure) {
-                     asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmElements);
-                     added.add(asmName);
-                  } else {
-                     throw new RuntimeException("Unhandled constant array element type " + constantArrayList.toString(program));
-                  }
+                  asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmElements);
+                  added.add(asmName);
                } else {
                   throw new RuntimeException("Unhandled constant array element type " + constantArrayList.toString(program));
                }
@@ -493,7 +491,7 @@ public class Pass4CodeGeneration {
             try {
                generateStatementAsm(asm, block, statement, aluState, true);
             } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
-               throw new CompileError("Unknown fragment for statement " + statement.toString(program, false)+"\nMissing ASM fragment "+e.getFragmentSignature(), e);
+               throw new CompileError("Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature(), statement.getSource());
             }
          }
       }
@@ -585,7 +583,7 @@ public class Pass4CodeGeneration {
             asmFragmentInstance.generate(asm);
             AsmSegment currentSegment = asm.getCurrentSegment();
 
-            if(statementAsm.getDeclaredClobber()!=null) {
+            if(statementAsm.getDeclaredClobber() != null) {
                currentSegment.setClobberOverwrite(statementAsm.getDeclaredClobber());
             } else {
                for(AsmLine asmLine : currentSegment.getLines()) {
@@ -634,7 +632,7 @@ public class Pass4CodeGeneration {
                if(procedureVariableType instanceof SymbolTypePointer) {
                   if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
                      String varAsmName = AsmFormat.getAsmParamName(procedureVariable, block.getScope());
-                     asm.addInstruction("jsr", AsmAddressingMode.ABS, varAsmName,false);
+                     asm.addInstruction("jsr", AsmAddressingMode.ABS, varAsmName, false);
                      supported = true;
                   }
                }
@@ -653,6 +651,7 @@ public class Pass4CodeGeneration {
 
    /**
     * Generate ASM code for an ASM fragment instance
+    *
     * @param asm The ASM program to generate into
     * @param asmFragmentInstanceSpecFactory The ASM fragment instance specification factory
     */
@@ -661,7 +660,7 @@ public class Pass4CodeGeneration {
       AsmFragmentInstanceSpec asmFragmentInstanceSpec = asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec();
       AsmFragmentInstance asmFragmentInstance = null;
       StringBuffer fragmentVariationsTried = new StringBuffer();
-      while(asmFragmentInstance==null) {
+      while(asmFragmentInstance == null) {
          try {
             asmFragmentInstance = AsmFragmentTemplateSynthesizer.getFragmentInstance(asmFragmentInstanceSpec, program.getLog());
          } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
@@ -671,11 +670,11 @@ public class Pass4CodeGeneration {
             if(asmFragmentInstanceSpec.hasNextVariation()) {
                asmFragmentInstanceSpec.nextVariation();
                if(program.getLog().isVerboseFragmentLog()) {
-                  program.getLog().append("Fragment not found "+signature+". Attempting another variation "+asmFragmentInstanceSpec.getSignature());
+                  program.getLog().append("Fragment not found " + signature + ". Attempting another variation " + asmFragmentInstanceSpec.getSignature());
                }
             } else {
                // No more variations available - fail with an error
-               throw new AsmFragmentTemplateSynthesizer.UnknownFragmentException("Fragment not found "+initialSignature+". Attempted variations "+fragmentVariationsTried);
+               throw new AsmFragmentTemplateSynthesizer.UnknownFragmentException("Fragment not found " + initialSignature + ". Attempted variations " + fragmentVariationsTried);
             }
          }
       }

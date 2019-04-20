@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSemiStruct1() throws IOException, URISyntaxException {
+      compileAndCompare("semi-struct-1");
+   }
+
+   @Test
    public void testReserveZpGlobal() throws IOException, URISyntaxException {
       compileAndCompare("reserve-zp-global");
    }
@@ -505,6 +510,16 @@ public class TestPrograms {
    @Test
    public void testInlineAsmOptimized() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-optimized");
+   }
+
+   @Test
+   public void testCastNotNeeded2() throws IOException, URISyntaxException {
+      compileAndCompare("cast-not-needed-2");
+   }
+
+   @Test
+   public void testCastNotNeeded3() throws IOException, URISyntaxException {
+      compileAndCompare("cast-not-needed-3");
    }
 
    @Test

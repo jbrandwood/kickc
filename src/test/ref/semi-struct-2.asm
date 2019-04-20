@@ -30,7 +30,7 @@
   .label CIA1_PORT_B_DDR = $dc03
   .const KEY_SPACE = $3c
   // The size of a file ENTRY
-  .const ENTRY_SIZE = $12
+  .const SIZEOF_ENTRY = $12
   // The maximal number of files
   .const MAX_FILES = $90
   .label print_char_cursor = 6
@@ -912,7 +912,7 @@ mul8u: {
     .label mb = 2
     .label res = 9
     .label return = 9
-    lda #ENTRY_SIZE
+    lda #SIZEOF_ENTRY
     sta mb
     lda #0
     sta mb+1
@@ -958,4 +958,4 @@ keyboard_init: {
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
   // All files
-  files: .fill MAX_FILES*ENTRY_SIZE, 0
+  files: .fill MAX_FILES*SIZEOF_ENTRY, 0

@@ -1,4 +1,4 @@
-//
+// Tests a cast that is not needed
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

@@ -247,6 +247,7 @@ public class Compiler {
       optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new Pass2TypeInference(program));
       optimizations.add(new PassNEliminateUnusedVars(program));
+      optimizations.add(new Pass2EliminateRedundantCasts(program));
       optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));

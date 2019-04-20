@@ -17,11 +17,10 @@ main: {
     sta w
     lda words+1,y
     sta w+1
-    lda w
     ldy idx
     sta SCREEN,y
     iny
-    lda w+1
+    lda w
     sta SCREEN,y
     iny
     tya
@@ -33,5 +32,5 @@ main: {
     bne b1
     rts
     // Clever word array that represents C64 numbers 0-7
-    words: .word $3130, $3332, $3534, $3736
+    words: .word $3031, $3233, $3435, $3637
 }

@@ -113,8 +113,8 @@ public class TestPrograms {
    }
 
    @Test
-   public void testWordArray() throws IOException, URISyntaxException {
-      compileAndCompare("word-array");
+   public void testWordArray1() throws IOException, URISyntaxException {
+      compileAndCompare("word-array-1");
    }
 
    @Test

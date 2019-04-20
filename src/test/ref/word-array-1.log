@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (word[]) main::words#0 ← { (word/signed word/dword/signed dword) $3130, (word/signed word/dword/signed dword) $3332, (word/signed word/dword/signed dword) $3534, (word/signed word/dword/signed dword) $3736 }
+  (word[]) main::words#0 ← { (word/signed word/dword/signed dword) $3031, (word/signed word/dword/signed dword) $3233, (word/signed word/dword/signed dword) $3435, (word/signed word/dword/signed dword) $3637 }
   (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
   (byte) main::idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
   (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
@@ -14,10 +14,10 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte) main::$3 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
   (word) main::w#0 ← *((word[]) main::words#0 + (byte) main::$3)
-  (byte~) main::$0 ← < (word) main::w#0
+  (byte~) main::$0 ← > (word) main::w#0
   *((byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$0
   (byte) main::idx#1 ← ++ (byte) main::idx#4
-  (byte~) main::$1 ← > (word) main::w#0
+  (byte~) main::$1 ← < (word) main::w#0
   *((byte*) main::SCREEN#0 + (byte) main::idx#1) ← (byte~) main::$1
   (byte) main::idx#2 ← ++ (byte) main::idx#1
   (byte) main::idx#3 ← ++ (byte) main::idx#2
@@ -69,7 +69,7 @@ Culled Empty Block (label) @2
 Successful SSA optimization Pass2CullEmptyBlocks
 Simple Condition (bool~) main::$2 [16] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const word[]) main::words#0 = { $3130, $3332, $3534, $3736 }
+Constant (const word[]) main::words#0 = { $3031, $3233, $3435, $3637 }
 Constant (const byte*) main::SCREEN#0 = ((byte*))$400
 Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::i#0 = 0
@@ -121,10 +121,10 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) main::i#1 )
   [6] (byte) main::$3 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1
   [7] (word) main::w#0 ← *((const word[]) main::words#0 + (byte) main::$3)
-  [8] (byte~) main::$0 ← < (word) main::w#0
+  [8] (byte~) main::$0 ← > (word) main::w#0
   [9] *((const byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$0
   [10] (byte) main::idx#1 ← ++ (byte) main::idx#4
-  [11] (byte~) main::$1 ← > (word) main::w#0
+  [11] (byte~) main::$1 ← < (word) main::w#0
   [12] *((const byte*) main::SCREEN#0 + (byte) main::idx#1) ← (byte~) main::$1
   [13] (byte) main::idx#2 ← ++ (byte) main::idx#1
   [14] (byte) main::idx#3 ← ++ (byte) main::idx#2
@@ -243,8 +243,8 @@ main: {
     sta w
     lda words+1,y
     sta w+1
-  //SEG20 [8] (byte~) main::$0 ← < (word) main::w#0 -- vbuz1=_lo_vwuz2 
-    lda w
+  //SEG20 [8] (byte~) main::$0 ← > (word) main::w#0 -- vbuz1=_hi_vwuz2 
+    lda w+1
     sta _0
   //SEG21 [9] *((const byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _0
@@ -254,8 +254,8 @@ main: {
     ldy idx_4
     iny
     sty idx
-  //SEG23 [11] (byte~) main::$1 ← > (word) main::w#0 -- vbuz1=_hi_vwuz2 
-    lda w+1
+  //SEG23 [11] (byte~) main::$1 ← < (word) main::w#0 -- vbuz1=_lo_vwuz2 
+    lda w
     sta _1
   //SEG24 [12] *((const byte*) main::SCREEN#0 + (byte) main::idx#1) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda _1
@@ -281,7 +281,7 @@ main: {
   //SEG30 [17] return 
     rts
     // Clever word array that represents C64 numbers 0-7
-    words: .word $3130, $3332, $3534, $3736
+    words: .word $3031, $3233, $3435, $3637
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
@@ -289,13 +289,13 @@ Statement [6] (byte) main::$3 ← (byte) main::i#2 << (byte/signed byte/word/sig
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::idx#4 main::idx#3 ]
 Statement [7] (word) main::w#0 ← *((const word[]) main::words#0 + (byte) main::$3) [ main::i#2 main::idx#4 main::w#0 ] ( main:2 [ main::i#2 main::idx#4 main::w#0 ] ) always clobbers reg byte a 
-Statement [8] (byte~) main::$0 ← < (word) main::w#0 [ main::i#2 main::idx#4 main::w#0 main::$0 ] ( main:2 [ main::i#2 main::idx#4 main::w#0 main::$0 ] ) always clobbers reg byte a 
-Statement [11] (byte~) main::$1 ← > (word) main::w#0 [ main::i#2 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::idx#1 main::$1 ] ) always clobbers reg byte a 
+Statement [8] (byte~) main::$0 ← > (word) main::w#0 [ main::i#2 main::idx#4 main::w#0 main::$0 ] ( main:2 [ main::i#2 main::idx#4 main::w#0 main::$0 ] ) always clobbers reg byte a 
+Statement [11] (byte~) main::$1 ← < (word) main::w#0 [ main::i#2 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::idx#1 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:8 [ main::idx#1 ]
 Statement [6] (byte) main::$3 ← (byte) main::i#2 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#2 main::idx#4 main::$3 ] ( main:2 [ main::i#2 main::idx#4 main::$3 ] ) always clobbers reg byte a 
 Statement [7] (word) main::w#0 ← *((const word[]) main::words#0 + (byte) main::$3) [ main::i#2 main::idx#4 main::w#0 ] ( main:2 [ main::i#2 main::idx#4 main::w#0 ] ) always clobbers reg byte a 
-Statement [8] (byte~) main::$0 ← < (word) main::w#0 [ main::i#2 main::idx#4 main::w#0 main::$0 ] ( main:2 [ main::i#2 main::idx#4 main::w#0 main::$0 ] ) always clobbers reg byte a 
-Statement [11] (byte~) main::$1 ← > (word) main::w#0 [ main::i#2 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::idx#1 main::$1 ] ) always clobbers reg byte a 
+Statement [8] (byte~) main::$0 ← > (word) main::w#0 [ main::i#2 main::idx#4 main::w#0 main::$0 ] ( main:2 [ main::i#2 main::idx#4 main::w#0 main::$0 ] ) always clobbers reg byte a 
+Statement [11] (byte~) main::$1 ← < (word) main::w#0 [ main::i#2 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::idx#1 main::$1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::idx#4 main::idx#3 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ main::$3 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -374,16 +374,16 @@ main: {
     sta w
     lda words+1,y
     sta w+1
-  //SEG20 [8] (byte~) main::$0 ← < (word) main::w#0 -- vbuaa=_lo_vwuz1 
-    lda w
+  //SEG20 [8] (byte~) main::$0 ← > (word) main::w#0 -- vbuaa=_hi_vwuz1 
+    lda w+1
   //SEG21 [9] *((const byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy idx
     sta SCREEN,y
   //SEG22 [10] (byte) main::idx#1 ← ++ (byte) main::idx#4 -- vbuyy=_inc_vbuz1 
     ldy idx
     iny
-  //SEG23 [11] (byte~) main::$1 ← > (word) main::w#0 -- vbuaa=_hi_vwuz1 
-    lda w+1
+  //SEG23 [11] (byte~) main::$1 ← < (word) main::w#0 -- vbuaa=_lo_vwuz1 
+    lda w
   //SEG24 [12] *((const byte*) main::SCREEN#0 + (byte) main::idx#1) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN,y
   //SEG25 [13] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuaa=_inc_vbuyy 
@@ -404,7 +404,7 @@ main: {
   //SEG30 [17] return 
     rts
     // Clever word array that represents C64 numbers 0-7
-    words: .word $3130, $3332, $3534, $3736
+    words: .word $3031, $3233, $3435, $3637
 }
 
 ASSEMBLER OPTIMIZATIONS
@@ -414,6 +414,7 @@ Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
+Removing instruction lda w+1
 Removing instruction ldy idx
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b1 with b1
@@ -458,7 +459,7 @@ FINAL SYMBOL TABLE
 (word) main::w
 (word) main::w#0 w zp ZP_WORD:3 8.25
 (word[]) main::words
-(const word[]) main::words#0 words = { (word/signed word/dword/signed dword) $3130, (word/signed word/dword/signed dword) $3332, (word/signed word/dword/signed dword) $3534, (word/signed word/dword/signed dword) $3736 }
+(const word[]) main::words#0 words = { (word/signed word/dword/signed dword) $3031, (word/signed word/dword/signed dword) $3233, (word/signed word/dword/signed dword) $3435, (word/signed word/dword/signed dword) $3637 }
 
 reg byte x [ main::i#2 main::i#1 ]
 zp ZP_BYTE:2 [ main::idx#4 main::idx#3 ]
@@ -471,7 +472,7 @@ reg byte a [ main::idx#2 ]
 
 
 FINAL ASSEMBLER
-Score: 671
+Score: 641
 
 //SEG0 File Comments
 // Tests a simple word array
@@ -512,15 +513,14 @@ main: {
     sta w
     lda words+1,y
     sta w+1
-  //SEG20 [8] (byte~) main::$0 ← < (word) main::w#0 -- vbuaa=_lo_vwuz1 
-    lda w
+  //SEG20 [8] (byte~) main::$0 ← > (word) main::w#0 -- vbuaa=_hi_vwuz1 
   //SEG21 [9] *((const byte*) main::SCREEN#0 + (byte) main::idx#4) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy idx
     sta SCREEN,y
   //SEG22 [10] (byte) main::idx#1 ← ++ (byte) main::idx#4 -- vbuyy=_inc_vbuz1 
     iny
-  //SEG23 [11] (byte~) main::$1 ← > (word) main::w#0 -- vbuaa=_hi_vwuz1 
-    lda w+1
+  //SEG23 [11] (byte~) main::$1 ← < (word) main::w#0 -- vbuaa=_lo_vwuz1 
+    lda w
   //SEG24 [12] *((const byte*) main::SCREEN#0 + (byte) main::idx#1) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SCREEN,y
   //SEG25 [13] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuaa=_inc_vbuyy 
@@ -539,6 +539,6 @@ main: {
   //SEG30 [17] return 
     rts
     // Clever word array that represents C64 numbers 0-7
-    words: .word $3130, $3332, $3534, $3736
+    words: .word $3031, $3233, $3435, $3637
 }
 

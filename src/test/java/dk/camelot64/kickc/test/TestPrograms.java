@@ -38,6 +38,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testSemiStruct2() throws IOException, URISyntaxException {
+      compileAndCompare("semi-struct-2");
+   }
+
+   @Test
    public void testReserveZpGlobal() throws IOException, URISyntaxException {
       compileAndCompare("reserve-zp-global");
    }

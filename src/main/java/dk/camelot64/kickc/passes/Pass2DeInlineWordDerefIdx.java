@@ -12,7 +12,6 @@ import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.PointerDereferenceIndexed;
 import dk.camelot64.kickc.model.values.PointerDereferenceSimple;
 import dk.camelot64.kickc.model.values.RValue;
-import sun.tools.jstat.Operator;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

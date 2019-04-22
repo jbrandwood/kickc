@@ -1,36 +1,98 @@
 // Test that plus creates the expected type for all legal combinations of bytes (signed/unsigned - constant/variable)
 
 const byte* SCREEN = $400;
+const signed byte* SSCREEN = $400;
 byte idx = 0;
 
 void main() {
     idx = 0;
     testUnsigned();
-    idx = $28;
+    idx += $28;
+    testUnsignedVals();
+    idx += $28;
     testSigned();
+    idx += $28;
+    testSignedVals();
 }
 
 
 void testUnsigned() {
-    volatile unsigned byte ubv1 = 91;
-    SCREEN[idx++] = typeid(123);
+    unsigned byte ubc1 = 250;
+    volatile unsigned byte ubv1 = 250;
+
+    SCREEN[idx++] = typeid(250);
+    SCREEN[idx++] = typeid(ubc1);
     SCREEN[idx++] = typeid(ubv1);
-    SCREEN[idx++] = typeid(121+71);
-    SCREEN[idx++] = typeid(ubv1+12);
-    SCREEN[idx++] = typeid(21+ubv1);
+
+    SCREEN[idx++] = typeid(120+130);
+
+    SCREEN[idx++] = typeid(ubc1+250);
+    SCREEN[idx++] = typeid(250+ubc1);
+
+    SCREEN[idx++] = typeid(ubv1+250);
+    SCREEN[idx++] = typeid(250+ubv1);
+    SCREEN[idx++] = typeid(ubv1+ubc1);
+    SCREEN[idx++] = typeid(ubc1+ubv1);
     SCREEN[idx++] = typeid(ubv1+ubv1);
 }
 
+void testUnsignedVals() {
+    unsigned byte ubc1 = 250;
+    volatile unsigned byte ubv1 = 250;
+
+    SCREEN[idx++] = 250;
+    SCREEN[idx++] = ubc1;
+    SCREEN[idx++] = ubv1;
+
+    SCREEN[idx++] = 120+130;
+
+    SCREEN[idx++] = ubc1+250;
+    SCREEN[idx++] = 250+ubc1;
+
+    SCREEN[idx++] = ubv1+250;
+    SCREEN[idx++] = 250+ubv1;
+    SCREEN[idx++] = ubv1+ubc1;
+    SCREEN[idx++] = ubc1+ubv1;
+    SCREEN[idx++] = ubv1+ubv1;
+}
+
 void testSigned() {
-    volatile signed byte sbv1 = 19;
-    SCREEN[idx++] = typeid(-12);
+    signed byte sbc1 = -120;
+    volatile signed byte sbv1 = -120;
+
+    SCREEN[idx++] = typeid(-120);
+    SCREEN[idx++] = typeid(sbc1);
     SCREEN[idx++] = typeid(sbv1);
-    SCREEN[idx++] = typeid(-41+-12);
-    SCREEN[idx++] = typeid(-41+12);
-    SCREEN[idx++] = typeid(-14+sbv1);
-    SCREEN[idx++] = typeid(sbv1+-31);
-    SCREEN[idx++] = typeid(sbv1+31);
+
+    SCREEN[idx++] = typeid(-120+-130);
+
+    SCREEN[idx++] = typeid(sbc1+-120);
+    SCREEN[idx++] = typeid(-120+sbc1);
+
+    SCREEN[idx++] = typeid(sbv1+-120);
+    SCREEN[idx++] = typeid(-120+sbv1);
+    SCREEN[idx++] = typeid(sbv1+sbc1);
+    SCREEN[idx++] = typeid(sbc1+sbv1);
     SCREEN[idx++] = typeid(sbv1+sbv1);
 }
 
+void testSignedVals() {
+    signed byte sbc1 = -120;
+    volatile signed byte sbv1 = -120;
+
+    SSCREEN[idx++] = (-120);
+    SSCREEN[idx++] = (sbc1);
+    SSCREEN[idx++] = (sbv1);
+
+    SSCREEN[idx++] = (-70+-50);
+
+    SSCREEN[idx++] = (sbc1+-120);
+    SSCREEN[idx++] = (-120+sbc1);
+
+    SSCREEN[idx++] = (sbv1+-120);
+    SSCREEN[idx++] = (-120+sbv1);
+    SSCREEN[idx++] = (sbv1+sbc1);
+    SSCREEN[idx++] = (sbc1+sbv1);
+    SSCREEN[idx++] = (sbv1+sbv1);
+}
 

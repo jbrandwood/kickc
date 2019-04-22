@@ -37,14 +37,19 @@ public class TestPrograms {
    //   compileAndCompare("pointer-cast-3");
    //}
 
+   //@Test
+   //public void testTypeIdPlusByteProblem() throws IOException, URISyntaxException {
+   //   compileAndCompare("typeid-plus-byte-problem");
+   //}
+
+   //@Test
+   //public void testTypeIdPlusBytes() throws IOException, URISyntaxException {
+   //   compileAndCompare("typeid-plus-bytes");
+   //}
+
    @Test
    public void testTypeIdSimple() throws IOException, URISyntaxException {
       compileAndCompare("typeid-simple");
-   }
-
-   @Test
-   public void testTypeIdPlusBytes() throws IOException, URISyntaxException {
-      compileAndCompare("typeid-plus-bytes");
    }
 
    @Test

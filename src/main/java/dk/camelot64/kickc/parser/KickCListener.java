@@ -602,6 +602,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitExprBinary(KickCParser.ExprBinaryContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code exprTypeId}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprTypeId(KickCParser.ExprTypeIdContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprTypeId}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprTypeId(KickCParser.ExprTypeIdContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code exprPostMod}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

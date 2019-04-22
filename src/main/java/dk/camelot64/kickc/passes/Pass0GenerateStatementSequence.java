@@ -6,6 +6,7 @@ import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorSizeOf;
+import dk.camelot64.kickc.model.operators.OperatorTypeId;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -1233,6 +1234,23 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, Operators.SIZEOF, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
+         sequence.addStatement(stmt);
+         return tmpVarRef;
+      }
+   }
+
+   @Override
+   public Object visitExprTypeId(KickCParser.ExprTypeIdContext ctx) {
+      if(ctx.typeDecl()!=null) {
+         // typeid(type) - add directly
+         SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
+         return OperatorTypeId.getTypeIdConstantVar(program.getScope(), type);
+      } else {
+         // typeid(expression) - add a unary expression to be resolved later
+         RValue child = (RValue) this.visit(ctx.expr());
+         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         VariableRef tmpVarRef = tmpVar.getRef();
+         Statement stmt = new StatementAssignment(tmpVarRef, Operators.TYPEID, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
          return tmpVarRef;
       }

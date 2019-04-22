@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.*;
@@ -29,6 +30,11 @@ public class SymbolTypeInference {
     * @return The type of the resulting value
     */
    public static SymbolType inferType(ProgramScope programScope, OperatorUnary operator, RValue rValue) {
+      if(Operators.TYPEID.equals(operator)) {
+         return SymbolType.BYTE;
+      } else if(Operators.SIZEOF.equals(operator)) {
+         return SymbolType.BYTE;
+      }
       if(rValue instanceof ConstantValue) {
          // Calculate resulting constant literal
          try {

@@ -38,6 +38,16 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testTypeIdSimple() throws IOException, URISyntaxException {
+      compileAndCompare("typeid-simple");
+   }
+
+   @Test
+   public void testTypeIdPlusBytes() throws IOException, URISyntaxException {
+      compileAndCompare("typeid-plus-bytes");
+   }
+
+   @Test
    public void testTypeSigned() throws IOException, URISyntaxException {
       compileAndCompare("type-signed");
    }

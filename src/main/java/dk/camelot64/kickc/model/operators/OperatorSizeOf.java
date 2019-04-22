@@ -54,7 +54,7 @@ public class OperatorSizeOf extends OperatorUnary {
    public static String getSizeofConstantName(SymbolType type) {
       if(type instanceof SymbolTypeMulti) {
          // Grab the first sub-type. It will be the smallest
-         SymbolType subType = ((SymbolTypeMulti) type).getTypes().iterator().next();
+         SymbolType subType = OperatorTypeId.getSubTypeToUse((SymbolTypeMulti) type);
          return getSizeofConstantName(subType);
       } else if(type instanceof SymbolTypePointer) {
          return "SIZEOF_POINTER";

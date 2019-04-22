@@ -123,6 +123,7 @@ expr
     : '(' commaExpr ')' #exprPar
     | expr '(' parameterList? ')' #exprCall
     | 'sizeof' '(' ( typeDecl | expr ) ')' #exprSizeOf
+    | 'typeid' '(' ( typeDecl | expr ) ')' #exprTypeId
     | expr '[' commaExpr ']' #exprArray
     | '(' typeDecl ')' expr #exprCast
     | ('--' | '++' ) expr #exprPreMod

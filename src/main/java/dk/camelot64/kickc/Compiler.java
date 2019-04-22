@@ -154,6 +154,7 @@ public class Compiler {
       new Pass1ResolveForwardReferences(program).execute();
       new Pass1UnwindBlockScopes(program).execute();
       new Pass1TypeInference(program).execute();
+      new Pass1TypeIdSimplification(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");

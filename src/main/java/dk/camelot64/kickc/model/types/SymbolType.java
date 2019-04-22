@@ -107,8 +107,6 @@ public interface SymbolType {
     */
    int getSizeBytes();
 
-
-
    /**
     * Is the type {@link #BYTE} or compatible {@link SymbolTypeMulti}
     *

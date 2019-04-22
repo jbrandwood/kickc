@@ -108,7 +108,7 @@ forClassicInit
 typeDecl
     : '(' typeDecl ')' #typePar
     | SIMPLETYPE  #typeSimple
-    | ('signed'|'unsigned') SIMPLETYPE  #typeSignedSimple
+    | ('signed'|'unsigned') SIMPLETYPE?  #typeSignedSimple
     | typeDecl '*' #typePtr
     | typeDecl '[' (expr)? ']' #typeArray
     | typeDecl '(' ')' #typeProcedure

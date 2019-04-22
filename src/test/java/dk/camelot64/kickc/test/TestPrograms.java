@@ -38,6 +38,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testTypeSigned() throws IOException, URISyntaxException {
+      compileAndCompare("type-signed");
+   }
+
+   @Test
    public void testPointerPlus0() throws IOException, URISyntaxException {
       compileAndCompare("pointer-plus-0");
    }

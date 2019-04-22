@@ -1117,7 +1117,14 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public SymbolType visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
       String signedness = ctx.getChild(0).getText();
-      return SymbolType.get(signedness + " " + ctx.SIMPLETYPE().getText());
+
+      String simpleTypeName;
+      if(ctx.SIMPLETYPE()!=null) {
+         simpleTypeName = ctx.SIMPLETYPE().getText();
+      } else {
+         simpleTypeName = "int";
+      }
+      return SymbolType.get(signedness + " " + simpleTypeName);
    }
 
    @Override

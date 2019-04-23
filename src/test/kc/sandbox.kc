@@ -1,11 +1,11 @@
 import "division"
 
-const byte * zp1 = 0x61; // #define zp1 *(byte *)0x61 -- allows "zp1" vs "*zp1" below -- not supported --
+const byte * zp1 = 0x61; // #define zp1 *(byte *)0x61 -- allows "zp1" vs "*zp1" below -- not supported --  https://gitlab.com/camelot/kickc/issues/169
 const byte * zp2 = 0x62;
 const byte * TIMEHI = 0xA1;
 const byte * TIMELO = 0xA2;
 const byte * VICBANK = 0xD018;
-byte[16] buf16; // "char buf16[16]" is the normal way -- not supported
+byte[16] buf16; // "char buf16[16]" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/162
 byte[100] strTemp;
 
 // simple 'utoa' without using multiply or divide
@@ -33,21 +33,22 @@ byte myprintf(byte *dst, byte *str, word w1, word w2, word w3) {
 
 	for (; *str != 0; ++str) { 
         b = *str; 
-		if (bFormat != 0) { // "(bFormat)" is the normal way -- not supported
+		if (bFormat != 0) { // "(bFormat)" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/135
 			if (b == '0') { bLeadZero = 1; continue; }
 			if (b >= '1' && b <= '9') { bDigits = b - '0'; continue; }
 			if (b == '-') { bTrailing = 1; continue; }
-			if (b == 'c'){ // "switch" is the normal way -- not supported 
+			if (b == 'c'){ // "switch" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/170
 				dst[bLen++] = (byte)w;
 			} else if (b == 'd') { 
 				utoa(w, buf6);
-				b = 1; while(buf6[b] != 0) ++b; // strlen() not supported
-                // if (bDigits > b) is used because non-executing for loop is not supported
+				b = 1; while(buf6[b] != 0) ++b; // strlen() not supported -- https://gitlab.com/camelot/kickc/issues/182
+                // if (bDigits > b) is used because non-executing for loop is not supported -- https://gitlab.com/camelot/kickc/issues/183
 				if (bTrailing == 0 && bDigits > b) for (; bDigits > b; --bDigits) dst[bLen++] = (bLeadZero == 0) ? ' ' : '0';
 				for (digit = 0; digit < b; ++digit) dst[bLen++] = buf6[digit];
 				if (bTrailing != 0 && bDigits > b) for (; bDigits > b; --bDigits) dst[bLen++] = ' '; 
             } else if (b == 'x' || b == 'X'){ // hex
-				b = (w >> 4) & 0xF; dst[bLen++] = (b < 10 ? '0' : 0x57) + b; // "('a' - 10)" is the normal way -- not supported
+				b = (w >> 4) & 0xF;
+				dst[bLen++] = (b < 10 ? '0' : 0x57) + b; // "('a' - 10)" is the normal way -- not supported  -- https://gitlab.com/camelot/kickc/issues/184
 				b = w & 0xF; dst[bLen++] = (b < 10 ? '0' : 0x57) + b;
 			}
             bFormat = 0;
@@ -56,7 +57,7 @@ byte myprintf(byte *dst, byte *str, word w1, word w2, word w3) {
 		if (b == '%') {
 			bFormat = 1;
 			bLeadZero = 0; bDigits = 1; bTrailing = 0; // default format
-			//w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks"
+			//w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks" -- https://gitlab.com/camelot/kickc/issues/185
             if (bArg == 0) w = w1;
             else if (bArg == 1) w = w2;
             else w = w3; 

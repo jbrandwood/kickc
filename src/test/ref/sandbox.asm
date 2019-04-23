@@ -2,7 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label zp1 = $61
-  // #define zp1 *(byte *)0x61 -- allows "zp1" vs "*zp1" below -- not supported --
+  // #define zp1 *(byte *)0x61 -- allows "zp1" vs "*zp1" below -- not supported --  https://gitlab.com/camelot/kickc/issues/169
   .label zp2 = $62
   .label TIMEHI = $a1
   .label TIMELO = $a2
@@ -342,7 +342,7 @@ myprintf: {
     jmp b12
   b6:
     lda w
-    // "switch" is the normal way -- not supported 
+    // "switch" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/170
     ldy bLen
     sta strTemp,y
     inc bLen
@@ -361,7 +361,7 @@ myprintf: {
     cpx #'%'
     bne b28
     // default format
-    //w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks"
+    //w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks" -- https://gitlab.com/camelot/kickc/issues/185
     lda bArg
     cmp #0
     beq b42
@@ -722,5 +722,5 @@ divr16u: {
     bne b1
     rts
 }
-  // "char buf16[16]" is the normal way -- not supported
+  // "char buf16[16]" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/162
   strTemp: .fill $64, 0

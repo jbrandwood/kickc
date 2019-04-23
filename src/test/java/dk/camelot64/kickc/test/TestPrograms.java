@@ -33,6 +33,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLiteralCharMinusNumber() throws IOException, URISyntaxException {
+      compileAndCompare("literal-char-minus-number");
+   }
+
+   //@Test
+   //public void testPaulNelsenSandboxTernaryError() throws IOException, URISyntaxException {
+   //   compileAndCompare("sandbox-ternary-error", log().verboseParse().verboseCreateSsa().setVerboseSSAOptimize().verboseStatementSequence());
+   //}
+
+   @Test
    public void testPaulNelsenSandbox() throws IOException, URISyntaxException {
       compileAndCompare("sandbox");
    }

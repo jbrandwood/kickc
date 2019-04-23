@@ -4,7 +4,9 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.operators.*;
+import dk.camelot64.kickc.model.operators.OperatorBinary;
+import dk.camelot64.kickc.model.operators.OperatorUnary;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
@@ -50,7 +52,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             // If the assignment has an operator then replace it with the single constant value
             if(constVarVal.getAssignment() instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) constVarVal.getAssignment();
-               if(assignment.getOperator()!=null) {
+               if(assignment.getOperator() != null) {
                   getLog().append("Constant right-side identified " + assignment.toString(getProgram(), false));
                   assignment.setOperator(null);
                   assignment.setrValue1(null);
@@ -201,6 +203,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
 
    /**
     * Examine the right side of an assignment and if it is constant then return the constant value.
+    *
     * @param assignment The assignment to examine
     * @param lValueType The type of the lvalue
     * @return The constant value if the right side is constant
@@ -259,7 +262,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             }
             if(allConstant && listType != null) {
                // Constant list confirmed!
-               return  new ConstantArrayList(elements, listType);
+               return new ConstantArrayList(elements, listType);
             }
          }
       } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
@@ -307,18 +310,24 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    }
 
    static ConstantValue createBinary(ConstantValue c1, OperatorBinary operator, ConstantValue c2, ProgramScope programScope) {
+
+      // Special handling of string append using +
+      if(Operators.PLUS.equals(operator) && SymbolType.STRING.equals(c1.getType(programScope))) {
+         if(c1 instanceof ConstantRef) {
+            c1 = programScope.getConstant((ConstantRef) c1).getValue();
+         }
+         if(c2 instanceof ConstantRef) {
+            c2 = programScope.getConstant((ConstantRef) c2).getValue();
+         }
+         return new ConstantBinary(c1, operator, c2);
+      }
+
+      if(Operators.PLUS.equals(operator)) {
+         return new ConstantBinary(c1, operator, c2);
+      }
+
       switch(operator.getOperator()) {
          case "-":
-         case "+":
-            if(SymbolType.STRING.equals(c1.getType(programScope))) {
-               if(c1 instanceof ConstantRef) {
-                  c1 = programScope.getConstant((ConstantRef) c1).getValue();
-               }
-               if(c2 instanceof ConstantRef) {
-                  c2 = programScope.getConstant((ConstantRef) c2).getValue();
-               }
-               return new ConstantBinary(c1, operator, c2);
-            }
          case "*":
          case "/":
          case "%":

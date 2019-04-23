@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.types;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -11,6 +12,7 @@ public class SymbolTypeMulti implements SymbolType {
 
    /** All numeric types. */
    public static final SymbolTypeMulti NUMERIC = new SymbolTypeMulti(Arrays.asList(BYTE, SBYTE, WORD, SWORD, DWORD, SDWORD));
+
    /**
     * All potential types for the inline constant.
     */
@@ -22,6 +24,22 @@ public class SymbolTypeMulti implements SymbolType {
 
    public Collection<SymbolType> getTypes() {
       return types;
+   }
+
+
+   /**
+    * Get the multi-type that can contain the passed number.
+    * @param number The number
+    * @return The multi-type
+    */
+   public static SymbolType getMultiType(Long number) {
+      ArrayList<SymbolType> potentialTypes = new ArrayList<>();
+      for(SymbolTypeInteger typeInteger : SymbolType.getIntegerTypes()) {
+         if(number >= typeInteger.getMinValue() && number <= typeInteger.getMaxValue()) {
+            potentialTypes.add(typeInteger);
+         }
+      }
+      return new SymbolTypeMulti(potentialTypes);
    }
 
    @Override

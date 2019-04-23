@@ -39,7 +39,7 @@ public class TestPrograms {
 
    @Test
    public void testTypeIdPlusByteProblem() throws IOException, URISyntaxException {
-      compileAndCompare("typeid-plus-byte-problem");
+      compileAndCompare("typeid-plus-byte-problem", log());
    }
 
    //@Test

@@ -1371,18 +1371,20 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue falseValue = (RValue) this.visit(ctx.expr(2));
       VariableRef falseVar = getCurrentScope().addVariableIntermediate().getRef();
       sequence.addStatement(new StatementAssignment(falseVar, null, null, falseValue, new StatementSource(ctx), Comment.NO_COMMENTS));
+      LabelRef falseExitLabel = sequence.getCurrentBlockLabel();
       sequence.addStatement(new StatementJump(endJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
       sequence.addStatement(new StatementLabel(trueLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
       RValue trueValue = (RValue) this.visit(ctx.expr(1));
       VariableRef trueVar = getCurrentScope().addVariableIntermediate().getRef();
       sequence.addStatement(new StatementAssignment(trueVar, null, null, trueValue, new StatementSource(ctx), Comment.NO_COMMENTS));
+      LabelRef trueExitLabel = sequence.getCurrentBlockLabel();
       sequence.addStatement(new StatementLabel(endJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
       StatementPhiBlock phiBlock = new StatementPhiBlock(Comment.NO_COMMENTS);
       phiBlock.setSource(new StatementSource(ctx));
       VariableRef finalVar = getCurrentScope().addVariableIntermediate().getRef();
       StatementPhiBlock.PhiVariable phiVariable = phiBlock.addPhiVariable(finalVar);
-      phiVariable.setrValue(trueLabel.getRef(), trueVar);
-      phiVariable.setrValue(falseLabel.getRef(), falseVar);
+      phiVariable.setrValue(trueExitLabel, trueVar);
+      phiVariable.setrValue(falseExitLabel, falseVar);
       sequence.addStatement(phiBlock);
       return finalVar;
    }

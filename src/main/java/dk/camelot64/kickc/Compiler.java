@@ -222,6 +222,7 @@ public class Compiler {
       assertions.add(new Pass2AssertNoLabels(program));
       assertions.add(new Pass2AssertSingleAssignment(program));
       assertions.add(new Pass2AssertRValues(program));
+      //assertions.add(new Pass2AssertPhiPredecessors(program));
       for(Pass2SsaAssertion assertion : assertions) {
          assertion.check();
       }

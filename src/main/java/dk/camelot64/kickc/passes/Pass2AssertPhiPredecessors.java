@@ -21,8 +21,9 @@ public class Pass2AssertPhiPredecessors extends Pass2SsaAssertion {
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          if(block.hasPhiBlock()) {
             StatementPhiBlock phiBlock = block.getPhiBlock();
+            List<ControlFlowBlock> phiPredecessors = Pass1GenerateSingleStaticAssignmentForm.getPhiPredecessors(block, getProgram());
             List<LabelRef> predecessors =
-                  getGraph().getPredecessors(block).stream().map(ControlFlowBlock::getLabel).collect(Collectors.toList());
+                  phiPredecessors.stream().map(ControlFlowBlock::getLabel).collect(Collectors.toList());
             for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
                for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                   if(!predecessors.contains(phiRValue.getPredecessor())) {

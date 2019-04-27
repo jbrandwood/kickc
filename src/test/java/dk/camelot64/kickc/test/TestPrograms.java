@@ -32,6 +32,27 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testSimpleLoop() throws IOException, URISyntaxException {
+      compileAndCompare("simple-loop");
+   }
+
+   @Test
+   public void testLiteralCharMinusNumber() throws IOException, URISyntaxException {
+      compileAndCompare("literal-char-minus-number");
+   }
+
+   @Test
+   public void testPaulNelsenSandboxTernaryError() throws IOException, URISyntaxException {
+      compileAndCompare("sandbox-ternary-error", log().verboseParse().verboseCreateSsa().setVerboseSSAOptimize().verboseStatementSequence());
+   }
+
+   @Test
+   public void testPaulNelsenSandbox() throws IOException, URISyntaxException {
+      compileAndCompare("sandbox");
+   }
+
+
    //@Test
    //public void testPointerCast3() throws IOException, URISyntaxException {
    //   compileAndCompare("pointer-cast-3");

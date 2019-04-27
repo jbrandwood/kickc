@@ -197,7 +197,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                      VariableRef phiLValVarRef = phiVariable.getVariable();
                      VariableVersion versioned = (VariableVersion) getScope().getVariable(phiLValVarRef);
                      VariableUnversioned unversioned = versioned.getVersionOf();
-                     List<ControlFlowBlock> predecessors = getPredecessors(block);
+                     List<ControlFlowBlock> predecessors = getPhiPredecessors(block, getProgram());
                      for(ControlFlowBlock predecessor : predecessors) {
                         LabelRef predecessorLabel = predecessor.getLabel();
                         Map<VariableUnversioned, VariableVersion> predecessorMap = symbolMap.get(predecessorLabel);
@@ -245,15 +245,15 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * @param block The block to examine
     * @return All predecessor blocks
     */
-   private List<ControlFlowBlock> getPredecessors(ControlFlowBlock block) {
-      List<ControlFlowBlock> predecessors = getGraph().getPredecessors(block);
-      Symbol symbol = getScope().getSymbol(block.getLabel());
+   public static List<ControlFlowBlock> getPhiPredecessors(ControlFlowBlock block, Program program) {
+      List<ControlFlowBlock> predecessors = program.getGraph().getPredecessors(block);
+      Symbol symbol = program.getScope().getSymbol(block.getLabel());
       if(symbol instanceof Procedure) {
          Procedure procedure = (Procedure) symbol;
-         if(procedure.getInterruptType()!=null || Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
+         if(procedure.getInterruptType()!=null || Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
             // Find all root-level predecessors to the main block
-            ControlFlowBlock mainBlock = getGraph().getBlock(new LabelRef(SymbolRef.MAIN_PROC_NAME));
-            List<ControlFlowBlock> mainPredecessors = getGraph().getPredecessors(mainBlock);
+            ControlFlowBlock mainBlock = program.getGraph().getBlock(new LabelRef(SymbolRef.MAIN_PROC_NAME));
+            List<ControlFlowBlock> mainPredecessors = program.getGraph().getPredecessors(mainBlock);
             for(ControlFlowBlock mainPredecessor : mainPredecessors) {
                if(mainPredecessor.getScope().equals(ScopeRef.ROOT)) {
                   predecessors.add(mainPredecessor);

@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementLabel;
 import dk.camelot64.kickc.model.statements.StatementProcedureBegin;
 import dk.camelot64.kickc.model.statements.StatementProcedureEnd;
+import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 /** A sequence of Statements */
 public class StatementSequence {
 
-   private List<Statement> statements;
+   private ArrayList<Statement> statements;
 
    public StatementSequence() {
       this.statements = new ArrayList<>();
@@ -43,4 +44,17 @@ public class StatementSequence {
       return out.toString();
    }
 
+   /**
+    * Look backwar from the end of the sequence and find the last label
+    * @return The label of the block, currently being build
+    */
+   public LabelRef getCurrentBlockLabel() {
+      for(int i = statements.size()-1; i >= 0; i--) {
+         Statement statement = statements.get(i);
+         if(statement instanceof StatementLabel) {
+            return ((StatementLabel) statement).getLabel();
+         }
+      }
+      return null;
+   }
 }

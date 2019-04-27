@@ -63,7 +63,7 @@ public class TestPrograms {
       compileAndCompare("typeid-plus-byte-problem", log());
    }
 
-   //@Test
+   @Test
    public void testTypeIdPlusBytes() throws IOException, URISyntaxException {
       compileAndCompare("typeid-plus-bytes");
    }

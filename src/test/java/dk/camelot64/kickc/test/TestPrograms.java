@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIntegerLiterals() throws IOException, URISyntaxException {
+      compileAndCompare("int-literals");
+   }
+
+   @Test
    public void testSimpleLoop() throws IOException, URISyntaxException {
       compileAndCompare("simple-loop");
    }

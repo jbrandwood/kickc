@@ -1298,12 +1298,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprNumber(KickCParser.ExprNumberContext ctx) {
-      Number number = NumberParser.parseLiteral(ctx.getText());
-      if(number instanceof Long) {
-         return new ConstantInteger((Long) number);
-      } else {
-         return new ConstantDouble((Double) number);
-      }
+      return NumberParser.parseIntegerLiteral(ctx.getText());
    }
 
    @Override

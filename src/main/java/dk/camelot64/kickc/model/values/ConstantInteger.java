@@ -21,7 +21,11 @@ public class ConstantInteger implements ConstantEnumerable<Long> {
 
    public ConstantInteger(Long number, SymbolType type) {
       this.number = number;
-      this.type = type;
+      if(type!=null) {
+         this.type = type;
+      } else {
+         this.type = SymbolTypeMulti.getMultiType(number);
+      }
    }
 
    @Override

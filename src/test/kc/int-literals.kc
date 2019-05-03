@@ -1,19 +1,64 @@
-// Tests different integer literals
+// Tests different integer literal types
+
+const byte RED = 2;
+const byte GREEN = 5;
+
+const byte* SCREEN = $0400;
+const byte* COLS = $d800;
+byte idx = 0;
 
 void main() {
-    unsigned byte ub = 12ub;
-    unsigned char uc = 12uc;
-    signed byte sb = 12sb;
-    signed byte sc = 12sc;
-    unsigned word uw = 12uw;
-    unsigned int ui = 12ui;
-    unsigned short us = 12us;
-    signed word sw = 12sw;
-    signed int si = 12si;
-    signed short ss = 12ss;
-    unsigned dword ud = 12ud;
-    unsigned long ul = 12ul;
-    signed dword sd = 12sd;
-    signed long sl = 12sl;
-    long l = 12l;
+    for(byte* s: SCREEN..SCREEN+999) *s = ' ';
+    idx = 0;
+    testSimpleTypes();
+    idx = 40;
+    testBinaryOperator();
+}
+
+void testSimpleTypes() {
+    // Simple types
+    assertType(typeid(12ub), typeid(byte));
+    assertType(typeid(12uc), typeid(byte));
+    assertType(typeid(12sb), typeid(signed byte));
+    assertType(typeid(12sc), typeid(signed byte));
+    assertType(typeid(12uw), typeid(word));
+    assertType(typeid(12ui), typeid(word));
+    assertType(typeid(12us), typeid(word));
+    assertType(typeid(12sw), typeid(signed word));
+    assertType(typeid(12si), typeid(signed word));
+    assertType(typeid(12ss), typeid(signed word));
+    assertType(typeid(12ud), typeid(dword));
+    assertType(typeid(12ul), typeid(dword));
+    assertType(typeid(12sd), typeid(signed dword));
+    assertType(typeid(12sl), typeid(signed dword));
+    assertType(typeid(12l), typeid(signed dword));
+}
+
+void testBinaryOperator() {
+    // Binary Operations between unsigned byte & other types
+    assertType(typeid(12ub+12ub), typeid(byte));
+    assertType(typeid(12ub+12sb), typeid(byte));
+    assertType(typeid(12ub+12uw), typeid(word));
+    assertType(typeid(12ub+12sw), typeid(signed word));
+    assertType(typeid(12ub+12ud), typeid(dword));
+    assertType(typeid(12ub+12sd), typeid(signed dword));
+    idx++;
+    // Binary Operations between signed byte & other types
+    assertType(typeid(12sb+12ub), typeid(byte));
+    assertType(typeid(12sb+12sb), typeid(signed byte));
+    assertType(typeid(12sb+12uw), typeid(word));
+    assertType(typeid(12sb+12sw), typeid(signed word));
+    assertType(typeid(12sb+12ud), typeid(dword));
+    assertType(typeid(12sb+12sd), typeid(signed dword));
+}
+
+
+
+void assertType(byte t1, byte t2) {
+    if(t1==t2) {
+        COLS[idx] = GREEN;
+    } else {
+        COLS[idx] = RED;
+    }
+    SCREEN[idx++] = t1;
 }

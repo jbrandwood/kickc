@@ -18,9 +18,9 @@ public class OperatorCastByte extends OperatorUnary {
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral value, ProgramScope scope) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xff & ((ConstantInteger) value).getValue());
+         return new ConstantInteger(0xff & ((ConstantInteger) value).getValue(), SymbolType.BYTE);
       } else if(value instanceof ConstantPointer) {
-         return new ConstantInteger(0xff & ((ConstantPointer) value).getLocation());
+         return new ConstantInteger(0xff & ((ConstantPointer) value).getLocation(), SymbolType.BYTE);
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + value );
    }

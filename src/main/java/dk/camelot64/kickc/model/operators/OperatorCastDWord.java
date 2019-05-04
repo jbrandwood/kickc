@@ -18,10 +18,10 @@ public class OperatorCastDWord extends OperatorUnary {
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral value, ProgramScope scope) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xffffffffL & ((ConstantInteger) value).getValue());
+         return new ConstantInteger(0xffffffffL & ((ConstantInteger) value).getValue(), SymbolType.DWORD);
       }
       if(value instanceof ConstantPointer) {
-         return new ConstantInteger(0xffff & ((ConstantPointer) value).getLocation());
+         return new ConstantInteger(0xffff & ((ConstantPointer) value).getLocation(), SymbolType.DWORD);
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + value );
    }

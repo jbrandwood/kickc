@@ -9,17 +9,19 @@ import java.util.Collection;
 public interface SymbolType {
 
    /** Unsigned byte (8 bits)). */
-   SymbolTypeInteger BYTE = new SymbolTypeInteger("byte", 0, 255, false, 8);
+   SymbolTypeIntegerFixed BYTE = new SymbolTypeIntegerFixed("byte", 0, 255, false, 8);
    /** Signed byte (8 bits). */
-   SymbolTypeInteger SBYTE = new SymbolTypeInteger("signed byte", -128, 127, true, 8);
+   SymbolTypeIntegerFixed SBYTE = new SymbolTypeIntegerFixed("signed byte", -128, 127, true, 8);
    /** Unsigned word (2 bytes, 16 bits). */
-   SymbolTypeInteger WORD = new SymbolTypeInteger("word", 0, 65_535, false, 16);
+   SymbolTypeIntegerFixed WORD = new SymbolTypeIntegerFixed("word", 0, 65_535, false, 16);
    /** Signed word (2 bytes, 16 bits). */
-   SymbolTypeInteger SWORD = new SymbolTypeInteger("signed word", -32_768, 32_767, true, 16);
+   SymbolTypeIntegerFixed SWORD = new SymbolTypeIntegerFixed("signed word", -32_768, 32_767, true, 16);
    /** Unsigned double word (4 bytes, 32 bits). */
-   SymbolTypeInteger DWORD = new SymbolTypeInteger("dword", 0, 4_294_967_296L, false, 32);
+   SymbolTypeIntegerFixed DWORD = new SymbolTypeIntegerFixed("dword", 0, 4_294_967_296L, false, 32);
    /** Signed double word (4 bytes, 32 bits). */
-   SymbolTypeInteger SDWORD = new SymbolTypeInteger("signed dword", -2_147_483_648, 2_147_483_647, true, 32);
+   SymbolTypeIntegerFixed SDWORD = new SymbolTypeIntegerFixed("signed dword", -2_147_483_648, 2_147_483_647, true, 32);
+   /** Integer with unknown size. */
+   SymbolTypeIntegerAuto NUMBER = new SymbolTypeIntegerAuto("number");
    /** String value (treated like byte* ). */
    SymbolTypeNamed STRING = new SymbolTypeNamed("string", 99);
    /** Boolean value. */
@@ -204,13 +206,13 @@ public interface SymbolType {
    }
 
    /**
-    * Is the type an integer type or compatible {@link SymbolTypeMulti}
+    * Is the type an integer type (including {@link #NUMBER})
     *
     * @param type The type to examine
     * @return true if the type is integer
     */
    static boolean isInteger(SymbolType type) {
-      return isSDWord(type) || isDWord(type) || isSWord(type) || isWord(type) || isSByte(type) || isByte(type);
+      return SDWORD.equals(type) || DWORD.equals(type) || SWORD.equals(type) || WORD.equals(type) || SBYTE.equals(type) || BYTE.equals(type) || NUMBER.equals(type);
    }
 
    /**
@@ -218,8 +220,8 @@ public interface SymbolType {
     *
     * @return All integeer types
     */
-   static Collection<SymbolTypeInteger> getIntegerTypes() {
-      ArrayList<SymbolTypeInteger> types = new ArrayList<>();
+   static Collection<SymbolTypeIntegerFixed> getIntegerFixedTypes() {
+      ArrayList<SymbolTypeIntegerFixed> types = new ArrayList<>();
       types.add(BYTE);
       types.add(SBYTE);
       types.add(WORD);
@@ -230,21 +232,41 @@ public interface SymbolType {
    }
 
    /**
-    * Find the smallest integer type that contains both sub-types usable for math ( + - * / ).
+    * Find the integer type that results from a binary operator according to C99 6.3.1.8
+    * http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=70
     *
     * @param type1 Left type in a binary expression
     * @param type2 Right type in a binary expression
-    * @return
+    * @return The type resulting from a binary operator performed on the two parameters
     */
-   static SymbolType promotedMathType(SymbolTypeInteger type1, SymbolTypeInteger type2) {
-      for(SymbolTypeInteger candidate : getIntegerTypes()) {
-         boolean match1 = type1.getMinValue() >= candidate.getMinValue() && type1.getMaxValue() <= candidate.getMaxValue();
-         boolean match2 = type2.getMinValue() >= candidate.getMinValue() && type2.getMaxValue() <= candidate.getMaxValue();
-         if(match1 && match2) {
-            return candidate;
-         }
+   static SymbolType convertedMathType(SymbolTypeInteger type1, SymbolTypeInteger type2) {
+      if(SymbolType.NUMBER.equals(type1) || SymbolType.NUMBER.equals(type2)) {
+         return NUMBER;
       }
-      throw new NoMatchingType("Cannot promote to a common type for "+type1.toString()+" and "+type2.toString());
+      SymbolTypeIntegerFixed fixed1 = (SymbolTypeIntegerFixed) type1;
+      SymbolTypeIntegerFixed fixed2 = (SymbolTypeIntegerFixed) type2;
+      // C99 6.3.1.8 a. If two operands have the same type no conversion is performed
+      if(type1.equals(type2))
+         return type1;
+      // C99 6.3.1.8 b. If both are signed or both are unsigned then the smallest type is converted to the size of the large type (byte->word->sword, sbyte->sword->sdword)
+      if(fixed1.isSigned()==fixed2.isSigned())
+         return (fixed1.getBits()>fixed2.getBits()) ? fixed1 : fixed2;
+      // C99 6.3.1.8 c. One is signed and one unsigned.
+      // If the signed type can contain all values of the unsigned type then the unsigned value is converted to the signed type. (byte->sword, byte->sdword, word->sdword).
+      SymbolTypeIntegerFixed typeS, typeU;
+      if(fixed1.isSigned()) {
+         typeS = fixed1;
+         typeU = fixed2;
+      }  else {
+         typeS = fixed2;
+         typeU = fixed1;
+      }
+      if(typeS.getBits()>typeU.getBits())
+         return typeS;
+      // C99 6.3.1.8 d. The unsigned type is the same size as or larger than the signed type.
+      // The signed value is first converted to the size of the unsigned type and then converted to unsigned changing the sign and the value
+      // (sbyte->byte, sbyte->word, sbyte->dword, sword->word, sword->dword, sdword->dword).
+      return typeU;
    }
 
    /**
@@ -254,8 +276,8 @@ public interface SymbolType {
     * @param type2 Right type in a binary expression
     * @return
     */
-   static SymbolType promotedBitwiseType(SymbolTypeInteger type1, SymbolTypeInteger type2) {
-      for(SymbolTypeInteger candidate : getIntegerTypes()) {
+   static SymbolType promotedBitwiseType(SymbolTypeIntegerFixed type1, SymbolTypeIntegerFixed type2) {
+      for(SymbolTypeIntegerFixed candidate : getIntegerFixedTypes()) {
          if(!candidate.isSigned() && type1.getBits()<=candidate.getBits() && type2.getBits()<=candidate.getBits()) {
             return candidate;
          }

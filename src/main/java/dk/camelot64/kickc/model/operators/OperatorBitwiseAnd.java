@@ -32,16 +32,9 @@ public class OperatorBitwiseAnd extends OperatorBinary {
       if(type2 instanceof SymbolTypePointer) {
          type2 = SymbolType.WORD;
       }
-      // Find smallest bitwise type
-      if(type1 instanceof SymbolTypeInteger && type2 instanceof SymbolTypeInteger) {
-
-         for(SymbolTypeInteger candidate : SymbolType.getIntegerTypes()) {
-            boolean match1 = ((SymbolTypeInteger) type1).getBits() <= candidate.getBits();
-            boolean match2 = ((SymbolTypeInteger) type2).getBits() <= candidate.getBits();
-            if(!candidate.isSigned() && (match1 || match2)) {
-               return candidate;
-            }
-         }
+      // Handle numeric types
+      if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {
+         return SymbolType.convertedMathType((SymbolTypeInteger) type1, (SymbolTypeInteger) type2);
       }
 
       throw new CompileError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);

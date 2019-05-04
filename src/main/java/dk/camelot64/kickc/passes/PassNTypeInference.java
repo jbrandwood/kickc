@@ -12,9 +12,9 @@ import dk.camelot64.kickc.model.types.SymbolTypeInference;
  * Pass through the generated statements inferring types of unresolved variables.
  * Also updates procedure calls to point to the actual procedure called.
  */
-public class Pass1TypeInference extends Pass1Base {
+public class PassNTypeInference extends Pass2SsaOptimization {
 
-   public Pass1TypeInference(Program program) {
+   public PassNTypeInference(Program program) {
       super(program);
    }
 
@@ -38,17 +38,6 @@ public class Pass1TypeInference extends Pass1Base {
                   }
                }
             } else if(statement instanceof StatementCall) {
-               StatementCall call = (StatementCall) statement;
-               String procedureName = call.getProcedureName();
-               Scope currentScope = getScope().getScope(block.getScope());
-               Procedure procedure = currentScope.getProcedure(procedureName);
-               if(procedure == null) {
-                  throw new CompileError("Called procedure not found. " + call.toString(getProgram(), false), statement.getSource());
-               }
-               call.setProcedure(procedure.getRef());
-               if(procedure.getParameters().size() != call.getParameters().size()) {
-                  throw new CompileError("Wrong number of parameters in call. Expected " + procedure.getParameters().size() + ". " + statement.toString(), statement.getSource());
-               }
                SymbolTypeInference.inferCallLValue(getProgram(), (StatementCall) statement, false);
             } else if(statement instanceof StatementCallPointer) {
                SymbolTypeInference.inferCallPointerLValue(getProgram(), (StatementCallPointer) statement, false);

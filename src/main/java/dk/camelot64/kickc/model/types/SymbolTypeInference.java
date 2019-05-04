@@ -1,18 +1,15 @@
 package dk.camelot64.kickc.model.types;
 
 import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
-import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,23 +27,6 @@ public class SymbolTypeInference {
     * @return The type of the resulting value
     */
    public static SymbolType inferType(ProgramScope programScope, OperatorUnary operator, RValue rValue) {
-      if(Operators.TYPEID.equals(operator)) {
-         return SymbolType.BYTE;
-      } else if(Operators.SIZEOF.equals(operator)) {
-         return SymbolType.BYTE;
-      }
-      if(rValue instanceof ConstantValue) {
-         // Calculate resulting constant literal
-         try {
-            ConstantValue constRValue = (ConstantValue) rValue;
-            ConstantLiteral literalRValue = constRValue.calculateLiteral(programScope);
-            ConstantValue value = operator.calculateLiteral(literalRValue, programScope);
-            return value.getType(programScope);
-         } catch(ConstantNotLiteral e) {
-            // Value literal cannot be calculated
-         }
-      }
-      // Infer value type - and then infer operator result type
       SymbolType valueType = inferType(programScope, rValue);
       return inferType(operator, valueType);
    }
@@ -62,19 +42,7 @@ public class SymbolTypeInference {
       if(operandType instanceof SymbolTypeSimple) {
          return operator.inferType((SymbolTypeSimple) operandType);
       } else {
-         // Infer all resulting types for each sub-type of the multi-type
-         ArrayList<SymbolType> resultTypes = new ArrayList<>();
-         for(SymbolType opType : ((SymbolTypeMulti) operandType).getTypes()) {
-            SymbolType resType = inferType(operator, opType);
-            if(!resultTypes.contains(resType)) {
-               resultTypes.add(resType);
-            }
-         }
-         if(resultTypes.size() == 1) {
-            return resultTypes.get(0);
-         } else {
-            return new SymbolTypeMulti(resultTypes);
-         }
+         throw new RuntimeException("Not implemented!");
       }
    }
 
@@ -88,18 +56,6 @@ public class SymbolTypeInference {
     * @return The type of the resulting value
     */
    public static SymbolType inferType(ProgramScope programScope, RValue left, OperatorBinary operator, RValue right) {
-      if(left instanceof ConstantValue && right instanceof ConstantValue) {
-         // Calculate resulting constant literal
-         try {
-            ConstantValue value = operator.calculateLiteral(
-                  ((ConstantValue) left).calculateLiteral(programScope),
-                  ((ConstantValue) right).calculateLiteral(programScope)
-            );
-            return value.getType(programScope);
-         } catch(ConstantNotLiteral e) {
-            // Value literal cannot be calculated
-         }
-      }
       SymbolType leftType = inferType(programScope, left);
       SymbolType rightType = inferType(programScope, right);
       return inferType(leftType, operator, rightType);
@@ -109,32 +65,7 @@ public class SymbolTypeInference {
       if(left instanceof SymbolTypeSimple && right instanceof SymbolTypeSimple) {
          return operator.inferType((SymbolTypeSimple) left, (SymbolTypeSimple) right);
       } else {
-         // Infer all resulting types for each sub-type of the multi-type
-         if(left instanceof SymbolTypeSimple) {
-            left = new SymbolTypeMulti(Arrays.asList(left));
-         }
-         if(right instanceof SymbolTypeSimple) {
-            right = new SymbolTypeMulti(Arrays.asList(right));
-         }
-         ArrayList<SymbolType> resultTypes = new ArrayList<>();
-         for(SymbolType leftType : ((SymbolTypeMulti) left).getTypes()) {
-            for(SymbolType rightType : ((SymbolTypeMulti) right).getTypes()) {
-               SymbolType resType;
-               try {
-                  resType = inferType(leftType, operator, rightType);
-                  if(!resultTypes.contains(resType)) {
-                     resultTypes.add(resType);
-                  }
-               } catch(NoMatchingType e) {
-                  // Cannot promote to common type - ignore!
-               }
-            }
-         }
-         if(resultTypes.size() == 1) {
-            return resultTypes.get(0);
-         } else {
-            return new SymbolTypeMulti(resultTypes);
-         }
+         throw new RuntimeException("Not implemented!");
       }
    }
 
@@ -209,13 +140,8 @@ public class SymbolTypeInference {
          if(elmType == null) {
             elmType = type;
          } else {
-            // element type already defined - check for a match
-            if(!typeMatch(elmType, type)) {
-               if(typeMatch(type, elmType)) {
-                  elmType = type;
-               } else {
-                  throw new RuntimeException("Array element has type mismatch " + elm.toString() + " not matching type " + elmType.getTypeName());
-               }
+            if(!elmType.equals(type)) {
+               throw new RuntimeException("Array element has type mismatch " + elm.toString() + " not matching type " + elmType.getTypeName());
             }
          }
       }
@@ -256,74 +182,12 @@ public class SymbolTypeInference {
       return rValueType;
    }
 
-   /**
-    * Determine if lValue and rValue types match (the same types, not needing a cast).
-    *
-    * @param lValueType The lValue type
-    * @param rValueType The rvalue type
-    * @return true if the types match
-    */
-   public static boolean typeMatch(SymbolType lValueType, SymbolType rValueType) {
-      if(lValueType.equals(rValueType)) {
-         // Types match directly
-         return true;
-      } else if(rValueType instanceof SymbolTypeMulti) {
-         Collection<SymbolType> rTypes = ((SymbolTypeMulti) rValueType).getTypes();
-         if(lValueType instanceof SymbolTypeMulti) {
-            // Both are inline types - RValue type must be superset of LValue
-            Collection<SymbolType> lTypes = ((SymbolTypeMulti) lValueType).getTypes();
-            return typeContainsMatchAll(lTypes, rTypes);
-         } else {
-            // Types match because the right side matches the left side
-            return typeContainsMatch(lValueType, rTypes);
-         }
-      } else if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer) {
-         return typeMatch(
-               ((SymbolTypePointer) lValueType).getElementType(),
-               ((SymbolTypePointer) rValueType).getElementType());
-      } else if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType)) {
-         if(SymbolType.isByte(((SymbolTypePointer) lValueType).getElementType())) {
-            return true;
-         }
-      } else if(SymbolType.STRING.equals(lValueType) && rValueType instanceof SymbolTypePointer) {
-         if(SymbolType.isByte(((SymbolTypePointer) rValueType).getElementType())) {
-            return true;
-         }
-      }
-      return false;
-   }
-
-   private static boolean typeContainsMatchAll(Collection<SymbolType> lTypes, Collection<SymbolType> rTypes) {
-      for(SymbolType lType : lTypes) {
-         if(!typeContainsMatch(lType, rTypes)) {
-            return false;
-         }
-      }
-      return true;
-   }
-
-   /**
-    * Determine is a list of potential inferred types contains a match for another type
-    *
-    * @param lValueType The type (rValue) we want to find a match for in the list
-    * @param rTypes The list of inferred potential types
-    * @return true if the list has a match
-    */
-   private static boolean typeContainsMatch(SymbolType lValueType, Collection<SymbolType> rTypes) {
-      for(SymbolType rType : rTypes) {
-         if(typeMatch(lValueType, rType)) {
-            return true;
-         }
-      }
-      return false;
-   }
-
    public static void inferCallLValue(Program program, StatementCall call, boolean reinfer) {
       ProgramScope programScope = program.getScope();
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
          Variable symbol = programScope.getVariable((VariableRef) lValue);
-         if(SymbolType.VAR.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
+         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
             Procedure procedure = programScope.getProcedure(call.getProcedure());
             SymbolType type = procedure.getReturnType();
             setInferedType(program, call, symbol, type);
@@ -336,7 +200,7 @@ public class SymbolTypeInference {
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
          Variable symbol = programScope.getVariable((VariableRef) lValue);
-         if(SymbolType.VAR.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
+         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
             SymbolType procedureType = inferType(programScope, call.getProcedure());
             if(procedureType instanceof SymbolTypeProcedure) {
                SymbolType returnType = ((SymbolTypeProcedure) procedureType).getReturnType();
@@ -350,7 +214,7 @@ public class SymbolTypeInference {
       ProgramScope programScope = program.getScope();
 
       Variable symbol = programScope.getVariable(phiVariable.getVariable());
-      if(SymbolType.VAR.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
+      if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
          SymbolType type = null;
          for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
             RValue rValue = phiRValue.getrValue();
@@ -377,7 +241,7 @@ public class SymbolTypeInference {
       LValue lValue = assignment.getlValue();
       if(lValue instanceof VariableRef) {
          Variable symbol = programScope.getVariable((VariableRef) lValue);
-         if(SymbolType.VAR.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
+         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType()) || (reinfer && symbol.isInferredType())) {
             // Unresolved symbol - perform inference
             Operator operator = assignment.getOperator();
             if(assignment.getrValue1() == null && operator == null) {

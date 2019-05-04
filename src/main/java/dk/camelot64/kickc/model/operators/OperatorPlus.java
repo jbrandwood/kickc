@@ -39,31 +39,14 @@ public class OperatorPlus extends OperatorBinary {
    @Override
    public SymbolType inferType(SymbolTypeSimple type1, SymbolTypeSimple type2) {
       // Handle all non-numeric types
-      if(type1.equals(SymbolType.STRING) && isStringLike(type2)) {
-         return SymbolType.STRING;
-      } else if(isStringLike(type1) && type2.equals(SymbolType.STRING)) {
-         return SymbolType.STRING;
-      } else if(type1 instanceof SymbolTypeArray && type2 instanceof SymbolTypeArray) {
-         SymbolType elemType1 = ((SymbolTypeArray) type1).getElementType();
-         SymbolType elemType2 = ((SymbolTypeArray) type2).getElementType();
-         if(SymbolTypeInference.typeMatch(elemType1, elemType2)) {
-            return new SymbolTypeArray(elemType1);
-         } else if(SymbolTypeInference.typeMatch(elemType2, elemType1)) {
-            return new SymbolTypeArray(elemType2);
-         } else {
-            throw new RuntimeException("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);
-         }
-      } else if(SymbolType.isInteger(type1) && type2 instanceof SymbolTypePointer ) {
+      if(SymbolType.isInteger(type1) && type2 instanceof SymbolTypePointer) {
          return new SymbolTypePointer(((SymbolTypePointer) type2).getElementType());
       } else if(type1 instanceof SymbolTypePointer && SymbolType.isInteger(type2)) {
          return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());
-      } else if(type1 instanceof SymbolTypePointer && type2 instanceof SymbolTypePointer) {
-         throw new NoMatchingType("Two pointers cannot be added.");
       }
-
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {
-         return SymbolType.promotedMathType((SymbolTypeInteger) type1, (SymbolTypeInteger) type2);
+         return SymbolType.convertedMathType( (SymbolTypeInteger) type1, (SymbolTypeInteger)type2);
       }
 
       throw new CompileError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);

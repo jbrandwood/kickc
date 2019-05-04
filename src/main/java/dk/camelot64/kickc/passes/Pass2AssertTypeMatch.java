@@ -30,7 +30,7 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
                if(conditionalJump.getOperator()==null) {
                   RValue rValue = conditionalJump.getrValue2();
                   SymbolType rValueType = SymbolTypeInference.inferType(getScope(), rValue);
-                  if(!SymbolTypeInference.typeMatch(SymbolType.BOOLEAN, rValueType)) {
+                  if(!SymbolType.BOOLEAN.equals(rValueType)) {
                      getLog().append("ERROR! Type mismatch non-boolean condition from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
                      throw new CompileError("ERROR! Type mismatch non-boolean condition from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false), statement.getSource());
                   }
@@ -48,10 +48,11 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
       LValue lValue = statement.getlValue();
       SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
       SymbolType rValueType = SymbolTypeInference.inferTypeRValue(getScope(), statement);
-      if(SymbolTypeInference.typeMatch(lValueType, rValueType)) {
+      if(lValueType.equals(rValueType)) {
          return;
       }
-      if(SymbolTypeInference.typeMatch(rValueType, lValueType)) {
+      if(SymbolType.NUMBER.equals(rValueType) && SymbolType.isInteger(lValueType)) {
+         // L-value is still a number - constants are probably not done being identified & typed
          return;
       }
       // Types do not match

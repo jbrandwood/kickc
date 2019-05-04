@@ -34,7 +34,7 @@ public class SymbolTypeMulti implements SymbolType {
     */
    public static SymbolType getMultiType(Long number) {
       ArrayList<SymbolType> potentialTypes = new ArrayList<>();
-      for(SymbolTypeInteger typeInteger : SymbolType.getIntegerTypes()) {
+      for(SymbolTypeIntegerFixed typeInteger : SymbolType.getIntegerFixedTypes()) {
          if(number >= typeInteger.getMinValue() && number <= typeInteger.getMaxValue()) {
             potentialTypes.add(typeInteger);
          }

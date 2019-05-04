@@ -15,7 +15,7 @@ import dk.camelot64.kickc.model.symbols.VariableIntermediate;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.types.SymbolTypeInteger;
+import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
 import dk.camelot64.kickc.model.values.Value;
 import dk.camelot64.kickc.model.values.ValueList;
 
@@ -68,11 +68,11 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
 
 
    private abstract class InlineConstructor implements ProgramValueHandler {
-      private SymbolTypeInteger constructType;
+      private SymbolTypeIntegerFixed constructType;
       private Operator constructOperator;
       private boolean optimized;
 
-      public InlineConstructor(SymbolTypeInteger constructType, Operator constructOperator) {
+      public InlineConstructor(SymbolTypeIntegerFixed constructType, Operator constructOperator) {
          this.constructType = constructType;
          this.constructOperator = constructOperator;
       }

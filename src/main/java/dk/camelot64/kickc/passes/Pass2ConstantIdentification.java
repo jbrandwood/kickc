@@ -72,10 +72,8 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          SymbolType constType = variableType;
 
          if(!valueType.equals(variableType)) {
-            if(SymbolTypeInference.typeMatch(variableType, valueType)) {
+            if(variableType.equals(valueType)) {
                constType = variableType;
-            } else if(SymbolTypeInference.typeMatch(valueType, variableType)) {
-               constType = valueType;
             } else {
                throw new CompileError(
                      "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
@@ -194,84 +192,10 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             // Volatile variables cannot be constant
             return;
          }
-         ConstantValue constant = getConstantAssignmentValue(assignment, var.getType());
-         if(constant != null) {
-            constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
+         if(assignment.getrValue1()==null && assignment.getOperator()==null && assignment.getrValue2() instanceof ConstantValue) {
+            constants.put(variable, new ConstantVariableValue(variable, (ConstantValue) assignment.getrValue2(), assignment));
          }
       }
-   }
-
-   /**
-    * Examine the right side of an assignment and if it is constant then return the constant value.
-    *
-    * @param assignment The assignment to examine
-    * @param lValueType The type of the lvalue
-    * @return The constant value if the right side is constant
-    */
-   private ConstantValue getConstantAssignmentValue(StatementAssignment assignment, SymbolType lValueType) {
-      if(assignment.getrValue1() == null && getConstant(assignment.getrValue2()) != null) {
-         if(assignment.getOperator() == null) {
-            // Constant assignment
-            return getConstant(assignment.getrValue2());
-         } else {
-            // Constant unary expression
-            return createUnary(
-                  (OperatorUnary) assignment.getOperator(),
-                  getConstant(assignment.getrValue2())
-            );
-         }
-      } else if(getConstant(assignment.getrValue1()) != null && getConstant(assignment.getrValue2()) != null) {
-         // Constant binary expression
-         return createBinary(
-               getConstant(assignment.getrValue1()),
-               (OperatorBinary) assignment.getOperator(),
-               getConstant(assignment.getrValue2()),
-               getScope());
-      } else if(assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
-         // A candidate for a constant list - examine to confirm
-         if(lValueType instanceof SymbolTypeArray) {
-            ValueList valueList = (ValueList) assignment.getrValue2();
-            List<RValue> values = valueList.getList();
-            boolean allConstant = true;
-            // Type of the elements of the list (deducted from the type of all elements)
-            SymbolType listType = null;
-            List<ConstantValue> elements = new ArrayList<>();
-            for(RValue elmValue : values) {
-               if(elmValue instanceof ConstantValue) {
-                  ConstantValue constantValue = (ConstantValue) elmValue;
-                  SymbolType elmType = constantValue.getType(getScope());
-                  if(listType == null) {
-                     listType = elmType;
-                  } else {
-                     if(!SymbolTypeInference.typeMatch(listType, elmType)) {
-                        SymbolType intersectType = SymbolTypeInference.intersectTypes(listType, elmType);
-                        if(intersectType == null) {
-                           // No overlap between list type and element type
-                           throw new RuntimeException("Array type " + listType + " does not match element type" + elmType + ". Array: " + valueList.toString(getProgram()));
-                        } else {
-                           listType = intersectType;
-                        }
-                     }
-                  }
-                  elements.add(constantValue);
-               } else {
-                  allConstant = false;
-                  listType = null;
-                  break;
-               }
-            }
-            if(allConstant && listType != null) {
-               // Constant list confirmed!
-               return new ConstantArrayList(elements, listType);
-            }
-         }
-      } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
-         // Constant address-of variable
-         if(assignment.getrValue2() instanceof SymbolRef) {
-            return new ConstantSymbolPointer((SymbolRef) assignment.getrValue2());
-         }
-      }
-      return null;
    }
 
    /**

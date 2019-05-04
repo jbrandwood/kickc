@@ -499,7 +499,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       if(initializer != null) {
          addInitialAssignment(initializer, lValue, comments);
       } else {
-         if(type instanceof SymbolTypeInteger) {
+         if(type instanceof SymbolTypeIntegerFixed) {
             // Add an zero value initializer
             ConstantInteger zero = new ConstantInteger(0L);
             Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));

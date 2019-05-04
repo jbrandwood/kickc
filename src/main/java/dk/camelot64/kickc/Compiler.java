@@ -153,7 +153,8 @@ public class Compiler {
       new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1ResolveForwardReferences(program).execute();
       new Pass1UnwindBlockScopes(program).execute();
-      new Pass1TypeInference(program).execute();
+      new Pass1Procedures(program).execute();
+      new PassNTypeInference(program).execute();
       new Pass1TypeIdSimplification(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
@@ -164,7 +165,7 @@ public class Compiler {
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1PointerSizeofFix(program).execute();
-      new Pass1AddTypePromotions(program).execute();
+      new PassNAddTypeConversions(program).execute();
       new Pass1EarlyConstantIdentification(program).execute();
       new PassNStatementIndices(program).step();
       new PassNCallGraphAnalysis(program).step();
@@ -230,6 +231,8 @@ public class Compiler {
 
    private void pass2Optimize() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
+      optimizations.add(new PassNTypeInference(program));
+      optimizations.add(new PassNAddTypeConversions(program));
       optimizations.add(new Pass2CullEmptyBlocks(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
@@ -240,6 +243,7 @@ public class Compiler {
       optimizations.add(new Pass2IdenticalPhiElimination(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
+      optimizations.add(new Pass2ConstantRValueConsolidation(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
@@ -294,6 +298,7 @@ public class Compiler {
       constantOptimizations.add(new Pass2ConstantInlining(program));
       constantOptimizations.add(new Pass2ConstantStringConsolidation(program));
       constantOptimizations.add(new Pass2IdenticalPhiElimination(program));
+      constantOptimizations.add(new Pass2ConstantRValueConsolidation(program));
       constantOptimizations.add(new Pass2ConstantIdentification(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));

@@ -33,8 +33,18 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIntegerLiteralsMin() throws IOException, URISyntaxException {
+      compileAndCompare("int-literals-min");
+   }
+
+   @Test
    public void testIntegerLiterals() throws IOException, URISyntaxException {
       compileAndCompare("int-literals");
+   }
+
+   @Test
+   public void testNumberType() throws IOException, URISyntaxException {
+      compileAndCompare("number-type", log());
    }
 
    @Test
@@ -1636,7 +1646,7 @@ public class TestPrograms {
 
    @Test
    public void testForClassicMin() throws IOException, URISyntaxException {
-      compileAndCompare("forclassicmin");
+      compileAndCompare("forclassicmin", log());
    }
 
    @Test

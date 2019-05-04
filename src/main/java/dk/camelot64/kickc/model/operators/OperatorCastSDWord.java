@@ -17,7 +17,7 @@ public class OperatorCastSDWord extends OperatorUnary {
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral value, ProgramScope scope) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0xffffffffL & ((ConstantInteger) value).getValue());
+         return new ConstantInteger(0xffffffffL & ((ConstantInteger) value).getValue(), SymbolType.SDWORD);
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + value );
    }

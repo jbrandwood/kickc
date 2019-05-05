@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.values.RangeValue;
@@ -24,7 +24,7 @@ public class Pass3AssertRValues extends Pass2SsaAssertion {
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value value = programValue.get();
          if(value instanceof ValueList) {
-            throw new CompileError(
+            throw new InternalError(
                   "Error! Value list not resolved to word constructor or array initializer" +
                         "\n value list: " + value.toString(getProgram()) +
                         "\n statement: " + currentStmt.toString(getProgram(), false)
@@ -32,7 +32,7 @@ public class Pass3AssertRValues extends Pass2SsaAssertion {
             );
          }
          if(value instanceof RangeValue) {
-            throw new CompileError(
+            throw new InternalError(
                   "Error! Ranged for() not resolved to constants" +
                         "\n Range: " + value.toString(getProgram()) +
                         "\n statement: " + currentStmt.toString(getProgram(), false)

@@ -20,7 +20,7 @@ public interface SymbolType {
    SymbolTypeIntegerFixed DWORD = new SymbolTypeIntegerFixed("dword", 0, 4_294_967_296L, false, 32);
    /** Signed double word (4 bytes, 32 bits). */
    SymbolTypeIntegerFixed SDWORD = new SymbolTypeIntegerFixed("signed dword", -2_147_483_648, 2_147_483_647, true, 32);
-   /** Integer with unknown size. */
+   /** Integer with unknown size (used for constant expressions). */
    SymbolTypeIntegerAuto NUMBER = new SymbolTypeIntegerAuto("number");
    /** String value (treated like byte* ). */
    SymbolTypeNamed STRING = new SymbolTypeNamed("string", 99);

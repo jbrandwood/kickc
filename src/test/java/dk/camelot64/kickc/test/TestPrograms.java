@@ -33,18 +33,23 @@ public class TestPrograms {
    }
 
    @Test
-   public void testIntegerLiteralsMin() throws IOException, URISyntaxException {
-      compileAndCompare("int-literals-min");
+   public void testNumberConversion() throws IOException, URISyntaxException {
+      compileAndCompare("number-conversion", log());
+   }
+
+   @Test
+   public void testNumberType() throws IOException, URISyntaxException {
+      compileAndCompare("number-type");
+   }
+
+   @Test
+   public void testIntegerConversion() throws IOException, URISyntaxException {
+      compileAndCompare("int-conversion");
    }
 
    @Test
    public void testIntegerLiterals() throws IOException, URISyntaxException {
       compileAndCompare("int-literals");
-   }
-
-   @Test
-   public void testNumberType() throws IOException, URISyntaxException {
-      compileAndCompare("number-type", log());
    }
 
    @Test
@@ -59,7 +64,7 @@ public class TestPrograms {
 
    @Test
    public void testPaulNelsenSandboxTernaryError() throws IOException, URISyntaxException {
-      compileAndCompare("sandbox-ternary-error", log().verboseParse().verboseCreateSsa().setVerboseSSAOptimize().verboseStatementSequence());
+      compileAndCompare("sandbox-ternary-error");
    }
 
    @Test
@@ -75,7 +80,7 @@ public class TestPrograms {
 
    @Test
    public void testTypeIdPlusByteProblem() throws IOException, URISyntaxException {
-      compileAndCompare("typeid-plus-byte-problem", log());
+      compileAndCompare("typeid-plus-byte-problem");
    }
 
    @Test

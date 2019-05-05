@@ -126,6 +126,8 @@ public class SymbolTypeInference {
       } else if(rValue instanceof ProcedureRef) {
          Procedure procedure = symbols.getProcedure((ProcedureRef) rValue);
          return procedure.getType();
+      }  else if(rValue instanceof AssignmentRValue) {
+         return inferTypeRValue(symbols, ((AssignmentRValue) rValue).getAssignment());
       }
       if(type == null) {
          throw new RuntimeException("Cannot infer type for " + rValue.toString());

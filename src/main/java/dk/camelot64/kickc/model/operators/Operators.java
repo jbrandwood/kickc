@@ -48,6 +48,7 @@ public class Operators {
    public static final OperatorBinary BOOL_OR = new OperatorBitwiseOr(11);
    public static final OperatorBinary LOGIC_AND = new OperatorLogicAnd(12);
    public static final OperatorBinary LOGIC_OR = new OperatorLogicOr(13);
+   public static final OperatorBinary ASSIGNMENT = new OperatorAssignment(14);
 
    public static Operator getBinary(String op) {
       switch(op) {

@@ -233,6 +233,7 @@ public class Compiler {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new PassNTypeInference(program));
       optimizations.add(new PassNAddTypeConversions(program));
+      optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new Pass2CullEmptyBlocks(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
@@ -247,7 +248,7 @@ public class Compiler {
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
-      optimizations.add(new Pass2ConstantAdditionElimination(program));
+      //optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2ConstantIfs(program));
       optimizations.add(new Pass2ConstantStringConsolidation(program));
       optimizations.add(new Pass2FixInlineConstructors(program));
@@ -356,7 +357,9 @@ public class Compiler {
    }
 
    private void pass3Analysis() {
+      new Pass3AssertNoTypeId(program).check();
       new Pass3AssertRValues(program).check();
+      new Pass3AssertNoNumbers(program).check();
       new Pass3AssertConstants(program).check();
       new Pass3AssertArrayLengths(program).check();
       new Pass3AssertNoMulDivMod(program).check();

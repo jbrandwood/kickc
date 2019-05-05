@@ -1,15 +1,19 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.VariableIntermediate;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -31,7 +35,7 @@ public class PassNAddTypeConversions extends Pass2SsaOptimization {
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementAssignment) {
-               doConversionAssignment((StatementAssignment) statement, stmtIt);
+               doConversionAssignment((StatementAssignment) statement, stmtIt, block);
             }
             // TODO: Implement conversion for calls
          }
@@ -48,7 +52,7 @@ public class PassNAddTypeConversions extends Pass2SsaOptimization {
     * @param assignment The assignment to examine
     * @param stmtIt Iterator allowing the method to add a tmp-var-assignment.
     */
-   private void doConversionAssignment(StatementAssignment assignment, ListIterator<Statement> stmtIt) {
+   private void doConversionAssignment(StatementAssignment assignment, ListIterator<Statement> stmtIt, ControlFlowBlock block) {
       LValue lValue = assignment.getlValue();
       SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
       SymbolType rValueType = SymbolTypeInference.inferTypeRValue(getScope(), assignment);
@@ -64,14 +68,14 @@ public class PassNAddTypeConversions extends Pass2SsaOptimization {
          }
          for(SymbolTypeIntegerFixed potentialType : potentialTypes) {
             if(lValueType.equals(potentialType) || canConvert(lValueType, potentialType)) {
-               addConversionCast(assignment, lValueType, rValueType);
+               addConversionCast(assignment, stmtIt, block, lValueType, rValueType);
                return;
             }
          }
       } else {
          // No direct type match - attempt conversion
          if(canConvert(lValueType, rValueType)) {
-            addConversionCast(assignment, lValueType, rValueType);
+            addConversionCast(assignment, stmtIt, block, lValueType, rValueType);
             return;
          }
       }
@@ -90,7 +94,7 @@ public class PassNAddTypeConversions extends Pass2SsaOptimization {
     * @param lValueType The type of the lValue
     * @param rValueType The type of the rValue
     */
-   private void addConversionCast(StatementAssignment assignment, SymbolType lValueType, SymbolType rValueType) {
+   private void addConversionCast(StatementAssignment assignment, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, SymbolType lValueType, SymbolType rValueType) {
       // Promotion possible - add tmp-var and a cast
       if(assignment.getOperator() == null) {
          // No operator - add cast directly!
@@ -100,11 +104,16 @@ public class PassNAddTypeConversions extends Pass2SsaOptimization {
          } else {
             assignment.setOperator(Operators.getCastUnary(lValueType));
          }
-         if(getLog().isVerbosePass1CreateSsa()) {
-            getLog().append("Converting " + rValueType + " to " + lValueType + " in " + assignment);
-         }
+         getLog().append("Converting " + rValueType + " to " + lValueType + " in " + assignment);
       } else {
-         throw new RuntimeException("Tmp-var conversion not implemented yet " + assignment);
+         ScopeRef currentScope = currentBlock.getScope();
+         Scope blockScope = getScope().getScope(currentScope);
+         VariableIntermediate tmpVar = blockScope.addVariableIntermediate();
+         tmpVar.setType(rValueType);
+         StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(lValueType), tmpVar.getRef(), assignment.getSource(), Comment.NO_COMMENTS);
+         getLog().append("Converting " + rValueType + " to " + lValueType + " in " + assignment + " adding "+tmpVar);
+         assignment.setlValue(tmpVar.getRef());
+         stmtIt.add(newAssignment);
       }
    }
 

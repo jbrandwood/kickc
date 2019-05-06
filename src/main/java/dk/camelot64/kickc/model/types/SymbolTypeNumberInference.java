@@ -90,8 +90,8 @@ public class SymbolTypeNumberInference {
          ArrayList<SymbolTypeIntegerFixed> potentialTypes = new ArrayList<>();
          ConstantInteger constantInteger = (ConstantInteger) literal;
          Long number = constantInteger.getValue();
-         for(SymbolTypeIntegerFixed typeInteger : SymbolType.getIntegerFixedTypes()) {
-            if(number >= typeInteger.getMinValue() && number <= typeInteger.getMaxValue()) {
+         for(SymbolTypeIntegerFixed typeInteger : SymbolTypeIntegerFixed.getIntegerFixedTypes()) {
+            if(typeInteger.contains(number)) {
                potentialTypes.add(typeInteger);
             }
          }

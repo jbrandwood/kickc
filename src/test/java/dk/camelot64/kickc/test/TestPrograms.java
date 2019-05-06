@@ -34,12 +34,12 @@ public class TestPrograms {
 
    @Test
    public void testNumberConversion() throws IOException, URISyntaxException {
-      compileAndCompare("number-conversion", log());
+      compileAndCompare("number-conversion");
    }
 
    @Test
    public void testNumberType() throws IOException, URISyntaxException {
-      compileAndCompare("number-type");
+      compileAndCompare("number-type", log());
    }
 
    @Test

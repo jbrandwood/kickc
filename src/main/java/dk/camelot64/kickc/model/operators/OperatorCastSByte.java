@@ -8,10 +8,10 @@ import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
 /** Unary Cast to signed byte operator ( (signed byte) x ) */
-public class OperatorCastSByte extends OperatorUnary {
+public class OperatorCastSByte extends OperatorCast {
 
    public OperatorCastSByte(int precedence) {
-      super("((signed byte))", "_sbyte_", precedence);
+      super("((signed byte))", "_sbyte_", precedence, SymbolType.SBYTE);
    }
 
    @Override

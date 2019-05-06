@@ -26,22 +26,6 @@ public class SymbolTypeMulti implements SymbolType {
       return types;
    }
 
-
-   /**
-    * Get the multi-type that can contain the passed number.
-    * @param number The number
-    * @return The multi-type
-    */
-   public static SymbolType getMultiType(Long number) {
-      ArrayList<SymbolType> potentialTypes = new ArrayList<>();
-      for(SymbolTypeIntegerFixed typeInteger : SymbolType.getIntegerFixedTypes()) {
-         if(number >= typeInteger.getMinValue() && number <= typeInteger.getMaxValue()) {
-            potentialTypes.add(typeInteger);
-         }
-      }
-      return new SymbolTypeMulti(potentialTypes);
-   }
-
    @Override
    public int getSizeBytes() {
       // Find the minimal sizeof - and return that

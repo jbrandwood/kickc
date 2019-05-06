@@ -9,10 +9,10 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantPointer;
 
 /** Unary Cast to double word operator ( (dword) x ) */
-public class OperatorCastDWord extends OperatorUnary {
+public class OperatorCastDWord extends OperatorCast {
 
    public OperatorCastDWord(int precedence) {
-      super("((dword))", "_dword_", precedence);
+      super("((dword))", "_dword_", precedence, SymbolType.DWORD);
    }
 
    @Override

@@ -50,10 +50,10 @@ public class ProgramValueIterator {
     */
    public static void execute(SymbolVariable symbolVariable, ProgramValueHandler programValueHandler) {
       if(symbolVariable.getType() instanceof SymbolTypeArray) {
-         execute(new ProgramValue.TypeArraySize((SymbolTypeArray) symbolVariable.getType()), programValueHandler, null, null, null);
+         execute(new ProgramValue.ProgramValueTypeArraySize((SymbolTypeArray) symbolVariable.getType()), programValueHandler, null, null, null);
       }
       if(symbolVariable instanceof ConstantVar) {
-         execute(new ProgramValue.ConstantVariableValue((ConstantVar) symbolVariable), programValueHandler, null, null, null);
+         execute(new ProgramValue.ProgramValueConstantVar((ConstantVar) symbolVariable), programValueHandler, null, null, null);
       }
    }
 
@@ -98,7 +98,7 @@ public class ProgramValueIterator {
          // The sequence RValue1, RValue2, LValue is important - as it is essential for {@link dk.camelot64.kickc.passes.Pass1GenerateSingleStaticAssignmentForm} to create the correct SSA
          execute(new ProgramValue.RValue1((StatementAssignment) statement), handler, statement, statementsIt, block);
          execute(new ProgramValue.RValue2((StatementAssignment) statement), handler, statement, statementsIt, block);
-         execute(new ProgramValue.LValue((StatementLValue) statement), handler, statement, statementsIt, block);
+         execute(new ProgramValue.ProgramValueLValue((StatementLValue) statement), handler, statement, statementsIt, block);
       } else if(statement instanceof StatementCall) {
          StatementCall call = (StatementCall) statement;
          if(call.getParameters() != null) {
@@ -107,7 +107,7 @@ public class ProgramValueIterator {
                execute(new ProgramValue.CallParameter(call, i), handler, statement, statementsIt, block);
             }
          }
-         execute(new ProgramValue.LValue((StatementLValue) statement), handler, statement, statementsIt, block);
+         execute(new ProgramValue.ProgramValueLValue((StatementLValue) statement), handler, statement, statementsIt, block);
       } else if(statement instanceof StatementCallPointer) {
          StatementCallPointer call = (StatementCallPointer) statement;
          execute(new ProgramValue.CallPointerProcedure((StatementCallPointer) statement), handler, statement, statementsIt, block);
@@ -117,7 +117,7 @@ public class ProgramValueIterator {
                execute(new ProgramValue.CallPointerParameter(call, i), handler, statement, statementsIt, block);
             }
          }
-         execute(new ProgramValue.LValue((StatementLValue) statement), handler, statement, statementsIt, block);
+         execute(new ProgramValue.ProgramValueLValue((StatementLValue) statement), handler, statement, statementsIt, block);
       } else if(statement instanceof StatementConditionalJump) {
          execute(new ProgramValue.CondRValue1((StatementConditionalJump) statement), handler, statement, statementsIt, block);
          execute(new ProgramValue.CondRValue2((StatementConditionalJump) statement), handler, statement, statementsIt, block);
@@ -137,15 +137,15 @@ public class ProgramValueIterator {
          StatementKickAsm statementKickAsm = (StatementKickAsm) statement;
          RValue location = statementKickAsm.getLocation();
          if(location!=null) {
-            execute(new ProgramValue.KickAsmLocation(statementKickAsm), handler, statement, statementsIt, block);
+            execute(new ProgramValue.ProgramValueKickAsmLocation(statementKickAsm), handler, statement, statementsIt, block);
          }
          RValue bytes = statementKickAsm.getLocation();
          if(bytes!=null) {
-            execute(new ProgramValue.KickAsmBytes(statementKickAsm), handler, statement, statementsIt, block);
+            execute(new ProgramValue.ProgramValueKickAsmBytes(statementKickAsm), handler, statement, statementsIt, block);
          }
          RValue cycles = statementKickAsm.getLocation();
          if(cycles!=null) {
-            execute(new ProgramValue.KickAsmCycles(statementKickAsm), handler, statement, statementsIt, block);
+            execute(new ProgramValue.ProgramValueKickAsmCycles(statementKickAsm), handler, statement, statementsIt, block);
          }
          List<SymbolVariableRef> uses = statementKickAsm.getUses();
          for(int i = 0; i < uses.size(); i++) {
@@ -155,7 +155,7 @@ public class ProgramValueIterator {
          StatementAsm statementAsm = (StatementAsm) statement;
          Map<String, SymbolVariableRef> referenced = statementAsm.getReferenced();
          for(String label : referenced.keySet()) {
-            execute(new ProgramValue.AsmReferenced(statementAsm, label), handler, statement, statementsIt, block);
+            execute(new ProgramValue.ProgramValueAsmReferenced(statementAsm, label), handler, statement, statementsIt, block);
          }
       }
    }
@@ -182,42 +182,42 @@ public class ProgramValueIterator {
    private static Collection<ProgramValue> getSubValues(Value value) {
       ArrayList<ProgramValue> subValues = new ArrayList<>();
       if(value instanceof PointerDereferenceIndexed) {
-         subValues.add(new ProgramValue.Pointer((PointerDereference) value));
-         subValues.add(new ProgramValue.PointerIndex((PointerDereferenceIndexed) value));
+         subValues.add(new ProgramValue.ProgramValuePointer((PointerDereference) value));
+         subValues.add(new ProgramValue.ProgramValuePointerIndex((PointerDereferenceIndexed) value));
       } else if(value instanceof PointerDereferenceSimple) {
-         subValues.add(new ProgramValue.Pointer((PointerDereference) value));
+         subValues.add(new ProgramValue.ProgramValuePointer((PointerDereference) value));
       } else if(value instanceof ValueList) {
          ValueList valueList = (ValueList) value;
          int size = valueList.getList().size();
          for(int i = 0; i < size; i++) {
-            subValues.add(new ProgramValue.ListElement(valueList, i));
+            subValues.add(new ProgramValue.ProgramValueListElement(valueList, i));
          }
       } else if(value instanceof ConstantArrayList) {
          ConstantArrayList constantArrayList = (ConstantArrayList) value;
          int size = constantArrayList.getElements().size();
          for(int i = 0; i < size; i++) {
-            subValues.add(new ProgramValue.ConstantArrayElement(constantArrayList, i));
+            subValues.add(new ProgramValue.ProgramValueConstantArrayElement(constantArrayList, i));
          }
       } else if(value instanceof CastValue) {
-         subValues.add(new ProgramValue.CastValue((CastValue) value));
+         subValues.add(new ProgramValue.ProgramValueCastValue((CastValue) value));
       } else if(value instanceof ConstantCastValue) {
-         subValues.add(new ProgramValue.ConstantCastValue((ConstantCastValue) value));
+         subValues.add(new ProgramValue.ProgramValueConstantCastValue((ConstantCastValue) value));
       } else if(value instanceof ConstantSymbolPointer) {
-         subValues.add(new ProgramValue.ConstantSymbolPointerTo((ConstantSymbolPointer) value));
+         subValues.add(new ProgramValue.ProgramValueConstantSymbolPointerTo((ConstantSymbolPointer) value));
       } else if(value instanceof RangeValue) {
-         subValues.add(new ProgramValue.RangeFirst((RangeValue) value));
-         subValues.add(new ProgramValue.RangeLast((RangeValue) value));
+         subValues.add(new ProgramValue.ProgramValueRangeFirst((RangeValue) value));
+         subValues.add(new ProgramValue.ProgramValueRangeLast((RangeValue) value));
       } else if(value instanceof ConstantBinary) {
-         subValues.add(new ProgramValue.ConstantBinaryLeft((ConstantBinary) value));
-         subValues.add(new ProgramValue.ConstantBinaryRight((ConstantBinary) value));
+         subValues.add(new ProgramValue.ProgramValueConstantBinaryLeft((ConstantBinary) value));
+         subValues.add(new ProgramValue.ProgramValueConstantBinaryRight((ConstantBinary) value));
       } else if(value instanceof ConstantUnary) {
-         subValues.add(new ProgramValue.ConstantUnaryValue((ConstantUnary) value));
+         subValues.add(new ProgramValue.ProgramValueConstantUnaryValue((ConstantUnary) value));
       } else if(value instanceof ArrayFilled) {
-         subValues.add(new ProgramValue.ArrayFilledSize((ArrayFilled) value));
+         subValues.add(new ProgramValue.ProgramValueArrayFilledSize((ArrayFilled) value));
       } else if(value instanceof ConstantArrayFilled) {
-         subValues.add(new ProgramValue.ConstantArrayFilledSize((ConstantArrayFilled) value));
+         subValues.add(new ProgramValue.ProgramValueConstantArrayFilledSize((ConstantArrayFilled) value));
       } else if(value instanceof LvalueIntermediate) {
-         subValues.add(new ProgramValue.LValueIntermediateVariable((LvalueIntermediate) value));
+         subValues.add(new ProgramValue.ProgramValueLValueIntermediateVariable((LvalueIntermediate) value));
       } else if(value == null ||
             value instanceof VariableRef ||
             value instanceof ProcedureRef ||

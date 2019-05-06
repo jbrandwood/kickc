@@ -38,7 +38,7 @@ public class OperatorDivide extends OperatorBinary {
       }
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(left) && SymbolType.isInteger(right)) {
-         return SymbolType.convertedMathType( (SymbolTypeInteger) left, (SymbolTypeInteger)right);
+         return SymbolTypeConversion.convertedMathType( (SymbolTypeInteger) left, (SymbolTypeInteger)right);
       }
 
       throw new RuntimeException("Type inference case not handled " + left + " " + getOperator() + " " + right);

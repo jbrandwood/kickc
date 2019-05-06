@@ -9,10 +9,10 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantPointer;
 
 /** Unary Cast to byte operator ( (byte) x ) */
-public class OperatorCastByte extends OperatorUnary {
+public class OperatorCastByte extends OperatorCast {
 
    public OperatorCastByte(int precedence) {
-      super("((byte))", "_byte_", precedence);
+      super("((byte))", "_byte_", precedence, SymbolType.BYTE);
    }
 
    @Override

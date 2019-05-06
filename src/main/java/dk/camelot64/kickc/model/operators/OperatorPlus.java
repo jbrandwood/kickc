@@ -46,7 +46,7 @@ public class OperatorPlus extends OperatorBinary {
       }
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {
-         return SymbolType.convertedMathType( (SymbolTypeInteger) type1, (SymbolTypeInteger)type2);
+         return SymbolTypeConversion.convertedMathType( (SymbolTypeInteger) type1, (SymbolTypeInteger)type2);
       }
 
       throw new CompileError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);

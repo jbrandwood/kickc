@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model.values;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 
-/** The "total" RValue of an assigment. */
+/** The "total" RValue of an assignment. */
 public class AssignmentRValue implements RValue {
 
    private StatementAssignment assignment;

@@ -8,10 +8,10 @@ import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
 /** Unary Cast to signed double word operator ( (signed dword) x ) */
-public class OperatorCastSDWord extends OperatorUnary {
+public class OperatorCastSDWord extends OperatorCast {
 
    public OperatorCastSDWord(int precedence) {
-      super("((signed dword))", "_sdword_", precedence);
+      super("((signed dword))", "_sdword_", precedence, SymbolType.SDWORD);
    }
 
    @Override

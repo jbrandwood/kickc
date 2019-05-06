@@ -96,7 +96,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                programValue.set(version.getRef());
             }
             // Update map of versions encountered in the block
-            if(currentStmt instanceof StatementAssignment && programValue instanceof ProgramValue.LValue) {
+            if(currentStmt instanceof StatementAssignment && programValue instanceof ProgramValue.ProgramValueLValue) {
                StatementAssignment assignment = (StatementAssignment) currentStmt;
                LValue lValue = assignment.getlValue();
                if(lValue instanceof VariableRef) {

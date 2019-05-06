@@ -155,7 +155,7 @@ public class Compiler {
       new Pass1UnwindBlockScopes(program).execute();
       new Pass1Procedures(program).execute();
       new PassNTypeInference(program).execute();
-      new Pass1TypeIdSimplification(program).execute();
+      new PassNTypeIdSimplification(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");
@@ -165,7 +165,7 @@ public class Compiler {
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1PointerSizeofFix(program).execute();
-      new PassNAddTypeConversions(program).execute();
+      new PassNAddTypeConversionsNew(program).execute();
       new Pass1EarlyConstantIdentification(program).execute();
       new PassNStatementIndices(program).step();
       new PassNCallGraphAnalysis(program).step();
@@ -231,9 +231,10 @@ public class Compiler {
 
    private void pass2Optimize() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
-      optimizations.add(new PassNTypeInference(program));
-      optimizations.add(new PassNAddTypeConversions(program));
+      optimizations.add(new PassNAddTypeConversionsNew(program));
       optimizations.add(new PassNAddNumberTypeConversions(program));
+      optimizations.add(new PassNTypeInference(program));
+      optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new Pass2CullEmptyBlocks(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
@@ -264,6 +265,7 @@ public class Compiler {
       optimizations.add(new Pass2SizeOfSimplification(program));
       optimizations.add(new Pass2InlineDerefIdx(program));
       optimizations.add(new Pass2DeInlineWordDerefIdx(program));
+      optimizations.add(new Pass2ConstantCastSimplification(program));
       pass2Execute(optimizations);
    }
 
@@ -303,6 +305,7 @@ public class Compiler {
       constantOptimizations.add(new Pass2ConstantIdentification(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));
+      constantOptimizations.add(new Pass2ConstantCastSimplification(program));
       constantOptimizations.add(new Pass2ConstantIfs(program));
       pass2Execute(constantOptimizations);
 

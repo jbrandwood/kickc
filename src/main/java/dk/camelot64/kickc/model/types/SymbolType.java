@@ -1,10 +1,5 @@
 package dk.camelot64.kickc.model.types;
 
-import dk.camelot64.kickc.model.CompileError;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
 /** Symbol Types */
 public interface SymbolType {
 
@@ -91,6 +86,8 @@ public interface SymbolType {
             return BOOLEAN;
          case "void":
             return VOID;
+         case "number":
+            return NUMBER;
       }
       return null;
    }
@@ -105,7 +102,7 @@ public interface SymbolType {
 
    /**
     * Get the size of the type (in bytes).
-    * @return The size
+    * @return The size. -1 if the type is compile-time only.
     */
    int getSizeBytes();
 
@@ -213,76 +210,6 @@ public interface SymbolType {
     */
    static boolean isInteger(SymbolType type) {
       return SDWORD.equals(type) || DWORD.equals(type) || SWORD.equals(type) || WORD.equals(type) || SBYTE.equals(type) || BYTE.equals(type) || NUMBER.equals(type);
-   }
-
-   /**
-    * Get all integer types.
-    *
-    * @return All integeer types
-    */
-   static Collection<SymbolTypeIntegerFixed> getIntegerFixedTypes() {
-      ArrayList<SymbolTypeIntegerFixed> types = new ArrayList<>();
-      types.add(BYTE);
-      types.add(SBYTE);
-      types.add(WORD);
-      types.add(SWORD);
-      types.add(DWORD);
-      types.add(SDWORD);
-      return types;
-   }
-
-   /**
-    * Find the integer type that results from a binary operator according to C99 6.3.1.8
-    * http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=70
-    *
-    * @param type1 Left type in a binary expression
-    * @param type2 Right type in a binary expression
-    * @return The type resulting from a binary operator performed on the two parameters
-    */
-   static SymbolType convertedMathType(SymbolTypeInteger type1, SymbolTypeInteger type2) {
-      if(SymbolType.NUMBER.equals(type1) || SymbolType.NUMBER.equals(type2)) {
-         return NUMBER;
-      }
-      SymbolTypeIntegerFixed fixed1 = (SymbolTypeIntegerFixed) type1;
-      SymbolTypeIntegerFixed fixed2 = (SymbolTypeIntegerFixed) type2;
-      // C99 6.3.1.8 a. If two operands have the same type no conversion is performed
-      if(type1.equals(type2))
-         return type1;
-      // C99 6.3.1.8 b. If both are signed or both are unsigned then the smallest type is converted to the size of the large type (byte->word->sword, sbyte->sword->sdword)
-      if(fixed1.isSigned()==fixed2.isSigned())
-         return (fixed1.getBits()>fixed2.getBits()) ? fixed1 : fixed2;
-      // C99 6.3.1.8 c. One is signed and one unsigned.
-      // If the signed type can contain all values of the unsigned type then the unsigned value is converted to the signed type. (byte->sword, byte->sdword, word->sdword).
-      SymbolTypeIntegerFixed typeS, typeU;
-      if(fixed1.isSigned()) {
-         typeS = fixed1;
-         typeU = fixed2;
-      }  else {
-         typeS = fixed2;
-         typeU = fixed1;
-      }
-      if(typeS.getBits()>typeU.getBits())
-         return typeS;
-      // C99 6.3.1.8 d. The unsigned type is the same size as or larger than the signed type.
-      // The signed value is first converted to the size of the unsigned type and then converted to unsigned changing the sign and the value
-      // (sbyte->byte, sbyte->word, sbyte->dword, sword->word, sword->dword, sdword->dword).
-      return typeU;
-   }
-
-   /**
-    * Find the unsigned integer type that contains both sub-types usable for binary operations ( & | ^ ).
-    *
-    * @param type1 Left type in a binary expression
-    * @param type2 Right type in a binary expression
-    * @return
-    */
-   static SymbolType promotedBitwiseType(SymbolTypeIntegerFixed type1, SymbolTypeIntegerFixed type2) {
-      for(SymbolTypeIntegerFixed candidate : getIntegerFixedTypes()) {
-         if(!candidate.isSigned() && type1.getBits()<=candidate.getBits() && type2.getBits()<=candidate.getBits()) {
-            return candidate;
-         }
-      }
-      throw new CompileError("Cannot promote to a common type for "+type1.toString()+" and "+type2.toString());
    }
 
 }

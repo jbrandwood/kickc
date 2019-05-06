@@ -83,7 +83,7 @@ public class Pass2InlineDerefIdx extends Pass2SsaOptimization {
       } else if(derefAssignment.getOperator()==null) {
          return attemptInlineDeref(derefAssignment.getrValue2());
       } else if(derefAssignment.getOperator() instanceof OperatorCastPtr) {
-         throw new CompileError("Not implemented!");
+         //throw new CompileError("Not implemented!");
         //return attemptInlineDeref(derefAssignment.getrValue2());
         }
       return null;

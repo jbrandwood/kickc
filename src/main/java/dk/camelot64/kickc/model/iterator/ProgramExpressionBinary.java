@@ -44,12 +44,14 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
    /**
     * Adds a cast to the left operand
+    *
     * @param toType The toType to cast to
     */
    void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols);
 
    /**
     * Adds a cast to the right operand
+    *
     * @param toType The toType to cast to
     */
    void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols);
@@ -135,7 +137,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
       @Override
       public RValue getRight() {
-         if(assignment.getrValue1()==null && assignment.getOperator()==null) {
+         if(assignment.getrValue1() == null && assignment.getOperator() == null) {
             return assignment.getrValue2();
          } else {
             return new AssignmentRValue(assignment);
@@ -160,13 +162,9 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
       @Override
       public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
-         if(assignment.getrValue1()==null && assignment.getOperator()==null) {
-            //if(assignment.getrValue2() instanceof ConstantInteger) {
-            //   ((ConstantInteger) assignment.getrValue2()).setType(toType);
-            //}  else {
-               assignment.setOperator(Operators.getCastUnary(toType));
-            //}
-         }  else {
+         if(assignment.getrValue1() == null && assignment.getOperator() == null) {
+            assignment.setOperator(Operators.getCastUnary(toType));
+         } else {
             throw new InternalError("Not implemented!");
          }
       }
@@ -205,12 +203,20 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
       @Override
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
-         throw new InternalError("Not implemented!");
+         if(conditionalJump.getrValue1() instanceof ConstantValue) {
+            conditionalJump.setrValue1(new ConstantCastValue(toType, (ConstantValue) conditionalJump.getrValue1()));
+         } else {
+            throw new InternalError("Not implemented!");
+         }
       }
 
       @Override
       public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
-         throw new InternalError("Not implemented!");
+         if(conditionalJump.getrValue2() instanceof ConstantValue) {
+            conditionalJump.setrValue2(new ConstantCastValue(toType, (ConstantValue) conditionalJump.getrValue2()));
+         } else {
+            throw new InternalError("Not implemented!");
+         }
       }
 
 
@@ -226,7 +232,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       public ConstantBinary getConstantBinary() {
-         return (ConstantBinary)programValue.get();
+         return (ConstantBinary) programValue.get();
       }
 
       @Override

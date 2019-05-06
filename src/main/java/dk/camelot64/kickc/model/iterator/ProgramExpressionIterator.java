@@ -28,6 +28,8 @@ public class ProgramExpressionIterator {
       ProgramValueIterator.execute(program.getScope(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof ConstantBinary) {
             handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryConstant(programValue), null, null, null);
+         } else if(programValue.get() instanceof ConstantUnary) {
+            handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryConstant(programValue), null, null, null);
          }
       });
 

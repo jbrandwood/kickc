@@ -29,7 +29,7 @@ public class PassNAddTypeConversionsNew extends Pass2SsaOptimization {
             // Special handling of assigning a pointer from an unsigned word
             if((programExpression instanceof ProgramExpressionBinary.ProgramExpressionBinaryAssignmentLValue) && (leftType instanceof SymbolTypePointer) && SymbolType.isInteger(rightType)) {
                getLog().append("Adding pointer type conversion cast (" + leftType + ") " + binary.getLeft().toString() + " in " + currentStmt.toString(getProgram(), false));
-               binary.addLeftCast(leftType, stmtIt, currentBlock.getScope(), getScope());
+               binary.addRightCast(leftType, stmtIt, currentBlock.getScope(), getScope());
             }
 
             if(SymbolType.isInteger(leftType) && SymbolType.isInteger(rightType)) {

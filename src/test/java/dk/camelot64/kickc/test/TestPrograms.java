@@ -104,6 +104,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstIntCastProblem() throws IOException, URISyntaxException {
+      compileAndCompare("const-int-cast-problem");
+   }
+
+   @Test
    public void testPointerPlus0() throws IOException, URISyntaxException {
       compileAndCompare("pointer-plus-0");
    }

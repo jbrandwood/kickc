@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.RValue;
 
 /**
@@ -28,12 +29,12 @@ public class PassNAddNumberTypeConversions extends Pass2SsaOptimization {
             if(conversionType != null) {
                // Convert both left and right to the found type
                SymbolType leftType = SymbolTypeInference.inferType(getProgram().getScope(), left);
-               if(!leftType.equals(conversionType)) {
+               if(!leftType.equals(conversionType) && !(leftType instanceof SymbolTypePointer)) {
                   getLog().append("Adding number conversion cast (" + conversionType + ") " + binary.getLeft().toString() + " in " + currentStmt.toString(getProgram(), false));
                   binary.addLeftCast(conversionType, stmtIt, currentBlock.getScope(), getScope());
                }
                SymbolType rightType = SymbolTypeInference.inferType(getProgram().getScope(), right);
-               if(!rightType.equals(conversionType)) {
+               if(!rightType.equals(conversionType) && !(rightType instanceof SymbolTypePointer)) {
                   getLog().append("Adding number conversion cast (" + conversionType + ") " + binary.getRight().toString() + " in " + currentStmt.toString(getProgram(), false));
                   binary.addRightCast(conversionType, stmtIt, currentBlock.getScope(), getScope());
                }
@@ -42,6 +43,5 @@ public class PassNAddNumberTypeConversions extends Pass2SsaOptimization {
       });
       return false;
    }
-
 
 }

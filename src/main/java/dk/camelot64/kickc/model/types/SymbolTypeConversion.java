@@ -90,10 +90,17 @@ public class SymbolTypeConversion {
             // Right is the number type - left is the fixed type
             numberVal = right;
             fixedType = (SymbolTypeIntegerFixed) leftType;
+         } else if(SymbolType.NUMBER.equals(leftType) && rightType instanceof SymbolTypePointer) {
+            // Left is the number type - right is a pointer (effectively unsigned word)
+            numberVal = left;
+            fixedType = SymbolType.WORD;
+         } else if(SymbolType.NUMBER.equals(rightType) && leftType instanceof SymbolTypePointer) {
+            // Right is the number type - left is a pointer (effectively unsigned word)
+            numberVal = right;
+            fixedType = SymbolType.WORD;
          } else {
             // Binary operator combining number and non-integer
             return null;
-            //throw new CompileError("Error! Incompatible operands " + left.toString() + " and " + right.toString(), currentStmt);
          }
 
          if(numberVal instanceof ConstantValue) {

@@ -73,6 +73,12 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          SymbolType valueType = SymbolTypeInference.inferType(getScope(), constVal);
          SymbolType variableType = variable.getType();
 
+         if(!variableType.equals(SymbolType.NUMBER) && valueType.equals(SymbolType.NUMBER)) {
+            // Value is number - wait til it is cast to a proper type
+            constants.remove(constRef);
+            continue;
+         }
+
          if(!SymbolTypeMatch.assignmentTypeMatch(variableType, valueType)) {
                throw new CompileError(
                      "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +

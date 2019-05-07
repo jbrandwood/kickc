@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testToD018Problem() throws IOException, URISyntaxException {
+      compileAndCompare("tod018-problem", log());
+   }
+
+   @Test
    public void testHelloWorld0() throws IOException, URISyntaxException {
       compileAndCompare("helloworld0");
    }

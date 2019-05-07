@@ -48,8 +48,13 @@ public class SymbolTypeNumberInference {
          // Calculate resulting constant literal
          ConstantLiteral leftLiteral = leftValue.calculateLiteral(programScope);
          ConstantLiteral rightLiteral = rightValue.calculateLiteral(programScope);
-         ConstantLiteral constantLiteral = operator.calculateLiteral(leftLiteral, rightLiteral);
-         return inferTypes(programScope, constantLiteral);
+         ConstantLiteral literal = operator.calculateLiteral(leftLiteral, rightLiteral);
+         if(literal instanceof ConstantInteger && SymbolType.NUMBER.equals(literal.getType(programScope))) {
+            SymbolType literalType = SymbolTypeInference.inferType(programScope, leftValue, operator, rightValue);
+            ((ConstantInteger) literal).setType(literalType);
+            throw new InternalError("Unexpected advanced literal type calculation!");
+         }
+         return inferTypes(programScope, literal);
       } else {
          throw new InternalError("Both operands must be number type.");
       }
@@ -64,8 +69,13 @@ public class SymbolTypeNumberInference {
       if(SymbolType.NUMBER.equals(constantValue.getType(programScope))) {
          // Calculate resulting constant literal
          ConstantLiteral operandLiteral = constantValue.calculateLiteral(programScope);
-         ConstantLiteral constantLiteral = operator.calculateLiteral(operandLiteral, programScope);
-         return inferTypes(programScope, constantLiteral);
+         ConstantLiteral literal = operator.calculateLiteral(operandLiteral, programScope);
+         if(literal instanceof ConstantInteger && SymbolType.NUMBER.equals(literal.getType(programScope))) {
+            SymbolType literalType = SymbolTypeInference.inferType(programScope, operator, constantValue);
+            ((ConstantInteger) literal).setType(literalType);
+            throw new InternalError("Unexpected advanced literal type calculation!");
+         }
+         return inferTypes(programScope, literal);
       } else {
          throw new InternalError("Operand must be number type.");
       }

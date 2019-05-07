@@ -43,6 +43,8 @@ public class OperatorGetHigh extends OperatorUnary {
          return SymbolType.WORD;
       } else if(SymbolType.STRING.equals(operandType)) {
          return SymbolType.BYTE;
+      } else if(SymbolType.NUMBER.equals(operandType)) {
+         return SymbolType.NUMBER;
       }
       throw new CompileError("Type inference not implemented "+getOperator()+" "+operandType);
    }

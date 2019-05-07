@@ -2,6 +2,8 @@ package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
+import dk.camelot64.kickc.model.types.SymbolTypeInteger;
 import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantBool;
 import dk.camelot64.kickc.model.values.ConstantInteger;
@@ -24,7 +26,11 @@ public class OperatorShiftLeft extends OperatorBinary {
 
    @Override
    public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
-      return left;
+      if(SymbolType.isInteger(left) && SymbolType.isInteger(right)) {
+         return SymbolTypeConversion.convertedMathType( (SymbolTypeInteger) left, (SymbolTypeInteger)right);
+      } else {
+         return left;
+      }
    }
 
 }

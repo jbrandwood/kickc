@@ -38,7 +38,11 @@ public class ConstantUnary implements ConstantValue {
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      return operator.calculateLiteral(operand.calculateLiteral(scope), scope);
+      ConstantLiteral literal = operator.calculateLiteral(operand.calculateLiteral(scope), scope);
+      if(literal instanceof ConstantInteger && SymbolType.NUMBER.equals(literal.getType(scope))) {
+         ((ConstantInteger) literal).setType(getType(scope));
+      }
+      return literal;
    }
 
    @Override

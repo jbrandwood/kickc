@@ -1,12 +1,15 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 
 /**
@@ -53,6 +56,10 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
       }
       if(SymbolType.NUMBER.equals(rValueType) && SymbolType.isInteger(lValueType)) {
          // L-value is still a number - constants are probably not done being identified & typed
+         return;
+      }
+      if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType) && ((SymbolTypePointer) lValueType).getElementType().equals(SymbolType.BYTE)) {
+         // String value can be assigned into a pointer
          return;
       }
       // Types do not match

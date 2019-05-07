@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Compiler Pass consolidating L-values that are constant into a single {@link ConstantValue}
+ * Compiler Pass consolidating R-values that are constant into a single {@link ConstantValue}
  */
 public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
 

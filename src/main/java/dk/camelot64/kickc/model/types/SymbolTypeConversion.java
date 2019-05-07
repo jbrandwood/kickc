@@ -11,11 +11,10 @@ import dk.camelot64.kickc.model.values.RValue;
 
 /**
  * Rules for converting integer types.
- *
+ * <p>
  * Integer conversion implements C99 6.3.1.8 http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=70
- *
+ * <p>
  * The special number type is converted as described here https://gitlab.com/camelot/kickc/issues/181
- * 
  */
 public class SymbolTypeConversion {
 
@@ -37,19 +36,19 @@ public class SymbolTypeConversion {
       if(type1.equals(type2))
          return type1;
       // C99 6.3.1.8 b. If both are signed or both are unsigned then the smallest type is converted to the size of the large type (byte->word->sword, sbyte->sword->sdword)
-      if(fixed1.isSigned()==fixed2.isSigned())
-         return (fixed1.getBits()>fixed2.getBits()) ? fixed1 : fixed2;
+      if(fixed1.isSigned() == fixed2.isSigned())
+         return (fixed1.getBits() > fixed2.getBits()) ? fixed1 : fixed2;
       // C99 6.3.1.8 c. One is signed and one unsigned.
       // If the signed type can contain all values of the unsigned type then the unsigned value is converted to the signed type. (byte->sword, byte->sdword, word->sdword).
       SymbolTypeIntegerFixed typeS, typeU;
       if(fixed1.isSigned()) {
          typeS = fixed1;
          typeU = fixed2;
-      }  else {
+      } else {
          typeS = fixed2;
          typeU = fixed1;
       }
-      if(typeS.getBits()>typeU.getBits())
+      if(typeS.getBits() > typeU.getBits())
          return typeS;
       // C99 6.3.1.8 d. The unsigned type is the same size as or larger than the signed type.
       // The signed value is first converted to the size of the unsigned type and then converted to unsigned changing the sign and the value
@@ -59,6 +58,7 @@ public class SymbolTypeConversion {
 
    /**
     * Find the integer type that results from a binary operator according to the special number type conversion https://gitlab.com/camelot/kickc/issues/181
+    *
     * @param left The left value
     * @param right The right value
     * @param symbols The program scope symbols (used for looking up symbols and constants)
@@ -92,7 +92,8 @@ public class SymbolTypeConversion {
             fixedType = (SymbolTypeIntegerFixed) leftType;
          } else {
             // Binary operator combining number and non-integer
-            throw new CompileError("Error! Incompatible operands " + left.toString() + " and " + right.toString(), currentStmt);
+            return null;
+            //throw new CompileError("Error! Incompatible operands " + left.toString() + " and " + right.toString(), currentStmt);
          }
 
          if(numberVal instanceof ConstantValue) {

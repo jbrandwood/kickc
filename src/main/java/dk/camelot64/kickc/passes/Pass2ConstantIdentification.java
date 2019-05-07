@@ -15,11 +15,14 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypeMatch;
 import dk.camelot64.kickc.model.values.*;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Compiler Pass propagating constants in expressions eliminating constant variables
@@ -69,24 +72,19 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          ConstantValue constVal = constVarVal.getConstantValue();
          SymbolType valueType = SymbolTypeInference.inferType(getScope(), constVal);
          SymbolType variableType = variable.getType();
-         SymbolType constType = variableType;
 
-         if(!valueType.equals(variableType)) {
-            if(variableType.equals(valueType)) {
-               constType = variableType;
-            } else {
+         if(!SymbolTypeMatch.assignmentTypeMatch(variableType, valueType)) {
                throw new CompileError(
                      "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
                            "\n value: (" + valueType.toString() + ") " + constVal.calculateLiteral(getScope()) +
                            "\n value definition: " + constVal.toString(getProgram())
                );
-            }
          }
 
          ConstantVar constantVar = new ConstantVar(
                variable.getName(),
                constScope,
-               constType,
+               variableType,
                constVal);
          constantVar.setDeclaredAlignment(variable.getDeclaredAlignment());
          constantVar.setDeclaredRegister(variable.getDeclaredRegister());

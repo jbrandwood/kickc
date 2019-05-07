@@ -76,12 +76,12 @@ public class Pass2SizeOfSimplification extends Pass2SsaOptimization {
             SymbolTypeArray arrayType = (SymbolTypeArray) symbolType;
             RValue arraySize = arrayType.getSize();
             if(arraySize instanceof ConstantValue) {
-               getLog().append("Resolving sizeof() " + unary.toString(getProgram()));
+               getLog().append("Resolving array sizeof() " + unary.toString(getProgram()));
                ConstantRef sizeOfConstantVar = OperatorSizeOf.getSizeOfConstantVar(getScope(), arrayType.getElementType());
                programValue.set(new ConstantBinary((ConstantValue) arraySize, Operators.MULTIPLY, sizeOfConstantVar));
                modified.set(true);
             } else if(constant.getValue() instanceof ConstantArrayList) {
-               getLog().append("Resolving sizeof() " + unary.toString(getProgram()));
+               getLog().append("Resolving array sizeof() " + unary.toString(getProgram()));
                int size = ((ConstantArrayList) constant.getValue()).getElements().size();
                ConstantRef sizeOfConstantVar = OperatorSizeOf.getSizeOfConstantVar(getScope(), arrayType.getElementType());
                programValue.set(new ConstantBinary(new ConstantInteger((long) size), Operators.MULTIPLY, sizeOfConstantVar));
@@ -97,6 +97,7 @@ public class Pass2SizeOfSimplification extends Pass2SsaOptimization {
                if(stringLiteral instanceof ConstantString) {
                   ConstantString constString = (ConstantString) stringLiteral;
                   int length = constString.getString().length();
+                  getLog().append("Resolving string sizeof() " + unary.toString(getProgram()));
                   ConstantRef sizeOfChar = OperatorSizeOf.getSizeOfConstantVar(getScope(), SymbolType.BYTE);
                   programValue.set(new ConstantBinary(new ConstantInteger((long) length), Operators.MULTIPLY, sizeOfChar));
                   modified.set(true);

@@ -34,7 +34,7 @@ public class TestPrograms {
 
    @Test
    public void testHelloWorld0() throws IOException, URISyntaxException {
-      compileAndCompare("helloworld0", log());
+      compileAndCompare("helloworld0");
    }
 
    @Test

@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeMatch;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 
@@ -51,17 +51,7 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
       LValue lValue = statement.getlValue();
       SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
       SymbolType rValueType = SymbolTypeInference.inferTypeRValue(getScope(), statement);
-      if(lValueType.equals(rValueType)) {
-         return;
-      }
-      if(SymbolType.NUMBER.equals(rValueType) && SymbolType.isInteger(lValueType)) {
-         // L-value is still a number - constants are probably not done being identified & typed
-         return;
-      }
-      if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType) && ((SymbolTypePointer) lValueType).getElementType().equals(SymbolType.BYTE)) {
-         // String value can be assigned into a pointer
-         return;
-      }
+      if(SymbolTypeMatch.assignmentTypeMatch(lValueType, rValueType)) return;
       // Types do not match
       getLog().append("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
       throw new CompileError("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false), statement.getSource());

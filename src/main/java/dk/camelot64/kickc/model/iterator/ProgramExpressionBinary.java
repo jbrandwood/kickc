@@ -98,7 +98,9 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             tmpVar.setType(toType);
             StatementAssignment newAssignment = new StatementAssignment(tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue1(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue1(tmpVar.getRef());
+            stmtIt.previous();
             stmtIt.add(newAssignment);
+            stmtIt.next();
          }
       }
 
@@ -112,7 +114,9 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             tmpVar.setType(toType);
             StatementAssignment newAssignment = new StatementAssignment(tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue2(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue2(tmpVar.getRef());
+            stmtIt.previous();
             stmtIt.add(newAssignment);
+            stmtIt.next();
          }
       }
    }

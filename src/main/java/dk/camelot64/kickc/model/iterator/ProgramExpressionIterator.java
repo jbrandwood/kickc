@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.values.ConstantBinary;
 import dk.camelot64.kickc.model.values.ConstantUnary;
+import dk.camelot64.kickc.model.values.PointerDereferenceIndexed;
 
 import java.util.ListIterator;
 
@@ -25,13 +26,16 @@ public class ProgramExpressionIterator {
     */
    public static void execute(Program program, ProgramExpressionHandler handler) {
       // Iterate all symbols
-      ProgramValueIterator.execute(program.getScope(), (programValue, currentStmt, stmtIt, currentBlock) -> {
+      ProgramValueHandler programValueHandler = (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof ConstantBinary) {
             handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryConstant(programValue), null, null, null);
          } else if(programValue.get() instanceof ConstantUnary) {
             handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryConstant(programValue), null, null, null);
+         } else if(programValue.get() instanceof PointerDereferenceIndexed) {
+            handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryPointerDereferenceIndexed(programValue), null, null, null);
          }
-      });
+      };
+      ProgramValueIterator.execute(program.getScope(), programValueHandler);
 
       // Iterate all blocks/statements
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
@@ -53,14 +57,7 @@ public class ProgramExpressionIterator {
                }
             }
             // Iterate all statement values
-            ProgramValueIterator.execute(stmt, (programValue, currentStmt, stmtIt1, currentBlock) -> {
-               if(programValue.get() instanceof ConstantBinary) {
-                  handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryConstant(programValue), stmt, stmtIt, block);
-               } else if(programValue.get() instanceof ConstantUnary) {
-                  handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryConstant(programValue), stmt, stmtIt, block);
-               }
-
-            }, stmtIt, block);
+            ProgramValueIterator.execute(stmt, programValueHandler, stmtIt, block);
          }
       }
 

@@ -269,4 +269,60 @@ public interface ProgramExpressionBinary extends ProgramExpression {
          getConstantBinary().setRight(new ConstantCastValue(toType, getConstantBinary().getRight()));
       }
    }
+
+   /** Binary expression that is an indexed dereference of a pointer eg. ptr[i] or *(ptr+i). */
+   class ProgramExpressionBinaryPointerDereferenceIndexed implements ProgramExpressionBinary {
+      /** A program value containing a {@link ConstantBinary}. */
+      private ProgramValue programValue;
+
+      public ProgramExpressionBinaryPointerDereferenceIndexed(ProgramValue programValue) {
+         this.programValue = programValue;
+      }
+
+      public PointerDereferenceIndexed getPointerDereferenceIndexed() {
+         return (PointerDereferenceIndexed) programValue.get();
+      }
+
+      @Override
+      public RValue getLeft() {
+         return getPointerDereferenceIndexed().getPointer();
+      }
+
+      @Override
+      public OperatorBinary getOperator() {
+         return Operators.PLUS;
+      }
+
+      @Override
+      public RValue getRight() {
+         return getPointerDereferenceIndexed().getIndex();
+      }
+
+      @Override
+      public void set(Value value) {
+         programValue.set(value);
+      }
+
+      @Override
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+         if(getPointerDereferenceIndexed().getPointer() instanceof ConstantValue) {
+            getPointerDereferenceIndexed().setPointer(new ConstantCastValue(toType, (ConstantValue) getPointerDereferenceIndexed().getPointer()));
+         }  else {
+            // Try to use CastValue - may later have to be supported!
+            getPointerDereferenceIndexed().setPointer(new CastValue(toType, getPointerDereferenceIndexed().getPointer()));
+         }
+      }
+
+      @Override
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+         if(getPointerDereferenceIndexed().getIndex() instanceof ConstantValue) {
+            getPointerDereferenceIndexed().setIndex(new ConstantCastValue(toType, (ConstantValue) getPointerDereferenceIndexed().getIndex()));
+         }  else {
+            // Try to use CastValue - may later have to be supported!
+            getPointerDereferenceIndexed().setIndex(new CastValue(toType, getPointerDereferenceIndexed().getIndex()));
+         }
+      }
+   }
+
+
 }

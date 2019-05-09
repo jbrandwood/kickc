@@ -233,6 +233,7 @@ public class Compiler {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new PassNAddTypeConversionsNew(program));
       optimizations.add(new PassNAddNumberTypeConversions(program));
+      optimizations.add(new PassNDowngradeBytePlusWord(program));
       optimizations.add(new PassNTypeInference(program));
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new Pass2CullEmptyBlocks(program));

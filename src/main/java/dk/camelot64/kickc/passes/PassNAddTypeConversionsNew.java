@@ -35,6 +35,14 @@ public class PassNAddTypeConversionsNew extends Pass2SsaOptimization {
             if(SymbolType.isInteger(leftType) && SymbolType.isInteger(rightType)) {
                SymbolType conversionType = SymbolTypeConversion.convertedMathType((SymbolTypeInteger) leftType, (SymbolTypeInteger) rightType);
                if(conversionType != null && !SymbolType.NUMBER.equals(conversionType)) {
+                  // If byte-like + word-like - skip!!
+                  if(leftType.equals(SymbolType.WORD) && rightType.equals(SymbolType.BYTE)) {
+                     return;
+                  }
+                  if(rightType.equals(SymbolType.WORD) && leftType.equals(SymbolType.BYTE)) {
+                     return;
+                  }
+
                   // Convert both left and right to the found type
                   if(!leftType.equals(conversionType)) {
                      getLog().append("Adding type conversion cast (" + conversionType + ") " + binary.getLeft().toString() + " in " + currentStmt.toString(getProgram(), false));

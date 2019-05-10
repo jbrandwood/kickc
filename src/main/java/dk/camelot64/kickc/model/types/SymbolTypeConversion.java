@@ -27,6 +27,7 @@ public class SymbolTypeConversion {
     * @return The type resulting from a binary operator performed on the two parameters
     */
    public static SymbolType convertedMathType(SymbolTypeInteger type1, SymbolTypeInteger type2) {
+      // If any of the two types are unresolved - return an unresolved result
       if(SymbolType.NUMBER.equals(type1) || SymbolType.NUMBER.equals(type2)) {
          return SymbolType.NUMBER;
       }
@@ -57,7 +58,7 @@ public class SymbolTypeConversion {
    }
 
    /**
-    * Find the integer type that results from a binary operator according to the special number type conversion https://gitlab.com/camelot/kickc/issues/181
+    * Find the integer type that a number operand in a binary operator should be converted/cast to according to number type conversion https://gitlab.com/camelot/kickc/issues/181
     *
     * @param left The left value
     * @param right The right value
@@ -65,7 +66,7 @@ public class SymbolTypeConversion {
     * @param currentStmt The current statement (used only for exception context)
     * @return a non-null fixed integer type if a number type conversion is relevant.
     */
-   public static SymbolType convertedNumberType(RValue left, RValue right, ProgramScope symbols, Statement currentStmt) {
+   public static SymbolType getNumberCastType(RValue left, RValue right, ProgramScope symbols, Statement currentStmt) {
 
       SymbolType leftType = SymbolTypeInference.inferType(symbols, left);
       SymbolType rightType = SymbolTypeInference.inferType(symbols, right);
@@ -79,6 +80,10 @@ public class SymbolTypeConversion {
             // a) If the two operands are numbers the result is a number
             return null;
          }
+
+         // Treat pointers like WORD
+         if(leftType instanceof SymbolTypePointer) leftType = SymbolType.WORD;
+         if(rightType instanceof SymbolTypePointer) rightType = SymbolType.WORD;
 
          RValue numberVal;
          SymbolTypeIntegerFixed fixedType;
@@ -125,7 +130,8 @@ public class SymbolTypeConversion {
                      } else {
                         smallestUnsignedType = SymbolTypeIntegerFixed.getSmallestUnsigned(value);
                      }
-                     return smallestUnsignedType.getBits() > fixedType.getBits() ? smallestUnsignedType : fixedType;
+                     return smallestUnsignedType;
+                     //return smallestUnsignedType.getBits() > fixedType.getBits() ? smallestUnsignedType : fixedType;
                   }
                } else {
                   throw new InternalError("Non-number constant has type number " + right.toString(), currentStmt);

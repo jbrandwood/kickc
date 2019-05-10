@@ -32,6 +32,7 @@ public class PassNAddTypeConversionsNew extends Pass2SsaOptimization {
                binary.addRightCast(leftType, stmtIt, currentBlock.getScope(), getScope());
             }
 
+            /*
             if(SymbolType.isInteger(leftType) && SymbolType.isInteger(rightType)) {
                SymbolType conversionType = SymbolTypeConversion.convertedMathType((SymbolTypeInteger) leftType, (SymbolTypeInteger) rightType);
                if(conversionType != null && !SymbolType.NUMBER.equals(conversionType)) {
@@ -54,6 +55,7 @@ public class PassNAddTypeConversionsNew extends Pass2SsaOptimization {
                   }
                }
             }
+            */
          }
       });
       return false;

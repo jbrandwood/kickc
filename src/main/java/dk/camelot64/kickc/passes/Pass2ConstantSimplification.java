@@ -29,13 +29,13 @@ public class Pass2ConstantSimplification extends Pass2SsaOptimization {
                // Found a candidate!!
                ConstantInteger intOperand = (ConstantInteger) unary.getOperand();
                getLog().append("Simplifying constant integer increment "+unary);
-               programValue.set(new ConstantInteger(intOperand.getValue()+1));
+               programValue.set(new ConstantInteger(intOperand.getValue()+1, intOperand.getType()));
                optimized[0] = true;
             } else if(Operators.DECREMENT.equals(unary.getOperator()) && unary.getOperand() instanceof ConstantInteger) {
                // Found a candidate!!
                ConstantInteger intOperand = (ConstantInteger) unary.getOperand();
                getLog().append("Simplifying constant integer decrement "+unary);
-               programValue.set(new ConstantInteger(intOperand.getValue()+1));
+               programValue.set(new ConstantInteger(intOperand.getValue()-1, intOperand.getType()));
                optimized[0] = true;
             }
          } else if(programValue.get() instanceof ConstantBinary) {
@@ -43,10 +43,10 @@ public class Pass2ConstantSimplification extends Pass2SsaOptimization {
             if(Operators.MULTIPLY.equals(binary.getOperator())) {
                if(binary.getLeft() instanceof ConstantInteger && ((ConstantInteger) binary.getLeft()).getValue() == 0) {
                   getLog().append("Simplifying constant multiply by zero " + binary);
-                  programValue.set(new ConstantInteger(0L));
+                  programValue.set(new ConstantInteger(0L, binary.getType(getScope())));
                } else if(binary.getRight() instanceof ConstantInteger && ((ConstantInteger) binary.getRight()).getValue() == 0) {
                   getLog().append("Simplifying constant multiply by zero " + binary);
-                  programValue.set(new ConstantInteger(0L));
+                  programValue.set(new ConstantInteger(0L, binary.getType(getScope())));
                }
             } else if(Operators.PLUS.equals(binary.getOperator())) {
                if(binary.getLeft() instanceof ConstantInteger && ((ConstantInteger) binary.getLeft()).getValue() == 0) {

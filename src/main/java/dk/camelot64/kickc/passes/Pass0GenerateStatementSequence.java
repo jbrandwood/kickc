@@ -501,7 +501,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else {
          if(type instanceof SymbolTypeIntegerFixed) {
             // Add an zero value initializer
-            ConstantInteger zero = new ConstantInteger(0L);
+            ConstantInteger zero = new ConstantInteger(0L, type);
             Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
             sequence.addStatement(stmt);
          } else if(type instanceof SymbolTypeArray) {

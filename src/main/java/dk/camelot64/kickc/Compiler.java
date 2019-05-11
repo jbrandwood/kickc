@@ -299,6 +299,7 @@ public class Compiler {
    private void pass2InlineConstants() {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
+      constantOptimizations.add(new Pass2AliasElimination(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
       constantOptimizations.add(new Pass2ConstantStringConsolidation(program));
       constantOptimizations.add(new Pass2IdenticalPhiElimination(program));

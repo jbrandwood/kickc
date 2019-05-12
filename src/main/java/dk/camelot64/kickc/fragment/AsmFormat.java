@@ -114,12 +114,14 @@ public class AsmFormat {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
-         if(SymbolType.NUMBER.equals(operandType)) {
-            List<SymbolTypeIntegerFixed> operandInferedTypes = SymbolTypeNumberInference.inferTypes(program.getScope(), operand);
-            if(operandInferedTypes.contains(SymbolType.BYTE) || operandInferedTypes.contains(SymbolType.SBYTE)) {
-               // No cast needed
-               return getAsmConstant(program, operand, outerPrecedence, codeScope);
-            }
+         ConstantLiteral constantLiteral = operand.calculateLiteral(program.getScope());
+         if(constantLiteral instanceof ConstantInteger && Operators.CAST_BYTE.equals(operator) && SymbolType.BYTE.contains(((ConstantInteger) constantLiteral).getValue())) {
+            // No cast needed
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
+         }
+         if(constantLiteral instanceof ConstantInteger && Operators.CAST_SBYTE.equals(operator) && SymbolType.SBYTE.contains(((ConstantInteger) constantLiteral).getValue())) {
+            // No cast needed
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
          // Cast is needed
          return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) 0xff), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
@@ -129,12 +131,18 @@ public class AsmFormat {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
-         if(SymbolType.NUMBER.equals(operandType)) {
-            List<SymbolTypeIntegerFixed> operandInferedTypes = SymbolTypeNumberInference.inferTypes(program.getScope(), operand);
-            if(operandInferedTypes.contains(SymbolType.WORD) || operandInferedTypes.contains(SymbolType.SWORD)) {
-               // No cast needed
-               return getAsmConstant(program, operand, outerPrecedence, codeScope);
-            }
+         ConstantLiteral constantLiteral = operand.calculateLiteral(program.getScope());
+         if(constantLiteral instanceof ConstantInteger  && Operators.CAST_WORD.equals(operator)&& SymbolType.WORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+            // No cast needed
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
+         }
+         if(constantLiteral instanceof ConstantInteger  && Operators.CAST_SWORD.equals(operator)&& SymbolType.SWORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+            // No cast needed
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
+         }
+         if(constantLiteral instanceof ConstantInteger  && (operator instanceof OperatorCastPtr) && SymbolType.WORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+            // No cast needed
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
          // Cast is needed
          return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) 0xffff), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
@@ -144,12 +152,14 @@ public class AsmFormat {
             // No cast needed
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
-         if(SymbolType.NUMBER.equals(operandType)) {
-            List<SymbolTypeIntegerFixed> operandInferedTypes = SymbolTypeNumberInference.inferTypes(program.getScope(), operand);
-            if(operandInferedTypes.contains(SymbolType.DWORD) || operandInferedTypes.contains(SymbolType.SDWORD)) {
-               // No cast needed
-               return getAsmConstant(program, operand, outerPrecedence, codeScope);
-            }
+         ConstantLiteral constantLiteral = operand.calculateLiteral(program.getScope());
+         if(constantLiteral instanceof ConstantInteger  && Operators.CAST_DWORD.equals(operator)&& SymbolType.DWORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+            // No cast needed
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
+         }
+         if(constantLiteral instanceof ConstantInteger  && Operators.CAST_SDWORD.equals(operator)&& SymbolType.SDWORD.contains(((ConstantInteger) constantLiteral).getValue())) {
+            // No cast needed
+            return getAsmConstant(program, operand, outerPrecedence, codeScope);
          }
          // Cast is needed
          return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) 0xffffffffL), Operators.BOOL_AND, operand), outerPrecedence, codeScope);

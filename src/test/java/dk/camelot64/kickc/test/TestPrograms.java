@@ -49,7 +49,7 @@ public class TestPrograms {
 
    @Test
    public void testNumberType() throws IOException, URISyntaxException {
-      compileAndCompare("number-type", log());
+      compileAndCompare("number-type");
    }
 
    @Test

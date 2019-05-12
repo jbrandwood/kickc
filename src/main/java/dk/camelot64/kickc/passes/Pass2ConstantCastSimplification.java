@@ -8,9 +8,7 @@ import dk.camelot64.kickc.model.operators.OperatorCast;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.values.ConstantCastValue;
-import dk.camelot64.kickc.model.values.ConstantInteger;
-import dk.camelot64.kickc.model.values.ConstantPointer;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

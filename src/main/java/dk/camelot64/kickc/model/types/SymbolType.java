@@ -113,13 +113,7 @@ public interface SymbolType {
     * @return true if the type is BYTE compatible
     */
    static boolean isByte(SymbolType type) {
-      if(BYTE.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeMulti) {
-         return ((SymbolTypeMulti) type).isByte();
-      } else {
-         return false;
-      }
+      return BYTE.equals(type);
    }
 
    /**
@@ -129,13 +123,7 @@ public interface SymbolType {
     * @return true if the type is SBYTE compatible
     */
    static boolean isSByte(SymbolType type) {
-      if(SBYTE.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeMulti) {
-         return ((SymbolTypeMulti) type).isSByte();
-      } else {
-         return false;
-      }
+      return SBYTE.equals(type);
    }
 
    /**
@@ -145,13 +133,7 @@ public interface SymbolType {
     * @return true if the type is WORD compatible
     */
    static boolean isWord(SymbolType type) {
-      if(WORD.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeMulti) {
-         return ((SymbolTypeMulti) type).isWord();
-      } else {
-         return false;
-      }
+      return WORD.equals(type);
    }
 
    /**
@@ -161,13 +143,7 @@ public interface SymbolType {
     * @return true if the type is SWORD compatible
     */
    static boolean isSWord(SymbolType type) {
-      if(SWORD.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeMulti) {
-         return ((SymbolTypeMulti) type).isSWord();
-      } else {
-         return false;
-      }
+      return SWORD.equals(type);
    }
 
    /**
@@ -177,13 +153,7 @@ public interface SymbolType {
     * @return true if the type is DWORD compatible
     */
    static boolean isDWord(SymbolType type) {
-      if(DWORD.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeMulti) {
-         return ((SymbolTypeMulti) type).isDWord();
-      } else {
-         return false;
-      }
+      return DWORD.equals(type);
    }
 
    /**
@@ -193,13 +163,7 @@ public interface SymbolType {
     * @return true if the type is SDWORD compatible
     */
    static boolean isSDWord(SymbolType type) {
-      if(SDWORD.equals(type)) {
-         return true;
-      } else if(type instanceof SymbolTypeMulti) {
-         return ((SymbolTypeMulti) type).isSWord();
-      } else {
-         return false;
-      }
+      return SDWORD.equals(type);
    }
 
    /**

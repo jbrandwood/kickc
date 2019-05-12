@@ -49,7 +49,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
 
       @Override
       protected boolean isSubType(SymbolType elmType) {
-         return SymbolType.isByte(elmType);
+         return SymbolType.BYTE.equals(elmType);
       }
    }
 
@@ -62,7 +62,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
 
       @Override
       protected boolean isSubType(SymbolType elmType) {
-         return SymbolType.isWord(elmType);
+         return SymbolType.WORD.equals(elmType);
       }
    }
 

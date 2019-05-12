@@ -23,13 +23,13 @@ public class OperatorSetLow extends OperatorBinary {
       if(left instanceof SymbolTypePointer) {
          return left;
       }
-      if(SymbolType.isWord(left)) {
+      if(SymbolType.WORD.equals(left)) {
          return SymbolType.WORD;
-      } else if(SymbolType.isSWord(left)) {
+      } else if(SymbolType.SWORD.equals(left)) {
          return SymbolType.SWORD;
-      } else if(SymbolType.isDWord(left)) {
+      } else if(SymbolType.DWORD.equals(left)) {
          return SymbolType.DWORD;
-      } else if(SymbolType.isSDWord(left)) {
+      } else if(SymbolType.SDWORD.equals(left)) {
          return SymbolType.SDWORD;
       }
       throw new RuntimeException("Type inference case not handled " + left + " " + getOperator() + " " + right);

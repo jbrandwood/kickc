@@ -36,7 +36,7 @@ public class OperatorTypeId extends OperatorUnary {
     * @return The constant variable
     */
    public static ConstantRef getTypeIdConstantVar(ProgramScope programScope, SymbolType type) {
-      String typeConstName = "TYPEID_"+getTypeIdConstantName(type);
+      String typeConstName = "TYPEID_" + getTypeIdConstantName(type);
       ConstantVar typeIdConstant = programScope.getConstant(typeConstName);
       if(typeIdConstant == null) {
          // Constant not found - create it
@@ -54,15 +54,7 @@ public class OperatorTypeId extends OperatorUnary {
     * @return The name of the constant
     */
    private static String getTypeIdConstantName(SymbolType type) {
-      if(type instanceof SymbolTypeMulti) {
-         // Grab the first sub-type. It will be the smallest
-         SymbolType subType = getSubTypeToUse((SymbolTypeMulti) type);
-         if(subType==null) {
-            return "VOID";
-         } else {
-            return getTypeIdConstantName(subType);
-         }
-      } else if(type instanceof SymbolTypeProcedure) {
+      if(type instanceof SymbolTypeProcedure) {
          return "PROCEDURE";
       } else if(type instanceof SymbolTypePointer) {
          return "POINTER_" + getTypeIdConstantName(((SymbolTypePointer) type).getElementType());
@@ -113,33 +105,9 @@ public class OperatorTypeId extends OperatorUnary {
          return 0x0f;
       } else if(type instanceof SymbolTypePointer) {
          return 0x10 + getTypeId(((SymbolTypePointer) type).getElementType());
-      } else if(type instanceof SymbolTypeMulti) {
-         // Return the smallest type ID
-         SymbolType useType = getSubTypeToUse((SymbolTypeMulti) type);
-         if(useType==null) return 0;
-         return getTypeId(useType);
       } else {
          return 0;
       }
    }
-
-   /**
-    * Find the sub-type to use for typeid()
-    * @param type The multi type
-    * @return The sub-type to use
-    */
-   public static SymbolType getSubTypeToUse(SymbolTypeMulti type) {
-      SymbolType useType = null;
-      Integer useID = null;
-      for(SymbolType subType : type.getTypes()) {
-         int subId = getTypeId(subType);
-         if(useType==null || subId < useID) {
-            useType = subType;
-            useID = subId;
-         }
-      }
-      return useType;
-   }
-
 
 }

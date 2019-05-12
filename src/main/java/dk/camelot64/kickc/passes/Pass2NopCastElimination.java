@@ -40,19 +40,19 @@ public class Pass2NopCastElimination extends Pass2SsaOptimization {
                   SymbolType rValType = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
                   boolean isNopCast = false;
                   SymbolType toType = null;
-                  if(SymbolType.isByte(rValType) && Operators.CAST_SBYTE.equals(assignment.getOperator())) {
+                  if(SymbolType.BYTE.equals(rValType) && Operators.CAST_SBYTE.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.SBYTE;
-                  } else if(SymbolType.isSByte(rValType) && Operators.CAST_BYTE.equals(assignment.getOperator())) {
+                  } else if(SymbolType.SBYTE.equals(rValType) && Operators.CAST_BYTE.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.BYTE;
-                  } else if(SymbolType.isWord(rValType) && Operators.CAST_SWORD.equals(assignment.getOperator())) {
+                  } else if(SymbolType.WORD.equals(rValType) && Operators.CAST_SWORD.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.SWORD;
-                  } else if(SymbolType.isSWord(rValType) && Operators.CAST_WORD.equals(assignment.getOperator())) {
+                  } else if(SymbolType.SWORD.equals(rValType) && Operators.CAST_WORD.equals(assignment.getOperator())) {
                      isNopCast = true;
                      toType = SymbolType.WORD;
-                  } else if(SymbolType.isWord(rValType) && assignment.getOperator() instanceof OperatorCastPtr) {
+                  } else if(SymbolType.WORD.equals(rValType) && assignment.getOperator() instanceof OperatorCastPtr) {
                      isNopCast = true;
                      OperatorCastPtr castOperator = (OperatorCastPtr) (assignment.getOperator());
                      toType = new SymbolTypePointer(castOperator.getElementType());

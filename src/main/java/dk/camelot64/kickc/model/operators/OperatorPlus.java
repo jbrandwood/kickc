@@ -23,7 +23,7 @@ public class OperatorPlus extends OperatorBinary {
          return new ConstantString(((ConstantString) left).getString() + ((ConstantString) right).getString());
       } else if(left instanceof ConstantString && right instanceof ConstantChar) {
          return new ConstantString(((ConstantString) left).getString() + ((ConstantChar) right).getChar());
-      } else if(left instanceof ConstantString && right instanceof ConstantInteger && SymbolType.isByte(((ConstantInteger) right).getType())) {
+      } else if(left instanceof ConstantString && right instanceof ConstantInteger && SymbolType.BYTE.equals(((ConstantInteger) right).getType())) {
          Character character = (char) ((ConstantInteger) right).getInteger().byteValue();
          return new ConstantString(((ConstantString) left).getString() + character);
       } else if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
@@ -62,9 +62,9 @@ public class OperatorPlus extends OperatorBinary {
    private boolean isStringLike(SymbolTypeSimple type) {
       if(SymbolType.STRING.equals(type)) {
          return true;
-      } else if(SymbolType.isByte(type)) {
+      } else if(SymbolType.BYTE.equals(type)) {
          return true;
-      } else if(type instanceof SymbolTypeArray && SymbolType.isByte(((SymbolTypeArray) type).getElementType())) {
+      } else if(type instanceof SymbolTypeArray && SymbolType.BYTE.equals(((SymbolTypeArray) type).getElementType())) {
          return true;
       }
       return false;

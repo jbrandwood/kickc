@@ -3,7 +3,6 @@ package dk.camelot64.kickc.model.operators;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.types.NoMatchingType;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
@@ -25,7 +24,7 @@ public class OperatorWord extends OperatorBinary {
 
    @Override
    public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
-      if(SymbolType.isByte(left) && SymbolType.isByte(right)) {
+      if(SymbolType.BYTE.equals(left) && SymbolType.BYTE.equals(right)) {
          return SymbolType.WORD;
       }
       throw new NoMatchingType("Word constructor cannot use " + left + " " + getOperator() + " " + right);

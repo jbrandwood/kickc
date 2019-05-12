@@ -107,66 +107,6 @@ public interface SymbolType {
    int getSizeBytes();
 
    /**
-    * Is the type {@link #BYTE} or compatible {@link SymbolTypeMulti}
-    *
-    * @param type The type to examine
-    * @return true if the type is BYTE compatible
-    */
-   static boolean isByte(SymbolType type) {
-      return BYTE.equals(type);
-   }
-
-   /**
-    * Is the type {@link #SBYTE} or compatible {@link SymbolTypeMulti}
-    *
-    * @param type The type to examine
-    * @return true if the type is SBYTE compatible
-    */
-   static boolean isSByte(SymbolType type) {
-      return SBYTE.equals(type);
-   }
-
-   /**
-    * Is the type {@link #WORD} or compatible {@link SymbolTypeMulti}
-    *
-    * @param type The type to examine
-    * @return true if the type is WORD compatible
-    */
-   static boolean isWord(SymbolType type) {
-      return WORD.equals(type);
-   }
-
-   /**
-    * Is the type {@link #SWORD} or compatible {@link SymbolTypeMulti}
-    *
-    * @param type The type to examine
-    * @return true if the type is SWORD compatible
-    */
-   static boolean isSWord(SymbolType type) {
-      return SWORD.equals(type);
-   }
-
-   /**
-    * Is the type {@link #DWORD} or compatible {@link SymbolTypeMulti}
-    *
-    * @param type The type to examine
-    * @return true if the type is DWORD compatible
-    */
-   static boolean isDWord(SymbolType type) {
-      return DWORD.equals(type);
-   }
-
-   /**
-    * Is the type {@link #SDWORD} or compatible {@link SymbolTypeMulti}
-    *
-    * @param type The type to examine
-    * @return true if the type is SDWORD compatible
-    */
-   static boolean isSDWord(SymbolType type) {
-      return SDWORD.equals(type);
-   }
-
-   /**
     * Is the type an integer type (including {@link #NUMBER})
     *
     * @param type The type to examine

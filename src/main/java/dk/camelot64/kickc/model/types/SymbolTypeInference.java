@@ -148,13 +148,13 @@ public class SymbolTypeInference {
          }
       }
       if(elmType != null) {
-         if((list.getList().size() == 2 && SymbolType.isByte(elmType) || SymbolType.isSByte(elmType))) {
+         if((list.getList().size() == 2 && SymbolType.BYTE.equals(elmType) || SymbolType.SBYTE.equals(elmType))) {
             // Potentially a word constructor - return a composite type
             ArrayList<SymbolType> types = new ArrayList<>();
             types.add(new SymbolTypeArray(elmType));
             types.add(SymbolType.WORD);
             return new SymbolTypeMulti(types);
-         } else if((list.getList().size() == 2 && SymbolType.isWord(elmType))) {
+         } else if((list.getList().size() == 2 && SymbolType.WORD.equals(elmType))) {
             // Potentially a dword constructor - return a composite type
             ArrayList<SymbolType> types = new ArrayList<>();
             types.add(new SymbolTypeArray(elmType));

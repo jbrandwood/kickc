@@ -288,17 +288,17 @@ public class AsmFragmentInstanceSpecFactory {
     * @return The type name
     */
    static String getTypePrefix(SymbolType type) {
-      if(SymbolType.isByte(type)) {
+      if(SymbolType.BYTE.equals(type)) {
          return "vbu";
-      } else if(SymbolType.isSByte(type)) {
+      } else if(SymbolType.SBYTE.equals(type)) {
          return "vbs";
-      } else if(SymbolType.isWord(type)) {
+      } else if(SymbolType.WORD.equals(type)) {
          return "vwu";
-      } else if(SymbolType.isSWord(type)) {
+      } else if(SymbolType.SWORD.equals(type)) {
          return "vws";
-      } else if(SymbolType.isDWord(type)) {
+      } else if(SymbolType.DWORD.equals(type)) {
          return "vdu";
-      } else if(SymbolType.isSDWord(type)) {
+      } else if(SymbolType.SDWORD.equals(type)) {
          return "vds";
       } else if(SymbolType.STRING.equals(type)) {
          return "pbu";
@@ -306,17 +306,17 @@ public class AsmFragmentInstanceSpecFactory {
          return "vbo";
       } else if(type instanceof SymbolTypePointer) {
          SymbolType elementType = ((SymbolTypePointer) type).getElementType();
-         if(SymbolType.isByte(elementType)) {
+         if(SymbolType.BYTE.equals(elementType)) {
             return "pbu";
-         } else if(SymbolType.isSByte(elementType)) {
+         } else if(SymbolType.SBYTE.equals(elementType)) {
             return "pbs";
-         } else if(SymbolType.isWord(elementType)) {
+         } else if(SymbolType.WORD.equals(elementType)) {
             return "pwu";
-         } else if(SymbolType.isSWord(elementType)) {
+         } else if(SymbolType.SWORD.equals(elementType)) {
             return "pws";
-         } else if(SymbolType.isDWord(elementType)) {
+         } else if(SymbolType.DWORD.equals(elementType)) {
             return "pdu";
-         } else if(SymbolType.isSDWord(elementType)) {
+         } else if(SymbolType.SDWORD.equals(elementType)) {
             return "pds";
          } else if(SymbolType.BOOLEAN.equals(elementType)) {
             return "pbo";

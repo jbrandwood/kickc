@@ -10,8 +10,6 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
-import java.util.List;
-
 /** Formatting of numbers, constants, names and more for KickAssembler */
 public class AsmFormat {
 
@@ -165,22 +163,22 @@ public class AsmFormat {
          return getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) 0xffffffffL), Operators.BOOL_AND, operand), outerPrecedence, codeScope);
       } else if(Operators.LOWBYTE.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
-         if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
+         if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
             return "<" + getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
+         } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_AND, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
          } else {
             throw new CompileError("Unhandled type " + operand);
          }
       } else if(Operators.HIBYTE.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
-         if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
+         if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
             return getAsmConstant(program, new ConstantInteger(0l), outerPrecedence, codeScope);
-         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
             return ">" + getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
+         } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope);
          } else {
             throw new CompileError("Unhandled type " + operand);
@@ -191,11 +189,11 @@ public class AsmFormat {
          return getAsmConstant(program, new ConstantBinary(operand, Operators.MINUS, new ConstantInteger((long) 1)), outerPrecedence, codeScope);
       } else if(Operators.BOOL_NOT.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
-         if(SymbolType.isByte(operandType) || SymbolType.isSByte(operandType)) {
+         if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xff)), outerPrecedence, codeScope);
-         } else if(SymbolType.isWord(operandType) || SymbolType.isSWord(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
-         } else if(SymbolType.isDWord(operandType) || SymbolType.isSDWord(operandType)) {
+         } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xffffffff)), outerPrecedence, codeScope);
          } else {
             throw new CompileError("Unhandled type " + operand);

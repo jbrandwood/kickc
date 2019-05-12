@@ -22,17 +22,17 @@ public class OperatorSetHigh extends OperatorBinary {
    public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
       if(left instanceof SymbolTypePointer) {
          return left;
-      } else if(SymbolType.isByte(left)) {
+      } else if(SymbolType.BYTE.equals(left)) {
          return SymbolType.WORD;
-      } else if(SymbolType.isSByte(left)) {
+      } else if(SymbolType.SBYTE.equals(left)) {
          return SymbolType.WORD;
-      } else if(SymbolType.isWord(left)) {
+      } else if(SymbolType.WORD.equals(left)) {
          return SymbolType.WORD;
-      } else if(SymbolType.isSWord(left)) {
+      } else if(SymbolType.SWORD.equals(left)) {
          return SymbolType.SWORD;
-      } else if(SymbolType.isDWord(left)) {
+      } else if(SymbolType.DWORD.equals(left)) {
          return SymbolType.DWORD;
-      } else if(SymbolType.isSDWord(left)) {
+      } else if(SymbolType.SDWORD.equals(left)) {
          return SymbolType.SDWORD;
       }
       throw new RuntimeException("Type inference case not handled " + left + " " + getOperator() + " " + right);

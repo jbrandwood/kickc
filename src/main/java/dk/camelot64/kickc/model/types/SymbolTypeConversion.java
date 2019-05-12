@@ -85,6 +85,7 @@ public class SymbolTypeConversion {
          if(leftType instanceof SymbolTypePointer) leftType = SymbolType.WORD;
          if(rightType instanceof SymbolTypePointer) rightType = SymbolType.WORD;
 
+         // Identify which of the two operands is a number and which is a fixed type
          RValue numberVal;
          SymbolTypeIntegerFixed fixedType;
          if(SymbolType.NUMBER.equals(leftType) && SymbolType.isInteger(rightType)) {
@@ -95,19 +96,12 @@ public class SymbolTypeConversion {
             // Right is the number type - left is the fixed type
             numberVal = right;
             fixedType = (SymbolTypeIntegerFixed) leftType;
-         } else if(SymbolType.NUMBER.equals(leftType) && rightType instanceof SymbolTypePointer) {
-            // Left is the number type - right is a pointer (effectively unsigned word)
-            numberVal = left;
-            fixedType = SymbolType.WORD;
-         } else if(SymbolType.NUMBER.equals(rightType) && leftType instanceof SymbolTypePointer) {
-            // Right is the number type - left is a pointer (effectively unsigned word)
-            numberVal = right;
-            fixedType = SymbolType.WORD;
          } else {
             // Binary operator combining number and non-integer
             return null;
          }
 
+         // Find the cast type if possible
          if(numberVal instanceof ConstantValue) {
             ConstantLiteral constantLiteral = ((ConstantValue) numberVal).calculateLiteral(symbols);
             if(constantLiteral instanceof ConstantInteger) {
@@ -115,14 +109,14 @@ public class SymbolTypeConversion {
                if(SymbolType.NUMBER.equals(constantInteger.getType())) {
                   Long value = constantInteger.getValue();
                   if(fixedType.isSigned()) {
-                     // b) If one operand is a signed type and the other a number they are both converted to the smallest signed type that can hold the values.
+                     // b) If one operand is a signed type and the other a number the number is converted to the smallest signed type that can hold its values.
                      SymbolTypeIntegerFixed smallestSignedType = SymbolTypeIntegerFixed.getSmallestSigned(value);
                      if(smallestSignedType == null) {
                         throw new CompileError("Number constant has value that cannot be represented by a signed type " + value, currentStmt);
                      }
-                     return smallestSignedType.getBits() > fixedType.getBits() ? smallestSignedType : fixedType;
+                     return smallestSignedType;
                   } else {
-                     // c) If one operand is an unsigned type and the other a number they are both converted to the smallest unsigned type that can hold the values.
+                     // b) If one operand is a signed type and the other a number the number is converted to the smallest unsigned type that can hold its values.
                      //    If the number value is negative it is converted to unsigned using two's complement.
                      SymbolTypeIntegerFixed smallestUnsignedType;
                      if(value < 0) {
@@ -131,7 +125,6 @@ public class SymbolTypeConversion {
                         smallestUnsignedType = SymbolTypeIntegerFixed.getSmallestUnsigned(value);
                      }
                      return smallestUnsignedType;
-                     //return smallestUnsignedType.getBits() > fixedType.getBits() ? smallestUnsignedType : fixedType;
                   }
                } else {
                   throw new InternalError("Non-number constant has type number " + right.toString(), currentStmt);
@@ -144,5 +137,34 @@ public class SymbolTypeConversion {
       }
       // No number conversion
       return null;
+   }
+
+   /**
+    * Determines if the types of an assignment match up properly
+    * @param lValueType The type of the LValue
+    * @param rValueType The type of the RValue
+    * @return true if the types match up
+    */
+   public static boolean assignmentTypeMatch(SymbolType lValueType, SymbolType rValueType) {
+      if(lValueType.equals(rValueType))
+         return true;
+      if(lValueType.equals(SymbolType.WORD) && rValueType.equals(SymbolType.BYTE))
+         return true;
+      if(lValueType.equals(SymbolType.SWORD) && rValueType.equals(SymbolType.SBYTE))
+         return true;
+      if(SymbolType.NUMBER.equals(rValueType) && SymbolType.isInteger(lValueType)) {
+         // L-value is still a number - constants are probably not done being identified & typed
+         return true;
+      }
+      if(SymbolType.STRING.equals(rValueType) && lValueType instanceof SymbolTypePointer && ((SymbolTypePointer) lValueType).getElementType().equals(SymbolType.BYTE)) {
+         // String value can be assigned into a pointer
+         return true;
+      }
+      if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer && assignmentTypeMatch(((SymbolTypePointer) lValueType).getElementType(), ((SymbolTypePointer) rValueType).getElementType())) {
+         // Pointer types assigned from each other
+         // TODO: Maybe handle sizes
+         return true;
+      }
+      return false;
    }
 }

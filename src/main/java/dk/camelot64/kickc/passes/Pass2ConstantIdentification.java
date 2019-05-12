@@ -15,8 +15,8 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.types.SymbolTypeMatch;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.LinkedHashMap;
@@ -79,7 +79,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             continue;
          }
 
-         if(!SymbolTypeMatch.assignmentTypeMatch(variableType, valueType)) {
+         if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType)) {
                throw new CompileError(
                      "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
                            "\n value: (" + valueType.toString() + ") " + constVal.calculateLiteral(getScope()) +

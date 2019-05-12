@@ -165,7 +165,7 @@ public class Compiler {
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1PointerSizeofFix(program).execute();
-      new PassNAddTypeConversionsNew(program).execute();
+      new PassNAddTypeConversionAssignment(program).execute();
       new Pass1EarlyConstantIdentification(program).execute();
       new PassNStatementIndices(program).step();
       new PassNCallGraphAnalysis(program).step();
@@ -231,7 +231,7 @@ public class Compiler {
 
    private void pass2Optimize() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
-      optimizations.add(new PassNAddTypeConversionsNew(program));
+      optimizations.add(new PassNAddTypeConversionAssignment(program));
       optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new PassNDowngradeBytePlusWord(program));
       optimizations.add(new PassNTypeInference(program));

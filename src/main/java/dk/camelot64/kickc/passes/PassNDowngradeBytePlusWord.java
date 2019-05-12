@@ -42,7 +42,6 @@ public class PassNDowngradeBytePlusWord extends Pass2SsaOptimization {
       return modified.get();
    }
 
-
    /**
     * Determines if a constant value is a byte-like value (can be represented inside a BYTE)
     *

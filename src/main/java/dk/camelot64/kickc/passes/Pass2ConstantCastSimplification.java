@@ -28,10 +28,10 @@ public class Pass2ConstantCastSimplification extends Pass2SsaOptimization {
          if(programExpression.getOperator() instanceof OperatorCast) {
             OperatorCast operatorCast = (OperatorCast) programExpression.getOperator();
             ProgramExpressionUnary unary = (ProgramExpressionUnary) programExpression;
+            SymbolType castType = operatorCast.getToType();
             if(unary.getOperand() instanceof ConstantInteger) {
                ConstantInteger constantInteger = (ConstantInteger) unary.getOperand();
                if(SymbolType.NUMBER.equals(constantInteger.getType())) {
-                  SymbolType castType = operatorCast.getToType();
                   if(castType instanceof SymbolTypeIntegerFixed ) {
                      ConstantInteger newConstInt = new ConstantInteger(constantInteger.getInteger(), castType);
                      programExpression.set(newConstInt);
@@ -43,6 +43,14 @@ public class Pass2ConstantCastSimplification extends Pass2SsaOptimization {
                      getLog().append("Simplifying constant pointer cast " + newConstPointer.toString());
                      optimized.set(true);
                   }
+               } else if(castType instanceof SymbolTypeIntegerFixed) {
+                  if(((SymbolTypeIntegerFixed) castType).contains(constantInteger.getValue())) {
+                     // Cast type contains the value - cast not needed
+                     ConstantInteger newConstInt = new ConstantInteger(constantInteger.getInteger(), castType);
+                     programExpression.set(newConstInt);
+                     getLog().append("Simplifying constant integer cast " + newConstInt.toString());
+                     optimized.set(true);
+                  }
                }
             }
          }
@@ -52,8 +60,8 @@ public class Pass2ConstantCastSimplification extends Pass2SsaOptimization {
             ConstantCastValue constantCastValue = (ConstantCastValue) programValue.get();
             if(constantCastValue.getValue() instanceof ConstantInteger) {
                ConstantInteger constantInteger = (ConstantInteger) constantCastValue.getValue();
+               SymbolType castType = constantCastValue.getToType();
                if(SymbolType.NUMBER.equals(constantInteger.getType())) {
-                  SymbolType castType = constantCastValue.getToType();
                   if(castType instanceof SymbolTypeIntegerFixed ) {
                      ConstantInteger newConstInt = new ConstantInteger(constantInteger.getInteger(), castType);
                      programValue.set(newConstInt);
@@ -63,6 +71,14 @@ public class Pass2ConstantCastSimplification extends Pass2SsaOptimization {
                      ConstantPointer newConstPointer = new ConstantPointer(constantInteger.getInteger(), ((SymbolTypePointer) castType).getElementType());
                      programValue.set(newConstPointer);
                      getLog().append("Simplifying constant pointer cast " + newConstPointer.toString());
+                     optimized.set(true);
+                  }
+               } else if(castType instanceof SymbolTypeIntegerFixed) {
+                  if(((SymbolTypeIntegerFixed) castType).contains(constantInteger.getValue())) {
+                     // Cast type contains the value - cast not needed
+                     ConstantInteger newConstInt = new ConstantInteger(constantInteger.getInteger(), castType);
+                     programValue.set(newConstInt);
+                     getLog().append("Simplifying constant integer cast " + newConstInt.toString());
                      optimized.set(true);
                   }
                }

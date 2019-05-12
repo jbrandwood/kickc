@@ -97,18 +97,25 @@ public class SymbolTypeNumberInference {
     */
    public static List<SymbolTypeIntegerFixed> inferTypes(ProgramScope programScope, ConstantLiteral literal) {
       if(literal instanceof ConstantInteger && SymbolType.NUMBER.equals(literal.getType(programScope))) {
-         ArrayList<SymbolTypeIntegerFixed> potentialTypes = new ArrayList<>();
-         ConstantInteger constantInteger = (ConstantInteger) literal;
-         Long number = constantInteger.getValue();
-         for(SymbolTypeIntegerFixed typeInteger : SymbolTypeIntegerFixed.getIntegerFixedTypes()) {
-            if(typeInteger.contains(number)) {
-               potentialTypes.add(typeInteger);
-            }
-         }
-         return potentialTypes;
+         return inferTypes(((ConstantInteger) literal).getValue());
       } else {
          throw new InternalError("Literal must number type.");
       }
+   }
+
+   /**
+    * Find any fixed integer types that can contain the passed integer value
+    * @param value the value to examine
+    * @return All fixed size integer types capable of representing the passed value
+    */
+   public static List<SymbolTypeIntegerFixed> inferTypes(Long value) {
+      ArrayList<SymbolTypeIntegerFixed> potentialTypes = new ArrayList<>();
+      for(SymbolTypeIntegerFixed typeInteger : SymbolTypeIntegerFixed.getIntegerFixedTypes()) {
+         if(typeInteger.contains(value)) {
+            potentialTypes.add(typeInteger);
+         }
+      }
+      return potentialTypes;
    }
 
 }

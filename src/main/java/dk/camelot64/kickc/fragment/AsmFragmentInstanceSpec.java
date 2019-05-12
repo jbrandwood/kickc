@@ -3,11 +3,9 @@ package dk.camelot64.kickc.fragment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.types.SymbolTypeMulti;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.ScopeRef;
-import dk.camelot64.kickc.model.values.Value;
+import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
+import dk.camelot64.kickc.model.types.SymbolTypeNumberInference;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
@@ -38,6 +36,7 @@ public class AsmFragmentInstanceSpec {
 
    /**
     * Creates an asm fragment instance specification.
+    *
     * @param program The symbol table
     * @param signature The fragment signature.
     * @param bindings Binding of named values in the fragment to values (constants, variables, ...)
@@ -70,7 +69,7 @@ public class AsmFragmentInstanceSpec {
    private ConstantValue variationConstant;
 
    /** When iterating variations this is iterates the potential types for the constant value. */
-   private Iterator<SymbolType> variationIterator;
+   private Iterator<SymbolTypeIntegerFixed> variationIterator;
 
    /** The name of the current variation in the bindings. */
    private String variationCurrentName;
@@ -82,10 +81,11 @@ public class AsmFragmentInstanceSpec {
     * Does any more variations of the ASM fragment instance specification exist?
     * Variations are used for finding the right fragment to use for constant numbers.
     * For instance the number 1000 can be represented as several different types (unsigned/signed word/dword).
+    *
     * @return true if more variations exits
     */
    public boolean hasNextVariation() {
-      if(variationIterator==null) {
+      if(variationIterator == null) {
          // Look for variations
          // TODO Currently only one iterable constant value is handled - add support for multiple iterable constant values!
          for(String name : bindings.keySet()) {
@@ -93,9 +93,9 @@ public class AsmFragmentInstanceSpec {
                // Found a constant value that may be multi-typed
                Value value = bindings.get(name);
                if(value instanceof ConstantValue) {
-                  SymbolType symbolType = SymbolTypeInference.inferType(program.getScope(), (ConstantValue) value);
-                  if(symbolType instanceof SymbolTypeMulti) {
-                     Collection<SymbolType> types = ((SymbolTypeMulti) symbolType).getTypes();
+                  ConstantLiteral constantLiteral = ((ConstantValue) value).calculateLiteral(program.getScope());
+                  if(constantLiteral instanceof ConstantInteger) {
+                     List<SymbolTypeIntegerFixed> types = SymbolTypeNumberInference.inferTypes(((ConstantInteger) constantLiteral).getValue());
                      if(types.size() > 1) {
                         // Found constant value with multiple types
                         variationConstant = (ConstantValue) value;
@@ -111,7 +111,7 @@ public class AsmFragmentInstanceSpec {
          }
          // If no variations exist add empty iterator
          if(variationIterator == null) {
-            List<SymbolType> empty = new ArrayList<>();
+            List<SymbolTypeIntegerFixed> empty = new ArrayList<>();
             variationIterator = empty.iterator();
          }
       }
@@ -126,7 +126,7 @@ public class AsmFragmentInstanceSpec {
       if(hasNextVariation()) {
          SymbolType nextVariationValue = variationIterator.next();
          // Find the next name
-         String variationConstName = "c"+variationCurrentName.substring(variationCurrentName.length() - 1);
+         String variationConstName = "c" + variationCurrentName.substring(variationCurrentName.length() - 1);
          String variationNextName = AsmFragmentInstanceSpecFactory.getTypePrefix(nextVariationValue) + variationConstName;
          // Update bindings
          Value constValue = bindings.get(variationCurrentName);
@@ -136,7 +136,7 @@ public class AsmFragmentInstanceSpec {
          this.signature = signature.replace(variationCurrentName, variationNextName);
          variationCurrentName = variationNextName;
          variationCurrentValue = nextVariationValue;
-      }  else {
+      } else {
          this.signature = "no-more-variations";
          this.bindings = new LinkedHashMap<>();
       }

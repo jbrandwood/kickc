@@ -150,7 +150,15 @@ public class SymbolTypeConversion {
          return true;
       if(lValueType.equals(SymbolType.WORD) && rValueType.equals(SymbolType.BYTE))
          return true;
+      if(lValueType.equals(SymbolType.DWORD) && rValueType.equals(SymbolType.BYTE))
+         return true;
+      if(lValueType.equals(SymbolType.DWORD) && rValueType.equals(SymbolType.WORD))
+         return true;
       if(lValueType.equals(SymbolType.SWORD) && rValueType.equals(SymbolType.SBYTE))
+         return true;
+      if(lValueType.equals(SymbolType.SDWORD) && rValueType.equals(SymbolType.SBYTE))
+         return true;
+      if(lValueType.equals(SymbolType.SDWORD) && rValueType.equals(SymbolType.SWORD))
          return true;
       if(SymbolType.NUMBER.equals(rValueType) && SymbolType.isInteger(lValueType)) {
          // L-value is still a number - constants are probably not done being identified & typed

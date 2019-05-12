@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.operators.OperatorUnary;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.values.ConstantCastValue;
 import dk.camelot64.kickc.model.values.ConstantUnary;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.Value;
@@ -52,7 +54,7 @@ public interface ProgramExpressionUnary extends ProgramExpression {
 
    /** Unary expression as part of a constant expression. */
    class ProgramExpressionUnaryConstant implements ProgramExpressionUnary {
-      
+
       /** A ProgramValue containing a {@link ConstantUnary}. */
       private ProgramValue programValue;
 
@@ -80,5 +82,38 @@ public interface ProgramExpressionUnary extends ProgramExpression {
       }
 
    }
+
+   /** Unary cast expression {@link ConstantCastValue} as part of a constant expression. */
+   class ProgramExpressionUnaryCast implements ProgramExpressionUnary {
+
+      /** A ProgramValue containing a {@link ConstantCastValue}. */
+      private ProgramValue programValue;
+
+      ProgramExpressionUnaryCast(ProgramValue programValue) {
+         this.programValue = programValue;
+      }
+
+      public ConstantCastValue getConstantUnary() {
+         return (ConstantCastValue) programValue.get();
+      }
+
+      @Override
+      public OperatorUnary getOperator() {
+         return Operators.getCastUnary(getConstantUnary().getToType());
+      }
+
+      @Override
+      public RValue getOperand() {
+         return getConstantUnary().getValue();
+      }
+
+      @Override
+      public void set(Value value) {
+         programValue.set(value);
+      }
+
+   }
+
+
 
 }

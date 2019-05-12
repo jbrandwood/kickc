@@ -5,9 +5,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.values.ConstantBinary;
-import dk.camelot64.kickc.model.values.ConstantUnary;
-import dk.camelot64.kickc.model.values.PointerDereferenceIndexed;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.ListIterator;
 
@@ -33,6 +31,8 @@ public class ProgramExpressionIterator {
             handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryConstant(programValue), null, null, null);
          } else if(programValue.get() instanceof PointerDereferenceIndexed) {
             handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryPointerDereferenceIndexed(programValue), null, null, null);
+         } else if(programValue.get() instanceof ConstantCastValue) {
+            handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryCast(programValue), null, null, null);
          }
       };
       ProgramValueIterator.execute(program.getScope(), programValueHandler);

@@ -53,37 +53,6 @@ public class Pass2ConstantCastSimplification extends Pass2SsaOptimization {
             }
          }
       });
-      ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
-         if(programValue.get() instanceof ConstantCastValue) {
-            ConstantCastValue constantCastValue = (ConstantCastValue) programValue.get();
-            if(constantCastValue.getValue() instanceof ConstantInteger) {
-               ConstantInteger constantInteger = (ConstantInteger) constantCastValue.getValue();
-               SymbolType castType = constantCastValue.getToType();
-               if(SymbolType.NUMBER.equals(constantInteger.getType())) {
-                  if(castType instanceof SymbolTypeIntegerFixed ) {
-                     ConstantInteger newConstInt = new ConstantInteger(constantInteger.getInteger(), castType);
-                     programValue.set(newConstInt);
-                     getLog().append("Simplifying constant integer cast " + newConstInt.toString());
-                     optimized.set(true);
-                  }  else if(castType instanceof SymbolTypePointer) {
-                     ConstantPointer newConstPointer = new ConstantPointer(constantInteger.getInteger(), ((SymbolTypePointer) castType).getElementType());
-                     programValue.set(newConstPointer);
-                     getLog().append("Simplifying constant pointer cast " + newConstPointer.toString());
-                     optimized.set(true);
-                  }
-               } else if(castType instanceof SymbolTypeIntegerFixed) {
-                  if(((SymbolTypeIntegerFixed) castType).contains(constantInteger.getValue())) {
-                     // Cast type contains the value - cast not needed
-                     ConstantInteger newConstInt = new ConstantInteger(constantInteger.getInteger(), castType);
-                     programValue.set(newConstInt);
-                     getLog().append("Simplifying constant integer cast " + newConstInt.toString());
-                     optimized.set(true);
-                  }
-               }
-            }
-         }
-
-      });
       return optimized.get();
    }
 

@@ -254,6 +254,7 @@ public class Compiler {
       optimizations.add(new Pass2ConstantIfs(program));
       optimizations.add(new Pass2ConstantStringConsolidation(program));
       optimizations.add(new Pass2FixInlineConstructors(program));
+      optimizations.add(new Pass2FixInlineConstructorsNew(program));
       optimizations.add(new Pass2TypeInference(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateRedundantCasts(program));

@@ -9,10 +9,6 @@ import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * Type inference of expressions (rValues & unary/binary operators)
  */
@@ -126,7 +122,7 @@ public class SymbolTypeInference {
       } else if(rValue instanceof ProcedureRef) {
          Procedure procedure = symbols.getProcedure((ProcedureRef) rValue);
          return procedure.getType();
-      }  else if(rValue instanceof AssignmentRValue) {
+      } else if(rValue instanceof AssignmentRValue) {
          return inferTypeRValue(symbols, ((AssignmentRValue) rValue).getAssignment());
       }
       if(type == null) {
@@ -148,21 +144,8 @@ public class SymbolTypeInference {
          }
       }
       if(elmType != null) {
-         if((list.getList().size() == 2 && SymbolType.BYTE.equals(elmType) || SymbolType.SBYTE.equals(elmType))) {
-            // Potentially a word constructor - return a composite type
-            ArrayList<SymbolType> types = new ArrayList<>();
-            types.add(new SymbolTypeArray(elmType));
-            types.add(SymbolType.WORD);
-            return new SymbolTypeMulti(types);
-         } else if((list.getList().size() == 2 && SymbolType.WORD.equals(elmType))) {
-            // Potentially a dword constructor - return a composite type
-            ArrayList<SymbolType> types = new ArrayList<>();
-            types.add(new SymbolTypeArray(elmType));
-            types.add(SymbolType.DWORD);
-            return new SymbolTypeMulti(types);
-         } else {
-            return new SymbolTypeArray(elmType);
-         }
+         long size = list.getList().size();
+         return new SymbolTypeArray(elmType, new ConstantInteger(size, size<256?SymbolType.BYTE:SymbolType.WORD));
       } else {
          throw new RuntimeException("Cannot infer list element type " + list.toString());
       }
@@ -223,13 +206,8 @@ public class SymbolTypeInference {
             SymbolType valueType = inferType(programScope, rValue);
             if(type == null) {
                type = valueType;
-            } else {
-               SymbolType newType = intersectTypes(type, valueType);
-               if(newType == null) {
-                  throw new CompileError("Types not compatible " + type + " and " + valueType);
-               }
-               type = newType;
-            }
+            } else if(!type.equals(valueType))
+               throw new CompileError("Types not compatible " + type + " and " + valueType);
          }
          if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
             program.getLog().append("Inferred type updated to " + type + " for " + symbol.toString(program));
@@ -295,53 +273,4 @@ public class SymbolTypeInference {
       }
    }
 
-   /**
-    * Find the symbol type that is the intersection between the two passed types.
-    * Handles SymbolTypeMulti by intersecting the sub type lists.
-    *
-    * @param type1 The first type
-    * @param type2 The second type
-    * @return The intersection between the two types (handling multi-types)
-    */
-   public static SymbolType intersectTypes(SymbolType type1, SymbolType type2) {
-      List<SymbolType> newSubTypes = new ArrayList<>();
-      if(type1 instanceof SymbolTypeMulti) {
-         Collection<SymbolType> subTypes1 = ((SymbolTypeMulti) type1).getTypes();
-         if(type2 instanceof SymbolTypeMulti) {
-            Collection<SymbolType> subTypes2 = ((SymbolTypeMulti) type2).getTypes();
-            for(SymbolType subType1 : subTypes1) {
-               if(subTypes2.contains(subType1)) {
-                  newSubTypes.add(subType1);
-               }
-            }
-         } else {
-            // Element type is not multi - check if the list type contains it
-            if(subTypes1.contains(type2)) {
-               newSubTypes.add(type2);
-            }
-         }
-      } else {
-         // List-type not multi - check if the element type contains it
-         if(type2 instanceof SymbolTypeMulti) {
-            Collection<SymbolType> subTypes2 = ((SymbolTypeMulti) type2).getTypes();
-            if(subTypes2.contains(type1)) {
-               newSubTypes.add(type1);
-            }
-         } else {
-            // Element type is not multi - check if the list type is the same
-            if(type1.equals(type2)) {
-               newSubTypes.add(type1);
-            }
-         }
-      }
-      if(newSubTypes.size() == 0) {
-         return null;
-      } else if(newSubTypes.size() == 1) {
-         // A single type matching - use it
-         return newSubTypes.get(0);
-      } else {
-         // Multiple matches was found - use them
-         return new SymbolTypeMulti(newSubTypes);
-      }
-   }
 }

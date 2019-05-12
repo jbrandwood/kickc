@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionBinary;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.types.*;
+import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,6 +38,15 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
                      binary.addRightCast(leftType, stmtIt, currentBlock.getScope(), getScope());
                      modified.set(true);
                   }
+
+                  // Detect word literal constructor
+                  if(leftType.equals(SymbolType.WORD) && isLiteralWordCandidate(rightType)) {
+                     SymbolType conversionType = SymbolType.WORD;
+                     getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
+                     binary.addRightCast(SymbolType.WORD, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
+                     modified.set(true);
+                  }
+
                }
                if(leftType instanceof SymbolTypeIntegerFixed && SymbolType.isInteger(rightType)) {
                   SymbolType conversionType = SymbolTypeConversion.convertedMathType((SymbolTypeInteger) leftType, (SymbolTypeInteger) rightType);
@@ -53,5 +63,14 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
       return modified.get();
    }
 
+   public static boolean isLiteralWordCandidate(SymbolType rightType) {
+      if(rightType instanceof SymbolTypeArray) {
+         SymbolTypeArray rightArray = (SymbolTypeArray) rightType;
+         if(new ConstantInteger(2L, SymbolType.BYTE).equals(rightArray.getSize()))
+            if(SymbolType.BYTE.equals(rightArray.getElementType()) || SymbolType.NUMBER.equals(rightArray.getElementType()))
+               return true;
+      }
+      return false;
+   }
 
 }

@@ -1360,6 +1360,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineWord0() throws IOException, URISyntaxException {
+      compileAndCompare("inline-word-0");
+   }
+
+   @Test
+   public void testInlineWord1() throws IOException, URISyntaxException {
+      compileAndCompare("inline-word-1");
+   }
+
+   @Test
+   public void testInlineWord2() throws IOException, URISyntaxException {
+      compileAndCompare("inline-word-2");
+   }
+
+   @Test
    public void testInlineWord() throws IOException, URISyntaxException {
       compileAndCompare("inline-word");
    }

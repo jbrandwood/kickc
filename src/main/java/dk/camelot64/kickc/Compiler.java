@@ -249,6 +249,7 @@ public class Compiler {
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
       optimizations.add(new Pass2ConstantIdentification(program));
+      optimizations.add(new Pass2ConstantValues(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
       //optimizations.add(new Pass2ConstantAdditionElimination(program));
@@ -308,6 +309,7 @@ public class Compiler {
       constantOptimizations.add(new Pass2IdenticalPhiElimination(program));
       constantOptimizations.add(new Pass2ConstantRValueConsolidation(program));
       constantOptimizations.add(new Pass2ConstantIdentification(program));
+      constantOptimizations.add(new Pass2ConstantValues(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));
       constantOptimizations.add(new Pass2ConstantCastSimplification(program));

@@ -169,7 +169,13 @@ public interface ProgramExpressionBinary extends ProgramExpression {
          if(assignment.getrValue1() == null && assignment.getOperator() == null) {
             assignment.setOperator(Operators.getCastUnary(toType));
          } else {
-            throw new InternalError("Not implemented!");
+            Scope blockScope = symbols.getScope(currentScope);
+            VariableIntermediate tmpVar = blockScope.addVariableIntermediate();
+            SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
+            tmpVar.setType(rightType);
+            StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.getSource(), Comment.NO_COMMENTS);
+            assignment.setlValue(tmpVar.getRef());
+            stmtIt.add(newAssignment);
          }
       }
 

@@ -139,7 +139,13 @@ public class SymbolTypeInference {
             elmType = type;
          } else {
             if(!elmType.equals(type)) {
-               throw new RuntimeException("Array element has type mismatch " + elm.toString() + " not matching type " + elmType.getTypeName());
+               if(SymbolType.NUMBER.equals(elmType) && SymbolType.isInteger(type)) {
+                  elmType = SymbolType.NUMBER;
+               } else if(SymbolType.isInteger(elmType) && SymbolType.NUMBER.equals(type)) {
+                  elmType = SymbolType.NUMBER;
+               } else {
+                  throw new CompileError("Array element has type mismatch "+elm.toString() + " not matching type " + elmType.getTypeName());
+               }
             }
          }
       }

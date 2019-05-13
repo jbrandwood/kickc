@@ -98,7 +98,7 @@ public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
                   } else {
                      if(!listType.equals(elmType)) {
                         // No overlap between list type and element type
-                        throw new RuntimeException("Array type " + listType + " does not match element type" + elmType + ". Array: " + valueList.toString(getProgram()));
+                        throw new RuntimeException("Array type " + listType + " does not match element type " + elmType + ". Array: " + valueList.toString(getProgram()));
                      }
                   }
                   elements.add(constantValue);

@@ -43,7 +43,22 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
                   if(leftType.equals(SymbolType.WORD) && isLiteralWordCandidate(rightType)) {
                      SymbolType conversionType = SymbolType.WORD;
                      getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
-                     binary.addRightCast(SymbolType.WORD, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
+                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
+                     modified.set(true);
+                  }
+                  // Detect word literal constructor
+                  if(leftType instanceof SymbolTypePointer && isLiteralWordCandidate(rightType)) {
+                     SymbolType conversionType = SymbolType.WORD;
+                     getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
+                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
+                     modified.set(true);
+                  }
+
+                  // Detect dword literal constructor
+                  if(leftType.equals(SymbolType.DWORD) && isLiteralWordCandidate(rightType)) {
+                     SymbolType conversionType = SymbolType.DWORD;
+                     getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
+                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
                      modified.set(true);
                   }
 
@@ -67,7 +82,7 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
       if(rightType instanceof SymbolTypeArray) {
          SymbolTypeArray rightArray = (SymbolTypeArray) rightType;
          if(new ConstantInteger(2L, SymbolType.BYTE).equals(rightArray.getSize()))
-            if(SymbolType.BYTE.equals(rightArray.getElementType()) || SymbolType.NUMBER.equals(rightArray.getElementType()))
+            if(SymbolType.isInteger(rightArray.getElementType()))
                return true;
       }
       return false;

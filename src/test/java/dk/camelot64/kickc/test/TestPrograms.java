@@ -33,8 +33,28 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMixedArray0() throws IOException, URISyntaxException {
+      compileAndCompare("mixed-array-0");
+   }
+
+   @Test
+   public void testInlinePointer2() throws IOException, URISyntaxException {
+      compileAndCompare("inline-pointer-2");
+   }
+
+   @Test
+   public void testInlinePointer1() throws IOException, URISyntaxException {
+      compileAndCompare("inline-pointer-1");
+   }
+
+   @Test
+   public void testInlinePointer0() throws IOException, URISyntaxException {
+      compileAndCompare("inline-pointer-0");
+   }
+
+   @Test
    public void testToD018Problem() throws IOException, URISyntaxException {
-      compileAndCompare("tod018-problem", log());
+      compileAndCompare("tod018-problem");
    }
 
    @Test

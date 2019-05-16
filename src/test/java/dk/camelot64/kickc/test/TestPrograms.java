@@ -32,14 +32,52 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   /*
+    * Avaiting String concatenation
+
+   @Test
+   public void testLiterals() throws IOException, URISyntaxException {
+      compileAndCompare("literals");
+   }
+
+
+    @Test
+    public void testConstantStringConcat() throws IOException, URISyntaxException {
+      compileAndCompare("constant-string-concat");
+    }
+
+   @Test
+   public void testConcatChar() throws IOException, URISyntaxException {
+      compileAndCompare("concat-char");
+   }
+
+   @Test
+   public void testC64DtvGfxModes() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-gfxmodes", 10);
+   }
+
+   @Test
+   public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-gfxexplorer", 10);
+   }
+
+    */
+
+
+
+   @Test
+   public void testFragmentVariations() throws IOException, URISyntaxException {
+      compileAndCompare("fragment-variations");
+   }
+
    @Test
    public void testTypeInference() throws IOException, URISyntaxException {
-      compileAndCompare("type-inference", log().verboseSSAOptimize());
+      compileAndCompare("type-inference");
    }
 
    @Test
    public void testMixedArray1() throws IOException, URISyntaxException {
-      compileAndCompare("mixed-array-1", log());
+      compileAndCompare("mixed-array-1");
    }
 
    @Test
@@ -1060,11 +1098,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testConcatChar() throws IOException, URISyntaxException {
-      compileAndCompare("concat-char");
-   }
-
-   @Test
    public void testConstMultDiv() throws IOException, URISyntaxException {
       compileAndCompare("const-mult-div");
    }
@@ -1185,11 +1218,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
-      compileAndCompare("c64dtv-gfxexplorer", 10);
-   }
-
-   @Test
    public void testInlineString2() throws IOException, URISyntaxException {
       compileAndCompare("inline-string-2");
    }
@@ -1207,11 +1235,6 @@ public class TestPrograms {
    @Test
    public void testKeyboardGlitch() throws IOException, URISyntaxException {
       compileAndCompare("keyboard-glitch");
-   }
-
-   @Test
-   public void testC64DtvGfxModes() throws IOException, URISyntaxException {
-      compileAndCompare("c64dtv-gfxmodes", 10);
    }
 
    @Test
@@ -1357,11 +1380,6 @@ public class TestPrograms {
    @Test
    public void testArraysInit() throws IOException, URISyntaxException {
       compileAndCompare("arrays-init");
-   }
-
-   @Test
-   public void testConstantStringConcat() throws IOException, URISyntaxException {
-      compileAndCompare("constant-string-concat");
    }
 
    @Test
@@ -1579,10 +1597,6 @@ public class TestPrograms {
       compileAndCompare("halfscii");
    }
 
-   @Test
-   public void testLiterals() throws IOException, URISyntaxException {
-      compileAndCompare("literals");
-   }
 
    @Test
    public void testScroll() throws IOException, URISyntaxException {

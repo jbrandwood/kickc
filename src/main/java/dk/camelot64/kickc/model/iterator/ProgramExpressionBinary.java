@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.VariableIntermediate;
@@ -329,6 +330,57 @@ public interface ProgramExpressionBinary extends ProgramExpression {
          }
       }
    }
+
+
+   /** Assignment of a phi value to a phi variable. */
+   class ProgramExpressionBinaryPhiValueAssignemnt implements ProgramExpressionBinary {
+
+      private final StatementPhiBlock.PhiVariable phiVariable;
+      private final StatementPhiBlock.PhiRValue value;
+
+      public ProgramExpressionBinaryPhiValueAssignemnt(StatementPhiBlock.PhiVariable phiVariable, StatementPhiBlock.PhiRValue value) {
+         this.phiVariable = phiVariable;
+         this.value = value;
+      }
+
+      @Override
+      public RValue getLeft() {
+         return phiVariable.getVariable();
+      }
+
+      @Override
+      public OperatorBinary getOperator() {
+         return Operators.ASSIGNMENT;
+      }
+
+      @Override
+      public RValue getRight() {
+         return value.getrValue();
+      }
+
+      @Override
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+         throw new InternalError("Not supported!");
+      }
+
+      @Override
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+         if(getRight() instanceof ConstantValue) {
+            value.setrValue(new ConstantCastValue(toType, (ConstantValue) getRight()));
+         }  else {
+            // Try to use CastValue - may later have to be supported!
+            value.setrValue(new CastValue(toType, getRight()));
+         }
+      }
+
+      @Override
+      public void set(Value value) {
+         throw new InternalError("Not supported!");
+      }
+   }
+
+
+
 
 
 }

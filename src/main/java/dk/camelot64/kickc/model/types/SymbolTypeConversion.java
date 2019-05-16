@@ -175,4 +175,23 @@ public class SymbolTypeConversion {
       }
       return false;
    }
+
+   /**
+    * Determines if the left side of an assignment needs a cast to be assigned to the right side
+    * @param lValueType The type of the LValue
+    * @param rValueType The type of the RValue
+    * @return true if the left side needs a cast
+    */
+   public static boolean assignmentCastNeeded(SymbolType lValueType, SymbolType rValueType) {
+      if(lValueType.equals(rValueType))
+         return false;
+      else if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer)
+         return false;
+      else if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType))
+         return false;
+      else
+      return true;
+
+   }
+
 }

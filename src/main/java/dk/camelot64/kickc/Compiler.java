@@ -270,7 +270,7 @@ public class Compiler {
       optimizations.add(new Pass2SizeOfSimplification(program));
       optimizations.add(new Pass2InlineDerefIdx(program));
       optimizations.add(new Pass2DeInlineWordDerefIdx(program));
-      optimizations.add(new Pass2ConstantCastSimplification(program));
+      optimizations.add(new PassNCastSimplification(program));
       pass2Execute(optimizations);
    }
 
@@ -312,7 +312,7 @@ public class Compiler {
       constantOptimizations.add(new Pass2ConstantValues(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));
-      constantOptimizations.add(new Pass2ConstantCastSimplification(program));
+      constantOptimizations.add(new PassNCastSimplification(program));
       constantOptimizations.add(new Pass2ConstantIfs(program));
       pass2Execute(constantOptimizations);
 
@@ -373,6 +373,8 @@ public class Compiler {
       new Pass3AssertConstants(program).check();
       new Pass3AssertArrayLengths(program).check();
       new Pass3AssertNoMulDivMod(program).check();
+      new Pass3AddAssignmentCasts(program).execute();
+      new PassNCastSimplification(program).execute();
       new PassNBlockSequencePlanner(program).step();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();

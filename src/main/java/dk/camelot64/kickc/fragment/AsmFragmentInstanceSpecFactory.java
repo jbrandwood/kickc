@@ -5,6 +5,8 @@ import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.OperatorUnary;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
@@ -228,13 +230,15 @@ public class AsmFragmentInstanceSpecFactory {
       if(value instanceof CastValue) {
          CastValue castVal = (CastValue) value;
          SymbolType toType = castVal.getToType();
-         value = castVal.getValue();
-         return bind(value, toType);
+         OperatorUnary castUnary = Operators.getCastUnary(toType);
+         return getOperatorFragmentName(castUnary) + bind(castVal.getValue());
       } else if(value instanceof ConstantCastValue) {
          ConstantCastValue castVal = (ConstantCastValue) value;
-         SymbolType toType = castVal.getToType();
-         value = castVal.getValue();
-         return bind(value, toType);
+         if(castType==null) {
+            return bind(castVal.getValue(), castVal.getToType());
+         } else {
+            return bind(castVal.getValue(), castType);
+         }
       } else if(value instanceof PointerDereference) {
          PointerDereference deref = (PointerDereference) value;
          SymbolType ptrType = null;

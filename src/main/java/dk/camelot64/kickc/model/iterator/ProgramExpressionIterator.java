@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.ListIterator;
@@ -32,6 +33,8 @@ public class ProgramExpressionIterator {
          } else if(programValue.get() instanceof PointerDereferenceIndexed) {
             handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryPointerDereferenceIndexed(programValue), null, null, null);
          } else if(programValue.get() instanceof ConstantCastValue) {
+            handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryConstantCast(programValue), null, null, null);
+         } else if(programValue.get() instanceof CastValue) {
             handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryCast(programValue), null, null, null);
          }
       };
@@ -54,6 +57,12 @@ public class ProgramExpressionIterator {
                StatementConditionalJump condJump = (StatementConditionalJump) stmt;
                if(condJump.getrValue1() != null && condJump.getOperator() != null && condJump.getrValue2() != null) {
                   handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryConditionalJump(condJump), stmt, stmtIt, block);
+               }
+            } else if(stmt instanceof StatementPhiBlock) {
+               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) stmt).getPhiVariables()) {
+                  for(StatementPhiBlock.PhiRValue value : phiVariable.getValues()) {
+                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryPhiValueAssignemnt(phiVariable, value), stmt, stmtIt, block);
+                  }
                }
             }
             // Iterate all statement values

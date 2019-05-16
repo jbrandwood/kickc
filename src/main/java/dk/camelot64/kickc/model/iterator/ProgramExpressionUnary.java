@@ -3,10 +3,7 @@ package dk.camelot64.kickc.model.iterator;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.values.ConstantCastValue;
-import dk.camelot64.kickc.model.values.ConstantUnary;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.Value;
+import dk.camelot64.kickc.model.values.*;
 
 /**
  * A binary expression in the program being iterated by {@link ProgramExpressionIterator}
@@ -84,12 +81,12 @@ public interface ProgramExpressionUnary extends ProgramExpression {
    }
 
    /** Unary cast expression {@link ConstantCastValue} as part of a constant expression. */
-   class ProgramExpressionUnaryCast implements ProgramExpressionUnary {
+   class ProgramExpressionUnaryConstantCast implements ProgramExpressionUnary {
 
       /** A ProgramValue containing a {@link ConstantCastValue}. */
       private ProgramValue programValue;
 
-      ProgramExpressionUnaryCast(ProgramValue programValue) {
+      ProgramExpressionUnaryConstantCast(ProgramValue programValue) {
          this.programValue = programValue;
       }
 
@@ -114,6 +111,36 @@ public interface ProgramExpressionUnary extends ProgramExpression {
 
    }
 
+   /** Unary cast expression {@link CastValue} as part of a constant expression. */
+   class ProgramExpressionUnaryCast implements ProgramExpressionUnary {
+
+      /** A ProgramValue containing a {@link CastValue}. */
+      private ProgramValue programValue;
+
+      ProgramExpressionUnaryCast(ProgramValue programValue) {
+         this.programValue = programValue;
+      }
+
+      public CastValue getConstantUnary() {
+         return (CastValue) programValue.get();
+      }
+
+      @Override
+      public OperatorUnary getOperator() {
+         return Operators.getCastUnary(getConstantUnary().getToType());
+      }
+
+      @Override
+      public RValue getOperand() {
+         return getConstantUnary().getValue();
+      }
+
+      @Override
+      public void set(Value value) {
+         programValue.set(value);
+      }
+
+   }
 
 
 }

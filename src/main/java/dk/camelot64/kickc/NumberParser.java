@@ -13,7 +13,7 @@ public class NumberParser {
          throw new NumberFormatException("Not Implemented: non-integer parsing. " + literal);
       }
 
-      SymbolType type = null;
+      SymbolType type = SymbolType.NUMBER;
       if(literal.endsWith("ub") || literal.endsWith("uc")) {
          type = SymbolType.BYTE;
          literal = literal.substring(0, literal.length()-2);

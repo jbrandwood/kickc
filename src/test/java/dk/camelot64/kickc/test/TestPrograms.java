@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testTypeInference() throws IOException, URISyntaxException {
+      compileAndCompare("type-inference", log().verboseSSAOptimize());
+   }
+
+   @Test
    public void testMixedArray1() throws IOException, URISyntaxException {
       compileAndCompare("mixed-array-1", log());
    }

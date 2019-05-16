@@ -213,7 +213,11 @@ public class SymbolTypeInference {
             if(type == null) {
                type = valueType;
             } else if(!type.equals(valueType))
-               throw new CompileError("Types not compatible " + type + " and " + valueType);
+               if(valueType instanceof SymbolTypeInteger && type instanceof SymbolTypeInteger) {
+                  type = SymbolTypeConversion.convertedMathType((SymbolTypeInteger) valueType, (SymbolTypeInteger) type);
+               } else  {
+                  throw new CompileError("Phi value has type mismatch "+phiRValue.toString() + " not matching type " + type.getTypeName());
+               }
          }
          if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
             program.getLog().append("Inferred type updated to " + type + " for " + symbol.toString(program));

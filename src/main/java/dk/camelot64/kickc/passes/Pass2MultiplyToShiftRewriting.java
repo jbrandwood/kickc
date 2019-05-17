@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.ListIterator;
@@ -44,12 +45,12 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
                         if(Operators.MULTIPLY.equals(assignment.getOperator())) {
                            getLog().append("Rewriting multiplication to use shift "+statement.toString(getProgram(), false));
                            assignment.setOperator(Operators.SHIFT_LEFT);
-                           assignment.setrValue2(new ConstantInteger((long)power2));
+                           assignment.setrValue2(new ConstantInteger((long)power2, SymbolType.BYTE));
                            optimized = true;
                         }  else if(Operators.DIVIDE.equals(assignment.getOperator())) {
                            getLog().append("Rewriting division to use shift "+statement.toString(getProgram(), false));
                            assignment.setOperator(Operators.SHIFT_RIGHT);
-                           assignment.setrValue2(new ConstantInteger((long)power2));
+                           assignment.setrValue2(new ConstantInteger((long)power2, SymbolType.BYTE));
                            optimized = true;
                         }
                      }

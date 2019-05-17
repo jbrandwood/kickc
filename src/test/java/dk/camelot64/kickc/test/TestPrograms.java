@@ -333,7 +333,7 @@ public class TestPrograms {
 
    @Test
    public void testPointerCast2() throws IOException, URISyntaxException {
-      compileAndCompare("pointer-cast-2");
+      compileAndCompare("pointer-cast-2", log());
    }
 
    @Test

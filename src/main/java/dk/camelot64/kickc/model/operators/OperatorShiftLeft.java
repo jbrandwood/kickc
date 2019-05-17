@@ -26,11 +26,7 @@ public class OperatorShiftLeft extends OperatorBinary {
 
    @Override
    public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
-      if(SymbolType.isInteger(left) && SymbolType.isInteger(right)) {
-         return SymbolTypeConversion.convertedMathType( (SymbolTypeInteger) left, (SymbolTypeInteger)right);
-      } else {
          return left;
-      }
    }
 
 }

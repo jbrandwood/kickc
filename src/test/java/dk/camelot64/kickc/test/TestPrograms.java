@@ -117,7 +117,7 @@ public class TestPrograms {
 
    @Test
    public void testNumberType() throws IOException, URISyntaxException {
-      compileAndCompare("number-type");
+      compileAndCompare("number-type", log());
    }
 
    @Test
@@ -333,7 +333,7 @@ public class TestPrograms {
 
    @Test
    public void testPointerCast2() throws IOException, URISyntaxException {
-      compileAndCompare("pointer-cast-2", log());
+      compileAndCompare("pointer-cast-2");
    }
 
    @Test

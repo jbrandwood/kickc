@@ -228,13 +228,21 @@ public class AsmFragmentInstanceSpecFactory {
    public String bind(Value value, SymbolType castType) {
 
       if(value instanceof CastValue) {
-         CastValue castVal = (CastValue) value;
-         SymbolType toType = castVal.getToType();
+         CastValue cast = (CastValue) value;
+         SymbolType toType = cast.getToType();
          OperatorUnary castUnary = Operators.getCastUnary(toType);
-         return getOperatorFragmentName(castUnary) + bind(castVal.getValue());
+         RValue castValue = cast.getValue();
+         SymbolType castValueType = SymbolTypeInference.inferType(this.program.getScope(), castValue);
+         if(castValueType.getSizeBytes()==toType.getSizeBytes()) {
+            return bind(castValue, toType);
+         } else {
+            return getOperatorFragmentName(castUnary) + bind(castValue);
+         }
       } else if(value instanceof ConstantCastValue) {
          ConstantCastValue castVal = (ConstantCastValue) value;
          if(castType==null) {
+            // TODO: If value literal not matching cast type then add expression code to transform it into the value space ( eg. value & 0xff )
+
             return bind(castVal.getValue(), castVal.getToType());
          } else {
             return bind(castVal.getValue(), castType);

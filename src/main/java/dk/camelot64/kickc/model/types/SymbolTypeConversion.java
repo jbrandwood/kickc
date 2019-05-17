@@ -185,9 +185,9 @@ public class SymbolTypeConversion {
    public static boolean assignmentCastNeeded(SymbolType lValueType, SymbolType rValueType) {
       if(lValueType.equals(rValueType))
          return false;
-      else if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer)
+      else if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer && ((SymbolTypePointer) lValueType).getElementType().equals(((SymbolTypePointer) rValueType).getElementType()))
          return false;
-      else if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType))
+      else if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType) && ((SymbolTypePointer) lValueType).getElementType().equals(SymbolType.BYTE))
          return false;
       else
       return true;

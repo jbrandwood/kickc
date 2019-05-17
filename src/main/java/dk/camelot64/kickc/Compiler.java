@@ -268,6 +268,7 @@ public class Compiler {
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));
       optimizations.add(new Pass2SizeOfSimplification(program));
       optimizations.add(new Pass2InlineDerefIdx(program));
+      optimizations.add(new Pass2InlineCast(program));
       optimizations.add(new Pass2DeInlineWordDerefIdx(program));
       optimizations.add(new PassNCastSimplification(program));
       pass2Execute(optimizations);

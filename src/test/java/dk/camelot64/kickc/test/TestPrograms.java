@@ -1231,6 +1231,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testC64DtvBlitterBox() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-blitter-box");
+   }
+
+   @Test
    public void testC64Dtv8bppChunkyStretch() throws IOException, URISyntaxException {
       compileAndCompare("c64dtv-8bppchunkystretch");
    }

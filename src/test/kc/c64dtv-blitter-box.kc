@@ -1,8 +1,9 @@
+// Fill a box on the screen using the blitter
+
 import "c64dtv.kc"
 
 const byte* SCREEN = $400;
-const byte[] SRCA = { 'c', 'a', 'm', 'e', 'l', 'o', 't', '!', ' '};
-const byte SRCA_LEN = 9;
+const byte[] SRCA = "camelot rules!";
 const byte[] SRCB = { $80 };
 
 void main() {
@@ -19,7 +20,7 @@ void main() {
     *DTV_BLITTER_SRCA_MOD_HI = 0;
     *DTV_BLITTER_SRCA_LIN_LO = <$100uw;
     *DTV_BLITTER_SRCA_LIN_HI = >$100uw;
-    *DTV_BLITTER_SRCA_STEP = $10; // Step 1.0
+    *DTV_BLITTER_SRCA_STEP = 01; // Step 0.0
 
     *DTV_BLITTER_SRCB_LO = <SRCB;
     *DTV_BLITTER_SRCB_MI = >SRCB;
@@ -30,17 +31,17 @@ void main() {
     *DTV_BLITTER_SRCB_LIN_HI = >$100uw;
     *DTV_BLITTER_SRCB_STEP = $00; // Step 0.0
 
-    *DTV_BLITTER_DEST_LO = <SCREEN;
-    *DTV_BLITTER_DEST_MI = >SCREEN;
+    *DTV_BLITTER_DEST_LO = <SCREEN+40+5;
+    *DTV_BLITTER_DEST_MI = >SCREEN+40+5;
     *DTV_BLITTER_DEST_HI = 0;
-    *DTV_BLITTER_DEST_MOD_LO = 0;
-    *DTV_BLITTER_DEST_MOD_HI = 0;
-    *DTV_BLITTER_DEST_LIN_LO = <$100uw;
-    *DTV_BLITTER_DEST_LIN_HI = >$100uw;
+    *DTV_BLITTER_DEST_MOD_LO = <21uw;
+    *DTV_BLITTER_DEST_MOD_HI = >21uw;
+    *DTV_BLITTER_DEST_LIN_LO = <19uw;
+    *DTV_BLITTER_DEST_LIN_HI = >19uw;
     *DTV_BLITTER_DEST_STEP = $10; // Step 1.0
 
-    *DTV_BLITTER_LEN_LO = SRCA_LEN;
-    *DTV_BLITTER_LEN_HI = 0;
+    *DTV_BLITTER_LEN_LO = <20*10uw;
+    *DTV_BLITTER_LEN_HI = >20*10uw;
 
     *DTV_BLITTER_ALU = DTV_BLIT_ADD;
     *DTV_BLITTER_TRANSPARANCY = DTV_BLIT_TRANSPARANCY_NONE;
@@ -50,13 +51,7 @@ void main() {
     // Instruct blitter to continue at DEST and restart SRC A/B
     *DTV_BLITTER_CONTROL2 = DTV_BLIT_DEST_CONT;
 
-    // Start a 8 more times when ready
-    for( byte r: 0..7 ) {
-        // wait til blitter is ready
-        do {} while((*DTV_BLITTER_CONTROL2 & DTV_BLIT_STATUS_BUSY)!=0);
-        // restart
-        *DTV_BLITTER_CONTROL = DTV_BLIT_FORCE_START | DTV_BLIT_SRCA_FWD | DTV_BLIT_SRCB_FWD| DTV_BLIT_DEST_FWD;
-     }
-
+     // wait til blitter is ready
+     do {} while((*DTV_BLITTER_CONTROL2 & DTV_BLIT_STATUS_BUSY)!=0);
 
 }

@@ -64,6 +64,11 @@ public class TestPrograms {
     */
 
    @Test
+   public void testNumberInferenceSum() throws IOException, URISyntaxException {
+      compileAndCompare("number-inference-sum");
+   }
+
+   @Test
    public void testGfxBankOptimization() throws IOException, URISyntaxException {
       compileAndCompare("gfxbank");
    }

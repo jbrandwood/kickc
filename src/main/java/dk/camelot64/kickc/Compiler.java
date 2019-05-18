@@ -267,10 +267,10 @@ public class Compiler {
       optimizations.add(new Pass2ComparisonOptimization(program));
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));
       optimizations.add(new Pass2SizeOfSimplification(program));
-      optimizations.add(new Pass2InlineDerefIdx(program));
       optimizations.add(new Pass2InlineCast(program));
-      optimizations.add(new Pass2DeInlineWordDerefIdx(program));
       optimizations.add(new PassNCastSimplification(program));
+      optimizations.add(new Pass2InlineDerefIdx(program));
+      optimizations.add(new Pass2DeInlineWordDerefIdx(program));
       pass2Execute(optimizations);
    }
 
@@ -303,6 +303,8 @@ public class Compiler {
    private void pass2InlineConstants() {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
+      constantOptimizations.add(new PassNStatementIndices(program));
+      constantOptimizations.add(new PassNVariableReferenceInfos(program));
       constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
       constantOptimizations.add(new Pass2AliasElimination(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
@@ -315,6 +317,9 @@ public class Compiler {
       constantOptimizations.add(new Pass2ConstantSimplification(program));
       constantOptimizations.add(new PassNCastSimplification(program));
       constantOptimizations.add(new Pass2ConstantIfs(program));
+      constantOptimizations.add(new Pass2InlineDerefIdx(program));
+      constantOptimizations.add(new PassNEliminateUnusedVars(program, true));
+
       pass2Execute(constantOptimizations);
 
    }

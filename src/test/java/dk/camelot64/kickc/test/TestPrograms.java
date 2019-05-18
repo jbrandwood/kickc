@@ -64,6 +64,26 @@ public class TestPrograms {
     */
 
    @Test
+   public void testDoubleIndexingArrays() throws IOException, URISyntaxException {
+      compileAndCompare("double-indexing-arrays");
+   }
+
+   @Test
+   public void testDerefidxWord2() throws IOException, URISyntaxException {
+      compileAndCompare("derefidx-word-2");
+   }
+
+   @Test
+   public void testDerefidxWord1() throws IOException, URISyntaxException {
+      compileAndCompare("derefidx-word-1");
+   }
+
+   @Test
+   public void testDerefidxWord0() throws IOException, URISyntaxException {
+      compileAndCompare("derefidx-word-0");
+   }
+
+   @Test
    public void testTernaryInference() throws IOException, URISyntaxException {
       compileAndCompare("ternary-inference", log());
    }
@@ -572,11 +592,6 @@ public class TestPrograms {
    @Test
    public void testIrqIdxProblem() throws IOException, URISyntaxException {
       compileAndCompare("irq-idx-problem");
-   }
-
-   @Test
-   public void testDoubleIndexingArrays() throws IOException, URISyntaxException {
-      compileAndCompare("double-indexing-arrays");
    }
 
    @Test

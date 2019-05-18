@@ -224,9 +224,11 @@ public class VariableReferenceInfos {
    public Collection<Integer> getConstRefStatements(ConstantRef constRef) {
       Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(constRef);
       LinkedHashSet<Integer> stmts = new LinkedHashSet<>();
-      refs.stream()
-            .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
-            .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).getStatementIdx()));
+      if(refs!=null) {
+         refs.stream()
+               .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
+               .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).getStatementIdx()));
+      }
       return stmts;
    }
 
@@ -239,9 +241,11 @@ public class VariableReferenceInfos {
    public Collection<Integer> getVarRefStatements(VariableRef varRef) {
       Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(varRef);
       LinkedHashSet<Integer> stmts = new LinkedHashSet<>();
-      refs.stream()
-            .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
-            .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).getStatementIdx()));
+      if(refs!=null) {
+         refs.stream()
+               .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
+               .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).getStatementIdx()));
+      }
       return stmts;
    }
 
@@ -254,10 +258,12 @@ public class VariableReferenceInfos {
    public Collection<Integer> getVarUseStatements(VariableRef varRef) {
       Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(varRef);
       LinkedHashSet<Integer> stmts = new LinkedHashSet<>();
-      refs.stream()
-            .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
-            .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE == referenceToSymbolVar.getReferenceType())
-            .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).getStatementIdx()));
+      if(refs!=null) {
+         refs.stream()
+               .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
+               .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE == referenceToSymbolVar.getReferenceType())
+               .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).getStatementIdx()));
+      }
       return stmts;
    }
 
@@ -271,10 +277,12 @@ public class VariableReferenceInfos {
    public Collection<SymbolVariableRef> getSymbolRefConsts(ConstantRef constRef) {
       Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(constRef);
       LinkedHashSet<SymbolVariableRef> constRefs = new LinkedHashSet<>();
-      refs.stream()
-            .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()))
-            .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInSymbol)
-            .forEach(referenceToSymbolVar -> constRefs.add(((ReferenceInSymbol) referenceToSymbolVar).getReferencingSymbol()));
+      if(refs!=null) {
+         refs.stream()
+               .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()))
+               .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInSymbol)
+               .forEach(referenceToSymbolVar -> constRefs.add(((ReferenceInSymbol) referenceToSymbolVar).getReferencingSymbol()));
+      }
       return constRefs;
    }
 

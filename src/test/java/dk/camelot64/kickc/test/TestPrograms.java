@@ -65,7 +65,7 @@ public class TestPrograms {
 
    @Test
    public void testTernaryInference() throws IOException, URISyntaxException {
-      compileAndCompare("ternary-inference");
+      compileAndCompare("ternary-inference", log());
    }
 
    @Test

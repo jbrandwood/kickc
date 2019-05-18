@@ -118,7 +118,7 @@ public class SymbolTypeInference {
       } else if(rValue instanceof RangeComparison) {
          return ((RangeComparison) rValue).getType();
       } else if(rValue instanceof RangeNext) {
-         return SymbolType.BYTE;
+         return inferType(symbols, ((RangeNext) rValue).getRangeFirst());
       } else if(rValue instanceof ProcedureRef) {
          Procedure procedure = symbols.getProcedure((ProcedureRef) rValue);
          return procedure.getType();

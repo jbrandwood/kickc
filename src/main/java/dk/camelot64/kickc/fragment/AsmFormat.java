@@ -230,7 +230,11 @@ public class AsmFormat {
          if(number.longValue() >= 0L && number.longValue() <= 255L) {
             return SHORT_ASM_NUMBERS[number.intValue()];
          } else {
-            return String.format("$%x", number.longValue());
+            if(number.longValue()<0) {
+               return String.format("-$%x", -number.longValue());
+            } else {
+               return String.format("$%x", number.longValue());
+            }
          }
       }
       throw new RuntimeException("Unsupported number type " + number);

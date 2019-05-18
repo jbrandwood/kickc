@@ -907,6 +907,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Assign loop variable with first value
       RValue rangeLastValue = (RValue) visit(rangeLastCtx);
       RValue rangeFirstValue = (RValue) visit(rangeFirstCtx);
+      if(varType!=null) {
+         if(rangeFirstValue instanceof ConstantInteger) ((ConstantInteger) rangeFirstValue).setType(varType);
+         if(rangeLastValue instanceof ConstantInteger) ((ConstantInteger) rangeLastValue).setType(varType);
+      }
       Statement stmtInit = new StatementAssignment(lValue.getRef(), rangeFirstValue, new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(stmtInit);
       // Add label
@@ -1348,11 +1352,16 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue child = (RValue) this.visit(ctx.expr());
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operators.getUnary(op);
-      VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
-      VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
-      sequence.addStatement(stmt);
-      return tmpVarRef;
+      // Special handling of negative literal number
+      if(child instanceof ConstantInteger && operator.equals(Operators.NEG)) {
+         return new ConstantInteger(-((ConstantInteger) child).getInteger(), ((ConstantInteger) child).getType());
+      }  else {
+         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         VariableRef tmpVarRef = tmpVar.getRef();
+         Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
+         sequence.addStatement(stmt);
+         return tmpVarRef;
+      }
    }
 
    @Override

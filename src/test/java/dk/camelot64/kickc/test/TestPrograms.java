@@ -63,8 +63,6 @@ public class TestPrograms {
 
     */
 
-
-
    @Test
    public void testFragmentVariations() throws IOException, URISyntaxException {
       compileAndCompare("fragment-variations");
@@ -117,7 +115,7 @@ public class TestPrograms {
 
    @Test
    public void testNumberType() throws IOException, URISyntaxException {
-      compileAndCompare("number-type", log());
+      compileAndCompare("number-type");
    }
 
    @Test

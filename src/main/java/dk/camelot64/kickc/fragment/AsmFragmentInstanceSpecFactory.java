@@ -14,10 +14,7 @@ import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.LinkedHashMap;
@@ -89,6 +86,7 @@ public class AsmFragmentInstanceSpecFactory {
 
    /**
     * Get the created ASM fragment instance specification
+    *
     * @return The ASM fragment instance specification
     */
    public AsmFragmentInstanceSpec getAsmFragmentInstanceSpec() {
@@ -233,19 +231,35 @@ public class AsmFragmentInstanceSpecFactory {
          OperatorUnary castUnary = Operators.getCastUnary(toType);
          RValue castValue = cast.getValue();
          SymbolType castValueType = SymbolTypeInference.inferType(this.program.getScope(), castValue);
-         if(castValueType.getSizeBytes()==toType.getSizeBytes()) {
+         if(castValueType.getSizeBytes() == toType.getSizeBytes()) {
             return bind(castValue, toType);
          } else {
             return getOperatorFragmentName(castUnary) + bind(castValue);
          }
       } else if(value instanceof ConstantCastValue) {
          ConstantCastValue castVal = (ConstantCastValue) value;
-         if(castType==null) {
-            // TODO: If value literal not matching cast type then add expression code to transform it into the value space ( eg. value & 0xff )
+         ConstantValue val = castVal.getValue();
+         if(castType == null) {
+            SymbolType toType = castVal.getToType();
+            // If value literal not matching cast type then add expression code to transform it into the value space ( eg. value & 0xff )
+            ConstantLiteral constantLiteral = val.calculateLiteral(program.getScope());
+            if(constantLiteral instanceof ConstantInteger) {
+               if(toType instanceof SymbolTypeIntegerFixed) {
+                  if(!((SymbolTypeIntegerFixed) toType).contains(((ConstantInteger) constantLiteral).getValue())) {
+                     if(toType.getSizeBytes() == 1) {
+                        val = new ConstantBinary(new ConstantInteger(0xffL, SymbolType.BYTE), Operators.BOOL_AND, val);
+                     } else if(toType.getSizeBytes() == 2) {
+                        val = new ConstantBinary(new ConstantInteger(0xffffL, SymbolType.WORD), Operators.BOOL_AND, val);
+                     } else {
+                        throw new InternalError("Not implemented!");
+                     }
+                  }
+               }
+            }
 
-            return bind(castVal.getValue(), castVal.getToType());
+            return bind(val, toType);
          } else {
-            return bind(castVal.getValue(), castType);
+            return bind(val, castType);
          }
       } else if(value instanceof PointerDereference) {
          PointerDereference deref = (PointerDereference) value;
@@ -357,7 +371,7 @@ public class AsmFragmentInstanceSpecFactory {
                   Registers.RegisterType.ZP_BYTE.equals(register.getType()) ||
                   Registers.RegisterType.ZP_WORD.equals(register.getType()) ||
                   Registers.RegisterType.ZP_DWORD.equals(register.getType())
-            ) {
+      ) {
          // Examine if the ZP register is already bound
          Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
          String zpNameIdx = null;

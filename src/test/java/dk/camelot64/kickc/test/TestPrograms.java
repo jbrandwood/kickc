@@ -64,6 +64,11 @@ public class TestPrograms {
     */
 
    @Test
+   public void testTernaryInference() throws IOException, URISyntaxException {
+      compileAndCompare("ternary-inference");
+   }
+
+   @Test
    public void testFragmentVariations() throws IOException, URISyntaxException {
       compileAndCompare("fragment-variations");
    }

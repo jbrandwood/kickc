@@ -63,6 +63,12 @@ public class TestPrograms {
 
     */
 
+
+   @Test
+   public void testTernaryInference() throws IOException, URISyntaxException {
+      compileAndCompare("ternary-inference");
+   }
+
    @Test
    public void testMul8uMin() throws IOException, URISyntaxException {
       compileAndCompare("mul8u-min");
@@ -96,11 +102,6 @@ public class TestPrograms {
    @Test
    public void testDerefidxWord0() throws IOException, URISyntaxException {
       compileAndCompare("derefidx-word-0");
-   }
-
-   @Test
-   public void testTernaryInference() throws IOException, URISyntaxException {
-      compileAndCompare("ternary-inference", log());
    }
 
    @Test
@@ -187,7 +188,6 @@ public class TestPrograms {
    public void testPaulNelsenSandbox() throws IOException, URISyntaxException {
       compileAndCompare("sandbox");
    }
-
 
    //@Test
    //public void testPointerCast3() throws IOException, URISyntaxException {

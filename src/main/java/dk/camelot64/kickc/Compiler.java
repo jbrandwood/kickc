@@ -323,7 +323,6 @@ public class Compiler {
       constantOptimizations.add(new PassNSimplifyConstantZero(program));
       constantOptimizations.add(new PassNSimplifyExpressionWithZero(program));
 
-
       pass2Execute(constantOptimizations);
 
    }

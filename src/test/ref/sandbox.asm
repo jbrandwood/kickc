@@ -152,11 +152,10 @@ Print: {
 }
 // myprintf(byte* zeropage(8) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage(6) w3)
 myprintf: {
-    .label _17 = $12
     .label str = 8
     .label bDigits = $11
     .label bLen = $10
-    .label digit = $a
+    .label b = $a
     .label bArg = $b
     .label return = $10
     .label w1 = 2
@@ -228,19 +227,13 @@ myprintf: {
     sta bFormat
     jmp b27
   b26:
-    lda w+1
-    sta _17+1
     lda w
-    sta _17
-    ldy #4
-  !:
-    lsr _17+1
-    ror _17
-    dey
-    bne !-
-    lda _17
-    and #$f
-    tax
+    lsr
+    lsr
+    lsr
+    lsr
+    ldx #$f
+    axs #0
     cpx #$a
     bcc b8
     lda #$57
@@ -255,8 +248,8 @@ myprintf: {
     sta strTemp,y
     iny
     lda w
-    and #$f
-    tax
+    ldx #$f
+    axs #0
     cpx #$a
     bcc b10
     lda #$57
@@ -277,35 +270,33 @@ myprintf: {
     lda w+1
     sta utoa.value+1
     jsr utoa
-    ldx #1
+    lda #1
+    sta b
   b12:
-    lda buf6,x
+    ldy b
+    lda buf6,y
     cmp #0
     bne b13
     lda bTrailing
     cmp #0
     beq b39
   b15:
-    lda #0
-    sta digit
+    ldx #0
   b19:
-    ldy digit
-    lda buf6,y
+    lda buf6,x
     ldy bLen
     sta strTemp,y
     inc bLen
-    inc digit
-    txa
-    cmp digit
-    beq !+
-    bcs b19
-  !:
+    inx
+    cpx b
+    bcc b19
     lda bTrailing
     cmp #0
     bne b40
     jmp b22
   b40:
-    cpx bDigits
+    lda b
+    cmp bDigits
     bcc b21
     jmp b22
   b21:
@@ -314,11 +305,13 @@ myprintf: {
     sta strTemp,y
     inc bLen
     dec bDigits
-    cpx bDigits
+    lda b
+    cmp bDigits
     bcc b21
     jmp b22
   b39:
-    cpx bDigits
+    lda b
+    cmp bDigits
     bcc b16
     jmp b15
   b16:
@@ -334,11 +327,12 @@ myprintf: {
     sta strTemp,y
     inc bLen
     dec bDigits
-    cpx bDigits
+    lda b
+    cmp bDigits
     bcc b16
     jmp b15
   b13:
-    inx
+    inc b
     jmp b12
   b6:
     lda w

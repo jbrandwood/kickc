@@ -1832,11 +1832,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testValueListError() throws IOException, URISyntaxException {
-      assertError("valuelist-error", "Value list not resolved to word constructor");
-   }
-
-   @Test
    public void testArrayUninitialized() throws IOException, URISyntaxException {
       assertError("array-uninitialized", "Array has no declared size.");
    }

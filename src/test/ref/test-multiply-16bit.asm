@@ -601,20 +601,18 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage(9) a, word zeropage($15) b)
+// mul16u(word zeropage($1d) a, word zeropage(9) b)
 mul16u: {
     .label mb = $11
-    .label a = 9
+    .label a = $1d
     .label res = $19
-    .label b = $15
+    .label b = 9
     .label return = $19
     .label b_1 = $17
-    lda #<0
+    lda #0
     sta res
     sta res+1
-    lda #<0>>$10
     sta res+2
-    lda #>0>>$10
     sta res+3
   b1:
     lda a
@@ -667,14 +665,12 @@ muls16s: {
     lda a
     beq b5
   !:
-    lda #<0
+    lda #0
     sta j
     sta j+1
     sta m
     sta m+1
-    lda #<0>>$10
     sta m+2
-    lda #>0>>$10
     sta m+3
   b3:
     lda b+1
@@ -708,23 +704,19 @@ muls16s: {
     bne b3
     rts
   b5:
-    lda #<0
+    lda #0
     sta return
     sta return+1
-    lda #<0>>$10
     sta return+2
-    lda #>0>>$10
     sta return+3
     rts
   b6:
-    lda #<0
+    lda #0
     sta i
     sta i+1
     sta m
     sta m+1
-    lda #<0>>$10
     sta m+2
-    lda #>0>>$10
     sta m+3
   b4:
     lda b+1
@@ -965,14 +957,12 @@ muls16u: {
     lda a+1
     beq b3
   !:
-    lda #<0
+    lda #0
     sta i
     sta i+1
     sta m
     sta m+1
-    lda #<0>>$10
     sta m+2
-    lda #>0>>$10
     sta m+3
   b2:
     lda m
@@ -1000,12 +990,10 @@ muls16u: {
     bne b2
     rts
   b3:
-    lda #<0
+    lda #0
     sta return
     sta return+1
-    lda #<0>>$10
     sta return+2
-    lda #>0>>$10
     sta return+3
     rts
 }
@@ -1028,7 +1016,7 @@ mulf_init: {
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #<0
+    lda #0
     sta sqr
     sta sqr+1
     tax

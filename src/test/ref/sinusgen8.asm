@@ -158,14 +158,14 @@ sin8s_gen: {
     .label x = 2
     .label i = 7
     jsr div16u
-    lda #<0
+    lda #0
     sta i
     sta i+1
     lda #<main.sintab2
     sta sintab
     lda #>main.sintab2
     sta sintab+1
-    lda #<0
+    lda #0
     sta x
     sta x+1
   // u[4.12]

@@ -258,7 +258,7 @@ mulf_init: {
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #<0
+    lda #0
     sta sqr
     sta sqr+1
     tax

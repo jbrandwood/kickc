@@ -68,7 +68,7 @@ loop: {
     .label _1 = 9
     .label _5 = 9
     .label xpos = 9
-    lda #<0
+    lda #0
     sta xsin_idx
     sta xsin_idx+1
   b1:
@@ -109,7 +109,7 @@ loop: {
     lda xsin_idx
     cmp #<XSIN_SIZE
     bne b4
-    lda #<0
+    lda #0
     sta xsin_idx
     sta xsin_idx+1
   b4:
@@ -260,19 +260,17 @@ sin16s_gen2: {
     .label x = 5
     .label i = 9
     jsr div32u16u
-    lda #<0
+    lda #0
     sta i
     sta i+1
     lda #<xsin
     sta sintab
     lda #>xsin
     sta sintab+1
-    lda #<0
+    lda #0
     sta x
     sta x+1
-    lda #<0>>$10
     sta x+2
-    lda #>0>>$10
     sta x+3
   // u[4.28]
   b1:
@@ -332,13 +330,13 @@ sin16s_gen2: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zeropage($15) a)
+// mul16s(signed word zeropage($f) a)
 mul16s: {
     .label _9 = $f
     .label _16 = $f
     .label m = $b
     .label return = $b
-    .label a = $15
+    .label a = $f
     lda a
     sta mul16u.a
     lda a+1
@@ -373,19 +371,17 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($f) a, word zeropage($17) b)
+// mul16u(word zeropage($11) a, word zeropage($f) b)
 mul16u: {
-    .label mb = $11
-    .label a = $f
+    .label mb = $13
+    .label a = $11
     .label res = $b
     .label return = $b
-    .label b = $17
-    lda #<0
+    .label b = $f
+    lda #0
     sta res
     sta res+1
-    lda #<0>>$10
     sta res+2
-    lda #>0>>$10
     sta res+3
   b1:
     lda a
@@ -427,18 +423,18 @@ mul16u: {
 // sin16s(dword zeropage($b) x)
 sin16s: {
     .label _4 = $b
-    .label _20 = $15
+    .label _20 = $f
     .label x = $b
-    .label return = $15
+    .label return = $f
     .label x1 = $1d
-    .label x2 = $15
-    .label x3 = $15
+    .label x2 = $17
+    .label x3 = $17
     .label x3_6 = $f
     .label usinx = $1f
-    .label x4 = $15
+    .label x4 = $17
     .label x5 = $f
     .label x5_128 = $f
-    .label sinx = $15
+    .label sinx = $f
     .label isUpper = 4
     lda x+3
     cmp #>PI_u4f28>>$10
@@ -609,15 +605,15 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($15) v1, word zeropage($17) v2, byte register(X) select)
+// mulu16_sel(word zeropage($17) v1, word zeropage($f) v2, byte register(X) select)
 mulu16_sel: {
     .label _0 = $b
     .label _1 = $b
-    .label v1 = $15
-    .label v2 = $17
+    .label v1 = $17
+    .label v2 = $f
     .label return = $f
-    .label return_1 = $15
-    .label return_10 = $15
+    .label return_1 = $17
+    .label return_10 = $17
     lda v1
     sta mul16u.a
     lda v1+1
@@ -649,14 +645,14 @@ mulu16_sel: {
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
-    .label quotient_hi = $15
+    .label quotient_hi = $11
     .label quotient_lo = $f
     .label return = $19
     lda #<PI2_u4f28>>$10
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
-    lda #<0
+    lda #0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u

@@ -25,22 +25,22 @@
   .label yvel_22 = 6
 main: {
     jsr init
-    lda #<$64
+    lda #$64
     sta yvel_init
-    lda #>$64
+    lda #0
     sta yvel_init+1
     lda #<$c8
     sta xvel
     lda #>$c8
     sta xvel+1
-    lda #<0
+    lda #0
     sta ypos
     sta ypos+1
     sta xpos
     sta xpos+1
-    lda #<$64
+    lda #$64
     sta yvel_12
-    lda #>$64
+    lda #0
     sta yvel_12+1
   b1:
     lda #$ff
@@ -96,7 +96,7 @@ anim: {
     sta yvel_22
     lda yvel+1
     sta yvel_22+1
-    lda #<0
+    lda #0
     sta ypos
     sta ypos+1
     sta xpos

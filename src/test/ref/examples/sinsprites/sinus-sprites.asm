@@ -228,9 +228,9 @@ gen_sintab: {
     lda #>f_amp
     sta setMEMtoFAC.mem+1
     jsr setMEMtoFAC
-    lda #<2
+    lda #2
     sta setFAC.w
-    lda #>2
+    lda #0
     sta setFAC.w+1
     jsr setFAC
     lda #<f_amp

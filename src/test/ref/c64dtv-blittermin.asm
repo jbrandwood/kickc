@@ -85,9 +85,8 @@ main: {
     sta DTV_BLITTER_SRCA_HI
     sta DTV_BLITTER_SRCA_MOD_LO
     sta DTV_BLITTER_SRCA_MOD_HI
-    lda #<$80
     sta DTV_BLITTER_SRCA_LIN_LO
-    lda #0
+    lda #>$100
     sta DTV_BLITTER_SRCA_LIN_HI
     lda #$10
     sta DTV_BLITTER_SRCA_STEP

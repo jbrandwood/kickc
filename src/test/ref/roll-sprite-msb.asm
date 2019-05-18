@@ -7,11 +7,11 @@
   .label SPRITES_XMSB = $d010
 main: {
     .label xpos = 2
-    lda #<$c8
+    lda #$c8
     sta xpos
-    lda #>$c8
+    lda #0
     sta xpos+1
-    ldx #0
+    tax
   b1:
     stx position_sprite.spriteno
     jsr position_sprite

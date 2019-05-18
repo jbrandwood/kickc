@@ -214,11 +214,8 @@ main: {
     sta level
     sta score_bcd
     sta score_bcd+1
-    lda #<0>>$10
     sta score_bcd+2
-    lda #>0>>$10
     sta score_bcd+3
-    lda #<0
     sta lines_bcd
     sta lines_bcd+1
     sta current_movedown_counter

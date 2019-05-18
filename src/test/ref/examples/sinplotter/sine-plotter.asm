@@ -73,7 +73,7 @@ render_sine: {
     .label sin2_val = 6
     .label xpos = 4
     .label sin_idx = 2
-    lda #<0
+    lda #0
     sta xpos
     sta xpos+1
     sta sin_idx
@@ -149,7 +149,7 @@ render_sine: {
     lda xpos
     cmp #<$140
     bne b2
-    lda #<0
+    lda #0
     sta xpos
     sta xpos+1
   b2:
@@ -174,9 +174,9 @@ render_sine: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(4) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $15
+    .label _1 = $10
     .label plotter = 6
-    .label plotter_1 = $15
+    .label plotter_1 = $10
     .label x = 4
     .label _4 = 6
     lda bitmap_plot_yhi,x
@@ -256,19 +256,17 @@ sin16s_gen2: {
     .label x = 8
     .label i = 4
     jsr div32u16u
-    lda #<0
+    lda #0
     sta i
     sta i+1
     lda #<sin
     sta sintab
     lda #>sin
     sta sintab+1
-    lda #<0
+    lda #0
     sta x
     sta x+1
-    lda #<0>>$10
     sta x+2
-    lda #>0>>$10
     sta x+3
   // u[4.28]
   b1:
@@ -328,13 +326,13 @@ sin16s_gen2: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zeropage($15) a)
+// mul16s(signed word zeropage(6) a)
 mul16s: {
     .label _9 = 6
     .label _16 = 6
     .label m = $c
     .label return = $c
-    .label a = $15
+    .label a = 6
     lda a
     sta mul16u.a
     lda a+1
@@ -369,19 +367,17 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage(6) a, word zeropage($17) b)
+// mul16u(word zeropage($10) a, word zeropage(6) b)
 mul16u: {
-    .label mb = $10
-    .label a = 6
+    .label mb = $12
+    .label a = $10
     .label res = $c
     .label return = $c
-    .label b = $17
-    lda #<0
+    .label b = 6
+    lda #0
     sta res
     sta res+1
-    lda #<0>>$10
     sta res+2
-    lda #>0>>$10
     sta res+3
   b1:
     lda a
@@ -423,19 +419,19 @@ mul16u: {
 // sin16s(dword zeropage($c) x)
 sin16s: {
     .label _4 = $c
-    .label _20 = $15
+    .label _20 = 6
     .label x = $c
-    .label return = $15
+    .label return = 6
     .label x1 = $1d
-    .label x2 = $15
-    .label x3 = $15
+    .label x2 = $17
+    .label x3 = $17
     .label x3_6 = 6
     .label usinx = $1f
-    .label x4 = $15
+    .label x4 = $17
     .label x5 = 6
     .label x5_128 = 6
-    .label sinx = $15
-    .label isUpper = $14
+    .label sinx = 6
+    .label isUpper = $16
     lda x+3
     cmp #>PI_u4f28>>$10
     bcc b4
@@ -605,15 +601,15 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($15) v1, word zeropage($17) v2, byte register(X) select)
+// mulu16_sel(word zeropage($17) v1, word zeropage(6) v2, byte register(X) select)
 mulu16_sel: {
     .label _0 = $c
     .label _1 = $c
-    .label v1 = $15
-    .label v2 = $17
+    .label v1 = $17
+    .label v2 = 6
     .label return = 6
-    .label return_1 = $15
-    .label return_10 = $15
+    .label return_1 = $17
+    .label return_10 = $17
     lda v1
     sta mul16u.a
     lda v1+1
@@ -645,14 +641,14 @@ mulu16_sel: {
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
-    .label quotient_hi = $15
+    .label quotient_hi = $10
     .label quotient_lo = 6
     .label return = $19
     lda #<PI2_u4f28>>$10
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
-    lda #<0
+    lda #0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u
@@ -732,7 +728,7 @@ divr16u: {
 // Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 2
-    .label y = $14
+    .label y = $16
     .label _4 = 2
     lda bitmap_plot_ylo
     sta _4
@@ -761,7 +757,7 @@ bitmap_clear: {
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _3 = $14
+    .label _3 = $16
     .label yoffs = 2
     ldx #0
     lda #$80

@@ -8,17 +8,15 @@ main: {
     .label screen = $400
     .label _0 = 2
     .label _1 = 2
-    lda #<$a
+    lda #$a
     sta mul16u.a
-    lda #>$a
+    lda #0
     sta mul16u.a+1
-    lda #<$a
+    lda #$a
     sta mul16u.mb
-    lda #>$a
+    lda #0
     sta mul16u.mb+1
-    lda #<$a>>$10
     sta mul16u.mb+2
-    lda #>$a>>$10
     sta mul16u.mb+3
     jsr mul16u
     lda _0

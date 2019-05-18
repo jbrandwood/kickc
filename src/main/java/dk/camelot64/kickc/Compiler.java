@@ -252,16 +252,13 @@ public class Compiler {
       optimizations.add(new Pass2ConstantValues(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
-      //optimizations.add(new Pass2ConstantAdditionElimination(program));
       optimizations.add(new Pass2ConstantIfs(program));
       optimizations.add(new Pass2ConstantStringConsolidation(program));
-      //optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new Pass2FixInlineConstructorsNew(program));
       optimizations.add(new PassNAddTypeConversionAssignment(program));
       optimizations.add(new Pass2TypeInference(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateRedundantCasts(program));
-      //optimizations.add(new Pass2NopCastElimination(program));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));
       optimizations.add(new Pass2ComparisonOptimization(program));
@@ -386,7 +383,6 @@ public class Compiler {
       new Pass3AssertConstants(program).check();
       new Pass3AssertArrayLengths(program).check();
       new Pass3AssertNoMulDivMod(program).check();
-      new Pass3AddAssignmentCasts(program).execute();
       new PassNCastSimplification(program).execute();
       new PassNBlockSequencePlanner(program).step();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes

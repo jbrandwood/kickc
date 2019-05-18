@@ -17,7 +17,7 @@ scrollup3: {
     .label _4 = 7
     .label _5 = 9
     .label l2_4 = 4
-    lda #<0
+    lda #0
     sta l2
     sta l2+1
   b1:
@@ -111,7 +111,7 @@ scrollup1: {
     .label line = 2
     .label _6 = 7
     .label _7 = 4
-    lda #<0
+    lda #0
     sta line
     sta line+1
   b1:

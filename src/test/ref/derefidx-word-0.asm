@@ -6,7 +6,7 @@ main: {
     .label screen = $400
     .label i = 2
     .label _1 = 4
-    lda #<0
+    lda #0
     sta i
     sta i+1
   b1:

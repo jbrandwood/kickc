@@ -5,7 +5,7 @@ main: {
     .label SCREEN = $400
     .label w = 2
     .label sw = 2
-    lda #<0
+    lda #0
     sta w
     sta w+1
   b1:

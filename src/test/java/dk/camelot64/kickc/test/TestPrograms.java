@@ -64,6 +64,11 @@ public class TestPrograms {
     */
 
    @Test
+   public void testMul8uMin() throws IOException, URISyntaxException {
+      compileAndCompare("mul8u-min");
+   }
+
+   @Test
    public void testNumberInferenceSum() throws IOException, URISyntaxException {
       compileAndCompare("number-inference-sum");
    }

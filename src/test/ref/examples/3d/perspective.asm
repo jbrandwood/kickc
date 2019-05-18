@@ -240,9 +240,9 @@ mulf_init: {
     .label val = 6
     .label sqr = 2
     .label add = 4
-    lda #<1
+    lda #1
     sta add
-    lda #>1
+    lda #0
     sta add+1
     tax
     sta sqr

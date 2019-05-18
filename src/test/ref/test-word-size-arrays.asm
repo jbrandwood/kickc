@@ -10,7 +10,7 @@ main: {
     .label _8 = 6
     .label _9 = 4
     .label _10 = 4
-    lda #<0
+    lda #0
     sta line
     sta line+1
   b1:

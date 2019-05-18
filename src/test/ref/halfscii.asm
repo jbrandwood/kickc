@@ -7,10 +7,11 @@
   .label D018 = $d018
   .label CHARSET4 = $2800
 main: {
-    .label _1 = 6
-    .label _11 = 6
-    .label _21 = 6
-    .label _30 = 6
+    .label _1 = 8
+    .label _11 = 8
+    .label _21 = 8
+    .label _30 = 8
+    .label chargen1 = 6
     .label charset4 = 4
     .label chargen = 2
     sei
@@ -25,13 +26,19 @@ main: {
     lda #>CHARGEN
     sta chargen+1
   b1:
+    lda chargen
+    clc
+    adc #1
+    sta chargen1
+    lda chargen+1
+    adc #0
+    sta chargen1+1
     lda #$60
     ldy #0
     and (chargen),y
     sta _1
     lda #$60
-    ldy #1
-    and (chargen),y
+    and (chargen1),y
     lsr
     lsr
     ora _1
@@ -54,8 +61,7 @@ main: {
     and (chargen),y
     sta _11
     lda #$18
-    ldy #1
-    and (chargen),y
+    and (chargen1),y
     lsr
     lsr
     ora _11
@@ -75,8 +81,7 @@ main: {
     asl
     sta _21
     lda #6
-    ldy #1
-    and (chargen),y
+    and (chargen1),y
     lsr
     ora _21
     tay
@@ -95,8 +100,7 @@ main: {
     asl
     sta _30
     lda #1
-    tay
-    and (chargen),y
+    and (chargen1),y
     ora _30
     tay
     lda bits_count,y

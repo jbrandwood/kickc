@@ -267,26 +267,36 @@ print_sbyte: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul8s(signed byte zeropage(2) a, signed byte register(Y) b)
 mul8s: {
+    .label _9 = $10
+    .label _13 = $10
     .label m = $c
-    .label a = 2
     .label return = $c
-    tya
+    .label a = 2
     ldx a
+    tya
+    sta mul8u.mb
+    lda #0
+    sta mul8u.mb+1
     jsr mul8u
     lda a
     cmp #0
     bpl b1
     lda m+1
-    sty $ff
+    sta _9
+    tya
+    eor #$ff
     sec
-    sbc $ff
+    adc _9
     sta m+1
   b1:
     cpy #0
     bpl b2
     lda m+1
+    sta _13
+    lda a
+    eor #$ff
     sec
-    sbc a
+    adc _13
     sta m+1
   b2:
     rts
@@ -297,9 +307,7 @@ mul8u: {
     .label mb = 6
     .label res = $c
     .label return = $c
-    sta mb
-    lda #0
-    sta mb+1
+    lda #<0
     sta res
     sta res+1
   b1:
@@ -331,34 +339,42 @@ mul8u: {
 mulf8s: {
     .label return = $e
     jsr mulf8u_prepare
-    stx mulf8s_prepared.b
+    txa
+    tay
     jsr mulf8s_prepared
     rts
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zeropage(3) b)
+// mulf8s_prepared(signed byte register(Y) b)
 mulf8s_prepared: {
     .label memA = $fd
+    .label _8 = $10
+    .label _12 = $10
     .label m = $e
-    .label b = 3
     .label return = $e
-    ldx b
+    tya
+    tax
     jsr mulf8u_prepared
     lda memA
     cmp #0
     bpl b1
     lda m+1
+    sta _8
+    tya
+    eor #$ff
     sec
-    sbc b
+    adc _8
     sta m+1
   b1:
-    lda b
-    cmp #0
+    cpy #0
     bpl b2
     lda m+1
+    sta _12
+    lda memA
+    eor #$ff
     sec
-    sbc memA
+    adc _12
     sta m+1
   b2:
     rts
@@ -411,8 +427,8 @@ muls8s: {
     bmi b6
     cmp #1
     bmi b5
-    lda #0
-    tay
+    ldy #0
+    tya
     sta m
     sta m+1
   b3:
@@ -435,13 +451,13 @@ muls8s: {
     bne b3
     rts
   b5:
-    lda #0
+    lda #<0
     sta return
     sta return+1
     rts
   b6:
-    lda #0
-    tay
+    ldy #0
+    tya
     sta m
     sta m+1
   b4:
@@ -484,6 +500,9 @@ mul8u_compare: {
     jsr mulf8u
     ldx a
     lda b
+    sta mul8u.mb
+    lda #0
+    sta mul8u.mb+1
     jsr mul8u
     lda ms
     cmp mf
@@ -615,7 +634,7 @@ muls8u: {
     bne b2
     rts
   b3:
-    lda #0
+    lda #<0
     sta return
     sta return+1
     rts
@@ -777,7 +796,7 @@ mulf_init: {
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #0
+    lda #<0
     sta sqr
     sta sqr+1
     tax

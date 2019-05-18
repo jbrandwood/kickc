@@ -129,8 +129,10 @@ print_char: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte zeropage(4) b)
 print_byte: {
-    lda print_sbyte.b
+    .label b = 4
+    lda b
     lsr
     lsr
     lsr
@@ -139,7 +141,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and print_sbyte.b
+    and b
     tay
     lda print_hextab,y
     jsr print_char
@@ -179,17 +181,19 @@ sin16s_gen: {
     .label x = 7
     .label i = 5
     jsr div32u16u
-    lda #0
+    lda #<0
     sta i
     sta i+1
     lda #<main.sintabw
     sta sintab
     lda #>main.sintabw
     sta sintab+1
-    lda #0
+    lda #<0
     sta x
     sta x+1
+    lda #<0>>$10
     sta x+2
+    lda #>0>>$10
     sta x+3
   // u[4.28]
   b1:
@@ -248,16 +252,17 @@ sin16s_gen: {
 // sin16s(dword zeropage($b) x)
 sin16s: {
     .label _4 = $b
+    .label _20 = $f
     .label x = $b
     .label return = $f
-    .label x1 = $20
-    .label x2 = $11
-    .label x3 = $11
-    .label x3_6 = $13
-    .label usinx = $f
-    .label x4 = $11
-    .label x5 = $13
-    .label x5_128 = $13
+    .label x1 = $1a
+    .label x2 = $f
+    .label x3 = $f
+    .label x3_6 = $11
+    .label usinx = $20
+    .label x4 = $f
+    .label x5 = $11
+    .label x5_128 = $11
     .label sinx = $f
     .label isUpper = 4
     lda x+3
@@ -404,9 +409,17 @@ sin16s: {
     lda usinx+1
     adc x5_128+1
     sta usinx+1
+    lda usinx
+    sta sinx
+    lda usinx+1
+    sta sinx+1
     lda isUpper
     cmp #0
     beq b3
+    lda usinx
+    sta _20
+    lda usinx+1
+    sta _20+1
     sec
     lda sinx
     eor #$ff
@@ -421,15 +434,15 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($11) v1, word zeropage($13) v2, byte register(X) select)
+// mulu16_sel(word zeropage($f) v1, word zeropage($11) v2, byte register(X) select)
 mulu16_sel: {
     .label _0 = $b
     .label _1 = $b
-    .label v1 = $11
-    .label v2 = $13
-    .label return = $13
-    .label return_1 = $11
-    .label return_10 = $11
+    .label v1 = $f
+    .label v2 = $11
+    .label return = $11
+    .label return_1 = $f
+    .label return_10 = $f
     lda v1
     sta mul16u.a
     lda v1+1
@@ -452,12 +465,12 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($15) a, word zeropage($13) b)
+// mul16u(word zeropage($13) a, word zeropage($11) b)
 mul16u: {
-    .label mb = $17
-    .label a = $15
+    .label a = $13
+    .label mb = $15
     .label res = $b
-    .label b = $13
+    .label b = $11
     .label return = $b
     lda b
     sta mb
@@ -468,7 +481,9 @@ mul16u: {
     sta mb+3
     sta res
     sta res+1
+    lda #<0>>$10
     sta res+2
+    lda #>0>>$10
     sta res+3
   b1:
     lda a
@@ -514,7 +529,7 @@ div32u16u: {
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
     sta divr16u.dividend+1
-    lda #0
+    lda #<0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u
@@ -601,14 +616,14 @@ sin8s_gen: {
     .label x = 2
     .label i = $11
     jsr div16u
-    lda #0
+    lda #<0
     sta i
     sta i+1
     lda #<main.sintabb
     sta sintab
     lda #>main.sintabb
     sta sintab+1
-    lda #0
+    lda #<0
     sta x
     sta x+1
   // u[4.12]
@@ -618,6 +633,7 @@ sin8s_gen: {
     lda x+1
     sta sin8s.x+1
     jsr sin8s
+    tya
     ldy #0
     sta (sintab),y
     inc sintab
@@ -745,25 +761,26 @@ sin8s: {
     bcc b3
     dex
   b3:
+    txa
+    tay
     lda isUpper
     cmp #0
-    beq b14
+    beq b4
     txa
     eor #$ff
     clc
     adc #1
-    rts
-  b14:
-    txa
+    tay
+  b4:
     rts
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($1b) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($19) select)
 mulu8_sel: {
     .label _0 = $13
     .label _1 = $13
-    .label select = $1b
+    .label select = $19
     tya
     jsr mul8u
     ldy select
@@ -780,7 +797,7 @@ mulu8_sel: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $15
+    .label mb = $1a
     .label res = $13
     .label return = $13
     sta mb
@@ -822,7 +839,7 @@ div16u: {
     sta divr16u.dividend
     lda #>PI2_u4f12
     sta divr16u.dividend+1
-    lda #0
+    lda #<0
     sta divr16u.rem
     sta divr16u.rem+1
     jsr divr16u

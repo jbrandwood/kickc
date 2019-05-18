@@ -254,7 +254,7 @@ makecharset: {
     sta print_char_cursor
     lda #>print_line_cursor
     sta print_char_cursor+1
-    lda #0
+    lda #<0
     sta c
     sta c+1
   b1:

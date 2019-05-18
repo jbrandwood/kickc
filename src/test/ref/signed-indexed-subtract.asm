@@ -2,22 +2,25 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 2
+  .label print_line_cursor = 3
   .label print_char_cursor = 7
 main: {
-    ldy #0
+    .label i = 2
+    lda #0
+    sta i
   b1:
-    tya
+    lda i
     ldx #$80
     jsr sub
-    tya
+    lda i
     ldx #$40
     jsr sub
-    tya
+    lda i
     ldx #$40
     jsr sub
-    iny
-    cpy #9
+    inc i
+    lda #9
+    cmp i
     bne b1
     jsr print_cls
     lda #<$400
@@ -71,9 +74,9 @@ print_ln: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage(4) w)
+// print_sword(signed word zeropage(5) w)
 print_sword: {
-    .label w = 4
+    .label w = 5
     lda w+1
     bpl b1
     lda #'-'
@@ -92,19 +95,21 @@ print_sword: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage(5) w)
 print_word: {
-    lda print_sword.w+1
+    .label w = 5
+    lda w+1
     sta print_byte.b
     jsr print_byte
-    lda print_sword.w
+    lda w
     sta print_byte.b
     jsr print_byte
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(6) b)
+// print_byte(byte zeropage(2) b)
 print_byte: {
-    .label b = 6
+    .label b = 2
     lda b
     lsr
     lsr
@@ -133,7 +138,7 @@ print_char: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = 3
     lda #<$400
     sta sc
     lda #>$400
@@ -156,16 +161,20 @@ print_cls: {
 }
 // sub(byte register(A) idx, byte register(X) s)
 sub: {
+    .label _1 = 3
     asl
+    tay
+    txa
+    sta _1
+    lda #0
+    sta _1+1
+    lda words,y
     sec
-    stx $ff
-    tax
-    lda words,x
-    sbc $ff
-    sta words,x
-    bcs !+
-    dec words+1,x
-  !:
+    sbc _1
+    sta words,y
+    lda words+1,y
+    sbc _1+1
+    sta words+1,y
     rts
 }
   print_hextab: .text "0123456789abcdef"

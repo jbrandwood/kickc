@@ -84,7 +84,7 @@ bbegin:
   rts
 main: {
     .const toSpritePtr2_return = SIN_SPRITE/$40
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_SCREEN_1)/$40
+    .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
     .label xpos = 2
     .label ypos = 3

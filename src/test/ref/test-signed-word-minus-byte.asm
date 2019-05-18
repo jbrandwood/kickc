@@ -22,19 +22,33 @@ main: {
     lda #>$4d2
     sta w1+1
   b1:
+    lda #$5b
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
     sec
     lda w1
-    sbc #$5b
+    sbc $fe
     sta w2
     lda w1+1
-    sbc #0
+    sbc $ff
     sta w2+1
+    lda #$29
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
     sec
     lda w2
-    sbc #$29
+    sbc $fe
     sta w1
     lda w2+1
-    sbc #0
+    sbc $ff
     sta w1+1
     lda w1
     sta print_sword.w
@@ -102,11 +116,13 @@ print_sword: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage(6) w)
 print_word: {
-    lda print_sword.w+1
+    .label w = 6
+    lda w+1
     sta print_byte.b
     jsr print_byte
-    lda print_sword.w
+    lda w
     sta print_byte.b
     jsr print_byte
     rts

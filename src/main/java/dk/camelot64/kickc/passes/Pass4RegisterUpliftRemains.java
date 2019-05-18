@@ -18,12 +18,7 @@ public class Pass4RegisterUpliftRemains extends Pass2Base {
       LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       List<LiveRangeEquivalenceClass> equivalenceClasses = new ArrayList<>(equivalenceClassSet.getEquivalenceClasses());
       final VariableRegisterWeights registerWeights = getProgram().getVariableRegisterWeights();
-      Collections.sort(equivalenceClasses, new Comparator<LiveRangeEquivalenceClass>() {
-         @Override
-         public int compare(LiveRangeEquivalenceClass o1, LiveRangeEquivalenceClass o2) {
-            return Double.compare(registerWeights.getTotalWeight(o2), registerWeights.getTotalWeight(o1));
-         }
-      });
+      Collections.sort(equivalenceClasses, (o1, o2) -> Double.compare(registerWeights.getTotalWeight(o2), registerWeights.getTotalWeight(o1)));
 
       Set<String> unknownFragments = new LinkedHashSet<>();
 

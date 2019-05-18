@@ -27,14 +27,16 @@ main: {
     rts
 }
 anim: {
-    .label _4 = 7
-    .label _6 = 9
+    .label _4 = 5
+    .label _6 = 5
     .label _9 = 5
     .label _10 = 5
     .label _11 = 5
     .label _12 = 5
-    .label x = $b
-    .label y = $c
+    .label cos_a = $b
+    .label sin_a = $c
+    .label x = $d
+    .label y = $e
     .label xr = 7
     .label yr = 9
     .label xpos = 5
@@ -48,6 +50,11 @@ anim: {
     cmp RASTER
     bne b2
     inc BORDERCOL
+    ldy angle
+    lda COS,y
+    sta cos_a
+    lda SIN,y
+    sta sin_a
     lda #0
     sta sprite_msb
     sta i
@@ -58,27 +65,25 @@ anim: {
     // signed fixed[7.0]
     lda ys,y
     sta y
-    ldy angle
-    lda COS,y
+    lda cos_a
     jsr mulf8u_prepare
     ldy x
     jsr mulf8s_prepared
-    lda mulf8s_prepared.return
-    sta _4
-    lda mulf8s_prepared.return+1
-    sta _4+1
-    asl xr
-    rol xr+1
+    lda _4
+    asl
+    sta xr
+    lda _4+1
+    rol
+    sta xr+1
     ldy y
     jsr mulf8s_prepared
-    lda mulf8s_prepared.return
-    sta _6
-    lda mulf8s_prepared.return+1
-    sta _6+1
-    asl yr
-    rol yr+1
-    ldy angle
-    lda SIN,y
+    lda _6
+    asl
+    sta yr
+    lda _6+1
+    rol
+    sta yr+1
+    lda sin_a
     jsr mulf8u_prepare
     ldy y
     jsr mulf8s_prepared
@@ -104,18 +109,16 @@ anim: {
     adc _12+1
     sta yr+1
     lda xr+1
+    tax
+    clc
+    adc #<$18+$95
     sta xpos
+    txa
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta xpos+1
-    lda xpos
-    clc
-    adc #$18+$95
-    sta xpos
-    lda xpos+1
-    adc #0
+    adc #>$18+$95
     sta xpos+1
     lsr sprite_msb
     cmp #0
@@ -153,35 +156,44 @@ anim: {
 // mulf8s_prepared(signed byte register(Y) b)
 mulf8s_prepared: {
     .label memA = $fd
+    .label _8 = $f
+    .label _12 = $f
     .label m = 5
     .label return = 5
+    tya
     jsr mulf8u_prepared
     lda memA
     cmp #0
     bpl b1
     lda m+1
-    sty $ff
+    sta _8
+    tya
+    eor #$ff
     sec
-    sbc $ff
+    adc _8
     sta m+1
   b1:
     cpy #0
     bpl b2
     lda m+1
+    sta _12
+    lda memA
+    eor #$ff
     sec
-    sbc memA
+    adc _12
     sta m+1
   b2:
     rts
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8u_prepare(byte a)
+// mulf8u_prepared(byte register(A) b)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
     .label return = 5
-    sty memB
-    ldx memB
+    sta memB
+    tax
     sec
   sm1:
     lda mulf_sqr1_lo,x
@@ -218,7 +230,7 @@ init: {
     sta SPRITES_ENABLE
     ldx #0
   b1:
-    lda #$ff&SPRITE/$40
+    lda #SPRITE/$40
     sta sprites_ptr,x
     lda #GREEN
     sta SPRITES_COLS,x
@@ -246,7 +258,7 @@ mulf_init: {
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #0
+    lda #<0
     sta sqr
     sta sqr+1
     tax

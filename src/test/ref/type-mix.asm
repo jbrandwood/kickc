@@ -10,13 +10,20 @@ main: {
     sta w
     sta w+1
   b1:
+    lda #$c
+    sta $fe
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta $ff
     sec
     lda w
-    sbc #$c
+    sbc $fe
     sta w
-    bcs !+
-    dec w+1
-  !:
+    lda w+1
+    sbc $ff
+    sta w+1
     lda w
     sta SCREEN,x
     inx

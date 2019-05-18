@@ -312,10 +312,11 @@ mul8u: {
     .label mb = $b
     .label res = 9
     .label return = 9
-    lda #b
+    lda #<b
     sta mb
-    lda #0
+    lda #>b
     sta mb+1
+    lda #<0
     sta res
     sta res+1
   b1:

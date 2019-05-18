@@ -7,7 +7,6 @@ main: {
     .label screen = $400
     // Increment on a const named pointer
     .label BGCOL = $d020
-    .label sc2 = screen+$51
     ldx #0
   // RValue pointer expression (variable)
   b1:
@@ -17,7 +16,7 @@ main: {
     cpx #$b
     bne b1
     lda screen+$79
-    sta sc2
+    sta screen+$51
     // LValue pointer expression (constant - directly)
     lda screen+$7a
     sta screen+$52

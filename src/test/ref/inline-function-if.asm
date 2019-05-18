@@ -6,8 +6,8 @@
 main: {
     .const toUpper1_ch = 'c'
     .const toUpper2_ch = 'm'
-    .const toUpper1_res = toUpper1_ch+$40
-    lda #toUpper1_res
+    .const toUpper1_return = toUpper1_ch+$40
+    lda #toUpper1_return
     sta screen
     lda #toUpper2_ch
     sta screen+1

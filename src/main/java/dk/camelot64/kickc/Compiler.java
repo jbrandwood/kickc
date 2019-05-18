@@ -269,8 +269,12 @@ public class Compiler {
       optimizations.add(new Pass2SizeOfSimplification(program));
       optimizations.add(new Pass2InlineCast(program));
       optimizations.add(new PassNCastSimplification(program));
+      optimizations.add(new PassNStatementIndices(program));
+      optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2InlineDerefIdx(program));
       optimizations.add(new Pass2DeInlineWordDerefIdx(program));
+      optimizations.add(new PassNSimplifyConstantZero(program));
+      optimizations.add(new PassNSimplifyExpressionWithZero(program));
       pass2Execute(optimizations);
    }
 
@@ -319,6 +323,9 @@ public class Compiler {
       constantOptimizations.add(new Pass2ConstantIfs(program));
       constantOptimizations.add(new Pass2InlineDerefIdx(program));
       constantOptimizations.add(new PassNEliminateUnusedVars(program, true));
+      constantOptimizations.add(new PassNSimplifyConstantZero(program));
+      constantOptimizations.add(new PassNSimplifyExpressionWithZero(program));
+
 
       pass2Execute(constantOptimizations);
 

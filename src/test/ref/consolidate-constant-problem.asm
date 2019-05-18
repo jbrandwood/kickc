@@ -6,7 +6,7 @@ main: {
     lda #0
     sta screen+$27
     sta screen+$26
-    sta $28*1+screen+$27
-    sta screen+$26+$28*1
+    sta screen+$28*1+$27
+    sta screen+$28*1+$26
     rts
 }

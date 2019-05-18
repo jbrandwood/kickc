@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -103,7 +104,13 @@ public class SymbolTypeConversion {
 
          // Find the cast type if possible
          if(numberVal instanceof ConstantValue) {
-            ConstantLiteral constantLiteral = ((ConstantValue) numberVal).calculateLiteral(symbols);
+            ConstantLiteral constantLiteral;
+            try {
+               constantLiteral = ((ConstantValue) numberVal).calculateLiteral(symbols);
+            } catch( ConstantNotLiteral e) {
+               // Postpone til later!
+               return null;
+            }
             if(constantLiteral instanceof ConstantInteger) {
                ConstantInteger constantInteger = (ConstantInteger) constantLiteral;
                if(SymbolType.NUMBER.equals(constantInteger.getType())) {
@@ -161,7 +168,11 @@ public class SymbolTypeConversion {
       if(lValueType.equals(SymbolType.SDWORD) && rValueType.equals(SymbolType.SWORD))
          return true;
       if(SymbolType.NUMBER.equals(rValueType) && SymbolType.isInteger(lValueType)) {
-         // L-value is still a number - constants are probably not done being identified & typed
+         // R-value is still a number - constants are probably not done being identified & typed
+         return true;
+      }
+      if(SymbolType.NUMBER.equals(lValueType) && SymbolType.isInteger(rValueType)) {
+         // R-value is still a number - constants are probably not done being identified & typed
          return true;
       }
       if(SymbolType.STRING.equals(rValueType) && lValueType instanceof SymbolTypePointer && ((SymbolTypePointer) lValueType).getElementType().equals(SymbolType.BYTE)) {

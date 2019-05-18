@@ -80,35 +80,38 @@ bitmap_plot: {
     .label _1 = 7
     .label x = 3
     .label plotter = 5
-    .label _3 = 5
+    .label plotter_1 = 7
+    .label _4 = 5
     lda bitmap_plot_yhi,x
-    sta _3+1
+    sta _4+1
     lda bitmap_plot_ylo,x
-    sta _3
+    sta _4
     lda x
     and #<$fff8
     sta _1
     lda x+1
     and #>$fff8
     sta _1+1
-    lda plotter
+    lda plotter_1
     clc
-    adc _1
-    sta plotter
-    lda plotter+1
-    adc _1+1
-    sta plotter+1
+    adc plotter
+    sta plotter_1
+    lda plotter_1+1
+    adc plotter+1
+    sta plotter_1+1
     lda x
     tay
     lda bitmap_plot_bit,y
     ldy #0
-    ora (plotter),y
-    sta (plotter),y
+    ora (plotter_1),y
+    sta (plotter_1),y
     rts
 }
 // Initialize the points to be animated
 // point_init(byte zeropage(2) point_idx)
 point_init: {
+    .label _0 = 9
+    .label _1 = 3
     .label _3 = 7
     .label _4 = 3
     .label _9 = 3
@@ -120,20 +123,28 @@ point_init: {
     .label abs16s1_return = 3
     .label abs16s2__2 = 5
     .label abs16s2_return = 5
-    .label x_stepf = 5
+    .label x_stepf = 3
     .label x_diff = 9
     lda point_idx
     asl
-    tax
+    tay
+    lda x_end,y
+    sta _0
+    lda x_end+1,y
+    sta _0+1
     lda point_idx
     asl
     tay
+    lda x_start,y
+    sta _1
+    lda x_start+1,y
+    sta _1+1
+    lda x_diff
     sec
-    lda x_end,x
-    sbc x_start,y
+    sbc _1
     sta x_diff
-    lda x_end+1,x
-    sbc x_start+1,y
+    lda x_diff+1
+    sbc _1+1
     sta x_diff+1
     ldy point_idx
     lda y_end,y
@@ -229,8 +240,8 @@ point_init: {
     lda x_diff+1
     bmi b4
     // x add = 1.0
-    ldy point_idx
     lda #$10
+    ldy point_idx
     sta x_add,y
   b5:
     jsr divr16s
@@ -278,23 +289,18 @@ point_init: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // divr16s(signed word zeropage(9) divisor, signed word zeropage(7) rem)
 divr16s: {
-    .const dividend = 0
     .label _10 = 7
     .label _13 = 9
-    .label resultu = 5
-    .label return = 5
+    .label _18 = 3
+    .label remu = 7
+    .label divisoru = 9
+    .label resultu = 3
+    .label return = 3
     .label divisor = 9
     .label rem = 7
-    .label dividendu = 3
-    .label divisoru = 9
-    .label remu = 7
     lda rem+1
     bmi b1
-    lda #dividend
-    sta dividendu
-    lda #0
-    sta dividendu+1
-    tay
+    ldy #0
   b2:
     lda divisor+1
     bmi b3
@@ -337,10 +343,6 @@ divr16s: {
     eor #$ff
     adc #0
     sta _10+1
-    lda #-dividend
-    sta dividendu
-    lda #0
-    sta dividendu+1
     ldy #1
     jmp b2
 }
@@ -348,17 +350,19 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(3) dividend, word zeropage(9) divisor, word zeropage(7) rem)
+// divr16u(word zeropage(5) dividend, word zeropage(9) divisor, word zeropage(7) rem)
 divr16u: {
     .label rem = 7
-    .label dividend = 3
-    .label quotient = 5
-    .label return = 5
+    .label dividend = 5
+    .label quotient = 3
+    .label return = 3
     .label divisor = 9
     ldx #0
     txa
     sta quotient
     sta quotient+1
+    sta dividend
+    sta dividend+1
   b1:
     asl rem
     rol rem+1
@@ -434,11 +438,11 @@ screen_fill: {
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
-    .label _3 = 3
+    .label _4 = 3
     lda bitmap_plot_ylo
-    sta _3
+    sta _4
     lda bitmap_plot_yhi
-    sta _3+1
+    sta _4+1
     lda #0
     sta y
   b1:

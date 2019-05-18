@@ -340,7 +340,9 @@ print_sword: {
 // mulf16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mulf16s: {
     .label _9 = 9
+    .label _10 = $15
     .label _13 = 9
+    .label _14 = $15
     .label _16 = 9
     .label _17 = 9
     .label m = $11
@@ -362,12 +364,16 @@ mulf16s: {
     sta _9
     lda m+3
     sta _9+1
+    lda b
+    sta _10
+    lda b+1
+    sta _10+1
     lda _16
     sec
-    sbc b
+    sbc _10
     sta _16
     lda _16+1
-    sbc b+1
+    sbc _10+1
     sta _16+1
     lda _16
     sta m+2
@@ -380,12 +386,16 @@ mulf16s: {
     sta _13
     lda m+3
     sta _13+1
+    lda a
+    sta _14
+    lda a+1
+    sta _14+1
     lda _17
     sec
-    sbc a
+    sbc _14
     sta _17
     lda _17+1
-    sbc a+1
+    sbc _14+1
     sta _17+1
     lda _17
     sta m+2
@@ -519,21 +529,30 @@ mulf16u: {
 // mul16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mul16s: {
     .label _9 = 9
+    .label _10 = $15
     .label _13 = 9
+    .label _14 = $15
     .label _16 = 9
     .label _17 = 9
     .label m = $19
     .label return = $19
     .label a = 3
     .label b = 5
-    lda b
-    sta mul16u.b
-    lda b+1
-    sta mul16u.b+1
     lda a
     sta mul16u.a
     lda a+1
     sta mul16u.a+1
+    lda b
+    sta mul16u.b
+    lda b+1
+    sta mul16u.b+1
+    lda mul16u.b
+    sta mul16u.mb
+    lda mul16u.b+1
+    sta mul16u.mb+1
+    lda #0
+    sta mul16u.mb+2
+    sta mul16u.mb+3
     jsr mul16u
     lda a+1
     bpl b1
@@ -541,12 +560,16 @@ mul16s: {
     sta _9
     lda m+3
     sta _9+1
+    lda b
+    sta _10
+    lda b+1
+    sta _10+1
     lda _16
     sec
-    sbc b
+    sbc _10
     sta _16
     lda _16+1
-    sbc b+1
+    sbc _10+1
     sta _16+1
     lda _16
     sta m+2
@@ -559,12 +582,16 @@ mul16s: {
     sta _13
     lda m+3
     sta _13+1
+    lda a
+    sta _14
+    lda a+1
+    sta _14+1
     lda _17
     sec
-    sbc a
+    sbc _14
     sta _17
     lda _17+1
-    sbc a+1
+    sbc _14+1
     sta _17+1
     lda _17
     sta m+2
@@ -574,23 +601,20 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage(9) a, word zeropage($17) b)
+// mul16u(word zeropage(9) a, word zeropage($15) b)
 mul16u: {
     .label mb = $11
     .label a = 9
     .label res = $19
+    .label b = $15
     .label return = $19
-    .label b = $17
-    lda b
-    sta mb
-    lda b+1
-    sta mb+1
-    lda #0
-    sta mb+2
-    sta mb+3
+    .label b_1 = $17
+    lda #<0
     sta res
     sta res+1
+    lda #<0>>$10
     sta res+2
+    lda #>0>>$10
     sta res+3
   b1:
     lda a
@@ -643,12 +667,14 @@ muls16s: {
     lda a
     beq b5
   !:
-    lda #0
+    lda #<0
     sta j
     sta j+1
     sta m
     sta m+1
+    lda #<0>>$10
     sta m+2
+    lda #>0>>$10
     sta m+3
   b3:
     lda b+1
@@ -682,19 +708,23 @@ muls16s: {
     bne b3
     rts
   b5:
-    lda #0
+    lda #<0
     sta return
     sta return+1
+    lda #<0>>$10
     sta return+2
+    lda #>0>>$10
     sta return+3
     rts
   b6:
-    lda #0
+    lda #<0
     sta i
     sta i+1
     sta m
     sta m+1
+    lda #<0>>$10
     sta m+2
+    lda #>0>>$10
     sta m+3
   b4:
     lda b+1
@@ -774,6 +804,13 @@ mul16u_compare: {
     sta mul16u.a
     lda a+1
     sta mul16u.a+1
+    lda mul16u.b_1
+    sta mul16u.mb
+    lda mul16u.b_1+1
+    sta mul16u.mb+1
+    lda #0
+    sta mul16u.mb+2
+    sta mul16u.mb+3
     jsr mul16u
     jsr mulf16u
     lda ms
@@ -822,7 +859,9 @@ mul16u_compare: {
   b5:
     iny
     cpy #$10
-    bne b2
+    beq !b2+
+    jmp b2
+  !b2:
     inc i
     lda #$10
     cmp i
@@ -926,12 +965,14 @@ muls16u: {
     lda a+1
     beq b3
   !:
-    lda #0
+    lda #<0
     sta i
     sta i+1
     sta m
     sta m+1
+    lda #<0>>$10
     sta m+2
+    lda #>0>>$10
     sta m+3
   b2:
     lda m
@@ -959,10 +1000,12 @@ muls16u: {
     bne b2
     rts
   b3:
-    lda #0
+    lda #<0
     sta return
     sta return+1
+    lda #<0>>$10
     sta return+2
+    lda #>0>>$10
     sta return+3
     rts
 }
@@ -985,7 +1028,7 @@ mulf_init: {
     sta sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta sqr1_lo+1
-    lda #0
+    lda #<0
     sta sqr
     sta sqr+1
     tax

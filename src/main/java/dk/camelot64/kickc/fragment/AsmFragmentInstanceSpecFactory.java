@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.fragment;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ControlFlowGraph;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.Registers;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -17,6 +14,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
+import java.lang.InternalError;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -242,17 +240,32 @@ public class AsmFragmentInstanceSpecFactory {
          if(castType == null) {
             SymbolType toType = castVal.getToType();
             // If value literal not matching cast type then add expression code to transform it into the value space ( eg. value & 0xff )
-            ConstantLiteral constantLiteral = val.calculateLiteral(program.getScope());
-            if(constantLiteral instanceof ConstantInteger) {
-               if(toType instanceof SymbolTypeIntegerFixed) {
-                  if(!((SymbolTypeIntegerFixed) toType).contains(((ConstantInteger) constantLiteral).getValue())) {
-                     if(toType.getSizeBytes() == 1) {
-                        val = new ConstantBinary(new ConstantInteger(0xffL, SymbolType.BYTE), Operators.BOOL_AND, val);
-                     } else if(toType.getSizeBytes() == 2) {
-                        val = new ConstantBinary(new ConstantInteger(0xffffL, SymbolType.WORD), Operators.BOOL_AND, val);
-                     } else {
-                        throw new InternalError("Not implemented!");
-                     }
+
+            if(toType instanceof SymbolTypeIntegerFixed) {
+               SymbolTypeIntegerFixed integerFixed = (SymbolTypeIntegerFixed) toType;
+               ConstantLiteral constantLiteral;
+               Long integerValue;
+               try {
+                  constantLiteral = val.calculateLiteral(program.getScope());
+                  if(constantLiteral instanceof ConstantInteger) {
+                     integerValue = ((ConstantInteger) constantLiteral).getValue();
+                  } else if(constantLiteral instanceof ConstantPointer) {
+                     integerValue = ((ConstantPointer) constantLiteral).getValue();
+                  } else {
+                     throw new InternalError("Not implemented "+constantLiteral);
+                  }
+               } catch (ConstantNotLiteral e) {
+                  // Assume it is a word
+                  integerValue = 0xffffL;
+               }
+
+               if(!integerFixed.contains(integerValue)) {
+                  if(toType.getSizeBytes() == 1) {
+                     val = new ConstantBinary(new ConstantInteger(0xffL, SymbolType.BYTE), Operators.BOOL_AND, val);
+                  } else if(toType.getSizeBytes() == 2) {
+                     val = new ConstantBinary(new ConstantInteger(0xffffL, SymbolType.WORD), Operators.BOOL_AND, val);
+                  } else {
+                     throw new InternalError("Not implemented "+toType);
                   }
                }
             }

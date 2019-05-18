@@ -10,11 +10,13 @@
   .const TYPEID_SIGNED_DWORD = 6
   .const RED = 2
   .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
 main: {
     .label s = 2
-    lda #<$400
+    lda #<SCREEN
     sta s
-    lda #>$400
+    lda #>SCREEN
     sta s+1
   b1:
     lda #' '
@@ -25,11 +27,11 @@ main: {
     inc s+1
   !:
     lda s+1
-    cmp #>$400+$3e8
+    cmp #>SCREEN+$3e8
     bcc b1
     bne !+
     lda s
-    cmp #<$400+$3e8
+    cmp #<SCREEN+$3e8
     bcc b1
   !:
     jsr testSimpleTypes
@@ -109,14 +111,14 @@ assertType: {
     cmp t2
     beq b1
     lda #RED
-    sta $d800,x
+    sta COLS,x
   b2:
     tya
-    sta $400,x
+    sta SCREEN,x
     inx
     rts
   b1:
     lda #GREEN
-    sta $d800,x
+    sta COLS,x
     jmp b2
 }

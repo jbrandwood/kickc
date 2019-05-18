@@ -187,6 +187,7 @@ bitmap_plot: {
     .label _0 = 9
     .label plotter_x = 9
     .label plotter_y = $b
+    .label plotter = 9
     lda bitmap_plot_xhi,x
     sta plotter_x+1
     lda bitmap_plot_xlo,x
@@ -204,8 +205,8 @@ bitmap_plot: {
     sta _0+1
     lda bitmap_plot_bit,x
     ldy #0
-    ora (_0),y
-    sta (_0),y
+    ora (plotter),y
+    sta (plotter),y
     rts
 }
 // bitmap_line_ydxi(byte zeropage(7) y, byte register(X) x, byte zeropage(6) y1, byte zeropage(3) yd, byte zeropage(4) xd)
@@ -335,11 +336,11 @@ init_screen: {
 bitmap_clear: {
     .label bitmap = 9
     .label y = 2
-    .label _3 = 9
+    .label _4 = 9
     lda bitmap_plot_xlo
-    sta _3
+    sta _4
     lda bitmap_plot_xhi
-    sta _3+1
+    sta _4+1
     lda #0
     sta y
   b1:

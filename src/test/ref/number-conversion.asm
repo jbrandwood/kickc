@@ -11,6 +11,8 @@
   .const TYPEID_DWORD = 5
   .const RED = 2
   .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
 main: {
     ldx #0
     lda #TYPEID_SIGNED_BYTE
@@ -167,14 +169,14 @@ assertType: {
     cmp t2
     beq b1
     lda #RED
-    sta $d800,x
+    sta COLS,x
   b2:
     tya
-    sta $400,x
+    sta SCREEN,x
     inx
     rts
   b1:
     lda #GREEN
-    sta $d800,x
+    sta COLS,x
     jmp b2
 }

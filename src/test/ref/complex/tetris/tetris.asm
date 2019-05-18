@@ -205,18 +205,20 @@ main: {
     ldx play_spawn_current.piece_idx
     lda #$20
     jsr render_next
-    ldy play_spawn_current._7
-    lda PIECES,y
+    lda current_piece_gfx
     sta current_piece
-    lda PIECES+1,y
+    lda current_piece_gfx+1
     sta current_piece+1
     lda #0
     sta level_bcd
     sta level
     sta score_bcd
     sta score_bcd+1
+    lda #<0>>$10
     sta score_bcd+2
+    lda #>0>>$10
     sta score_bcd+3
+    lda #<0
     sta lines_bcd
     sta lines_bcd+1
     sta current_movedown_counter
@@ -308,16 +310,16 @@ render_score: {
     jsr render_bcd
     ldx score_bytes+1
     ldy #0
-    lda #score_offset+2
+    lda #<score_offset+2
     sta render_bcd.offset
-    tya
+    lda #>score_offset+2
     sta render_bcd.offset+1
     jsr render_bcd
     ldx score_bytes
     ldy #0
-    lda #score_offset+4
+    lda #<score_offset+4
     sta render_bcd.offset
-    tya
+    lda #>score_offset+4
     sta render_bcd.offset+1
     jsr render_bcd
     lda lines_bcd+1
@@ -331,9 +333,9 @@ render_score: {
     lda lines_bcd
     tax
     ldy #0
-    lda #lines_offset+1
+    lda #<lines_offset+1
     sta render_bcd.offset
-    tya
+    lda #>lines_offset+1
     sta render_bcd.offset+1
     jsr render_bcd
     ldx level_bcd
@@ -390,8 +392,8 @@ render_bcd: {
 // Render the next tetromino in the "next" area
 render_next: {
     .const next_area_offset = $28*$c+$18+4
-    .label next_piece_char = $a
     .label next_piece_gfx = 5
+    .label next_piece_char = $a
     .label screen_next_area = 7
     .label l = 9
     cmp #0
@@ -409,13 +411,14 @@ render_next: {
   b1:
     txa
     asl
+    // Render the next piece
     tay
-    lda PIECES_NEXT_CHARS,x
-    sta next_piece_char
     lda PIECES,y
     sta next_piece_gfx
     lda PIECES+1,y
     sta next_piece_gfx+1
+    lda PIECES_NEXT_CHARS,x
+    sta next_piece_char
     lda #0
     sta l
   b3:
@@ -816,10 +819,9 @@ play_move_down: {
     tax
     jsr play_update_score
     jsr play_spawn_current
-    ldy play_spawn_current._7
-    lda PIECES,y
+    lda current_piece_gfx
     sta current_piece
-    lda PIECES+1,y
+    lda current_piece_gfx+1
     sta current_piece+1
     lda #0
     sta current_orientation
@@ -838,20 +840,18 @@ play_move_down: {
 // Spawn a new piece
 // Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
-    .label _7 = 4
     .label piece_idx = $21
     // Move next piece into current
     ldx next_piece_idx
     txa
     asl
-    sta _7
-    lda PIECES_CHARS,x
-    sta current_piece_char
-    ldy _7
+    tay
     lda PIECES,y
     sta current_piece_gfx
     lda PIECES+1,y
     sta current_piece_gfx+1
+    lda PIECES_CHARS,x
+    sta current_piece_char
     lda PIECES_START_X,x
     sta current_xpos
     lda PIECES_START_Y,x
@@ -860,9 +860,9 @@ play_spawn_current: {
     sta play_collision.xpos
     lda current_ypos
     sta play_collision.ypos
-    lda PIECES,y
+    lda current_piece_gfx
     sta current_piece_104
-    lda PIECES+1,y
+    lda current_piece_gfx+1
     sta current_piece_104+1
     ldx #0
     jsr play_collision
@@ -1378,7 +1378,7 @@ sprites_init: {
 }
 // Initialize rendering
 render_init: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)/$40
+    .const vicSelectGfxBank1_toDd001_return = 3
     .label li_1 = 5
     .label li_2 = 7
     lda #3

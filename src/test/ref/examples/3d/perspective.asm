@@ -32,8 +32,8 @@ main: {
     rts
 }
 do_perspective: {
-    .label y = -$47
     .label x = $39
+    .label y = -$47
     .label z = $36
     lda #<$400
     sta print_char_cursor
@@ -240,9 +240,9 @@ mulf_init: {
     .label val = 6
     .label sqr = 2
     .label add = 4
-    lda #1
+    lda #<1
     sta add
-    lda #0
+    lda #>1
     sta add+1
     tax
     sta sqr

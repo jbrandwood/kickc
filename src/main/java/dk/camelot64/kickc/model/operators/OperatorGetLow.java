@@ -26,13 +26,17 @@ public class OperatorGetLow extends OperatorUnary {
             return new ConstantInteger(operandInt.getInteger()&0xff);
          } else if(SymbolType.DWORD.equals(operandInt.getType()) || SymbolType.SDWORD.equals(operandInt.getType())) {
             return new ConstantInteger(operandInt.getInteger()&0xffff);
+         } else if(SymbolType.BYTE.equals(operandInt.getType()) || SymbolType.SBYTE.equals(operandInt.getType())) {
+            return operandInt;
+         } else if(SymbolType.NUMBER.equals(operandInt.getType())) {
+            throw new ConstantNotLiteral("Operand not resolved "+operand);
          }
       } else if(operand instanceof ConstantPointer) {
          return new ConstantInteger(((ConstantPointer) operand).getLocation()&0xff);
       } else if(operand instanceof ConstantString) {
          throw new ConstantNotLiteral("address of string is not literal");
       }
-      throw new CompileError("Calculation not implemented " + getOperator() + " " + operand );
+      throw new ConstantNotLiteral("Calculation not implemented " + getOperator() + " " + operand );
    }
 
    @Override
@@ -41,6 +45,8 @@ public class OperatorGetLow extends OperatorUnary {
          return SymbolType.BYTE;
       } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
          return SymbolType.WORD;
+      } else if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
+         return SymbolType.BYTE;
       } else if(SymbolType.STRING.equals(operandType)) {
          return SymbolType.BYTE;
       } else if(SymbolType.NUMBER.equals(operandType)) {

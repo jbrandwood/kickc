@@ -228,9 +228,9 @@ gen_sintab: {
     lda #>f_amp
     sta setMEMtoFAC.mem+1
     jsr setMEMtoFAC
-    lda #2
+    lda #<2
     sta setFAC.w
-    lda #0
+    lda #>2
     sta setFAC.w+1
     jsr setFAC
     lda #<f_amp
@@ -596,7 +596,7 @@ place_sprites: {
     sta spr_x
     lda #0
     sta j
-    lda #$ff&sprites/$40
+    lda #sprites/$40
     sta spr_id
   b1:
     lda spr_id

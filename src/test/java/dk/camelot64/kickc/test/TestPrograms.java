@@ -64,6 +64,11 @@ public class TestPrograms {
     */
 
    @Test
+   public void testGfxBankOptimization() throws IOException, URISyntaxException {
+      compileAndCompare("gfxbank");
+   }
+
+   @Test
    public void testDoubleIndexingArrays() throws IOException, URISyntaxException {
       compileAndCompare("double-indexing-arrays");
    }
@@ -1743,7 +1748,7 @@ public class TestPrograms {
 
    @Test
    public void testForClassicMin() throws IOException, URISyntaxException {
-      compileAndCompare("forclassicmin", log());
+      compileAndCompare("forclassicmin");
    }
 
    @Test

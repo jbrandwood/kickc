@@ -730,10 +730,11 @@ mul8u: {
     .label mb = 2
     .label res = 8
     .label return = 8
-    lda #SIZEOF_ENTRY
+    lda #<SIZEOF_ENTRY
     sta mb
-    lda #0
+    lda #>SIZEOF_ENTRY
     sta mb+1
+    lda #<0
     sta res
     sta res+1
   b1:

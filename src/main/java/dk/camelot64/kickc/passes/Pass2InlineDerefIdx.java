@@ -12,6 +12,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Identify derefs of pointers that are defined as pointer + value - and inline them as derefidx instead */
@@ -71,6 +72,11 @@ public class Pass2InlineDerefIdx extends Pass2SsaOptimization {
 
 
    public RValue attemptInlineDeref(StatementAssignment derefAssignment) {
+      VariableRef derefVar = (VariableRef) derefAssignment.getlValue();
+      Collection<Integer> varUseStatements = getProgram().getVariableReferenceInfos().getVarUseStatements(derefVar);
+      if(varUseStatements.size()>2) {
+         return null;
+      }
       if(Operators.PLUS.equals(derefAssignment.getOperator())) {
          SymbolType derefLeftType = SymbolTypeInference.inferType(getScope(), derefAssignment.getrValue1());
          if(derefLeftType instanceof SymbolTypePointer) {

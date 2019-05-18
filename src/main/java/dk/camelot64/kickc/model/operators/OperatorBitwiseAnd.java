@@ -31,7 +31,10 @@ public class OperatorBitwiseAnd extends OperatorBinary {
       }
       // Handle numeric types
       if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {
-         return SymbolTypeConversion.convertedMathType((SymbolTypeInteger) type1, (SymbolTypeInteger) type2);
+         if(type1.getSizeBytes()<type2.getSizeBytes())
+            return type1;
+         else
+            return type2;
       }
 
       throw new CompileError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);

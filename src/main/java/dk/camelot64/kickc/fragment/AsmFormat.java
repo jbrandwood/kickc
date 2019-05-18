@@ -231,7 +231,7 @@ public class AsmFormat {
             return SHORT_ASM_NUMBERS[number.intValue()];
          } else {
             if(number.longValue()<0) {
-               return String.format("-$%x", -number.longValue());
+               return "-"+getAsmNumber(-number.longValue());
             } else {
                return String.format("$%x", number.longValue());
             }

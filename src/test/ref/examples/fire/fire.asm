@@ -307,7 +307,7 @@ sid_rnd_init: {
 fillscreen: {
     .label screen = 2
     .label i = 4
-    lda #0
+    lda #<0
     sta i
     sta i+1
   b1:

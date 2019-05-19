@@ -13,12 +13,19 @@ void main() {
         } while (rst!=0x30);
         unsigned char *screen = 0x0400;
         *bordercol = 1;
-        utoa(00000, screen); (*bordercol)++; screen += 40;
-        utoa(01234, screen); (*bordercol)++; screen += 40;
-        utoa(05678, screen); (*bordercol)++; screen += 40;
-        utoa(09999, screen); (*bordercol)++; screen += 40;
-        utoa(59999, screen);
+        unsigned char time_start = *raster;
+        utoa10b(00000, screen); (*bordercol)++; screen += 40;
+        utoa10b(01234, screen); (*bordercol)++; screen += 40;
+        utoa10b(05678, screen); (*bordercol)++; screen += 40;
+        utoa10b(09999, screen); (*bordercol)++; screen += 40;
+        utoa10b(58888, screen);
+        unsigned char time_end = *raster;
         *bordercol = 0;
+        unsigned char time = time_end - time_start;
+        utoa10b((unsigned int)time, screen+80);
+        byte[] msg = "raster lines";
+        for( byte i=0; msg[i]!=0; i++ ) (screen+80+3)[i] = msg[i];
+        //for( byte* m="lines", s=screen+80+6 ;*m!=0;m++,s++) *s = *m;
     }
 
 }
@@ -28,29 +35,70 @@ void cls() {
     for( unsigned char *sc: screen..screen+999) *sc=' ';
 }
 
-unsigned char[] DIGITS = "0123456789abcdef";
 const unsigned char RADIX_BINARY = 2;
 const unsigned char RADIX_OCTAL = 8;
 const unsigned char RADIX_DECIMAL = 10;
 const unsigned char RADIX_HEX = 16;
 
-
-
 // simple 'utoa' without using multiply or divide
-unsigned int append(unsigned char *dst, unsigned int value, unsigned int sub){
-    *dst = '0';
+unsigned int utoa_digit(unsigned char *dst, unsigned int value, unsigned int sub){
+    unsigned char digit = 0;
     unsigned int sub3 = sub*2+sub;
-    while (value >= sub3){ *dst += 3; value -= sub3; }
-    while (value >= sub){ ++*dst; value -= sub; }
+    while (value >= sub3){ digit += 3; value -= sub3; }
+    while (value >= sub){ ++digit; value -= sub; }
+    *dst = DIGITS[digit];
     return value;
 }
 
 void utoa(unsigned int value, unsigned char *dst){
     unsigned char bStarted = 0;
-    if (bStarted == 1 || value >= 10000){ value = append(dst++, value, 10000); bStarted = 1; }
-    if (bStarted == 1 || value >= 1000){ value = append(dst++, value, 1000); bStarted = 1; }
-    if (bStarted == 1 || value >= 100){ value = append(dst++, value, 100); bStarted = 1; }
-    if (bStarted == 1 || value >= 10){ value = append(dst++, value, 10); bStarted = 1; }
+    if (bStarted == 1 || value >= 10000){ value = utoa_digit(dst++, value, 10000); bStarted = 1; }
+    if (bStarted == 1 || value >= 1000){ value = utoa_digit(dst++, value, 1000); bStarted = 1; }
+    if (bStarted == 1 || value >= 100){ value = utoa_digit(dst++, value, 100); bStarted = 1; }
+    if (bStarted == 1 || value >= 10){ value = utoa_digit(dst++, value, 10); bStarted = 1; }
     *dst++ = '0' + (unsigned char) value;
+    //*dst = 0;
+}
+
+unsigned char[] DIGITS = "0123456789abcdef";
+unsigned int[] SUB3 = { 30000, 3000, 300, 30 };
+unsigned int[] SUB1 = { 10000, 1000, 100, 10 };
+
+// Simple decimal utoa() without using multiply or divide
+void utoa10(unsigned int value, unsigned char* dst) {
+    unsigned char bStarted = 0;
+    for( unsigned char i: 0..3) {
+        unsigned char digit = 0;
+        unsigned int sub1 = SUB1[i];
+        if(value>=sub1) {
+            unsigned int sub3 = SUB3[i];
+            while(value>=sub3) { digit += 3; value -= sub3;  bStarted = 1; }
+            while(value>=sub1) { digit += 1; value -= sub1;  bStarted = 1; }
+        }
+        if(bStarted!=0) {
+            *dst++ = DIGITS[digit];
+        }
+    }
+    *dst++ = DIGITS[(unsigned char) value];
+    //*dst = 0;
+}
+
+unsigned int[] SUB = { 30000, 10000, 3000, 1000, 300, 100, 30, 10 };
+unsigned char[] VAL = { 3, 1, 3, 1, 3, 1, 3, 1 };
+
+// Decimal utoa() without using multiply or divide
+void utoa10b(unsigned int value, unsigned char* dst) {
+    unsigned char bStarted = 0;
+    unsigned char digit = 0;
+    for( unsigned char i: 0..7) {
+        while(value>=SUB[i]) { digit += VAL[i]; value -= SUB[i];  bStarted = 1; }
+        if((i&1)!=0) {
+            if(bStarted!=0) {
+                *dst++ = DIGITS[digit];
+            }
+            digit = 0;
+        }
+    }
+    *dst++ = DIGITS[(unsigned char) value];
     *dst = 0;
 }

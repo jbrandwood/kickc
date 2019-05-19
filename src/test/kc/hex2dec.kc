@@ -1,0 +1,56 @@
+// Testing hex to decimal conversion
+
+const unsigned char *control = 0xd011;
+const unsigned char *raster = 0xd012;
+const unsigned char *bordercol = 0xd020;
+
+void main() {
+    asm { sei }
+    cls();
+    while(true) {
+        do {
+            unsigned char rst = (*control&0x80)|(*raster>>1);
+        } while (rst!=0x30);
+        unsigned char *screen = 0x0400;
+        *bordercol = 1;
+        utoa(00000, screen); (*bordercol)++; screen += 40;
+        utoa(01234, screen); (*bordercol)++; screen += 40;
+        utoa(05678, screen); (*bordercol)++; screen += 40;
+        utoa(09999, screen); (*bordercol)++; screen += 40;
+        utoa(59999, screen);
+        *bordercol = 0;
+    }
+
+}
+
+void cls() {
+    unsigned char *screen = 0x0400;
+    for( unsigned char *sc: screen..screen+999) *sc=' ';
+}
+
+unsigned char[] DIGITS = "0123456789abcdef";
+const unsigned char RADIX_BINARY = 2;
+const unsigned char RADIX_OCTAL = 8;
+const unsigned char RADIX_DECIMAL = 10;
+const unsigned char RADIX_HEX = 16;
+
+
+
+// simple 'utoa' without using multiply or divide
+unsigned int append(unsigned char *dst, unsigned int value, unsigned int sub){
+    *dst = '0';
+    unsigned int sub3 = sub*2+sub;
+    while (value >= sub3){ *dst += 3; value -= sub3; }
+    while (value >= sub){ ++*dst; value -= sub; }
+    return value;
+}
+
+void utoa(unsigned int value, unsigned char *dst){
+    unsigned char bStarted = 0;
+    if (bStarted == 1 || value >= 10000){ value = append(dst++, value, 10000); bStarted = 1; }
+    if (bStarted == 1 || value >= 1000){ value = append(dst++, value, 1000); bStarted = 1; }
+    if (bStarted == 1 || value >= 100){ value = append(dst++, value, 100); bStarted = 1; }
+    if (bStarted == 1 || value >= 10){ value = append(dst++, value, 10); bStarted = 1; }
+    *dst++ = '0' + (unsigned char) value;
+    *dst = 0;
+}

@@ -13,9 +13,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Downgrade any number expression cast that are part of a WORD+NUMBER expression to BYTE if the number is small enough to fit in the byte.
  */
-public class PassNDowngradeBytePlusWord extends Pass2SsaOptimization {
+public class PassNDowngradeConstantTypeConversions extends Pass2SsaOptimization {
 
-   public PassNDowngradeBytePlusWord(Program program) {
+   public PassNDowngradeConstantTypeConversions(Program program) {
       super(program);
    }
 

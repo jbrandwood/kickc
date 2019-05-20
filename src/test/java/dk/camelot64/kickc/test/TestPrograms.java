@@ -63,7 +63,6 @@ public class TestPrograms {
 
     */
 
-
    @Test
    public void testHex2Dec() throws IOException, URISyntaxException {
       compileAndCompare("hex2dec");

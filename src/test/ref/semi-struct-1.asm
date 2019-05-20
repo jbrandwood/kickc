@@ -22,7 +22,7 @@ main: {
 }
 // Print points
 print_points: {
-    .label pointXpos1__0 = 9
+    .label point = 9
     .label i = 2
     jsr print_cls
     lda #<$400
@@ -42,15 +42,15 @@ print_points: {
     tya
     clc
     adc #<points
-    sta pointXpos1__0
+    sta point
     lda #>points
     adc #0
-    sta pointXpos1__0+1
+    sta point+1
     ldx points,y
     jsr print_byte
     jsr print_str
     ldy #1
-    lda (pointXpos1__0),y
+    lda (point),y
     tax
     jsr print_byte
     jsr print_ln
@@ -168,7 +168,7 @@ print_cls: {
 }
 // Initialize points
 init_points: {
-    .label pointXpos1__0 = 3
+    .label getPoint1_return = 3
     .label pos = 2
     lda #$a
     sta pos
@@ -180,17 +180,17 @@ init_points: {
     tya
     clc
     adc #<points
-    sta pointXpos1__0
+    sta getPoint1_return
     lda #>points
     adc #0
-    sta pointXpos1__0+1
+    sta getPoint1_return+1
     lda pos
     sta points,y
     lda #$a
     clc
     adc pos
     ldy #1
-    sta (pointXpos1__0),y
+    sta (getPoint1_return),y
     clc
     adc #$a
     sta pos

@@ -545,9 +545,9 @@ append: {
     bne !+
     lda sub
     cmp value
+    beq b2
   !:
     bcc b2
-    beq b2
     rts
   b2:
     ldy #0

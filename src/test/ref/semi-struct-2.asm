@@ -301,7 +301,6 @@ print_ln: {
 // printEntry(byte* zeropage(4) entry)
 printEntry: {
     .label entry = 4
-    .label entryBufDisk1__0 = 4
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -312,10 +311,10 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #0
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w
     iny
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
@@ -333,10 +332,10 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #2
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w
     iny
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
@@ -354,10 +353,10 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #4
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w
     iny
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
@@ -375,10 +374,10 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #6
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w
     iny
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
@@ -396,7 +395,7 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #8
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -414,7 +413,7 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #9
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -432,7 +431,7 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #$a
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -450,7 +449,7 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #$b
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -468,10 +467,10 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #$c
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w
     iny
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
@@ -489,7 +488,7 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #$e
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -507,7 +506,7 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #$f
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -525,7 +524,7 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #$10
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -543,7 +542,7 @@ printEntry: {
     sta print_str.str+1
     jsr print_str
     ldy #$11
-    lda (entryBufDisk1__0),y
+    lda (entry),y
     tax
     jsr print_byte
     lda print_line_cursor
@@ -616,7 +615,6 @@ initEntry: {
     .label _7 = 6
     .label _17 = 6
     .label entry = 2
-    .label entryBufDisk1__0 = 2
     txa
     clc
     adc #<$1111
@@ -626,10 +624,10 @@ initEntry: {
     sta _1+1
     ldy #0
     lda _1
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     iny
     lda _1+1
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #<$2222
@@ -639,10 +637,10 @@ initEntry: {
     sta _3+1
     ldy #2
     lda _3
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     iny
     lda _3+1
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #<$3333
@@ -652,10 +650,10 @@ initEntry: {
     sta _5+1
     ldy #4
     lda _5
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     iny
     lda _5+1
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #<$4444
@@ -665,30 +663,30 @@ initEntry: {
     sta _7+1
     ldy #6
     lda _7
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     iny
     lda _7+1
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #$55
     ldy #8
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #$66
     ldy #9
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #$77
     ldy #$a
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #$88
     ldy #$b
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #<$9999
@@ -698,30 +696,30 @@ initEntry: {
     sta _17+1
     ldy #$c
     lda _17
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     iny
     lda _17+1
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #$aa
     ldy #$e
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #$bb
     ldy #$f
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #$cc
     ldy #$10
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     txa
     clc
     adc #$dd
     ldy #$11
-    sta (entryBufDisk1__0),y
+    sta (entry),y
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word

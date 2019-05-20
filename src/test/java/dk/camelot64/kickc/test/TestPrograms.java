@@ -64,6 +64,11 @@ public class TestPrograms {
     */
 
    @Test
+   public void testHex2DecPtrPtr() throws IOException, URISyntaxException {
+      compileAndCompare("hex2dec-ptrptr");
+   }
+
+   @Test
    public void testHex2Dec() throws IOException, URISyntaxException {
       compileAndCompare("hex2dec");
    }

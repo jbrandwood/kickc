@@ -69,6 +69,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMemoryHeap() throws IOException, URISyntaxException {
+      compileAndCompare("memory-heap");
+   }
+
+   @Test
    public void testTernaryInference() throws IOException, URISyntaxException {
       compileAndCompare("ternary-inference");
    }

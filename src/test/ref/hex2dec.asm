@@ -5,9 +5,11 @@
   .label control = $d011
   .label raster = $d012
   .label bordercol = $d020
+  .label utoa16_dst = 2
+  .label utoa16_started = 4
 main: {
     .label _1 = 4
-    .label time_start = 8
+    .label time_start = 5
     sei
     jsr cls
   b1:
@@ -23,68 +25,64 @@ main: {
     sta bordercol
     lda raster
     sta time_start
-    lda #<$400
-    sta utoa10b.dst
-    lda #>$400
-    sta utoa10b.dst+1
     lda #0
-    sta utoa10b.value
-    sta utoa10b.value+1
-    jsr utoa10b
+    sta utoa16w.value
+    sta utoa16w.value+1
+    lda #<$400
+    sta utoa16w.dst
+    lda #>$400
+    sta utoa16w.dst+1
+    jsr utoa16w
     inc bordercol
-    lda #<$400+$28
-    sta utoa10b.dst
-    lda #>$400+$28
-    sta utoa10b.dst+1
     lda #<$4d2
-    sta utoa10b.value
+    sta utoa16w.value
     lda #>$4d2
-    sta utoa10b.value+1
-    jsr utoa10b
+    sta utoa16w.value+1
+    lda #<$400+$28
+    sta utoa16w.dst
+    lda #>$400+$28
+    sta utoa16w.dst+1
+    jsr utoa16w
     inc bordercol
-    lda #<$400+$28+$28
-    sta utoa10b.dst
-    lda #>$400+$28+$28
-    sta utoa10b.dst+1
     lda #<$162e
-    sta utoa10b.value
+    sta utoa16w.value
     lda #>$162e
-    sta utoa10b.value+1
-    jsr utoa10b
+    sta utoa16w.value+1
+    lda #<$400+$28+$28
+    sta utoa16w.dst
+    lda #>$400+$28+$28
+    sta utoa16w.dst+1
+    jsr utoa16w
     inc bordercol
-    lda #<$400+$28+$28+$28
-    sta utoa10b.dst
-    lda #>$400+$28+$28+$28
-    sta utoa10b.dst+1
     lda #<$270f
-    sta utoa10b.value
+    sta utoa16w.value
     lda #>$270f
-    sta utoa10b.value+1
-    jsr utoa10b
+    sta utoa16w.value+1
+    lda #<$400+$28+$28+$28
+    sta utoa16w.dst
+    lda #>$400+$28+$28+$28
+    sta utoa16w.dst+1
+    jsr utoa16w
     inc bordercol
-    lda #<$400+$28+$28+$28+$28
-    sta utoa10b.dst
-    lda #>$400+$28+$28+$28+$28
-    sta utoa10b.dst+1
     lda #<$e608
-    sta utoa10b.value
+    sta utoa16w.value
     lda #>$e608
-    sta utoa10b.value+1
-    jsr utoa10b
+    sta utoa16w.value+1
+    lda #<$400+$28+$28+$28+$28
+    sta utoa16w.dst
+    lda #>$400+$28+$28+$28+$28
+    sta utoa16w.dst+1
+    jsr utoa16w
     ldx raster
     lda #0
     sta bordercol
     txa
     sec
     sbc time_start
-    sta utoa10b.value
+    sta utoa10w.value
     lda #0
-    sta utoa10b.value+1
-    lda #<$400+$28+$28+$28+$28+$50
-    sta utoa10b.dst
-    lda #>$400+$28+$28+$28+$28+$50
-    sta utoa10b.dst+1
-    jsr utoa10b
+    sta utoa10w.value+1
+    jsr utoa10w
     ldx #0
   b3:
     lda msg,x
@@ -97,12 +95,16 @@ main: {
     msg: .text "raster lines@"
 }
 // Decimal utoa() without using multiply or divide
-// utoa10b(word zeropage(2) value, byte* zeropage(6) dst)
-utoa10b: {
+// utoa10w(word zeropage(2) value, byte* zeropage(6) dst)
+utoa10w: {
     .label value = 2
     .label digit = 4
     .label dst = 6
     .label bStarted = 5
+    lda #<$400+$28+$28+$28+$28+$50
+    sta dst
+    lda #>$400+$28+$28+$28+$28+$50
+    sta dst+1
     lda #0
     sta bStarted
     sta digit
@@ -111,10 +113,10 @@ utoa10b: {
     txa
     asl
     tay
-    lda SUB+1,y
+    lda UTOA10_SUB+1,y
     cmp value+1
     bne !+
-    lda SUB,y
+    lda UTOA10_SUB,y
     cmp value
     beq b2
   !:
@@ -155,7 +157,7 @@ utoa10b: {
     sta (dst),y
     rts
   b2:
-    lda VAL,x
+    lda UTOA10_VAL,x
     clc
     adc digit
     sta digit
@@ -164,14 +166,71 @@ utoa10b: {
     tay
     sec
     lda value
-    sbc SUB,y
+    sbc UTOA10_SUB,y
     sta value
     lda value+1
-    sbc SUB+1,y
+    sbc UTOA10_SUB+1,y
     sta value+1
     lda #1
     sta bStarted
     jmp b1
+}
+// Hexadecimal utoa() for an unsigned int (16bits)
+// utoa16w(word zeropage(6) value, byte* zeropage(2) dst)
+utoa16w: {
+    .label dst = 2
+    .label value = 6
+    lda value+1
+    lsr
+    lsr
+    lsr
+    lsr
+    tax
+    lda #0
+    sta utoa16_started
+    jsr utoa16n
+    lda value+1
+    ldx #$f
+    axs #0
+    jsr utoa16n
+    lda value
+    lsr
+    lsr
+    lsr
+    lsr
+    tax
+    jsr utoa16n
+    lda value
+    ldx #$f
+    axs #0
+    lda #1
+    sta utoa16_started
+    jsr utoa16n
+    lda #0
+    tay
+    sta (utoa16_dst),y
+    rts
+}
+// Hexadecimal utoa() for a single nybble
+// utoa16n(byte register(X) nybble)
+utoa16n: {
+    cpx #0
+    beq b1
+    lda #1
+    sta utoa16_started
+  b1:
+    lda utoa16_started
+    cmp #0
+    beq breturn
+    lda DIGITS,x
+    ldy #0
+    sta (utoa16_dst),y
+    inc utoa16_dst
+    bne !+
+    inc utoa16_dst+1
+  !:
+  breturn:
+    rts
 }
 cls: {
     .label screen = $400
@@ -196,6 +255,9 @@ cls: {
     bne b1
     rts
 }
+  // Digits used for utoa()
   DIGITS: .text "0123456789abcdef@"
-  SUB: .word $7530, $2710, $bb8, $3e8, $12c, $64, $1e, $a
-  VAL: .byte 3, 1, 3, 1, 3, 1, 3, 1
+  // Subtraction values used for decimal utoa()
+  UTOA10_SUB: .word $7530, $2710, $bb8, $3e8, $12c, $64, $1e, $a
+  // Digit addition values used for decimal utoa()
+  UTOA10_VAL: .byte 3, 1, 3, 1, 3, 1, 3, 1

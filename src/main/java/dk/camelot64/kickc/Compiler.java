@@ -256,7 +256,6 @@ public class Compiler {
       optimizations.add(new Pass2ConstantStringConsolidation(program));
       optimizations.add(new Pass2FixInlineConstructorsNew(program));
       optimizations.add(new PassNAddTypeConversionAssignment(program));
-      optimizations.add(new Pass2TypeInference(program));
       optimizations.add(new Pass2EliminateRedundantCasts(program));
       optimizations.add(new Pass2RangeResolving(program));
       optimizations.add(new Pass2ComparisonOptimization(program));

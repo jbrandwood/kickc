@@ -60,48 +60,40 @@ utoa16w: {
     lsr
     lsr
     lsr
-    tax
+    tay
     lda #<dst
     sta utoa16n.dst
     lda #>dst
     sta utoa16n.dst+1
-    lda #0
-    sta utoa16n.started
+    ldx #0
     jsr utoa16n
-    lda utoa16n.return
-    tay
     lda value+1
-    ldx #$f
-    axs #0
-    sty utoa16n.started
-    lda #<dst
-    sta utoa16n.dst
-    lda #>dst
-    sta utoa16n.dst+1
-    jsr utoa16n
-    lda utoa16n.return
+    and #$f
     tay
-    lda value
-    lsr
-    lsr
-    lsr
-    lsr
-    tax
-    sty utoa16n.started
     lda #<dst
     sta utoa16n.dst
     lda #>dst
     sta utoa16n.dst+1
     jsr utoa16n
     lda value
-    ldx #$f
-    axs #0
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
     lda #<dst
     sta utoa16n.dst
     lda #>dst
     sta utoa16n.dst+1
-    lda #1
-    sta utoa16n.started
+    jsr utoa16n
+    lda value
+    and #$f
+    tay
+    lda #<dst
+    sta utoa16n.dst
+    lda #>dst
+    sta utoa16n.dst+1
+    ldx #1
     jsr utoa16n
     lda #0
     tay
@@ -109,25 +101,21 @@ utoa16w: {
     rts
 }
 // Hexadecimal utoa() for a single nybble
-// utoa16n(byte register(X) nybble, word** zeropage(6) dst, byte zeropage(8) started)
+// utoa16n(byte register(Y) nybble, word** zeropage(6) dst, byte register(X) started)
 utoa16n: {
-    .label started = 8
-    .label return = 8
     .label dst = 6
-    cpx #0
+    cpy #0
     beq b1
-    lda #1
-    sta return
+    ldx #1
   b1:
-    lda return
-    cmp #0
+    cpx #0
     beq breturn
+    lda DIGITS,y
+    ldy dst
+    sty !++1
     ldy #0
-    lda dst
-    sta !++1
-    lda DIGITS,x
   !:
-    sta (dst),y
+    sta ($ff),y
     ldy #0
     lda (dst),y
     clc

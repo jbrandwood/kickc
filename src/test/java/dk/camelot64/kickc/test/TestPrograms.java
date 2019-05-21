@@ -64,6 +64,26 @@ public class TestPrograms {
     */
 
    @Test
+   public void testSubExprOptimize0() throws IOException, URISyntaxException {
+      compileAndCompare("subexpr-optimize-0");
+   }
+
+   @Test
+   public void testPtrPtrOptimize2() throws IOException, URISyntaxException {
+      compileAndCompare("ptrptr-optimize-2");
+   }
+
+   @Test
+   public void testPtrPtrOptimize1() throws IOException, URISyntaxException {
+      compileAndCompare("ptrptr-optimize-1");
+   }
+
+   @Test
+   public void testPtrPtrOptimize0() throws IOException, URISyntaxException {
+      compileAndCompare("ptrptr-optimize-0");
+   }
+
+   @Test
    public void testHex2DecPtrPtr() throws IOException, URISyntaxException {
       compileAndCompare("hex2dec-ptrptr");
    }

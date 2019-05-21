@@ -268,6 +268,7 @@ public class Compiler {
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
+      optimizations.add(new Pass2DuplicateRValueIdentification(program));
       pass2Execute(optimizations);
    }
 

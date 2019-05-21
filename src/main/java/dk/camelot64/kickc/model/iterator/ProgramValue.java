@@ -23,7 +23,7 @@ public interface ProgramValue {
    class RValue1 implements ProgramValue {
       private final StatementAssignment statement;
 
-      RValue1(StatementAssignment statement) {
+      public RValue1(StatementAssignment statement) {
          this.statement = statement;
       }
 
@@ -41,7 +41,7 @@ public interface ProgramValue {
    class RValue2 implements ProgramValue {
       private final StatementAssignment statement;
 
-      RValue2(StatementAssignment statement) {
+      public RValue2(StatementAssignment statement) {
          this.statement = statement;
       }
 

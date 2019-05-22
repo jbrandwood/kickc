@@ -4,7 +4,6 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
 /** Unary Pointer Dereference Operator (*p) */
@@ -20,7 +19,7 @@ public class OperatorDeref extends OperatorUnary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple operandType) {
+   public SymbolType inferType(SymbolType operandType) {
       if(operandType instanceof SymbolTypePointer) {
          return ((SymbolTypePointer) operandType).getElementType();
       }

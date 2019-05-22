@@ -29,7 +29,7 @@ public class OperatorMinus extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple type1, SymbolTypeSimple type2) {
+   public SymbolType inferType(SymbolType type1, SymbolType type2) {
       // Handle pointer types
       if(type1 instanceof SymbolTypePointer && SymbolType.isInteger(type2)) {
          return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());

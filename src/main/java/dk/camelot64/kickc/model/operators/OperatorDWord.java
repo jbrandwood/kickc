@@ -4,7 +4,6 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.types.NoMatchingType;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
@@ -24,7 +23,7 @@ public class OperatorDWord extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
+   public SymbolType inferType(SymbolType left, SymbolType right) {
       // Handle pointers as words
       if(left instanceof SymbolTypePointer) {
          left = SymbolType.WORD;

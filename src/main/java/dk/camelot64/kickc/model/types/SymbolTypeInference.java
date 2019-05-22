@@ -1,8 +1,6 @@
 package dk.camelot64.kickc.model.types;
 
 import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.statements.*;
@@ -24,22 +22,7 @@ public class SymbolTypeInference {
     */
    public static SymbolType inferType(ProgramScope programScope, OperatorUnary operator, RValue rValue) {
       SymbolType valueType = inferType(programScope, rValue);
-      return inferType(operator, valueType);
-   }
-
-   /**
-    * Infer the type of a unary operator on an operand type
-    *
-    * @param operator The unary operator
-    * @param operandType The operand type
-    * @return The type of the result from applying the operator on the operand
-    */
-   public static SymbolType inferType(OperatorUnary operator, SymbolType operandType) {
-      if(operandType instanceof SymbolTypeSimple) {
-         return operator.inferType((SymbolTypeSimple) operandType);
-      } else {
-         throw new RuntimeException("Not implemented!");
-      }
+      return operator.inferType(valueType);
    }
 
    /**
@@ -54,15 +37,7 @@ public class SymbolTypeInference {
    public static SymbolType inferType(ProgramScope programScope, RValue left, OperatorBinary operator, RValue right) {
       SymbolType leftType = inferType(programScope, left);
       SymbolType rightType = inferType(programScope, right);
-      return inferType(leftType, operator, rightType);
-   }
-
-   public static SymbolType inferType(SymbolType left, OperatorBinary operator, SymbolType right) {
-      if(left instanceof SymbolTypeSimple && right instanceof SymbolTypeSimple) {
-         return operator.inferType((SymbolTypeSimple) left, (SymbolTypeSimple) right);
-      } else {
-         throw new RuntimeException("Not implemented!");
-      }
+      return operator.inferType(leftType, rightType);
    }
 
    public static SymbolType inferType(ProgramScope symbols, RValue rValue) {

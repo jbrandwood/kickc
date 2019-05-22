@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model.types;
 import java.util.Objects;
 
 /** A function returning another type */
-public class SymbolTypeProcedure implements SymbolTypeSimple {
+public class SymbolTypeProcedure implements SymbolType {
 
    private SymbolType returnType;
 

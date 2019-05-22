@@ -21,7 +21,7 @@ public class OperatorMultiply extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
+   public SymbolType inferType(SymbolType left, SymbolType right) {
       if(left instanceof SymbolTypePointer) {
          if(SymbolType.BYTE.equals(right) || SymbolType.WORD.equals(right) || SymbolType.NUMBER.equals(right)) {
             return left;

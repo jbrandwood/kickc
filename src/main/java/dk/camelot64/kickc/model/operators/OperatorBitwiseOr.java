@@ -21,7 +21,7 @@ public class OperatorBitwiseOr extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple type1, SymbolTypeSimple type2) {
+   public SymbolType inferType(SymbolType type1, SymbolType type2) {
       // Handle pointers as words
       if(type1 instanceof SymbolTypePointer) {
          type1 = SymbolType.WORD;

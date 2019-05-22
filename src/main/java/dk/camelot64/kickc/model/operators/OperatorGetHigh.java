@@ -5,7 +5,6 @@ import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantPointer;
@@ -40,7 +39,7 @@ public class OperatorGetHigh extends OperatorUnary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple operandType) {
+   public SymbolType inferType(SymbolType operandType) {
       if(operandType instanceof SymbolTypePointer || SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType)) {
          return SymbolType.BYTE;
       } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {

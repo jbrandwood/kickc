@@ -4,7 +4,6 @@ import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantRef;
@@ -23,7 +22,7 @@ public class OperatorSizeOf extends OperatorUnary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple operandType) {
+   public SymbolType inferType(SymbolType operandType) {
       return SymbolType.BYTE;
    }
 

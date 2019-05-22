@@ -4,7 +4,6 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeSimple;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantPointer;
@@ -33,7 +32,7 @@ public class OperatorCastPtr extends OperatorCast {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple operandType) {
+   public SymbolType inferType(SymbolType operandType) {
       return new SymbolTypePointer(elementType);
    }
 

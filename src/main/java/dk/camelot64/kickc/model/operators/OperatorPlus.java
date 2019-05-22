@@ -37,7 +37,7 @@ public class OperatorPlus extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple type1, SymbolTypeSimple type2) {
+   public SymbolType inferType(SymbolType type1, SymbolType type2) {
       // Handle all non-numeric types
       if(SymbolType.isInteger(type1) && type2 instanceof SymbolTypePointer) {
          return new SymbolTypePointer(((SymbolTypePointer) type2).getElementType());
@@ -59,7 +59,7 @@ public class OperatorPlus extends OperatorBinary {
     * @param type The type to check
     * @return true if the type is string like
     */
-   private boolean isStringLike(SymbolTypeSimple type) {
+   private boolean isStringLike(SymbolType type) {
       if(SymbolType.STRING.equals(type)) {
          return true;
       } else if(SymbolType.BYTE.equals(type)) {

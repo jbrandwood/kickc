@@ -24,7 +24,7 @@ public class OperatorTypeId extends OperatorUnary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple operandType) {
+   public SymbolType inferType(SymbolType operandType) {
       return SymbolType.BYTE;
    }
 

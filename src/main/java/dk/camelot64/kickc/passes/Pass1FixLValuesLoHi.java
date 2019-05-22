@@ -79,7 +79,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
       VariableIntermediate tmpVar = currentScope.addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       statementLValue.setlValue(tmpVarRef);
-      PassNTypeInference.inferLValue(getProgram(), statementLValue);
+      PassNTypeInference.updateInferedTypeLValue(getProgram(), statementLValue);
       // Insert an extra "set low" assignment statement
       Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, statementLValue.getSource(), new ArrayList<>());
       statementsIt.add(setLoHiAssignment);

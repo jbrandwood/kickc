@@ -15,7 +15,6 @@ import dk.camelot64.kickc.model.values.VariableRef;
 
 /**
  * Pass through the generated statements inferring types of unresolved variables.
- * Also updates procedure calls to point to the actual procedure called.
  */
 public class PassNTypeInference extends Pass2SsaOptimization {
 
@@ -23,17 +22,16 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       super(program);
    }
 
-
    @Override
    public boolean step() {
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             try {
                if(statement instanceof StatementLValue) {
-                  inferLValue(getProgram(), (StatementLValue) statement);
+                  updateInferedTypeLValue(getProgram(), (StatementLValue) statement);
                } else if(statement instanceof StatementPhiBlock) {
                   for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                     inferPhiVariable(getProgram(), phiVariable);
+                     updateInferedTypePhiVariable(getProgram(), phiVariable);
                   }
                }
             } catch(CompileError e) {
@@ -44,20 +42,20 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       return false;
    }
 
-   public static void inferLValue(Program program, StatementLValue statementLValue) {
+   static void updateInferedTypeLValue(Program program, StatementLValue statementLValue) {
       if(statementLValue instanceof StatementAssignment) {
-         inferAssignmentLValue(program, (StatementAssignment) statementLValue);
+         updateInferedTypeAssignmentLValue(program, (StatementAssignment) statementLValue);
       } else if(statementLValue instanceof StatementCall) {
-         inferCallLValue(program, (StatementCall) statementLValue);
+         updateInferedTypeCallLValue(program, (StatementCall) statementLValue);
       } else if(statementLValue instanceof StatementCallPointer) {
-         inferCallPointerLValue(program, (StatementCallPointer) statementLValue);
+         updateInferedTypeCallPointerLValue(program, (StatementCallPointer) statementLValue);
       } else {
          throw new RuntimeException("LValue statement not implemented " + statementLValue);
       }
    }
 
 
-   private static void inferCallLValue(Program program, StatementCall call) {
+   private static void updateInferedTypeCallLValue(Program program, StatementCall call) {
       ProgramScope programScope = program.getScope();
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
@@ -70,7 +68,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       }
    }
 
-   private static void inferCallPointerLValue(Program program, StatementCallPointer call) {
+   private static void updateInferedTypeCallPointerLValue(Program program, StatementCallPointer call) {
       ProgramScope programScope = program.getScope();
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
@@ -85,7 +83,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       }
    }
 
-   private static void inferPhiVariable(Program program, StatementPhiBlock.PhiVariable phiVariable) {
+   private static void updateInferedTypePhiVariable(Program program, StatementPhiBlock.PhiVariable phiVariable) {
       ProgramScope programScope = program.getScope();
       Variable symbol = programScope.getVariable(phiVariable.getVariable());
       if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())) {
@@ -109,7 +107,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       }
    }
 
-   private static void inferAssignmentLValue(Program program, StatementAssignment assignment) {
+   private static void updateInferedTypeAssignmentLValue(Program program, StatementAssignment assignment) {
       ProgramScope programScope = program.getScope();
       LValue lValue = assignment.getlValue();
       if(lValue instanceof VariableRef) {

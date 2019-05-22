@@ -137,7 +137,7 @@ public class SymbolTypeInference {
       }
    }
 
-   public static SymbolType inferTypeRValue(ProgramScope symbols, StatementAssignment assignment) {
+   private static SymbolType inferTypeRValue(ProgramScope symbols, StatementAssignment assignment) {
       SymbolType rValueType;
       RValue rValue1 = assignment.getrValue1();
       RValue rValue2 = assignment.getrValue2();

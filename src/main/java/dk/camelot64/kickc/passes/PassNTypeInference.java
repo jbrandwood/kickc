@@ -3,14 +3,12 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.operators.Operator;
-import dk.camelot64.kickc.model.operators.OperatorBinary;
-import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
+import dk.camelot64.kickc.model.values.AssignmentRValue;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -117,28 +115,8 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       if(lValue instanceof VariableRef) {
          Variable symbol = programScope.getVariable((VariableRef) lValue);
          if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())) {
-            // Unresolved symbol - perform inference
-            Operator operator = assignment.getOperator();
-            if(assignment.getrValue1() == null && operator == null) {
-               // Copy operation
-               RValue rValue = assignment.getrValue2();
-               SymbolType type = SymbolTypeInference.inferType(programScope, rValue);
-               setInferedType(program, assignment, symbol, type);
-            } else if(assignment.getrValue1() == null && operator instanceof OperatorUnary) {
-               // Unary operation
-               RValue rValue = assignment.getrValue2();
-               SymbolType type = SymbolTypeInference.inferType(programScope, (OperatorUnary) operator, rValue);
-               setInferedType(program, assignment, symbol, type);
-            } else if(operator instanceof OperatorBinary) {
-               // Binary operation
-               SymbolType type = SymbolTypeInference.inferType(
-                     programScope, assignment.getrValue1(),
-                     (OperatorBinary) assignment.getOperator(),
-                     assignment.getrValue2());
-               setInferedType(program, assignment, symbol, type);
-            } else {
-               throw new CompileError("Cannot infer type of " + assignment);
-            }
+            SymbolType type = SymbolTypeInference.inferType(programScope, new AssignmentRValue(assignment));
+            setInferedType(program, assignment, symbol, type);
             // If the type is an array or a string the symbol is constant
             if(symbol.getType() instanceof SymbolTypeArray) {
                symbol.setDeclaredConstant(true);

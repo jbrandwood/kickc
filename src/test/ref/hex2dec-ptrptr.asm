@@ -60,39 +60,19 @@ utoa16w: {
     lsr
     lsr
     lsr
-    tay
-    lda #<dst
-    sta utoa16n.dst
-    lda #>dst
-    sta utoa16n.dst+1
     ldx #0
     jsr utoa16n
     lda value+1
     and #$f
-    tay
-    lda #<dst
-    sta utoa16n.dst
-    lda #>dst
-    sta utoa16n.dst+1
     jsr utoa16n
     lda value
     lsr
     lsr
     lsr
     lsr
-    tay
-    lda #<dst
-    sta utoa16n.dst
-    lda #>dst
-    sta utoa16n.dst+1
     jsr utoa16n
     lda value
     and #$f
-    tay
-    lda #<dst
-    sta utoa16n.dst
-    lda #>dst
-    sta utoa16n.dst+1
     ldx #1
     jsr utoa16n
     lda #0
@@ -101,26 +81,22 @@ utoa16w: {
     rts
 }
 // Hexadecimal utoa() for a single nybble
-// utoa16n(byte register(Y) nybble, word** zeropage(6) dst, byte register(X) started)
+// utoa16n(byte register(A) nybble, byte register(X) started)
 utoa16n: {
-    .label dst = 6
-    cpy #0
+    cmp #0
     beq b1
     ldx #1
   b1:
     cpx #0
     beq breturn
+    tay
     lda DIGITS,y
-    ldy dst
-    sty !++1
     ldy #0
+    sta (utoa16w.dst),y
+    inc utoa16w.dst
+    bne !+
+    inc utoa16w.dst+1
   !:
-    sta ($ff),y
-    ldy #0
-    lda (dst),y
-    clc
-    adc #1
-    sta (dst),y
   breturn:
     rts
 }

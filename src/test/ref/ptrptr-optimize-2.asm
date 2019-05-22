@@ -9,33 +9,19 @@ main: {
     sta screen
     lda #>$400
     sta screen+1
-    lda #<screen
-    sta sub.dst
-    lda #>screen
-    sta sub.dst+1
-    ldx #'a'
+    lda #'a'
     jsr sub
-    lda #<screen
-    sta sub.dst
-    lda #>screen
-    sta sub.dst+1
-    ldx #'b'
+    lda #'b'
     jsr sub
     rts
 }
-// sub(byte register(X) ch, byte** zeropage(2) dst)
+// sub(byte register(A) ch)
 sub: {
-    .label dst = 2
-    txa
-    ldy dst
-    sty !++1
     ldy #0
+    sta (main.screen),y
+    inc main.screen
+    bne !+
+    inc main.screen+1
   !:
-    sta ($ff),y
-    ldy #0
-    lda (dst),y
-    clc
-    adc #1
-    sta (dst),y
     rts
 }

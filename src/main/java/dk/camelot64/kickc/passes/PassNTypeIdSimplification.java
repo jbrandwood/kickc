@@ -42,31 +42,6 @@ public class PassNTypeIdSimplification extends Pass2SsaOptimization {
          }
       });
 
-      /*
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               if(Operators.TYPEID.equals(assignment.getOperator())) {
-                  RValue rValue = assignment.getrValue2();
-                  SymbolType symbolType = SymbolTypeInference.inferType(getSymbols(), rValue);
-                  if(SymbolType.NUMBER.equals(symbolType)) {
-                     if(rValue instanceof ConstantValue) {
-                        List<SymbolTypeIntegerFixed> fixedTypes = SymbolTypeNumberInference.inferTypes(getSymbols(), (ConstantLiteral) rValue);
-                        throw new InternalError("TODO: Implement typeof(const)!");
-                     }
-                  } else {
-                     getLog().append("Resolving typeid() " + assignment.toString(getProgram(), false));
-                     ConstantRef typeIDConstantVar = OperatorTypeId.getTypeIdConstantVar(getSymbols(), symbolType);
-                     assignment.setrValue2(typeIDConstantVar);
-                     assignment.setOperator(null);
-                     modified = true;
-                  }
-               }
-            }
-         }
-      }
-      */
       return modified.get();
    }
 }

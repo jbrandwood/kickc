@@ -4,7 +4,6 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
-import dk.camelot64.kickc.model.types.SymbolTypeNumberInference;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -48,6 +47,7 @@ public class AsmFragmentInstanceSpec {
       this.bindings = bindings;
       this.codeScopeRef = codeScopeRef;
    }
+
 
    public String getSignature() {
       return signature;
@@ -95,7 +95,7 @@ public class AsmFragmentInstanceSpec {
                if(value instanceof ConstantValue) {
                   ConstantLiteral constantLiteral = ((ConstantValue) value).calculateLiteral(program.getScope());
                   if(constantLiteral instanceof ConstantInteger) {
-                     List<SymbolTypeIntegerFixed> types = SymbolTypeNumberInference.inferTypes(((ConstantInteger) constantLiteral).getValue());
+                     List<SymbolTypeIntegerFixed> types = getVariationTypes(((ConstantInteger) constantLiteral).getValue());
                      if(types.size() > 1) {
                         // Found constant value with multiple types
                         variationConstant = (ConstantValue) value;
@@ -117,6 +117,22 @@ public class AsmFragmentInstanceSpec {
       }
       return variationIterator.hasNext();
    }
+
+   /**
+    * Find any fixed integer types that can contain the passed integer value
+    * @param value the value to examine
+    * @return All fixed size integer types capable of representing the passed value
+    */
+   public static List<SymbolTypeIntegerFixed> getVariationTypes(Long value) {
+      ArrayList<SymbolTypeIntegerFixed> potentialTypes = new ArrayList<>();
+      for(SymbolTypeIntegerFixed typeInteger : SymbolTypeIntegerFixed.getIntegerFixedTypes()) {
+         if(typeInteger.contains(value)) {
+            potentialTypes.add(typeInteger);
+         }
+      }
+      return potentialTypes;
+   }
+
 
    /**
     * Updates the ASM fragment instance specification to the next available variation.

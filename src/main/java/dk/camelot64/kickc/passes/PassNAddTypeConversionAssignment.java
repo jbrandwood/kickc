@@ -40,7 +40,7 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
                   }
 
                   // Detect word literal constructor
-                  if(leftType.equals(SymbolType.WORD) && isLiteralWordCandidate(rightType)) {
+                  if(SymbolType.WORD.equals(leftType) && isLiteralWordCandidate(rightType)) {
                      SymbolType conversionType = SymbolType.WORD;
                      getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
                      binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
@@ -55,7 +55,7 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
                   }
 
                   // Detect dword literal constructor
-                  if(leftType.equals(SymbolType.DWORD) && isLiteralWordCandidate(rightType)) {
+                  if(SymbolType.DWORD.equals(leftType) && isLiteralWordCandidate(rightType)) {
                      SymbolType conversionType = SymbolType.DWORD;
                      getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
                      binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());

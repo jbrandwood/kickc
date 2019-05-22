@@ -30,7 +30,7 @@ public class PassNTypeIdSimplification extends Pass2SsaOptimization {
             if(Operators.TYPEID.equals(unary.getOperator())) {
                RValue rValue = unary.getOperand();
                SymbolType symbolType = SymbolTypeInference.inferType(getScope(), rValue);
-               if(symbolType.equals(SymbolType.VAR) || symbolType.equals(SymbolType.NUMBER)) {
+               if(SymbolType.VAR.equals(symbolType) || SymbolType.NUMBER.equals(symbolType)) {
 
                }  else {
                   getLog().append("Resolving typeid() " + currentStmt.toString(getProgram(), false));

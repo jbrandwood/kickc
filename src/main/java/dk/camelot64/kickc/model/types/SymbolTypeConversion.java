@@ -155,17 +155,17 @@ public class SymbolTypeConversion {
    public static boolean assignmentTypeMatch(SymbolType lValueType, SymbolType rValueType) {
       if(lValueType.equals(rValueType))
          return true;
-      if(lValueType.equals(SymbolType.WORD) && rValueType.equals(SymbolType.BYTE))
+      if(SymbolType.WORD.equals(lValueType) && SymbolType.BYTE.equals(rValueType))
          return true;
-      if(lValueType.equals(SymbolType.DWORD) && rValueType.equals(SymbolType.BYTE))
+      if(SymbolType.DWORD.equals(lValueType) && SymbolType.BYTE.equals(rValueType))
          return true;
-      if(lValueType.equals(SymbolType.DWORD) && rValueType.equals(SymbolType.WORD))
+      if(SymbolType.DWORD.equals(lValueType) && SymbolType.WORD.equals(rValueType))
          return true;
-      if(lValueType.equals(SymbolType.SWORD) && rValueType.equals(SymbolType.SBYTE))
+      if(SymbolType.SWORD.equals(lValueType) && SymbolType.SBYTE.equals(rValueType))
          return true;
-      if(lValueType.equals(SymbolType.SDWORD) && rValueType.equals(SymbolType.SBYTE))
+      if(SymbolType.SDWORD.equals(lValueType) && SymbolType.SBYTE.equals(rValueType))
          return true;
-      if(lValueType.equals(SymbolType.SDWORD) && rValueType.equals(SymbolType.SWORD))
+      if(SymbolType.SDWORD.equals(lValueType) && SymbolType.SWORD.equals(rValueType))
          return true;
       if(SymbolType.NUMBER.equals(rValueType) && SymbolType.isInteger(lValueType)) {
          // R-value is still a number - constants are probably not done being identified & typed
@@ -175,7 +175,7 @@ public class SymbolTypeConversion {
          // R-value is still a number - constants are probably not done being identified & typed
          return true;
       }
-      if(SymbolType.STRING.equals(rValueType) && lValueType instanceof SymbolTypePointer && ((SymbolTypePointer) lValueType).getElementType().equals(SymbolType.BYTE)) {
+      if(SymbolType.STRING.equals(rValueType) && lValueType instanceof SymbolTypePointer && SymbolType.BYTE.equals(((SymbolTypePointer) lValueType).getElementType())) {
          // String value can be assigned into a pointer
          return true;
       }
@@ -198,7 +198,7 @@ public class SymbolTypeConversion {
          return false;
       else if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer && ((SymbolTypePointer) lValueType).getElementType().equals(((SymbolTypePointer) rValueType).getElementType()))
          return false;
-      else if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType) && ((SymbolTypePointer) lValueType).getElementType().equals(SymbolType.BYTE))
+      else if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType) && SymbolType.BYTE.equals(((SymbolTypePointer) lValueType).getElementType()))
          return false;
       else
       return true;

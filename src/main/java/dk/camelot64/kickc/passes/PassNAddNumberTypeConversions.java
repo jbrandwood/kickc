@@ -37,7 +37,7 @@ public class PassNAddNumberTypeConversions extends Pass2SsaOptimization {
                   modified.set(true);
                }
                SymbolType rightType = SymbolTypeInference.inferType(getProgram().getScope(), right);
-               if(rightType.equals(SymbolType.NUMBER)) {
+               if(SymbolType.NUMBER.equals(rightType)) {
                   getLog().append("Adding number conversion cast (" + castType + ") " + binary.getRight().toString() + " in " + ((currentStmt==null)?"":currentStmt.toString(getProgram(), false)));
                   binary.addRightCast(castType, stmtIt, currentBlock==null?null:currentBlock.getScope(), getScope());
                   modified.set(true);

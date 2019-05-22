@@ -68,7 +68,7 @@ public class PassNDowngradeConstantTypeConversions extends Pass2SsaOptimization 
     */
    public boolean isWordLike(RValue rValue) {
       SymbolType symbolType = SymbolTypeInference.inferType(getProgram().getScope(), rValue);
-      return symbolType.equals(SymbolType.WORD) || symbolType instanceof SymbolTypePointer;
+      return SymbolType.WORD.equals(symbolType) || symbolType instanceof SymbolTypePointer;
    }
 
 
@@ -79,10 +79,10 @@ public class PassNDowngradeConstantTypeConversions extends Pass2SsaOptimization 
     * @return true if the value is a constant cast to word
     */
    public boolean isConstantWord(RValue rValue) {
-      if(rValue instanceof ConstantInteger && ((ConstantInteger) rValue).getType().equals(SymbolType.WORD)) {
+      if(rValue instanceof ConstantInteger && SymbolType.WORD.equals(((ConstantInteger) rValue).getType())) {
          return true;
       }
-      if((rValue instanceof ConstantCastValue) && ((ConstantCastValue) rValue).getToType().equals(SymbolType.WORD))
+      if((rValue instanceof ConstantCastValue) && SymbolType.WORD.equals(((ConstantCastValue) rValue).getToType()))
          return true;
       return false;
    }

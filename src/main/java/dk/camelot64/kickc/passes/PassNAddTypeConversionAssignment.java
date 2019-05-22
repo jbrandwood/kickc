@@ -63,15 +63,6 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
                   }
 
                }
-               if(leftType instanceof SymbolTypeIntegerFixed && SymbolType.isInteger(rightType)) {
-                  SymbolType conversionType = SymbolTypeConversion.convertedMathType((SymbolTypeInteger) leftType, (SymbolTypeInteger) rightType);
-                  // Add cast to the right Type if needed
-                  if(leftType.equals(conversionType) && !rightType.equals(conversionType)) {
-                     getLog().append("Adding type conversion cast (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
-                     binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
-                     modified.set(true);
-                  }
-               }
             }
          }
       });

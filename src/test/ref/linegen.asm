@@ -335,13 +335,14 @@ lin16u_gen: {
     sta step
     lda stepf+1
     sta step+1
+    lda #<0
+    sta val
+    sta val+1
     lda min
     sta val+2
     lda min+1
     sta val+3
     lda #0
-    sta val
-    sta val+1
     sta i
     sta i+1
   b1:

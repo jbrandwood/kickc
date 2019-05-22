@@ -47,7 +47,8 @@ public class ConstantUnary implements ConstantValue {
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return SymbolTypeInference.inferType(scope, operator, operand);
+      SymbolType valueType = SymbolTypeInference.inferType(scope, operand);
+      return operator.inferType(valueType);
    }
 
    @Override

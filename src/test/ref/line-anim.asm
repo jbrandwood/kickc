@@ -455,7 +455,7 @@ bitmap_clear: {
     rts
 }
 bitmap_init: {
-    .label _3 = 2
+    .label _7 = 2
     .label yoffs = 3
     ldx #0
     lda #$80
@@ -476,15 +476,14 @@ bitmap_init: {
     ldx #0
   b3:
     lda #7
-    sax _3
+    sax _7
     lda yoffs
-    ora _3
+    ora _7
     sta bitmap_plot_ylo,x
     lda yoffs+1
     sta bitmap_plot_yhi,x
-    txa
-    and #7
-    cmp #7
+    lda #7
+    cmp _7
     bne b4
     clc
     lda yoffs

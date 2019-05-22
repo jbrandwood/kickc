@@ -111,10 +111,6 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          if(operator instanceof OperatorCast) return true;
          if(operator.equals(Operators.PLUS)) return true;
          if(operator.equals(Operators.MINUS)) return true;
-         if(operator.equals(Operators.BOOL_AND)) return true;
-         if(operator.equals(Operators.BOOL_OR)) return true;
-         if(operator.equals(Operators.BOOL_XOR)) return true;
-         if(operator.equals(Operators.BOOL_NOT)) return true;
          if(operator.equals(Operators.LE)) return true;
          if(operator.equals(Operators.LT)) return true;
          if(operator.equals(Operators.GE)) return true;
@@ -122,6 +118,8 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          if(operator.equals(Operators.EQ)) return true;
          if(operator.equals(Operators.NEQ)) return true;
          if(operator.equals(Operators.LOGIC_NOT)) return true;
+         if(operator.equals(Operators.LOGIC_AND)) return true;
+         if(operator.equals(Operators.LOGIC_OR)) return true;
          return false;
       }
 

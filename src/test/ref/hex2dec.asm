@@ -5,11 +5,9 @@
   .label control = $d011
   .label raster = $d012
   .label bordercol = $d020
-  .label utoa16_dst = 2
-  .label utoa16_started = 4
 main: {
     .label _1 = 4
-    .label time_start = 5
+    .label time_start = 4
     sei
     jsr cls
   b1:
@@ -25,53 +23,53 @@ main: {
     sta bordercol
     lda raster
     sta time_start
-    lda #0
-    sta utoa16w.value
-    sta utoa16w.value+1
     lda #<$400
     sta utoa16w.dst
     lda #>$400
     sta utoa16w.dst+1
+    lda #0
+    sta utoa16w.value
+    sta utoa16w.value+1
     jsr utoa16w
     inc bordercol
-    lda #<$4d2
-    sta utoa16w.value
-    lda #>$4d2
-    sta utoa16w.value+1
     lda #<$400+$28
     sta utoa16w.dst
     lda #>$400+$28
     sta utoa16w.dst+1
+    lda #<$4d2
+    sta utoa16w.value
+    lda #>$4d2
+    sta utoa16w.value+1
     jsr utoa16w
     inc bordercol
-    lda #<$162e
-    sta utoa16w.value
-    lda #>$162e
-    sta utoa16w.value+1
     lda #<$400+$28+$28
     sta utoa16w.dst
     lda #>$400+$28+$28
     sta utoa16w.dst+1
+    lda #<$162e
+    sta utoa16w.value
+    lda #>$162e
+    sta utoa16w.value+1
     jsr utoa16w
     inc bordercol
-    lda #<$270f
-    sta utoa16w.value
-    lda #>$270f
-    sta utoa16w.value+1
     lda #<$400+$28+$28+$28
     sta utoa16w.dst
     lda #>$400+$28+$28+$28
     sta utoa16w.dst+1
+    lda #<$270f
+    sta utoa16w.value
+    lda #>$270f
+    sta utoa16w.value+1
     jsr utoa16w
     inc bordercol
-    lda #<$e608
-    sta utoa16w.value
-    lda #>$e608
-    sta utoa16w.value+1
     lda #<$400+$28+$28+$28+$28
     sta utoa16w.dst
     lda #>$400+$28+$28+$28+$28
     sta utoa16w.dst+1
+    lda #<$e608
+    sta utoa16w.value
+    lda #>$e608
+    sta utoa16w.value+1
     jsr utoa16w
     ldx raster
     lda #0
@@ -176,58 +174,51 @@ utoa10w: {
     jmp b1
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zeropage(6) value, byte* zeropage(2) dst)
+// utoa16w(word zeropage(2) value, byte* zeropage(6) dst)
 utoa16w: {
-    .label dst = 2
-    .label value = 6
+    .label value = 2
+    .label dst = 6
     lda value+1
     lsr
     lsr
     lsr
     lsr
-    tax
-    lda #0
-    sta utoa16_started
+    ldx #0
     jsr utoa16n
     lda value+1
-    ldx #$f
-    axs #0
+    and #$f
     jsr utoa16n
     lda value
     lsr
     lsr
     lsr
     lsr
-    tax
     jsr utoa16n
     lda value
-    ldx #$f
-    axs #0
-    lda #1
-    sta utoa16_started
+    and #$f
+    ldx #1
     jsr utoa16n
     lda #0
     tay
-    sta (utoa16_dst),y
+    sta (dst),y
     rts
 }
 // Hexadecimal utoa() for a single nybble
-// utoa16n(byte register(X) nybble)
+// utoa16n(byte register(A) nybble, byte register(X) started)
 utoa16n: {
-    cpx #0
-    beq b1
-    lda #1
-    sta utoa16_started
-  b1:
-    lda utoa16_started
     cmp #0
+    beq b1
+    ldx #1
+  b1:
+    cpx #0
     beq breturn
-    lda DIGITS,x
+    tay
+    lda DIGITS,y
     ldy #0
-    sta (utoa16_dst),y
-    inc utoa16_dst
+    sta (utoa16w.dst),y
+    inc utoa16w.dst
     bne !+
-    inc utoa16_dst+1
+    inc utoa16w.dst+1
   !:
   breturn:
     rts

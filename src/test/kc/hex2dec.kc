@@ -65,27 +65,21 @@ void utoa10w(unsigned int value, unsigned char* dst) {
     *dst = 0;
 }
 
-// Holds the destination address for the hexadecimal utoa()
-unsigned char* utoa16_dst;
-// Holds whether the hexadecimal utoa() has started outputting digits
-unsigned char utoa16_started;
-
 // Hexadecimal utoa() for an unsigned int (16bits)
 void utoa16w(unsigned int value, unsigned char* dst) {
-    utoa16_dst = dst;
-    utoa16_started = 0;
-    utoa16n((>value)>>4);
-    utoa16n((>value)&0x0f);
-    utoa16n((<value)>>4);
-    utoa16_started = 1;
-    utoa16n((<value)&0x0f);
-    *utoa16_dst = 0;
+    unsigned char started = 0;
+    started = utoa16n((>value)>>4, &dst, started);
+    started = utoa16n((>value)&0x0f, &dst, started);
+    started = utoa16n((<value)>>4, &dst, started);
+    utoa16n((<value)&0x0f, &dst, 1);
+    *dst = 0;
 }
 
 // Hexadecimal utoa() for a single nybble
-void utoa16n(unsigned char nybble) {
-    if(nybble!=0) utoa16_started=1;
-    if(utoa16_started!=0) {
-        *utoa16_dst++ = DIGITS[nybble];
+unsigned char utoa16n(unsigned char nybble, unsigned **dst, unsigned char started) {
+    if(nybble!=0) started=1;
+    if(started!=0) {
+        *(*dst)++ = DIGITS[nybble];
     }
+    return started;
 }

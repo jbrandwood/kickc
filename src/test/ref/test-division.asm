@@ -24,17 +24,14 @@ test_16s: {
   b1:
     lda i
     asl
-    tay
-    lda dividends,y
+    tax
+    lda dividends,x
     sta dividend
-    lda dividends+1,y
+    lda dividends+1,x
     sta dividend+1
-    lda i
-    asl
-    tay
-    lda divisors,y
+    lda divisors,x
     sta divisor
-    lda divisors+1,y
+    lda divisors+1,x
     sta divisor+1
     jsr div16s
     lda print_line_cursor
@@ -76,9 +73,7 @@ test_16s: {
     inc i
     lda #6
     cmp i
-    beq !b1+
-    jmp b1
-  !b1:
+    bne b1
     rts
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
     divisors: .word 5, -7, $b, -$d, -$11, $13
@@ -539,17 +534,14 @@ test_16u: {
   b1:
     lda i
     asl
-    tay
-    lda dividends,y
+    tax
+    lda dividends,x
     sta dividend
-    lda dividends+1,y
+    lda dividends+1,x
     sta dividend+1
-    lda i
-    asl
-    tay
-    lda divisors,y
+    lda divisors,x
     sta divisor
-    lda divisors+1,y
+    lda divisors+1,x
     sta divisor+1
     jsr div16u
     lda print_line_cursor

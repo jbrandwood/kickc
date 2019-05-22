@@ -127,17 +127,14 @@ point_init: {
     .label x_diff = 9
     lda point_idx
     asl
-    tay
-    lda x_end,y
+    tax
+    lda x_end,x
     sta _0
-    lda x_end+1,y
+    lda x_end+1,x
     sta _0+1
-    lda point_idx
-    asl
-    tay
-    lda x_start,y
+    lda x_start,x
     sta _1
-    lda x_start+1,y
+    lda x_start+1,x
     sta _1+1
     lda x_diff
     sec
@@ -191,10 +188,10 @@ point_init: {
   b2:
     lda point_idx
     asl
-    tay
-    lda x_start,y
+    tax
+    lda x_start,x
     sta _9
-    lda x_start+1,y
+    lda x_start+1,x
     sta _9+1
     asl _9
     rol _9+1
@@ -204,13 +201,10 @@ point_init: {
     rol _9+1
     asl _9
     rol _9+1
-    lda point_idx
-    asl
-    tay
     lda _9
-    sta x_cur,y
+    sta x_cur,x
     lda _9+1
-    sta x_cur+1,y
+    sta x_cur+1,x
     ldy point_idx
     lda y_start,y
     sta _10
@@ -224,15 +218,11 @@ point_init: {
     rol _11+1
     asl _11
     rol _11+1
-    tya
-    asl
-    tay
     lda _11
-    sta y_cur,y
+    sta y_cur,x
     lda _11+1
-    sta y_cur+1,y
+    sta y_cur+1,x
     lda #DELAY
-    ldy point_idx
     sta delay,y
     rts
   b1:

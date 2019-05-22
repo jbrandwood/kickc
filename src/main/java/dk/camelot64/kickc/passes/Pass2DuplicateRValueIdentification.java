@@ -109,6 +109,19 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
       private boolean isTrivial() {
          if(operator == null) return true;
          if(operator instanceof OperatorCast) return true;
+         if(operator.equals(Operators.PLUS)) return true;
+         if(operator.equals(Operators.MINUS)) return true;
+         if(operator.equals(Operators.BOOL_AND)) return true;
+         if(operator.equals(Operators.BOOL_OR)) return true;
+         if(operator.equals(Operators.BOOL_XOR)) return true;
+         if(operator.equals(Operators.BOOL_NOT)) return true;
+         if(operator.equals(Operators.LE)) return true;
+         if(operator.equals(Operators.LT)) return true;
+         if(operator.equals(Operators.GE)) return true;
+         if(operator.equals(Operators.GT)) return true;
+         if(operator.equals(Operators.EQ)) return true;
+         if(operator.equals(Operators.NEQ)) return true;
+         if(operator.equals(Operators.LOGIC_NOT)) return true;
          return false;
       }
 

@@ -1412,22 +1412,19 @@ render_init: {
     sta li_1
     lda #>PLAYFIELD_SCREEN_1+2*$28+$10
     sta li_1+1
-    ldx #0
+    ldy #0
   b1:
-    txa
+    tya
     asl
-    tay
+    tax
     lda li_1
-    sta screen_lines_1,y
+    sta screen_lines_1,x
     lda li_1+1
-    sta screen_lines_1+1,y
-    txa
-    asl
-    tay
+    sta screen_lines_1+1,x
     lda li_2
-    sta screen_lines_2,y
+    sta screen_lines_2,x
     lda li_2+1
-    sta screen_lines_2+1,y
+    sta screen_lines_2+1,x
     lda #$28
     clc
     adc li_1
@@ -1442,8 +1439,8 @@ render_init: {
     bcc !+
     inc li_2+1
   !:
-    inx
-    cpx #PLAYFIELD_LINES-1+1
+    iny
+    cpy #PLAYFIELD_LINES-1+1
     bne b1
     rts
 }

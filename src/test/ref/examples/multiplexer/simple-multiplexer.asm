@@ -120,17 +120,13 @@ plexShowSprite: {
     ldx plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
     ldy plex_show_idx
-    ldx PLEX_SORTED_IDX,y
-    txa
+    lda PLEX_SORTED_IDX,y
     asl
-    tay
-    lda PLEX_XPOS,y
+    tax
+    lda PLEX_XPOS,x
     ldy plex_sprite_idx2
     sta SPRITES_XPOS,y
-    txa
-    asl
-    tay
-    lda PLEX_XPOS+1,y
+    lda PLEX_XPOS+1,x
     cmp #0
     bne b1
     lda #$ff

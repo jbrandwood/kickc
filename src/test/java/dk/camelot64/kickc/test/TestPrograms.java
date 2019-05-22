@@ -64,6 +64,11 @@ public class TestPrograms {
     */
 
    @Test
+   public void testSubExprOptimize1() throws IOException, URISyntaxException {
+      compileAndCompare("subexpr-optimize-1");
+   }
+
+   @Test
    public void testSubExprOptimize0() throws IOException, URISyntaxException {
       compileAndCompare("subexpr-optimize-0");
    }

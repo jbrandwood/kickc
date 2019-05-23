@@ -7,9 +7,9 @@ main: {
     .label _2 = 6
     .label _6 = 4
     .label line = 2
-    .label _8 = 6
-    .label _9 = 4
+    .label _9 = 6
     .label _10 = 4
+    .label _11 = 4
     lda #0
     sta line
     sta line+1
@@ -31,22 +31,22 @@ main: {
     adc line+1
     sta _2+1
     clc
-    lda _8
-    adc #<screen+$28
-    sta _8
-    lda _8+1
-    adc #>screen+$28
-    sta _8+1
-    clc
     lda _9
-    adc #<screen
+    adc #<screen+$28
     sta _9
     lda _9+1
-    adc #>screen
+    adc #>screen+$28
     sta _9+1
+    clc
+    lda _10
+    adc #<screen
+    sta _10
+    lda _10+1
+    adc #>screen
+    sta _10+1
     ldy #0
-    lda (_8),y
-    sta (_9),y
+    lda (_9),y
+    sta (_10),y
     inx
     cpx #$28
     bcc b2
@@ -76,15 +76,15 @@ main: {
     adc line+1
     sta _6+1
     clc
-    lda _10
+    lda _11
     adc #<screen
-    sta _10
-    lda _10+1
+    sta _11
+    lda _11+1
     adc #>screen
-    sta _10+1
+    sta _11+1
     lda #' '
     ldy #0
-    sta (_10),y
+    sta (_11),y
     inx
     cpx #$28
     bcc b4

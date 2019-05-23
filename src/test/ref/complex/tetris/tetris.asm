@@ -388,6 +388,7 @@ render_bcd: {
 }
 // Render the next tetromino in the "next" area
 render_next: {
+    // Find the screen area
     .const next_area_offset = $28*$c+$18+4
     .label next_piece_gfx = 5
     .label next_piece_char = $a

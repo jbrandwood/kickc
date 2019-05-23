@@ -81,11 +81,11 @@ bitmap_plot: {
     .label x = 3
     .label plotter = 5
     .label plotter_1 = 7
-    .label _4 = 5
+    .label _3 = 5
     lda bitmap_plot_yhi,x
-    sta _4+1
+    sta _3+1
     lda bitmap_plot_ylo,x
-    sta _4
+    sta _3
     lda x
     and #<$fff8
     sta _1
@@ -428,11 +428,11 @@ screen_fill: {
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
-    .label _4 = 3
+    .label _3 = 3
     lda bitmap_plot_ylo
-    sta _4
+    sta _3
     lda bitmap_plot_yhi
-    sta _4+1
+    sta _3+1
     lda #0
     sta y
   b1:

@@ -77,7 +77,7 @@ public class Pass2FixInlineConstructorsNew extends Pass2SsaOptimization {
       // Convert list to a word constructor in a new tmp variable
       Scope currentScope = Pass2FixInlineConstructorsNew.this.getScope().getScope(currentBlock.getScope());
       VariableIntermediate tmpVar = currentScope.addVariableIntermediate();
-      tmpVar.setTypeInferred(constructType);
+      //tmpVar.setTypeInferred(constructType);
       // Move backward - to insert before the current statement
       stmtIt.previous();
       // Add assignment of the new tmpVar

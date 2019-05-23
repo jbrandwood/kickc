@@ -336,11 +336,11 @@ init_screen: {
 bitmap_clear: {
     .label bitmap = 9
     .label y = 2
-    .label _4 = 9
+    .label _3 = 9
     lda bitmap_plot_xlo
-    sta _4
+    sta _3
     lda bitmap_plot_xhi
-    sta _4+1
+    sta _3+1
     lda #0
     sta y
   b1:

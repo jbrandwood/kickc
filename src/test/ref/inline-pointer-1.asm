@@ -14,9 +14,9 @@ main: {
 // puta(byte register(A) ph, byte register(X) pl)
 puta: {
     .label screen = 2
-    .label _2 = 2
-    sta _2+1
-    stx _2
+    .label _1 = 2
+    sta _1+1
+    stx _1
     lda #'a'
     ldy #0
     sta (screen),y

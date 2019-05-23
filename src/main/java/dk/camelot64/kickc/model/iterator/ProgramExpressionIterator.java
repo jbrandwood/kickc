@@ -27,15 +27,15 @@ public class ProgramExpressionIterator {
       // Iterate all symbols
       ProgramValueHandler programValueHandler = (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof ConstantBinary) {
-            handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryConstant(programValue), null, null, null);
+            handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryConstant(programValue), currentStmt, stmtIt, currentBlock);
          } else if(programValue.get() instanceof ConstantUnary) {
-            handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryConstant(programValue), null, null, null);
+            handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryConstant(programValue), currentStmt, stmtIt, currentBlock);
          } else if(programValue.get() instanceof PointerDereferenceIndexed) {
-            handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryPointerDereferenceIndexed(programValue), null, null, null);
+            handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryPointerDereferenceIndexed(programValue), currentStmt, stmtIt, currentBlock);
          } else if(programValue.get() instanceof ConstantCastValue) {
-            handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryConstantCast(programValue), null, null, null);
+            handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryConstantCast(programValue), currentStmt, stmtIt, currentBlock);
          } else if(programValue.get() instanceof CastValue) {
-            handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryCast(programValue), null, null, null);
+            handler.execute(new ProgramExpressionUnary.ProgramExpressionUnaryCast(programValue), currentStmt, stmtIt, currentBlock);
          }
       };
       ProgramValueIterator.execute(program.getScope(), programValueHandler);

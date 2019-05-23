@@ -178,11 +178,11 @@ bitmap_plot: {
     .label plotter = 6
     .label plotter_1 = $10
     .label x = 4
-    .label _4 = 6
+    .label _3 = 6
     lda bitmap_plot_yhi,x
-    sta _4+1
+    sta _3+1
     lda bitmap_plot_ylo,x
-    sta _4
+    sta _3
     lda x
     and #<$fff8
     sta _1
@@ -729,11 +729,11 @@ divr16u: {
 bitmap_clear: {
     .label bitmap = 2
     .label y = $16
-    .label _4 = 2
+    .label _3 = 2
     lda bitmap_plot_ylo
-    sta _4
+    sta _3
     lda bitmap_plot_yhi
-    sta _4+1
+    sta _3+1
     lda #0
     sta y
   b1:

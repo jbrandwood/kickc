@@ -231,9 +231,16 @@ public class Compiler {
 
    private void pass2Optimize() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
+
+      optimizations.add(new Pass2FixInlineConstructorsNew(program));
+
       optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new PassNAddArrayNumberTypeConversions(program));
       optimizations.add(new PassNTypeInference(program));
+      optimizations.add(new PassNAddTypeConversionAssignment(program));
+      optimizations.add(new Pass2InlineCast(program));
+      optimizations.add(new PassNCastSimplification(program));
+
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new Pass2SizeOfSimplification(program));
       optimizations.add(new Pass2CullEmptyBlocks(program));
@@ -243,6 +250,7 @@ public class Compiler {
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2SelfPhiElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
+      optimizations.add(new Pass2DuplicateRValueIdentification(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
@@ -253,19 +261,14 @@ public class Compiler {
       optimizations.add(new Pass2ConstantStringConsolidation(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
-      optimizations.add(new Pass2FixInlineConstructorsNew(program));
-      optimizations.add(new PassNAddTypeConversionAssignment(program));
       optimizations.add(new Pass2RangeResolving(program));
       optimizations.add(new Pass2ComparisonOptimization(program));
-      optimizations.add(new Pass2InlineCast(program));
-      optimizations.add(new PassNCastSimplification(program));
       optimizations.add(new Pass2InlineDerefIdx(program));
       optimizations.add(new Pass2DeInlineWordDerefIdx(program));
       optimizations.add(new PassNSimplifyConstantZero(program));
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
-      optimizations.add(new Pass2DuplicateRValueIdentification(program));
       pass2Execute(optimizations);
    }
 

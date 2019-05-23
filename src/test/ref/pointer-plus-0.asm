@@ -7,27 +7,25 @@ main: {
     .label _0 = 2
     .label _2 = 2
     lda #<msg1
-    sta first.msg
+    sta first.return
     lda #>msg1
-    sta first.msg+1
+    sta first.return+1
     jsr first
     ldy #0
     lda (_0),y
     sta SCREEN
     lda #<msg2
-    sta first.msg
+    sta first.return
     lda #>msg2
-    sta first.msg+1
+    sta first.return+1
     jsr first
     ldy #0
     lda (_2),y
     sta SCREEN+1
     rts
 }
-// first(byte* zeropage(2) msg)
 first: {
     .label return = 2
-    .label msg = 2
     rts
 }
   msg1: .text "hello world!@"

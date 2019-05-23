@@ -270,5 +270,8 @@ fc: {
     cmp #7
     cmp #8
     cmp #9
+    bne b10
+    rts
+  b10:
     rts
 }

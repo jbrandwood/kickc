@@ -130,6 +130,12 @@ plexSort: {
     dex
     cpx #$ff
     bne b6
+    jmp b4
+  b6:
+    lda nxt_y
+    ldy PLEX_SORTED_IDX,x
+    cmp PLEX_YPOS,y
+    bcc b3
   b4:
     inx
     lda nxt_idx
@@ -154,12 +160,6 @@ plexSort: {
     bne plexFreePrepare1_b1
     sta plex_free_next
     rts
-  b6:
-    lda nxt_y
-    ldy PLEX_SORTED_IDX,x
-    cmp PLEX_YPOS,y
-    bcc b3
-    jmp b4
 }
 // Initialize the program
 init: {
@@ -242,6 +242,10 @@ plex_irq: {
     lda plex_show_idx
     cmp #PLEX_COUNT
     bcc b7
+    jmp b4
+  b7:
+    cpx _4
+    bcc b3
   b4:
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -257,10 +261,6 @@ plex_irq: {
   b1:
     stx RASTER
     jmp b2
-  b7:
-    cpx _4
-    bcc b3
-    jmp b4
 }
 // Show the next sprite.
 // plexSort() prepares showing the sprites

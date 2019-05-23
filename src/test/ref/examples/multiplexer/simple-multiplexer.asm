@@ -142,10 +142,11 @@ plexShowSprite: {
     asl plex_sprite_msb
     lda plex_sprite_msb
     cmp #0
-    bne breturn
+    bne b5
     lda #1
     sta plex_sprite_msb
-  breturn:
+    rts
+  b5:
     rts
   b1:
     lda SPRITES_XMSB
@@ -185,6 +186,12 @@ plexSort: {
     dex
     cpx #$ff
     bne b5
+    jmp b4
+  b5:
+    lda nxt_y
+    ldy PLEX_SORTED_IDX,x
+    cmp PLEX_YPOS,y
+    bcc b3
   b4:
     inx
     lda nxt_idx
@@ -202,12 +209,6 @@ plexSort: {
     cpx #8
     bne plexFreePrepare1_b1
     rts
-  b5:
-    lda nxt_y
-    ldy PLEX_SORTED_IDX,x
-    cmp PLEX_YPOS,y
-    bcc b3
-    jmp b4
 }
 // Initialize the program
 init: {

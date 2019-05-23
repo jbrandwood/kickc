@@ -19,11 +19,7 @@ main: {
     lda str,x
     cmp #' '
     bne b3
-  b4:
-    inx
-    cpx #0
-    bne b1
-    rts
+    jmp b4
   b3:
     lda str,x
     ldy #0
@@ -32,6 +28,10 @@ main: {
     bne !+
     inc screen+1
   !:
-    jmp b4
+  b4:
+    inx
+    cpx #0
+    bne b1
+    rts
     str: .text "hello brave new world@"
 }

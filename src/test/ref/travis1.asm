@@ -22,6 +22,17 @@ main: {
     jsr game_ready
     cmp #0
     bne b3
+    jmp b2
+  b3:
+    lda print_line_cursor
+    sta print_char_cursor
+    lda print_line_cursor+1
+    sta print_char_cursor+1
+    lda #<str
+    sta print_str_ln.str
+    lda #>str
+    sta print_str_ln.str+1
+    jsr print_str_ln
   b2:
     inc i
     lda #6
@@ -34,17 +45,6 @@ main: {
     lda print_line_cursor+1
     sta print_char_cursor+1
     jmp b1
-  b3:
-    lda print_line_cursor
-    sta print_char_cursor
-    lda print_line_cursor+1
-    sta print_char_cursor+1
-    lda #<str
-    sta print_str_ln.str
-    lda #>str
-    sta print_str_ln.str+1
-    jsr print_str_ln
-    jmp b2
     str: .text "ready!@"
 }
 // Print a zero-terminated string followed by a newline

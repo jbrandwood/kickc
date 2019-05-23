@@ -20,6 +20,13 @@ main: {
     lda (line),y
     cmp #'a'
     bne b3
+    jmp b4
+  b3:
+    lda #'a'
+    sta (line),y
+    iny
+    cpy #$28
+    bne b2
   b4:
     lda #$28
     clc
@@ -37,11 +44,4 @@ main: {
     bcc b1
   !:
     rts
-  b3:
-    lda #'a'
-    sta (line),y
-    iny
-    cpy #$28
-    bne b2
-    jmp b4
 }

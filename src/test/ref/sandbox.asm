@@ -202,9 +202,16 @@ myprintf: {
     rts
   b3:
     cpx #'1'
-    bcc !b37+
-    jmp b37
-  !b37:
+    bcs b37
+    jmp b4
+  b37:
+    cpx #'9'
+    bcs !b23+
+    jmp b23
+  !b23:
+    bne !b23+
+    jmp b23
+  !b23:
   b4:
     cpx #'-'
     bne b5
@@ -280,6 +287,11 @@ myprintf: {
     lda bTrailing
     cmp #0
     beq b39
+    jmp b15
+  b39:
+    lda b
+    cmp bDigits
+    bcc b16
   b15:
     ldx #0
   b19:
@@ -309,18 +321,13 @@ myprintf: {
     cmp bDigits
     bcc b21
     jmp b22
-  b39:
-    lda b
-    cmp bDigits
-    bcc b16
-    jmp b15
   b16:
     lda bLeadZero
     cmp #0
-    beq b14
+    beq b17
     lda #'0'
     jmp b18
-  b14:
+  b17:
     lda #' '
   b18:
     ldy bLen
@@ -341,11 +348,6 @@ myprintf: {
     sta strTemp,y
     inc bLen
     jmp b22
-  b37:
-    cpx #'9'
-    bcc b23
-    beq b23
-    jmp b4
   b23:
     txa
     axs #'0'
@@ -392,13 +394,7 @@ myprintf: {
   b28:
     cpx #$41
     bcs b41
-  b30:
-    // swap 0x41 / 0x61 when in lower case mode
-    ldy bLen
-    txa
-    sta strTemp,y
-    inc bLen
-    jmp b27
+    jmp b30
   b41:
     cpx #$5a+1
     bcc b35
@@ -406,7 +402,13 @@ myprintf: {
   b35:
     txa
     axs #-[$20]
-    jmp b30
+  b30:
+    // swap 0x41 / 0x61 when in lower case mode
+    ldy bLen
+    txa
+    sta strTemp,y
+    inc bLen
+    jmp b27
     buf6: .fill 6, 0
 }
 // utoa(word zeropage($12) value, byte* zeropage($14) dst)

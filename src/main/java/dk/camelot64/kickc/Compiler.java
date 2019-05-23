@@ -377,7 +377,7 @@ public class Compiler {
       new Pass3AssertConstants(program).check();
       new Pass3AssertArrayLengths(program).check();
       new Pass3AssertNoMulDivMod(program).check();
-      new PassNBlockSequencePlanner(program).step();
+      //new PassNBlockSequencePlanner(program).step();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();
       new PassNBlockSequencePlanner(program).step();

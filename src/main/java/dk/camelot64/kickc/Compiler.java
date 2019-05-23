@@ -230,17 +230,19 @@ public class Compiler {
    }
 
    private void pass2Optimize() {
+      List<Pass2SsaOptimization> optimizations = getPass2Optimizations();
+      pass2Execute(optimizations);
+   }
+
+   private List<Pass2SsaOptimization> getPass2Optimizations() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
-
       optimizations.add(new Pass2FixInlineConstructorsNew(program));
-
       optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new PassNAddArrayNumberTypeConversions(program));
       optimizations.add(new PassNTypeInference(program));
       optimizations.add(new PassNAddTypeConversionAssignment(program));
       optimizations.add(new Pass2InlineCast(program));
       optimizations.add(new PassNCastSimplification(program));
-
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new Pass2SizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));
@@ -266,7 +268,7 @@ public class Compiler {
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
-      pass2Execute(optimizations);
+      return optimizations;
    }
 
    private void pass2UnrollLoops() {
@@ -297,26 +299,15 @@ public class Compiler {
 
    private void pass2InlineConstants() {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
+
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new PassNStatementIndices(program));
       constantOptimizations.add(new PassNVariableReferenceInfos(program));
       constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
-      constantOptimizations.add(new Pass2AliasElimination(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
-      constantOptimizations.add(new Pass2ConstantStringConsolidation(program));
-      constantOptimizations.add(new Pass2IdenticalPhiElimination(program));
-      constantOptimizations.add(new Pass2ConstantRValueConsolidation(program));
-      constantOptimizations.add(new Pass2ConstantIdentification(program));
-      constantOptimizations.add(new Pass2ConstantValues(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));
-      constantOptimizations.add(new PassNCastSimplification(program));
-      constantOptimizations.add(new Pass2ConstantIfs(program));
-      constantOptimizations.add(new Pass2InlineDerefIdx(program));
-      constantOptimizations.add(new PassNEliminateUnusedVars(program, true));
-      constantOptimizations.add(new PassNSimplifyConstantZero(program));
-      constantOptimizations.add(new PassNSimplifyExpressionWithZero(program));
-
+      constantOptimizations.addAll(getPass2Optimizations());
       pass2Execute(constantOptimizations);
 
    }

@@ -3,8 +3,8 @@
 :BasicUpstart(bbegin)
 .pc = $80d "Program"
   .label SCREEN = $400
-  .label msg = 4
-  .label idx = 3
+  .label msg = 3
+  .label idx = 5
 bbegin:
   lda #<0
   sta msg
@@ -13,7 +13,6 @@ bbegin:
   jsr main
   rts
 main: {
-    .label f = hello
     lda #<msg1
     sta msg
     lda #>msg1
@@ -31,7 +30,7 @@ do10: {
     lda #0
     sta i
   b1:
-    jsr main.f
+    jsr hello
     inc i
     lda #$a
     cmp i

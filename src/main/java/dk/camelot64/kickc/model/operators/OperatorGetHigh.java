@@ -50,6 +50,10 @@ public class OperatorGetHigh extends OperatorUnary {
          return SymbolType.BYTE;
       } else if(SymbolType.NUMBER.equals(operandType)) {
          return SymbolType.NUMBER;
+      } else if(SymbolType.UNUMBER.equals(operandType)) {
+         return SymbolType.UNUMBER;
+      } else if(SymbolType.SNUMBER.equals(operandType)) {
+         return SymbolType.UNUMBER;
       }
       throw new CompileError("Type inference not implemented "+getOperator()+" "+operandType);
    }

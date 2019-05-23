@@ -10,6 +10,7 @@ import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableIntermediate;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -96,7 +97,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
          } else {
             Scope blockScope = symbols.getScope(currentScope);
             VariableIntermediate tmpVar = blockScope.addVariableIntermediate();
-            tmpVar.setType(toType);
+            tmpVar.setTypeInferred(toType);
             StatementAssignment newAssignment = new StatementAssignment(tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue1(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue1(tmpVar.getRef());
             stmtIt.previous();
@@ -112,7 +113,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
          } else {
             Scope blockScope = symbols.getScope(currentScope);
             VariableIntermediate tmpVar = blockScope.addVariableIntermediate();
-            tmpVar.setType(toType);
+            tmpVar.setTypeInferred(toType);
             StatementAssignment newAssignment = new StatementAssignment(tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue2(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue2(tmpVar.getRef());
             stmtIt.previous();
@@ -156,13 +157,21 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
       @Override
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
-         Scope blockScope = symbols.getScope(currentScope);
-         VariableIntermediate tmpVar = blockScope.addVariableIntermediate();
-         SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
-         tmpVar.setType(rightType);
-         StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.getSource(), Comment.NO_COMMENTS);
-         assignment.setlValue(tmpVar.getRef());
-         stmtIt.add(newAssignment);
+         if(assignment.getlValue() instanceof VariableRef) {
+            Variable variable = symbols.getVariable((VariableRef) assignment.getlValue());
+            if(variable.isInferredType())
+               variable.setTypeInferred(toType);
+            else
+               throw new InternalError("Cannot cast declared type!" + variable.toString());
+         } else {
+            Scope blockScope = symbols.getScope(currentScope);
+            VariableIntermediate tmpVar = blockScope.addVariableIntermediate();
+            SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
+            tmpVar.setTypeInferred(rightType);
+            StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.getSource(), Comment.NO_COMMENTS);
+            assignment.setlValue(tmpVar.getRef());
+            stmtIt.add(newAssignment);
+         }
       }
 
       @Override
@@ -173,7 +182,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             Scope blockScope = symbols.getScope(currentScope);
             VariableIntermediate tmpVar = blockScope.addVariableIntermediate();
             SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
-            tmpVar.setType(rightType);
+            tmpVar.setTypeInferred(rightType);
             StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setlValue(tmpVar.getRef());
             stmtIt.add(newAssignment);
@@ -314,7 +323,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
          if(getPointerDereferenceIndexed().getPointer() instanceof ConstantValue) {
             getPointerDereferenceIndexed().setPointer(new ConstantCastValue(toType, (ConstantValue) getPointerDereferenceIndexed().getPointer()));
-         }  else {
+         } else {
             // Try to use CastValue - may later have to be supported!
             getPointerDereferenceIndexed().setPointer(new CastValue(toType, getPointerDereferenceIndexed().getPointer()));
          }
@@ -324,7 +333,14 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
          if(getPointerDereferenceIndexed().getIndex() instanceof ConstantValue) {
             getPointerDereferenceIndexed().setIndex(new ConstantCastValue(toType, (ConstantValue) getPointerDereferenceIndexed().getIndex()));
-         }  else {
+         } else if( getPointerDereferenceIndexed().getIndex() instanceof VariableRef) {
+            Variable variable = symbols.getVariable((VariableRef) getPointerDereferenceIndexed().getIndex());
+            if(variable.isInferredType())
+               variable.setTypeInferred(toType);
+            else
+               throw new InternalError("Cannot cast declared type!" + variable.toString());
+
+         } else {
             // Try to use CastValue - may later have to be supported!
             getPointerDereferenceIndexed().setIndex(new CastValue(toType, getPointerDereferenceIndexed().getIndex()));
          }
@@ -360,15 +376,22 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
       @Override
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
-         throw new InternalError("Not supported!");
+         Variable variable = symbols.getVariable(phiVariable.getVariable());
+         if(variable.isInferredType())
+            variable.setTypeInferred(toType);
+         else
+            throw new InternalError("Cannot cast declared type!" + variable.toString());
       }
 
       @Override
       public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
-         if(getRight() instanceof ConstantValue) {
+         if(getRight() instanceof VariableRef) {
+            Variable variable = symbols.getVariable((VariableRef) getRight());
+            if(variable.isInferredType())
+               variable.setTypeInferred(toType);
+         } else if(getRight() instanceof ConstantValue) {
             value.setrValue(new ConstantCastValue(toType, (ConstantValue) getRight()));
-         }  else {
-            // Try to use CastValue - may later have to be supported!
+         } else {
             value.setrValue(new CastValue(toType, getRight()));
          }
       }
@@ -378,9 +401,6 @@ public interface ProgramExpressionBinary extends ProgramExpression {
          throw new InternalError("Not supported!");
       }
    }
-
-
-
 
 
 }

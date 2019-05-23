@@ -32,6 +32,16 @@ public class SymbolTypeConversion {
       if(SymbolType.NUMBER.equals(type1) || SymbolType.NUMBER.equals(type2)) {
          return SymbolType.NUMBER;
       }
+      // If any of the two types are unresolved unsigned - return an unresolved unsigned result
+      if(SymbolType.UNUMBER.equals(type1) || SymbolType.UNUMBER.equals(type2)) {
+         return SymbolType.UNUMBER;
+      }
+      // If any of the two types are unresolved signed - return an unresolved signed result
+      if(SymbolType.SNUMBER.equals(type1) || SymbolType.SNUMBER.equals(type2)) {
+         return SymbolType.SNUMBER;
+      }
+
+      // Both types are resolved (fixed) integer types
       SymbolTypeIntegerFixed fixed1 = (SymbolTypeIntegerFixed) type1;
       SymbolTypeIntegerFixed fixed2 = (SymbolTypeIntegerFixed) type2;
       // C99 6.3.1.8 a. If two operands have the same type no conversion is performed
@@ -82,6 +92,13 @@ public class SymbolTypeConversion {
             return null;
          }
 
+         // a) If any the two operands are unsigned numbers the result is an unsigned number
+         if(SymbolType.UNUMBER.equals(leftType) || SymbolType.UNUMBER.equals(rightType))
+            return SymbolType.UNUMBER;
+         // a) If any the two operands are signed numbers the result is an signed number
+         if(SymbolType.SNUMBER.equals(leftType) || SymbolType.SNUMBER.equals(rightType))
+            return SymbolType.SNUMBER;
+
          // Treat pointers like WORD
          if(leftType instanceof SymbolTypePointer) leftType = SymbolType.WORD;
          if(rightType instanceof SymbolTypePointer) rightType = SymbolType.WORD;
@@ -102,52 +119,70 @@ public class SymbolTypeConversion {
             return null;
          }
 
-         // Find the cast type if possible
-         if(numberVal instanceof ConstantValue) {
-            ConstantLiteral constantLiteral;
-            try {
-               constantLiteral = ((ConstantValue) numberVal).calculateLiteral(symbols);
-            } catch( ConstantNotLiteral e) {
-               // Postpone til later!
-               return null;
-            }
-            if(constantLiteral instanceof ConstantInteger) {
-               ConstantInteger constantInteger = (ConstantInteger) constantLiteral;
-               if(SymbolType.NUMBER.equals(constantInteger.getType())) {
-                  Long value = constantInteger.getValue();
-                  if(fixedType.isSigned()) {
-                     // b) If one operand is a signed type and the other a number the number is converted to the smallest signed type that can hold its values.
-                     SymbolTypeIntegerFixed smallestSignedType = SymbolTypeIntegerFixed.getSmallestSigned(value);
-                     if(smallestSignedType == null) {
-                        throw new CompileError("Number constant has value that cannot be represented by a signed type " + value, currentStmt);
-                     }
-                     return smallestSignedType;
-                  } else {
-                     // b) If one operand is a signed type and the other a number the number is converted to the smallest unsigned type that can hold its values.
-                     //    If the number value is negative it is converted to unsigned using two's complement.
-                     SymbolTypeIntegerFixed smallestUnsignedType;
-                     if(value < 0) {
-                        smallestUnsignedType = SymbolTypeIntegerFixed.getSmallestUnsigned(-value);
-                     } else {
-                        smallestUnsignedType = SymbolTypeIntegerFixed.getSmallestUnsigned(value);
-                     }
-                     return smallestUnsignedType;
-                  }
-               } else {
-                  throw new InternalError("Non-number constant has type number " + right.toString(), currentStmt);
-               }
-            }
+         if(fixedType.isSigned()) {
+            return SymbolType.SNUMBER;
          } else {
-            // Postpone til later!
-            return null;
+            return SymbolType.UNUMBER;
          }
       }
+
       // No number conversion
+      return null;
+
+   }
+
+
+   public static  SymbolType getSmallestSignedFixedIntegerType(ConstantValue constantValue, ProgramScope symbols) {
+      ConstantLiteral constantLiteral;
+      try {
+         constantLiteral = constantValue.calculateLiteral(symbols);
+      } catch(ConstantNotLiteral e) {
+         // Postpone til later!
+         return null;
+      }
+      if(constantLiteral instanceof ConstantInteger) {
+         Long value = ((ConstantInteger) constantLiteral).getValue();
+         // b) If one operand is a signed type and the other a number the number is converted to the smallest signed type that can hold its values.
+         SymbolTypeIntegerFixed smallestSignedType = SymbolTypeIntegerFixed.getSmallestSigned(value);
+         if(smallestSignedType == null) {
+            throw new CompileError("Number constant has value that cannot be represented by a signed type " + constantValue.toString());
+         }
+         return smallestSignedType;
+      }
+      // Postpone til later!
       return null;
    }
 
+   public static  SymbolType getSmallestUnsignedFixedIntegerType(ConstantValue constantValue, ProgramScope symbols) {
+      ConstantLiteral constantLiteral;
+      try {
+         constantLiteral = constantValue.calculateLiteral(symbols);
+      } catch(ConstantNotLiteral e) {
+         // Postpone til later!
+         return null;
+      }
+      if(constantLiteral instanceof ConstantInteger) {
+         Long value = ((ConstantInteger) constantLiteral).getValue();
+         // b) If one operand is a signed type and the other a number the number is converted to the smallest signed type that can hold its values.
+         SymbolTypeIntegerFixed smallestUnsignedType;
+         if(value < 0) {
+            smallestUnsignedType = SymbolTypeIntegerFixed.getSmallestUnsigned(-value);
+         } else {
+            smallestUnsignedType = SymbolTypeIntegerFixed.getSmallestUnsigned(value);
+         }
+         if(smallestUnsignedType == null) {
+            throw new CompileError("Number constant has value that cannot be represented by a unsigned type " + constantValue.toString());
+         }
+         return smallestUnsignedType;
+      }
+      // Postpone til later!
+      return null;
+   }
+
+
    /**
     * Determines if the types of an assignment match up properly
+    *
     * @param lValueType The type of the LValue
     * @param rValueType The type of the RValue
     * @return true if the types match up
@@ -171,7 +206,23 @@ public class SymbolTypeConversion {
          // R-value is still a number - constants are probably not done being identified & typed
          return true;
       }
+      if(SymbolType.UNUMBER.equals(rValueType) && SymbolType.isInteger(lValueType)) {
+         // R-value is still a number - constants are probably not done being identified & typed
+         return true;
+      }
+      if(SymbolType.SNUMBER.equals(rValueType) && SymbolType.isInteger(lValueType)) {
+         // R-value is still a number - constants are probably not done being identified & typed
+         return true;
+      }
       if(SymbolType.NUMBER.equals(lValueType) && SymbolType.isInteger(rValueType)) {
+         // R-value is still a number - constants are probably not done being identified & typed
+         return true;
+      }
+      if(SymbolType.UNUMBER.equals(lValueType) && SymbolType.isInteger(rValueType)) {
+         // R-value is still a number - constants are probably not done being identified & typed
+         return true;
+      }
+      if(SymbolType.SNUMBER.equals(lValueType) && SymbolType.isInteger(rValueType)) {
          // R-value is still a number - constants are probably not done being identified & typed
          return true;
       }
@@ -189,6 +240,7 @@ public class SymbolTypeConversion {
 
    /**
     * Determines if the left side of an assignment needs a cast to be assigned to the right side
+    *
     * @param lValueType The type of the LValue
     * @param rValueType The type of the RValue
     * @return true if the left side needs a cast
@@ -201,9 +253,8 @@ public class SymbolTypeConversion {
       else if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType) && SymbolType.BYTE.equals(((SymbolTypePointer) lValueType).getElementType()))
          return false;
       else
-      return true;
+         return true;
    }
-
 
 
 }

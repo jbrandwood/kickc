@@ -11,10 +11,11 @@ import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** Simplifies casts
+/**
+ * Simplifies casts
  * - Inlines casts of (number) constants
  * - Removes unnecessary casts
- * */
+ */
 public class PassNCastSimplification extends Pass2SsaOptimization {
 
    public PassNCastSimplification(Program program) {
@@ -39,12 +40,12 @@ public class PassNCastSimplification extends Pass2SsaOptimization {
             } else if(unaryOperand instanceof ConstantInteger) {
                ConstantInteger constantInteger = (ConstantInteger) unaryOperand;
                if(SymbolType.NUMBER.equals(constantInteger.getType())) {
-                  if(castType instanceof SymbolTypeIntegerFixed ) {
+                  if(castType instanceof SymbolTypeIntegerFixed || SymbolType.UNUMBER.equals(castType) || SymbolType.SNUMBER.equals(castType)) {
                      ConstantInteger newConstInt = new ConstantInteger(constantInteger.getInteger(), castType);
                      programExpression.set(newConstInt);
                      getLog().append("Simplifying constant integer cast " + newConstInt.toString());
                      optimized.set(true);
-                  }  else if(castType instanceof SymbolTypePointer) {
+                  } else if(castType instanceof SymbolTypePointer) {
                      ConstantPointer newConstPointer = new ConstantPointer(constantInteger.getInteger(), ((SymbolTypePointer) castType).getElementType());
                      programExpression.set(newConstPointer);
                      getLog().append("Simplifying constant pointer cast " + newConstPointer.toString());

@@ -117,7 +117,7 @@ public interface SymbolType {
     * @return true if the type is integer
     */
    static boolean isInteger(SymbolType type) {
-      return SDWORD.equals(type) || DWORD.equals(type) || SWORD.equals(type) || WORD.equals(type) || SBYTE.equals(type) || BYTE.equals(type) || NUMBER.equals(type);
+      return SDWORD.equals(type) || DWORD.equals(type) || SWORD.equals(type) || WORD.equals(type) || SBYTE.equals(type) || BYTE.equals(type) || NUMBER.equals(type)|| UNUMBER.equals(type)|| SNUMBER.equals(type);
    }
 
 }

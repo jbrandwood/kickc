@@ -26,6 +26,8 @@ public class Operators {
    public static final OperatorUnary CAST_DWORD = new OperatorCastDWord(2);
    public static final OperatorUnary CAST_SDWORD = new OperatorCastSDWord(2);
    public static final OperatorUnary CAST_BOOL= new OperatorCastBool(2);
+   public static final OperatorUnary CAST_UNUMBER = new OperatorCastUNumber(2);
+   public static final OperatorUnary CAST_SNUMBER = new OperatorCastSNumber(2);
    public static final OperatorUnary SIZEOF = new OperatorSizeOf(2);
    public static final OperatorUnary TYPEID = new OperatorTypeId(2);
    public static final OperatorBinary MULTIPLY = new OperatorMultiply(3);
@@ -149,6 +151,10 @@ public class Operators {
          return CAST_DWORD;
       } else if(SymbolType.SDWORD.equals(castType)) {
          return CAST_SDWORD;
+      } else if(SymbolType.UNUMBER.equals(castType)) {
+         return CAST_UNUMBER;
+      } else if(SymbolType.SNUMBER.equals(castType)) {
+         return CAST_SNUMBER;
       } else if(SymbolType.BOOLEAN.equals(castType)) {
          return CAST_BOOL;
       } else if(castType instanceof SymbolTypePointer) {

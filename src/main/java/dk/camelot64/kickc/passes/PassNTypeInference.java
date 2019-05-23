@@ -60,7 +60,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
          Variable symbol = programScope.getVariable((VariableRef) lValue);
-         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())) {
+         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType())|| SymbolType.SNUMBER.equals(symbol.getType())) {
             Procedure procedure = programScope.getProcedure(call.getProcedure());
             SymbolType type = procedure.getReturnType();
             setInferedType(program, call, symbol, type);
@@ -73,7 +73,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
          Variable symbol = programScope.getVariable((VariableRef) lValue);
-         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())) {
+         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType())|| SymbolType.SNUMBER.equals(symbol.getType())) {
             SymbolType procedureType = SymbolTypeInference.inferType(programScope, call.getProcedure());
             if(procedureType instanceof SymbolTypeProcedure) {
                SymbolType returnType = ((SymbolTypeProcedure) procedureType).getReturnType();
@@ -86,7 +86,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
    private static void updateInferedTypePhiVariable(Program program, StatementPhiBlock.PhiVariable phiVariable) {
       ProgramScope programScope = program.getScope();
       Variable symbol = programScope.getVariable(phiVariable.getVariable());
-      if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())) {
+      if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType())|| SymbolType.SNUMBER.equals(symbol.getType())) {
          SymbolType type = null;
          for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
             RValue rValue = phiRValue.getrValue();
@@ -112,7 +112,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       LValue lValue = assignment.getlValue();
       if(lValue instanceof VariableRef) {
          Variable symbol = programScope.getVariable((VariableRef) lValue);
-         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())) {
+         if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType()) || SymbolType.SNUMBER.equals(symbol.getType())) {
             SymbolType type = SymbolTypeInference.inferType(programScope, new AssignmentRValue(assignment));
             setInferedType(program, assignment, symbol, type);
             // If the type is an array or a string the symbol is constant

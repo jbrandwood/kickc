@@ -40,6 +40,7 @@ public class PassNAddNumberTypeConversions extends Pass2SsaOptimization {
                if(SymbolType.NUMBER.equals(rightType)) {
                   getLog().append("Adding number conversion cast (" + castType + ") " + binary.getRight().toString() + " in " + ((currentStmt==null)?"":currentStmt.toString(getProgram(), false)));
                   binary.addRightCast(castType, stmtIt, currentBlock==null?null:currentBlock.getScope(), getScope());
+
                   modified.set(true);
                }
             }

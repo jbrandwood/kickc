@@ -129,9 +129,9 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     dex
     cpx #$ff
-    bne b6
+    bne b7
     jmp b4
-  b6:
+  b7:
     lda nxt_y
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y

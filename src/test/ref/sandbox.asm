@@ -202,9 +202,9 @@ myprintf: {
     rts
   b3:
     cpx #'1'
-    bcs b37
+    bcs b39
     jmp b4
-  b37:
+  b39:
     cpx #'9'
     bcs !b23+
     jmp b23
@@ -286,9 +286,9 @@ myprintf: {
     bne b13
     lda bTrailing
     cmp #0
-    beq b39
+    beq b41
     jmp b15
-  b39:
+  b41:
     lda b
     cmp bDigits
     bcc b16
@@ -304,9 +304,9 @@ myprintf: {
     bcc b19
     lda bTrailing
     cmp #0
-    bne b40
+    bne b42
     jmp b22
-  b40:
+  b42:
     lda b
     cmp bDigits
     bcc b21
@@ -360,15 +360,15 @@ myprintf: {
     //w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks" -- https://gitlab.com/camelot/kickc/issues/185 [FIXED]
     lda bArg
     cmp #0
-    beq b42
+    beq b29
     lda #1
     cmp bArg
-    beq b43
+    beq b30
     lda w3
     sta w
     lda w3+1
     sta w+1
-  b29:
+  b31:
     inc bArg
     lda #0
     sta bLeadZero
@@ -379,30 +379,30 @@ myprintf: {
     lda #1
     sta bFormat
     jmp b27
-  b43:
+  b30:
     lda w2
     sta w
     lda w2+1
     sta w+1
-    jmp b29
-  b42:
+    jmp b31
+  b29:
     lda w1
     sta w
     lda w1+1
     sta w+1
-    jmp b29
+    jmp b31
   b28:
     cpx #$41
-    bcs b41
-    jmp b30
-  b41:
+    bcs b43
+    jmp b32
+  b43:
     cpx #$5a+1
-    bcc b35
-    jmp b30
-  b35:
+    bcc b37
+    jmp b32
+  b37:
     txa
     axs #-[$20]
-  b30:
+  b32:
     // swap 0x41 / 0x61 when in lower case mode
     ldy bLen
     txa

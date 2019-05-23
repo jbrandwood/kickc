@@ -18,18 +18,18 @@ main: {
 print_msg: {
     .label msg = 4
     cpx #1
-    beq b2
+    beq b1
     lda #<msg_2
     sta msg
     lda #>msg_2
     sta msg+1
-    jmp b1
-  b2:
+    jmp b2
+  b1:
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
-  b1:
+  b2:
     jsr print
     rts
     msg_1: .text "Hello @"

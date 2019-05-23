@@ -183,7 +183,7 @@ public class Compiler {
       new Pass1EliminateUncalledProcedures(program).execute();
       new PassNEliminateUnusedVars(program, false).execute();
       new Pass1ExtractInlineStrings(program).execute();
-      new Pass1EliminateEmptyBlocks(program).execute();
+      new PassNCullEmptyBlocks(program).execute();
 
       new Pass1ModifiedVarsAnalysis(program).execute();
       if(getLog().isVerbosePass1CreateSsa()) {
@@ -243,7 +243,6 @@ public class Compiler {
 
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new Pass2SizeOfSimplification(program));
-      optimizations.add(new Pass2CullEmptyBlocks(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
@@ -377,7 +376,6 @@ public class Compiler {
       new Pass3AssertConstants(program).check();
       new Pass3AssertArrayLengths(program).check();
       new Pass3AssertNoMulDivMod(program).check();
-      //new PassNBlockSequencePlanner(program).step();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();
       new PassNBlockSequencePlanner(program).step();
@@ -404,7 +402,7 @@ public class Compiler {
 
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program).step();
-      new Pass2CullEmptyBlocks(program).step();
+      new PassNCullEmptyBlocks(program).step();
       new PassNRenumberLabels(program).execute();
       new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();

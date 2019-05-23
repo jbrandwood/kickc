@@ -11,18 +11,18 @@ main: {
     txa
     and #1
     cmp #0
-    beq b1
+    beq b3
     lda #<fn2
     sta f
     lda #>fn2
     sta f+1
-    jmp b3
-  b1:
+    jmp b4
+  b3:
     lda #<fn1
     sta f
     lda #>fn1
     sta f+1
-  b3:
+  b4:
     lda f
     sta SCREEN
     jmp b2

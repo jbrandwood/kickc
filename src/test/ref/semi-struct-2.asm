@@ -37,6 +37,8 @@
   .label print_line_cursor = $a
   .label print_line_cursor_32 = 2
   .label print_line_cursor_63 = 2
+  .label print_line_cursor_157 = 2
+  .label print_line_cursor_158 = 2
   .label print_line_cursor_159 = 2
   .label print_line_cursor_160 = 2
   .label print_line_cursor_161 = 2
@@ -52,9 +54,7 @@
   .label print_line_cursor_171 = 2
   .label print_line_cursor_172 = 2
   .label print_line_cursor_173 = 2
-  .label print_line_cursor_174 = 2
   .label print_line_cursor_175 = 2
-  .label print_line_cursor_177 = 2
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
@@ -114,9 +114,9 @@ main: {
     sta print_line_cursor_63+1
     jsr print_ln
     lda print_line_cursor
-    sta print_line_cursor_159
+    sta print_line_cursor_157
     lda print_line_cursor+1
-    sta print_line_cursor_159+1
+    sta print_line_cursor_157+1
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -124,9 +124,9 @@ main: {
     jsr print_ln
     jsr printEntry
     lda print_line_cursor
-    sta print_line_cursor_160
+    sta print_line_cursor_158
     lda print_line_cursor+1
-    sta print_line_cursor_160+1
+    sta print_line_cursor_158+1
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -161,9 +161,9 @@ main: {
     sta print_line_cursor_63+1
     jsr print_ln
     lda print_line_cursor
-    sta print_line_cursor_161
+    sta print_line_cursor_159
     lda print_line_cursor+1
-    sta print_line_cursor_161+1
+    sta print_line_cursor_159+1
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -175,9 +175,9 @@ main: {
     sta printEntry.entry+1
     jsr printEntry
     lda print_line_cursor
-    sta print_line_cursor_162
+    sta print_line_cursor_160
     lda print_line_cursor+1
-    sta print_line_cursor_162+1
+    sta print_line_cursor_160+1
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -292,9 +292,9 @@ print_ln: {
     rts
   b2:
     lda print_line_cursor
-    sta print_line_cursor_177
+    sta print_line_cursor_175
     lda print_line_cursor+1
-    sta print_line_cursor_177+1
+    sta print_line_cursor_175+1
     jmp b1
 }
 // Print the contents of a file entry
@@ -318,9 +318,9 @@ printEntry: {
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
-    sta print_line_cursor_163
+    sta print_line_cursor_161
     lda print_line_cursor+1
-    sta print_line_cursor_163+1
+    sta print_line_cursor_161+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -339,9 +339,9 @@ printEntry: {
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
-    sta print_line_cursor_164
+    sta print_line_cursor_162
     lda print_line_cursor+1
-    sta print_line_cursor_164+1
+    sta print_line_cursor_162+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -360,9 +360,9 @@ printEntry: {
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
-    sta print_line_cursor_165
+    sta print_line_cursor_163
     lda print_line_cursor+1
-    sta print_line_cursor_165+1
+    sta print_line_cursor_163+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -381,9 +381,9 @@ printEntry: {
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
-    sta print_line_cursor_166
+    sta print_line_cursor_164
     lda print_line_cursor+1
-    sta print_line_cursor_166+1
+    sta print_line_cursor_164+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -399,9 +399,9 @@ printEntry: {
     tax
     jsr print_byte
     lda print_line_cursor
-    sta print_line_cursor_167
+    sta print_line_cursor_165
     lda print_line_cursor+1
-    sta print_line_cursor_167+1
+    sta print_line_cursor_165+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -417,9 +417,9 @@ printEntry: {
     tax
     jsr print_byte
     lda print_line_cursor
-    sta print_line_cursor_168
+    sta print_line_cursor_166
     lda print_line_cursor+1
-    sta print_line_cursor_168+1
+    sta print_line_cursor_166+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -435,9 +435,9 @@ printEntry: {
     tax
     jsr print_byte
     lda print_line_cursor
-    sta print_line_cursor_169
+    sta print_line_cursor_167
     lda print_line_cursor+1
-    sta print_line_cursor_169+1
+    sta print_line_cursor_167+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -453,9 +453,9 @@ printEntry: {
     tax
     jsr print_byte
     lda print_line_cursor
-    sta print_line_cursor_170
+    sta print_line_cursor_168
     lda print_line_cursor+1
-    sta print_line_cursor_170+1
+    sta print_line_cursor_168+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -474,9 +474,9 @@ printEntry: {
     sta print_word.w+1
     jsr print_word
     lda print_line_cursor
-    sta print_line_cursor_171
+    sta print_line_cursor_169
     lda print_line_cursor+1
-    sta print_line_cursor_171+1
+    sta print_line_cursor_169+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -492,9 +492,9 @@ printEntry: {
     tax
     jsr print_byte
     lda print_line_cursor
-    sta print_line_cursor_172
+    sta print_line_cursor_170
     lda print_line_cursor+1
-    sta print_line_cursor_172+1
+    sta print_line_cursor_170+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -510,9 +510,9 @@ printEntry: {
     tax
     jsr print_byte
     lda print_line_cursor
-    sta print_line_cursor_173
+    sta print_line_cursor_171
     lda print_line_cursor+1
-    sta print_line_cursor_173+1
+    sta print_line_cursor_171+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -528,9 +528,9 @@ printEntry: {
     tax
     jsr print_byte
     lda print_line_cursor
-    sta print_line_cursor_174
+    sta print_line_cursor_172
     lda print_line_cursor+1
-    sta print_line_cursor_174+1
+    sta print_line_cursor_172+1
     jsr print_ln
     lda print_line_cursor
     sta print_char_cursor
@@ -546,9 +546,9 @@ printEntry: {
     tax
     jsr print_byte
     lda print_line_cursor
-    sta print_line_cursor_175
+    sta print_line_cursor_173
     lda print_line_cursor+1
-    sta print_line_cursor_175+1
+    sta print_line_cursor_173+1
     jsr print_ln
     rts
     str: .text "bufdisk   @"

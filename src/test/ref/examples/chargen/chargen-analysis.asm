@@ -174,39 +174,39 @@ main: {
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
     cmp #0
-    bne b2
+    bne b9
     lda #0
     sta shift
-    jmp b9
-  b2:
+    jmp b10
+  b9:
     lda #1
     sta shift
-  b9:
+  b10:
     lda #0
     sta ch
   // Check for key presses - and plot char if found
-  b10:
+  b11:
     ldx ch
     jsr keyboard_get_keycode
     cmp #$3f
-    beq b13
+    beq b2
     tax
     jsr keyboard_key_pressed
-    jmp b11
-  b13:
+    jmp b12
+  b2:
     lda #0
-  b11:
+  b12:
     cmp #0
-    beq b12
+    beq b13
     ldy cur_pos
     lda ch
     ldx shift
     jsr plot_chargen
-  b12:
+  b13:
     inc ch
     lda #$40
     cmp ch
-    bne b10
+    bne b11
     jmp b4
     str: .text "f1@"
     str1: .text "f3@"

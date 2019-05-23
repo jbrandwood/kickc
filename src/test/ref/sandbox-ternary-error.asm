@@ -7,15 +7,15 @@ main: {
     ldx #0
   b1:
     cpx #0
-    beq b4
-    cpx #1
     beq b2
+    cpx #1
+    beq b4
     lda #'c'
     jmp b3
-  b2:
+  b4:
     lda #'b'
     jmp b3
-  b4:
+  b2:
     lda #'a'
   b3:
     sta SCREEN

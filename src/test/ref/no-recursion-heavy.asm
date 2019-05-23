@@ -5,6 +5,7 @@
   .label bb = 3
   .label bb_27 = 4
   .label bc = 5
+  .label bb_100 = 4
   .label bb_101 = 4
   .label bb_102 = 4
   .label bb_103 = 4
@@ -13,7 +14,6 @@
   .label bb_106 = 4
   .label bb_107 = 4
   .label bb_108 = 4
-  .label bb_109 = 4
 main: {
     lda #0
     sta ba
@@ -31,7 +31,7 @@ f0: {
     bne b1
     inc bb
     lda bb
-    sta bb_101
+    sta bb_100
     jsr fa
   b1:
     lda #1
@@ -39,7 +39,7 @@ f0: {
     bne b2
     inc bb
     lda bb
-    sta bb_102
+    sta bb_101
     jsr fa
   b2:
     lda #2
@@ -47,7 +47,7 @@ f0: {
     bne b3
     inc bb
     lda bb
-    sta bb_103
+    sta bb_102
     jsr fa
   b3:
     lda #3
@@ -55,7 +55,7 @@ f0: {
     bne b4
     inc bb
     lda bb
-    sta bb_104
+    sta bb_103
     jsr fa
   b4:
     lda #4
@@ -63,7 +63,7 @@ f0: {
     bne b5
     inc bb
     lda bb
-    sta bb_105
+    sta bb_104
     jsr fa
   b5:
     lda #5
@@ -71,7 +71,7 @@ f0: {
     bne b6
     inc bb
     lda bb
-    sta bb_106
+    sta bb_105
     jsr fa
   b6:
     lda #6
@@ -79,7 +79,7 @@ f0: {
     bne b7
     inc bb
     lda bb
-    sta bb_107
+    sta bb_106
     jsr fa
   b7:
     lda #7
@@ -87,7 +87,7 @@ f0: {
     bne b8
     inc bb
     lda bb
-    sta bb_108
+    sta bb_107
     jsr fa
   b8:
     lda #8
@@ -95,7 +95,7 @@ f0: {
     bne b9
     inc bb
     lda bb
-    sta bb_109
+    sta bb_108
     jsr fa
   b9:
     lda #9
@@ -270,8 +270,5 @@ fc: {
     cmp #7
     cmp #8
     cmp #9
-    bne b10
-    rts
-  b10:
     rts
 }

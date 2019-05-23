@@ -80,8 +80,9 @@ main: {
     inc i
     cmp i
     bne b1
-  b8:
-    jmp b8
+  b5:
+  // loop forever
+    jmp b5
 }
 // Print a newline
 print_ln: {

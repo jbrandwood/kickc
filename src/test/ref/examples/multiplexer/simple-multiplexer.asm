@@ -23,10 +23,10 @@
   .label SPRITE = $2000
   .label YSIN = $2100
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
+  .label plex_sprite_msb = 6
   .label plex_free_next = 3
   .label plex_sprite_idx = 4
   .label plex_show_idx = 5
-  .label plex_sprite_msb = 6
 main: {
     sei
     jsr init
@@ -185,9 +185,9 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     dex
     cpx #$ff
-    bne b5
+    bne b6
     jmp b4
-  b5:
+  b6:
     lda nxt_y
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y

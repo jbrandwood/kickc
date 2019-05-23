@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 /** Pass that culls empty control flow blocks from the program */
-public class Pass2CullEmptyBlocks extends Pass2SsaOptimization {
+public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
 
-   public Pass2CullEmptyBlocks(Program program) {
+   public PassNCullEmptyBlocks(Program program) {
       super(program);
    }
 

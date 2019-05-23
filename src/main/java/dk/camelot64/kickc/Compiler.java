@@ -255,7 +255,6 @@ public class Compiler {
       optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2FixInlineConstructorsNew(program));
       optimizations.add(new PassNAddTypeConversionAssignment(program));
-      optimizations.add(new Pass2EliminateRedundantCasts(program));
       optimizations.add(new Pass2RangeResolving(program));
       optimizations.add(new Pass2ComparisonOptimization(program));
       optimizations.add(new Pass2InlineCast(program));

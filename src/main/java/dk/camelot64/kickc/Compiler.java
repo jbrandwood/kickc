@@ -229,11 +229,6 @@ public class Compiler {
       }
    }
 
-   private void pass2Optimize() {
-      List<Pass2SsaOptimization> optimizations = getPass2Optimizations();
-      pass2Execute(optimizations);
-   }
-
    private List<Pass2SsaOptimization> getPass2Optimizations() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
       optimizations.add(new Pass2FixInlineConstructorsNew(program));
@@ -271,6 +266,11 @@ public class Compiler {
       return optimizations;
    }
 
+   private void pass2Optimize() {
+      List<Pass2SsaOptimization> optimizations = getPass2Optimizations();
+      pass2Execute(optimizations);
+   }
+
    private void pass2UnrollLoops() {
       List<Pass2SsaOptimization> loopUnrolling = new ArrayList<>();
       loopUnrolling.add(new PassNStatementIndices(program));
@@ -299,7 +299,6 @@ public class Compiler {
 
    private void pass2InlineConstants() {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
-
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new PassNStatementIndices(program));
       constantOptimizations.add(new PassNVariableReferenceInfos(program));

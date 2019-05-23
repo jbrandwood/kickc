@@ -14,10 +14,10 @@ main: {
     lda #>HEAP_START
     sta heap_head+1
     jsr malloc
-    lda malloc.return_2
-    sta malloc.return
-    lda malloc.return_2+1
-    sta malloc.return+1
+    lda malloc.return
+    sta malloc.return_2
+    lda malloc.return+1
+    sta malloc.return_2+1
     jsr malloc
     ldy #0
   b1:
@@ -48,13 +48,12 @@ free: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label return = 4
-    .label return_1 = 6
-    .label return_2 = 6
+    .label return = 6
+    .label return_2 = 4
     lda heap_head
-    sta return_2
+    sta return
     lda heap_head+1
-    sta return_2+1
+    sta return+1
     lda #$64
     clc
     adc heap_head

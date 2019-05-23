@@ -259,8 +259,6 @@ public class Compiler {
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));
       optimizations.add(new Pass2ConstantIfs(program));
       optimizations.add(new Pass2ConstantStringConsolidation(program));
-      optimizations.add(new PassNStatementIndices(program));
-      optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2RangeResolving(program));
       optimizations.add(new Pass2ComparisonOptimization(program));
       optimizations.add(new Pass2InlineDerefIdx(program));

@@ -249,6 +249,7 @@ public class Compiler {
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
+      optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program)); 
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantValues(program));

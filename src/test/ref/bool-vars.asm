@@ -107,9 +107,7 @@ bool_and: {
     txa
     and #1
     cpx #$a
-    bcc b5
-    jmp b4
-  b5:
+    bcs b4
     cmp #0
     beq b2
   b4:

@@ -16,9 +16,7 @@ bool_complex: {
     txa
     and #1
     cpx #$a
-    bcc b6
-    jmp b5
-  b6:
+    bcs b5
     cmp #0
     beq b2
   b5:
@@ -90,9 +88,7 @@ bool_and: {
     txa
     and #1
     cpx #$a
-    bcc b5
-    jmp b4
-  b5:
+    bcs b4
     cmp #0
     beq b2
   b4:

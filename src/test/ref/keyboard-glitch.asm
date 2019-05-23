@@ -95,7 +95,9 @@ pressed: {
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
     cmp #0
-    beq b1
+    bne breturn
+    jmp b1
+  breturn:
     rts
 }
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)

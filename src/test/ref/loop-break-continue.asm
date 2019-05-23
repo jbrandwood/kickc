@@ -14,13 +14,12 @@ main: {
     lda str,x
     cmp #'@'
     bne b2
+  breturn:
     rts
   b2:
     lda str,x
     cmp #' '
-    bne b3
-    jmp b4
-  b3:
+    beq b4
     lda str,x
     ldy #0
     sta (screen),y
@@ -31,7 +30,7 @@ main: {
   b4:
     inx
     cpx #0
-    bne b1
-    rts
+    beq breturn
+    jmp b1
     str: .text "hello brave new world@"
 }

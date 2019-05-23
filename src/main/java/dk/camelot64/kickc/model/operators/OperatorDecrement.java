@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
@@ -18,7 +19,7 @@ public class OperatorDecrement extends OperatorUnary {
       if(operand instanceof ConstantInteger ) {
          return new ConstantInteger(((ConstantInteger) operand).getInteger() -1);
       }
-      throw new CompileError("Calculation not implemented " + getOperator() + " " + operand );
+      throw new ConstantNotLiteral("Calculation not literal " + getOperator() + " " + operand );
    }
 
    @Override

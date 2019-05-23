@@ -12,16 +12,15 @@ main: {
     ldy #0
     lda (line),y
     cmp #'a'
-    bne b5
+    bne b3
+  breturn:
     rts
-  b5:
+  b3:
     ldy #0
   b2:
     lda (line),y
     cmp #'a'
-    bne b3
-    jmp b4
-  b3:
+    beq b4
     lda #'a'
     sta (line),y
     iny
@@ -37,11 +36,11 @@ main: {
   !:
     lda line+1
     cmp #>$400+$28*$19
-    bcc b1
-    bne !+
+    bcc !+
+    bne breturn
     lda line
     cmp #<$400+$28*$19
-    bcc b1
+    bcs breturn
   !:
-    rts
+    jmp b1
 }

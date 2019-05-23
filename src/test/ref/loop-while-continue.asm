@@ -13,9 +13,7 @@ main: {
   b2:
     lda SCREEN,x
     cmp #' '
-    bne b3
-    jmp b1
-  b3:
+    beq b1
     inc SCREEN,x
     jmp b1
 }

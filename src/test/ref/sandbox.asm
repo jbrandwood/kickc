@@ -202,9 +202,7 @@ myprintf: {
     rts
   b3:
     cpx #'1'
-    bcs b39
-    jmp b4
-  b39:
+    bcc b4
     cpx #'9'
     bcs !b23+
     jmp b23
@@ -286,10 +284,8 @@ myprintf: {
     bne b13
     lda bTrailing
     cmp #0
-    beq b41
-    jmp b15
-  b41:
-    lda b
+    bne b15
+    tya
     cmp bDigits
     bcc b16
   b15:
@@ -304,13 +300,14 @@ myprintf: {
     bcc b19
     lda bTrailing
     cmp #0
-    bne b42
+    bne !b22+
     jmp b22
-  b42:
+  !b22:
     lda b
     cmp bDigits
-    bcc b21
+    bcc !b22+
     jmp b22
+  !b22:
   b21:
     lda #' '
     ldy bLen
@@ -393,13 +390,9 @@ myprintf: {
     jmp b31
   b28:
     cpx #$41
-    bcs b43
-    jmp b32
-  b43:
+    bcc b32
     cpx #$5a+1
-    bcc b37
-    jmp b32
-  b37:
+    bcs b32
     txa
     axs #-[$20]
   b32:

@@ -129,9 +129,7 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     dex
     cpx #$ff
-    bne b7
-    jmp b4
-  b7:
+    beq b4
     lda nxt_y
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
@@ -241,9 +239,7 @@ plex_irq: {
     sta _4
     lda plex_show_idx
     cmp #PLEX_COUNT
-    bcc b7
-    jmp b4
-  b7:
+    bcs b4
     cpx _4
     bcc b3
   b4:

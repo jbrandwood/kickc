@@ -311,6 +311,13 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeArray(KickCParser.TypeArrayContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code typeStructRef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeStructRef(KickCParser.TypeStructRefContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code typeSimple}
 	 * labeled alternative in {@link KickCParser#typeDecl}.
 	 * @param ctx the parse tree
@@ -318,12 +325,37 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeSimple(KickCParser.TypeSimpleContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code typeStructDef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeStructDef(KickCParser.TypeStructDefContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code typeSignedSimple}
 	 * labeled alternative in {@link KickCParser#typeDecl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#structRef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructRef(KickCParser.StructRefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#structDef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructDef(KickCParser.StructDefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#structMembers}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructMembers(KickCParser.StructMembersContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code commaNone}
 	 * labeled alternative in {@link KickCParser#commaExpr}.

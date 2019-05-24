@@ -23,6 +23,7 @@ declSeq
 
 decl
     : declVariables ';'
+    | structDef ';'
     | declFunction
     | declKasm
     | globalDirective
@@ -112,6 +113,20 @@ typeDecl
     | typeDecl '*' #typePtr
     | typeDecl '[' (expr)? ']' #typeArray
     | typeDecl '(' ')' #typeProcedure
+    | structDef  #typeStructDef
+    | structRef  #typeStructRef
+    ;
+
+structRef
+    : 'struct' NAME
+    ;
+
+structDef
+    : 'struct' NAME? '{' structMembers+ '}'
+    ;
+
+structMembers
+    : declVariables ';'
     ;
 
 commaExpr

@@ -1307,12 +1307,18 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
-      String text = ctx.getText();
-      String stringValue;
-      if(text.endsWith("z")) {
-         stringValue = text.substring(1, text.length() - 2);
-      }  else {
-         stringValue = text.substring(1, text.length() - 1)+"@";
+      String stringValue ="";
+      String subText = "";
+      for(TerminalNode stringNode : ctx.STRING()) {
+         subText = stringNode.getText();
+         if(subText.endsWith("z")) {
+            stringValue += subText.substring(1, subText.length() - 2);
+         }  else {
+            stringValue += subText.substring(1, subText.length() - 1);
+         }
+      }
+      if(!subText.endsWith("z")) {
+         stringValue += "@";
       }
       return new ConstantString(stringValue);
    }

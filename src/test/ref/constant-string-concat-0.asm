@@ -6,11 +6,12 @@ main: {
     .label SCREEN = $400
     ldx #0
   b1:
-    lda s,x
+    lda msg,x
     sta SCREEN,x
     inx
-    cpx #8
+    lda msg,x
+    cmp #0
     bne b1
     rts
-    s: .text "camelot@"
+    msg: .text "camelot@"
 }

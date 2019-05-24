@@ -146,7 +146,7 @@ expr
     | '{' expr (',' expr )* '}' #initList
     | NAME  #exprId
     | NUMBER #exprNumber
-    | STRING #exprString
+    | STRING+ #exprString
     | CHAR #exprChar
     | BOOLEAN #exprBool
     ;

@@ -32,23 +32,9 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   /*
-    * Avaiting String concatenation
-
    @Test
-   public void testLiterals() throws IOException, URISyntaxException {
-      compileAndCompare("literals");
-   }
-
-
-    @Test
-    public void testConstantStringConcat() throws IOException, URISyntaxException {
-      compileAndCompare("constant-string-concat");
-    }
-
-   @Test
-   public void testConcatChar() throws IOException, URISyntaxException {
-      compileAndCompare("concat-char");
+   public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
+      compileAndCompare("c64dtv-gfxexplorer", 10);
    }
 
    @Test
@@ -57,11 +43,20 @@ public class TestPrograms {
    }
 
    @Test
-   public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
-      compileAndCompare("c64dtv-gfxexplorer", 10);
+   public void testConstantStringConcat0() throws IOException, URISyntaxException {
+      compileAndCompare("constant-string-concat-0", log().verboseParse().verboseStatementSequence().verboseCreateSsa());
    }
 
-    */
+   @Test
+   public void testLiterals() throws IOException, URISyntaxException {
+      compileAndCompare("literals");
+   }
+
+
+   @Test
+   public void testConstantStringConcat() throws IOException, URISyntaxException {
+      compileAndCompare("constant-string-concat");
+   }
 
    @Test
    public void testStatementSequence1() throws IOException, URISyntaxException {

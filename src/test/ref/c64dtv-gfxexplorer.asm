@@ -130,41 +130,6 @@
   .const FORM_CURSOR_BLINK = $28
   // Any shift is pressed
   .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
-  .label form_ctrl_bmm = form_fields_val+1
-  .label form_ctrl_mcm = form_fields_val+2
-  .label form_ctrl_ecm = form_fields_val+3
-  .label form_ctrl_hicol = form_fields_val+4
-  .label form_ctrl_line = form_fields_val+5
-  .label form_ctrl_colof = form_fields_val+6
-  .label form_ctrl_chunk = form_fields_val+7
-  .label form_ctrl_borof = form_fields_val+8
-  .label form_ctrl_overs = form_fields_val+9
-  .label form_a_pattern = form_fields_val+$a
-  .label form_a_start_hi = form_fields_val+$b
-  .label form_a_start_lo = form_fields_val+$c
-  .label form_a_step_hi = form_fields_val+$d
-  .label form_a_step_lo = form_fields_val+$e
-  .label form_a_mod_hi = form_fields_val+$f
-  .label form_a_mod_lo = form_fields_val+$10
-  .label form_b_pattern = form_fields_val+$11
-  .label form_b_start_hi = form_fields_val+$12
-  .label form_b_start_lo = form_fields_val+$13
-  .label form_b_step_hi = form_fields_val+$14
-  .label form_b_step_lo = form_fields_val+$15
-  .label form_b_mod_hi = form_fields_val+$16
-  .label form_b_mod_lo = form_fields_val+$17
-  .label form_vic_screen = form_fields_val+$18
-  .label form_vic_gfx = form_fields_val+$19
-  .label form_vic_cols = form_fields_val+$1a
-  .label form_dtv_palet = form_fields_val+$1b
-  .label form_vic_bg0_hi = form_fields_val+$1c
-  .label form_vic_bg0_lo = form_fields_val+$1d
-  .label form_vic_bg1_hi = form_fields_val+$1e
-  .label form_vic_bg1_lo = form_fields_val+$1f
-  .label form_vic_bg2_hi = form_fields_val+$20
-  .label form_vic_bg2_lo = form_fields_val+$21
-  .label form_vic_bg3_hi = form_fields_val+$22
-  .label form_vic_bg3_lo = form_fields_val+$23
   .label print_char_cursor = 5
   .label print_line_cursor = $10
   .label keyboard_events_size = 8
@@ -196,61 +161,61 @@ main: {
 // Change graphics mode to show the selected graphics mode
 gfx_mode: {
     .label _22 = 9
-    .label _24 = 3
     .label _26 = 3
     .label _28 = 3
     .label _36 = 9
-    .label _38 = 3
     .label _40 = 3
     .label _42 = 3
     .label _52 = 3
+    .label _53 = 3
     .label _54 = 3
     .label _55 = 3
     .label _56 = 2
     .label _57 = 3
+    .label _58 = 3
     .label _59 = 3
     .label plane_a = 9
     .label plane_b = 9
     .label vic_colors = 3
     .label col = 5
     .label cy = 2
-    lda form_ctrl_line
+    lda form_fields_val+5
     cmp #0
     beq b10
-    ldx #0|DTV_LINEAR
+    ldx #DTV_LINEAR
     jmp b1
   b10:
     ldx #0
   b1:
-    lda form_ctrl_borof
+    lda form_fields_val+8
     cmp #0
     beq b2
     txa
     ora #DTV_BORDER_OFF
     tax
   b2:
-    lda form_ctrl_hicol
+    lda form_fields_val+4
     cmp #0
     beq b3
     txa
     ora #DTV_HIGHCOLOR
     tax
   b3:
-    lda form_ctrl_overs
+    lda form_fields_val+9
     cmp #0
     beq b4
     txa
     ora #DTV_OVERSCAN
     tax
   b4:
-    lda form_ctrl_colof
+    lda form_fields_val+6
     cmp #0
     beq b5
     txa
     ora #DTV_COLORRAM_OFF
     tax
   b5:
-    lda form_ctrl_chunk
+    lda form_fields_val+7
     cmp #0
     beq b6
     txa
@@ -258,7 +223,7 @@ gfx_mode: {
     tax
   b6:
     stx DTV_CONTROL
-    lda form_ctrl_ecm
+    lda form_fields_val+3
     cmp #0
     beq b11
     ldx #VIC_DEN|VIC_RSEL|3|VIC_ECM
@@ -266,7 +231,7 @@ gfx_mode: {
   b11:
     ldx #VIC_DEN|VIC_RSEL|3
   b7:
-    lda form_ctrl_bmm
+    lda form_fields_val+1
     cmp #0
     beq b8
     txa
@@ -274,7 +239,7 @@ gfx_mode: {
     tax
   b8:
     stx VIC_CONTROL
-    lda form_ctrl_mcm
+    lda form_fields_val+2
     cmp #0
     beq b12
     lda #VIC_CSEL|VIC_MCM
@@ -283,14 +248,14 @@ gfx_mode: {
     lda #VIC_CSEL
   b9:
     sta VIC_CONTROL2
-    lda form_a_start_hi
+    lda form_fields_val+$b
     asl
     asl
     asl
     asl
-    ora form_a_start_lo
+    ora form_fields_val+$c
     tax
-    lda form_a_pattern
+    lda form_fields_val+$a
     jsr get_plane
     txa
     clc
@@ -306,15 +271,12 @@ gfx_mode: {
     adc #0
     sta plane_a+3
     lda plane_a
-    sta _24
-    lda plane_a+1
-    sta _24+1
-    lda _24
-    sta DTV_PLANEA_START_LO
-    lda plane_a
     sta _26
     lda plane_a+1
     sta _26+1
+    lda _26
+    sta DTV_PLANEA_START_LO
+    lda _26+1
     sta DTV_PLANEA_START_MI
     lda plane_a+2
     sta _28
@@ -322,30 +284,30 @@ gfx_mode: {
     sta _28+1
     lda _28
     sta DTV_PLANEA_START_HI
-    lda form_a_step_hi
+    lda form_fields_val+$d
     asl
     asl
     asl
     asl
-    ora form_a_step_lo
+    ora form_fields_val+$e
     sta DTV_PLANEA_STEP
-    lda form_a_mod_hi
+    lda form_fields_val+$f
     asl
     asl
     asl
     asl
-    ora form_a_mod_lo
+    ora form_fields_val+$10
     sta DTV_PLANEA_MODULO_LO
     lda #0
     sta DTV_PLANEA_MODULO_HI
-    lda form_b_start_hi
+    lda form_fields_val+$12
     asl
     asl
     asl
     asl
-    ora form_b_start_lo
+    ora form_fields_val+$13
     tax
-    lda form_b_pattern
+    lda form_fields_val+$11
     jsr get_plane
     txa
     clc
@@ -361,15 +323,12 @@ gfx_mode: {
     adc #0
     sta plane_b+3
     lda plane_b
-    sta _38
-    lda plane_b+1
-    sta _38+1
-    lda _38
-    sta DTV_PLANEB_START_LO
-    lda plane_b
     sta _40
     lda plane_b+1
     sta _40+1
+    lda _40
+    sta DTV_PLANEB_START_LO
+    lda _40+1
     sta DTV_PLANEB_START_MI
     lda plane_b+2
     sta _42
@@ -377,19 +336,19 @@ gfx_mode: {
     sta _42+1
     lda _42
     sta DTV_PLANEB_START_HI
-    lda form_b_step_hi
+    lda form_fields_val+$14
     asl
     asl
     asl
     asl
-    ora form_b_step_lo
+    ora form_fields_val+$15
     sta DTV_PLANEB_STEP
-    lda form_b_mod_hi
+    lda form_fields_val+$16
     asl
     asl
     asl
     asl
-    ora form_b_mod_lo
+    ora form_fields_val+$17
     sta DTV_PLANEB_MODULO_LO
     lda #0
     sta DTV_PLANEB_MODULO_HI
@@ -399,7 +358,7 @@ gfx_mode: {
     // Set VIC Bank bits to output - all others to input
     lda #3^VIC_SCREEN0/$4000
     sta CIA2_PORT_A
-    lda form_vic_screen
+    lda form_fields_val+$18
     jsr get_vic_screen
     lda _54
     and #<$3fff
@@ -415,7 +374,7 @@ gfx_mode: {
     bne !-
     lda _55
     sta _56
-    lda form_vic_gfx
+    lda form_fields_val+$19
     jsr get_vic_charset
     lda _59
     and #<$3fff
@@ -429,7 +388,7 @@ gfx_mode: {
     // Set VIC Bank
     // VIC memory
     sta VIC_MEMORY
-    lda form_vic_cols
+    lda form_fields_val+$1a
     jsr get_vic_screen
     lda #0
     sta cy
@@ -461,36 +420,36 @@ gfx_mode: {
     // Background colors
     lda #0
     sta BORDERCOL
-    lda form_vic_bg0_hi
+    lda form_fields_val+$1c
     asl
     asl
     asl
     asl
-    ora form_vic_bg0_lo
+    ora form_fields_val+$1d
     sta BGCOL1
-    lda form_vic_bg1_hi
+    lda form_fields_val+$1e
     asl
     asl
     asl
     asl
-    ora form_vic_bg1_lo
+    ora form_fields_val+$1f
     sta BGCOL2
-    lda form_vic_bg2_hi
+    lda form_fields_val+$20
     asl
     asl
     asl
     asl
-    ora form_vic_bg2_lo
+    ora form_fields_val+$21
     sta BGCOL3
-    lda form_vic_bg3_hi
+    lda form_fields_val+$22
     asl
     asl
     asl
     asl
-    ora form_vic_bg3_lo
+    ora form_fields_val+$23
     sta BGCOL4
     // DTV Palette
-    lda form_dtv_palet
+    lda form_fields_val+$1b
     cmp #0
     beq b13
     ldx #0
@@ -508,7 +467,9 @@ gfx_mode: {
     jsr keyboard_event_scan
     jsr keyboard_event_get
     cmp #KEY_SPACE
-    bne b25
+    beq breturn
+    jmp b25
+  breturn:
     rts
   // DTV Palette - default
   b13:
@@ -567,7 +528,7 @@ keyboard_event_scan: {
     jsr keyboard_event_pressed
     cmp #0
     beq b4
-    ldx #0|KEY_MODIFIER_LSHIFT
+    ldx #KEY_MODIFIER_LSHIFT
     jmp b1
   b4:
     ldx #0
@@ -679,39 +640,39 @@ keyboard_matrix_read: {
 get_vic_screen: {
     .label return = 3
     cmp #0
-    beq b2
+    beq b1
     cmp #1
-    beq b3
+    beq b2
     cmp #2
-    beq b4
+    beq b3
     cmp #3
-    beq b5
+    beq b4
     cmp #4
-    bne b2
+    bne b1
     lda #<VIC_SCREEN4
     sta return
     lda #>VIC_SCREEN4
     sta return+1
     rts
-  b2:
+  b1:
     lda #<VIC_SCREEN0
     sta return
     lda #>VIC_SCREEN0
     sta return+1
     rts
-  b3:
+  b2:
     lda #<VIC_SCREEN1
     sta return
     lda #>VIC_SCREEN1
     sta return+1
     rts
-  b4:
+  b3:
     lda #<VIC_SCREEN2
     sta return
     lda #>VIC_SCREEN2
     sta return+1
     rts
-  b5:
+  b4:
     lda #<VIC_SCREEN3
     sta return
     lda #>VIC_SCREEN3
@@ -723,15 +684,15 @@ get_vic_screen: {
 get_vic_charset: {
     .label return = 3
     cmp #0
-    beq b2
+    beq b1
     cmp #1
-    bne b2
+    bne b1
     lda #<VIC_BITMAP
     sta return
     lda #>VIC_BITMAP
     sta return+1
     rts
-  b2:
+  b1:
     lda #<VIC_CHARSET_ROM
     sta return
     lda #>VIC_CHARSET_ROM
@@ -785,7 +746,7 @@ get_plane: {
     cmp #$c
     beq b6
     cmp #$d
-    bne b2
+    bne b1
     lda #<PLANE_FULL
     sta return
     lda #>PLANE_FULL
@@ -795,14 +756,24 @@ get_plane: {
     lda #>PLANE_FULL>>$10
     sta return+3
     rts
-  b2:
-    lda #<$ffffffff&VIC_SCREEN0
+  b1:
+    lda #<VIC_SCREEN0
     sta return
-    lda #>$ffffffff&VIC_SCREEN0
+    lda #>VIC_SCREEN0
     sta return+1
-    lda #<$ffffffff&VIC_SCREEN0>>$10
+    lda #<VIC_SCREEN0>>$10
     sta return+2
-    lda #>$ffffffff&VIC_SCREEN0>>$10
+    lda #>VIC_SCREEN0>>$10
+    sta return+3
+    rts
+  b2:
+    lda #<VIC_SCREEN0
+    sta return
+    lda #>VIC_SCREEN0
+    sta return+1
+    lda #<VIC_SCREEN0>>$10
+    sta return+2
+    lda #>VIC_SCREEN0>>$10
     sta return+3
     rts
   b3:
@@ -846,53 +817,53 @@ get_plane: {
     sta return+3
     rts
   b7:
-    lda #<$ffffffff&VIC_SCREEN1
+    lda #<VIC_SCREEN1
     sta return
-    lda #>$ffffffff&VIC_SCREEN1
+    lda #>VIC_SCREEN1
     sta return+1
-    lda #<$ffffffff&VIC_SCREEN1>>$10
+    lda #<VIC_SCREEN1>>$10
     sta return+2
-    lda #>$ffffffff&VIC_SCREEN1>>$10
+    lda #>VIC_SCREEN1>>$10
     sta return+3
     rts
   b8:
-    lda #<$ffffffff&VIC_SCREEN2
+    lda #<VIC_SCREEN2
     sta return
-    lda #>$ffffffff&VIC_SCREEN2
+    lda #>VIC_SCREEN2
     sta return+1
-    lda #<$ffffffff&VIC_SCREEN2>>$10
+    lda #<VIC_SCREEN2>>$10
     sta return+2
-    lda #>$ffffffff&VIC_SCREEN2>>$10
+    lda #>VIC_SCREEN2>>$10
     sta return+3
     rts
   b9:
-    lda #<$ffffffff&VIC_SCREEN3
+    lda #<VIC_SCREEN3
     sta return
-    lda #>$ffffffff&VIC_SCREEN3
+    lda #>VIC_SCREEN3
     sta return+1
-    lda #<$ffffffff&VIC_SCREEN3>>$10
+    lda #<VIC_SCREEN3>>$10
     sta return+2
-    lda #>$ffffffff&VIC_SCREEN3>>$10
+    lda #>VIC_SCREEN3>>$10
     sta return+3
     rts
   b10:
-    lda #<$ffffffff&VIC_BITMAP
+    lda #<VIC_BITMAP
     sta return
-    lda #>$ffffffff&VIC_BITMAP
+    lda #>VIC_BITMAP
     sta return+1
-    lda #<$ffffffff&VIC_BITMAP>>$10
+    lda #<VIC_BITMAP>>$10
     sta return+2
-    lda #>$ffffffff&VIC_BITMAP>>$10
+    lda #>VIC_BITMAP>>$10
     sta return+3
     rts
   b11:
-    lda #<$ffffffff&VIC_CHARSET_ROM
+    lda #<VIC_CHARSET_ROM
     sta return
-    lda #>$ffffffff&VIC_CHARSET_ROM
+    lda #>VIC_CHARSET_ROM
     sta return+1
-    lda #<$ffffffff&VIC_CHARSET_ROM>>$10
+    lda #<VIC_CHARSET_ROM>>$10
     sta return+2
-    lda #>$ffffffff&VIC_CHARSET_ROM>>$10
+    lda #>VIC_CHARSET_ROM>>$10
     sta return+3
     rts
   b12:
@@ -956,10 +927,10 @@ form_mode: {
     lda form_fields_val
     jsr render_preset_name
     // DTV Graphics Bank
-    lda #($ffffffff&FORM_CHARSET)/$10000
+    lda #0
     sta DTV_GRAPHICS_VIC_BANK
     // DTV Color Bank
-    lda #DTV_COLOR_BANK_DEFAULT/$400
+    lda #<DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -967,7 +938,6 @@ form_mode: {
     lda #3
     sta CIA2_PORT_A_DDR
     // Set VIC Bank bits to output - all others to input
-    lda #3^FORM_CHARSET/$4000
     sta CIA2_PORT_A
     // Set VIC Bank
     // DTV Graphics Mode
@@ -982,7 +952,7 @@ form_mode: {
     lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
     sta VIC_MEMORY
     // DTV Plane A to FORM_SCREEN also
-    lda #<FORM_SCREEN
+    lda #0
     sta DTV_PLANEA_START_LO
     lda #>FORM_SCREEN
     sta DTV_PLANEA_START_MI
@@ -1030,93 +1000,93 @@ form_mode: {
 render_preset_name: {
     .label name = 3
     cmp #0
-    beq b12
-    cmp #1
-    beq b4
-    cmp #2
-    beq b5
-    cmp #3
-    beq b6
-    cmp #4
-    beq b7
-    cmp #5
-    beq b8
-    cmp #6
-    beq b9
-    cmp #7
-    beq b10
-    cmp #8
-    beq b11
-    cmp #9
-    beq b2
-    cmp #$a
     beq b3
-  b12:
+    cmp #1
+    beq b6
+    cmp #2
+    beq b7
+    cmp #3
+    beq b8
+    cmp #4
+    beq b9
+    cmp #5
+    beq b10
+    cmp #6
+    beq b11
+    cmp #7
+    beq b12
+    cmp #8
+    beq b4
+    cmp #9
+    beq b5
+    cmp #$a
+    beq b1
+  b3:
     lda #<name_1
     sta name
     lda #>name_1
     sta name+1
-    jmp b1
-  b2:
-    lda #<name_10
-    sta name
-    lda #>name_10
-    sta name+1
-    jmp b1
-  b3:
+    jmp b2
+  b1:
     lda #<name_11
     sta name
     lda #>name_11
     sta name+1
-    jmp b1
+    jmp b2
   b4:
-    lda #<name_2
-    sta name
-    lda #>name_2
-    sta name+1
-    jmp b1
-  b5:
-    lda #<name_3
-    sta name
-    lda #>name_3
-    sta name+1
-    jmp b1
-  b6:
-    lda #<name_4
-    sta name
-    lda #>name_4
-    sta name+1
-    jmp b1
-  b7:
-    lda #<name_5
-    sta name
-    lda #>name_5
-    sta name+1
-    jmp b1
-  b8:
-    lda #<name_6
-    sta name
-    lda #>name_6
-    sta name+1
-    jmp b1
-  b9:
-    lda #<name_7
-    sta name
-    lda #>name_7
-    sta name+1
-    jmp b1
-  b10:
-    lda #<name_8
-    sta name
-    lda #>name_8
-    sta name+1
-    jmp b1
-  b11:
     lda #<name_9
     sta name
     lda #>name_9
     sta name+1
-  b1:
+    jmp b2
+  b5:
+    lda #<name_10
+    sta name
+    lda #>name_10
+    sta name+1
+    jmp b2
+  b6:
+    lda #<name_2
+    sta name
+    lda #>name_2
+    sta name+1
+    jmp b2
+  b7:
+    lda #<name_3
+    sta name
+    lda #>name_3
+    sta name+1
+    jmp b2
+  b8:
+    lda #<name_4
+    sta name
+    lda #>name_4
+    sta name+1
+    jmp b2
+  b9:
+    lda #<name_5
+    sta name
+    lda #>name_5
+    sta name+1
+    jmp b2
+  b10:
+    lda #<name_6
+    sta name
+    lda #>name_6
+    sta name+1
+    jmp b2
+  b11:
+    lda #<name_7
+    sta name
+    lda #>name_7
+    sta name+1
+    jmp b2
+  b12:
+    lda #<name_8
+    sta name
+    lda #>name_8
+    sta name+1
+  b2:
     jsr print_str_at
     rts
     name_1: .text "Standard Charset              @"
@@ -1168,7 +1138,7 @@ form_render_values: {
     ldy form_fields_val,x
     lda print_hextab,y
     ldy form_field_ptr.x
-    sta (form_field_ptr._2),y
+    sta (form_field_ptr.line),y
     inx
     cpx #form_fields_cnt
     bcc b1
@@ -1178,6 +1148,7 @@ form_render_values: {
 // field_idx is the index of the field to get the screen address for
 // form_field_ptr(byte register(X) field_idx)
 form_field_ptr: {
+    .label line = 3
     .label x = $13
     .label _2 = 3
     lda form_fields_y,x
@@ -1196,93 +1167,93 @@ form_field_ptr: {
 apply_preset: {
     .label preset = 3
     cmp #0
-    beq b12
-    cmp #1
-    beq b4
-    cmp #2
-    beq b5
-    cmp #3
-    beq b6
-    cmp #4
-    beq b7
-    cmp #5
-    beq b8
-    cmp #6
-    beq b9
-    cmp #7
-    beq b10
-    cmp #8
-    beq b11
-    cmp #9
-    beq b2
-    cmp #$a
     beq b3
-  b12:
+    cmp #1
+    beq b6
+    cmp #2
+    beq b7
+    cmp #3
+    beq b8
+    cmp #4
+    beq b9
+    cmp #5
+    beq b10
+    cmp #6
+    beq b11
+    cmp #7
+    beq b12
+    cmp #8
+    beq b4
+    cmp #9
+    beq b5
+    cmp #$a
+    beq b1
+  b3:
     lda #<preset_stdchar
     sta preset
     lda #>preset_stdchar
     sta preset+1
-    jmp b1
-  b2:
-    lda #<preset_sixsfred2
-    sta preset
-    lda #>preset_sixsfred2
-    sta preset+1
-    jmp b1
-  b3:
+    jmp b2
+  b1:
     lda #<preset_8bpppixelcell
     sta preset
     lda #>preset_8bpppixelcell
     sta preset+1
-    jmp b1
+    jmp b2
   b4:
-    lda #<preset_ecmchar
-    sta preset
-    lda #>preset_ecmchar
-    sta preset+1
-    jmp b1
-  b5:
-    lda #<preset_stdbm
-    sta preset
-    lda #>preset_stdbm
-    sta preset+1
-    jmp b1
-  b6:
-    lda #<preset_mcbm
-    sta preset
-    lda #>preset_mcbm
-    sta preset+1
-    jmp b1
-  b7:
-    lda #<preset_hi_stdchar
-    sta preset
-    lda #>preset_hi_stdchar
-    sta preset+1
-    jmp b1
-  b8:
-    lda #<preset_hi_ecmchar
-    sta preset
-    lda #>preset_hi_ecmchar
-    sta preset+1
-    jmp b1
-  b9:
-    lda #<preset_twoplane
-    sta preset
-    lda #>preset_twoplane
-    sta preset+1
-    jmp b1
-  b10:
-    lda #<preset_chunky
-    sta preset
-    lda #>preset_chunky
-    sta preset+1
-    jmp b1
-  b11:
     lda #<preset_sixsfred
     sta preset
     lda #>preset_sixsfred
     sta preset+1
-  b1:
+    jmp b2
+  b5:
+    lda #<preset_sixsfred2
+    sta preset
+    lda #>preset_sixsfred2
+    sta preset+1
+    jmp b2
+  b6:
+    lda #<preset_ecmchar
+    sta preset
+    lda #>preset_ecmchar
+    sta preset+1
+    jmp b2
+  b7:
+    lda #<preset_stdbm
+    sta preset
+    lda #>preset_stdbm
+    sta preset+1
+    jmp b2
+  b8:
+    lda #<preset_mcbm
+    sta preset
+    lda #>preset_mcbm
+    sta preset+1
+    jmp b2
+  b9:
+    lda #<preset_hi_stdchar
+    sta preset
+    lda #>preset_hi_stdchar
+    sta preset+1
+    jmp b2
+  b10:
+    lda #<preset_hi_ecmchar
+    sta preset
+    lda #>preset_hi_ecmchar
+    sta preset+1
+    jmp b2
+  b11:
+    lda #<preset_twoplane
+    sta preset
+    lda #>preset_twoplane
+    sta preset+1
+    jmp b2
+  b12:
+    lda #<preset_chunky
+    sta preset
+    lda #>preset_chunky
+    sta preset+1
+  b2:
     ldy #0
   // Copy preset values into the fields
   b13:
@@ -1316,8 +1287,8 @@ form_control: {
   !b2:
     lda #$7f
     ldy form_field_ptr.x
-    and (form_field_ptr._2),y
-    sta (form_field_ptr._2),y
+    and (form_field_ptr.line),y
+    sta (form_field_ptr.line),y
   b3:
     jsr keyboard_event_scan
     jsr keyboard_event_get
@@ -1325,78 +1296,78 @@ form_control: {
     bne b4
     lda #$7f
     ldy form_field_ptr.x
-    and (form_field_ptr._2),y
+    and (form_field_ptr.line),y
     // Unblink the cursor
-    sta (form_field_ptr._2),y
+    sta (form_field_ptr.line),y
     txa
     and #KEY_MODIFIER_SHIFT
     cmp #0
-    beq b12
+    beq b13
     dec form_field_idx
     lda #$ff
     cmp form_field_idx
-    bne b13
+    bne b14
     lda #form_fields_cnt-1
     sta form_field_idx
-  b13:
+  b14:
     lda #FORM_CURSOR_BLINK/2
     sta form_cursor_count
     ldx #0
     rts
-  b12:
+  b13:
     inc form_field_idx
     lda #form_fields_cnt
     cmp form_field_idx
-    bne b13
+    bne b14
     lda #0
     sta form_field_idx
-    jmp b13
+    jmp b14
   b4:
     cmp #KEY_CRSR_RIGHT
     bne b5
     txa
     and #KEY_MODIFIER_SHIFT
     cmp #0
-    beq b14
+    beq b15
     ldx form_field_idx
     dec form_fields_val,x
     lda #$ff
     ldy form_field_idx
     cmp form_fields_val,y
-    bne b15
+    bne b16
     lda form_fields_max,y
     sta form_fields_val,y
-  b15:
+  b16:
     // Render field value
     ldx form_field_idx
     ldy form_fields_val,x
     lda print_hextab,y
     ldy form_field_ptr.x
-    sta (form_field_ptr._2),y
-  b6:
+    sta (form_field_ptr.line),y
+  b7:
     ldx #0
     rts
-  b14:
+  b15:
     ldx form_field_idx
     inc form_fields_val,x
     ldy form_field_idx
     lda form_fields_val,y
     cmp form_fields_max,y
-    bcc b15
-    beq b15
+    bcc b16
+    beq b16
     lda #0
     sta form_fields_val,y
-    jmp b15
+    jmp b16
   b5:
     cmp #KEY_SPACE
-    bne b6
+    bne b7
     ldx #$ff
     rts
   b2:
     lda #$80
     ldy form_field_ptr.x
-    ora (form_field_ptr._2),y
-    sta (form_field_ptr._2),y
+    ora (form_field_ptr.line),y
+    sta (form_field_ptr.line),y
     jmp b3
 }
 // Set the screen to use for the form.
@@ -1680,9 +1651,9 @@ gfx_init_plane_horisontal2: {
     .label ay = 2
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
-    lda #<$4000+(PLANE_HORISONTAL2&$3fff)
+    lda #<$4000
     sta gfxa
-    lda #>$4000+(PLANE_HORISONTAL2&$3fff)
+    lda #>$4000
     sta gfxa+1
     lda #0
     sta ay
@@ -1753,9 +1724,9 @@ gfx_init_plane_horisontal: {
     .label ay = 2
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
-    lda #<$4000+(PLANE_HORISONTAL&$3fff)
+    lda #<$4000
     sta gfxa
-    lda #>$4000+(PLANE_HORISONTAL&$3fff)
+    lda #>$4000
     sta gfxa+1
     lda #0
     sta ay
@@ -1810,9 +1781,9 @@ gfx_init_plane_charset8: {
     lda #0
     sta ch
     sta col
-    lda #<$4000+(PLANE_CHARSET8&$3fff)
+    lda #<$4000
     sta gfxa
-    lda #>$4000+(PLANE_CHARSET8&$3fff)
+    lda #>$4000
     sta gfxa+1
     lda #<CHARGEN
     sta chargen
@@ -2104,6 +2075,7 @@ bitmap_plot: {
     .label _0 = 3
     .label plotter_x = 3
     .label plotter_y = 5
+    .label plotter = 3
     lda bitmap_plot_xhi,x
     sta plotter_x+1
     lda bitmap_plot_xlo,x
@@ -2121,8 +2093,8 @@ bitmap_plot: {
     sta _0+1
     lda bitmap_plot_bit,x
     ldy #0
-    ora (_0),y
-    sta (_0),y
+    ora (plotter),y
+    sta (plotter),y
     rts
 }
 // bitmap_line_ydxi(byte zeropage($e) y, byte register(X) x, byte zeropage($12) y1, byte zeropage(7) yd, byte zeropage(8) xd)
@@ -2260,7 +2232,7 @@ bitmap_clear: {
 }
 // Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
-    .label _6 = 2
+    .label _10 = 2
     .label yoffs = 3
     ldy #$80
     ldx #0
@@ -2288,15 +2260,14 @@ bitmap_init: {
     tax
   b3:
     lda #7
-    sax _6
+    sax _10
     lda yoffs
-    ora _6
+    ora _10
     sta bitmap_plot_ylo,x
     lda yoffs+1
     sta bitmap_plot_yhi,x
-    txa
-    and #7
-    cmp #7
+    lda #7
+    cmp _10
     bne b4
     clc
     lda yoffs
@@ -2563,6 +2534,9 @@ keyboard_init: {
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
+  // Charset ROM
+  FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @                                        @ PRESET 0 Standard Charset              @                                        @ CONTROL        PLANE  A     VIC II     @ bmm        0   pattern p0   screen s0  @ mcm        0   start   00   gfx    g0  @ ecm        0   step    00   colors c0  @ hicolor    0   modulo  00              @ linear     0                COLORS     @ color off  0   PLANE  B     palet   0  @ chunky     0   pattern p0   bgcol0 00  @ border off 0   start   00   bgcol1 00  @ overscan   0   step    00   bgcol2 00  @                modulo  00   bgcol3 00  @@"
+  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm              @ nnnnnnnnnnnn                jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @@"
   // Form fields x/y-positions
   form_fields_x: .byte 8, $c, $c, $c, $c, $c, $c, $c, $c, $c, $19, $18, $19, $18, $19, $18, $19, $19, $18, $19, $18, $19, $18, $19, $25, $25, $25, $25, $24, $25, $24, $25, $24, $25, $24, $25
   form_fields_y: .byte 2, 5, 6, 7, 8, 9, $a, $b, $c, $d, 5, 6, 6, 7, 7, 8, 8, $b, $c, $c, $d, $d, $e, $e, 5, 6, 7, $a, $b, $b, $c, $c, $d, $d, $e, $e
@@ -2595,6 +2569,3 @@ keyboard_init: {
   // Table with addresses of the y-lines of the form. The first line contains the address of the form screen.
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0
-  // Charset ROM
-  FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @"+"                                        @"+" PRESET 0 Standard Charset              @"+"                                        @"+" CONTROL        PLANE  A     VIC II     @"+" bmm        0   pattern p0   screen s0  @"+" mcm        0   start   00   gfx    g0  @"+" ecm        0   step    00   colors c0  @"+" hicolor    0   modulo  00              @"+" linear     0                COLORS     @"+" color off  0   PLANE  B     palet   0  @"+" chunky     0   pattern p0   bgcol0 00  @"+" border off 0   start   00   bgcol1 00  @"+" overscan   0   step    00   bgcol2 00  @"+"                modulo  00   bgcol3 00  @"+"@"
-  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+"                                        @"+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@"+"                                        @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @"+" nnnnnnnnnnnn   mmmmmmmmmm              @"+" nnnnnnnnnnnn                jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+" nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"+"@"

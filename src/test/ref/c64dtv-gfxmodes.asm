@@ -120,10 +120,10 @@ menu: {
     .label c = 2
     // Charset ROM
     // DTV Graphics Bank
-    lda #($ffffffff&CHARSET)/$10000
+    lda #0
     sta DTV_GRAPHICS_VIC_BANK
     // DTV Color Bank
-    lda #DTV_COLOR_BANK_DEFAULT/$400
+    lda #<DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -142,7 +142,7 @@ menu: {
     lda #VIC_CSEL
     sta VIC_CONTROL2
     // VIC Memory Pointers
-    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
+    lda #(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - default
@@ -286,11 +286,10 @@ mode_8bppchunkybmm: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
     // Linear Graphics Plane B Counter
-    lda #PLANEB&$ffff
-    sta DTV_PLANEB_START_LO
     lda #0
+    sta DTV_PLANEB_START_LO
     sta DTV_PLANEB_START_MI
-    lda #PLANEB>>$10
+    lda #<PLANEB>>$10
     sta DTV_PLANEB_START_HI
     lda #8
     sta DTV_PLANEB_STEP
@@ -525,7 +524,7 @@ mode_8bpppixelcell: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
     // Linear Graphics Plane A Counter
-    lda #<PLANEA
+    lda #0
     sta DTV_PLANEA_START_LO
     lda #>PLANEA
     sta DTV_PLANEA_START_MI
@@ -537,7 +536,6 @@ mode_8bpppixelcell: {
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
     // Linear Graphics Plane B Counter
-    lda #<PLANEB
     sta DTV_PLANEB_START_LO
     lda #>PLANEB
     sta DTV_PLANEB_START_MI
@@ -674,7 +672,7 @@ mode_sixsfred: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
     // Linear Graphics Plane A Counter
-    lda #<PLANEA
+    lda #0
     sta DTV_PLANEA_START_LO
     lda #>PLANEA
     sta DTV_PLANEA_START_MI
@@ -686,7 +684,6 @@ mode_sixsfred: {
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
     // Linear Graphics Plane B Counter
-    lda #<PLANEB
     sta DTV_PLANEB_START_LO
     lda #>PLANEB
     sta DTV_PLANEB_START_MI
@@ -700,9 +697,9 @@ mode_sixsfred: {
     // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    lda #>COLORS/$400
+    lda #0
     sta DTV_COLOR_BANK_HI
-    ldx #0
+    tax
   // DTV Palette - Grey Tones
   b1:
     txa
@@ -823,7 +820,7 @@ mode_twoplanebitmap: {
     lda #VIC_CSEL
     sta VIC_CONTROL2
     // Linear Graphics Plane A Counter
-    lda #<PLANEA
+    lda #0
     sta DTV_PLANEA_START_LO
     lda #>PLANEA
     sta DTV_PLANEA_START_MI
@@ -835,7 +832,6 @@ mode_twoplanebitmap: {
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
     // Linear Graphics Plane B Counter
-    lda #<PLANEB
     sta DTV_PLANEB_START_LO
     lda #>PLANEB
     sta DTV_PLANEB_START_MI
@@ -849,9 +845,9 @@ mode_twoplanebitmap: {
     // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    lda #>COLORS/$400
+    lda #0
     sta DTV_COLOR_BANK_HI
-    ldx #0
+    tax
   // DTV Palette - Grey Tones
   b1:
     txa
@@ -989,7 +985,7 @@ mode_sixsfred2: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
     // Linear Graphics Plane A Counter
-    lda #<PLANEA
+    lda #0
     sta DTV_PLANEA_START_LO
     lda #>PLANEA
     sta DTV_PLANEA_START_MI
@@ -1001,7 +997,6 @@ mode_sixsfred2: {
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
     // Linear Graphics Plane B Counter
-    lda #<PLANEB
     sta DTV_PLANEB_START_LO
     lda #>PLANEB
     sta DTV_PLANEB_START_MI
@@ -1015,9 +1010,9 @@ mode_sixsfred2: {
     // DTV Color Bank
     lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
-    lda #>COLORS/$400
+    lda #0
     sta DTV_COLOR_BANK_HI
-    ldx #0
+    tax
   // DTV Palette - Grey Tones
   b1:
     txa
@@ -1138,10 +1133,10 @@ mode_hicolmcchar: {
     .label ch = 5
     .label cy = 4
     // DTV Graphics Bank
-    lda #($ffffffff&CHARSET)/$10000
+    lda #0
     sta DTV_GRAPHICS_VIC_BANK
     // DTV Color Bank
-    lda #COLORS/$400
+    lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -1160,7 +1155,7 @@ mode_hicolmcchar: {
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
     // VIC Memory Pointers
-    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
+    lda #(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
@@ -1247,10 +1242,10 @@ mode_hicolecmchar: {
     .label ch = 5
     .label cy = 4
     // DTV Graphics Bank
-    lda #($ffffffff&CHARSET)/$10000
+    lda #0
     sta DTV_GRAPHICS_VIC_BANK
     // DTV Color Bank
-    lda #COLORS/$400
+    lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -1269,7 +1264,7 @@ mode_hicolecmchar: {
     lda #VIC_CSEL
     sta VIC_CONTROL2
     // VIC Memory Pointers
-    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
+    lda #(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
@@ -1354,10 +1349,10 @@ mode_hicolstdchar: {
     .label ch = 5
     .label cy = 4
     // DTV Graphics Bank
-    lda #($ffffffff&CHARSET)/$10000
+    lda #0
     sta DTV_GRAPHICS_VIC_BANK
     // DTV Color Bank
-    lda #COLORS/$400
+    lda #<COLORS/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -1376,7 +1371,7 @@ mode_hicolstdchar: {
     lda #VIC_CSEL
     sta VIC_CONTROL2
     // VIC Memory Pointers
-    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
+    lda #(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
@@ -1453,9 +1448,8 @@ mode_stdbitmap: {
     .label cy = 4
     .label l = 4
     // DTV Graphics Bank
-    lda #($ffffffff&BITMAP)/$10000
-    sta DTV_GRAPHICS_VIC_BANK
     lda #0
+    sta DTV_GRAPHICS_VIC_BANK
     sta DTV_CONTROL
     // VIC Graphics Bank
     lda #3
@@ -1470,7 +1464,7 @@ mode_stdbitmap: {
     lda #VIC_CSEL
     sta VIC_CONTROL2
     // VIC Memory Pointers
-    lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
+    lda #(BITMAP&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - default
@@ -1694,6 +1688,7 @@ bitmap_plot: {
     .label _0 = 2
     .label plotter_x = 2
     .label plotter_y = 5
+    .label plotter = 2
     lda bitmap_plot_xhi,x
     sta plotter_x+1
     lda bitmap_plot_xlo,x
@@ -1711,8 +1706,8 @@ bitmap_plot: {
     sta _0+1
     lda bitmap_plot_bit,x
     ldy #0
-    ora (_0),y
-    sta (_0),y
+    ora (plotter),y
+    sta (plotter),y
     rts
 }
 // bitmap_line_ydxi(byte zeropage($a) y, byte register(X) x, byte zeropage($c) y1, byte zeropage(7) yd, byte zeropage(8) xd)
@@ -1850,7 +1845,7 @@ bitmap_clear: {
 }
 // Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
-    .label _6 = 4
+    .label _10 = 4
     .label yoffs = 2
     ldy #$80
     ldx #0
@@ -1878,15 +1873,14 @@ bitmap_init: {
     tax
   b3:
     lda #7
-    sax _6
+    sax _10
     lda yoffs
-    ora _6
+    ora _10
     sta bitmap_plot_ylo,x
     lda yoffs+1
     sta bitmap_plot_yhi,x
-    txa
-    and #7
-    cmp #7
+    lda #7
+    cmp _10
     bne b4
     clc
     lda yoffs
@@ -1923,10 +1917,10 @@ mode_mcchar: {
     .label ch = 5
     .label cy = 4
     // DTV Graphics Bank
-    lda #($ffffffff&CHARSET)/$10000
+    lda #0
     sta DTV_GRAPHICS_VIC_BANK
     // DTV Color Bank
-    lda #DTV_COLOR_BANK_DEFAULT/$400
+    lda #<DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -1944,7 +1938,7 @@ mode_mcchar: {
     lda #VIC_CSEL|VIC_MCM
     sta VIC_CONTROL2
     // VIC Memory Pointers
-    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
+    lda #(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - default
@@ -2035,10 +2029,10 @@ mode_ecmchar: {
     .label ch = 5
     .label cy = 4
     // DTV Graphics Bank
-    lda #($ffffffff&CHARSET)/$10000
+    lda #0
     sta DTV_GRAPHICS_VIC_BANK
     // DTV Color Bank
-    lda #DTV_COLOR_BANK_DEFAULT/$400
+    lda #<DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -2056,7 +2050,7 @@ mode_ecmchar: {
     lda #VIC_CSEL
     sta VIC_CONTROL2
     // VIC Memory Pointers
-    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
+    lda #(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - default
@@ -2144,10 +2138,10 @@ mode_stdchar: {
     .label ch = 5
     .label cy = 4
     // DTV Graphics Bank
-    lda #($ffffffff&CHARSET)/$10000
+    lda #0
     sta DTV_GRAPHICS_VIC_BANK
     // DTV Color Bank
-    lda #DTV_COLOR_BANK_DEFAULT/$400
+    lda #<DTV_COLOR_BANK_DEFAULT/$400
     sta DTV_COLOR_BANK_LO
     lda #0
     sta DTV_COLOR_BANK_HI
@@ -2165,7 +2159,7 @@ mode_stdchar: {
     lda #VIC_CSEL
     sta VIC_CONTROL2
     // VIC Memory Pointers
-    lda #(SCREEN&$3fff)/$40|(CHARSET&$3fff)/$400
+    lda #(CHARSET&$3fff)/$400
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - default
@@ -2337,4 +2331,4 @@ print_set_screen: {
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  MENU_TEXT: .text "C64DTV Graphics Modes            CCLHBME@"+"                                 OHIIMCC@"+"                                 LUNCMMM@"+"----------------------------------------@"+"1. Standard Char             (V) 0000000@"+"2. Extended Color Char       (V) 0000001@"+"3. Multicolor Char           (V) 0000010@"+"4. Standard Bitmap           (V) 0000100@"+"5. Multicolor Bitmap         (V) 0000110@"+"6. High Color Standard Char  (H) 0001000@"+"7. High Extended Color Char  (H) 0001001@"+"8. High Multicolor Char      (H) 0001010@"+"9. High Multicolor Bitmap    (H) 0001110@"+"a. Sixs Fred 2               (D) 0010111@"+"b. Two Plane Bitmap          (D) 0011101@"+"c. Sixs Fred (2 Plane MC BM) (D) 0011111@"+"d. 8bpp Pixel Cell           (D) 0111011@"+"e. Chunky 8bpp Bitmap        (D) 1111011@"+"----------------------------------------@"+"    (V) vicII (H) vicII+hicol (D) c64dtv@"+"@"
+  MENU_TEXT: .text "C64DTV Graphics Modes            CCLHBME@                                 OHIIMCC@                                 LUNCMMM@----------------------------------------@1. Standard Char             (V) 0000000@2. Extended Color Char       (V) 0000001@3. Multicolor Char           (V) 0000010@4. Standard Bitmap           (V) 0000100@5. Multicolor Bitmap         (V) 0000110@6. High Color Standard Char  (H) 0001000@7. High Extended Color Char  (H) 0001001@8. High Multicolor Char      (H) 0001010@9. High Multicolor Bitmap    (H) 0001110@a. Sixs Fred 2               (D) 0010111@b. Two Plane Bitmap          (D) 0011101@c. Sixs Fred (2 Plane MC BM) (D) 0011111@d. 8bpp Pixel Cell           (D) 0111011@e. Chunky 8bpp Bitmap        (D) 1111011@----------------------------------------@    (V) vicII (H) vicII+hicol (D) c64dtv@@"

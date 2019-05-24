@@ -54,9 +54,22 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
                      constantCastValue.setToType(smallestUnsigned);
                   }
                }
+            } else if(SymbolType.SNUMBER.equals(toType)) {
+               if(constantCastValue.getValue() instanceof ConstantRef) {
+                  ConstantRef constRef = (ConstantRef) constantCastValue.getValue();
+                  ConstantVar constant = getScope().getConstant(constRef);
+                  if(constant.isInferredType())
+                     constant.setTypeInferred(toType);
+                  else
+                     throw new InternalError("Cannot cast declared type!" + constant.toString());
+               } else {
+                  ConstantLiteral constantLiteral = constantCastValue.getValue().calculateLiteral(getProgram().getScope());
+                  SymbolType smallestSigned = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantLiteral, getScope());
+                  if(smallestSigned!=null) {
+                     constantCastValue.setToType(smallestSigned);
+                  }
+               }
             }
-            if(SymbolType.SNUMBER.equals(toType))
-               throw new InternalError("TODO: Finalize ConstantCast");
          }
       });
       return modified.get();

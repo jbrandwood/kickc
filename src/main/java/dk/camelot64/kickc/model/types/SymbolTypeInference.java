@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.model.types;
 
+import dk.camelot64.kickc.fragment.AsmFragmentInstanceSpec;
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -98,6 +100,21 @@ public class SymbolTypeInference {
             throw new CompileError("Cannot infer type of " + assignment.toString());
          }
          return rValueType;
+      } else if(rValue instanceof StructMemberRef) {
+         StructMemberRef structMemberRef = (StructMemberRef) rValue;
+         SymbolType structType = inferType(symbols, structMemberRef.getStruct());
+         if(structType instanceof SymbolTypeStruct) {
+            String typeName = ((SymbolTypeStruct) structType).getStructTypeName();
+            StructDefinition structDefinition = symbols.getStructDefinition(typeName);
+            Variable structMember = structDefinition.getVariable(structMemberRef.getMemberName());
+            return structMember.getType();
+         } else {
+            AsmFragmentInstanceSpec asmFragmentInstanceSpec = null;
+            Program program = asmFragmentInstanceSpec.getProgram();
+            throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString(program));
+         }
+      } else if(rValue instanceof StructZero) {
+         return ((StructZero)rValue).getTypeStruct();
       }
       if(type == null) {
          throw new RuntimeException("Cannot infer type for " + rValue.toString());

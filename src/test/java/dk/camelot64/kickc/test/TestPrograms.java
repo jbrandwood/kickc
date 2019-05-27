@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStruct0() throws IOException, URISyntaxException {
+      compileAndCompare("struct-0", log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+   }
+
+   @Test
    public void testC64DtvGfxExplorer() throws IOException, URISyntaxException {
       compileAndCompare("c64dtv-gfxexplorer", 10);
    }

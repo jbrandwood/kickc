@@ -749,6 +749,28 @@ public interface ProgramValue {
    }
 
    /**
+    * Struct expression inside a struct member reference.
+    */
+   class ProgramValueStruct implements ProgramValue {
+      private final StructMemberRef structMemberRef;
+
+      public ProgramValueStruct(StructMemberRef structMemberRef) {
+         this.structMemberRef = structMemberRef;
+      }
+
+      @Override
+      public Value get() {
+         return structMemberRef.getStruct();
+      }
+
+      @Override
+      public void set(Value val) {
+         structMemberRef.setStruct((RValue) val);
+      }
+
+   }
+
+   /**
     * Pointer index inside a indexed pointer dererence value.
     */
    class ProgramValuePointerIndex implements ProgramValue {

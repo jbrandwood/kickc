@@ -716,6 +716,30 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitExprChar(KickCParser.ExprCharContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code exprArrow}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprArrow(KickCParser.ExprArrowContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprArrow}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprArrow(KickCParser.ExprArrowContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprDot}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprDot(KickCParser.ExprDotContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprDot}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprDot(KickCParser.ExprDotContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code initList}
 	 * labeled alternative in {@link KickCParser#expr}.
 	 * @param ctx the parse tree

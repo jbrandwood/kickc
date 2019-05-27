@@ -82,7 +82,7 @@ public abstract class Scope implements Symbol {
       }
    }
 
-   public Symbol add(Symbol symbol) {
+   public <T extends Symbol> T add(T symbol) {
       if(symbols.get(symbol.getLocalName()) != null) {
          throw new CompileError("Symbol already declared " + symbol.getLocalName());
       }
@@ -95,16 +95,12 @@ public abstract class Scope implements Symbol {
    }
 
    public VariableUnversioned addVariable(String name, SymbolType type) {
-      VariableUnversioned symbol = new VariableUnversioned(name, this, type);
-      add(symbol);
-      return symbol;
+      return add(new VariableUnversioned(name, this, type));
    }
 
    public VariableIntermediate addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      VariableIntermediate symbol = new VariableIntermediate(name, this, SymbolType.VAR);
-      add(symbol);
-      return symbol;
+      return add(new VariableIntermediate(name, this, SymbolType.VAR));
    }
 
    /**
@@ -254,16 +250,12 @@ public abstract class Scope implements Symbol {
 
 
    public Label addLabel(String name) {
-      Label symbol = new Label(name, this, false);
-      add(symbol);
-      return symbol;
+      return add(new Label(name, this, false));
    }
 
    public Label addLabelIntermediate() {
       String name = "@" + intermediateLabelCount++;
-      Label symbol = new Label(name, this, true);
-      add(symbol);
-      return symbol;
+      return add(new Label(name, this, true));
    }
 
    public Label getLabel(String name) {
@@ -276,9 +268,7 @@ public abstract class Scope implements Symbol {
 
    public BlockScope addBlockScope() {
       String name = ":" + blockCount++;
-      BlockScope blockScope = new BlockScope(name, this);
-      add(blockScope);
-      return blockScope;
+      return add(new BlockScope(name, this));
    }
 
    public BlockScope getBlockScope(String name) {
@@ -286,13 +276,7 @@ public abstract class Scope implements Symbol {
    }
 
    public Procedure addProcedure(String name, SymbolType type) {
-      Symbol symbol = symbols.get(name);
-      if(symbol != null) {
-         throw new RuntimeException("Error! Symbol already defined " + symbol);
-      }
-      Procedure procedure = new Procedure(name, type, this);
-      add(procedure);
-      return procedure;
+      return add(new Procedure(name, type, this));
    }
 
    public Procedure getProcedure(String name) {
@@ -302,6 +286,19 @@ public abstract class Scope implements Symbol {
       } else {
          return null;
       }
+   }
+
+   /**
+    * Add a struct definition.
+    * The name can be either defined in the program or an intermediate name.
+    * @param name
+    */
+   public StructDefinition addStructDefinition(String name) {
+      return add(new StructDefinition(name, this));
+   }
+
+   public StructDefinition getStructDefinition(String name) {
+      return (StructDefinition) getSymbol(name);
    }
 
    public Scope getScope(ScopeRef scopeRef) {

@@ -7,10 +7,7 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
@@ -306,6 +303,26 @@ public class AsmFragmentInstanceSpecFactory {
          String name = "la" + nextLabelIdx++;
          bind(name, value);
          return name;
+      } else if(value instanceof StructZero) {
+         return "vssf"+((StructZero) value).getTypeStruct().getSizeBytes();
+      } else if(value instanceof StructMemberRef) {
+         StructMemberRef structMemberRef = (StructMemberRef) value;
+         RValue struct = structMemberRef.getStruct();
+         String memberName = structMemberRef.getMemberName();
+         SymbolType symbolType = SymbolTypeInference.inferType(program.getScope(), struct);
+         byte idx = 0;
+         if(symbolType instanceof SymbolTypeStruct) {
+            String structTypeName = ((SymbolTypeStruct) symbolType).getStructTypeName();
+            StructDefinition structDefinition = program.getScope().getStructDefinition(structTypeName);
+            for(Variable structMember : structDefinition.getAllVariables(false)) {
+               if(structMember.getLocalName().equals(memberName)) {
+                  break;
+               } else {
+                  idx += structMember.getType().getSizeBytes();
+               }
+            }
+         }
+         return bind(struct)+"_mbr_"+ idx;
       }
       throw new RuntimeException("Binding of value type not supported " + value);
    }
@@ -343,6 +360,8 @@ public class AsmFragmentInstanceSpecFactory {
          return "pbu";
       } else if(SymbolType.BOOLEAN.equals(type)) {
          return "vbo";
+      } else if(type instanceof SymbolTypeStruct) {
+         return "vss";
       } else if(type instanceof SymbolTypePointer) {
          SymbolType elementType = ((SymbolTypePointer) type).getElementType();
          if(SymbolType.BYTE.equals(elementType)) {
@@ -383,7 +402,8 @@ public class AsmFragmentInstanceSpecFactory {
             Registers.RegisterType.ZP_BOOL.equals(register.getType()) ||
                   Registers.RegisterType.ZP_BYTE.equals(register.getType()) ||
                   Registers.RegisterType.ZP_WORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_DWORD.equals(register.getType())
+                  Registers.RegisterType.ZP_DWORD.equals(register.getType()) ||
+                  Registers.RegisterType.ZP_STRUCT.equals(register.getType())
       ) {
          // Examine if the ZP register is already bound
          Registers.RegisterZp registerZp = (Registers.RegisterZp) register;

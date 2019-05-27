@@ -45,6 +45,7 @@ public class Registers {
       ZP_BYTE,
       ZP_WORD,
       ZP_DWORD,
+      ZP_STRUCT,
       ZP_BOOL,
       CONSTANT
    }
@@ -150,6 +151,19 @@ public class Registers {
 
    }
 
+   /** Zero page addresses used as a register for a struct variable. */
+   public static class RegisterZpStruct extends RegisterZp {
+
+      public RegisterZpStruct(int zp) {
+         super(zp);
+      }
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.ZP_STRUCT;
+      }
+
+   }
 
    /** A zero page address used as a register for a boolean variable. */
    public static class RegisterZpBool extends RegisterZp {

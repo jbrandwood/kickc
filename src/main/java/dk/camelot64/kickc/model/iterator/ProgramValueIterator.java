@@ -186,6 +186,8 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValuePointerIndex((PointerDereferenceIndexed) value));
       } else if(value instanceof PointerDereferenceSimple) {
          subValues.add(new ProgramValue.ProgramValuePointer((PointerDereference) value));
+      } else if(value instanceof StructMemberRef) {
+         subValues.add(new ProgramValue.ProgramValueStruct((StructMemberRef) value));
       } else if(value instanceof ValueList) {
          ValueList valueList = (ValueList) value;
          int size = valueList.getList().size();
@@ -223,6 +225,7 @@ public class ProgramValueIterator {
             value instanceof ProcedureRef ||
             value instanceof ConstantLiteral ||
             value instanceof ConstantRef ||
+            value instanceof StructZero ||
             value instanceof LabelRef
             ) {
          // No sub values

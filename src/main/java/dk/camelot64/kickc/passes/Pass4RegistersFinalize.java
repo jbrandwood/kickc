@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Scope;
@@ -224,6 +225,10 @@ public class Pass4RegistersFinalize extends Pass2Base {
          Registers.RegisterZpWord registerZpWord =
                new Registers.RegisterZpWord(allocateZp(2));
          return registerZpWord;
+      } else if(varType instanceof SymbolTypeStruct) {
+         Registers.RegisterZpStruct registerZpStruct =
+               new Registers.RegisterZpStruct(allocateZp(varType.getSizeBytes()));
+         return registerZpStruct;
       } else {
          throw new RuntimeException("Unhandled variable type " + varType);
       }

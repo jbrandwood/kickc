@@ -431,6 +431,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    private List<Directive> declVarDirectives = null;
    /** Holds the declared comments when descending into a Variable Declaration. */
    private List<Comment> declVarComments = null;
+   /** State specifying that we are currently populating struct members. */
+   private boolean declVarStructMember = false;
 
    /**
     * Visit the type/directive part of a declaration. Setup the local decl-variables
@@ -496,6 +498,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          lValue.setComments(ensureUnusedComments(comments));
       }
       KickCParser.ExprContext initializer = ctx.expr();
+      if(declVarStructMember) {
+         if(initializer != null) {
+            throw new CompileError("Initializers not supported inside structs " + type.getTypeName(), new StatementSource(ctx));
+         }
+      } else {
       if(initializer != null) {
          addInitialAssignment(initializer, lValue, comments);
       } else {
@@ -519,9 +526,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             ConstantValue zero = new ConstantPointer(0L, typePointer.getElementType());
             Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
             sequence.addStatement(stmt);
+         } else if(type instanceof SymbolTypeStruct) {
+            // Add an zero-struct initializer
+            SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
+            Statement stmt = new StatementAssignment(lValue.getRef(), new StructZero(typeStruct), new StatementSource(ctx), ensureUnusedComments(comments));
+            sequence.addStatement(stmt);
          } else {
             throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), new StatementSource(ctx));
          }
+      }
 
       }
       return null;
@@ -1119,6 +1132,28 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return SymbolType.get(ctx.getText());
    }
 
+
+
+
+   @Override
+   public Object visitStructDef(KickCParser.StructDefContext ctx) {
+      String structDefName;
+      if(ctx.NAME()!=null) {
+         structDefName = ctx.NAME().getText();
+      } else {
+         structDefName = getCurrentScope().allocateIntermediateVariableName();
+      }
+      StructDefinition structDefinition = getCurrentScope().addStructDefinition(structDefName);
+      scopeStack.push(structDefinition);
+      declVarStructMember = true;
+      for(KickCParser.StructMembersContext memberCtx : ctx.structMembers()) {
+         visit(memberCtx);
+      }
+      declVarStructMember = false;
+      scopeStack.pop();
+      return structDefinition.getType();
+   }
+
    @Override
    public SymbolType visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
       String signedness = ctx.getChild(0).getText();
@@ -1212,6 +1247,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else {
          throw new CompileError("Unknown LValue type "+lValue);
       }
+   }
+
+   @Override
+   public Object visitExprDot(KickCParser.ExprDotContext ctx) {
+      RValue structExpr = (RValue) visit(ctx.expr());
+      String name = ctx.NAME().getText();
+      return new StructMemberRef(structExpr, name);
    }
 
    @Override

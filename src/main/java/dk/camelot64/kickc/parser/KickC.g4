@@ -136,6 +136,8 @@ commaExpr
 
 expr
     : '(' commaExpr ')' #exprPar
+    | expr '.' NAME #exprDot
+    | expr '->' NAME  #exprArrow
     | expr '(' parameterList? ')' #exprCall
     | 'sizeof' '(' ( typeDecl | expr ) ')' #exprSizeOf
     | 'typeid' '(' ( typeDecl | expr ) ')' #exprTypeId

@@ -33,8 +33,18 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStruct1() throws IOException, URISyntaxException {
+      compileAndCompare("struct-1");
+   }
+
+   @Test
    public void testStruct0() throws IOException, URISyntaxException {
-      compileAndCompare("struct-0", log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+      compileAndCompare("struct-0");
+   }
+
+   @Test
+   public void testForTwoVars() throws IOException, URISyntaxException {
+      compileAndCompare("for-two-vars");
    }
 
    @Test
@@ -49,14 +59,13 @@ public class TestPrograms {
 
    @Test
    public void testConstantStringConcat0() throws IOException, URISyntaxException {
-      compileAndCompare("constant-string-concat-0", log().verboseParse().verboseStatementSequence().verboseCreateSsa());
+      compileAndCompare("constant-string-concat-0");
    }
 
    @Test
    public void testLiterals() throws IOException, URISyntaxException {
       compileAndCompare("literals");
    }
-
 
    @Test
    public void testConstantStringConcat() throws IOException, URISyntaxException {

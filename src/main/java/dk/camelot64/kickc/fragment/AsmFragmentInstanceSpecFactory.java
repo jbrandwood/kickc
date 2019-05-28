@@ -249,9 +249,9 @@ public class AsmFragmentInstanceSpecFactory {
                   } else if(constantLiteral instanceof ConstantPointer) {
                      integerValue = ((ConstantPointer) constantLiteral).getValue();
                   } else {
-                     throw new InternalError("Not implemented "+constantLiteral);
+                     throw new InternalError("Not implemented " + constantLiteral);
                   }
-               } catch (ConstantNotLiteral e) {
+               } catch(ConstantNotLiteral e) {
                   // Assume it is a word
                   integerValue = 0xffffL;
                }
@@ -262,7 +262,7 @@ public class AsmFragmentInstanceSpecFactory {
                   } else if(toType.getSizeBytes() == 2) {
                      val = new ConstantBinary(new ConstantInteger(0xffffL, SymbolType.WORD), Operators.BOOL_AND, val);
                   } else {
-                     throw new InternalError("Not implemented "+toType);
+                     throw new InternalError("Not implemented " + toType);
                   }
                }
             }
@@ -304,25 +304,26 @@ public class AsmFragmentInstanceSpecFactory {
          bind(name, value);
          return name;
       } else if(value instanceof StructZero) {
-         return "vssf"+((StructZero) value).getTypeStruct().getSizeBytes();
+         return "vssf" + ((StructZero) value).getTypeStruct().getSizeBytes();
       } else if(value instanceof StructMemberRef) {
          StructMemberRef structMemberRef = (StructMemberRef) value;
+         StructDefinition structDefinition = program.getScope().getStructDefinition(structMemberRef);
+         Variable structMember = structDefinition.getMember(structMemberRef.getMemberName());
+         int memberByteOffset = structDefinition.getMemberByteOffset(structMember);
+
          RValue struct = structMemberRef.getStruct();
-         String memberName = structMemberRef.getMemberName();
-         SymbolType symbolType = SymbolTypeInference.inferType(program.getScope(), struct);
-         byte idx = 0;
-         if(symbolType instanceof SymbolTypeStruct) {
-            String structTypeName = ((SymbolTypeStruct) symbolType).getStructTypeName();
-            StructDefinition structDefinition = program.getScope().getStructDefinition(structTypeName);
-            for(Variable structMember : structDefinition.getAllVariables(false)) {
-               if(structMember.getLocalName().equals(memberName)) {
-                  break;
-               } else {
-                  idx += structMember.getType().getSizeBytes();
-               }
+         if(struct instanceof VariableRef) {
+            Variable structVar = program.getScope().getVariable((VariableRef) struct);
+            if(structVar.getAllocation() instanceof Registers.RegisterZpStruct) {
+               Registers.RegisterZpStruct structRegister = (Registers.RegisterZpStruct) structVar.getAllocation();
+               Registers.RegisterZpStructMember memberRegister = structRegister.getMemberRegister(memberByteOffset);
+               String name = getTypePrefix(structMember.getType()) + getRegisterName(memberRegister);
+               bind(name, structMemberRef);
+               return name;
             }
+         } else {
+            return bind(struct) + "_mbr_" + memberByteOffset;
          }
-         return bind(struct)+"_mbr_"+ idx;
       }
       throw new RuntimeException("Binding of value type not supported " + value);
    }

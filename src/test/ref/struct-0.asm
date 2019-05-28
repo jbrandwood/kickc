@@ -1,4 +1,4 @@
-// Minimal struct - declaration & 
+// Minimal struct - declaration, instantiation and usage
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"

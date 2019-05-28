@@ -1155,6 +1155,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitStructRef(KickCParser.StructRefContext ctx) {
+      String structDefName = ctx.NAME().getText();
+      StructDefinition structDefinition = getCurrentScope().getStructDefinition(structDefName);
+      return structDefinition.getType();
+   }
+
+   @Override
    public SymbolType visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
       String signedness = ctx.getChild(0).getText();
 

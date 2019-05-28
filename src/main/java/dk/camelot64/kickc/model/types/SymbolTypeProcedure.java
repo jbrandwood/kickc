@@ -40,7 +40,6 @@ public class SymbolTypeProcedure implements SymbolType {
 
    @Override
    public int hashCode() {
-
       return Objects.hash(returnType);
    }
 }

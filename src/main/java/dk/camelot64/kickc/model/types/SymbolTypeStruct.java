@@ -48,7 +48,6 @@ public class SymbolTypeStruct implements SymbolType {
 
    @Override
    public int hashCode() {
-
       return Objects.hash(name, sizeBytes);
    }
 

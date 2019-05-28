@@ -105,6 +105,7 @@ public class Registers {
       public int hashCode() {
          return zp;
       }
+
    }
 
 
@@ -158,12 +159,31 @@ public class Registers {
          super(zp);
       }
 
+      public RegisterZpStructMember getMemberRegister(int memberByteOffset) {
+         return new RegisterZpStructMember(getZp()+memberByteOffset);
+      }
+
       @Override
       public RegisterType getType() {
          return RegisterType.ZP_STRUCT;
       }
 
    }
+
+   /** Zero page addresses used as a register for a struct member variable. */
+   public static class RegisterZpStructMember extends RegisterZp {
+
+      public RegisterZpStructMember(int zp) {
+         super(zp);
+      }
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.ZP_STRUCT;
+      }
+
+   }
+
 
    /** A zero page address used as a register for a boolean variable. */
    public static class RegisterZpBool extends RegisterZp {

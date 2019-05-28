@@ -159,7 +159,7 @@ public class Compiler {
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");
-         getLog().append(program.getScope().getSymbolTableContents(program));
+         getLog().append(program.getScope().toString(program, null));
       }
 
       new Pass1FixLValuesLoHi(program).execute();
@@ -206,7 +206,7 @@ public class Compiler {
       getLog().append(program.getGraph().toString(program));
 
       getLog().append("SYMBOL TABLE SSA");
-      getLog().append(program.getScope().getSymbolTableContents(program));
+      getLog().append(program.getScope().toString(program, null));
 
       return program;
    }
@@ -530,7 +530,7 @@ public class Compiler {
       new Pass5FixLongBranches(program).optimize();
 
       getLog().append("\nFINAL SYMBOL TABLE");
-      getLog().append(program.getScope().getSymbolTableContents(program));
+      getLog().append(program.getScope().toString(program, null));
 
       getLog().append("\nFINAL ASSEMBLER");
       getLog().append("Score: " + Pass4RegisterUpliftCombinations.getAsmScore(program) + "\n");

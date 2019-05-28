@@ -497,6 +497,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          // Add comments to constant
          lValue.setComments(ensureUnusedComments(comments));
       }
+      if(type instanceof SymbolTypeStruct) {
+         lValue.setDeclaredVolatile(true);
+      }
       KickCParser.ExprContext initializer = ctx.expr();
       if(declVarStructMember) {
          if(initializer != null) {

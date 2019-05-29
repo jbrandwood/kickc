@@ -1,38 +1,38 @@
-// Minimal struct - array of struct
+// Minimal struct - array of struct - near pointer math indexing
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const OFFS_X = 0
+  .const OFFS_Y = 1
 main: {
     .label SCREEN = $400
-    .label _5 = 2
     ldx #0
   b1:
     txa
     asl
-    sta _5
     tay
     txa
-    sta points,y
+    sta points+OFFS_X,y
     txa
-    tay
-    iny
-    tya
-    ldy _5
-    sta points+1,y
+    clc
+    adc #4
+    // points[i].x = i;
+    sta points+OFFS_Y,y
     inx
-    cpx #5
+    cpx #4
     bne b1
     ldy #0
   b2:
     tya
     asl
     tax
-    lda points,x
+    lda points+OFFS_X,x
     sta SCREEN,y
-    lda points+1,x
+    // SCREEN[i] = points[i].x;
+    lda points+OFFS_Y,x
     sta SCREEN+$28,y
     iny
-    cpy #5
+    cpy #4
     bne b2
     rts
 }

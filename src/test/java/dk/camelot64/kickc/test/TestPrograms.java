@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStruct3() throws IOException, URISyntaxException {
+      compileAndCompare("struct-3", log().verboseParse().verboseCreateSsa().verboseStatementSequence().verboseFragmentLog());
+   }
+
+   @Test
    public void testStruct2() throws IOException, URISyntaxException {
       compileAndCompare("struct-2");
    }

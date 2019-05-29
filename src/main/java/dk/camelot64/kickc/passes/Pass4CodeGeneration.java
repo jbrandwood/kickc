@@ -6,10 +6,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -436,6 +433,11 @@ public class Pass4CodeGeneration {
                   added.add(asmName);
                } else if(constantArrayFilled.getElementType() instanceof SymbolTypePointer) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+                  added.add(asmName);
+               } else if(constantArrayFilled.getElementType() instanceof SymbolTypeStruct) {
+                  SymbolTypeStruct structElementType = (SymbolTypeStruct) constantArrayFilled.getElementType();
+                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) structElementType.getSizeBytes()), Operators.MULTIPLY, arraySize), 99, scopeRef);
                   asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                   added.add(asmName);
                } else {

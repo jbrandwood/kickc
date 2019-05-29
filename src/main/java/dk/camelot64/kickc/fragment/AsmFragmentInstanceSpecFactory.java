@@ -383,6 +383,8 @@ public class AsmFragmentInstanceSpecFactory {
             return "ppr";
          } else if(elementType instanceof SymbolTypePointer) {
             return "ppt";
+         } else if(elementType instanceof SymbolTypeStruct) {
+            return "pss";
          } else {
             throw new RuntimeException("Not implemented " + type);
          }

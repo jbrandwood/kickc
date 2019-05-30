@@ -216,14 +216,12 @@ div16s: {
 divr16s: {
     .label _8 = 8
     .label _13 = $a
-    .label _16 = $e
-    .label _18 = $c
-    .label dividendu = 8
-    .label divisoru = $a
     .label resultu = $c
     .label return = $c
     .label dividend = 8
     .label divisor = $a
+    .label dividendu = 8
+    .label divisoru = $a
     lda dividend+1
     bmi b1
     ldy #0

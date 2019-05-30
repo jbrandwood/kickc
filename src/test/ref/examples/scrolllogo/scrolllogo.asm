@@ -120,8 +120,8 @@ loop: {
 render_logo: {
     .label _3 = $f
     .label xpos = 9
+    .label x_char = 4
     .label logo_idx = 4
-    .label logo_start = 4
     lda xpos
     and #7
     ora #VIC_MCM
@@ -142,21 +142,20 @@ render_logo: {
     ror _3+1
     ror _3
     lda _3
-    tax
+    sta x_char
     lda xpos+1
     bmi b1
-    stx logo_start
     ldy #0
-  b3:
-    cpy logo_start
-    bne b4
+  b2:
+    cpy x_char
+    bne b3
     lda #0
     sta logo_idx
-  b6:
+  b5:
     cpy #$28
-    bne b7
+    bne b6
     rts
-  b7:
+  b6:
     lda logo_idx
     sta SCREEN,y
     lda #$28*1
@@ -181,8 +180,8 @@ render_logo: {
     sta SCREEN+$28*5,y
     iny
     inc logo_idx
-    jmp b6
-  b4:
+    jmp b5
+  b3:
     lda #0
     sta SCREEN,y
     sta SCREEN+$28*1,y
@@ -191,23 +190,23 @@ render_logo: {
     sta SCREEN+$28*4,y
     sta SCREEN+$28*5,y
     iny
-    jmp b3
+    jmp b2
   b1:
-    txa
+    lda x_char
     eor #$ff
     clc
     adc #1
     sta logo_idx
     ldy #0
-  b9:
+  b8:
     lda #$28
     cmp logo_idx
-    bne b10
-  b12:
+    bne b9
+  b11:
     cpy #$28
-    bne b13
+    bne b12
     rts
-  b13:
+  b12:
     lda #0
     sta SCREEN,y
     sta SCREEN+$28*1,y
@@ -216,8 +215,8 @@ render_logo: {
     sta SCREEN+$28*4,y
     sta SCREEN+$28*5,y
     iny
-    jmp b12
-  b10:
+    jmp b11
+  b9:
     lda logo_idx
     sta SCREEN,y
     lda #$28*1
@@ -242,7 +241,7 @@ render_logo: {
     sta SCREEN+$28*5,y
     iny
     inc logo_idx
-    jmp b9
+    jmp b8
 }
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
@@ -254,8 +253,7 @@ sin16s_gen2: {
     .label ampl = max-min
     .label _5 = $b
     .label _6 = $f
-    .label _8 = $f
-    .label step = $19
+    .label step = $1b
     .label sintab = 2
     .label x = 5
     .label i = 9
@@ -289,10 +287,10 @@ sin16s_gen2: {
     lda _5+3
     sta _6+1
     ldy #0
-    lda _8
+    lda _6
     sta (sintab),y
     iny
-    lda _8+1
+    lda _6+1
     sta (sintab),y
     lda #SIZEOF_SIGNED_WORD
     clc
@@ -330,13 +328,13 @@ sin16s_gen2: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zeropage($f) a)
+// mul16s(signed word zeropage($17) a)
 mul16s: {
     .label _9 = $f
     .label _16 = $f
     .label m = $b
     .label return = $b
-    .label a = $f
+    .label a = $17
     lda a
     sta mul16u.a
     lda a+1
@@ -423,18 +421,17 @@ mul16u: {
 // sin16s(dword zeropage($b) x)
 sin16s: {
     .label _4 = $b
-    .label _20 = $f
     .label x = $b
-    .label return = $f
-    .label x1 = $1d
-    .label x2 = $17
-    .label x3 = $17
+    .label return = $17
+    .label x1 = $1f
+    .label x2 = $19
+    .label x3 = $19
     .label x3_6 = $f
-    .label usinx = $1f
-    .label x4 = $17
+    .label usinx = $17
+    .label x4 = $19
     .label x5 = $f
     .label x5_128 = $f
-    .label sinx = $f
+    .label sinx = $17
     .label isUpper = 4
     lda x+3
     cmp #>PI_u4f28>>$10
@@ -580,17 +577,9 @@ sin16s: {
     lda usinx+1
     adc x5_128+1
     sta usinx+1
-    lda usinx
-    sta sinx
-    lda usinx+1
-    sta sinx+1
     lda isUpper
     cmp #0
     beq b3
-    lda usinx
-    sta _20
-    lda usinx+1
-    sta _20+1
     sec
     lda sinx
     eor #$ff
@@ -605,15 +594,15 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($17) v1, word zeropage($f) v2, byte register(X) select)
+// mulu16_sel(word zeropage($19) v1, word zeropage($f) v2, byte register(X) select)
 mulu16_sel: {
     .label _0 = $b
     .label _1 = $b
-    .label v1 = $17
+    .label v1 = $19
     .label v2 = $f
     .label return = $f
-    .label return_1 = $17
-    .label return_10 = $17
+    .label return_1 = $19
+    .label return_10 = $19
     lda v1
     sta mul16u.a
     lda v1+1
@@ -647,7 +636,7 @@ mulu16_sel: {
 div32u16u: {
     .label quotient_hi = $11
     .label quotient_lo = $f
-    .label return = $19
+    .label return = $1b
     lda #<PI2_u4f28>>$10
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10

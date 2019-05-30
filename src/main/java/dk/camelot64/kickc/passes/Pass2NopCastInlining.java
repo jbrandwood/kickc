@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -12,8 +13,7 @@ import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
-import java.util.LinkedHashMap;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * Compiler Pass inlineng cast assignments that has no effect (byte to/from signed byte, word to/from signed word)
@@ -24,12 +24,19 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
       super(program);
    }
 
+   /** We can either inline intermediate vars or expressions - not both at once */
+   enum Mode { VARS, EXPR }
+
    /**
     * Inline cast assignments that has no effect (byte to/from signed byte, word to/from signed word)
     */
    @Override
    public boolean step() {
-      LinkedHashMap<SymbolRef, RValue> castAliasses = new LinkedHashMap<>();
+      LinkedHashMap<SymbolRef, RValue> replace1 = new LinkedHashMap<>();
+      LinkedHashMap<SymbolRef, RValue> replace2 = new LinkedHashMap<>();
+      Set<SymbolRef> delete = new HashSet<>();
+
+      Mode mode = null;
 
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
@@ -58,20 +65,59 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                      isNopCast = true;
                   }
                   if(isNopCast && assignment.getlValue() instanceof VariableRef) {
-                     getLog().append("Inlining Noop Cast " + assignment.toString(getProgram(), false));
-                     // Add the alias for replacement
-                     castAliasses.put((VariableRef) assignment.getlValue(), assignment.getrValue2());
-                     // Remove the assignment
-                     stmtIt.remove();
-                  }
+                     boolean handled = false;
+                     if(castValue.getValue() instanceof VariableRef && ((VariableRef)castValue.getValue()).isIntermediate()) {
+                        if(mode==null || mode==Mode.VARS ) {
+                           mode = Mode.VARS;
+                           Collection<Integer> varUseStatements = getProgram().getVariableReferenceInfos().getVarUseStatements((VariableRef) castValue.getValue());
+                           if(varUseStatements.size() == 1 && assignment.getIndex().equals(varUseStatements.iterator().next())) {
+                              // Cast variable is only ever used in the cast
+                              getLog().append("Inlining Noop Cast " + assignment.toString(getProgram(), false) + " keeping " + assignment.getlValue());
+                              // 1. Inline the cast
+                              replace1.put((VariableRef) assignment.getlValue(), castValue);
+                              // 2. Rename the cast variable (since we like the assignment variable better)
+                              replace2.put((SymbolRef) castValue.getValue(), assignment.getlValue());
+                              // 3. Delete the cast variable
+                              delete.add((SymbolRef) castValue.getValue());
+                              // Change the type of the assignment variable
+                              Variable assignmentVar = getScope().getVariable((VariableRef) assignment.getlValue());
+                              Variable castVar = getScope().getVariable((VariableRef) castValue.getValue());
+                              assignmentVar.setType(castVar.getType());
+                              // Remove the assignment
+                              stmtIt.remove();
+                              handled = true;
+                           }
+                        }
+                     }
 
+                     if(!handled) {
+                        if(mode==null || mode==Mode.EXPR) {
+                           mode = Mode.EXPR;
+                           getLog().append("Inlining Noop Cast " + assignment.toString(getProgram(), false) + " keeping " + castValue.getValue());
+                           // 1. Inline the cast
+                           replace1.put((VariableRef) assignment.getlValue(), assignment.getrValue2());
+                           // 2. Delete the assignment variable
+                           delete.add((VariableRef) assignment.getlValue());
+                           // Remove the assignment
+                           stmtIt.remove();
+                        }
+                     }
+                  }
                }
             }
          }
       }
-      replaceVariables(castAliasses);
-      deleteSymbols(getScope(), castAliasses.keySet());
-      return (castAliasses.size() > 0);
+
+      if(replace1.size()>0) {
+         // 1. Perform first replace
+         replaceVariables(replace1);
+         // 2. Perform second replace
+         replaceVariables(replace2);
+         // 3. Delete unused symbols
+         deleteSymbols(getScope(), delete);
+      }
+
+      return (replace1.size() > 0);
    }
 
 

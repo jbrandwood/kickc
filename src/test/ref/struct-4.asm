@@ -2,7 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const OFFS_X = 0
   .const OFFS_Y = 1
 main: {
     .label SCREEN = $400
@@ -12,7 +11,7 @@ main: {
     asl
     tay
     txa
-    sta points+OFFS_X,y
+    sta points,y
     txa
     clc
     adc #4
@@ -26,7 +25,7 @@ main: {
     tya
     asl
     tax
-    lda points+OFFS_X,x
+    lda points,x
     sta SCREEN,y
     // SCREEN[i] = points[i].x;
     lda points+OFFS_Y,x

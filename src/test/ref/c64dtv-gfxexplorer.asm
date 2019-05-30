@@ -166,12 +166,10 @@ gfx_mode: {
     .label _36 = 9
     .label _40 = 3
     .label _42 = 3
-    .label _52 = 3
     .label _53 = 3
     .label _54 = 3
     .label _55 = 3
     .label _56 = 2
-    .label _57 = 3
     .label _58 = 3
     .label _59 = 3
     .label plane_a = 9
@@ -1150,13 +1148,12 @@ form_render_values: {
 form_field_ptr: {
     .label line = 3
     .label x = $13
-    .label _2 = 3
     lda form_fields_y,x
     tay
     lda form_line_hi,y
-    sta _2+1
+    sta line+1
     lda form_line_lo,y
-    sta _2
+    sta line
     lda form_fields_x,x
     sta x
     rts
@@ -1534,7 +1531,6 @@ gfx_init_plane_fill: {
     .label _1 = 3
     .label _4 = 3
     .label _5 = 3
-    .label _6 = 3
     .label gfxb = 3
     .label by = 7
     .label plane_addr = 9
@@ -1572,12 +1568,12 @@ gfx_init_plane_fill: {
     and #>$3fff
     sta _5+1
     clc
-    lda _6
+    lda gfxb
     adc #<$4000
-    sta _6
-    lda _6+1
+    sta gfxb
+    lda gfxb+1
     adc #>$4000
-    sta _6+1
+    sta gfxb+1
     lda #0
     sta by
   b1:
@@ -2072,7 +2068,6 @@ bitmap_line_xdyi: {
 }
 // bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
-    .label _0 = 3
     .label plotter_x = 3
     .label plotter_y = 5
     .label plotter = 3
@@ -2084,13 +2079,13 @@ bitmap_plot: {
     sta plotter_y+1
     lda bitmap_plot_ylo,y
     sta plotter_y
-    lda _0
+    lda plotter
     clc
     adc plotter_y
-    sta _0
-    lda _0+1
+    sta plotter
+    lda plotter+1
     adc plotter_y+1
-    sta _0+1
+    sta plotter+1
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
@@ -2204,11 +2199,10 @@ bitmap_line_ydxd: {
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
-    .label _3 = 3
     lda bitmap_plot_xlo
-    sta _3
+    sta bitmap
     lda bitmap_plot_xhi
-    sta _3+1
+    sta bitmap+1
     lda #0
     sta y
   b1:

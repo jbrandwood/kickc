@@ -8,15 +8,14 @@ main: {
     .label PTR = $9ffe
     .label SCREEN = $400
     .label ptr = 2
-    .label _6 = 2
     lda #<STRING
     sta PTR
     lda #>STRING
     sta PTR+1
     lda PTR
-    sta _6
+    sta ptr
     lda PTR+1
-    sta _6+1
+    sta ptr+1
     ldy #0
     lda (ptr),y
     sta SCREEN

@@ -2,7 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SIZEOF_VOID = 0
   .const SIZEOF_BYTE = 1
   .const SIZEOF_SIGNED_BYTE = 1
   .const SIZEOF_BOOL = 1
@@ -13,7 +12,7 @@
   .const SIZEOF_SIGNED_DWORD = 4
   .label SCREEN = $400
 main: {
-    lda #'0'+SIZEOF_VOID
+    lda #'0'
     sta SCREEN
     lda #'0'+SIZEOF_BYTE
     sta SCREEN+2

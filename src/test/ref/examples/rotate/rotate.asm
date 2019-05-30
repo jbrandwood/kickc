@@ -27,16 +27,10 @@ main: {
     rts
 }
 anim: {
-    .label _4 = 5
-    .label _6 = 5
-    .label _9 = 5
     .label _10 = 5
-    .label _11 = 5
     .label _12 = 5
-    .label cos_a = $b
-    .label sin_a = $c
-    .label x = $d
-    .label y = $e
+    .label x = $b
+    .label y = $c
     .label xr = 7
     .label yr = 9
     .label xpos = 5
@@ -50,11 +44,6 @@ anim: {
     cmp RASTER
     bne b2
     inc BORDERCOL
-    ldy angle
-    lda COS,y
-    sta cos_a
-    lda SIN,y
-    sta sin_a
     lda #0
     sta sprite_msb
     sta i
@@ -65,25 +54,27 @@ anim: {
     // signed fixed[7.0]
     lda ys,y
     sta y
-    lda cos_a
+    ldy angle
+    lda COS,y
     jsr mulf8u_prepare
     ldy x
     jsr mulf8s_prepared
-    lda _4
+    lda mulf8s_prepared.m
     asl
     sta xr
-    lda _4+1
+    lda mulf8s_prepared.m+1
     rol
     sta xr+1
     ldy y
     jsr mulf8s_prepared
-    lda _6
+    lda mulf8s_prepared.m
     asl
     sta yr
-    lda _6+1
+    lda mulf8s_prepared.m+1
     rol
     sta yr+1
-    lda sin_a
+    ldy angle
+    lda SIN,y
     jsr mulf8u_prepare
     ldy y
     jsr mulf8s_prepared
@@ -156,44 +147,34 @@ anim: {
 // mulf8s_prepared(signed byte register(Y) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label _8 = $f
-    .label _12 = $f
     .label m = 5
-    .label return = 5
-    tya
     jsr mulf8u_prepared
     lda memA
     cmp #0
     bpl b1
     lda m+1
-    sta _8
-    tya
-    eor #$ff
+    sty $ff
     sec
-    adc _8
+    sbc $ff
     sta m+1
   b1:
     cpy #0
     bpl b2
     lda m+1
-    sta _12
-    lda memA
-    eor #$ff
     sec
-    adc _12
+    sbc memA
     sta m+1
   b2:
     rts
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8u_prepare(byte a)
-// mulf8u_prepared(byte register(A) b)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
     .label return = 5
-    sta memB
-    tax
+    sty memB
+    ldx memB
     sec
   sm1:
     lda mulf_sqr1_lo,x

@@ -17,7 +17,7 @@ main: {
 // Test different signed byte constants
 test_sbytes: {
     .const bb = 0
-    .const bc = bb+2
+    .const bc = 2
     .const bf = $ff&-$7f-$7f
     .const bd = bc-4
     .const be = -bd
@@ -147,7 +147,7 @@ print_ln: {
 // Test different byte constants
 test_bytes: {
     .const bb = 0
-    .const bc = bb+2
+    .const bc = 2
     .const bd = bc-4
     lda #<$400
     sta print_line_cursor

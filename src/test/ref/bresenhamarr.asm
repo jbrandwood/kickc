@@ -8,15 +8,13 @@ main: {
     .const y0 = 0
     .const x1 = $27
     .const y1 = $18
-    .const xd = x1-x0
-    .const yd = y1-y0
     .label x = 4
     .label idx = 2
     .label y = 5
     .label _16 = 6
     lda #y0
     sta y
-    ldx #yd/2
+    ldx #y1/2
     lda #x0
     sta x
     lda #0
@@ -39,8 +37,8 @@ main: {
     inc idx+1
   !:
     txa
-    axs #-[yd]
-    cpx #xd
+    axs #-[y1]
+    cpx #x1
     bcc b2
     beq b2
     inc y
@@ -52,7 +50,7 @@ main: {
     inc idx+1
   !:
     txa
-    axs #xd
+    axs #x1
   b2:
     lda x
     cmp #x1+1

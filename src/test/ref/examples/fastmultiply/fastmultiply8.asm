@@ -145,11 +145,10 @@ print_char_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage($a) b, byte* zeropage(8) at)
+// print_byte_at(byte* zeropage(8) at)
 print_byte_at: {
-    .label b = $a
     .label at = 8
-    lda b
+    lda print_sbyte_at.b
     lsr
     lsr
     lsr
@@ -159,7 +158,7 @@ print_byte_at: {
     sta print_char_at.ch
     jsr print_char_at
     lda #$f
-    and b
+    and print_sbyte_at.b
     tay
     inc print_char_at.at
     bne !+

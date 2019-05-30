@@ -7,7 +7,7 @@
   .const PI_u4f12 = $3244
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
-  .label print_char_cursor = $d
+  .label print_char_cursor = $f
   .label print_line_cursor = 8
 main: {
     .label tabsize = $14
@@ -30,7 +30,6 @@ sin8u_table: {
     .const mid = sum/2+1
     .label step = $12
     .label sinx = $11
-    .label sinx_sc = $f
     .label sintab = 4
     .label x = 2
     .label i = 6
@@ -103,9 +102,10 @@ sin8u_table: {
     lda x+1
     sta sin8s.x+1
     jsr sin8s
-    sty sinx
+    sta sinx
+    tay
     jsr mul8su
-    lda sinx_sc+1
+    lda mul8su.m+1
     tax
     axs #-[mid]
     txa
@@ -142,10 +142,6 @@ sin8u_table: {
     lda #>str7
     sta print_str.str+1
     jsr print_str
-    lda sinx_sc
-    sta print_sword.w
-    lda sinx_sc+1
-    sta print_sword.w+1
     jsr print_sword
     lda #<str8
     sta print_str.str
@@ -264,10 +260,10 @@ print_str: {
     jmp b1
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage($b) w)
+// print_sword(signed word zeropage($d) w)
 print_sword: {
-    .label w = $b
-    lda w+1
+    .label w = $d
+    lda mul8su.m+1
     bpl b1
     lda #'-'
     jsr print_char
@@ -281,6 +277,10 @@ print_sword: {
     adc #0
     sta w+1
   b1:
+    lda w
+    sta print_word.w
+    lda w+1
+    sta print_word.w+1
     jsr print_word
     rts
 }
@@ -322,8 +322,7 @@ print_sbyte: {
 // mul8su(signed byte register(Y) a)
 mul8su: {
     .const b = sin8u_table.amplitude+1
-    .label m = $f
-    .label return = $f
+    .label m = $d
     tya
     tax
     lda #b
@@ -344,8 +343,8 @@ mul8su: {
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
     .label mb = $b
-    .label res = $f
-    .label return = $f
+    .label res = $d
+    .label return = $d
     lda #0
     sta res
     sta res+1
@@ -473,25 +472,24 @@ sin8s: {
     bcc b3
     dex
   b3:
-    txa
-    tay
     lda isUpper
     cmp #0
-    beq b4
+    beq b14
     txa
     eor #$ff
     clc
     adc #1
-    tay
-  b4:
+    rts
+  b14:
+    txa
     rts
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
 // mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($11) select)
 mulu8_sel: {
-    .label _0 = $f
-    .label _1 = $f
+    .label _0 = $d
+    .label _1 = $d
     .label select = $11
     tya
     sta mul8u.mb

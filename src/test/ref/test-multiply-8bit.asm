@@ -19,8 +19,6 @@ main: {
 // Perform all possible signed byte multiplications (slow and fast) and compare the results
 mul8s_compare: {
     .label ms = 8
-    .label mf = $e
-    .label mn = $c
     .label b = 3
     .label a = 2
     lda #-$80
@@ -37,10 +35,10 @@ mul8s_compare: {
     ldy b
     jsr mul8s
     lda ms
-    cmp mf
+    cmp mulf8s_prepared.m
     bne !+
     lda ms+1
-    cmp mf+1
+    cmp mulf8s_prepared.m+1
     beq b6
   !:
     ldx #0
@@ -49,10 +47,10 @@ mul8s_compare: {
     ldx #1
   b3:
     lda ms
-    cmp mn
+    cmp mul8s.m
     bne !+
     lda ms+1
-    cmp mn+1
+    cmp mul8s.m+1
     beq b4
   !:
     ldx #0
@@ -129,12 +127,10 @@ print_str: {
   !:
     jmp b1
 }
-// mul8s_error(signed byte register(X) a, signed byte zeropage(3) b, signed word zeropage(8) ms, signed word zeropage($c) mn, signed word zeropage($e) mf)
+// mul8s_error(signed byte register(X) a, signed byte zeropage(3) b, signed word zeropage(8) ms)
 mul8s_error: {
     .label b = 3
     .label ms = 8
-    .label mn = $c
-    .label mf = $e
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -163,9 +159,9 @@ mul8s_error: {
     lda #>str3
     sta print_str.str+1
     jsr print_str
-    lda mn
+    lda mul8s.m
     sta print_sword.w
-    lda mn+1
+    lda mul8s.m+1
     sta print_sword.w+1
     jsr print_sword
     lda #<str4
@@ -173,9 +169,9 @@ mul8s_error: {
     lda #>str4
     sta print_str.str+1
     jsr print_str
-    lda mf
+    lda mulf8s_prepared.m
     sta print_sword.w
-    lda mf+1
+    lda mulf8s_prepared.m+1
     sta print_sword.w+1
     jsr print_sword
     jsr print_ln
@@ -267,36 +263,28 @@ print_sbyte: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul8s(signed byte zeropage(2) a, signed byte register(Y) b)
 mul8s: {
-    .label _9 = $10
-    .label _13 = $10
     .label m = $c
-    .label return = $c
     .label a = 2
-    ldx a
     tya
     sta mul8u.mb
     lda #0
     sta mul8u.mb+1
+    ldx a
     jsr mul8u
     lda a
     cmp #0
     bpl b1
     lda m+1
-    sta _9
-    tya
-    eor #$ff
+    sty $ff
     sec
-    adc _9
+    sbc $ff
     sta m+1
   b1:
     cpy #0
     bpl b2
     lda m+1
-    sta _13
-    lda a
-    eor #$ff
     sec
-    adc _13
+    sbc a
     sta m+1
   b2:
     rts
@@ -337,44 +325,34 @@ mul8u: {
 // Fast multiply two signed bytes to a word result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
-    .label return = $e
     jsr mulf8u_prepare
-    txa
-    tay
+    stx mulf8s_prepared.b
     jsr mulf8s_prepared
     rts
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte register(Y) b)
+// mulf8s_prepared(signed byte zeropage(3) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label _8 = $10
-    .label _12 = $10
     .label m = $e
-    .label return = $e
-    tya
-    tax
+    .label b = 3
+    ldx b
     jsr mulf8u_prepared
     lda memA
     cmp #0
     bpl b1
     lda m+1
-    sta _8
-    tya
-    eor #$ff
     sec
-    adc _8
+    sbc b
     sta m+1
   b1:
-    cpy #0
+    lda b
+    cmp #0
     bpl b2
     lda m+1
-    sta _12
-    lda memA
-    eor #$ff
     sec
-    adc _12
+    sbc memA
     sta m+1
   b2:
     rts

@@ -1,13 +1,12 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionBinary;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.ConstantInteger;
-import dk.camelot64.kickc.model.values.PointerDereferenceSimple;
-import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -31,19 +30,19 @@ public class PassNSimplifyExpressionWithZero extends Pass2SsaOptimization {
             RValue right = binary.getRight();
             Operator operator = programExpression.getOperator();
             if(Operators.PLUS.equals(operator) || Operators.MINUS.equals(operator) || Operators.BOOL_OR.equals(operator) || Operators.BOOL_XOR.equals(operator)) {
-               if(left instanceof ConstantInteger && ((ConstantInteger) left).getInteger() == 0) {
-                  getLog().append("Simplifying expression containing zero " + binary.getRight().toString()+ " in "+ (currentStmt==null?"":currentStmt.toString(getProgram(), false)));
+               if(isZero(left)) {
+                  getLog().append("Simplifying expression containing zero " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
                   if(programExpression instanceof ProgramExpressionBinary.ProgramExpressionBinaryPointerDereferenceIndexed) {
                      programExpression.set(new PointerDereferenceSimple(binary.getRight()));
-                  }  else {
+                  } else {
                      programExpression.set(binary.getRight());
                   }
                   modified.set(true);
-               } else if(right instanceof ConstantInteger && ((ConstantInteger) right).getInteger() == 0) {
-                  getLog().append("Simplifying expression containing zero " + binary.getLeft().toString()+ " in "+ (currentStmt==null?"":currentStmt.toString(getProgram(), false)));
+               } else if(isZero(right)) {
+                  getLog().append("Simplifying expression containing zero " + binary.getLeft().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
                   if(programExpression instanceof ProgramExpressionBinary.ProgramExpressionBinaryPointerDereferenceIndexed) {
                      programExpression.set(new PointerDereferenceSimple(binary.getLeft()));
-                  }  else {
+                  } else {
                      programExpression.set(binary.getLeft());
                   }
                   modified.set(true);
@@ -53,6 +52,27 @@ public class PassNSimplifyExpressionWithZero extends Pass2SsaOptimization {
       });
 
       return modified.get();
+   }
+
+   /**
+    * Determine if an RValue is effectively a zero
+    *
+    * @param left
+    * @return
+    */
+   public boolean isZero(RValue left) {
+      if(left instanceof ConstantInteger && ((ConstantInteger) left).getInteger() == 0) {
+         return true;
+      } else if(left instanceof ConstantValue) {
+         try {
+            ConstantLiteral literal = ((ConstantValue) left).calculateLiteral(getProgram().getScope());
+            if(literal instanceof ConstantInteger && ((ConstantInteger) literal).getInteger() == 0L)
+               return true;
+         } catch(ConstantNotLiteral e) {
+            // Ignore
+         }
+      }
+      return false;
    }
 
 }

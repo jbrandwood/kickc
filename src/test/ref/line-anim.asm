@@ -80,38 +80,34 @@ bitmap_plot: {
     .label _1 = 7
     .label x = 3
     .label plotter = 5
-    .label plotter_1 = 7
-    .label _3 = 5
     lda bitmap_plot_yhi,x
-    sta _3+1
+    sta plotter+1
     lda bitmap_plot_ylo,x
-    sta _3
+    sta plotter
     lda x
     and #<$fff8
     sta _1
     lda x+1
     and #>$fff8
     sta _1+1
-    lda plotter_1
+    lda plotter
     clc
-    adc plotter
-    sta plotter_1
-    lda plotter_1+1
-    adc plotter+1
-    sta plotter_1+1
+    adc _1
+    sta plotter
+    lda plotter+1
+    adc _1+1
+    sta plotter+1
     lda x
     tay
     lda bitmap_plot_bit,y
     ldy #0
-    ora (plotter_1),y
-    sta (plotter_1),y
+    ora (plotter),y
+    sta (plotter),y
     rts
 }
 // Initialize the points to be animated
 // point_init(byte zeropage(2) point_idx)
 point_init: {
-    .label _0 = 9
-    .label _1 = 3
     .label _3 = 7
     .label _4 = 3
     .label _9 = 3
@@ -119,29 +115,19 @@ point_init: {
     .label _11 = 3
     .label point_idx = 2
     .label y_diff = 7
-    .label abs16s1__2 = 3
     .label abs16s1_return = 3
-    .label abs16s2__2 = 5
     .label abs16s2_return = 5
     .label x_stepf = 3
     .label x_diff = 9
     lda point_idx
     asl
-    tax
-    lda x_end,x
-    sta _0
-    lda x_end+1,x
-    sta _0+1
-    lda x_start,x
-    sta _1
-    lda x_start+1,x
-    sta _1+1
-    lda x_diff
+    tay
     sec
-    sbc _1
+    lda x_end,y
+    sbc x_start,y
     sta x_diff
-    lda x_diff+1
-    sbc _1+1
+    lda x_end+1,y
+    sbc x_start+1,y
     sta x_diff+1
     ldy point_idx
     lda y_end,y
@@ -254,22 +240,22 @@ point_init: {
     lda y_diff
     eor #$ff
     adc #0
-    sta abs16s2__2
+    sta abs16s2_return
     lda y_diff+1
     eor #$ff
     adc #0
-    sta abs16s2__2+1
+    sta abs16s2_return+1
     jmp b6
   abs16s1_b1:
     sec
     lda x_diff
     eor #$ff
     adc #0
-    sta abs16s1__2
+    sta abs16s1_return
     lda x_diff+1
     eor #$ff
     adc #0
-    sta abs16s1__2+1
+    sta abs16s1_return+1
     jmp abs16s2
 }
 // Perform division on two signed 16-bit numbers with an initial remainder.
@@ -279,9 +265,6 @@ point_init: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // divr16s(signed word zeropage(9) divisor, signed word zeropage(7) rem)
 divr16s: {
-    .label _10 = 7
-    .label _13 = 9
-    .label _18 = 3
     .label remu = 7
     .label divisoru = 9
     .label resultu = 3
@@ -311,28 +294,28 @@ divr16s: {
     rts
   b3:
     sec
-    lda _13
+    lda divisoru
     eor #$ff
     adc #0
-    sta _13
-    lda _13+1
+    sta divisoru
+    lda divisoru+1
     eor #$ff
     adc #0
-    sta _13+1
+    sta divisoru+1
     tya
     eor #1
     tay
     jmp b4
   b1:
     sec
-    lda _10
+    lda remu
     eor #$ff
     adc #0
-    sta _10
-    lda _10+1
+    sta remu
+    lda remu+1
     eor #$ff
     adc #0
-    sta _10+1
+    sta remu+1
     ldy #1
     jmp b2
 }
@@ -428,11 +411,10 @@ screen_fill: {
 bitmap_clear: {
     .label bitmap = 3
     .label y = 2
-    .label _3 = 3
     lda bitmap_plot_ylo
-    sta _3
+    sta bitmap
     lda bitmap_plot_yhi
-    sta _3+1
+    sta bitmap+1
     lda #0
     sta y
   b1:

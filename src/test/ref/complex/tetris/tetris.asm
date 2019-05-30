@@ -193,9 +193,10 @@ main: {
     ldx current_ypos
     lda current_xpos
     sta current_xpos_119
-    lda current_piece_gfx
+    ldy play_spawn_current._7
+    lda PIECES,y
     sta current_piece_gfx_112
-    lda current_piece_gfx+1
+    lda PIECES+1,y
     sta current_piece_gfx_112+1
     lda current_piece_char
     sta current_piece_char_100
@@ -205,10 +206,15 @@ main: {
     ldx play_spawn_current.piece_idx
     lda #$20
     jsr render_next
-    lda current_piece_gfx
+    ldy play_spawn_current._7
+    lda PIECES,y
     sta current_piece
-    lda current_piece_gfx+1
+    lda PIECES+1,y
     sta current_piece+1
+    lda PIECES,y
+    sta current_piece_gfx
+    lda PIECES+1,y
+    sta current_piece_gfx+1
     lda #0
     sta level_bcd
     sta level
@@ -390,8 +396,8 @@ render_bcd: {
 render_next: {
     // Find the screen area
     .const next_area_offset = $28*$c+$18+4
-    .label next_piece_gfx = 5
     .label next_piece_char = $a
+    .label next_piece_gfx = 5
     .label screen_next_area = 7
     .label l = 9
     cmp #0
@@ -409,14 +415,13 @@ render_next: {
   b2:
     txa
     asl
-    // Render the next piece
     tay
+    lda PIECES_NEXT_CHARS,x
+    sta next_piece_char
     lda PIECES,y
     sta next_piece_gfx
     lda PIECES+1,y
     sta next_piece_gfx+1
-    lda PIECES_NEXT_CHARS,x
-    sta next_piece_char
     lda #0
     sta l
   b3:
@@ -817,10 +822,15 @@ play_move_down: {
     tax
     jsr play_update_score
     jsr play_spawn_current
-    lda current_piece_gfx
+    ldy play_spawn_current._7
+    lda PIECES,y
     sta current_piece
-    lda current_piece_gfx+1
+    lda PIECES+1,y
     sta current_piece+1
+    lda PIECES,y
+    sta current_piece_gfx
+    lda PIECES+1,y
+    sta current_piece_gfx+1
     lda #0
     sta current_orientation
   b11:
@@ -838,16 +848,13 @@ play_move_down: {
 // Spawn a new piece
 // Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
+    .label _7 = 4
     .label piece_idx = $21
     // Move next piece into current
     ldx next_piece_idx
     txa
     asl
-    tay
-    lda PIECES,y
-    sta current_piece_gfx
-    lda PIECES+1,y
-    sta current_piece_gfx+1
+    sta _7
     lda PIECES_CHARS,x
     sta current_piece_char
     lda PIECES_START_X,x
@@ -858,9 +865,10 @@ play_spawn_current: {
     sta play_collision.xpos
     lda current_ypos
     sta play_collision.ypos
-    lda current_piece_gfx
+    ldy _7
+    lda PIECES,y
     sta current_piece_100
-    lda current_piece_gfx+1
+    lda PIECES+1,y
     sta current_piece_100+1
     ldx #0
     jsr play_collision

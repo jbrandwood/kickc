@@ -1685,7 +1685,6 @@ bitmap_line_xdyi: {
 }
 // bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
-    .label _0 = 2
     .label plotter_x = 2
     .label plotter_y = 5
     .label plotter = 2
@@ -1697,13 +1696,13 @@ bitmap_plot: {
     sta plotter_y+1
     lda bitmap_plot_ylo,y
     sta plotter_y
-    lda _0
+    lda plotter
     clc
     adc plotter_y
-    sta _0
-    lda _0+1
+    sta plotter
+    lda plotter+1
     adc plotter_y+1
-    sta _0+1
+    sta plotter+1
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
@@ -1817,11 +1816,10 @@ bitmap_line_ydxd: {
 bitmap_clear: {
     .label bitmap = 2
     .label y = 4
-    .label _3 = 2
     lda bitmap_plot_xlo
-    sta _3
+    sta bitmap
     lda bitmap_plot_xhi
-    sta _3+1
+    sta bitmap+1
     lda #0
     sta y
   b1:

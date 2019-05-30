@@ -10,7 +10,6 @@ main: {
     rts
 }
 f1: {
-    .label x = 0
     .label return = f2.return+1
     jsr f2
     rts
@@ -501,7 +500,7 @@ f98: {
     rts
 }
 f99: {
-    .label return = f1.x+1
+    .label return = 1
     jsr f100
     rts
 }

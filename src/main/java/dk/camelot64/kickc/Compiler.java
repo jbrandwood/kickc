@@ -236,7 +236,6 @@ public class Compiler {
       optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new PassNAddArrayNumberTypeConversions(program));
       optimizations.add(new Pass2InlineCast(program));
-      //optimizations.add(new Pass2NopCastInlining(program));
       optimizations.add(new PassNCastSimplification(program));
       optimizations.add(new PassNFinalizeNumberTypeConversions(program));
       optimizations.add(new PassNTypeInference(program));
@@ -307,6 +306,7 @@ public class Compiler {
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new PassNStatementIndices(program));
       constantOptimizations.add(new PassNVariableReferenceInfos(program));
+      constantOptimizations.add(new Pass2NopCastInlining(program));
       constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));

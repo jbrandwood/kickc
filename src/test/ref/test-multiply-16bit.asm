@@ -340,9 +340,7 @@ print_sword: {
 // mulf16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mulf16s: {
     .label _9 = 9
-    .label _10 = $15
     .label _13 = 9
-    .label _14 = $15
     .label _16 = 9
     .label _17 = 9
     .label m = $11
@@ -364,16 +362,12 @@ mulf16s: {
     sta _9
     lda m+3
     sta _9+1
-    lda b
-    sta _10
-    lda b+1
-    sta _10+1
     lda _16
     sec
-    sbc _10
+    sbc b
     sta _16
     lda _16+1
-    sbc _10+1
+    sbc b+1
     sta _16+1
     lda _16
     sta m+2
@@ -386,16 +380,12 @@ mulf16s: {
     sta _13
     lda m+3
     sta _13+1
-    lda a
-    sta _14
-    lda a+1
-    sta _14+1
     lda _17
     sec
-    sbc _14
+    sbc a
     sta _17
     lda _17+1
-    sbc _14+1
+    sbc a+1
     sta _17+1
     lda _17
     sta m+2
@@ -529,30 +519,24 @@ mulf16u: {
 // mul16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mul16s: {
     .label _9 = 9
-    .label _10 = $15
     .label _13 = 9
-    .label _14 = $15
     .label _16 = 9
     .label _17 = 9
     .label m = $19
     .label return = $19
     .label a = 3
     .label b = 5
-    lda a
-    sta mul16u.a
-    lda a+1
-    sta mul16u.a+1
     lda b
-    sta mul16u.b
-    lda b+1
-    sta mul16u.b+1
-    lda mul16u.b
     sta mul16u.mb
-    lda mul16u.b+1
+    lda b+1
     sta mul16u.mb+1
     lda #0
     sta mul16u.mb+2
     sta mul16u.mb+3
+    lda a
+    sta mul16u.a
+    lda a+1
+    sta mul16u.a+1
     jsr mul16u
     lda a+1
     bpl b1
@@ -560,16 +544,12 @@ mul16s: {
     sta _9
     lda m+3
     sta _9+1
-    lda b
-    sta _10
-    lda b+1
-    sta _10+1
     lda _16
     sec
-    sbc _10
+    sbc b
     sta _16
     lda _16+1
-    sbc _10+1
+    sbc b+1
     sta _16+1
     lda _16
     sta m+2
@@ -582,16 +562,12 @@ mul16s: {
     sta _13
     lda m+3
     sta _13+1
-    lda a
-    sta _14
-    lda a+1
-    sta _14+1
     lda _17
     sec
-    sbc _14
+    sbc a
     sta _17
     lda _17+1
-    sbc _14+1
+    sbc a+1
     sta _17+1
     lda _17
     sta m+2
@@ -601,14 +577,13 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($1d) a, word zeropage(9) b)
+// mul16u(word zeropage(9) a, word zeropage($17) b)
 mul16u: {
     .label mb = $11
-    .label a = $1d
+    .label a = 9
     .label res = $19
-    .label b = 9
     .label return = $19
-    .label b_1 = $17
+    .label b = $17
     lda #0
     sta res
     sta res+1
@@ -796,9 +771,9 @@ mul16u_compare: {
     sta mul16u.a
     lda a+1
     sta mul16u.a+1
-    lda mul16u.b_1
+    lda mul16u.b
     sta mul16u.mb
-    lda mul16u.b_1+1
+    lda mul16u.b+1
     sta mul16u.mb+1
     lda #0
     sta mul16u.mb+2

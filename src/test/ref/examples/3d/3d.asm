@@ -97,7 +97,7 @@ anim: {
     cmp RASTER
     bne b4
     inc BORDERCOL
-    ldy sx
+    ldx sx
     jsr calculate_matrix
     jsr store_matrix
     lda #0
@@ -129,13 +129,13 @@ anim: {
     tya
     asl
     tax
-    lda xp
+    lda #$80
     clc
-    adc #$80
+    adc xp
     sta SPRITES_XPOS,x
-    lda yp
+    lda #$80
     clc
-    adc #$80
+    adc yp
     sta SPRITES_YPOS,x
     inc i
     lda #8
@@ -335,7 +335,8 @@ print_sbyte_at: {
     .label at = 6
     cpx #0
     bmi b1
-    ldy #' '
+    lda #' '
+    sta print_char_at.ch
     jsr print_char_at
   b2:
     inc print_byte_at.at
@@ -345,7 +346,8 @@ print_sbyte_at: {
     jsr print_byte_at
     rts
   b1:
-    ldy #'-'
+    lda #'-'
+    sta print_char_at.ch
     jsr print_char_at
     txa
     eor #$ff
@@ -355,16 +357,17 @@ print_sbyte_at: {
     jmp b2
 }
 // Print a single char
-// print_char_at(byte register(Y) ch, byte* zeropage(6) at)
+// print_char_at(byte zeropage(8) ch, byte* zeropage(6) at)
 print_char_at: {
     .label at = 6
-    tya
+    .label ch = 8
+    lda ch
     ldy #0
     sta (at),y
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte register(X) b, byte* zeropage(6) at)
+// print_byte_at(byte* zeropage(6) at)
 print_byte_at: {
     .label at = 6
     txa
@@ -374,7 +377,7 @@ print_byte_at: {
     lsr
     tay
     lda print_hextab,y
-    tay
+    sta print_char_at.ch
     jsr print_char_at
     lda #$f
     axs #0
@@ -382,7 +385,8 @@ print_byte_at: {
     bne !+
     inc print_char_at.at+1
   !:
-    ldy print_hextab,x
+    lda print_hextab,x
+    sta print_char_at.ch
     jsr print_char_at
     rts
 }
@@ -390,10 +394,10 @@ print_byte_at: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zeropage(5) y, signed byte zeropage($a) z)
+// rotate_matrix(signed byte register(X) x, signed byte zeropage(5) y, signed byte zeropage(8) z)
 rotate_matrix: {
     .label y = 5
-    .label z = $a
+    .label z = 8
     txa
     sta xr
     lda y
@@ -533,62 +537,61 @@ store_matrix: {
 // Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-// calculate_matrix(signed byte register(Y) sx, signed byte zeropage(3) sy)
+// calculate_matrix(signed byte register(X) sx, signed byte zeropage(3) sy)
 calculate_matrix: {
     .label sy = 3
     .label t1 = 4
-    .label t3 = 5
-    .label t4 = $a
-    .label t5 = $b
-    .label t6 = $c
-    .label t7 = $d
-    .label t8 = $e
-    .label t9 = $f
-    .label t10 = $10
-    lax sy
-    axs #sz
-    stx t1
-    ldx sy
-    sty t3
-    tya
-    sec
-    sbc #sz
-    sta t4
+    .label t2 = 5
+    .label t3 = 8
+    .label t4 = $b
+    .label t5 = $c
+    .label t6 = $d
+    .label t7 = $e
+    .label t8 = $f
+    .label t9 = $10
+    lda sy
+    sta t1
+    lda sy
+    sta t2
+    stx t3
+    stx t4
     txa
-    sty $ff
     clc
-    adc $ff
+    adc t2
     sta t5
-    tya
+    txa
     sec
     sbc t1
     sta t6
-    tya
+    txa
     clc
     adc t1
     sta t7
     txa
-    sty $ff
+    eor #$ff
     sec
-    sbc $ff
+    adc t2
     sta t8
-    tya
+    txa
     eor #$ff
     sec
     adc sy
     sta t9
-    tya
+    txa
     clc
     adc sy
-    sta t10
-    lda COSH,x
+    tax
     ldy t1
+    lda COSH,y
+    ldy t2
     clc
     adc COSH,y
     sta rotation_matrix
+    ldy t1
     lda SINH,y
+    ldy t2
     sec
-    sbc SINH,x
+    sbc SINH,y
     sta rotation_matrix+1
     ldy sy
     clc
@@ -633,9 +636,8 @@ calculate_matrix: {
     sta rotation_matrix+4
     ldy t9
     lda SINH,y
-    ldy t10
     sec
-    sbc SINH,y
+    sbc SINH,x
     sta rotation_matrix+5
     ldy t4
     lda COSH,y
@@ -673,9 +675,8 @@ calculate_matrix: {
     sec
     sbc COSQ,y
     sta rotation_matrix+7
+    lda COSH,x
     ldy t9
-    lda COSH,y
-    ldy t10
     clc
     adc COSH,y
     sta rotation_matrix+8
@@ -954,9 +955,9 @@ debug_print_init: {
     str11: .text "yp@"
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zeropage(6) str, byte* zeropage(8) at)
+// print_str_at(byte* zeropage(6) str, byte* zeropage(9) at)
 print_str_at: {
-    .label at = 8
+    .label at = 9
     .label str = 6
   b1:
     ldy #0

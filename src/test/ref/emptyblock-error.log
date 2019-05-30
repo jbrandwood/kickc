@@ -1,4 +1,20 @@
+Adding pointer type conversion cast (byte*) B in (byte*) B ← (number) $1000
 Identified constant variable (byte*) B
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) @1
+Culled Empty Block (label) menu::@4
+Culled Empty Block (label) menu::@3
+Culled Empty Block (label) menu::@5
+Culled Empty Block (label) menu::@6
+Culled Empty Block (label) menu::@7
+Culled Empty Block (label) mode::@5
+Culled Empty Block (label) mode::@3
+Culled Empty Block (label) mode::@6
+Culled Empty Block (label) mode::@4
+Culled Empty Block (label) mode::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -30,19 +46,19 @@ menu::@return: scope:[menu]  from menu::@1 menu::@8
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) B#0 ← ((byte*)) (word/signed word/dword/signed dword) $1000
+  (byte*) B#0 ← ((byte*)) (number) $1000
   to:@3
 mode: scope:[mode]  from menu::@2
   to:mode::@1
-mode::@1: scope:[mode]  from mode mode::@2 mode::@4
+mode::@1: scope:[mode]  from mode mode::@2 mode::@7
   if(true) goto mode::@2
   to:mode::@return
 mode::@2: scope:[mode]  from mode::@1
-  (bool~) mode::$0 ← *((byte*) B#0) == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (bool~) mode::$0 ← *((byte*) B#0) == (number) 0
   (bool~) mode::$1 ← ! (bool~) mode::$0
-  if((bool~) mode::$1) goto mode::@4
-  to:mode::@1
-mode::@4: scope:[mode]  from mode::@2
+  if((bool~) mode::$1) goto mode::@1
+  to:mode::@7
+mode::@7: scope:[mode]  from mode::@2
   to:mode::@1
 mode::@return: scope:[mode]  from mode::@1
   return 
@@ -77,52 +93,66 @@ SYMBOL TABLE SSA
 (bool~) mode::$1
 (label) mode::@1
 (label) mode::@2
-(label) mode::@4
+(label) mode::@7
 (label) mode::@return
 
-Culled Empty Block (label) main::@7
-Culled Empty Block (label) menu::@8
-Culled Empty Block (label) @4
-Successful SSA optimization Pass2CullEmptyBlocks
-Inversing boolean not [9] (bool~) mode::$1 ← *((byte*) B#0) != (byte/signed byte/word/signed word/dword/signed dword) 0 from [8] (bool~) mode::$0 ← *((byte*) B#0) == (byte/signed byte/word/signed word/dword/signed dword) 0
+Adding number conversion cast (unumber) 0 in (bool~) mode::$0 ← *((byte*) B#0) == (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) B#0 ← (byte*)(number) $1000
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 4096
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [9] (bool~) mode::$1 ← *((byte*) B#0) != (byte) 0 from [8] (bool~) mode::$0 ← *((byte*) B#0) == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) mode::$1 [10] if(*((byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@4
+Simple Condition (bool~) mode::$1 [10] if(*((byte*) B#0)!=(byte) 0) goto mode::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) B#0 = ((byte*))$1000
+Constant (const byte*) B#0 = (byte*) 4096
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [0] if(true) goto main::@2
 if() condition always true - replacing block destination [3] if(true) goto menu::@2
-if() condition always true - replacing block destination [6] if(true) goto mode::@2
+if() condition always true - replacing block destination [7] if(true) goto mode::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Removing unused block mode::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) menu::@1
-Culled Empty Block (label) @2
-Culled Empty Block (label) mode::@1
-Successful SSA optimization Pass2CullEmptyBlocks
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of main::@7
 Adding NOP phi() at start of menu
+Adding NOP phi() at start of menu::@1
 Adding NOP phi() at start of menu::@2
+Adding NOP phi() at start of menu::@8
 Adding NOP phi() at start of mode
-Adding NOP phi() at start of mode::@4
+Adding NOP phi() at start of mode::@1
+Adding NOP phi() at start of mode::@7
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to menu:6 
-Calls in [menu] to mode:9 
+Calls in [] to main:3 
+Calls in [main] to menu:9 
+Calls in [menu] to mode:14 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) @4
+Culled Empty Block (label) main::@1
+Culled Empty Block (label) main::@7
+Culled Empty Block (label) menu::@1
+Culled Empty Block (label) menu::@8
+Culled Empty Block (label) mode::@1
 Renumbering block @3 to @1
 Renumbering block main::@2 to main::@1
 Renumbering block menu::@2 to menu::@1
 Renumbering block mode::@2 to mode::@1
-Renumbering block mode::@4 to mode::@2
+Renumbering block mode::@7 to mode::@2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -164,8 +194,8 @@ mode: scope:[mode]  from menu::@1
   [11] phi()
   to:mode::@1
 mode::@1: scope:[mode]  from mode mode::@1 mode::@2
-  [12] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@2
-  to:mode::@1
+  [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1
+  to:mode::@2
 mode::@2: scope:[mode]  from mode::@1
   [13] phi()
   to:mode::@1
@@ -241,11 +271,10 @@ mode: {
     jmp b1
   //SEG23 mode::@1
   b1:
-  //SEG24 [12] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@2 -- _deref_pbuc1_neq_0_then_la1 
+  //SEG24 [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
-    bne b2_from_b1
-    jmp b1
+    bne b1
   //SEG25 [13] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
   b2_from_b1:
     jmp b2
@@ -255,7 +284,7 @@ mode: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@2 [ ] ( main:2::menu:6::mode:9 [ ] ) always clobbers reg byte a 
+Statement [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1 [ ] ( main:2::menu:6::mode:9 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -263,10 +292,10 @@ Uplift Scope [menu]
 Uplift Scope [mode] 
 Uplift Scope [] 
 
-Uplifting [main] best 11929 combination 
-Uplifting [menu] best 11929 combination 
-Uplifting [mode] best 11929 combination 
-Uplifting [] best 11929 combination 
+Uplifting [main] best 8929 combination 
+Uplifting [menu] best 8929 combination 
+Uplifting [mode] best 8929 combination 
+Uplifting [] best 8929 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -329,11 +358,10 @@ mode: {
     jmp b1
   //SEG23 mode::@1
   b1:
-  //SEG24 [12] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@2 -- _deref_pbuc1_neq_0_then_la1 
+  //SEG24 [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
-    bne b2_from_b1
-    jmp b1
+    bne b1
   //SEG25 [13] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
   b2_from_b1:
     jmp b2
@@ -352,7 +380,6 @@ Removing instruction jmp b1
 Removing instruction jmp b2
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
-Replacing label b2_from_b1 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -367,24 +394,20 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
 Removing instruction b1:
 Removing instruction breturn:
+Removing instruction b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Skipping double jump to b1 in bne b2
-Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction bbegin:
-Removing instruction b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing unreachable instruction jmp b1
-Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
 (byte*) B
-(const byte*) B#0 B = ((byte*))(word/signed word/dword/signed dword) $1000
+(const byte*) B#0 B = (byte*) 4096
 (void()) main()
 (label) main::@1
 (void()) menu()
@@ -397,7 +420,7 @@ FINAL SYMBOL TABLE
 
 
 FINAL ASSEMBLER
-Score: 11521
+Score: 8551
 
 //SEG0 File Comments
 // Error cleaning up unused blocks
@@ -439,12 +462,12 @@ menu: {
 mode: {
   //SEG23 mode::@1
   b1:
-  //SEG24 [12] if(*((const byte*) B#0)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto mode::@2 -- _deref_pbuc1_neq_0_then_la1 
+  //SEG24 [12] if(*((const byte*) B#0)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
     bne b1
-    jmp b1
   //SEG25 [13] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
   //SEG26 mode::@2
+    jmp b1
 }
 

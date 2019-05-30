@@ -1,9 +1,12 @@
+Adding pointer type conversion cast (byte*) screen in (byte*) screen ← (number) $400
 Identified constant variable (byte*) screen
 Identified constant variable (byte*) main::hello
+Culled Empty Block (label) @1
+Culled Empty Block (label) print2::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) screen#0 ← ((byte*)) (number) $400
   to:@2
 main: scope:[main]  from @2
   (byte*) main::hello#0 ← (const string) main::$3
@@ -12,7 +15,7 @@ main: scope:[main]  from @2
   call print2 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*~) main::$1 ← (byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) $50
+  (byte*~) main::$1 ← (byte*) screen#0 + (number) $50
   (byte*) print2::at#1 ← (byte*~) main::$1
   (byte*) print2::msg#1 ← (byte*) main::hello#0
   call print2 
@@ -25,8 +28,8 @@ main::@return: scope:[main]  from main::@2
 print2: scope:[print2]  from main main::@1
   (byte*) print2::at#3 ← phi( main/(byte*) print2::at#0 main::@1/(byte*) print2::at#1 )
   (byte*) print2::msg#3 ← phi( main/(byte*) print2::msg#0 main::@1/(byte*) print2::msg#1 )
-  (byte) print2::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) print2::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) print2::j#0 ← (number) 0
+  (byte) print2::i#0 ← (number) 0
   to:print2::@1
 print2::@1: scope:[print2]  from print2 print2::@1
   (byte) print2::j#2 ← phi( print2/(byte) print2::j#0 print2::@1/(byte) print2::j#1 )
@@ -34,7 +37,7 @@ print2::@1: scope:[print2]  from print2 print2::@1
   (byte) print2::i#2 ← phi( print2/(byte) print2::i#0 print2::@1/(byte) print2::i#1 )
   (byte*) print2::msg#2 ← phi( print2/(byte*) print2::msg#3 print2::@1/(byte*) print2::msg#2 )
   *((byte*) print2::at#2 + (byte) print2::j#2) ← *((byte*) print2::msg#2 + (byte) print2::i#2)
-  (byte) print2::j#1 ← (byte) print2::j#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) print2::j#1 ← (byte) print2::j#2 + (number) 2
   (byte) print2::i#1 ← ++ (byte) print2::i#2
   (bool~) print2::$0 ← *((byte*) print2::msg#2 + (byte) print2::i#1) != (byte) '@'
   if((bool~) print2::$0) goto print2::@1
@@ -87,40 +90,60 @@ SYMBOL TABLE SSA
 (byte*) screen
 (byte*) screen#0
 
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) $50 in (byte*~) main::$1 ← (byte*) screen#0 + (number) $50
+Adding number conversion cast (unumber) 0 in (byte) print2::j#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (byte) print2::i#0 ← (number) 0
+Adding number conversion cast (unumber) 2 in (byte) print2::j#1 ← (byte) print2::j#2 + (number) 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) screen#0 ← (byte*)(number) $400
+Inlining cast (byte) print2::j#0 ← (unumber)(number) 0
+Inlining cast (byte) print2::i#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $50
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) print2::at#1 = (byte*~) main::$1 
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (byte*) print2::msg#2
 Self Phi Eliminated (byte*) print2::at#2
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) print2::msg#2 (byte*) print2::msg#3
-Redundant Phi (byte*) print2::at#2 (byte*) print2::at#3
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte*) print2::msg#2 (byte*) print2::msg#3
+Identical Phi Values (byte*) print2::at#2 (byte*) print2::at#3
+Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) print2::$0 [18] if(*((byte*) print2::msg#3 + (byte) print2::i#1)!=(byte) '@') goto print2::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) screen#0 = ((byte*))$400
+Constant (const byte*) screen#0 = (byte*) 1024
 Constant (const byte*) main::hello#0 = main::$3
 Constant (const byte) print2::j#0 = 0
 Constant (const byte) print2::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print2::at#0 = screen#0
 Constant (const byte*) print2::msg#0 = main::hello#0
-Constant (const byte*) print2::at#1 = screen#0+$50
 Constant (const byte*) print2::msg#1 = main::hello#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [1] (byte*) print2::at#1 ← (const byte*) screen#0 + (byte) $50
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) print2::at#1 = screen#0+$50
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) print2::j#0
 Inlining constant with var siblings (const byte) print2::i#0
 Inlining constant with var siblings (const byte*) print2::at#0
 Inlining constant with var siblings (const byte*) print2::msg#0
-Inlining constant with var siblings (const byte*) print2::at#1
 Inlining constant with var siblings (const byte*) print2::msg#1
+Inlining constant with var siblings (const byte*) print2::at#1
 Constant inlined print2::msg#1 = (const byte*) main::hello#0
-Constant inlined print2::j#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined print2::j#0 = (byte) 0
 Constant inlined print2::msg#0 = (const byte*) main::hello#0
-Constant inlined print2::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined print2::at#1 = (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50
+Constant inlined print2::i#0 = (byte) 0
+Constant inlined print2::at#1 = (const byte*) screen#0+(byte) $50
 Constant inlined main::$3 = (const byte*) main::hello#0
 Constant inlined print2::at#0 = (const byte*) screen#0
 Successful SSA optimization Pass2ConstantInlining
@@ -129,17 +152,21 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Added new block during phi lifting print2::@3(between print2::@1 and print2::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to print2:5 print2:7 
+Calls in [main] to print2:6 print2:8 
 
 Created 3 initial phi equivalence classes
-Coalesced [16] print2::i#3 ← print2::i#1
-Coalesced [17] print2::j#3 ← print2::j#1
+Coalesced [18] print2::i#3 ← print2::i#1
+Coalesced [19] print2::j#3 ← print2::j#1
 Coalesced down to 3 phi equivalence classes
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@2
 Culled Empty Block (label) print2::@3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
@@ -170,13 +197,13 @@ main::@return: scope:[main]  from main::@1
   [8] return 
   to:@return
 print2: scope:[print2]  from main main::@1
-  [9] (byte*) print2::at#3 ← phi( main/(const byte*) screen#0 main::@1/(const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50 )
+  [9] (byte*) print2::at#3 ← phi( main/(const byte*) screen#0 main::@1/(const byte*) screen#0+(byte) $50 )
   to:print2::@1
 print2::@1: scope:[print2]  from print2 print2::@1
-  [10] (byte) print2::j#2 ← phi( print2/(byte/signed byte/word/signed word/dword/signed dword) 0 print2::@1/(byte) print2::j#1 )
-  [10] (byte) print2::i#2 ← phi( print2/(byte/signed byte/word/signed word/dword/signed dword) 0 print2::@1/(byte) print2::i#1 )
+  [10] (byte) print2::j#2 ← phi( print2/(byte) 0 print2::@1/(byte) print2::j#1 )
+  [10] (byte) print2::i#2 ← phi( print2/(byte) 0 print2::@1/(byte) print2::i#1 )
   [11] *((byte*) print2::at#3 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2)
-  [12] (byte) print2::j#1 ← (byte) print2::j#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
+  [12] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2
   [13] (byte) print2::i#1 ← ++ (byte) print2::i#2
   [14] if(*((const byte*) main::hello#0 + (byte) print2::i#1)!=(byte) '@') goto print2::@1
   to:print2::@return
@@ -255,7 +282,7 @@ main: {
   //SEG16 [7] call print2 
   //SEG17 [9] phi from main::@1 to print2 [phi:main::@1->print2]
   print2_from_b1:
-  //SEG18 [9] phi (byte*) print2::at#3 = (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
+  //SEG18 [9] phi (byte*) print2::at#3 = (const byte*) screen#0+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
     lda #<screen+$50
     sta print2.at
     lda #>screen+$50
@@ -276,10 +303,10 @@ print2: {
     .label at = 2
   //SEG22 [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
   b1_from_print2:
-  //SEG23 [10] phi (byte) print2::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
+  //SEG23 [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta j
-  //SEG24 [10] phi (byte) print2::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:print2->print2::@1#1] -- vbuz1=vbuc1 
+  //SEG24 [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -295,7 +322,7 @@ print2: {
     lda main.hello,y
     ldy j
     sta (at),y
-  //SEG30 [12] (byte) print2::j#1 ← (byte) print2::j#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuz1=vbuz1_plus_2 
+  //SEG30 [12] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda j
     clc
     adc #2
@@ -377,7 +404,7 @@ main: {
   //SEG16 [7] call print2 
   //SEG17 [9] phi from main::@1 to print2 [phi:main::@1->print2]
   print2_from_b1:
-  //SEG18 [9] phi (byte*) print2::at#3 = (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
+  //SEG18 [9] phi (byte*) print2::at#3 = (const byte*) screen#0+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
     lda #<screen+$50
     sta print2.at
     lda #>screen+$50
@@ -396,9 +423,9 @@ print2: {
     .label at = 2
   //SEG22 [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
   b1_from_print2:
-  //SEG23 [10] phi (byte) print2::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
+  //SEG23 [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  //SEG24 [10] phi (byte) print2::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
+  //SEG24 [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
   //SEG25 [10] phi from print2::@1 to print2::@1 [phi:print2::@1->print2::@1]
@@ -411,7 +438,7 @@ print2: {
   //SEG29 [11] *((byte*) print2::at#3 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda main.hello,x
     sta (at),y
-  //SEG30 [12] (byte) print2::j#1 ← (byte) print2::j#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuyy=vbuyy_plus_2 
+  //SEG30 [12] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
     iny
     iny
   //SEG31 [13] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
@@ -481,7 +508,7 @@ FINAL SYMBOL TABLE
 (byte) print2::j#2 reg byte y 16.5
 (byte*) print2::msg
 (byte*) screen
-(const byte*) screen#0 screen = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) screen#0 screen = (byte*) 1024
 
 zp ZP_WORD:2 [ print2::at#3 ]
 reg byte x [ print2::i#2 print2::i#1 ]
@@ -519,7 +546,7 @@ main: {
   //SEG15 main::@1
   //SEG16 [7] call print2 
   //SEG17 [9] phi from main::@1 to print2 [phi:main::@1->print2]
-  //SEG18 [9] phi (byte*) print2::at#3 = (const byte*) screen#0+(byte/signed byte/word/signed word/dword/signed dword) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
+  //SEG18 [9] phi (byte*) print2::at#3 = (const byte*) screen#0+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
     lda #<screen+$50
     sta print2.at
     lda #>screen+$50
@@ -535,9 +562,9 @@ main: {
 print2: {
     .label at = 2
   //SEG22 [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
-  //SEG23 [10] phi (byte) print2::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
+  //SEG23 [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
     ldy #0
-  //SEG24 [10] phi (byte) print2::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
+  //SEG24 [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
     ldx #0
   //SEG25 [10] phi from print2::@1 to print2::@1 [phi:print2::@1->print2::@1]
   //SEG26 [10] phi (byte) print2::j#2 = (byte) print2::j#1 [phi:print2::@1->print2::@1#0] -- register_copy 
@@ -547,7 +574,7 @@ print2: {
   //SEG29 [11] *((byte*) print2::at#3 + (byte) print2::j#2) ← *((const byte*) main::hello#0 + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda main.hello,x
     sta (at),y
-  //SEG30 [12] (byte) print2::j#1 ← (byte) print2::j#2 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuyy=vbuyy_plus_2 
+  //SEG30 [12] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
     iny
     iny
   //SEG31 [13] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 

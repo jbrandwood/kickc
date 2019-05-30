@@ -1,8 +1,11 @@
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
 Identified constant variable (byte*) SCREEN
+Culled Empty Block (label) @1
+Culled Empty Block (label) fillscreen::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@2
 main: scope:[main]  from @2
   (byte) main::c#0 ← *((byte*) SCREEN#0)
@@ -16,16 +19,16 @@ main::@return: scope:[main]  from main::@1
   to:@return
 fillscreen: scope:[fillscreen]  from main
   (byte) fillscreen::c#2 ← phi( main/(byte) fillscreen::c#0 )
-  (byte) fillscreen::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) fillscreen::j#0 ← (number) 0
   to:fillscreen::@1
 fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
   (byte) fillscreen::j#2 ← phi( fillscreen/(byte) fillscreen::j#0 fillscreen::@1/(byte) fillscreen::j#1 )
   (byte) fillscreen::c#1 ← phi( fillscreen/(byte) fillscreen::c#2 fillscreen::@1/(byte) fillscreen::c#1 )
-  (byte*~) fillscreen::$0 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) $100
+  (byte*~) fillscreen::$0 ← (byte*) SCREEN#0 + (number) $100
   (byte*) fillscreen::SCREEN2#0 ← (byte*~) fillscreen::$0
-  (byte*~) fillscreen::$1 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) $200
+  (byte*~) fillscreen::$1 ← (byte*) SCREEN#0 + (number) $200
   (byte*) fillscreen::SCREEN3#0 ← (byte*~) fillscreen::$1
-  (byte*~) fillscreen::$2 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) $3e8
+  (byte*~) fillscreen::$2 ← (byte*) SCREEN#0 + (number) $3e8
   (byte*) fillscreen::SCREEN4#0 ← (byte*~) fillscreen::$2
   *((byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#1
   *((byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#1
@@ -79,44 +82,74 @@ SYMBOL TABLE SSA
 (byte) main::c
 (byte) main::c#0
 
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) fillscreen::j#0 ← (number) 0
+Adding number conversion cast (unumber) $100 in (byte*~) fillscreen::$0 ← (byte*) SCREEN#0 + (number) $100
+Adding number conversion cast (unumber) $200 in (byte*~) fillscreen::$1 ← (byte*) SCREEN#0 + (number) $200
+Adding number conversion cast (unumber) $3e8 in (byte*~) fillscreen::$2 ← (byte*) SCREEN#0 + (number) $3e8
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) fillscreen::j#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast $100
+Simplifying constant integer cast $200
+Simplifying constant integer cast $3e8
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $200
+Finalized unsigned number type (word) $3e8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) fillscreen::SCREEN2#0 = (byte*~) fillscreen::$0 
 Alias (byte*) fillscreen::SCREEN3#0 = (byte*~) fillscreen::$1 
 Alias (byte*) fillscreen::SCREEN4#0 = (byte*~) fillscreen::$2 
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (byte) fillscreen::c#1
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte) fillscreen::c#2 (byte) fillscreen::c#0
-Redundant Phi (byte) fillscreen::c#1 (byte) fillscreen::c#2
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte) fillscreen::c#2 (byte) fillscreen::c#0
+Identical Phi Values (byte) fillscreen::c#1 (byte) fillscreen::c#2
+Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) fillscreen::$3 [20] if((byte) fillscreen::j#1!=rangelast(0,$ff)) goto fillscreen::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte) fillscreen::j#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [18] fillscreen::j#1 ← ++ fillscreen::j#2 to ++
+Resolved ranged comparison value [20] if(fillscreen::j#1!=rangelast(0,$ff)) goto fillscreen::@1 to (number) 0
+Adding number conversion cast (unumber) 0 in if((byte) fillscreen::j#1!=(number) 0) goto fillscreen::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant right-side identified [5] (byte*) fillscreen::SCREEN2#0 ← (const byte*) SCREEN#0 + (word) $100
+Constant right-side identified [6] (byte*) fillscreen::SCREEN3#0 ← (const byte*) SCREEN#0 + (word) $200
+Constant right-side identified [7] (byte*) fillscreen::SCREEN4#0 ← (const byte*) SCREEN#0 + (word) $3e8
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) fillscreen::SCREEN2#0 = SCREEN#0+$100
 Constant (const byte*) fillscreen::SCREEN3#0 = SCREEN#0+$200
 Constant (const byte*) fillscreen::SCREEN4#0 = SCREEN#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value fillscreen::j#1 ← ++ fillscreen::j#2 to ++
-Resolved ranged comparison value if(fillscreen::j#1!=rangelast(0,$ff)) goto fillscreen::@1 to (byte/signed byte/word/signed word/dword/signed dword) 0
 Inlining constant with var siblings (const byte) fillscreen::j#0
-Constant inlined fillscreen::j#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined fillscreen::j#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting fillscreen::@3(between fillscreen::@1 and fillscreen::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of fillscreen
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to fillscreen:6 
+Calls in [main] to fillscreen:7 
 
 Created 1 initial phi equivalence classes
-Coalesced [17] fillscreen::j#3 ← fillscreen::j#1
+Coalesced [19] fillscreen::j#3 ← fillscreen::j#1
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@1
 Culled Empty Block (label) fillscreen::@3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
@@ -146,13 +179,13 @@ fillscreen: scope:[fillscreen]  from main
   [8] phi()
   to:fillscreen::@1
 fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
-  [9] (byte) fillscreen::j#2 ← phi( fillscreen/(byte/signed byte/word/signed word/dword/signed dword) 0 fillscreen::@1/(byte) fillscreen::j#1 )
+  [9] (byte) fillscreen::j#2 ← phi( fillscreen/(byte) 0 fillscreen::@1/(byte) fillscreen::j#1 )
   [10] *((const byte*) SCREEN#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0
   [11] *((const byte*) fillscreen::SCREEN2#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0
   [12] *((const byte*) fillscreen::SCREEN3#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0
   [13] *((const byte*) fillscreen::SCREEN4#0 + (byte) fillscreen::j#2) ← (byte) fillscreen::c#0
   [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2
-  [15] if((byte) fillscreen::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto fillscreen::@1
+  [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1
   to:fillscreen::@return
 fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
   [16] return 
@@ -237,7 +270,7 @@ fillscreen: {
     .label j = 2
   //SEG17 [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  //SEG18 [9] phi (byte) fillscreen::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuz1=vbuc1 
+  //SEG18 [9] phi (byte) fillscreen::j#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta j
     jmp b1
@@ -265,7 +298,7 @@ fillscreen: {
     sta SCREEN4,y
   //SEG26 [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 -- vbuz1=_inc_vbuz1 
     inc j
-  //SEG27 [15] if((byte) fillscreen::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto fillscreen::@1 -- vbuz1_neq_0_then_la1 
+  //SEG27 [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1 -- vbuz1_neq_0_then_la1 
     lda j
     cmp #0
     bne b1_from_b1
@@ -335,7 +368,7 @@ fillscreen: {
     .label SCREEN4 = SCREEN+$3e8
   //SEG17 [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   b1_from_fillscreen:
-  //SEG18 [9] phi (byte) fillscreen::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
+  //SEG18 [9] phi (byte) fillscreen::j#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
   //SEG19 [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
@@ -354,7 +387,7 @@ fillscreen: {
     sta SCREEN4,x
   //SEG26 [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG27 [15] if((byte) fillscreen::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto fillscreen::@1 -- vbuxx_neq_0_then_la1 
+  //SEG27 [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b1_from_b1
     jmp breturn
@@ -396,16 +429,16 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (void()) fillscreen((byte) fillscreen::c)
 (label) fillscreen::@1
 (label) fillscreen::@return
 (byte*) fillscreen::SCREEN2
-(const byte*) fillscreen::SCREEN2#0 SCREEN2 = (const byte*) SCREEN#0+(word/signed word/dword/signed dword) $100
+(const byte*) fillscreen::SCREEN2#0 SCREEN2 = (const byte*) SCREEN#0+(word) $100
 (byte*) fillscreen::SCREEN3
-(const byte*) fillscreen::SCREEN3#0 SCREEN3 = (const byte*) SCREEN#0+(word/signed word/dword/signed dword) $200
+(const byte*) fillscreen::SCREEN3#0 SCREEN3 = (const byte*) SCREEN#0+(word) $200
 (byte*) fillscreen::SCREEN4
-(const byte*) fillscreen::SCREEN4#0 SCREEN4 = (const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8
+(const byte*) fillscreen::SCREEN4#0 SCREEN4 = (const byte*) SCREEN#0+(word) $3e8
 (byte) fillscreen::c
 (byte) fillscreen::c#0 reg byte a 5.111111111111112
 (byte) fillscreen::j
@@ -456,7 +489,7 @@ fillscreen: {
     .label SCREEN3 = SCREEN+$200
     .label SCREEN4 = SCREEN+$3e8
   //SEG17 [9] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  //SEG18 [9] phi (byte) fillscreen::j#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
+  //SEG18 [9] phi (byte) fillscreen::j#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG19 [9] phi from fillscreen::@1 to fillscreen::@1 [phi:fillscreen::@1->fillscreen::@1]
   //SEG20 [9] phi (byte) fillscreen::j#2 = (byte) fillscreen::j#1 [phi:fillscreen::@1->fillscreen::@1#0] -- register_copy 
@@ -472,7 +505,7 @@ fillscreen: {
     sta SCREEN4,x
   //SEG26 [14] (byte) fillscreen::j#1 ← ++ (byte) fillscreen::j#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG27 [15] if((byte) fillscreen::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto fillscreen::@1 -- vbuxx_neq_0_then_la1 
+  //SEG27 [15] if((byte) fillscreen::j#1!=(byte) 0) goto fillscreen::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne b1
   //SEG28 fillscreen::@return

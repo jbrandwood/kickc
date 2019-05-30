@@ -1,10 +1,18 @@
 Resolved forward reference fn1 to (void()) fn1()
+Adding pointer type conversion cast (byte*) fn1::BORDERCOL in (byte*) fn1::BORDERCOL ← (number) $d020
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) @1
+Culled Empty Block (label) getfn::@1
+Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@3
 main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@7
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@7/(byte) main::i#4 )
@@ -36,7 +44,7 @@ getfn::@return: scope:[getfn]  from getfn
   return 
   to:@return
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
+  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (number) $d020
   *((byte*) fn1::BORDERCOL#0) ← ++ *((byte*) fn1::BORDERCOL#0)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
@@ -82,51 +90,62 @@ SYMBOL TABLE SSA
 (byte) main::i#3
 (byte) main::i#4
 
-Culled Empty Block (label) @4
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) main::i#0 ← (unumber)(number) 0
+Inlining cast (byte*) fn1::BORDERCOL#0 ← (byte*)(number) $d020
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 0
+Simplifying constant pointer cast (byte*) 53280
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (void()*) getfn::return#0 = (void()*) getfn::return#3 
 Alias (byte) main::i#1 = (byte) main::i#4 
 Alias (void()*) getfn::return#1 = (void()*~) getfn::$0 (void()*) getfn::return#4 (void()*) getfn::return#2 
 Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [12] (void()*) getfn::return#1 ← & (void()) fn1()
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#0 = 0
 Constant (const void()*) getfn::return#1 = &fn1
-Constant (const byte*) fn1::BORDERCOL#0 = ((byte*))$d020
+Constant (const byte*) fn1::BORDERCOL#0 = (byte*) 53280
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void()*) getfn::return#0 = getfn::return#1
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void()*) main::$1 = getfn::return#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [1] if(true) goto main::@2
+Replacing constant pointer function [10] call fn1 
+Successful SSA optimization Pass2ConstantCallPointerIdentification
+if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused variable (byte) getfn::b#0 and assignment [2] (byte) getfn::b#0 ← (byte) main::i#1
-Successful SSA optimization PassNEliminateUnusedVars
-Removing unused block main::@return
-Successful SSA optimization Pass2EliminateUnusedBlocks
-Replacing constant pointer function call fn1 
-Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::$1
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const void()*) getfn::return#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const void()*) getfn::return#1
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@7
 Adding NOP phi() at start of getfn
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to getfn:7 fn1:9 
+Calls in [main] to getfn:8 fn1:10 
 
 Created 1 initial phi equivalence classes
-Coalesced [10] main::i#5 ← main::i#1
+Coalesced [11] main::i#5 ← main::i#1
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @4
 Renumbering block @3 to @1
 Renumbering block main::@7 to main::@3
 Adding NOP phi() at start of @begin
@@ -150,7 +169,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::i#1 )
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@3/(byte) main::i#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [6] (byte) main::i#1 ← ++ (byte) main::i#2
@@ -220,7 +239,7 @@ main: {
     .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -309,7 +328,7 @@ bend:
 main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
   //SEG13 main::@1
@@ -393,7 +412,7 @@ FINAL SYMBOL TABLE
 (void()) fn1()
 (label) fn1::@return
 (byte*) fn1::BORDERCOL
-(const byte*) fn1::BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) $d020
+(const byte*) fn1::BORDERCOL#0 BORDERCOL = (byte*) 53280
 (void()*()) getfn((byte) getfn::b)
 (label) getfn::@return
 (byte) getfn::b
@@ -429,7 +448,7 @@ Score: 154
 //SEG10 main
 main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG13 main::@1
   //SEG14 main::@2

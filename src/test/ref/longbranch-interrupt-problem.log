@@ -1,31 +1,37 @@
 Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
+Adding pointer type conversion cast (void()**) KERNEL_IRQ in (void()**) KERNEL_IRQ ← (number) $314
+Adding pointer type conversion cast (byte*) BGCOL in (byte*) BGCOL ← (number) $d020
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@8
+Culled Empty Block (label) @1
+Culled Empty Block (label) irq::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ#0 ← ((void()**)) (word/signed word/dword/signed dword) $314
-  (byte*) BGCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
-  (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (void()**) KERNEL_IRQ#0 ← ((void()**)) (number) $314
+  (byte*) BGCOL#0 ← ((byte*)) (number) $d020
+  (byte) col#0 ← (number) 0
   to:@2
 main: scope:[main]  from @2
-  (byte) col#15 ← phi( @2/(byte) col#13 )
+  (byte) col#14 ← phi( @2/(byte) col#13 )
   (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
   *((void()**) KERNEL_IRQ#0) ← (void()*~) main::$0
   to:main::@1
-main::@1: scope:[main]  from main main::@4 main::@7
-  (byte) col#12 ← phi( main/(byte) col#15 main::@4/(byte) col#16 main::@7/(byte) col#1 )
+main::@1: scope:[main]  from main main::@2 main::@7
+  (byte) col#12 ← phi( main/(byte) col#14 main::@2/(byte) col#6 main::@7/(byte) col#1 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) col#6 ← phi( main::@1/(byte) col#12 )
-  (bool~) main::$1 ← (byte) col#6 > (byte/signed byte/word/signed word/dword/signed dword) $a
+  (bool~) main::$1 ← (byte) col#6 > (number) $a
   (bool~) main::$2 ← ! (bool~) main::$1
-  if((bool~) main::$2) goto main::@4
+  if((bool~) main::$2) goto main::@1
   to:main::@7
-main::@4: scope:[main]  from main::@2
-  (byte) col#16 ← phi( main::@2/(byte) col#6 )
-  to:main::@1
 main::@7: scope:[main]  from main::@2
-  (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) col#1 ← (number) 0
   to:main::@1
 main::@return: scope:[main]  from main::@1
   (byte) col#7 ← phi( main::@1/(byte) col#12 )
@@ -36,19 +42,16 @@ irq: scope:[irq]  from
   (byte) col#8 ← phi( @2/(byte) col#13 )
   asm { lda$dc0d  }
   *((byte*) BGCOL#0) ← (byte) col#8
-  (bool~) irq::$0 ← (byte) col#8 != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (bool~) irq::$0 ← (byte) col#8 != (number) 0
   (bool~) irq::$1 ← ! (bool~) irq::$0
-  if((bool~) irq::$1) goto irq::@1
+  if((bool~) irq::$1) goto irq::@return
   to:irq::@2
-irq::@1: scope:[irq]  from irq
-  (byte) col#14 ← phi( irq/(byte) col#8 )
-  to:irq::@return
 irq::@2: scope:[irq]  from irq
   (byte) col#9 ← phi( irq/(byte) col#8 )
   (byte) col#3 ← ++ (byte) col#9
   to:irq::@return
-irq::@return: scope:[irq]  from irq::@1 irq::@2
-  (byte) col#10 ← phi( irq::@1/(byte) col#14 irq::@2/(byte) col#3 )
+irq::@return: scope:[irq]  from irq irq::@2
+  (byte) col#10 ← phi( irq/(byte) col#8 irq::@2/(byte) col#3 )
   (byte) col#4 ← (byte) col#10
   return 
   to:@return
@@ -79,8 +82,6 @@ SYMBOL TABLE SSA
 (byte) col#12
 (byte) col#13
 (byte) col#14
-(byte) col#15
-(byte) col#16
 (byte) col#2
 (byte) col#3
 (byte) col#4
@@ -92,7 +93,6 @@ SYMBOL TABLE SSA
 interrupt(KERNEL_MIN)(void()) irq()
 (bool~) irq::$0
 (bool~) irq::$1
-(label) irq::@1
 (label) irq::@2
 (label) irq::@return
 (void()) main()
@@ -101,54 +101,83 @@ interrupt(KERNEL_MIN)(void()) irq()
 (bool~) main::$2
 (label) main::@1
 (label) main::@2
-(label) main::@4
 (label) main::@7
 (label) main::@return
 
-Inversing boolean not [10] (bool~) main::$2 ← (byte) col#6 <= (byte/signed byte/word/signed word/dword/signed dword) $a from [9] (bool~) main::$1 ← (byte) col#6 > (byte/signed byte/word/signed word/dword/signed dword) $a
-Inversing boolean not [21] (bool~) irq::$1 ← (byte) col#8 == (byte/signed byte/word/signed word/dword/signed dword) 0 from [20] (bool~) irq::$0 ← (byte) col#8 != (byte/signed byte/word/signed word/dword/signed dword) 0
+Adding number conversion cast (unumber) 0 in (byte) col#0 ← (number) 0
+Adding number conversion cast (unumber) $a in (bool~) main::$1 ← (byte) col#6 > (number) $a
+Adding number conversion cast (unumber) 0 in (byte) col#1 ← (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) irq::$0 ← (byte) col#8 != (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (void()**) KERNEL_IRQ#0 ← (void()**)(number) $314
+Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d020
+Inlining cast (byte) col#0 ← (unumber)(number) 0
+Inlining cast (byte) col#1 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (void()**) 788
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant integer cast 0
+Simplifying constant integer cast $a
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [10] (bool~) main::$2 ← (byte) col#6 <= (byte) $a from [9] (bool~) main::$1 ← (byte) col#6 > (byte) $a
+Inversing boolean not [20] (bool~) irq::$1 ← (byte) col#8 == (byte) 0 from [19] (bool~) irq::$0 ← (byte) col#8 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte) col#12 = (byte) col#6 (byte) col#16 (byte) col#7 (byte) col#2 
-Alias (byte) col#14 = (byte) col#8 (byte) col#9 
+Alias (byte) col#12 = (byte) col#6 (byte) col#7 (byte) col#2 
+Alias (byte) col#8 = (byte) col#9 
 Alias (byte) col#10 = (byte) col#4 
 Alias (byte) col#0 = (byte) col#13 
 Alias (byte) col#11 = (byte) col#5 
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (byte) col#12
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte) col#15 (byte) col#0
-Redundant Phi (byte) col#14 (byte) col#0
-Redundant Phi (byte) col#11 (byte) col#12
-Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$2 [11] if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@4
-Simple Condition (bool~) irq::$1 [22] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@1
+Identical Phi Values (byte) col#14 (byte) col#0
+Identical Phi Values (byte) col#8 (byte) col#0
+Identical Phi Values (byte) col#11 (byte) col#12
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$2 [11] if((byte) col#12<=(byte) $a) goto main::@1
+Simple Condition (bool~) irq::$1 [21] if((byte) col#0==(byte) 0) goto irq::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const void()**) KERNEL_IRQ#0 = ((void()**))$314
-Constant (const byte*) BGCOL#0 = ((byte*))$d020
+Constant right-side identified [4] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const void()**) KERNEL_IRQ#0 = (void()**) 788
+Constant (const byte*) BGCOL#0 = (byte*) 53280
 Constant (const void()*) main::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [3] if(true) goto main::@2
+if() condition always true - replacing block destination [7] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
+Rewriting conditional comparison [11] if((byte) col#12<=(byte) $a) goto main::@1
 Eliminating unused variable - keeping the phi block (byte) col#10
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Rewriting conditional comparison if((byte) col#12<=(byte/signed byte/word/signed word/dword/signed dword) $a) goto main::@4
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) irq::@1
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) $a+1 in if((byte) col#12<(byte) $a+(number) 1) goto main::@1
+Adding number conversion cast (unumber) 1 in if((byte) col#12<(unumber)(byte) $a+(number) 1) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast (byte) $a+(unumber)(number) 1
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [5] col#17 ← col#0
-Coalesced [9] col#18 ← col#1
+Coalesced [6] col#15 ← col#0
+Coalesced [10] col#16 ← col#1
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Renumbering block main::@7 to main::@3
 Renumbering block irq::@2 to irq::@1
@@ -157,7 +186,7 @@ Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  [0] (byte) col#0 ← (byte) 0
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -172,15 +201,15 @@ main::@1: scope:[main]  from main main::@2 main::@3
   [5] (byte) col#12 ← phi( main/(byte) col#0 main::@3/(byte) col#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1
+  [6] if((byte) col#12<(byte) $a+(byte) 1) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  [7] (byte) col#1 ← (byte) 0
   to:main::@1
 irq: scope:[irq]  from
   asm { lda$dc0d  }
   [9] *((const byte*) BGCOL#0) ← (byte) col#0
-  [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return
+  [10] if((byte) col#0==(byte) 0) goto irq::@return
   to:irq::@1
 irq::@1: scope:[irq]  from irq
   [11] (byte) col#3 ← ++ (byte) col#0
@@ -221,7 +250,7 @@ INITIAL ASM
   .label col = 2
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
 //SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -256,14 +285,14 @@ main: {
     jmp b2
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG17 [6] if((byte) col#12<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda col
     cmp #$a+1
     bcc b1_from_b2
     jmp b3
   //SEG18 main::@3
   b3:
-  //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //SEG19 [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
     jmp b1_from_b3
@@ -276,7 +305,7 @@ irq: {
   //SEG23 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG24 [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
+  //SEG24 [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda col
     cmp #0
     beq breturn
@@ -293,13 +322,13 @@ irq: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ col#0 ] ( ) always clobbers reg byte a 
+Statement [0] (byte) col#0 ← (byte) 0 [ col#0 ] ( ) always clobbers reg byte a 
 Statement [4] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) always clobbers reg byte a 
-Statement [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ col#1 ] ( main:2 [ col#1 ] ) always clobbers reg byte a 
+Statement [6] if((byte) col#12<(byte) $a+(byte) 1) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] (byte) col#1 ← (byte) 0 [ col#1 ] ( main:2 [ col#1 ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 Statement [9] *((const byte*) BGCOL#0) ← (byte) col#0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
-Statement [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
+Statement [10] if((byte) col#0==(byte) 0) goto irq::@return [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ] : zp ZP_BYTE:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -326,7 +355,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label col = 2
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
 //SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -361,14 +390,14 @@ main: {
     jmp b2
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG17 [6] if((byte) col#12<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda col
     cmp #$a+1
     bcc b1_from_b2
     jmp b3
   //SEG18 main::@3
   b3:
-  //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //SEG19 [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
     jmp b1_from_b3
@@ -381,7 +410,7 @@ irq: {
   //SEG23 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG24 [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
+  //SEG24 [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda col
     cmp #0
     beq breturn
@@ -439,9 +468,9 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) BGCOL
-(const byte*) BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) $d020
+(const byte*) BGCOL#0 BGCOL = (byte*) 53280
 (void()**) KERNEL_IRQ
-(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = ((void()**))(word/signed word/dword/signed dword) $314
+(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = (void()**) 788
 (byte) col
 (byte) col#0 col zp ZP_BYTE:2 1.6666666666666665
 (byte) col#1 col zp ZP_BYTE:2 22.0
@@ -473,7 +502,7 @@ Score: 888
   .label col = 2
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte) col#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col
 //SEG5 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -496,12 +525,12 @@ main: {
   //SEG15 main::@1
   //SEG16 main::@2
   b2:
-  //SEG17 [6] if((byte) col#12<(byte/signed byte/word/signed word/dword/signed dword) $a+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+  //SEG17 [6] if((byte) col#12<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda col
     cmp #$a+1
     bcc b2
   //SEG18 main::@3
-  //SEG19 [7] (byte) col#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+  //SEG19 [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta col
     jmp b2
@@ -514,7 +543,7 @@ irq: {
   //SEG23 [9] *((const byte*) BGCOL#0) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
     lda col
     sta BGCOL
-  //SEG24 [10] if((byte) col#0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
+  //SEG24 [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda col
     cmp #0
     bne !_ea81+

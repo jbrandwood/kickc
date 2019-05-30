@@ -1,10 +1,15 @@
+Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
 Identified constant variable (byte*) main::SCREEN
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
@@ -13,7 +18,7 @@ main::@2: scope:[main]  from main::@1
   *((byte*) main::SCREEN#0) ← ++ *((byte*) main::SCREEN#0)
   to:main::@1
 main::@3: scope:[main]  from main::@1
-  (byte) main::line#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::line#0 ← (number) 0
   to:main::@7
 main::@7: scope:[main]  from main::@3 main::@7
   (byte) main::line#2 ← phi( main::@3/(byte) main::line#0 main::@7/(byte) main::line#1 )
@@ -51,15 +56,25 @@ SYMBOL TABLE SSA
 (byte) main::line#1
 (byte) main::line#2
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) main::line#0 ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) main::line#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition (bool~) main::$0 [8] if((byte) main::line#1!=rangelast(0,$18)) goto main::@7
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN#0 = ((byte*))$400
+Constant (const byte*) main::SCREEN#0 = (byte*) 1024
 Constant (const byte) main::line#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [0] if(true) goto main::@2
+if() condition always true - replacing block destination [1] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
+Resolved ranged next value [6] main::line#1 ← ++ main::line#2 to ++
+Resolved ranged comparison value [8] if(main::line#1!=rangelast(0,$18)) goto main::@7 to (number) $19
 Eliminating variable (byte) main::line#2 from unused block main::@7
 Eliminating variable (byte) main::line#1 from unused block main::@7
 Removing PHI-reference to removed block (main::@3) in block main::@7
@@ -67,19 +82,21 @@ Removing unused block main::@3
 Removing unused block main::@7
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Culled Empty Block (label) main::@1
-Successful SSA optimization Pass2CullEmptyBlocks
 Eliminating unused constant (const byte) main::line#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@1
 Renumbering block main::@2 to main::@1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -216,7 +233,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
 (byte) main::line
 
 

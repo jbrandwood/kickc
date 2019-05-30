@@ -1,11 +1,15 @@
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
 Identified constant variable (byte*) SCREEN
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) @1
+Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@3
 main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@5
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@5/(byte) main::i#1 )
@@ -19,7 +23,7 @@ main::@5: scope:[main]  from main::@1
   if((bool~) main::$1) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@5
-  (byte) main::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) $a
+  (byte) main::j#0 ← (number) $a
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@6
   (byte) main::j#2 ← phi( main::@2/(byte) main::j#0 main::@6/(byte) main::j#1 )
@@ -42,8 +46,8 @@ line: scope:[line]  from main::@1 main::@3
   to:line::@1
 line::@1: scope:[line]  from line
   (byte) line::l#3 ← phi( line/(byte) line::l#2 )
-  (byte/signed word/word/dword/signed dword~) line::$1 ← (byte) line::l#3 + (byte/signed byte/word/signed word/dword/signed dword) $14
-  (byte) plot::x#1 ← (byte/signed word/word/dword/signed dword~) line::$1
+  (number~) line::$1 ← (byte) line::l#3 + (number) $14
+  (byte) plot::x#1 ← (number~) line::$1
   call plot 
   to:line::@2
 line::@2: scope:[line]  from line::@1
@@ -73,7 +77,7 @@ SYMBOL TABLE SSA
 (byte*) SCREEN
 (byte*) SCREEN#0
 (void()) line((byte) line::l)
-(byte/signed word/word/dword/signed dword~) line::$1
+(number~) line::$1
 (label) line::@1
 (label) line::@2
 (label) line::@return
@@ -108,53 +112,82 @@ SYMBOL TABLE SSA
 (byte) plot::x#1
 (byte) plot::x#2
 
-Culled Empty Block (label) line::@2
-Culled Empty Block (label) @4
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Adding number conversion cast (unumber) $a in (byte) main::j#0 ← (number) $a
+Adding number conversion cast (unumber) $14 in (number~) line::$1 ← (byte) line::l#3 + (number) $14
+Adding number conversion cast (unumber) line::$1 in (number~) line::$1 ← (byte) line::l#3 + (unumber)(number) $14
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) main::i#0 ← (unumber)(number) 0
+Inlining cast (byte) main::j#0 ← (unumber)(number) $a
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast $a
+Simplifying constant integer cast $14
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $14
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) line::$1 ← (byte) line::l#3 + (byte) $14
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte) main::j#2 = (byte) main::j#3 
 Alias (byte) line::l#2 = (byte) line::l#3 
-Alias (byte) plot::x#1 = (byte/signed word/word/dword/signed dword~) line::$1 
+Alias (byte) plot::x#1 = (byte~) line::$1 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [8] if((byte) main::i#1!=rangelast(0,8)) goto main::@1
 Simple Condition (bool~) main::$3 [16] if((byte) main::j#1!=rangelast($a,$12)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#0 = $a
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value if(main::i#1!=rangelast(0,8)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) 9
-Resolved ranged next value main::j#1 ← ++ main::j#2 to ++
-Resolved ranged comparison value if(main::j#1!=rangelast($a,$12)) goto main::@3 to (byte/signed byte/word/signed word/dword/signed dword) $13
-Culled Empty Block (label) main::@2
-Successful SSA optimization Pass2CullEmptyBlocks
+Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,8)) goto main::@1 to (number) 9
+Resolved ranged next value [14] main::j#1 ← ++ main::j#2 to ++
+Resolved ranged comparison value [16] if(main::j#1!=rangelast($a,$12)) goto main::@3 to (number) $13
+Adding number conversion cast (unumber) 9 in if((byte) main::i#1!=(number) 9) goto main::@1
+Adding number conversion cast (unumber) $13 in if((byte) main::j#1!=(number) $13) goto main::@3
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 9
+Simplifying constant integer cast $13
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 9
+Finalized unsigned number type (byte) $13
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::j#0
-Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined main::j#0 = (byte/signed byte/word/signed word/dword/signed dword) $a
+Constant inlined main::i#0 = (byte) 0
+Constant inlined main::j#0 = (byte) $a
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@7(between main::@5 and main::@1)
 Added new block during phi lifting main::@8(between main::@6 and main::@3)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of line::@2
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to line:8 line:14 
-Calls in [line] to plot:23 plot:26 
+Calls in [main] to line:9 line:16 
+Calls in [line] to plot:25 plot:28 
 
 Created 4 initial phi equivalence classes
-Coalesced [7] line::l#4 ← line::l#0
-Coalesced [13] line::l#5 ← line::l#1
-Coalesced [18] main::j#4 ← main::j#1
-Coalesced [19] main::i#4 ← main::i#1
-Coalesced [22] plot::x#3 ← plot::x#0
-Coalesced [25] plot::x#4 ← plot::x#1
+Coalesced [8] line::l#4 ← line::l#0
+Coalesced [15] line::l#5 ← line::l#1
+Coalesced [20] main::j#4 ← main::j#1
+Coalesced [21] main::i#4 ← main::i#1
+Coalesced [24] plot::x#3 ← plot::x#0
+Coalesced [27] plot::x#4 ← plot::x#1
 Coalesced down to 4 phi equivalence classes
+Culled Empty Block (label) @4
+Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@7
+Culled Empty Block (label) line::@2
 Renumbering block @3 to @1
 Renumbering block main::@3 to main::@2
 Renumbering block main::@5 to main::@3
@@ -178,22 +211,22 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::i#1 )
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@3/(byte) main::i#1 )
   [6] (byte) line::l#0 ← (byte) main::i#2
   [7] call line 
   to:main::@3
 main::@3: scope:[main]  from main::@1
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
-  [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 9) goto main::@1
+  [9] if((byte) main::i#1!=(byte) 9) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@3 main::@4
-  [10] (byte) main::j#2 ← phi( main::@3/(byte/signed byte/word/signed word/dword/signed dword) $a main::@4/(byte) main::j#1 )
+  [10] (byte) main::j#2 ← phi( main::@3/(byte) $a main::@4/(byte) main::j#1 )
   [11] (byte) line::l#1 ← (byte) main::j#2
   [12] call line 
   to:main::@4
 main::@4: scope:[main]  from main::@2
   [13] (byte) main::j#1 ← ++ (byte) main::j#2
-  [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $13) goto main::@2
+  [14] if((byte) main::j#1!=(byte) $13) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@4
   [15] return 
@@ -204,7 +237,7 @@ line: scope:[line]  from main::@1 main::@2
   [18] call plot 
   to:line::@1
 line::@1: scope:[line]  from line
-  [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte/signed byte/word/signed word/dword/signed dword) $14
+  [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte) $14
   [20] call plot 
   to:line::@return
 line::@return: scope:[line]  from line::@1
@@ -285,7 +318,7 @@ main: {
     .label j = 3
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -308,13 +341,13 @@ main: {
   b3:
   //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG22 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 9) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG22 [9] if((byte) main::i#1!=(byte) 9) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #9
     cmp i
     bne b1_from_b3
   //SEG23 [10] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) $a [phi:main::@3->main::@2#0] -- vbuz1=vbuc1 
+  //SEG24 [10] phi (byte) main::j#2 = (byte) $a [phi:main::@3->main::@2#0] -- vbuz1=vbuc1 
     lda #$a
     sta j
     jmp b2
@@ -337,7 +370,7 @@ main: {
   b4:
   //SEG33 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuz1=_inc_vbuz1 
     inc j
-  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $13) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG34 [14] if((byte) main::j#1!=(byte) $13) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$13
     cmp j
     bne b2_from_b4
@@ -362,7 +395,7 @@ line: {
     jmp b1
   //SEG42 line::@1
   b1:
-  //SEG43 [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte/signed byte/word/signed word/dword/signed dword) $14 -- vbuz1=vbuz2_plus_vbuc1 
+  //SEG43 [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte) $14 -- vbuz1=vbuz2_plus_vbuc1 
     lax l
     axs #-[$14]
     stx plot.x
@@ -397,7 +430,7 @@ Statement [23] *((const byte*) SCREEN#0 + (byte) plot::x#2) ← (byte) '*' [ ] (
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ line::l#2 line::l#0 line::l#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::j#2 main::j#1 ]
-Statement [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte/signed byte/word/signed word/dword/signed dword) $14 [ plot::x#1 ] ( main:2::line:7 [ main::i#2 plot::x#1 ] main:2::line:12 [ main::j#2 plot::x#1 ] ) always clobbers reg byte a 
+Statement [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte) $14 [ plot::x#1 ] ( main:2::line:7 [ main::i#2 plot::x#1 ] main:2::line:12 [ main::j#2 plot::x#1 ] ) always clobbers reg byte a 
 Statement [23] *((const byte*) SCREEN#0 + (byte) plot::x#2) ← (byte) '*' [ ] ( main:2::line:7::plot:18 [ main::i#2 line::l#2 ] main:2::line:12::plot:18 [ main::j#2 line::l#2 ] main:2::line:7::plot:20 [ main::i#2 ] main:2::line:12::plot:20 [ main::j#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::j#2 main::j#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
@@ -448,7 +481,7 @@ bend:
 main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
     jmp b1
   //SEG13 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
@@ -470,12 +503,12 @@ main: {
   b3:
   //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG22 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 9) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG22 [9] if((byte) main::i#1!=(byte) 9) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #9
     bne b1_from_b3
   //SEG23 [10] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
   b2_from_b3:
-  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) $a [phi:main::@3->main::@2#0] -- vbuyy=vbuc1 
+  //SEG24 [10] phi (byte) main::j#2 = (byte) $a [phi:main::@3->main::@2#0] -- vbuyy=vbuc1 
     ldy #$a
     jmp b2
   //SEG25 [10] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
@@ -497,7 +530,7 @@ main: {
   b4:
   //SEG33 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $13) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG34 [14] if((byte) main::j#1!=(byte) $13) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$13
     bne b2_from_b4
     jmp breturn
@@ -518,7 +551,7 @@ line: {
     jmp b1
   //SEG42 line::@1
   b1:
-  //SEG43 [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte/signed byte/word/signed word/dword/signed dword) $14 -- vbuxx=vbuxx_plus_vbuc1 
+  //SEG43 [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte) $14 -- vbuxx=vbuxx_plus_vbuc1 
     txa
     axs #-[$14]
   //SEG44 [20] call plot 
@@ -594,7 +627,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (void()) line((byte) line::l)
 (label) line::@1
 (label) line::@return
@@ -648,7 +681,7 @@ Score: 303
 //SEG10 main
 main: {
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
   //SEG13 [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   //SEG14 [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
@@ -664,11 +697,11 @@ main: {
   //SEG20 main::@3
   //SEG21 [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG22 [9] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) 9) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG22 [9] if((byte) main::i#1!=(byte) 9) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #9
     bne b1
   //SEG23 [10] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG24 [10] phi (byte) main::j#2 = (byte/signed byte/word/signed word/dword/signed dword) $a [phi:main::@3->main::@2#0] -- vbuyy=vbuc1 
+  //SEG24 [10] phi (byte) main::j#2 = (byte) $a [phi:main::@3->main::@2#0] -- vbuyy=vbuc1 
     ldy #$a
   //SEG25 [10] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
   //SEG26 [10] phi (byte) main::j#2 = (byte) main::j#1 [phi:main::@4->main::@2#0] -- register_copy 
@@ -684,7 +717,7 @@ main: {
   //SEG32 main::@4
   //SEG33 [13] (byte) main::j#1 ← ++ (byte) main::j#2 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG34 [14] if((byte) main::j#1!=(byte/signed byte/word/signed word/dword/signed dword) $13) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG34 [14] if((byte) main::j#1!=(byte) $13) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$13
     bne b2
   //SEG35 main::@return
@@ -700,7 +733,7 @@ line: {
   //SEG41 [22] phi (byte) plot::x#2 = (byte) plot::x#0 [phi:line->plot#0] -- register_copy 
     jsr plot
   //SEG42 line::@1
-  //SEG43 [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte/signed byte/word/signed word/dword/signed dword) $14 -- vbuxx=vbuxx_plus_vbuc1 
+  //SEG43 [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte) $14 -- vbuxx=vbuxx_plus_vbuc1 
     txa
     axs #-[$14]
   //SEG44 [20] call plot 

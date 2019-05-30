@@ -1,4 +1,8 @@
 Resolved forward reference hello to (void()) hello()
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
+Culled Empty Block (label) @1
+Culled Empty Block (label) do10::@2
+Culled Empty Block (label) hello::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -16,7 +20,7 @@ main::@return: scope:[main]  from main::@1
   to:@return
 do10: scope:[do10]  from main
   (void()*) do10::fn#2 ← phi( main/(void()*) do10::fn#0 )
-  (byte) do10::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) do10::i#0 ← (number) 0
   to:do10::@1
 do10::@1: scope:[do10]  from do10 do10::@1
   (byte) do10::i#2 ← phi( do10/(byte) do10::i#0 do10::@1/(byte) do10::i#1 )
@@ -30,13 +34,13 @@ do10::@return: scope:[do10]  from do10::@1
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
   (byte[]) msg#0 ← (const string) $0
-  (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) idx#0 ← (number) 0
   to:@3
 hello: scope:[hello]  from
   (byte) idx#5 ← phi( @3/(byte) idx#6 )
-  (byte) hello::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) hello::i#0 ← (number) 0
   to:hello::@1
 hello::@1: scope:[hello]  from hello hello::@1
   (byte) idx#3 ← phi( hello/(byte) idx#5 hello::@1/(byte) idx#1 )
@@ -106,62 +110,89 @@ SYMBOL TABLE SSA
 (byte[]) msg
 (byte[]) msg#0
 
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) @4
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) do10::i#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (byte) idx#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (byte) hello::i#0 ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) do10::i#0 ← (unumber)(number) 0
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) idx#0 ← (unumber)(number) 0
+Inlining cast (byte) hello::i#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 0
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (void()*) main::f#0 = (void()*~) main::$0 
 Alias (byte) idx#1 = (byte) idx#4 (byte) idx#2 
 Alias (byte) idx#0 = (byte) idx#6 
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (void()*) do10::fn#1
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (void()*) do10::fn#2 (void()*) do10::fn#0
-Redundant Phi (void()*) do10::fn#1 (void()*) do10::fn#2
-Redundant Phi (byte) idx#5 (byte) idx#0
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (void()*) do10::fn#2 (void()*) do10::fn#0
+Identical Phi Values (void()*) do10::fn#1 (void()*) do10::fn#2
+Identical Phi Values (byte) idx#5 (byte) idx#0
+Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) do10::$1 [11] if((byte) do10::i#1!=rangelast(0,9)) goto do10::@1
 Simple Condition (bool~) hello::$0 [23] if(*((byte[]) msg#0 + (byte) hello::i#1)!=(byte) '@') goto hello::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [0] (void()*) main::f#0 ← & (void()) hello()
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void()*) main::f#0 = &hello
 Constant (const byte) do10::i#0 = 0
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte[]) msg#0 = $0
 Constant (const byte) hello::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void()*) do10::fn#0 = main::f#0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value do10::i#1 ← ++ do10::i#2 to ++
-Resolved ranged comparison value if(do10::i#1!=rangelast(0,9)) goto do10::@1 to (byte/signed byte/word/signed word/dword/signed dword) $a
-Replacing constant pointer function call hello 
+Replacing constant pointer function [8] call hello 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
+Resolved ranged next value [9] do10::i#1 ← ++ do10::i#2 to ++
+Resolved ranged comparison value [11] if(do10::i#1!=rangelast(0,9)) goto do10::@1 to (number) $a
 Eliminating unused constant (const void()*) do10::fn#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const void()*) main::f#0
 Successful SSA optimization PassNEliminateUnusedVars
+Adding number conversion cast (unumber) $a in if((byte) do10::i#1!=(number) $a) goto do10::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $a
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $a
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) do10::i#0
 Inlining constant with var siblings (const byte) hello::i#0
 Constant inlined $0 = (const byte[]) msg#0
-Constant inlined hello::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined do10::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined hello::i#0 = (byte) 0
+Constant inlined do10::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting do10::@3(between do10::@1 and do10::@1)
 Added new block during phi lifting hello::@3(between hello::@1 and hello::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of do10
 CALL GRAPH
 Calls in [] to main:3 
-Calls in [main] to do10:6 
-Calls in [do10] to hello:10 
+Calls in [main] to do10:7 
+Calls in [do10] to hello:12 
 
 Created 3 initial phi equivalence classes
-Coalesced [14] do10::i#3 ← do10::i#1
-Not coalescing [15] idx#7 ← idx#0
-Coalesced [22] hello::i#3 ← hello::i#1
-Coalesced [23] idx#8 ← idx#1
+Coalesced [16] do10::i#3 ← do10::i#1
+Not coalescing [17] idx#7 ← idx#0
+Coalesced [24] hello::i#3 ← hello::i#1
+Coalesced [25] idx#8 ← idx#1
 Coalesced down to 4 phi equivalence classes
+Culled Empty Block (label) @4
+Culled Empty Block (label) main::@1
 Culled Empty Block (label) do10::@3
 Culled Empty Block (label) hello::@3
 Renumbering block @2 to @1
@@ -177,7 +208,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  [1] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  [1] (byte) idx#0 ← (byte) 0
   to:@2
 @2: scope:[]  from @1
   [2] phi()
@@ -196,10 +227,10 @@ do10: scope:[do10]  from main
   [8] phi()
   to:do10::@1
 do10::@1: scope:[do10]  from do10 do10::@1
-  [9] (byte) do10::i#2 ← phi( do10/(byte/signed byte/word/signed word/dword/signed dword) 0 do10::@1/(byte) do10::i#1 )
+  [9] (byte) do10::i#2 ← phi( do10/(byte) 0 do10::@1/(byte) do10::i#1 )
   [10] call hello 
   [11] (byte) do10::i#1 ← ++ (byte) do10::i#2
-  [12] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1
+  [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1
   to:do10::@return
 do10::@return: scope:[do10]  from do10::@1
   [13] return 
@@ -209,7 +240,7 @@ hello: scope:[hello]  from do10::@1
   to:hello::@1
 hello::@1: scope:[hello]  from hello hello::@1
   [15] (byte) idx#3 ← phi( hello/(byte~) idx#7 hello::@1/(byte) idx#1 )
-  [15] (byte) hello::i#2 ← phi( hello/(byte/signed byte/word/signed word/dword/signed dword) 0 hello::@1/(byte) hello::i#1 )
+  [15] (byte) hello::i#2 ← phi( hello/(byte) 0 hello::@1/(byte) hello::i#1 )
   [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2)
   [17] (byte) idx#1 ← ++ (byte) idx#3
   [18] (byte) hello::i#1 ← ++ (byte) hello::i#2
@@ -268,7 +299,7 @@ bbegin:
   jmp b1
 //SEG4 @1
 b1:
-//SEG5 [1] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG5 [1] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
 //SEG6 [2] phi from @1 to @2 [phi:@1->@2]
@@ -302,7 +333,7 @@ do10: {
     .label i = 2
   //SEG18 [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
   b1_from_do10:
-  //SEG19 [9] phi (byte) do10::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+  //SEG19 [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -316,7 +347,7 @@ do10: {
     jsr hello
   //SEG24 [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG25 [12] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG25 [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
     cmp i
     bne b1_from_b1
@@ -333,7 +364,7 @@ hello: {
   //SEG30 [15] phi from hello to hello::@1 [phi:hello->hello::@1]
   b1_from_hello:
   //SEG31 [15] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
-  //SEG32 [15] phi (byte) hello::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:hello->hello::@1#1] -- vbuz1=vbuc1 
+  //SEG32 [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -367,14 +398,14 @@ hello: {
   msg: .text "hello @"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ idx#0 ] ( ) always clobbers reg byte a 
+Statement [1] (byte) idx#0 ← (byte) 0 [ idx#0 ] ( ) always clobbers reg byte a 
 Statement [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2) [ idx#0 hello::i#2 idx#3 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx#0 hello::i#2 idx#3 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ hello::i#2 hello::i#1 ]
 Statement [19] if(*((const byte[]) msg#0 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 [ idx#0 hello::i#1 idx#1 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx#0 hello::i#1 idx#1 ] ) always clobbers reg byte a 
-Statement [1] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ idx#0 ] ( ) always clobbers reg byte a 
+Statement [1] (byte) idx#0 ← (byte) 0 [ idx#0 ] ( ) always clobbers reg byte a 
 Statement [16] *((const byte*) SCREEN#0 + (byte) idx#3) ← *((const byte[]) msg#0 + (byte) hello::i#2) [ idx#0 hello::i#2 idx#3 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx#0 hello::i#2 idx#3 ] ) always clobbers reg byte a reg byte y 
 Statement [19] if(*((const byte[]) msg#0 + (byte) hello::i#1)!=(byte) '@') goto hello::@1 [ idx#0 hello::i#1 idx#1 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx#0 hello::i#1 idx#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ do10::i#2 do10::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
@@ -412,7 +443,7 @@ bbegin:
   jmp b1
 //SEG4 @1
 b1:
-//SEG5 [1] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG5 [1] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
 //SEG6 [2] phi from @1 to @2 [phi:@1->@2]
@@ -446,7 +477,7 @@ do10: {
     .label i = 2
   //SEG18 [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
   b1_from_do10:
-  //SEG19 [9] phi (byte) do10::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+  //SEG19 [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -460,7 +491,7 @@ do10: {
     jsr hello
   //SEG24 [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG25 [12] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG25 [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
     cmp i
     bne b1_from_b1
@@ -476,7 +507,7 @@ hello: {
   //SEG30 [15] phi from hello to hello::@1 [phi:hello->hello::@1]
   b1_from_hello:
   //SEG31 [15] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
-  //SEG32 [15] phi (byte) hello::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:hello->hello::@1#1] -- vbuxx=vbuc1 
+  //SEG32 [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
   //SEG33 [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
@@ -546,7 +577,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (void()) do10((void()*) do10::fn)
 (label) do10::@1
 (label) do10::@return
@@ -591,7 +622,7 @@ Score: 3326
 //SEG3 @begin
 bbegin:
 //SEG4 @1
-//SEG5 [1] (byte) idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG5 [1] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta idx
 //SEG6 [2] phi from @1 to @2 [phi:@1->@2]
@@ -615,7 +646,7 @@ main: {
 do10: {
     .label i = 2
   //SEG18 [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
-  //SEG19 [9] phi (byte) do10::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+  //SEG19 [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
   //SEG20 [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
@@ -626,7 +657,7 @@ do10: {
     jsr hello
   //SEG24 [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG25 [12] if((byte) do10::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG25 [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
     cmp i
     bne b1
@@ -639,7 +670,7 @@ hello: {
   //SEG29 [14] (byte~) idx#7 ← (byte) idx#0
   //SEG30 [15] phi from hello to hello::@1 [phi:hello->hello::@1]
   //SEG31 [15] phi (byte) idx#3 = (byte~) idx#7 [phi:hello->hello::@1#0] -- register_copy 
-  //SEG32 [15] phi (byte) hello::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:hello->hello::@1#1] -- vbuxx=vbuc1 
+  //SEG32 [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#1] -- vbuxx=vbuc1 
     ldx #0
   //SEG33 [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
   //SEG34 [15] phi (byte) idx#3 = (byte) idx#1 [phi:hello::@1->hello::@1#0] -- register_copy 

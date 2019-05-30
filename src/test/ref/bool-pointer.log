@@ -1,25 +1,25 @@
+Adding pointer type conversion cast (bool*) main::bscreen in (bool*) main::bscreen ← (number) $400
+Culled Empty Block (label) main::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (bool*) main::bscreen#0 ← ((bool*)) (word/signed word/dword/signed dword) $400
-  *((bool*) main::bscreen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← true
-  *((bool*) main::bscreen#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← false
-  (bool*~) main::$0 ← (bool*) main::bscreen#0 + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (bool*) main::bscreen#0 ← ((bool*)) (number) $400
+  *((bool*) main::bscreen#0 + (number) 0) ← true
+  *((bool*) main::bscreen#0 + (number) 1) ← false
+  (bool*~) main::$0 ← (bool*) main::bscreen#0 + (number) 2
   (bool*) main::bscreen#1 ← (bool*~) main::$0
   *((bool*) main::bscreen#1) ← true
   (bool~) main::$1 ← ! *((bool*) main::bscreen#1)
-  if((bool~) main::$1) goto main::@1
+  if((bool~) main::$1) goto main::@return
   to:main::@2
-main::@1: scope:[main]  from main
-  to:main::@return
 main::@2: scope:[main]  from main
   (bool*) main::bscreen#3 ← phi( main/(bool*) main::bscreen#1 )
   (bool*) main::bscreen#2 ← ++ (bool*) main::bscreen#3
   *((bool*) main::bscreen#2) ← true
   to:main::@return
-main::@return: scope:[main]  from main::@1 main::@2
+main::@return: scope:[main]  from main main::@2
   return 
   to:@return
 @1: scope:[]  from @begin
@@ -37,7 +37,6 @@ SYMBOL TABLE SSA
 (void()) main()
 (bool*~) main::$0
 (bool~) main::$1
-(label) main::@1
 (label) main::@2
 (label) main::@return
 (bool*) main::bscreen
@@ -46,38 +45,58 @@ SYMBOL TABLE SSA
 (bool*) main::bscreen#2
 (bool*) main::bscreen#3
 
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in *((bool*) main::bscreen#0 + (number) 0) ← true
+Adding number conversion cast (unumber) 1 in *((bool*) main::bscreen#0 + (number) 1) ← false
+Adding number conversion cast (unumber) 2 in (bool*~) main::$0 ← (bool*) main::bscreen#0 + (number) 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (bool*) main::bscreen#0 ← (bool*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (bool*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (bool*) main::bscreen#1 = (bool*~) main::$0 (bool*) main::bscreen#3 
 Successful SSA optimization Pass2AliasElimination
 Rewriting ! if()-condition to reversed if() [6] (bool~) main::$1 ← ! *((bool*) main::bscreen#1)
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const bool*) main::bscreen#0 = ((bool*))$400
+Constant (const bool*) main::bscreen#0 = (bool*) 1024
 Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::bscreen#0 in [1] *((const bool*) main::bscreen#0 + (byte) 0) ← true
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Constant right-side identified [2] (bool*) main::bscreen#1 ← (const bool*) main::bscreen#0 + (byte) 2
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const bool*) main::bscreen#1 = main::bscreen#0+2
 Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [4] (bool*) main::bscreen#2 ← ++ (const bool*) main::bscreen#1
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const bool*) main::bscreen#2 = ++main::bscreen#1
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(main::bscreen#0+0)
-Consolidated array index constant in *(main::bscreen#0+1)
-Successful SSA optimization Pass2ConstantAdditionElimination
 Inlining constant with different constant siblings (const bool*) main::bscreen#0
 Inlining constant with different constant siblings (const bool*) main::bscreen#1
 Inlining constant with different constant siblings (const bool*) main::bscreen#2
-Constant inlined main::bscreen#2 = ++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2
-Constant inlined main::bscreen#0 = ((bool*))(word/signed word/dword/signed dword) $400
-Constant inlined main::bscreen#1 = ((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2
+Constant inlined main::bscreen#2 = ++(bool*) 1024+(byte) 2
+Constant inlined main::bscreen#0 = (bool*) 1024
+Constant inlined main::bscreen#1 = (bool*) 1024+(byte) 2
 Successful SSA optimization Pass2ConstantInlining
-Simplifying constant plus zero ((bool*))$400+0
+Consolidated array index constant in *((bool*) 1024+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Simplifying constant integer increment ++(bool*) 1024+2
+Successful SSA optimization Pass2ConstantSimplification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
 Renumbering block main::@2 to main::@1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -94,17 +113,17 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @1
   [3] phi()
 main: scope:[main]  from @1
-  [4] *(((bool*))(word/signed word/dword/signed dword) $400) ← true
-  [5] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false
-  [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true
-  [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1
+  [4] *((bool*) 1024) ← true
+  [5] *((bool*) 1024+(byte) 1) ← false
+  [6] *((bool*) 1024+(byte) 2) ← true
+  [7] if(*((bool*) 1024+(byte) 2)) goto main::@1
+  to:main::@return
+main::@1: scope:[main]  from main
+  [8] *((bool*) 1024+(byte) 3) ← true
   to:main::@return
 main::@return: scope:[main]  from main main::@1
-  [8] return 
+  [9] return 
   to:@return
-main::@1: scope:[main]  from main
-  [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true
-  to:main::@return
 
 
 VARIABLE REGISTER WEIGHTS
@@ -138,38 +157,38 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-  //SEG10 [4] *(((bool*))(word/signed word/dword/signed dword) $400) ← true -- _deref_pboc1=vboc2 
+  //SEG10 [4] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400
-  //SEG11 [5] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false -- _deref_pboc1=vboc2 
+  //SEG11 [5] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
     lda #0
     sta $400+1
-  //SEG12 [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
+  //SEG12 [6] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-  //SEG13 [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1 -- _deref_pboc1_then_la1 
+  //SEG13 [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
     lda $400+2
     cmp #0
     bne b1
     jmp breturn
-  //SEG14 main::@return
-  breturn:
-  //SEG15 [8] return 
-    rts
-  //SEG16 main::@1
+  //SEG14 main::@1
   b1:
-  //SEG17 [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
+  //SEG15 [8] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
     lda #1
-    sta $400+2+1
+    sta $400+3
     jmp breturn
+  //SEG16 main::@return
+  breturn:
+  //SEG17 [9] return 
+    rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *(((bool*))(word/signed word/dword/signed dword) $400) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((bool*) 1024) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((bool*) 1024+(byte) 1) ← false [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((bool*) 1024+(byte) 2) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((bool*) 1024+(byte) 3) ← true [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -202,30 +221,30 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-  //SEG10 [4] *(((bool*))(word/signed word/dword/signed dword) $400) ← true -- _deref_pboc1=vboc2 
+  //SEG10 [4] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400
-  //SEG11 [5] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false -- _deref_pboc1=vboc2 
+  //SEG11 [5] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
     lda #0
     sta $400+1
-  //SEG12 [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
+  //SEG12 [6] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-  //SEG13 [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1 -- _deref_pboc1_then_la1 
+  //SEG13 [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
     lda $400+2
     cmp #0
     bne b1
     jmp breturn
-  //SEG14 main::@return
-  breturn:
-  //SEG15 [8] return 
-    rts
-  //SEG16 main::@1
+  //SEG14 main::@1
   b1:
-  //SEG17 [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
+  //SEG15 [8] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
     lda #1
-    sta $400+2+1
+    sta $400+3
     jmp breturn
+  //SEG16 main::@return
+  breturn:
+  //SEG17 [9] return 
+    rts
 }
 
 ASSEMBLER OPTIMIZATIONS
@@ -279,26 +298,26 @@ Score: 40
 //SEG8 @end
 //SEG9 main
 main: {
-  //SEG10 [4] *(((bool*))(word/signed word/dword/signed dword) $400) ← true -- _deref_pboc1=vboc2 
+  //SEG10 [4] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400
-  //SEG11 [5] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 1) ← false -- _deref_pboc1=vboc2 
+  //SEG11 [5] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
     lda #0
     sta $400+1
-  //SEG12 [6] *(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
+  //SEG12 [6] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-  //SEG13 [7] if(*(((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2)) goto main::@1 -- _deref_pboc1_then_la1 
+  //SEG13 [7] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
     cmp #0
     bne b1
-  //SEG14 main::@return
-  //SEG15 [8] return 
     rts
-  //SEG16 main::@1
+  //SEG14 main::@1
   b1:
-  //SEG17 [9] *(++((bool*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) 2) ← true -- _deref_pboc1=vboc2 
+  //SEG15 [8] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
     lda #1
-    sta $400+2+1
+    sta $400+3
+  //SEG16 main::@return
+  //SEG17 [9] return 
     rts
 }
 

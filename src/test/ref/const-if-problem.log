@@ -1,16 +1,20 @@
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte) cc
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@1
 main: scope:[main]  from @3
-  (bool~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) 1 == (byte/signed byte/word/signed word/dword/signed dword) 1
+  (bool~) main::$0 ← (number) 1 == (number) 1
   if((bool~) main::$0) goto main::@1
   to:main::@3
 main::@1: scope:[main]  from main
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a'
+  *((byte*) SCREEN#0 + (number) 0) ← (byte) 'a'
   to:main::@return
 main::@3: scope:[main]  from main
   call doit 
@@ -24,7 +28,7 @@ main::@return: scope:[main]  from main::@1 main::@5
   (byte) cc#0 ← (byte) 'b'
   to:@3
 doit: scope:[doit]  from main::@3
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cc#0
+  *((byte*) SCREEN#0 + (number) 1) ← (byte) cc#0
   call doit2 
   to:doit::@1
 doit::@1: scope:[doit]  from doit
@@ -33,7 +37,7 @@ doit::@return: scope:[doit]  from doit::@1
   return 
   to:@return
 doit2: scope:[doit2]  from doit
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte) cc#0
+  *((byte*) SCREEN#0 + (number) 2) ← (byte) cc#0
   to:doit2::@return
 doit2::@return: scope:[doit2]  from doit2
   return 
@@ -67,43 +71,55 @@ SYMBOL TABLE SSA
 (label) main::@5
 (label) main::@return
 
-Culled Empty Block (label) main::@5
-Culled Empty Block (label) doit::@1
-Culled Empty Block (label) @4
-Successful SSA optimization Pass2CullEmptyBlocks
-Simple Condition (bool~) main::$0 [2] if((byte/signed byte/word/signed word/dword/signed dword) 1==(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 1 in *((byte*) SCREEN#0 + (number) 1) ← (byte) cc#0
+Adding number conversion cast (unumber) 2 in *((byte*) SCREEN#0 + (number) 2) ← (byte) cc#0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simple Condition (bool~) main::$0 [2] if((number) 1==(number) 1) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte) cc#0 = 'b'
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(SCREEN#0+0)
-Consolidated array index constant in *(SCREEN#0+1)
-Consolidated array index constant in *(SCREEN#0+2)
-Successful SSA optimization Pass2ConstantAdditionElimination
-if() condition always true - replacing block destination [0] if((byte/signed byte/word/signed word/dword/signed dword) 1==(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@1
+if() condition always true - replacing block destination [2] if((number) 1==(number) 1) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
+Simplifying expression containing zero SCREEN#0 in [3] *((const byte*) SCREEN#0 + (byte) 0) ← (byte) 'a'
+Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@3
+Removing unused block main::@5
 Removing unused procedure doit
 Removing unused procedure block doit
+Removing unused procedure block doit::@1
 Removing unused procedure block doit::@return
 Removing unused procedure doit2
 Removing unused procedure block doit2
 Removing unused procedure block doit2::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Culled Empty Block (label) @1
-Successful SSA optimization Pass2CullEmptyBlocks
 Eliminating unused constant (const byte) cc#0
 Successful SSA optimization PassNEliminateUnusedVars
-Simplifying constant plus zero SCREEN#0+0
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
+Calls in [] to main:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @4
 Renumbering block @3 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -255,7 +271,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (byte) cc
 (void()) main()
 (label) main::@1

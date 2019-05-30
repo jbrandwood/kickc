@@ -1,19 +1,21 @@
+Adding pointer type conversion cast (byte*) main::PTR in (byte*) main::PTR ← (number) $9ffe
+Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
   (byte[]) main::STRING#0 ← (const string) main::$5
-  (byte*) main::PTR#0 ← ((byte*)) (word/dword/signed dword) $9ffe
+  (byte*) main::PTR#0 ← ((byte*)) (number) $9ffe
   (byte~) main::$0 ← < (byte[]) main::STRING#0
   *((byte*) main::PTR#0) ← (byte~) main::$0
-  (byte*~) main::$1 ← (byte*) main::PTR#0 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte*~) main::$1 ← (byte*) main::PTR#0 + (number) 1
   (byte~) main::$2 ← > (byte[]) main::STRING#0
   *((byte*~) main::$1) ← (byte~) main::$2
-  (byte*~) main::$3 ← (byte*) main::PTR#0 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte*~) main::$3 ← (byte*) main::PTR#0 + (number) 1
   (byte*~) main::$4 ← ((byte*)) { *((byte*~) main::$3), *((byte*) main::PTR#0) }
   (byte*) main::ptr#0 ← (byte*~) main::$4
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
   *((byte*) main::SCREEN#0) ← *((byte*) main::ptr#0)
   to:main::@return
 main::@return: scope:[main]  from main
@@ -48,37 +50,65 @@ SYMBOL TABLE SSA
 (byte*) main::ptr
 (byte*) main::ptr#0
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Fixing inline constructor with main::$6 ← (byte)*(main::$3) w= (byte)*(main::PTR#0)
+Successful SSA optimization Pass2FixInlineConstructorsNew
+Adding number conversion cast (unumber) 1 in (byte*~) main::$1 ← (byte*) main::PTR#0 + (number) 1
+Adding number conversion cast (unumber) 1 in (byte*~) main::$3 ← (byte*) main::PTR#0 + (number) 1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::PTR#0 ← (byte*)(number) $9ffe
+Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 40958
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
+Simplifying constant integer cast *((byte*~) main::$3)
+Simplifying constant integer cast *((byte*) main::PTR#0)
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding pointer type conversion cast (byte*) main::$4 in (byte*~) main::$4 ← (word~) main::$6
+Successful SSA optimization PassNAddTypeConversionAssignment
 Alias (byte*) main::ptr#0 = (byte*~) main::$4 
 Successful SSA optimization Pass2AliasElimination
 Constant (const byte[]) main::STRING#0 = main::$5
-Constant (const byte*) main::PTR#0 = ((byte*))$9ffe
-Constant (const byte*) main::SCREEN#0 = ((byte*))$400
+Constant (const byte*) main::PTR#0 = (byte*) 40958
+Constant (const byte*) main::SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
+Converting *(pointer+n) to pointer[n] [6] *((byte*~) main::$1) ← (byte~) main::$2  -- *(main::PTR#0 + 1)
+Converting *(pointer+n) to pointer[n] [8] (word~) main::$6 ← *((byte*~) main::$3) w= *((const byte*) main::PTR#0)  -- *(main::PTR#0 + 1)
+Successful SSA optimization Pass2InlineDerefIdx
+Eliminating unused variable (byte*~) main::$1 and assignment [2] (byte*~) main::$1 ← (const byte*) main::PTR#0 + (byte) 1
+Eliminating unused variable (byte*~) main::$3 and assignment [5] (byte*~) main::$3 ← (const byte*) main::PTR#0 + (byte) 1
+Successful SSA optimization PassNEliminateUnusedVars
+Inlining cast (byte*) main::ptr#0 ← (byte*)(word~) main::$6
+Successful SSA optimization Pass2InlineCast
+Constant right-side identified [0] (byte~) main::$0 ← < (const byte[]) main::STRING#0
+Constant right-side identified [2] (byte~) main::$2 ← > (const byte[]) main::STRING#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$0 = <main::STRING#0
-Constant (const byte*) main::$1 = main::PTR#0+1
 Constant (const byte) main::$2 = >main::STRING#0
-Constant (const byte*) main::$3 = main::PTR#0+1
 Successful SSA optimization Pass2ConstantIdentification
-Fixing inline constructor with main::$6 ← *(main::$3) w= *(main::PTR#0)
-Successful SSA optimization Pass2FixInlineConstructors
-Eliminating Noop Cast (byte*) main::ptr#0 ← ((byte*)) (word~) main::$6
-Successful SSA optimization Pass2NopCastElimination
+Inlining Noop Cast [3] (byte*) main::ptr#0 ← (byte*)(word~) main::$6 keeping main::ptr#0
+Successful SSA optimization Pass2NopCastInlining
 Constant inlined main::$5 = (const byte[]) main::STRING#0
-Constant inlined main::$3 = (const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1
-Constant inlined main::$1 = (const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1
 Constant inlined main::$2 = >(const byte[]) main::STRING#0
 Constant inlined main::$0 = <(const byte[]) main::STRING#0
 Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::PTR#0+1)
+Consolidated array index constant in *(main::PTR#0+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -95,9 +125,9 @@ FINAL CONTROL FLOW GRAPH
   [3] phi()
 main: scope:[main]  from @1
   [4] *((const byte*) main::PTR#0) ← <(const byte[]) main::STRING#0
-  [5] *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← >(const byte[]) main::STRING#0
-  [6] (word~) main::$6 ← *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) w= *((const byte*) main::PTR#0)
-  [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word~) main::$6)
+  [5] *((const byte*) main::PTR#0+(byte) 1) ← >(const byte[]) main::STRING#0
+  [6] (word) main::ptr#0 ← *((const byte*) main::PTR#0+(byte) 1) w= *((const byte*) main::PTR#0)
+  [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word) main::ptr#0)
   to:main::@return
 main::@return: scope:[main]  from main
   [8] return 
@@ -106,17 +136,17 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(word~) main::$6 2.0
 (byte*) main::PTR
 (byte*) main::SCREEN
 (byte[]) main::STRING
 (byte*) main::ptr
+(word) main::ptr#0 2.0
 
 Initial phi equivalence classes
-Added variable main::$6 to zero page equivalence class [ main::$6 ]
+Added variable main::ptr#0 to zero page equivalence class [ main::ptr#0 ]
 Complete equivalence classes
-[ main::$6 ]
-Allocated zp ZP_WORD:2 [ main::$6 ]
+[ main::ptr#0 ]
+Allocated zp ZP_WORD:2 [ main::ptr#0 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -146,21 +176,21 @@ bend:
 main: {
     .label PTR = $9ffe
     .label SCREEN = $400
-    .label _6 = 2
+    .label ptr = 2
   //SEG10 [4] *((const byte*) main::PTR#0) ← <(const byte[]) main::STRING#0 -- _deref_pbuc1=vbuc2 
     lda #<STRING
     sta PTR
-  //SEG11 [5] *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← >(const byte[]) main::STRING#0 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte*) main::PTR#0+(byte) 1) ← >(const byte[]) main::STRING#0 -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
-  //SEG12 [6] (word~) main::$6 ← *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) w= *((const byte*) main::PTR#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+  //SEG12 [6] (word) main::ptr#0 ← *((const byte*) main::PTR#0+(byte) 1) w= *((const byte*) main::PTR#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda PTR
-    sta _6
+    sta ptr
     lda PTR+1
-    sta _6+1
-  //SEG13 [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word~) main::$6) -- _deref_pbuc1=_deref_pbuz1 
+    sta ptr+1
+  //SEG13 [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word) main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
-    lda (_6),y
+    lda (ptr),y
     sta SCREEN
     jmp breturn
   //SEG14 main::@return
@@ -172,16 +202,16 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) main::PTR#0) ← <(const byte[]) main::STRING#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← >(const byte[]) main::STRING#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] (word~) main::$6 ← *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) w= *((const byte*) main::PTR#0) [ main::$6 ] ( main:2 [ main::$6 ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word~) main::$6) [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ main::$6 ] : zp ZP_WORD:2 , 
+Statement [5] *((const byte*) main::PTR#0+(byte) 1) ← >(const byte[]) main::STRING#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] (word) main::ptr#0 ← *((const byte*) main::PTR#0+(byte) 1) w= *((const byte*) main::PTR#0) [ main::ptr#0 ] ( main:2 [ main::ptr#0 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word) main::ptr#0) [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Potential registers zp ZP_WORD:2 [ main::ptr#0 ] : zp ZP_WORD:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2: zp ZP_WORD:2 [ main::$6 ] 
+Uplift Scope [main] 2: zp ZP_WORD:2 [ main::ptr#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 58 combination zp ZP_WORD:2 [ main::$6 ] 
+Uplifting [main] best 58 combination zp ZP_WORD:2 [ main::ptr#0 ] 
 Uplifting [] best 58 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -212,21 +242,21 @@ bend:
 main: {
     .label PTR = $9ffe
     .label SCREEN = $400
-    .label _6 = 2
+    .label ptr = 2
   //SEG10 [4] *((const byte*) main::PTR#0) ← <(const byte[]) main::STRING#0 -- _deref_pbuc1=vbuc2 
     lda #<STRING
     sta PTR
-  //SEG11 [5] *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← >(const byte[]) main::STRING#0 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte*) main::PTR#0+(byte) 1) ← >(const byte[]) main::STRING#0 -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
-  //SEG12 [6] (word~) main::$6 ← *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) w= *((const byte*) main::PTR#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+  //SEG12 [6] (word) main::ptr#0 ← *((const byte*) main::PTR#0+(byte) 1) w= *((const byte*) main::PTR#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda PTR
-    sta _6
+    sta ptr
     lda PTR+1
-    sta _6+1
-  //SEG13 [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word~) main::$6) -- _deref_pbuc1=_deref_pbuz1 
+    sta ptr+1
+  //SEG13 [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word) main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
-    lda (_6),y
+    lda (ptr),y
     sta SCREEN
     jmp breturn
   //SEG14 main::@return
@@ -259,17 +289,17 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (void()) main()
-(word~) main::$6 $6 zp ZP_WORD:2 2.0
 (label) main::@return
 (byte*) main::PTR
-(const byte*) main::PTR#0 PTR = ((byte*))(word/dword/signed dword) $9ffe
+(const byte*) main::PTR#0 PTR = (byte*) 40958
 (byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
 (byte[]) main::STRING
 (const byte[]) main::STRING#0 STRING = (string) "camelot"
 (byte*) main::ptr
+(word) main::ptr#0 ptr zp ZP_WORD:2 2.0
 
-zp ZP_WORD:2 [ main::$6 ]
+zp ZP_WORD:2 [ main::ptr#0 ]
 
 
 FINAL ASSEMBLER
@@ -294,21 +324,21 @@ Score: 43
 main: {
     .label PTR = $9ffe
     .label SCREEN = $400
-    .label _6 = 2
+    .label ptr = 2
   //SEG10 [4] *((const byte*) main::PTR#0) ← <(const byte[]) main::STRING#0 -- _deref_pbuc1=vbuc2 
     lda #<STRING
     sta PTR
-  //SEG11 [5] *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← >(const byte[]) main::STRING#0 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte*) main::PTR#0+(byte) 1) ← >(const byte[]) main::STRING#0 -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
-  //SEG12 [6] (word~) main::$6 ← *((const byte*) main::PTR#0+(byte/signed byte/word/signed word/dword/signed dword) 1) w= *((const byte*) main::PTR#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+  //SEG12 [6] (word) main::ptr#0 ← *((const byte*) main::PTR#0+(byte) 1) w= *((const byte*) main::PTR#0) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda PTR
-    sta _6
+    sta ptr
     lda PTR+1
-    sta _6+1
-  //SEG13 [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word~) main::$6) -- _deref_pbuc1=_deref_pbuz1 
+    sta ptr+1
+  //SEG13 [7] *((const byte*) main::SCREEN#0) ← *((byte*)(word) main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
-    lda (_6),y
+    lda (ptr),y
     sta SCREEN
   //SEG14 main::@return
   //SEG15 [8] return 

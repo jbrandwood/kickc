@@ -1,0 +1,366 @@
+Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (struct Point) point1#0 ← {}
+  (struct Point) point2#0 ← {}
+  to:@1
+main: scope:[main]  from @1
+  (struct Point) point2#1 ← phi( @1/(struct Point) point2#2 )
+  (struct Point) point1#1 ← phi( @1/(struct Point) point1#2 )
+  (struct Point) point1#1.x ← (number) 2
+  (struct Point) point1#1.y ← (number) 3
+  (struct Point) point2#1.x ← (struct Point) point1#1.y
+  (struct Point) point2#1.y ← (struct Point) point1#1.x
+  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  *((byte*) main::SCREEN#0 + (number) 0) ← (struct Point) point2#1.x
+  *((byte*) main::SCREEN#0 + (number) 1) ← (struct Point) point2#1.y
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (struct Point) point2#2 ← phi( @begin/(struct Point) point2#0 )
+  (struct Point) point1#2 ← phi( @begin/(struct Point) point1#0 )
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte) Point::x
+(byte) Point::y
+(void()) main()
+(label) main::@return
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(struct Point) point1
+(struct Point) point1#0
+(struct Point) point1#1
+(struct Point) point1#2
+(struct Point) point2
+(struct Point) point2#0
+(struct Point) point2#1
+(struct Point) point2#2
+
+Adding number conversion cast (unumber) 2 in (struct Point) point1#1.x ← (number) 2
+Adding number conversion cast (unumber) 3 in (struct Point) point1#1.y ← (number) 3
+Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN#0 + (number) 0) ← (struct Point) point2#1.x
+Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN#0 + (number) 1) ← (struct Point) point2#1.y
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (struct Point) point1#1.x ← (unumber)(number) 2
+Inlining cast (struct Point) point1#1.y ← (unumber)(number) 3
+Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (struct Point) point1#0 = (struct Point) point1#2 
+Alias (struct Point) point2#0 = (struct Point) point2#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (struct Point) point1#1 (struct Point) point1#0
+Identical Phi Values (struct Point) point2#1 (struct Point) point2#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN#0 in [8] *((const byte*) main::SCREEN#0 + (byte) 0) ← (struct Point) point2#0.x
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Consolidated array index constant in *(main::SCREEN#0+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:3 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] (struct Point) point1#0 ← {}
+  [1] (struct Point) point2#0 ← {}
+  to:@1
+@1: scope:[]  from @begin
+  [2] phi()
+  [3] call main 
+  to:@end
+@end: scope:[]  from @1
+  [4] phi()
+main: scope:[main]  from @1
+  [5] (struct Point) point1#0.x ← (byte) 2
+  [6] (struct Point) point1#0.y ← (byte) 3
+  [7] (struct Point) point2#0.x ← (struct Point) point1#0.y
+  [8] (struct Point) point2#0.y ← (struct Point) point1#0.x
+  [9] *((const byte*) main::SCREEN#0) ← (struct Point) point2#0.x
+  [10] *((const byte*) main::SCREEN#0+(byte) 1) ← (struct Point) point2#0.y
+  to:main::@return
+main::@return: scope:[main]  from main
+  [11] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) Point::x
+(byte) Point::y
+(void()) main()
+(byte*) main::SCREEN
+(struct Point) point1
+(struct Point) point1#0 0.3333333333333333
+(struct Point) point2
+(struct Point) point2#0 0.2857142857142857
+
+Initial phi equivalence classes
+Complete equivalence classes
+[ point1#0 ]
+[ point2#0 ]
+Allocated zp ZP_STRUCT:2 [ point1#0 ]
+Allocated zp ZP_STRUCT:4 [ point2#0 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Minimal struct - two instances being used.
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label point1 = 2
+  .label point2 = 4
+//SEG3 @begin
+bbegin:
+//SEG4 [0] (struct Point) point1#0 ← {} -- vssz1=vssf2 
+  lda #0
+  sta point1
+  sta point1+1
+//SEG5 [1] (struct Point) point2#0 ← {} -- vssz1=vssf2 
+  lda #0
+  sta point2
+  sta point2+1
+//SEG6 [2] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG7 @1
+b1:
+//SEG8 [3] call main 
+  jsr main
+//SEG9 [4] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG10 @end
+bend:
+//SEG11 main
+main: {
+    .label SCREEN = $400
+  //SEG12 [5] (struct Point) point1#0.x ← (byte) 2 -- vbuz1=vbuc1 
+    lda #2
+    sta point1+0
+  //SEG13 [6] (struct Point) point1#0.y ← (byte) 3 -- vbuz1=vbuc1 
+    lda #3
+    sta point1+1
+  //SEG14 [7] (struct Point) point2#0.x ← (struct Point) point1#0.y -- vbuz1=vbuz2 
+    lda point1+1
+    sta point2+0
+  //SEG15 [8] (struct Point) point2#0.y ← (struct Point) point1#0.x -- vbuz1=vbuz2 
+    lda point1+0
+    sta point2+1
+  //SEG16 [9] *((const byte*) main::SCREEN#0) ← (struct Point) point2#0.x -- _deref_pbuc1=vbuz1 
+    lda point2+0
+    sta SCREEN
+  //SEG17 [10] *((const byte*) main::SCREEN#0+(byte) 1) ← (struct Point) point2#0.y -- _deref_pbuc1=vbuz1 
+    lda point2+1
+    sta SCREEN+1
+    jmp breturn
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [11] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] (struct Point) point1#0 ← {} [ point1#0 ] ( ) always clobbers reg byte a 
+Statement [1] (struct Point) point2#0 ← {} [ point1#0 point2#0 ] ( ) always clobbers reg byte a 
+Statement [5] (struct Point) point1#0.x ← (byte) 2 [ point1#0 point2#0 ] ( main:3 [ point1#0 point2#0 ] ) always clobbers reg byte a 
+Statement [6] (struct Point) point1#0.y ← (byte) 3 [ point1#0 point2#0 ] ( main:3 [ point1#0 point2#0 ] ) always clobbers reg byte a 
+Statement [7] (struct Point) point2#0.x ← (struct Point) point1#0.y [ point1#0 point2#0 ] ( main:3 [ point1#0 point2#0 ] ) always clobbers reg byte a 
+Statement [8] (struct Point) point2#0.y ← (struct Point) point1#0.x [ point2#0 ] ( main:3 [ point2#0 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) main::SCREEN#0) ← (struct Point) point2#0.x [ point2#0 ] ( main:3 [ point2#0 ] ) always clobbers reg byte a 
+Statement [10] *((const byte*) main::SCREEN#0+(byte) 1) ← (struct Point) point2#0.y [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Potential registers zp ZP_STRUCT:2 [ point1#0 ] : zp ZP_STRUCT:2 , 
+Potential registers zp ZP_STRUCT:4 [ point2#0 ] : zp ZP_STRUCT:4 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 0.33: zp ZP_STRUCT:2 [ point1#0 ] 0.29: zp ZP_STRUCT:4 [ point2#0 ] 
+Uplift Scope [Point] 
+Uplift Scope [main] 
+
+Uplifting [] best 73 combination zp ZP_STRUCT:2 [ point1#0 ] zp ZP_STRUCT:4 [ point2#0 ] 
+Uplifting [Point] best 73 combination 
+Uplifting [main] best 73 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Minimal struct - two instances being used.
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label point1 = 2
+  .label point2 = 4
+//SEG3 @begin
+bbegin:
+//SEG4 [0] (struct Point) point1#0 ← {} -- vssz1=vssf2 
+  lda #0
+  sta point1
+  sta point1+1
+//SEG5 [1] (struct Point) point2#0 ← {} -- vssz1=vssf2 
+  lda #0
+  sta point2
+  sta point2+1
+//SEG6 [2] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG7 @1
+b1:
+//SEG8 [3] call main 
+  jsr main
+//SEG9 [4] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG10 @end
+bend:
+//SEG11 main
+main: {
+    .label SCREEN = $400
+  //SEG12 [5] (struct Point) point1#0.x ← (byte) 2 -- vbuz1=vbuc1 
+    lda #2
+    sta point1+0
+  //SEG13 [6] (struct Point) point1#0.y ← (byte) 3 -- vbuz1=vbuc1 
+    lda #3
+    sta point1+1
+  //SEG14 [7] (struct Point) point2#0.x ← (struct Point) point1#0.y -- vbuz1=vbuz2 
+    lda point1+1
+    sta point2+0
+  //SEG15 [8] (struct Point) point2#0.y ← (struct Point) point1#0.x -- vbuz1=vbuz2 
+    lda point1+0
+    sta point2+1
+  //SEG16 [9] *((const byte*) main::SCREEN#0) ← (struct Point) point2#0.x -- _deref_pbuc1=vbuz1 
+    lda point2+0
+    sta SCREEN
+  //SEG17 [10] *((const byte*) main::SCREEN#0+(byte) 1) ← (struct Point) point2#0.y -- _deref_pbuc1=vbuz1 
+    lda point2+1
+    sta SCREEN+1
+    jmp breturn
+  //SEG18 main::@return
+  breturn:
+  //SEG19 [11] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #0
+Removing instruction lda point1+1
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction b1_from_bbegin:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction b1:
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte) Point::x
+(byte) Point::y
+(void()) main()
+(label) main::@return
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(struct Point) point1
+(struct Point) point1#0 point1 zp ZP_STRUCT:2 0.3333333333333333
+(struct Point) point2
+(struct Point) point2#0 point2 zp ZP_STRUCT:4 0.2857142857142857
+
+zp ZP_STRUCT:2 [ point1#0 ]
+zp ZP_STRUCT:4 [ point2#0 ]
+
+
+FINAL ASSEMBLER
+Score: 65
+
+//SEG0 File Comments
+// Minimal struct - two instances being used.
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label point1 = 2
+  .label point2 = 4
+//SEG3 @begin
+bbegin:
+//SEG4 [0] (struct Point) point1#0 ← {} -- vssz1=vssf2 
+  lda #0
+  sta point1
+  sta point1+1
+//SEG5 [1] (struct Point) point2#0 ← {} -- vssz1=vssf2 
+  sta point2
+  sta point2+1
+//SEG6 [2] phi from @begin to @1 [phi:@begin->@1]
+//SEG7 @1
+//SEG8 [3] call main 
+  jsr main
+  rts
+//SEG9 [4] phi from @1 to @end [phi:@1->@end]
+//SEG10 @end
+//SEG11 main
+main: {
+    .label SCREEN = $400
+  //SEG12 [5] (struct Point) point1#0.x ← (byte) 2 -- vbuz1=vbuc1 
+    lda #2
+    sta point1+0
+  //SEG13 [6] (struct Point) point1#0.y ← (byte) 3 -- vbuz1=vbuc1 
+    lda #3
+    sta point1+1
+  //SEG14 [7] (struct Point) point2#0.x ← (struct Point) point1#0.y -- vbuz1=vbuz2 
+    sta point2+0
+  //SEG15 [8] (struct Point) point2#0.y ← (struct Point) point1#0.x -- vbuz1=vbuz2 
+    lda point1+0
+    sta point2+1
+  //SEG16 [9] *((const byte*) main::SCREEN#0) ← (struct Point) point2#0.x -- _deref_pbuc1=vbuz1 
+    lda point2+0
+    sta SCREEN
+  //SEG17 [10] *((const byte*) main::SCREEN#0+(byte) 1) ← (struct Point) point2#0.y -- _deref_pbuc1=vbuz1 
+    lda point2+1
+    sta SCREEN+1
+  //SEG18 main::@return
+  //SEG19 [11] return 
+    rts
+}
+

@@ -1,17 +1,19 @@
+Adding pointer type conversion cast (byte*) sprite in (byte*) sprite ← (number) $5000
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $4400
 Identified constant variable (byte*) sprite
 Identified constant variable (byte*) SCREEN
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) sprite#0 ← ((byte*)) (word/signed word/dword/signed dword) $5000
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $4400
+  (byte*) sprite#0 ← ((byte*)) (number) $5000
+  (byte*) SCREEN#0 ← ((byte*)) (number) $4400
   to:@1
 main: scope:[main]  from @1
-  (byte*~) main::$0 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) $378
+  (byte*~) main::$0 ← (byte*) SCREEN#0 + (number) $378
   (byte*) main::sprite_ptr#0 ← (byte*~) main::$0
-  (byte*~) main::$1 ← (byte*) sprite#0 / (byte/signed byte/word/signed word/dword/signed dword) $40
+  (byte*~) main::$1 ← (byte*) sprite#0 / (number) $40
   (byte~) main::$2 ← ((byte)) (byte*~) main::$1
-  *((byte*) main::sprite_ptr#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$2
+  *((byte*) main::sprite_ptr#0 + (number) 0) ← (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -40,32 +42,54 @@ SYMBOL TABLE SSA
 (byte*) sprite
 (byte*) sprite#0
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) $378 in (byte*~) main::$0 ← (byte*) SCREEN#0 + (number) $378
+Adding number conversion cast (unumber) $40 in (byte*~) main::$1 ← (byte*) sprite#0 / (number) $40
+Adding number conversion cast (unumber) 0 in *((byte*) main::sprite_ptr#0 + (number) 0) ← (byte~) main::$2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) sprite#0 ← (byte*)(number) $5000
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $4400
+Inlining cast (byte~) main::$2 ← (byte)(byte*~) main::$1
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 20480
+Simplifying constant pointer cast (byte*) 17408
+Simplifying constant integer cast $378
+Simplifying constant integer cast $40
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $378
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) main::sprite_ptr#0 = (byte*~) main::$0 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) sprite#0 = ((byte*))$5000
-Constant (const byte*) SCREEN#0 = ((byte*))$4400
+Constant (const byte*) sprite#0 = (byte*) 20480
+Constant (const byte*) SCREEN#0 = (byte*) 17408
 Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::sprite_ptr#0 in [6] *((byte*) main::sprite_ptr#0 + (byte) 0) ← (byte~) main::$2
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Constant right-side identified [0] (byte*) main::sprite_ptr#0 ← (const byte*) SCREEN#0 + (word) $378
+Constant right-side identified [1] (byte*~) main::$1 ← (const byte*) sprite#0 / (byte) $40
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::sprite_ptr#0 = SCREEN#0+$378
 Constant (const byte*) main::$1 = sprite#0/$40
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::$2 = ((byte))main::$1
+Constant value identified (byte)main::$1 in [2] (byte~) main::$2 ← (byte)(const byte*) main::$1
+Successful SSA optimization Pass2ConstantValues
+Constant (const byte) main::$2 = (byte)main::$1
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(main::sprite_ptr#0+0)
-Successful SSA optimization Pass2ConstantAdditionElimination
-Constant inlined main::$1 = (const byte*) sprite#0/(byte/signed byte/word/signed word/dword/signed dword) $40
-Constant inlined main::$2 = ((byte))(const byte*) sprite#0/(byte/signed byte/word/signed word/dword/signed dword) $40
+Constant inlined main::$1 = (const byte*) sprite#0/(byte) $40
+Constant inlined main::$2 = (byte)(const byte*) sprite#0/(byte) $40
 Successful SSA optimization Pass2ConstantInlining
-Simplifying constant plus zero main::sprite_ptr#0+0
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -81,7 +105,7 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @1
   [3] phi()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::sprite_ptr#0) ← ((byte))(const byte*) sprite#0/(byte/signed byte/word/signed word/dword/signed dword) $40
+  [4] *((const byte*) main::sprite_ptr#0) ← (byte)(const byte*) sprite#0/(byte) $40
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -124,7 +148,7 @@ bend:
 //SEG9 main
 main: {
     .label sprite_ptr = SCREEN+$378
-  //SEG10 [4] *((const byte*) main::sprite_ptr#0) ← ((byte))(const byte*) sprite#0/(byte/signed byte/word/signed word/dword/signed dword) $40 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) main::sprite_ptr#0) ← (byte)(const byte*) sprite#0/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #$ff&sprite/$40
     sta sprite_ptr
     jmp breturn
@@ -135,7 +159,7 @@ main: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::sprite_ptr#0) ← ((byte))(const byte*) sprite#0/(byte/signed byte/word/signed word/dword/signed dword) $40 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::sprite_ptr#0) ← (byte)(const byte*) sprite#0/(byte) $40 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -171,7 +195,7 @@ bend:
 //SEG9 main
 main: {
     .label sprite_ptr = SCREEN+$378
-  //SEG10 [4] *((const byte*) main::sprite_ptr#0) ← ((byte))(const byte*) sprite#0/(byte/signed byte/word/signed word/dword/signed dword) $40 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) main::sprite_ptr#0) ← (byte)(const byte*) sprite#0/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #$ff&sprite/$40
     sta sprite_ptr
     jmp breturn
@@ -204,13 +228,13 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $4400
+(const byte*) SCREEN#0 SCREEN = (byte*) 17408
 (void()) main()
 (label) main::@return
 (byte*) main::sprite_ptr
-(const byte*) main::sprite_ptr#0 sprite_ptr = (const byte*) SCREEN#0+(word/signed word/dword/signed dword) $378
+(const byte*) main::sprite_ptr#0 sprite_ptr = (const byte*) SCREEN#0+(word) $378
 (byte*) sprite
-(const byte*) sprite#0 sprite = ((byte*))(word/signed word/dword/signed dword) $5000
+(const byte*) sprite#0 sprite = (byte*) 20480
 
 
 
@@ -235,7 +259,7 @@ Score: 12
 //SEG9 main
 main: {
     .label sprite_ptr = SCREEN+$378
-  //SEG10 [4] *((const byte*) main::sprite_ptr#0) ← ((byte))(const byte*) sprite#0/(byte/signed byte/word/signed word/dword/signed dword) $40 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) main::sprite_ptr#0) ← (byte)(const byte*) sprite#0/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #$ff&sprite/$40
     sta sprite_ptr
   //SEG11 main::@return

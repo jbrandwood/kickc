@@ -1,16 +1,23 @@
+Adding pointer type conversion cast (byte*) screen in (byte*) screen ← (number) $400
+Culled Empty Block (label) @1
+Culled Empty Block (label) print_msg::@4
+Culled Empty Block (label) print::@4
+Culled Empty Block (label) print::@3
+Culled Empty Block (label) print::@5
+Culled Empty Block (label) print::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @3
   (byte*) screen#17 ← phi( @3/(byte*) screen#20 )
-  (byte) print_msg::idx#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte) print_msg::idx#0 ← (number) 1
   call print_msg 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte*) screen#9 ← phi( main/(byte*) screen#4 )
   (byte*) screen#0 ← (byte*) screen#9
-  (byte) print_msg::idx#1 ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte) print_msg::idx#1 ← (number) 2
   call print_msg 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -26,7 +33,7 @@ print_msg: scope:[print_msg]  from main main::@1
   (byte*) screen#24 ← phi( main/(byte*) screen#17 main::@1/(byte*) screen#0 )
   (byte) print_msg::idx#2 ← phi( main/(byte) print_msg::idx#0 main::@1/(byte) print_msg::idx#1 )
   (byte*) print_msg::msg#0 ← (byte*) 0
-  (bool~) print_msg::$0 ← (byte) print_msg::idx#2 == (byte/signed byte/word/signed word/dword/signed dword) 1
+  (bool~) print_msg::$0 ← (byte) print_msg::idx#2 == (number) 1
   if((bool~) print_msg::$0) goto print_msg::@1
   to:print_msg::@3
 print_msg::@1: scope:[print_msg]  from print_msg
@@ -53,7 +60,7 @@ print_msg::@return: scope:[print_msg]  from print_msg::@5
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) screen#5 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) screen#5 ← ((byte*)) (number) $400
   to:@3
 print: scope:[print]  from print_msg::@2
   (byte*) screen#23 ← phi( print_msg::@2/(byte*) screen#18 )
@@ -153,6 +160,23 @@ SYMBOL TABLE SSA
 (byte*) screen#8
 (byte*) screen#9
 
+Adding number conversion cast (unumber) 1 in (byte) print_msg::idx#0 ← (number) 1
+Adding number conversion cast (unumber) 2 in (byte) print_msg::idx#1 ← (number) 2
+Adding number conversion cast (unumber) 1 in (bool~) print_msg::$0 ← (byte) print_msg::idx#2 == (number) 1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) print_msg::idx#0 ← (unumber)(number) 1
+Inlining cast (byte) print_msg::idx#1 ← (unumber)(number) 2
+Inlining cast (byte*) screen#5 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 1
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) screen#0 = (byte*) screen#9 
 Alias (byte*) screen#1 = (byte*) screen#10 (byte*) screen#11 (byte*) screen#2 
 Alias (byte*) screen#21 = (byte*) screen#24 (byte*) screen#22 
@@ -164,40 +188,34 @@ Alias (byte*) screen#16 = (byte*) screen#8
 Successful SSA optimization Pass2AliasElimination
 Alias (byte*) screen#18 = (byte*) screen#21 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte*) screen#17 (byte*) screen#20
-Redundant Phi (byte*) screen#0 (byte*) screen#12
-Redundant Phi (byte*) screen#1 (byte*) screen#12
-Redundant Phi (byte*) screen#12 (byte*) screen#14
-Redundant Phi (byte*) print::msg#4 (byte*) print::msg#0
-Redundant Phi (byte*) screen#23 (byte*) screen#18
-Redundant Phi (byte*) screen#16 (byte*) screen#1
-Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) print_msg::$0 [15] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1
+Identical Phi Values (byte*) screen#17 (byte*) screen#20
+Identical Phi Values (byte*) screen#0 (byte*) screen#12
+Identical Phi Values (byte*) screen#1 (byte*) screen#12
+Identical Phi Values (byte*) screen#12 (byte*) screen#14
+Identical Phi Values (byte*) print::msg#4 (byte*) print::msg#0
+Identical Phi Values (byte*) screen#23 (byte*) screen#18
+Identical Phi Values (byte*) screen#16 (byte*) screen#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) print_msg::$0 [15] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1
 Simple Condition (bool~) print::$0 [32] if(*((byte*) print::msg#2)!=(byte) '@') goto print::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) print_msg::idx#0 = 1
 Constant (const byte) print_msg::idx#1 = 2
-Constant (const byte*) print_msg::msg#0 = 0
+Constant (const byte*) print_msg::msg#0 = (byte*) 0
 Constant (const byte*) print_msg::msg#1 = print_msg::$2
 Constant (const byte*) print_msg::msg#2 = print_msg::$3
-Constant (const byte*) screen#20 = ((byte*))$400
+Constant (const byte*) screen#20 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte*) print_msg::msg#0
 Successful SSA optimization PassNEliminateUnusedVars
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) print_msg::@1
-Culled Empty Block (label) print_msg::@5
-Culled Empty Block (label) @2
-Culled Empty Block (label) @4
-Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte) print_msg::idx#0
 Inlining constant with var siblings (const byte) print_msg::idx#1
 Inlining constant with var siblings (const byte*) print_msg::msg#1
 Inlining constant with var siblings (const byte*) print_msg::msg#2
 Inlining constant with var siblings (const byte*) screen#20
-Constant inlined print_msg::idx#1 = (byte/signed byte/word/signed word/dword/signed dword) 2
-Constant inlined print_msg::idx#0 = (byte/signed byte/word/signed word/dword/signed dword) 1
-Constant inlined screen#20 = ((byte*))(word/signed word/dword/signed dword) $400
+Constant inlined print_msg::idx#1 = (byte) 2
+Constant inlined print_msg::idx#0 = (byte) 1
+Constant inlined screen#20 = (byte*) 1024
 Constant inlined print_msg::$3 = (const byte*) print_msg::msg#2
 Constant inlined print_msg::$2 = (const byte*) print_msg::msg#1
 Successful SSA optimization Pass2ConstantInlining
@@ -206,31 +224,39 @@ Inlining constant with var siblings (const byte*) print_msg::msg#2
 Inlining constant with var siblings (const byte*) print_msg::msg#1
 Inlining constant with var siblings (const byte*) print_msg::msg#2
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of print_msg::@3
+Adding NOP phi() at start of print_msg::@5
+Adding NOP phi() at start of print_msg::@1
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to print_msg:5 print_msg:7 
-Calls in [print_msg] to print:14 
+Calls in [] to main:3 
+Calls in [main] to print_msg:7 print_msg:9 
+Calls in [print_msg] to print:17 
 
 Created 5 initial phi equivalence classes
-Coalesced [6] screen#25 ← screen#14
-Coalesced [16] print::msg#5 ← print::msg#0
-Coalesced (already) [17] screen#26 ← screen#18
-Coalesced [24] print::msg#6 ← print::msg#1
-Coalesced [25] screen#27 ← screen#6
+Coalesced [8] screen#25 ← screen#14
+Coalesced [21] print::msg#5 ← print::msg#0
+Coalesced (already) [22] screen#26 ← screen#18
+Coalesced [29] print::msg#6 ← print::msg#1
+Coalesced [30] screen#27 ← screen#6
 Coalesced down to 4 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) @4
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) print_msg::@3
+Culled Empty Block (label) print_msg::@5
 Renumbering block @3 to @1
-Renumbering block print_msg::@2 to print_msg::@1
-Renumbering block print_msg::@3 to print_msg::@2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
-Adding NOP phi() at start of print_msg::@2
+Adding NOP phi() at start of print_msg::@1
 Adding NOP phi() at start of print
 
 FINAL CONTROL FLOW GRAPH
@@ -255,22 +281,22 @@ main::@return: scope:[main]  from main::@1
   [8] return 
   to:@return
 print_msg: scope:[print_msg]  from main main::@1
-  [9] (byte*) screen#18 ← phi( main/((byte*))(word/signed word/dword/signed dword) $400 main::@1/(byte*) screen#14 )
-  [9] (byte) print_msg::idx#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 1 main::@1/(byte/signed byte/word/signed word/dword/signed dword) 2 )
-  [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1
+  [9] (byte*) screen#18 ← phi( main/(byte*) 1024 main::@1/(byte*) screen#14 )
+  [9] (byte) print_msg::idx#2 ← phi( main/(byte) 1 main::@1/(byte) 2 )
+  [10] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1
   to:print_msg::@2
-print_msg::@2: scope:[print_msg]  from print_msg
+print_msg::@1: scope:[print_msg]  from print_msg
   [11] phi()
-  to:print_msg::@1
-print_msg::@1: scope:[print_msg]  from print_msg print_msg::@2
-  [12] (byte*) print_msg::msg#3 ← phi( print_msg/(const byte*) print_msg::msg#1 print_msg::@2/(const byte*) print_msg::msg#2 )
+  to:print_msg::@2
+print_msg::@2: scope:[print_msg]  from print_msg print_msg::@1
+  [12] (byte*) print_msg::msg#3 ← phi( print_msg::@1/(const byte*) print_msg::msg#1 print_msg/(const byte*) print_msg::msg#2 )
   [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   [14] call print 
   to:print_msg::@return
-print_msg::@return: scope:[print_msg]  from print_msg::@1
+print_msg::@return: scope:[print_msg]  from print_msg::@2
   [15] return 
   to:@return
-print: scope:[print]  from print_msg::@1
+print: scope:[print]  from print_msg::@2
   [16] phi()
   to:print::@1
 print::@1: scope:[print]  from print print::@2
@@ -350,12 +376,12 @@ main: {
   //SEG11 [5] call print_msg 
   //SEG12 [9] phi from main to print_msg [phi:main->print_msg]
   print_msg_from_main:
-  //SEG13 [9] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->print_msg#0] -- pbuz1=pbuc1 
+  //SEG13 [9] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print_msg#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG14 [9] phi (byte) print_msg::idx#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->print_msg#1] -- vbuz1=vbuc1 
+  //SEG14 [9] phi (byte) print_msg::idx#2 = (byte) 1 [phi:main->print_msg#1] -- vbuz1=vbuc1 
     lda #1
     sta print_msg.idx
     jsr print_msg
@@ -368,7 +394,7 @@ main: {
   //SEG18 [9] phi from main::@1 to print_msg [phi:main::@1->print_msg]
   print_msg_from_b1:
   //SEG19 [9] phi (byte*) screen#18 = (byte*) screen#14 [phi:main::@1->print_msg#0] -- register_copy 
-  //SEG20 [9] phi (byte) print_msg::idx#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main::@1->print_msg#1] -- vbuz1=vbuc1 
+  //SEG20 [9] phi (byte) print_msg::idx#2 = (byte) 2 [phi:main::@1->print_msg#1] -- vbuz1=vbuc1 
     lda #2
     sta print_msg.idx
     jsr print_msg
@@ -383,41 +409,41 @@ main: {
 print_msg: {
     .label idx = 2
     .label msg = 5
-  //SEG24 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1 -- vbuz1_eq_vbuc1_then_la1 
+  //SEG24 [10] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1 -- vbuz1_eq_vbuc1_then_la1 
     lda #1
     cmp idx
     beq b1_from_print_msg
-  //SEG25 [11] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
+  //SEG25 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
   b2_from_print_msg:
-    jmp b2
-  //SEG26 print_msg::@2
-  b2:
-  //SEG27 [12] phi from print_msg::@2 to print_msg::@1 [phi:print_msg::@2->print_msg::@1]
-  b1_from_b2:
-  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@2->print_msg::@1#0] -- pbuz1=pbuc1 
+  //SEG26 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_2
     sta msg
     lda #>msg_2
     sta msg+1
-    jmp b1
-  //SEG29 [12] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
+    jmp b2
+  //SEG27 [11] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
   b1_from_print_msg:
-  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@1#0] -- pbuz1=pbuc1 
+    jmp b1
+  //SEG28 print_msg::@1
+  b1:
+  //SEG29 [12] phi from print_msg::@1 to print_msg::@2 [phi:print_msg::@1->print_msg::@2]
+  b2_from_b1:
+  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg::@1->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
-    jmp b1
-  //SEG31 print_msg::@1
-  b1:
+    jmp b2
+  //SEG31 print_msg::@2
+  b2:
   //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3 -- pbuz1=pbuz2 
     lda msg
     sta print.msg
     lda msg+1
     sta print.msg+1
   //SEG33 [14] call print 
-  //SEG34 [16] phi from print_msg::@1 to print [phi:print_msg::@1->print]
-  print_from_b1:
+  //SEG34 [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
+  print_from_b2:
     jsr print
     jmp breturn
   //SEG35 print_msg::@return
@@ -522,12 +548,12 @@ main: {
   //SEG11 [5] call print_msg 
   //SEG12 [9] phi from main to print_msg [phi:main->print_msg]
   print_msg_from_main:
-  //SEG13 [9] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->print_msg#0] -- pbuz1=pbuc1 
+  //SEG13 [9] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print_msg#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG14 [9] phi (byte) print_msg::idx#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->print_msg#1] -- vbuxx=vbuc1 
+  //SEG14 [9] phi (byte) print_msg::idx#2 = (byte) 1 [phi:main->print_msg#1] -- vbuxx=vbuc1 
     ldx #1
     jsr print_msg
   //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -539,7 +565,7 @@ main: {
   //SEG18 [9] phi from main::@1 to print_msg [phi:main::@1->print_msg]
   print_msg_from_b1:
   //SEG19 [9] phi (byte*) screen#18 = (byte*) screen#14 [phi:main::@1->print_msg#0] -- register_copy 
-  //SEG20 [9] phi (byte) print_msg::idx#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main::@1->print_msg#1] -- vbuxx=vbuc1 
+  //SEG20 [9] phi (byte) print_msg::idx#2 = (byte) 2 [phi:main::@1->print_msg#1] -- vbuxx=vbuc1 
     ldx #2
     jsr print_msg
     jmp breturn
@@ -552,36 +578,36 @@ main: {
 // print_msg(byte register(X) idx)
 print_msg: {
     .label msg = 4
-  //SEG24 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
+  //SEG24 [10] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
     beq b1_from_print_msg
-  //SEG25 [11] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
+  //SEG25 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
   b2_from_print_msg:
-    jmp b2
-  //SEG26 print_msg::@2
-  b2:
-  //SEG27 [12] phi from print_msg::@2 to print_msg::@1 [phi:print_msg::@2->print_msg::@1]
-  b1_from_b2:
-  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@2->print_msg::@1#0] -- pbuz1=pbuc1 
+  //SEG26 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_2
     sta msg
     lda #>msg_2
     sta msg+1
-    jmp b1
-  //SEG29 [12] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
+    jmp b2
+  //SEG27 [11] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
   b1_from_print_msg:
-  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@1#0] -- pbuz1=pbuc1 
+    jmp b1
+  //SEG28 print_msg::@1
+  b1:
+  //SEG29 [12] phi from print_msg::@1 to print_msg::@2 [phi:print_msg::@1->print_msg::@2]
+  b2_from_b1:
+  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg::@1->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
-    jmp b1
-  //SEG31 print_msg::@1
-  b1:
+    jmp b2
+  //SEG31 print_msg::@2
+  b2:
   //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   //SEG33 [14] call print 
-  //SEG34 [16] phi from print_msg::@1 to print [phi:print_msg::@1->print]
-  print_from_b1:
+  //SEG34 [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
+  print_from_b2:
     jsr print
     jmp breturn
   //SEG35 print_msg::@return
@@ -638,14 +664,15 @@ Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp breturn
-Removing instruction jmp b2
 Removing instruction jmp b1
+Removing instruction jmp b2
 Removing instruction jmp breturn
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label b1_from_print_msg with b1
 Replacing label b1_from_b2 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
@@ -653,9 +680,9 @@ Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction print_msg_from_b1:
-Removing instruction b2_from_print_msg:
-Removing instruction b1_from_b2:
-Removing instruction print_from_b1:
+Removing instruction b1_from_print_msg:
+Removing instruction b2_from_b1:
+Removing instruction print_from_b2:
 Removing instruction b1_from_print:
 Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
@@ -663,15 +690,13 @@ Removing instruction bend:
 Removing instruction print_msg_from_main:
 Removing instruction b1:
 Removing instruction breturn:
-Removing instruction b2:
+Removing instruction b2_from_print_msg:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Relabelling long label b1_from_print_msg to b2
-Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -732,12 +757,12 @@ Score: 612
 main: {
   //SEG11 [5] call print_msg 
   //SEG12 [9] phi from main to print_msg [phi:main->print_msg]
-  //SEG13 [9] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->print_msg#0] -- pbuz1=pbuc1 
+  //SEG13 [9] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print_msg#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG14 [9] phi (byte) print_msg::idx#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->print_msg#1] -- vbuxx=vbuc1 
+  //SEG14 [9] phi (byte) print_msg::idx#2 = (byte) 1 [phi:main->print_msg#1] -- vbuxx=vbuc1 
     ldx #1
     jsr print_msg
   //SEG15 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -745,7 +770,7 @@ main: {
   //SEG17 [7] call print_msg 
   //SEG18 [9] phi from main::@1 to print_msg [phi:main::@1->print_msg]
   //SEG19 [9] phi (byte*) screen#18 = (byte*) screen#14 [phi:main::@1->print_msg#0] -- register_copy 
-  //SEG20 [9] phi (byte) print_msg::idx#2 = (byte/signed byte/word/signed word/dword/signed dword) 2 [phi:main::@1->print_msg#1] -- vbuxx=vbuc1 
+  //SEG20 [9] phi (byte) print_msg::idx#2 = (byte) 2 [phi:main::@1->print_msg#1] -- vbuxx=vbuc1 
     ldx #2
     jsr print_msg
   //SEG21 main::@return
@@ -756,30 +781,30 @@ main: {
 // print_msg(byte register(X) idx)
 print_msg: {
     .label msg = 4
-  //SEG24 [10] if((byte) print_msg::idx#2==(byte/signed byte/word/signed word/dword/signed dword) 1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
+  //SEG24 [10] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
-    beq b2
-  //SEG25 [11] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
-  //SEG26 print_msg::@2
-  //SEG27 [12] phi from print_msg::@2 to print_msg::@1 [phi:print_msg::@2->print_msg::@1]
-  //SEG28 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg::@2->print_msg::@1#0] -- pbuz1=pbuc1 
+    beq b1
+  //SEG25 [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
+  //SEG26 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_2
     sta msg
     lda #>msg_2
     sta msg+1
-    jmp b1
-  //SEG29 [12] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
-  b2:
-  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg->print_msg::@1#0] -- pbuz1=pbuc1 
+    jmp b2
+  //SEG27 [11] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
+  //SEG28 print_msg::@1
+  b1:
+  //SEG29 [12] phi from print_msg::@1 to print_msg::@2 [phi:print_msg::@1->print_msg::@2]
+  //SEG30 [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg::@1->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta msg
     lda #>msg_1
     sta msg+1
-  //SEG31 print_msg::@1
-  b1:
+  //SEG31 print_msg::@2
+  b2:
   //SEG32 [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
   //SEG33 [14] call print 
-  //SEG34 [16] phi from print_msg::@1 to print [phi:print_msg::@1->print]
+  //SEG34 [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
     jsr print
   //SEG35 print_msg::@return
   //SEG36 [15] return 

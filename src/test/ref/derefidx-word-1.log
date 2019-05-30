@@ -1,0 +1,233 @@
+Adding pointer type conversion cast (byte*) main::screen in (byte*) main::screen ← (number) $400
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (number~) main::$0 ← (number) $28 * (number) $a
+  *((byte*) main::screen#0 + (number~) main::$0) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(number~) main::$0
+(label) main::@return
+(byte*) main::screen
+(byte*) main::screen#0
+
+Adding number conversion cast (unumber) main::$0 in *((byte*) main::screen#0 + (number~) main::$0) ← (byte) 'a'
+Successful SSA optimization PassNAddNumberTypeConversions
+Adding number conversion cast (unumber) dk.camelot64.kickc.model.values.AssignmentRValue@7e09bee in (unumber~) main::$0 ← (number) $28 * (number) $a
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (unumber~) main::$0 ← (unumber)(number~) main::$1
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Constant right-side identified [1] (number~) main::$1 ← (number) $28 * (number) $a
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const number) main::$1 = $28*$a
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (unumber)main::$1 in [2] (unumber~) main::$0 ← (unumber)(const number) main::$1
+Successful SSA optimization Pass2ConstantValues
+Constant (const unumber) main::$0 = (unumber)main::$1
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying constant integer cast (const unumber) main::$1
+Successful SSA optimization PassNCastSimplification
+Constant inlined main::$1 = (number) $28*(number) $a
+Constant inlined main::$0 = (number) $28*(number) $a
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::screen#0+$28*$a)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding number conversion cast (unumber) $28*$a in [0] *((const byte*) main::screen#0+(number) $28*(number) $a) ← (byte) 'a'
+Successful SSA optimization PassNAddNumberTypeConversions
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::screen
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests that array-indexing by a constant word is turned into a constant pointer
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label screen = $400
+  //SEG10 [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen+$28*$a
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 27 combination 
+Uplifting [] best 27 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests that array-indexing by a constant word is turned into a constant pointer
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label screen = $400
+  //SEG10 [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen+$28*$a
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(byte*) main::screen
+(const byte*) main::screen#0 screen = (byte*) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+//SEG0 File Comments
+// Tests that array-indexing by a constant word is turned into a constant pointer
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label screen = $400
+  //SEG10 [4] *((const byte*) main::screen#0+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen+$28*$a
+  //SEG11 main::@return
+  //SEG12 [5] return 
+    rts
+}
+

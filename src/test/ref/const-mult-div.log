@@ -1,16 +1,17 @@
+Adding pointer type conversion cast (byte*) main::screen in (byte*) main::screen ← (number) $400
 Identified constant variable (byte*) main::screen
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte/signed byte/word/signed word/dword/signed dword~) main::$0 ← (byte/signed byte/word/signed word/dword/signed dword) $e / (byte/signed byte/word/signed word/dword/signed dword) 3
-  (byte/signed word/word/dword/signed dword/signed byte~) main::$1 ← (byte/signed byte/word/signed word/dword/signed dword) 6 * (byte/signed byte/word/signed word/dword/signed dword~) main::$0
-  (byte/signed byte/word/signed word/dword/signed dword~) main::$2 ← (byte/signed byte/word/signed word/dword/signed dword) $16 % (byte/signed byte/word/signed word/dword/signed dword) 3
-  (byte/signed word/word/dword/signed dword/signed byte~) main::$3 ← (byte/signed word/word/dword/signed dword/signed byte~) main::$1 + (byte/signed byte/word/signed word/dword/signed dword~) main::$2
-  (byte) main::b#0 ← (byte/signed word/word/dword/signed dword/signed byte~) main::$3
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  *((byte*) main::screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::b#0
+  (number~) main::$0 ← (number) $e / (number) 3
+  (number~) main::$1 ← (number) 6 * (number~) main::$0
+  (number~) main::$2 ← (number) $16 % (number) 3
+  (number~) main::$3 ← (number~) main::$1 + (number~) main::$2
+  (byte) main::b#0 ← (number~) main::$3
+  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  *((byte*) main::screen#0 + (number) 0) ← (byte) main::b#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -28,43 +29,65 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte/signed byte/word/signed word/dword/signed dword~) main::$0
-(byte/signed word/word/dword/signed dword/signed byte~) main::$1
-(byte/signed byte/word/signed word/dword/signed dword~) main::$2
-(byte/signed word/word/dword/signed dword/signed byte~) main::$3
+(number~) main::$0
+(number~) main::$1
+(number~) main::$2
+(number~) main::$3
 (label) main::@return
 (byte) main::b
 (byte) main::b#0
 (byte*) main::screen
 (byte*) main::screen#0
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
-Alias (byte) main::b#0 = (byte/signed word/word/dword/signed dword/signed byte~) main::$3 
-Successful SSA optimization Pass2AliasElimination
-Constant (const byte/signed byte/word/signed word/dword/signed dword) main::$0 = $e/3
-Constant (const byte/signed byte/word/signed word/dword/signed dword) main::$2 = $16%3
-Constant (const byte*) main::screen#0 = ((byte*))$400
+Adding number conversion cast (unumber) main::$3 in (byte) main::b#0 ← (number~) main::$3
+Adding number conversion cast (unumber) 0 in *((byte*) main::screen#0 + (number) 0) ← (byte) main::b#0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) main::b#0 ← (unumber)(number~) main::$3
+Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant right-side identified [0] (number~) main::$0 ← (number) $e / (number) 3
+Constant right-side identified [2] (number~) main::$2 ← (number) $16 % (number) 3
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const number) main::$0 = $e/3
+Constant (const number) main::$2 = $16%3
+Constant (const byte*) main::screen#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte/signed word/word/dword/signed dword/signed byte) main::$1 = 6*main::$0
+Simplifying expression containing zero main::screen#0 in [6] *((const byte*) main::screen#0 + (byte) 0) ← (byte) main::b#0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Constant right-side identified [0] (number~) main::$1 ← (number) 6 * (const number) main::$0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const number) main::$1 = 6*main::$0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::b#0 = main::$1+main::$2
+Constant right-side identified [0] (number~) main::$3 ← (const number) main::$1 + (const number) main::$2
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const number) main::$3 = main::$1+main::$2
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(main::screen#0+0)
-Successful SSA optimization Pass2ConstantAdditionElimination
-Constant inlined main::$1 = (byte/signed byte/word/signed word/dword/signed dword) 6*(byte/signed byte/word/signed word/dword/signed dword) $e/(byte/signed byte/word/signed word/dword/signed dword) 3
-Constant inlined main::$2 = (byte/signed byte/word/signed word/dword/signed dword) $16%(byte/signed byte/word/signed word/dword/signed dword) 3
-Constant inlined main::$0 = (byte/signed byte/word/signed word/dword/signed dword) $e/(byte/signed byte/word/signed word/dword/signed dword) 3
+Constant value identified (unumber)main::$3 in [1] (byte) main::b#0 ← (unumber)(const number) main::$3
+Successful SSA optimization Pass2ConstantValues
+Constant (const byte) main::b#0 = (unumber)main::$3
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying constant integer cast (const unumber) main::$3
+Successful SSA optimization PassNCastSimplification
+Constant inlined main::$3 = (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
+Constant inlined main::$1 = (number) 6*(number) $e/(number) 3
+Constant inlined main::$2 = (number) $16%(number) 3
+Constant inlined main::$0 = (number) $e/(number) 3
 Successful SSA optimization Pass2ConstantInlining
-Simplifying constant plus zero main::screen#0+0
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -202,9 +225,9 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (byte) main::b
-(const byte) main::b#0 b = (byte/signed byte/word/signed word/dword/signed dword) 6*(byte/signed byte/word/signed word/dword/signed dword) $e/(byte/signed byte/word/signed word/dword/signed dword) 3+(byte/signed byte/word/signed word/dword/signed dword) $16%(byte/signed byte/word/signed word/dword/signed dword) 3
+(const byte) main::b#0 b = (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
 (byte*) main::screen
-(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) main::screen#0 screen = (byte*) 1024
 
 
 

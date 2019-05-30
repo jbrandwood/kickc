@@ -1,12 +1,15 @@
+Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
 Identified constant variable (byte*) main::SCREEN
+Culled Empty Block (label) @1
+Culled Empty Block (label) inci::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) i#0 ← (number) 0
   to:@2
 main: scope:[main]  from @2
   (byte) i#13 ← phi( @2/(byte) i#14 )
-  (byte) main::a#0 ← (byte/signed byte/word/signed word/dword/signed dword) 4
+  (byte) main::a#0 ← (number) 4
   call inci 
   (byte) inci::return#0 ← (byte) inci::return#3
   to:main::@1
@@ -29,9 +32,9 @@ main::@2: scope:[main]  from main::@1
   (byte) i#2 ← (byte) i#8
   (byte~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
   (byte) main::a#2 ← (byte~) main::$3
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
   *((byte*) main::SCREEN#0) ← (byte) i#2
-  (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (number) 1
   *((byte*~) main::$4) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
@@ -41,8 +44,8 @@ main::@return: scope:[main]  from main::@2
   to:@return
 inci: scope:[inci]  from main main::@1
   (byte) i#10 ← phi( main/(byte) i#13 main::@1/(byte) i#1 )
-  (byte/signed word/word/dword/signed dword~) inci::$0 ← (byte) i#10 + (byte/signed byte/word/signed word/dword/signed dword) 7
-  (byte) i#4 ← (byte/signed word/word/dword/signed dword~) inci::$0
+  (number~) inci::$0 ← (byte) i#10 + (number) 7
+  (byte) i#4 ← (number~) inci::$0
   (byte) inci::return#2 ← (byte) i#4
   to:inci::@return
 inci::@return: scope:[inci]  from inci
@@ -84,7 +87,7 @@ SYMBOL TABLE SSA
 (byte) i#8
 (byte) i#9
 (byte()) inci()
-(byte/signed word/word/dword/signed dword~) inci::$0
+(number~) inci::$0
 (label) inci::@return
 (byte) inci::return
 (byte) inci::return#0
@@ -112,6 +115,28 @@ SYMBOL TABLE SSA
 (byte) main::a#3
 (byte) main::a#4
 
+Adding number conversion cast (unumber) 0 in (byte) i#0 ← (number) 0
+Adding number conversion cast (unumber) 4 in (byte) main::a#0 ← (number) 4
+Adding number conversion cast (unumber) 1 in (byte*~) main::$4 ← (byte*) main::SCREEN#0 + (number) 1
+Adding number conversion cast (unumber) 7 in (number~) inci::$0 ← (byte) i#10 + (number) 7
+Adding number conversion cast (unumber) inci::$0 in (number~) inci::$0 ← (byte) i#10 + (unumber)(number) 7
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) i#0 ← (unumber)(number) 0
+Inlining cast (byte) main::a#0 ← (unumber)(number) 4
+Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 0
+Simplifying constant integer cast 4
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 1
+Simplifying constant integer cast 7
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 7
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) inci::$0 ← (byte) i#10 + (byte) 7
 Alias (byte) inci::return#0 = (byte) inci::return#4 
 Alias (byte) main::a#0 = (byte) main::a#3 
 Alias (byte) i#1 = (byte) i#7 
@@ -119,41 +144,44 @@ Alias (byte) main::a#1 = (byte~) main::$1 (byte) main::a#4
 Alias (byte) inci::return#1 = (byte) inci::return#5 
 Alias (byte) i#2 = (byte) i#8 (byte) i#9 (byte) i#3 
 Alias (byte) main::a#2 = (byte~) main::$3 
-Alias (byte) i#11 = (byte) i#4 (byte/signed word/word/dword/signed dword~) inci::$0 (byte) i#5 
+Alias (byte) i#11 = (byte) i#4 (byte~) inci::$0 (byte) i#5 
 Alias (byte) inci::return#2 = (byte) inci::return#6 (byte) inci::return#3 
 Alias (byte) i#0 = (byte) i#14 
 Alias (byte) i#12 = (byte) i#6 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte) i#13 (byte) i#0
-Redundant Phi (byte) i#1 (byte) i#11
-Redundant Phi (byte) i#2 (byte) i#11
-Redundant Phi (byte) i#12 (byte) i#2
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte) i#13 (byte) i#0
+Identical Phi Values (byte) i#1 (byte) i#11
+Identical Phi Values (byte) i#2 (byte) i#11
+Identical Phi Values (byte) i#12 (byte) i#2
+Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte) i#0 = 0
 Constant (const byte) main::a#0 = 4
-Constant (const byte*) main::SCREEN#0 = ((byte*))$400
+Constant (const byte*) main::SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::$4 = main::SCREEN#0+1
-Successful SSA optimization Pass2ConstantIdentification
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Converting *(pointer+n) to pointer[n] [20] *((byte*~) main::$4) ← (byte) main::a#2  -- *(main::SCREEN#0 + 1)
+Successful SSA optimization Pass2InlineDerefIdx
+Eliminating unused variable (byte*~) main::$4 and assignment [9] (byte*~) main::$4 ← (const byte*) main::SCREEN#0 + (byte) 1
+Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) main::a#0
 Inlining constant with var siblings (const byte) i#0
-Constant inlined main::a#0 = (byte/signed byte/word/signed word/dword/signed dword) 4
-Constant inlined main::$4 = (const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1
-Constant inlined i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::a#0 = (byte) 4
+Constant inlined i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::SCREEN#0+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to inci:5 inci:10 
+Calls in [main] to inci:6 inci:11 
 
 Created 1 initial phi equivalence classes
-Coalesced [9] i#15 ← i#11
+Coalesced [10] i#15 ← i#11
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -177,7 +205,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main
   [7] (byte~) main::$0 ← (byte) inci::return#0
-  [8] (byte) main::a#1 ← (byte/signed byte/word/signed word/dword/signed dword) 4 + (byte~) main::$0
+  [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0
   [9] call inci 
   [10] (byte) inci::return#1 ← (byte) inci::return#2
   to:main::@2
@@ -185,14 +213,14 @@ main::@2: scope:[main]  from main::@1
   [11] (byte~) main::$2 ← (byte) inci::return#1
   [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2
   [13] *((const byte*) main::SCREEN#0) ← (byte) i#11
-  [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a#2
+  [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [15] return 
   to:@return
 inci: scope:[inci]  from main main::@1
-  [16] (byte) i#10 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) i#11 )
-  [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word/dword/signed dword) 7
+  [16] (byte) i#10 ← phi( main/(byte) 0 main::@1/(byte) i#11 )
+  [17] (byte) i#11 ← (byte) i#10 + (byte) 7
   [18] (byte) inci::return#2 ← (byte) i#11
   to:inci::@return
 inci::@return: scope:[inci]  from inci
@@ -278,7 +306,7 @@ main: {
   //SEG11 [5] call inci 
   //SEG12 [16] phi from main to inci [phi:main->inci]
   inci_from_main:
-  //SEG13 [16] phi (byte) i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inci#0] -- vbuz1=vbuc1 
+  //SEG13 [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jsr inci
@@ -291,7 +319,7 @@ main: {
   //SEG16 [7] (byte~) main::$0 ← (byte) inci::return#0 -- vbuz1=vbuz2 
     lda inci.return
     sta _0
-  //SEG17 [8] (byte) main::a#1 ← (byte/signed byte/word/signed word/dword/signed dword) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuz2 
+  //SEG17 [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuz2 
     lax _0
     axs #-[4]
     stx a
@@ -317,7 +345,7 @@ main: {
   //SEG25 [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuz1 
     lda i
     sta SCREEN
-  //SEG26 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
+  //SEG26 [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
     lda a_2
     sta SCREEN+1
     jmp breturn
@@ -331,7 +359,7 @@ inci: {
     .label return = 3
     .label return_1 = 6
     .label return_2 = 9
-  //SEG30 [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuz1=vbuz1_plus_vbuc1 
+  //SEG30 [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuz1=vbuz1_plus_vbuc1 
     lax i
     axs #-[7]
     stx i
@@ -348,10 +376,10 @@ inci: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ i#10 i#11 ]
-Statement [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word/dword/signed dword) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
+Statement [17] (byte) i#11 ← (byte) i#10 + (byte) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ main::a#1 ]
 Statement [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] ) always clobbers reg byte a 
-Statement [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word/dword/signed dword) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
+Statement [17] (byte) i#11 ← (byte) i#10 + (byte) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ i#10 i#11 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ inci::return#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ main::$0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
@@ -404,7 +432,7 @@ main: {
   //SEG11 [5] call inci 
   //SEG12 [16] phi from main to inci [phi:main->inci]
   inci_from_main:
-  //SEG13 [16] phi (byte) i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
+  //SEG13 [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
     ldy #0
     jsr inci
   //SEG14 [6] (byte) inci::return#0 ← (byte) inci::return#2
@@ -412,7 +440,7 @@ main: {
   //SEG15 main::@1
   b1:
   //SEG16 [7] (byte~) main::$0 ← (byte) inci::return#0
-  //SEG17 [8] (byte) main::a#1 ← (byte/signed byte/word/signed word/dword/signed dword) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
+  //SEG17 [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
     clc
     adc #4
     sta a
@@ -432,7 +460,7 @@ main: {
     tax
   //SEG25 [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuyy 
     sty SCREEN
-  //SEG26 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuxx 
+  //SEG26 [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     jmp breturn
   //SEG27 main::@return
@@ -442,7 +470,7 @@ main: {
 }
 //SEG29 inci
 inci: {
-  //SEG30 [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuyy_plus_vbuc1 
+  //SEG30 [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuyy=vbuyy_plus_vbuc1 
     tya
     clc
     adc #7
@@ -503,7 +531,7 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
 (byte) main::a
 (byte) main::a#1 a zp ZP_BYTE:2 1.0
 (byte) main::a#2 reg byte x 2.0
@@ -540,13 +568,13 @@ main: {
     .label a = 2
   //SEG11 [5] call inci 
   //SEG12 [16] phi from main to inci [phi:main->inci]
-  //SEG13 [16] phi (byte) i#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
+  //SEG13 [16] phi (byte) i#10 = (byte) 0 [phi:main->inci#0] -- vbuyy=vbuc1 
     ldy #0
     jsr inci
   //SEG14 [6] (byte) inci::return#0 ← (byte) inci::return#2
   //SEG15 main::@1
   //SEG16 [7] (byte~) main::$0 ← (byte) inci::return#0
-  //SEG17 [8] (byte) main::a#1 ← (byte/signed byte/word/signed word/dword/signed dword) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
+  //SEG17 [8] (byte) main::a#1 ← (byte) 4 + (byte~) main::$0 -- vbuz1=vbuc1_plus_vbuaa 
     clc
     adc #4
     sta a
@@ -563,7 +591,7 @@ main: {
     tax
   //SEG25 [13] *((const byte*) main::SCREEN#0) ← (byte) i#11 -- _deref_pbuc1=vbuyy 
     sty SCREEN
-  //SEG26 [14] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuxx 
+  //SEG26 [14] *((const byte*) main::SCREEN#0+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
   //SEG27 main::@return
   //SEG28 [15] return 
@@ -571,7 +599,7 @@ main: {
 }
 //SEG29 inci
 inci: {
-  //SEG30 [17] (byte) i#11 ← (byte) i#10 + (byte/signed byte/word/signed word/dword/signed dword) 7 -- vbuyy=vbuyy_plus_vbuc1 
+  //SEG30 [17] (byte) i#11 ← (byte) i#10 + (byte) 7 -- vbuyy=vbuyy_plus_vbuc1 
     tya
     clc
     adc #7

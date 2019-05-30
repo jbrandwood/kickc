@@ -1,11 +1,24 @@
 Resolved forward reference fn1 to (void()) fn1()
 Resolved forward reference fn2 to (void()) fn2()
+Adding pointer type conversion cast (byte*) fn1::BORDERCOL in (byte*) fn1::BORDERCOL ← (number) $d020
+Adding pointer type conversion cast (byte*) fn2::BGCOL in (byte*) fn2::BGCOL ← (number) $d021
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) @1
+Culled Empty Block (label) getfn::@4
+Culled Empty Block (label) getfn::@2
+Culled Empty Block (label) getfn::@5
+Culled Empty Block (label) getfn::@6
+Culled Empty Block (label) @2
+Culled Empty Block (label) @3
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@4
 main: scope:[main]  from @4
-  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@7
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@7/(byte) main::i#4 )
@@ -29,8 +42,8 @@ main::@return: scope:[main]  from main::@1
   to:@return
 getfn: scope:[getfn]  from main::@2
   (byte) getfn::b#1 ← phi( main::@2/(byte) getfn::b#0 )
-  (byte~) getfn::$0 ← (byte) getfn::b#1 & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (bool~) getfn::$1 ← (byte~) getfn::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (number~) getfn::$0 ← (byte) getfn::b#1 & (number) 1
+  (bool~) getfn::$1 ← (number~) getfn::$0 == (number) 0
   if((bool~) getfn::$1) goto getfn::@1
   to:getfn::@3
 getfn::@1: scope:[getfn]  from getfn
@@ -47,14 +60,14 @@ getfn::@return: scope:[getfn]  from getfn::@1 getfn::@3
   return 
   to:@return
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
+  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (number) $d020
   *((byte*) fn1::BORDERCOL#0) ← ++ *((byte*) fn1::BORDERCOL#0)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
   to:@return
 fn2: scope:[fn2]  from
-  (byte*) fn2::BGCOL#0 ← ((byte*)) (word/dword/signed dword) $d021
+  (byte*) fn2::BGCOL#0 ← ((byte*)) (number) $d021
   *((byte*) fn2::BGCOL#0) ← ++ *((byte*) fn2::BGCOL#0)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
@@ -81,7 +94,7 @@ SYMBOL TABLE SSA
 (byte*) fn2::BGCOL
 (byte*) fn2::BGCOL#0
 (void()*()) getfn((byte) getfn::b)
-(byte~) getfn::$0
+(number~) getfn::$0
 (bool~) getfn::$1
 (void()*~) getfn::$2
 (void()*~) getfn::$3
@@ -111,8 +124,26 @@ SYMBOL TABLE SSA
 (byte) main::i#3
 (byte) main::i#4
 
-Culled Empty Block (label) @5
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Adding number conversion cast (unumber) 1 in (number~) getfn::$0 ← (byte) getfn::b#1 & (number) 1
+Adding number conversion cast (unumber) getfn::$0 in (number~) getfn::$0 ← (byte) getfn::b#1 & (unumber)(number) 1
+Adding number conversion cast (unumber) 0 in (bool~) getfn::$1 ← (unumber~) getfn::$0 == (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) main::i#0 ← (unumber)(number) 0
+Inlining cast (byte*) fn1::BORDERCOL#0 ← (byte*)(number) $d020
+Inlining cast (byte*) fn2::BGCOL#0 ← (byte*)(number) $d021
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant pointer cast (byte*) 53281
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) getfn::$0 ← (byte) getfn::b#1 & (byte) 1
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (void()*) getfn::return#0 = (void()*) getfn::return#4 
 Alias (byte) main::i#1 = (byte) main::i#4 
@@ -120,44 +151,48 @@ Alias (void()*) getfn::return#1 = (void()*~) getfn::$3
 Alias (void()*) getfn::return#2 = (void()*~) getfn::$2 
 Alias (void()*) getfn::return#3 = (void()*) getfn::return#5 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte) getfn::b#1 (byte) getfn::b#0
-Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) getfn::$1 [15] if((byte~) getfn::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto getfn::@1
+Identical Phi Values (byte) getfn::b#1 (byte) getfn::b#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) getfn::$1 [15] if((byte~) getfn::$0==(byte) 0) goto getfn::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [16] (void()*) getfn::return#1 ← & (void()) fn1()
+Constant right-side identified [18] (void()*) getfn::return#2 ← & (void()) fn2()
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#0 = 0
 Constant (const void()*) getfn::return#1 = &fn1
 Constant (const void()*) getfn::return#2 = &fn2
-Constant (const byte*) fn1::BORDERCOL#0 = ((byte*))$d020
-Constant (const byte*) fn2::BGCOL#0 = ((byte*))$d021
+Constant (const byte*) fn1::BORDERCOL#0 = (byte*) 53280
+Constant (const byte*) fn2::BGCOL#0 = (byte*) 53281
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [1] if(true) goto main::@2
+if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Culled Empty Block (label) getfn::@1
-Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const void()*) getfn::return#1
 Inlining constant with var siblings (const void()*) getfn::return#2
 Constant inlined getfn::return#1 = &(void()) fn1()
-Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::i#0 = (byte) 0
 Constant inlined getfn::return#2 = &(void()) fn2()
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
+Adding NOP phi() at start of @5
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of getfn::@3
+Adding NOP phi() at start of getfn::@1
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to getfn:8 
+Calls in [main] to getfn:9 
 
 Created 2 initial phi equivalence classes
-Coalesced [12] main::i#5 ← main::i#1
+Coalesced [13] main::i#5 ← main::i#1
 Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) @5
+Culled Empty Block (label) getfn::@3
 Renumbering block @4 to @1
 Renumbering block main::@7 to main::@3
-Renumbering block getfn::@3 to getfn::@1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -178,7 +213,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@3/(byte) main::i#1 )
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@3/(byte) main::i#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [6] (byte) main::i#1 ← ++ (byte) main::i#2
@@ -191,14 +226,14 @@ main::@3: scope:[main]  from main::@2
   [11] call (void()*~) main::$1 
   to:main::@1
 getfn: scope:[getfn]  from main::@2
-  [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte/signed byte/word/signed word/dword/signed dword) 1
-  [13] if((byte~) getfn::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto getfn::@return
-  to:getfn::@1
+  [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1
+  [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1
+  to:getfn::@return
 getfn::@1: scope:[getfn]  from getfn
   [14] phi()
   to:getfn::@return
 getfn::@return: scope:[getfn]  from getfn getfn::@1
-  [15] (void()*) getfn::return#3 ← phi( getfn/&(void()) fn1() getfn::@1/&(void()) fn2() )
+  [15] (void()*) getfn::return#3 ← phi( getfn::@1/&(void()) fn1() getfn/&(void()) fn2() )
   [16] return 
   to:@return
 fn2: scope:[fn2]  from
@@ -284,7 +319,7 @@ main: {
     .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -329,30 +364,30 @@ getfn: {
     .label b = 5
     .label return = 6
     .label return_3 = 3
-  //SEG25 [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG25 [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and b
     sta _0
-  //SEG26 [13] if((byte~) getfn::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto getfn::@return -- vbuz1_eq_0_then_la1 
+  //SEG26 [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1 -- vbuz1_eq_0_then_la1 
     lda _0
     cmp #0
-    beq breturn_from_getfn
-  //SEG27 [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
-  b1_from_getfn:
-    jmp b1
-  //SEG28 getfn::@1
-  b1:
-  //SEG29 [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
-  breturn_from_b1:
-  //SEG30 [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
+    beq b1_from_getfn
+  //SEG27 [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
+  breturn_from_getfn:
+  //SEG28 [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn2
     sta return_3
     lda #>fn2
     sta return_3+1
     jmp breturn
-  //SEG31 [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
-  breturn_from_getfn:
-  //SEG32 [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
+  //SEG29 [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
+  b1_from_getfn:
+    jmp b1
+  //SEG30 getfn::@1
+  b1:
+  //SEG31 [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
+  breturn_from_b1:
+  //SEG32 [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn1
     sta return_3
     lda #>fn1
@@ -450,7 +485,7 @@ main: {
     .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -483,27 +518,27 @@ main: {
 // getfn(byte register(A) b)
 getfn: {
     .label return = 3
-  //SEG25 [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuaa_band_vbuc1 
+  //SEG25 [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1 -- vbuaa=vbuaa_band_vbuc1 
     and #1
-  //SEG26 [13] if((byte~) getfn::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto getfn::@return -- vbuaa_eq_0_then_la1 
+  //SEG26 [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq breturn_from_getfn
-  //SEG27 [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
-  b1_from_getfn:
-    jmp b1
-  //SEG28 getfn::@1
-  b1:
-  //SEG29 [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
-  breturn_from_b1:
-  //SEG30 [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
+    beq b1_from_getfn
+  //SEG27 [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
+  breturn_from_getfn:
+  //SEG28 [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn2
     sta return
     lda #>fn2
     sta return+1
     jmp breturn
-  //SEG31 [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
-  breturn_from_getfn:
-  //SEG32 [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
+  //SEG29 [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
+  b1_from_getfn:
+    jmp b1
+  //SEG30 getfn::@1
+  b1:
+  //SEG31 [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
+  breturn_from_b1:
+  //SEG32 [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn1
     sta return
     lda #>fn1
@@ -549,6 +584,7 @@ Removing instruction jmp breturn
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1 with b2
+Replacing label b1_from_getfn with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
@@ -561,7 +597,7 @@ Removing instruction bend:
 Removing instruction b1_from_main:
 Removing instruction b3:
 Removing instruction b1_from_b3:
-Removing instruction b1:
+Removing instruction breturn_from_getfn:
 Removing instruction breturn:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -570,8 +606,6 @@ Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
 Replacing jump to rts with rts in jmp breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label breturn_from_getfn to b1
-Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction bbegin:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -583,11 +617,11 @@ FINAL SYMBOL TABLE
 (void()) fn1()
 (label) fn1::@return
 (byte*) fn1::BORDERCOL
-(const byte*) fn1::BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) $d020
+(const byte*) fn1::BORDERCOL#0 BORDERCOL = (byte*) 53280
 (void()) fn2()
 (label) fn2::@return
 (byte*) fn2::BGCOL
-(const byte*) fn2::BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) $d021
+(const byte*) fn2::BGCOL#0 BGCOL = (byte*) 53281
 (void()*()) getfn((byte) getfn::b)
 (byte~) getfn::$0 reg byte a 4.0
 (label) getfn::@1
@@ -634,7 +668,7 @@ main: {
     .label _1 = 3
     .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
   //SEG13 main::@1
@@ -661,23 +695,23 @@ main: {
 // getfn(byte register(A) b)
 getfn: {
     .label return = 3
-  //SEG25 [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuaa_band_vbuc1 
+  //SEG25 [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1 -- vbuaa=vbuaa_band_vbuc1 
     and #1
-  //SEG26 [13] if((byte~) getfn::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto getfn::@return -- vbuaa_eq_0_then_la1 
+  //SEG26 [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b1
-  //SEG27 [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
-  //SEG28 getfn::@1
-  //SEG29 [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
-  //SEG30 [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
+  //SEG27 [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
+  //SEG28 [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn2
     sta return
     lda #>fn2
     sta return+1
     rts
-  //SEG31 [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
+  //SEG29 [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
+  //SEG30 getfn::@1
   b1:
-  //SEG32 [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
+  //SEG31 [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
+  //SEG32 [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn1
     sta return
     lda #>fn1

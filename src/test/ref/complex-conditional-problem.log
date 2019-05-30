@@ -1,8 +1,14 @@
+Adding pointer type conversion cast (byte*) RASTER in (byte*) RASTER ← (number) $d012
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER#0 ← ((byte*)) (word/dword/signed dword) $d012
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) RASTER#0 ← ((byte*)) (number) $d012
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@1
 main: scope:[main]  from @1
   to:main::@1
@@ -11,8 +17,8 @@ main::@1: scope:[main]  from main main::@4
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::key#0 ← *((byte*) RASTER#0)
-  (bool~) main::$0 ← (byte) main::key#0 > (byte/signed byte/word/signed word/dword/signed dword) $20
-  (bool~) main::$1 ← (byte) main::key#0 < (byte/signed byte/word/signed word/dword/signed dword) $40
+  (bool~) main::$0 ← (byte) main::key#0 > (number) $20
+  (bool~) main::$1 ← (byte) main::key#0 < (number) $40
   (bool~) main::$2 ← (bool~) main::$0 || (bool~) main::$1
   (bool~) main::$3 ← ! (bool~) main::$2
   if((bool~) main::$3) goto main::@4
@@ -22,7 +28,7 @@ main::@4: scope:[main]  from main::@2 main::@7
   *((byte*) SCREEN#0) ← (byte) main::key#2
   to:main::@1
 main::@7: scope:[main]  from main::@2
-  (byte) main::key#1 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::key#1 ← (number) 0
   to:main::@4
 main::@return: scope:[main]  from main::@1
   return 
@@ -58,51 +64,79 @@ SYMBOL TABLE SSA
 (byte) main::key#1
 (byte) main::key#2
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) $20 in (bool~) main::$0 ← (byte) main::key#0 > (number) $20
+Adding number conversion cast (unumber) $40 in (bool~) main::$1 ← (byte) main::key#0 < (number) $40
+Adding number conversion cast (unumber) 0 in (byte) main::key#1 ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) main::key#1 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53266
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $20
+Simplifying constant integer cast $40
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting ! if()-condition to reversed if() [7] (bool~) main::$3 ← ! (bool~) main::$2
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Rewriting || if()-condition to two if()s [6] (bool~) main::$2 ← (bool~) main::$0 || (bool~) main::$1
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const byte*) RASTER#0 = ((byte*))$d012
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte*) RASTER#0 = (byte*) 53266
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte) main::key#1 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [0] if(true) goto main::@2
+if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Culled Empty Block (label) main::@1
-Successful SSA optimization Pass2CullEmptyBlocks
-Simple Condition (bool~) main::$0 [3] if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@7
-Simple Condition (bool~) main::$1 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@7
+Simple Condition (bool~) main::$0 [3] if((byte) main::key#0>(byte) $20) goto main::@7
+Simple Condition (bool~) main::$1 [7] if((byte) main::key#0<(byte) $40) goto main::@7
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting conditional comparison if((byte) main::key#0>(byte/signed byte/word/signed word/dword/signed dword) $20) goto main::@7
+Negating conditional jump and destination [7] if((byte) main::key#0>=(byte) $40) goto main::@4
+Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
+Rewriting conditional comparison [3] if((byte) main::key#0>(byte) $20) goto main::@7
+Adding number conversion cast (unumber) $20+1 in if((byte) main::key#0>=(byte) $20+(number) 1) goto main::@7
+Adding number conversion cast (unumber) 1 in if((byte) main::key#0>=(unumber)(byte) $20+(number) 1) goto main::@7
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast (byte) $20+(unumber)(number) 1
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::key#1
-Constant inlined main::key#1 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::key#1 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@10(between main::@9 and main::@4)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@7
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [8] main::key#3 ← main::key#0
+Coalesced [13] main::key#3 ← main::key#0
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) main::@10
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@1
+Culled Empty Block (label) main::@7
 Renumbering block main::@2 to main::@1
 Renumbering block main::@4 to main::@2
-Renumbering block main::@7 to main::@3
-Renumbering block main::@9 to main::@4
+Renumbering block main::@9 to main::@3
+Renumbering block main::@10 to main::@4
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@3
+Adding NOP phi() at start of main::@4
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -119,18 +153,18 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::key#0 ← *((const byte*) RASTER#0)
-  [6] if((byte) main::key#0>=(byte/signed byte/word/signed word/dword/signed dword) $20+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3
-  to:main::@4
-main::@4: scope:[main]  from main::@1
-  [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@3
+  [6] if((byte) main::key#0>=(byte) $20+(byte) 1) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  [7] if((byte) main::key#0>=(byte) $40) goto main::@4
   to:main::@2
-main::@2: scope:[main]  from main::@3 main::@4
-  [8] (byte) main::key#2 ← phi( main::@4/(byte) main::key#0 main::@3/(byte/signed byte/word/signed word/dword/signed dword) 0 )
-  [9] *((const byte*) SCREEN#0) ← (byte) main::key#2
+main::@4: scope:[main]  from main::@3
+  [8] phi()
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@3 main::@4
+  [9] (byte) main::key#2 ← phi( main::@4/(byte) main::key#0 main::@1/(byte) 0 main::@3/(byte) 0 )
+  [10] *((const byte*) SCREEN#0) ← (byte) main::key#2
   to:main::@1
-main::@3: scope:[main]  from main::@1 main::@4
-  [10] phi()
-  to:main::@2
 
 
 VARIABLE REGISTER WEIGHTS
@@ -138,7 +172,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) SCREEN
 (void()) main()
 (byte) main::key
-(byte) main::key#0 14.666666666666666
+(byte) main::key#0 11.0
 (byte) main::key#2 22.0
 
 Initial phi equivalence classes
@@ -182,46 +216,46 @@ main: {
   //SEG12 [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuz1=_deref_pbuc1 
     lda RASTER
     sta key
-  //SEG13 [6] if((byte) main::key#0>=(byte/signed byte/word/signed word/dword/signed dword) $20+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3 -- vbuz1_ge_vbuc1_then_la1 
+  //SEG13 [6] if((byte) main::key#0>=(byte) $20+(byte) 1) goto main::@2 -- vbuz1_ge_vbuc1_then_la1 
     lda key
     cmp #$20+1
-    bcs b3_from_b1
-    jmp b4
-  //SEG14 main::@4
-  b4:
-  //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
+    bcs b2_from_b1
+    jmp b3
+  //SEG14 main::@3
+  b3:
+  //SEG15 [7] if((byte) main::key#0>=(byte) $40) goto main::@4 -- vbuz1_ge_vbuc1_then_la1 
     lda key
     cmp #$40
-    bcc b3_from_b4
-  //SEG16 [8] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
-  b2_from_b4:
-  //SEG17 [8] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@4->main::@2#0] -- register_copy 
-    jmp b2
-  //SEG18 main::@2
-  b2:
-  //SEG19 [9] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuz1 
-    lda key
-    sta SCREEN
-    jmp b1
-  //SEG20 [10] phi from main::@1 main::@4 to main::@3 [phi:main::@1/main::@4->main::@3]
-  b3_from_b1:
-  b3_from_b4:
-    jmp b3
-  //SEG21 main::@3
-  b3:
-  //SEG22 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+    bcs b4_from_b3
+  //SEG16 [9] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
+  b2_from_b1:
   b2_from_b3:
-  //SEG23 [8] phi (byte) main::key#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@3->main::@2#0] -- vbuz1=vbuc1 
+  //SEG17 [9] phi (byte) main::key#2 = (byte) 0 [phi:main::@1/main::@3->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta key
     jmp b2
+  //SEG18 [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  b4_from_b3:
+    jmp b4
+  //SEG19 main::@4
+  b4:
+  //SEG20 [9] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  b2_from_b4:
+  //SEG21 [9] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@4->main::@2#0] -- register_copy 
+    jmp b2
+  //SEG22 main::@2
+  b2:
+  //SEG23 [10] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuz1 
+    lda key
+    sta SCREEN
+    jmp b1
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp ZP_BYTE:2 [ main::key#2 main::key#0 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 36.67: zp ZP_BYTE:2 [ main::key#2 main::key#0 ] 
+Uplift Scope [main] 33: zp ZP_BYTE:2 [ main::key#2 main::key#0 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 382 combination reg byte a [ main::key#2 main::key#0 ] 
@@ -260,62 +294,66 @@ main: {
   b1:
   //SEG12 [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
     lda RASTER
-  //SEG13 [6] if((byte) main::key#0>=(byte/signed byte/word/signed word/dword/signed dword) $20+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3 -- vbuaa_ge_vbuc1_then_la1 
+  //SEG13 [6] if((byte) main::key#0>=(byte) $20+(byte) 1) goto main::@2 -- vbuaa_ge_vbuc1_then_la1 
     cmp #$20+1
-    bcs b3_from_b1
-    jmp b4
-  //SEG14 main::@4
-  b4:
-  //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@3 -- vbuaa_lt_vbuc1_then_la1 
-    cmp #$40
-    bcc b3_from_b4
-  //SEG16 [8] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
-  b2_from_b4:
-  //SEG17 [8] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@4->main::@2#0] -- register_copy 
-    jmp b2
-  //SEG18 main::@2
-  b2:
-  //SEG19 [9] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
-    sta SCREEN
-    jmp b1
-  //SEG20 [10] phi from main::@1 main::@4 to main::@3 [phi:main::@1/main::@4->main::@3]
-  b3_from_b1:
-  b3_from_b4:
+    bcs b2_from_b1
     jmp b3
-  //SEG21 main::@3
+  //SEG14 main::@3
   b3:
-  //SEG22 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
+  //SEG15 [7] if((byte) main::key#0>=(byte) $40) goto main::@4 -- vbuaa_ge_vbuc1_then_la1 
+    cmp #$40
+    bcs b4_from_b3
+  //SEG16 [9] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
+  b2_from_b1:
   b2_from_b3:
-  //SEG23 [8] phi (byte) main::key#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@3->main::@2#0] -- vbuaa=vbuc1 
+  //SEG17 [9] phi (byte) main::key#2 = (byte) 0 [phi:main::@1/main::@3->main::@2#0] -- vbuaa=vbuc1 
     lda #0
     jmp b2
+  //SEG18 [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  b4_from_b3:
+    jmp b4
+  //SEG19 main::@4
+  b4:
+  //SEG20 [9] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  b2_from_b4:
+  //SEG21 [9] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@4->main::@2#0] -- register_copy 
+    jmp b2
+  //SEG22 main::@2
+  b2:
+  //SEG23 [10] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    jmp b1
 }
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp b1
+Removing instruction jmp b3
 Removing instruction jmp b4
 Removing instruction jmp b2
-Removing instruction jmp b3
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b3_from_b1 with b3
-Replacing label b3_from_b4 with b3
+Replacing label b2_from_b1 with b2_from_b3
+Replacing label b4_from_b3 with b2
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
+Removing instruction b2_from_b1:
+Removing instruction b4_from_b3:
+Removing instruction b4:
 Removing instruction b2_from_b4:
-Removing instruction b3_from_b1:
-Removing instruction b3_from_b4:
-Removing instruction b2_from_b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
-Removing instruction b4:
+Removing instruction b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
+Relabelling long label b2_from_b3 to b3
+Succesful ASM optimization Pass5RelabelLongLabels
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -324,23 +362,23 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) RASTER
-(const byte*) RASTER#0 RASTER = ((byte*))(word/dword/signed dword) $d012
+(const byte*) RASTER#0 RASTER = (byte*) 53266
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (label) main::@4
 (byte) main::key
-(byte) main::key#0 reg byte a 14.666666666666666
+(byte) main::key#0 reg byte a 11.0
 (byte) main::key#2 reg byte a 22.0
 
 reg byte a [ main::key#2 main::key#0 ]
 
 
 FINAL ASSEMBLER
-Score: 250
+Score: 220
 
 //SEG0 File Comments
 // Test to provoke Exception when using complex || condition
@@ -364,26 +402,25 @@ main: {
   b1:
   //SEG12 [5] (byte) main::key#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
     lda RASTER
-  //SEG13 [6] if((byte) main::key#0>=(byte/signed byte/word/signed word/dword/signed dword) $20+(byte/signed byte/word/signed word/dword/signed dword) 1) goto main::@3 -- vbuaa_ge_vbuc1_then_la1 
+  //SEG13 [6] if((byte) main::key#0>=(byte) $20+(byte) 1) goto main::@2 -- vbuaa_ge_vbuc1_then_la1 
     cmp #$20+1
     bcs b3
-  //SEG14 main::@4
-  //SEG15 [7] if((byte) main::key#0<(byte/signed byte/word/signed word/dword/signed dword) $40) goto main::@3 -- vbuaa_lt_vbuc1_then_la1 
+  //SEG14 main::@3
+  //SEG15 [7] if((byte) main::key#0>=(byte) $40) goto main::@4 -- vbuaa_ge_vbuc1_then_la1 
     cmp #$40
-    bcc b3
-  //SEG16 [8] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
-  //SEG17 [8] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@4->main::@2#0] -- register_copy 
-  //SEG18 main::@2
+    bcs b2
+  //SEG16 [9] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
+  b3:
+  //SEG17 [9] phi (byte) main::key#2 = (byte) 0 [phi:main::@1/main::@3->main::@2#0] -- vbuaa=vbuc1 
+    lda #0
+  //SEG18 [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  //SEG19 main::@4
+  //SEG20 [9] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
+  //SEG21 [9] phi (byte) main::key#2 = (byte) main::key#0 [phi:main::@4->main::@2#0] -- register_copy 
+  //SEG22 main::@2
   b2:
-  //SEG19 [9] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
+  //SEG23 [10] *((const byte*) SCREEN#0) ← (byte) main::key#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     jmp b1
-  //SEG20 [10] phi from main::@1 main::@4 to main::@3 [phi:main::@1/main::@4->main::@3]
-  //SEG21 main::@3
-  b3:
-  //SEG22 [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  //SEG23 [8] phi (byte) main::key#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main::@3->main::@2#0] -- vbuaa=vbuc1 
-    lda #0
-    jmp b2
 }
 

@@ -1,9 +1,11 @@
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
 Identified constant variable (byte*) SCREEN
+Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte) line#0 ← (byte/signed byte/word/signed word/dword/signed dword) $40
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte) line#0 ← (number) $40
   (byte) ch#0 ← (byte) line#0
   to:@2
 main: scope:[main]  from @2
@@ -33,7 +35,7 @@ main::@3: scope:[main]  from main::@2
   (byte) line#3 ← (byte) line#10
   (byte) ch#5 ← (byte) ch#12
   *((byte*) SCREEN#0) ← (byte) ch#5
-  (byte*~) main::$3 ← (byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) $28
+  (byte*~) main::$3 ← (byte*) SCREEN#0 + (number) $28
   *((byte*~) main::$3) ← (byte) line#3
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -45,8 +47,8 @@ main::@return: scope:[main]  from main::@3
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
   (byte) line#12 ← phi( main/(byte) line#15 main::@1/(byte) line#1 main::@2/(byte) line#2 )
-  (byte/signed word/word/dword/signed dword~) ln::$0 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2
-  (byte) line#5 ← (byte/signed word/word/dword/signed dword~) ln::$0
+  (number~) ln::$0 ← (byte) line#12 + (number) 2
+  (byte) line#5 ← (number~) ln::$0
   (byte) ch#7 ← (byte) line#5
   to:ln::@return
 ln::@return: scope:[ln]  from ln
@@ -114,7 +116,7 @@ SYMBOL TABLE SSA
 (byte) line#8
 (byte) line#9
 (void()) ln()
-(byte/signed word/word/dword/signed dword~) ln::$0
+(number~) ln::$0
 (label) ln::@return
 (void()) main()
 (byte*~) main::$3
@@ -123,6 +125,24 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 
+Adding number conversion cast (unumber) $40 in (byte) line#0 ← (number) $40
+Adding number conversion cast (unumber) $28 in (byte*~) main::$3 ← (byte*) SCREEN#0 + (number) $28
+Adding number conversion cast (unumber) 2 in (number~) ln::$0 ← (byte) line#12 + (number) 2
+Adding number conversion cast (unumber) ln::$0 in (number~) ln::$0 ← (byte) line#12 + (unumber)(number) 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) line#0 ← (unumber)(number) $40
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $40
+Simplifying constant integer cast $28
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) ln::$0 ← (byte) line#12 + (byte) 2
 Alias (byte) line#0 = (byte) ch#0 (byte) line#16 (byte) ch#17 
 Alias (byte) line#1 = (byte) line#8 
 Alias (byte) ch#1 = (byte) ch#10 
@@ -130,47 +150,49 @@ Alias (byte) line#2 = (byte) line#9
 Alias (byte) ch#11 = (byte) ch#3 
 Alias (byte) line#10 = (byte) line#3 (byte) line#11 (byte) line#4 
 Alias (byte) ch#12 = (byte) ch#5 (byte) ch#13 (byte) ch#6 
-Alias (byte) line#13 = (byte) line#5 (byte/signed word/word/dword/signed dword~) ln::$0 (byte) ch#7 (byte) ch#14 (byte) line#6 (byte) ch#8 
+Alias (byte) line#13 = (byte) line#5 (byte~) ln::$0 (byte) ch#7 (byte) ch#14 (byte) line#6 (byte) ch#8 
 Alias (byte) line#14 = (byte) line#7 
 Alias (byte) ch#15 = (byte) ch#9 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte) line#15 (byte) line#0
-Redundant Phi (byte) ch#16 (byte) line#0
-Redundant Phi (byte) line#1 (byte) line#13
-Redundant Phi (byte) ch#1 (byte) line#13
-Redundant Phi (byte) line#2 (byte) line#13
-Redundant Phi (byte) ch#11 (byte) line#13
-Redundant Phi (byte) line#10 (byte) line#13
-Redundant Phi (byte) ch#12 (byte) line#13
-Redundant Phi (byte) line#14 (byte) line#10
-Redundant Phi (byte) ch#15 (byte) ch#12
-Successful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Identical Phi Values (byte) line#15 (byte) line#0
+Identical Phi Values (byte) ch#16 (byte) line#0
+Identical Phi Values (byte) line#1 (byte) line#13
+Identical Phi Values (byte) ch#1 (byte) line#13
+Identical Phi Values (byte) line#2 (byte) line#13
+Identical Phi Values (byte) ch#11 (byte) line#13
+Identical Phi Values (byte) line#10 (byte) line#13
+Identical Phi Values (byte) ch#12 (byte) line#13
+Identical Phi Values (byte) line#14 (byte) line#10
+Identical Phi Values (byte) ch#15 (byte) ch#12
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte) line#0 = $40
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::$3 = SCREEN#0+$28
-Successful SSA optimization Pass2ConstantIdentification
+Converting *(pointer+n) to pointer[n] [20] *((byte*~) main::$3) ← (byte) line#13  -- *(SCREEN#0 + $28)
+Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (byte) ch#2 and assignment [1] (byte) ch#2 ← ++ (byte) line#13
 Eliminating unused variable (byte) ch#4 and assignment [3] (byte) ch#4 ← ++ (byte) line#13
+Eliminating unused variable (byte*~) main::$3 and assignment [6] (byte*~) main::$3 ← (const byte*) SCREEN#0 + (byte) $28
 Successful SSA optimization PassNEliminateUnusedVars
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte) line#0
-Constant inlined main::$3 = (const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28
-Constant inlined line#0 = (byte/signed byte/word/signed word/dword/signed dword) $40
+Constant inlined line#0 = (byte) $40
 Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(SCREEN#0+$28)
+Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to ln:5 ln:7 ln:9 
+Calls in [main] to ln:6 ln:8 ln:10 
 
 Created 1 initial phi equivalence classes
-Coalesced [6] line#17 ← line#13
-Coalesced (already) [8] line#18 ← line#13
+Coalesced [7] line#17 ← line#13
+Coalesced (already) [9] line#18 ← line#13
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -203,14 +225,14 @@ main::@2: scope:[main]  from main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [10] *((const byte*) SCREEN#0) ← (byte) line#13
-  [11] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) line#13
+  [11] *((const byte*) SCREEN#0+(byte) $28) ← (byte) line#13
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [12] return 
   to:@return
 ln: scope:[ln]  from main main::@1 main::@2
-  [13] (byte) line#12 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) $40 main::@1/(byte) line#13 main::@2/(byte) line#13 )
-  [14] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2
+  [13] (byte) line#12 ← phi( main/(byte) $40 main::@1/(byte) line#13 main::@2/(byte) line#13 )
+  [14] (byte) line#13 ← (byte) line#12 + (byte) 2
   to:ln::@return
 ln::@return: scope:[ln]  from ln
   [15] return 
@@ -262,7 +284,7 @@ main: {
   //SEG11 [5] call ln 
   //SEG12 [13] phi from main to ln [phi:main->ln]
   ln_from_main:
-  //SEG13 [13] phi (byte) line#12 = (byte/signed byte/word/signed word/dword/signed dword) $40 [phi:main->ln#0] -- vbuz1=vbuc1 
+  //SEG13 [13] phi (byte) line#12 = (byte) $40 [phi:main->ln#0] -- vbuz1=vbuc1 
     lda #$40
     sta line
     jsr ln
@@ -292,7 +314,7 @@ main: {
   //SEG25 [10] *((const byte*) SCREEN#0) ← (byte) line#13 -- _deref_pbuc1=vbuz1 
     lda line
     sta SCREEN
-  //SEG26 [11] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) line#13 -- _deref_pbuc1=vbuz1 
+  //SEG26 [11] *((const byte*) SCREEN#0+(byte) $28) ← (byte) line#13 -- _deref_pbuc1=vbuz1 
     lda line
     sta SCREEN+$28
     jmp breturn
@@ -303,7 +325,7 @@ main: {
 }
 //SEG29 ln
 ln: {
-  //SEG30 [14] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuz1=vbuz1_plus_2 
+  //SEG30 [14] (byte) line#13 ← (byte) line#12 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda line
     clc
     adc #2
@@ -356,7 +378,7 @@ main: {
   //SEG11 [5] call ln 
   //SEG12 [13] phi from main to ln [phi:main->ln]
   ln_from_main:
-  //SEG13 [13] phi (byte) line#12 = (byte/signed byte/word/signed word/dword/signed dword) $40 [phi:main->ln#0] -- vbuaa=vbuc1 
+  //SEG13 [13] phi (byte) line#12 = (byte) $40 [phi:main->ln#0] -- vbuaa=vbuc1 
     lda #$40
     jsr ln
   //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -384,7 +406,7 @@ main: {
   b3:
   //SEG25 [10] *((const byte*) SCREEN#0) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-  //SEG26 [11] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
+  //SEG26 [11] *((const byte*) SCREEN#0+(byte) $28) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
     sta SCREEN+$28
     jmp breturn
   //SEG27 main::@return
@@ -394,7 +416,7 @@ main: {
 }
 //SEG29 ln
 ln: {
-  //SEG30 [14] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuaa=vbuaa_plus_2 
+  //SEG30 [14] (byte) line#13 ← (byte) line#12 + (byte) 2 -- vbuaa=vbuaa_plus_2 
     clc
     adc #2
     jmp breturn
@@ -441,7 +463,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (byte) ch
 (byte) line
 (byte) line#12 reg byte a 6.0
@@ -478,7 +500,7 @@ Score: 44
 main: {
   //SEG11 [5] call ln 
   //SEG12 [13] phi from main to ln [phi:main->ln]
-  //SEG13 [13] phi (byte) line#12 = (byte/signed byte/word/signed word/dword/signed dword) $40 [phi:main->ln#0] -- vbuaa=vbuc1 
+  //SEG13 [13] phi (byte) line#12 = (byte) $40 [phi:main->ln#0] -- vbuaa=vbuc1 
     lda #$40
     jsr ln
   //SEG14 [6] phi from main to main::@1 [phi:main->main::@1]
@@ -496,7 +518,7 @@ main: {
   //SEG24 main::@3
   //SEG25 [10] *((const byte*) SCREEN#0) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-  //SEG26 [11] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
+  //SEG26 [11] *((const byte*) SCREEN#0+(byte) $28) ← (byte) line#13 -- _deref_pbuc1=vbuaa 
     sta SCREEN+$28
   //SEG27 main::@return
   //SEG28 [12] return 
@@ -504,7 +526,7 @@ main: {
 }
 //SEG29 ln
 ln: {
-  //SEG30 [14] (byte) line#13 ← (byte) line#12 + (byte/signed byte/word/signed word/dword/signed dword) 2 -- vbuaa=vbuaa_plus_2 
+  //SEG30 [14] (byte) line#13 ← (byte) line#12 + (byte) 2 -- vbuaa=vbuaa_plus_2 
     clc
     adc #2
   //SEG31 ln::@return

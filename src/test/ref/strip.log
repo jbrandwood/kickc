@@ -1,3 +1,7 @@
+Adding pointer type conversion cast (byte*) screen in (byte*) screen ← (number) $400
+Culled Empty Block (label) @1
+Culled Empty Block (label) strip::@4
+Culled Empty Block (label) print::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -53,7 +57,7 @@ strip::@2: scope:[strip]  from strip::@1 strip::@3
   (byte*) strip::dest#4 ← phi( strip::@1/(byte*) strip::dest#3 strip::@3/(byte*) strip::dest#1 )
   (byte) strip::c#4 ← phi( strip::@1/(byte) strip::c#2 strip::@3/(byte) strip::c#5 )
   (byte*) strip::p#5 ← phi( strip::@1/(byte*) strip::p#4 strip::@3/(byte*) strip::p#6 )
-  (bool~) strip::$2 ← *((byte*) strip::p#5) != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (bool~) strip::$2 ← *((byte*) strip::p#5) != (number) 0
   (byte*) strip::p#2 ← ++ (byte*) strip::p#5
   if((bool~) strip::$2) goto strip::@1
   to:strip::@return
@@ -68,7 +72,7 @@ strip::@return: scope:[strip]  from strip::@2
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) screen#3 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) screen#3 ← ((byte*)) (number) $400
   to:@3
 print: scope:[print]  from main::@1 main::@3
   (byte*) screen#15 ← phi( main::@1/(byte*) screen#13 main::@3/(byte*) screen#14 )
@@ -80,7 +84,7 @@ print::@1: scope:[print]  from print print::@1
   *((byte*) screen#10) ← *((byte*) print::msg#3)
   (byte*) screen#4 ← ++ (byte*) screen#10
   (byte*) print::msg#2 ← ++ (byte*) print::msg#3
-  (bool~) print::$0 ← *((byte*) print::msg#2) != (byte/signed byte/word/signed word/dword/signed dword) 0
+  (bool~) print::$0 ← *((byte*) print::msg#2) != (number) 0
   if((bool~) print::$0) goto print::@1
   to:print::@return
 print::@return: scope:[print]  from print::@1
@@ -175,6 +179,18 @@ SYMBOL TABLE SSA
 (byte*) strip::p#5
 (byte*) strip::p#6
 
+Adding number conversion cast (unumber) 0 in (bool~) strip::$2 ← *((byte*) strip::p#5) != (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) print::$0 ← *((byte*) print::msg#2) != (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) screen#3 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 0
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [26] (bool~) strip::$1 ← *((byte*) strip::p#4) == (byte) strip::c#2 from [25] (bool~) strip::$0 ← *((byte*) strip::p#4) != (byte) strip::c#2
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) screen#13 = (byte*) screen#17 
@@ -193,31 +209,27 @@ Alias (byte) strip::c#2 = (byte) strip::c#4
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (byte) strip::c#2
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) screen#13 (byte*) screen#16
-Redundant Phi (byte*) screen#0 (byte*) screen#11
-Redundant Phi (byte*) screen#1 (byte*) screen#11
-Redundant Phi (byte) strip::c#2 (byte) strip::c#3
-Redundant Phi (byte*) screen#12 (byte*) screen#1
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte*) screen#13 (byte*) screen#16
+Identical Phi Values (byte*) screen#0 (byte*) screen#11
+Identical Phi Values (byte*) screen#1 (byte*) screen#11
+Identical Phi Values (byte) strip::c#2 (byte) strip::c#3
+Identical Phi Values (byte*) screen#12 (byte*) screen#1
+Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) strip::$1 [27] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2
-Simple Condition (bool~) strip::$2 [31] if(*((byte*) strip::p#4)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto strip::@1
-Simple Condition (bool~) print::$0 [43] if(*((byte*) print::msg#2)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print::@1
+Simple Condition (bool~) strip::$2 [31] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@1
+Simple Condition (bool~) print::$0 [43] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte[]) msg1#0 = $0
 Constant (const byte[]) msg2#0 = $1
 Constant (const byte) strip::c#0 = ' '
 Constant (const byte) strip::c#1 = 'y'
-Constant (const byte*) screen#16 = ((byte*))$400
+Constant (const byte*) screen#16 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) strip::p#0 = msg1#0
 Constant (const byte*) print::msg#0 = msg1#0
 Constant (const byte*) strip::p#1 = msg2#0
 Constant (const byte*) print::msg#1 = msg2#0
 Successful SSA optimization Pass2ConstantIdentification
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) @2
-Culled Empty Block (label) @4
-Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte) strip::c#0
 Inlining constant with var siblings (const byte) strip::c#1
 Inlining constant with var siblings (const byte*) strip::p#0
@@ -233,34 +245,40 @@ Constant inlined strip::c#0 = (byte) ' '
 Constant inlined strip::c#1 = (byte) 'y'
 Constant inlined $0 = (const byte[]) msg1#0
 Constant inlined $1 = (const byte[]) msg2#0
-Constant inlined screen#16 = ((byte*))(word/signed word/dword/signed dword) $400
+Constant inlined screen#16 = (byte*) 1024
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting print::@3(between print::@1 and print::@1)
 Added new block during phi lifting strip::@5(between strip::@2 and strip::@1)
 Added new block during phi lifting strip::@6(between strip::@1 and strip::@2)
+Added new block during phi lifting print::@3(between print::@1 and print::@1)
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of main::@4
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to strip:5 print:7 strip:9 print:11 
+Calls in [] to main:3 
+Calls in [main] to strip:7 print:9 strip:11 print:13 
 
 Created 9 initial phi equivalence classes
-Coalesced [10] screen#18 ← screen#11
-Coalesced [14] print::msg#5 ← print::msg#4
-Coalesced [15] screen#19 ← screen#15
-Coalesced [22] print::msg#6 ← print::msg#2
-Coalesced (already) [23] screen#20 ← screen#11
-Not coalescing [25] strip::p#7 ← strip::dest#0
-Coalesced [26] strip::dest#5 ← strip::dest#0
-Coalesced [31] strip::dest#8 ← strip::dest#1
-Not coalescing [36] strip::p#8 ← strip::p#2
-Coalesced [37] strip::dest#6 ← strip::dest#4
-Coalesced (already) [38] strip::dest#7 ← strip::dest#2
+Coalesced [12] screen#18 ← screen#11
+Coalesced [17] print::msg#5 ← print::msg#4
+Coalesced [18] screen#19 ← screen#15
+Coalesced [25] print::msg#6 ← print::msg#2
+Coalesced (already) [26] screen#20 ← screen#11
+Not coalescing [28] strip::p#7 ← strip::dest#0
+Coalesced [29] strip::dest#5 ← strip::dest#0
+Coalesced [34] strip::dest#8 ← strip::dest#1
+Not coalescing [39] strip::p#8 ← strip::p#2
+Coalesced [40] strip::dest#6 ← strip::dest#4
+Coalesced (already) [41] strip::dest#7 ← strip::dest#2
 Coalesced down to 6 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) @4
+Culled Empty Block (label) main::@4
 Culled Empty Block (label) print::@3
 Culled Empty Block (label) strip::@6
 Renumbering block @3 to @1
@@ -303,7 +321,7 @@ main::@return: scope:[main]  from main::@3
   [12] return 
   to:@return
 print: scope:[print]  from main::@1 main::@3
-  [13] (byte*) screen#15 ← phi( main::@1/((byte*))(word/signed word/dword/signed dword) $400 main::@3/(byte*) screen#11 )
+  [13] (byte*) screen#15 ← phi( main::@1/(byte*) 1024 main::@3/(byte*) screen#11 )
   [13] (byte*) print::msg#4 ← phi( main::@1/(const byte[]) msg1#0 main::@3/(const byte[]) msg2#0 )
   to:print::@1
 print::@1: scope:[print]  from print print::@1
@@ -312,7 +330,7 @@ print::@1: scope:[print]  from print print::@1
   [15] *((byte*) screen#10) ← *((byte*) print::msg#3)
   [16] (byte*) screen#11 ← ++ (byte*) screen#10
   [17] (byte*) print::msg#2 ← ++ (byte*) print::msg#3
-  [18] if(*((byte*) print::msg#2)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print::@1
+  [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1
   to:print::@return
 print::@return: scope:[print]  from print::@1
   [19] return 
@@ -334,7 +352,7 @@ strip::@3: scope:[strip]  from strip::@1
 strip::@2: scope:[strip]  from strip::@1 strip::@3
   [26] (byte*) strip::dest#4 ← phi( strip::@1/(byte*) strip::dest#2 strip::@3/(byte*) strip::dest#1 )
   [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4
-  [28] if(*((byte*) strip::p#4)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto strip::@4
+  [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4
   to:strip::@return
 strip::@return: scope:[strip]  from strip::@2
   [29] return 
@@ -439,7 +457,7 @@ main: {
   //SEG17 [7] call print 
   //SEG18 [13] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG19 [13] phi (byte*) screen#15 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main::@1->print#0] -- pbuz1=pbuc1 
+  //SEG19 [13] phi (byte*) screen#15 = (byte*) 1024 [phi:main::@1->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -515,7 +533,7 @@ print: {
     bne !+
     inc msg+1
   !:
-  //SEG43 [18] if(*((byte*) print::msg#2)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print::@1 -- _deref_pbuz1_neq_0_then_la1 
+  //SEG43 [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -581,7 +599,7 @@ strip: {
     lda p_4+1
     adc #0
     sta p+1
-  //SEG60 [28] if(*((byte*) strip::p#4)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto strip::@4 -- _deref_pbuz1_neq_0_then_la1 
+  //SEG60 [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
     lda (p_4),y
     cmp #0
@@ -605,22 +623,22 @@ strip: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [15] *((byte*) screen#10) ← *((byte*) print::msg#3) [ print::msg#3 screen#10 ] ( main:2::print:7 [ print::msg#3 screen#10 ] main:2::print:11 [ print::msg#3 screen#10 ] ) always clobbers reg byte a reg byte y 
-Statement [18] if(*((byte*) print::msg#2)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print::@1 [ screen#11 print::msg#2 ] ( main:2::print:7 [ screen#11 print::msg#2 ] main:2::print:11 [ screen#11 print::msg#2 ] ) always clobbers reg byte a reg byte y 
+Statement [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 [ screen#11 print::msg#2 ] ( main:2::print:7 [ screen#11 print::msg#2 ] main:2::print:11 [ screen#11 print::msg#2 ] ) always clobbers reg byte a reg byte y 
 Statement [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 [ strip::dest#0 strip::c#3 strip::p#7 ] ( main:2::strip:5 [ strip::dest#0 strip::c#3 strip::p#7 ] main:2::strip:9 [ screen#11 strip::dest#0 strip::c#3 strip::p#7 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ strip::c#3 ]
 Statement [23] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2 [ strip::c#3 strip::p#4 strip::dest#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ strip::c#3 ]
 Statement [24] *((byte*) strip::dest#2) ← *((byte*) strip::p#4) [ strip::c#3 strip::p#4 strip::dest#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#2 ] ) always clobbers reg byte a reg byte y 
 Statement [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 [ strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a 
-Statement [28] if(*((byte*) strip::p#4)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto strip::@4 [ strip::c#3 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a reg byte y 
+Statement [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 [ strip::c#3 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a reg byte y 
 Statement [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 [ strip::c#3 strip::p#8 strip::dest#4 ] ( main:2::strip:5 [ strip::c#3 strip::p#8 strip::dest#4 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#8 strip::dest#4 ] ) always clobbers reg byte a 
 Statement [15] *((byte*) screen#10) ← *((byte*) print::msg#3) [ print::msg#3 screen#10 ] ( main:2::print:7 [ print::msg#3 screen#10 ] main:2::print:11 [ print::msg#3 screen#10 ] ) always clobbers reg byte a reg byte y 
-Statement [18] if(*((byte*) print::msg#2)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print::@1 [ screen#11 print::msg#2 ] ( main:2::print:7 [ screen#11 print::msg#2 ] main:2::print:11 [ screen#11 print::msg#2 ] ) always clobbers reg byte a reg byte y 
+Statement [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 [ screen#11 print::msg#2 ] ( main:2::print:7 [ screen#11 print::msg#2 ] main:2::print:11 [ screen#11 print::msg#2 ] ) always clobbers reg byte a reg byte y 
 Statement [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 [ strip::dest#0 strip::c#3 strip::p#7 ] ( main:2::strip:5 [ strip::dest#0 strip::c#3 strip::p#7 ] main:2::strip:9 [ screen#11 strip::dest#0 strip::c#3 strip::p#7 ] ) always clobbers reg byte a 
 Statement [23] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2 [ strip::c#3 strip::p#4 strip::dest#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#2 ] ) always clobbers reg byte a reg byte y 
 Statement [24] *((byte*) strip::dest#2) ← *((byte*) strip::p#4) [ strip::c#3 strip::p#4 strip::dest#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#2 ] ) always clobbers reg byte a reg byte y 
 Statement [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 [ strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a 
-Statement [28] if(*((byte*) strip::p#4)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto strip::@4 [ strip::c#3 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a reg byte y 
+Statement [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 [ strip::c#3 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a reg byte y 
 Statement [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 [ strip::c#3 strip::p#8 strip::dest#4 ] ( main:2::strip:5 [ strip::c#3 strip::p#8 strip::dest#4 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#8 strip::dest#4 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ print::msg#3 print::msg#4 print::msg#2 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ screen#10 screen#15 screen#11 ] : zp ZP_WORD:4 , 
@@ -689,7 +707,7 @@ main: {
   //SEG17 [7] call print 
   //SEG18 [13] phi from main::@1 to print [phi:main::@1->print]
   print_from_b1:
-  //SEG19 [13] phi (byte*) screen#15 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main::@1->print#0] -- pbuz1=pbuc1 
+  //SEG19 [13] phi (byte*) screen#15 = (byte*) 1024 [phi:main::@1->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -764,7 +782,7 @@ print: {
     bne !+
     inc msg+1
   !:
-  //SEG43 [18] if(*((byte*) print::msg#2)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print::@1 -- _deref_pbuz1_neq_0_then_la1 
+  //SEG43 [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -829,7 +847,7 @@ strip: {
     lda p_4+1
     adc #0
     sta p+1
-  //SEG60 [28] if(*((byte*) strip::p#4)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto strip::@4 -- _deref_pbuz1_neq_0_then_la1 
+  //SEG60 [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
     lda (p_4),y
     cmp #0
@@ -990,7 +1008,7 @@ main: {
   //SEG16 main::@1
   //SEG17 [7] call print 
   //SEG18 [13] phi from main::@1 to print [phi:main::@1->print]
-  //SEG19 [13] phi (byte*) screen#15 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main::@1->print#0] -- pbuz1=pbuc1 
+  //SEG19 [13] phi (byte*) screen#15 = (byte*) 1024 [phi:main::@1->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -1051,7 +1069,7 @@ print: {
     bne !+
     inc msg+1
   !:
-  //SEG43 [18] if(*((byte*) print::msg#2)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto print::@1 -- _deref_pbuz1_neq_0_then_la1 
+  //SEG43 [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -1104,7 +1122,7 @@ strip: {
     lda p_4+1
     adc #0
     sta p+1
-  //SEG60 [28] if(*((byte*) strip::p#4)!=(byte/signed byte/word/signed word/dword/signed dword) 0) goto strip::@4 -- _deref_pbuz1_neq_0_then_la1 
+  //SEG60 [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 -- _deref_pbuz1_neq_0_then_la1 
     ldy #0
     lda (p_4),y
     cmp #0

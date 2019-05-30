@@ -1,26 +1,27 @@
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
 Identified constant variable (byte) b
 Identified constant variable (word) w
 Identified constant variable (byte*) ptr
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) b#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (word) w#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) b#0 ← (byte) 0
+  (word) w#0 ← (word) 0
   (byte*) ptr#0 ← (byte*) 0
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@1
 main: scope:[main]  from @1
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) b#0
+  *((byte*) SCREEN#0 + (number) 0) ← (byte) b#0
   (byte~) main::$0 ← < (word) w#0
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$0
+  *((byte*) SCREEN#0 + (number) 2) ← (byte~) main::$0
   (byte~) main::$1 ← > (word) w#0
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 3) ← (byte~) main::$1
+  *((byte*) SCREEN#0 + (number) 3) ← (byte~) main::$1
   (byte~) main::$2 ← < (byte*) ptr#0
   (byte~) main::$3 ← ((byte)) (byte~) main::$2
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 5) ← (byte~) main::$3
+  *((byte*) SCREEN#0 + (number) 5) ← (byte~) main::$3
   (byte~) main::$4 ← > (byte*) ptr#0
   (byte~) main::$5 ← ((byte)) (byte~) main::$4
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 5) ← (byte~) main::$5
+  *((byte*) SCREEN#0 + (number) 5) ← (byte~) main::$5
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -54,43 +55,79 @@ SYMBOL TABLE SSA
 (word) w
 (word) w#0
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← (byte) b#0
+Adding number conversion cast (unumber) 2 in *((byte*) SCREEN#0 + (number) 2) ← (byte~) main::$0
+Adding number conversion cast (unumber) 3 in *((byte*) SCREEN#0 + (number) 3) ← (byte~) main::$1
+Adding number conversion cast (unumber) 5 in *((byte*) SCREEN#0 + (number) 5) ← (byte~) main::$3
+Adding number conversion cast (unumber) 5 in *((byte*) SCREEN#0 + (number) 5) ← (byte~) main::$5
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte~) main::$3 ← (byte)(byte~) main::$2
+Inlining cast (byte~) main::$5 ← (byte)(byte~) main::$4
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Simplifying constant integer cast (byte~) main::$2
+Simplifying constant integer cast 5
+Simplifying constant integer cast (byte~) main::$4
+Simplifying constant integer cast 5
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 5
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (byte~) main::$3 = (byte~) main::$2 
+Alias (byte~) main::$5 = (byte~) main::$4 
+Successful SSA optimization Pass2AliasElimination
 Constant (const byte) b#0 = 0
 Constant (const word) w#0 = 0
-Constant (const byte*) ptr#0 = 0
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte*) ptr#0 = (byte*) 0
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN#0 in [4] *((const byte*) SCREEN#0 + (byte) 0) ← (const byte) b#0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Constant right-side identified [1] (byte~) main::$0 ← < (const word) w#0
+Constant right-side identified [3] (byte~) main::$1 ← > (const word) w#0
+Constant right-side identified [5] (byte~) main::$3 ← < (const byte*) ptr#0
+Constant right-side identified [7] (byte~) main::$5 ← > (const byte*) ptr#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$0 = <w#0
 Constant (const byte) main::$1 = >w#0
-Constant (const byte) main::$2 = <ptr#0
-Constant (const byte) main::$4 = >ptr#0
+Constant (const byte) main::$3 = <ptr#0
+Constant (const byte) main::$5 = >ptr#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::$3 = ((byte))main::$2
-Constant (const byte) main::$5 = ((byte))main::$4
-Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(SCREEN#0+0)
+Simplifying constant evaluating to zero <(const word) w#0 in 
+Simplifying constant evaluating to zero >(const word) w#0 in 
+Simplifying constant evaluating to zero <(const byte*) ptr#0 in 
+Simplifying constant evaluating to zero >(const byte*) ptr#0 in 
+Successful SSA optimization PassNSimplifyConstantZero
+Eliminating unused constant (const word) w#0
+Eliminating unused constant (const byte*) ptr#0
+Successful SSA optimization PassNEliminateUnusedVars
+Constant inlined main::$5 = (byte) 0
+Constant inlined main::$3 = (byte) 0
+Constant inlined main::$1 = (byte) 0
+Constant inlined main::$0 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN#0+2)
 Consolidated array index constant in *(SCREEN#0+3)
 Consolidated array index constant in *(SCREEN#0+5)
 Consolidated array index constant in *(SCREEN#0+5)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Constant inlined main::$1 = >(const word) w#0
-Constant inlined main::$2 = <(const byte*) ptr#0
-Constant inlined main::$0 = <(const word) w#0
-Constant inlined main::$5 = ((byte))>(const byte*) ptr#0
-Constant inlined main::$3 = ((byte))<(const byte*) ptr#0
-Constant inlined main::$4 = >(const byte*) ptr#0
-Successful SSA optimization Pass2ConstantInlining
-Simplifying constant plus zero SCREEN#0+0
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -107,10 +144,10 @@ FINAL CONTROL FLOW GRAPH
   [3] phi()
 main: scope:[main]  from @1
   [4] *((const byte*) SCREEN#0) ← (const byte) b#0
-  [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0
-  [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0
-  [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0
-  [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0
+  [5] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 0
+  [6] *((const byte*) SCREEN#0+(byte) 3) ← (byte) 0
+  [7] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0
+  [8] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0
   to:main::@return
 main::@return: scope:[main]  from main
   [9] return 
@@ -136,8 +173,6 @@ INITIAL ASM
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
   .const b = 0
-  .const w = 0
-  .label ptr = 0
   .label SCREEN = $400
 //SEG3 @begin
 bbegin:
@@ -158,17 +193,17 @@ main: {
   //SEG10 [4] *((const byte*) SCREEN#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
-  //SEG11 [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0 -- _deref_pbuc1=vbuc2 
-    lda #<w
+  //SEG11 [5] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN+2
-  //SEG12 [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0 -- _deref_pbuc1=vbuc2 
-    lda #>w
+  //SEG12 [6] *((const byte*) SCREEN#0+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN+3
-  //SEG13 [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
-    lda #<ptr
+  //SEG13 [7] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN+5
-  //SEG14 [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
-    lda #>ptr
+  //SEG14 [8] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN+5
     jmp breturn
   //SEG15 main::@return
@@ -179,10 +214,10 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) SCREEN#0) ← (const byte) b#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN#0+(byte) 3) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -200,8 +235,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
   .const b = 0
-  .const w = 0
-  .label ptr = 0
   .label SCREEN = $400
 //SEG3 @begin
 bbegin:
@@ -222,17 +255,17 @@ main: {
   //SEG10 [4] *((const byte*) SCREEN#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
-  //SEG11 [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0 -- _deref_pbuc1=vbuc2 
-    lda #<w
+  //SEG11 [5] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN+2
-  //SEG12 [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0 -- _deref_pbuc1=vbuc2 
-    lda #>w
+  //SEG12 [6] *((const byte*) SCREEN#0+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN+3
-  //SEG13 [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
-    lda #<ptr
+  //SEG13 [7] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN+5
-  //SEG14 [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
-    lda #>ptr
+  //SEG14 [8] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN+5
     jmp breturn
   //SEG15 main::@return
@@ -246,6 +279,10 @@ Removing instruction jmp b1
 Removing instruction jmp bend
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #0
+Removing instruction lda #0
+Removing instruction lda #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction bend_from_b1:
@@ -264,20 +301,18 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (byte) b
-(const byte) b#0 b = (byte/signed byte/word/signed word/dword/signed dword) 0
+(const byte) b#0 b = (byte) 0
 (void()) main()
 (label) main::@return
 (byte*) ptr
-(const byte*) ptr#0 ptr = (byte*) 0
 (word) w
-(const word) w#0 w = (byte/signed byte/word/signed word/dword/signed dword) 0
 
 
 
 FINAL ASSEMBLER
-Score: 36
+Score: 30
 
 //SEG0 File Comments
 // Tests uninitialized values of variables.
@@ -287,8 +322,6 @@ Score: 36
 .pc = $80d "Program"
 //SEG2 Global Constants & labels
   .const b = 0
-  .const w = 0
-  .label ptr = 0
   .label SCREEN = $400
 //SEG3 @begin
 //SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
@@ -301,17 +334,14 @@ main: {
   //SEG10 [4] *((const byte*) SCREEN#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
-  //SEG11 [5] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← <(const word) w#0 -- _deref_pbuc1=vbuc2 
-    lda #<w
+  //SEG11 [5] *((const byte*) SCREEN#0+(byte) 2) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN+2
-  //SEG12 [6] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 3) ← >(const word) w#0 -- _deref_pbuc1=vbuc2 
-    lda #>w
+  //SEG12 [6] *((const byte*) SCREEN#0+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     sta SCREEN+3
-  //SEG13 [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))<(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
-    lda #<ptr
+  //SEG13 [7] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     sta SCREEN+5
-  //SEG14 [8] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 5) ← ((byte))>(const byte*) ptr#0 -- _deref_pbuc1=vbuc2 
-    lda #>ptr
+  //SEG14 [8] *((const byte*) SCREEN#0+(byte) 5) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     sta SCREEN+5
   //SEG15 main::@return
   //SEG16 [9] return 

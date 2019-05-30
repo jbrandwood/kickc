@@ -1,3 +1,4 @@
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -25,13 +26,13 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte) idx#3 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte) idx#3 ← (number) 0
   to:@2
 print: scope:[print]  from main main::@1
   (byte) idx#10 ← phi( main/(byte) idx#13 main::@1/(byte) idx#0 )
   (byte*) print::m#2 ← phi( main/(byte*) print::m#0 main::@1/(byte*) print::m#1 )
-  (byte*~) print::$0 ← (byte*) print::m#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
+  (byte*~) print::$0 ← (byte*) print::m#2 + (number) 2
   *((byte*) SCREEN#0 + (byte) idx#10) ← *((byte*~) print::$0)
   (byte) idx#4 ← ++ (byte) idx#10
   to:print::@return
@@ -90,51 +91,69 @@ SYMBOL TABLE SSA
 (byte*) print::m#1
 (byte*) print::m#2
 
+Adding number conversion cast (unumber) 0 in (byte) idx#3 ← (number) 0
+Adding number conversion cast (unumber) 2 in (byte*~) print::$0 ← (byte*) print::m#2 + (number) 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) idx#3 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) idx#0 = (byte) idx#7 
 Alias (byte) idx#1 = (byte) idx#8 (byte) idx#9 (byte) idx#2 
 Alias (byte) idx#11 = (byte) idx#4 (byte) idx#5 
 Alias (byte) idx#14 = (byte) idx#3 
 Alias (byte) idx#12 = (byte) idx#6 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte) idx#13 (byte) idx#14
-Redundant Phi (byte) idx#0 (byte) idx#11
-Redundant Phi (byte) idx#1 (byte) idx#11
-Redundant Phi (byte) idx#12 (byte) idx#1
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte) idx#13 (byte) idx#14
+Identical Phi Values (byte) idx#0 (byte) idx#11
+Identical Phi Values (byte) idx#1 (byte) idx#11
+Identical Phi Values (byte) idx#12 (byte) idx#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant right-side identified [0] (byte[]) msg1#0 ← { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
+Constant right-side identified [1] (byte[]) msg2#0 ← { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte[]) msg1#0 = { 'a', 'b', 'c', 'd' }
 Constant (const byte[]) msg2#0 = { '1', '2', '3', '4' }
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte) idx#14 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print::m#0 = msg1#0
 Constant (const byte*) print::m#1 = msg2#0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*~) print::$0)  -- *(print::m#2 + 2)
+Converting *(pointer+n) to pointer[n] [18] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*~) print::$0)  -- *(print::m#2 + 2)
 Successful SSA optimization Pass2InlineDerefIdx
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @1
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
-Eliminating unused variable (byte*~) print::$0 and assignment [4] (byte*~) print::$0 ← (byte*) print::m#2 + (byte/signed byte/word/signed word/dword/signed dword) 2
+Eliminating unused variable (byte*~) print::$0 and assignment [4] (byte*~) print::$0 ← (byte*) print::m#2 + (byte) 2
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte*) print::m#0
 Inlining constant with var siblings (const byte*) print::m#1
 Inlining constant with var siblings (const byte) idx#14
-Constant inlined idx#14 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined idx#14 = (byte) 0
 Constant inlined print::m#1 = (const byte[]) msg2#0
 Constant inlined print::m#0 = (const byte[]) msg1#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@2
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to print:5 print:7 
+Calls in [] to main:3 
+Calls in [main] to print:7 print:9 
 
 Created 2 initial phi equivalence classes
-Coalesced [6] idx#15 ← idx#11
+Coalesced [8] idx#15 ← idx#11
 Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@2
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -164,9 +183,9 @@ main::@return: scope:[main]  from main::@1
   [8] return 
   to:@return
 print: scope:[print]  from main main::@1
-  [9] (byte) idx#10 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) idx#11 )
+  [9] (byte) idx#10 ← phi( main/(byte) 0 main::@1/(byte) idx#11 )
   [9] (byte*) print::m#2 ← phi( main/(const byte[]) msg1#0 main::@1/(const byte[]) msg2#0 )
-  [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte/signed byte/word/signed word/dword/signed dword) 2)
+  [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte) 2)
   [11] (byte) idx#11 ← ++ (byte) idx#10
   to:print::@return
 print::@return: scope:[print]  from print
@@ -226,7 +245,7 @@ main: {
   //SEG11 [5] call print 
   //SEG12 [9] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG13 [9] phi (byte) idx#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->print#0] -- vbuz1=vbuc1 
+  //SEG13 [9] phi (byte) idx#10 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
     lda #0
     sta idx
   //SEG14 [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
@@ -260,7 +279,7 @@ main: {
 // print(byte* zeropage(2) m)
 print: {
     .label m = 2
-  //SEG24 [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
+  //SEG24 [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte) 2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
     ldx idx
     ldy #2
     lda (m),y
@@ -277,10 +296,10 @@ print: {
   msg2: .byte '1', '2', '3', '4'
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) [ idx#10 ] ( main:2::print:5 [ idx#10 ] main:2::print:7 [ idx#10 ] ) always clobbers reg byte a reg byte y 
+Statement [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte) 2) [ idx#10 ] ( main:2::print:5 [ idx#10 ] main:2::print:7 [ idx#10 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ idx#10 idx#11 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ idx#10 idx#11 ]
-Statement [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) [ idx#10 ] ( main:2::print:5 [ idx#10 ] main:2::print:7 [ idx#10 ] ) always clobbers reg byte a reg byte y 
+Statement [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte) 2) [ idx#10 ] ( main:2::print:5 [ idx#10 ] main:2::print:7 [ idx#10 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp ZP_WORD:2 [ print::m#2 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ idx#10 idx#11 ] : zp ZP_BYTE:4 , reg byte x , 
 
@@ -323,7 +342,7 @@ main: {
   //SEG11 [5] call print 
   //SEG12 [9] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG13 [9] phi (byte) idx#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+  //SEG13 [9] phi (byte) idx#10 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG14 [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
@@ -356,7 +375,7 @@ main: {
 // print(byte* zeropage(2) m)
 print: {
     .label m = 2
-  //SEG24 [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+  //SEG24 [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #2
     lda (m),y
     sta SCREEN,x
@@ -402,7 +421,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (byte) idx
 (byte) idx#10 reg byte x 3.0
 (byte) idx#11 reg byte x 1.0
@@ -444,7 +463,7 @@ Score: 60
 main: {
   //SEG11 [5] call print 
   //SEG12 [9] phi from main to print [phi:main->print]
-  //SEG13 [9] phi (byte) idx#10 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+  //SEG13 [9] phi (byte) idx#10 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG14 [9] phi (byte*) print::m#2 = (const byte[]) msg1#0 [phi:main->print#1] -- pbuz1=pbuc1 
     lda #<msg1
@@ -471,7 +490,7 @@ main: {
 // print(byte* zeropage(2) m)
 print: {
     .label m = 2
-  //SEG24 [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte/signed byte/word/signed word/dword/signed dword) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+  //SEG24 [10] *((const byte*) SCREEN#0 + (byte) idx#10) ← *((byte*) print::m#2 + (byte) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #2
     lda (m),y
     sta SCREEN,x

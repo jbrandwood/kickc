@@ -1,11 +1,15 @@
+Adding pointer type conversion cast (byte*) screen in (byte*) screen ← (number) $400
+Adding pointer type conversion cast (byte*) screen1 in (byte*) screen1 ← (number) $400
+Adding pointer type conversion cast (byte*) screen2 in (byte*) screen2 ← (number~) $0
 Identified constant variable (byte*) screen1
+Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte*) screen1#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (word/signed word/dword/signed dword~) $0 ← (word/signed word/dword/signed dword) $400 + (byte/signed byte/word/signed word/dword/signed dword) $28
-  (byte*) screen2#0 ← ((byte*)) (word/signed word/dword/signed dword~) $0
+  (byte*) screen#0 ← ((byte*)) (number) $400
+  (byte*) screen1#0 ← ((byte*)) (number) $400
+  (number~) $0 ← (number) $400 + (number) $28
+  (byte*) screen2#0 ← ((byte*)) (number~) $0
   to:@2
 main: scope:[main]  from @2
   (byte*) screen2#2 ← phi( @2/(byte*) screen2#3 )
@@ -18,7 +22,7 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte*) screen2#1 ← phi( main/(byte*) screen2#2 )
   (byte*) screen#2 ← phi( main/(byte*) screen#1 )
-  *((byte*) screen#2 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a'
+  *((byte*) screen#2 + (number) 0) ← (byte) 'a'
   (byte**~) main::$2 ← & (byte*) screen#2
   (byte**) setscreen::screen#1 ← (byte**~) main::$2
   (byte*) setscreen::val#1 ← (byte*) screen2#1
@@ -26,7 +30,7 @@ main::@1: scope:[main]  from main
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte*) screen#3 ← phi( main::@1/(byte*) screen#2 )
-  *((byte*) screen#3 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a'
+  *((byte*) screen#3 + (number) 0) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -49,7 +53,7 @@ setscreen::@return: scope:[setscreen]  from setscreen
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(word/signed word/dword/signed dword~) $0
+(number~) $0
 (label) @2
 (label) @3
 (label) @begin
@@ -84,8 +88,21 @@ SYMBOL TABLE SSA
 (byte*) setscreen::val#1
 (byte*) setscreen::val#2
 
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in *((byte*) screen#2 + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in *((byte*) screen#3 + (number) 0) ← (byte) 'a'
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) screen1#0 ← (byte*)(number) $400
+Inlining cast (byte*) screen2#0 ← (byte*)(number~) $0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte**) setscreen::screen#0 = (byte**~) main::$0 
 Alias (byte*) screen#1 = (byte*) screen#2 (byte*) screen#3 
 Alias (byte*) screen2#1 = (byte*) screen2#2 
@@ -93,17 +110,26 @@ Alias (byte**) setscreen::screen#1 = (byte**~) main::$2
 Alias (byte*) screen#0 = (byte*) screen#4 
 Alias (byte*) screen2#0 = (byte*) screen2#3 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte*) screen#1 (byte*) screen#0
-Redundant Phi (byte*) screen2#1 (byte*) screen2#0
-Successful SSA optimization Pass2RedundantPhiElimination
-Constant right-side identified [0] (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-Constant (const byte*) screen1#0 = ((byte*))$400
-Constant (const word/signed word/dword/signed dword) $0 = $400+$28
+Identical Phi Values (byte*) screen#1 (byte*) screen#0
+Identical Phi Values (byte*) screen2#1 (byte*) screen2#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant right-side identified [2] (number~) $0 ← (number) $400 + (number) $28
+Constant right-side identified [5] (byte**) setscreen::screen#0 ← & (byte*) screen#0
+Constant right-side identified [11] (byte**) setscreen::screen#1 ← & (byte*) screen#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) screen1#0 = (byte*) 1024
+Constant (const number) $0 = $400+$28
 Constant (const byte**) setscreen::screen#0 = &screen#0
 Constant (const byte**) setscreen::screen#1 = &screen#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) screen2#0 = ((byte*))$0
 Constant (const byte*) setscreen::val#0 = screen1#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte*)$0 in [3] (byte*) screen2#0 ← (byte*)(const number) $0
+Successful SSA optimization Pass2ConstantValues
+Simplifying expression containing zero screen#0 in [10] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen#0 in [16] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Constant (const byte*) screen2#0 = (byte*)$0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) setscreen::val#1 = screen2#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -112,20 +138,24 @@ Inlining constant with var siblings (const byte**) setscreen::screen#1
 Inlining constant with var siblings (const byte*) setscreen::val#0
 Inlining constant with var siblings (const byte*) setscreen::val#1
 Constant inlined setscreen::screen#0 = &(byte*) screen#0
-Constant inlined $0 = (word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) $28
+Constant inlined $0 = (number) $400+(number) $28
 Constant inlined setscreen::val#1 = (const byte*) screen2#0
 Constant inlined setscreen::screen#1 = &(byte*) screen#0
 Constant inlined setscreen::val#0 = (const byte*) screen1#0
 Successful SSA optimization Pass2ConstantInlining
+Identical Phi Values (byte**) setscreen::screen#2 &(byte*) screen#0
+Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to setscreen:5 setscreen:7 
+Calls in [main] to setscreen:6 setscreen:8 
 
-Created 2 initial phi equivalence classes
-Coalesced down to 2 phi equivalence classes
+Created 1 initial phi equivalence classes
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -133,7 +163,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte*) screen#0 ← ((byte*))(word/signed word/dword/signed dword) $400
+  [0] (byte*) screen#0 ← (byte*) 1024
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -146,19 +176,18 @@ main: scope:[main]  from @1
   [5] call setscreen 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a'
+  [6] *((byte*) screen#0) ← (byte) 'a'
   [7] call setscreen 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a'
+  [8] *((byte*) screen#0) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [9] return 
   to:@return
 setscreen: scope:[setscreen]  from main main::@1
-  [10] (byte**) setscreen::screen#2 ← phi( main/&(byte*) screen#0 main::@1/&(byte*) screen#0 )
   [10] (byte*) setscreen::val#2 ← phi( main/(const byte*) screen1#0 main::@1/(const byte*) screen2#0 )
-  [11] *((byte**) setscreen::screen#2) ← (byte*) setscreen::val#2
+  [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2
   to:setscreen::@return
 setscreen::@return: scope:[setscreen]  from setscreen
   [12] return 
@@ -173,21 +202,17 @@ VARIABLE REGISTER WEIGHTS
 (byte*) screen2
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 (byte**) setscreen::screen
-(byte**) setscreen::screen#2 2.0
 (byte*) setscreen::val
 (byte*) setscreen::val#2 2.0
 
 Initial phi equivalence classes
 [ setscreen::val#2 ]
-[ setscreen::screen#2 ]
 Added variable screen#0 to zero page equivalence class [ screen#0 ]
 Complete equivalence classes
 [ setscreen::val#2 ]
-[ setscreen::screen#2 ]
 [ screen#0 ]
 Allocated zp ZP_WORD:2 [ setscreen::val#2 ]
-Allocated zp ZP_WORD:4 [ setscreen::screen#2 ]
-Allocated zp ZP_WORD:6 [ screen#0 ]
+Allocated zp ZP_WORD:4 [ screen#0 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -199,10 +224,10 @@ INITIAL ASM
 //SEG2 Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
-  .label screen = 6
+  .label screen = 4
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte*) screen#0 ← ((byte*))(word/signed word/dword/signed dword) $400 -- pbuz1=pbuc1 
+//SEG4 [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta screen
   lda #>$400
@@ -226,87 +251,73 @@ main: {
   //SEG12 [5] call setscreen 
   //SEG13 [10] phi from main to setscreen [phi:main->setscreen]
   setscreen_from_main:
-  //SEG14 [10] phi (byte**) setscreen::screen#2 = &(byte*) screen#0 [phi:main->setscreen#0] -- pptz1=pptc1 
-    lda #<screen
-    sta setscreen.screen
-    lda #>screen
-    sta setscreen.screen+1
-  //SEG15 [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#1] -- pbuz1=pbuc1 
+  //SEG14 [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta setscreen.val
     lda #>screen1
     sta setscreen.val+1
     jsr setscreen
     jmp b1
-  //SEG16 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG17 [6] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a' -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG16 [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-  //SEG18 [7] call setscreen 
-  //SEG19 [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
+  //SEG17 [7] call setscreen 
+  //SEG18 [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
   setscreen_from_b1:
-  //SEG20 [10] phi (byte**) setscreen::screen#2 = &(byte*) screen#0 [phi:main::@1->setscreen#0] -- pptz1=pptc1 
-    lda #<screen
-    sta setscreen.screen
-    lda #>screen
-    sta setscreen.screen+1
-  //SEG21 [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#1] -- pbuz1=pbuc1 
+  //SEG19 [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta setscreen.val
     lda #>screen2
     sta setscreen.val+1
     jsr setscreen
     jmp b2
-  //SEG22 main::@2
+  //SEG20 main::@2
   b2:
-  //SEG23 [8] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a' -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG21 [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     jmp breturn
-  //SEG24 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG25 [9] return 
+  //SEG23 [9] return 
     rts
 }
-//SEG26 setscreen
-// setscreen(byte** zeropage(4) screen, byte* zeropage(2) val)
+//SEG24 setscreen
+// setscreen(byte* zeropage(2) val)
 setscreen: {
     .label val = 2
-    .label screen = 4
-  //SEG27 [11] *((byte**) setscreen::screen#2) ← (byte*) setscreen::val#2 -- _deref_pptz1=pbuz2 
-    ldy #0
+  //SEG25 [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda val
-    sta (screen),y
-    iny
+    sta screen
     lda val+1
-    sta (screen),y
+    sta screen+1
     jmp breturn
-  //SEG28 setscreen::@return
+  //SEG26 setscreen::@return
   breturn:
-  //SEG29 [12] return 
+  //SEG27 [12] return 
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte*) screen#0 ← ((byte*))(word/signed word/dword/signed dword) $400 [ screen#0 ] ( ) always clobbers reg byte a 
-Statement [6] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a' [ screen#0 ] ( main:2 [ screen#0 ] ) always clobbers reg byte a reg byte y 
-Statement [8] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
-Statement [11] *((byte**) setscreen::screen#2) ← (byte*) setscreen::val#2 [ screen#0 ] ( main:2::setscreen:5 [ screen#0 ] main:2::setscreen:7 [ screen#0 ] ) always clobbers reg byte a reg byte y 
+Statement [0] (byte*) screen#0 ← (byte*) 1024 [ screen#0 ] ( ) always clobbers reg byte a 
+Statement [6] *((byte*) screen#0) ← (byte) 'a' [ screen#0 ] ( main:2 [ screen#0 ] ) always clobbers reg byte a reg byte y 
+Statement [8] *((byte*) screen#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 [ screen#0 ] ( main:2::setscreen:5 [ screen#0 ] main:2::setscreen:7 [ screen#0 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ setscreen::val#2 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ setscreen::screen#2 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ screen#0 ] : zp ZP_WORD:6 , 
+Potential registers zp ZP_WORD:4 [ screen#0 ] : zp ZP_WORD:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [setscreen] 2: zp ZP_WORD:2 [ setscreen::val#2 ] 2: zp ZP_WORD:4 [ setscreen::screen#2 ] 
-Uplift Scope [] 0.67: zp ZP_WORD:6 [ screen#0 ] 
+Uplift Scope [setscreen] 2: zp ZP_WORD:2 [ setscreen::val#2 ] 
+Uplift Scope [] 0.67: zp ZP_WORD:4 [ screen#0 ] 
 Uplift Scope [main] 
 
-Uplifting [setscreen] best 140 combination zp ZP_WORD:2 [ setscreen::val#2 ] zp ZP_WORD:4 [ setscreen::screen#2 ] 
-Uplifting [] best 140 combination zp ZP_WORD:6 [ screen#0 ] 
-Uplifting [main] best 140 combination 
+Uplifting [setscreen] best 112 combination zp ZP_WORD:2 [ setscreen::val#2 ] 
+Uplifting [] best 112 combination zp ZP_WORD:4 [ screen#0 ] 
+Uplifting [main] best 112 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -318,10 +329,10 @@ ASSEMBLER BEFORE OPTIMIZATION
 //SEG2 Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
-  .label screen = 6
+  .label screen = 4
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte*) screen#0 ← ((byte*))(word/signed word/dword/signed dword) $400 -- pbuz1=pbuc1 
+//SEG4 [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta screen
   lda #>$400
@@ -345,67 +356,54 @@ main: {
   //SEG12 [5] call setscreen 
   //SEG13 [10] phi from main to setscreen [phi:main->setscreen]
   setscreen_from_main:
-  //SEG14 [10] phi (byte**) setscreen::screen#2 = &(byte*) screen#0 [phi:main->setscreen#0] -- pptz1=pptc1 
-    lda #<screen
-    sta setscreen.screen
-    lda #>screen
-    sta setscreen.screen+1
-  //SEG15 [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#1] -- pbuz1=pbuc1 
+  //SEG14 [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta setscreen.val
     lda #>screen1
     sta setscreen.val+1
     jsr setscreen
     jmp b1
-  //SEG16 main::@1
+  //SEG15 main::@1
   b1:
-  //SEG17 [6] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a' -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG16 [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-  //SEG18 [7] call setscreen 
-  //SEG19 [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
+  //SEG17 [7] call setscreen 
+  //SEG18 [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
   setscreen_from_b1:
-  //SEG20 [10] phi (byte**) setscreen::screen#2 = &(byte*) screen#0 [phi:main::@1->setscreen#0] -- pptz1=pptc1 
-    lda #<screen
-    sta setscreen.screen
-    lda #>screen
-    sta setscreen.screen+1
-  //SEG21 [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#1] -- pbuz1=pbuc1 
+  //SEG19 [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta setscreen.val
     lda #>screen2
     sta setscreen.val+1
     jsr setscreen
     jmp b2
-  //SEG22 main::@2
+  //SEG20 main::@2
   b2:
-  //SEG23 [8] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a' -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG21 [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     jmp breturn
-  //SEG24 main::@return
+  //SEG22 main::@return
   breturn:
-  //SEG25 [9] return 
+  //SEG23 [9] return 
     rts
 }
-//SEG26 setscreen
-// setscreen(byte** zeropage(4) screen, byte* zeropage(2) val)
+//SEG24 setscreen
+// setscreen(byte* zeropage(2) val)
 setscreen: {
     .label val = 2
-    .label screen = 4
-  //SEG27 [11] *((byte**) setscreen::screen#2) ← (byte*) setscreen::val#2 -- _deref_pptz1=pbuz2 
-    ldy #0
+  //SEG25 [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda val
-    sta (screen),y
-    iny
+    sta screen
     lda val+1
-    sta (screen),y
+    sta screen+1
     jmp breturn
-  //SEG28 setscreen::@return
+  //SEG26 setscreen::@return
   breturn:
-  //SEG29 [12] return 
+  //SEG27 [12] return 
     rts
 }
 
@@ -442,25 +440,23 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (byte*) screen
-(byte*) screen#0 screen zp ZP_WORD:6 0.6666666666666666
+(byte*) screen#0 screen zp ZP_WORD:4 0.6666666666666666
 (byte*) screen1
-(const byte*) screen1#0 screen1 = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) screen1#0 screen1 = (byte*) 1024
 (byte*) screen2
-(const byte*) screen2#0 screen2 = ((byte*))(word/signed word/dword/signed dword) $400+(byte/signed byte/word/signed word/dword/signed dword) $28
+(const byte*) screen2#0 screen2 = (byte*)(number) $400+(number) $28
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 (label) setscreen::@return
 (byte**) setscreen::screen
-(byte**) setscreen::screen#2 screen zp ZP_WORD:4 2.0
 (byte*) setscreen::val
 (byte*) setscreen::val#2 val zp ZP_WORD:2 2.0
 
 zp ZP_WORD:2 [ setscreen::val#2 ]
-zp ZP_WORD:4 [ setscreen::screen#2 ]
-zp ZP_WORD:6 [ screen#0 ]
+zp ZP_WORD:4 [ screen#0 ]
 
 
 FINAL ASSEMBLER
-Score: 128
+Score: 100
 
 //SEG0 File Comments
 // Tests pointer to pointer in a more complex setup
@@ -471,10 +467,10 @@ Score: 128
 //SEG2 Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
-  .label screen = 6
+  .label screen = 4
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte*) screen#0 ← ((byte*))(word/signed word/dword/signed dword) $400 -- pbuz1=pbuc1 
+//SEG4 [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta screen
   lda #>$400
@@ -491,58 +487,45 @@ bbegin:
 main: {
   //SEG12 [5] call setscreen 
   //SEG13 [10] phi from main to setscreen [phi:main->setscreen]
-  //SEG14 [10] phi (byte**) setscreen::screen#2 = &(byte*) screen#0 [phi:main->setscreen#0] -- pptz1=pptc1 
-    lda #<screen
-    sta setscreen.screen
-    lda #>screen
-    sta setscreen.screen+1
-  //SEG15 [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#1] -- pbuz1=pbuc1 
+  //SEG14 [10] phi (byte*) setscreen::val#2 = (const byte*) screen1#0 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta setscreen.val
     lda #>screen1
     sta setscreen.val+1
     jsr setscreen
-  //SEG16 main::@1
-  //SEG17 [6] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a' -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG15 main::@1
+  //SEG16 [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-  //SEG18 [7] call setscreen 
-  //SEG19 [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
-  //SEG20 [10] phi (byte**) setscreen::screen#2 = &(byte*) screen#0 [phi:main::@1->setscreen#0] -- pptz1=pptc1 
-    lda #<screen
-    sta setscreen.screen
-    lda #>screen
-    sta setscreen.screen+1
-  //SEG21 [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#1] -- pbuz1=pbuc1 
+  //SEG17 [7] call setscreen 
+  //SEG18 [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
+  //SEG19 [10] phi (byte*) setscreen::val#2 = (const byte*) screen2#0 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta setscreen.val
     lda #>screen2
     sta setscreen.val+1
     jsr setscreen
-  //SEG22 main::@2
-  //SEG23 [8] *((byte*) screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) 'a' -- pbuz1_derefidx_vbuc1=vbuc2 
+  //SEG20 main::@2
+  //SEG21 [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-  //SEG24 main::@return
-  //SEG25 [9] return 
+  //SEG22 main::@return
+  //SEG23 [9] return 
     rts
 }
-//SEG26 setscreen
-// setscreen(byte** zeropage(4) screen, byte* zeropage(2) val)
+//SEG24 setscreen
+// setscreen(byte* zeropage(2) val)
 setscreen: {
     .label val = 2
-    .label screen = 4
-  //SEG27 [11] *((byte**) setscreen::screen#2) ← (byte*) setscreen::val#2 -- _deref_pptz1=pbuz2 
-    ldy #0
+  //SEG25 [11] *(&(byte*) screen#0) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda val
-    sta (screen),y
-    iny
+    sta screen
     lda val+1
-    sta (screen),y
-  //SEG28 setscreen::@return
-  //SEG29 [12] return 
+    sta screen+1
+  //SEG26 setscreen::@return
+  //SEG27 [12] return 
     rts
 }
 

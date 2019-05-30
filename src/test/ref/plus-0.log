@@ -1,15 +1,17 @@
+Culled Empty Block (label) @1
+Culled Empty Block (label) fill::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @2
-  (byte*~) main::$0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*~) main::$0 ← ((byte*)) (number) $400
   (byte*) fill::screen#0 ← (byte*~) main::$0
   (byte) fill::ch#0 ← (byte) 'a'
   call fill 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*~) main::$2 ← ((byte*)) (word/signed word/dword/signed dword) $2000
+  (byte*~) main::$2 ← ((byte*)) (number) $2000
   (byte*) fill::screen#1 ← (byte*~) main::$2
   (byte) fill::ch#1 ← (byte) 'b'
   call fill 
@@ -22,21 +24,21 @@ main::@return: scope:[main]  from main::@2
 fill: scope:[fill]  from main main::@1
   (byte) fill::ch#4 ← phi( main/(byte) fill::ch#0 main::@1/(byte) fill::ch#1 )
   (byte*) fill::screen#4 ← phi( main/(byte*) fill::screen#0 main::@1/(byte*) fill::screen#1 )
-  (byte) fill::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) fill::i#0 ← (number) 0
   to:fill::@1
 fill::@1: scope:[fill]  from fill fill::@3
   (byte) fill::i#4 ← phi( fill/(byte) fill::i#0 fill::@3/(byte) fill::i#1 )
   (byte) fill::ch#3 ← phi( fill/(byte) fill::ch#4 fill::@3/(byte) fill::ch#5 )
   (byte*) fill::screen#3 ← phi( fill/(byte*) fill::screen#4 fill::@3/(byte*) fill::screen#5 )
-  (byte) fill::j#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) fill::j#0 ← (number) 0
   to:fill::@2
 fill::@2: scope:[fill]  from fill::@1 fill::@2
   (byte) fill::i#2 ← phi( fill::@1/(byte) fill::i#4 fill::@2/(byte) fill::i#2 )
   (byte) fill::ch#2 ← phi( fill::@1/(byte) fill::ch#3 fill::@2/(byte) fill::ch#2 )
   (byte*) fill::screen#2 ← phi( fill::@1/(byte*) fill::screen#3 fill::@2/(byte*) fill::screen#2 )
   (byte) fill::j#2 ← phi( fill::@1/(byte) fill::j#0 fill::@2/(byte) fill::j#1 )
-  (byte/signed word/word/dword/signed dword~) fill::$0 ← (byte) fill::j#2 * (byte/signed byte/word/signed word/dword/signed dword) $28
-  (byte*~) fill::$1 ← (byte*) fill::screen#2 + (byte/signed word/word/dword/signed dword~) fill::$0
+  (number~) fill::$0 ← (byte) fill::j#2 * (number) $28
+  (byte*~) fill::$1 ← (byte*) fill::screen#2 + (number~) fill::$0
   *((byte*~) fill::$1 + (byte) fill::i#2) ← (byte) fill::ch#2
   (byte) fill::j#1 ← (byte) fill::j#2 + rangenext(0,2)
   (bool~) fill::$2 ← (byte) fill::j#1 != rangelast(0,2)
@@ -66,7 +68,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) fill((byte*) fill::screen , (byte) fill::ch)
-(byte/signed word/word/dword/signed dword~) fill::$0
+(number~) fill::$0
 (byte*~) fill::$1
 (bool~) fill::$2
 (bool~) fill::$3
@@ -105,9 +107,27 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) fill::i#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (byte) fill::j#0 ← (number) 0
+Adding number conversion cast (unumber) $28 in (number~) fill::$0 ← (byte) fill::j#2 * (number) $28
+Adding number conversion cast (unumber) fill::$0 in (number~) fill::$0 ← (byte) fill::j#2 * (unumber)(number) $28
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*~) main::$0 ← (byte*)(number) $400
+Inlining cast (byte*~) main::$2 ← (byte*)(number) $2000
+Inlining cast (byte) fill::i#0 ← (unumber)(number) 0
+Inlining cast (byte) fill::j#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 8192
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast $28
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) fill::$0 ← (byte) fill::j#2 * (byte) $28
 Alias (byte*) fill::screen#0 = (byte*~) main::$0 
 Alias (byte*) fill::screen#1 = (byte*~) main::$2 
 Alias (byte) fill::i#2 = (byte) fill::i#3 
@@ -118,67 +138,94 @@ Self Phi Eliminated (byte*) fill::screen#2
 Self Phi Eliminated (byte) fill::ch#2
 Self Phi Eliminated (byte) fill::i#2
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) fill::screen#2 (byte*) fill::screen#3
-Redundant Phi (byte) fill::ch#2 (byte) fill::ch#3
-Redundant Phi (byte) fill::i#2 (byte) fill::i#4
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte*) fill::screen#2 (byte*) fill::screen#3
+Identical Phi Values (byte) fill::ch#2 (byte) fill::ch#3
+Identical Phi Values (byte) fill::i#2 (byte) fill::i#4
+Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) fill::$2 [19] unroll if((byte) fill::j#1!=rangelast(0,2)) goto fill::@2
 Simple Condition (bool~) fill::$3 [23] if((byte) fill::i#1!=rangelast(0,$27)) goto fill::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) fill::screen#0 = ((byte*))$400
+Constant (const byte*) fill::screen#0 = (byte*) 1024
 Constant (const byte) fill::ch#0 = 'a'
-Constant (const byte*) fill::screen#1 = ((byte*))$2000
+Constant (const byte*) fill::screen#1 = (byte*) 8192
 Constant (const byte) fill::ch#1 = 'b'
 Constant (const byte) fill::i#0 = 0
 Constant (const byte) fill::j#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value fill::j#1 ← ++ fill::j#2 to ++
-Resolved ranged comparison value unroll if(fill::j#1!=rangelast(0,2)) goto fill::@2 to (byte/signed byte/word/signed word/dword/signed dword) 3
-Resolved ranged next value fill::i#1 ← ++ fill::i#4 to ++
-Resolved ranged comparison value if(fill::i#1!=rangelast(0,$27)) goto fill::@1 to (byte/signed byte/word/signed word/dword/signed dword) $28
+Resolved ranged next value [17] fill::j#1 ← ++ fill::j#2 to ++
+Resolved ranged comparison value [19] unroll if(fill::j#1!=rangelast(0,2)) goto fill::@2 to (number) 3
+Resolved ranged next value [21] fill::i#1 ← ++ fill::i#4 to ++
+Resolved ranged comparison value [23] if(fill::i#1!=rangelast(0,$27)) goto fill::@1 to (number) $28
+Adding number conversion cast (unumber) 3 in unroll if((byte) fill::j#1!=(number) 3) goto fill::@2
+Adding number conversion cast (unumber) $28 in if((byte) fill::i#1!=(number) $28) goto fill::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 3
+Simplifying constant integer cast $28
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Self Phi Eliminated (byte*) fill::screen#3
 Self Phi Eliminated (byte) fill::ch#3
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte*) fill::screen#3 (byte*) fill::screen#4
-Redundant Phi (byte) fill::ch#3 (byte) fill::ch#4
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte*) fill::screen#3 (byte*) fill::screen#4
+Identical Phi Values (byte) fill::ch#3 (byte) fill::ch#4
+Successful SSA optimization Pass2IdenticalPhiElimination
 Unrolling loop Loop head: fill::@2 tails: fill::@2 blocks: fill::@2 
 Successful SSA optimization Pass2LoopUnroll
-Redundant Phi (byte) fill::j#2 (const byte) fill::j#0
-Successful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) fill::$0 = fill::j#0*$28
+Identical Phi Values (byte) fill::j#2 (const byte) fill::j#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Negating conditional jump and destination [10] if((byte) fill::j#1==(byte) 3) goto fill::@3
+Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
+Constant right-side identified [6] (byte~) fill::$0 ← (const byte) fill::j#0 * (byte) $28
+Constant right-side identified [9] (byte) fill::j#1 ← ++ (const byte) fill::j#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) fill::$0 = fill::j#0*$28
 Constant (const byte) fill::j#1 = ++fill::j#0
 Successful SSA optimization Pass2ConstantIdentification
-Removed zero-constant in assignment fill::$1
-if() condition always true - replacing block destination [7] if((const byte) fill::j#1!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto fill::@2_1
+if() condition always false - eliminating [10] if((const byte) fill::j#1==(byte) 3) goto fill::@3
 Successful SSA optimization Pass2ConstantIfs
-Eliminating unused constant (const byte/signed word/word/dword/signed dword) fill::$0
+Simplifying constant evaluating to zero (const byte) fill::j#0*(byte) $28 in 
+Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero fill::screen#4 in [7] (byte*~) fill::$1 ← (byte*) fill::screen#4 + (const byte) fill::$0
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant (const byte) fill::$0
 Successful SSA optimization PassNEliminateUnusedVars
 Alias (byte*) fill::screen#4 = (byte*~) fill::$1 
 Successful SSA optimization Pass2AliasElimination
 Unrolling loop Loop head: fill::@2_1 tails: fill::@2_1 blocks: fill::@2_1 
 Successful SSA optimization Pass2LoopUnroll
-Redundant Phi (byte) fill::j#3 (const byte) fill::j#1
-Successful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) fill::$4 = fill::j#1*$28
+Identical Phi Values (byte) fill::j#3 (const byte) fill::j#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Negating conditional jump and destination [12] if((byte) fill::j#4==(byte) 3) goto fill::@3
+Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
+Constant right-side identified [8] (byte~) fill::$4 ← (const byte) fill::j#1 * (byte) $28
+Constant right-side identified [11] (byte) fill::j#4 ← ++ (const byte) fill::j#1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) fill::$4 = fill::j#1*$28
 Constant (const byte) fill::j#4 = ++fill::j#1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [9] if((const byte) fill::j#4!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto fill::@2_2
+if() condition always false - eliminating [12] if((const byte) fill::j#4==(byte) 3) goto fill::@3
 Successful SSA optimization Pass2ConstantIfs
 Unrolling loop Loop head: fill::@2_2 tails: fill::@2_2 blocks: fill::@2_2 
 Successful SSA optimization Pass2LoopUnroll
-Redundant Phi (byte) fill::j#5 (const byte) fill::j#4
-Successful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte/signed word/word/dword/signed dword) fill::$6 = fill::j#4*$28
+Identical Phi Values (byte) fill::j#5 (const byte) fill::j#4
+Successful SSA optimization Pass2IdenticalPhiElimination
+Negating conditional jump and destination [14] if((byte) fill::j#6==(byte) 3) goto fill::@3
+Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
+Constant right-side identified [10] (byte~) fill::$6 ← (const byte) fill::j#4 * (byte) $28
+Constant right-side identified [13] (byte) fill::j#6 ← ++ (const byte) fill::j#4
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) fill::$6 = fill::j#4*$28
 Constant (const byte) fill::j#6 = ++fill::j#4
 Successful SSA optimization Pass2ConstantIdentification
 Removing PHI-reference to removed block (fill::@2_2) in block fill::@2_3
-if() condition always false - eliminating [11] if((const byte) fill::j#6!=(byte/signed byte/word/signed word/dword/signed dword) 3) goto fill::@2_3
+if() condition always true - replacing block destination [14] if((const byte) fill::j#6==(byte) 3) goto fill::@3
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused constant (const byte) fill::j#6
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating variable (byte) fill::j#7 from unused block fill::@2_3
-Eliminating variable (byte/signed word/word/dword/signed dword~) fill::$8 from unused block fill::@2_3
+Eliminating variable (byte~) fill::$8 from unused block fill::@2_3
 Eliminating variable (byte*~) fill::$9 from unused block fill::@2_3
 Eliminating variable (byte) fill::j#8 from unused block fill::@2_3
 Removing unused block fill::@2_3
@@ -191,16 +238,16 @@ Inlining constant with var siblings (const byte) fill::i#0
 Inlining constant with different constant siblings (const byte) fill::j#0
 Inlining constant with different constant siblings (const byte) fill::j#1
 Inlining constant with different constant siblings (const byte) fill::j#4
-Constant inlined fill::j#4 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined fill::j#4 = ++++(byte) 0
 Constant inlined fill::ch#0 = (byte) 'a'
-Constant inlined fill::screen#1 = ((byte*))(word/signed word/dword/signed dword) $2000
-Constant inlined fill::screen#0 = ((byte*))(word/signed word/dword/signed dword) $400
-Constant inlined fill::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined fill::$6 = ++++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) $28
+Constant inlined fill::screen#1 = (byte*) 8192
+Constant inlined fill::screen#0 = (byte*) 1024
+Constant inlined fill::i#0 = (byte) 0
+Constant inlined fill::$6 = ++++(byte) 0*(byte) $28
 Constant inlined fill::ch#1 = (byte) 'b'
-Constant inlined fill::j#1 = ++(byte/signed byte/word/signed word/dword/signed dword) 0
-Constant inlined fill::$4 = ++(byte/signed byte/word/signed word/dword/signed dword) 0*(byte/signed byte/word/signed word/dword/signed dword) $28
-Constant inlined fill::j#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined fill::j#1 = ++(byte) 0
+Constant inlined fill::$4 = ++(byte) 0*(byte) $28
+Constant inlined fill::j#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Simplifying constant integer increment ++0
 Simplifying constant integer increment ++0
@@ -210,16 +257,20 @@ Successful SSA optimization Pass2ConstantSimplification
 Added new block during phi lifting fill::@5(between fill::@3 and fill::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to fill:5 fill:7 
+Calls in [main] to fill:6 fill:8 
 
 Created 3 initial phi equivalence classes
-Coalesced [19] fill::i#5 ← fill::i#1
+Coalesced [21] fill::i#5 ← fill::i#1
 Coalesced down to 3 phi equivalence classes
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@2
 Culled Empty Block (label) fill::@5
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
@@ -251,25 +302,25 @@ main::@return: scope:[main]  from main::@1
   to:@return
 fill: scope:[fill]  from main main::@1
   [9] (byte) fill::ch#4 ← phi( main/(byte) 'a' main::@1/(byte) 'b' )
-  [9] (byte*) fill::screen#4 ← phi( main/((byte*))(word/signed word/dword/signed dword) $400 main::@1/((byte*))(word/signed word/dword/signed dword) $2000 )
+  [9] (byte*) fill::screen#4 ← phi( main/(byte*) 1024 main::@1/(byte*) 8192 )
   to:fill::@1
 fill::@1: scope:[fill]  from fill fill::@3
-  [10] (byte) fill::i#4 ← phi( fill/(byte/signed byte/word/signed word/dword/signed dword) 0 fill::@3/(byte) fill::i#1 )
+  [10] (byte) fill::i#4 ← phi( fill/(byte) 0 fill::@3/(byte) fill::i#1 )
   to:fill::@2
 fill::@2: scope:[fill]  from fill::@1
   [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4
   to:fill::@2_1
 fill::@2_1: scope:[fill]  from fill::@2
-  [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) $28
+  [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28
   [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4
   to:fill::@2_2
 fill::@2_2: scope:[fill]  from fill::@2_1
-  [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) $28
+  [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28
   [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4
   to:fill::@3
 fill::@3: scope:[fill]  from fill::@2_2
   [16] (byte) fill::i#1 ← ++ (byte) fill::i#4
-  [17] if((byte) fill::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto fill::@1
+  [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1
   to:fill::@return
 fill::@return: scope:[fill]  from fill::@3
   [18] return 
@@ -340,7 +391,7 @@ main: {
   //SEG13 [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuz1=vbuc1 
     lda #'a'
     sta fill.ch
-  //SEG14 [9] phi (byte*) fill::screen#4 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->fill#1] -- pbuz1=pbuc1 
+  //SEG14 [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta fill.screen
     lda #>$400
@@ -357,7 +408,7 @@ main: {
   //SEG19 [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuz1=vbuc1 
     lda #'b'
     sta fill.ch
-  //SEG20 [9] phi (byte*) fill::screen#4 = ((byte*))(word/signed word/dword/signed dword) $2000 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+  //SEG20 [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta fill.screen
     lda #>$2000
@@ -379,7 +430,7 @@ fill: {
     .label _7 = 8
   //SEG24 [10] phi from fill to fill::@1 [phi:fill->fill::@1]
   b1_from_fill:
-  //SEG25 [10] phi (byte) fill::i#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fill->fill::@1#0] -- vbuz1=vbuc1 
+  //SEG25 [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -399,7 +450,7 @@ fill: {
     jmp b2_1
   //SEG31 fill::@2_1
   b2_1:
-  //SEG32 [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  //SEG32 [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc screen
@@ -414,7 +465,7 @@ fill: {
     jmp b2_2
   //SEG34 fill::@2_2
   b2_2:
-  //SEG35 [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  //SEG35 [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc screen
@@ -431,7 +482,7 @@ fill: {
   b3:
   //SEG38 [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG39 [17] if((byte) fill::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto fill::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG39 [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp i
     bne b1_from_b3
@@ -443,16 +494,16 @@ fill: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ) always clobbers reg byte a 
+Statement [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ fill::ch#4 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ fill::i#4 fill::i#1 ]
 Statement [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] ) always clobbers reg byte a 
-Statement [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ) always clobbers reg byte a 
+Statement [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ) always clobbers reg byte a 
 Statement [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] ) always clobbers reg byte a 
 Statement [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] ) always clobbers reg byte a 
-Statement [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ) always clobbers reg byte a 
+Statement [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ) always clobbers reg byte a 
 Statement [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] ) always clobbers reg byte a 
-Statement [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ) always clobbers reg byte a 
+Statement [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ) always clobbers reg byte a 
 Statement [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ fill::screen#4 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ fill::ch#4 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
@@ -502,7 +553,7 @@ main: {
   fill_from_main:
   //SEG13 [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #'a'
-  //SEG14 [9] phi (byte*) fill::screen#4 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->fill#1] -- pbuz1=pbuc1 
+  //SEG14 [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta fill.screen
     lda #>$400
@@ -518,7 +569,7 @@ main: {
   fill_from_b1:
   //SEG19 [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
     ldx #'b'
-  //SEG20 [9] phi (byte*) fill::screen#4 = ((byte*))(word/signed word/dword/signed dword) $2000 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+  //SEG20 [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta fill.screen
     lda #>$2000
@@ -538,7 +589,7 @@ fill: {
     .label _7 = 4
   //SEG24 [10] phi from fill to fill::@1 [phi:fill->fill::@1]
   b1_from_fill:
-  //SEG25 [10] phi (byte) fill::i#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
+  //SEG25 [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
     ldy #0
     jmp b1
   //SEG26 [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
@@ -556,7 +607,7 @@ fill: {
     jmp b2_1
   //SEG31 fill::@2_1
   b2_1:
-  //SEG32 [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  //SEG32 [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc screen
@@ -570,7 +621,7 @@ fill: {
     jmp b2_2
   //SEG34 fill::@2_2
   b2_2:
-  //SEG35 [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  //SEG35 [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc screen
@@ -586,7 +637,7 @@ fill: {
   b3:
   //SEG38 [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG39 [17] if((byte) fill::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG39 [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
     bne b1_from_b3
     jmp breturn
@@ -691,7 +742,7 @@ main: {
   //SEG12 [9] phi from main to fill [phi:main->fill]
   //SEG13 [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #'a'
-  //SEG14 [9] phi (byte*) fill::screen#4 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->fill#1] -- pbuz1=pbuc1 
+  //SEG14 [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta fill.screen
     lda #>$400
@@ -703,7 +754,7 @@ main: {
   //SEG18 [9] phi from main::@1 to fill [phi:main::@1->fill]
   //SEG19 [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
     ldx #'b'
-  //SEG20 [9] phi (byte*) fill::screen#4 = ((byte*))(word/signed word/dword/signed dword) $2000 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+  //SEG20 [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta fill.screen
     lda #>$2000
@@ -720,7 +771,7 @@ fill: {
     .label _5 = 4
     .label _7 = 4
   //SEG24 [10] phi from fill to fill::@1 [phi:fill->fill::@1]
-  //SEG25 [10] phi (byte) fill::i#4 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
+  //SEG25 [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
     ldy #0
   //SEG26 [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
   //SEG27 [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
@@ -731,7 +782,7 @@ fill: {
     txa
     sta (screen),y
   //SEG31 fill::@2_1
-  //SEG32 [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 1*(byte/signed byte/word/signed word/dword/signed dword) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  //SEG32 [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc screen
@@ -743,7 +794,7 @@ fill: {
     txa
     sta (_5),y
   //SEG34 fill::@2_2
-  //SEG35 [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte/signed byte/word/signed word/dword/signed dword) 2*(byte/signed byte/word/signed word/dword/signed dword) $28 -- pbuz1=pbuz2_plus_vbuc1 
+  //SEG35 [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc screen
@@ -757,7 +808,7 @@ fill: {
   //SEG37 fill::@3
   //SEG38 [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
     iny
-  //SEG39 [17] if((byte) fill::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
+  //SEG39 [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
     bne b2
   //SEG40 fill::@return

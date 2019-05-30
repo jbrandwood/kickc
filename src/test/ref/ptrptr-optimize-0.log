@@ -1,0 +1,283 @@
+Adding pointer type conversion cast (byte*) main::screen in (byte*) main::screen ← (number) $400
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte**~) main::$0 ← & (byte*) main::screen#0
+  (byte**) main::pscreen#0 ← (byte**~) main::$0
+  *(*((byte**) main::pscreen#0)) ← (byte) 'a'
+  *((byte**) main::pscreen#0) ← ++ *((byte**) main::pscreen#0)
+  *(*((byte**) main::pscreen#0)) ← (byte) 'b'
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(byte**~) main::$0
+(label) main::@return
+(byte**) main::pscreen
+(byte**) main::pscreen#0
+(byte*) main::screen
+(byte*) main::screen#0
+
+Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Alias (byte**) main::pscreen#0 = (byte**~) main::$0 
+Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [1] (byte**) main::pscreen#0 ← & (byte*) main::screen#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte**) main::pscreen#0 = &main::screen#0
+Successful SSA optimization Pass2ConstantIdentification
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] (byte*) main::screen#0 ← (byte*) 1024
+  [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a'
+  [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0)
+  [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [8] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte**) main::pscreen
+(byte*) main::screen
+(byte*) main::screen#0 20.0
+
+Initial phi equivalence classes
+Added variable main::screen#0 to zero page equivalence class [ main::screen#0 ]
+Complete equivalence classes
+[ main::screen#0 ]
+Allocated zp ZP_WORD:2 [ main::screen#0 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests optimization of constant pointers to pointers
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label pscreen = screen
+    .label screen = 2
+  //SEG10 [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+  //SEG11 [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref__deref_pptc1=vbuc2 
+    lda #'a'
+    ldy #0
+    sta (pscreen),y
+  //SEG12 [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
+    inc pscreen
+    bne !+
+    inc pscreen+1
+  !:
+  //SEG13 [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref__deref_pptc1=vbuc2 
+    lda #'b'
+    ldy #0
+    sta (pscreen),y
+    jmp breturn
+  //SEG14 main::@return
+  breturn:
+  //SEG15 [8] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] (byte*) main::screen#0 ← (byte*) 1024 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Potential registers zp ZP_WORD:2 [ main::screen#0 ] : zp ZP_WORD:2 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 20: zp ZP_WORD:2 [ main::screen#0 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 65 combination zp ZP_WORD:2 [ main::screen#0 ] 
+Uplifting [] best 65 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests optimization of constant pointers to pointers
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label pscreen = screen
+    .label screen = 2
+  //SEG10 [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+  //SEG11 [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref__deref_pptc1=vbuc2 
+    lda #'a'
+    ldy #0
+    sta (pscreen),y
+  //SEG12 [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
+    inc pscreen
+    bne !+
+    inc pscreen+1
+  !:
+  //SEG13 [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref__deref_pptc1=vbuc2 
+    lda #'b'
+    ldy #0
+    sta (pscreen),y
+    jmp breturn
+  //SEG14 main::@return
+  breturn:
+  //SEG15 [8] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(byte**) main::pscreen
+(const byte**) main::pscreen#0 pscreen = &(byte*) main::screen#0
+(byte*) main::screen
+(byte*) main::screen#0 screen zp ZP_WORD:2 20.0
+
+zp ZP_WORD:2 [ main::screen#0 ]
+
+
+FINAL ASSEMBLER
+Score: 50
+
+//SEG0 File Comments
+// Tests optimization of constant pointers to pointers
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label pscreen = screen
+    .label screen = 2
+  //SEG10 [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+  //SEG11 [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref__deref_pptc1=vbuc2 
+    lda #'a'
+    ldy #0
+    sta (pscreen),y
+  //SEG12 [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
+    inc pscreen
+    bne !+
+    inc pscreen+1
+  !:
+  //SEG13 [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref__deref_pptc1=vbuc2 
+    lda #'b'
+    ldy #0
+    sta (pscreen),y
+  //SEG14 main::@return
+  //SEG15 [8] return 
+    rts
+}
+

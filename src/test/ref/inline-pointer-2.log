@@ -1,0 +1,256 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*~) main::$0 ← ((byte*)) { (number) 4, (number) 0 }
+  (word~) main::$1 ← ((word)) { (number) 0, (number) $28 }
+  (byte*~) main::$2 ← (byte*~) main::$0 + (word~) main::$1
+  (byte*) main::screen#0 ← (byte*~) main::$2
+  *((byte*) main::screen#0) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(byte*~) main::$0
+(word~) main::$1
+(byte*~) main::$2
+(label) main::@return
+(byte*) main::screen
+(byte*) main::screen#0
+
+Fixing inline constructor with main::$3 ← (byte)4 w= (byte)0
+Fixing inline constructor with main::$4 ← (byte)0 w= (byte)$28
+Successful SSA optimization Pass2FixInlineConstructorsNew
+Simplifying constant integer cast 4
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast $28
+Successful SSA optimization PassNCastSimplification
+Adding pointer type conversion cast (byte*) main::$0 in (byte*~) main::$0 ← (word~) main::$3
+Successful SSA optimization PassNAddTypeConversionAssignment
+Alias (word~) main::$1 = (word~) main::$4 
+Alias (byte*) main::screen#0 = (byte*~) main::$2 
+Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [0] (word~) main::$3 ← (byte) 4 w= (byte) 0
+Constant right-side identified [2] (word~) main::$1 ← (byte) 0 w= (byte) $28
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Simplifying constant evaluating to zero (byte) 0*(number) $100 in [2] (word~) main::$1 ← (byte) 0*(number) $100+(byte) $28
+Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero 4*$100 in [0] (word~) main::$3 ← (byte) 4*(number) $100+(byte) 0
+Simplifying expression containing zero $28 in [2] (word~) main::$1 ← (number) 0+(byte) $28
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Adding number conversion cast (unumber) 4*$100 in (word~) main::$3 ← (byte) 4*(number) $100
+Adding number conversion cast (unumber) $100 in (word~) main::$3 ← ((unumber)) (byte) 4*(number) $100
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (word~) main::$3 ← (unumber)(byte) 4*(unumber)(number) $100
+Inlining cast (byte*~) main::$0 ← (byte*)(word~) main::$3
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast (byte) 4*(unumber)(number) $100
+Simplifying constant integer cast $100
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $100
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant (const word) main::$3 = 4*$100
+Constant (const word) main::$1 = $28
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte*)main::$3 in [1] (byte*~) main::$0 ← (byte*)(const word) main::$3
+Successful SSA optimization Pass2ConstantValues
+Constant (const byte*) main::$0 = (byte*)main::$3
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [0] (byte*) main::screen#0 ← (const byte*) main::$0 + (const word) main::$1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::screen#0 = main::$0+main::$1
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined main::$3 = (byte) 4*(word) $100
+Constant inlined main::$1 = (byte) $28
+Constant inlined main::$0 = (byte*)(byte) 4*(word) $100
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte*) main::screen#0) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::screen
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests creating a literal pointer from two bytes
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label screen = 4*$100+$28
+  //SEG10 [4] *((const byte*) main::screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) main::screen#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 27 combination 
+Uplifting [] best 27 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests creating a literal pointer from two bytes
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label screen = 4*$100+$28
+  //SEG10 [4] *((const byte*) main::screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(byte*) main::screen
+(const byte*) main::screen#0 screen = (byte*)(byte) 4*(word) $100+(byte) $28
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+//SEG0 File Comments
+// Tests creating a literal pointer from two bytes
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label screen = 4*$100+$28
+  //SEG10 [4] *((const byte*) main::screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen
+  //SEG11 main::@return
+  //SEG12 [5] return 
+    rts
+}
+

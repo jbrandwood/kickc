@@ -1,8 +1,14 @@
+Adding pointer type conversion cast (byte*) screen in (byte*) screen ← (number) $400
+Culled Empty Block (label) @1
+Culled Empty Block (label) print::@4
+Culled Empty Block (label) print::@3
+Culled Empty Block (label) print::@5
+Culled Empty Block (label) print::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte[]) rex1#0 ← (const string) $0
-  (byte*) screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) screen#0 ← ((byte*)) (number) $400
   to:@2
 main: scope:[main]  from @2
   (byte*) screen#15 ← phi( @2/(byte*) screen#17 )
@@ -114,6 +120,10 @@ SYMBOL TABLE SSA
 (byte*) screen#8
 (byte*) screen#9
 
+Inlining cast (byte*) screen#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
 Alias (byte*) screen#1 = (byte*) screen#8 
 Alias (byte*) screen#2 = (byte*) screen#9 
 Alias (byte*) screen#10 = (byte*) screen#3 (byte*) screen#11 (byte*) screen#4 
@@ -122,16 +132,16 @@ Alias (byte*) screen#12 = (byte*) screen#16 (byte*) screen#13 (byte*) screen#6
 Alias (byte*) screen#0 = (byte*) screen#17 
 Alias (byte*) screen#14 = (byte*) screen#7 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte*) screen#15 (byte*) screen#0
-Redundant Phi (byte*) screen#1 (byte*) screen#12
-Redundant Phi (byte*) screen#2 (byte*) screen#12
-Redundant Phi (byte*) screen#10 (byte*) screen#12
-Redundant Phi (byte*) screen#14 (byte*) screen#10
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte*) screen#15 (byte*) screen#0
+Identical Phi Values (byte*) screen#1 (byte*) screen#12
+Identical Phi Values (byte*) screen#2 (byte*) screen#12
+Identical Phi Values (byte*) screen#10 (byte*) screen#12
+Identical Phi Values (byte*) screen#14 (byte*) screen#10
+Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) print::$0 [22] if(*((byte*) print::string#4)!=(byte) '@') goto print::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte[]) rex1#0 = $0
-Constant (const byte*) screen#0 = ((byte*))$400
+Constant (const byte*) screen#0 = (byte*) 1024
 Constant (const byte[]) main::rex2#0 = main::$3
 Constant (const byte*) print::string#2 = main::string
 Successful SSA optimization Pass2ConstantIdentification
@@ -139,9 +149,6 @@ Constant (const byte*) print::string#0 = rex1#0
 Constant (const byte*) print::string#1 = main::rex2#0
 Successful SSA optimization Pass2ConstantIdentification
 Successful SSA optimization Pass2ConstantStringConsolidation
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
 Inlining constant with var siblings (const byte*) print::string#2
 Inlining constant with var siblings (const byte*) print::string#0
 Inlining constant with var siblings (const byte*) print::string#1
@@ -151,7 +158,7 @@ Constant inlined print::string#0 = (const byte[]) rex1#0
 Constant inlined print::string#1 = (const byte[]) main::rex2#0
 Constant inlined $0 = (const byte[]) rex1#0
 Constant inlined print::string#2 = (const string) main::string
-Constant inlined screen#0 = ((byte*))(word/signed word/dword/signed dword) $400
+Constant inlined screen#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantInlining
 Successful SSA optimization Pass2ConstantStringConsolidation
 Constant inlined main::rex2#0 = (const byte[]) rex1#0
@@ -161,19 +168,23 @@ Identical Phi Values (byte*) print::string#6 (const byte[]) rex1#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@3
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to print:5 print:7 print:9 
+Calls in [main] to print:6 print:8 print:10 
 
 Created 3 initial phi equivalence classes
-Coalesced [6] screen#19 ← screen#12
-Coalesced (already) [8] screen#20 ← screen#12
-Coalesced (already) [12] screen#21 ← screen#18
-Coalesced [19] print::string#7 ← print::string#3
-Coalesced [20] screen#22 ← screen#5
+Coalesced [7] screen#19 ← screen#12
+Coalesced (already) [9] screen#20 ← screen#12
+Coalesced (already) [14] screen#21 ← screen#18
+Coalesced [21] print::string#7 ← print::string#3
+Coalesced [22] screen#22 ← screen#5
 Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -208,7 +219,7 @@ main::@return: scope:[main]  from main::@2
   [10] return 
   to:@return
 print: scope:[print]  from main main::@1 main::@2
-  [11] (byte*) screen#18 ← phi( main/((byte*))(word/signed word/dword/signed dword) $400 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
+  [11] (byte*) screen#18 ← phi( main/(byte*) 1024 main::@1/(byte*) screen#12 main::@2/(byte*) screen#12 )
   to:print::@1
 print::@1: scope:[print]  from print print::@2
   [12] (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
@@ -277,7 +288,7 @@ main: {
   //SEG11 [5] call print 
   //SEG12 [11] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG13 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->print#0] -- pbuz1=pbuc1 
+  //SEG13 [11] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -404,7 +415,7 @@ main: {
   //SEG11 [5] call print 
   //SEG12 [11] phi from main to print [phi:main->print]
   print_from_main:
-  //SEG13 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->print#0] -- pbuz1=pbuc1 
+  //SEG13 [11] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -570,7 +581,7 @@ Score: 675
 main: {
   //SEG11 [5] call print 
   //SEG12 [11] phi from main to print [phi:main->print]
-  //SEG13 [11] phi (byte*) screen#18 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->print#0] -- pbuz1=pbuc1 
+  //SEG13 [11] phi (byte*) screen#18 = (byte*) 1024 [phi:main->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400

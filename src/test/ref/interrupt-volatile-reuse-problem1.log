@@ -1,11 +1,14 @@
 Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
+Adding pointer type conversion cast (void()**) KERNEL_IRQ in (void()**) KERNEL_IRQ ← (number) $314
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
+Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ#0 ← ((void()**)) (word/signed word/dword/signed dword) $314
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) col2#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  (void()**) KERNEL_IRQ#0 ← ((void()**)) (number) $314
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte) col1#0 ← (number) 0
+  (byte) col2#0 ← (number) 8
   to:@2
 main: scope:[main]  from @2
   (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
@@ -17,9 +20,9 @@ main::@return: scope:[main]  from main
 irq: scope:[irq]  from
   (byte) col2#3 ← phi( @2/(byte) col2#5 )
   (byte) col1#3 ← phi( @2/(byte) col1#5 )
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) col1#3
+  *((byte*) SCREEN#0 + (number) $28) ← (byte) col1#3
   (byte) col1#1 ← ++ (byte) col1#3
-  *((byte*) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) $29) ← (byte) col2#3
+  *((byte*) SCREEN#0 + (number) $29) ← (byte) col2#3
   (byte) col2#1 ← ++ (byte) col2#3
   to:irq::@return
 irq::@return: scope:[irq]  from irq
@@ -67,40 +70,64 @@ interrupt(KERNEL_MIN)(void()) irq()
 (void()*~) main::$0
 (label) main::@return
 
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) col1#0 ← (number) 0
+Adding number conversion cast (unumber) 8 in (byte) col2#0 ← (number) 8
+Adding number conversion cast (unumber) $28 in *((byte*) SCREEN#0 + (number) $28) ← (byte) col1#3
+Adding number conversion cast (unumber) $29 in *((byte*) SCREEN#0 + (number) $29) ← (byte) col2#3
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (void()**) KERNEL_IRQ#0 ← (void()**)(number) $314
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) col1#0 ← (unumber)(number) 0
+Inlining cast (byte) col2#0 ← (unumber)(number) 8
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (void()**) 788
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 8
+Simplifying constant integer cast $28
+Simplifying constant integer cast $29
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $29
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) col1#1 = (byte) col1#4 (byte) col1#2 
 Alias (byte) col2#1 = (byte) col2#4 (byte) col2#2 
 Alias (byte) col1#0 = (byte) col1#5 
 Alias (byte) col2#0 = (byte) col2#5 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte) col1#3 (byte) col1#0
-Redundant Phi (byte) col2#3 (byte) col2#0
-Successful SSA optimization Pass2RedundantPhiElimination
-Constant (const void()**) KERNEL_IRQ#0 = ((void()**))$314
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Identical Phi Values (byte) col1#3 (byte) col1#0
+Identical Phi Values (byte) col2#3 (byte) col2#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant right-side identified [4] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const void()**) KERNEL_IRQ#0 = (void()**) 788
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const void()*) main::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
+Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
+Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN#0+$28)
 Consolidated array index constant in *(SCREEN#0+$29)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  [1] (byte) col2#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8
+  [0] (byte) col1#0 ← (byte) 0
+  [1] (byte) col2#0 ← (byte) 8
   to:@1
 @1: scope:[]  from @begin
   [2] phi()
@@ -115,9 +142,9 @@ main::@return: scope:[main]  from main
   [6] return 
   to:@return
 irq: scope:[irq]  from
-  [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) col1#0
+  [7] *((const byte*) SCREEN#0+(byte) $28) ← (byte) col1#0
   [8] (byte) col1#1 ← ++ (byte) col1#0
-  [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $29) ← (byte) col2#0
+  [9] *((const byte*) SCREEN#0+(byte) $29) ← (byte) col2#0
   [10] (byte) col2#1 ← ++ (byte) col2#0
   to:irq::@return
 irq::@return: scope:[irq]  from irq
@@ -160,10 +187,10 @@ INITIAL ASM
   .label col2 = 3
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col1
-//SEG5 [1] (byte) col2#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8 -- vbuz1=vbuc1 
+//SEG5 [1] (byte) col2#0 ← (byte) 8 -- vbuz1=vbuc1 
   lda #8
   sta col2
 //SEG6 [2] phi from @begin to @1 [phi:@begin->@1]
@@ -194,12 +221,12 @@ main: {
 //SEG15 irq
 irq: {
   //SEG16 entry interrupt(KERNEL_MIN)
-  //SEG17 [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
+  //SEG17 [7] *((const byte*) SCREEN#0+(byte) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
     lda col1
     sta SCREEN+$28
   //SEG18 [8] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
     inc col1
-  //SEG19 [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $29) ← (byte) col2#0 -- _deref_pbuc1=vbuz1 
+  //SEG19 [9] *((const byte*) SCREEN#0+(byte) $29) ← (byte) col2#0 -- _deref_pbuc1=vbuz1 
     lda col2
     sta SCREEN+$29
   //SEG20 [10] (byte) col2#1 ← ++ (byte) col2#0 -- vbuz1=_inc_vbuz1 
@@ -212,11 +239,11 @@ irq: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 [ ] ( ) always clobbers reg byte a 
-Statement [1] (byte) col2#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8 [ ] ( ) always clobbers reg byte a 
+Statement [0] (byte) col1#0 ← (byte) 0 [ ] ( ) always clobbers reg byte a 
+Statement [1] (byte) col2#0 ← (byte) 8 [ ] ( ) always clobbers reg byte a 
 Statement [5] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) col1#0 [ col1#0 col2#0 ] (  [ col1#0 col2#0 ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $29) ← (byte) col2#0 [ col2#0 ] (  [ col2#0 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) SCREEN#0+(byte) $28) ← (byte) col1#0 [ col1#0 col2#0 ] (  [ col1#0 col2#0 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) SCREEN#0+(byte) $29) ← (byte) col2#0 [ col2#0 ] (  [ col2#0 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ col1#0 col1#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ col2#0 col2#1 ] : zp ZP_BYTE:3 , 
 
@@ -247,10 +274,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label col2 = 3
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col1
-//SEG5 [1] (byte) col2#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8 -- vbuz1=vbuc1 
+//SEG5 [1] (byte) col2#0 ← (byte) 8 -- vbuz1=vbuc1 
   lda #8
   sta col2
 //SEG6 [2] phi from @begin to @1 [phi:@begin->@1]
@@ -281,12 +308,12 @@ main: {
 //SEG15 irq
 irq: {
   //SEG16 entry interrupt(KERNEL_MIN)
-  //SEG17 [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
+  //SEG17 [7] *((const byte*) SCREEN#0+(byte) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
     lda col1
     sta SCREEN+$28
   //SEG18 [8] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
     inc col1
-  //SEG19 [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $29) ← (byte) col2#0 -- _deref_pbuc1=vbuz1 
+  //SEG19 [9] *((const byte*) SCREEN#0+(byte) $29) ← (byte) col2#0 -- _deref_pbuc1=vbuz1 
     lda col2
     sta SCREEN+$29
   //SEG20 [10] (byte) col2#1 ← ++ (byte) col2#0 -- vbuz1=_inc_vbuz1 
@@ -320,9 +347,9 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (void()**) KERNEL_IRQ
-(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = ((void()**))(word/signed word/dword/signed dword) $314
+(const void()**) KERNEL_IRQ#0 KERNEL_IRQ = (void()**) 788
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (byte) col1
 (byte) col1#0 col1 zp ZP_BYTE:2 6.0
 (byte) col1#1 col1 zp ZP_BYTE:2 20.0
@@ -354,10 +381,10 @@ Score: 67
   .label col2 = 3
 //SEG3 @begin
 bbegin:
-//SEG4 [0] (byte) col1#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0 -- vbuz1=vbuc1 
+//SEG4 [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta col1
-//SEG5 [1] (byte) col2#0 ← (byte/signed byte/word/signed word/dword/signed dword) 8 -- vbuz1=vbuc1 
+//SEG5 [1] (byte) col2#0 ← (byte) 8 -- vbuz1=vbuc1 
   lda #8
   sta col2
 //SEG6 [2] phi from @begin to @1 [phi:@begin->@1]
@@ -381,12 +408,12 @@ main: {
 //SEG15 irq
 irq: {
   //SEG16 entry interrupt(KERNEL_MIN)
-  //SEG17 [7] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
+  //SEG17 [7] *((const byte*) SCREEN#0+(byte) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
     lda col1
     sta SCREEN+$28
   //SEG18 [8] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
     inc col1
-  //SEG19 [9] *((const byte*) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $29) ← (byte) col2#0 -- _deref_pbuc1=vbuz1 
+  //SEG19 [9] *((const byte*) SCREEN#0+(byte) $29) ← (byte) col2#0 -- _deref_pbuc1=vbuz1 
     lda col2
     sta SCREEN+$29
   //SEG20 [10] (byte) col2#1 ← ++ (byte) col2#0 -- vbuz1=_inc_vbuz1 

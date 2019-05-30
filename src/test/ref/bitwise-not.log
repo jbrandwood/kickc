@@ -1,13 +1,15 @@
+Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
 Identified constant variable (byte*) main::SCREEN
+Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte/signed byte/word/signed word/dword/signed dword~) main::$0 ← ~ (byte/signed byte/word/signed word/dword/signed dword) 1
-  *((byte*) main::SCREEN#0) ← (byte/signed byte/word/signed word/dword/signed dword~) main::$0
-  (byte) main::c#0 ← (byte/signed byte/word/signed word/dword/signed dword) 1
+  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte~) main::$0 ← ~ (byte) 1
+  *((byte*) main::SCREEN#0) ← (byte~) main::$0
+  (byte) main::c#0 ← (number) 1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::c#2 ← phi( main/(byte) main::c#0 main::@1/(byte) main::c#1 )
@@ -33,7 +35,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte/signed byte/word/signed word/dword/signed dword~) main::$0
+(byte~) main::$0
 (byte~) main::$1
 (bool~) main::$2
 (label) main::@1
@@ -45,30 +47,48 @@ SYMBOL TABLE SSA
 (byte) main::c#1
 (byte) main::c#2
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 1 in (byte) main::c#0 ← (number) 1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) main::c#0 ← (unumber)(number) 1
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition (bool~) main::$2 [9] if((byte) main::c#1!=rangelast(1,$1a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN#0 = ((byte*))$400
-Constant (const byte/signed byte/word/signed word/dword/signed dword) main::$0 = ~1
+Constant right-side identified [1] (byte~) main::$0 ← ~ (byte) 1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte) main::$0 = ~1
 Constant (const byte) main::c#0 = 1
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value main::c#1 ← ++ main::c#2 to ++
-Resolved ranged comparison value if(main::c#1!=rangelast(1,$1a)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $1b
+Resolved ranged next value [7] main::c#1 ← ++ main::c#2 to ++
+Resolved ranged comparison value [9] if(main::c#1!=rangelast(1,$1a)) goto main::@1 to (number) $1b
+Adding number conversion cast (unumber) $1b in if((byte) main::c#1!=(number) $1b) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $1b
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $1b
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::c#0
-Constant inlined main::c#0 = (byte/signed byte/word/signed word/dword/signed dword) 1
-Constant inlined main::$0 = ~(byte/signed byte/word/signed word/dword/signed dword) 1
+Constant inlined main::c#0 = (byte) 1
+Constant inlined main::$0 = ~(byte) 1
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [11] main::c#3 ← main::c#1
+Coalesced [12] main::c#3 ← main::c#1
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -85,14 +105,14 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @1
   [3] phi()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN#0) ← ~(byte/signed byte/word/signed word/dword/signed dword) 1
+  [4] *((const byte*) main::SCREEN#0) ← ~(byte) 1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte) main::c#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 1 main::@1/(byte) main::c#1 )
+  [5] (byte) main::c#2 ← phi( main/(byte) 1 main::@1/(byte) main::c#1 )
   [6] (byte~) main::$1 ← ~ (byte) main::c#2
   [7] *((const byte*) main::SCREEN#0 + (byte) main::c#2) ← (byte~) main::$1
   [8] (byte) main::c#1 ← ++ (byte) main::c#2
-  [9] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) $1b) goto main::@1
+  [9] if((byte) main::c#1!=(byte) $1b) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [10] return 
@@ -142,12 +162,12 @@ main: {
     .label SCREEN = $400
     .label _1 = 3
     .label c = 2
-  //SEG10 [4] *((const byte*) main::SCREEN#0) ← ~(byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) main::SCREEN#0) ← ~(byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1^$ff
     sta SCREEN
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::c#2 = (byte) 1 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #1
     sta c
     jmp b1
@@ -167,7 +187,7 @@ main: {
     sta SCREEN,y
   //SEG18 [8] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
     inc c
-  //SEG19 [9] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) $1b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG19 [9] if((byte) main::c#1!=(byte) $1b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$1b
     cmp c
     bne b1_from_b1
@@ -179,10 +199,10 @@ main: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN#0) ← ~(byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN#0) ← ~(byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] (byte~) main::$1 ← ~ (byte) main::c#2 [ main::c#2 main::$1 ] ( main:2 [ main::c#2 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::c#2 main::c#1 ]
-Statement [4] *((const byte*) main::SCREEN#0) ← ~(byte/signed byte/word/signed word/dword/signed dword) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN#0) ← ~(byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] (byte~) main::$1 ← ~ (byte) main::c#2 [ main::c#2 main::$1 ] ( main:2 [ main::c#2 main::$1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::c#2 main::c#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::$1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
@@ -218,12 +238,12 @@ bend:
 //SEG9 main
 main: {
     .label SCREEN = $400
-  //SEG10 [4] *((const byte*) main::SCREEN#0) ← ~(byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) main::SCREEN#0) ← ~(byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1^$ff
     sta SCREEN
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::c#2 = (byte) 1 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #1
     jmp b1
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
@@ -239,7 +259,7 @@ main: {
     sta SCREEN,x
   //SEG18 [8] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG19 [9] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) $1b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG19 [9] if((byte) main::c#1!=(byte) $1b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$1b
     bne b1_from_b1
     jmp breturn
@@ -282,7 +302,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@return
 (byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
 (byte) main::c
 (byte) main::c#1 reg byte x 16.5
 (byte) main::c#2 reg byte x 14.666666666666666
@@ -309,11 +329,11 @@ Score: 187
 //SEG9 main
 main: {
     .label SCREEN = $400
-  //SEG10 [4] *((const byte*) main::SCREEN#0) ← ~(byte/signed byte/word/signed word/dword/signed dword) 1 -- _deref_pbuc1=vbuc2 
+  //SEG10 [4] *((const byte*) main::SCREEN#0) ← ~(byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1^$ff
     sta SCREEN
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::c#2 = (byte/signed byte/word/signed word/dword/signed dword) 1 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::c#2 = (byte) 1 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #1
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   //SEG14 [5] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@1->main::@1#0] -- register_copy 
@@ -326,7 +346,7 @@ main: {
     sta SCREEN,x
   //SEG18 [8] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG19 [9] if((byte) main::c#1!=(byte/signed byte/word/signed word/dword/signed dword) $1b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG19 [9] if((byte) main::c#1!=(byte) $1b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$1b
     bne b1
   //SEG20 main::@return

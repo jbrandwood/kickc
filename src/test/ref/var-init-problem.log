@@ -1,10 +1,11 @@
+Adding pointer type conversion cast (byte*) screen in (byte*) screen ← (number) $400
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) screen#0 ← (byte*) 0
   to:@1
 main: scope:[main]  from @1
-  (byte*) screen#1 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) screen#1 ← ((byte*)) (number) $400
   *((byte*) screen#1) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
@@ -38,27 +39,31 @@ SYMBOL TABLE SSA
 (byte*) screen#5
 (byte*) screen#6
 
+Inlining cast (byte*) screen#1 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
 Alias (byte*) screen#1 = (byte*) screen#4 (byte*) screen#2 
 Alias (byte*) screen#0 = (byte*) screen#6 
 Alias (byte*) screen#3 = (byte*) screen#5 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte*) screen#3 (byte*) screen#1
-Successful SSA optimization Pass2RedundantPhiElimination
-Constant (const byte*) screen#0 = 0
-Constant (const byte*) screen#1 = ((byte*))$400
+Identical Phi Values (byte*) screen#3 (byte*) screen#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const byte*) screen#0 = (byte*) 0
+Constant (const byte*) screen#1 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte*) screen#0
 Successful SSA optimization PassNEliminateUnusedVars
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -193,7 +198,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (byte*) screen
-(const byte*) screen#1 screen = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) screen#1 screen = (byte*) 1024
 
 
 

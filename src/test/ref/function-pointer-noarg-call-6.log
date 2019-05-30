@@ -1,4 +1,9 @@
 Resolved forward reference fn1 to (void()) fn1()
+Adding pointer type conversion cast (byte*) main::cols in (byte*) main::cols ← (number) $d800
+Adding pointer type conversion cast (byte*) fn1::screen in (byte*) fn1::screen ← (number) $400
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) @1
+Culled Empty Block (label) fn1::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -6,7 +11,7 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @2
   (void()*~) main::$0 ← & (void()) fn1()
   (void()*) main::cls#0 ← (void()*~) main::$0
-  (byte*) main::cols#0 ← ((byte*)) (word/dword/signed dword) $d800
+  (byte*) main::cols#0 ← ((byte*)) (number) $d800
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte*) main::cols#2 ← phi( main/(byte*) main::cols#0 main::@1/(byte*) main::cols#1 )
@@ -14,22 +19,22 @@ main::@1: scope:[main]  from main main::@1
   call *((void()*) main::cls#1) 
   *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2)
   (byte*) main::cols#1 ← ++ (byte*) main::cols#2
-  (word/dword/signed dword~) main::$2 ← (word/dword/signed dword) $d800 + (word/signed word/dword/signed dword) $3e8
-  (bool~) main::$3 ← (byte*) main::cols#1 < (word/dword/signed dword~) main::$2
+  (number~) main::$2 ← (number) $d800 + (number) $3e8
+  (bool~) main::$3 ← (byte*) main::cols#1 < (number~) main::$2
   if((bool~) main::$3) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 fn1: scope:[fn1]  from
-  (byte*) fn1::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) fn1::screen#0 ← ((byte*)) (number) $400
   to:fn1::@1
 fn1::@1: scope:[fn1]  from fn1 fn1::@1
   (byte*) fn1::screen#2 ← phi( fn1/(byte*) fn1::screen#0 fn1::@1/(byte*) fn1::screen#1 )
   *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2)
   (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2
-  (word/signed word/dword/signed dword~) fn1::$0 ← (word/signed word/dword/signed dword) $400 + (word/signed word/dword/signed dword) $3e8
-  (bool~) fn1::$1 ← (byte*) fn1::screen#1 < (word/signed word/dword/signed dword~) fn1::$0
+  (number~) fn1::$0 ← (number) $400 + (number) $3e8
+  (bool~) fn1::$1 ← (byte*) fn1::screen#1 < (number~) fn1::$0
   if((bool~) fn1::$1) goto fn1::@1
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1::@1
@@ -48,7 +53,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) fn1()
-(word/signed word/dword/signed dword~) fn1::$0
+(number~) fn1::$0
 (bool~) fn1::$1
 (label) fn1::@1
 (label) fn1::@return
@@ -58,7 +63,7 @@ SYMBOL TABLE SSA
 (byte*) fn1::screen#2
 (void()) main()
 (void()*~) main::$0
-(word/dword/signed dword~) main::$2
+(number~) main::$2
 (bool~) main::$3
 (label) main::@1
 (label) main::@return
@@ -70,49 +75,78 @@ SYMBOL TABLE SSA
 (byte*) main::cols#1
 (byte*) main::cols#2
 
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) main::$2 in (bool~) main::$3 ← (byte*) main::cols#1 < (number~) main::$2
+Adding number conversion cast (unumber) fn1::$0 in (bool~) fn1::$1 ← (byte*) fn1::screen#1 < (number~) fn1::$0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::cols#0 ← (byte*)(number) $d800
+Inlining cast (unumber~) main::$4 ← (unumber)(number~) main::$2
+Inlining cast (byte*) fn1::screen#0 ← (byte*)(number) $400
+Inlining cast (unumber~) fn1::$2 ← (unumber)(number~) fn1::$0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 55296
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
 Alias (void()*) main::cls#0 = (void()*~) main::$0 
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (void()*) main::cls#1
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (void()*) main::cls#1 (void()*) main::cls#0
-Successful SSA optimization Pass2RedundantPhiElimination
-Simple Condition (bool~) main::$3 [9] if((byte*) main::cols#1<(word/dword/signed dword~) main::$2) goto main::@1
-Simple Condition (bool~) fn1::$1 [17] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword~) fn1::$0) goto fn1::@1
+Identical Phi Values (void()*) main::cls#1 (void()*) main::cls#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$3 [10] if((byte*) main::cols#1<(unumber~) main::$4) goto main::@1
+Simple Condition (bool~) fn1::$1 [19] if((byte*) fn1::screen#1<(unumber~) fn1::$2) goto fn1::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [0] (void()*) main::cls#0 ← & (void()) fn1()
+Constant right-side identified [7] (number~) main::$2 ← (number) $d800 + (number) $3e8
+Constant right-side identified [16] (number~) fn1::$0 ← (number) $400 + (number) $3e8
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void()*) main::cls#0 = &fn1
-Constant (const byte*) main::cols#0 = ((byte*))$d800
-Constant (const word/dword/signed dword) main::$2 = $d800+$3e8
-Constant (const byte*) fn1::screen#0 = ((byte*))$400
-Constant (const word/signed word/dword/signed dword) fn1::$0 = $400+$3e8
+Constant (const byte*) main::cols#0 = (byte*) 55296
+Constant (const number) main::$2 = $d800+$3e8
+Constant (const byte*) fn1::screen#0 = (byte*) 1024
+Constant (const number) fn1::$0 = $400+$3e8
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function call fn1 
+Constant value identified (unumber)main::$2 in [8] (unumber~) main::$4 ← (unumber)(const number) main::$2
+Constant value identified (unumber)fn1::$0 in [17] (unumber~) fn1::$2 ← (unumber)(const number) fn1::$0
+Successful SSA optimization Pass2ConstantValues
+Replacing constant pointer function [4] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::cls#0
 Successful SSA optimization PassNEliminateUnusedVars
+Constant (const unumber) main::$4 = (unumber)main::$2
+Constant (const unumber) fn1::$2 = (unumber)fn1::$0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying constant integer cast (const unumber) main::$2
+Simplifying constant integer cast (const unumber) fn1::$0
+Successful SSA optimization PassNCastSimplification
 Inlining constant with var siblings (const byte*) main::cols#0
 Inlining constant with var siblings (const byte*) fn1::screen#0
-Constant inlined fn1::screen#0 = ((byte*))(word/signed word/dword/signed dword) $400
-Constant inlined fn1::$0 = (word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8
-Constant inlined main::$2 = (word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8
-Constant inlined main::cols#0 = ((byte*))(word/dword/signed dword) $d800
+Constant inlined fn1::$2 = (number) $400+(number) $3e8
+Constant inlined fn1::screen#0 = (byte*) 1024
+Constant inlined fn1::$0 = (number) $400+(number) $3e8
+Constant inlined main::$4 = (number) $d800+(number) $3e8
+Constant inlined main::$2 = (number) $d800+(number) $3e8
+Constant inlined main::cols#0 = (byte*) 55296
 Successful SSA optimization Pass2ConstantInlining
+Adding number conversion cast (unumber) $d800+$3e8 in [4] if((byte*) main::cols#1<(number) $d800+(number) $3e8) goto main::@1
+Adding number conversion cast (unumber) $400+$3e8 in [9] if((byte*) fn1::screen#1<(number) $400+(number) $3e8) goto fn1::@1
+Successful SSA optimization PassNAddNumberTypeConversions
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Added new block during phi lifting fn1::@3(between fn1::@1 and fn1::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of fn1
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to fn1:6 
+Calls in [main] to fn1:7 
 
 Created 2 initial phi equivalence classes
-Coalesced [11] main::cols#3 ← main::cols#1
-Coalesced [18] fn1::screen#3 ← fn1::screen#1
+Coalesced [12] main::cols#3 ← main::cols#1
+Coalesced [19] fn1::screen#3 ← fn1::screen#1
 Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) @3
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) fn1::@3
 Renumbering block @2 to @1
@@ -136,11 +170,11 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte*) main::cols#2 ← phi( main/((byte*))(word/dword/signed dword) $d800 main::@1/(byte*) main::cols#1 )
+  [5] (byte*) main::cols#2 ← phi( main/(byte*) 55296 main::@1/(byte*) main::cols#1 )
   [6] call fn1 
   [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2)
   [8] (byte*) main::cols#1 ← ++ (byte*) main::cols#2
-  [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1
+  [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [10] return 
@@ -149,10 +183,10 @@ fn1: scope:[fn1]  from main::@1
   [11] phi()
   to:fn1::@1
 fn1::@1: scope:[fn1]  from fn1 fn1::@1
-  [12] (byte*) fn1::screen#2 ← phi( fn1/((byte*))(word/signed word/dword/signed dword) $400 fn1::@1/(byte*) fn1::screen#1 )
+  [12] (byte*) fn1::screen#2 ← phi( fn1/(byte*) 1024 fn1::@1/(byte*) fn1::screen#1 )
   [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2)
   [14] (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2
-  [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1
+  [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@1
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1::@1
   [16] return 
@@ -208,7 +242,7 @@ main: {
     .label cols = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte*) main::cols#2 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG12 [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
@@ -236,7 +270,7 @@ main: {
     bne !+
     inc cols+1
   !:
-  //SEG20 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG20 [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b1_from_b1
@@ -256,7 +290,7 @@ fn1: {
     .label screen = 4
   //SEG24 [12] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
   b1_from_fn1:
-  //SEG25 [12] phi (byte*) fn1::screen#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+  //SEG25 [12] phi (byte*) fn1::screen#2 = (byte*) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -280,7 +314,7 @@ fn1: {
     bne !+
     inc screen+1
   !:
-  //SEG31 [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG31 [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda screen+1
     cmp #>$400+$3e8
     bcc b1_from_b1
@@ -298,9 +332,9 @@ fn1: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) [ main::cols#2 ] ( main:2 [ main::cols#2 ] ) always clobbers reg byte a reg byte y 
-Statement [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 [ main::cols#1 ] ( main:2 [ main::cols#1 ] ) always clobbers reg byte a 
+Statement [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@1 [ main::cols#1 ] ( main:2 [ main::cols#1 ] ) always clobbers reg byte a 
 Statement [13] *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2) [ fn1::screen#2 ] ( main:2::fn1:6 [ main::cols#2 fn1::screen#2 ] ) always clobbers reg byte a reg byte y 
-Statement [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 [ fn1::screen#1 ] ( main:2::fn1:6 [ main::cols#2 fn1::screen#1 ] ) always clobbers reg byte a 
+Statement [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@1 [ fn1::screen#1 ] ( main:2::fn1:6 [ main::cols#2 fn1::screen#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::cols#2 main::cols#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ fn1::screen#2 fn1::screen#1 ] : zp ZP_WORD:4 , 
 
@@ -342,7 +376,7 @@ main: {
     .label cols = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte*) main::cols#2 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG12 [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
@@ -370,7 +404,7 @@ main: {
     bne !+
     inc cols+1
   !:
-  //SEG20 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG20 [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b1_from_b1
@@ -390,7 +424,7 @@ fn1: {
     .label screen = 4
   //SEG24 [12] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
   b1_from_fn1:
-  //SEG25 [12] phi (byte*) fn1::screen#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+  //SEG25 [12] phi (byte*) fn1::screen#2 = (byte*) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -414,7 +448,7 @@ fn1: {
     bne !+
     inc screen+1
   !:
-  //SEG31 [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG31 [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda screen+1
     cmp #>$400+$3e8
     bcc b1_from_b1
@@ -511,7 +545,7 @@ Score: 6343
 main: {
     .label cols = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte*) main::cols#2 = ((byte*))(word/dword/signed dword) $d800 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+  //SEG12 [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta cols
     lda #>$d800
@@ -534,7 +568,7 @@ main: {
     bne !+
     inc cols+1
   !:
-  //SEG20 [9] if((byte*) main::cols#1<(word/dword/signed dword) $d800+(word/signed word/dword/signed dword) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG20 [9] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda cols+1
     cmp #>$d800+$3e8
     bcc b1
@@ -551,7 +585,7 @@ main: {
 fn1: {
     .label screen = 4
   //SEG24 [12] phi from fn1 to fn1::@1 [phi:fn1->fn1::@1]
-  //SEG25 [12] phi (byte*) fn1::screen#2 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
+  //SEG25 [12] phi (byte*) fn1::screen#2 = (byte*) 1024 [phi:fn1->fn1::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
@@ -571,7 +605,7 @@ fn1: {
     bne !+
     inc screen+1
   !:
-  //SEG31 [15] if((byte*) fn1::screen#1<(word/signed word/dword/signed dword) $400+(word/signed word/dword/signed dword) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
+  //SEG31 [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@1 -- pbuz1_lt_vwuc1_then_la1 
     lda screen+1
     cmp #>$400+$3e8
     bcc b1

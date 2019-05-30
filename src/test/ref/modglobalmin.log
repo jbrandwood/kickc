@@ -1,8 +1,10 @@
+Adding pointer type conversion cast (byte[$100]) SCREEN in (byte[$100]) SCREEN ← (number) $400
+Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) cnt#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte[$100]) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte) cnt#0 ← (number) 0
+  (byte[$100]) SCREEN#0 ← ((byte*)) (number) $400
   to:@2
 main: scope:[main]  from @2
   (byte) cnt#15 ← phi( @2/(byte) cnt#16 )
@@ -11,7 +13,7 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte) cnt#9 ← phi( main/(byte) cnt#7 )
   (byte) cnt#1 ← (byte) cnt#9
-  *((byte[$100]) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) cnt#1
+  *((byte[$100]) SCREEN#0 + (number) 0) ← (byte) cnt#1
   (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt 
   to:main::@2
@@ -19,7 +21,7 @@ main::@2: scope:[main]  from main::@1
   (byte) cnt#10 ← phi( main::@1/(byte) cnt#7 )
   (byte) cnt#3 ← (byte) cnt#10
   (byte) cnt#4 ← ++ (byte) cnt#3
-  *((byte[$100]) SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#4
+  *((byte[$100]) SCREEN#0 + (number) 1) ← (byte) cnt#4
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
@@ -77,6 +79,22 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 
+Adding number conversion cast (unumber) 0 in (byte) cnt#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in *((byte[$100]) SCREEN#0 + (number) 0) ← (byte) cnt#1
+Adding number conversion cast (unumber) 1 in *((byte[$100]) SCREEN#0 + (number) 1) ← (byte) cnt#4
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) cnt#0 ← (unumber)(number) 0
+Inlining cast (byte[$100]) SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 0
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) cnt#1 = (byte) cnt#9 
 Alias (byte) cnt#10 = (byte) cnt#3 
 Alias (byte) cnt#11 = (byte) cnt#4 (byte) cnt#5 
@@ -84,34 +102,34 @@ Alias (byte) cnt#13 = (byte) cnt#6 (byte) cnt#7
 Alias (byte) cnt#0 = (byte) cnt#16 
 Alias (byte) cnt#14 = (byte) cnt#8 
 Successful SSA optimization Pass2AliasElimination
-Redundant Phi (byte) cnt#15 (byte) cnt#0
-Redundant Phi (byte) cnt#1 (byte) cnt#13
-Redundant Phi (byte) cnt#10 (byte) cnt#13
-Redundant Phi (byte) cnt#14 (byte) cnt#11
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte) cnt#15 (byte) cnt#0
+Identical Phi Values (byte) cnt#1 (byte) cnt#13
+Identical Phi Values (byte) cnt#10 (byte) cnt#13
+Identical Phi Values (byte) cnt#14 (byte) cnt#11
+Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte) cnt#0 = 0
-Constant (const byte[$100]) SCREEN#0 = ((byte*))$400
+Constant (const byte[$100]) SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(SCREEN#0+0)
+Simplifying expression containing zero SCREEN#0 in [6] *((const byte[$100]) SCREEN#0 + (byte) 0) ← (byte) cnt#13
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Inlining constant with var siblings (const byte) cnt#0
+Constant inlined cnt#0 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN#0+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
-Inlining constant with var siblings (const byte) cnt#0
-Constant inlined cnt#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
-Successful SSA optimization Pass2ConstantInlining
-Simplifying constant plus zero SCREEN#0+0
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to inccnt:5 inccnt:9 
+Calls in [main] to inccnt:6 inccnt:10 
 
 Created 1 initial phi equivalence classes
-Coalesced [8] cnt#17 ← cnt#2
+Coalesced [9] cnt#17 ← cnt#2
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -139,13 +157,13 @@ main::@1: scope:[main]  from main
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [9] (byte) cnt#11 ← ++ (byte) cnt#13
-  [10] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11
+  [10] *((const byte[$100]) SCREEN#0+(byte) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [11] return 
   to:@return
 inccnt: scope:[inccnt]  from main main::@1
-  [12] (byte) cnt#12 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@1/(byte) cnt#2 )
+  [12] (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte) cnt#2 )
   [13] (byte) cnt#13 ← ++ (byte) cnt#12
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
@@ -207,7 +225,7 @@ main: {
   //SEG11 [5] call inccnt 
   //SEG12 [12] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
-  //SEG13 [12] phi (byte) cnt#12 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#0] -- vbuz1=vbuc1 
+  //SEG13 [12] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- vbuz1=vbuc1 
     lda #0
     sta cnt
     jsr inccnt
@@ -233,7 +251,7 @@ main: {
     ldy cnt_13
     iny
     sty cnt_11
-  //SEG22 [10] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
+  //SEG22 [10] *((const byte[$100]) SCREEN#0+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
     lda cnt_11
     sta SCREEN+1
     jmp breturn
@@ -298,7 +316,7 @@ main: {
   //SEG11 [5] call inccnt 
   //SEG12 [12] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
-  //SEG13 [12] phi (byte) cnt#12 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
+  //SEG13 [12] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
     jsr inccnt
     jmp b1
@@ -318,7 +336,7 @@ main: {
   b2:
   //SEG21 [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG22 [10] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+  //SEG22 [10] *((const byte[$100]) SCREEN#0+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     jmp breturn
   //SEG23 main::@return
@@ -369,7 +387,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte[$100]) SCREEN
-(const byte[$100]) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte[$100]) SCREEN#0 SCREEN = (byte*) 1024
 (byte) cnt
 (byte) cnt#11 reg byte x 4.0
 (byte) cnt#12 reg byte x 4.0
@@ -408,7 +426,7 @@ Score: 40
 main: {
   //SEG11 [5] call inccnt 
   //SEG12 [12] phi from main to inccnt [phi:main->inccnt]
-  //SEG13 [12] phi (byte) cnt#12 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
+  //SEG13 [12] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
     jsr inccnt
   //SEG14 main::@1
@@ -423,7 +441,7 @@ main: {
   //SEG20 main::@2
   //SEG21 [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG22 [10] *((const byte[$100]) SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+  //SEG22 [10] *((const byte[$100]) SCREEN#0+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
   //SEG23 main::@return
   //SEG24 [11] return 

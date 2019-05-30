@@ -1,8 +1,19 @@
+Adding pointer type conversion cast (byte*) BORDERCOL in (byte*) BORDERCOL ← (number) $d020
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
+Culled Empty Block (label) @1
+Culled Empty Block (label) print_cls::@2
+Culled Empty Block (label) @2
+Culled Empty Block (label) mode_ctrl::@6
+Culled Empty Block (label) mode_ctrl::@3
+Culled Empty Block (label) mode_ctrl::@7
+Culled Empty Block (label) mode_ctrl::@5
+Culled Empty Block (label) mode_ctrl::@9
+Culled Empty Block (label) mode_ctrl::@10
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) BORDERCOL#0 ← ((byte*)) (number) $d020
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@3
 main: scope:[main]  from @3
   call print_cls 
@@ -22,7 +33,7 @@ print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
   (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) print_cls::sc#0 print_cls::@1/(byte*) print_cls::sc#1 )
   *((byte*) print_cls::sc#2) ← (byte) ' '
   (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  (byte*~) print_cls::$0 ← (byte*) SCREEN#0 + (word/signed word/dword/signed dword) $3e8
+  (byte*~) print_cls::$0 ← (byte*) SCREEN#0 + (number) $3e8
   (bool~) print_cls::$1 ← (byte*) print_cls::sc#1 != (byte*~) print_cls::$0
   if((bool~) print_cls::$1) goto print_cls::@1
   to:print_cls::@return
@@ -36,14 +47,14 @@ mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@4 mode_ctrl::@8
   to:mode_ctrl::@return
 mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
   (byte) mode_ctrl::before#0 ← *((byte*) BORDERCOL#0)
-  (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (byte/word/signed word/dword/signed dword) $ff
+  (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (number) $ff
   if((bool~) mode_ctrl::$0) goto mode_ctrl::@4
   to:mode_ctrl::@8
 mode_ctrl::@4: scope:[mode_ctrl]  from mode_ctrl::@2
-  *((byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  *((byte*) BORDERCOL#0) ← (number) 2
   to:mode_ctrl::@1
 mode_ctrl::@8: scope:[mode_ctrl]  from mode_ctrl::@2
-  *((byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  *((byte*) BORDERCOL#0) ← (number) 3
   to:mode_ctrl::@1
 mode_ctrl::@return: scope:[mode_ctrl]  from mode_ctrl::@1
   return 
@@ -87,43 +98,69 @@ SYMBOL TABLE SSA
 (byte*) print_cls::sc#1
 (byte*) print_cls::sc#2
 
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @4
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) $3e8 in (byte*~) print_cls::$0 ← (byte*) SCREEN#0 + (number) $3e8
+Adding number conversion cast (unumber) $ff in (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (number) $ff
+Adding number conversion cast (unumber) 2 in *((byte*) BORDERCOL#0) ← (number) 2
+Adding number conversion cast (unumber) 3 in *((byte*) BORDERCOL#0) ← (number) 3
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) BORDERCOL#0 ← (byte*)(number) $d020
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast *((byte*) BORDERCOL#0) ← (unumber)(number) 2
+Inlining cast *((byte*) BORDERCOL#0) ← (unumber)(number) 3
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $3e8
+Simplifying constant integer cast $ff
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition (bool~) print_cls::$1 [11] if((byte*) print_cls::sc#1!=(byte*~) print_cls::$0) goto print_cls::@1
-Simple Condition (bool~) mode_ctrl::$0 [16] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@4
+Simple Condition (bool~) mode_ctrl::$0 [16] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) BORDERCOL#0 = ((byte*))$d020
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte*) BORDERCOL#0 = (byte*) 53280
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print_cls::sc#0 = SCREEN#0
-Constant (const byte*) print_cls::$0 = SCREEN#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [8] if(true) goto mode_ctrl::@2
+if() condition always true - replacing block destination [13] if(true) goto mode_ctrl::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block mode_ctrl::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Culled Empty Block (label) mode_ctrl::@1
-Successful SSA optimization Pass2CullEmptyBlocks
+Constant right-side identified [6] (byte*~) print_cls::$0 ← (const byte*) SCREEN#0 + (word) $3e8
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) print_cls::$0 = SCREEN#0+$3e8
+Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) print_cls::sc#0
-Constant inlined print_cls::$0 = (const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8
 Constant inlined print_cls::sc#0 = (const byte*) SCREEN#0
+Constant inlined print_cls::$0 = (const byte*) SCREEN#0+(word) $3e8
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting print_cls::@3(between print_cls::@1 and print_cls::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of mode_ctrl
+Adding NOP phi() at start of mode_ctrl::@1
 Adding NOP phi() at start of print_cls
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to print_cls:5 mode_ctrl:7 
+Calls in [main] to print_cls:6 mode_ctrl:8 
 
 Created 1 initial phi equivalence classes
-Coalesced [20] print_cls::sc#3 ← print_cls::sc#1
+Coalesced [23] print_cls::sc#3 ← print_cls::sc#1
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @4
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) mode_ctrl::@1
 Culled Empty Block (label) print_cls::@3
 Renumbering block @3 to @1
 Renumbering block mode_ctrl::@2 to mode_ctrl::@1
@@ -163,13 +200,13 @@ mode_ctrl: scope:[mode_ctrl]  from main::@1
   to:mode_ctrl::@1
 mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@2 mode_ctrl::@3
   [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0)
-  [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@2
+  [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2
   to:mode_ctrl::@3
 mode_ctrl::@3: scope:[mode_ctrl]  from mode_ctrl::@1
-  [12] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3
+  [12] *((const byte*) BORDERCOL#0) ← (byte) 3
   to:mode_ctrl::@1
 mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
-  [13] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2
+  [13] *((const byte*) BORDERCOL#0) ← (byte) 2
   to:mode_ctrl::@1
 print_cls: scope:[print_cls]  from main
   [14] phi()
@@ -178,7 +215,7 @@ print_cls::@1: scope:[print_cls]  from print_cls print_cls::@1
   [15] (byte*) print_cls::sc#2 ← phi( print_cls/(const byte*) SCREEN#0 print_cls::@1/(byte*) print_cls::sc#1 )
   [16] *((byte*) print_cls::sc#2) ← (byte) ' '
   [17] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
-  [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1
+  [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@1
   [19] return 
@@ -261,20 +298,20 @@ mode_ctrl: {
   //SEG21 [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuz1=_deref_pbuc1 
     lda BORDERCOL
     sta before
-  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@2 -- vbuz1_eq_vbuc1_then_la1 
+  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuz1_eq_vbuc1_then_la1 
     lda #$ff
     cmp before
     beq b2
     jmp b3
   //SEG23 mode_ctrl::@3
   b3:
-  //SEG24 [12] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+  //SEG24 [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
     jmp b1
   //SEG25 mode_ctrl::@2
   b2:
-  //SEG26 [13] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
+  //SEG26 [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
     jmp b1
@@ -305,7 +342,7 @@ print_cls: {
     bne !+
     inc sc+1
   !:
-  //SEG35 [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG35 [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bne b1_from_b1
@@ -320,10 +357,10 @@ print_cls: {
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) BORDERCOL#0) ← (byte) 3 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) BORDERCOL#0) ← (byte) 2 [ ] ( main:2::mode_ctrl:7 [ ] ) always clobbers reg byte a 
 Statement [16] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] ) always clobbers reg byte a reg byte y 
-Statement [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) always clobbers reg byte a 
+Statement [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 [ print_cls::sc#1 ] ( main:2::print_cls:5 [ print_cls::sc#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ print_cls::sc#2 print_cls::sc#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_BYTE:4 [ mode_ctrl::before#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 
@@ -391,19 +428,19 @@ mode_ctrl: {
   b1:
   //SEG21 [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
     lda BORDERCOL
-  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
+  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$ff
     beq b2
     jmp b3
   //SEG23 mode_ctrl::@3
   b3:
-  //SEG24 [12] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+  //SEG24 [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
     jmp b1
   //SEG25 mode_ctrl::@2
   b2:
-  //SEG26 [13] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
+  //SEG26 [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
     jmp b1
@@ -434,7 +471,7 @@ print_cls: {
     bne !+
     inc sc+1
   !:
-  //SEG35 [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG35 [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bne b1_from_b1
@@ -489,9 +526,9 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) BORDERCOL
-(const byte*) BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) $d020
+(const byte*) BORDERCOL#0 BORDERCOL = (byte*) 53280
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -550,17 +587,17 @@ mode_ctrl: {
   b1:
   //SEG21 [10] (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL#0) -- vbuaa=_deref_pbuc1 
     lda BORDERCOL
-  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte/word/signed word/dword/signed dword) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
+  //SEG22 [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$ff
     beq b2
   //SEG23 mode_ctrl::@3
-  //SEG24 [12] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 3 -- _deref_pbuc1=vbuc2 
+  //SEG24 [12] *((const byte*) BORDERCOL#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta BORDERCOL
     jmp b1
   //SEG25 mode_ctrl::@2
   b2:
-  //SEG26 [13] *((const byte*) BORDERCOL#0) ← (byte/signed byte/word/signed word/dword/signed dword) 2 -- _deref_pbuc1=vbuc2 
+  //SEG26 [13] *((const byte*) BORDERCOL#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta BORDERCOL
     jmp b1
@@ -587,7 +624,7 @@ print_cls: {
     bne !+
     inc sc+1
   !:
-  //SEG35 [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word/signed word/dword/signed dword) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+  //SEG35 [18] if((byte*) print_cls::sc#1!=(const byte*) SCREEN#0+(word) $3e8) goto print_cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda sc+1
     cmp #>SCREEN+$3e8
     bne b1

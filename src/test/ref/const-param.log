@@ -1,11 +1,14 @@
+Adding pointer type conversion cast (byte*) main::screen in (byte*) main::screen ← (number) $400
 Identified constant variable (byte*) main::screen
+Culled Empty Block (label) @1
+Culled Empty Block (label) sum::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 main: scope:[main]  from @2
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte) main::reverse#0 ← (byte/word/signed word/dword/signed dword) $80
+  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte) main::reverse#0 ← (number) $80
   (byte) sum::a#0 ← (byte) main::reverse#0
   (byte) sum::b#0 ← (byte) 'c'
   call sum 
@@ -14,7 +17,7 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte) sum::return#5 ← phi( main/(byte) sum::return#0 )
   (byte~) main::$0 ← (byte) sum::return#5
-  *((byte*) main::screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte~) main::$0
+  *((byte*) main::screen#0 + (number) 0) ← (byte~) main::$0
   (byte) sum::a#1 ← (byte) main::reverse#0
   (byte) sum::b#1 ← (byte) 'm'
   call sum 
@@ -23,7 +26,7 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte) sum::return#6 ← phi( main::@1/(byte) sum::return#1 )
   (byte~) main::$1 ← (byte) sum::return#6
-  *((byte*) main::screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
+  *((byte*) main::screen#0 + (number) 1) ← (byte~) main::$1
   (byte) sum::a#2 ← (byte) main::reverse#0
   (byte) sum::b#2 ← (byte) 'l'
   call sum 
@@ -32,7 +35,7 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@2
   (byte) sum::return#7 ← phi( main::@2/(byte) sum::return#2 )
   (byte~) main::$2 ← (byte) sum::return#7
-  *((byte*) main::screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$2
+  *((byte*) main::screen#0 + (number) 2) ← (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -96,14 +99,31 @@ SYMBOL TABLE SSA
 (byte) sum::return#7
 (byte) sum::return#8
 
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) $80 in (byte) main::reverse#0 ← (number) $80
+Adding number conversion cast (unumber) 0 in *((byte*) main::screen#0 + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 1 in *((byte*) main::screen#0 + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) 2 in *((byte*) main::screen#0 + (number) 2) ← (byte~) main::$2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte) main::reverse#0 ← (unumber)(number) $80
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $80
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) sum::return#0 = (byte) sum::return#5 
 Alias (byte) sum::return#1 = (byte) sum::return#6 
 Alias (byte) sum::return#2 = (byte) sum::return#7 
 Alias (byte) sum::return#3 = (byte~) sum::$0 (byte) sum::return#8 (byte) sum::return#4 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) main::screen#0 = ((byte*))$400
+Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const byte) main::reverse#0 = $80
 Constant (const byte) sum::b#0 = 'c'
 Constant (const byte) sum::b#1 = 'm'
@@ -113,10 +133,8 @@ Constant (const byte) sum::a#0 = main::reverse#0
 Constant (const byte) sum::a#1 = main::reverse#0
 Constant (const byte) sum::a#2 = main::reverse#0
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(main::screen#0+0)
-Consolidated array index constant in *(main::screen#0+1)
-Consolidated array index constant in *(main::screen#0+2)
-Successful SSA optimization Pass2ConstantAdditionElimination
+Simplifying expression containing zero main::screen#0 in [8] *((const byte*) main::screen#0 + (byte) 0) ← (byte~) main::$0
+Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte) sum::b#0
 Inlining constant with var siblings (const byte) sum::b#1
 Inlining constant with var siblings (const byte) sum::b#2
@@ -130,19 +148,23 @@ Constant inlined sum::b#0 = (byte) 'c'
 Constant inlined sum::b#2 = (byte) 'l'
 Constant inlined sum::a#0 = (const byte) main::reverse#0
 Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::screen#0+1)
+Consolidated array index constant in *(main::screen#0+2)
+Successful SSA optimization Pass2ConstantAdditionElimination
 Identical Phi Values (byte) sum::a#3 (const byte) main::reverse#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simplifying constant plus zero main::screen#0+0
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to sum:5 sum:9 sum:13 
+Calls in [main] to sum:6 sum:10 sum:14 
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -172,13 +194,13 @@ main::@1: scope:[main]  from main
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [11] (byte~) main::$1 ← (byte) sum::return#1
-  [12] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1
+  [12] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$1
   [13] call sum 
   [14] (byte) sum::return#2 ← (byte) sum::return#3
   to:main::@3
 main::@3: scope:[main]  from main::@2
   [15] (byte~) main::$2 ← (byte) sum::return#2
-  [16] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$2
+  [16] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [17] return 
@@ -302,7 +324,7 @@ main: {
   //SEG23 [11] (byte~) main::$1 ← (byte) sum::return#1 -- vbuz1=vbuz2 
     lda sum.return_1
     sta _1
-  //SEG24 [12] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+  //SEG24 [12] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda _1
     sta screen+1
   //SEG25 [13] call sum 
@@ -321,7 +343,7 @@ main: {
   //SEG30 [15] (byte~) main::$2 ← (byte) sum::return#2 -- vbuz1=vbuz2 
     lda sum.return_2
     sta _2
-  //SEG31 [16] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+  //SEG31 [16] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
     lda _2
     sta screen+2
     jmp breturn
@@ -423,7 +445,7 @@ main: {
   //SEG22 main::@2
   b2:
   //SEG23 [11] (byte~) main::$1 ← (byte) sum::return#1
-  //SEG24 [12] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+  //SEG24 [12] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen+1
   //SEG25 [13] call sum 
   //SEG26 [18] phi from main::@2 to sum [phi:main::@2->sum]
@@ -436,7 +458,7 @@ main: {
   //SEG29 main::@3
   b3:
   //SEG30 [15] (byte~) main::$2 ← (byte) sum::return#2
-  //SEG31 [16] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+  //SEG31 [16] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+2
     jmp breturn
   //SEG32 main::@return
@@ -500,9 +522,9 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@return
 (byte) main::reverse
-(const byte) main::reverse#0 reverse = (byte/word/signed word/dword/signed dword) $80
+(const byte) main::reverse#0 reverse = (byte) $80
 (byte*) main::screen
-(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) main::screen#0 screen = (byte*) 1024
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (label) sum::@return
 (byte) sum::a
@@ -563,7 +585,7 @@ main: {
   //SEG21 [10] (byte) sum::return#1 ← (byte) sum::return#3
   //SEG22 main::@2
   //SEG23 [11] (byte~) main::$1 ← (byte) sum::return#1
-  //SEG24 [12] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+  //SEG24 [12] *((const byte*) main::screen#0+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen+1
   //SEG25 [13] call sum 
   //SEG26 [18] phi from main::@2 to sum [phi:main::@2->sum]
@@ -573,7 +595,7 @@ main: {
   //SEG28 [14] (byte) sum::return#2 ← (byte) sum::return#3
   //SEG29 main::@3
   //SEG30 [15] (byte~) main::$2 ← (byte) sum::return#2
-  //SEG31 [16] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+  //SEG31 [16] *((const byte*) main::screen#0+(byte) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+2
   //SEG32 main::@return
   //SEG33 [17] return 

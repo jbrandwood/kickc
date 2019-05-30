@@ -1,16 +1,17 @@
+Adding pointer type conversion cast (byte*) main::screen in (byte*) main::screen ← (number) $400
 Identified constant variable (byte*) main::screen
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (byte) main::a#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte) main::b#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte) main::b#1 ← (byte/signed byte/word/signed word/dword/signed dword) $c
+  (byte) main::a#0 ← (byte) 0
+  (byte) main::b#0 ← (byte) 0
+  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte) main::b#1 ← (number) $c
   (byte) main::a#1 ← (byte) main::b#1
-  *((byte*) main::screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 0) ← (byte) main::a#1
-  *((byte*) main::screen#0 + (byte/signed byte/word/signed word/dword/signed dword) 1) ← (byte) main::b#1
+  *((byte*) main::screen#0 + (number) 0) ← (byte) main::a#1
+  *((byte*) main::screen#0 + (number) 1) ← (byte) main::b#1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -38,30 +39,46 @@ SYMBOL TABLE SSA
 (byte*) main::screen
 (byte*) main::screen#0
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) $c in (byte) main::b#1 ← (number) $c
+Adding number conversion cast (unumber) 0 in *((byte*) main::screen#0 + (number) 0) ← (byte) main::a#1
+Adding number conversion cast (unumber) 1 in *((byte*) main::screen#0 + (number) 1) ← (byte) main::b#1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte) main::b#1 ← (unumber)(number) $c
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $c
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $c
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::a#1 = (byte) main::b#1 
 Successful SSA optimization Pass2AliasElimination
 Constant (const byte) main::a#0 = 0
 Constant (const byte) main::b#0 = 0
-Constant (const byte*) main::screen#0 = ((byte*))$400
+Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const byte) main::a#1 = $c
 Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(main::screen#0+0)
-Consolidated array index constant in *(main::screen#0+1)
-Successful SSA optimization Pass2ConstantAdditionElimination
+Simplifying expression containing zero main::screen#0 in [5] *((const byte*) main::screen#0 + (byte) 0) ← (const byte) main::a#1
+Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::a#0
 Eliminating unused constant (const byte) main::b#0
 Successful SSA optimization PassNEliminateUnusedVars
-Simplifying constant plus zero main::screen#0+0
+Consolidated array index constant in *(main::screen#0+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -78,7 +95,7 @@ FINAL CONTROL FLOW GRAPH
   [3] phi()
 main: scope:[main]  from @1
   [4] *((const byte*) main::screen#0) ← (const byte) main::a#1
-  [5] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::a#1
+  [5] *((const byte*) main::screen#0+(byte) 1) ← (const byte) main::a#1
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -123,7 +140,7 @@ main: {
   //SEG10 [4] *((const byte*) main::screen#0) ← (const byte) main::a#1 -- _deref_pbuc1=vbuc2 
     lda #a
     sta screen
-  //SEG11 [5] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::a#1 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte*) main::screen#0+(byte) 1) ← (const byte) main::a#1 -- _deref_pbuc1=vbuc2 
     lda #a
     sta screen+1
     jmp breturn
@@ -135,7 +152,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) main::screen#0) ← (const byte) main::a#1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::a#1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::screen#0+(byte) 1) ← (const byte) main::a#1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -173,7 +190,7 @@ main: {
   //SEG10 [4] *((const byte*) main::screen#0) ← (const byte) main::a#1 -- _deref_pbuc1=vbuc2 
     lda #a
     sta screen
-  //SEG11 [5] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::a#1 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte*) main::screen#0+(byte) 1) ← (const byte) main::a#1 -- _deref_pbuc1=vbuc2 
     lda #a
     sta screen+1
     jmp breturn
@@ -210,10 +227,10 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (byte) main::a
-(const byte) main::a#1 a = (byte/signed byte/word/signed word/dword/signed dword) $c
+(const byte) main::a#1 a = (byte) $c
 (byte) main::b
 (byte*) main::screen
-(const byte*) main::screen#0 screen = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) main::screen#0 screen = (byte*) 1024
 
 
 
@@ -240,7 +257,7 @@ main: {
   //SEG10 [4] *((const byte*) main::screen#0) ← (const byte) main::a#1 -- _deref_pbuc1=vbuc2 
     lda #a
     sta screen
-  //SEG11 [5] *((const byte*) main::screen#0+(byte/signed byte/word/signed word/dword/signed dword) 1) ← (const byte) main::a#1 -- _deref_pbuc1=vbuc2 
+  //SEG11 [5] *((const byte*) main::screen#0+(byte) 1) ← (const byte) main::a#1 -- _deref_pbuc1=vbuc2 
     sta screen+1
   //SEG12 main::@return
   //SEG13 [6] return 

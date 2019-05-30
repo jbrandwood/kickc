@@ -1,13 +1,19 @@
+Adding pointer type conversion cast (byte*) TABLE in (byte*) TABLE ← (number) $2000
+Adding pointer type conversion cast (byte*) main::BORDERCOL in (byte*) main::BORDERCOL ← (number) $d020
 Identified constant variable (byte*) TABLE
 Identified constant variable (byte*) main::BORDERCOL
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) TABLE#0 ← ((byte*)) (word/signed word/dword/signed dword) $2000
+  (byte*) TABLE#0 ← ((byte*)) (number) $2000
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
-  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte*) main::BORDERCOL#0 ← ((byte*)) (number) $d020
+  (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
@@ -49,30 +55,42 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) TABLE#0 ← (byte*)(number) $2000
+Inlining cast (byte*) main::BORDERCOL#0 ← (byte*)(number) $d020
+Inlining cast (byte) main::i#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 8192
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) TABLE#0 = ((byte*))$2000
-Constant (const byte*) main::BORDERCOL#0 = ((byte*))$d020
+Constant (const byte*) TABLE#0 = (byte*) 8192
+Constant (const byte*) main::BORDERCOL#0 = (byte*) 53280
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [1] if(true) goto main::@2
+if() condition always true - replacing block destination [4] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [8] main::i#4 ← main::i#1
+Coalesced [9] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
@@ -92,7 +110,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::i#1 )
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [6] *((const byte*) main::BORDERCOL#0) ← *((const byte*) TABLE#0 + (byte) main::i#2)
@@ -144,7 +162,7 @@ main: {
     .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -210,7 +228,7 @@ main: {
     .label BORDERCOL = $d020
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp b1
   //SEG13 main::@1
@@ -259,12 +277,12 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) TABLE
-(const byte*) TABLE#0 TABLE = ((byte*))(word/signed word/dword/signed dword) $2000
+(const byte*) TABLE#0 TABLE = (byte*) 8192
 (void()) main()
 (label) main::@1
 (label) main::@2
 (byte*) main::BORDERCOL
-(const byte*) main::BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) $d020
+(const byte*) main::BORDERCOL#0 BORDERCOL = (byte*) 53280
 (byte) main::i
 (byte) main::i#1 reg byte x 22.0
 (byte) main::i#2 reg byte x 16.5
@@ -294,7 +312,7 @@ Score: 2715
 main: {
     .label BORDERCOL = $d020
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG13 main::@1
   //SEG14 main::@2

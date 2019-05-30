@@ -1,4 +1,6 @@
 Resolved forward reference fn1 to (void()) fn1()
+Adding pointer type conversion cast (byte*) fn1::BORDERCOL in (byte*) fn1::BORDERCOL ← (number) $d020
+Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -12,7 +14,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
+  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (number) $d020
   *((byte*) fn1::BORDERCOL#0) ← ++ *((byte*) fn1::BORDERCOL#0)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
@@ -40,27 +42,33 @@ SYMBOL TABLE SSA
 (void()*) main::f
 (void()*) main::f#0
 
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Inlining cast (byte*) fn1::BORDERCOL#0 ← (byte*)(number) $d020
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53280
+Successful SSA optimization PassNCastSimplification
 Alias (void()*) main::f#0 = (void()*~) main::$0 
 Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [0] (void()*) main::f#0 ← & (void()) fn1()
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void()*) main::f#0 = &fn1
-Constant (const byte*) fn1::BORDERCOL#0 = ((byte*))$d020
+Constant (const byte*) fn1::BORDERCOL#0 = (byte*) 53280
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function call fn1 
+Replacing constant pointer function [2] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::f#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to fn1:5 
+Calls in [main] to fn1:6 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -232,7 +240,7 @@ FINAL SYMBOL TABLE
 (void()) fn1()
 (label) fn1::@return
 (byte*) fn1::BORDERCOL
-(const byte*) fn1::BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) $d020
+(const byte*) fn1::BORDERCOL#0 BORDERCOL = (byte*) 53280
 (void()) main()
 (label) main::@return
 (void()*) main::f

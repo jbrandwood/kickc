@@ -1,6 +1,14 @@
 Resolved forward reference fn1 to (void()) fn1()
 Resolved forward reference fn2 to (void()) fn2()
-Fixing pointer array-indexing *((void()*[2]) fns + (byte~) main::$0)
+Fixing pointer array-indexing *((void()*[2]) fns + (number~) main::$0)
+Adding pointer type conversion cast (byte*) fn1::BORDERCOL in (byte*) fn1::BORDERCOL ← (number) $d020
+Adding pointer type conversion cast (byte*) fn2::BGCOL in (byte*) fn2::BGCOL ← (number) $d021
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) @1
+Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -9,7 +17,7 @@ CONTROL FLOW GRAPH SSA
   (void()*[2]) fns#0 ← { (void()*~) $0, (void()*~) $1 }
   to:@3
 main: scope:[main]  from @3
-  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
@@ -18,23 +26,23 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
   (byte) main::i#1 ← ++ (byte) main::i#2
-  (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (byte) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
-  (void()*) main::f#0 ← *((void()*[2]) fns#0 + (byte) main::$2)
+  (number~) main::$0 ← (byte) main::i#1 & (number) 1
+  (number~) main::$2 ← (number~) main::$0 * (const byte) SIZEOF_POINTER
+  (void()*) main::f#0 ← *((void()*[2]) fns#0 + (number~) main::$2)
   call *((void()*) main::f#0) 
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (word/dword/signed dword) $d020
+  (byte*) fn1::BORDERCOL#0 ← ((byte*)) (number) $d020
   *((byte*) fn1::BORDERCOL#0) ← ++ *((byte*) fn1::BORDERCOL#0)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
   to:@return
 fn2: scope:[fn2]  from
-  (byte*) fn2::BGCOL#0 ← ((byte*)) (word/dword/signed dword) $d021
+  (byte*) fn2::BGCOL#0 ← ((byte*)) (number) $d021
   *((byte*) fn2::BGCOL#0) ← ++ *((byte*) fn2::BGCOL#0)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
@@ -54,7 +62,7 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(const byte) SIZEOF_POINTER = (byte/signed byte/word/signed word/dword/signed dword) 2
+(const byte) SIZEOF_POINTER = (byte) 2
 (void()) fn1()
 (label) fn1::@return
 (byte*) fn1::BORDERCOL
@@ -66,8 +74,8 @@ SYMBOL TABLE SSA
 (void()*[2]) fns
 (void()*[2]) fns#0
 (void()) main()
-(byte~) main::$0
-(byte) main::$2
+(number~) main::$0
+(number~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@return
@@ -79,41 +87,65 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 
-Culled Empty Block (label) @4
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::i#1 & (number) 1
+Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#1 & (unumber)(number) 1
+Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (unumber~) main::$0 * (const byte) SIZEOF_POINTER
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) main::i#0 ← (unumber)(number) 0
+Inlining cast (byte*) fn1::BORDERCOL#0 ← (byte*)(number) $d020
+Inlining cast (byte*) fn2::BGCOL#0 ← (byte*)(number) $d021
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant pointer cast (byte*) 53281
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#1 & (byte) 1
+Inferred type updated to byte in (unumber~) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [0] (void()*~) $0 ← & (void()) fn1()
+Constant right-side identified [1] (void()*~) $1 ← & (void()) fn2()
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void()*) $0 = &fn1
 Constant (const void()*) $1 = &fn2
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) fn1::BORDERCOL#0 = ((byte*))$d020
-Constant (const byte*) fn2::BGCOL#0 = ((byte*))$d021
+Constant (const byte*) fn1::BORDERCOL#0 = (byte*) 53280
+Constant (const byte*) fn2::BGCOL#0 = (byte*) 53281
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const void()*[2]) fns#0 = { $0, $1 }
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [1] if(true) goto main::@2
+if() condition always true - replacing block destination [5] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Rewriting multiplication to use shift (byte) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
+Constant right-side identified [0] (void()*[2]) fns#0 ← { (const void()*) $0, (const void()*) $1 }
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const void()*[2]) fns#0 = { $0, $1 }
+Successful SSA optimization Pass2ConstantIdentification
+Rewriting multiplication to use shift [3] (byte~) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Eliminating unused constant (const byte) SIZEOF_POINTER
-Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined $0 = &(void()) fn1()
-Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::i#0 = (byte) 0
 Constant inlined $1 = &(void()) fn2()
 Successful SSA optimization Pass2ConstantInlining
+Eliminating unused constant (const byte) SIZEOF_POINTER
+Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [11] main::i#4 ← main::i#1
+Coalesced [12] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @4
 Renumbering block @3 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -134,13 +166,13 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::i#1 )
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [6] (byte) main::i#1 ← ++ (byte) main::i#2
-  [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1
-  [8] (byte) main::$2 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1
-  [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte) main::$2)
+  [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1
+  [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1
+  [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2)
   [10] call *((void()*) main::f#0) 
   to:main::@1
 fn2: scope:[fn2]  from
@@ -165,7 +197,7 @@ VARIABLE REGISTER WEIGHTS
 (void()*[2]) fns
 (void()) main()
 (byte~) main::$0 22.0
-(byte) main::$2 22.0
+(byte~) main::$2 22.0
 (void()*) main::f
 (void()*) main::f#0 11.0
 (byte) main::i
@@ -219,7 +251,7 @@ main: {
     .label f = 5
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -230,15 +262,15 @@ main: {
   b2:
   //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and i
     sta _0
-  //SEG17 [8] (byte) main::$2 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_rol_1 
+  //SEG17 [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda _0
     asl
     sta _2
-  //SEG18 [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte) main::$2) -- pprz1=pptc1_derefidx_vbuz2 
+  //SEG18 [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuz2 
     ldy _2
     lda fns,y
     sta f
@@ -278,15 +310,15 @@ fn1: {
   fns: .word fn1, fn2
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] (byte) main::$2 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
+Statement [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
+Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
 Statement [10] call *((void()*) main::f#0)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#1 main::$0 ] ( main:2 [ main::i#1 main::$0 ] ) always clobbers reg byte a 
-Statement [8] (byte) main::$2 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
-Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
+Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 [ main::i#1 main::$0 ] ( main:2 [ main::i#1 main::$0 ] ) always clobbers reg byte a 
+Statement [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
+Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
 Statement [10] call *((void()*) main::f#0)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ main::$0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
@@ -337,7 +369,7 @@ main: {
     .label f = 3
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
     jmp b1
@@ -348,12 +380,12 @@ main: {
   b2:
   //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_band_vbuc1 
+  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
     and i
-  //SEG17 [8] (byte) main::$2 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuaa_rol_1 
+  //SEG17 [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-  //SEG18 [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
+  //SEG18 [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
     tay
     lda fns,y
     sta f
@@ -426,16 +458,16 @@ FINAL SYMBOL TABLE
 (void()) fn1()
 (label) fn1::@return
 (byte*) fn1::BORDERCOL
-(const byte*) fn1::BORDERCOL#0 BORDERCOL = ((byte*))(word/dword/signed dword) $d020
+(const byte*) fn1::BORDERCOL#0 BORDERCOL = (byte*) 53280
 (void()) fn2()
 (label) fn2::@return
 (byte*) fn2::BGCOL
-(const byte*) fn2::BGCOL#0 BGCOL = ((byte*))(word/dword/signed dword) $d021
+(const byte*) fn2::BGCOL#0 BGCOL = (byte*) 53281
 (void()*[2]) fns
 (const void()*[2]) fns#0 fns = { &(void()) fn1(), &(void()) fn2() }
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
-(byte) main::$2 reg byte a 22.0
+(byte~) main::$2 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (void()*) main::f
@@ -472,7 +504,7 @@ main: {
     .label i = 2
     .label f = 3
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
   //SEG13 main::@1
@@ -480,12 +512,12 @@ main: {
   b2:
   //SEG15 [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_band_vbuc1 
+  //SEG16 [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
     and i
-  //SEG17 [8] (byte) main::$2 ← (byte~) main::$0 << (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuaa_rol_1 
+  //SEG17 [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-  //SEG18 [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
+  //SEG18 [9] (void()*) main::f#0 ← *((const void()*[2]) fns#0 + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
     tay
     lda fns,y
     sta f

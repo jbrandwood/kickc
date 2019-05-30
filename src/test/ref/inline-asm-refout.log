@@ -1,12 +1,13 @@
+Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte[]) table#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @1
-  (byte*) main::SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
-  (byte*~) main::$0 ← (byte*) main::SCREEN#0 + (byte/signed byte/word/signed word/dword/signed dword) $28
-  *((byte*~) main::$0) ← *((byte[]) table#0 + (byte/signed byte/word/signed word/dword/signed dword) 0)
+  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*~) main::$0 ← (byte*) main::SCREEN#0 + (number) $28
+  *((byte*~) main::$0) ← *((byte[]) table#0 + (number) 0)
   asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -33,27 +34,41 @@ SYMBOL TABLE SSA
 (byte[]) table
 (byte[]) table#0
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) $28 in (byte*~) main::$0 ← (byte*) main::SCREEN#0 + (number) $28
+Adding number conversion cast (unumber) 0 in *((byte*~) main::$0) ← *((byte[]) table#0 + (number) 0)
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $28
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant (const byte[]) table#0 = $0
-Constant (const byte*) main::SCREEN#0 = ((byte*))$400
+Constant (const byte*) main::SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::$0 = main::SCREEN#0+$28
-Successful SSA optimization Pass2ConstantIdentification
-Consolidated array index constant in *(table#0+0)
-Successful SSA optimization Pass2ConstantAdditionElimination
+Converting *(pointer+n) to pointer[n] [3] *((byte*~) main::$0) ← *((const byte[]) table#0 + (byte) 0)  -- *(main::SCREEN#0 + $28)
+Successful SSA optimization Pass2InlineDerefIdx
+Simplifying expression containing zero table#0 in [3] *((const byte*) main::SCREEN#0 + (byte) $28) ← *((const byte[]) table#0 + (byte) 0)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (byte*~) main::$0 and assignment [0] (byte*~) main::$0 ← (const byte*) main::SCREEN#0 + (byte) $28
+Successful SSA optimization PassNEliminateUnusedVars
 Constant inlined $0 = (const byte[]) table#0
-Constant inlined main::$0 = (const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28
 Successful SSA optimization Pass2ConstantInlining
-Simplifying constant plus zero table#0+0
+Consolidated array index constant in *(main::SCREEN#0+$28)
+Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -69,7 +84,7 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @1
   [3] phi()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← *((const byte[]) table#0)
+  [4] *((const byte*) main::SCREEN#0+(byte) $28) ← *((const byte[]) table#0)
   asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -110,7 +125,7 @@ bend:
 //SEG9 main
 main: {
     .label SCREEN = $400
-  //SEG10 [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← *((const byte[]) table#0) -- _deref_pbuc1=_deref_pbuc2 
+  //SEG10 [4] *((const byte*) main::SCREEN#0+(byte) $28) ← *((const byte[]) table#0) -- _deref_pbuc1=_deref_pbuc2 
     lda table
     sta SCREEN+$28
   //SEG11 asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
@@ -130,7 +145,7 @@ main: {
   table: .text "cml!"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← *((const byte[]) table#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN#0+(byte) $28) ← *((const byte[]) table#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  } always clobbers reg byte a reg byte x 
 
 REGISTER UPLIFT SCOPES
@@ -165,7 +180,7 @@ bend:
 //SEG9 main
 main: {
     .label SCREEN = $400
-  //SEG10 [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← *((const byte[]) table#0) -- _deref_pbuc1=_deref_pbuc2 
+  //SEG10 [4] *((const byte*) main::SCREEN#0+(byte) $28) ← *((const byte[]) table#0) -- _deref_pbuc1=_deref_pbuc2 
     lda table
     sta SCREEN+$28
   //SEG11 asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
@@ -209,7 +224,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
 (byte[]) table
 (const byte[]) table#0 table = (string) "cml!"
 
@@ -234,7 +249,7 @@ Score: 32
 //SEG9 main
 main: {
     .label SCREEN = $400
-  //SEG10 [4] *((const byte*) main::SCREEN#0+(byte/signed byte/word/signed word/dword/signed dword) $28) ← *((const byte[]) table#0) -- _deref_pbuc1=_deref_pbuc2 
+  //SEG10 [4] *((const byte*) main::SCREEN#0+(byte) $28) ← *((const byte[]) table#0) -- _deref_pbuc1=_deref_pbuc2 
     lda table
     sta SCREEN+$28
   //SEG11 asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }

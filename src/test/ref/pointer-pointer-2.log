@@ -1,12 +1,19 @@
+Adding pointer type conversion cast (byte*) main::screen in (byte*) main::screen ← (number) $400
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+Culled Empty Block (label) main::@7
+Culled Empty Block (label) main::@8
+Culled Empty Block (label) nexttext::@2
+Culled Empty Block (label) nexttext::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @2
   (byte) textid#16 ← phi( @2/(byte) textid#15 )
-  (byte*) main::screen#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) main::screen#0 ← ((byte*)) (number) $400
   (byte*) main::text#0 ← (byte*) 0
-  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   (byte) main::i#6 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
@@ -58,13 +65,13 @@ main::@return: scope:[main]  from main::@4
 @1: scope:[]  from @begin
   (byte[]) text1#0 ← (const string) $0
   (byte[]) text2#0 ← (const string) $1
-  (byte) textid#2 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) textid#2 ← (number) 0
   to:@2
 nexttext: scope:[nexttext]  from main::@1
   (byte**) nexttext::textp#3 ← phi( main::@1/(byte**) nexttext::textp#0 )
   (byte) textid#8 ← phi( main::@1/(byte) textid#11 )
-  (byte~) nexttext::$0 ← (byte) textid#8 & (byte/signed byte/word/signed word/dword/signed dword) 1
-  (bool~) nexttext::$1 ← (byte~) nexttext::$0 == (byte/signed byte/word/signed word/dword/signed dword) 0
+  (number~) nexttext::$0 ← (byte) textid#8 & (number) 1
+  (bool~) nexttext::$1 ← (number~) nexttext::$0 == (number) 0
   (byte) textid#3 ← ++ (byte) textid#8
   if((bool~) nexttext::$1) goto nexttext::@1
   to:nexttext::@3
@@ -136,7 +143,7 @@ SYMBOL TABLE SSA
 (byte*) main::text#5
 (byte*) main::text#6
 (void()) nexttext((byte**) nexttext::textp)
-(byte~) nexttext::$0
+(number~) nexttext::$0
 (bool~) nexttext::$1
 (label) nexttext::@1
 (label) nexttext::@3
@@ -171,6 +178,28 @@ SYMBOL TABLE SSA
 (byte) textid#8
 (byte) textid#9
 
+Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (byte) textid#2 ← (number) 0
+Adding number conversion cast (unumber) 1 in (number~) nexttext::$0 ← (byte) textid#8 & (number) 1
+Adding number conversion cast (unumber) nexttext::$0 in (number~) nexttext::$0 ← (byte) textid#8 & (unumber)(number) 1
+Adding number conversion cast (unumber) 0 in (bool~) nexttext::$1 ← (unumber~) nexttext::$0 == (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Inlining cast (byte) main::i#0 ← (unumber)(number) 0
+Inlining cast (byte) textid#2 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) nexttext::$0 ← (byte) textid#8 & (byte) 1
 Alias (byte**) nexttext::textp#0 = (byte**~) main::$0 
 Alias (byte*) main::text#2 = (byte*) main::text#6 
 Alias (byte*) main::screen#4 = (byte*) main::screen#5 
@@ -191,62 +220,71 @@ Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (byte) main::i#2
 Self Phi Eliminated (byte) textid#1
 Successful SSA optimization Pass2SelfPhiElimination
-Redundant Phi (byte) textid#16 (byte) textid#15
-Redundant Phi (byte) textid#0 (byte) textid#13
-Redundant Phi (byte) main::i#2 (byte) main::i#5
-Redundant Phi (byte) textid#1 (byte) textid#0
-Redundant Phi (byte) textid#8 (byte) textid#11
-Redundant Phi (byte**) nexttext::textp#1 (byte**) nexttext::textp#0
-Redundant Phi (byte) textid#10 (byte) textid#1
-Successful SSA optimization Pass2RedundantPhiElimination
+Identical Phi Values (byte) textid#16 (byte) textid#15
+Identical Phi Values (byte) textid#0 (byte) textid#13
+Identical Phi Values (byte) main::i#2 (byte) main::i#5
+Identical Phi Values (byte) textid#1 (byte) textid#0
+Identical Phi Values (byte) textid#8 (byte) textid#11
+Identical Phi Values (byte**) nexttext::textp#1 (byte**) nexttext::textp#0
+Identical Phi Values (byte) textid#10 (byte) textid#1
+Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$2 [12] if(*((byte*) main::text#3)!=(byte) '@') goto main::@3
 Simple Condition (bool~) main::$3 [20] if((byte) main::i#1!=rangelast(0,$14)) goto main::@1
-Simple Condition (bool~) nexttext::$1 [31] if((byte~) nexttext::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto nexttext::@1
+Simple Condition (bool~) nexttext::$1 [31] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen#0 = ((byte*))$400
-Constant (const byte*) main::text#0 = 0
+Constant right-side identified [5] (byte**) nexttext::textp#0 ← & (byte*) main::text#2
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::screen#0 = (byte*) 1024
+Constant (const byte*) main::text#0 = (byte*) 0
 Constant (const byte) main::i#0 = 0
 Constant (const byte**) nexttext::textp#0 = &main::text#2
 Constant (const byte[]) text1#0 = $0
 Constant (const byte[]) text2#0 = $1
 Constant (const byte) textid#15 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value main::i#1 ← ++ main::i#5 to ++
-Resolved ranged comparison value if(main::i#1!=rangelast(0,$14)) goto main::@1 to (byte/signed byte/word/signed word/dword/signed dword) $15
-Culled Empty Block (label) main::@9
-Culled Empty Block (label) @1
-Culled Empty Block (label) @3
-Successful SSA optimization Pass2CullEmptyBlocks
+Resolved ranged next value [18] main::i#1 ← ++ main::i#5 to ++
+Resolved ranged comparison value [20] if(main::i#1!=rangelast(0,$14)) goto main::@1 to (number) $15
+Adding number conversion cast (unumber) $15 in if((byte) main::i#1!=(number) $15) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $15
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $15
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte*) main::screen#0
 Inlining constant with var siblings (const byte*) main::text#0
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) textid#15
-Constant inlined main::screen#0 = ((byte*))(word/signed word/dword/signed dword) $400
-Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::screen#0 = (byte*) 1024
+Constant inlined main::i#0 = (byte) 0
 Constant inlined main::text#0 = (byte*) 0
-Constant inlined textid#15 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined textid#15 = (byte) 0
 Constant inlined $0 = (const byte[]) text1#0
 Constant inlined $1 = (const byte[]) text2#0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@10(between main::@4 and main::@1)
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to nexttext:6 
+Calls in [] to main:3 
+Calls in [main] to nexttext:8 
 
 Created 6 initial phi equivalence classes
-Coalesced [7] main::text#9 ← main::text#2
-Coalesced [8] main::screen#9 ← main::screen#4
-Coalesced (already) [14] main::text#7 ← main::text#3
-Coalesced [15] textid#19 ← textid#13
-Coalesced (already) [16] main::screen#7 ← main::screen#2
-Coalesced [17] main::i#7 ← main::i#1
-Coalesced [21] main::text#8 ← main::text#1
-Coalesced [22] main::screen#8 ← main::screen#1
+Coalesced [9] main::text#9 ← main::text#2
+Coalesced [10] main::screen#9 ← main::screen#4
+Coalesced (already) [16] main::text#7 ← main::text#3
+Coalesced [17] textid#19 ← textid#13
+Coalesced (already) [18] main::screen#7 ← main::screen#2
+Coalesced [19] main::i#7 ← main::i#1
+Coalesced [23] main::text#8 ← main::text#1
+Coalesced [24] main::screen#8 ← main::screen#1
 Coalesced down to 4 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@9
 Culled Empty Block (label) main::@10
 Renumbering block @2 to @1
 Renumbering block nexttext::@3 to nexttext::@2
@@ -269,9 +307,9 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@4
-  [5] (byte) main::i#5 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(byte) main::i#1 )
-  [5] (byte*) main::screen#4 ← phi( main/((byte*))(word/signed word/dword/signed dword) $400 main::@4/(byte*) main::screen#2 )
-  [5] (byte) textid#11 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@4/(byte) textid#13 )
+  [5] (byte) main::i#5 ← phi( main/(byte) 0 main::@4/(byte) main::i#1 )
+  [5] (byte*) main::screen#4 ← phi( main/(byte*) 1024 main::@4/(byte*) main::screen#2 )
+  [5] (byte) textid#11 ← phi( main/(byte) 0 main::@4/(byte) textid#13 )
   [5] (byte*) main::text#2 ← phi( main/(byte*) 0 main::@4/(byte*) main::text#3 )
   [6] call nexttext 
   to:main::@2
@@ -282,7 +320,7 @@ main::@2: scope:[main]  from main::@1 main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@2
   [9] (byte) main::i#1 ← ++ (byte) main::i#5
-  [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $15) goto main::@1
+  [10] if((byte) main::i#1!=(byte) $15) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@4
   [11] return 
@@ -293,9 +331,9 @@ main::@3: scope:[main]  from main::@2
   [14] (byte*) main::text#1 ← ++ (byte*) main::text#3
   to:main::@2
 nexttext: scope:[nexttext]  from main::@1
-  [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte/signed byte/word/signed word/dword/signed dword) 1
+  [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1
   [16] (byte) textid#13 ← ++ (byte) textid#11
-  [17] if((byte~) nexttext::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto nexttext::@1
+  [17] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1
   to:nexttext::@2
 nexttext::@2: scope:[nexttext]  from nexttext
   [18] *((const byte**) nexttext::textp#0) ← (const byte[]) text2#0
@@ -380,15 +418,15 @@ main: {
     .label i = 7
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#5 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
-  //SEG13 [5] phi (byte*) main::screen#4 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+  //SEG13 [5] phi (byte*) main::screen#4 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG14 [5] phi (byte) textid#11 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
+  //SEG14 [5] phi (byte) textid#11 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta textid
   //SEG15 [5] phi (byte*) main::text#2 = (byte*) 0 [phi:main->main::@1#3] -- pbuz1=pbuc1 
@@ -426,7 +464,7 @@ main: {
   b4:
   //SEG29 [9] (byte) main::i#1 ← ++ (byte) main::i#5 -- vbuz1=_inc_vbuz1 
     inc i
-  //SEG30 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $15) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG30 [10] if((byte) main::i#1!=(byte) $15) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$15
     cmp i
     bne b1_from_b4
@@ -459,13 +497,13 @@ main: {
 nexttext: {
     .label textp = main.text
     .label _0 = 8
-  //SEG38 [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuz1=vbuz2_band_vbuc1 
+  //SEG38 [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and textid
     sta _0
   //SEG39 [16] (byte) textid#13 ← ++ (byte) textid#11 -- vbuz1=_inc_vbuz1 
     inc textid
-  //SEG40 [17] if((byte~) nexttext::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto nexttext::@1 -- vbuz1_eq_0_then_la1 
+  //SEG40 [17] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1 -- vbuz1_eq_0_then_la1 
     lda _0
     cmp #0
     beq b1
@@ -501,12 +539,12 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:7 [ ma
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ textid#11 textid#13 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ textid#11 textid#13 ]
 Statement [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
-Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ textid#11 nexttext::$0 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#11 nexttext::$0 ] ) always clobbers reg byte a 
+Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 [ textid#11 nexttext::$0 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#11 nexttext::$0 ] ) always clobbers reg byte a 
 Statement [18] *((const byte**) nexttext::textp#0) ← (const byte[]) text2#0 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
 Statement [20] *((const byte**) nexttext::textp#0) ← (const byte[]) text1#0 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
 Statement [8] if(*((byte*) main::text#3)!=(byte) '@') goto main::@3 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
 Statement [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
-Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte/signed byte/word/signed word/dword/signed dword) 1 [ textid#11 nexttext::$0 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#11 nexttext::$0 ] ) always clobbers reg byte a 
+Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 [ textid#11 nexttext::$0 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#11 nexttext::$0 ] ) always clobbers reg byte a 
 Statement [18] *((const byte**) nexttext::textp#0) ← (const byte[]) text2#0 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
 Statement [20] *((const byte**) nexttext::textp#0) ← (const byte[]) text1#0 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::text#2 main::text#3 main::text#1 ] : zp ZP_WORD:2 , 
@@ -557,14 +595,14 @@ main: {
     .label text = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG13 [5] phi (byte*) main::screen#4 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+  //SEG13 [5] phi (byte*) main::screen#4 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG14 [5] phi (byte) textid#11 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
+  //SEG14 [5] phi (byte) textid#11 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta textid
   //SEG15 [5] phi (byte*) main::text#2 = (byte*) 0 [phi:main->main::@1#3] -- pbuz1=pbuc1 
@@ -602,7 +640,7 @@ main: {
   b4:
   //SEG29 [9] (byte) main::i#1 ← ++ (byte) main::i#5 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG30 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $15) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG30 [10] if((byte) main::i#1!=(byte) $15) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1_from_b4
     jmp breturn
@@ -633,12 +671,12 @@ main: {
 // Choose the next text to show - by updating the text pointer pointed to by the passed pointer to a pointer
 nexttext: {
     .label textp = main.text
-  //SEG38 [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_band_vbuc1 
+  //SEG38 [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
     and textid
   //SEG39 [16] (byte) textid#13 ← ++ (byte) textid#11 -- vbuz1=_inc_vbuz1 
     inc textid
-  //SEG40 [17] if((byte~) nexttext::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto nexttext::@1 -- vbuaa_eq_0_then_la1 
+  //SEG40 [17] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b1
     jmp b2
@@ -774,14 +812,14 @@ main: {
     .label screen = 5
     .label text = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#5 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG13 [5] phi (byte*) main::screen#4 = ((byte*))(word/signed word/dword/signed dword) $400 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+  //SEG13 [5] phi (byte*) main::screen#4 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-  //SEG14 [5] phi (byte) textid#11 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
+  //SEG14 [5] phi (byte) textid#11 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     txa
     sta textid
   //SEG15 [5] phi (byte*) main::text#2 = (byte*) 0 [phi:main->main::@1#3] -- pbuz1=pbuc1 
@@ -809,7 +847,7 @@ main: {
   //SEG28 main::@4
   //SEG29 [9] (byte) main::i#1 ← ++ (byte) main::i#5 -- vbuxx=_inc_vbuxx 
     inx
-  //SEG30 [10] if((byte) main::i#1!=(byte/signed byte/word/signed word/dword/signed dword) $15) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+  //SEG30 [10] if((byte) main::i#1!=(byte) $15) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
     bne b1
   //SEG31 main::@return
@@ -837,12 +875,12 @@ main: {
 // Choose the next text to show - by updating the text pointer pointed to by the passed pointer to a pointer
 nexttext: {
     .label textp = main.text
-  //SEG38 [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte/signed byte/word/signed word/dword/signed dword) 1 -- vbuaa=vbuz1_band_vbuc1 
+  //SEG38 [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
     and textid
   //SEG39 [16] (byte) textid#13 ← ++ (byte) textid#11 -- vbuz1=_inc_vbuz1 
     inc textid
-  //SEG40 [17] if((byte~) nexttext::$0==(byte/signed byte/word/signed word/dword/signed dword) 0) goto nexttext::@1 -- vbuaa_eq_0_then_la1 
+  //SEG40 [17] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq b1
   //SEG41 nexttext::@2

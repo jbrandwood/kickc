@@ -1,14 +1,17 @@
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
+Adding pointer type conversion cast (byte*) SCROLL in (byte*) SCROLL ← (number) $d016
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) SCROLL
+Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN#0 ← ((byte*)) (word/signed word/dword/signed dword) $400
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
   (byte[]) TEXT#0 ← (const string) $0
   to:@1
 main: scope:[main]  from @1
   (byte*) main::nxt#0 ← (byte[]) TEXT#0
-  (byte) main::i#0 ← (byte/signed byte/word/signed word/dword/signed dword) 0
+  (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
@@ -76,8 +79,16 @@ SYMBOL TABLE SSA
 (byte*) main::nxt#3
 (byte*) main::nxt#4
 
-Culled Empty Block (label) @2
-Successful SSA optimization Pass2CullEmptyBlocks
+Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte) main::i#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [7] (bool~) main::$1 ← (byte) main::c#0 != (byte) '@' from [6] (bool~) main::$0 ← (byte) main::c#0 == (byte) '@'
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#3 = (byte) main::i#4 
@@ -86,21 +97,21 @@ Alias (byte) main::i#2 = (byte) main::i#3
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [8] if((byte) main::c#0!=(byte) '@') goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = ((byte*))$400
+Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte[]) TEXT#0 = $0
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::nxt#0 = TEXT#0
 Constant (const byte*) main::nxt#2 = TEXT#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [7] if(true) goto main::@1
+if() condition always true - replacing block destination [13] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) main::nxt#0
 Inlining constant with var siblings (const byte*) main::nxt#2
-Constant inlined main::i#0 = (byte/signed byte/word/signed word/dword/signed dword) 0
+Constant inlined main::i#0 = (byte) 0
 Constant inlined main::nxt#0 = (const byte[]) TEXT#0
 Constant inlined $0 = (const byte[]) TEXT#0
 Constant inlined main::nxt#2 = (const byte[]) TEXT#0
@@ -108,18 +119,20 @@ Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@1 and main::@2)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 4 initial phi equivalence classes
-Coalesced [9] main::c#4 ← main::c#1
-Coalesced [14] main::nxt#5 ← main::nxt#1
-Coalesced [15] main::i#5 ← main::i#1
-Coalesced [16] main::c#3 ← main::c#0
-Coalesced [17] main::nxt#6 ← main::nxt#3
+Coalesced [10] main::c#4 ← main::c#1
+Coalesced [15] main::nxt#5 ← main::nxt#1
+Coalesced [16] main::i#5 ← main::i#1
+Coalesced [17] main::c#3 ← main::c#0
+Coalesced [18] main::nxt#6 ← main::nxt#3
 Coalesced down to 3 phi equivalence classes
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@5
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -140,7 +153,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte/signed byte/word/signed word/dword/signed dword) 0 main::@2/(byte) main::i#1 )
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
   [5] (byte*) main::nxt#3 ← phi( main/(const byte[]) TEXT#0 main::@2/(byte*) main::nxt#1 )
   [6] (byte) main::c#0 ← *((byte*) main::nxt#3)
   [7] if((byte) main::c#0!=(byte) '@') goto main::@2
@@ -216,7 +229,7 @@ main: {
     .label nxt = 4
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta i
   //SEG13 [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
@@ -322,7 +335,7 @@ main: {
     .label nxt = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG13 [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
@@ -411,7 +424,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = ((byte*))(word/signed word/dword/signed dword) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (byte[]) TEXT
 (const byte[]) TEXT#0 TEXT = (string) "01234567@"
 (void()) main()
@@ -456,7 +469,7 @@ Score: 645
 main: {
     .label nxt = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::i#2 = (byte/signed byte/word/signed word/dword/signed dword) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+  //SEG12 [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   //SEG13 [5] phi (byte*) main::nxt#3 = (const byte[]) TEXT#0 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT

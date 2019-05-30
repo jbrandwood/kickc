@@ -51,7 +51,7 @@ public class Pass4CodeGeneration {
       generateComments(asm, program.getFileComments());
 
       Number programPc;
-      if(program.getProgramPc()!=null) {
+      if(program.getProgramPc() != null) {
          programPc = program.getProgramPc();
       } else {
          programPc = 0x080d;
@@ -306,40 +306,38 @@ public class Pass4CodeGeneration {
       Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getRef());
       if(constRefStatements != null) {
          for(Integer constRefStmtIdx : constRefStatements) {
+            Statement statement = program.getStatementInfos().getStatement(constRefStmtIdx);
             ScopeRef refScope = program.getStatementInfos().getBlock(constRefStmtIdx).getScope();
-            if(!refScope.equals(scopeRef)) {
-               Statement statement = program.getStatementInfos().getStatement(constRefStmtIdx);
-               if(statement instanceof StatementPhiBlock) {
-                  // Const reference in PHI block - examine if the only predecessor is current scope
-                  boolean found = false;
-                  for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                     for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                        RValue phiRRValue = phiRValue.getrValue();
-                        Collection<ConstantRef> phiRValueConstRefs = PassNVariableReferenceInfos.getReferencedConsts(phiRRValue);
-                        for(ConstantRef phiRValueConstRef : phiRValueConstRefs) {
-                           if(phiRValueConstRef.equals(constantVar.getRef())) {
-                              found = true;
-                              // Found the constant
-                              LabelRef pred = phiRValue.getPredecessor();
-                              ControlFlowBlock predBlock = program.getGraph().getBlock(pred);
-                              ScopeRef predScope = predBlock.getScope();
-                              if(!predScope.equals(scopeRef)) {
-                                 // Scopes in PHI RValue differs from const scope - generate label
-                                 useLabel = true;
-                              }
+            if(statement instanceof StatementPhiBlock) {
+               // Const reference in PHI block - examine if the only predecessor is current scope
+               boolean found = false;
+               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+                  for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                     RValue phiRRValue = phiRValue.getrValue();
+                     Collection<ConstantRef> phiRValueConstRefs = PassNVariableReferenceInfos.getReferencedConsts(phiRRValue);
+                     for(ConstantRef phiRValueConstRef : phiRValueConstRefs) {
+                        if(phiRValueConstRef.equals(constantVar.getRef())) {
+                           found = true;
+                           // Found the constant
+                           LabelRef pred = phiRValue.getPredecessor();
+                           ControlFlowBlock predBlock = program.getGraph().getBlock(pred);
+                           ScopeRef predScope = predBlock.getScope();
+                           if(!predScope.equals(scopeRef)) {
+                              // Scopes in PHI RValue differs from const scope - generate label
+                              useLabel = true;
                            }
                         }
                      }
                   }
-                  if(!found) {
-                     // PHI-reference is complex - generate label
-                     program.getLog().append("Warning: Complex PHI-value using constant. Using .label as fallback. " + statement);
-                     useLabel = true;
-                  }
-               } else {
-                  // Used in a non-PHI statement in another scope - generate label
+               }
+               if(!found) {
+                  // PHI-reference is complex - generate label
+                  program.getLog().append("Warning: Complex PHI-value using constant. Using .label as fallback. " + statement);
                   useLabel = true;
                }
+            } else if(!refScope.equals(scopeRef)) {
+               // Used in a non-PHI statement in another scope - generate label
+               useLabel = true;
             }
          }
       }

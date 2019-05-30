@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testRobozzleLabelProblem() throws IOException, URISyntaxException {
+      compileAndCompare("robozzle64-label-problem", log());
+   }
+
+   @Test
    public void testGlobalPc() throws IOException, URISyntaxException {
       compileAndCompare("global-pc");
    }

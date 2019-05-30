@@ -50,10 +50,17 @@ public class Pass4CodeGeneration {
       asm.startSegment(currentScope, null, "File Comments");
       generateComments(asm, program.getFileComments());
 
+      Number programPc;
+      if(program.getProgramPc()!=null) {
+         programPc = program.getProgramPc();
+      } else {
+         programPc = 0x080d;
+      }
+
       asm.startSegment(currentScope, null, "Basic Upstart");
       asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
       asm.addLine(new AsmBasicUpstart("bbegin"));
-      asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(0x080d)));
+      asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
 
       // Generate global ZP labels
       asm.startSegment(currentScope, null, "Global Constants & labels");

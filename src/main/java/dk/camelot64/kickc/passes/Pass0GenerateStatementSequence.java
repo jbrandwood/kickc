@@ -112,10 +112,19 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitGlobalDirective(KickCParser.GlobalDirectiveContext ctx) {
+   public Object visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) {
       DirectiveReserveZp reserveDirective = (DirectiveReserveZp) this.visit(ctx.directiveReserve());
-      if(reserveDirective!=null) {
+      if(reserveDirective != null) {
          program.addReservedZps(reserveDirective.getReservedZp());
+      }
+      return null;
+   }
+
+   @Override
+   public Object visitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) {
+      Number programPc = NumberParser.parseLiteral(ctx.NUMBER().getText());
+      if(programPc != null) {
+         program.setProgramPc(programPc);
       }
       return null;
    }
@@ -171,7 +180,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
                // A single void parameter decl - equals zero parameters
                return new ArrayList<>();
             } else {
-               throw new CompileError("Illegal void parameter." , new StatementSource(ctx));
+               throw new CompileError("Illegal void parameter.", new StatementSource(ctx));
             }
          } else if(parameterDecl instanceof Variable) {
             parameterDecls.add((Variable) parameterDecl);
@@ -436,6 +445,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /**
     * Visit the type/directive part of a declaration. Setup the local decl-variables
+    *
     * @param ctx The declaration type & directives
     * @return null
     */
@@ -467,7 +477,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitDeclVariableList(KickCParser.DeclVariableListContext ctx) {
-      if(ctx.declVariableList()!=null) {
+      if(ctx.declVariableList() != null) {
          this.visit(ctx.declVariableList());
       }
       this.visit(ctx.declVariableInit());
@@ -506,38 +516,38 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             throw new CompileError("Initializers not supported inside structs " + type.getTypeName(), new StatementSource(ctx));
          }
       } else {
-      if(initializer != null) {
-         addInitialAssignment(initializer, lValue, comments);
-      } else {
-         if(type instanceof SymbolTypeIntegerFixed) {
-            // Add an zero value initializer
-            ConstantInteger zero = new ConstantInteger(0L, type);
-            Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
-            sequence.addStatement(stmt);
-         } else if(type instanceof SymbolTypeArray) {
-            // Add an zero-array initializer
-            SymbolTypeArray typeArray = (SymbolTypeArray) type;
-            RValue size = typeArray.getSize();
-            if(size == null) {
-               throw new CompileError("Error! Array has no declared size. " + lValue.toString(program), new StatementSource(ctx));
-            }
-            Statement stmt = new StatementAssignment(lValue.getRef(), new ArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx), ensureUnusedComments(comments));
-            sequence.addStatement(stmt);
-         } else if(type instanceof SymbolTypePointer) {
-            // Add an zero value initializer
-            SymbolTypePointer typePointer = (SymbolTypePointer) type;
-            ConstantValue zero = new ConstantPointer(0L, typePointer.getElementType());
-            Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
-            sequence.addStatement(stmt);
-         } else if(type instanceof SymbolTypeStruct) {
-            // Add an zero-struct initializer
-            SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
-            Statement stmt = new StatementAssignment(lValue.getRef(), new StructZero(typeStruct), new StatementSource(ctx), ensureUnusedComments(comments));
-            sequence.addStatement(stmt);
+         if(initializer != null) {
+            addInitialAssignment(initializer, lValue, comments);
          } else {
-            throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), new StatementSource(ctx));
+            if(type instanceof SymbolTypeIntegerFixed) {
+               // Add an zero value initializer
+               ConstantInteger zero = new ConstantInteger(0L, type);
+               Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
+               sequence.addStatement(stmt);
+            } else if(type instanceof SymbolTypeArray) {
+               // Add an zero-array initializer
+               SymbolTypeArray typeArray = (SymbolTypeArray) type;
+               RValue size = typeArray.getSize();
+               if(size == null) {
+                  throw new CompileError("Error! Array has no declared size. " + lValue.toString(program), new StatementSource(ctx));
+               }
+               Statement stmt = new StatementAssignment(lValue.getRef(), new ArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx), ensureUnusedComments(comments));
+               sequence.addStatement(stmt);
+            } else if(type instanceof SymbolTypePointer) {
+               // Add an zero value initializer
+               SymbolTypePointer typePointer = (SymbolTypePointer) type;
+               ConstantValue zero = new ConstantPointer(0L, typePointer.getElementType());
+               Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
+               sequence.addStatement(stmt);
+            } else if(type instanceof SymbolTypeStruct) {
+               // Add an zero-struct initializer
+               SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
+               Statement stmt = new StatementAssignment(lValue.getRef(), new StructZero(typeStruct), new StatementSource(ctx), ensureUnusedComments(comments));
+               sequence.addStatement(stmt);
+            } else {
+               throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), new StatementSource(ctx));
+            }
          }
-      }
 
       }
       return null;
@@ -545,7 +555,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /**
     * Add declared directives to an lValue (typically a variable).
-    *  @param lValue The lValue
+    *
+    * @param lValue The lValue
     * @param type The type of the lValue
     * @param directives The directives to add
     */
@@ -576,6 +587,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    /**
     * Find the directives in the parse tree
+    *
     * @param directivesCtx The directives in the parse tree to examine
     * @return Objects representing the found directives
     */
@@ -885,7 +897,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitForClassicInitDecl(KickCParser.ForClassicInitDeclContext ctx) {
-      if(ctx.declVariables()!=null) {
+      if(ctx.declVariables() != null) {
          this.visit(ctx.declVariables());
       }
       return null;
@@ -898,7 +910,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       loopStack.push(new Loop(blockScope));
 
       // Create / find declared loop variable
-      if(ctx.declTypes()!=null) {
+      if(ctx.declTypes() != null) {
          this.visitDeclTypes(ctx.declTypes());
       }
       SymbolType varType = declVarType;
@@ -923,7 +935,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Assign loop variable with first value
       RValue rangeLastValue = (RValue) visit(rangeLastCtx);
       RValue rangeFirstValue = (RValue) visit(rangeFirstCtx);
-      if(varType!=null) {
+      if(varType != null) {
          if(rangeFirstValue instanceof ConstantInteger) ((ConstantInteger) rangeFirstValue).setType(SymbolType.NUMBER);
          if(rangeLastValue instanceof ConstantInteger) ((ConstantInteger) rangeLastValue).setType(SymbolType.NUMBER);
       }
@@ -1136,12 +1148,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
 
-
-
    @Override
    public Object visitStructDef(KickCParser.StructDefContext ctx) {
       String structDefName;
-      if(ctx.NAME()!=null) {
+      if(ctx.NAME() != null) {
          structDefName = ctx.NAME().getText();
       } else {
          structDefName = getCurrentScope().allocateIntermediateVariableName();
@@ -1169,7 +1179,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       String signedness = ctx.getChild(0).getText();
 
       String simpleTypeName;
-      if(ctx.SIMPLETYPE()!=null) {
+      if(ctx.SIMPLETYPE() != null) {
          simpleTypeName = ctx.SIMPLETYPE().getText();
       } else {
          simpleTypeName = "int";
@@ -1255,7 +1265,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else if(lValue instanceof PointerDereferenceIndexed) {
          return new PointerDereferenceIndexed(((PointerDereferenceIndexed) lValue).getPointer(), ((PointerDereferenceIndexed) lValue).getIndex());
       } else {
-         throw new CompileError("Unknown LValue type "+lValue);
+         throw new CompileError("Unknown LValue type " + lValue);
       }
    }
 
@@ -1280,7 +1290,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitExprSizeOf(KickCParser.ExprSizeOfContext ctx) {
-      if(ctx.typeDecl()!=null) {
+      if(ctx.typeDecl() != null) {
          // sizeof(type) - add directly
          SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
          return OperatorSizeOf.getSizeOfConstantVar(program.getScope(), type);
@@ -1297,7 +1307,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitExprTypeId(KickCParser.ExprTypeIdContext ctx) {
-      if(ctx.typeDecl()!=null) {
+      if(ctx.typeDecl() != null) {
          // typeid(type) - add directly
          SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
          return OperatorTypeId.getTypeIdConstantVar(program.getScope(), type);
@@ -1359,13 +1369,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
-      String stringValue ="";
+      String stringValue = "";
       String subText = "";
       for(TerminalNode stringNode : ctx.STRING()) {
          subText = stringNode.getText();
          if(subText.endsWith("z")) {
             stringValue += subText.substring(1, subText.length() - 2);
-         }  else {
+         } else {
             stringValue += subText.substring(1, subText.length() - 1);
          }
       }
@@ -1413,7 +1423,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Special handling of negative literal number
       if(child instanceof ConstantInteger && operator.equals(Operators.NEG)) {
          return new ConstantInteger(-((ConstantInteger) child).getInteger(), ((ConstantInteger) child).getType());
-      }  else {
+      } else {
          VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));

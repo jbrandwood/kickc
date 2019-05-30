@@ -68,6 +68,9 @@ public class Program {
    /** Reserved ZP addresses that the compiler cannot use. */
    private List<Number> reservedZps;
 
+   /** Absolute start address of the code. Null to start ad 0x080d. */
+   private Number programPc;
+
    public Program() {
       this.scope = new ProgramScope();
       this.log = new CompileLog();
@@ -296,5 +299,17 @@ public class Program {
 
    public List<Number> getReservedZps() {
       return reservedZps;
+   }
+
+   /**
+    * Set the absolute position of the program code
+    * @param programPc The address
+    */
+   public void setProgramPc(Number programPc) {
+      this.programPc = programPc;
+   }
+
+   public Number getProgramPc() {
+      return programPc;
    }
 }

@@ -1,4 +1,4 @@
-// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -152,15 +152,29 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#globalDirective}.
+	 * Enter a parse tree produced by the {@code globalDirectiveReserve}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
 	 * @param ctx the parse tree
 	 */
-	void enterGlobalDirective(KickCParser.GlobalDirectiveContext ctx);
+	void enterGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#globalDirective}.
+	 * Exit a parse tree produced by the {@code globalDirectiveReserve}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
 	 * @param ctx the parse tree
 	 */
-	void exitGlobalDirective(KickCParser.GlobalDirectiveContext ctx);
+	void exitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code globalDirectivePc}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code globalDirectivePc}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.

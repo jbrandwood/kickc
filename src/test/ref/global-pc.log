@@ -1,0 +1,263 @@
+Adding pointer type conversion cast (byte*) BGCOL in (byte*) BGCOL ← (number) $d021
+Adding pointer type conversion cast (byte*) RASTER in (byte*) RASTER ← (number) $d012
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) BGCOL#0 ← ((byte*)) (number) $d021
+  (byte*) RASTER#0 ← ((byte*)) (number) $d012
+  to:@1
+main: scope:[main]  from @1
+  asm { sei  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  if(true) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte) main::col#0 ← *((byte*) RASTER#0)
+  *((byte*) BGCOL#0) ← (byte) main::col#0
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(byte*) BGCOL#0
+(byte*) RASTER
+(byte*) RASTER#0
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::col
+(byte) main::col#0
+
+Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
+Inlining cast (byte*) RASTER#0 ← (byte*)(number) $d012
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53281
+Simplifying constant pointer cast (byte*) 53266
+Successful SSA optimization PassNCastSimplification
+Constant (const byte*) BGCOL#0 = (byte*) 53281
+Constant (const byte*) RASTER#0 = (byte*) 53266
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [3] if(true) goto main::@2
+Successful SSA optimization Pass2ConstantIfs
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@1
+Renumbering block main::@2 to main::@1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  asm { sei  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [5] (byte) main::col#0 ← *((const byte*) RASTER#0)
+  [6] *((const byte*) BGCOL#0) ← (byte) main::col#0
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) BGCOL
+(byte*) RASTER
+(void()) main()
+(byte) main::col
+(byte) main::col#0 22.0
+
+Initial phi equivalence classes
+Added variable main::col#0 to zero page equivalence class [ main::col#0 ]
+Complete equivalence classes
+[ main::col#0 ]
+Allocated zp ZP_BYTE:2 [ main::col#0 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Test setting the program PC through a #pc directive
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $1000 "Program"
+//SEG2 Global Constants & labels
+  .label BGCOL = $d021
+  .label RASTER = $d012
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label col = 2
+  //SEG10 asm { sei  }
+    sei
+    jmp b1
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuz1=_deref_pbuc1 
+    lda RASTER
+    sta col
+  //SEG13 [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuz1 
+    lda col
+    sta BGCOL
+    jmp b1
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Potential registers zp ZP_BYTE:2 [ main::col#0 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 22: zp ZP_BYTE:2 [ main::col#0 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 127 combination reg byte a [ main::col#0 ] 
+Uplifting [] best 127 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Test setting the program PC through a #pc directive
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $1000 "Program"
+//SEG2 Global Constants & labels
+  .label BGCOL = $d021
+  .label RASTER = $d012
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 asm { sei  }
+    sei
+    jmp b1
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
+    lda RASTER
+  //SEG13 [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
+    sta BGCOL
+    jmp b1
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) BGCOL
+(const byte*) BGCOL#0 BGCOL = (byte*) 53281
+(byte*) RASTER
+(const byte*) RASTER#0 RASTER = (byte*) 53266
+(void()) main()
+(label) main::@1
+(byte) main::col
+(byte) main::col#0 reg byte a 22.0
+
+reg byte a [ main::col#0 ]
+
+
+FINAL ASSEMBLER
+Score: 112
+
+//SEG0 File Comments
+// Test setting the program PC through a #pc directive
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $1000 "Program"
+//SEG2 Global Constants & labels
+  .label BGCOL = $d021
+  .label RASTER = $d012
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 asm { sei  }
+    sei
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] (byte) main::col#0 ← *((const byte*) RASTER#0) -- vbuaa=_deref_pbuc1 
+    lda RASTER
+  //SEG13 [6] *((const byte*) BGCOL#0) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
+    sta BGCOL
+    jmp b1
+}
+

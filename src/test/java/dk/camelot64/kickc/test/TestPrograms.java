@@ -33,6 +33,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testGlobalPc() throws IOException, URISyntaxException {
+      compileAndCompare("global-pc");
+   }
+
+   @Test
    public void testNoopCastElimination() throws IOException, URISyntaxException {
       compileAndCompare("noop-cast-elimination");
    }

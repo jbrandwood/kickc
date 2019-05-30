@@ -59,7 +59,8 @@ parameterDecl
     ;
 
 globalDirective
-    : directiveReserve ';'
+    : '#' directiveReserve #globalDirectiveReserve
+    | '#' 'pc' '(' NUMBER ')' #globalDirectivePc
     ;
 
 directive

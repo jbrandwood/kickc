@@ -25,4 +25,8 @@ public class AssignmentRValue implements RValue {
             ;
    }
 
+   @Override
+   public String toString() {
+      return toString(null);
+   }
 }

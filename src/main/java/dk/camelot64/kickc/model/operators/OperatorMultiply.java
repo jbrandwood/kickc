@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeInteger;
-import dk.camelot64.kickc.model.types.SymbolTypeSimple;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
@@ -23,10 +21,17 @@ public class OperatorMultiply extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
+   public SymbolType inferType(SymbolType left, SymbolType right) {
+      if(left instanceof SymbolTypePointer) {
+         if(SymbolType.BYTE.equals(right) || SymbolType.WORD.equals(right) || SymbolType.NUMBER.equals(right)) {
+            return left;
+         } else {
+            throw new NoMatchingType("Cannot multiply pointer by "+right.toString());
+         }
+      }
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(left) && SymbolType.isInteger(right)) {
-         return SymbolType.promotedMathType((SymbolTypeInteger) left, (SymbolTypeInteger) right);
+         return SymbolTypeConversion.convertedMathType((SymbolTypeInteger) left, (SymbolTypeInteger) right);
       }
       throw new RuntimeException("Type inference case not handled " + left + " " + getOperator() + " " + right);
    }

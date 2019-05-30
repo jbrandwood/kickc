@@ -8,13 +8,11 @@ main: {
   b1:
     lda SCREEN,x
     cmp #' '
-    bne b2
+    beq b3
+    inc SCREEN,x
   b3:
     inx
     cpx #$28*6+1
     bne b1
     rts
-  b2:
-    inc SCREEN,x
-    jmp b3
 }

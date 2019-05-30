@@ -1,10 +1,7 @@
 package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeInteger;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeSimple;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
@@ -24,7 +21,7 @@ public class OperatorBitwiseXor extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple type1, SymbolTypeSimple type2) {
+   public SymbolType inferType(SymbolType type1, SymbolType type2) {
       // Handle pointers as words
       if(type1 instanceof SymbolTypePointer) {
          type1 = SymbolType.WORD;
@@ -32,9 +29,9 @@ public class OperatorBitwiseXor extends OperatorBinary {
       if(type2 instanceof SymbolTypePointer) {
          type2 = SymbolType.WORD;
       }
-      // Handle numeric types through proper promotion
+      // Handle numeric types
       if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {
-         return SymbolType.promotedBitwiseType((SymbolTypeInteger) type1, (SymbolTypeInteger) type2);
+         return SymbolTypeConversion.convertedMathType((SymbolTypeInteger) type1, (SymbolTypeInteger) type2);
       }
       throw new CompileError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);
    }

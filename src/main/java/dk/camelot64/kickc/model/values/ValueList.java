@@ -38,4 +38,8 @@ public class ValueList implements RValue {
       return out.toString();
    }
 
+   @Override
+   public String toString() {
+      return toString(null);
+   }
 }

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -518,6 +518,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitTypeArray(KickCParser.TypeArrayContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code typeStructRef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeStructRef(KickCParser.TypeStructRefContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeStructRef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeStructRef(KickCParser.TypeStructRefContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code typeSimple}
 	 * labeled alternative in {@link KickCParser#typeDecl}.
 	 * @param ctx the parse tree
@@ -530,6 +542,18 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitTypeSimple(KickCParser.TypeSimpleContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code typeStructDef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeStructDef(KickCParser.TypeStructDefContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeStructDef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeStructDef(KickCParser.TypeStructDefContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code typeSignedSimple}
 	 * labeled alternative in {@link KickCParser#typeDecl}.
 	 * @param ctx the parse tree
@@ -541,6 +565,36 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#structRef}.
+	 * @param ctx the parse tree
+	 */
+	void enterStructRef(KickCParser.StructRefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#structRef}.
+	 * @param ctx the parse tree
+	 */
+	void exitStructRef(KickCParser.StructRefContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#structDef}.
+	 * @param ctx the parse tree
+	 */
+	void enterStructDef(KickCParser.StructDefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#structDef}.
+	 * @param ctx the parse tree
+	 */
+	void exitStructDef(KickCParser.StructDefContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#structMembers}.
+	 * @param ctx the parse tree
+	 */
+	void enterStructMembers(KickCParser.StructMembersContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#structMembers}.
+	 * @param ctx the parse tree
+	 */
+	void exitStructMembers(KickCParser.StructMembersContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code commaNone}
 	 * labeled alternative in {@link KickCParser#commaExpr}.
@@ -661,6 +715,30 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExprChar(KickCParser.ExprCharContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprArrow}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprArrow(KickCParser.ExprArrowContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprArrow}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprArrow(KickCParser.ExprArrowContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprDot}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprDot(KickCParser.ExprDotContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprDot}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprDot(KickCParser.ExprDotContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code initList}
 	 * labeled alternative in {@link KickCParser#expr}.

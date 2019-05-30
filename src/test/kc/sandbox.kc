@@ -47,9 +47,11 @@ byte myprintf(byte *dst, byte *str, word w1, word w2, word w3) {
 				for (digit = 0; digit < b; ++digit) dst[bLen++] = buf6[digit];
 				if (bTrailing != 0 && bDigits > b) for (; bDigits > b; --bDigits) dst[bLen++] = ' '; 
             } else if (b == 'x' || b == 'X'){ // hex
-				b = (w >> 4) & 0xF;
-				dst[bLen++] = (b < 10 ? '0' : 0x57) + b; // "('a' - 10)" is the normal way -- not supported  -- https://gitlab.com/camelot/kickc/issues/184 [FIXED]
-				b = w & 0xF; dst[bLen++] = (b < 10 ? '0' : 0x57) + b;
+				b = ((byte)w >> 4) & 0xF;
+				dst[bLen++] = (b < 10 ? '0' : 0x57) + b;
+				// "('a' - 10)" is the normal way -- not supported  -- https://gitlab.com/camelot/kickc/issues/184 [FIXED]
+				// (b < 10 ? '0' : 0x57) not supported
+				b = (byte)w & 0xF; dst[bLen++] = (b < 10 ? '0' : 0x57) + b;
 			}
             bFormat = 0;
 			continue;

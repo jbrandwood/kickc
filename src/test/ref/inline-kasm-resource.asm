@@ -8,7 +8,7 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
 main: {
-    lda #$ff&SPRITE/$40
+    lda #SPRITE/$40
     sta SCREEN+$3f8
     lda #1
     sta SPRITES_ENABLE

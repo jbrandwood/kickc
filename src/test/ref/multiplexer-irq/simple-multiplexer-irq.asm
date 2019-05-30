@@ -129,7 +129,11 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     dex
     cpx #$ff
-    bne b6
+    beq b4
+    lda nxt_y
+    ldy PLEX_SORTED_IDX,x
+    cmp PLEX_YPOS,y
+    bcc b3
   b4:
     inx
     lda nxt_idx
@@ -154,12 +158,6 @@ plexSort: {
     bne plexFreePrepare1_b1
     sta plex_free_next
     rts
-  b6:
-    lda nxt_y
-    ldy PLEX_SORTED_IDX,x
-    cmp PLEX_YPOS,y
-    bcc b3
-    jmp b4
 }
 // Initialize the program
 init: {
@@ -173,7 +171,7 @@ init: {
     sta xp+1
     tax
   b1:
-    lda #$ff&SPRITE/$40
+    lda #SPRITE/$40
     sta PLEX_PTR,x
     txa
     asl
@@ -241,7 +239,9 @@ plex_irq: {
     sta _4
     lda plex_show_idx
     cmp #PLEX_COUNT
-    bcc b7
+    bcs b4
+    cpx _4
+    bcc b3
   b4:
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -257,10 +257,6 @@ plex_irq: {
   b1:
     stx RASTER
     jmp b2
-  b7:
-    cpx _4
-    bcc b3
-    jmp b4
 }
 // Show the next sprite.
 // plexSort() prepares showing the sprites
@@ -290,17 +286,13 @@ plexShowSprite: {
     ldx plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
     ldy plex_show_idx
-    ldx PLEX_SORTED_IDX,y
-    txa
+    lda PLEX_SORTED_IDX,y
     asl
-    tay
-    lda PLEX_XPOS,y
+    tax
+    lda PLEX_XPOS,x
     ldy plex_sprite_idx2
     sta SPRITES_XPOS,y
-    txa
-    asl
-    tay
-    lda PLEX_XPOS+1,y
+    lda PLEX_XPOS+1,x
     cmp #0
     bne b1
     lda #$ff

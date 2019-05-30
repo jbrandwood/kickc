@@ -5,7 +5,7 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
-/** Constant pointer (meaning it points to a constant location)*/
+/** Constant pointer (meaning it points to a constant location) */
 public class ConstantPointer implements ConstantEnumerable<Long> {
 
    /** The memory location pointed to. */
@@ -52,11 +52,7 @@ public class ConstantPointer implements ConstantEnumerable<Long> {
 
    @Override
    public String toString(Program program) {
-      if(program == null) {
-         return Long.toString(location);
-      } else {
-         return "(" + getType(program.getScope()).getTypeName() + ") " + Long.toString(location);
-      }
+      return "(" + getType().getTypeName() + ") " + Long.toString(location);
    }
 
    @Override

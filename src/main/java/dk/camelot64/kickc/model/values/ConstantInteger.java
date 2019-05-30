@@ -1,21 +1,30 @@
 package dk.camelot64.kickc.model.values;
 
 import dk.camelot64.kickc.fragment.AsmFormat;
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeMulti;
-import dk.camelot64.kickc.model.types.SymbolTypeInteger;
 
-import java.util.ArrayList;
-
-/** SSA form constant integer value */
+/** Constant integer value */
 public class ConstantInteger implements ConstantEnumerable<Long> {
 
    private Long number;
 
-   public ConstantInteger( Long number) {
+   /** The type of the number. (Either fixed size og the "number" type) */
+   private SymbolType type;
+
+   public ConstantInteger(Long number) {
       this.number = number;
+      this.type = SymbolType.NUMBER;
+   }
+
+   public ConstantInteger(Long number, SymbolType type) {
+      this.number = number;
+      if(type != null) {
+         this.type = type;
+      } else {
+         this.type = SymbolType.NUMBER;
+      }
    }
 
    @Override
@@ -32,14 +41,11 @@ public class ConstantInteger implements ConstantEnumerable<Long> {
    }
 
    public SymbolType getType() {
-      ArrayList<SymbolType> potentialTypes = new ArrayList<>();
-      Long number = getValue();
-      for(SymbolTypeInteger typeInteger : SymbolType.getIntegerTypes()) {
-         if(number >= typeInteger.getMinValue() && number <= typeInteger.getMaxValue()) {
-            potentialTypes.add(typeInteger);
-         }
-      }
-      return new SymbolTypeMulti(potentialTypes);
+      return type;
+   }
+
+   public void setType(SymbolType type) {
+      this.type = type;
    }
 
    @Override
@@ -68,4 +74,5 @@ public class ConstantInteger implements ConstantEnumerable<Long> {
    public int hashCode() {
       return number != null ? number.hashCode() : 0;
    }
+
 }

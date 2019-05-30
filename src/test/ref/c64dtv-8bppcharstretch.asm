@@ -77,7 +77,7 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
     // Plane A: SCREEN
-    lda #<SCREEN
+    lda #0
     sta DTV_PLANEA_START_LO
     lda #>SCREEN
     sta DTV_PLANEA_START_MI
@@ -89,7 +89,6 @@ main: {
     sta DTV_PLANEA_MODULO_LO
     sta DTV_PLANEA_MODULO_HI
     // Plane B: CHARSET8
-    lda #<CHARSET8
     sta DTV_PLANEB_START_LO
     lda #>CHARSET8
     sta DTV_PLANEB_START_MI
@@ -233,9 +232,9 @@ gfx_init_plane_charset8: {
     lda #0
     sta ch
     sta col
-    lda #<$4000+(CHARSET8&$3fff)
+    lda #<$4000
     sta gfxa
-    lda #>$4000+(CHARSET8&$3fff)
+    lda #>$4000
     sta gfxa+1
     lda #<CHARGEN+1
     sta chargen

@@ -3,14 +3,12 @@ package dk.camelot64.kickc.fragment;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.ConstantInteger;
-import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
+import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.ScopeRef;
-import dk.camelot64.kickc.model.values.Value;
 import dk.camelot64.kickc.parser.KickCBaseVisitor;
 import dk.camelot64.kickc.parser.KickCParser;
 
@@ -97,6 +95,16 @@ public class AsmFragmentInstance {
       } else if(boundValue instanceof Label) {
          String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
          return new AsmParameter(param, false);
+      } else if(boundValue instanceof StructMemberRef) {
+         StructMemberRef structMemberRef = (StructMemberRef) boundValue;
+         StructDefinition structDefinition = program.getScope().getStructDefinition(structMemberRef);
+         Variable structMember = structDefinition.getMember(structMemberRef.getMemberName());
+         int memberByteOffset = structDefinition.getMemberByteOffset(structMember);
+         VariableRef struct = (VariableRef) structMemberRef.getStruct();
+         Variable structVar = program.getScope().getVariable( struct);
+         Registers.RegisterZpStruct structRegister = (Registers.RegisterZpStruct) structVar.getAllocation();
+         // TODO Use STRUCT_OFFSET constants instead of hardcoded constants
+         return new AsmParameter(AsmFormat.getAsmParamName(structVar, codeScopeRef)+"+"+memberByteOffset,true);
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }
@@ -300,8 +308,7 @@ public class AsmFragmentInstance {
       @Override
       public AsmParameter visitAsmExprInt(KickCParser.AsmExprIntContext ctx) {
          Number number = NumberParser.parseLiteral(ctx.NUMBER().getText());
-         ConstantInteger intVal = new ConstantInteger(number.longValue());
-         boolean isZp = SymbolType.isByte(intVal.getType()) || SymbolType.isSByte(intVal.getType());
+         boolean isZp = SymbolType.BYTE.contains(number.longValue()) || SymbolType.SBYTE.contains(number.longValue());
          String param = AsmFormat.getAsmNumber(number);
          return new AsmParameter(param, isZp);
       }

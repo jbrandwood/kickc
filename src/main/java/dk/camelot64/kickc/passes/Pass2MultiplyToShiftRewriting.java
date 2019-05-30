@@ -6,14 +6,8 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementCallPointer;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.*;
-import kickass.pass.expressions.expr.Constant;
 
 import java.util.ListIterator;
 
@@ -34,7 +28,8 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                if(Operators.MULTIPLY.equals(assignment.getOperator()) || Operators.DIVIDE.equals(assignment.getOperator())) {
-                  ConstantLiteral constantLiteral = getConstantLiteral(assignment);
+                  if(assignment.getrValue1() instanceof ConstantValue) continue;
+                  ConstantLiteral constantLiteral = getConstantLiteral2(assignment);
                   if(constantLiteral instanceof ConstantInteger) {
                      Long constantInt = ((ConstantInteger)constantLiteral).getInteger();
                      double power2 = Math.log(constantInt) / Math.log(2);
@@ -50,12 +45,12 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
                         if(Operators.MULTIPLY.equals(assignment.getOperator())) {
                            getLog().append("Rewriting multiplication to use shift "+statement.toString(getProgram(), false));
                            assignment.setOperator(Operators.SHIFT_LEFT);
-                           assignment.setrValue2(new ConstantInteger((long)power2));
+                           assignment.setrValue2(new ConstantInteger((long)power2, SymbolType.BYTE));
                            optimized = true;
                         }  else if(Operators.DIVIDE.equals(assignment.getOperator())) {
                            getLog().append("Rewriting division to use shift "+statement.toString(getProgram(), false));
                            assignment.setOperator(Operators.SHIFT_RIGHT);
-                           assignment.setrValue2(new ConstantInteger((long)power2));
+                           assignment.setrValue2(new ConstantInteger((long)power2, SymbolType.BYTE));
                            optimized = true;
                         }
                      }
@@ -72,7 +67,7 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
     * @param assignment The Assignment
     * @return The constant literal value for RValue2 (or null)
     */
-   private ConstantLiteral getConstantLiteral(StatementAssignment assignment) {
+   private ConstantLiteral getConstantLiteral2(StatementAssignment assignment) {
       if(assignment.getrValue2() instanceof ConstantValue) {
          ConstantValue constantValue = (ConstantValue) assignment.getrValue2();
          try {

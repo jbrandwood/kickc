@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeInteger;
+import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
 
@@ -51,9 +51,9 @@ public class Pass2RangeResolving extends Pass2SsaOptimization {
 
                if(rangeValue instanceof RangeComparison) {
                   SymbolType type = ((RangeComparison) rangeValue).getType();
-                  SymbolTypeInteger valueType;
-                  if(type instanceof SymbolTypeInteger) {
-                     valueType = (SymbolTypeInteger) type;
+                  SymbolTypeIntegerFixed valueType;
+                  if(type instanceof SymbolTypeIntegerFixed) {
+                     valueType = (SymbolTypeIntegerFixed) type;
                   } else if(type instanceof SymbolTypePointer) {
                      valueType = SymbolType.WORD;
                   } else {

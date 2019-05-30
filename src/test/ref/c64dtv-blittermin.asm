@@ -85,7 +85,6 @@ main: {
     sta DTV_BLITTER_SRCA_HI
     sta DTV_BLITTER_SRCA_MOD_LO
     sta DTV_BLITTER_SRCA_MOD_HI
-    lda #<$100
     sta DTV_BLITTER_SRCA_LIN_LO
     lda #>$100
     sta DTV_BLITTER_SRCA_LIN_HI
@@ -100,14 +99,12 @@ main: {
     sta DTV_BLITTER_SRCB_HI
     sta DTV_BLITTER_SRCB_MOD_LO
     sta DTV_BLITTER_SRCB_MOD_HI
-    lda #<$100
     sta DTV_BLITTER_SRCB_LIN_LO
     lda #>$100
     sta DTV_BLITTER_SRCB_LIN_HI
     lda #0
     sta DTV_BLITTER_SRCB_STEP
     // Step 0.0
-    lda #<SCREEN
     sta DTV_BLITTER_DEST_LO
     lda #>SCREEN
     sta DTV_BLITTER_DEST_MI
@@ -115,7 +112,6 @@ main: {
     sta DTV_BLITTER_DEST_HI
     sta DTV_BLITTER_DEST_MOD_LO
     sta DTV_BLITTER_DEST_MOD_HI
-    lda #<$100
     sta DTV_BLITTER_DEST_LIN_LO
     lda #>$100
     sta DTV_BLITTER_DEST_LIN_HI

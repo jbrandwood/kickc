@@ -187,6 +187,7 @@ bitmap_plot: {
     .label _0 = 9
     .label plotter_x = 9
     .label plotter_y = $b
+    .label plotter = 9
     lda bitmap_plot_xhi,x
     sta plotter_x+1
     lda bitmap_plot_xlo,x
@@ -204,8 +205,8 @@ bitmap_plot: {
     sta _0+1
     lda bitmap_plot_bit,x
     ldy #0
-    ora (_0),y
-    sta (_0),y
+    ora (plotter),y
+    sta (plotter),y
     rts
 }
 // bitmap_line_ydxi(byte zeropage(7) y, byte register(X) x, byte zeropage(6) y1, byte zeropage(3) yd, byte zeropage(4) xd)
@@ -363,7 +364,7 @@ bitmap_clear: {
 }
 // Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
-    .label _6 = 2
+    .label _10 = 2
     .label yoffs = 9
     ldy #$80
     ldx #0
@@ -391,15 +392,14 @@ bitmap_init: {
     tax
   b3:
     lda #7
-    sax _6
+    sax _10
     lda yoffs
-    ora _6
+    ora _10
     sta bitmap_plot_ylo,x
     lda yoffs+1
     sta bitmap_plot_yhi,x
-    txa
-    and #7
-    cmp #7
+    lda #7
+    cmp _10
     bne b4
     clc
     lda yoffs

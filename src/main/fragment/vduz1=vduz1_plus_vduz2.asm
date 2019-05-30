@@ -11,4 +11,3 @@ sta {z1}+2
 lda {z1}+3
 adc {z2}+3
 sta {z1}+3
-

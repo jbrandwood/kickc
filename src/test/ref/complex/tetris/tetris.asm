@@ -145,18 +145,18 @@
   .label current_xpos_59 = $a
   .label current_piece_gfx_64 = 5
   .label current_piece_char_68 = $b
-  .label render_screen_render_69 = 9
-  .label current_xpos_130 = $a
-  .label current_xpos_131 = $a
-  .label current_piece_gfx_120 = 5
-  .label current_piece_gfx_121 = 5
-  .label current_piece_char_108 = $b
-  .label current_piece_char_109 = $b
+  .label render_screen_render_65 = 9
+  .label current_xpos_119 = $a
+  .label current_xpos_120 = $a
+  .label current_piece_gfx_112 = 5
+  .label current_piece_gfx_113 = 5
+  .label current_piece_char_100 = $b
+  .label current_piece_char_101 = $b
+  .label current_piece_96 = 5
+  .label current_piece_97 = 5
+  .label current_piece_98 = 5
+  .label current_piece_99 = 5
   .label current_piece_100 = 5
-  .label current_piece_101 = 5
-  .label current_piece_102 = 5
-  .label current_piece_103 = 5
-  .label current_piece_104 = 5
 bbegin:
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
@@ -192,23 +192,22 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda current_xpos
-    sta current_xpos_130
+    sta current_xpos_119
     lda current_piece_gfx
-    sta current_piece_gfx_120
+    sta current_piece_gfx_112
     lda current_piece_gfx+1
-    sta current_piece_gfx_120+1
+    sta current_piece_gfx_112+1
     lda current_piece_char
-    sta current_piece_char_108
+    sta current_piece_char_100
     lda #$20
     sta render_screen_render_33
     jsr render_moving
     ldx play_spawn_current.piece_idx
     lda #$20
     jsr render_next
-    ldy play_spawn_current._7
-    lda PIECES,y
+    lda current_piece_gfx
     sta current_piece
-    lda PIECES+1,y
+    lda current_piece_gfx+1
     sta current_piece+1
     lda #0
     sta level_bcd
@@ -251,15 +250,15 @@ main: {
     jsr render_playfield
     ldx current_ypos
     lda render_screen_render
-    sta render_screen_render_69
+    sta render_screen_render_65
     lda current_xpos
-    sta current_xpos_131
+    sta current_xpos_120
     lda current_piece_gfx
-    sta current_piece_gfx_121
+    sta current_piece_gfx_113
     lda current_piece_gfx+1
-    sta current_piece_gfx_121+1
+    sta current_piece_gfx_113+1
     lda current_piece_char
-    sta current_piece_char_109
+    sta current_piece_char_101
     jsr render_moving
     lda render_screen_render
     ldx next_piece_idx
@@ -287,18 +286,18 @@ render_score: {
     .label screen = 5
     lda render_screen_render
     cmp #0
-    beq b2
+    beq b1
     lda #<PLAYFIELD_SCREEN_2
     sta screen
     lda #>PLAYFIELD_SCREEN_2
     sta screen+1
-    jmp b1
-  b2:
+    jmp b2
+  b1:
     lda #<PLAYFIELD_SCREEN_1
     sta screen
     lda #>PLAYFIELD_SCREEN_1
     sta screen+1
-  b1:
+  b2:
     ldx score_bytes+2
     ldy #0
     lda #<score_offset
@@ -308,16 +307,16 @@ render_score: {
     jsr render_bcd
     ldx score_bytes+1
     ldy #0
-    lda #score_offset+2
+    lda #<score_offset+2
     sta render_bcd.offset
-    tya
+    lda #>score_offset+2
     sta render_bcd.offset+1
     jsr render_bcd
     ldx score_bytes
     ldy #0
-    lda #score_offset+4
+    lda #<score_offset+4
     sta render_bcd.offset
-    tya
+    lda #>score_offset+4
     sta render_bcd.offset+1
     jsr render_bcd
     lda lines_bcd+1
@@ -331,9 +330,9 @@ render_score: {
     lda lines_bcd
     tax
     ldy #0
-    lda #lines_offset+1
+    lda #<lines_offset+1
     sta render_bcd.offset
-    tya
+    lda #>lines_offset+1
     sta render_bcd.offset+1
     jsr render_bcd
     ldx level_bcd
@@ -389,33 +388,35 @@ render_bcd: {
 }
 // Render the next tetromino in the "next" area
 render_next: {
+    // Find the screen area
     .const next_area_offset = $28*$c+$18+4
-    .label next_piece_char = $a
     .label next_piece_gfx = 5
+    .label next_piece_char = $a
     .label screen_next_area = 7
     .label l = 9
     cmp #0
-    beq b2
+    beq b1
     lda #<PLAYFIELD_SCREEN_2+next_area_offset
     sta screen_next_area
     lda #>PLAYFIELD_SCREEN_2+next_area_offset
     sta screen_next_area+1
-    jmp b1
-  b2:
+    jmp b2
+  b1:
     lda #<PLAYFIELD_SCREEN_1+next_area_offset
     sta screen_next_area
     lda #>PLAYFIELD_SCREEN_1+next_area_offset
     sta screen_next_area+1
-  b1:
+  b2:
     txa
     asl
+    // Render the next piece
     tay
-    lda PIECES_NEXT_CHARS,x
-    sta next_piece_char
     lda PIECES,y
     sta next_piece_gfx
     lda PIECES+1,y
     sta next_piece_gfx+1
+    lda PIECES_NEXT_CHARS,x
+    sta next_piece_char
     lda #0
     sta l
   b3:
@@ -608,9 +609,9 @@ play_move_rotate: {
     sta play_collision.ypos
     ldx orientation
     lda current_piece
-    sta current_piece_103
+    sta current_piece_99
     lda current_piece+1
-    sta current_piece_103+1
+    sta current_piece_99+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b4
@@ -645,8 +646,8 @@ play_collision: {
     .label l = $d
     .label i_2 = $e
     .label i_3 = $e
-    .label i_11 = $e
-    .label i_13 = $e
+    .label i_10 = $e
+    .label i_12 = $e
     txa
     clc
     adc piece_gfx
@@ -715,11 +716,11 @@ play_collision: {
     rts
   b9:
     lda i
-    sta i_11
+    sta i_10
     jmp b1
   b10:
     lda i
-    sta i_13
+    sta i_12
     jmp b2
 }
 // Move left/right or rotate the current piece
@@ -738,9 +739,9 @@ play_move_leftright: {
     sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_102
+    sta current_piece_98
     lda current_piece+1
-    sta current_piece_102+1
+    sta current_piece_98+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -759,9 +760,9 @@ play_move_leftright: {
     sta play_collision.ypos
     ldx current_orientation
     lda current_piece
-    sta current_piece_101
+    sta current_piece_97
     lda current_piece+1
-    sta current_piece_101+1
+    sta current_piece_97+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b3
@@ -804,9 +805,9 @@ play_move_down: {
     sta play_collision.xpos
     ldx current_orientation
     lda current_piece
-    sta current_piece_100
+    sta current_piece_96
     lda current_piece+1
-    sta current_piece_100+1
+    sta current_piece_96+1
     jsr play_collision
     cmp #COLLISION_NONE
     beq b10
@@ -816,10 +817,9 @@ play_move_down: {
     tax
     jsr play_update_score
     jsr play_spawn_current
-    ldy play_spawn_current._7
-    lda PIECES,y
+    lda current_piece_gfx
     sta current_piece
-    lda PIECES+1,y
+    lda current_piece_gfx+1
     sta current_piece+1
     lda #0
     sta current_orientation
@@ -838,20 +838,18 @@ play_move_down: {
 // Spawn a new piece
 // Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
-    .label _7 = 4
     .label piece_idx = $21
     // Move next piece into current
     ldx next_piece_idx
     txa
     asl
-    sta _7
-    lda PIECES_CHARS,x
-    sta current_piece_char
-    ldy _7
+    tay
     lda PIECES,y
     sta current_piece_gfx
     lda PIECES+1,y
     sta current_piece_gfx+1
+    lda PIECES_CHARS,x
+    sta current_piece_char
     lda PIECES_START_X,x
     sta current_xpos
     lda PIECES_START_Y,x
@@ -860,10 +858,10 @@ play_spawn_current: {
     sta play_collision.xpos
     lda current_ypos
     sta play_collision.ypos
-    lda PIECES,y
-    sta current_piece_104
-    lda PIECES+1,y
-    sta current_piece_104+1
+    lda current_piece_gfx
+    sta current_piece_100
+    lda current_piece_gfx+1
+    sta current_piece_100+1
     ldx #0
     jsr play_collision
     cmp #COLLISION_PLAYFIELD
@@ -1378,7 +1376,7 @@ sprites_init: {
 }
 // Initialize rendering
 render_init: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)/$40
+    .const vicSelectGfxBank1_toDd001_return = 3
     .label li_1 = 5
     .label li_2 = 7
     lda #3
@@ -1415,22 +1413,19 @@ render_init: {
     sta li_1
     lda #>PLAYFIELD_SCREEN_1+2*$28+$10
     sta li_1+1
-    ldx #0
+    ldy #0
   b1:
-    txa
+    tya
     asl
-    tay
+    tax
     lda li_1
-    sta screen_lines_1,y
+    sta screen_lines_1,x
     lda li_1+1
-    sta screen_lines_1+1,y
-    txa
-    asl
-    tay
+    sta screen_lines_1+1,x
     lda li_2
-    sta screen_lines_2,y
+    sta screen_lines_2,x
     lda li_2+1
-    sta screen_lines_2+1,y
+    sta screen_lines_2+1,x
     lda #$28
     clc
     adc li_1
@@ -1445,8 +1440,8 @@ render_init: {
     bcc !+
     inc li_2+1
   !:
-    inx
-    cpx #PLAYFIELD_LINES-1+1
+    iny
+    cpy #PLAYFIELD_LINES-1+1
     bne b1
     rts
 }

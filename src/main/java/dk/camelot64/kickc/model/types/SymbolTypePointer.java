@@ -1,10 +1,10 @@
 package dk.camelot64.kickc.model.types;
 
 /** A pointer */
-public class SymbolTypePointer implements SymbolTypeSimple {
+public class SymbolTypePointer implements SymbolType {
 
    /** The number of bytes needed to represent a pointer in memory. */
-   public static final int SIZE_BYTES = 2;
+   public static final int SIZE_POINTER_BYTES = 2;
 
    private SymbolType elementType;
 
@@ -28,7 +28,7 @@ public class SymbolTypePointer implements SymbolTypeSimple {
 
    @Override
    public int getSizeBytes() {
-      return SIZE_BYTES;
+      return SIZE_POINTER_BYTES;
    }
 
    @Override

@@ -10,13 +10,13 @@ main: {
     sta w
     sta w+1
   b1:
-    sec
     lda w
+    sec
     sbc #$c
     sta w
-    bcs !+
-    dec w+1
-  !:
+    lda w+1
+    sbc #>$c
+    sta w+1
     lda w
     sta SCREEN,x
     inx

@@ -152,11 +152,10 @@ Print: {
 }
 // myprintf(byte* zeropage(8) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage(6) w3)
 myprintf: {
-    .label _17 = $12
     .label str = 8
     .label bDigits = $11
     .label bLen = $10
-    .label digit = $a
+    .label b = $a
     .label bArg = $b
     .label return = $10
     .label w1 = 2
@@ -203,9 +202,14 @@ myprintf: {
     rts
   b3:
     cpx #'1'
-    bcc !b37+
-    jmp b37
-  !b37:
+    bcc b4
+    cpx #'9'
+    bcs !b23+
+    jmp b23
+  !b23:
+    bne !b23+
+    jmp b23
+  !b23:
   b4:
     cpx #'-'
     bne b5
@@ -228,19 +232,13 @@ myprintf: {
     sta bFormat
     jmp b27
   b26:
-    lda w+1
-    sta _17+1
     lda w
-    sta _17
-    ldy #4
-  !:
-    lsr _17+1
-    ror _17
-    dey
-    bne !-
-    lda _17
-    and #$f
-    tax
+    lsr
+    lsr
+    lsr
+    lsr
+    ldx #$f
+    axs #0
     cpx #$a
     bcc b8
     lda #$57
@@ -255,8 +253,8 @@ myprintf: {
     sta strTemp,y
     iny
     lda w
-    and #$f
-    tax
+    ldx #$f
+    axs #0
     cpx #$a
     bcc b10
     lda #$57
@@ -277,68 +275,68 @@ myprintf: {
     lda w+1
     sta utoa.value+1
     jsr utoa
-    ldx #1
+    lda #1
+    sta b
   b12:
-    lda buf6,x
+    ldy b
+    lda buf6,y
     cmp #0
     bne b13
     lda bTrailing
     cmp #0
-    beq b39
+    bne b15
+    tya
+    cmp bDigits
+    bcc b16
   b15:
-    lda #0
-    sta digit
+    ldx #0
   b19:
-    ldy digit
-    lda buf6,y
+    lda buf6,x
     ldy bLen
     sta strTemp,y
     inc bLen
-    inc digit
-    txa
-    cmp digit
-    beq !+
-    bcs b19
-  !:
+    inx
+    cpx b
+    bcc b19
     lda bTrailing
     cmp #0
-    bne b40
+    bne !b22+
     jmp b22
-  b40:
-    cpx bDigits
-    bcc b21
+  !b22:
+    lda b
+    cmp bDigits
+    bcc !b22+
     jmp b22
+  !b22:
   b21:
     lda #' '
     ldy bLen
     sta strTemp,y
     inc bLen
     dec bDigits
-    cpx bDigits
+    lda b
+    cmp bDigits
     bcc b21
     jmp b22
-  b39:
-    cpx bDigits
-    bcc b16
-    jmp b15
   b16:
     lda bLeadZero
     cmp #0
-    beq b14
+    beq b17
     lda #'0'
     jmp b18
-  b14:
+  b17:
     lda #' '
   b18:
     ldy bLen
     sta strTemp,y
     inc bLen
     dec bDigits
-    cpx bDigits
+    lda b
+    cmp bDigits
     bcc b16
     jmp b15
   b13:
-    inx
+    inc b
     jmp b12
   b6:
     lda w
@@ -347,11 +345,6 @@ myprintf: {
     sta strTemp,y
     inc bLen
     jmp b22
-  b37:
-    cpx #'9'
-    bcc b23
-    beq b23
-    jmp b4
   b23:
     txa
     axs #'0'
@@ -364,15 +357,15 @@ myprintf: {
     //w = (bArg == 0) ? w1 : ((bArg == 1) ? w2 : w3); -- "?" is the normal way, but error "sequence does not contain all blocks" -- https://gitlab.com/camelot/kickc/issues/185 [FIXED]
     lda bArg
     cmp #0
-    beq b42
+    beq b29
     lda #1
     cmp bArg
-    beq b43
+    beq b30
     lda w3
     sta w
     lda w3+1
     sta w+1
-  b29:
+  b31:
     inc bArg
     lda #0
     sta bLeadZero
@@ -383,36 +376,32 @@ myprintf: {
     lda #1
     sta bFormat
     jmp b27
-  b43:
+  b30:
     lda w2
     sta w
     lda w2+1
     sta w+1
-    jmp b29
-  b42:
+    jmp b31
+  b29:
     lda w1
     sta w
     lda w1+1
     sta w+1
-    jmp b29
+    jmp b31
   b28:
     cpx #$41
-    bcs b41
-  b30:
+    bcc b32
+    cpx #$5a+1
+    bcs b32
+    txa
+    axs #-[$20]
+  b32:
     // swap 0x41 / 0x61 when in lower case mode
     ldy bLen
     txa
     sta strTemp,y
     inc bLen
     jmp b27
-  b41:
-    cpx #$5a+1
-    bcc b35
-    jmp b30
-  b35:
-    txa
-    axs #-[$20]
-    jmp b30
     buf6: .fill 6, 0
 }
 // utoa(word zeropage($12) value, byte* zeropage($14) dst)
@@ -551,9 +540,9 @@ append: {
     bne !+
     lda sub
     cmp value
+    beq b2
   !:
     bcc b2
-    beq b2
     rts
   b2:
     ldy #0

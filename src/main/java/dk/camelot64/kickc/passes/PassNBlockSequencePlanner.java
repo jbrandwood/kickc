@@ -39,11 +39,25 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
          if(block.getCallSuccessor() != null) {
             pushTodo(getGraph().getCallSuccessor(block));
          }
-         if(block.getConditionalSuccessor() != null) {
+         ControlFlowBlock conditionalSuccessor = getGraph().getConditionalSuccessor(block);
+         ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
+         if(conditionalSuccessor != null && defaultSuccessor != null) {
+            // Both conditional and default successor
+            if(conditionalSuccessor.getDefaultSuccessor().equals(defaultSuccessor.getLabel())) {
+               // Best sequence is cond->default (resulting in better code locality)
+               pushTodo(defaultSuccessor);
+               pushTodo(getGraph().getConditionalSuccessor(block));
+            } else {
+               // Best sequence is default->cond
+               pushTodo(getGraph().getConditionalSuccessor(block));
+               pushTodo(defaultSuccessor);
+            }
+         } else if(conditionalSuccessor != null) {
+            // Only a conditional successor
             pushTodo(getGraph().getConditionalSuccessor(block));
-         }
-         if(getGraph().getDefaultSuccessor(block) != null) {
-            pushTodo(getGraph().getDefaultSuccessor(block));
+         } else if(defaultSuccessor != null) {
+            // Only a default successor
+            pushTodo(defaultSuccessor);
          }
 
       }

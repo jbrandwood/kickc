@@ -27,18 +27,17 @@ public class OperatorDivide extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
+   public SymbolType inferType(SymbolType left, SymbolType right) {
       if(left instanceof SymbolTypePointer) {
-         if(SymbolType.isByte(right) || SymbolType.isWord(right)) {
+         if(SymbolType.BYTE.equals(right) || SymbolType.WORD.equals(right) || SymbolType.NUMBER.equals(right)|| SymbolType.UNUMBER.equals(right)|| SymbolType.SNUMBER.equals(right)) {
             return left;
          } else {
             throw new NoMatchingType("Cannot divide pointer by "+right.toString());
-
          }
       }
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(left) && SymbolType.isInteger(right)) {
-         return SymbolType.promotedMathType((SymbolTypeInteger) left, (SymbolTypeInteger) right);
+         return SymbolTypeConversion.convertedMathType( (SymbolTypeInteger) left, (SymbolTypeInteger)right);
       }
 
       throw new RuntimeException("Type inference case not handled " + left + " " + getOperator() + " " + right);

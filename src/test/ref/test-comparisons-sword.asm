@@ -80,8 +80,9 @@ main: {
     inc i
     cmp i
     bne b1
-  b8:
-    jmp b8
+  b5:
+  // loop forever
+    jmp b5
 }
 // Print a newline
 print_ln: {
@@ -323,11 +324,13 @@ print_sword: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage($a) w)
 print_word: {
-    lda print_sword.w+1
+    .label w = $a
+    lda w+1
     sta print_byte.b
     jsr print_byte
-    lda print_sword.w
+    lda w
     sta print_byte.b
     jsr print_byte
     rts

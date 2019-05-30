@@ -23,6 +23,7 @@ declSeq
 
 decl
     : declVariables ';'
+    | structDef ';'
     | declFunction
     | declKasm
     | globalDirective
@@ -112,6 +113,20 @@ typeDecl
     | typeDecl '*' #typePtr
     | typeDecl '[' (expr)? ']' #typeArray
     | typeDecl '(' ')' #typeProcedure
+    | structDef  #typeStructDef
+    | structRef  #typeStructRef
+    ;
+
+structRef
+    : 'struct' NAME
+    ;
+
+structDef
+    : 'struct' NAME? '{' structMembers+ '}'
+    ;
+
+structMembers
+    : declVariables ';'
     ;
 
 commaExpr
@@ -121,6 +136,8 @@ commaExpr
 
 expr
     : '(' commaExpr ')' #exprPar
+    | expr '.' NAME #exprDot
+    | expr '->' NAME  #exprArrow
     | expr '(' parameterList? ')' #exprCall
     | 'sizeof' '(' ( typeDecl | expr ) ')' #exprSizeOf
     | 'typeid' '(' ( typeDecl | expr ) ')' #exprTypeId
@@ -146,7 +163,7 @@ expr
     | '{' expr (',' expr )* '}' #initList
     | NAME  #exprId
     | NUMBER #exprNumber
-    | STRING #exprString
+    | STRING+ #exprString
     | CHAR #exprChar
     | BOOLEAN #exprBool
     ;
@@ -236,7 +253,7 @@ NUMFLOAT : BINFLOAT | DECFLOAT | HEXFLOAT;
 BINFLOAT : ('%' | '0b' | '0B' ) (BINDIGIT)* '.' BINDIGIT+;
 DECFLOAT : (DECDIGIT)* '.' DECDIGIT+;
 HEXFLOAT : ('$' | '0x' | '0X' ) (HEXDIGIT)* '.' HEXDIGIT+;
-NUMINT : DECINTEGER | HEXINTEGER | BININTEGER ;
+NUMINT : (DECINTEGER | HEXINTEGER | BININTEGER ) ([us][bcwisdl] | 'l')? ;
 BININTEGER : '0' [bB] BINDIGIT+ | '%' BINDIGIT+ ;
 DECINTEGER : DECDIGIT+ ;
 HEXINTEGER : ( '$' | '0x' | '0X' ) HEXDIGIT+ ;

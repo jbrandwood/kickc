@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.types.SymbolTypeInteger;
+import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
 import dk.camelot64.kickc.model.values.ConstantBinary;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
@@ -48,7 +48,7 @@ public class Pass2ComparisonOptimization extends Pass2SsaOptimization {
                   } catch(ConstantNotLiteral e) {
                      // Ignore
                   }
-                  if(Operators.GT.equals(operator) && valueType instanceof SymbolTypeInteger && constantLiteral instanceof ConstantInteger) {
+                  if(Operators.GT.equals(operator) && valueType instanceof SymbolTypeIntegerFixed && constantLiteral instanceof ConstantInteger) {
                      // Found > C - rewrite to >= C+1 if possible
                      Long longValue = (Long) constantLiteral.getValue();
                      if(longValue > 0x00L && longValue < 0xffL) {
@@ -58,7 +58,7 @@ public class Pass2ComparisonOptimization extends Pass2SsaOptimization {
                         conditionalJump.setrValue2(new ConstantBinary(constantValue, Operators.PLUS, new ConstantInteger(1L)));
                      }
                   }
-                  if(Operators.LE.equals(operator) && valueType instanceof SymbolTypeInteger && constantLiteral instanceof ConstantInteger) {
+                  if(Operators.LE.equals(operator) && valueType instanceof SymbolTypeIntegerFixed && constantLiteral instanceof ConstantInteger) {
                      // Found <= C - rewrite to < C+1 if possible
                      Long longValue = (Long) constantLiteral.getValue();
                      if(longValue > 0x00L && longValue < 0xffL) {

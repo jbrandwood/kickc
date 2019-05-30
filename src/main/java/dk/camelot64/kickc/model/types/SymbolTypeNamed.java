@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
 /** Basic named (string, char, ...) Symbol Types */
-public class SymbolTypeNamed implements SymbolTypeSimple {
+public class SymbolTypeNamed implements SymbolType {
 
    private String typeName;
 

@@ -18,8 +18,8 @@ main: {
 test_sbytes: {
     .const bb = 0
     .const bc = bb+2
-    .const bd = bc-4
     .const bf = $ff&-$7f-$7f
+    .const bd = bc-4
     .const be = -bd
     lda #0
     sta assert_sbyte.c

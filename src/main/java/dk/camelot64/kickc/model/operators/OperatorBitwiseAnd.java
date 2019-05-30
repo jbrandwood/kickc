@@ -1,10 +1,7 @@
 package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeInteger;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeSimple;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
@@ -24,7 +21,7 @@ public class OperatorBitwiseAnd extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple type1, SymbolTypeSimple type2) {
+   public SymbolType inferType(SymbolType type1, SymbolType type2) {
       // Handle pointers as words
       if(type1 instanceof SymbolTypePointer) {
          type1 = SymbolType.WORD;
@@ -32,16 +29,12 @@ public class OperatorBitwiseAnd extends OperatorBinary {
       if(type2 instanceof SymbolTypePointer) {
          type2 = SymbolType.WORD;
       }
-      // Find smallest bitwise type
-      if(type1 instanceof SymbolTypeInteger && type2 instanceof SymbolTypeInteger) {
-
-         for(SymbolTypeInteger candidate : SymbolType.getIntegerTypes()) {
-            boolean match1 = ((SymbolTypeInteger) type1).getBits() <= candidate.getBits();
-            boolean match2 = ((SymbolTypeInteger) type2).getBits() <= candidate.getBits();
-            if(!candidate.isSigned() && (match1 || match2)) {
-               return candidate;
-            }
-         }
+      // Handle numeric types
+      if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {
+         if(type1.getSizeBytes()<type2.getSizeBytes())
+            return type1;
+         else
+            return type2;
       }
 
       throw new CompileError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);

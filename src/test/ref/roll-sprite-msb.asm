@@ -37,9 +37,6 @@ position_sprite: {
     tay
     lda #y
     sta SPRITES_YPOS,y
-    lda spriteno
-    asl
-    tay
     lda x
     sta SPRITES_XPOS,y
     lda x+1

@@ -45,6 +45,7 @@ public class Registers {
       ZP_BYTE,
       ZP_WORD,
       ZP_DWORD,
+      ZP_STRUCT,
       ZP_BOOL,
       CONSTANT
    }
@@ -104,6 +105,7 @@ public class Registers {
       public int hashCode() {
          return zp;
       }
+
    }
 
 
@@ -146,6 +148,38 @@ public class Registers {
       @Override
       public RegisterType getType() {
          return RegisterType.ZP_DWORD;
+      }
+
+   }
+
+   /** Zero page addresses used as a register for a struct variable. */
+   public static class RegisterZpStruct extends RegisterZp {
+
+      public RegisterZpStruct(int zp) {
+         super(zp);
+      }
+
+      public RegisterZpStructMember getMemberRegister(int memberByteOffset) {
+         return new RegisterZpStructMember(getZp()+memberByteOffset);
+      }
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.ZP_STRUCT;
+      }
+
+   }
+
+   /** Zero page addresses used as a register for a struct member variable. */
+   public static class RegisterZpStructMember extends RegisterZp {
+
+      public RegisterZpStructMember(int zp) {
+         super(zp);
+      }
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.ZP_STRUCT;
       }
 
    }

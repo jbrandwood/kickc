@@ -11,6 +11,7 @@
   .label print_char_cursor = 5
 main: {
     .label wavelength = $c0
+    .label _2 = 4
     .label sb = 4
     jsr sin8s_gen
     jsr print_cls
@@ -20,9 +21,11 @@ main: {
     sta print_char_cursor+1
     ldx #0
   b1:
+    lda sintabref,x
+    sta _2
     lda sintab2,x
     sec
-    sbc sintabref,x
+    sbc sb
     sta sb
     bmi b2
     lda #<str1
@@ -104,8 +107,10 @@ print_char: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte zeropage(4) b)
 print_byte: {
-    lda print_sbyte.b
+    .label b = 4
+    lda b
     lsr
     lsr
     lsr
@@ -114,7 +119,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and print_sbyte.b
+    and b
     tay
     lda print_hextab,y
     jsr print_char
@@ -170,6 +175,7 @@ sin8s_gen: {
     lda x+1
     sta sin8s.x+1
     jsr sin8s
+    tya
     ldy #0
     sta (sintab),y
     inc sintab
@@ -297,16 +303,17 @@ sin8s: {
     bcc b3
     dex
   b3:
+    txa
+    tay
     lda isUpper
     cmp #0
-    beq b14
+    beq b4
     txa
     eor #$ff
     clc
     adc #1
-    rts
-  b14:
-    txa
+    tay
+  b4:
     rts
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.

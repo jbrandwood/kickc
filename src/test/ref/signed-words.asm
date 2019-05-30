@@ -22,17 +22,18 @@
   .label yvel_10 = 6
   .label xvel = 2
   .label yvel_12 = 6
-  .label yvel_22 = 6
+  .label yvel_20 = 6
 main: {
     jsr init
     lda #$64
     sta yvel_init
     lda #0
     sta yvel_init+1
-    lda #$c8
+    lda #<$c8
     sta xvel
-    lda #0
+    lda #>$c8
     sta xvel+1
+    lda #0
     sta ypos
     sta ypos+1
     sta xpos
@@ -64,13 +65,13 @@ anim: {
     eor #$ff
     adc #0
     sta xvel+1
-    sec
     lda yvel_init
+    sec
     sbc #$a
     sta yvel_init
-    bcs !+
-    dec yvel_init+1
-  !:
+    lda yvel_init+1
+    sbc #>$a
+    sta yvel_init+1
     lda yvel_init
     cmp #<-$c8
     lda yvel_init+1
@@ -79,15 +80,15 @@ anim: {
     eor #$80
   !:
     bpl b3
-    lda #$c8
+    lda #<$c8
     sta yvel
-    lda #0
+    lda #>$c8
     sta yvel+1
   b3:
     lda yvel
-    sta yvel_22
+    sta yvel_20
     lda yvel+1
-    sta yvel_22+1
+    sta yvel_20+1
     lda #0
     sta ypos
     sta ypos+1
@@ -182,7 +183,7 @@ init: {
     sta SPRITES_YPOS
     lda #WHITE
     sta SPRITES_COLS
-    lda #$ff&SPRITE/$40
+    lda #SPRITE/$40
     sta SPRITES_PTR
     lda #<SCREEN
     sta sc

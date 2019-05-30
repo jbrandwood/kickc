@@ -32,8 +32,8 @@ main: {
     rts
 }
 do_perspective: {
-    .label y = -$47
     .label x = $39
+    .label y = -$47
     .label z = $36
     lda #<$400
     sta print_char_cursor
@@ -244,42 +244,35 @@ mulf_init: {
     sta add
     lda #0
     sta add+1
-    tax
+    tay
     sta sqr
     sta sqr+1
   b1:
     lda sqr+1
     sta val
+    sta mulf_sqr1,y
+    sta mulf_sqr1+$100,y
+    tya
+    eor #$ff
+    tax
+    inx
+    lda val
     sta mulf_sqr1,x
     sta mulf_sqr1+$100,x
-    txa
+    sta mulf_sqr2+1,y
+    sta mulf_sqr2+$100+1,y
+    tya
     eor #$ff
-    tay
-    iny
+    tax
+    axs #1+1
     lda val
-    sta mulf_sqr1,y
-    txa
+    sta mulf_sqr2,x
+    tya
     eor #$ff
-    tay
-    iny
+    tax
+    axs #1+1
     lda val
-    sta mulf_sqr1+$100,y
-    sta mulf_sqr2+1,x
-    sta mulf_sqr2+$100+1,x
-    txa
-    eor #$ff
-    clc
-    adc #1+1
-    tay
-    lda val
-    sta mulf_sqr2,y
-    txa
-    eor #$ff
-    clc
-    adc #1+1
-    tay
-    lda val
-    sta mulf_sqr2+$100,y
+    sta mulf_sqr2+$100,x
     lda sqr
     clc
     adc add
@@ -294,8 +287,8 @@ mulf_init: {
     bcc !+
     inc add+1
   !:
-    inx
-    cpx #$81
+    iny
+    cpy #$81
     bne b1
     rts
 }

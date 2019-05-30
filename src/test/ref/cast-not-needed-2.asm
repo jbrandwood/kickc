@@ -2,14 +2,12 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SIZEOF_POINTER = 2
 main: {
-    .const getScreen1_id = 0
     .label getScreen1_return = 2
     .label spritePtr1_return = 2
-    lda screens+getScreen1_id*SIZEOF_POINTER
+    lda screens
     sta getScreen1_return
-    lda screens+getScreen1_id*SIZEOF_POINTER+1
+    lda screens+1
     sta getScreen1_return+1
     clc
     lda spritePtr1_return

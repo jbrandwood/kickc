@@ -596,7 +596,7 @@ place_sprites: {
     sta spr_x
     lda #0
     sta j
-    lda #$ff&sprites/$40
+    lda #sprites/$40
     sta spr_id
   b1:
     lda spr_id

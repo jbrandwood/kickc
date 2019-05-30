@@ -10,9 +10,7 @@ main: {
     txa
     and #$1f
     cpx #0
-    beq b3
-    jmp b1
-  b3:
+    bne b1
     cmp #$1f
     beq b1
     jmp b1

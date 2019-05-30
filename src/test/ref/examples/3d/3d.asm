@@ -129,13 +129,13 @@ anim: {
     tya
     asl
     tax
-    lda #$80
+    lda xp
     clc
-    adc xp
+    adc #$80
     sta SPRITES_XPOS,x
-    lda #$80
+    lda yp
     clc
-    adc yp
+    adc #$80
     sta SPRITES_YPOS,x
     inc i
     lda #8
@@ -149,10 +149,9 @@ anim: {
     // Increment angles        
     inc sx
     inc sx
-    lda sy
-    sec
-    sbc #3
-    sta sy
+    lax sy
+    axs #3
+    stx sy
     jmp b2
 }
 debug_print: {
@@ -336,8 +335,7 @@ print_sbyte_at: {
     .label at = 6
     cpx #0
     bmi b1
-    lda #' '
-    sta print_char_at.ch
+    ldy #' '
     jsr print_char_at
   b2:
     inc print_byte_at.at
@@ -347,8 +345,7 @@ print_sbyte_at: {
     jsr print_byte_at
     rts
   b1:
-    lda #'-'
-    sta print_char_at.ch
+    ldy #'-'
     jsr print_char_at
     txa
     eor #$ff
@@ -358,17 +355,16 @@ print_sbyte_at: {
     jmp b2
 }
 // Print a single char
-// print_char_at(byte zeropage(8) ch, byte* zeropage(6) at)
+// print_char_at(byte register(Y) ch, byte* zeropage(6) at)
 print_char_at: {
     .label at = 6
-    .label ch = 8
-    lda ch
+    tya
     ldy #0
     sta (at),y
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte* zeropage(6) at)
+// print_byte_at(byte register(X) b, byte* zeropage(6) at)
 print_byte_at: {
     .label at = 6
     txa
@@ -378,7 +374,7 @@ print_byte_at: {
     lsr
     tay
     lda print_hextab,y
-    sta print_char_at.ch
+    tay
     jsr print_char_at
     lda #$f
     axs #0
@@ -386,8 +382,7 @@ print_byte_at: {
     bne !+
     inc print_char_at.at+1
   !:
-    lda print_hextab,x
-    sta print_char_at.ch
+    ldy print_hextab,x
     jsr print_char_at
     rts
 }
@@ -395,10 +390,10 @@ print_byte_at: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zeropage(5) y, signed byte zeropage(8) z)
+// rotate_matrix(signed byte register(X) x, signed byte zeropage(5) y, signed byte zeropage($a) z)
 rotate_matrix: {
     .label y = 5
-    .label z = 8
+    .label z = $a
     txa
     sta xr
     lda y
@@ -543,7 +538,7 @@ calculate_matrix: {
     .label sy = 3
     .label t1 = 4
     .label t3 = 5
-    .label t4 = 8
+    .label t4 = $a
     .label t5 = $b
     .label t6 = $c
     .label t7 = $d
@@ -959,9 +954,9 @@ debug_print_init: {
     str11: .text "yp@"
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zeropage(6) str, byte* zeropage(9) at)
+// print_str_at(byte* zeropage(6) str, byte* zeropage(8) at)
 print_str_at: {
-    .label at = 9
+    .label at = 8
     .label str = 6
   b1:
     ldy #0
@@ -1014,7 +1009,7 @@ sprites_init: {
     sta SPRITES_ENABLE
     ldx #0
   b1:
-    lda #$ff&SPRITE/$40
+    lda #SPRITE/$40
     sta sprites_ptr,x
     lda #GREEN
     sta SPRITES_COLS,x
@@ -1024,6 +1019,9 @@ sprites_init: {
     rts
 }
   print_hextab: .text "0123456789abcdef"
+  // Positions to rotate
+  xs: .byte -$34, -$34, -$34, 0, 0, $34, $34, $34
+  ys: .byte -$34, 0, $34, -$34, $34, -$34, 0, $34
   zs: .byte $34, $34, $34, $34, $34, $34, $34, $34
   // Rotated positions
   xrs: .fill 8, 0
@@ -1036,9 +1034,6 @@ sprites_init: {
   yps: .fill 8, 0
   // The rotation matrix
   rotation_matrix: .fill 9, 0
-  // Positions to rotate
-  xs: .byte -$34, -$34, -$34, 0, 0, $34, $34, $34
-  ys: .byte -$34, 0, $34, -$34, $34, -$34, 0, $34
 .pc = mulf_sqr1 "mulf_sqr1"
   .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }

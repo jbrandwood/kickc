@@ -1,23 +1,17 @@
 package dk.camelot64.kickc.fragment;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ControlFlowGraph;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.Registers;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
+import dk.camelot64.kickc.model.operators.OperatorUnary;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
+import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
+import java.lang.InternalError;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -87,6 +81,7 @@ public class AsmFragmentInstanceSpecFactory {
 
    /**
     * Get the created ASM fragment instance specification
+    *
     * @return The ASM fragment instance specification
     */
    public AsmFragmentInstanceSpec getAsmFragmentInstanceSpec() {
@@ -226,15 +221,56 @@ public class AsmFragmentInstanceSpecFactory {
    public String bind(Value value, SymbolType castType) {
 
       if(value instanceof CastValue) {
-         CastValue castVal = (CastValue) value;
-         SymbolType toType = castVal.getToType();
-         value = castVal.getValue();
-         return bind(value, toType);
+         CastValue cast = (CastValue) value;
+         SymbolType toType = cast.getToType();
+         OperatorUnary castUnary = Operators.getCastUnary(toType);
+         RValue castValue = cast.getValue();
+         SymbolType castValueType = SymbolTypeInference.inferType(this.program.getScope(), castValue);
+         if(castValueType.getSizeBytes() == toType.getSizeBytes()) {
+            return bind(castValue, toType);
+         } else {
+            return getOperatorFragmentName(castUnary) + bind(castValue);
+         }
       } else if(value instanceof ConstantCastValue) {
          ConstantCastValue castVal = (ConstantCastValue) value;
-         SymbolType toType = castVal.getToType();
-         value = castVal.getValue();
-         return bind(value, toType);
+         ConstantValue val = castVal.getValue();
+         if(castType == null) {
+            SymbolType toType = castVal.getToType();
+            // If value literal not matching cast type then add expression code to transform it into the value space ( eg. value & 0xff )
+
+            if(toType instanceof SymbolTypeIntegerFixed) {
+               SymbolTypeIntegerFixed integerFixed = (SymbolTypeIntegerFixed) toType;
+               ConstantLiteral constantLiteral;
+               Long integerValue;
+               try {
+                  constantLiteral = val.calculateLiteral(program.getScope());
+                  if(constantLiteral instanceof ConstantInteger) {
+                     integerValue = ((ConstantInteger) constantLiteral).getValue();
+                  } else if(constantLiteral instanceof ConstantPointer) {
+                     integerValue = ((ConstantPointer) constantLiteral).getValue();
+                  } else {
+                     throw new InternalError("Not implemented " + constantLiteral);
+                  }
+               } catch(ConstantNotLiteral e) {
+                  // Assume it is a word
+                  integerValue = 0xffffL;
+               }
+
+               if(!integerFixed.contains(integerValue)) {
+                  if(toType.getSizeBytes() == 1) {
+                     val = new ConstantBinary(new ConstantInteger(0xffL, SymbolType.BYTE), Operators.BOOL_AND, val);
+                  } else if(toType.getSizeBytes() == 2) {
+                     val = new ConstantBinary(new ConstantInteger(0xffffL, SymbolType.WORD), Operators.BOOL_AND, val);
+                  } else {
+                     throw new InternalError("Not implemented " + toType);
+                  }
+               }
+            }
+
+            return bind(val, toType);
+         } else {
+            return bind(val, castType);
+         }
       } else if(value instanceof PointerDereference) {
          PointerDereference deref = (PointerDereference) value;
          SymbolType ptrType = null;
@@ -267,6 +303,27 @@ public class AsmFragmentInstanceSpecFactory {
          String name = "la" + nextLabelIdx++;
          bind(name, value);
          return name;
+      } else if(value instanceof StructZero) {
+         return "vssf" + ((StructZero) value).getTypeStruct().getSizeBytes();
+      } else if(value instanceof StructMemberRef) {
+         StructMemberRef structMemberRef = (StructMemberRef) value;
+         StructDefinition structDefinition = program.getScope().getStructDefinition(structMemberRef);
+         Variable structMember = structDefinition.getMember(structMemberRef.getMemberName());
+         int memberByteOffset = structDefinition.getMemberByteOffset(structMember);
+
+         RValue struct = structMemberRef.getStruct();
+         if(struct instanceof VariableRef) {
+            Variable structVar = program.getScope().getVariable((VariableRef) struct);
+            if(structVar.getAllocation() instanceof Registers.RegisterZpStruct) {
+               Registers.RegisterZpStruct structRegister = (Registers.RegisterZpStruct) structVar.getAllocation();
+               Registers.RegisterZpStructMember memberRegister = structRegister.getMemberRegister(memberByteOffset);
+               String name = getTypePrefix(structMember.getType()) + getRegisterName(memberRegister);
+               bind(name, structMemberRef);
+               return name;
+            }
+         } else {
+            return bind(struct) + "_mbr_" + memberByteOffset;
+         }
       }
       throw new RuntimeException("Binding of value type not supported " + value);
    }
@@ -288,35 +345,37 @@ public class AsmFragmentInstanceSpecFactory {
     * @return The type name
     */
    static String getTypePrefix(SymbolType type) {
-      if(SymbolType.isByte(type)) {
+      if(SymbolType.BYTE.equals(type)) {
          return "vbu";
-      } else if(SymbolType.isSByte(type)) {
+      } else if(SymbolType.SBYTE.equals(type)) {
          return "vbs";
-      } else if(SymbolType.isWord(type)) {
+      } else if(SymbolType.WORD.equals(type)) {
          return "vwu";
-      } else if(SymbolType.isSWord(type)) {
+      } else if(SymbolType.SWORD.equals(type)) {
          return "vws";
-      } else if(SymbolType.isDWord(type)) {
+      } else if(SymbolType.DWORD.equals(type)) {
          return "vdu";
-      } else if(SymbolType.isSDWord(type)) {
+      } else if(SymbolType.SDWORD.equals(type)) {
          return "vds";
       } else if(SymbolType.STRING.equals(type)) {
          return "pbu";
       } else if(SymbolType.BOOLEAN.equals(type)) {
          return "vbo";
+      } else if(type instanceof SymbolTypeStruct) {
+         return "vss";
       } else if(type instanceof SymbolTypePointer) {
          SymbolType elementType = ((SymbolTypePointer) type).getElementType();
-         if(SymbolType.isByte(elementType)) {
+         if(SymbolType.BYTE.equals(elementType)) {
             return "pbu";
-         } else if(SymbolType.isSByte(elementType)) {
+         } else if(SymbolType.SBYTE.equals(elementType)) {
             return "pbs";
-         } else if(SymbolType.isWord(elementType)) {
+         } else if(SymbolType.WORD.equals(elementType)) {
             return "pwu";
-         } else if(SymbolType.isSWord(elementType)) {
+         } else if(SymbolType.SWORD.equals(elementType)) {
             return "pws";
-         } else if(SymbolType.isDWord(elementType)) {
+         } else if(SymbolType.DWORD.equals(elementType)) {
             return "pdu";
-         } else if(SymbolType.isSDWord(elementType)) {
+         } else if(SymbolType.SDWORD.equals(elementType)) {
             return "pds";
          } else if(SymbolType.BOOLEAN.equals(elementType)) {
             return "pbo";
@@ -324,6 +383,8 @@ public class AsmFragmentInstanceSpecFactory {
             return "ppr";
          } else if(elementType instanceof SymbolTypePointer) {
             return "ppt";
+         } else if(elementType instanceof SymbolTypeStruct) {
+            return "pss";
          } else {
             throw new RuntimeException("Not implemented " + type);
          }
@@ -344,8 +405,9 @@ public class AsmFragmentInstanceSpecFactory {
             Registers.RegisterType.ZP_BOOL.equals(register.getType()) ||
                   Registers.RegisterType.ZP_BYTE.equals(register.getType()) ||
                   Registers.RegisterType.ZP_WORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_DWORD.equals(register.getType())
-            ) {
+                  Registers.RegisterType.ZP_DWORD.equals(register.getType()) ||
+                  Registers.RegisterType.ZP_STRUCT.equals(register.getType())
+      ) {
          // Examine if the ZP register is already bound
          Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
          String zpNameIdx = null;

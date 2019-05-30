@@ -50,12 +50,18 @@ public class ConstantBinary implements ConstantValue {
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      return operator.calculateLiteral(left.calculateLiteral(scope), right.calculateLiteral(scope));
+      ConstantLiteral literal = operator.calculateLiteral(left.calculateLiteral(scope), right.calculateLiteral(scope));
+      if(literal instanceof ConstantInteger && SymbolType.NUMBER.equals(literal.getType(scope))) {
+         ((ConstantInteger) literal).setType(getType(scope));
+      }
+      return literal;
    }
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return SymbolTypeInference.inferType(scope, left, operator, right);
+      SymbolType leftType = SymbolTypeInference.inferType(scope, left);
+      SymbolType rightType = SymbolTypeInference.inferType(scope, right);
+      return operator.inferType(leftType, rightType);
    }
 
    @Override

@@ -9,11 +9,9 @@
   .label SCREEN = $400
 main: {
     .const dw = $2000
-    .const w1 = dw&$ffff
-    .const w2 = <dw+1
-    lda #<w1
+    .const w2 = dw+1&$ffff
+    lda #0
     sta SCREEN
-    lda #>w1
     sta SCREEN+1
     lda #<w2
     sta SCREEN+3

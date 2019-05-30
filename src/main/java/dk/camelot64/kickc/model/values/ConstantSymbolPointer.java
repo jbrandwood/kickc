@@ -6,6 +6,8 @@ import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
+import java.util.Objects;
+
 /** A pointer to a symbol (variable or procedure) */
 public class ConstantSymbolPointer implements ConstantValue {
 
@@ -43,5 +45,19 @@ public class ConstantSymbolPointer implements ConstantValue {
    @Override
    public String toString() {
       return toString(null);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      ConstantSymbolPointer that = (ConstantSymbolPointer) o;
+      return Objects.equals(toSymbol, that.toSymbol);
+   }
+
+   @Override
+   public int hashCode() {
+
+      return Objects.hash(toSymbol);
    }
 }

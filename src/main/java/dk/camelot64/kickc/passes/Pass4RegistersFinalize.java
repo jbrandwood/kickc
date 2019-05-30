@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Scope;
@@ -195,23 +196,23 @@ public class Pass4RegistersFinalize extends Pass2Base {
     */
    private Registers.Register allocateNewRegisterZp(Variable variable) {
       SymbolType varType = variable.getType();
-      if(SymbolType.isByte(varType)) {
+      if(SymbolType.BYTE.equals(varType)) {
          return new Registers.RegisterZpByte(allocateZp((1)));
-      } else if(SymbolType.isSByte(varType)) {
+      } else if(SymbolType.SBYTE.equals(varType)) {
          return new Registers.RegisterZpByte(allocateZp(1));
-      } else if(SymbolType.isWord(varType)) {
+      } else if(SymbolType.WORD.equals(varType)) {
          Registers.RegisterZpWord registerZpWord =
                new Registers.RegisterZpWord(allocateZp(2));
          return registerZpWord;
-      } else if(SymbolType.isSWord(varType)) {
+      } else if(SymbolType.SWORD.equals(varType)) {
          Registers.RegisterZpWord registerZpWord =
                new Registers.RegisterZpWord(allocateZp(2));
          return registerZpWord;
-      } else if(SymbolType.isDWord(varType)) {
+      } else if(SymbolType.DWORD.equals(varType)) {
          Registers.RegisterZpDWord registerZpDWord =
                new Registers.RegisterZpDWord(allocateZp(4));
          return registerZpDWord;
-      } else if(SymbolType.isSDWord(varType)) {
+      } else if(SymbolType.SDWORD.equals(varType)) {
          Registers.RegisterZpDWord registerZpDWord =
                new Registers.RegisterZpDWord(allocateZp(4));
          return registerZpDWord;
@@ -224,6 +225,10 @@ public class Pass4RegistersFinalize extends Pass2Base {
          Registers.RegisterZpWord registerZpWord =
                new Registers.RegisterZpWord(allocateZp(2));
          return registerZpWord;
+      } else if(varType instanceof SymbolTypeStruct) {
+         Registers.RegisterZpStruct registerZpStruct =
+               new Registers.RegisterZpStruct(allocateZp(varType.getSizeBytes()));
+         return registerZpStruct;
       } else {
          throw new RuntimeException("Unhandled variable type " + varType);
       }

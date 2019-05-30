@@ -103,8 +103,7 @@ sin8u_table: {
     lda x+1
     sta sin8s.x+1
     jsr sin8s
-    sta sinx
-    tay
+    sty sinx
     jsr mul8su
     lda sinx_sc+1
     tax
@@ -328,6 +327,9 @@ mul8su: {
     tya
     tax
     lda #b
+    sta mul8u.mb
+    lda #0
+    sta mul8u.mb+1
     jsr mul8u
     cpy #0
     bpl b1
@@ -344,9 +346,7 @@ mul8u: {
     .label mb = $b
     .label res = $f
     .label return = $f
-    sta mb
     lda #0
-    sta mb+1
     sta res
     sta res+1
   b1:
@@ -473,16 +473,17 @@ sin8s: {
     bcc b3
     dex
   b3:
+    txa
+    tay
     lda isUpper
     cmp #0
-    beq b14
+    beq b4
     txa
     eor #$ff
     clc
     adc #1
-    rts
-  b14:
-    txa
+    tay
+  b4:
     rts
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
@@ -493,6 +494,9 @@ mulu8_sel: {
     .label _1 = $f
     .label select = $11
     tya
+    sta mul8u.mb
+    lda #0
+    sta mul8u.mb+1
     jsr mul8u
     ldy select
     beq !e+

@@ -153,18 +153,19 @@ public class Compiler {
       new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1ResolveForwardReferences(program).execute();
       new Pass1UnwindBlockScopes(program).execute();
-      new Pass1TypeInference(program).execute();
-      new Pass1TypeIdSimplification(program).execute();
+      new Pass1Procedures(program).execute();
+      new PassNTypeInference(program).execute();
+      new PassNTypeIdSimplification(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");
-         getLog().append(program.getScope().getSymbolTableContents(program));
+         getLog().append(program.getScope().toString(program, null));
       }
 
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1PointerSizeofFix(program).execute();
-      new Pass1AddTypePromotions(program).execute();
+      new PassNAddTypeConversionAssignment(program).execute();
       new Pass1EarlyConstantIdentification(program).execute();
       new PassNStatementIndices(program).step();
       new PassNCallGraphAnalysis(program).step();
@@ -182,7 +183,7 @@ public class Compiler {
       new Pass1EliminateUncalledProcedures(program).execute();
       new PassNEliminateUnusedVars(program, false).execute();
       new Pass1ExtractInlineStrings(program).execute();
-      new Pass1EliminateEmptyBlocks(program).execute();
+      new PassNCullEmptyBlocks(program).execute();
 
       new Pass1ModifiedVarsAnalysis(program).execute();
       if(getLog().isVerbosePass1CreateSsa()) {
@@ -205,7 +206,7 @@ public class Compiler {
       getLog().append(program.getGraph().toString(program));
 
       getLog().append("SYMBOL TABLE SSA");
-      getLog().append(program.getScope().getSymbolTableContents(program));
+      getLog().append(program.getScope().toString(program, null));
 
       return program;
    }
@@ -228,37 +229,50 @@ public class Compiler {
       }
    }
 
-   private void pass2Optimize() {
+   private List<Pass2SsaOptimization> getPass2Optimizations() {
       List<Pass2SsaOptimization> optimizations = new ArrayList<>();
-      optimizations.add(new Pass2CullEmptyBlocks(program));
+      optimizations.add(new Pass2FixInlineConstructorsNew(program));
+
+      optimizations.add(new PassNAddNumberTypeConversions(program));
+      optimizations.add(new PassNAddArrayNumberTypeConversions(program));
+      optimizations.add(new Pass2InlineCast(program));
+      //optimizations.add(new Pass2NopCastInlining(program));
+      optimizations.add(new PassNCastSimplification(program));
+      optimizations.add(new PassNFinalizeNumberTypeConversions(program));
+      optimizations.add(new PassNTypeInference(program));
+      optimizations.add(new PassNAddTypeConversionAssignment(program));
+
+      optimizations.add(new PassNTypeIdSimplification(program));
+      optimizations.add(new Pass2SizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2SelfPhiElimination(program));
-      optimizations.add(new Pass2RedundantPhiElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
+      optimizations.add(new Pass2DuplicateRValueIdentification(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
+      optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program)); 
+      optimizations.add(new Pass2ConstantRValueConsolidation(program));
       optimizations.add(new Pass2ConstantIdentification(program));
-      optimizations.add(new PassNStatementIndices(program));
-      optimizations.add(new PassNVariableReferenceInfos(program));
-      optimizations.add(new Pass2ConstantAdditionElimination(program));
+      optimizations.add(new Pass2ConstantValues(program));
+      optimizations.add(new Pass2ConstantCallPointerIdentification(program));
       optimizations.add(new Pass2ConstantIfs(program));
       optimizations.add(new Pass2ConstantStringConsolidation(program));
-      optimizations.add(new Pass2FixInlineConstructors(program));
-      optimizations.add(new Pass2TypeInference(program));
-      optimizations.add(new PassNEliminateUnusedVars(program, true));
-      optimizations.add(new Pass2EliminateRedundantCasts(program));
-      optimizations.add(new Pass2NopCastElimination(program));
-      optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new Pass2RangeResolving(program));
       optimizations.add(new Pass2ComparisonOptimization(program));
-      optimizations.add(new Pass2ConstantCallPointerIdentification(program));
-      optimizations.add(new Pass2MultiplyToShiftRewriting(program));
-      optimizations.add(new Pass2SizeOfSimplification(program));
       optimizations.add(new Pass2InlineDerefIdx(program));
       optimizations.add(new Pass2DeInlineWordDerefIdx(program));
+      optimizations.add(new PassNSimplifyConstantZero(program));
+      optimizations.add(new PassNSimplifyExpressionWithZero(program));
+      optimizations.add(new PassNEliminateUnusedVars(program, true));
+      optimizations.add(new Pass2EliminateUnusedBlocks(program));
+      return optimizations;
+   }
+
+   private void pass2Optimize() {
+      List<Pass2SsaOptimization> optimizations = getPass2Optimizations();
       pass2Execute(optimizations);
    }
 
@@ -291,13 +305,13 @@ public class Compiler {
    private void pass2InlineConstants() {
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<Pass2SsaOptimization> constantOptimizations = new ArrayList<>();
+      constantOptimizations.add(new PassNStatementIndices(program));
+      constantOptimizations.add(new PassNVariableReferenceInfos(program));
+      constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
-      constantOptimizations.add(new Pass2ConstantStringConsolidation(program));
-      constantOptimizations.add(new Pass2IdenticalPhiElimination(program));
-      constantOptimizations.add(new Pass2ConstantIdentification(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));
-      constantOptimizations.add(new Pass2ConstantIfs(program));
+      constantOptimizations.addAll(getPass2Optimizations());
       pass2Execute(constantOptimizations);
 
    }
@@ -351,11 +365,12 @@ public class Compiler {
    }
 
    private void pass3Analysis() {
+      new Pass3AssertNoTypeId(program).check();
       new Pass3AssertRValues(program).check();
+      new Pass3AssertNoNumbers(program).check();
       new Pass3AssertConstants(program).check();
       new Pass3AssertArrayLengths(program).check();
       new Pass3AssertNoMulDivMod(program).check();
-      new PassNBlockSequencePlanner(program).step();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();
       new PassNBlockSequencePlanner(program).step();
@@ -382,7 +397,7 @@ public class Compiler {
 
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program).step();
-      new Pass2CullEmptyBlocks(program).step();
+      new PassNCullEmptyBlocks(program).step();
       new PassNRenumberLabels(program).execute();
       new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();
@@ -516,7 +531,7 @@ public class Compiler {
       new Pass5FixLongBranches(program).optimize();
 
       getLog().append("\nFINAL SYMBOL TABLE");
-      getLog().append(program.getScope().getSymbolTableContents(program));
+      getLog().append(program.getScope().toString(program, null));
 
       getLog().append("\nFINAL ASSEMBLER");
       getLog().append("Score: " + Pass4RegisterUpliftCombinations.getAsmScore(program) + "\n");

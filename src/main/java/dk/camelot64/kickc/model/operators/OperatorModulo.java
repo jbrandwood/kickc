@@ -24,10 +24,10 @@ public class OperatorModulo extends OperatorBinary {
    }
 
    @Override
-   public SymbolType inferType(SymbolTypeSimple left, SymbolTypeSimple right) {
+   public SymbolType inferType(SymbolType left, SymbolType right) {
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(left) && SymbolType.isInteger(right)) {
-         return SymbolType.promotedMathType((SymbolTypeInteger) left, (SymbolTypeInteger) right);
+         return SymbolTypeConversion.convertedMathType((SymbolTypeInteger) left, (SymbolTypeInteger) right);
       }
       if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
          return ((ConstantInteger) right).getType();

@@ -36,7 +36,7 @@
   .label sin2 = $1400
   .label rem16u = 2
 main: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)/$40
+    .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     sei
     // Disable normal interrupt
@@ -176,6 +176,7 @@ render_sine: {
 bitmap_plot: {
     .label _1 = $10
     .label plotter = 6
+    .label plotter_1 = $10
     .label x = 4
     .label _3 = 6
     lda bitmap_plot_yhi,x
@@ -188,19 +189,19 @@ bitmap_plot: {
     lda x+1
     and #>$fff8
     sta _1+1
-    lda plotter
+    lda plotter_1
     clc
-    adc _1
-    sta plotter
-    lda plotter+1
-    adc _1+1
-    sta plotter+1
+    adc plotter
+    sta plotter_1
+    lda plotter_1+1
+    adc plotter+1
+    sta plotter_1+1
     lda x
     tay
     lda bitmap_plot_bit,y
     ldy #0
-    ora (plotter),y
-    sta (plotter),y
+    ora (plotter_1),y
+    sta (plotter_1),y
     rts
 }
 // wrap_y(signed word zeropage(6) y)
@@ -230,13 +231,13 @@ wrap_y: {
     sta y+1
     jmp b3
   b2:
-    sec
     lda y
-    sbc #$c8
+    sec
+    sbc #<$c8
     sta y
-    bcs !+
-    dec y+1
-  !:
+    lda y+1
+    sbc #>$c8
+    sta y+1
     jmp b1
 }
 // Generate signed word sinus table - with values in the range min-max.
@@ -250,7 +251,7 @@ sin16s_gen2: {
     .label _5 = $c
     .label _6 = 6
     .label _8 = 6
-    .label step = $1b
+    .label step = $19
     .label sintab = 2
     .label x = 8
     .label i = 4
@@ -325,21 +326,25 @@ sin16s_gen2: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zeropage($17) a)
+// mul16s(signed word zeropage(6) a)
 mul16s: {
     .label _9 = 6
     .label _16 = 6
     .label m = $c
     .label return = $c
-    .label a = $17
+    .label a = 6
     lda a
     sta mul16u.a
     lda a+1
     sta mul16u.a+1
     lda #<sin16s_gen2.ampl
-    sta mul16u.b
+    sta mul16u.mb
     lda #>sin16s_gen2.ampl
-    sta mul16u.b+1
+    sta mul16u.mb+1
+    lda #<sin16s_gen2.ampl>>$10
+    sta mul16u.mb+2
+    lda #>sin16s_gen2.ampl>>$10
+    sta mul16u.mb+3
     jsr mul16u
     lda a+1
     bpl b2
@@ -369,13 +374,7 @@ mul16u: {
     .label res = $c
     .label return = $c
     .label b = 6
-    lda b
-    sta mb
-    lda b+1
-    sta mb+1
     lda #0
-    sta mb+2
-    sta mb+3
     sta res
     sta res+1
     sta res+2
@@ -420,17 +419,18 @@ mul16u: {
 // sin16s(dword zeropage($c) x)
 sin16s: {
     .label _4 = $c
+    .label _20 = 6
     .label x = $c
-    .label return = $17
-    .label x1 = $1f
-    .label x2 = $19
-    .label x3 = $19
+    .label return = 6
+    .label x1 = $1d
+    .label x2 = $17
+    .label x3 = $17
     .label x3_6 = 6
-    .label usinx = $17
-    .label x4 = $19
+    .label usinx = $1f
+    .label x4 = $17
     .label x5 = 6
     .label x5_128 = 6
-    .label sinx = $17
+    .label sinx = 6
     .label isUpper = $16
     lda x+3
     cmp #>PI_u4f28>>$10
@@ -576,9 +576,17 @@ sin16s: {
     lda usinx+1
     adc x5_128+1
     sta usinx+1
+    lda usinx
+    sta sinx
+    lda usinx+1
+    sta sinx+1
     lda isUpper
     cmp #0
     beq b3
+    lda usinx
+    sta _20
+    lda usinx+1
+    sta _20+1
     sec
     lda sinx
     eor #$ff
@@ -593,19 +601,26 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($19) v1, word zeropage(6) v2, byte register(X) select)
+// mulu16_sel(word zeropage($17) v1, word zeropage(6) v2, byte register(X) select)
 mulu16_sel: {
     .label _0 = $c
     .label _1 = $c
-    .label v1 = $19
+    .label v1 = $17
     .label v2 = 6
     .label return = 6
-    .label return_1 = $19
-    .label return_10 = $19
+    .label return_1 = $17
+    .label return_10 = $17
     lda v1
     sta mul16u.a
     lda v1+1
     sta mul16u.a+1
+    lda mul16u.b
+    sta mul16u.mb
+    lda mul16u.b+1
+    sta mul16u.mb+1
+    lda #0
+    sta mul16u.mb+2
+    sta mul16u.mb+3
     jsr mul16u
     cpx #0
     beq !e+
@@ -628,7 +643,7 @@ mulu16_sel: {
 div32u16u: {
     .label quotient_hi = $10
     .label quotient_lo = 6
-    .label return = $1b
+    .label return = $19
     lda #<PI2_u4f28>>$10
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
@@ -742,7 +757,7 @@ bitmap_clear: {
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _3 = $16
+    .label _7 = $16
     .label yoffs = 2
     ldx #0
     lda #$80
@@ -763,15 +778,14 @@ bitmap_init: {
     ldx #0
   b3:
     lda #7
-    sax _3
+    sax _7
     lda yoffs
-    ora _3
+    ora _7
     sta bitmap_plot_ylo,x
     lda yoffs+1
     sta bitmap_plot_yhi,x
-    txa
-    and #7
-    cmp #7
+    lda #7
+    cmp _7
     bne b4
     clc
     lda yoffs

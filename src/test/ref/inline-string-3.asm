@@ -7,6 +7,7 @@
 main: {
     .label PTR = $9ffe
     .label SCREEN = $400
+    .label ptr = 2
     .label _6 = 2
     lda #<STRING
     sta PTR
@@ -17,7 +18,7 @@ main: {
     lda PTR+1
     sta _6+1
     ldy #0
-    lda (_6),y
+    lda (ptr),y
     sta SCREEN
     rts
     STRING: .text "camelot"

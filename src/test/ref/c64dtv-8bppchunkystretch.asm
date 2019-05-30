@@ -65,7 +65,7 @@ main: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
     // Plane B: CHUNKY
-    lda #<CHUNKY
+    lda #0
     sta DTV_PLANEB_START_LO
     lda #>CHUNKY
     sta DTV_PLANEB_START_MI
@@ -84,9 +84,9 @@ main: {
     sta CIA2_PORT_A
     // Set VIC Bank
     // VIC memory
-    lda #(CHUNKY&$3fff)/$40|(0)/4
+    lda #0
     sta VIC_MEMORY
-    ldx #0
+    tax
   // DTV Palette - Grey Tones
   b1:
     txa
@@ -195,7 +195,7 @@ gfx_init_chunky: {
     .label gfxb = 5
     .label x = 3
     .label y = 2
-    lda #$ff&CHUNKY/$4000
+    lda #CHUNKY/$4000
     jsr dtvSetCpuBankSegment1
     ldx #($ff&CHUNKY/$4000)+1
     lda #0

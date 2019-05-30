@@ -20,5 +20,5 @@ main: {
     bne b1
     rts
 }
+  str: .text "bcde@"
   nums: .byte 2, 3, 4, 5
-  str: .text "bc"+"d"+'e'

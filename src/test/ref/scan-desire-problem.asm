@@ -76,6 +76,7 @@ draw_block: {
     asl
     sta x1
     lda #0
+    rol
     sta x1+1
     txa
     asl

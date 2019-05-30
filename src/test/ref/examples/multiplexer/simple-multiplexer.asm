@@ -23,10 +23,10 @@
   .label SPRITE = $2000
   .label YSIN = $2100
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
+  .label plex_sprite_msb = 6
   .label plex_free_next = 3
   .label plex_sprite_idx = 4
   .label plex_show_idx = 5
-  .label plex_sprite_msb = 6
 main: {
     sei
     jsr init
@@ -120,17 +120,13 @@ plexShowSprite: {
     ldx plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
     ldy plex_show_idx
-    ldx PLEX_SORTED_IDX,y
-    txa
+    lda PLEX_SORTED_IDX,y
     asl
-    tay
-    lda PLEX_XPOS,y
+    tax
+    lda PLEX_XPOS,x
     ldy plex_sprite_idx2
     sta SPRITES_XPOS,y
-    txa
-    asl
-    tay
-    lda PLEX_XPOS+1,y
+    lda PLEX_XPOS+1,x
     cmp #0
     bne b1
     lda #$ff
@@ -146,10 +142,11 @@ plexShowSprite: {
     asl plex_sprite_msb
     lda plex_sprite_msb
     cmp #0
-    bne breturn
+    bne b5
     lda #1
     sta plex_sprite_msb
-  breturn:
+    rts
+  b5:
     rts
   b1:
     lda SPRITES_XMSB
@@ -188,7 +185,11 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     dex
     cpx #$ff
-    bne b5
+    beq b4
+    lda nxt_y
+    ldy PLEX_SORTED_IDX,x
+    cmp PLEX_YPOS,y
+    bcc b3
   b4:
     inx
     lda nxt_idx
@@ -206,12 +207,6 @@ plexSort: {
     cpx #8
     bne plexFreePrepare1_b1
     rts
-  b5:
-    lda nxt_y
-    ldy PLEX_SORTED_IDX,x
-    cmp PLEX_YPOS,y
-    bcc b3
-    jmp b4
 }
 // Initialize the program
 init: {
@@ -225,7 +220,7 @@ init: {
     sta xp+1
     tax
   b1:
-    lda #$ff&SPRITE/$40
+    lda #SPRITE/$40
     sta PLEX_PTR,x
     txa
     asl

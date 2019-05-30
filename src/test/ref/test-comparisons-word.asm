@@ -73,8 +73,9 @@ main: {
     inc i
     cmp i
     bne b1
-  b8:
-    jmp b8
+  b5:
+  // loop forever
+    jmp b5
 }
 // Print a newline
 print_ln: {
@@ -205,9 +206,9 @@ compare: {
     bne !+
     lda w1
     cmp w2
+    beq b11
   !:
     bcc b11
-    beq b11
     lda #TT
     sta r
     jmp b22
@@ -247,9 +248,9 @@ compare: {
     bne !+
     lda w2
     cmp w1
+    beq b13
   !:
     bcc b13
-    beq b13
     lda #TT
     sta r
     jmp b24

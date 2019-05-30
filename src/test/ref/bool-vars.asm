@@ -31,6 +31,11 @@ bool_complex: {
     lda o1
     cmp #0
     bne b6
+    jmp b5
+  b6:
+    lda o2
+    cmp #0
+    bne b2
   b5:
     lda o1
     cmp #0
@@ -50,11 +55,6 @@ bool_complex: {
     lda #' '
     sta screen,x
     jmp b3
-  b6:
-    lda o2
-    cmp #0
-    bne b2
-    jmp b5
 }
 bool_not: {
     .label screen = $450
@@ -107,7 +107,9 @@ bool_and: {
     txa
     and #1
     cpx #$a
-    bcc b5
+    bcs b4
+    cmp #0
+    beq b2
   b4:
     lda #' '
     sta screen,x
@@ -116,10 +118,6 @@ bool_and: {
     cpx #$15
     bne b1
     rts
-  b5:
-    cmp #0
-    beq b2
-    jmp b4
   b2:
     lda #'*'
     sta screen,x

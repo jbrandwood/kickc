@@ -31,11 +31,7 @@ public class SymbolTypeArray extends SymbolTypePointer {
    @Override
    public String getTypeName() {
       SymbolType elementType = getElementType();
-      if(elementType instanceof SymbolTypeMulti) {
-         return "(" + elementType.getTypeName() + ")" + "[" + (size == null ? "" : size.toString()) + "]";
-      } else {
-         return elementType.getTypeName() + "[" + (size == null ? "" : size.toString()) + "]";
-      }
+      return elementType.getTypeName() + "[" + (size == null ? "" : size.toString()) + "]";
    }
 
    @Override

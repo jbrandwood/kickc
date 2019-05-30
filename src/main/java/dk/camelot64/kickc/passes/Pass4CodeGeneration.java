@@ -6,10 +6,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -387,13 +384,13 @@ public class Pass4CodeGeneration {
                   String asmElement = AsmFormat.getAsmConstant(program, element, 99, scopeRef);
                   asmElements.add(asmElement);
                }
-               if(SymbolType.isByte(elementType) || SymbolType.isSByte(elementType)) {
+               if(SymbolType.BYTE.equals(elementType) || SymbolType.SBYTE.equals(elementType)) {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmElements);
                   added.add(asmName);
-               } else if(SymbolType.isWord(elementType) || SymbolType.isSWord(elementType)) {
+               } else if(SymbolType.WORD.equals(elementType) || SymbolType.SWORD.equals(elementType)) {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmElements);
                   added.add(asmName);
-               } else if(SymbolType.isDWord(elementType) || SymbolType.isSDWord(elementType)) {
+               } else if(SymbolType.DWORD.equals(elementType) || SymbolType.SDWORD.equals(elementType)) {
                   asm.addDataNumeric(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmElements);
                   added.add(asmName);
                } else if(elementType instanceof SymbolTypePointer) {
@@ -410,32 +407,37 @@ public class Pass4CodeGeneration {
                   throw new Pass2SsaAssertion.AssertionFailed("Error! Array size is not constant integer " + constantVar.toString(program));
                }
                int size = ((ConstantInteger) arraySizeConst).getInteger().intValue();
-               if(SymbolType.isByte(constantArrayFilled.getElementType())) {
+               if(SymbolType.BYTE.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
                   asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
                   added.add(asmName);
-               } else if(SymbolType.isSByte(constantArrayFilled.getElementType())) {
+               } else if(SymbolType.SBYTE.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
                   asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.BYTE, asmSize, size, "0");
                   added.add(asmName);
-               } else if(SymbolType.isWord(constantArrayFilled.getElementType())) {
+               } else if(SymbolType.WORD.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
                   asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                   added.add(asmName);
-               } else if(SymbolType.isSWord(constantArrayFilled.getElementType())) {
+               } else if(SymbolType.SWORD.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
                   asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                   added.add(asmName);
-               } else if(SymbolType.isDWord(constantArrayFilled.getElementType())) {
+               } else if(SymbolType.DWORD.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
                   asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
                   added.add(asmName);
-               } else if(SymbolType.isSDWord(constantArrayFilled.getElementType())) {
+               } else if(SymbolType.SDWORD.equals(constantArrayFilled.getElementType())) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(4L), Operators.MULTIPLY, arraySize), 99, scopeRef);
                   asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.DWORD, asmSize, size, "0");
                   added.add(asmName);
                } else if(constantArrayFilled.getElementType() instanceof SymbolTypePointer) {
                   String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger(2L), Operators.MULTIPLY, arraySize), 99, scopeRef);
+                  asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
+                  added.add(asmName);
+               } else if(constantArrayFilled.getElementType() instanceof SymbolTypeStruct) {
+                  SymbolTypeStruct structElementType = (SymbolTypeStruct) constantArrayFilled.getElementType();
+                  String asmSize = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) structElementType.getSizeBytes()), Operators.MULTIPLY, arraySize), 99, scopeRef);
                   asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                   added.add(asmName);
                } else {

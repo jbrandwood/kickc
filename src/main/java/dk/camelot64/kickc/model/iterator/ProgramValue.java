@@ -7,486 +7,20 @@ import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
 
 /**
- * An RValue in the program being iterated by {@link ProgramValueIterator}.
+ * Any Value in the program being iterated by {@link ProgramValueIterator}.
  *
- * The RValue can be inspected using get() and replaced inside the model using set(val).
+ * The Value can be inspected using get() and replaced inside the model using set(val).
  *
- * The context of the RValue can be determined from the sub-class containing it plus the parameters to the ProgramValueHandler.
+ * The context of the Value can be determined from the sub-class containing it plus the parameters to the ProgramValueHandler.
  *
  */
-public abstract class ProgramValue {
+public interface ProgramValue {
 
-   public abstract Value get();
+   Value get();
 
-   public abstract void set(Value value);
+   void set(Value value);
 
-   public static class ConstantVariableValue extends ProgramValue {
-      private final ConstantVar constantVar;
-
-      ConstantVariableValue(ConstantVar constantVar) {
-         this.constantVar = constantVar;
-      }
-
-      @Override
-      public Value get() {
-         return constantVar.getValue();
-      }
-
-      @Override
-      public void set(Value val) {
-         constantVar.setValue((ConstantValue) val);
-      }
-
-   }
-
-   /** Size inside a fixed size array. */
-   public static class TypeArraySize extends ProgramValue {
-      private final SymbolTypeArray array;
-
-      TypeArraySize(SymbolTypeArray array) {
-         this.array = array;
-      }
-
-      @Override
-      public Value get() {
-         return array.getSize();
-      }
-
-      @Override
-      public void set(Value val) {
-         array.setSize((RValue) val);
-      }
-
-   }
-
-   /** Value inside a array filled expression. */
-   public static class ArrayFilledSize extends ProgramValue {
-      private final ArrayFilled array;
-
-      ArrayFilledSize(ArrayFilled array) {
-         this.array = array;
-      }
-
-      @Override
-      public Value get() {
-         return array.getSize();
-      }
-
-      @Override
-      public void set(Value val) {
-         array.setSize((RValue) val);
-      }
-
-   }
-
-   /** Value inside an intermediate LValue. */
-   public static class LValueIntermediateVariable  extends ProgramValue {
-      private final LvalueIntermediate intermediate;
-
-      LValueIntermediateVariable(LvalueIntermediate intermediate) {
-         this.intermediate = intermediate;
-      }
-
-      @Override
-      public Value get() {
-         return intermediate.getVariable();
-      }
-
-      @Override
-      public void set(Value val) {
-         intermediate.setVariable((VariableRef) val);
-      }
-
-   }
-
-   /** Value inside a constant array filled expression. */
-   public static class ConstantArrayFilledSize extends ProgramValue {
-      private final ConstantArrayFilled array;
-
-      ConstantArrayFilledSize(ConstantArrayFilled array) {
-         this.array = array;
-      }
-
-      @Override
-      public Value get() {
-         return array.getSize();
-      }
-
-      @Override
-      public void set(Value val) {
-         array.setSize((ConstantValue) val);
-      }
-
-   }
-
-   /** Value inside a constant unary expression. */
-   public static class ConstantUnaryValue extends ProgramValue {
-      private final ConstantUnary unary;
-
-      ConstantUnaryValue(ConstantUnary unary) {
-         this.unary = unary;
-      }
-
-      @Override
-      public Value get() {
-         return unary.getOperand();
-      }
-
-      @Override
-      public void set(Value val) {
-         unary.setOperand((ConstantValue) val);
-      }
-
-   }
-
-   /** Left value inside a constant binary expression. */
-   public static class ConstantBinaryLeft extends ProgramValue {
-      private final ConstantBinary binary;
-
-      ConstantBinaryLeft(ConstantBinary binary) {
-         this.binary = binary;
-      }
-
-      @Override
-      public Value get() {
-         return binary.getLeft();
-      }
-
-      @Override
-      public void set(Value val) {
-         binary.setLeft((ConstantValue) val);
-      }
-
-   }
-
-   /** Right value inside a constant binary expression. */
-   public static class ConstantBinaryRight extends ProgramValue {
-      private final ConstantBinary binary;
-
-      ConstantBinaryRight(ConstantBinary range) {
-         this.binary = range;
-      }
-
-      @Override
-      public Value get() {
-         return binary.getRight();
-      }
-
-      @Override
-      public void set(Value val) {
-         binary.setRight((ConstantValue) val);
-      }
-
-   }
-
-   /**
-    * First value inside a ranged comparison value.
-    */
-   public static class RangeFirst extends ProgramValue {
-      private final RangeValue range;
-
-      RangeFirst(RangeValue range) {
-         this.range = range;
-      }
-
-      @Override
-      public Value get() {
-         return range.getRangeFirst();
-      }
-
-      @Override
-      public void set(Value val) {
-         range.setRangeFirst((RValue) val);
-      }
-
-   }
-
-   /**
-    * Last value inside inside a ranged comparison value.
-    */
-   public static class RangeLast extends ProgramValue {
-      private final RangeValue range;
-
-      RangeLast(RangeValue range) {
-         this.range = range;
-      }
-
-      @Override
-      public Value get() {
-         return range.getRangeLast();
-      }
-
-      @Override
-      public void set(Value val) {
-         range.setRangeLast((RValue) val);
-      }
-
-   }
-
-   /** A variable/constant referenced inside inline ASM. */
-   public static class AsmReferenced extends ProgramValue {
-      private StatementAsm statementAsm;
-      private String label;
-
-      public AsmReferenced(StatementAsm statementAsm, String label) {
-         this.statementAsm = statementAsm;
-         this.label = label;
-      }
-
-      @Override
-      public Value get() {
-         return statementAsm.getReferenced().get(label);
-      }
-
-      @Override
-      public void set(Value value) {
-         statementAsm.getReferenced().put(label, (SymbolVariableRef) value);
-      }
-   }
-
-   /** Location inside inline kickasm code. */
-   public static class KickAsmLocation extends ProgramValue {
-
-      private StatementKickAsm statementKickAsm;
-
-      KickAsmLocation(StatementKickAsm statementKickAsm) {
-         super();
-         this.statementKickAsm = statementKickAsm;
-      }
-
-      @Override
-      public Value get() {
-         return statementKickAsm.getLocation();
-      }
-
-      @Override
-      public void set(Value value) {
-         statementKickAsm.setLocation((RValue) value);
-      }
-
-   }
-
-   /** Bytes inside inline kickasm code. */
-   public static class KickAsmBytes extends ProgramValue {
-
-      private StatementKickAsm statementKickAsm;
-
-      KickAsmBytes(StatementKickAsm statementKickAsm) {
-         super();
-         this.statementKickAsm = statementKickAsm;
-      }
-
-      @Override
-      public Value get() {
-         return statementKickAsm.getBytes();
-      }
-
-      @Override
-      public void set(Value value) {
-         statementKickAsm.setBytes((RValue) value);
-      }
-
-   }
-
-   /** Cycles inside inline kickasm code. */
-   public static class KickAsmCycles extends ProgramValue {
-
-      private StatementKickAsm statementKickAsm;
-
-      KickAsmCycles(StatementKickAsm statementKickAsm) {
-         super();
-         this.statementKickAsm = statementKickAsm;
-      }
-
-      @Override
-      public Value get() {
-         return statementKickAsm.getCycles();
-      }
-
-      @Override
-      public void set(Value value) {
-         statementKickAsm.setCycles((RValue) value);
-      }
-
-   }
-
-   /**
-    * LValue as part of an assignment statement (or a call).
-    */
-   public static class LValue extends ProgramValue {
-      private final StatementLValue statement;
-
-      public LValue(StatementLValue statement) {
-         this.statement = statement;
-      }
-
-      @Override
-      public Value get() {
-         return statement.getlValue();
-      }
-
-      @Override
-      public void set(Value value) {
-         statement.setlValue((dk.camelot64.kickc.model.values.LValue) value);
-      }
-
-   }
-
-   /**
-    * Pointer inside a pointer dererence value.
-    */
-   public static class Pointer extends ProgramValue {
-      private final PointerDereference pointer;
-
-      Pointer(PointerDereference pointer) {
-         this.pointer = pointer;
-      }
-
-      @Override
-      public Value get() {
-         return pointer.getPointer();
-      }
-
-      @Override
-      public void set(Value val) {
-         pointer.setPointer((RValue) val);
-      }
-
-   }
-
-   /**
-    * Value inside a noop cast.
-    */
-   public static class CastValue extends ProgramValue {
-      private final dk.camelot64.kickc.model.values.CastValue castValue;
-
-
-      public CastValue(dk.camelot64.kickc.model.values.CastValue castValue) {
-         this.castValue = castValue;
-      }
-
-      @Override
-      public Value get() {
-         return castValue.getValue();
-      }
-
-      @Override
-      public void set(Value val) {
-         castValue.setValue((RValue) val);
-      }
-
-   }
-
-   /**
-    * Value inside a constant noop cast.
-    */
-   public static class ConstantCastValue extends ProgramValue {
-      private final dk.camelot64.kickc.model.values.ConstantCastValue castValue;
-
-
-      ConstantCastValue(dk.camelot64.kickc.model.values.ConstantCastValue castValue) {
-         this.castValue = castValue;
-      }
-
-      @Override
-      public Value get() {
-         return castValue.getValue();
-      }
-
-      @Override
-      public void set(Value val) {
-         castValue.setValue((ConstantValue) val);
-      }
-
-   }
-
-   /**
-    * Pointer inside a variable pointer.
-    */
-   public static class ConstantSymbolPointerTo extends ProgramValue {
-      private final ConstantSymbolPointer varPointer;
-
-
-      ConstantSymbolPointerTo(ConstantSymbolPointer varPointer) {
-         this.varPointer = varPointer;
-      }
-
-      @Override
-      public Value get() {
-         return (RValue) varPointer.getToSymbol();
-      }
-
-      @Override
-      public void set(Value val) {
-         varPointer.setToSymbol((VariableRef) val);
-      }
-
-   }
-
-   public static class ConstantArrayElement extends ProgramValue {
-      private final ConstantArrayList arrayList;
-      private final int idx;
-
-      ConstantArrayElement(ConstantArrayList arrayList, int idx) {
-         this.arrayList = arrayList;
-         this.idx = idx;
-      }
-
-      @Override
-      public Value get() {
-         return arrayList.getElements().get(idx);
-      }
-
-      @Override
-      public void set(Value value) {
-         arrayList.getElements().set(idx, (ConstantValue) value);
-      }
-   }
-
-   public static class ListElement extends ProgramValue {
-      private ValueList list;
-      private int idx;
-
-      ListElement(ValueList list, int idx) {
-         this.list = list;
-         this.idx = idx;
-      }
-
-      @Override
-      public Value get() {
-         return list.getList().get(idx);
-      }
-
-      @Override
-      public void set(Value value) {
-         list.getList().set(idx, (RValue) value);
-      }
-
-   }
-
-   /**
-    * Pointer index inside a indexed pointer dererence value.
-    */
-   public static class PointerIndex extends ProgramValue {
-      private final PointerDereferenceIndexed pointer;
-
-      PointerIndex(PointerDereferenceIndexed pointer) {
-         this.pointer = pointer;
-      }
-
-      @Override
-      public Value get() {
-         return pointer.getIndex();
-      }
-
-      @Override
-      public void set(Value val) {
-         pointer.setIndex((RValue) val);
-      }
-
-   }
-
-   public static class RValue1 extends ProgramValue {
+   class RValue1 implements ProgramValue {
       private final StatementAssignment statement;
 
       public RValue1(StatementAssignment statement) {
@@ -504,7 +38,7 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class RValue2 extends ProgramValue {
+   class RValue2 implements ProgramValue {
       private final StatementAssignment statement;
 
       public RValue2(StatementAssignment statement) {
@@ -522,7 +56,7 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class CallParameter extends ProgramValue {
+   class CallParameter implements ProgramValue {
       private final StatementCall call;
       private final int i;
 
@@ -542,7 +76,7 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class CallPointerProcedure extends ProgramValue {
+   class CallPointerProcedure implements ProgramValue {
       private final StatementCallPointer call;
 
       CallPointerProcedure(StatementCallPointer call) {
@@ -560,7 +94,7 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class CallPointerParameter extends ProgramValue {
+   class CallPointerParameter implements ProgramValue {
       private final StatementCallPointer call;
       private final int i;
 
@@ -580,10 +114,10 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class CondRValue1 extends ProgramValue {
+   class CondRValue1 implements ProgramValue {
       private final StatementConditionalJump statement;
 
-      public CondRValue1(StatementConditionalJump statement) {
+      CondRValue1(StatementConditionalJump statement) {
          this.statement = statement;
       }
 
@@ -598,10 +132,10 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class CondRValue2 extends ProgramValue {
+   class CondRValue2 implements ProgramValue {
       private final StatementConditionalJump statement;
 
-      public CondRValue2(StatementConditionalJump statement) {
+      CondRValue2(StatementConditionalJump statement) {
          this.statement = statement;
       }
 
@@ -616,10 +150,10 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class CondLabel extends ProgramValue {
+   class CondLabel implements ProgramValue {
       private final StatementConditionalJump statement;
 
-      public CondLabel(StatementConditionalJump statement) {
+      CondLabel(StatementConditionalJump statement) {
          this.statement = statement;
       }
 
@@ -634,7 +168,7 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class Return extends ProgramValue {
+   class Return implements ProgramValue {
       private final StatementReturn statement;
 
       public Return(StatementReturn statement) {
@@ -652,7 +186,7 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class PhiValue extends ProgramValue {
+   class PhiValue implements ProgramValue {
       private final StatementPhiBlock.PhiVariable phiVariable;
       private final int i;
 
@@ -672,7 +206,7 @@ public abstract class ProgramValue {
       }
    }
 
-   public static class PhiValuePredecessor extends ProgramValue {
+   class PhiValuePredecessor implements ProgramValue {
       private final StatementPhiBlock.PhiVariable phiVariable;
       private final int i;
 
@@ -695,7 +229,7 @@ public abstract class ProgramValue {
    /**
     * LValue as part of an assignment statement (or a call).
     */
-   public static class PhiVariable extends ProgramValue {
+   class PhiVariable implements ProgramValue {
       private final StatementPhiBlock.PhiVariable phiVariable;
 
       public PhiVariable(StatementPhiBlock.PhiVariable phiVariable) {
@@ -715,7 +249,7 @@ public abstract class ProgramValue {
    }
 
    /** A generic Value. */
-   public static class GenericValue extends ProgramValue {
+   class GenericValue implements ProgramValue {
       private RValue rValue;
 
       public GenericValue(RValue rValue) {
@@ -734,11 +268,11 @@ public abstract class ProgramValue {
    }
 
    /** A variable used by inline kickasm. */
-   public static class KickAsmUses extends ProgramValue {
+   class KickAsmUses implements ProgramValue {
       private StatementKickAsm statementKickAsm;
       private int idx;
 
-      public KickAsmUses(StatementKickAsm statementKickAsm, int idx) {
+      KickAsmUses(StatementKickAsm statementKickAsm, int idx) {
          this.statementKickAsm = statementKickAsm;
          this.idx = idx;
       }
@@ -756,7 +290,7 @@ public abstract class ProgramValue {
 
    }
 
-   public static class BlockLabel extends ProgramValue {
+   class BlockLabel implements ProgramValue {
 
       private final ControlFlowBlock block;
 
@@ -776,7 +310,7 @@ public abstract class ProgramValue {
 
    }
 
-   public static class BlockDefaultSuccessor extends ProgramValue {
+   class BlockDefaultSuccessor implements ProgramValue {
 
       private final ControlFlowBlock block;
 
@@ -796,7 +330,7 @@ public abstract class ProgramValue {
 
    }
 
-   public static class BlockConditionalSuccessor extends ProgramValue {
+   class BlockConditionalSuccessor implements ProgramValue {
 
       private final ControlFlowBlock block;
 
@@ -816,7 +350,7 @@ public abstract class ProgramValue {
 
    }
 
-   public static class BlockCallSuccessor extends ProgramValue {
+   class BlockCallSuccessor implements ProgramValue {
 
       private final ControlFlowBlock block;
 
@@ -836,4 +370,489 @@ public abstract class ProgramValue {
 
    }
 
+   /** Value inside a array filled expression. */
+   class ProgramValueArrayFilledSize implements ProgramValue {
+      private final ArrayFilled array;
+
+      ProgramValueArrayFilledSize(ArrayFilled array) {
+         this.array = array;
+      }
+
+      @Override
+      public Value get() {
+         return array.getSize();
+      }
+
+      @Override
+      public void set(Value val) {
+         array.setSize((RValue) val);
+      }
+
+   }
+
+   /** A variable/constant referenced inside inline ASM. */
+   class ProgramValueAsmReferenced implements ProgramValue {
+      private StatementAsm statementAsm;
+      private String label;
+
+      ProgramValueAsmReferenced(StatementAsm statementAsm, String label) {
+         this.statementAsm = statementAsm;
+         this.label = label;
+      }
+
+      @Override
+      public Value get() {
+         return statementAsm.getReferenced().get(label);
+      }
+
+      @Override
+      public void set(Value value) {
+         statementAsm.getReferenced().put(label, (SymbolVariableRef) value);
+      }
+   }
+
+   /**
+    * Value inside a noop cast.
+    */
+   class ProgramValueCastValue implements ProgramValue {
+      private final CastValue castValue;
+
+
+      public ProgramValueCastValue(CastValue castValue) {
+         this.castValue = castValue;
+      }
+
+      @Override
+      public Value get() {
+         return castValue.getValue();
+      }
+
+      @Override
+      public void set(Value val) {
+         castValue.setValue((RValue) val);
+      }
+
+   }
+
+   class ProgramValueConstantArrayElement implements ProgramValue {
+      private final ConstantArrayList arrayList;
+      private final int idx;
+
+      ProgramValueConstantArrayElement(ConstantArrayList arrayList, int idx) {
+         this.arrayList = arrayList;
+         this.idx = idx;
+      }
+
+      @Override
+      public Value get() {
+         return arrayList.getElements().get(idx);
+      }
+
+      @Override
+      public void set(Value value) {
+         arrayList.getElements().set(idx, (ConstantValue) value);
+      }
+   }
+
+   /** Value inside a constant array filled expression. */
+   class ProgramValueConstantArrayFilledSize implements ProgramValue {
+      private final ConstantArrayFilled array;
+
+      ProgramValueConstantArrayFilledSize(ConstantArrayFilled array) {
+         this.array = array;
+      }
+
+      @Override
+      public Value get() {
+         return array.getSize();
+      }
+
+      @Override
+      public void set(Value val) {
+         array.setSize((ConstantValue) val);
+      }
+
+   }
+
+   /** Left value inside a constant binary expression. */
+   class ProgramValueConstantBinaryLeft implements ProgramValue {
+      private final ConstantBinary binary;
+
+      ProgramValueConstantBinaryLeft(ConstantBinary binary) {
+         this.binary = binary;
+      }
+
+      @Override
+      public Value get() {
+         return binary.getLeft();
+      }
+
+      @Override
+      public void set(Value val) {
+         binary.setLeft((ConstantValue) val);
+      }
+
+   }
+
+   /** Right value inside a constant binary expression. */
+   class ProgramValueConstantBinaryRight implements ProgramValue {
+      private final ConstantBinary binary;
+
+      ProgramValueConstantBinaryRight(ConstantBinary range) {
+         this.binary = range;
+      }
+
+      @Override
+      public Value get() {
+         return binary.getRight();
+      }
+
+      @Override
+      public void set(Value val) {
+         binary.setRight((ConstantValue) val);
+      }
+
+   }
+
+   /**
+    * Value inside a constant noop cast.
+    */
+   class ProgramValueConstantCastValue implements ProgramValue {
+      private final ConstantCastValue castValue;
+
+
+      ProgramValueConstantCastValue(ConstantCastValue castValue) {
+         this.castValue = castValue;
+      }
+
+      @Override
+      public Value get() {
+         return castValue.getValue();
+      }
+
+      @Override
+      public void set(Value val) {
+         castValue.setValue((ConstantValue) val);
+      }
+
+   }
+
+   /**
+    * Pointer inside a variable pointer.
+    */
+   class ProgramValueConstantSymbolPointerTo implements ProgramValue {
+      private final ConstantSymbolPointer varPointer;
+
+
+      ProgramValueConstantSymbolPointerTo(ConstantSymbolPointer varPointer) {
+         this.varPointer = varPointer;
+      }
+
+      @Override
+      public Value get() {
+         return varPointer.getToSymbol();
+      }
+
+      @Override
+      public void set(Value val) {
+         varPointer.setToSymbol((VariableRef) val);
+      }
+
+   }
+
+   /** Value inside a constant unary expression. */
+   class ProgramValueConstantUnaryValue implements ProgramValue {
+      private final ConstantUnary unary;
+
+      ProgramValueConstantUnaryValue(ConstantUnary unary) {
+         this.unary = unary;
+      }
+
+      @Override
+      public Value get() {
+         return unary.getOperand();
+      }
+
+      @Override
+      public void set(Value val) {
+         unary.setOperand((ConstantValue) val);
+      }
+
+   }
+
+   class ProgramValueConstantVar implements ProgramValue {
+      private final ConstantVar constantVar;
+
+      ProgramValueConstantVar(ConstantVar constantVar) {
+         this.constantVar = constantVar;
+      }
+
+      @Override
+      public Value get() {
+         return constantVar.getValue();
+      }
+
+      @Override
+      public void set(Value val) {
+         constantVar.setValue((ConstantValue) val);
+      }
+
+   }
+
+   /** Bytes inside inline kickasm code. */
+   class ProgramValueKickAsmBytes implements ProgramValue {
+
+      private StatementKickAsm statementKickAsm;
+
+      ProgramValueKickAsmBytes(StatementKickAsm statementKickAsm) {
+         this.statementKickAsm = statementKickAsm;
+      }
+
+      @Override
+      public Value get() {
+         return statementKickAsm.getBytes();
+      }
+
+      @Override
+      public void set(Value value) {
+         statementKickAsm.setBytes((RValue) value);
+      }
+
+   }
+
+   /** Cycles inside inline kickasm code. */
+   class ProgramValueKickAsmCycles implements ProgramValue {
+
+      private StatementKickAsm statementKickAsm;
+
+      ProgramValueKickAsmCycles(StatementKickAsm statementKickAsm) {
+         this.statementKickAsm = statementKickAsm;
+      }
+
+      @Override
+      public Value get() {
+         return statementKickAsm.getCycles();
+      }
+
+      @Override
+      public void set(Value value) {
+         statementKickAsm.setCycles((RValue) value);
+      }
+
+   }
+
+   /** Location inside inline kickasm code. */
+   class ProgramValueKickAsmLocation implements ProgramValue {
+
+      private StatementKickAsm statementKickAsm;
+
+      ProgramValueKickAsmLocation(StatementKickAsm statementKickAsm) {
+         super();
+         this.statementKickAsm = statementKickAsm;
+      }
+
+      @Override
+      public Value get() {
+         return statementKickAsm.getLocation();
+      }
+
+      @Override
+      public void set(Value value) {
+         statementKickAsm.setLocation((RValue) value);
+      }
+
+   }
+
+   class ProgramValueListElement implements ProgramValue {
+      private ValueList list;
+      private int idx;
+
+      ProgramValueListElement(ValueList list, int idx) {
+         this.list = list;
+         this.idx = idx;
+      }
+
+      @Override
+      public Value get() {
+         return list.getList().get(idx);
+      }
+
+      @Override
+      public void set(Value value) {
+         list.getList().set(idx, (RValue) value);
+      }
+
+   }
+
+   /**
+    * LValue as part of an assignment statement (or a call).
+    */
+   class ProgramValueLValue implements ProgramValue {
+      private final StatementLValue statement;
+
+      public ProgramValueLValue(StatementLValue statement) {
+         this.statement = statement;
+      }
+
+      @Override
+      public Value get() {
+         return statement.getlValue();
+      }
+
+      @Override
+      public void set(Value value) {
+         statement.setlValue((LValue) value);
+      }
+
+   }
+
+   /** Value inside an intermediate LValue. */
+   class ProgramValueLValueIntermediateVariable implements ProgramValue {
+      private final LvalueIntermediate intermediate;
+
+      ProgramValueLValueIntermediateVariable(LvalueIntermediate intermediate) {
+         this.intermediate = intermediate;
+      }
+
+      @Override
+      public Value get() {
+         return intermediate.getVariable();
+      }
+
+      @Override
+      public void set(Value val) {
+         intermediate.setVariable((VariableRef) val);
+      }
+
+   }
+
+   /**
+    * Pointer inside a pointer dererence value.
+    */
+   class ProgramValuePointer implements ProgramValue {
+      private final PointerDereference pointer;
+
+      ProgramValuePointer(PointerDereference pointer) {
+         this.pointer = pointer;
+      }
+
+      @Override
+      public Value get() {
+         return pointer.getPointer();
+      }
+
+      @Override
+      public void set(Value val) {
+         pointer.setPointer((RValue) val);
+      }
+
+   }
+
+   /**
+    * Struct expression inside a struct member reference.
+    */
+   class ProgramValueStruct implements ProgramValue {
+      private final StructMemberRef structMemberRef;
+
+      public ProgramValueStruct(StructMemberRef structMemberRef) {
+         this.structMemberRef = structMemberRef;
+      }
+
+      @Override
+      public Value get() {
+         return structMemberRef.getStruct();
+      }
+
+      @Override
+      public void set(Value val) {
+         structMemberRef.setStruct((RValue) val);
+      }
+
+   }
+
+   /**
+    * Pointer index inside a indexed pointer dererence value.
+    */
+   class ProgramValuePointerIndex implements ProgramValue {
+      private final PointerDereferenceIndexed pointer;
+
+      ProgramValuePointerIndex(PointerDereferenceIndexed pointer) {
+         this.pointer = pointer;
+      }
+
+      @Override
+      public Value get() {
+         return pointer.getIndex();
+      }
+
+      @Override
+      public void set(Value val) {
+         pointer.setIndex((RValue) val);
+      }
+
+   }
+
+   /**
+    * First value inside a ranged comparison value.
+    */
+   class ProgramValueRangeFirst implements ProgramValue {
+      private final RangeValue range;
+
+      ProgramValueRangeFirst(RangeValue range) {
+         this.range = range;
+      }
+
+      @Override
+      public Value get() {
+         return range.getRangeFirst();
+      }
+
+      @Override
+      public void set(Value val) {
+         range.setRangeFirst((RValue) val);
+      }
+
+   }
+
+   /**
+    * Last value inside inside a ranged comparison value.
+    */
+   class ProgramValueRangeLast implements ProgramValue {
+      private final RangeValue range;
+
+      ProgramValueRangeLast(RangeValue range) {
+         this.range = range;
+      }
+
+      @Override
+      public Value get() {
+         return range.getRangeLast();
+      }
+
+      @Override
+      public void set(Value val) {
+         range.setRangeLast((RValue) val);
+      }
+
+   }
+
+   /** Size inside a fixed size array. */
+   class ProgramValueTypeArraySize implements ProgramValue {
+      private final SymbolTypeArray array;
+
+      ProgramValueTypeArraySize(SymbolTypeArray array) {
+         this.array = array;
+      }
+
+      @Override
+      public Value get() {
+         return array.getSize();
+      }
+
+      @Override
+      public void set(Value val) {
+         array.setSize((RValue) val);
+      }
+
+   }
 }

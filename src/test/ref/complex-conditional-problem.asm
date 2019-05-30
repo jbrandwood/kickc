@@ -10,11 +10,10 @@ main: {
     cmp #$20+1
     bcs b3
     cmp #$40
-    bcc b3
+    bcs b2
+  b3:
+    lda #0
   b2:
     sta SCREEN
     jmp b1
-  b3:
-    lda #0
-    jmp b2
 }

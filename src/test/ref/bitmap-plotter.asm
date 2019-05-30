@@ -81,7 +81,7 @@ plot: {
     rts
 }
 init_plot_tables: {
-    .label _6 = 4
+    .label _10 = 4
     .label yoffs = 2
     ldy #$80
     ldx #0
@@ -109,15 +109,14 @@ init_plot_tables: {
     tax
   b3:
     lda #7
-    sax _6
+    sax _10
     lda yoffs
-    ora _6
+    ora _10
     sta plot_ylo,x
     lda yoffs+1
     sta plot_yhi,x
-    txa
-    and #7
-    cmp #7
+    lda #7
+    cmp _10
     bne b4
     clc
     lda yoffs

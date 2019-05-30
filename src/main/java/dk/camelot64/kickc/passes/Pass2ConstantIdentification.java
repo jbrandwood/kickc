@@ -4,7 +4,9 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.operators.*;
+import dk.camelot64.kickc.model.operators.OperatorBinary;
+import dk.camelot64.kickc.model.operators.OperatorUnary;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
@@ -13,11 +15,14 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Compiler Pass propagating constants in expressions eliminating constant variables
@@ -50,7 +55,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             // If the assignment has an operator then replace it with the single constant value
             if(constVarVal.getAssignment() instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) constVarVal.getAssignment();
-               if(assignment.getOperator()!=null) {
+               if(assignment.getOperator() != null) {
                   getLog().append("Constant right-side identified " + assignment.toString(getProgram(), false));
                   assignment.setOperator(null);
                   assignment.setrValue1(null);
@@ -67,27 +72,27 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          ConstantValue constVal = constVarVal.getConstantValue();
          SymbolType valueType = SymbolTypeInference.inferType(getScope(), constVal);
          SymbolType variableType = variable.getType();
-         SymbolType constType = variableType;
 
-         if(!valueType.equals(variableType)) {
-            if(SymbolTypeInference.typeMatch(variableType, valueType)) {
-               constType = variableType;
-            } else if(SymbolTypeInference.typeMatch(valueType, variableType)) {
-               constType = valueType;
-            } else {
+         if(!SymbolType.NUMBER.equals(variableType) && SymbolType.NUMBER.equals(valueType)) {
+            // Value is number - wait til it is cast to a proper type
+            constants.remove(constRef);
+            continue;
+         }
+
+         if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType)) {
                throw new CompileError(
                      "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
                            "\n value: (" + valueType.toString() + ") " + constVal.calculateLiteral(getScope()) +
                            "\n value definition: " + constVal.toString(getProgram())
                );
-            }
          }
 
          ConstantVar constantVar = new ConstantVar(
                variable.getName(),
                constScope,
-               constType,
+               variableType,
                constVal);
+         constantVar.setInferredType(variable.isInferredType());
          constantVar.setDeclaredAlignment(variable.getDeclaredAlignment());
          constantVar.setDeclaredRegister(variable.getDeclaredRegister());
          if(variable.getComments().size() > 0) {
@@ -192,83 +197,10 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             // Volatile variables cannot be constant
             return;
          }
-         ConstantValue constant = getConstantAssignmentValue(assignment, var.getType());
-         if(constant != null) {
-            constants.put(variable, new ConstantVariableValue(variable, constant, assignment));
+         if(assignment.getrValue1()==null && assignment.getOperator()==null && assignment.getrValue2() instanceof ConstantValue) {
+            constants.put(variable, new ConstantVariableValue(variable, (ConstantValue) assignment.getrValue2(), assignment));
          }
       }
-   }
-
-   /**
-    * Examine the right side of an assignment and if it is constant then return the constant value.
-    * @param assignment The assignment to examine
-    * @param lValueType The type of the lvalue
-    * @return The constant value if the right side is constant
-    */
-   private ConstantValue getConstantAssignmentValue(StatementAssignment assignment, SymbolType lValueType) {
-      if(assignment.getrValue1() == null && getConstant(assignment.getrValue2()) != null) {
-         if(assignment.getOperator() == null) {
-            // Constant assignment
-            return getConstant(assignment.getrValue2());
-         } else {
-            // Constant unary expression
-            return createUnary(
-                  (OperatorUnary) assignment.getOperator(),
-                  getConstant(assignment.getrValue2())
-            );
-         }
-      } else if(getConstant(assignment.getrValue1()) != null && getConstant(assignment.getrValue2()) != null) {
-         // Constant binary expression
-         return createBinary(
-               getConstant(assignment.getrValue1()),
-               (OperatorBinary) assignment.getOperator(),
-               getConstant(assignment.getrValue2()),
-               getScope());
-      } else if(assignment.getrValue2() instanceof ValueList && assignment.getOperator() == null && assignment.getrValue1() == null) {
-         // A candidate for a constant list - examine to confirm
-         if(lValueType instanceof SymbolTypeArray) {
-            ValueList valueList = (ValueList) assignment.getrValue2();
-            List<RValue> values = valueList.getList();
-            boolean allConstant = true;
-            // Type of the elements of the list (deducted from the type of all elements)
-            SymbolType listType = null;
-            List<ConstantValue> elements = new ArrayList<>();
-            for(RValue elmValue : values) {
-               if(elmValue instanceof ConstantValue) {
-                  ConstantValue constantValue = (ConstantValue) elmValue;
-                  SymbolType elmType = constantValue.getType(getScope());
-                  if(listType == null) {
-                     listType = elmType;
-                  } else {
-                     if(!SymbolTypeInference.typeMatch(listType, elmType)) {
-                        SymbolType intersectType = SymbolTypeInference.intersectTypes(listType, elmType);
-                        if(intersectType == null) {
-                           // No overlap between list type and element type
-                           throw new RuntimeException("Array type " + listType + " does not match element type" + elmType + ". Array: " + valueList.toString(getProgram()));
-                        } else {
-                           listType = intersectType;
-                        }
-                     }
-                  }
-                  elements.add(constantValue);
-               } else {
-                  allConstant = false;
-                  listType = null;
-                  break;
-               }
-            }
-            if(allConstant && listType != null) {
-               // Constant list confirmed!
-               return  new ConstantArrayList(elements, listType);
-            }
-         }
-      } else if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && assignment.getrValue1() == null) {
-         // Constant address-of variable
-         if(assignment.getrValue2() instanceof SymbolRef) {
-            return new ConstantSymbolPointer((SymbolRef) assignment.getrValue2());
-         }
-      }
-      return null;
    }
 
    /**
@@ -307,18 +239,24 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    }
 
    static ConstantValue createBinary(ConstantValue c1, OperatorBinary operator, ConstantValue c2, ProgramScope programScope) {
+
+      // Special handling of string append using +
+      if(Operators.PLUS.equals(operator) && SymbolType.STRING.equals(c1.getType(programScope))) {
+         if(c1 instanceof ConstantRef) {
+            c1 = programScope.getConstant((ConstantRef) c1).getValue();
+         }
+         if(c2 instanceof ConstantRef) {
+            c2 = programScope.getConstant((ConstantRef) c2).getValue();
+         }
+         return new ConstantBinary(c1, operator, c2);
+      }
+
+      if(Operators.PLUS.equals(operator)) {
+         return new ConstantBinary(c1, operator, c2);
+      }
+
       switch(operator.getOperator()) {
          case "-":
-         case "+":
-            if(SymbolType.STRING.equals(c1.getType(programScope))) {
-               if(c1 instanceof ConstantRef) {
-                  c1 = programScope.getConstant((ConstantRef) c1).getValue();
-               }
-               if(c2 instanceof ConstantRef) {
-                  c2 = programScope.getConstant((ConstantRef) c2).getValue();
-               }
-               return new ConstantBinary(c1, operator, c2);
-            }
          case "*":
          case "/":
          case "%":

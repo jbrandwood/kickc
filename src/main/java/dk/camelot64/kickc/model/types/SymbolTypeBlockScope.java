@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model.types;
 
 /** A block scope */
-public class SymbolTypeBlockScope implements SymbolTypeSimple {
+public class SymbolTypeBlockScope implements SymbolType {
 
    public SymbolTypeBlockScope() {
 

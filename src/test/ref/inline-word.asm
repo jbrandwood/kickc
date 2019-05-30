@@ -4,6 +4,7 @@
   .label SCREEN = $400
 main: {
     .label w = 3
+    .label sc = 3
     .label h = 2
     lda #0
     sta h
@@ -17,7 +18,7 @@ main: {
     stx w
     lda #'*'
     ldy #0
-    sta (w),y
+    sta (sc),y
     inx
     cpx #8
     bne b2

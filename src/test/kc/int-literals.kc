@@ -1,0 +1,45 @@
+// Tests different integer literal types
+
+const byte RED = 2ub;
+const byte GREEN = 5ub;
+
+const byte* SCREEN = $0400uw;
+const byte* COLS = $d800uw;
+byte idx = 0ub;
+
+void main() {
+    for(byte* s=SCREEN;s<SCREEN+1000uw;s++) *s = ' ';
+    testSimpleTypes();
+}
+
+void testSimpleTypes() {
+    idx = 0ub;
+    // Simple types
+    assertType(typeid(12ub), typeid(unsigned byte));
+    assertType(typeid(12uc), typeid(unsigned byte));
+    assertType(typeid(12sb), typeid(signed byte));
+    assertType(typeid(12sc), typeid(signed byte));
+    assertType(typeid(12uw), typeid(unsigned word));
+    assertType(typeid(12ui), typeid(unsigned word));
+    assertType(typeid(12us), typeid(unsigned word));
+    assertType(typeid(12sw), typeid(signed word));
+    assertType(typeid(12si), typeid(signed word));
+    assertType(typeid(12ss), typeid(signed word));
+    assertType(typeid(12ud), typeid(unsigned dword));
+    assertType(typeid(12ul), typeid(unsigned dword));
+    assertType(typeid(12sd), typeid(signed dword));
+    assertType(typeid(12sl), typeid(signed dword));
+    assertType(typeid(12l), typeid(signed dword));
+}
+
+// Check that the two passed type IDs are equal.
+// Shows a letter symbolizing t1
+// If they are equal the letter is green - if not it is red.
+void assertType(byte t1, byte t2) {
+    if(t1==t2) {
+        COLS[idx] = GREEN;
+    } else {
+        COLS[idx] = RED;
+    }
+    SCREEN[idx++] = t1;
+}

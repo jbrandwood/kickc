@@ -12,7 +12,6 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableIntermediate;
-import dk.camelot64.kickc.model.types.SymbolTypeInference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +79,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
       VariableIntermediate tmpVar = currentScope.addVariableIntermediate();
       VariableRef tmpVarRef = tmpVar.getRef();
       statementLValue.setlValue(tmpVarRef);
-      SymbolTypeInference.inferLValue(getProgram(), statementLValue, false);
+      PassNTypeInference.updateInferedTypeLValue(getProgram(), statementLValue);
       // Insert an extra "set low" assignment statement
       Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, statementLValue.getSource(), new ArrayList<>());
       statementsIt.add(setLoHiAssignment);

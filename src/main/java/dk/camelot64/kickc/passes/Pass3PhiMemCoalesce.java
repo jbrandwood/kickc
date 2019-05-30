@@ -1,10 +1,14 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
+import dk.camelot64.kickc.model.LiveRangeEquivalenceClass;
+import dk.camelot64.kickc.model.LiveRangeEquivalenceClassSet;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,9 +53,12 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
     */
    public static class EquivalenceClassPhiInitializer extends ControlFlowGraphBaseVisitor<Void> {
 
+      private Program program;
+
       private LiveRangeEquivalenceClassSet phiEquivalenceClasses;
 
       public EquivalenceClassPhiInitializer(Program program) {
+         this.program = program;
          this.phiEquivalenceClasses = new LiveRangeEquivalenceClassSet(program);
       }
 
@@ -65,7 +72,13 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
                   VariableRef phiRVar = (VariableRef) phiRValue.getrValue();
                   LiveRangeEquivalenceClass rValEquivalenceClass = phiEquivalenceClasses.getOrCreateEquivalenceClass(phiRVar);
                   if(!rValEquivalenceClass.equals(equivalenceClass)) {
-                     phiEquivalenceClasses.consolidate(equivalenceClass, rValEquivalenceClass);
+                     SymbolType varType = program.getScope().getVariable(variable).getType();
+                     SymbolType rVarType = program.getScope().getVariable(phiRVar).getType();
+                     if(varType.getSizeBytes()==rVarType.getSizeBytes()) {
+                        phiEquivalenceClasses.consolidate(equivalenceClass, rValEquivalenceClass);
+                     } else {
+                        program.getLog().append("Not consolidating phi with different size "+variable.toString()+" "+phiRVar.toString());
+                     }
                   }
                }
             }

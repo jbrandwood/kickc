@@ -93,6 +93,13 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
             return true;
          }
       }
+      if(pointerDereferenceIndexed.getIndex() instanceof ConstantInteger ) {
+         if(((ConstantInteger)pointerDereferenceIndexed.getIndex()).getValue()==0L) {
+            value.set(new PointerDereferenceSimple(pointerDereferenceIndexed.getPointer()));
+            getLog().append("Simplified zero-index dereference" + value.get().toString());
+            return true;
+         }
+      }
       return false;
    }
 

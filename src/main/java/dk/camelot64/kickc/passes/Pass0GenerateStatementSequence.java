@@ -431,6 +431,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    private List<Directive> declVarDirectives = null;
    /** Holds the declared comments when descending into a Variable Declaration. */
    private List<Comment> declVarComments = null;
+   /** State specifying that we are currently populating struct members. */
+   private boolean declVarStructMember = false;
 
    /**
     * Visit the type/directive part of a declaration. Setup the local decl-variables
@@ -495,13 +497,21 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          // Add comments to constant
          lValue.setComments(ensureUnusedComments(comments));
       }
+      if(type instanceof SymbolTypeStruct) {
+         lValue.setDeclaredVolatile(true);
+      }
       KickCParser.ExprContext initializer = ctx.expr();
+      if(declVarStructMember) {
+         if(initializer != null) {
+            throw new CompileError("Initializers not supported inside structs " + type.getTypeName(), new StatementSource(ctx));
+         }
+      } else {
       if(initializer != null) {
          addInitialAssignment(initializer, lValue, comments);
       } else {
-         if(type instanceof SymbolTypeInteger) {
+         if(type instanceof SymbolTypeIntegerFixed) {
             // Add an zero value initializer
-            ConstantInteger zero = new ConstantInteger(0L);
+            ConstantInteger zero = new ConstantInteger(0L, type);
             Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
             sequence.addStatement(stmt);
          } else if(type instanceof SymbolTypeArray) {
@@ -519,9 +529,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             ConstantValue zero = new ConstantPointer(0L, typePointer.getElementType());
             Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
             sequence.addStatement(stmt);
+         } else if(type instanceof SymbolTypeStruct) {
+            // Add an zero-struct initializer
+            SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
+            Statement stmt = new StatementAssignment(lValue.getRef(), new StructZero(typeStruct), new StatementSource(ctx), ensureUnusedComments(comments));
+            sequence.addStatement(stmt);
          } else {
             throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), new StatementSource(ctx));
          }
+      }
 
       }
       return null;
@@ -907,6 +923,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Assign loop variable with first value
       RValue rangeLastValue = (RValue) visit(rangeLastCtx);
       RValue rangeFirstValue = (RValue) visit(rangeFirstCtx);
+      if(varType!=null) {
+         if(rangeFirstValue instanceof ConstantInteger) ((ConstantInteger) rangeFirstValue).setType(SymbolType.NUMBER);
+         if(rangeLastValue instanceof ConstantInteger) ((ConstantInteger) rangeLastValue).setType(SymbolType.NUMBER);
+      }
       Statement stmtInit = new StatementAssignment(lValue.getRef(), rangeFirstValue, new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(stmtInit);
       // Add label
@@ -1115,6 +1135,35 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return SymbolType.get(ctx.getText());
    }
 
+
+
+
+   @Override
+   public Object visitStructDef(KickCParser.StructDefContext ctx) {
+      String structDefName;
+      if(ctx.NAME()!=null) {
+         structDefName = ctx.NAME().getText();
+      } else {
+         structDefName = getCurrentScope().allocateIntermediateVariableName();
+      }
+      StructDefinition structDefinition = getCurrentScope().addStructDefinition(structDefName);
+      scopeStack.push(structDefinition);
+      declVarStructMember = true;
+      for(KickCParser.StructMembersContext memberCtx : ctx.structMembers()) {
+         visit(memberCtx);
+      }
+      declVarStructMember = false;
+      scopeStack.pop();
+      return structDefinition.getType();
+   }
+
+   @Override
+   public Object visitStructRef(KickCParser.StructRefContext ctx) {
+      String structDefName = ctx.NAME().getText();
+      StructDefinition structDefinition = getCurrentScope().getStructDefinition(structDefName);
+      return structDefinition.getType();
+   }
+
    @Override
    public SymbolType visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx) {
       String signedness = ctx.getChild(0).getText();
@@ -1211,6 +1260,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitExprDot(KickCParser.ExprDotContext ctx) {
+      RValue structExpr = (RValue) visit(ctx.expr());
+      String name = ctx.NAME().getText();
+      return new StructMemberRef(structExpr, name);
+   }
+
+   @Override
    public RValue visitExprCast(KickCParser.ExprCastContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
       SymbolType castType = (SymbolType) this.visit(ctx.typeDecl());
@@ -1298,22 +1354,23 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public RValue visitExprNumber(KickCParser.ExprNumberContext ctx) {
-      Number number = NumberParser.parseLiteral(ctx.getText());
-      if(number instanceof Long) {
-         return new ConstantInteger((Long) number);
-      } else {
-         return new ConstantDouble((Double) number);
-      }
+      return NumberParser.parseIntegerLiteral(ctx.getText());
    }
 
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
-      String text = ctx.getText();
-      String stringValue;
-      if(text.endsWith("z")) {
-         stringValue = text.substring(1, text.length() - 2);
-      }  else {
-         stringValue = text.substring(1, text.length() - 1)+"@";
+      String stringValue ="";
+      String subText = "";
+      for(TerminalNode stringNode : ctx.STRING()) {
+         subText = stringNode.getText();
+         if(subText.endsWith("z")) {
+            stringValue += subText.substring(1, subText.length() - 2);
+         }  else {
+            stringValue += subText.substring(1, subText.length() - 1);
+         }
+      }
+      if(!subText.endsWith("z")) {
+         stringValue += "@";
       }
       return new ConstantString(stringValue);
    }
@@ -1353,11 +1410,16 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue child = (RValue) this.visit(ctx.expr());
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operators.getUnary(op);
-      VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
-      VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
-      sequence.addStatement(stmt);
-      return tmpVarRef;
+      // Special handling of negative literal number
+      if(child instanceof ConstantInteger && operator.equals(Operators.NEG)) {
+         return new ConstantInteger(-((ConstantInteger) child).getInteger(), ((ConstantInteger) child).getType());
+      }  else {
+         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         VariableRef tmpVarRef = tmpVar.getRef();
+         Statement stmt = new StatementAssignment(tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
+         sequence.addStatement(stmt);
+         return tmpVarRef;
+      }
    }
 
    @Override

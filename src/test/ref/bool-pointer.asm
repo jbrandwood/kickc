@@ -14,6 +14,6 @@ main: {
     rts
   b1:
     lda #1
-    sta $400+2+1
+    sta $400+3
     rts
 }

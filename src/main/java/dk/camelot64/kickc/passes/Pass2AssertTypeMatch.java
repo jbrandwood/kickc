@@ -1,12 +1,16 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.values.AssignmentRValue;
+import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 
 /**
@@ -30,7 +34,7 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
                if(conditionalJump.getOperator()==null) {
                   RValue rValue = conditionalJump.getrValue2();
                   SymbolType rValueType = SymbolTypeInference.inferType(getScope(), rValue);
-                  if(!SymbolTypeInference.typeMatch(SymbolType.BOOLEAN, rValueType)) {
+                  if(!SymbolType.BOOLEAN.equals(rValueType)) {
                      getLog().append("ERROR! Type mismatch non-boolean condition from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
                      throw new CompileError("ERROR! Type mismatch non-boolean condition from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false), statement.getSource());
                   }
@@ -47,13 +51,8 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
    private void checkAssignment(StatementAssignment statement) {
       LValue lValue = statement.getlValue();
       SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
-      SymbolType rValueType = SymbolTypeInference.inferTypeRValue(getScope(), statement);
-      if(SymbolTypeInference.typeMatch(lValueType, rValueType)) {
-         return;
-      }
-      if(SymbolTypeInference.typeMatch(rValueType, lValueType)) {
-         return;
-      }
+      SymbolType rValueType = SymbolTypeInference.inferType(getScope(), new AssignmentRValue(statement));
+      if(SymbolTypeConversion.assignmentTypeMatch(lValueType, rValueType)) return;
       // Types do not match
       getLog().append("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
       throw new CompileError("ERROR! Type mismatch (" + lValueType.getTypeName() + ") cannot be assigned from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false), statement.getSource());

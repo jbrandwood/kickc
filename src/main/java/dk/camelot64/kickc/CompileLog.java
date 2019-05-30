@@ -192,7 +192,7 @@ public class CompileLog {
       return verboseSSAOptimize;
    }
 
-   public CompileLog setVerboseSSAOptimize() {
+   public CompileLog verboseSSAOptimize() {
       setVerboseSSAOptimize(true);
       return this;
    }

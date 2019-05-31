@@ -40,8 +40,8 @@ Resolving typeid() (byte~) testBinaryOperator::$97 ← typeid  (signed dword~) t
 Resolving typeid() (byte~) testBinaryOperator::$100 ← typeid  (signed dword~) testBinaryOperator::$99
 Resolving typeid() (byte~) testBinaryOperator::$103 ← typeid  (dword~) testBinaryOperator::$102
 Resolving typeid() (byte~) testBinaryOperator::$106 ← typeid  (signed dword~) testBinaryOperator::$105
-Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (word) $400
-Adding pointer type conversion cast (byte*) COLS in (byte*) COLS ← (word) $d800
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
+Adding pointer type conversion cast (byte*) COLS in (byte*) COLS ← (number) $d800
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -51,8 +51,8 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) RED#0 ← (byte) 2
   (byte) GREEN#0 ← (byte) 5
-  (byte*) SCREEN#0 ← ((byte*)) (word) $400
-  (byte*) COLS#0 ← ((byte*)) (word) $d800
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) COLS#0 ← ((byte*)) (number) $d800
   (byte) idx#0 ← (byte) 0
   to:@4
 main: scope:[main]  from @4
@@ -64,7 +64,7 @@ main::@1: scope:[main]  from main main::@1
   (byte*) main::s#2 ← phi( main/(byte*) main::s#0 main::@1/(byte*) main::s#1 )
   *((byte*) main::s#2) ← (byte) ' '
   (byte*) main::s#1 ← ++ (byte*) main::s#2
-  (byte*~) main::$2 ← (byte*) SCREEN#0 + (word) $3e8
+  (byte*~) main::$2 ← (byte*) SCREEN#0 + (number) $3e8
   (bool~) main::$3 ← (byte*) main::s#1 < (byte*~) main::$2
   if((bool~) main::$3) goto main::@1
   to:main::@2
@@ -87,7 +87,7 @@ main::@return: scope:[main]  from main::@4
   return 
   to:@return
 testUnaryOperator: scope:[testUnaryOperator]  from main::@2
-  (byte) idx#4 ← (byte) 0
+  (byte) idx#4 ← (number) 0
   (byte~) testUnaryOperator::$0 ← (const byte) TYPEID_BYTE
   (byte) assertType::t1#0 ← (byte~) testUnaryOperator::$0
   (byte) assertType::t2#0 ← (const byte) TYPEID_BYTE
@@ -143,7 +143,7 @@ testUnaryOperator::@return: scope:[testUnaryOperator]  from testUnaryOperator::@
   return 
   to:@return
 testBinaryOperator: scope:[testBinaryOperator]  from main::@3
-  (byte) idx#12 ← (byte) $28
+  (byte) idx#12 ← (number) $28
   (byte~) testBinaryOperator::$1 ← (const byte) TYPEID_BYTE
   (byte) assertType::t1#6 ← (byte~) testBinaryOperator::$1
   (byte) assertType::t2#6 ← (const byte) TYPEID_BYTE
@@ -814,9 +814,25 @@ SYMBOL TABLE SSA
 (label) testUnaryOperator::@6
 (label) testUnaryOperator::@return
 
-Inlining cast (byte*) SCREEN#0 ← (byte*)(word) $400
-Inlining cast (byte*) COLS#0 ← (byte*)(word) $d800
+Adding number conversion cast (unumber) $3e8 in (byte*~) main::$2 ← (byte*) SCREEN#0 + (number) $3e8
+Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
+Adding number conversion cast (unumber) $28 in (byte) idx#12 ← (number) $28
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) COLS#0 ← (byte*)(number) $d800
+Inlining cast (byte) idx#4 ← (unumber)(number) 0
+Inlining cast (byte) idx#12 ← (unumber)(number) $28
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 55296
+Simplifying constant integer cast $3e8
+Simplifying constant integer cast 0
+Simplifying constant integer cast $28
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) idx#110 = (byte) idx#113 
 Alias (byte) idx#1 = (byte) idx#58 
 Alias (byte) idx#2 = (byte) idx#59 (byte) idx#60 (byte) idx#3 
@@ -966,13 +982,10 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$3 [12] if((byte*) main::s#1<(byte*~) main::$2) goto main::@1
 Simple Condition (bool~) assertType::$0 [290] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [2] (byte*) SCREEN#0 ← (byte*)(word) $400
-Constant right-side identified [3] (byte*) COLS#0 ← (byte*)(word) $d800
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) RED#0 = 2
 Constant (const byte) GREEN#0 = 5
-Constant (const byte*) SCREEN#0 = (byte*)$400
-Constant (const byte*) COLS#0 = (byte*)$d800
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Constant (const byte*) COLS#0 = (byte*) 55296
 Constant (const byte) idx#0 = 0
 Constant (const byte) idx#4 = 0
 Constant (const byte) assertType::t1#0 = TYPEID_BYTE
@@ -3497,13 +3510,13 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) COLS
-(const byte*) COLS#0 COLS = (byte*)(word) $d800
+(const byte*) COLS#0 COLS = (byte*) 55296
 (byte) GREEN
 (const byte) GREEN#0 GREEN = (byte) 5
 (byte) RED
 (const byte) RED#0 RED = (byte) 2
 (byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*)(word) $400
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
 (const byte) TYPEID_BYTE TYPEID_BYTE = (number) 1
 (const byte) TYPEID_DWORD TYPEID_DWORD = (number) 5
 (const byte) TYPEID_SIGNED_BYTE TYPEID_SIGNED_BYTE = (number) 2

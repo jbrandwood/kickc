@@ -110,6 +110,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       }
       // Generate ASM
       try {
+         new Pass4PhiTransitions(program).generate();
          new Pass4CodeGeneration(program, false).generate();
       } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
          unknownFragments.add(e.getFragmentSignature());

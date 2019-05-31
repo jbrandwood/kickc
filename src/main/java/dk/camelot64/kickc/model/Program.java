@@ -4,12 +4,14 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /** A KickC Intermediate Compiler Language (ICL) Program */
 public class Program {
@@ -67,9 +69,10 @@ public class Program {
    private Collection<VariableRef> earlyIdentifiedConstants;
    /** Reserved ZP addresses that the compiler cannot use. */
    private List<Number> reservedZps;
-
    /** Absolute start address of the code. Null to start ad 0x080d. */
    private Number programPc;
+   /** Cached phi transisitons into each block. */
+   Map<LabelRef, PhiTransitions> phiTransitions;
 
    public Program() {
       this.scope = new ProgramScope();
@@ -78,6 +81,14 @@ public class Program {
       this.imported = new ArrayList<>();
       this.asmResourceFiles = new ArrayList<>();
       this.reservedZps = new ArrayList<>();
+   }
+
+   public Map<LabelRef, PhiTransitions> getPhiTransitions() {
+      return phiTransitions;
+   }
+
+   public void setPhiTransitions(Map<LabelRef, PhiTransitions> phiTransitions) {
+      this.phiTransitions = phiTransitions;
    }
 
    public List<Comment> getFileComments() {

@@ -27,7 +27,24 @@ public class Pass4CodeGeneration {
     * Used to ensure that duplicate transitions are only code generated once.
     * Maps to-blocks to the transition information for the block
     */
-   private Map<ControlFlowBlock, PhiTransitions> blockTransitions = new LinkedHashMap<>();
+   private Map<PhiTransitions.PhiTransition, Boolean> transitionsGenerated = new LinkedHashMap<>();
+
+   /**
+    * Determines if a phi-transition has already been code-generated
+    * @param transition The transition to examine
+    * @return true if it has already been generated
+    */
+   private boolean transitionIsGenerated(PhiTransitions.PhiTransition transition) {
+      return Boolean.TRUE.equals(transitionsGenerated.get(transition));
+   }
+
+   /**
+    * Mark a Phi transition as generated
+    * @param transition The transition
+    */
+   private void transitionSetGenerated(PhiTransitions.PhiTransition transition) {
+      transitionsGenerated.put(transition, Boolean.TRUE);
+   }
 
    public Pass4CodeGeneration(Program program, boolean verboseAliveInfo) {
       this.program = program;
@@ -109,7 +126,7 @@ public class Pass4CodeGeneration {
          if(defaultSuccessor != null) {
             if(defaultSuccessor.hasPhiBlock()) {
                PhiTransitions.PhiTransition transition = getTransitions(defaultSuccessor).getTransition(block);
-               if(!transition.isGenerated()) {
+               if(!transitionIsGenerated(transition)) {
                   genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getScope());
                   String label = defaultSuccessor.getLabel().getLocalName().replace('@', 'b').replace(':', '_');
                   asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
@@ -562,7 +579,7 @@ public class Pass4CodeGeneration {
                ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
                if(callSuccessor != null && callSuccessor.hasPhiBlock()) {
                   PhiTransitions.PhiTransition transition = getTransitions(callSuccessor).getTransition(block);
-                  if(transition.isGenerated()) {
+                  if(transitionIsGenerated(transition)) {
                      throw new RuntimeException("Error! JSR transition already generated. Must modify PhiTransitions code to ensure this does not happen.");
                   }
                   genBlockPhiTransition(asm, block, callSuccessor, block.getScope());
@@ -780,7 +797,7 @@ public class Pass4CodeGeneration {
       PhiTransitions transitions = getTransitions(toBlock);
       for(ControlFlowBlock fromBlock : transitions.getFromBlocks()) {
          PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
-         if(!transition.isGenerated() && toBlock.getLabel().equals(fromBlock.getConditionalSuccessor())) {
+         if(!transitionIsGenerated(transition) && toBlock.getLabel().equals(fromBlock.getConditionalSuccessor())) {
             genBlockPhiTransition(asm, fromBlock, toBlock, toBlock.getScope());
             asm.addInstruction("JMP", AsmAddressingMode.ABS, toBlock.getLabel().getLocalName().replace('@', 'b').replace(':', '_'), false);
          }
@@ -802,7 +819,7 @@ public class Pass4CodeGeneration {
    private void genBlockPhiTransition(AsmProgram asm, ControlFlowBlock fromBlock, ControlFlowBlock toBlock, ScopeRef scope) {
       PhiTransitions transitions = getTransitions(toBlock);
       PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
-      if(!transition.isGenerated()) {
+      if(!transitionIsGenerated(transition)) {
          Statement toFirstStatement = toBlock.getStatements().get(0);
          String segmentSrc = "[" + toFirstStatement.getIndex() + "] phi from ";
          for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
@@ -830,7 +847,7 @@ public class Pass4CodeGeneration {
                generateAsm(asm, asmFragmentInstanceSpecFactory);
             }
          }
-         transition.setGenerated(true);
+         transitionSetGenerated(transition);
       } else {
          program.getLog().append("Already generated transition from " + fromBlock.getLabel() + " to " + toBlock.getLabel() + " - not generating it again!");
       }
@@ -843,12 +860,7 @@ public class Pass4CodeGeneration {
     * @return The transitions into the block
     */
    private PhiTransitions getTransitions(ControlFlowBlock toBlock) {
-      PhiTransitions transitions = this.blockTransitions.get(toBlock);
-      if(transitions == null) {
-         transitions = new PhiTransitions(program, toBlock);
-         this.blockTransitions.put(toBlock, transitions);
-      }
-      return transitions;
+      return program.getPhiTransitions().get(toBlock.getLabel());
    }
 
    private Registers.Register getRegister(RValue rValue) {

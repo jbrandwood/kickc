@@ -5,6 +5,7 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmSegment;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementSource;
+import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -13,6 +14,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /*** Ensures that no statement clobbers a CPU register used by an alive variable - and that assigning statements clobber the CPU registers they assign to */
 public class Pass4AssertNoCpuClobber extends Pass2Base {
@@ -56,6 +58,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
     * @return true if there is a clobber problem in the program
     */
    public boolean hasClobberProblem(boolean verbose) {
+
       AsmProgram asm = getProgram().getAsm();
       boolean clobberProblem = false;
       for(AsmSegment asmSegment : asm.getSegments()) {
@@ -71,13 +74,13 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
 
             // Find alive variables
             List<VariableRef> aliveVars = new ArrayList<>(getProgram().getLiveRangeVariablesEffective().getAliveEffective(statement));
-
             // If the segment is an assignment in a phi transition, examine the later phi transition assignments and update alive variables alive and variables assigned
             if(asmSegment.getPhiTransitionId() != null && asmSegment.getPhiTransitionAssignmentIdx() != null) {
                String phiTransitionId = asmSegment.getPhiTransitionId();
                int transitionAssignmentIdx = asmSegment.getPhiTransitionAssignmentIdx();
                ControlFlowBlock statementBlock = getProgram().getStatementInfos().getBlock(statementIdx);
-               PhiTransitions phiTransitions = new PhiTransitions(getProgram(), statementBlock);
+               Map<LabelRef, PhiTransitions> programPhiTransitions = getProgram().getPhiTransitions();
+               PhiTransitions phiTransitions = programPhiTransitions.get(statementBlock.getLabel());
                PhiTransitions.PhiTransition phiTransition = phiTransitions.getTransition(phiTransitionId);
                for(PhiTransitions.PhiTransition.PhiAssignment phiAssignment : phiTransition.getAssignments()) {
                   if(phiAssignment.getAssignmentIdx() > transitionAssignmentIdx) {

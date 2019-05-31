@@ -1,10 +1,10 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.*;
 
@@ -34,12 +34,7 @@ public class PhiTransitions {
       if(toBlock.hasPhiBlock()) {
          this.phiBlock = toBlock.getPhiBlock();
          List<ControlFlowBlock> predecessors = new ArrayList<>(program.getGraph().getPredecessors(toBlock));
-         Collections.sort(predecessors, new Comparator<ControlFlowBlock>() {
-            @Override
-            public int compare(ControlFlowBlock o1, ControlFlowBlock o2) {
-               return o1.getLabel().getFullName().compareTo(o2.getLabel().getFullName());
-            }
-         });
+         predecessors.sort(Comparator.comparing(o -> o.getLabel().getFullName()));
          for(ControlFlowBlock predecessor : predecessors) {
             PhiTransition transition = findTransition(predecessor);
             transitions.put(predecessor, transition);
@@ -55,7 +50,7 @@ public class PhiTransitions {
     * @return The transition into the passed block
     */
    private PhiTransition findTransition(ControlFlowBlock fromBlock) {
-      PhiTransition transition = new PhiTransition(fromBlock);
+      PhiTransition transition = new PhiTransition(fromBlock, toBlock, phiBlock, program);
       boolean isCallTransition = toBlock.getLabel().equals(fromBlock.getCallSuccessor());
       if(!isCallTransition) {
          // If the transition is not a call - then attempt to join with other equal transition(s)
@@ -80,8 +75,7 @@ public class PhiTransitions {
     * @return The transition from the from-block into the to-block
     */
    public PhiTransition getTransition(ControlFlowBlock fromBlock) {
-      PhiTransition transition = transitions.get(fromBlock);
-      return transition;
+      return transitions.get(fromBlock);
    }
 
    /**
@@ -104,20 +98,31 @@ public class PhiTransitions {
     * The transition contains the assignments necessary to enter the to-block from specific from-block(s).
     * The transition may be shared between multiple from-blocks, if the assignments are identical.
     */
-   public class PhiTransition {
+   public static class PhiTransition {
 
+      /** The program used for accessing information. */
+      private Program program;
+
+      /** The block we are entering into. */
+      private ControlFlowBlock toBlock;
+
+      /** The phi statement of the to-block. */
+      private StatementPhiBlock phiBlock;
+
+      /** The block we are entering from. */
       private List<ControlFlowBlock> fromBlocks;
 
+      /** The assignments when transitioning between the two blocks. */
       private List<PhiTransition.PhiAssignment> assignments;
-
-      private boolean generated;
 
       private int nextIdx;
 
-      public PhiTransition(ControlFlowBlock fromBlock) {
+      PhiTransition(ControlFlowBlock fromBlock, ControlFlowBlock toBlock, StatementPhiBlock phiBlock, Program program) {
+         this.program = program;
+         this.toBlock = toBlock;
+         this.phiBlock = phiBlock;
          this.fromBlocks = new ArrayList<>();
          this.fromBlocks.add(fromBlock);
-         this.generated = false;
          this.nextIdx = 0;
          initAssignments(fromBlock);
       }
@@ -129,7 +134,7 @@ public class PhiTransitions {
             Collections.reverse(phiVariables);
             for(StatementPhiBlock.PhiVariable phiVariable : phiVariables) {
                List<StatementPhiBlock.PhiRValue> phiRValues = new ArrayList<>(phiVariable.getValues());
-               Collections.sort(phiRValues, Comparator.comparing(o -> o.getPredecessor().getFullName()));
+               phiRValues.sort(Comparator.comparing(o -> o.getPredecessor().getFullName()));
                for(StatementPhiBlock.PhiRValue phiRValue : phiRValues) {
                   if(phiRValue.getPredecessor().equals(fromBlock.getLabel())) {
                      this.assignments.add(new PhiTransition.PhiAssignment(phiVariable, phiRValue, nextIdx++));
@@ -163,15 +168,7 @@ public class PhiTransitions {
          return assignments;
       }
 
-      public boolean isGenerated() {
-         return generated;
-      }
-
-      public void setGenerated(boolean generated) {
-         this.generated = generated;
-      }
-
-      public void addFromBlock(ControlFlowBlock fromBlock) {
+      void addFromBlock(ControlFlowBlock fromBlock) {
          fromBlocks.add(fromBlock);
       }
 
@@ -181,7 +178,7 @@ public class PhiTransitions {
        * @param other The other transition to examine
        * @return true if the assignments are identical
        */
-      public boolean equalAssignments(PhiTransition other) {
+      boolean equalAssignments(PhiTransition other) {
          List<PhiTransition.PhiAssignment> otherAssignments = other.getAssignments();
          if(assignments.size() != otherAssignments.size()) {
             return false;
@@ -227,7 +224,7 @@ public class PhiTransitions {
          /** The index of the assignment within the transition. */
          private int idx;
 
-         public PhiAssignment(StatementPhiBlock.PhiVariable phiVariable, StatementPhiBlock.PhiRValue phiRValue, int idx) {
+         PhiAssignment(StatementPhiBlock.PhiVariable phiVariable, StatementPhiBlock.PhiRValue phiRValue, int idx) {
             this.phiVariable = phiVariable;
             this.phiRValue = phiRValue;
             this.idx = idx;
@@ -248,8 +245,22 @@ public class PhiTransitions {
          public int getAssignmentIdx() {
             return idx;
          }
+
       }
 
+      @Override
+      public boolean equals(Object o) {
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
+         PhiTransition that = (PhiTransition) o;
+         return Objects.equals(toBlock, that.toBlock) &&
+               Objects.equals(fromBlocks, that.fromBlocks);
+      }
+
+      @Override
+      public int hashCode() {
+         return Objects.hash(toBlock, fromBlocks);
+      }
    }
 
 }

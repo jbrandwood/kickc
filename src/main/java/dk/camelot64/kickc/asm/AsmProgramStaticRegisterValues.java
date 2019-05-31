@@ -141,6 +141,8 @@ public class AsmProgramStaticRegisterValues {
          }
          if(mnemnonic.equals("sta") && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             current.setaMem(instruction.getParameter());
+            if(instruction.getParameter().equals(current.getyMem())) current.setyMem(null);
+            if(instruction.getParameter().equals(current.getxMem())) current.setxMem(null);
          }
          if(mnemnonic.equals("ldx") && addressingMode.equals(AsmAddressingMode.IMM)) {
             current.setX(instruction.getParameter());
@@ -157,6 +159,8 @@ public class AsmProgramStaticRegisterValues {
          }
          if(mnemnonic.equals("stx") && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             current.setxMem(instruction.getParameter());
+            if(instruction.getParameter().equals(current.getyMem())) current.setyMem(null);
+            if(instruction.getParameter().equals(current.getaMem())) current.setaMem(null);
          }
          if(mnemnonic.equals("ldy") && addressingMode.equals(AsmAddressingMode.IMM)) {
             current.setY(instruction.getParameter());
@@ -172,7 +176,8 @@ public class AsmProgramStaticRegisterValues {
          }
          if(mnemnonic.equals("sty") && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             current.setyMem(instruction.getParameter());
-            current.setY(null);
+            if(instruction.getParameter().equals(current.getxMem())) current.setxMem(null);
+            if(instruction.getParameter().equals(current.getaMem())) current.setaMem(null);
          }
          if(mnemnonic.equals("txa")) {
             current.setA(current.getX());

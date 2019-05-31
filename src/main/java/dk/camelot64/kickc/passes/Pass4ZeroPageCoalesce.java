@@ -2,8 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -110,7 +110,7 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
     * @return True if the two equivalence classes can be coalesced into one without problems.
     */
    private static boolean canCoalesceThreads(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Collection<ScopeRef> threadHeads, Program program) {
-      if(threadHeads.size()<=1) {
+      if(threadHeads.size() <= 1) {
          return true;
       }
       CallGraph callGraph = program.getCallGraph();
@@ -136,11 +136,18 @@ public class Pass4ZeroPageCoalesce extends Pass2Base {
       for(VariableRef varRef : equivalenceClass.getVariables()) {
          Variable variable = program.getScope().getVariable(varRef);
          ScopeRef scopeRef = variable.getScope().getRef();
-         Collection<ScopeRef> recursiveCallers = callGraph.getRecursiveCallers(scopeRef);
-         for(ScopeRef threadHead : threadHeads) {
-            if(recursiveCallers.contains(threadHead)) {
-               if(!threads.contains(threadHead)) {
-                  threads.add(threadHead);
+         if(scopeRef.equals(ScopeRef.ROOT)) {
+            ProcedureRef mainThreadHead = program.getScope().getProcedure(SymbolRef.MAIN_PROC_NAME).getRef();
+            if(!threads.contains(mainThreadHead)) {
+               threads.add(mainThreadHead);
+            }
+         } else {
+            Collection<ScopeRef> recursiveCallers = callGraph.getRecursiveCallers(scopeRef);
+            for(ScopeRef threadHead : threadHeads) {
+               if(recursiveCallers.contains(threadHead)) {
+                  if(!threads.contains(threadHead)) {
+                     threads.add(threadHead);
+                  }
                }
             }
          }

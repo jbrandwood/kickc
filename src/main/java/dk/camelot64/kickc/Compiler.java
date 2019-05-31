@@ -29,12 +29,19 @@ public class Compiler {
    /** The number of combinations to test when uplifting variables into registers. */
    private int upliftCombinations = 100;
 
+   /** Tell the compiler to mimimize optimizations to increase performance. */
+   private boolean optimizeMinimal = false;
+
    public Compiler() {
       this.program = new Program();
    }
 
    public void setUpliftCombinations(int upliftCombinations) {
       this.upliftCombinations = upliftCombinations;
+   }
+
+   public void setOptimizeMinimal(boolean optimizeMinimal) {
+      this.optimizeMinimal = optimizeMinimal;
    }
 
    public void setLog(CompileLog compileLog) {
@@ -252,7 +259,7 @@ public class Compiler {
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
-      optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program)); 
+      optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantValues(program));
@@ -464,21 +471,23 @@ public class Compiler {
       } while(change);
       getLog().append(program.getRegisterPotentials().toString());
 
-      // Find register uplift scopes
-      getLog().append("REGISTER UPLIFT SCOPES");
-      new Pass4RegisterUpliftScopeAnalysis(program).findScopes();
-      getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
+      if(!optimizeMinimal) {
+         // Find register uplift scopes
+         getLog().append("REGISTER UPLIFT SCOPES");
+         new Pass4RegisterUpliftScopeAnalysis(program).findScopes();
+         getLog().append(program.getRegisterUpliftProgram().toString((program.getVariableRegisterWeights())));
 
-      // Attempt uplifting registers through a lot of combinations
-      //getLog().setVerboseUplift(true);
-      new Pass4RegisterUpliftCombinations(program).performUplift(upliftCombinations);
+         // Attempt uplifting registers through a lot of combinations
+         //getLog().setVerboseUplift(true);
+         new Pass4RegisterUpliftCombinations(program).performUplift(upliftCombinations);
 
-      //getLog().setVerboseUplift(true);
-      //new Pass4RegisterUpliftStatic(program).performUplift();
-      //getLog().setVerboseUplift(false);
+         //getLog().setVerboseUplift(true);
+         //new Pass4RegisterUpliftStatic(program).performUplift();
+         //getLog().setVerboseUplift(false);
 
-      // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
-      new Pass4RegisterUpliftRemains(program).performUplift(upliftCombinations);
+         // Attempt uplifting registers one at a time to catch remaining potential not realized by combination search
+         new Pass4RegisterUpliftRemains(program).performUplift(upliftCombinations);
+      }
 
       // Final register coalesce and finalization
       new Pass4ZeroPageCoalesceAssignment(program).coalesce();

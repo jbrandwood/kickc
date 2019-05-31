@@ -12,6 +12,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.*;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
 import java.net.URISyntaxException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -31,6 +34,7 @@ public class TestPrograms {
 
    public TestPrograms() {
    }
+
 
    @Test
    public void testRobozzleLabelProblem() throws IOException, URISyntaxException {
@@ -2013,6 +2017,43 @@ public class TestPrograms {
    public static void tearDown() {
       CompileLog log = log();
       AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
+
+      printGCStats();
+
+   }
+
+   public static void printGCStats() {
+      long totalGarbageCollections = 0;
+      long garbageCollectionTime = 0;
+
+      for(GarbageCollectorMXBean gc :
+            ManagementFactory.getGarbageCollectorMXBeans()) {
+
+         long count = gc.getCollectionCount();
+
+         if(count >= 0) {
+            totalGarbageCollections += count;
+         }
+
+         long time = gc.getCollectionTime();
+
+         if(time >= 0) {
+            garbageCollectionTime += time;
+         }
+      }
+
+      System.out.println("Total Garbage Collections: "
+            + totalGarbageCollections);
+      System.out.println("Total Garbage Collection Time (ms): "
+            + garbageCollectionTime);
+
+      MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+      MemoryUsage nonHeapMemoryUsage = ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage();
+      System.out.println("Heap Memory Usage: "
+            + heapMemoryUsage.toString());
+      System.out.println("Non-Heap Memory Usage: "
+            + nonHeapMemoryUsage.toString());
+
    }
 
    private static CompileLog log() {

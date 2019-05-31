@@ -5,10 +5,7 @@ import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.passes.PassNCallGraphAnalysis;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * The call graph for the entire control flow graph.
@@ -312,6 +309,19 @@ public class CallGraph {
             return out.toString();
          }
 
+         @Override
+         public boolean equals(Object o) {
+            if(this == o) return true;
+            if(o == null || getClass() != o.getClass()) return false;
+            Call call = (Call) o;
+            return Objects.equals(callStatementIdx, call.callStatementIdx) &&
+                  Objects.equals(procedure, call.procedure);
+         }
+
+         @Override
+         public int hashCode() {
+            return Objects.hash(callStatementIdx, procedure);
+         }
       }
 
    }

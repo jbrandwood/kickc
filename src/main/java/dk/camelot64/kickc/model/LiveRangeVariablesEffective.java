@@ -232,6 +232,19 @@ public class LiveRangeVariablesEffective {
       public Pass2AliasElimination.Aliases getInnerAliases() {
          return innerAliases;
       }
+
+      @Override
+      public boolean equals(Object o) {
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
+         CallPath callPath = (CallPath) o;
+         return Objects.equals(path, callPath.path);
+      }
+
+      @Override
+      public int hashCode() {
+         return Objects.hash(path);
+      }
    }
 
    /**
@@ -258,11 +271,29 @@ public class LiveRangeVariablesEffective {
        */
       private Pass2AliasElimination.Aliases callAliases;
 
+      /** Effective alive variables for each call path. */
+      private Map<CallPath, Collection<VariableRef>> effectiveAliveAtStmt;
+
+
       public AliveCombinations(CallPaths callPaths, Collection<VariableRef> referencedInProcedure, Collection<VariableRef> aliveAtStmt, Pass2AliasElimination.Aliases callAliases) {
          this.callPaths = callPaths;
          this.referencedInProcedure = referencedInProcedure;
          this.aliveAtStmt = aliveAtStmt;
          this.callAliases = callAliases;
+         // Initialize the effective alive at statment per call-path
+         this.effectiveAliveAtStmt = new LinkedHashMap<>();
+         for(CallPath callPath : callPaths.getCallPaths()) {
+            // Add alive at call
+            LinkedHashSet<VariableRef> effectiveAlive = new LinkedHashSet<>();
+            // Add alive through the call path
+            effectiveAlive.addAll(callPath.getAlive());
+            // Clear out any variables referenced in the method
+            effectiveAlive.removeAll(referencedInProcedure);
+            // Add alive at statement
+            effectiveAlive.addAll(aliveAtStmt);
+            // Store the effective alive vars
+            effectiveAliveAtStmt.put(callPath, effectiveAlive);
+         }
       }
 
       public CallPaths getCallPaths() {
@@ -276,13 +307,7 @@ public class LiveRangeVariablesEffective {
        * @return All variables effectively alive at the statement on the call-path
        */
       public Collection<VariableRef> getEffectiveAliveAtStmt(CallPath callPath) {
-         // Add alive at call
-         LinkedHashSet<VariableRef> effectiveAlive = new LinkedHashSet<>(callPath.getAlive());
-         // Clear out any variables referenced in the method
-         effectiveAlive.removeAll(referencedInProcedure);
-         // Add alive at statement
-         effectiveAlive.addAll(aliveAtStmt);
-         return effectiveAlive;
+         return effectiveAliveAtStmt.get(callPath);
       }
 
       public Pass2AliasElimination.Aliases getEffectiveAliasesAtStmt(CallPath callPath) {

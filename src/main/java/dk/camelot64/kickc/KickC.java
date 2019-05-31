@@ -54,9 +54,6 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Ouplift" }, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
    private Integer optimizeUpliftCombinations = null;
 
-   @CommandLine.Option(names = {"-O0" }, description = "Optimization Option. Perform minimal optimization to increase the speed of the compiler.")
-   private boolean optimizeMinimal = false;
-
    @CommandLine.Option(names = {"-v" }, description = "Verbose output describing the compilation process")
    private boolean verbose= false;
 
@@ -161,10 +158,6 @@ public class KickC implements Callable<Void> {
             compiler.setUpliftCombinations(optimizeUpliftCombinations);
          }
 
-         if(optimizeMinimal) {
-            compiler.setOptimizeMinimal(true);
-         }
-         
          System.out.println("Compiling " + kcFile);
          Program program = null;
          try {

@@ -78,7 +78,9 @@ fire: {
     .label screen = 2
     .label screen_2 = 6
     .label buffer = 4
+    .label buffer_3 = 8
     .label screen_4 = 6
+    .label buffer_7 = 8
     .label screen_10 = 6
     lda screen
     sta screen_10
@@ -103,9 +105,9 @@ fire: {
     adc #>$18*$28
     sta screen+1
     lda #<BUFFER+$18*$28
-    sta buffer
+    sta buffer_7
     lda #>BUFFER+$18*$28
-    sta buffer+1
+    sta buffer_7+1
   b6:
     jsr sid_rnd
     lsr
@@ -115,21 +117,21 @@ fire: {
     clc
     adc #$30
     ldy #0
-    sta (buffer),y
-    lda (buffer),y
+    sta (buffer_7),y
+    lda (buffer_7),y
     sta (screen),y
     inc screen
     bne !+
     inc screen+1
   !:
-    inc buffer
+    inc buffer_3
     bne !+
-    inc buffer+1
+    inc buffer_3+1
   !:
-    lda buffer+1
+    lda buffer_3+1
     cmp #>BUFFER+$19*$28
     bne b6
-    lda buffer
+    lda buffer_3
     cmp #<BUFFER+$19*$28
     bne b6
     rts
@@ -173,16 +175,16 @@ sid_rnd: {
 }
 // Make a fire-friendly charset in chars $00-$3f of the passed charset
 makecharset: {
-    .label _13 = $b
-    .label _17 = 2
-    .label _18 = 2
-    .label _19 = 2
-    .label font = 2
-    .label font1 = 2
-    .label ii = $a
-    .label i = 9
-    .label c = 8
-    .label _26 = 2
+    .label _13 = $15
+    .label _17 = $16
+    .label _18 = $16
+    .label _19 = $16
+    .label font = $a
+    .label font1 = $c
+    .label ii = $10
+    .label i = $f
+    .label c = $e
+    .label _26 = $16
     lda #<CHARSET
     sta font
     lda #>CHARSET
@@ -303,10 +305,10 @@ sid_rnd_init: {
     rts
 }
 // Fill a screen (1000 bytes) with a specific byte
-// fillscreen(byte* zeropage(2) screen, byte register(X) fill)
+// fillscreen(byte* zeropage($11) screen, byte register(X) fill)
 fillscreen: {
-    .label screen = 2
-    .label i = 4
+    .label screen = $11
+    .label i = $13
     lda #0
     sta i
     sta i+1

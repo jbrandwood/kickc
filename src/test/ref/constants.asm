@@ -192,10 +192,10 @@ test_bytes: {
     rts
     msg2: .text "0+2-4=254@"
 }
-// assert_byte(byte* zeropage(2) msg, byte register(X) b, byte zeropage(4) c)
+// assert_byte(byte* zeropage(2) msg, byte register(X) b, byte zeropage(9) c)
 assert_byte: {
     .label msg = 2
-    .label c = 4
+    .label c = 9
     jsr print_str
     lda #<str
     sta print_str.str
@@ -224,7 +224,7 @@ assert_byte: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $a
     lda #<$400
     sta sc
     lda #>$400

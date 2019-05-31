@@ -1959,12 +1959,12 @@ Attempting to uplift remaining variables inzp ZP_BYTE:14 [ init_points::pos#10 i
 Uplifting [init_points] best 14251 combination zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ]
 Uplifting [print_points] best 14251 combination zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] 
-Coalescing zero page register [ zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ] ] with [ zp ZP_BYTE:14 [ init_points::pos#10 init_points::pos#2 ] ]
-Coalescing zero page register [ zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] ] with [ zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 print_cls::sc#2 print_cls::sc#1 ] ] with [ zp ZP_WORD:21 [ init_points::getPoint1_return#0 ] ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 Allocated (was zp ZP_WORD:9) zp ZP_WORD:7 [ print_str::str#2 print_str::str#0 ]
-Allocated (was zp ZP_WORD:16) zp ZP_WORD:9 [ print_points::point#0 ]
+Allocated (was zp ZP_WORD:11) zp ZP_WORD:9 [ print_cls::sc#2 print_cls::sc#1 ]
+Allocated (was zp ZP_BYTE:14) zp ZP_BYTE:11 [ init_points::pos#10 init_points::pos#2 ]
+Allocated (was zp ZP_WORD:16) zp ZP_WORD:12 [ print_points::point#0 ]
+Allocated (was zp ZP_WORD:21) zp ZP_WORD:14 [ init_points::getPoint1_return#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -2027,7 +2027,7 @@ main: {
 //SEG19 print_points
 // Print points
 print_points: {
-    .label point = 9
+    .label point = $c
     .label i = 2
   //SEG20 [10] call print_cls 
   //SEG21 [52] phi from print_points to print_cls [phi:print_points->print_cls]
@@ -2289,7 +2289,7 @@ print_str: {
 //SEG109 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 3
+    .label sc = 9
   //SEG110 [53] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
   //SEG111 [53] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
@@ -2329,8 +2329,8 @@ print_cls: {
 //SEG120 init_points
 // Initialize points
 init_points: {
-    .label getPoint1_return = 3
-    .label pos = 2
+    .label getPoint1_return = $e
+    .label pos = $b
   //SEG121 [59] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
   b1_from_init_points:
   //SEG122 [59] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
@@ -2529,7 +2529,7 @@ FINAL SYMBOL TABLE
 (byte*~) init_points::getPoint1_$1
 (byte) init_points::getPoint1_idx
 (byte*) init_points::getPoint1_return
-(byte*) init_points::getPoint1_return#0 getPoint1_return zp ZP_WORD:3 4.4
+(byte*) init_points::getPoint1_return#0 getPoint1_return zp ZP_WORD:14 4.4
 (byte) init_points::i
 (byte) init_points::i#1 reg byte x 16.5
 (byte) init_points::i#10 reg byte x 3.666666666666667
@@ -2546,8 +2546,8 @@ FINAL SYMBOL TABLE
 (byte*) init_points::pointYpos1_return
 (byte) init_points::pos
 (byte) init_points::pos#1 reg byte a 11.0
-(byte) init_points::pos#10 pos zp ZP_BYTE:2 6.6000000000000005
-(byte) init_points::pos#2 pos zp ZP_BYTE:2 7.333333333333333
+(byte) init_points::pos#10 pos zp ZP_BYTE:11 6.6000000000000005
+(byte) init_points::pos#2 pos zp ZP_BYTE:11 7.333333333333333
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -2580,8 +2580,8 @@ FINAL SYMBOL TABLE
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:3 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:3 16.5
+(byte*) print_cls::sc#1 sc zp ZP_WORD:9 16.5
+(byte*) print_cls::sc#2 sc zp ZP_WORD:9 16.5
 (byte[]) print_hextab
 (const byte[]) print_hextab#0 print_hextab = (string) "0123456789abcdef"
 (byte*) print_line_cursor
@@ -2610,7 +2610,7 @@ FINAL SYMBOL TABLE
 (byte) print_points::i#1 i zp ZP_BYTE:2 11.0
 (byte) print_points::i#10 i zp ZP_BYTE:2 2.5384615384615383
 (byte*) print_points::point
-(byte*) print_points::point#0 point zp ZP_WORD:9 3.142857142857143
+(byte*) print_points::point#0 point zp ZP_WORD:12 3.142857142857143
 (label) print_points::pointXpos1
 (byte*~) print_points::pointXpos1_$0
 (byte*~) print_points::pointXpos1_$1
@@ -2631,18 +2631,21 @@ FINAL SYMBOL TABLE
 (byte*) print_str::str#0 str zp ZP_WORD:7 202.0
 (byte*) print_str::str#2 str zp ZP_WORD:7 101.0
 
-zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 init_points::pos#10 init_points::pos#2 ]
-zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 print_cls::sc#2 print_cls::sc#1 init_points::getPoint1_return#0 ]
+zp ZP_BYTE:2 [ print_points::i#10 print_points::i#1 ]
+zp ZP_WORD:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ]
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
 zp ZP_WORD:5 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#66 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 zp ZP_WORD:7 [ print_str::str#2 print_str::str#0 ]
+zp ZP_WORD:9 [ print_cls::sc#2 print_cls::sc#1 ]
 reg byte x [ init_points::i#10 init_points::i#1 ]
+zp ZP_BYTE:11 [ init_points::pos#10 init_points::pos#2 ]
 reg byte y [ print_points::getPoint1_$0#0 ]
-zp ZP_WORD:9 [ print_points::point#0 ]
+zp ZP_WORD:12 [ print_points::point#0 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
 reg byte y [ init_points::getPoint1_$0#0 ]
+zp ZP_WORD:14 [ init_points::getPoint1_return#0 ]
 reg byte a [ init_points::pos#1 ]
 
 
@@ -2693,7 +2696,7 @@ main: {
 //SEG19 print_points
 // Print points
 print_points: {
-    .label point = 9
+    .label point = $c
     .label i = 2
   //SEG20 [10] call print_cls 
   //SEG21 [52] phi from print_points to print_cls [phi:print_points->print_cls]
@@ -2906,7 +2909,7 @@ print_str: {
 //SEG109 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 3
+    .label sc = 9
   //SEG110 [53] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   //SEG111 [53] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400
@@ -2940,8 +2943,8 @@ print_cls: {
 //SEG120 init_points
 // Initialize points
 init_points: {
-    .label getPoint1_return = 3
-    .label pos = 2
+    .label getPoint1_return = $e
+    .label pos = $b
   //SEG121 [59] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
   //SEG122 [59] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
     lda #$a

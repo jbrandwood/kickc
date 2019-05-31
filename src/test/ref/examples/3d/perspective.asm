@@ -14,7 +14,7 @@
   .label psp2 = $f5
   // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
   .label PERSP_Z = $2400
-  .label print_char_cursor = 4
+  .label print_char_cursor = 6
   .label print_line_cursor = 2
 main: {
     sei
@@ -112,9 +112,9 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(2) str)
+// print_str(byte* zeropage(4) str)
 print_str: {
-    .label str = 2
+    .label str = 4
   b1:
     ldy #0
     lda (str),y
@@ -214,7 +214,7 @@ print_sbyte: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = 8
     lda #<$400
     sta sc
     lda #>$400
@@ -237,9 +237,9 @@ print_cls: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
-    .label val = 6
-    .label sqr = 2
-    .label add = 4
+    .label val = $e
+    .label sqr = $a
+    .label add = $c
     lda #1
     sta add
     lda #0

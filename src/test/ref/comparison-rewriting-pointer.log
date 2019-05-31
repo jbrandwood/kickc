@@ -303,7 +303,6 @@ Uplift Scope []
 
 Uplifting [main] best 1198 combination zp ZP_WORD:2 [ main::sc#2 main::sc#1 ] zp ZP_WORD:4 [ main::cc#2 main::cc#1 ] 
 Uplifting [] best 1198 combination 
-Coalescing zero page register [ zp ZP_WORD:2 [ main::sc#2 main::sc#1 ] ] with [ zp ZP_WORD:4 [ main::cc#2 main::cc#1 ] ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -334,7 +333,7 @@ main: {
     .label screen = $400
     .label cols = $d800
     .label sc = 2
-    .label cc = 2
+    .label cc = 4
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
   //SEG12 [5] phi (byte*) main::sc#2 = (const byte*) main::screen#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
@@ -448,8 +447,8 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (byte*) main::cc
-(byte*) main::cc#1 cc zp ZP_WORD:2 16.5
-(byte*) main::cc#2 cc zp ZP_WORD:2 16.5
+(byte*) main::cc#1 cc zp ZP_WORD:4 16.5
+(byte*) main::cc#2 cc zp ZP_WORD:4 16.5
 (byte*) main::cols
 (const byte*) main::cols#0 cols = (byte*) 55296
 (byte*) main::sc
@@ -458,7 +457,8 @@ FINAL SYMBOL TABLE
 (byte*) main::screen
 (const byte*) main::screen#0 screen = (byte*) 1024
 
-zp ZP_WORD:2 [ main::sc#2 main::sc#1 main::cc#2 main::cc#1 ]
+zp ZP_WORD:2 [ main::sc#2 main::sc#1 ]
+zp ZP_WORD:4 [ main::cc#2 main::cc#1 ]
 
 
 FINAL ASSEMBLER
@@ -483,7 +483,7 @@ main: {
     .label screen = $400
     .label cols = $d800
     .label sc = 2
-    .label cc = 2
+    .label cc = 4
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   //SEG12 [5] phi (byte*) main::sc#2 = (const byte*) main::screen#0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<screen

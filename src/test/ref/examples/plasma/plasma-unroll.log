@@ -4366,18 +4366,18 @@ Attempting to uplift remaining variables inzp ZP_BYTE:7 [ c2B#1 c2B#3 ]
 Uplifting [] best 123052 combination zp ZP_BYTE:7 [ c2B#1 c2B#3 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:59 [ makecharset::$8 ] ] with [ zp ZP_WORD:61 [ makecharset::$9 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:59 [ makecharset::$8 makecharset::$9 ] ] with [ zp ZP_WORD:63 [ makecharset::$16 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:2 [ main::col#2 main::col#1 ] ] with [ zp ZP_WORD:16 [ makecharset::c#2 makecharset::c#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:2 [ main::col#2 main::col#1 makecharset::c#2 makecharset::c#1 ] ] with [ zp ZP_WORD:23 [ print_cls::sc#2 print_cls::sc#1 ] ]
-Coalescing zero page register [ zp ZP_BYTE:4 [ c1A#1 c1A#3 ] ] with [ zp ZP_BYTE:20 [ makecharset::i#7 makecharset::i#1 ] ]
-Coalescing zero page register [ zp ZP_BYTE:5 [ c1B#1 c1B#3 ] ] with [ zp ZP_BYTE:55 [ makecharset::s#0 ] ]
-Coalescing zero page register [ zp ZP_BYTE:6 [ c2A#1 c2A#3 ] ] with [ zp ZP_BYTE:58 [ makecharset::$4 ] ]
-Coalescing zero page register [ zp ZP_BYTE:8 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ] ] with [ zp ZP_BYTE:12 [ doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ] ]
-Coalescing zero page register [ zp ZP_BYTE:9 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ] ] with [ zp ZP_BYTE:13 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ] ]
-Coalescing zero page register [ zp ZP_BYTE:11 [ doplasma::i#2 doplasma::i#1 ] ] with [ zp ZP_BYTE:14 [ doplasma::i1#2 doplasma::i1#1 ] ]
-Allocated (was zp ZP_BYTE:11) zp ZP_BYTE:10 [ doplasma::i#2 doplasma::i#1 doplasma::i1#2 doplasma::i1#1 ]
-Allocated (was zp ZP_WORD:18) zp ZP_WORD:11 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ]
-Allocated (was zp ZP_BYTE:25) zp ZP_BYTE:13 [ doplasma::yval#0 ]
-Allocated (was zp ZP_WORD:59) zp ZP_WORD:14 [ makecharset::$8 makecharset::$9 makecharset::$16 ]
+Allocated (was zp ZP_BYTE:11) zp ZP_BYTE:10 [ doplasma::i#2 doplasma::i#1 ]
+Allocated (was zp ZP_BYTE:12) zp ZP_BYTE:11 [ doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ]
+Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:12 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ]
+Allocated (was zp ZP_BYTE:14) zp ZP_BYTE:13 [ doplasma::i1#2 doplasma::i1#1 ]
+Allocated (was zp ZP_WORD:16) zp ZP_WORD:14 [ makecharset::c#2 makecharset::c#1 ]
+Allocated (was zp ZP_WORD:18) zp ZP_WORD:16 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ]
+Allocated (was zp ZP_BYTE:20) zp ZP_BYTE:18 [ makecharset::i#7 makecharset::i#1 ]
+Allocated (was zp ZP_WORD:23) zp ZP_WORD:19 [ print_cls::sc#2 print_cls::sc#1 ]
+Allocated (was zp ZP_BYTE:25) zp ZP_BYTE:21 [ doplasma::yval#0 ]
+Allocated (was zp ZP_BYTE:55) zp ZP_BYTE:22 [ makecharset::s#0 ]
+Allocated (was zp ZP_BYTE:58) zp ZP_BYTE:23 [ makecharset::$4 ]
+Allocated (was zp ZP_WORD:59) zp ZP_WORD:24 [ makecharset::$8 makecharset::$9 makecharset::$16 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -4410,7 +4410,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN1 = $2800
   .label CHARSET = $2000
   .label SINTABLE = $1f00
-  .label print_char_cursor = $b
+  .label print_char_cursor = $10
   .label c1A = 4
   .label c1B = 5
   .label c2A = 6
@@ -4532,11 +4532,11 @@ main: {
 doplasma: {
     .label c1a = 8
     .label c1b = 9
-    .label yval = $d
+    .label yval = $15
     .label i = $a
-    .label c2a = 8
-    .label c2b = 9
-    .label i1 = $a
+    .label c2a = $b
+    .label c2b = $c
+    .label i1 = $d
   //SEG46 [19] (byte) doplasma::c1a#0 ← (byte) c1A#1 -- vbuz1=vbuz2 
     lda c1A
     sta c1a
@@ -4899,13 +4899,13 @@ doplasma: {
 //SEG177 makecharset
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
-    .label _4 = 6
-    .label _8 = $e
-    .label _9 = $e
-    .label s = 5
-    .label i = 4
-    .label c = 2
-    .label _16 = $e
+    .label _4 = $17
+    .label _8 = $18
+    .label _9 = $18
+    .label s = $16
+    .label i = $12
+    .label c = $e
+    .label _16 = $18
   //SEG178 [99] call sid_rnd_init 
     jsr sid_rnd_init
   //SEG179 [100] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
@@ -5120,7 +5120,7 @@ sid_rnd: {
 //SEG246 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $13
   //SEG247 [136] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
   //SEG248 [136] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
@@ -5443,19 +5443,19 @@ FINAL SYMBOL TABLE
 (byte) doplasma::c1b#1 c1b zp ZP_BYTE:9 50.5
 (byte) doplasma::c1b#2 c1b zp ZP_BYTE:9 61.0
 (byte) doplasma::c2a
-(byte) doplasma::c2a#0 c2a zp ZP_BYTE:8 2.0
-(byte) doplasma::c2a#1 c2a zp ZP_BYTE:8 50.5
-(byte) doplasma::c2a#2 c2a zp ZP_BYTE:8 101.66666666666666
+(byte) doplasma::c2a#0 c2a zp ZP_BYTE:11 2.0
+(byte) doplasma::c2a#1 c2a zp ZP_BYTE:11 50.5
+(byte) doplasma::c2a#2 c2a zp ZP_BYTE:11 101.66666666666666
 (byte) doplasma::c2b
-(byte) doplasma::c2b#0 c2b zp ZP_BYTE:9 4.0
-(byte) doplasma::c2b#1 c2b zp ZP_BYTE:9 67.33333333333333
-(byte) doplasma::c2b#2 c2b zp ZP_BYTE:9 76.25
+(byte) doplasma::c2b#0 c2b zp ZP_BYTE:12 4.0
+(byte) doplasma::c2b#1 c2b zp ZP_BYTE:12 67.33333333333333
+(byte) doplasma::c2b#2 c2b zp ZP_BYTE:12 76.25
 (byte) doplasma::i
 (byte) doplasma::i#1 i zp ZP_BYTE:10 101.0
 (byte) doplasma::i#2 i zp ZP_BYTE:10 50.5
 (byte) doplasma::i1
-(byte) doplasma::i1#1 i1 zp ZP_BYTE:10 151.5
-(byte) doplasma::i1#2 i1 zp ZP_BYTE:10 60.599999999999994
+(byte) doplasma::i1#1 i1 zp ZP_BYTE:13 151.5
+(byte) doplasma::i1#2 i1 zp ZP_BYTE:13 60.599999999999994
 (byte) doplasma::i2
 (byte) doplasma::i2#1 reg byte x 151.5
 (byte) doplasma::i2#2 reg byte x 54.3846153846154
@@ -5496,7 +5496,7 @@ FINAL SYMBOL TABLE
 (byte) doplasma::yprev#2 reg byte x 101.0
 (byte~) doplasma::yprev#3 reg byte x 202.0
 (byte) doplasma::yval
-(byte) doplasma::yval#0 yval zp ZP_BYTE:13 43.285714285714285
+(byte) doplasma::yval#0 yval zp ZP_BYTE:21 43.285714285714285
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -5522,12 +5522,12 @@ FINAL SYMBOL TABLE
 (byte*) main::toD0181_screen
 (void()) makecharset((byte*) makecharset::charset)
 (byte~) makecharset::$11 reg byte a 22.0
-(byte*~) makecharset::$16 $16 zp ZP_WORD:14 202.0
+(byte*~) makecharset::$16 $16 zp ZP_WORD:24 202.0
 (byte~) makecharset::$2 reg byte a 22.0
 (byte~) makecharset::$3 reg byte a 2002.0
-(byte~) makecharset::$4 $4 zp ZP_BYTE:6 2002.0
-(word~) makecharset::$8 $8 zp ZP_WORD:14 202.0
-(word~) makecharset::$9 $9 zp ZP_WORD:14 202.0
+(byte~) makecharset::$4 $4 zp ZP_BYTE:23 2002.0
+(word~) makecharset::$8 $8 zp ZP_WORD:24 202.0
+(word~) makecharset::$9 $9 zp ZP_WORD:24 202.0
 (label) makecharset::@1
 (label) makecharset::@10
 (label) makecharset::@11
@@ -5547,31 +5547,31 @@ FINAL SYMBOL TABLE
 (byte[8]) makecharset::bittab
 (const byte[8]) makecharset::bittab#0 bittab = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (word) makecharset::c
-(word) makecharset::c#1 c zp ZP_WORD:2 16.5
-(word) makecharset::c#2 c zp ZP_WORD:2 5.800000000000001
+(word) makecharset::c#1 c zp ZP_WORD:14 16.5
+(word) makecharset::c#2 c zp ZP_WORD:14 5.800000000000001
 (byte*) makecharset::charset
 (byte) makecharset::i
-(byte) makecharset::i#1 i zp ZP_BYTE:4 151.5
-(byte) makecharset::i#7 i zp ZP_BYTE:4 20.2
+(byte) makecharset::i#1 i zp ZP_BYTE:18 151.5
+(byte) makecharset::i#7 i zp ZP_BYTE:18 20.2
 (byte) makecharset::ii
 (byte) makecharset::ii#1 reg byte x 1501.5
 (byte) makecharset::ii#2 reg byte x 375.375
 (byte) makecharset::s
-(byte) makecharset::s#0 s zp ZP_BYTE:5 56.22222222222223
+(byte) makecharset::s#0 s zp ZP_BYTE:22 56.22222222222223
 (void()) print_char((byte) print_char::ch)
 (label) print_char::@return
 (byte) print_char::ch
 (const byte) print_char::ch#0 ch = (byte) '.'
 (byte*) print_char_cursor
-(byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:11 4.333333333333333
-(byte*) print_char_cursor#18 print_char_cursor zp ZP_WORD:11 11.0
-(byte*) print_char_cursor#44 print_char_cursor zp ZP_WORD:11 1.0833333333333333
+(byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:16 4.333333333333333
+(byte*) print_char_cursor#18 print_char_cursor zp ZP_WORD:16 11.0
+(byte*) print_char_cursor#44 print_char_cursor zp ZP_WORD:16 1.0833333333333333
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:2 16.5
+(byte*) print_cls::sc#1 sc zp ZP_WORD:19 16.5
+(byte*) print_cls::sc#2 sc zp ZP_WORD:19 16.5
 (byte*) print_line_cursor
 (const byte*) print_line_cursor#0 print_line_cursor = (byte*) 1024
 (byte*) print_screen
@@ -5583,20 +5583,26 @@ FINAL SYMBOL TABLE
 (void()) sid_rnd_init()
 (label) sid_rnd_init::@return
 
-zp ZP_WORD:2 [ main::col#2 main::col#1 makecharset::c#2 makecharset::c#1 print_cls::sc#2 print_cls::sc#1 ]
-zp ZP_BYTE:4 [ c1A#1 c1A#3 makecharset::i#7 makecharset::i#1 ]
-zp ZP_BYTE:5 [ c1B#1 c1B#3 makecharset::s#0 ]
-zp ZP_BYTE:6 [ c2A#1 c2A#3 makecharset::$4 ]
+zp ZP_WORD:2 [ main::col#2 main::col#1 ]
+zp ZP_BYTE:4 [ c1A#1 c1A#3 ]
+zp ZP_BYTE:5 [ c1B#1 c1B#3 ]
+zp ZP_BYTE:6 [ c2A#1 c2A#3 ]
 zp ZP_BYTE:7 [ c2B#1 c2B#3 ]
-zp ZP_BYTE:8 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ]
-zp ZP_BYTE:9 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ]
+zp ZP_BYTE:8 [ doplasma::c1a#2 doplasma::c1a#0 doplasma::c1a#1 ]
+zp ZP_BYTE:9 [ doplasma::c1b#2 doplasma::c1b#0 doplasma::c1b#1 ]
 reg byte x [ doplasma::yprev#2 doplasma::yprev#3 ]
-zp ZP_BYTE:10 [ doplasma::i#2 doplasma::i#1 doplasma::i1#2 doplasma::i1#1 ]
+zp ZP_BYTE:10 [ doplasma::i#2 doplasma::i#1 ]
+zp ZP_BYTE:11 [ doplasma::c2a#2 doplasma::c2a#0 doplasma::c2a#1 ]
+zp ZP_BYTE:12 [ doplasma::c2b#2 doplasma::c2b#0 doplasma::c2b#1 ]
+zp ZP_BYTE:13 [ doplasma::i1#2 doplasma::i1#1 ]
 reg byte x [ doplasma::i2#2 doplasma::i2#1 ]
-zp ZP_WORD:11 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ]
+zp ZP_WORD:14 [ makecharset::c#2 makecharset::c#1 ]
+zp ZP_WORD:16 [ print_char_cursor#44 print_char_cursor#18 print_char_cursor#1 ]
+zp ZP_BYTE:18 [ makecharset::i#7 makecharset::i#1 ]
 reg byte x [ makecharset::ii#2 makecharset::ii#1 ]
 reg byte y [ makecharset::b#2 makecharset::b#3 makecharset::b#1 ]
-zp ZP_BYTE:13 [ doplasma::yval#0 ]
+zp ZP_WORD:19 [ print_cls::sc#2 print_cls::sc#1 ]
+zp ZP_BYTE:21 [ doplasma::yval#0 ]
 reg byte a [ doplasma::$1 ]
 reg byte a [ doplasma::$3 ]
 reg byte a [ doplasma::val#0 ]
@@ -5626,9 +5632,11 @@ reg byte a [ doplasma::val#46 ]
 reg byte a [ doplasma::val#48 ]
 reg byte a [ doplasma::val#50 ]
 reg byte a [ makecharset::$2 ]
+zp ZP_BYTE:22 [ makecharset::s#0 ]
 reg byte a [ sid_rnd::return#2 ]
 reg byte a [ makecharset::$3 ]
-zp ZP_WORD:14 [ makecharset::$8 makecharset::$9 makecharset::$16 ]
+zp ZP_BYTE:23 [ makecharset::$4 ]
+zp ZP_WORD:24 [ makecharset::$8 makecharset::$9 makecharset::$16 ]
 reg byte a [ makecharset::$11 ]
 reg byte a [ sid_rnd::return#0 ]
 
@@ -5666,7 +5674,7 @@ Score: 93970
   .label SCREEN1 = $2800
   .label CHARSET = $2000
   .label SINTABLE = $1f00
-  .label print_char_cursor = $b
+  .label print_char_cursor = $10
   .label c1A = 4
   .label c1B = 5
   .label c2A = 6
@@ -5755,11 +5763,11 @@ main: {
 doplasma: {
     .label c1a = 8
     .label c1b = 9
-    .label yval = $d
+    .label yval = $15
     .label i = $a
-    .label c2a = 8
-    .label c2b = 9
-    .label i1 = $a
+    .label c2a = $b
+    .label c2b = $c
+    .label i1 = $d
   //SEG46 [19] (byte) doplasma::c1a#0 ← (byte) c1A#1 -- vbuz1=vbuz2 
     lda c1A
     sta c1a
@@ -6057,13 +6065,13 @@ doplasma: {
 //SEG177 makecharset
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
-    .label _4 = 6
-    .label _8 = $e
-    .label _9 = $e
-    .label s = 5
-    .label i = 4
-    .label c = 2
-    .label _16 = $e
+    .label _4 = $17
+    .label _8 = $18
+    .label _9 = $18
+    .label s = $16
+    .label i = $12
+    .label c = $e
+    .label _16 = $18
   //SEG178 [99] call sid_rnd_init 
     jsr sid_rnd_init
   //SEG179 [100] phi from makecharset to makecharset::@10 [phi:makecharset->makecharset::@10]
@@ -6238,7 +6246,7 @@ sid_rnd: {
 //SEG246 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $13
   //SEG247 [136] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   //SEG248 [136] phi (byte*) print_cls::sc#2 = (const byte*) print_line_cursor#0 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<print_line_cursor

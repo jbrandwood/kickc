@@ -943,7 +943,7 @@ public class TestPrograms {
 
    //@Test
    //public void testRobozzle64() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/robozzle_c64/robozzle64_1", log());
+   //   compileAndCompare("complex/robozzle_c64/robozzle64", log());
    //}
 
    //@Test

@@ -262,7 +262,7 @@ plex_irq: {
 // plexSort() prepares showing the sprites
 plexShowSprite: {
     .label _6 = 6
-    .label plex_sprite_idx2 = $d
+    .label plex_sprite_idx2 = $e
     .label plexFreeAdd1__2 = 9
     lda plex_sprite_idx
     asl

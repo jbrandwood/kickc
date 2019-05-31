@@ -96,9 +96,9 @@
   .const KEY_1 = $38
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
-  .label print_char_cursor = 5
-  .label dtv_control = 4
-  .label print_line_cursor = $d
+  .label print_char_cursor = $69
+  .label dtv_control = 9
+  .label print_line_cursor = $6b
 main: {
     sei
     // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
@@ -274,9 +274,9 @@ menu: {
 mode_8bppchunkybmm: {
     // 8BPP Chunky Bitmap (contains 8bpp pixels)
     .const PLANEB = $20000
-    .label _27 = $d
-    .label gfxb = 5
-    .label x = 2
+    .label _27 = $6f
+    .label gfxb = 7
+    .label x = 5
     .label y = 4
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
@@ -452,7 +452,7 @@ mode_ctrl: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
-    .label colidx = 7
+    .label colidx = $71
     tya
     and #7
     sta colidx
@@ -507,15 +507,15 @@ mode_8bpppixelcell: {
     // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
     .label PLANEB = $4000
     .label CHARGEN = $d000
-    .label _15 = 7
-    .label gfxa = 2
-    .label ay = 4
-    .label bits = 8
-    .label chargen = 2
-    .label gfxb = 5
-    .label col = 9
-    .label cr = 7
-    .label ch = 4
+    .label _15 = $72
+    .label gfxa = $b
+    .label ay = $a
+    .label bits = $11
+    .label chargen = $e
+    .label gfxb = $12
+    .label col = $14
+    .label cr = $10
+    .label ch = $d
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
     // VIC Graphics Mode
@@ -658,12 +658,12 @@ mode_sixsfred: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label col = 2
-    .label cy = 4
-    .label gfxa = 2
-    .label ay = 4
-    .label gfxb = 2
-    .label by = 4
+    .label col = $16
+    .label cy = $15
+    .label gfxa = $19
+    .label ay = $18
+    .label gfxb = $1c
+    .label by = $1b
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
     // VIC Graphics Mode
@@ -805,13 +805,13 @@ mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label _17 = 7
-    .label col = 2
-    .label cy = 4
-    .label gfxa = 2
-    .label ay = 4
-    .label gfxb = 2
-    .label by = 4
+    .label _17 = $73
+    .label col = $1f
+    .label cy = $1e
+    .label gfxa = $22
+    .label ay = $21
+    .label gfxb = $25
+    .label by = $24
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
     // VIC Graphics Mode
@@ -970,13 +970,13 @@ mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label _16 = 7
-    .label col = 2
-    .label cy = 4
-    .label gfxa = 2
-    .label ay = 4
-    .label gfxb = 2
-    .label by = 4
+    .label _16 = $74
+    .label col = $28
+    .label cy = $27
+    .label gfxa = $2b
+    .label ay = $2a
+    .label gfxb = $2e
+    .label by = $2d
     lda #DTV_LINEAR
     sta DTV_CONTROL
     // VIC Graphics Mode
@@ -1128,10 +1128,10 @@ mode_hicolmcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label _27 = 7
-    .label col = 2
-    .label ch = 5
-    .label cy = 4
+    .label _27 = $75
+    .label col = $31
+    .label ch = $33
+    .label cy = $30
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
@@ -1237,10 +1237,10 @@ mode_hicolecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label _27 = 7
-    .label col = 2
-    .label ch = 5
-    .label cy = 4
+    .label _27 = $76
+    .label col = $36
+    .label ch = $38
+    .label cy = $35
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
@@ -1344,10 +1344,10 @@ mode_hicolstdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label _26 = 7
-    .label col = 2
-    .label ch = 5
-    .label cy = 4
+    .label _26 = $77
+    .label col = $3b
+    .label ch = $3d
+    .label cy = $3a
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
@@ -1443,10 +1443,10 @@ mode_stdbitmap: {
     .label SCREEN = $4000
     .label BITMAP = $6000
     .const lines_cnt = 9
-    .label col2 = 7
-    .label ch = 2
-    .label cy = 4
-    .label l = 4
+    .label col2 = $78
+    .label ch = $40
+    .label cy = $3f
+    .label l = $42
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
@@ -1542,12 +1542,12 @@ mode_stdbitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zeropage(9) x0, byte register(X) x1, byte zeropage($b) y0, byte zeropage($c) y1)
+// bitmap_line(byte zeropage($45) x0, byte register(X) x1, byte zeropage($47) y0, byte zeropage($4a) y1)
 bitmap_line: {
-    .label xd = 8
-    .label x0 = 9
-    .label y0 = $b
-    .label y1 = $c
+    .label xd = $44
+    .label x0 = $45
+    .label y0 = $47
+    .label y1 = $4a
     txa
     cmp x0
     beq !+
@@ -1648,14 +1648,14 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zeropage($a) x, byte zeropage($b) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
+// bitmap_line_xdyi(byte zeropage($46) x, byte zeropage($47) y, byte zeropage($45) x1, byte zeropage($44) xd, byte zeropage($43) yd)
 bitmap_line_xdyi: {
-    .label x = $a
-    .label y = $b
-    .label x1 = 9
-    .label xd = 8
-    .label yd = 7
-    .label e = $c
+    .label x = $46
+    .label y = $47
+    .label x1 = $45
+    .label xd = $44
+    .label yd = $43
+    .label e = $48
     lda yd
     lsr
     sta e
@@ -1685,9 +1685,9 @@ bitmap_line_xdyi: {
 }
 // bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
-    .label plotter_x = 2
-    .label plotter_y = 5
-    .label plotter = 2
+    .label plotter_x = $79
+    .label plotter_y = $7b
+    .label plotter = $79
     lda bitmap_plot_xhi,x
     sta plotter_x+1
     lda bitmap_plot_xlo,x
@@ -1709,13 +1709,13 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
-// bitmap_line_ydxi(byte zeropage($a) y, byte register(X) x, byte zeropage($c) y1, byte zeropage(7) yd, byte zeropage(8) xd)
+// bitmap_line_ydxi(byte zeropage($4b) y, byte register(X) x, byte zeropage($4a) y1, byte zeropage($49) yd, byte zeropage($44) xd)
 bitmap_line_ydxi: {
-    .label y = $a
-    .label y1 = $c
-    .label yd = 7
-    .label xd = 8
-    .label e = 9
+    .label y = $4b
+    .label y1 = $4a
+    .label yd = $49
+    .label xd = $44
+    .label e = $4c
     lda xd
     lsr
     sta e
@@ -1743,14 +1743,14 @@ bitmap_line_ydxi: {
     bne b1
     rts
 }
-// bitmap_line_xdyd(byte zeropage($a) x, byte zeropage($b) y, byte zeropage(9) x1, byte zeropage(8) xd, byte zeropage(7) yd)
+// bitmap_line_xdyd(byte zeropage($4e) x, byte zeropage($47) y, byte zeropage($45) x1, byte zeropage($44) xd, byte zeropage($4d) yd)
 bitmap_line_xdyd: {
-    .label x = $a
-    .label y = $b
-    .label x1 = 9
-    .label xd = 8
-    .label yd = 7
-    .label e = $c
+    .label x = $4e
+    .label y = $47
+    .label x1 = $45
+    .label xd = $44
+    .label yd = $4d
+    .label e = $4f
     lda yd
     lsr
     sta e
@@ -1778,13 +1778,13 @@ bitmap_line_xdyd: {
     bne b1
     rts
 }
-// bitmap_line_ydxd(byte zeropage($a) y, byte register(X) x, byte zeropage($b) y1, byte zeropage(7) yd, byte zeropage(8) xd)
+// bitmap_line_ydxd(byte zeropage($51) y, byte register(X) x, byte zeropage($47) y1, byte zeropage($50) yd, byte zeropage($44) xd)
 bitmap_line_ydxd: {
-    .label y = $a
-    .label y1 = $b
-    .label yd = 7
-    .label xd = 8
-    .label e = 9
+    .label y = $51
+    .label y1 = $47
+    .label yd = $50
+    .label xd = $44
+    .label e = $52
     lda xd
     lsr
     sta e
@@ -1814,8 +1814,8 @@ bitmap_line_ydxd: {
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {
-    .label bitmap = 2
-    .label y = 4
+    .label bitmap = $54
+    .label y = $53
     lda bitmap_plot_xlo
     sta bitmap
     lda bitmap_plot_xhi
@@ -1843,8 +1843,8 @@ bitmap_clear: {
 }
 // Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
-    .label _10 = 4
-    .label yoffs = 2
+    .label _10 = $7d
+    .label yoffs = $56
     ldy #$80
     ldx #0
   b1:
@@ -1910,10 +1910,10 @@ mode_mcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label _29 = 7
-    .label col = 2
-    .label ch = 5
-    .label cy = 4
+    .label _29 = $7e
+    .label col = $59
+    .label ch = $5b
+    .label cy = $58
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
@@ -2022,10 +2022,10 @@ mode_ecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label _29 = 7
-    .label col = 2
-    .label ch = 5
-    .label cy = 4
+    .label _29 = $7f
+    .label col = $5e
+    .label ch = $60
+    .label cy = $5d
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
@@ -2131,10 +2131,10 @@ mode_stdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label _28 = 7
-    .label col = 2
-    .label ch = 5
-    .label cy = 4
+    .label _28 = $80
+    .label col = $63
+    .label ch = $65
+    .label cy = $62
     // DTV Graphics Bank
     lda #0
     sta DTV_GRAPHICS_VIC_BANK
@@ -2224,9 +2224,9 @@ mode_stdchar: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zeropage(2) str)
+// print_str_lines(byte* zeropage($67) str)
 print_str_lines: {
-    .label str = 2
+    .label str = $67
     lda #<menu.SCREEN
     sta print_line_cursor
     lda #>menu.SCREEN
@@ -2292,7 +2292,7 @@ print_ln: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $6d
     lda #<menu.SCREEN
     sta sc
     lda #>menu.SCREEN

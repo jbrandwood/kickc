@@ -53,13 +53,13 @@ print: {
     bne b1
     rts
 }
-// strip(byte* zeropage(8) p, byte register(X) c)
+// strip(byte* zeropage($a) p, byte register(X) c)
 strip: {
-    .label dest = 6
-    .label p = 8
-    .label p_4 = 2
-    .label p_7 = 2
-    .label p_8 = 2
+    .label dest = 8
+    .label p = $a
+    .label p_4 = 6
+    .label p_7 = 6
+    .label p_8 = 6
     lda dest
     sta p_7
     lda dest+1

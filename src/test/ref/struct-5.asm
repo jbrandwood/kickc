@@ -6,7 +6,7 @@
 main: {
     .label SCREEN = $400
     .label point_i = 2
-    .label point_i1 = 2
+    .label point_i1 = 4
     ldx #0
   b1:
     txa

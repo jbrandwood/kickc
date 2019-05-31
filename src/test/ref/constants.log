@@ -2101,11 +2101,11 @@ Attempting to uplift remaining variables inzp ZP_BYTE:5 [ assert_sbyte::c#5 ]
 Uplifting [assert_sbyte] best 2169 combination zp ZP_BYTE:5 [ assert_sbyte::c#5 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:2 [ assert_sbyte::msg#5 ] ] with [ zp ZP_WORD:8 [ print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 ] ] with [ zp ZP_WORD:12 [ assert_byte::msg#3 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 assert_byte::msg#3 ] ] with [ zp ZP_WORD:16 [ print_cls::sc#2 print_cls::sc#1 ] ]
-Coalescing zero page register [ zp ZP_BYTE:5 [ assert_sbyte::c#5 ] ] with [ zp ZP_BYTE:15 [ assert_byte::c#3 ] ]
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ assert_sbyte::c#5 assert_byte::c#3 ]
+Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ assert_sbyte::c#5 ]
 Allocated (was zp ZP_WORD:6) zp ZP_WORD:5 [ print_char_cursor#80 print_char_cursor#70 print_char_cursor#2 print_char_cursor#86 print_char_cursor#1 print_char_cursor#92 print_char_cursor#93 ]
 Allocated (was zp ZP_WORD:10) zp ZP_WORD:7 [ print_line_cursor#24 print_line_cursor#47 print_line_cursor#50 print_line_cursor#1 ]
+Allocated (was zp ZP_BYTE:15) zp ZP_BYTE:9 [ assert_byte::c#3 ]
+Allocated (was zp ZP_WORD:16) zp ZP_WORD:10 [ print_cls::sc#2 print_cls::sc#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -2520,10 +2520,10 @@ test_bytes: {
     msg2: .text "0+2-4=254@"
 }
 //SEG141 assert_byte
-// assert_byte(byte* zeropage(2) msg, byte register(X) b, byte zeropage(4) c)
+// assert_byte(byte* zeropage(2) msg, byte register(X) b, byte zeropage(9) c)
 assert_byte: {
     .label msg = 2
-    .label c = 4
+    .label c = 9
   //SEG142 [56] (byte*) print_str::str#1 ← (byte*) assert_byte::msg#3
   //SEG143 [57] call print_str 
   //SEG144 [36] phi from assert_byte to print_str [phi:assert_byte->print_str]
@@ -2603,7 +2603,7 @@ assert_byte: {
 //SEG174 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $a
   //SEG175 [69] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
   //SEG176 [69] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
@@ -2783,7 +2783,7 @@ FINAL SYMBOL TABLE
 (byte) assert_byte::b
 (byte) assert_byte::b#3 reg byte x 0.4
 (byte) assert_byte::c
-(byte) assert_byte::c#3 c zp ZP_BYTE:4 0.4
+(byte) assert_byte::c#3 c zp ZP_BYTE:9 0.4
 (byte*) assert_byte::msg
 (byte*) assert_byte::msg#3 msg zp ZP_WORD:2 2.0
 (void()) assert_sbyte((byte*) assert_sbyte::msg , (signed byte) assert_sbyte::b , (signed byte) assert_sbyte::c)
@@ -2817,8 +2817,8 @@ FINAL SYMBOL TABLE
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:2 16.5
+(byte*) print_cls::sc#1 sc zp ZP_WORD:10 16.5
+(byte*) print_cls::sc#2 sc zp ZP_WORD:10 16.5
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:7 1.2500000000000002
 (byte*) print_line_cursor#24 print_line_cursor zp ZP_WORD:7 24.0
@@ -2872,12 +2872,14 @@ FINAL SYMBOL TABLE
 (const string) test_sbytes::msg3 msg3 = (string) "-(0+2-4)=2@"
 (const string) test_sbytes::msg4 msg4 = (string) "-127-127=2@"
 
-zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 assert_byte::msg#3 print_cls::sc#2 print_cls::sc#1 ]
+zp ZP_WORD:2 [ assert_sbyte::msg#5 print_str::str#10 print_str::str#11 print_str::str#1 print_str::str#5 print_str::str#0 assert_byte::msg#3 ]
 reg byte x [ assert_sbyte::b#5 ]
-zp ZP_BYTE:4 [ assert_sbyte::c#5 assert_byte::c#3 ]
+zp ZP_BYTE:4 [ assert_sbyte::c#5 ]
 zp ZP_WORD:5 [ print_char_cursor#80 print_char_cursor#70 print_char_cursor#2 print_char_cursor#86 print_char_cursor#1 print_char_cursor#92 print_char_cursor#93 ]
 zp ZP_WORD:7 [ print_line_cursor#24 print_line_cursor#47 print_line_cursor#50 print_line_cursor#1 ]
 reg byte x [ assert_byte::b#3 ]
+zp ZP_BYTE:9 [ assert_byte::c#3 ]
+zp ZP_WORD:10 [ print_cls::sc#2 print_cls::sc#1 ]
 
 
 FINAL ASSEMBLER
@@ -3219,10 +3221,10 @@ test_bytes: {
     msg2: .text "0+2-4=254@"
 }
 //SEG141 assert_byte
-// assert_byte(byte* zeropage(2) msg, byte register(X) b, byte zeropage(4) c)
+// assert_byte(byte* zeropage(2) msg, byte register(X) b, byte zeropage(9) c)
 assert_byte: {
     .label msg = 2
-    .label c = 4
+    .label c = 9
   //SEG142 [56] (byte*) print_str::str#1 ← (byte*) assert_byte::msg#3
   //SEG143 [57] call print_str 
   //SEG144 [36] phi from assert_byte to print_str [phi:assert_byte->print_str]
@@ -3284,7 +3286,7 @@ assert_byte: {
 //SEG174 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $a
   //SEG175 [69] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   //SEG176 [69] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400

@@ -28,8 +28,8 @@ sin8u_table: {
     .label amplitude = max-min
     .const sum = min+max
     .const mid = sum/2+1
-    .label step = $12
-    .label sinx = $11
+    .label step = $1d
+    .label sinx = $21
     .label sintab = 4
     .label x = 2
     .label i = 6
@@ -285,9 +285,9 @@ print_sword: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($b) w)
+// print_word(word zeropage($11) w)
 print_word: {
-    .label w = $b
+    .label w = $11
     lda w+1
     sta print_byte.b
     jsr print_byte
@@ -342,7 +342,7 @@ mul8su: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $b
+    .label mb = $13
     .label res = $d
     .label return = $d
     lda #0
@@ -375,16 +375,16 @@ mul8u: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zeropage($b) x)
+// sin8s(word zeropage($16) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label _4 = $b
-    .label x = $b
-    .label x1 = $14
-    .label x3 = $15
-    .label usinx = $16
-    .label isUpper = $a
+    .label _4 = $16
+    .label x = $16
+    .label x1 = $22
+    .label x3 = $23
+    .label usinx = $24
+    .label isUpper = $15
     lda x+1
     cmp #>PI_u4f12
     bcc b5
@@ -486,11 +486,11 @@ sin8s: {
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($11) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($18) select)
 mulu8_sel: {
     .label _0 = $d
     .label _1 = $d
-    .label select = $11
+    .label select = $18
     tya
     sta mul8u.mb
     lda #0
@@ -512,7 +512,7 @@ mulu8_sel: {
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
 div16u: {
-    .label return = $12
+    .label return = $1d
     jsr divr16u
     rts
 }
@@ -520,12 +520,12 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(4) dividend, word zeropage(2) rem)
+// divr16u(word zeropage($1b) dividend, word zeropage($19) rem)
 divr16u: {
-    .label rem = 2
-    .label dividend = 4
-    .label quotient = $12
-    .label return = $12
+    .label rem = $19
+    .label dividend = $1b
+    .label quotient = $1d
+    .label return = $1d
     ldx #0
     txa
     sta quotient
@@ -579,7 +579,7 @@ divr16u: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $1f
     lda #<$400
     sta sc
     lda #>$400

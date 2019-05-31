@@ -29,11 +29,11 @@ main: {
 anim: {
     .label _10 = 5
     .label _12 = 5
-    .label x = $b
-    .label y = $c
-    .label xr = 7
-    .label yr = 9
-    .label xpos = 5
+    .label x = $13
+    .label y = $14
+    .label xr = $15
+    .label yr = $17
+    .label xpos = $19
     .label sprite_msb = 4
     .label i = 3
     .label angle = 2
@@ -222,13 +222,13 @@ init: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = 7
-    .label sqr = 9
-    .label sqr1_lo = 5
-    .label x_2 = 2
-    .label sqr2_hi = 7
-    .label sqr2_lo = 5
-    .label dir = 2
+    .label sqr1_hi = 9
+    .label sqr = $c
+    .label sqr1_lo = 7
+    .label x_2 = $b
+    .label sqr2_hi = $10
+    .label sqr2_lo = $e
+    .label dir = $12
     lda #0
     sta x_2
     lda #<mulf_sqr1_hi+1

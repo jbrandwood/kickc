@@ -57,18 +57,18 @@ main: {
 }
 // draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
 draw_block: {
-    .label tileno = 8
-    .label x1 = 9
+    .label tileno = $a
+    .label x1 = $b
     .label z = 4
-    .label z_1 = 9
-    .label _11 = 4
-    .label _12 = 4
-    .label _13 = 4
-    .label _14 = 4
-    .label _15 = 4
-    .label _16 = 4
-    .label _17 = 4
-    .label _18 = 9
+    .label z_1 = $b
+    .label _11 = $d
+    .label _12 = $f
+    .label _13 = $11
+    .label _14 = $13
+    .label _15 = $15
+    .label _16 = $17
+    .label _17 = $19
+    .label _18 = $b
     asl
     asl
     sta tileno
@@ -236,8 +236,8 @@ init: {
 // Fill some memory with a value
 // fill(byte register(X) val)
 fill: {
-    .label end = 6
-    .label addr = 4
+    .label end = $1b
+    .label addr = 8
     lda addr
     clc
     adc #<$3e8

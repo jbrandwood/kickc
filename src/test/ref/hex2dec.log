@@ -2178,15 +2178,15 @@ Uplifting [utoa16w] best 25525 combination reg byte x [ utoa16w::started#1 ]
 Attempting to uplift remaining variables inzp ZP_BYTE:35 [ utoa16w::started#2 ]
 Uplifting [utoa16w] best 25519 combination reg byte x [ utoa16w::started#2 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:8 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] ] with [ zp ZP_WORD:27 [ utoa10w::dst#2 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] ] with [ zp ZP_WORD:10 [ utoa16w::value#5 ] ]
-Coalescing zero page register [ zp ZP_WORD:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 utoa16w::value#5 ] ] with [ zp ZP_WORD:16 [ cls::sc#2 cls::sc#1 ] ]
-Coalescing zero page register [ zp ZP_BYTE:6 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ] ] with [ zp ZP_BYTE:18 [ main::$1 ] ]
-Coalescing zero page register [ zp ZP_BYTE:6 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 main::$1 ] ] with [ zp ZP_BYTE:21 [ main::time_start#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:8 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 utoa10w::dst#2 ] ] with [ zp ZP_WORD:12 [ utoa16w::dst#5 ] ]
-Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 utoa16w::value#5 cls::sc#2 cls::sc#1 ]
-Allocated (was zp ZP_BYTE:6) zp ZP_BYTE:4 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 main::$1 main::time_start#0 ]
+Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ]
+Allocated (was zp ZP_BYTE:6) zp ZP_BYTE:4 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ]
 Allocated (was zp ZP_BYTE:7) zp ZP_BYTE:5 [ utoa10w::bStarted#2 ]
-Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 utoa10w::dst#2 utoa16w::dst#5 ]
+Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 utoa10w::dst#2 ]
+Allocated (was zp ZP_WORD:10) zp ZP_WORD:8 [ utoa16w::value#5 ]
+Allocated (was zp ZP_WORD:12) zp ZP_WORD:10 [ utoa16w::dst#5 ]
+Allocated (was zp ZP_WORD:16) zp ZP_WORD:12 [ cls::sc#2 cls::sc#1 ]
+Allocated (was zp ZP_BYTE:18) zp ZP_BYTE:14 [ main::$1 ]
+Allocated (was zp ZP_BYTE:21) zp ZP_BYTE:15 [ main::time_start#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -2215,8 +2215,8 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-    .label _1 = 4
-    .label time_start = 4
+    .label _1 = $e
+    .label time_start = $f
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] call cls 
@@ -2535,10 +2535,10 @@ utoa10w: {
 }
 //SEG113 utoa16w
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zeropage(2) value, byte* zeropage(6) dst)
+// utoa16w(word zeropage(8) value, byte* zeropage($a) dst)
 utoa16w: {
-    .label value = 2
-    .label dst = 6
+    .label value = 8
+    .label dst = $a
   //SEG114 [52] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
     lda value+1
   //SEG115 [53] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
@@ -2663,7 +2663,7 @@ utoa16n: {
 //SEG166 cls
 cls: {
     .label screen = $400
-    .label sc = 2
+    .label sc = $c
   //SEG167 [81] phi from cls to cls::@1 [phi:cls->cls::@1]
   b1_from_cls:
   //SEG168 [81] phi (byte*) cls::sc#2 = (const byte*) cls::screen#0 [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
@@ -2829,14 +2829,14 @@ FINAL SYMBOL TABLE
 (label) cls::@1
 (label) cls::@return
 (byte*) cls::sc
-(byte*) cls::sc#1 sc zp ZP_WORD:2 16.5
-(byte*) cls::sc#2 sc zp ZP_WORD:2 16.5
+(byte*) cls::sc#1 sc zp ZP_WORD:12 16.5
+(byte*) cls::sc#2 sc zp ZP_WORD:12 16.5
 (byte*) cls::screen
 (const byte*) cls::screen#0 screen = (byte*) 1024
 (byte*) control
 (const byte*) control#0 control = (byte*) 53265
 (void()) main()
-(byte~) main::$1 $1 zp ZP_BYTE:4 101.0
+(byte~) main::$1 $1 zp ZP_BYTE:14 101.0
 (byte~) main::$2 reg byte a 202.0
 (label) main::@1
 (label) main::@2
@@ -2859,7 +2859,7 @@ FINAL SYMBOL TABLE
 (byte) main::time_end
 (byte) main::time_end#0 reg byte x 11.0
 (byte) main::time_start
-(byte) main::time_start#0 time_start zp ZP_BYTE:4 1.8333333333333333
+(byte) main::time_start#0 time_start zp ZP_BYTE:15 1.8333333333333333
 (byte*) raster
 (const byte*) raster#0 raster = (byte*) 53266
 (void()) utoa10w((word) utoa10w::value , (byte*) utoa10w::dst)
@@ -2926,23 +2926,28 @@ FINAL SYMBOL TABLE
 (label) utoa16w::@4
 (label) utoa16w::@return
 (byte*) utoa16w::dst
-(byte*) utoa16w::dst#5 dst zp ZP_WORD:6 0.07407407407407407
+(byte*) utoa16w::dst#5 dst zp ZP_WORD:10 0.07407407407407407
 (byte) utoa16w::started
 (byte) utoa16w::started#1 reg byte x 1.3333333333333333
 (byte) utoa16w::started#2 reg byte x 1.3333333333333333
 (word) utoa16w::value
-(word) utoa16w::value#5 value zp ZP_WORD:2 0.5
+(word) utoa16w::value#5 value zp ZP_WORD:8 0.5
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte x [ utoa10w::i#2 utoa10w::i#1 ]
-zp ZP_WORD:2 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 utoa16w::value#5 cls::sc#2 cls::sc#1 ]
-zp ZP_BYTE:4 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 main::$1 main::time_start#0 ]
+zp ZP_WORD:2 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ]
+zp ZP_BYTE:4 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ]
 zp ZP_BYTE:5 [ utoa10w::bStarted#2 ]
-zp ZP_WORD:6 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 utoa10w::dst#2 utoa16w::dst#5 ]
+zp ZP_WORD:6 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 utoa10w::dst#2 ]
+zp ZP_WORD:8 [ utoa16w::value#5 ]
+zp ZP_WORD:10 [ utoa16w::dst#5 ]
 reg byte a [ utoa16n::nybble#4 utoa16n::nybble#0 utoa16n::nybble#1 utoa16n::nybble#2 utoa16n::nybble#3 ]
 reg byte x [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ]
+zp ZP_WORD:12 [ cls::sc#2 cls::sc#1 ]
+zp ZP_BYTE:14 [ main::$1 ]
 reg byte a [ main::$2 ]
 reg byte a [ main::rst#0 ]
+zp ZP_BYTE:15 [ main::time_start#0 ]
 reg byte x [ main::time_end#0 ]
 reg byte a [ main::time#0 ]
 reg byte a [ utoa10w::$8 ]
@@ -2980,8 +2985,8 @@ Score: 21558
 //SEG8 @end
 //SEG9 main
 main: {
-    .label _1 = 4
-    .label time_start = 4
+    .label _1 = $e
+    .label time_start = $f
   //SEG10 asm { sei  }
     sei
   //SEG11 [5] call cls 
@@ -3252,10 +3257,10 @@ utoa10w: {
 }
 //SEG113 utoa16w
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zeropage(2) value, byte* zeropage(6) dst)
+// utoa16w(word zeropage(8) value, byte* zeropage($a) dst)
 utoa16w: {
-    .label value = 2
-    .label dst = 6
+    .label value = 8
+    .label dst = $a
   //SEG114 [52] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
     lda value+1
   //SEG115 [53] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
@@ -3356,7 +3361,7 @@ utoa16n: {
 //SEG166 cls
 cls: {
     .label screen = $400
-    .label sc = 2
+    .label sc = $c
   //SEG167 [81] phi from cls to cls::@1 [phi:cls->cls::@1]
   //SEG168 [81] phi (byte*) cls::sc#2 = (const byte*) cls::screen#0 [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
     lda #<screen

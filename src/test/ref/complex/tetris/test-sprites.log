@@ -3081,17 +3081,17 @@ Attempting to uplift remaining variables inzp ZP_BYTE:22 [ sprites_irq::ptr#0 ]
 Uplifting [sprites_irq] best 9094 combination reg byte x [ sprites_irq::ptr#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:11 [ render_screen_showing#0 ]
 Uplifting [] best 9094 combination zp ZP_BYTE:11 [ render_screen_showing#0 ] 
-Coalescing zero page register [ zp ZP_BYTE:3 [ main::xpos#2 main::xpos#1 ] ] with [ zp ZP_BYTE:5 [ sin_idx#10 sin_idx#3 ] ]
-Coalescing zero page register [ zp ZP_BYTE:3 [ main::xpos#2 main::xpos#1 sin_idx#10 sin_idx#3 ] ] with [ zp ZP_BYTE:9 [ sprites_init::xpos#2 sprites_init::xpos#1 ] ]
-Coalescing zero page register [ zp ZP_BYTE:4 [ main::ypos#2 main::ypos#1 ] ] with [ zp ZP_BYTE:6 [ loop::s#2 loop::s#1 ] ]
-Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ main::xpos#2 main::xpos#1 sin_idx#10 sin_idx#3 sprites_init::xpos#2 sprites_init::xpos#1 ]
-Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:3 [ main::ypos#2 main::ypos#1 loop::s#2 loop::s#1 ]
-Allocated (was zp ZP_BYTE:10) zp ZP_BYTE:4 [ sprites_irq::raster_sprite_gfx_modify#0 ]
-Allocated (was zp ZP_BYTE:11) zp ZP_BYTE:5 [ render_screen_showing#0 ]
-Allocated (was zp ZP_BYTE:12) zp ZP_BYTE:6 [ irq_raster_next#0 irq_raster_next#4 irq_raster_next#1 irq_raster_next#2 irq_raster_next#3 ]
-Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:7 [ irq_sprite_ypos#0 irq_sprite_ypos#1 irq_sprite_ypos#2 irq_sprite_ypos#3 ]
-Allocated (was zp ZP_BYTE:14) zp ZP_BYTE:8 [ irq_sprite_ptr#0 irq_sprite_ptr#1 irq_sprite_ptr#2 irq_sprite_ptr#3 ]
-Allocated (was zp ZP_BYTE:15) zp ZP_BYTE:9 [ irq_cnt#0 irq_cnt#1 irq_cnt#2 ]
+Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ main::xpos#2 main::xpos#1 ]
+Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:3 [ main::ypos#2 main::ypos#1 ]
+Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ sin_idx#10 sin_idx#3 ]
+Allocated (was zp ZP_BYTE:6) zp ZP_BYTE:5 [ loop::s#2 loop::s#1 ]
+Allocated (was zp ZP_BYTE:9) zp ZP_BYTE:6 [ sprites_init::xpos#2 sprites_init::xpos#1 ]
+Allocated (was zp ZP_BYTE:10) zp ZP_BYTE:7 [ sprites_irq::raster_sprite_gfx_modify#0 ]
+Allocated (was zp ZP_BYTE:11) zp ZP_BYTE:8 [ render_screen_showing#0 ]
+Allocated (was zp ZP_BYTE:12) zp ZP_BYTE:9 [ irq_raster_next#0 irq_raster_next#4 irq_raster_next#1 irq_raster_next#2 irq_raster_next#3 ]
+Allocated (was zp ZP_BYTE:13) zp ZP_BYTE:10 [ irq_sprite_ypos#0 irq_sprite_ypos#1 irq_sprite_ypos#2 irq_sprite_ypos#3 ]
+Allocated (was zp ZP_BYTE:14) zp ZP_BYTE:11 [ irq_sprite_ptr#0 irq_sprite_ptr#1 irq_sprite_ptr#2 irq_sprite_ptr#3 ]
+Allocated (was zp ZP_BYTE:15) zp ZP_BYTE:12 [ irq_cnt#0 irq_cnt#1 irq_cnt#2 ]
 Interrupt procedure sprites_irq clobbers AXCNZV
 Removing interrupt register storage sty regy+1 in SEG128 entry interrupt(HARDWARE_CLOBBER)
 Removing interrupt register storage regy: in SEG164 [99] return  - exit interrupt(HARDWARE_CLOBBER)
@@ -3161,12 +3161,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
-  .label render_screen_showing = 5
-  .label irq_raster_next = 6
-  .label irq_sprite_ypos = 7
-  .label irq_sprite_ptr = 8
-  .label irq_cnt = 9
-  .label sin_idx = 2
+  .label render_screen_showing = 8
+  .label irq_raster_next = 9
+  .label irq_sprite_ypos = $a
+  .label irq_sprite_ptr = $b
+  .label irq_cnt = $c
+  .label sin_idx = 4
 //SEG3 @begin
 bbegin:
   jmp b1
@@ -3349,7 +3349,7 @@ main: {
 }
 //SEG69 loop
 loop: {
-    .label s = 3
+    .label s = 5
   //SEG70 [39] phi from loop to loop::@1 [phi:loop->loop::@1]
   b1_from_loop:
   //SEG71 [39] phi (byte) sin_idx#10 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
@@ -3461,7 +3461,7 @@ sprites_irq_init: {
 //SEG107 sprites_init
 // Setup the sprites
 sprites_init: {
-    .label xpos = 2
+    .label xpos = 6
   //SEG108 [61] *((const byte*) SPRITES_ENABLE#0) ← (byte) $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta SPRITES_ENABLE
@@ -3520,7 +3520,7 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
-    .label raster_sprite_gfx_modify = 4
+    .label raster_sprite_gfx_modify = 7
   //SEG128 entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
@@ -3901,25 +3901,25 @@ FINAL SYMBOL TABLE
 (byte*) VIC_CONTROL
 (const byte*) VIC_CONTROL#0 VIC_CONTROL = (byte*) 53265
 (byte) irq_cnt
-(byte) irq_cnt#0 irq_cnt zp ZP_BYTE:9 0.17391304347826086
-(byte) irq_cnt#1 irq_cnt zp ZP_BYTE:9 3.0
-(byte) irq_cnt#2 irq_cnt zp ZP_BYTE:9 20.0
+(byte) irq_cnt#0 irq_cnt zp ZP_BYTE:12 0.17391304347826086
+(byte) irq_cnt#1 irq_cnt zp ZP_BYTE:12 3.0
+(byte) irq_cnt#2 irq_cnt zp ZP_BYTE:12 20.0
 (byte) irq_raster_next
-(byte) irq_raster_next#0 irq_raster_next zp ZP_BYTE:6 0.3076923076923077
-(byte) irq_raster_next#1 irq_raster_next zp ZP_BYTE:6 1.0
-(byte) irq_raster_next#2 irq_raster_next zp ZP_BYTE:6 1.3333333333333333
-(byte) irq_raster_next#3 irq_raster_next zp ZP_BYTE:6 1.3333333333333333
-(byte) irq_raster_next#4 irq_raster_next zp ZP_BYTE:6 8.0
+(byte) irq_raster_next#0 irq_raster_next zp ZP_BYTE:9 0.3076923076923077
+(byte) irq_raster_next#1 irq_raster_next zp ZP_BYTE:9 1.0
+(byte) irq_raster_next#2 irq_raster_next zp ZP_BYTE:9 1.3333333333333333
+(byte) irq_raster_next#3 irq_raster_next zp ZP_BYTE:9 1.3333333333333333
+(byte) irq_raster_next#4 irq_raster_next zp ZP_BYTE:9 8.0
 (byte) irq_sprite_ptr
-(byte) irq_sprite_ptr#0 irq_sprite_ptr zp ZP_BYTE:8 0.25806451612903225
-(byte) irq_sprite_ptr#1 irq_sprite_ptr zp ZP_BYTE:8 20.0
-(byte) irq_sprite_ptr#2 irq_sprite_ptr zp ZP_BYTE:8 20.0
-(byte) irq_sprite_ptr#3 irq_sprite_ptr zp ZP_BYTE:8 20.0
+(byte) irq_sprite_ptr#0 irq_sprite_ptr zp ZP_BYTE:11 0.25806451612903225
+(byte) irq_sprite_ptr#1 irq_sprite_ptr zp ZP_BYTE:11 20.0
+(byte) irq_sprite_ptr#2 irq_sprite_ptr zp ZP_BYTE:11 20.0
+(byte) irq_sprite_ptr#3 irq_sprite_ptr zp ZP_BYTE:11 20.0
 (byte) irq_sprite_ypos
-(byte) irq_sprite_ypos#0 irq_sprite_ypos zp ZP_BYTE:7 0.27586206896551724
-(byte) irq_sprite_ypos#1 irq_sprite_ypos zp ZP_BYTE:7 20.0
-(byte) irq_sprite_ypos#2 irq_sprite_ypos zp ZP_BYTE:7 20.0
-(byte) irq_sprite_ypos#3 irq_sprite_ypos zp ZP_BYTE:7 20.0
+(byte) irq_sprite_ypos#0 irq_sprite_ypos zp ZP_BYTE:10 0.27586206896551724
+(byte) irq_sprite_ypos#1 irq_sprite_ypos zp ZP_BYTE:10 20.0
+(byte) irq_sprite_ypos#2 irq_sprite_ypos zp ZP_BYTE:10 20.0
+(byte) irq_sprite_ypos#3 irq_sprite_ypos zp ZP_BYTE:10 20.0
 (void()) loop()
 (byte~) loop::$1 reg byte a 202.0
 (label) loop::@1
@@ -3932,8 +3932,8 @@ FINAL SYMBOL TABLE
 (byte) loop::idx#1 reg byte x 67.33333333333333
 (byte) loop::idx#2 reg byte x 104.66666666666666
 (byte) loop::s
-(byte) loop::s#1 s zp ZP_BYTE:3 151.5
-(byte) loop::s#2 s zp ZP_BYTE:3 75.75
+(byte) loop::s#1 s zp ZP_BYTE:5 151.5
+(byte) loop::s#2 s zp ZP_BYTE:5 75.75
 (void()) main()
 (byte~) main::$6 reg byte a 22.0
 (label) main::@1
@@ -3988,10 +3988,10 @@ FINAL SYMBOL TABLE
 (byte) main::ypos#1 ypos zp ZP_BYTE:3 7.333333333333333
 (byte) main::ypos#2 ypos zp ZP_BYTE:3 3.666666666666667
 (byte) render_screen_showing
-(byte) render_screen_showing#0 render_screen_showing zp ZP_BYTE:5 0.4
+(byte) render_screen_showing#0 render_screen_showing zp ZP_BYTE:8 0.4
 (byte) sin_idx
-(byte) sin_idx#10 sin_idx zp ZP_BYTE:2 3.666666666666667
-(byte) sin_idx#3 sin_idx zp ZP_BYTE:2 22.0
+(byte) sin_idx#10 sin_idx zp ZP_BYTE:4 3.666666666666667
+(byte) sin_idx#3 sin_idx zp ZP_BYTE:4 22.0
 (void()) sprites_init()
 (label) sprites_init::@1
 (label) sprites_init::@return
@@ -4001,8 +4001,8 @@ FINAL SYMBOL TABLE
 (byte) sprites_init::s2
 (byte) sprites_init::s2#0 reg byte x 22.0
 (byte) sprites_init::xpos
-(byte) sprites_init::xpos#1 xpos zp ZP_BYTE:2 7.333333333333333
-(byte) sprites_init::xpos#2 xpos zp ZP_BYTE:2 8.25
+(byte) sprites_init::xpos#1 xpos zp ZP_BYTE:6 7.333333333333333
+(byte) sprites_init::xpos#2 xpos zp ZP_BYTE:6 8.25
 interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 (byte~) sprites_irq::$0 reg byte x 4.0
 (label) sprites_irq::@1
@@ -4024,7 +4024,7 @@ interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 (byte) sprites_irq::ptr#3 reg byte a 2.6666666666666665
 (byte) sprites_irq::ptr#4 reg byte a 4.0
 (byte) sprites_irq::raster_sprite_gfx_modify
-(byte) sprites_irq::raster_sprite_gfx_modify#0 raster_sprite_gfx_modify zp ZP_BYTE:4 6.5
+(byte) sprites_irq::raster_sprite_gfx_modify#0 raster_sprite_gfx_modify zp ZP_BYTE:7 6.5
 (label) sprites_irq::toSpritePtr2
 (word~) sprites_irq::toSpritePtr2_$0
 (number~) sprites_irq::toSpritePtr2_$1
@@ -4045,16 +4045,19 @@ interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 (byte*) toSpritePtr1_sprite
 
 reg byte y [ main::s#2 main::s#1 ]
-zp ZP_BYTE:2 [ main::xpos#2 main::xpos#1 sin_idx#10 sin_idx#3 sprites_init::xpos#2 sprites_init::xpos#1 ]
-zp ZP_BYTE:3 [ main::ypos#2 main::ypos#1 loop::s#2 loop::s#1 ]
+zp ZP_BYTE:2 [ main::xpos#2 main::xpos#1 ]
+zp ZP_BYTE:3 [ main::ypos#2 main::ypos#1 ]
+zp ZP_BYTE:4 [ sin_idx#10 sin_idx#3 ]
+zp ZP_BYTE:5 [ loop::s#2 loop::s#1 ]
 reg byte x [ loop::idx#2 loop::idx#0 loop::idx#1 ]
 reg byte y [ sprites_init::s#2 sprites_init::s#1 ]
-zp ZP_BYTE:4 [ sprites_irq::raster_sprite_gfx_modify#0 ]
-zp ZP_BYTE:5 [ render_screen_showing#0 ]
-zp ZP_BYTE:6 [ irq_raster_next#0 irq_raster_next#4 irq_raster_next#1 irq_raster_next#2 irq_raster_next#3 ]
-zp ZP_BYTE:7 [ irq_sprite_ypos#0 irq_sprite_ypos#1 irq_sprite_ypos#2 irq_sprite_ypos#3 ]
-zp ZP_BYTE:8 [ irq_sprite_ptr#0 irq_sprite_ptr#1 irq_sprite_ptr#2 irq_sprite_ptr#3 ]
-zp ZP_BYTE:9 [ irq_cnt#0 irq_cnt#1 irq_cnt#2 ]
+zp ZP_BYTE:6 [ sprites_init::xpos#2 sprites_init::xpos#1 ]
+zp ZP_BYTE:7 [ sprites_irq::raster_sprite_gfx_modify#0 ]
+zp ZP_BYTE:8 [ render_screen_showing#0 ]
+zp ZP_BYTE:9 [ irq_raster_next#0 irq_raster_next#4 irq_raster_next#1 irq_raster_next#2 irq_raster_next#3 ]
+zp ZP_BYTE:10 [ irq_sprite_ypos#0 irq_sprite_ypos#1 irq_sprite_ypos#2 irq_sprite_ypos#3 ]
+zp ZP_BYTE:11 [ irq_sprite_ptr#0 irq_sprite_ptr#1 irq_sprite_ptr#2 irq_sprite_ptr#3 ]
+zp ZP_BYTE:12 [ irq_cnt#0 irq_cnt#1 irq_cnt#2 ]
 reg byte x [ main::s2#0 ]
 reg byte a [ main::$6 ]
 reg byte a [ loop::$1 ]
@@ -4134,12 +4137,12 @@ Score: 7310
   // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
-  .label render_screen_showing = 5
-  .label irq_raster_next = 6
-  .label irq_sprite_ypos = 7
-  .label irq_sprite_ptr = 8
-  .label irq_cnt = 9
-  .label sin_idx = 2
+  .label render_screen_showing = 8
+  .label irq_raster_next = 9
+  .label irq_sprite_ypos = $a
+  .label irq_sprite_ptr = $b
+  .label irq_cnt = $c
+  .label sin_idx = 4
 //SEG3 @begin
 bbegin:
 //SEG4 @1
@@ -4273,7 +4276,7 @@ main: {
 }
 //SEG69 loop
 loop: {
-    .label s = 3
+    .label s = 5
   //SEG70 [39] phi from loop to loop::@1 [phi:loop->loop::@1]
   //SEG71 [39] phi (byte) sin_idx#10 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
     lda #0
@@ -4370,7 +4373,7 @@ sprites_irq_init: {
 //SEG107 sprites_init
 // Setup the sprites
 sprites_init: {
-    .label xpos = 2
+    .label xpos = 6
   //SEG108 [61] *((const byte*) SPRITES_ENABLE#0) ← (byte) $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta SPRITES_ENABLE
@@ -4421,7 +4424,7 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
-    .label raster_sprite_gfx_modify = 4
+    .label raster_sprite_gfx_modify = 7
   //SEG128 entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1

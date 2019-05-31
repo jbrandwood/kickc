@@ -50,10 +50,10 @@ main: {
     jmp b1
 }
 anim: {
-    .label _5 = $c
-    .label _7 = $e
-    .label sprite_x = $c
-    .label sprite_y = $e
+    .label _5 = $e
+    .label _7 = $10
+    .label sprite_x = $e
+    .label sprite_y = $10
     lda ypos+1
     bpl b1
     sec
@@ -172,7 +172,7 @@ anim: {
 }
 // Fill and show a sprite, clear the screen
 init: {
-    .label sc = 2
+    .label sc = $c
     lda #1
     sta SPRITES_ENABLE
     lda #0

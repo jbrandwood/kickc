@@ -133,7 +133,7 @@ print_char: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = 9
     lda #<$400
     sta sc
     lda #>$400

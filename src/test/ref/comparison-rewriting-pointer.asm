@@ -6,7 +6,7 @@ main: {
     .label screen = $400
     .label cols = $d800
     .label sc = 2
-    .label cc = 2
+    .label cc = 4
     lda #<screen
     sta sc
     lda #>screen

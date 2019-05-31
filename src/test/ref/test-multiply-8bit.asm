@@ -292,7 +292,7 @@ mul8s: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = 6
+    .label mb = $e
     .label res = $c
     .label return = $c
     lda #0
@@ -332,11 +332,11 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zeropage(3) b)
+// mulf8s_prepared(signed byte zeropage($24) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = $e
-    .label b = 3
+    .label m = $10
+    .label b = $24
     ldx b
     jsr mulf8u_prepared
     lda memA
@@ -363,7 +363,7 @@ mulf8s_prepared: {
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = $e
+    .label return = $10
     stx memB
     sec
   sm1:
@@ -461,10 +461,10 @@ muls8s: {
 // Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
     .label ms = 8
-    .label mf = $e
+    .label mf = $10
     .label mn = $c
-    .label b = 3
-    .label a = 2
+    .label b = $13
+    .label a = $12
     lda #0
     sta a
   b1:
@@ -528,12 +528,12 @@ mul8u_compare: {
     rts
     str: .text "multiply results match!@"
 }
-// mul8u_error(byte register(X) a, byte zeropage(3) b, word zeropage(8) ms, word zeropage($c) mn, word zeropage($e) mf)
+// mul8u_error(byte register(X) a, byte zeropage($13) b, word zeropage(8) ms, word zeropage($c) mn, word zeropage($10) mf)
 mul8u_error: {
-    .label b = 3
+    .label b = $13
     .label ms = 8
     .label mn = $c
-    .label mf = $e
+    .label mf = $10
     lda #<str
     sta print_str.str
     lda #>str
@@ -580,18 +580,18 @@ mul8u_error: {
 // Fast multiply two unsigned bytes to a word result
 // mulf8u(byte register(A) a, byte register(X) b)
 mulf8u: {
-    .label return = $e
+    .label return = $10
     jsr mulf8u_prepare
     jsr mulf8u_prepared
     rts
 }
 // Slow multiplication of unsigned bytes
 // Calculate an unsigned multiplication by repeated addition
-// muls8u(byte zeropage(2) a, byte register(X) b)
+// muls8u(byte zeropage($12) a, byte register(X) b)
 muls8u: {
     .label return = 8
     .label m = 8
-    .label a = 2
+    .label a = $12
     lda a
     cmp #0
     beq b3
@@ -621,7 +621,7 @@ muls8u: {
 // Red screen on failure - green on success
 mulf_tables_cmp: {
     .label asm_sqr = 8
-    .label kc_sqr = 4
+    .label kc_sqr = $14
     lda #<mula_sqr1_lo
     sta asm_sqr
     lda #>mula_sqr1_lo
@@ -757,13 +757,13 @@ mulf_init_asm: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = 6
-    .label sqr = 8
-    .label sqr1_lo = 4
-    .label x_2 = 2
-    .label sqr2_hi = 6
-    .label sqr2_lo = 4
-    .label dir = 2
+    .label sqr1_hi = $18
+    .label sqr = $1b
+    .label sqr1_lo = $16
+    .label x_2 = $1a
+    .label sqr2_hi = $1f
+    .label sqr2_lo = $1d
+    .label dir = $21
     lda #0
     sta x_2
     lda #<mulf_sqr1_hi+1
@@ -865,7 +865,7 @@ mulf_init: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 4
+    .label sc = $22
     lda #<$400
     sta sc
     lda #>$400

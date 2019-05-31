@@ -8,7 +8,7 @@ main: {
     .label sb_ptr = ub
     .label ub_ptr = sb
     .label ub = 2
-    .label sb = 2
+    .label sb = 3
     lda #$ff
     sta ub
     lda #1

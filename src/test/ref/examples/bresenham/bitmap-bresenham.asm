@@ -48,13 +48,15 @@ lines: {
     rts
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zeropage(5) x0, byte zeropage(8) x1, byte zeropage(6) y0, byte register(Y) y1)
+// bitmap_line(byte zeropage(5) x0, byte zeropage($b) x1, byte zeropage(6) y0, byte register(Y) y1)
 bitmap_line: {
     .label xd = 4
-    .label yd = 3
+    .label yd = $a
+    .label yd_2 = 3
     .label x0 = 5
-    .label x1 = 8
+    .label x1 = $b
     .label y0 = 6
+    .label yd_11 = 3
     lda x0
     cmp x1
     bcc b1
@@ -70,7 +72,7 @@ bitmap_line: {
     eor #$ff
     sec
     adc y0
-    sta yd
+    sta yd_2
     cmp xd
     bcc b8
     sty bitmap_line_ydxi.y
@@ -131,7 +133,7 @@ bitmap_line: {
     tya
     sec
     sbc y0
-    sta yd
+    sta yd_11
     cmp xd
     bcc b13
     lda y0
@@ -149,7 +151,7 @@ bitmap_line: {
 }
 // bitmap_line_xdyi(byte register(X) x, byte zeropage(6) y, byte zeropage(5) x1, byte zeropage(4) xd, byte zeropage(3) yd)
 bitmap_line_xdyi: {
-    .label _6 = 8
+    .label _6 = $16
     .label y = 6
     .label x1 = 5
     .label xd = 4
@@ -184,9 +186,9 @@ bitmap_line_xdyi: {
 }
 // bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
-    .label plotter_x = 9
-    .label plotter_y = $b
-    .label plotter = 9
+    .label plotter_x = $17
+    .label plotter_y = $19
+    .label plotter = $17
     lda bitmap_plot_xhi,x
     sta plotter_x+1
     lda bitmap_plot_xlo,x
@@ -208,13 +210,13 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
-// bitmap_line_ydxi(byte zeropage(7) y, byte register(X) x, byte zeropage(6) y1, byte zeropage(3) yd, byte zeropage(4) xd)
+// bitmap_line_ydxi(byte zeropage(8) y, byte register(X) x, byte zeropage(6) y1, byte zeropage(3) yd, byte zeropage(4) xd)
 bitmap_line_ydxi: {
-    .label y = 7
+    .label y = 8
     .label y1 = 6
     .label yd = 3
     .label xd = 4
-    .label e = 5
+    .label e = 9
     lda xd
     lsr
     sta e
@@ -241,14 +243,14 @@ bitmap_line_ydxi: {
     bne b1
     rts
 }
-// bitmap_line_xdyd(byte register(X) x, byte zeropage(6) y, byte zeropage(8) x1, byte zeropage(4) xd, byte zeropage(3) yd)
+// bitmap_line_xdyd(byte register(X) x, byte zeropage(6) y, byte zeropage($b) x1, byte zeropage(4) xd, byte zeropage($a) yd)
 bitmap_line_xdyd: {
-    .label _6 = 7
+    .label _6 = $1b
     .label y = 6
-    .label x1 = 8
+    .label x1 = $b
     .label xd = 4
-    .label yd = 3
-    .label e = 5
+    .label yd = $a
+    .label e = $c
     lda yd
     lsr
     sta e
@@ -276,13 +278,13 @@ bitmap_line_xdyd: {
     bne b1
     rts
 }
-// bitmap_line_ydxd(byte zeropage(7) y, byte register(X) x, byte zeropage(6) y1, byte zeropage(3) yd, byte zeropage(4) xd)
+// bitmap_line_ydxd(byte zeropage($d) y, byte register(X) x, byte zeropage(6) y1, byte zeropage($a) yd, byte zeropage(4) xd)
 bitmap_line_ydxd: {
-    .label y = 7
+    .label y = $d
     .label y1 = 6
-    .label yd = 3
+    .label yd = $a
     .label xd = 4
-    .label e = 5
+    .label e = $e
     lda xd
     lsr
     sta e
@@ -310,7 +312,7 @@ bitmap_line_ydxd: {
     rts
 }
 init_screen: {
-    .label c = 9
+    .label c = $f
     lda #<SCREEN
     sta c
     lda #>SCREEN
@@ -333,8 +335,8 @@ init_screen: {
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {
-    .label bitmap = 9
-    .label y = 2
+    .label bitmap = $12
+    .label y = $11
     lda bitmap_plot_xlo
     sta bitmap
     lda bitmap_plot_xhi
@@ -362,8 +364,8 @@ bitmap_clear: {
 }
 // Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
-    .label _10 = 2
-    .label yoffs = 9
+    .label _10 = $1c
+    .label yoffs = $14
     ldy #$80
     ldx #0
   b1:

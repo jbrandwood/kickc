@@ -29,6 +29,9 @@ public class Compiler {
    /** The number of combinations to test when uplifting variables into registers. */
    private int upliftCombinations = 100;
 
+   /** Enable the zero-page coalesce pass. It takes a lot of time, but limits the zero page usage significantly. */
+   private boolean enableZeroPageCoalasce = false;
+
    public Compiler() {
       this.program = new Program();
    }
@@ -37,9 +40,14 @@ public class Compiler {
       this.upliftCombinations = upliftCombinations;
    }
 
+   public void setEnableZeroPageCoalasce(boolean optimizeZeroPageCoalesce) {
+      this.enableZeroPageCoalasce = optimizeZeroPageCoalesce;
+   }
+
    public void setLog(CompileLog compileLog) {
       program.setLog(compileLog);
    }
+
 
    public static void loadAndParseFile(String fileName, Program program, Path currentPath) {
       try {
@@ -483,7 +491,9 @@ public class Compiler {
 
       // Final register coalesce and finalization
       new Pass4ZeroPageCoalesceAssignment(program).coalesce();
-      new Pass4ZeroPageCoalesce(program).coalesce();
+      if(enableZeroPageCoalasce) {
+         new Pass4ZeroPageCoalesce(program).coalesce();
+      }
       new Pass4RegistersFinalize(program).allocate(true);
 
    }

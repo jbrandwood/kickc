@@ -3125,10 +3125,10 @@ Uplifting [testInt] best 2598 combination
 Uplifting [testLong] best 2598 combination 
 Coalescing zero page register with common assignment [ zp ZP_DWORD:4 [ print_sdword::dw#4 print_sdword::dw#3 print_sdword::dw#0 ] ] with [ zp ZP_DWORD:8 [ print_dword::dw#2 print_dword::dw#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:12 [ print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#9 ] ] with [ zp ZP_WORD:20 [ print_sword::w#6 print_sword::w#5 print_sword::w#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:2 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 ] ] with [ zp ZP_WORD:23 [ print_cls::sc#2 print_cls::sc#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:12 [ print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#9 print_sword::w#6 print_sword::w#5 print_sword::w#0 ] ] with [ zp ZP_WORD:18 [ print_str::str#5 print_str::str#7 print_str::str#0 ] ]
-Allocated (was zp ZP_WORD:12) zp ZP_WORD:8 [ print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#9 print_sword::w#6 print_sword::w#5 print_sword::w#0 print_str::str#5 print_str::str#7 print_str::str#0 ]
+Allocated (was zp ZP_WORD:12) zp ZP_WORD:8 [ print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#9 print_sword::w#6 print_sword::w#5 print_sword::w#0 ]
 Allocated (was zp ZP_WORD:16) zp ZP_WORD:10 [ print_char_cursor#90 print_char_cursor#143 print_char_cursor#139 print_char_cursor#140 print_char_cursor#24 print_char_cursor#132 print_char_cursor#150 print_char_cursor#155 print_char_cursor#156 print_char_cursor#157 print_char_cursor#1 ]
+Allocated (was zp ZP_WORD:18) zp ZP_WORD:12 [ print_str::str#5 print_str::str#7 print_str::str#0 ]
+Allocated (was zp ZP_WORD:23) zp ZP_WORD:14 [ print_cls::sc#2 print_cls::sc#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -3535,9 +3535,9 @@ print_char: {
 }
 //SEG146 print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(8) str)
+// print_str(byte* zeropage($c) str)
 print_str: {
-    .label str = 8
+    .label str = $c
   //SEG147 [69] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
   b1_from_print_str:
   b1_from_b2:
@@ -3998,7 +3998,7 @@ print_sbyte: {
 //SEG326 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $e
   //SEG327 [141] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   b1_from_print_cls:
   //SEG328 [141] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
@@ -4307,8 +4307,8 @@ FINAL SYMBOL TABLE
 (label) print_cls::@1
 (label) print_cls::@return
 (byte*) print_cls::sc
-(byte*) print_cls::sc#1 sc zp ZP_WORD:2 16.5
-(byte*) print_cls::sc#2 sc zp ZP_WORD:2 16.5
+(byte*) print_cls::sc#1 sc zp ZP_WORD:14 16.5
+(byte*) print_cls::sc#2 sc zp ZP_WORD:14 16.5
 (void()) print_dword((dword) print_dword::dw)
 (label) print_dword::@1
 (label) print_dword::@return
@@ -4349,9 +4349,9 @@ FINAL SYMBOL TABLE
 (label) print_str::@2
 (label) print_str::@return
 (byte*) print_str::str
-(byte*) print_str::str#0 str zp ZP_WORD:8 22.0
-(byte*) print_str::str#5 str zp ZP_WORD:8 11.5
-(byte*) print_str::str#7 str zp ZP_WORD:8 2.0
+(byte*) print_str::str#0 str zp ZP_WORD:12 22.0
+(byte*) print_str::str#5 str zp ZP_WORD:12 11.5
+(byte*) print_str::str#7 str zp ZP_WORD:12 2.0
 (void()) print_sword((signed word) print_sword::w)
 (label) print_sword::@1
 (label) print_sword::@2
@@ -4430,13 +4430,15 @@ FINAL SYMBOL TABLE
 (word) testShort::u
 (const word) testShort::u#0 u = (word) $578
 
-zp ZP_WORD:2 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 print_cls::sc#2 print_cls::sc#1 ]
+zp ZP_WORD:2 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 ]
 zp ZP_DWORD:4 [ print_sdword::dw#4 print_sdword::dw#3 print_sdword::dw#0 print_dword::dw#2 print_dword::dw#0 ]
-zp ZP_WORD:8 [ print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#9 print_sword::w#6 print_sword::w#5 print_sword::w#0 print_str::str#5 print_str::str#7 print_str::str#0 ]
+zp ZP_WORD:8 [ print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#9 print_sword::w#6 print_sword::w#5 print_sword::w#0 ]
 reg byte x [ print_byte::b#4 print_byte::b#6 print_byte::b#1 print_byte::b#2 ]
 reg byte a [ print_char::ch#14 print_char::ch#4 print_char::ch#5 ]
 zp ZP_WORD:10 [ print_char_cursor#90 print_char_cursor#143 print_char_cursor#139 print_char_cursor#140 print_char_cursor#24 print_char_cursor#132 print_char_cursor#150 print_char_cursor#155 print_char_cursor#156 print_char_cursor#157 print_char_cursor#1 ]
+zp ZP_WORD:12 [ print_str::str#5 print_str::str#7 print_str::str#0 ]
 reg byte x [ print_sbyte::b#5 print_sbyte::b#0 print_sbyte::b#3 ]
+zp ZP_WORD:14 [ print_cls::sc#2 print_cls::sc#1 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
 
@@ -4759,9 +4761,9 @@ print_char: {
 }
 //SEG146 print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(8) str)
+// print_str(byte* zeropage($c) str)
 print_str: {
-    .label str = 8
+    .label str = $c
   //SEG147 [69] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
   //SEG148 [69] phi (byte*) print_char_cursor#132 = (byte*) print_char_cursor#150 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
   //SEG149 [69] phi (byte*) print_str::str#5 = (byte*) print_str::str#7 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
@@ -5108,7 +5110,7 @@ print_sbyte: {
 //SEG326 print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $e
   //SEG327 [141] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   //SEG328 [141] phi (byte*) print_cls::sc#2 = (byte*) 1024 [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<$400

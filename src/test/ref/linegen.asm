@@ -4,7 +4,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
-  .label rem16u = $f
+  .label rem16u = $1b
   .label print_char_cursor = 7
   .label print_line_cursor = 2
 main: {
@@ -241,9 +241,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(4) str)
+// print_str(byte* zeropage(9) str)
 print_str: {
-    .label str = 4
+    .label str = 9
   b1:
     ldy #0
     lda (str),y
@@ -266,7 +266,7 @@ print_str: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $b
     lda #<$400
     sta sc
     lda #>$400
@@ -290,18 +290,18 @@ print_cls: {
 // Generate word linear table
 // lintab - the table to generate into
 // length - the number of points in a total sinus wavelength (the size of the table)
-// lin16u_gen(word zeropage(4) min, word zeropage(2) max, word* zeropage(7) lintab)
+// lin16u_gen(word zeropage($f) min, word zeropage($d) max, word* zeropage($15) lintab)
 lin16u_gen: {
-    .label _5 = 4
-    .label ampl = 2
-    .label stepi = $13
-    .label stepf = $11
-    .label step = $15
-    .label val = 9
-    .label lintab = 7
-    .label i = 2
-    .label max = 2
-    .label min = 4
+    .label _5 = $25
+    .label ampl = $d
+    .label stepi = $1f
+    .label stepf = $1d
+    .label step = $21
+    .label val = $11
+    .label lintab = $15
+    .label i = $17
+    .label max = $d
+    .label min = $f
     lda ampl
     sec
     sbc min
@@ -394,13 +394,13 @@ lin16u_gen: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(2) dividend, word zeropage($d) divisor, word zeropage($f) rem)
+// divr16u(word zeropage($d) dividend, word zeropage($19) divisor, word zeropage($1b) rem)
 divr16u: {
-    .label rem = $f
-    .label dividend = 2
-    .label quotient = $11
-    .label return = $11
-    .label divisor = $d
+    .label rem = $1b
+    .label dividend = $d
+    .label quotient = $1d
+    .label return = $1d
+    .label divisor = $19
     ldx #0
     txa
     sta quotient

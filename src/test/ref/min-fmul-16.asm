@@ -8,7 +8,7 @@
 main: {
     .label a = $4d2
     .label b = $929
-    .label r = 9
+    .label r = $12
     jsr mulf_init
     sei
     lda #<$400
@@ -35,9 +35,9 @@ print_set_screen: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zeropage(9) dw)
+// print_dword(dword zeropage($12) dw)
 print_dword: {
-    .label dw = 9
+    .label dw = $12
     lda dw+2
     sta print_word.w
     lda dw+3
@@ -96,7 +96,7 @@ mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
-    .label return = 9
+    .label return = $12
     lda #<main.a
     sta memA
     lda #>main.a
@@ -209,13 +209,13 @@ mulf16u: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = 4
-    .label sqr = 7
-    .label sqr1_lo = 2
-    .label x_2 = 6
-    .label sqr2_hi = 4
-    .label sqr2_lo = 2
-    .label dir = 6
+    .label sqr1_hi = 8
+    .label sqr = $b
+    .label sqr1_lo = 6
+    .label x_2 = $a
+    .label sqr2_hi = $f
+    .label sqr2_lo = $d
+    .label dir = $11
     lda #0
     sta x_2
     lda #<mulf_sqr1_hi+1

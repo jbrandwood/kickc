@@ -302,9 +302,9 @@ dtvSetCpuBankSegment1: {
 }
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
-    .label _1 = 5
-    .label ch = 3
-    .label cy = 2
+    .label _1 = $d
+    .label ch = $b
+    .label cy = $a
     lda #<SCREEN
     sta ch
     lda #>SCREEN

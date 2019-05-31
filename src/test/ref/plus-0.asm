@@ -21,7 +21,7 @@ main: {
 fill: {
     .label screen = 2
     .label _5 = 4
-    .label _7 = 4
+    .label _7 = 6
     ldy #0
   b2:
     txa

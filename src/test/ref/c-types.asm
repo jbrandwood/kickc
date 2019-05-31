@@ -166,9 +166,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(8) str)
+// print_str(byte* zeropage($c) str)
 print_str: {
-    .label str = 8
+    .label str = $c
   b1:
     ldy #0
     lda (str),y
@@ -335,7 +335,7 @@ print_sbyte: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $e
     lda #<$400
     sta sc
     lda #>$400

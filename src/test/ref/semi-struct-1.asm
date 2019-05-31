@@ -22,7 +22,7 @@ main: {
 }
 // Print points
 print_points: {
-    .label point = 9
+    .label point = $c
     .label i = 2
     jsr print_cls
     lda #<$400
@@ -145,7 +145,7 @@ print_str: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 3
+    .label sc = 9
     lda #<$400
     sta sc
     lda #>$400
@@ -168,8 +168,8 @@ print_cls: {
 }
 // Initialize points
 init_points: {
-    .label getPoint1_return = 3
-    .label pos = 2
+    .label getPoint1_return = $e
+    .label pos = $b
     lda #$a
     sta pos
     ldx #0

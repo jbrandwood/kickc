@@ -111,7 +111,7 @@ render: {
 findcol: {
     .label x = 5
     .label y = 2
-    .label yp = 8
+    .label yp = $a
     .label return = 7
     .label mincol = 7
     .label mindiff = 6
@@ -186,7 +186,7 @@ findcol: {
     jmp b4
 }
 initscreen: {
-    .label screen = 3
+    .label screen = 8
     lda #<SCREEN
     sta screen
     lda #>SCREEN

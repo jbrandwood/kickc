@@ -54,6 +54,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Ouplift" }, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
    private Integer optimizeUpliftCombinations = null;
 
+   @CommandLine.Option(names = {"-Ocoalesce" }, description = "Optimization Option. Enables zero-page coalesce pass which limits zero-page usage significantly, but takes a lot of compile time..")
+   private boolean optimizeZeroPageCoalesce = false;
+
    @CommandLine.Option(names = {"-v" }, description = "Verbose output describing the compilation process")
    private boolean verbose= false;
 
@@ -157,6 +160,11 @@ public class KickC implements Callable<Void> {
          if(optimizeUpliftCombinations != null) {
             compiler.setUpliftCombinations(optimizeUpliftCombinations);
          }
+
+         if(optimizeZeroPageCoalesce) {
+            compiler.setEnableZeroPageCoalasce(true);
+         }
+
 
          System.out.println("Compiling " + kcFile);
          Program program = null;

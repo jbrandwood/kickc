@@ -20,12 +20,13 @@
   .label mulf_sqr2 = $2200
 main: {
     .label at = 2
-    .label at_3 = 5
-    .label j = 7
-    .label i = 4
-    .label at_line = 2
-    .label at_6 = 5
-    .label at_12 = 5
+    .label at_2 = 4
+    .label at_3 = 7
+    .label j = 9
+    .label i = 6
+    .label at_line = 4
+    .label at_6 = 7
+    .label at_12 = 7
     jsr init_screen
     lda #<$400+4
     sta at
@@ -59,22 +60,22 @@ main: {
   b2:
     lda #$28
     clc
-    adc at
-    sta at
+    adc at_2
+    sta at_2
     bcc !+
-    inc at+1
+    inc at_2+1
   !:
     ldy i
     lda vals,y
     sta print_sbyte_at.b
-    lda at
+    lda at_2
     sta print_sbyte_at.at
-    lda at+1
+    lda at_2+1
     sta print_sbyte_at.at+1
     jsr print_sbyte_at
-    lda at
+    lda at_2
     sta at_12
-    lda at+1
+    lda at_2+1
     sta at_12+1
     lda #0
     sta j
@@ -107,10 +108,10 @@ main: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte zeropage($a) b, byte* zeropage(8) at)
+// print_sbyte_at(signed byte zeropage($c) b, byte* zeropage($a) at)
 print_sbyte_at: {
-    .label b = $a
-    .label at = 8
+    .label b = $c
+    .label at = $a
     lda b
     bmi b1
     lda #' '
@@ -135,19 +136,19 @@ print_sbyte_at: {
     jmp b2
 }
 // Print a single char
-// print_char_at(byte zeropage($b) ch, byte* zeropage(8) at)
+// print_char_at(byte zeropage($d) ch, byte* zeropage($a) at)
 print_char_at: {
-    .label at = 8
-    .label ch = $b
+    .label at = $a
+    .label ch = $d
     lda ch
     ldy #0
     sta (at),y
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte* zeropage(8) at)
+// print_byte_at(byte* zeropage($a) at)
 print_byte_at: {
-    .label at = 8
+    .label at = $a
     lda print_sbyte_at.b
     lsr
     lsr
@@ -189,7 +190,7 @@ fmul8: {
 }
 init_screen: {
     .const WHITE = 1
-    .label COLS = 2
+    .label COLS = $e
     jsr print_cls
     ldx #0
   b1:
@@ -227,7 +228,7 @@ init_screen: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $10
     lda #<print_screen
     sta sc
     lda #>print_screen

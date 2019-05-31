@@ -24,7 +24,7 @@
   .label SCREEN2 = $2c00
   .label CHARSET = $2000
   .label SINTABLE = $1f00
-  .label print_char_cursor = $b
+  .label print_char_cursor = $12
   .label c1A = 4
   .label c1B = 5
   .label c2A = 6
@@ -80,15 +80,15 @@ main: {
     jmp b4
 }
 // Render plasma to the passed screen
-// doplasma(byte* zeropage(2) screen)
+// doplasma(byte* zeropage($e) screen)
 doplasma: {
     .label c1a = 8
     .label c1b = 9
     .label i = $a
-    .label c2a = 8
-    .label c2b = 9
-    .label i1 = $a
-    .label screen = 2
+    .label c2a = $b
+    .label c2b = $c
+    .label i1 = $d
+    .label screen = $e
     lda c1A
     sta c1a
     lda c1B
@@ -177,13 +177,13 @@ doplasma: {
 }
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
-    .label _4 = 6
-    .label _8 = $d
-    .label _9 = $d
-    .label s = 5
-    .label i = 4
-    .label c = 2
-    .label _16 = $d
+    .label _4 = $18
+    .label _8 = $19
+    .label _9 = $19
+    .label s = $17
+    .label i = $14
+    .label c = $10
+    .label _16 = $19
     jsr sid_rnd_init
     jsr print_cls
     lda #<print_line_cursor
@@ -289,7 +289,7 @@ sid_rnd: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $15
     lda #<print_line_cursor
     sta sc
     lda #>print_line_cursor

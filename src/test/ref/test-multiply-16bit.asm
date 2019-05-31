@@ -339,10 +339,10 @@ print_sword: {
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mulf16s: {
-    .label _9 = 9
-    .label _13 = 9
-    .label _16 = 9
-    .label _17 = 9
+    .label _9 = $38
+    .label _13 = $3a
+    .label _16 = $38
+    .label _17 = $3a
     .label m = $11
     .label return = $11
     .label a = 3
@@ -518,10 +518,10 @@ mulf16u: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mul16s: {
-    .label _9 = 9
-    .label _13 = 9
-    .label _16 = 9
-    .label _17 = 9
+    .label _9 = $3c
+    .label _13 = $3e
+    .label _16 = $3c
+    .label _17 = $3e
     .label m = $19
     .label return = $19
     .label a = 3
@@ -577,10 +577,10 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage(9) a, word zeropage($17) b)
+// mul16u(word zeropage($1d) a, word zeropage($17) b)
 mul16u: {
-    .label mb = $11
-    .label a = 9
+    .label mb = $1f
+    .label a = $1d
     .label res = $19
     .label return = $19
     .label b = $17
@@ -628,9 +628,9 @@ mul16u: {
 // muls16s(signed word zeropage(3) a, signed word zeropage(5) b)
 muls16s: {
     .label m = $b
-    .label j = 9
+    .label j = $23
     .label return = $b
-    .label i = 9
+    .label i = $25
     .label a = 3
     .label b = 5
     lda a+1
@@ -733,7 +733,7 @@ mul16u_compare: {
     .label ms = $b
     .label mn = $19
     .label mf = $11
-    .label i = 2
+    .label i = $27
     lda #0
     sta i
     sta b
@@ -924,7 +924,7 @@ mul16u_error: {
 muls16u: {
     .label return = $b
     .label m = $b
-    .label i = 3
+    .label i = $28
     .label a = $15
     .label b = $17
     lda a
@@ -974,13 +974,13 @@ muls16u: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = 5
-    .label sqr = 7
-    .label sqr1_lo = 3
-    .label x_2 = 2
-    .label sqr2_hi = 5
-    .label sqr2_lo = 3
-    .label dir = 2
+    .label sqr1_hi = $2c
+    .label sqr = $2f
+    .label sqr1_lo = $2a
+    .label x_2 = $2e
+    .label sqr2_hi = $33
+    .label sqr2_lo = $31
+    .label dir = $35
     lda #0
     sta x_2
     lda #<mulf_sqr1_hi+1
@@ -1082,7 +1082,7 @@ mulf_init: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 3
+    .label sc = $36
     lda #<$400
     sta sc
     lda #>$400

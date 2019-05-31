@@ -14,8 +14,8 @@ scrollup3: {
     .label l2_1 = 4
     .label line = 2
     .label l2_2 = 4
-    .label _5 = 7
-    .label _6 = 9
+    .label _5 = $d
+    .label _6 = $f
     .label l2_4 = 4
     lda #0
     sta l2
@@ -69,8 +69,8 @@ scrollup3: {
     rts
 }
 scrollup2: {
-    .label line1 = 4
-    .label line2 = 2
+    .label line1 = 9
+    .label line2 = 7
     .label l = 6
     lda #0
     sta l
@@ -106,11 +106,11 @@ scrollup2: {
     rts
 }
 scrollup1: {
-    .label _0 = 4
-    .label _2 = 7
-    .label line = 2
-    .label _7 = 7
-    .label _8 = 4
+    .label _0 = $11
+    .label _2 = $13
+    .label line = $b
+    .label _7 = $13
+    .label _8 = $11
     lda #0
     sta line
     sta line+1

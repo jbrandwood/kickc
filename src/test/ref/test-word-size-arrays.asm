@@ -5,11 +5,11 @@ main: {
     .label screen = $400
     .label _0 = 4
     .label _2 = 6
-    .label _6 = 4
+    .label _6 = 8
     .label line = 2
     .label _9 = 6
     .label _10 = 4
-    .label _11 = 4
+    .label _11 = 8
     lda #0
     sta line
     sta line+1

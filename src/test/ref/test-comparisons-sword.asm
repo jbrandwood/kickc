@@ -15,8 +15,8 @@
   .label print_char_cursor = $c
   .label print_line_cursor = 5
 main: {
-    .label w1 = $f
-    .label w2 = $11
+    .label w1 = $11
+    .label w2 = $13
     .label s = 4
     .label j = 3
     .label i = 2
@@ -105,10 +105,10 @@ print_ln: {
     rts
 }
 // Compare two words using an operator
-// compare(signed word zeropage($a) w1, signed word zeropage($11) w2, byte register(X) op)
+// compare(signed word zeropage($a) w1, signed word zeropage($13) w2, byte register(X) op)
 compare: {
     .label w1 = $a
-    .label w2 = $11
+    .label w2 = $13
     .label ops = 7
     .label r = 9
     cpx #LT
@@ -378,7 +378,7 @@ print_str: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 5
+    .label sc = $f
     lda #<$400
     sta sc
     lda #>$400

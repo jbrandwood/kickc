@@ -5,7 +5,7 @@
   .label print_line_cursor = 4
   .label print_char_cursor = 9
 main: {
-    .label w2 = $b
+    .label w2 = $d
     .label w1 = 2
     jsr print_cls
     ldx #0
@@ -143,7 +143,7 @@ print_char: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 2
+    .label sc = $b
     lda #<$400
     sta sc
     lda #>$400

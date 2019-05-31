@@ -4,15 +4,15 @@
   .label print_line_cursor = 6
   .label print_char_cursor = 8
 main: {
-    .label _2 = $a
-    .label _5 = $a
-    .label _15 = $a
-    .label _19 = $a
-    .label _23 = $a
-    .label _27 = $a
-    .label _32 = $a
-    .label _33 = $a
-    .label dw2 = $c
+    .label _2 = $e
+    .label _5 = $14
+    .label _15 = $16
+    .label _19 = $18
+    .label _23 = $1a
+    .label _27 = $1c
+    .label _32 = $e
+    .label _33 = $14
+    .label dw2 = $10
     .label dw = 2
     jsr print_cls
     lda #<$400
@@ -205,9 +205,9 @@ print_word: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zeropage($c) dw)
+// print_dword(dword zeropage($10) dw)
 print_dword: {
-    .label dw = $c
+    .label dw = $10
     lda dw+2
     sta print_word.w
     lda dw+3
@@ -222,7 +222,7 @@ print_dword: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = 6
+    .label sc = $c
     lda #<$400
     sta sc
     lda #>$400

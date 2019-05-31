@@ -2,7 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label cur_line = 4
+  .label cur_line = 6
+  .label cur_line_10 = $a
+  .label cur_line_11 = $a
 main: {
     .const line1_xpos = 2
     .const line1_xadd = $40
@@ -13,8 +15,8 @@ main: {
     .const line2_ysize = $f
     .const line2_ch = '.'
     .label sc = 2
-    .label line1_pos = 2
-    .label line2_pos = 2
+    .label line1_pos = 4
+    .label line2_pos = 8
     lda #<$400
     sta sc
     lda #>$400
@@ -68,9 +70,9 @@ main: {
     bcc line1_b1
     ldx #0
     lda #<$400
-    sta cur_line
+    sta cur_line_10
     lda #>$400
-    sta cur_line+1
+    sta cur_line_10+1
     lda #<line2_xpos*$100
     sta line2_pos
     lda #>line2_xpos*$100
@@ -79,7 +81,7 @@ main: {
     lda line2_pos+1
     tay
     lda #line2_ch
-    sta (cur_line),y
+    sta (cur_line_10),y
     lda #line2_xadd
     clc
     adc line2_pos
@@ -89,10 +91,10 @@ main: {
   !:
     lda #$28
     clc
-    adc cur_line
-    sta cur_line
+    adc cur_line_11
+    sta cur_line_11
     bcc !+
-    inc cur_line+1
+    inc cur_line_11+1
   !:
     inx
     cpx #line2_ysize

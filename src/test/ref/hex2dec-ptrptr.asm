@@ -102,7 +102,7 @@ utoa16n: {
 }
 cls: {
     .label screen = $400
-    .label sc = 2
+    .label sc = 6
     lda #<screen
     sta sc
     lda #>screen

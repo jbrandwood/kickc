@@ -7,7 +7,7 @@ main: {
     .label words = $400
     .label SCREEN = $400+6*$28
     .label w1 = 2
-    .label w2 = 2
+    .label w2 = 4
     lda words+1*SIZEOF_WORD
     sta w1
     lda words+1*SIZEOF_WORD+1

@@ -10,10 +10,10 @@
 main: {
     .label _2 = 6
     .label _3 = 6
-    .label _4 = 8
+    .label _4 = $1d
     .label _11 = 6
     .label _12 = 6
-    .label _13 = 8
+    .label _13 = $1f
     .label v = 4
     .label u = 2
     lda #$17
@@ -153,11 +153,11 @@ Print: {
 // myprintf(byte* zeropage(8) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage(6) w3)
 myprintf: {
     .label str = 8
-    .label bDigits = $11
-    .label bLen = $10
-    .label b = $a
+    .label bDigits = $12
+    .label bLen = $11
+    .label b = $10
     .label bArg = $b
-    .label return = $10
+    .label return = $11
     .label w1 = 2
     .label w2 = 4
     .label w3 = 6
@@ -404,10 +404,10 @@ myprintf: {
     jmp b27
     buf6: .fill 6, 0
 }
-// utoa(word zeropage($12) value, byte* zeropage($14) dst)
+// utoa(word zeropage($13) value, byte* zeropage($15) dst)
 utoa: {
-    .label value = $12
-    .label dst = $14
+    .label value = $13
+    .label dst = $15
     lda value+1
     cmp #>$2710
     bcc !+
@@ -525,12 +525,12 @@ utoa: {
     jmp b1
 }
 // simple 'utoa' without using multiply or divide
-// append(byte* zeropage($14) dst, word zeropage($12) value, word zeropage($16) sub)
+// append(byte* zeropage($15) dst, word zeropage($13) value, word zeropage($17) sub)
 append: {
-    .label value = $12
-    .label return = $12
-    .label dst = $14
-    .label sub = $16
+    .label value = $13
+    .label return = $13
+    .label dst = $15
+    .label sub = $17
     lda #'0'
     ldy #0
     sta (dst),y
@@ -559,15 +559,17 @@ append: {
     sta value+1
     jmp b1
 }
-// div10(word zeropage(4) val)
+// div10(word zeropage($21) val)
 div10: {
-    .label _0 = 4
-    .label _2 = 6
+    .label _0 = $21
+    .label _2 = $23
     .label _3 = 4
-    .label _4 = 6
-    .label _5 = 6
-    .label val = 4
-    .label val_1 = 6
+    .label _4 = $25
+    .label _5 = $25
+    .label val = $21
+    .label val_1 = $23
+    .label val_2 = 4
+    .label val_3 = 4
     .label return = 4
     .label val_4 = 2
     lda val_4+1
@@ -602,15 +604,15 @@ div10: {
     ror _3
     dey
     bne !-
-    lda val
+    lda val_2
     clc
     adc val_1
-    sta val
-    lda val+1
+    sta val_2
+    lda val_2+1
     adc val_1+1
-    sta val+1
+    sta val_2+1
     sta _4+1
-    lda val
+    lda val_2
     sta _4
     ldy #4
   !:
@@ -624,13 +626,13 @@ div10: {
     ror _5
     dey
     bne !-
-    lda val
+    lda val_3
     clc
     adc _5
-    sta val
-    lda val+1
+    sta val_3
+    lda val_3+1
     adc _5+1
-    sta val+1
+    sta val_3+1
     ldy #4
   !:
     lsr return+1
@@ -659,10 +661,10 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(8) dividend, word zeropage(6) rem)
+// divr16u(word zeropage($1b) dividend, word zeropage($19) rem)
 divr16u: {
-    .label rem = 6
-    .label dividend = 8
+    .label rem = $19
+    .label dividend = $1b
     .label quotient = 4
     .label return = 4
     ldx #0

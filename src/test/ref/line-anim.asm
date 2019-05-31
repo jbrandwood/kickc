@@ -75,11 +75,11 @@ main: {
     jmp b2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage(3) x, byte register(X) y)
+// bitmap_plot(word zeropage($17) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = 7
-    .label x = 3
-    .label plotter = 5
+    .label _1 = $1b
+    .label x = $17
+    .label plotter = $19
     lda bitmap_plot_yhi,x
     sta plotter+1
     lda bitmap_plot_ylo,x
@@ -109,15 +109,15 @@ bitmap_plot: {
 // point_init(byte zeropage(2) point_idx)
 point_init: {
     .label _3 = 7
-    .label _4 = 3
-    .label _9 = 3
-    .label _10 = 3
-    .label _11 = 3
+    .label _4 = $1d
+    .label _9 = $1f
+    .label _10 = $21
+    .label _11 = $21
     .label point_idx = 2
     .label y_diff = 7
     .label abs16s1_return = 3
     .label abs16s2_return = 5
-    .label x_stepf = 3
+    .label x_stepf = $b
     .label x_diff = 9
     lda point_idx
     asl
@@ -267,8 +267,8 @@ point_init: {
 divr16s: {
     .label remu = 7
     .label divisoru = 9
-    .label resultu = 3
-    .label return = 3
+    .label resultu = $b
+    .label return = $b
     .label divisor = 9
     .label rem = 7
     lda rem+1
@@ -323,12 +323,12 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(5) dividend, word zeropage(9) divisor, word zeropage(7) rem)
+// divr16u(word zeropage($d) dividend, word zeropage(9) divisor, word zeropage(7) rem)
 divr16u: {
     .label rem = 7
-    .label dividend = 5
-    .label quotient = 3
-    .label return = 3
+    .label dividend = $d
+    .label quotient = $b
+    .label return = $b
     .label divisor = 9
     ldx #0
     txa
@@ -377,11 +377,11 @@ divr16u: {
     rts
 }
 // Fill the screen with a specific char
-// screen_fill(byte* zeropage(3) screen)
+// screen_fill(byte* zeropage($10) screen)
 screen_fill: {
     .const ch = $10
-    .label screen = 3
-    .label y = 2
+    .label screen = $10
+    .label y = $f
     lda #0
     sta y
     lda #<SCREEN
@@ -409,8 +409,8 @@ screen_fill: {
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {
-    .label bitmap = 3
-    .label y = 2
+    .label bitmap = $13
+    .label y = $12
     lda bitmap_plot_ylo
     sta bitmap
     lda bitmap_plot_yhi
@@ -437,8 +437,8 @@ bitmap_clear: {
     rts
 }
 bitmap_init: {
-    .label _7 = 2
-    .label yoffs = 3
+    .label _7 = $23
+    .label yoffs = $15
     ldx #0
     lda #$80
   b1:

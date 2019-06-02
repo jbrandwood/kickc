@@ -24,6 +24,12 @@ public interface ProgramExpressionUnary extends ProgramExpression {
     */
    RValue getOperand();
 
+   /**
+    * Set the operand of the unary expression.
+    * @param rValue The new operand
+    */
+   void setOperand(RValue rValue);
+
    /** Unary expression assignment rvalue. */
    class ProgramExpressionUnaryAssignmentRValue implements ProgramExpressionUnary {
       private final StatementAssignment assignment;
@@ -40,6 +46,11 @@ public interface ProgramExpressionUnary extends ProgramExpression {
       @Override
       public RValue getOperand() {
          return assignment.getrValue2();
+      }
+
+      @Override
+      public void setOperand(RValue rValue) {
+         assignment.setrValue2(rValue);
       }
 
       @Override
@@ -74,6 +85,11 @@ public interface ProgramExpressionUnary extends ProgramExpression {
       }
 
       @Override
+      public void setOperand(RValue rValue) {
+         getConstantUnary().setOperand((ConstantValue) rValue);
+      }
+
+      @Override
       public void set(Value value) {
          programValue.set(value);
       }
@@ -105,6 +121,11 @@ public interface ProgramExpressionUnary extends ProgramExpression {
       }
 
       @Override
+      public void setOperand(RValue rValue) {
+         getConstantUnary().setValue((ConstantValue) rValue);
+      }
+
+      @Override
       public void set(Value value) {
          programValue.set(value);
       }
@@ -133,6 +154,11 @@ public interface ProgramExpressionUnary extends ProgramExpression {
       @Override
       public RValue getOperand() {
          return getConstantUnary().getValue();
+      }
+
+      @Override
+      public void setOperand(RValue rValue) {
+         getConstantUnary().setValue(rValue);
       }
 
       @Override

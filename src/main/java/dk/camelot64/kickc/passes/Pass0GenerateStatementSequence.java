@@ -947,8 +947,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue rangeLastValue = (RValue) visit(rangeLastCtx);
       RValue rangeFirstValue = (RValue) visit(rangeFirstCtx);
       if(varType != null) {
-         if(rangeFirstValue instanceof ConstantInteger) ((ConstantInteger) rangeFirstValue).setType(SymbolType.NUMBER);
-         if(rangeLastValue instanceof ConstantInteger) ((ConstantInteger) rangeLastValue).setType(SymbolType.NUMBER);
+         if(rangeFirstValue instanceof ConstantInteger) ((ConstantInteger) rangeFirstValue).setType(varType);
+         if(rangeLastValue instanceof ConstantInteger) ((ConstantInteger) rangeLastValue).setType(varType);
       }
       Statement stmtInit = new StatementAssignment(lValue.getRef(), rangeFirstValue, new StatementSource(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(stmtInit);

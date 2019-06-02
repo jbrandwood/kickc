@@ -18,7 +18,7 @@ import java.util.ListIterator;
 public class ProgramExpressionIterator {
 
    /**
-    * Execute a handler on all values in the entire program (both in the control flow graph and the symbol table.)
+    * Execute a handler on all expressions (unary or binary) in the entire program (both in the control flow graph and the symbol table.)
     *
     * @param program The program
     * @param handler The handler to execute

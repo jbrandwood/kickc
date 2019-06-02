@@ -173,6 +173,7 @@ public class Compiler {
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1PointerSizeofFix(program).execute();
+      new PassNAddBooleanCasts(program).execute();
       new PassNAddTypeConversionAssignment(program).execute();
       new Pass1EarlyConstantIdentification(program).execute();
       new PassNStatementIndices(program).step();
@@ -260,6 +261,8 @@ public class Compiler {
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
+      optimizations.add(new PassNAddBooleanCasts(program));
+
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
       optimizations.add(new Pass2ConstantIdentification(program));
@@ -268,6 +271,7 @@ public class Compiler {
       optimizations.add(new Pass2ConstantIfs(program));
       optimizations.add(new Pass2ConstantStringConsolidation(program));
       optimizations.add(new Pass2RangeResolving(program));
+      //optimizations.add(new Pass2BooleanizeConditions(program));
       optimizations.add(new Pass2ComparisonOptimization(program));
       optimizations.add(new Pass2InlineDerefIdx(program));
       optimizations.add(new Pass2DeInlineWordDerefIdx(program));

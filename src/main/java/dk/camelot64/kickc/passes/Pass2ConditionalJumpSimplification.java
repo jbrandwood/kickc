@@ -1,12 +1,13 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,42 +36,41 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
 
       final List<VariableRef> simpleConditionVars = new ArrayList<>();
 
-      ControlFlowGraphBaseVisitor<Void> visitor = new ControlFlowGraphBaseVisitor<Void>() {
-         @Override
-         public Void visitConditionalJump(StatementConditionalJump conditionalJump) {
-            if(conditionalJump.getrValue1() == null && conditionalJump.getOperator() == null) {
-               RValue conditionRValue = conditionalJump.getrValue2();
-               if(conditionRValue instanceof VariableRef && usages.get(conditionRValue).size() == 1) {
-                  VariableRef conditionVar = (VariableRef) conditionRValue;
-                  StatementAssignment conditionAssignment = assignments.get(conditionVar);
-                  if(conditionAssignment!=null && conditionAssignment.getOperator() != null) {
-                     switch(conditionAssignment.getOperator().getOperator()) {
-                        case "==":
-                        case "<>":
-                        case "!=":
-                        case "<":
-                        case ">":
-                        case "<=":
-                        case "=<":
-                        case ">=":
-                        case "=>":
-                           conditionalJump.setrValue1(conditionAssignment.getrValue1());
-                           conditionalJump.setOperator(conditionAssignment.getOperator());
-                           conditionalJump.setrValue2(conditionAssignment.getrValue2());
-                           simpleConditionVars.add(conditionVar);
-                           getLog().append("Simple Condition " + conditionVar.toString(getProgram()) + " " + conditionalJump.toString(getProgram(), false));
-                           break;
-                        default:
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementConditionalJump) {
+               StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
+               if(conditionalJump.getrValue1() == null && conditionalJump.getOperator() == null) {
+                  RValue conditionRValue = conditionalJump.getrValue2();
+                  if(conditionRValue instanceof VariableRef && usages.get(conditionRValue).size() == 1) {
+                     VariableRef conditionVar = (VariableRef) conditionRValue;
+                     StatementAssignment conditionAssignment = assignments.get(conditionVar);
+                     if(conditionAssignment != null && conditionAssignment.getOperator() != null) {
+                        switch(conditionAssignment.getOperator().getOperator()) {
+                           case "==":
+                           case "<>":
+                           case "!=":
+                           case "<":
+                           case ">":
+                           case "<=":
+                           case "=<":
+                           case ">=":
+                           case "=>":
+                              conditionalJump.setrValue1(conditionAssignment.getrValue1());
+                              conditionalJump.setOperator(conditionAssignment.getOperator());
+                              conditionalJump.setrValue2(conditionAssignment.getrValue2());
+                              simpleConditionVars.add(conditionVar);
+                              getLog().append("Simple Condition " + conditionVar.toString(getProgram()) + " " + conditionalJump.toString(getProgram(), false));
+                              break;
+                           default:
+                        }
                      }
                   }
                }
             }
-            return null;
          }
-      };
-      visitor.visitGraph(getGraph());
+      }
       return simpleConditionVars;
    }
-
 
 }

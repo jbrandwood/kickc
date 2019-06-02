@@ -39,7 +39,7 @@ public class Pass2ComparisonOptimization extends Pass2SsaOptimization {
             if(statement instanceof StatementConditionalJump) {
                StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
                Operator operator = conditionalJump.getOperator();
-               if(conditionalJump.getrValue2() instanceof ConstantValue) {
+               if(operator!=null && conditionalJump.getrValue2() instanceof ConstantValue) {
                   SymbolType valueType = SymbolTypeInference.inferType(getScope(), conditionalJump.getrValue1());
                   ConstantValue constantValue = (ConstantValue) conditionalJump.getrValue2();
                   ConstantLiteral constantLiteral = null;

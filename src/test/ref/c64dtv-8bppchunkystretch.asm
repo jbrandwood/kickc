@@ -205,7 +205,7 @@ gfx_init_chunky: {
     lda #>$4000
     sta gfxb+1
   b1:
-    lda #0
+    lda #<0
     sta x
     sta x+1
   b2:

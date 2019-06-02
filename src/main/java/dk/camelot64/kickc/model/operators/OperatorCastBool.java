@@ -3,6 +3,7 @@ package dk.camelot64.kickc.model.operators;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.ConstantBool;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantPointer;
@@ -17,9 +18,9 @@ public class OperatorCastBool extends OperatorCast  {
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral value, ProgramScope scope) {
       if(value instanceof ConstantInteger) {
-         return new ConstantInteger(0x1 & ((ConstantInteger) value).getValue());
+         return new ConstantBool(((ConstantInteger) value).getInteger()!=0L);
       } else if(value instanceof ConstantPointer) {
-         return new ConstantInteger(0x1 & ((ConstantPointer) value).getLocation());
+         return new ConstantBool(((ConstantPointer) value).getLocation()!=0L);
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + value );
    }

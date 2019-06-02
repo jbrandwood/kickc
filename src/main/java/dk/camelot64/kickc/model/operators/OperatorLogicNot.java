@@ -23,7 +23,7 @@ public class OperatorLogicNot extends OperatorUnary {
 
    @Override
    public SymbolType inferType(SymbolType operandType) {
-      return operandType;
+      return SymbolType.BOOLEAN;
    }
 
 }

@@ -1848,7 +1848,7 @@ gfx_init_plane_8bppchunky: {
     lda #>$4000
     sta gfxb+1
   b1:
-    lda #0
+    lda #<0
     sta x
     sta x+1
   b2:

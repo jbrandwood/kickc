@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
   to:@1
 main: scope:[main]  from @1
   (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
-  (word) main::w#0 ← (number) 0
+  (word) main::w#0 ← (word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (word) main::w#2 ← phi( main/(word) main::w#0 main::@1/(word) main::w#1 )
@@ -20,7 +20,7 @@ main::@1: scope:[main]  from main main::@1
   if((bool~) main::$2) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (signed word) main::sw#0 ← (number) -$7fff
+  (signed word) main::sw#0 ← (signed word) -$7fff
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
   (signed word) main::sw#2 ← phi( main::@2/(signed word) main::sw#0 main::@3/(signed word) main::sw#1 )
@@ -69,29 +69,21 @@ SYMBOL TABLE SSA
 (word) main::w#1
 (word) main::w#2
 
-Adding number conversion cast (unumber) 0 in (word) main::w#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN#0 + (number) 0) ← (byte~) main::$0
 Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN#0 + (number) 1) ← (byte~) main::$1
-Adding number conversion cast (snumber) -$7fff in (signed word) main::sw#0 ← (number) -$7fff
 Adding number conversion cast (unumber) 3 in *((byte*) main::SCREEN#0 + (number) 3) ← (byte~) main::$3
 Adding number conversion cast (unumber) 4 in *((byte*) main::SCREEN#0 + (number) 4) ← (byte~) main::$4
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
-Inlining cast (word) main::w#0 ← (unumber)(number) 0
-Inlining cast (signed word) main::sw#0 ← (snumber)(number) -$7fff
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast 1
-Simplifying constant integer cast -$7fff
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
-Finalized signed number type (signed word) -$7fff
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -119,7 +111,7 @@ Finalized signed number type (signed word) $7fff
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const word) main::w#0
 Inlining constant with var siblings (const signed word) main::sw#0
-Constant inlined main::w#0 = (byte) 0
+Constant inlined main::w#0 = (word) 0
 Constant inlined main::sw#0 = (signed word) -$7fff
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN#0+1)
@@ -165,7 +157,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (word) main::w#2 ← phi( main/(byte) 0 main::@1/(word) main::w#1 )
+  [5] (word) main::w#2 ← phi( main/(word) 0 main::@1/(word) main::w#1 )
   [6] (byte~) main::$0 ← < (word) main::w#2
   [7] *((const byte*) main::SCREEN#0) ← (byte~) main::$0
   [8] (byte~) main::$1 ← > (word) main::w#2
@@ -256,10 +248,10 @@ main: {
     .label sw = 4
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (word) main::w#2 = (byte) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
-    lda #0
+  //SEG12 [5] phi (word) main::w#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    lda #<0
     sta w
-    lda #0
+    lda #>0
     sta w+1
     jmp b1
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
@@ -387,10 +379,10 @@ main: {
     .label sw = 4
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
   b1_from_main:
-  //SEG12 [5] phi (word) main::w#2 = (byte) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
-    lda #0
+  //SEG12 [5] phi (word) main::w#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    lda #<0
     sta w
-    lda #0
+    lda #>0
     sta w+1
     jmp b1
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
@@ -465,7 +457,7 @@ Removing instruction jmp b1
 Removing instruction jmp b2
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda #0
+Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
@@ -543,8 +535,8 @@ main: {
     .label w = 2
     .label sw = 4
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (word) main::w#2 = (byte) 0 [phi:main->main::@1#0] -- vwuz1=vbuc1 
-    lda #0
+  //SEG12 [5] phi (word) main::w#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    lda #<0
     sta w
     sta w+1
   //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]

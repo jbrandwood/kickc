@@ -37,6 +37,31 @@ public class TestPrograms {
 
 
    @Test
+   public void testConditionInteger4() throws IOException, URISyntaxException {
+      compileAndCompare("condition-integer-4");
+   }
+
+   @Test
+   public void testConditionInteger3() throws IOException, URISyntaxException {
+      compileAndCompare("condition-integer-3");
+   }
+
+   @Test
+   public void testConditionInteger2() throws IOException, URISyntaxException {
+      compileAndCompare("condition-integer-2");
+   }
+
+   @Test
+   public void testConditionInteger1() throws IOException, URISyntaxException {
+      compileAndCompare("condition-integer-1");
+   }
+
+   @Test
+   public void testConditionInteger0() throws IOException, URISyntaxException {
+      compileAndCompare("condition-integer-0");
+   }
+
+   @Test
    public void testStringUnknownEncoding() throws IOException, URISyntaxException {
       assertError("string-encoding-unknown", "Unknown string encoding");
    }
@@ -2025,7 +2050,7 @@ public class TestPrograms {
 
    @Test
    public void testConditionTypeMismatch() throws IOException, URISyntaxException {
-      assertError("condition-type-mismatch", "Type mismatch non-boolean condition");
+      compileAndCompare("condition-type-mismatch");
    }
 
    @BeforeClass

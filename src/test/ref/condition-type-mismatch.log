@@ -1,0 +1,267 @@
+Warning! Adding boolean cast to non-boolean sub-expression (byte) main::b
+Adding pointer type conversion cast (byte*) main::screen in (byte*) main::screen ← (number) $400
+Identified constant variable (byte) main::b
+Identified constant variable (byte*) main::screen
+Culled Empty Block (label) main::@1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte) main::b#0 ← (number) $c
+  (bool~) main::$1 ← (number) 0 != (byte) main::b#0
+  (bool~) main::$0 ← ! (bool~) main::$1
+  if((bool~) main::$0) goto main::@return
+  to:main::@2
+main::@2: scope:[main]  from main
+  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  *((byte*) main::screen#0) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main main::@2
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(bool~) main::$0
+(bool~) main::$1
+(label) main::@2
+(label) main::@return
+(byte) main::b
+(byte) main::b#0
+(byte*) main::screen
+(byte*) main::screen#0
+
+Adding number conversion cast (unumber) $c in (byte) main::b#0 ← (number) $c
+Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != (byte) main::b#0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) main::b#0 ← (unumber)(number) $c
+Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast $c
+Simplifying constant integer cast 0
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $c
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [2] (bool~) main::$0 ← (byte) 0 == (byte) main::b#0 from [1] (bool~) main::$1 ← (byte) 0 != (byte) main::b#0
+Successful SSA optimization Pass2UnaryNotSimplification
+Simple Condition (bool~) main::$0 [3] if((byte) 0==(byte) main::b#0) goto main::@return
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte) main::b#0 = $c
+Constant (const byte*) main::screen#0 = (byte*) 1024
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always false - eliminating [3] if((byte) 0==(const byte) main::b#0) goto main::@return
+Successful SSA optimization Pass2ConstantIfs
+Eliminating unused constant (const byte) main::b#0
+Successful SSA optimization PassNEliminateUnusedVars
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Renumbering block main::@2 to main::@1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main
+  [5] *((const byte*) main::screen#0) ← (byte) 'a'
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [6] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte) main::b
+(byte*) main::screen
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests a condition type mismatch (not boolean)
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .label screen = $400
+    jmp b1
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] *((const byte*) main::screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen
+    jmp breturn
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [6] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] *((const byte*) main::screen#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 57 combination 
+Uplifting [] best 57 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests a condition type mismatch (not boolean)
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+main_from_b1:
+  jsr main
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG9 @end
+bend:
+//SEG10 main
+main: {
+    .label screen = $400
+    jmp b1
+  //SEG11 main::@1
+  b1:
+  //SEG12 [5] *((const byte*) main::screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen
+    jmp breturn
+  //SEG13 main::@return
+  breturn:
+  //SEG14 [6] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp b1
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction main_from_b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction b1:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@return
+(byte) main::b
+(byte*) main::screen
+(const byte*) main::screen#0 screen = (byte*) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+//SEG0 File Comments
+// Tests a condition type mismatch (not boolean)
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [4] phi from @1 to main [phi:@1->main]
+//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG9 @end
+//SEG10 main
+main: {
+    .label screen = $400
+  //SEG11 main::@1
+  //SEG12 [5] *((const byte*) main::screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    lda #'a'
+    sta screen
+  //SEG13 main::@return
+  //SEG14 [6] return 
+    rts
+}
+

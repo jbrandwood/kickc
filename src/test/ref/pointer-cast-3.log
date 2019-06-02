@@ -1,0 +1,226 @@
+Adding pointer type conversion cast (signed byte*) main::sb_screen in (signed byte*) main::sb_screen ← (number) $400
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (signed byte*) main::sb_screen#0 ← ((signed byte*)) (number) $400
+  (signed byte~) main::$0 ← ((signed byte)) (number) $ff
+  (signed byte) main::sb#0 ← (signed byte~) main::$0
+  *((signed byte*) main::sb_screen#0) ← (signed byte) main::sb#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(signed byte~) main::$0
+(label) main::@return
+(signed byte) main::sb
+(signed byte) main::sb#0
+(signed byte*) main::sb_screen
+(signed byte*) main::sb_screen#0
+
+Inlining cast (signed byte*) main::sb_screen#0 ← (signed byte*)(number) $400
+Inlining cast (signed byte~) main::$0 ← (signed byte)(number) $ff
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (signed byte*) 1024
+Simplifying constant integer cast $ff
+Successful SSA optimization PassNCastSimplification
+Alias (signed byte) main::sb#0 = (signed byte~) main::$0 
+Successful SSA optimization Pass2AliasElimination
+Constant (const signed byte*) main::sb_screen#0 = (signed byte*) 1024
+Constant (const signed byte) main::sb#0 = $ff
+Successful SSA optimization Pass2ConstantIdentification
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(signed byte) main::sb
+(signed byte*) main::sb_screen
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests casting pointer types to other pointer types
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label sb_screen = $400
+    .const sb = $ff
+  //SEG10 [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
+    lda #sb
+    sta sb_screen
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 27 combination 
+Uplifting [] best 27 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests casting pointer types to other pointer types
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label sb_screen = $400
+    .const sb = $ff
+  //SEG10 [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
+    lda #sb
+    sta sb_screen
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(signed byte) main::sb
+(const signed byte) main::sb#0 sb = (signed byte) $ff
+(signed byte*) main::sb_screen
+(const signed byte*) main::sb_screen#0 sb_screen = (signed byte*) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+//SEG0 File Comments
+// Tests casting pointer types to other pointer types
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label sb_screen = $400
+    .const sb = $ff
+  //SEG10 [4] *((const signed byte*) main::sb_screen#0) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
+    lda #sb
+    sta sb_screen
+  //SEG11 main::@return
+  //SEG12 [5] return 
+    rts
+}
+

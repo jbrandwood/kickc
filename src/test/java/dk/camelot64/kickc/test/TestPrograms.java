@@ -331,10 +331,10 @@ public class TestPrograms {
       compileAndCompare("sandbox");
    }
 
-   //@Test
-   //public void testPointerCast3() throws IOException, URISyntaxException {
-   //   compileAndCompare("pointer-cast-3");
-   //}
+   @Test
+   public void testPointerCast3() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-cast-3");
+   }
 
    @Test
    public void testTypeIdPlusByteProblem() throws IOException, URISyntaxException {

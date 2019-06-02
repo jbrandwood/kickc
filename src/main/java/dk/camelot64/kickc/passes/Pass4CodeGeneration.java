@@ -29,8 +29,12 @@ public class Pass4CodeGeneration {
     */
    private Map<PhiTransitions.PhiTransition, Boolean> transitionsGenerated = new LinkedHashMap<>();
 
+   /** The current encoding used for printing strings. */
+   private ConstantString.Encoding currentEncoding = ConstantString.Encoding.SCREENCODE_MIXED;
+
    /**
     * Determines if a phi-transition has already been code-generated
+    *
     * @param transition The transition to examine
     * @return true if it has already been generated
     */
@@ -40,6 +44,7 @@ public class Pass4CodeGeneration {
 
    /**
     * Mark a Phi transition as generated
+    *
     * @param transition The transition
     */
    private void transitionSetGenerated(PhiTransitions.PhiTransition transition) {
@@ -469,6 +474,11 @@ public class Pass4CodeGeneration {
                try {
                   ConstantLiteral literal = constantVar.getValue().calculateLiteral(getScope());
                   if(literal instanceof ConstantString) {
+                     ConstantString.Encoding stringEncoding = ((ConstantString) literal).getEncoding();
+                     if(!currentEncoding.equals(stringEncoding)) {
+                        asm.addLine(new AsmSetEncoding(stringEncoding));
+                        currentEncoding = stringEncoding;
+                     }
                      String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
                      asm.addDataString(asmName.replace("#", "_").replace("$", "_"), asmConstant);
                      added.add(asmName);
@@ -480,6 +490,7 @@ public class Pass4CodeGeneration {
          }
       }
    }
+
 
    /**
     * Add label declarations for all scope variables assigned to ZP registers

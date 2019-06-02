@@ -37,8 +37,28 @@ public class TestPrograms {
 
 
    @Test
+   public void testStringUnknownEncoding() throws IOException, URISyntaxException {
+      assertError("string-encoding-unknown", "Unknown string encoding");
+   }
+
+   @Test
+   public void testStringEncodingMixError() throws IOException, URISyntaxException {
+      assertError("string-encoding-mix-error", "Cannot mix encodings in concatenated strings");
+   }
+
+   @Test
+   public void testStringEncodingPragma() throws IOException, URISyntaxException {
+      compileAndCompare("string-encoding-pragma");
+   }
+
+   @Test
+   public void testStringEncodingLiterals() throws IOException, URISyntaxException {
+      compileAndCompare("string-encoding-literals");
+   }
+
+   @Test
    public void testRobozzleLabelProblem() throws IOException, URISyntaxException {
-      compileAndCompare("robozzle64-label-problem", log());
+      compileAndCompare("robozzle64-label-problem");
    }
 
    @Test
@@ -2075,7 +2095,7 @@ public class TestPrograms {
          assertTrue("Error message expected  '" + expectError + "' - was:" + e.getMessage(), e.getMessage().contains(expectError));
          if(expectLineNumber) {
             // expecting line number!
-            assertTrue("Error message expected  line number - was:" + e.getMessage(), e.getMessage().contains("Line"));
+            assertTrue("Error message expected line number - was:" + e.getMessage(), e.getMessage().contains("Line"));
          }
          return;
       }

@@ -1118,7 +1118,7 @@ print_cls: {
   .align $100
   mulf_sqr2_hi: .fill $200, 0
   str: .text ".@"
-  str4: .text " / fast:@"
-  str3: .text " / normal:@"
   str1: .text "*@"
   str2: .text " slow:@"
+  str3: .text " / normal:@"
+  str4: .text " / fast:@"

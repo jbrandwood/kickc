@@ -61,6 +61,7 @@ parameterDecl
 globalDirective
     : '#' directiveReserve #globalDirectiveReserve
     | '#' 'pc' '(' NUMBER ')' #globalDirectivePc
+    | '#' 'encoding' '(' NAME')' #globalDirectiveEncoding
     ;
 
 directive
@@ -246,7 +247,7 @@ MNEMONIC:
 
 KICKASM: '{{' .*? '}}';
 SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'long' | 'void' ;
-STRING : '"' ('\\"' | ~'"')* '"' 'z'?;
+STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]?;
 CHAR : '\''  ('\\\'' | ~'\'' ) '\'';
 BOOLEAN : 'true' | 'false';
 NUMBER : NUMFLOAT | NUMINT ;

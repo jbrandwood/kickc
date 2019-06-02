@@ -245,8 +245,8 @@ print_cls: {
     bne b1
     rts
 }
-  str: .text " @"
-  str2: .text "ok@"
-  msg1: .text "0+2=2@"
   msg: .text "0=0@"
+  msg1: .text "0+2=2@"
+  str: .text " @"
   str1: .text "fail!@"
+  str2: .text "ok@"

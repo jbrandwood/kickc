@@ -121,6 +121,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) {
+      try {
+         ConstantString.Encoding encoding = ConstantString.Encoding.valueOf(ctx.NAME().getText().toUpperCase());
+         this.currentEncoding = encoding;
+      } catch( IllegalArgumentException  e) {
+         throw new CompileError("Unknown string encoding "+ctx.NAME().getText(), new StatementSource(ctx));
+      }
+      return null;
+   }
+
+   @Override
    public Object visitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) {
       Number programPc = NumberParser.parseLiteral(ctx.NUMBER().getText());
       if(programPc != null) {
@@ -1367,22 +1378,53 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return NumberParser.parseIntegerLiteral(ctx.getText());
    }
 
+   /** The current string encoding used if no explicit encoding is specified. */
+   ConstantString.Encoding currentEncoding = ConstantString.Encoding.SCREENCODE_MIXED;
+
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
       String stringValue = "";
       String subText = "";
+      String lastSuffix = "";
+      ConstantString.Encoding encoding = null;
       for(TerminalNode stringNode : ctx.STRING()) {
          subText = stringNode.getText();
-         if(subText.endsWith("z")) {
-            stringValue += subText.substring(1, subText.length() - 2);
-         } else {
-            stringValue += subText.substring(1, subText.length() - 1);
+         String suffix = subText.substring(subText.lastIndexOf('"') + 1);
+
+         if(suffix.contains("pm")) {
+            if(encoding != null && !encoding.equals(ConstantString.Encoding.PETSCII_MIXED))
+               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
+            encoding = ConstantString.Encoding.PETSCII_MIXED;
+         } else if(suffix.contains("pu")) {
+            if(encoding != null && !encoding.equals(ConstantString.Encoding.PETSCII_UPPER))
+               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
+            encoding = ConstantString.Encoding.PETSCII_UPPER;
+         } else if(suffix.contains("p")) {
+            if(encoding != null && !encoding.equals(ConstantString.Encoding.PETSCII_MIXED))
+               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
+            encoding = ConstantString.Encoding.PETSCII_MIXED;
+         } else if(suffix.contains("sm")) {
+            if(encoding != null && !encoding.equals(ConstantString.Encoding.SCREENCODE_MIXED))
+               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
+            encoding = ConstantString.Encoding.SCREENCODE_MIXED;
+         } else if(suffix.contains("su")) {
+            if(encoding != null && !encoding.equals(ConstantString.Encoding.SCREENCODE_UPPER))
+               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
+            encoding = ConstantString.Encoding.SCREENCODE_UPPER;
+         } else if(suffix.contains("s")) {
+            if(encoding != null && !encoding.equals(ConstantString.Encoding.SCREENCODE_MIXED))
+               throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
+            encoding = ConstantString.Encoding.SCREENCODE_MIXED;
          }
+
+         lastSuffix = suffix;
+         stringValue += subText.substring(1, subText.lastIndexOf('"'));
       }
-      if(!subText.endsWith("z")) {
+      if(!lastSuffix.contains("z")) {
          stringValue += "@";
       }
-      return new ConstantString(stringValue);
+      if(encoding == null) encoding = currentEncoding;
+      return new ConstantString(stringValue, encoding);
    }
 
    @Override

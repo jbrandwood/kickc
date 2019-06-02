@@ -913,7 +913,7 @@ print_cls: {
   // >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mula_sqr2_hi: .fill $200, 0
-  str4: .text " / fast:@"
-  str3: .text " / normal:@"
   str1: .text "*@"
   str2: .text " slow:@"
+  str3: .text " / normal:@"
+  str4: .text " / fast:@"

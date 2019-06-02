@@ -9,10 +9,7 @@ import dk.camelot64.kickc.model.values.ConstantString;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Compiler Pass finding and consolidating identical constant strings
@@ -23,6 +20,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
       super(program);
    }
 
+
    /**
     * Find identical constant strings and consolidate
     *
@@ -32,21 +30,17 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
    public boolean step() {
       boolean modified = false;
       // Build a map with all constant strings
-      Map<String, List<ConstantVar>> constantStringMap = new HashMap<>();
+      Map<ConstantString, List<ConstantVar>> constantStringMap = new LinkedHashMap<>();
       for(ConstantVar constVar : getScope().getAllConstants(true)) {
          ConstantValue constVal = constVar.getValue();
          if(constVal instanceof ConstantString) {
-            String constString = ((ConstantString) constVal).getString();
-            List<ConstantVar> constantVars = constantStringMap.get(constString);
-            if(constantVars == null) {
-               constantVars = new ArrayList<>();
-               constantStringMap.put(constString, constantVars);
-            }
+            ConstantString constString = (ConstantString) constVal;
+            List<ConstantVar> constantVars = constantStringMap.computeIfAbsent(constString, k -> new ArrayList<>());
             constantVars.add(constVar);
          }
       }
       // Handle all constant strings with duplicate definitions
-      for(String constantString : constantStringMap.keySet()) {
+      for(ConstantString constantString : constantStringMap.keySet()) {
          List<ConstantVar> constantVars = constantStringMap.get(constantString);
          if(constantVars.size() > 1) {
             // Found duplicate constant strings
@@ -63,7 +57,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
     * @param constantVars The constant strings with identical values
     * @return true if any optimization was performed
     */
-   private boolean handleDuplicateConstantString(List<ConstantVar> constantVars, String constString) {
+   private boolean handleDuplicateConstantString(List<ConstantVar> constantVars, ConstantString constString) {
       boolean modified = false;
       // Look for a constant in the root scope - or check if they are all in the same scope
       ConstantVar rootConstant = null;
@@ -93,7 +87,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
             // Create a new root - and roll around again
             ProgramScope rootScope = getScope();
             String localName = getRootName(constantVars);
-            ConstantVar newRootConstant = new ConstantVar(localName, rootScope, SymbolType.STRING, new ConstantString(constString));
+            ConstantVar newRootConstant = new ConstantVar(localName, rootScope, SymbolType.STRING, constString);
             rootScope.add(newRootConstant);
             rootConstant = newRootConstant;
          }

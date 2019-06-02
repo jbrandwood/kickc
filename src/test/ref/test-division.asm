@@ -691,5 +691,5 @@ print_cls: {
 }
   print_hextab: .text "0123456789abcdef"
   str: .text " / @"
-  str2: .text " @"
   str1: .text " = @"
+  str2: .text " @"

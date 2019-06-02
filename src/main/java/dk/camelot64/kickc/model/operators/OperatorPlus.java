@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
@@ -19,19 +20,14 @@ public class OperatorPlus extends OperatorBinary {
          return new ConstantInteger(((ConstantInteger) left).getInteger() + ((ConstantChar) right).getChar());
       } else if(left instanceof ConstantChar && right instanceof ConstantInteger) {
          return new ConstantInteger(((ConstantChar) left).getChar() + ((ConstantInteger) right).getInteger());
-      } else if(left instanceof ConstantString && right instanceof ConstantString) {
-         return new ConstantString(((ConstantString) left).getString() + ((ConstantString) right).getString());
-      } else if(left instanceof ConstantString && right instanceof ConstantChar) {
-         return new ConstantString(((ConstantString) left).getString() + ((ConstantChar) right).getChar());
-      } else if(left instanceof ConstantString && right instanceof ConstantInteger && SymbolType.BYTE.equals(((ConstantInteger) right).getType())) {
-         Character character = (char) ((ConstantInteger) right).getInteger().byteValue();
-         return new ConstantString(((ConstantString) left).getString() + character);
       } else if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
          long location = ((ConstantPointer) left).getLocation() + ((ConstantInteger) right).getInteger();
          return new ConstantPointer(location, ((ConstantPointer) left).getElementType());
       } else if(left instanceof ConstantInteger && right instanceof ConstantPointer) {
          long location = ((ConstantPointer) right).getLocation() + ((ConstantInteger) left).getInteger();
          return new ConstantPointer(location, ((ConstantPointer) right).getElementType());
+      } else if(left instanceof ConstantString && right instanceof ConstantInteger) {
+         throw new ConstantNotLiteral("String pointer not literal");
       }
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }

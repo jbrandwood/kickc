@@ -1408,6 +1408,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testOperatorLoHiProblem1() throws IOException, URISyntaxException {
+      compileAndCompare("operator-lohi-problem-1");
+   }
+
+   @Test
    public void testOperatorLoHiProblem() throws IOException, URISyntaxException {
       compileAndCompare("operator-lohi-problem");
    }

@@ -172,6 +172,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSubExprOptimize4() throws IOException, URISyntaxException {
+      compileAndCompare("subexpr-optimize-4");
+   }
+
+   @Test
+   public void testSubExprOptimize3() throws IOException, URISyntaxException {
+      compileAndCompare("subexpr-optimize-3");
+   }
+
+   @Test
+   public void testSubExprOptimize2() throws IOException, URISyntaxException {
+      compileAndCompare("subexpr-optimize-2");
+   }
+
+   @Test
    public void testSubExprOptimize1() throws IOException, URISyntaxException {
       compileAndCompare("subexpr-optimize-1");
    }

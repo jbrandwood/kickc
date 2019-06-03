@@ -1,10 +1,8 @@
 // Tests optimization of identical sub-expressions
-// The two examples of i*2 is detected as identical leading to optimized ASM where *2 is only calculated once
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label _1 = 4
     .label screen = 2
     lda #<$400
     sta screen
@@ -13,15 +11,27 @@ main: {
     ldx #0
   b1:
     txa
+    and #1
+    cmp #0
+    bne b2
+    txa
     asl
-    sta _1
+    asl
+  b4:
     ldy #0
     sta (screen),y
     inc screen
     bne !+
     inc screen+1
   !:
-    lda _1
+    txa
+    and #1
+    cmp #0
+    bne b5
+    txa
+    asl
+    asl
+  b7:
     ldy #0
     sta (screen),y
     inc screen
@@ -32,4 +42,14 @@ main: {
     cpx #3
     bne b1
     rts
+  b5:
+    txa
+    clc
+    adc #3
+    jmp b7
+  b2:
+    txa
+    clc
+    adc #3
+    jmp b4
 }

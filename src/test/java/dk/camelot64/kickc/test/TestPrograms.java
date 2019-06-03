@@ -46,6 +46,10 @@ public class TestPrograms {
       compileAndCompare("sequence-locality-0");
    }
 
+   public void testVoidParameter() throws IOException, URISyntaxException {
+      compileAndCompare("void-parameter");
+   }
+
    @Test
    public void testConditionInteger4() throws IOException, URISyntaxException {
       compileAndCompare("condition-integer-4");
@@ -174,6 +178,21 @@ public class TestPrograms {
    @Test
    public void testStatementSequence1() throws IOException, URISyntaxException {
       compileAndCompare("statement-sequence-1");
+   }
+
+   @Test
+   public void testSubExprOptimize4() throws IOException, URISyntaxException {
+      compileAndCompare("subexpr-optimize-4");
+   }
+
+   @Test
+   public void testSubExprOptimize3() throws IOException, URISyntaxException {
+      compileAndCompare("subexpr-optimize-3");
+   }
+
+   @Test
+   public void testSubExprOptimize2() throws IOException, URISyntaxException {
+      compileAndCompare("subexpr-optimize-2");
    }
 
    @Test

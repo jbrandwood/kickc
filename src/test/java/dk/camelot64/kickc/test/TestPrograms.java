@@ -37,6 +37,11 @@ public class TestPrograms {
 
 
    @Test
+   public void testVoidParameter() throws IOException, URISyntaxException {
+      compileAndCompare("void-parameter");
+   }
+
+   @Test
    public void testConditionInteger4() throws IOException, URISyntaxException {
       compileAndCompare("condition-integer-4");
    }

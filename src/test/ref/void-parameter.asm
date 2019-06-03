@@ -1,5 +1,5 @@
 // Test that void-parameter works top specify function takes no parameters
-// Out
+// Output is "..." in the top left corner of the screen
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

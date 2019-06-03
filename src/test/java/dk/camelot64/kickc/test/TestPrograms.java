@@ -332,6 +332,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPointerCast4() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-cast-4");
+   }
+
+   @Test
    public void testPointerCast3() throws IOException, URISyntaxException {
       compileAndCompare("pointer-cast-3");
    }

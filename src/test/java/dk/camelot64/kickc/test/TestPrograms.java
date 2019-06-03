@@ -37,6 +37,16 @@ public class TestPrograms {
 
 
    @Test
+   public void testSequenceLocality1() throws IOException, URISyntaxException {
+      compileAndCompare("sequence-locality-1");
+   }
+
+   @Test
+   public void testSequenceLocality0() throws IOException, URISyntaxException {
+      compileAndCompare("sequence-locality-0");
+   }
+
+   @Test
    public void testConditionInteger4() throws IOException, URISyntaxException {
       compileAndCompare("condition-integer-4");
    }

@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.types;
 
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 
@@ -30,6 +31,10 @@ public class SymbolTypeStruct implements SymbolType {
 
    public String getStructTypeName() {
       return name;
+   }
+
+   public StructDefinition getStructDefinition(ProgramScope programScope) {
+      return programScope.getStructDefinition(name);
    }
 
    @Override

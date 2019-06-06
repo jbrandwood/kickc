@@ -37,6 +37,36 @@ public class TestPrograms {
 
 
    @Test
+   public void testStruct5() throws IOException, URISyntaxException {
+      compileAndCompare("struct-5", log());
+   }
+
+   @Test
+   public void testStruct4() throws IOException, URISyntaxException {
+      compileAndCompare("struct-4", log());
+   }
+
+   @Test
+   public void testStruct3() throws IOException, URISyntaxException {
+      compileAndCompare("struct-3", log());
+   }
+
+   @Test
+   public void testStruct2() throws IOException, URISyntaxException {
+      compileAndCompare("struct-2", log());
+   }
+
+   @Test
+   public void testStruct1() throws IOException, URISyntaxException {
+      compileAndCompare("struct-1", log());
+   }
+
+   @Test
+   public void testStruct0() throws IOException, URISyntaxException {
+      compileAndCompare("struct-0", log());
+   }
+
+   @Test
    public void testSequenceLocality1() throws IOException, URISyntaxException {
       compileAndCompare("sequence-locality-1");
    }
@@ -113,36 +143,6 @@ public class TestPrograms {
    @Test
    public void testSignedWordMinusByte2() throws IOException, URISyntaxException {
       compileAndCompare("signed-word-minus-byte-2");
-   }
-
-   @Test
-   public void testStruct5() throws IOException, URISyntaxException {
-      compileAndCompare("struct-5", log().verboseParse().verboseCreateSsa().verboseStatementSequence());
-   }
-
-   @Test
-   public void testStruct4() throws IOException, URISyntaxException {
-      compileAndCompare("struct-4", log().verboseParse().verboseCreateSsa().verboseStatementSequence());
-   }
-
-   @Test
-   public void testStruct3() throws IOException, URISyntaxException {
-      compileAndCompare("struct-3");
-   }
-
-   @Test
-   public void testStruct2() throws IOException, URISyntaxException {
-      compileAndCompare("struct-2");
-   }
-
-   @Test
-   public void testStruct1() throws IOException, URISyntaxException {
-      compileAndCompare("struct-1");
-   }
-
-   @Test
-   public void testStruct0() throws IOException, URISyntaxException {
-      compileAndCompare("struct-0");
    }
 
    @Test

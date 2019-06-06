@@ -165,6 +165,8 @@ public class Compiler {
       new PassNTypeInference(program).execute();
       new PassNTypeIdSimplification(program).execute();
 
+      new Pass1UnwindStructValues(program).execute();
+
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");
          getLog().append(program.getScope().toString(program, null));

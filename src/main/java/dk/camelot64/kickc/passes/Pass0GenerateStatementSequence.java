@@ -125,8 +125,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       try {
          ConstantString.Encoding encoding = ConstantString.Encoding.valueOf(ctx.NAME().getText().toUpperCase());
          this.currentEncoding = encoding;
-      } catch( IllegalArgumentException  e) {
-         throw new CompileError("Unknown string encoding "+ctx.NAME().getText(), new StatementSource(ctx));
+      } catch(IllegalArgumentException e) {
+         throw new CompileError("Unknown string encoding " + ctx.NAME().getText(), new StatementSource(ctx));
       }
       return null;
    }
@@ -518,9 +518,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          // Add comments to constant
          lValue.setComments(ensureUnusedComments(comments));
       }
-      if(type instanceof SymbolTypeStruct) {
-         lValue.setDeclaredVolatile(true);
-      }
+      //if(type instanceof SymbolTypeStruct) {
+      //   lValue.setDeclaredVolatile(true);
+      //}
       KickCParser.ExprContext initializer = ctx.expr();
       if(declVarStructMember) {
          if(initializer != null) {
@@ -530,38 +530,51 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          if(initializer != null) {
             addInitialAssignment(initializer, lValue, comments);
          } else {
-            if(type instanceof SymbolTypeIntegerFixed) {
-               // Add an zero value initializer
-               ConstantInteger zero = new ConstantInteger(0L, type);
-               Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
-               sequence.addStatement(stmt);
-            } else if(type instanceof SymbolTypeArray) {
-               // Add an zero-array initializer
-               SymbolTypeArray typeArray = (SymbolTypeArray) type;
-               RValue size = typeArray.getSize();
-               if(size == null) {
-                  throw new CompileError("Error! Array has no declared size. " + lValue.toString(program), new StatementSource(ctx));
-               }
-               Statement stmt = new StatementAssignment(lValue.getRef(), new ArrayFilled(typeArray.getElementType(), size), new StatementSource(ctx), ensureUnusedComments(comments));
-               sequence.addStatement(stmt);
-            } else if(type instanceof SymbolTypePointer) {
-               // Add an zero value initializer
-               SymbolTypePointer typePointer = (SymbolTypePointer) type;
-               ConstantValue zero = new ConstantPointer(0L, typePointer.getElementType());
-               Statement stmt = new StatementAssignment(lValue.getRef(), zero, new StatementSource(ctx), ensureUnusedComments(comments));
-               sequence.addStatement(stmt);
-            } else if(type instanceof SymbolTypeStruct) {
-               // Add an zero-struct initializer
-               SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
-               Statement stmt = new StatementAssignment(lValue.getRef(), new StructZero(typeStruct), new StatementSource(ctx), ensureUnusedComments(comments));
-               sequence.addStatement(stmt);
-            } else {
-               throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), new StatementSource(ctx));
-            }
+            Statement initStmt;
+            StatementSource statementSource = new StatementSource(ctx);
+            initStmt = createDefaultInitializationStatement(lValue.getRef(), type, statementSource, ensureUnusedComments(comments));
+            sequence.addStatement(initStmt);
          }
 
       }
       return null;
+   }
+
+   /**
+    * Create a statement that initializes a variable with the default (zero) value. The statement has to be added to the program by the caller.
+    * @param lValue The variable to initialize
+    * @param type The type of the variable
+    * @param statementSource The source line
+    * @param comments Any comments to add to the output
+    * @return The new statement
+    */
+   public static Statement createDefaultInitializationStatement(VariableRef varRef, SymbolType type, StatementSource statementSource, List<Comment> comments) {
+      Statement initStmt;
+      if(type instanceof SymbolTypeIntegerFixed) {
+         // Add an zero value initializer
+         ConstantInteger zero = new ConstantInteger(0L, type);
+         initStmt = new StatementAssignment(varRef, zero, statementSource, comments);
+      } else if(type instanceof SymbolTypeArray) {
+         // Add an zero-array initializer
+         SymbolTypeArray typeArray = (SymbolTypeArray) type;
+         RValue size = typeArray.getSize();
+         if(size == null) {
+            throw new CompileError("Error! Array has no declared size. " + varRef.toString(), statementSource);
+         }
+         initStmt = new StatementAssignment(varRef, new ArrayFilled(typeArray.getElementType(), size), statementSource, comments);
+      } else if(type instanceof SymbolTypePointer) {
+         // Add an zero value initializer
+         SymbolTypePointer typePointer = (SymbolTypePointer) type;
+         ConstantValue zero = new ConstantPointer(0L, typePointer.getElementType());
+         initStmt = new StatementAssignment(varRef, zero, statementSource, comments);
+      } else if(type instanceof SymbolTypeStruct) {
+         // Add an zero-struct initializer
+         SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
+         initStmt = new StatementAssignment(varRef, new StructZero(typeStruct), statementSource, comments);
+      } else {
+         throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), statementSource);
+      }
+      return initStmt;
    }
 
    /**

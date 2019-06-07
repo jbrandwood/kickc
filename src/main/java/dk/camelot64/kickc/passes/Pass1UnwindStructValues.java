@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.InternalError;
-import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -120,7 +118,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                               stmtIt.remove();
                            }
                         } else {
-                           throw new RuntimeException("Struct assignment not implemented yet " + statement.toString(getProgram(), false));
+                           throw new CompileError("Incompatible struct assignment " + statement.toString(getProgram(), false), statement);
                         }
                      }
                   }

@@ -50,7 +50,15 @@ public class TestPrograms {
       compileAndCompare("struct-ptr-0", log());
    }
 
+   @Test
+   public void testError1() throws IOException, URISyntaxException {
+      assertError("struct-err-1", "Incompatible struct assignment");
+   }
 
+   @Test
+   public void testError0() throws IOException, URISyntaxException {
+      assertError("struct-err-0", "Unknown struct type");
+   }
 
    @Test
    public void testStruct5() throws IOException, URISyntaxException {

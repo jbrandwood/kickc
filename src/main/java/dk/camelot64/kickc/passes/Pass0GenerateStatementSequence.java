@@ -463,7 +463,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    @Override
    public Object visitDeclTypes(KickCParser.DeclTypesContext ctx) {
       List<KickCParser.DirectiveContext> directive = ctx.directive();
-      this.declVarType = (SymbolType) visit(ctx.typeDecl());
+      SymbolType varType = (SymbolType) visit(ctx.typeDecl());
+      this.declVarType = varType;
       this.declVarDirectives = getDirectives(directive);
       this.declVarComments = getCommentsSymbol(ctx.getParent());
       return null;
@@ -1195,6 +1196,9 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitStructRef(KickCParser.StructRefContext ctx) {
       String structDefName = ctx.NAME().getText();
       StructDefinition structDefinition = getCurrentScope().getStructDefinition(structDefName);
+      if(structDefinition==null) {
+         throw new CompileError("Unknown struct type "+structDefName, new StatementSource(ctx));
+      }
       return structDefinition.getType();
    }
 

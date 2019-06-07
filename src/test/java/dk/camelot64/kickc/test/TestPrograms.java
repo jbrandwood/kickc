@@ -35,6 +35,22 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testStructPtr2() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-2", log());
+   }
+
+   @Test
+   public void testStructPtr1() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-1", log());
+   }
+
+   @Test
+   public void testStructPtr0() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-0", log());
+   }
+
+
 
    @Test
    public void testStruct5() throws IOException, URISyntaxException {
@@ -48,7 +64,7 @@ public class TestPrograms {
 
    @Test
    public void testStruct3() throws IOException, URISyntaxException {
-      compileAndCompare("struct-3", log());
+      compileAndCompare("struct-3", log().verboseCreateSsa());
    }
 
    @Test

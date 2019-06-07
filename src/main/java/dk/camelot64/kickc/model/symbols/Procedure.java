@@ -61,6 +61,9 @@ public class Procedure extends Scope {
       }
    }
 
+   public void setParameterNames(List<String> parameterNames) {
+      this.parameterNames = parameterNames;
+   }
 
    public List<Comment> getComments() {
       return comments;

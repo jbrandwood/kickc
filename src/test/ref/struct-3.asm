@@ -1,39 +1,23 @@
-// Minimal struct - array of struct
+// Minimal struct - passing struct value parameter
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
 main: {
-    .label SCREEN = $400
-    .label _5 = 2
+    .label p1_y = 4
     ldx #0
-  b1:
-    txa
-    asl
-    sta _5
-    tay
-    txa
-    sta points,y
-    txa
-    tay
-    iny
-    tya
-    ldy _5
-    sta points+1,y
-    inx
-    cpx #5
-    bne b1
-    ldy #0
-  b2:
-    tya
-    asl
-    tax
-    lda points,x
-    sta SCREEN,y
-    lda points+1,x
-    sta SCREEN+$28,y
-    iny
-    cpy #5
-    bne b2
+    lda #1
+    jsr print
+    lda #2
+    jsr print
     rts
 }
-  points: .fill 2*4, 0
+// print(byte register(A) p_x)
+print: {
+    sta SCREEN,x
+    inx
+    lda #main.p1_y
+    sta SCREEN,x
+    inx
+    rts
+}

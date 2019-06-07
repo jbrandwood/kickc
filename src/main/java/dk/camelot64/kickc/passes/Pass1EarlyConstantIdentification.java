@@ -54,7 +54,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
    }
 
    /**
-    * Examines whether a variale is a procedure parameter
+    * Examines whether a variable is a procedure parameter
     * @param variableRef The variable
     * @return true if the variable is a procedure parameter
     */

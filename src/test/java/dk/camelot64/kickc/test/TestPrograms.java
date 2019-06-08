@@ -51,43 +51,53 @@ public class TestPrograms {
    }
 
    @Test
-   public void testError1() throws IOException, URISyntaxException {
+   public void testStructError3() throws IOException, URISyntaxException {
+      assertError("struct-err-3", "Parameters type mismatch in call");
+   }
+
+   @Test
+   public void testStructError2() throws IOException, URISyntaxException {
+      assertError("struct-err-2", "Incompatible struct assignment");
+   }
+
+   @Test
+   public void testStructError1() throws IOException, URISyntaxException {
       assertError("struct-err-1", "Incompatible struct assignment");
    }
 
    @Test
-   public void testError0() throws IOException, URISyntaxException {
+   public void testStructError0() throws IOException, URISyntaxException {
       assertError("struct-err-0", "Unknown struct type");
    }
 
    @Test
    public void testStruct5() throws IOException, URISyntaxException {
-      compileAndCompare("struct-5", log());
+      compileAndCompare("struct-5");
    }
 
    @Test
    public void testStruct4() throws IOException, URISyntaxException {
-      compileAndCompare("struct-4", log());
+      compileAndCompare("struct-4");
    }
 
    @Test
    public void testStruct3() throws IOException, URISyntaxException {
-      compileAndCompare("struct-3", log().verboseCreateSsa());
+      compileAndCompare("struct-3");
    }
 
    @Test
    public void testStruct2() throws IOException, URISyntaxException {
-      compileAndCompare("struct-2", log());
+      compileAndCompare("struct-2");
    }
 
    @Test
    public void testStruct1() throws IOException, URISyntaxException {
-      compileAndCompare("struct-1", log());
+      compileAndCompare("struct-1");
    }
 
    @Test
    public void testStruct0() throws IOException, URISyntaxException {
-      compileAndCompare("struct-0", log());
+      compileAndCompare("struct-0");
    }
 
    @Test

@@ -164,7 +164,7 @@ public class Compiler {
       new Pass1Procedures(program).execute();
       new PassNTypeInference(program).execute();
       new PassNTypeIdSimplification(program).execute();
-
+      new Pass1AssertProcedureCallParameters(program).execute();
       new Pass1UnwindStructValues(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {

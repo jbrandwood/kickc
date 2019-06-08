@@ -51,8 +51,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
             }
          }
       }
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
 
+      // Iterate through all procedures changing parameter lists by unwinding each struct value parameter
+      for(Procedure procedure : getScope().getAllProcedures(true)) {
          ArrayList<String> unwoundParameterNames = new ArrayList<>();
          boolean procedureUnwound = false;
          for(Variable parameter : procedure.getParameters()) {
@@ -72,8 +73,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          }
       }
 
-
-      // Unwind all references to full structs
+      // Unwind all references to struct values into members
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
@@ -83,44 +83,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                if(assignment.getlValue() instanceof VariableRef) {
                   Variable assignedVar = getScope().getVariable((VariableRef) assignment.getlValue());
                   if(assignedVar.getType() instanceof SymbolTypeStruct) {
-                     // Assigning a struct!
-                     if(assignment.getOperator() == null && assignment.getrValue2() instanceof StructZero) {
-                        // Initializing a struct - unwind to assigning zero to each member!
-                        StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.getVariableUnwinding(assignedVar.getRef());
-                        if(variableUnwinding != null) {
-                           stmtIt.previous();
-                           for(String memberName : variableUnwinding.getMemberNames()) {
-                              VariableRef memberVarRef = variableUnwinding.getMemberUnwinding(memberName);
-                              Variable memberVar = getScope().getVariable(memberVarRef);
-                              Statement initStmt = Pass0GenerateStatementSequence.createDefaultInitializationStatement(memberVarRef, memberVar.getType(), statement.getSource(), Comment.NO_COMMENTS);
-                              stmtIt.add(initStmt);
-                              getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
-                           }
-                           stmtIt.next();
-                           stmtIt.remove();
-                        }
-                     } else if(assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
-                        Variable sourceVar = getScope().getVariable((VariableRef) assignment.getrValue2());
-                        if(sourceVar.getType().equals(assignedVar.getType())) {
-                           // Copying a struct - unwind to assigning each member!
-                           StructUnwinding.VariableUnwinding assignedMemberVariables = structUnwinding.getVariableUnwinding(assignedVar.getRef());
-                           StructUnwinding.VariableUnwinding sourceMemberVariables = structUnwinding.getVariableUnwinding(sourceVar.getRef());
-                           if(assignedMemberVariables != null && sourceMemberVariables != null) {
-                              stmtIt.previous();
-                              for(String memberName : assignedMemberVariables.getMemberNames()) {
-                                 VariableRef assignedMemberVarRef = assignedMemberVariables.getMemberUnwinding(memberName);
-                                 VariableRef sourceMemberVarRef = sourceMemberVariables.getMemberUnwinding(memberName);
-                                 Statement copyStmt = new StatementAssignment(assignedMemberVarRef, sourceMemberVarRef, statement.getSource(), Comment.NO_COMMENTS);
-                                 stmtIt.add(copyStmt);
-                                 getLog().append("Adding struct value member variable copy " + copyStmt.toString(getProgram(), false));
-                              }
-                              stmtIt.next();
-                              stmtIt.remove();
-                           }
-                        } else {
-                           throw new CompileError("Incompatible struct assignment " + statement.toString(getProgram(), false), statement);
-                        }
-                     }
+                     unwindStructAssignment(assignment, assignedVar, stmtIt, structUnwinding);
                   }
                }
             } else if(statement instanceof StatementCall) {
@@ -177,6 +140,56 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
 
       return modified;
+   }
+
+   /**
+    * Unwind an assignment to a struct value variable into assignment of each member
+    * @param assignment The assignment statement
+    * @param assignedVar The struct value variable being assigned to (the LValue)
+    * @param stmtIt The statement iterator used for adding/removing statements
+    * @param structUnwinding Information about unwound struct value variables
+    */
+   public void unwindStructAssignment(StatementAssignment assignment, Variable assignedVar, ListIterator<Statement> stmtIt, StructUnwinding structUnwinding) {
+      // Assigning a struct!
+      if(assignment.getOperator() == null && assignment.getrValue2() instanceof StructZero) {
+         // Initializing a struct - unwind to assigning zero to each member!
+         StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.getVariableUnwinding(assignedVar.getRef());
+         if(variableUnwinding != null) {
+            stmtIt.previous();
+            for(String memberName : variableUnwinding.getMemberNames()) {
+               VariableRef memberVarRef = variableUnwinding.getMemberUnwinding(memberName);
+               Variable memberVar = getScope().getVariable(memberVarRef);
+               Statement initStmt = Pass0GenerateStatementSequence.createDefaultInitializationStatement(memberVarRef, memberVar.getType(), assignment.getSource(), Comment.NO_COMMENTS);
+               stmtIt.add(initStmt);
+               getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
+            }
+            stmtIt.next();
+            stmtIt.remove();
+         }
+      } else if(assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
+         Variable sourceVar = getScope().getVariable((VariableRef) assignment.getrValue2());
+         if(sourceVar.getType().equals(assignedVar.getType())) {
+            // Copying a struct - unwind to assigning each member!
+            StructUnwinding.VariableUnwinding assignedMemberVariables = structUnwinding.getVariableUnwinding(assignedVar.getRef());
+            StructUnwinding.VariableUnwinding sourceMemberVariables = structUnwinding.getVariableUnwinding(sourceVar.getRef());
+            if(assignedMemberVariables != null && sourceMemberVariables != null) {
+               stmtIt.previous();
+               for(String memberName : assignedMemberVariables.getMemberNames()) {
+                  VariableRef assignedMemberVarRef = assignedMemberVariables.getMemberUnwinding(memberName);
+                  VariableRef sourceMemberVarRef = sourceMemberVariables.getMemberUnwinding(memberName);
+                  Statement copyStmt = new StatementAssignment(assignedMemberVarRef, sourceMemberVarRef, assignment.getSource(), Comment.NO_COMMENTS);
+                  stmtIt.add(copyStmt);
+                  getLog().append("Adding struct value member variable copy " + copyStmt.toString(getProgram(), false));
+               }
+               stmtIt.next();
+               stmtIt.remove();
+            }
+         } else {
+            throw new CompileError("Incompatible struct assignment " + assignment.toString(getProgram(), false), assignment);
+         }
+      } else {
+         throw new CompileError("Incompatible struct assignment " + assignment.toString(getProgram(), false), assignment);
+      }
    }
 
    /**

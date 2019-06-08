@@ -165,6 +165,9 @@ public class Compiler {
       new PassNTypeInference(program).execute();
       new PassNTypeIdSimplification(program).execute();
       new Pass1AssertProcedureCallParameters(program).execute();
+      new Pass1AssertReturn(program).execute();
+      new Pass1AssertUsedVars(program).execute();
+
       new Pass1UnwindStructValues(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
@@ -188,8 +191,6 @@ public class Compiler {
          getLog().append(program.getGraph().toString(program));
       }
 
-      new Pass1AssertReturn(program).execute();
-      new Pass1AssertUsedVars(program).execute();
       new Pass1ProcedureInline(program).execute();
       new Pass1EliminateUncalledProcedures(program).execute();
       new PassNEliminateUnusedVars(program, false).execute();

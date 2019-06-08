@@ -1,4 +1,4 @@
-// Minimal struct - different instances and copying
+// Minimal struct - two instances being copied (using assignment)
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

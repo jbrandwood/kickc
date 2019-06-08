@@ -1,38 +1,15 @@
-// Minimal struct - array of struct - near pointer math indexing
+// Minimal struct - initializing using a value list
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const OFFS_Y = 1
 main: {
+    .const x = 2
+    .const y = 3
     .label SCREEN = $400
-    ldx #0
-  b1:
-    txa
-    asl
-    tay
-    txa
-    sta points,y
-    txa
-    clc
-    adc #4
-    // points[i].x = i;
-    sta points+OFFS_Y,y
-    inx
-    cpx #4
-    bne b1
-    ldy #0
-  b2:
-    tya
-    asl
-    tax
-    lda points,x
-    sta SCREEN,y
-    // SCREEN[i] = points[i].x;
-    lda points+OFFS_Y,x
-    sta SCREEN+$28,y
-    iny
-    cpy #4
-    bne b2
+    .const p_y = y+1
+    lda #x
+    sta SCREEN
+    lda #p_y
+    sta SCREEN+1
     rts
 }
-  points: .fill 2*4, 0

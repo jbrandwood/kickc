@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.passes.Pass1UnwindStructValues;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -71,8 +72,10 @@ public class Program {
    private List<Number> reservedZps;
    /** Absolute start address of the code. Null to start ad 0x080d. */
    private Number programPc;
-   /** Cached phi transisitons into each block. */
-   Map<LabelRef, PhiTransitions> phiTransitions;
+   /** Cached phi transitions into each block. */
+   private Map<LabelRef, PhiTransitions> phiTransitions;
+   /** Struct values unwound to individual variables. */
+   private Pass1UnwindStructValues.StructUnwinding structUnwinding;
 
    public Program() {
       this.scope = new ProgramScope();
@@ -81,6 +84,14 @@ public class Program {
       this.imported = new ArrayList<>();
       this.asmResourceFiles = new ArrayList<>();
       this.reservedZps = new ArrayList<>();
+   }
+
+   public Pass1UnwindStructValues.StructUnwinding getStructUnwinding() {
+      return structUnwinding;
+   }
+
+   public void setStructUnwinding(Pass1UnwindStructValues.StructUnwinding structUnwinding) {
+      this.structUnwinding = structUnwinding;
    }
 
    public Map<LabelRef, PhiTransitions> getPhiTransitions() {

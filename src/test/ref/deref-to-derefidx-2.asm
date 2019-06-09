@@ -27,10 +27,10 @@ print: {
     ldy #2
     tax
     lda (m),y
-    sta SCREEN,y
+    sta SCREEN,x
     iny
     lda (m),y
-    sta SCREEN+1,y
+    sta SCREEN+1,x
     inc screen_idx
     rts
 }

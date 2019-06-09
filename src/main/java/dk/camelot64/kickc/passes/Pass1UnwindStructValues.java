@@ -11,6 +11,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Convert all struct values that are not used as pointers (address-of used or declared volatile) into variables representing each member */
 public class Pass1UnwindStructValues extends Pass1Base {
@@ -22,23 +23,30 @@ public class Pass1UnwindStructValues extends Pass1Base {
    @Override
    public boolean step() {
       boolean modified = false;
+      StructUnwinding structUnwinding = getProgram().getStructUnwinding();
+      if(structUnwinding == null) {
+         structUnwinding = new StructUnwinding();
+         getProgram().setStructUnwinding(structUnwinding);
+      }
+
       // Iterate through all scopes generating member-variables for each struct
-      StructUnwinding structUnwinding = unwindAllStructVariables();
+      modified |= unwindAllStructVariables(structUnwinding);
       // Unwind all procedure declaration parameters
-      unwindProcedureParameters(structUnwinding);
+      modified |= unwindProcedureParameters(structUnwinding);
       // Unwind all usages of struct values
-      unwindStructReferences(structUnwinding);
+      modified |= unwindStructReferences(structUnwinding);
       // Change all usages of members of struct values
-      unwindMemberReferences(structUnwinding);
+      modified |= unwindMemberReferences(structUnwinding);
       return modified;
    }
 
    /**
-    * Unwins all usages of struct value references (in statements such as assignments.)
+    * Unwinds all usages of struct value references (in statements such as assignments.)
     *
     * @param structUnwinding Information about all unwound struct variables
     */
-   private void unwindStructReferences(StructUnwinding structUnwinding) {
+   private boolean unwindStructReferences(StructUnwinding structUnwinding) {
+      boolean modified = false;
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
@@ -48,14 +56,15 @@ public class Pass1UnwindStructValues extends Pass1Base {
                if(assignment.getlValue() instanceof VariableRef) {
                   Variable assignedVar = getScope().getVariable((VariableRef) assignment.getlValue());
                   if(assignedVar.getType() instanceof SymbolTypeStruct) {
-                     unwindAssignment(assignment, assignedVar, stmtIt, structUnwinding);
+                     modified |= unwindAssignment(assignment, assignedVar, stmtIt, structUnwinding);
                   }
                }
             } else if(statement instanceof StatementCall) {
-               unwindCall((StatementCall) statement, structUnwinding);
+               modified |= unwindCall((StatementCall) statement, structUnwinding);
             }
          }
       }
+      return modified;
    }
 
    /**
@@ -63,7 +72,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
     *
     * @param structUnwinding Information about all unwound struct variables
     */
-   private void unwindMemberReferences(StructUnwinding structUnwinding) {
+   private boolean unwindMemberReferences(StructUnwinding structUnwinding) {
+      AtomicBoolean modified = new AtomicBoolean(false);
       ProgramValueIterator.execute(
             getProgram(), (programValue, currentStmt, stmtIt, currentBlock) ->
             {
@@ -76,10 +86,12 @@ public class Pass1UnwindStructValues extends Pass1Base {
                         VariableRef structMemberVariable = memberVariables.getMemberUnwinding(structMemberRef.getMemberName());
                         getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member variable reference " + structMemberVariable.toString(getProgram()));
                         programValue.set(structMemberVariable);
+                        modified.set(true);
                      }
                   }
                }
             });
+      return modified.get();
    }
 
    /**
@@ -88,7 +100,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @param statementCall The call to unwind
     * @param structUnwinding Information about all unwound struct variables
     */
-   private void unwindCall(StatementCall statementCall, StructUnwinding structUnwinding) {
+   private boolean unwindCall(StatementCall statementCall, StructUnwinding structUnwinding) {
       //Procedure procedure = getScope().getProcedure(statementCall.getProcedure());
       ArrayList<RValue> unwoundParameters = new ArrayList<>();
       boolean anyUnwound = false;
@@ -117,6 +129,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          statementCall.setParameters(unwoundParameters);
          getLog().append("Converted procedure struct value parameter to member variables in call " + statementCall.toString(getProgram(), false));
       }
+      return anyUnwound;
    }
 
    /**
@@ -124,7 +137,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
     *
     * @param structUnwinding Information about all unwound struct variables (including procedure parameters)
     */
-   private void unwindProcedureParameters(StructUnwinding structUnwinding) {
+   private boolean unwindProcedureParameters(StructUnwinding structUnwinding) {
+      boolean modified = false;
       // Iterate through all procedures changing parameter lists by unwinding each struct value parameter
       for(Procedure procedure : getScope().getAllProcedures(true)) {
          ArrayList<String> unwoundParameterNames = new ArrayList<>();
@@ -143,8 +157,10 @@ public class Pass1UnwindStructValues extends Pass1Base {
          if(procedureUnwound) {
             procedure.setParameterNames(unwoundParameterNames);
             getLog().append("Converted procedure struct value parameter to member variables " + procedure.toString(getProgram()));
+            modified = true;
          }
       }
+      return modified;
    }
 
    /**
@@ -152,33 +168,37 @@ public class Pass1UnwindStructValues extends Pass1Base {
     *
     * @return Information about all unwound struct variables
     */
-   private StructUnwinding unwindAllStructVariables() {
-      // Maps struct variable to map from member name to the variable
-      StructUnwinding structUnwinding = new StructUnwinding();
-
+   private boolean unwindAllStructVariables(StructUnwinding structUnwinding) {
+      boolean modified = false;
       // Iterate through all scopes generating member-variables for each struct
       for(Variable variable : getScope().getAllVariables(true)) {
          if(variable.getType() instanceof SymbolTypeStruct) {
-            if(!variable.isDeclaredVolatile() && !Pass2ConstantIdentification.isAddressOfUsed(variable.getRef(), getProgram())) {
-               // A non-volatile struct variable
-               Scope scope = variable.getScope();
-               StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
-               StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
-               for(Variable member : structDefinition.getAllVariables(false)) {
-                  Variable memberVariable;
-                  if(variable.getRef().isIntermediate()) {
-                     memberVariable = scope.add(new VariableIntermediate(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType()));
-                  } else {
-                     memberVariable = scope.addVariable(variable.getLocalName() + "_" + member.getLocalName(), member.getType());
+            if(structUnwinding.getVariableUnwinding(variable.getRef()) == null) {
+               if(!variable.isDeclaredVolatile() && !Pass2ConstantIdentification.isAddressOfUsed(variable.getRef(), getProgram())) {
+                  // A non-volatile struct variable
+                  Scope scope = variable.getScope();
+                  if(!(scope instanceof StructDefinition)) {
+                     // Not inside another struct
+                     StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
+                     StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
+                     for(Variable member : structDefinition.getAllVariables(false)) {
+                        Variable memberVariable;
+                        if(variable.getRef().isIntermediate()) {
+                           memberVariable = scope.add(new VariableIntermediate(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType()));
+                        } else {
+                           memberVariable = scope.addVariable(variable.getLocalName() + "_" + member.getLocalName(), member.getType());
+                        }
+                        variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
+                        getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
+                     }
+                     getLog().append("Converted struct value to member variables " + variable.toString(getProgram()));
+                     modified = true;
                   }
-                  variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
-                  getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
                }
-               getLog().append("Converted struct value to member variables " + variable.toString(getProgram()));
             }
          }
       }
-      return structUnwinding;
+      return modified;
    }
 
    /**
@@ -189,7 +209,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @param stmtIt The statement iterator used for adding/removing statements
     * @param structUnwinding Information about unwound struct value variables
     */
-   private void unwindAssignment(StatementAssignment assignment, Variable assignedVar, ListIterator<Statement> stmtIt, StructUnwinding structUnwinding) {
+   private boolean unwindAssignment(StatementAssignment assignment, Variable assignedVar, ListIterator<Statement> stmtIt, StructUnwinding structUnwinding) {
+      boolean modified = false;
       // Assigning a struct!
       if(assignment.getOperator() == null && assignment.getrValue2() instanceof StructZero) {
          // Initializing a struct - unwind to assigning zero to each member!
@@ -205,6 +226,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
             }
             stmtIt.next();
             stmtIt.remove();
+            modified = true;
          }
       } else if(assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
          Variable sourceVar = getScope().getVariable((VariableRef) assignment.getrValue2());
@@ -223,6 +245,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                }
                stmtIt.next();
                stmtIt.remove();
+               modified = true;
             }
          } else {
             throw new CompileError("Incompatible struct assignment " + assignment.toString(getProgram(), false), assignment);
@@ -245,10 +268,12 @@ public class Pass1UnwindStructValues extends Pass1Base {
             }
             stmtIt.next();
             stmtIt.remove();
+            modified = true;
          }
       } else {
          throw new CompileError("Incompatible struct assignment " + assignment.toString(getProgram(), false), assignment);
       }
+      return modified;
    }
 
    /**

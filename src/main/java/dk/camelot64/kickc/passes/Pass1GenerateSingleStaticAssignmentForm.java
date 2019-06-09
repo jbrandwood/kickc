@@ -35,9 +35,9 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       do {
          if(getLog().isVerbosePass1CreateSsa()) {
             getLog().append("Completing Phi functions...");
+            //getLog().append(getGraph().toString(getProgram()));
          }
          done = completePhiFunctions();
-         //log.append(this.controlFlowGraph.toString(symbols));
       } while(!done);
       return false;
    }
@@ -110,15 +110,17 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                programValue.set(version.getRef());
             }
             // Update map of versions encountered in the block
-            if(currentStmt instanceof StatementAssignment && programValue instanceof ProgramValue.ProgramValueLValue) {
-               StatementAssignment assignment = (StatementAssignment) currentStmt;
-               LValue lValue = assignment.getlValue();
+            if(currentStmt instanceof StatementLValue && programValue instanceof ProgramValue.ProgramValueLValue) {
+               StatementLValue statementLValue = (StatementLValue) currentStmt;
+               LValue lValue = statementLValue.getlValue();
                if(lValue instanceof VariableRef) {
-                  VariableRef lValueRef = (VariableRef) lValue;
-                  Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValueRef);
-                  if(variable instanceof VariableVersion) {
-                     VariableVersion versioned = (VariableVersion) variable;
-                     blockVersions.put(versioned.getVersionOf(), versioned);
+                  updateBlockVersions((VariableRef) lValue, blockVersions);
+               } else if(lValue instanceof ValueList) {
+                  List<RValue> lValueList = ((ValueList) lValue).getList();
+                  for(RValue lValueElement : lValueList) {
+                     if(lValueElement instanceof VariableRef) {
+                        updateBlockVersions((VariableRef) lValueElement, blockVersions);
+                     }
                   }
                }
             }
@@ -143,6 +145,15 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          for(VariableUnversioned symbol : blockNewPhis.keySet()) {
             block.getPhiBlock().addPhiVariable(blockNewPhis.get(symbol).getRef());
          }
+      }
+   }
+
+   private void updateBlockVersions(VariableRef lValue, Map<VariableUnversioned, VariableVersion> blockVersions) {
+      VariableRef lValueRef = lValue;
+      Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValueRef);
+      if(variable instanceof VariableVersion) {
+         VariableVersion versioned = (VariableVersion) variable;
+         blockVersions.put(versioned.getVersionOf(), versioned);
       }
    }
 
@@ -289,11 +300,11 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
                StatementLValue assignment = (StatementLValue) statement;
-               addSymbolToMap(symbolMap, block, assignment.getlValue());
+               addSymbolToMap(assignment.getlValue(), block, symbolMap);
             } else if(statement instanceof StatementPhiBlock) {
                StatementPhiBlock phiBlock = (StatementPhiBlock) statement;
                for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
-                  addSymbolToMap(symbolMap, block, phiVariable.getVariable());
+                  addSymbolToMap(phiVariable.getVariable(), block, symbolMap);
                }
             }
          }
@@ -301,7 +312,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       return symbolMap;
    }
 
-   private void addSymbolToMap(Map<LabelRef, Map<VariableUnversioned, VariableVersion>> symbolMap, ControlFlowBlock block, dk.camelot64.kickc.model.values.LValue lValue) {
+   private void addSymbolToMap(LValue lValue, ControlFlowBlock block, Map<LabelRef, Map<VariableUnversioned, VariableVersion>> symbolMap) {
       if(lValue instanceof VariableRef) {
          Variable lValueVar = getScope().getVariable((VariableRef) lValue);
          if(lValueVar instanceof VariableVersion) {
@@ -315,6 +326,11 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
             }
             blockMap.put(unversioned, versioned);
          }
+      } else if(lValue instanceof ValueList) {
+         for(RValue lValueElement : ((ValueList) lValue).getList()) {
+            addSymbolToMap((LValue) lValueElement, block, symbolMap);
+         }
+
       }
    }
 }

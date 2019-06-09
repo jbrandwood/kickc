@@ -82,7 +82,7 @@ public class TestPrograms {
 
    @Test
    public void testStruct5() throws IOException, URISyntaxException {
-      compileAndCompare("struct-5", log().verboseParse().verboseCreateSsa());
+      compileAndCompare("struct-5");
    }
 
    @Test

@@ -218,6 +218,7 @@ public class Compiler {
       //getLog().append(program.getGraph().toString(program));
 
       program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
+      new PassNUnwindLValueLists(program).execute();
 
       getLog().append("\nCONTROL FLOW GRAPH SSA");
       getLog().append(program.getGraph().toString(program));

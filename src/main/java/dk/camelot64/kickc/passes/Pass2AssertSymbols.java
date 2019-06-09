@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.VariableUnversioned;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.SymbolRef;
 
 import java.util.Collection;
@@ -44,6 +45,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
          if(tableSymbol instanceof VariableUnversioned) continue;
          if(tableSymbol instanceof ConstantVar) continue;
          if(tableSymbol instanceof StructDefinition) continue;
+         if(tableSymbol.getType() instanceof SymbolTypeStruct) continue;
          Symbol codeSymbol = null;
          String codeSymbolFullName = tableSymbol.getFullName();
          for(Symbol symbol : codeSymbols) {
@@ -53,7 +55,11 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
             }
          }
          if(codeSymbol == null) {
-            throw new AssertionFailed("Compile process error. Symbol found in symbol table, but not in code. " + codeSymbolFullName);
+            if(tableSymbol.getType() instanceof SymbolTypeStruct) {
+               getLog().append("Struct no longer used in code "+codeSymbolFullName);
+            }  else {
+               throw new AssertionFailed("Compile process error. Symbol found in symbol table, but not in code. " + codeSymbolFullName);
+            }
          }
       }
    }

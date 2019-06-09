@@ -71,6 +71,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStruct7() throws IOException, URISyntaxException {
+      compileAndCompare("struct-7");
+   }
+
+   @Test
    public void testStruct6() throws IOException, URISyntaxException {
       compileAndCompare("struct-6");
    }

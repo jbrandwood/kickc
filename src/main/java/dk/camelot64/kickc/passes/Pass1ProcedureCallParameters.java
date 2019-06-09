@@ -1,18 +1,16 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.statements.StatementReturn;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
+import dk.camelot64.kickc.model.values.*;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /** Pass that modifies a control flow graph to call procedures by passing parameters through registers */
 public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
@@ -34,7 +32,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
             for(StatementPhiBlock.PhiVariable phiVariable : block.getPhiBlock().getPhiVariables()) {
                for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                   LabelRef splitBlockNew = splitBlockMap.get(phiRValue.getPredecessor());
-                  if(splitBlockNew !=null) {
+                  if(splitBlockNew != null) {
                      phiRValue.setPredecessor(splitBlockNew);
                   }
                }
@@ -64,10 +62,23 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       }
       String procedureName = origCall.getProcedureName();
       Variable procReturnVar = procedure.getVariable("return");
-      VariableRef procReturnVarRef = null;
+      LValue procReturnVarRef = null;
       if(procReturnVar != null) {
          procReturnVarRef = procReturnVar.getRef();
+
+         // Special handing of struct value returns
+         if(procReturnVar.getType() instanceof SymbolTypeStruct) {
+            Pass1UnwindStructValues.StructUnwinding.VariableUnwinding returnVarUnwinding = program.getStructUnwinding().getVariableUnwinding((VariableRef) procReturnVarRef);
+            if(returnVarUnwinding!=null) {
+               ArrayList<RValue> unwoundReturnVars = new ArrayList<>();
+               for(String memberName : returnVarUnwinding.getMemberNames()) {
+                  unwoundReturnVars.add(returnVarUnwinding.getMemberUnwinding(memberName));
+               }
+               procReturnVarRef = new ValueList(unwoundReturnVars);
+            }
+         }
       }
+
       StatementCall copyCall = new StatementCall(procReturnVarRef, procedureName, null, origCall.getSource(), Comment.NO_COMMENTS);
       copyCall.setProcedure(procedureRef);
       addStatementToCurrentBlock(copyCall);

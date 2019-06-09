@@ -5,12 +5,10 @@ import dk.camelot64.kickc.model.Program;
 import java.util.List;
 
 /**
- * A list of sub-values. Used for array variable initializers and word from byte constructors
- * (in the future also usable for dword from byte, dword from double etc.).
- * Compilation execution will resolve into a constant array,
- * constant word or word constructor operator before ASM-generation.
+ * A list of sub-values.
+ * Used for array variable initializers, struct value initilizers, word/dword initializers.
  */
-public class ValueList implements RValue {
+public class ValueList implements LValue {
 
    private List<RValue> list;
 

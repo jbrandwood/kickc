@@ -80,10 +80,10 @@ public class TestPrograms {
       compileAndCompare("struct-6");
    }
 
-   //@Test
-   //public void testStruct5() throws IOException, URISyntaxException {
-   //   compileAndCompare("struct-5", log().verboseParse().verboseCreateSsa());
-   //}
+   @Test
+   public void testStruct5() throws IOException, URISyntaxException {
+      compileAndCompare("struct-5", log().verboseParse().verboseCreateSsa());
+   }
 
    @Test
    public void testStruct4() throws IOException, URISyntaxException {

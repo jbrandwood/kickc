@@ -5,10 +5,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementLValue;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
@@ -49,34 +46,51 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * Version all non-versioned non-intermediary being assigned a value.
     */
    private void versionAllAssignments() {
-      Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementLValue) {
                StatementLValue statementLValue = (StatementLValue) statement;
-               dk.camelot64.kickc.model.values.LValue lValue = statementLValue.getlValue();
+               LValue lValue = statementLValue.getlValue();
                if(lValue instanceof VariableRef) {
-                  VariableRef lValueRef = (VariableRef) lValue;
-                  Variable assignedVar = getScope().getVariable(lValueRef);
-                  if(assignedVar instanceof VariableUnversioned) {
-                     // Assignment to a non-versioned non-intermediary variable
-                     VariableUnversioned assignedSymbol = (VariableUnversioned) assignedVar;
-                     VariableVersion version;
-                     if(assignedSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedSymbol.getRef())) {
-                        Collection<VariableVersion> versions = assignedVar.getScope().getVersions(assignedSymbol);
-                        if(versions.size() != 0) {
-                           throw new CompileError("Error! Constants can not be modified " + statement, statement.getSource());
-                        }
-                        version = assignedSymbol.createVersion();
-                        version.setDeclaredConstant(true);
-                     } else {
-                        version = assignedSymbol.createVersion();
+                  versionAssignment((VariableRef) lValue, new ProgramValue.ProgramValueLValue(statementLValue), statementLValue.getSource());
+               } else if(lValue instanceof ValueList) {
+                  List<RValue> lValueList = ((ValueList) lValue).getList();
+                  for(int i = 0; i < lValueList.size(); i++) {
+                     LValue lVal = (LValue) lValueList.get(i);
+                     if(lVal instanceof VariableRef) {
+                        versionAssignment((VariableRef) lVal, new ProgramValue.ProgramValueListElement((ValueList) lValue, i), statementLValue.getSource());
                      }
-                     statementLValue.setlValue(version.getRef());
                   }
                }
             }
          }
+      }
+   }
+
+   /**
+    * Version a single unversioned variable being assigned
+    * @param lValueRef The variable  being assigned
+    * @param programLValue Program Value usable for updating the variable
+    * @param source The statement source - usable for error messages
+    */
+   private void versionAssignment(VariableRef lValueRef, ProgramValue programLValue, StatementSource source) {
+      Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
+      Variable assignedVar = getScope().getVariable(lValueRef);
+      if(assignedVar instanceof VariableUnversioned) {
+         // Assignment to a non-versioned non-intermediary variable
+         VariableUnversioned assignedSymbol = (VariableUnversioned) assignedVar;
+         VariableVersion version;
+         if(assignedSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedSymbol.getRef())) {
+            Collection<VariableVersion> versions = assignedVar.getScope().getVersions(assignedSymbol);
+            if(versions.size() != 0) {
+               throw new CompileError("Error! Constants can not be modified", source);
+            }
+            version = assignedSymbol.createVersion();
+            version.setDeclaredConstant(true);
+         } else {
+            version = assignedSymbol.createVersion();
+         }
+         programLValue.set(version.getRef());
       }
    }
 
@@ -242,6 +256,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    /**
     * Get all predecessors for a control flow block.
     * If the block is the start of an interrupt the @begin is included as a predecessor.
+    *
     * @param block The block to examine
     * @return All predecessor blocks
     */
@@ -250,7 +265,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       Symbol symbol = program.getScope().getSymbol(block.getLabel());
       if(symbol instanceof Procedure) {
          Procedure procedure = (Procedure) symbol;
-         if(procedure.getInterruptType()!=null || Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
+         if(procedure.getInterruptType() != null || Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
             // Find all root-level predecessors to the main block
             ControlFlowBlock mainBlock = program.getGraph().getBlock(new LabelRef(SymbolRef.MAIN_PROC_NAME));
             List<ControlFlowBlock> mainPredecessors = program.getGraph().getPredecessors(mainBlock);

@@ -667,7 +667,7 @@ public interface ProgramValue {
       private ValueList list;
       private int idx;
 
-      ProgramValueListElement(ValueList list, int idx) {
+      public ProgramValueListElement(ValueList list, int idx) {
          this.list = list;
          this.idx = idx;
       }

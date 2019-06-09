@@ -203,21 +203,23 @@ public class Compiler {
          getLog().append(program.getProcedureModifiedVars().toString(program));
       }
 
-      getLog().append("CONTROL FLOW GRAPH (CLEANED)");
-      getLog().append(program.getGraph().toString(program));
+      //getLog().append("CONTROL FLOW GRAPH (CLEANED)");
+      //getLog().append(program.getGraph().toString(program));
 
       new Pass1ProcedureCallParameters(program).generate();
-      getLog().append("CONTROL FLOW GRAPH (CALL PARAMETERS)");
-      getLog().append(program.getGraph().toString(program));
+      new PassNUnwindLValueLists(program).execute();
+
+      //getLog().append("CONTROL FLOW GRAPH (CALL PARAMETERS)");
+      //getLog().append(program.getGraph().toString(program));
 
       new Pass1GenerateSingleStaticAssignmentForm(program).execute();
 
-      getLog().append("CONTROL FLOW GRAPH (SSA)");
-      getLog().append(program.getGraph().toString(program));
+      //getLog().append("CONTROL FLOW GRAPH (SSA)");
+      //getLog().append(program.getGraph().toString(program));
 
       program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
 
-      getLog().append("\nCONTROL FLOW GRAPH SSA (RETURN VALUES)");
+      getLog().append("\nCONTROL FLOW GRAPH SSA");
       getLog().append(program.getGraph().toString(program));
 
       getLog().append("SYMBOL TABLE SSA");

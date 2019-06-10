@@ -50,13 +50,23 @@ main: scope:[main]  from @1
   (byte~) main::$7 ← (byte) '0' + (byte~) main::$6
   *((byte*) SCREEN#0 + (byte) main::idx#6) ← (byte~) main::$7
   (byte) main::idx#7 ← ++ (byte) main::idx#6
-  (number~) main::$8 ← (byte) main::NUM_POINTS#0 - (number) 1
-  (byte) main::NUM_CIRCLES#0 ← (number~) main::$8
-  (struct Point[main::NUM_CIRCLES#0]) main::circles#0 ← { fill( main::NUM_CIRCLES#0, 0) }
-  (byte~) main::$9 ← sizeof  (struct Point[main::NUM_CIRCLES#0]) main::circles#0
+  (byte~) main::$8 ← sizeof  (struct Point[main::NUM_POINTS#0]) main::points#0
+  (byte~) main::$9 ← (byte~) main::$8 / (const byte) SIZEOF_STRUCT_POINT
   (byte~) main::$10 ← (byte) '0' + (byte~) main::$9
   *((byte*) SCREEN#0 + (byte) main::idx#7) ← (byte~) main::$10
   (byte) main::idx#8 ← ++ (byte) main::idx#7
+  (number~) main::$11 ← (byte) main::NUM_POINTS#0 - (number) 1
+  (byte) main::NUM_CIRCLES#0 ← (number~) main::$11
+  (struct Circle[main::NUM_CIRCLES#0]) main::circles#0 ← { fill( main::NUM_CIRCLES#0, 0) }
+  (byte~) main::$12 ← sizeof  (struct Circle[main::NUM_CIRCLES#0]) main::circles#0
+  (byte~) main::$13 ← (byte) '0' + (byte~) main::$12
+  *((byte*) SCREEN#0 + (byte) main::idx#8) ← (byte~) main::$13
+  (byte) main::idx#9 ← ++ (byte) main::idx#8
+  (byte~) main::$14 ← sizeof  (struct Circle[main::NUM_CIRCLES#0]) main::circles#0
+  (byte~) main::$15 ← (byte~) main::$14 / (const byte) SIZEOF_STRUCT_CIRCLE
+  (byte~) main::$16 ← (byte) '0' + (byte~) main::$15
+  *((byte*) SCREEN#0 + (byte) main::idx#9) ← (byte~) main::$16
+  (byte) main::idx#10 ← ++ (byte) main::idx#9
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -85,13 +95,19 @@ SYMBOL TABLE SSA
 (byte~) main::$0
 (byte~) main::$1
 (byte~) main::$10
+(number~) main::$11
+(byte~) main::$12
+(byte~) main::$13
+(byte~) main::$14
+(byte~) main::$15
+(byte~) main::$16
 (byte~) main::$2
 (byte~) main::$3
 (byte~) main::$4
 (byte~) main::$5
 (byte~) main::$6
 (byte~) main::$7
-(number~) main::$8
+(byte~) main::$8
 (byte~) main::$9
 (label) main::@return
 (byte) main::NUM_CIRCLES
@@ -100,11 +116,12 @@ SYMBOL TABLE SSA
 (byte) main::NUM_POINTS#0
 (struct Circle) main::c
 (struct Point) main::c_center
-(struct Point[main::NUM_CIRCLES#0]) main::circles
-(struct Point[main::NUM_CIRCLES#0]) main::circles#0
+(struct Circle[main::NUM_CIRCLES#0]) main::circles
+(struct Circle[main::NUM_CIRCLES#0]) main::circles#0
 (byte) main::idx
 (byte) main::idx#0
 (byte) main::idx#1
+(byte) main::idx#10
 (byte) main::idx#2
 (byte) main::idx#3
 (byte) main::idx#4
@@ -112,14 +129,15 @@ SYMBOL TABLE SSA
 (byte) main::idx#6
 (byte) main::idx#7
 (byte) main::idx#8
+(byte) main::idx#9
 (struct Point) main::p
 (struct Point[main::NUM_POINTS#0]) main::points
 (struct Point[main::NUM_POINTS#0]) main::points#0
 
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
 Adding number conversion cast (unumber) 4 in (byte) main::NUM_POINTS#0 ← (number) 4
-Adding number conversion cast (unumber) 1 in (number~) main::$8 ← (byte) main::NUM_POINTS#0 - (number) 1
-Adding number conversion cast (unumber) main::$8 in (number~) main::$8 ← (byte) main::NUM_POINTS#0 - (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) main::$11 ← (byte) main::NUM_POINTS#0 - (number) 1
+Adding number conversion cast (unumber) main::$11 in (number~) main::$11 ← (byte) main::NUM_POINTS#0 - (unumber)(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
 Inlining cast (byte) main::idx#0 ← (unumber)(number) 0
@@ -134,9 +152,12 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$8 ← (byte) main::NUM_POINTS#0 - (byte) 1
-Alias (byte) main::NUM_CIRCLES#0 = (byte~) main::$8 
+Inferred type updated to byte in (unumber~) main::$11 ← (byte) main::NUM_POINTS#0 - (byte) 1
+Alias (byte) main::NUM_CIRCLES#0 = (byte~) main::$11 
 Successful SSA optimization Pass2AliasElimination
+Identified duplicate assignment right side [24] (byte~) main::$8 ← sizeof  (struct Point[main::NUM_POINTS#0]) main::points#0
+Identified duplicate assignment right side [36] (byte~) main::$14 ← sizeof  (struct Circle[main::NUM_CIRCLES#0]) main::circles#0
+Successful SSA optimization Pass2DuplicateRValueIdentification
 Constant right-side identified [2] (byte~) main::$0 ← (byte) '0' + (const byte) SIZEOF_STRUCT_POINT
 Constant right-side identified [5] (byte~) main::$1 ← (byte) '0' + (const byte) SIZEOF_STRUCT_CIRCLE
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -152,12 +173,15 @@ Constant value identified { fill( main::NUM_POINTS#0, 0) } in [19] (struct Point
 Successful SSA optimization Pass2ConstantValues
 Simplifying expression containing zero SCREEN#0 in [3] *((const byte*) SCREEN#0 + (const byte) main::idx#0) ← (const byte) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) main::idx#8 and assignment [22] (byte) main::idx#8 ← ++ (byte) main::idx#7
+Eliminating unused variable (byte) main::idx#10 and assignment [32] (byte) main::idx#10 ← ++ (byte) main::idx#9
 Successful SSA optimization PassNEliminateUnusedVars
+Alias (byte~) main::$8 = (byte~) main::$6 
+Alias (byte~) main::$14 = (byte~) main::$12 
+Successful SSA optimization Pass2AliasElimination
 Constant right-side identified [1] (byte) main::idx#1 ← ++ (const byte) main::idx#0
 Constant right-side identified [5] (byte~) main::$3 ← (byte) '0' + (const byte) main::$2
 Constant right-side identified [8] (byte~) main::$5 ← (byte) '0' + (const byte) main::$4
-Constant right-side identified [17] (byte) main::NUM_CIRCLES#0 ← (const byte) main::NUM_POINTS#0 - (byte) 1
+Constant right-side identified [22] (byte) main::NUM_CIRCLES#0 ← (const byte) main::NUM_POINTS#0 - (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::idx#1 = ++main::idx#0
 Constant (const byte) main::$3 = '0'+main::$2
@@ -165,40 +189,48 @@ Constant (const byte) main::$5 = '0'+main::$4
 Constant (const struct Point[main::NUM_POINTS#0]) main::points#0 = { fill( main::NUM_POINTS#0, 0) }
 Constant (const byte) main::NUM_CIRCLES#0 = main::NUM_POINTS#0-1
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified { fill( main::NUM_CIRCLES#0, 0) } in [18] (struct Point[main::NUM_CIRCLES#0]) main::circles#0 ← { fill( main::NUM_CIRCLES#0, 0) }
+Constant value identified { fill( main::NUM_CIRCLES#0, 0) } in [23] (struct Circle[main::NUM_CIRCLES#0]) main::circles#0 ← { fill( main::NUM_CIRCLES#0, 0) }
 Successful SSA optimization Pass2ConstantValues
 Constant right-side identified [2] (byte) main::idx#2 ← ++ (const byte) main::idx#1
-Constant right-side identified [9] (byte~) main::$6 ← sizeof  (const struct Point[main::NUM_POINTS#0]) main::points#0
+Constant right-side identified [9] (byte~) main::$8 ← sizeof  (const struct Point[main::NUM_POINTS#0]) main::points#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::idx#2 = ++main::idx#1
-Constant (const byte) main::$6 = sizeof main::points#0
-Constant (const struct Point[main::NUM_CIRCLES#0]) main::circles#0 = { fill( main::NUM_CIRCLES#0, 0) }
+Constant (const byte) main::$8 = sizeof main::points#0
+Constant (const struct Circle[main::NUM_CIRCLES#0]) main::circles#0 = { fill( main::NUM_CIRCLES#0, 0) }
 Successful SSA optimization Pass2ConstantIdentification
 Resolving array sizeof() sizeof (const struct Point[main::NUM_POINTS#0]) main::points#0
 Successful SSA optimization PassNSizeOfSimplification
 Constant right-side identified [2] (byte) main::idx#3 ← ++ (const byte) main::idx#2
-Constant right-side identified [8] (byte~) main::$7 ← (byte) '0' + (const byte) main::$6
-Constant right-side identified [11] (byte~) main::$9 ← sizeof  (const struct Point[main::NUM_CIRCLES#0]) main::circles#0
+Constant right-side identified [8] (byte~) main::$7 ← (byte) '0' + (const byte) main::$8
+Constant right-side identified [11] (byte~) main::$9 ← (const byte) main::$8 / (const byte) SIZEOF_STRUCT_POINT
+Constant right-side identified [15] (byte~) main::$14 ← sizeof  (const struct Circle[main::NUM_CIRCLES#0]) main::circles#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::idx#3 = ++main::idx#2
-Constant (const byte) main::$7 = '0'+main::$6
-Constant (const byte) main::$9 = sizeof main::circles#0
+Constant (const byte) main::$7 = '0'+main::$8
+Constant (const byte) main::$9 = main::$8/SIZEOF_STRUCT_POINT
+Constant (const byte) main::$14 = sizeof main::circles#0
 Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const struct Point[main::NUM_POINTS#0]) main::points#0
 Successful SSA optimization PassNEliminateUnusedVars
-Resolving array sizeof() sizeof (const struct Point[main::NUM_CIRCLES#0]) main::circles#0
+Resolving array sizeof() sizeof (const struct Circle[main::NUM_CIRCLES#0]) main::circles#0
 Successful SSA optimization PassNSizeOfSimplification
 Constant right-side identified [3] (byte) main::idx#4 ← ++ (const byte) main::idx#3
 Constant right-side identified [9] (byte~) main::$10 ← (byte) '0' + (const byte) main::$9
+Constant right-side identified [12] (byte~) main::$13 ← (byte) '0' + (const byte) main::$14
+Constant right-side identified [15] (byte~) main::$15 ← (const byte) main::$14 / (const byte) SIZEOF_STRUCT_CIRCLE
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::idx#4 = ++main::idx#3
 Constant (const byte) main::$10 = '0'+main::$9
+Constant (const byte) main::$13 = '0'+main::$14
+Constant (const byte) main::$15 = main::$14/SIZEOF_STRUCT_CIRCLE
 Successful SSA optimization Pass2ConstantIdentification
-Eliminating unused constant (const struct Point[main::NUM_CIRCLES#0]) main::circles#0
+Eliminating unused constant (const struct Circle[main::NUM_CIRCLES#0]) main::circles#0
 Successful SSA optimization PassNEliminateUnusedVars
 Constant right-side identified [4] (byte) main::idx#5 ← ++ (const byte) main::idx#4
+Constant right-side identified [12] (byte~) main::$16 ← (byte) '0' + (const byte) main::$15
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::idx#5 = ++main::idx#4
+Constant (const byte) main::$16 = '0'+main::$15
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [4] (byte) main::idx#6 ← ++ (const byte) main::idx#5
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -208,6 +240,14 @@ Constant right-side identified [5] (byte) main::idx#7 ← ++ (const byte) main::
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::idx#7 = ++main::idx#6
 Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [6] (byte) main::idx#8 ← ++ (const byte) main::idx#7
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::idx#8 = ++main::idx#7
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [7] (byte) main::idx#9 ← ++ (const byte) main::idx#8
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::idx#9 = ++main::idx#8
+Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings (const byte) main::idx#0
 Inlining constant with different constant siblings (const byte) main::idx#1
 Inlining constant with different constant siblings (const byte) main::idx#2
@@ -216,11 +256,17 @@ Inlining constant with different constant siblings (const byte) main::idx#4
 Inlining constant with different constant siblings (const byte) main::idx#5
 Inlining constant with different constant siblings (const byte) main::idx#6
 Inlining constant with different constant siblings (const byte) main::idx#7
-Constant inlined main::$10 = (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_POINT
+Inlining constant with different constant siblings (const byte) main::idx#8
+Inlining constant with different constant siblings (const byte) main::idx#9
+Constant inlined main::$13 = (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE
+Constant inlined main::$14 = (const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE
+Constant inlined main::$15 = (const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE/(const byte) SIZEOF_STRUCT_CIRCLE
+Constant inlined main::$10 = (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT/(const byte) SIZEOF_STRUCT_POINT
 Constant inlined main::idx#0 = (byte) 0
 Constant inlined main::idx#1 = ++(byte) 0
 Constant inlined main::idx#2 = ++++(byte) 0
 Constant inlined main::$1 = (byte) '0'+(const byte) SIZEOF_STRUCT_CIRCLE
+Constant inlined main::$16 = (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE/(const byte) SIZEOF_STRUCT_CIRCLE
 Constant inlined main::idx#3 = ++++++(byte) 0
 Constant inlined main::$2 = (const byte) SIZEOF_STRUCT_POINT
 Constant inlined main::idx#4 = ++++++++(byte) 0
@@ -229,31 +275,39 @@ Constant inlined main::$0 = (byte) '0'+(const byte) SIZEOF_STRUCT_POINT
 Constant inlined main::idx#6 = ++++++++++++(byte) 0
 Constant inlined main::$5 = (byte) '0'+(const byte) SIZEOF_STRUCT_CIRCLE
 Constant inlined main::idx#7 = ++++++++++++++(byte) 0
-Constant inlined main::$6 = (const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT
+Constant inlined main::idx#8 = ++++++++++++++++(byte) 0
 Constant inlined main::$3 = (byte) '0'+(const byte) SIZEOF_STRUCT_POINT
+Constant inlined main::idx#9 = ++++++++++++++++++(byte) 0
 Constant inlined main::$4 = (const byte) SIZEOF_STRUCT_CIRCLE
-Constant inlined main::$9 = (const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_POINT
+Constant inlined main::$9 = (const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT/(const byte) SIZEOF_STRUCT_POINT
 Constant inlined main::$7 = (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT
+Constant inlined main::$8 = (const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN#0+++0)
 Consolidated array index constant in *(SCREEN#0+++++++0)
 Consolidated array index constant in *(SCREEN#0+++++++++0)
 Consolidated array index constant in *(SCREEN#0+++++++++++++0)
 Consolidated array index constant in *(SCREEN#0+++++++++++++++0)
+Consolidated array index constant in *(SCREEN#0+++++++++++++++++0)
+Consolidated array index constant in *(SCREEN#0+++++++++++++++++++0)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Simplifying constant integer increment ++0
 Simplifying constant integer increment ++0
 Simplifying constant integer increment ++1
 Simplifying constant integer increment ++2
 Simplifying constant integer increment ++3
-Successful SSA optimization Pass2ConstantSimplification
-Simplifying constant integer increment ++2
-Simplifying constant integer increment ++3
 Simplifying constant integer increment ++4
 Simplifying constant integer increment ++5
 Successful SSA optimization Pass2ConstantSimplification
+Simplifying constant integer increment ++2
+Simplifying constant integer increment ++3
 Simplifying constant integer increment ++5
 Simplifying constant integer increment ++6
+Simplifying constant integer increment ++6
+Simplifying constant integer increment ++7
+Successful SSA optimization Pass2ConstantSimplification
+Simplifying constant integer increment ++7
+Simplifying constant integer increment ++8
 Successful SSA optimization Pass2ConstantSimplification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -285,10 +339,12 @@ main: scope:[main]  from @1
   [6] *((const byte*) SCREEN#0+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_STRUCT_POINT
   [7] *((const byte*) SCREEN#0+(byte) 4) ← (byte) '0'+(const byte) SIZEOF_STRUCT_CIRCLE
   [8] *((const byte*) SCREEN#0+(byte) 6) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT
-  [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_POINT
+  [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT/(const byte) SIZEOF_STRUCT_POINT
+  [10] *((const byte*) SCREEN#0+(byte) 8) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE
+  [11] *((const byte*) SCREEN#0+(byte) 9) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE/(const byte) SIZEOF_STRUCT_CIRCLE
   to:main::@return
 main::@return: scope:[main]  from main
-  [10] return 
+  [12] return 
   to:@return
 
 
@@ -303,7 +359,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::NUM_POINTS
 (struct Circle) main::c
 (struct Point) main::c_center
-(struct Point[main::NUM_CIRCLES#0]) main::circles
+(struct Circle[main::NUM_CIRCLES#0]) main::circles
 (byte) main::idx
 (struct Point) main::p
 (struct Point[main::NUM_POINTS#0]) main::points
@@ -338,7 +394,7 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-    // Struct Array
+    // Struct Arrays
     .const NUM_POINTS = 4
     .const NUM_CIRCLES = NUM_POINTS-1
   //SEG10 [4] *((const byte*) SCREEN#0) ← (byte) '0'+(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
@@ -357,13 +413,19 @@ main: {
   //SEG14 [8] *((const byte*) SCREEN#0+(byte) 6) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
     lda #'0'+NUM_POINTS*SIZEOF_STRUCT_POINT
     sta SCREEN+6
-  //SEG15 [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
-    lda #'0'+NUM_CIRCLES*SIZEOF_STRUCT_POINT
+  //SEG15 [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT/(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
+    lda #'0'+NUM_POINTS*SIZEOF_STRUCT_POINT/SIZEOF_STRUCT_POINT
     sta SCREEN+7
+  //SEG16 [10] *((const byte*) SCREEN#0+(byte) 8) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE -- _deref_pbuc1=vbuc2 
+    lda #'0'+NUM_CIRCLES*SIZEOF_STRUCT_CIRCLE
+    sta SCREEN+8
+  //SEG17 [11] *((const byte*) SCREEN#0+(byte) 9) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE/(const byte) SIZEOF_STRUCT_CIRCLE -- _deref_pbuc1=vbuc2 
+    lda #'0'+NUM_CIRCLES*SIZEOF_STRUCT_CIRCLE/SIZEOF_STRUCT_CIRCLE
+    sta SCREEN+9
     jmp breturn
-  //SEG16 main::@return
+  //SEG18 main::@return
   breturn:
-  //SEG17 [10] return 
+  //SEG19 [12] return 
     rts
 }
 
@@ -373,7 +435,9 @@ Statement [5] *((const byte*) SCREEN#0+(byte) 1) ← (byte) '0'+(const byte) SIZ
 Statement [6] *((const byte*) SCREEN#0+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_STRUCT_POINT [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) SCREEN#0+(byte) 4) ← (byte) '0'+(const byte) SIZEOF_STRUCT_CIRCLE [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) SCREEN#0+(byte) 6) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_POINT [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT/(const byte) SIZEOF_STRUCT_POINT [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [10] *((const byte*) SCREEN#0+(byte) 8) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [11] *((const byte*) SCREEN#0+(byte) 9) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE/(const byte) SIZEOF_STRUCT_CIRCLE [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Point] 
@@ -381,10 +445,10 @@ Uplift Scope [Circle]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [Point] best 57 combination 
-Uplifting [Circle] best 57 combination 
-Uplifting [main] best 57 combination 
-Uplifting [] best 57 combination 
+Uplifting [Point] best 69 combination 
+Uplifting [Circle] best 69 combination 
+Uplifting [main] best 69 combination 
+Uplifting [] best 69 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -413,7 +477,7 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-    // Struct Array
+    // Struct Arrays
     .const NUM_POINTS = 4
     .const NUM_CIRCLES = NUM_POINTS-1
   //SEG10 [4] *((const byte*) SCREEN#0) ← (byte) '0'+(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
@@ -432,13 +496,19 @@ main: {
   //SEG14 [8] *((const byte*) SCREEN#0+(byte) 6) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
     lda #'0'+NUM_POINTS*SIZEOF_STRUCT_POINT
     sta SCREEN+6
-  //SEG15 [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
-    lda #'0'+NUM_CIRCLES*SIZEOF_STRUCT_POINT
+  //SEG15 [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT/(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
+    lda #'0'+NUM_POINTS*SIZEOF_STRUCT_POINT/SIZEOF_STRUCT_POINT
     sta SCREEN+7
+  //SEG16 [10] *((const byte*) SCREEN#0+(byte) 8) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE -- _deref_pbuc1=vbuc2 
+    lda #'0'+NUM_CIRCLES*SIZEOF_STRUCT_CIRCLE
+    sta SCREEN+8
+  //SEG17 [11] *((const byte*) SCREEN#0+(byte) 9) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE/(const byte) SIZEOF_STRUCT_CIRCLE -- _deref_pbuc1=vbuc2 
+    lda #'0'+NUM_CIRCLES*SIZEOF_STRUCT_CIRCLE/SIZEOF_STRUCT_CIRCLE
+    sta SCREEN+9
     jmp breturn
-  //SEG16 main::@return
+  //SEG18 main::@return
   breturn:
-  //SEG17 [10] return 
+  //SEG19 [12] return 
     rts
 }
 
@@ -480,7 +550,7 @@ FINAL SYMBOL TABLE
 (const byte) main::NUM_POINTS#0 NUM_POINTS = (byte) 4
 (struct Circle) main::c
 (struct Point) main::c_center
-(struct Point[main::NUM_CIRCLES#0]) main::circles
+(struct Circle[main::NUM_CIRCLES#0]) main::circles
 (byte) main::idx
 (struct Point) main::p
 (struct Point[main::NUM_POINTS#0]) main::points
@@ -488,7 +558,7 @@ FINAL SYMBOL TABLE
 
 
 FINAL ASSEMBLER
-Score: 42
+Score: 54
 
 //SEG0 File Comments
 // Tests the sizeof() operator on structs
@@ -508,7 +578,7 @@ Score: 42
 //SEG8 @end
 //SEG9 main
 main: {
-    // Struct Array
+    // Struct Arrays
     .const NUM_POINTS = 4
     .const NUM_CIRCLES = NUM_POINTS-1
   //SEG10 [4] *((const byte*) SCREEN#0) ← (byte) '0'+(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
@@ -527,11 +597,17 @@ main: {
   //SEG14 [8] *((const byte*) SCREEN#0+(byte) 6) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
     lda #'0'+NUM_POINTS*SIZEOF_STRUCT_POINT
     sta SCREEN+6
-  //SEG15 [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
-    lda #'0'+NUM_CIRCLES*SIZEOF_STRUCT_POINT
+  //SEG15 [9] *((const byte*) SCREEN#0+(byte) 7) ← (byte) '0'+(const byte) main::NUM_POINTS#0*(const byte) SIZEOF_STRUCT_POINT/(const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
+    lda #'0'+NUM_POINTS*SIZEOF_STRUCT_POINT/SIZEOF_STRUCT_POINT
     sta SCREEN+7
-  //SEG16 main::@return
-  //SEG17 [10] return 
+  //SEG16 [10] *((const byte*) SCREEN#0+(byte) 8) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE -- _deref_pbuc1=vbuc2 
+    lda #'0'+NUM_CIRCLES*SIZEOF_STRUCT_CIRCLE
+    sta SCREEN+8
+  //SEG17 [11] *((const byte*) SCREEN#0+(byte) 9) ← (byte) '0'+(const byte) main::NUM_CIRCLES#0*(const byte) SIZEOF_STRUCT_CIRCLE/(const byte) SIZEOF_STRUCT_CIRCLE -- _deref_pbuc1=vbuc2 
+    lda #'0'+NUM_CIRCLES*SIZEOF_STRUCT_CIRCLE/SIZEOF_STRUCT_CIRCLE
+    sta SCREEN+9
+  //SEG18 main::@return
+  //SEG19 [12] return 
     rts
 }
 

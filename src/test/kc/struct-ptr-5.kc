@@ -1,8 +1,8 @@
 // Minimal struct - simple linked list implemented using pointers
 
 struct Entry {
-    struct Entry* next;
     byte value;
+    struct Entry* next;
 };
 
 struct Entry* ENTRIES= 0x1000;
@@ -13,15 +13,12 @@ void main() {
     struct Entry* entry1 = ENTRIES+1;
     struct Entry* entry2 = ENTRIES+2;
 
-    (*entry0).next = entry2;
-    (*entry0).value = 1;
-
-    (*entry2).next = entry1;
-    (*entry2).value = 2;
-
-    (*entry1).next = 0;
-    (*entry1).value = 3;
-
+    entry0->next = entry2;
+    entry0->value = 1;
+    entry2->next = entry1;
+    entry2->value = 2;
+    entry1->next = 0;
+    entry1->value = 3;
 
     // Run through the linked list
     const byte* SCREEN = 0x0400;
@@ -29,12 +26,11 @@ void main() {
 
     struct Entry* entry = ENTRIES;
     while(entry) {
-        SCREEN[idx++] = '0'+(*entry).value;
-        struct Entry* next = (*entry).next;
-        SCREEN[idx++] = <next;
-        SCREEN[idx++] = >next;
+        SCREEN[idx++] = '0'+entry->value;
+        SCREEN[idx++] = <entry->next;
+        SCREEN[idx++] = >entry->next;
         SCREEN[idx++] = ' ';
-        entry = (*entry).next;
+        entry = entry->next;
     }
 
 

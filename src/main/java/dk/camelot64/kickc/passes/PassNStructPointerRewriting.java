@@ -92,7 +92,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
     * @param memberName The name of the struct member
     * @return The constant variable
     */
-   private static ConstantRef getMemberOffsetConstant(ProgramScope programScope, StructDefinition structDefinition, String memberName) {
+   public static ConstantRef getMemberOffsetConstant(ProgramScope programScope, StructDefinition structDefinition, String memberName) {
       String typeConstName = getMemberOffsetConstantName(structDefinition, memberName);
       ConstantVar memberOffsetConstant = programScope.getConstant(typeConstName);
       if(memberOffsetConstant == null) {

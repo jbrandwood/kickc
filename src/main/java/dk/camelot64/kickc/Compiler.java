@@ -169,8 +169,6 @@ public class Compiler {
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
 
-      new PassNSizeOfSimplification(program).execute(); // Needed to eliminate sizeof() referencing pointer value variables
-      new Pass1UnwindStructValues(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");
@@ -180,6 +178,8 @@ public class Compiler {
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1PointerSizeofFix(program).execute(); // After this point in the code all pointer math is byte-based
+      new PassNSizeOfSimplification(program).execute(); // Needed to eliminate sizeof() referencing pointer value variables
+      new Pass1UnwindStructValues(program).execute();
       new PassNStructPointerRewriting(program).execute();
 
       new PassNAddBooleanCasts(program).execute();

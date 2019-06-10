@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStructPtr9() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-9");
+   }
+
+   @Test
    public void testStructPtr8() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-8");
    }

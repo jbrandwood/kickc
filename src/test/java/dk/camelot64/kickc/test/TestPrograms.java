@@ -2273,7 +2273,7 @@ public class TestPrograms {
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);
       success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(false));
-      success &= helper.testOutput(fileName, ".sym", program.getScope().toString(program));
+      success &= helper.testOutput(fileName, ".sym", program.getScope().toString(program, null));
       success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(fileName, ".log", program.getLog().toString());
       if(!success) {

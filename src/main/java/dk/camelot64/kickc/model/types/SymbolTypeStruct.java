@@ -17,11 +17,7 @@ public class SymbolTypeStruct implements SymbolType {
 
    public SymbolTypeStruct(StructDefinition structDefinition) {
       this.name = structDefinition.getLocalName();
-      int sizeBytes = 0;
-      for(Variable member : structDefinition.getAllVariables(false)) {
-         sizeBytes += member.getType().getSizeBytes();
-      }
-      this.sizeBytes = sizeBytes;
+      this.sizeBytes = calculateSizeBytes(structDefinition);
    }
 
    @Override
@@ -39,6 +35,23 @@ public class SymbolTypeStruct implements SymbolType {
 
    @Override
    public int getSizeBytes() {
+      return sizeBytes;
+   }
+
+   public void setSizeBytes(int sizeBytes) {
+      this.sizeBytes = sizeBytes;
+   }
+
+   /**
+    * Calculate the number of bytes used by the struct by calculating bytes used by each member
+    * @param structDefinition The struct definition (get using getStructDefinition)
+    * @return The number of bytes a struct value require
+    */
+   public int calculateSizeBytes(StructDefinition structDefinition) {
+      int sizeBytes = 0;
+      for(Variable member : structDefinition.getAllVariables(false)) {
+         sizeBytes += member.getType().getSizeBytes();
+      }
       return sizeBytes;
    }
 

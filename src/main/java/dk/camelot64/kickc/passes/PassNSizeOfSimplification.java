@@ -22,9 +22,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Simplifies sizeof() operators whenever the expression is constant
  */
-public class Pass2SizeOfSimplification extends Pass2SsaOptimization {
+public class PassNSizeOfSimplification extends Pass2SsaOptimization {
 
-   public Pass2SizeOfSimplification(Program program) {
+   public PassNSizeOfSimplification(Program program) {
       super(program);
    }
 

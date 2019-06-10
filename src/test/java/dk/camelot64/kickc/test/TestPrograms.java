@@ -530,6 +530,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSizeofStruct() throws IOException, URISyntaxException {
+      compileAndCompare("sizeof-struct");
+   }
+
+   @Test
+   public void testSizeofArrays() throws IOException, URISyntaxException {
+      compileAndCompare("sizeof-arrays");
+   }
+
+   @Test
    public void testSizeofExpression() throws IOException, URISyntaxException {
       compileAndCompare("sizeof-expr");
    }

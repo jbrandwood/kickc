@@ -168,6 +168,7 @@ public class Compiler {
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
 
+      new PassNSizeOfSimplification(program).execute();
       new Pass1UnwindStructValues(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
@@ -260,7 +261,7 @@ public class Compiler {
       optimizations.add(new PassNAddTypeConversionAssignment(program));
 
       optimizations.add(new PassNTypeIdSimplification(program));
-      optimizations.add(new Pass2SizeOfSimplification(program));
+      optimizations.add(new PassNSizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new PassNVariableReferenceInfos(program));
       optimizations.add(new Pass2UnaryNotSimplification(program));

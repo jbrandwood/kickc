@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStructPtr11() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-11");
+   }
+
+   @Test
    public void testStructPtr10() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-10");
    }
@@ -637,6 +642,11 @@ public class TestPrograms {
    @Test
    public void testMultiply2s() throws IOException, URISyntaxException {
       compileAndCompare("multiply-2s");
+   }
+
+   @Test
+   public void testMultiplyNs() throws IOException, URISyntaxException {
+      compileAndCompare("multiply-ns");
    }
 
    @Test

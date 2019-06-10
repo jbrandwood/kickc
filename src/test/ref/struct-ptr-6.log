@@ -1,0 +1,360 @@
+Fixing pointer increment (struct Point*) points ← ++ (struct Point*) points
+Rewriting struct pointer member access *((struct Point*) points).x
+Rewriting struct pointer member access *((struct Point*) points).y
+Rewriting struct pointer member access *((struct Point*) points).x
+Rewriting struct pointer member access *((struct Point*) points).y
+Adding pointer type conversion cast (struct Point*) points in (struct Point*) points ← (number) $1000
+Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (struct Point*) points#0 ← ((struct Point*)) (number) $1000
+  to:@1
+main: scope:[main]  from @1
+  (struct Point*) points#4 ← phi( @1/(struct Point*) points#7 )
+  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (byte*) main::$0 ← (byte*)(struct Point*) points#4 + (const byte) OFFSET_STRUCT_POINT_X
+  *((byte*) main::SCREEN#0 + (number) 0) ← *((byte*) main::$0)
+  (byte*) main::$1 ← (byte*)(struct Point*) points#4 + (const byte) OFFSET_STRUCT_POINT_Y
+  *((byte*) main::SCREEN#0 + (number) 1) ← *((byte*) main::$1)
+  (struct Point*) points#1 ← (struct Point*) points#4 + (const byte) SIZEOF_STRUCT_POINT
+  (byte*) main::$2 ← (byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_X
+  *((byte*) main::SCREEN#0 + (number) 2) ← *((byte*) main::$2)
+  (byte*) main::$3 ← (byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_Y
+  *((byte*) main::SCREEN#0 + (number) 3) ← *((byte*) main::$3)
+  to:main::@return
+main::@return: scope:[main]  from main
+  (struct Point*) points#5 ← phi( main/(struct Point*) points#1 )
+  (struct Point*) points#2 ← (struct Point*) points#5
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (struct Point*) points#7 ← phi( @begin/(struct Point*) points#0 )
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  (struct Point*) points#6 ← phi( @1/(struct Point*) points#2 )
+  (struct Point*) points#3 ← (struct Point*) points#6
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(const byte) OFFSET_STRUCT_POINT_X = (byte) 0
+(const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
+(byte) Point::x
+(byte) Point::y
+(const byte) SIZEOF_STRUCT_POINT = (byte) 2
+(void()) main()
+(byte*) main::$0
+(byte*) main::$1
+(byte*) main::$2
+(byte*) main::$3
+(label) main::@return
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(struct Point*) points
+(struct Point*) points#0
+(struct Point*) points#1
+(struct Point*) points#2
+(struct Point*) points#3
+(struct Point*) points#4
+(struct Point*) points#5
+(struct Point*) points#6
+(struct Point*) points#7
+
+Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN#0 + (number) 0) ← *((byte*) main::$0)
+Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN#0 + (number) 1) ← *((byte*) main::$1)
+Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN#0 + (number) 2) ← *((byte*) main::$2)
+Adding number conversion cast (unumber) 3 in *((byte*) main::SCREEN#0 + (number) 3) ← *((byte*) main::$3)
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (struct Point*) points#0 ← (struct Point*)(number) $1000
+Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (struct Point*) 4096
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 3
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (struct Point*) points#1 = (struct Point*) points#5 (struct Point*) points#2 
+Alias (struct Point*) points#0 = (struct Point*) points#7 
+Alias (struct Point*) points#3 = (struct Point*) points#6 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (struct Point*) points#4 (struct Point*) points#0
+Identical Phi Values (struct Point*) points#3 (struct Point*) points#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const struct Point*) points#0 = (struct Point*) 4096
+Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte*)points#0 in [3] (byte*) main::$0 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_X
+Constant value identified (byte*)points#0 in [5] (byte*) main::$1 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_Y
+Successful SSA optimization Pass2ConstantValues
+Converting *(pointer+n) to pointer[n] [4] *((const byte*) main::SCREEN#0 + (byte) 0) ← *((byte*) main::$0)  -- *((byte*)points#0 + OFFSET_STRUCT_POINT_X)
+Converting *(pointer+n) to pointer[n] [6] *((const byte*) main::SCREEN#0 + (byte) 1) ← *((byte*) main::$1)  -- *((byte*)points#0 + OFFSET_STRUCT_POINT_Y)
+Converting *(pointer+n) to pointer[n] [9] *((const byte*) main::SCREEN#0 + (byte) 2) ← *((byte*) main::$2)  -- *((byte*)points#1 + OFFSET_STRUCT_POINT_X)
+Converting *(pointer+n) to pointer[n] [11] *((const byte*) main::SCREEN#0 + (byte) 3) ← *((byte*) main::$3)  -- *((byte*)points#1 + OFFSET_STRUCT_POINT_Y)
+Successful SSA optimization Pass2InlineDerefIdx
+Simplifying expression containing zero (byte*)points#0 in [3] (byte*) main::$0 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero (byte*)points#0 in [4] *((const byte*) main::SCREEN#0 + (byte) 0) ← *((byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero main::SCREEN#0 in [4] *((const byte*) main::SCREEN#0 + (byte) 0) ← *((byte*)(const struct Point*) points#0)
+Simplifying expression containing zero (byte*)points#1 in [8] (byte*) main::$2 ← (byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero (byte*)points#1 in [9] *((const byte*) main::SCREEN#0 + (byte) 2) ← *((byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_X)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (byte*) main::$0 and assignment [0] (byte*) main::$0 ← (byte*)(const struct Point*) points#0
+Eliminating unused variable (byte*) main::$1 and assignment [2] (byte*) main::$1 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_Y
+Eliminating unused variable (byte*) main::$2 and assignment [5] (byte*) main::$2 ← (byte*)(struct Point*) points#1
+Eliminating unused variable (byte*) main::$3 and assignment [7] (byte*) main::$3 ← (byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_Y
+Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
+Successful SSA optimization PassNEliminateUnusedVars
+Constant right-side identified [2] (struct Point*) points#1 ← (const struct Point*) points#0 + (const byte) SIZEOF_STRUCT_POINT
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const struct Point*) points#1 = points#0+SIZEOF_STRUCT_POINT
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte*)points#1 in [3] *((const byte*) main::SCREEN#0 + (byte) 2) ← *((byte*)(const struct Point*) points#1)
+Constant value identified (byte*)points#1 in [4] *((const byte*) main::SCREEN#0 + (byte) 3) ← *((byte*)(const struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_Y)
+Successful SSA optimization Pass2ConstantValues
+Inlining constant with different constant siblings (const struct Point*) points#0
+Inlining constant with different constant siblings (const struct Point*) points#1
+Constant inlined points#0 = (struct Point*) 4096
+Constant inlined points#1 = (struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *((byte*)(struct Point*) 4096+OFFSET_STRUCT_POINT_Y)
+Consolidated array index constant in *(main::SCREEN#0+1)
+Consolidated array index constant in *(main::SCREEN#0+2)
+Consolidated array index constant in *((byte*)(struct Point*) 4096+SIZEOF_STRUCT_POINT+OFFSET_STRUCT_POINT_Y)
+Consolidated array index constant in *(main::SCREEN#0+3)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte*) main::SCREEN#0) ← *((byte*)(struct Point*) 4096)
+  [5] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*)(struct Point*) 4096+(const byte) OFFSET_STRUCT_POINT_Y)
+  [6] *((const byte*) main::SCREEN#0+(byte) 2) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT)
+  [7] *((const byte*) main::SCREEN#0+(byte) 3) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT+(const byte) OFFSET_STRUCT_POINT_Y)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [8] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) Point::x
+(byte) Point::y
+(void()) main()
+(byte*) main::SCREEN
+(struct Point*) points
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Minimal struct - accessing pointer to struct in memory using arrow operator
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const SIZEOF_STRUCT_POINT = 2
+  .const OFFSET_STRUCT_POINT_Y = 1
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+  //SEG10 [4] *((const byte*) main::SCREEN#0) ← *((byte*)(struct Point*) 4096) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000
+    sta SCREEN
+  //SEG11 [5] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*)(struct Point*) 4096+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000+OFFSET_STRUCT_POINT_Y
+    sta SCREEN+1
+  //SEG12 [6] *((const byte*) main::SCREEN#0+(byte) 2) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000+SIZEOF_STRUCT_POINT
+    sta SCREEN+2
+  //SEG13 [7] *((const byte*) main::SCREEN#0+(byte) 3) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000+SIZEOF_STRUCT_POINT+OFFSET_STRUCT_POINT_Y
+    sta SCREEN+3
+    jmp breturn
+  //SEG14 main::@return
+  breturn:
+  //SEG15 [8] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) main::SCREEN#0) ← *((byte*)(struct Point*) 4096) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*)(struct Point*) 4096+(const byte) OFFSET_STRUCT_POINT_Y) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::SCREEN#0+(byte) 2) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) main::SCREEN#0+(byte) 3) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT+(const byte) OFFSET_STRUCT_POINT_Y) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [Point] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [Point] best 53 combination 
+Uplifting [main] best 53 combination 
+Uplifting [] best 53 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Minimal struct - accessing pointer to struct in memory using arrow operator
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const SIZEOF_STRUCT_POINT = 2
+  .const OFFSET_STRUCT_POINT_Y = 1
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+  //SEG10 [4] *((const byte*) main::SCREEN#0) ← *((byte*)(struct Point*) 4096) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000
+    sta SCREEN
+  //SEG11 [5] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*)(struct Point*) 4096+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000+OFFSET_STRUCT_POINT_Y
+    sta SCREEN+1
+  //SEG12 [6] *((const byte*) main::SCREEN#0+(byte) 2) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000+SIZEOF_STRUCT_POINT
+    sta SCREEN+2
+  //SEG13 [7] *((const byte*) main::SCREEN#0+(byte) 3) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000+SIZEOF_STRUCT_POINT+OFFSET_STRUCT_POINT_Y
+    sta SCREEN+3
+    jmp breturn
+  //SEG14 main::@return
+  breturn:
+  //SEG15 [8] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte) OFFSET_STRUCT_POINT_Y OFFSET_STRUCT_POINT_Y = (byte) 1
+(byte) Point::x
+(byte) Point::y
+(const byte) SIZEOF_STRUCT_POINT SIZEOF_STRUCT_POINT = (byte) 2
+(void()) main()
+(label) main::@return
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(struct Point*) points
+
+
+
+FINAL ASSEMBLER
+Score: 38
+
+//SEG0 File Comments
+// Minimal struct - accessing pointer to struct in memory using arrow operator
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const SIZEOF_STRUCT_POINT = 2
+  .const OFFSET_STRUCT_POINT_Y = 1
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label SCREEN = $400
+  //SEG10 [4] *((const byte*) main::SCREEN#0) ← *((byte*)(struct Point*) 4096) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000
+    sta SCREEN
+  //SEG11 [5] *((const byte*) main::SCREEN#0+(byte) 1) ← *((byte*)(struct Point*) 4096+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000+OFFSET_STRUCT_POINT_Y
+    sta SCREEN+1
+  //SEG12 [6] *((const byte*) main::SCREEN#0+(byte) 2) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000+SIZEOF_STRUCT_POINT
+    sta SCREEN+2
+  //SEG13 [7] *((const byte*) main::SCREEN#0+(byte) 3) ← *((byte*)(struct Point*) 4096+(const byte) SIZEOF_STRUCT_POINT+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    lda $1000+SIZEOF_STRUCT_POINT+OFFSET_STRUCT_POINT_Y
+    sta SCREEN+3
+  //SEG14 main::@return
+  //SEG15 [8] return 
+    rts
+}
+

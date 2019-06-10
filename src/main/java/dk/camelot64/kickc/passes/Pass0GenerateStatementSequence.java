@@ -1305,6 +1305,13 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitExprArrow(KickCParser.ExprArrowContext ctx) {
+      RValue structPtrExpr = (RValue) visit(ctx.expr());
+      String name = ctx.NAME().getText();
+      return new StructMemberRef(new PointerDereferenceSimple(structPtrExpr), name);
+   }
+
+   @Override
    public RValue visitExprCast(KickCParser.ExprCastContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
       SymbolType castType = (SymbolType) this.visit(ctx.typeDecl());

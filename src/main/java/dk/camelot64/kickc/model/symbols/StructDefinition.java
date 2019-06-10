@@ -37,8 +37,8 @@ public class StructDefinition extends Scope {
     * @param member The member to find offset for
     * @return The byte offset of the start of the member data
     */
-   public int getMemberByteOffset(Variable member) {
-      int byteOffset=0;
+   public long getMemberByteOffset(Variable member) {
+      long byteOffset=0;
       for(Variable structMember : getAllVariables(false)) {
          if(structMember.equals(member)) {
             break;

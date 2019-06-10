@@ -159,8 +159,8 @@ public class Registers {
          super(zp);
       }
 
-      public RegisterZpStructMember getMemberRegister(int memberByteOffset) {
-         return new RegisterZpStructMember(getZp()+memberByteOffset);
+      public RegisterZpStructMember getMemberRegister(long memberByteOffset) {
+         return new RegisterZpStructMember((int) (getZp()+memberByteOffset));
       }
 
       @Override

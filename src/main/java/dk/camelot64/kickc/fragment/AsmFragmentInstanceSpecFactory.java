@@ -309,7 +309,7 @@ public class AsmFragmentInstanceSpecFactory {
          StructMemberRef structMemberRef = (StructMemberRef) value;
          StructDefinition structDefinition = program.getScope().getStructDefinition(structMemberRef);
          Variable structMember = structDefinition.getMember(structMemberRef.getMemberName());
-         int memberByteOffset = structDefinition.getMemberByteOffset(structMember);
+         long memberByteOffset = structDefinition.getMemberByteOffset(structMember);
 
          RValue struct = structMemberRef.getStruct();
          if(struct instanceof VariableRef) {

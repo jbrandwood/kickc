@@ -99,7 +99,7 @@ public class AsmFragmentInstance {
          StructMemberRef structMemberRef = (StructMemberRef) boundValue;
          StructDefinition structDefinition = program.getScope().getStructDefinition(structMemberRef);
          Variable structMember = structDefinition.getMember(structMemberRef.getMemberName());
-         int memberByteOffset = structDefinition.getMemberByteOffset(structMember);
+         long memberByteOffset = structDefinition.getMemberByteOffset(structMember);
          VariableRef struct = (VariableRef) structMemberRef.getStruct();
          Variable structVar = program.getScope().getVariable( struct);
          Registers.RegisterZpStruct structRegister = (Registers.RegisterZpStruct) structVar.getAllocation();

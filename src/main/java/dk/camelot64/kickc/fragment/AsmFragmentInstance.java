@@ -95,16 +95,6 @@ public class AsmFragmentInstance {
       } else if(boundValue instanceof Label) {
          String param = ((Label) boundValue).getLocalName().replace('@', 'b').replace(':', '_').replace("$", "_");
          return new AsmParameter(param, false);
-      } else if(boundValue instanceof StructMemberRef) {
-         StructMemberRef structMemberRef = (StructMemberRef) boundValue;
-         StructDefinition structDefinition = program.getScope().getStructDefinition(structMemberRef);
-         Variable structMember = structDefinition.getMember(structMemberRef.getMemberName());
-         long memberByteOffset = structDefinition.getMemberByteOffset(structMember);
-         VariableRef struct = (VariableRef) structMemberRef.getStruct();
-         Variable structVar = program.getScope().getVariable( struct);
-         Registers.RegisterZpStruct structRegister = (Registers.RegisterZpStruct) structVar.getAllocation();
-         // TODO Use STRUCT_OFFSET constants instead of hardcoded constants
-         return new AsmParameter(AsmFormat.getAsmParamName(structVar, codeScopeRef)+"+"+memberByteOffset,true);
       } else {
          throw new RuntimeException("Bound Value Type not implemented " + boundValue);
       }

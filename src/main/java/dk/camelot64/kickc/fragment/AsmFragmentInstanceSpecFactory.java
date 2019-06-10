@@ -303,27 +303,6 @@ public class AsmFragmentInstanceSpecFactory {
          String name = "la" + nextLabelIdx++;
          bind(name, value);
          return name;
-      } else if(value instanceof StructZero) {
-         return "vssf" + ((StructZero) value).getTypeStruct().getSizeBytes();
-      } else if(value instanceof StructMemberRef) {
-         StructMemberRef structMemberRef = (StructMemberRef) value;
-         StructDefinition structDefinition = program.getScope().getStructDefinition(structMemberRef);
-         Variable structMember = structDefinition.getMember(structMemberRef.getMemberName());
-         long memberByteOffset = structDefinition.getMemberByteOffset(structMember);
-
-         RValue struct = structMemberRef.getStruct();
-         if(struct instanceof VariableRef) {
-            Variable structVar = program.getScope().getVariable((VariableRef) struct);
-            if(structVar.getAllocation() instanceof Registers.RegisterZpStruct) {
-               Registers.RegisterZpStruct structRegister = (Registers.RegisterZpStruct) structVar.getAllocation();
-               Registers.RegisterZpStructMember memberRegister = structRegister.getMemberRegister(memberByteOffset);
-               String name = getTypePrefix(structMember.getType()) + getRegisterName(memberRegister);
-               bind(name, structMemberRef);
-               return name;
-            }
-         } else {
-            return bind(struct) + "_mbr_" + memberByteOffset;
-         }
       }
       throw new RuntimeException("Binding of value type not supported " + value);
    }

@@ -2,6 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const OFFSET_STRUCT_POINT_Y = 1
 main: {
     .label SCREEN = $400
     .label _5 = 2
@@ -18,7 +19,7 @@ main: {
     iny
     tya
     ldy _5
-    sta points+1,y
+    sta points+OFFSET_STRUCT_POINT_Y,y
     inx
     cpx #5
     bne b1
@@ -29,7 +30,7 @@ main: {
     tax
     lda points,x
     sta SCREEN,y
-    lda points+1,x
+    lda points+OFFSET_STRUCT_POINT_Y,x
     sta SCREEN+$28,y
     iny
     cpy #5

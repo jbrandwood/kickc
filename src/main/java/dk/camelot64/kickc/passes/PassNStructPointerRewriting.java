@@ -54,6 +54,30 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                // Replace (*ptr_struct).x with *($1)
                programValue.set(new PointerDereferenceSimple(memberAddress.getRef()));
                modified.set(true);
+            } else if(struct instanceof PointerDereferenceIndexed) {
+               RValue structPointer = ((PointerDereferenceIndexed) struct).getPointer();
+               // We have a match for ptr_struct[idx].x
+               SymbolType structType = SymbolTypeInference.inferType(getScope(), struct);
+               if(!(structType instanceof SymbolTypeStruct)) {
+                  throw new CompileError("Accessing member of a non-struct ", currentStmt.getSource());
+               }
+               StructDefinition structDefinition = ((SymbolTypeStruct) structType).getStructDefinition(getScope());
+               ConstantRef memberOffsetConstant = getMemberOffsetConstant(getScope(), structDefinition, structMemberRef.getMemberName());
+               SymbolType memberType = SymbolTypeInference.inferType(getScope(), structMemberRef);
+               getLog().append("Rewriting struct pointer member access " + programValue.get().toString(getProgram()));
+               // Cast struct pointer to the type of the member
+               CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointer);
+               // Create temporary variable to hold pointer to member ($1)
+               Scope scope = getScope().getScope(currentBlock.getScope());
+               VariableIntermediate memberAddress = scope.addVariableIntermediate();
+               memberAddress.setType(new SymbolTypePointer(memberType));
+               // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
+               stmtIt.previous();
+               stmtIt.add(new StatementAssignment(memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+               stmtIt.next();
+               // Replace ptr_struct[idx].x with ($1)[idx]
+               programValue.set(new PointerDereferenceIndexed(memberAddress.getRef(), ((PointerDereferenceIndexed) struct).getIndex()));
+               modified.set(true);
             }
          }
       });

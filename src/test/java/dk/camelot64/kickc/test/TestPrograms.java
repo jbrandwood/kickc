@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testTextbox() throws IOException, URISyntaxException {
+      compileAndCompare("textbox");
+   }
+
+   @Test
    public void testStructPtr11() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-11");
    }

@@ -563,12 +563,11 @@ append: {
 div10: {
     .label _0 = $21
     .label _2 = $23
-    .label _3 = 4
-    .label _4 = $25
-    .label _5 = $25
+    .label _3 = $25
+    .label _4 = 4
     .label val = $21
     .label val_1 = $23
-    .label val_2 = 4
+    .label val_2 = $25
     .label val_3 = 4
     .label return = 4
     .label val_4 = 2
@@ -611,27 +610,25 @@ div10: {
     lda val_2+1
     adc val_1+1
     sta val_2+1
-    sta _4+1
+    ldy #8
     lda val_2
     sta _4
-    ldy #4
+    lda val_2+1
+    sta _4+1
+    cpy #0
+    beq !e+
   !:
     lsr _4+1
     ror _4
     dey
     bne !-
-    ldy #4
-  !:
-    lsr _5+1
-    ror _5
-    dey
-    bne !-
+  !e:
     lda val_3
     clc
-    adc _5
+    adc val_2
     sta val_3
     lda val_3+1
-    adc _5+1
+    adc val_2+1
     sta val_3+1
     ldy #4
   !:

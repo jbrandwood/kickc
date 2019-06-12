@@ -186,6 +186,7 @@ public class Compiler {
       new PassNAddBooleanCasts(program).execute();
       new PassNAddTypeConversionAssignment(program).execute();
       new Pass1EarlyConstantIdentification(program).execute();
+      new Pass1ProcedureInline(program).execute();
       new PassNStatementIndices(program).step();
       new PassNCallGraphAnalysis(program).step();
       new Pass1AssertNoRecursion(program).execute();
@@ -196,7 +197,6 @@ public class Compiler {
          getLog().append(program.getGraph().toString(program));
       }
 
-      new Pass1ProcedureInline(program).execute();
       new Pass1EliminateUncalledProcedures(program).execute();
       new PassNEliminateUnusedVars(program, false).execute();
       new Pass1ExtractInlineStrings(program).execute();

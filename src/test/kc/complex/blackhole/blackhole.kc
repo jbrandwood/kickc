@@ -5,15 +5,15 @@ import "multiply"
 
 // Address of the screen
 const byte* SCREEN = 0x0400;
+// Sprite data for the animating sprites
+const byte* SPRITE_DATA = 0x2000;
 
 // Copy of the screen used for finding chars to process
 byte[1000] SCREEN_COPY;
 
 // Max number of chars processed at once
-const byte NUM_PROCESSING = 8;
+const byte NUM_PROCESSING = 1;
 
-// Sprite data for the animating sprites
-const align(64) byte[NUM_PROCESSING*64] SPRITE_DATA;
 
 // Struct holding char being processed
 struct ProcessingChar {
@@ -95,9 +95,12 @@ void startProcessing(struct ProcessingChar center) {
     // Copy char into sprite
     // TODO: Copy chargen data
     byte* spriteData = SPRITE_DATA+(word)spriteIdx*64;
-    for( byte i: 0..7) *spriteData++ = 0xff;
+    for( byte i: 0..7) {
+        *spriteData = 0xff;
+        spriteData += 3;
+    }
     word spriteX = 24 + (word)center.x*8;
-    byte spriteY = 30 + center.y*8;
+    byte spriteY = 50 + center.y*8;
     byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
     byte* screenPtr = SCREEN+(word)center.y*40+center.x;
     // Put the sprite into the PROCESSING array
@@ -107,31 +110,33 @@ void startProcessing(struct ProcessingChar center) {
 // Process any chars in the PROCESSING array
 void processChars() {
     for( byte i: 0..NUM_PROCESSING-1 ) {
-        if(PROCESSING[i].status!=STATUS_FREE) {
-            if(PROCESSING[i].status==STATUS_NEW) {
+        struct ProcessingSprite* processing = PROCESSING+i;
+        byte bitmask = 1<<processing->id;
+        if(processing->status!=STATUS_FREE) {
+            if(processing->status==STATUS_NEW) {
                 // Clear the char on the screen
-                *PROCESSING[i].screenPtr = ' ';
+                *(processing->screenPtr) = ' ';
                 // Enable the sprite
-                *SPRITES_ENABLE |= 1<<PROCESSING[i].id;
+                *SPRITES_ENABLE |= bitmask;
                 // Set sprite pointer
-                *(SCREEN+SPRITE_PTRS+PROCESSING[i].id) = PROCESSING[i].ptr;
+                *(SCREEN+SPRITE_PTRS+processing->id) = processing->ptr;
                 // Set status
-                PROCESSING[i].status = STATUS_PROCESSING;
+                processing->status = STATUS_PROCESSING;
             }
             // Set sprite position
-            if(>PROCESSING[i].x) {
-                *SPRITES_XMSB |= (1<<PROCESSING[i].id);
+            if(>processing->x) {
+                *SPRITES_XMSB |= bitmask;
             } else {
-                *SPRITES_XMSB &= 0xff ^ (1<<PROCESSING[i].id);
+                *SPRITES_XMSB &= 0xff ^ bitmask;
             }
-            SPRITES_XPOS[i<<2] = (byte)PROCESSING[i].x;
-            SPRITES_YPOS[i<<2] = PROCESSING[i].y;
+            SPRITES_XPOS[i*2] = (byte)processing->x;
+            SPRITES_YPOS[i*2] = processing->y;
             // Move sprite
-            if(--(PROCESSING[i].x)==0) {
+            if(--(processing->x)==0) {
                 // Set status
-                PROCESSING[i].status = STATUS_FREE;
+                processing->status = STATUS_FREE;
                 // Disable the sprite
-                *SPRITES_ENABLE &= 0xff ^ (1<<PROCESSING[i].id);
+                *SPRITES_ENABLE &= 0xff ^ bitmask;
             }
         }
     }

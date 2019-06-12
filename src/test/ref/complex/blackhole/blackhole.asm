@@ -1,9 +1,13 @@
-// Black Hole at the center of the BASIC screen sucking in any letters
+// Black Hole at the center of the BASIC screen sucking in letters
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const OFFSET_STRUCT_PROCESSINGCHAR_Y = 1
-  .const OFFSET_STRUCT_PROCESSINGCHAR_DIST = 2
+  .const SIZEOF_POINTER = 2
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_ID = 3
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_PTR = 4
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = 5
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = 6
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -12,7 +16,13 @@
   .label PROCPORT = 1
   // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
+  // The offset of the sprite pointers from the screen start address
+  .const SPRITE_PTRS = $3f8
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_XMSB = $d010
   .label RASTER = $d012
+  .label SPRITES_ENABLE = $d015
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label VIC_CONTROL = $d011
@@ -22,8 +32,6 @@
   .label IRQ_ENABLE = $d01a
   // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // Color Ram
-  .label COLS = $d800
   // CIA#1 Interrupt Status & Control Register
   .label CIA1_INTERRUPT = $dc0d
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
@@ -33,33 +41,68 @@
   .const WHITE = 1
   .const BLUE = 6
   .const LIGHT_BLUE = $e
+  // Address of the screen
   .label SCREEN = $400
+  // Sprite data for the animating sprites
+  .label SPRITE_DATA = $2000
+  // Max number of chars processed at once
+  .const NUM_PROCESSING = 1
   // Distance value meaning not found
   .const NOT_FOUND = $ffff
-  .const NUM_PROCESSING = $10
+  // Values for ProcessingSprite.status
+  .const STATUS_FREE = 0
+  .const STATUS_NEW = 1
+  .const STATUS_PROCESSING = 2
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
 main: {
-    .label src = 2
-    .label dst = 4
-    .label center_dist = $f
+    .label sp = 2
+    .label src = 4
+    .label dst = 6
+    .label center_dist = $13
     ldy #0
   // Init processing array
   b1:
     tya
     asl
     asl
+    asl
     tax
     lda #0
     sta PROCESSING,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_Y,x
-    lda #<NOT_FOUND
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST,x
-    lda #>NOT_FOUND
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST+1,x
+    sta PROCESSING+1,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,x
+    lda #STATUS_FREE
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,x
+    lda #<0
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
     iny
-    cpy #NUM_PROCESSING-1+1
+    cpy #1
     bne b1
+    lda #<SPRITE_DATA
+    sta sp
+    lda #>SPRITE_DATA
+    sta sp+1
+  // Clear sprites
+  b2:
+    lda #0
+    tay
+    sta (sp),y
+    inc sp
+    bne !+
+    inc sp+1
+  !:
+    lda sp+1
+    cmp #>SPRITE_DATA+SIZEOF_POINTER
+    bcc b2
+    bne !+
+    lda sp
+    cmp #<SPRITE_DATA+SIZEOF_POINTER
+    bcc b2
+  !:
     jsr setupRasterIrq
     lda #<SCREEN_COPY
     sta dst
@@ -69,8 +112,10 @@ main: {
     sta src
     lda #>SCREEN
     sta src+1
+  // Fill screen with some chars
+  //for( byte* sc: SCREEN..SCREEN+999) *sc = 'a'+(<sc&0x1f);
   // Copy screen to screen copy
-  b3:
+  b4:
     ldy #0
     lda (src),y
     sta (dst),y
@@ -84,97 +129,229 @@ main: {
   !:
     lda src+1
     cmp #>SCREEN+$3e8
-    bne b3
+    bne b4
     lda src
     cmp #<SCREEN+$3e8
-    bne b3
+    bne b4
     jsr initSquareTables
-  b2:
+  b3:
   // Main loop
     jsr getCharToProcess
     ldy getCharToProcess.return_x
     ldx getCharToProcess.return_y
     lda center_dist+1
     cmp #>NOT_FOUND
-    bne b6
+    bne b7
     lda center_dist
     cmp #<NOT_FOUND
-    bne b6
-  b7:
+    bne b7
+  b8:
     inc SCREEN+$3e7
-    jmp b7
-  b6:
+    jmp b8
+  b7:
     sty startProcessing.center_x
     stx startProcessing.center_y
     jsr startProcessing
-    jmp b2
+    jmp b3
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($17) center_x, byte zeropage($18) center_y, word zeropage($f) center_dist)
+// startProcessing(byte zeropage($1c) center_x, byte zeropage($1d) center_y)
 startProcessing: {
-    .label center_x = $17
-    .label center_y = $18
-    .label center_dist = $f
-    .label freeIdx = 6
-    lda #$ff
-    sta freeIdx
+    .label _0 = 9
+    .label _1 = 9
+    .label _3 = $1e
+    .label _4 = $1e
+    .label _11 = $21
+    .label _12 = $21
+    .label _13 = $21
+    .label center_x = $1c
+    .label center_y = $1d
+    .label i = 8
+    .label spriteData = 9
+    .label spriteX = $1e
+    .label spritePtr = $20
+    .label screenPtr = $21
+    .label freeIdx = 8
+    .label _30 = $23
+    .label _31 = $21
+    ldx #$ff
   b1:
-    ldx #0
+    lda #0
+    sta i
   b2:
-    txa
+    lda i
+    asl
     asl
     asl
     tay
-    lda PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST+1,y
-    cmp #>NOT_FOUND
-    bne b3
-    lda PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST,y
-    cmp #<NOT_FOUND
-    bne b3
+    lda #STATUS_FREE
+    cmp PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,y
+    beq !b3+
+    jmp b3
+  !b3:
   b4:
-    cpx #$ff
-    beq b6
-    txa
+    lda #$ff
+    cmp freeIdx
+    bne !b8+
+    jmp b8
+  !b8:
+    lda freeIdx
+    sta _0
+    lda #0
+    sta _0+1
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    asl _1
+    rol _1+1
+    clc
+    lda spriteData
+    adc #<SPRITE_DATA
+    sta spriteData
+    lda spriteData+1
+    adc #>SPRITE_DATA
+    sta spriteData+1
+    ldx #0
+  b6:
+    lda #$ff
+    ldy #0
+    sta (spriteData),y
+    lda #3
+    clc
+    adc spriteData
+    sta spriteData
+    bcc !+
+    inc spriteData+1
+  !:
+    inx
+    cpx #8
+    bne b6
+    lda center_x
+    sta _3
+    lda #0
+    sta _3+1
+    asl _4
+    rol _4+1
+    asl _4
+    rol _4+1
+    asl _4
+    rol _4+1
+    lda #$18
+    clc
+    adc spriteX
+    sta spriteX
+    bcc !+
+    inc spriteX+1
+  !:
+    lda center_y
+    asl
+    asl
+    asl
+    clc
+    adc #$32
+    tay
+    lax freeIdx
+    axs #-[SPRITE_DATA/$40]
+    stx spritePtr
+    lda center_y
+    sta _11
+    lda #0
+    sta _11+1
+    lda _11
+    asl
+    sta _30
+    lda _11+1
+    rol
+    sta _30+1
+    asl _30
+    rol _30+1
+    lda _31
+    clc
+    adc _30
+    sta _31
+    lda _31+1
+    adc _30+1
+    sta _31+1
+    asl _12
+    rol _12+1
+    asl _12
+    rol _12+1
+    asl _12
+    rol _12+1
+    clc
+    lda _13
+    adc #<SCREEN
+    sta _13
+    lda _13+1
+    adc #>SCREEN
+    sta _13+1
+    lda center_x
+    clc
+    adc screenPtr
+    sta screenPtr
+    bcc !+
+    inc screenPtr+1
+  !:
+    lda freeIdx
+    asl
     asl
     asl
     tax
-    lda center_x
+    lda spriteX
     sta PROCESSING,x
-    lda center_y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_Y,x
-    lda center_dist
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST,x
-    lda center_dist+1
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST+1,x
+    lda spriteX+1
+    sta PROCESSING+1,x
+    tya
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
+    lda freeIdx
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
+    lda spritePtr
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,x
+    lda #STATUS_NEW
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,x
+    lda screenPtr
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,x
+    lda screenPtr+1
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
     rts
-  b6:
-    stx freeIdx
+  b8:
+    ldx freeIdx
     jmp b1
   b3:
-    inx
-    cpx #NUM_PROCESSING-1+1
-    bne b2
-    ldx freeIdx
+    inc i
+    lda #1
+    cmp i
+    beq !b2+
+    jmp b2
+  !b2:
+    stx freeIdx
     jmp b4
 }
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _9 = $19
-    .label _10 = $19
-    .label _11 = $19
-    .label return_dist = $f
-    .label x = $a
-    .label dist = $f
-    .label screen_line = 7
-    .label y = 9
-    .label return_x = $d
-    .label return_y = $e
-    .label closest_dist = $b
-    .label closest_x = $d
-    .label closest_y = $e
-    .label _15 = $1b
-    .label _16 = $19
+    .label _9 = $25
+    .label _10 = $25
+    .label _11 = $25
+    .label return_dist = $13
+    .label x = $e
+    .label dist = $13
+    .label screen_line = $b
+    .label y = $d
+    .label return_x = $11
+    .label return_y = $12
+    .label closest_dist = $f
+    .label closest_x = $11
+    .label closest_y = $12
+    .label _15 = $27
+    .label _16 = $25
     lda #0
     sta closest_y
     sta closest_x
@@ -314,10 +491,10 @@ getCharToProcess: {
 }
 // initialize SQUARES table
 initSquareTables: {
-    .label _6 = $13
-    .label _14 = $13
-    .label x = $11
-    .label y = $12
+    .label _6 = $17
+    .label _14 = $17
+    .label x = $15
+    .label y = $16
     lda #0
     sta x
   b1:
@@ -383,9 +560,9 @@ initSquareTables: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $15
-    .label res = $13
-    .label return = $13
+    .label mb = $19
+    .label res = $17
+    .label return = $17
     lda #0
     sta res
     sta res+1
@@ -479,144 +656,119 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _3 = $1f
-    .label _4 = $1f
-    .label _5 = $1f
-    .label _7 = $23
-    .label _8 = $23
-    .label _9 = $23
-    .label processing_x = $1d
-    .label processing_y = $1e
-    .label _22 = $21
-    .label _23 = $1f
-    .label _25 = $25
-    .label _26 = $23
-    ldx #0
+    .label processing = $29
+    .label bitmask = $2b
+    .label i = $1b
+    lda #0
+    sta i
   b1:
-    txa
+    lda i
     asl
     asl
-    tay
-    lda PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST,y
-    cmp #<NOT_FOUND
-    bne !+
-    lda PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST+1,y
-    cmp #>NOT_FOUND
-    bne !b2+
-    jmp b2
-  !b2:
+    asl
+    clc
+    adc #<PROCESSING
+    sta processing
+    lda #>PROCESSING
+    adc #0
+    sta processing+1
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
+    lda (processing),y
+    tax
+    lda #1
+    cpx #0
+    beq !e+
   !:
+    asl
+    dex
+    bne !-
+  !e:
+    sta bitmask
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
+    lda (processing),y
+    cmp #STATUS_FREE
+    beq b2
+    lda (processing),y
+    cmp #STATUS_NEW
+    bne b3
+    // Clear the char on the screen
+    ldx #' '
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR
+    lda (processing),y
+    sta !++1
+    iny
+    lda (processing),y
+    sta !++2
     txa
-    asl
-    asl
-    tay
-    lda PROCESSING,y
-    sta processing_x
-    lda PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_Y,y
-    sta processing_y
-    sta _3
-    lda #0
-    sta _3+1
-    lda _3
-    asl
-    sta _22
-    lda _3+1
-    rol
-    sta _22+1
-    asl _22
-    rol _22+1
-    lda _23
-    clc
-    adc _22
-    sta _23
-    lda _23+1
-    adc _22+1
-    sta _23+1
-    asl _4
-    rol _4+1
-    asl _4
-    rol _4+1
-    asl _4
-    rol _4+1
-    clc
-    lda _5
-    adc #<COLS
-    sta _5
-    lda _5+1
-    adc #>COLS
-    sta _5+1
-    lda #WHITE
-    ldy processing_x
-    sta (_5),y
-    lda processing_y
-    sta _7
-    lda #0
-    sta _7+1
-    lda _7
-    asl
-    sta _25
-    lda _7+1
-    rol
-    sta _25+1
-    asl _25
-    rol _25+1
-    lda _26
-    clc
-    adc _25
-    sta _26
-    lda _26+1
-    adc _25+1
-    sta _26+1
-    asl _8
-    rol _8+1
-    asl _8
-    rol _8+1
-    asl _8
-    rol _8+1
-    clc
-    lda _9
-    adc #<SCREEN
-    sta _9
-    lda _9+1
-    adc #>SCREEN
-    sta _9+1
-    lda (_9),y
-    cmp #' '
-    beq b3
-    lda (_9),y
-    cmp #' '
-    beq !+
-    bcs b4
   !:
-    ldy processing_x
-    lda (_9),y
-    clc
-    adc #1
-    sta (_9),y
+    sta $ffff
+    // Enable the sprite
+    lda SPRITES_ENABLE
+    ora bitmask
+    sta SPRITES_ENABLE
+    // Set sprite pointer
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_PTR
+    lda (processing),y
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
+    lda (processing),y
+    tay
+    lda SCREEN+SPRITE_PTRS,y
+    // Set status
+    lda #STATUS_PROCESSING
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
+    sta (processing),y
+  b3:
+    ldy #1
+    lda (processing),y
+    // Set sprite position
+    cmp #0
+    bne b4
+    lda #$ff
+    eor bitmask
+    and SPRITES_XMSB
+    sta SPRITES_XMSB
+  b5:
+    lda i
+    asl
+    tax
+    ldy #0
+    lda (processing),y
+    sta SPRITES_XPOS,x
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
+    lda (processing),y
+    sta SPRITES_YPOS,x
+    ldy #0
+    lda (processing),y
+    sec
+    sbc #1
+    sta (processing),y
+    lda (processing),y
+    bne b2
+    iny
+    lda (processing),y
+    bne b2
+    // Set status
+    lda #STATUS_FREE
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
+    sta (processing),y
+    lda #$ff
+    eor bitmask
+    // Disable the sprite
+    and SPRITES_ENABLE
+    sta SPRITES_ENABLE
   b2:
-    inx
-    cpx #NUM_PROCESSING-1+1
+    inc i
+    lda #1
+    cmp i
     beq !b1+
     jmp b1
   !b1:
     rts
   b4:
-    ldy processing_x
-    lda (_9),y
-    sec
-    sbc #1
-    sta (_9),y
-    jmp b2
-  b3:
-    txa
-    asl
-    asl
-    tay
-    lda #<NOT_FOUND
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST,y
-    lda #>NOT_FOUND
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST+1,y
-    jmp b2
+    lda SPRITES_XMSB
+    ora bitmask
+    sta SPRITES_XMSB
+    jmp b5
 }
 // Raster Interrupt at the top of the screen
 irqTop: {
@@ -664,5 +816,5 @@ irqTop: {
   SQUARES_X: .fill 2*$28, 0
   // SQUARES_Y[i] = (i-12)*(i-12)
   SQUARES_Y: .fill 2*$19, 0
-  // Chars currently being processed in the interrupt
-  PROCESSING: .fill 4*NUM_PROCESSING, 0
+  // Sprites currently being processed in the interrupt
+  PROCESSING: .fill 8*NUM_PROCESSING, 0

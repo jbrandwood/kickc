@@ -15,6 +15,13 @@
   .label PROCPORT = 1
   // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
+  // RAM in $A000, $E000 CHAR ROM in $D000
+  .const PROCPORT_RAM_CHARROM = $31
+  // The address of the CHARGEN character set
+  .label CHARGEN = $d000
+  // Positions of the border (in sprite positions)
+  .const BORDER_XPOS_LEFT = $18
+  .const BORDER_YPOS_TOP = $32
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
@@ -59,10 +66,10 @@
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
 main: {
-    .label sp = 2
-    .label src = 4
-    .label dst = 6
+    .label src = 2
+    .label dst = 4
     .label center_dist = $13
+    jsr initSquareTables
     ldy #0
   // Init processing array
   b1:
@@ -85,39 +92,7 @@ main: {
     iny
     cpy #NUM_PROCESSING-1+1
     bne b1
-    lda #<SPRITE_DATA
-    sta sp
-    lda #>SPRITE_DATA
-    sta sp+1
-  // Clear sprites
-  b2:
-    lda #0
-    tay
-    sta (sp),y
-    inc sp
-    bne !+
-    inc sp+1
-  !:
-    lda sp+1
-    cmp #>SPRITE_DATA+NUM_PROCESSING*$40
-    bcc b2
-    bne !+
-    lda sp
-    cmp #<SPRITE_DATA+NUM_PROCESSING*$40
-    bcc b2
-  !:
-    ldx #0
-  // Initialize sprites
-  b3:
-    lda #WHITE
-    sta SPRITES_COLS,x
-    inx
-    cpx #8
-    bne b3
-    lda #0
-    sta SPRITES_MC
-    sta SPRITES_EXPAND_X
-    sta SPRITES_EXPAND_Y
+    jsr initSprites
     jsr setupRasterIrq
     lda #<SCREEN_COPY
     sta dst
@@ -127,10 +102,8 @@ main: {
     sta src
     lda #>SCREEN
     sta src+1
-  // Fill screen with some chars
-  //for( byte* sc: SCREEN..SCREEN+999) *sc = 'a'+(<sc&0x1f);
   // Copy screen to screen copy
-  b5:
+  b3:
     ldy #0
     lda (src),y
     sta (dst),y
@@ -144,51 +117,53 @@ main: {
   !:
     lda src+1
     cmp #>SCREEN+$3e8
-    bne b5
+    bne b3
     lda src
     cmp #<SCREEN+$3e8
-    bne b5
-    jsr initSquareTables
-  b4:
+    bne b3
+  b2:
   // Main loop
     jsr getCharToProcess
-    ldx getCharToProcess.return_x
-    ldy getCharToProcess.return_y
+    ldy getCharToProcess.return_x
+    ldx getCharToProcess.return_y
     lda center_dist+1
     cmp #>NOT_FOUND
-    bne b8
+    bne b5
     lda center_dist
     cmp #<NOT_FOUND
-    bne b8
-  b9:
+    bne b5
+  b6:
     inc SCREEN+$3e7
-    jmp b9
-  b8:
-    stx startProcessing.center_x
-    sty startProcessing.center_y
+    jmp b6
+  b5:
+    sty startProcessing.center_x
+    stx startProcessing.center_y
     jsr startProcessing
-    jmp b4
+    jmp b2
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($1c) center_x, byte zeropage($1d) center_y)
+// startProcessing(byte zeropage($1e) center_x, byte zeropage($1f) center_y)
 startProcessing: {
-    .label _0 = 9
-    .label _1 = 9
-    .label _3 = $1e
-    .label _4 = $1e
-    .label _11 = $21
-    .label _12 = $21
-    .label _13 = $21
-    .label center_x = $1c
-    .label center_y = $1d
-    .label i = 8
+    .label _0 = $20
+    .label _1 = $20
+    .label _2 = $20
+    .label _4 = 9
+    .label _5 = 9
+    .label _7 = 7
+    .label _8 = 7
+    .label _10 = $26
+    .label _11 = $26
+    .label center_x = $1e
+    .label center_y = $1f
+    .label i = 6
+    .label screenPtr = $24
     .label spriteData = 9
-    .label spriteX = $1e
-    .label spritePtr = $20
-    .label screenPtr = $21
-    .label freeIdx = 8
-    .label _30 = $23
-    .label _31 = $21
+    .label chargenData = 7
+    .label spriteX = $26
+    .label spritePtr = $28
+    .label freeIdx = 6
+    .label _33 = $22
+    .label _34 = $20
     ldx #$ff
   b1:
     lda #0
@@ -210,16 +185,25 @@ startProcessing: {
     bne !b8+
     jmp b8
   !b8:
-    lda freeIdx
+    lda center_y
     sta _0
     lda #0
     sta _0+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
-    asl _1
-    rol _1+1
+    lda _0
+    asl
+    sta _33
+    lda _0+1
+    rol
+    sta _33+1
+    asl _33
+    rol _33+1
+    lda _34
+    clc
+    adc _33
+    sta _34
+    lda _34+1
+    adc _33+1
+    sta _34+1
     asl _1
     rol _1+1
     asl _1
@@ -227,16 +211,67 @@ startProcessing: {
     asl _1
     rol _1+1
     clc
+    lda _2
+    adc #<SCREEN
+    sta _2
+    lda _2+1
+    adc #>SCREEN
+    sta _2+1
+    lda center_x
+    clc
+    adc _2
+    sta screenPtr
+    lda #0
+    adc _2+1
+    sta screenPtr+1
+    lda freeIdx
+    sta _4
+    lda #0
+    sta _4+1
+    asl _5
+    rol _5+1
+    asl _5
+    rol _5+1
+    asl _5
+    rol _5+1
+    asl _5
+    rol _5+1
+    asl _5
+    rol _5+1
+    asl _5
+    rol _5+1
+    clc
     lda spriteData
     adc #<SPRITE_DATA
     sta spriteData
     lda spriteData+1
     adc #>SPRITE_DATA
     sta spriteData+1
+    ldy center_x
+    lda (_2),y
+    sta _7
+    lda #0
+    sta _7+1
+    asl _8
+    rol _8+1
+    asl _8
+    rol _8+1
+    asl _8
+    rol _8+1
+    clc
+    lda chargenData
+    adc #<CHARGEN
+    sta chargenData
+    lda chargenData+1
+    adc #>CHARGEN
+    sta chargenData+1
+    sei
+    lda #PROCPORT_RAM_CHARROM
+    sta PROCPORT
     ldx #0
   b6:
-    lda #$ff
     ldy #0
+    lda (chargenData),y
     sta (spriteData),y
     lda #3
     clc
@@ -245,20 +280,27 @@ startProcessing: {
     bcc !+
     inc spriteData+1
   !:
+    inc chargenData
+    bne !+
+    inc chargenData+1
+  !:
     inx
     cpx #8
     bne b6
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    cli
     lda center_x
-    sta _3
+    sta _10
     lda #0
-    sta _3+1
-    asl _4
-    rol _4+1
-    asl _4
-    rol _4+1
-    asl _4
-    rol _4+1
-    lda #$18
+    sta _10+1
+    asl _11
+    rol _11+1
+    asl _11
+    rol _11+1
+    asl _11
+    rol _11+1
+    lda #BORDER_XPOS_LEFT
     clc
     adc spriteX
     sta spriteX
@@ -270,50 +312,11 @@ startProcessing: {
     asl
     asl
     clc
-    adc #$32
+    adc #BORDER_YPOS_TOP
     tay
     lax freeIdx
     axs #-[SPRITE_DATA/$40]
     stx spritePtr
-    lda center_y
-    sta _11
-    lda #0
-    sta _11+1
-    lda _11
-    asl
-    sta _30
-    lda _11+1
-    rol
-    sta _30+1
-    asl _30
-    rol _30+1
-    lda _31
-    clc
-    adc _30
-    sta _31
-    lda _31+1
-    adc _30+1
-    sta _31+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
-    asl _12
-    rol _12+1
-    clc
-    lda _13
-    adc #<SCREEN
-    sta _13
-    lda _13+1
-    adc #>SCREEN
-    sta _13+1
-    lda center_x
-    clc
-    adc screenPtr
-    sta screenPtr
-    bcc !+
-    inc screenPtr+1
-  !:
     lda freeIdx
     asl
     asl
@@ -352,9 +355,9 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _9 = $25
-    .label _10 = $25
-    .label _11 = $25
+    .label _9 = $29
+    .label _10 = $29
+    .label _11 = $29
     .label return_dist = $13
     .label x = $e
     .label dist = $13
@@ -365,8 +368,8 @@ getCharToProcess: {
     .label closest_dist = $f
     .label closest_x = $11
     .label closest_y = $12
-    .label _15 = $27
-    .label _16 = $25
+    .label _15 = $2b
+    .label _16 = $29
     lda #0
     sta closest_y
     sta closest_x
@@ -504,12 +507,78 @@ getCharToProcess: {
     sta return_dist+1
     jmp b3
 }
+// Setup Raster IRQ
+setupRasterIrq: {
+    .label irqRoutine = irqTop
+    sei
+    // Disable kernal & basic
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1_INTERRUPT
+    lda #$7f
+    and VIC_CONTROL
+    sta VIC_CONTROL
+    lda #RASTER_IRQ_TOP
+    sta RASTER
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+    // Set the IRQ routine
+    lda #<irqRoutine
+    sta HARDWARE_IRQ
+    lda #>irqRoutine
+    sta HARDWARE_IRQ+1
+    cli
+    rts
+}
+// Initialize sprites
+initSprites: {
+    .label sp = $15
+    lda #<SPRITE_DATA
+    sta sp
+    lda #>SPRITE_DATA
+    sta sp+1
+  // Clear sprite data
+  b1:
+    lda #0
+    tay
+    sta (sp),y
+    inc sp
+    bne !+
+    inc sp+1
+  !:
+    lda sp+1
+    cmp #>SPRITE_DATA+NUM_PROCESSING*$40
+    bcc b1
+    bne !+
+    lda sp
+    cmp #<SPRITE_DATA+NUM_PROCESSING*$40
+    bcc b1
+  !:
+    ldx #0
+  // Initialize sprite registers
+  b2:
+    lda #LIGHT_BLUE
+    sta SPRITES_COLS,x
+    inx
+    cpx #8
+    bne b2
+    lda #0
+    sta SPRITES_MC
+    sta SPRITES_EXPAND_X
+    sta SPRITES_EXPAND_Y
+    rts
+}
 // initialize SQUARES table
 initSquareTables: {
-    .label _6 = $17
-    .label _14 = $17
-    .label x = $15
-    .label y = $16
+    .label _6 = $19
+    .label _14 = $19
+    .label x = $17
+    .label y = $18
     lda #0
     sta x
   b1:
@@ -575,9 +644,9 @@ initSquareTables: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $19
-    .label res = $17
-    .label return = $17
+    .label mb = $1b
+    .label res = $19
+    .label return = $19
     lda #0
     sta res
     sta res+1
@@ -604,34 +673,6 @@ mul8u: {
     asl mb
     rol mb+1
     jmp b1
-}
-// Setup Raster IRQ
-setupRasterIrq: {
-    .label irqRoutine = irqTop
-    sei
-    // Disable kernal & basic
-    lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
-    lda #PROCPORT_RAM_IO
-    sta PROCPORT
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
-    lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    lda #RASTER_IRQ_TOP
-    sta RASTER
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta IRQ_ENABLE
-    // Set the IRQ routine
-    lda #<irqRoutine
-    sta HARDWARE_IRQ
-    lda #>irqRoutine
-    sta HARDWARE_IRQ+1
-    cli
-    rts
 }
 // Raster Interrupt at the middle of the screen
 irqBottom: {
@@ -671,9 +712,9 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label processing = $29
-    .label bitmask = $2b
-    .label i = $1b
+    .label processing = $2d
+    .label bitmask = $2f
+    .label i = $1d
     lda #0
     sta i
   b1:
@@ -756,6 +797,25 @@ processChars: {
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
     sta SPRITES_YPOS,x
+    // Move sprite
+    ldy #0
+    lda (processing),y
+    cmp #<BORDER_XPOS_LEFT-8
+    bne !+
+    iny
+    lda (processing),y
+    cmp #>BORDER_XPOS_LEFT-8
+    beq b6
+  !:
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
+    lda (processing),y
+    cmp #BORDER_YPOS_TOP-8
+    beq b6
+    lda (processing),y
+    sty $ff
+    sec
+    sbc #1
+    sta (processing),y
     ldy #0
     lda (processing),y
     sec
@@ -765,21 +825,6 @@ processChars: {
     lda (processing),y
     sbc #0
     sta (processing),y
-    ldy #0
-    lda (processing),y
-    bne b2
-    iny
-    lda (processing),y
-    bne b2
-    // Set status
-    lda #STATUS_FREE
-    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
-    sta (processing),y
-    lda #$ff
-    eor bitmask
-    // Disable the sprite
-    and SPRITES_ENABLE
-    sta SPRITES_ENABLE
   b2:
     inc i
     lda #NUM_PROCESSING-1+1
@@ -788,6 +833,17 @@ processChars: {
     jmp b1
   !b1:
     rts
+  b6:
+    // Set status to FREE
+    lda #STATUS_FREE
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
+    sta (processing),y
+    lda #$ff
+    eor bitmask
+    // Disable the sprite
+    and SPRITES_ENABLE
+    sta SPRITES_ENABLE
+    jmp b2
   b4:
     lda SPRITES_XMSB
     ora bitmask

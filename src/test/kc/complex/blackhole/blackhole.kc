@@ -53,25 +53,16 @@ const byte STATUS_PROCESSING = 2;
 struct ProcessingSprite[NUM_PROCESSING] PROCESSING;
 
 void main() {
-    // Init processing array
-    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, STATUS_FREE, 0};
-    // Clear sprites
-    for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++) *sp = 0;
-    // Initialize sprites
-    for( byte i: 0..7) {
-        SPRITES_COLS[i] = WHITE;
-    }
-    *SPRITES_MC = 0;
-    *SPRITES_EXPAND_X = 0;
-    *SPRITES_EXPAND_Y = 0;
-    // Set-up raster interrupts
-    setupRasterIrq(RASTER_IRQ_TOP, &irqTop);
-    // Fill screen with some chars
-    //for( byte* sc: SCREEN..SCREEN+999) *sc = 'a'+(<sc&0x1f);
-    // Copy screen to screen copy
-    for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
     // Init squares table
     initSquareTables();
+    // Init processing array
+    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, STATUS_FREE, 0};
+    // Init sprites
+    initSprites();
+    // Set-up raster interrupts
+    setupRasterIrq(RASTER_IRQ_TOP, &irqTop);
+    // Copy screen to screen copy
+    for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
     // Main loop
     do {
         // Look for the non-space closest to the screen center
@@ -100,16 +91,22 @@ void startProcessing(struct ProcessingChar center) {
     // Found a free sprite
     byte spriteIdx = freeIdx;
     // Copy char into sprite
-    // TODO: Copy chargen data
-    byte* spriteData = SPRITE_DATA+(word)spriteIdx*64;
-    for( byte i: 0..7) {
-        *spriteData = 0xff;
-        spriteData += 3;
-    }
-    word spriteX = 24 + (word)center.x*8;
-    byte spriteY = 50 + center.y*8;
-    byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
     byte* screenPtr = SCREEN+(word)center.y*40+center.x;
+    byte* spriteData = SPRITE_DATA+(word)spriteIdx*64;
+    byte ch = (*screenPtr);
+    byte* chargenData = CHARGEN+(word)ch*8;
+    asm { sei }
+    *PROCPORT = PROCPORT_RAM_CHARROM;
+    for( byte i: 0..7) {
+        *spriteData = *chargenData;
+        spriteData += 3;
+        chargenData++;
+    }
+    *PROCPORT = PROCPORT_RAM_IO;
+    asm { cli }
+    word spriteX = BORDER_XPOS_LEFT + (word)center.x*8;
+    byte spriteY = BORDER_YPOS_TOP + center.y*8;
+    byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
     // Put the sprite into the PROCESSING array
     PROCESSING[spriteIdx] = { spriteX, spriteY, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
 }
@@ -138,12 +135,16 @@ void processChars() {
             }
             SPRITES_XPOS[i*2] = (byte)processing->x;
             SPRITES_YPOS[i*2] = processing->y;
+
             // Move sprite
-            if(--(processing->x)==0) {
-                // Set status
+            if(processing->x==BORDER_XPOS_LEFT-8 || processing->y==BORDER_YPOS_TOP-8) {
+                // Set status to FREE
                 processing->status = STATUS_FREE;
                 // Disable the sprite
                 *SPRITES_ENABLE &= 0xff ^ bitmask;
+            } else {
+                (processing->y)--;
+                (processing->x)--;
             }
         }
     }
@@ -164,6 +165,19 @@ void initSquareTables() {
         byte y_dist = (y<12)?12-y:y-12;
         SQUARES_Y[y] = mul8u(y_dist, y_dist);
     }
+}
+
+// Initialize sprites
+void initSprites() {
+    // Clear sprite data
+    for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++) *sp = 0;
+    // Initialize sprite registers
+    for( byte i: 0..7) {
+        SPRITES_COLS[i] = LIGHT_BLUE;
+    }
+    *SPRITES_MC = 0;
+    *SPRITES_EXPAND_X = 0;
+    *SPRITES_EXPAND_Y = 0;
 }
 
 // Find the non-space char closest to the center of the screen
@@ -240,7 +254,6 @@ interrupt(hardware_all) void irqBottom() {
     processChars();
     *BORDERCOL = LIGHT_BLUE;
     *BGCOL = BLUE;
-
 
     // Trigger IRQ at the top of the screen
     *RASTER = RASTER_IRQ_TOP;

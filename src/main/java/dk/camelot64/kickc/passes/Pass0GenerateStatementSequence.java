@@ -4,6 +4,7 @@ import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.operators.OperatorTypeId;
@@ -1200,6 +1201,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          throw new CompileError("Unknown struct type "+structDefName, new StatementSource(ctx));
       }
       return structDefinition.getType();
+   }
+
+   @Override
+   public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
+      throw new InternalError("Not implemented typeef'ed types", new StatementSource(ctx));
    }
 
    @Override

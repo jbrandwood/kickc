@@ -1,4 +1,4 @@
-// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -67,6 +67,16 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDecl(KickCParser.DeclContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#typeDef}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeDef(KickCParser.TypeDefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#typeDef}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeDef(KickCParser.TypeDefContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#declTypes}.
 	 * @param ctx the parse tree
@@ -579,6 +589,18 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeStructDef(KickCParser.TypeStructDefContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code typeNamedRef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeNamedRef(KickCParser.TypeNamedRefContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeNamedRef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeNamedRef(KickCParser.TypeNamedRefContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code typeSignedSimple}
 	 * labeled alternative in {@link KickCParser#typeDecl}.

@@ -25,8 +25,14 @@ decl
     : declVariables ';'
     | structDef ';'
     | declFunction
+    | declFunction
     | declKasm
     | globalDirective
+    | typeDef ';'
+    ;
+
+typeDef
+    : 'typedef' declVariables
     ;
 
 declTypes
@@ -117,6 +123,7 @@ typeDecl
     | typeDecl '(' ')' #typeProcedure
     | structDef  #typeStructDef
     | structRef  #typeStructRef
+    | NAME  #typeNamedRef
     ;
 
 structRef
@@ -141,8 +148,8 @@ expr
     | expr '.' NAME #exprDot
     | expr '->' NAME  #exprArrow
     | expr '(' parameterList? ')' #exprCall
-    | 'sizeof' '(' ( typeDecl | expr ) ')' #exprSizeOf
-    | 'typeid' '(' ( typeDecl | expr ) ')' #exprTypeId
+    | 'sizeof' '(' ( expr | typeDecl ) ')' #exprSizeOf
+    | 'typeid' '(' ( expr | typeDecl ) ')' #exprTypeId
     | expr '[' commaExpr ']' #exprArray
     | '(' typeDecl ')' expr #exprCast
     | ('--' | '++' ) expr #exprPreMod

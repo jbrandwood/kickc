@@ -1,4 +1,4 @@
-// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -83,6 +83,18 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDecl(KickCParser.DeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypeDef(KickCParser.TypeDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeDef(KickCParser.TypeDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -611,6 +623,18 @@ public class KickCBaseListener implements KickCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTypeStructDef(KickCParser.TypeStructDefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypeNamedRef(KickCParser.TypeNamedRefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

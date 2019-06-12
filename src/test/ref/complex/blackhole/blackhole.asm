@@ -36,53 +36,31 @@
   .label SCREEN = $400
   // Distance value meaning not found
   .const NOT_FOUND = $ffff
+  .const NUM_PROCESSING = $10
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
 main: {
-    .label sc = 2
-    .label src = 4
-    .label dst = 6
-    .label center_dist = $11
-    ldx #0
+    .label src = 2
+    .label dst = 4
+    .label center_dist = $f
+    ldy #0
   // Init processing array
   b1:
-    txa
+    tya
     asl
     asl
-    tay
+    tax
     lda #0
-    sta PROCESSING,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_Y,y
+    sta PROCESSING,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_Y,x
     lda #<NOT_FOUND
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST,x
     lda #>NOT_FOUND
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST+1,y
-    inx
-    cpx #8
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_DIST+1,x
+    iny
+    cpy #NUM_PROCESSING-1+1
     bne b1
     jsr setupRasterIrq
-    lda #<SCREEN
-    sta sc
-    lda #>SCREEN
-    sta sc+1
-  // Fill screen with some chars
-  b3:
-    lda sc
-    and #$1f
-    clc
-    adc #'a'
-    ldy #0
-    sta (sc),y
-    inc sc
-    bne !+
-    inc sc+1
-  !:
-    lda sc+1
-    cmp #>SCREEN+$3e7+1
-    bne b3
-    lda sc
-    cmp #<SCREEN+$3e7+1
-    bne b3
     lda #<SCREEN_COPY
     sta dst
     lda #>SCREEN_COPY
@@ -92,7 +70,7 @@ main: {
     lda #>SCREEN
     sta src+1
   // Copy screen to screen copy
-  b4:
+  b3:
     ldy #0
     lda (src),y
     sta (dst),y
@@ -105,39 +83,39 @@ main: {
     inc dst+1
   !:
     lda src+1
-    cmp #>SCREEN+$3e7
-    bne b4
+    cmp #>SCREEN+$3e8
+    bne b3
     lda src
-    cmp #<SCREEN+$3e7
-    bne b4
+    cmp #<SCREEN+$3e8
+    bne b3
     jsr initSquareTables
   b2:
   // Main loop
-    jsr getCenterChar
-    ldx getCenterChar.return_x
-    ldy getCenterChar.return_y
+    jsr getCharToProcess
+    ldy getCharToProcess.return_x
+    ldx getCharToProcess.return_y
     lda center_dist+1
     cmp #>NOT_FOUND
-    bne b7
+    bne b6
     lda center_dist
     cmp #<NOT_FOUND
-    bne b7
-  b8:
-    inc SCREEN+$3e7
-    jmp b8
+    bne b6
   b7:
-    stx startProcessing.center_x
-    sty startProcessing.center_y
+    inc SCREEN+$3e7
+    jmp b7
+  b6:
+    sty startProcessing.center_x
+    stx startProcessing.center_y
     jsr startProcessing
     jmp b2
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($19) center_x, byte zeropage($1a) center_y, word zeropage($11) center_dist)
+// startProcessing(byte zeropage($17) center_x, byte zeropage($18) center_y, word zeropage($f) center_dist)
 startProcessing: {
-    .label center_x = $19
-    .label center_y = $1a
-    .label center_dist = $11
-    .label freeIdx = 8
+    .label center_x = $17
+    .label center_y = $18
+    .label center_dist = $f
+    .label freeIdx = 6
     lda #$ff
     sta freeIdx
   b1:
@@ -174,29 +152,29 @@ startProcessing: {
     jmp b1
   b3:
     inx
-    cpx #8
+    cpx #NUM_PROCESSING-1+1
     bne b2
     ldx freeIdx
     jmp b4
 }
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
-getCenterChar: {
-    .label _9 = $1b
-    .label _10 = $1b
-    .label _11 = $1b
-    .label return_dist = $11
-    .label x = $c
-    .label dist = $11
-    .label screen_line = 9
-    .label y = $b
-    .label return_x = $f
-    .label return_y = $10
-    .label closest_dist = $d
-    .label closest_x = $f
-    .label closest_y = $10
-    .label _15 = $1d
-    .label _16 = $1b
+getCharToProcess: {
+    .label _9 = $19
+    .label _10 = $19
+    .label _11 = $19
+    .label return_dist = $f
+    .label x = $a
+    .label dist = $f
+    .label screen_line = 7
+    .label y = 9
+    .label return_x = $d
+    .label return_y = $e
+    .label closest_dist = $b
+    .label closest_x = $d
+    .label closest_y = $e
+    .label _15 = $1b
+    .label _16 = $19
     lda #0
     sta closest_y
     sta closest_x
@@ -336,10 +314,10 @@ getCenterChar: {
 }
 // initialize SQUARES table
 initSquareTables: {
-    .label _6 = $15
-    .label _14 = $15
-    .label x = $13
-    .label y = $14
+    .label _6 = $13
+    .label _14 = $13
+    .label x = $11
+    .label y = $12
     lda #0
     sta x
   b1:
@@ -405,9 +383,9 @@ initSquareTables: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $17
-    .label res = $15
-    .label return = $15
+    .label mb = $15
+    .label res = $13
+    .label return = $13
     lda #0
     sta res
     sta res+1
@@ -501,18 +479,18 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _2 = $21
-    .label _3 = $21
-    .label _4 = $21
-    .label _6 = $25
-    .label _7 = $25
-    .label _8 = $25
-    .label processing_x = $1f
-    .label processing_y = $20
-    .label _21 = $23
+    .label _3 = $1f
+    .label _4 = $1f
+    .label _5 = $1f
+    .label _7 = $23
+    .label _8 = $23
+    .label _9 = $23
+    .label processing_x = $1d
+    .label processing_y = $1e
     .label _22 = $21
-    .label _24 = $27
+    .label _23 = $1f
     .label _25 = $25
+    .label _26 = $23
     ldx #0
   b1:
     txa
@@ -536,98 +514,98 @@ processChars: {
     sta processing_x
     lda PROCESSING+OFFSET_STRUCT_PROCESSINGCHAR_Y,y
     sta processing_y
-    sta _2
+    sta _3
     lda #0
-    sta _2+1
-    lda _2
+    sta _3+1
+    lda _3
     asl
-    sta _21
-    lda _2+1
-    rol
-    sta _21+1
-    asl _21
-    rol _21+1
-    lda _22
-    clc
-    adc _21
     sta _22
-    lda _22+1
-    adc _21+1
+    lda _3+1
+    rol
     sta _22+1
-    asl _3
-    rol _3+1
-    asl _3
-    rol _3+1
-    asl _3
-    rol _3+1
+    asl _22
+    rol _22+1
+    lda _23
     clc
-    lda _4
+    adc _22
+    sta _23
+    lda _23+1
+    adc _22+1
+    sta _23+1
+    asl _4
+    rol _4+1
+    asl _4
+    rol _4+1
+    asl _4
+    rol _4+1
+    clc
+    lda _5
     adc #<COLS
-    sta _4
-    lda _4+1
+    sta _5
+    lda _5+1
     adc #>COLS
-    sta _4+1
+    sta _5+1
     lda #WHITE
     ldy processing_x
-    sta (_4),y
+    sta (_5),y
     lda processing_y
-    sta _6
+    sta _7
     lda #0
-    sta _6+1
-    lda _6
+    sta _7+1
+    lda _7
     asl
-    sta _24
-    lda _6+1
-    rol
-    sta _24+1
-    asl _24
-    rol _24+1
-    lda _25
-    clc
-    adc _24
     sta _25
-    lda _25+1
-    adc _24+1
+    lda _7+1
+    rol
     sta _25+1
-    asl _7
-    rol _7+1
-    asl _7
-    rol _7+1
-    asl _7
-    rol _7+1
+    asl _25
+    rol _25+1
+    lda _26
     clc
-    lda _8
+    adc _25
+    sta _26
+    lda _26+1
+    adc _25+1
+    sta _26+1
+    asl _8
+    rol _8+1
+    asl _8
+    rol _8+1
+    asl _8
+    rol _8+1
+    clc
+    lda _9
     adc #<SCREEN
-    sta _8
-    lda _8+1
+    sta _9
+    lda _9+1
     adc #>SCREEN
-    sta _8+1
-    lda (_8),y
+    sta _9+1
+    lda (_9),y
     cmp #' '
     beq b3
-    lda (_8),y
+    lda (_9),y
     cmp #' '
     beq !+
     bcs b4
   !:
     ldy processing_x
-    lda (_8),y
+    lda (_9),y
     clc
     adc #1
-    sta (_8),y
+    sta (_9),y
   b2:
     inx
-    cpx #8
+    cpx #NUM_PROCESSING-1+1
     beq !b1+
     jmp b1
   !b1:
     rts
   b4:
     ldy processing_x
-    lda (_8),y
+    lda (_9),y
     sec
     sbc #1
-    sta (_8),y
+    sta (_9),y
     jmp b2
   b3:
     txa
@@ -682,9 +660,9 @@ irqTop: {
 }
   // Copy of the screen used for finding chars to process
   SCREEN_COPY: .fill $3e8, 0
-  // Chars currently being processed in the interrupt
-  PROCESSING: .fill 4*8, 0
   // SQUARES_X[i] = (i-20)*(i-20)
   SQUARES_X: .fill 2*$28, 0
   // SQUARES_Y[i] = (i-12)*(i-12)
   SQUARES_Y: .fill 2*$19, 0
+  // Chars currently being processed in the interrupt
+  PROCESSING: .fill 4*NUM_PROCESSING, 0

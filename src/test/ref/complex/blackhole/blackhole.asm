@@ -710,9 +710,11 @@ processChars: {
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_PTR
     lda (processing),y
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
+    pha
     lda (processing),y
     tay
-    lda SCREEN+SPRITE_PTRS,y
+    pla
+    sta SCREEN+SPRITE_PTRS,y
     // Set status
     lda #STATUS_PROCESSING
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS

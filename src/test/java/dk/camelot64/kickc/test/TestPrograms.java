@@ -37,7 +37,7 @@ public class TestPrograms {
 
    @Test
    public void testBlackhole() throws IOException, URISyntaxException {
-      compileAndCompare("complex/blackhole/blackhole");
+      compileAndCompare("complex/blackhole/blackhole", log());
    }
 
    // TODO: Optimize unused IRQ's away (and other unused funtions that reference each other circularly)

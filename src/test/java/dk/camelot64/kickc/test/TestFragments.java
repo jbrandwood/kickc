@@ -131,7 +131,8 @@ public class TestFragments {
             "pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuz1_band_pbuz3_derefidx_vbuc2",
             "vbuxx=pbuz1_derefidx_vbuc1_band_pbuz2_derefidx_vbuc2",
             "_deref_pbuz1=pbuz2_derefidx_vbuc1_band_pbuz3_derefidx_vbuc2",
-            "pbuz1_derefidx_vbuaa=pbuz2_derefidx_vbuc1_band_pbuz3_derefidx_vbuc2");
+            "pbuz1_derefidx_vbuaa=pbuz2_derefidx_vbuc1_band_pbuz3_derefidx_vbuc2",
+            "pbuc1_derefidx_pbuz1_derefidx_vbuc2=pbuz1_derefidx_vbuc3");
       testFragments("fragments-complex", signaturesComplex);
    }
 

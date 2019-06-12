@@ -1,12 +1,19 @@
-// Black Hole at the center of the BASIC screen sucking in any letters
+// Black Hole at the center of the BASIC screen sucking in letters
 
 import "c64"
 import "multiply"
 
+// Address of the screen
 const byte* SCREEN = 0x0400;
 
 // Copy of the screen used for finding chars to process
 byte[1000] SCREEN_COPY;
+
+// Max number of chars processed at once
+const byte NUM_PROCESSING = 8;
+
+// Sprite data for the animating sprites
+const align(64) byte[NUM_PROCESSING*64] SPRITE_DATA;
 
 // Struct holding char being processed
 struct ProcessingChar {
@@ -21,23 +28,43 @@ struct ProcessingChar {
 // Distance value meaning not found
 const word NOT_FOUND = 0xffff;
 
+// Struct holding sprite being processed
+struct ProcessingSprite {
+    // sprite x-position (24-336)
+    word x;
+    // sprite y-position (30-228)
+    byte y;
+    // sprite ID (0-7)
+    byte id;
+    // sprite pointer (0-255)
+    byte ptr;
+    // status of the processing (0: free, 1: new, 2: processing)
+    byte status;
+    // Pointer to screen char being processed (used for deletion)
+    byte* screenPtr;
+};
+
+// Values for ProcessingSprite.status
+const byte STATUS_FREE = 0;
+const byte STATUS_NEW = 1;
+const byte STATUS_PROCESSING = 2;
+
+// Sprites currently being processed in the interrupt
+struct ProcessingSprite[NUM_PROCESSING] PROCESSING;
+
 void main() {
-
     // Init processing array
-    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, NOT_FOUND };
-
+    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, STATUS_FREE, 0};
+    // Clear sprites
+    for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+sizeof(SPRITE_DATA); sp++) *sp = 0;
     // Set-up raster interrupts
     setupRasterIrq(RASTER_IRQ_TOP, &irqTop);
-
     // Fill screen with some chars
     //for( byte* sc: SCREEN..SCREEN+999) *sc = 'a'+(<sc&0x1f);
-
     // Copy screen to screen copy
     for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
-
     // Init squares table
     initSquareTables();
-
     // Main loop
     do {
         // Look for the non-space closest to the screen center
@@ -49,12 +76,7 @@ void main() {
     do {
         (*(SCREEN+999))++;
     } while (true);
-
 }
-
-const byte NUM_PROCESSING = 16;
-// Chars currently being processed in the interrupt
-struct ProcessingChar[NUM_PROCESSING] PROCESSING;
 
 // Start processing a char - by inserting it into the PROCESSING array
 void startProcessing(struct ProcessingChar center) {
@@ -62,30 +84,55 @@ void startProcessing(struct ProcessingChar center) {
     byte freeIdx = 0xff;
     do {
         for( byte i: 0..NUM_PROCESSING-1 ) {
-            if(PROCESSING[i].dist==NOT_FOUND) {
+            if(PROCESSING[i].status==STATUS_FREE) {
                 freeIdx = i;
                 break;
             }
         }
     } while (freeIdx==0xff);
-
-    // Put the char into the PROCESSING array
-    PROCESSING[freeIdx] = center;
+    // Found a free sprite
+    byte spriteIdx = freeIdx;
+    // Copy char into sprite
+    // TODO: Copy chargen data
+    byte* spriteData = SPRITE_DATA+(word)spriteIdx*64;
+    for( byte i: 0..7) *spriteData++ = 0xff;
+    word spriteX = 24 + (word)center.x*8;
+    byte spriteY = 30 + center.y*8;
+    byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
+    byte* screenPtr = SCREEN+(word)center.y*40+center.x;
+    // Put the sprite into the PROCESSING array
+    PROCESSING[spriteIdx] = { spriteX, spriteY, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
 }
 
 // Process any chars in the PROCESSING array
 void processChars() {
     for( byte i: 0..NUM_PROCESSING-1 ) {
-        if(PROCESSING[i].dist!=NOT_FOUND) {
-            struct ProcessingChar processing = PROCESSING[i];
-            *(COLS+(word)processing.y*40+processing.x) = WHITE;
-            byte* processing_ptr = SCREEN+(word)processing.y*40+processing.x;
-            if(*processing_ptr==' ')
-                PROCESSING[i].dist = NOT_FOUND;
-            else if(*processing_ptr>' ')
-                (*processing_ptr)--;
-            else // must be <' '
-                (*processing_ptr)++;
+        if(PROCESSING[i].status!=STATUS_FREE) {
+            if(PROCESSING[i].status==STATUS_NEW) {
+                // Clear the char on the screen
+                *PROCESSING[i].screenPtr = ' ';
+                // Enable the sprite
+                *SPRITES_ENABLE |= 1<<PROCESSING[i].id;
+                // Set sprite pointer
+                *(SCREEN+SPRITE_PTRS+PROCESSING[i].id) = PROCESSING[i].ptr;
+                // Set status
+                PROCESSING[i].status = STATUS_PROCESSING;
+            }
+            // Set sprite position
+            if(>PROCESSING[i].x) {
+                *SPRITES_XMSB |= (1<<PROCESSING[i].id);
+            } else {
+                *SPRITES_XMSB &= 0xff ^ (1<<PROCESSING[i].id);
+            }
+            SPRITES_XPOS[i<<2] = (byte)PROCESSING[i].x;
+            SPRITES_YPOS[i<<2] = PROCESSING[i].y;
+            // Move sprite
+            if(--(PROCESSING[i].x)==0) {
+                // Set status
+                PROCESSING[i].status = STATUS_FREE;
+                // Disable the sprite
+                *SPRITES_ENABLE &= 0xff ^ (1<<PROCESSING[i].id);
+            }
         }
     }
 }

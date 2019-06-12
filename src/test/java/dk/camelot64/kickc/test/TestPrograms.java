@@ -36,10 +36,29 @@ public class TestPrograms {
    }
 
    @Test
+   public void testBlackhole() throws IOException, URISyntaxException {
+      compileAndCompare("complex/blackhole/blackhole");
+   }
+
+   // TODO: Optimize unused IRQ's away (and other unused funtions that reference each other circularly)
+   @Test
+   public void testUnusedIrq() throws IOException, URISyntaxException {
+      compileAndCompare("unused-irq");
+   }
+
+   /** TODO: Fix error with number resolving
+   @Test
+   public void testNumberTernaryFail() throws IOException, URISyntaxException {
+      compileAndCompare("number-ternary-fail");
+   }
+    */
+
+   @Test
    public void testTextbox() throws IOException, URISyntaxException {
       compileAndCompare("textbox");
    }
-/*
+
+   /* TODO: Implemente & / address-of for struct values
    @Test
    public void testStructPtr12Ref() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-12-ref", log());
@@ -47,7 +66,7 @@ public class TestPrograms {
 
    @Test
    public void testStructPtr12() throws IOException, URISyntaxException {
-      compileAndCompare("struct-ptr-12");
+      compileAndCompare("struct-ptr-12", log().verboseCreateSsa().verboseParse().verboseStatementSequence());
    }
    */
 
@@ -109,6 +128,16 @@ public class TestPrograms {
    @Test
    public void testStructPtr0() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-0");
+   }
+
+   @Test
+   public void testStructError5() throws IOException, URISyntaxException {
+      assertError("struct-err-5", "Unknown struct member");
+   }
+
+   @Test
+   public void testStructError4() throws IOException, URISyntaxException {
+      assertError("struct-err-4", "Unknown struct member");
    }
 
    @Test

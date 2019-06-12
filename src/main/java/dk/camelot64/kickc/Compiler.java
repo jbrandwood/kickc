@@ -160,6 +160,7 @@ public class Compiler {
 
       new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1ResolveForwardReferences(program).execute();
+      new PassNAssertStructMembers(program).execute();
       new Pass1UnwindBlockScopes(program).execute();
       new Pass1Procedures(program).execute();
       new PassNTypeInference(program).execute();

@@ -1,0 +1,190 @@
+// Black Hole at the center of the BASIC screen sucking in any letters
+
+import "c64"
+import "multiply"
+
+const byte* SCREEN = 0x0400;
+
+// Copy of the screen used for finding chars to process
+byte[1000] SCREEN_COPY;
+
+// Struct holding char being processed
+struct ProcessingChar {
+    // x-position (0-39)
+    byte x;
+    // y-position (0-24)
+    byte y;
+    // squared distance to center (0-569)
+    word dist;
+};
+
+// Distance value meaning not found
+const word NOT_FOUND = 0xffff;
+
+void main() {
+
+    // Init processing array
+    for( byte i: 0..7 ) PROCESSING[i] = { 0, 0, NOT_FOUND };
+
+    // Set-up raster interrupts
+    setupRasterIrq(RASTER_IRQ_TOP, &irqTop);
+
+    // Fill screen with some chars
+    for( byte* sc: SCREEN..SCREEN+999) *sc = 'a'+(<sc&0x1f);
+
+    // Copy screen to screen copy
+    for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+999; src++, dst++) *dst = *src;
+
+    // Init squares table
+    initSquareTables();
+
+    // Main loop
+    do {
+        // Look for the non-space closest to the screen center
+        struct ProcessingChar center = getCenterChar();
+        if(center.dist==NOT_FOUND)
+            break;
+        startProcessing(center);
+    } while(true);
+    do {
+        (*(SCREEN+999))++;
+    } while (true);
+
+}
+
+// Chars currently being processed in the interrupt
+struct ProcessingChar[8] PROCESSING;
+
+// Start processing a char - by inserting it into the PROCESSING array
+void startProcessing(struct ProcessingChar center) {
+    // Busy-wait while finding an empty slot in the PROCESSING array
+    byte freeIdx = 0xff;
+    do {
+        for( byte i: 0..7 ) {
+            if(PROCESSING[i].dist==NOT_FOUND) {
+                freeIdx = i;
+                break;
+            }
+        }
+    } while (freeIdx==0xff);
+
+    // Put the char into the PROCESSING array
+    PROCESSING[freeIdx] = center;
+}
+
+// Process any chars in the PROCESSING array
+void processChars() {
+    for( byte i: 0..7 ) {
+        if(PROCESSING[i].dist!=NOT_FOUND) {
+            struct ProcessingChar processing = PROCESSING[i];
+            *(COLS+(word)processing.y*40+processing.x) = WHITE;
+            byte* processing_ptr = SCREEN+(word)processing.y*40+processing.x;
+            if(*processing_ptr==' ')
+                PROCESSING[i].dist = NOT_FOUND;
+            else if(*processing_ptr>' ')
+                (*processing_ptr)--;
+            else // must be <' '
+                (*processing_ptr)++;
+        }
+    }
+}
+
+// SQUARES_X[i] = (i-20)*(i-20)
+word[40] SQUARES_X;
+// SQUARES_Y[i] = (i-12)*(i-12)
+word[25] SQUARES_Y;
+
+// initialize SQUARES table
+void initSquareTables() {
+    for(byte x: 0..39) {
+        byte x_dist = (x<20)?20-x:x-20;
+        SQUARES_X[x] = mul8u(x_dist, x_dist);
+    }
+    for(byte y: 0..24) {
+        byte y_dist = (y<12)?12-y:y-12;
+        SQUARES_Y[y] = mul8u(y_dist, y_dist);
+    }
+}
+
+// Find the non-space char closest to the center of the screen
+// If no non-space char is found the distance will be 0xffff
+struct ProcessingChar getCenterChar() {
+    struct ProcessingChar closest = { 0, 0, NOT_FOUND };
+    byte* screen_line = SCREEN_COPY;
+    for( byte y: 0..24) {
+        for( byte x: 0..39) {
+            if(screen_line[x]!=' ') {
+                word dist = SQUARES_X[x]+SQUARES_Y[y];
+                if(dist<closest.dist) {
+                    // Update closest char
+                    closest = { x, y, dist };
+                }
+            }
+        }
+        screen_line += 40;
+    }
+    if(closest.dist != NOT_FOUND) {
+        // clear the found char on the screen copy
+        *(SCREEN_COPY+(word)closest.y*40+closest.x) = ' ';
+    }
+    return closest;
+}
+
+
+// Setup Raster IRQ
+void setupRasterIrq(word raster, void()* irqRoutine) {
+    asm { sei }
+    // Disable kernal & basic
+    *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+    *PROCPORT = PROCPORT_RAM_IO;
+    // Disable CIA 1 Timer IRQ
+    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    if(raster<0x100) {
+        *VIC_CONTROL &=0x7f;
+    } else {
+        *VIC_CONTROL |=0x80;
+    }
+    *RASTER = <raster;
+    // Enable Raster Interrupt
+    *IRQ_ENABLE = IRQ_RASTER;
+    // Set the IRQ routine
+    *HARDWARE_IRQ = irqRoutine;
+    asm { cli }
+}
+
+const byte RASTER_IRQ_TOP = 0x30;
+
+// Raster Interrupt at the top of the screen
+interrupt(hardware_all) void irqTop() {
+    for( byte i: 0..4) {}
+    *BORDERCOL = WHITE;
+    *BGCOL = WHITE;
+    for( byte i: 0..7) {}
+    *BORDERCOL = LIGHT_BLUE;
+    *BGCOL = BLUE;
+
+    // Trigger IRQ at the middle of the screen
+    *RASTER = RASTER_IRQ_MIDDLE;
+    *HARDWARE_IRQ = &irqBottom;
+    // Acknowledge the IRQ
+    *IRQ_STATUS = IRQ_RASTER;
+}
+
+const byte RASTER_IRQ_MIDDLE = 0xff;
+
+// Raster Interrupt at the middle of the screen
+interrupt(hardware_all) void irqBottom() {
+    for( byte i: 0..4) {}
+    *BORDERCOL = WHITE;
+    *BGCOL = WHITE;
+    processChars();
+    *BORDERCOL = LIGHT_BLUE;
+    *BGCOL = BLUE;
+
+
+    // Trigger IRQ at the top of the screen
+    *RASTER = RASTER_IRQ_TOP;
+    *HARDWARE_IRQ = &irqTop;
+    // Acknowledge the IRQ
+    *IRQ_STATUS = IRQ_RASTER;
+}

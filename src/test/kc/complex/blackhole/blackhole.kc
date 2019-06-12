@@ -24,16 +24,16 @@ const word NOT_FOUND = 0xffff;
 void main() {
 
     // Init processing array
-    for( byte i: 0..7 ) PROCESSING[i] = { 0, 0, NOT_FOUND };
+    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, NOT_FOUND };
 
     // Set-up raster interrupts
     setupRasterIrq(RASTER_IRQ_TOP, &irqTop);
 
     // Fill screen with some chars
-    for( byte* sc: SCREEN..SCREEN+999) *sc = 'a'+(<sc&0x1f);
+    //for( byte* sc: SCREEN..SCREEN+999) *sc = 'a'+(<sc&0x1f);
 
     // Copy screen to screen copy
-    for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+999; src++, dst++) *dst = *src;
+    for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
 
     // Init squares table
     initSquareTables();
@@ -41,7 +41,7 @@ void main() {
     // Main loop
     do {
         // Look for the non-space closest to the screen center
-        struct ProcessingChar center = getCenterChar();
+        struct ProcessingChar center = getCharToProcess();
         if(center.dist==NOT_FOUND)
             break;
         startProcessing(center);
@@ -52,15 +52,16 @@ void main() {
 
 }
 
+const byte NUM_PROCESSING = 16;
 // Chars currently being processed in the interrupt
-struct ProcessingChar[8] PROCESSING;
+struct ProcessingChar[NUM_PROCESSING] PROCESSING;
 
 // Start processing a char - by inserting it into the PROCESSING array
 void startProcessing(struct ProcessingChar center) {
     // Busy-wait while finding an empty slot in the PROCESSING array
     byte freeIdx = 0xff;
     do {
-        for( byte i: 0..7 ) {
+        for( byte i: 0..NUM_PROCESSING-1 ) {
             if(PROCESSING[i].dist==NOT_FOUND) {
                 freeIdx = i;
                 break;
@@ -74,7 +75,7 @@ void startProcessing(struct ProcessingChar center) {
 
 // Process any chars in the PROCESSING array
 void processChars() {
-    for( byte i: 0..7 ) {
+    for( byte i: 0..NUM_PROCESSING-1 ) {
         if(PROCESSING[i].dist!=NOT_FOUND) {
             struct ProcessingChar processing = PROCESSING[i];
             *(COLS+(word)processing.y*40+processing.x) = WHITE;
@@ -108,7 +109,7 @@ void initSquareTables() {
 
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
-struct ProcessingChar getCenterChar() {
+struct ProcessingChar getCharToProcess() {
     struct ProcessingChar closest = { 0, 0, NOT_FOUND };
     byte* screen_line = SCREEN_COPY;
     for( byte y: 0..24) {

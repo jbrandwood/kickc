@@ -58,7 +58,7 @@ public class TestPrograms {
       compileAndCompare("textbox");
    }
 
-   /* TODO: Implemente & / address-of for struct values
+   /* TODO: Implement address-of (&) for struct values
    @Test
    public void testStructPtr12Ref() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-12-ref", log());
@@ -117,12 +117,12 @@ public class TestPrograms {
 
    @Test
    public void testStructPtr2() throws IOException, URISyntaxException {
-      compileAndCompare("struct-ptr-2", log());
+      compileAndCompare("struct-ptr-2");
    }
 
    @Test
    public void testStructPtr1() throws IOException, URISyntaxException {
-      compileAndCompare("struct-ptr-1", log());
+      compileAndCompare("struct-ptr-1");
    }
 
    @Test

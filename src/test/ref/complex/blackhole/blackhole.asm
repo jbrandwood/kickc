@@ -2,7 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SIZEOF_POINTER = 2
   .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
   .const OFFSET_STRUCT_PROCESSINGSPRITE_ID = 3
   .const OFFSET_STRUCT_PROCESSINGSPRITE_PTR = 4
@@ -23,8 +22,12 @@
   .label SPRITES_XMSB = $d010
   .label RASTER = $d012
   .label SPRITES_ENABLE = $d015
+  .label SPRITES_EXPAND_Y = $d017
+  .label SPRITES_MC = $d01c
+  .label SPRITES_EXPAND_X = $d01d
   .label BORDERCOL = $d020
   .label BGCOL = $d021
+  .label SPRITES_COLS = $d027
   .label VIC_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -46,7 +49,7 @@
   // Sprite data for the animating sprites
   .label SPRITE_DATA = $2000
   // Max number of chars processed at once
-  .const NUM_PROCESSING = 1
+  .const NUM_PROCESSING = 8
   // Distance value meaning not found
   .const NOT_FOUND = $ffff
   // Values for ProcessingSprite.status
@@ -80,7 +83,7 @@ main: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,x
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
     iny
-    cpy #1
+    cpy #NUM_PROCESSING-1+1
     bne b1
     lda #<SPRITE_DATA
     sta sp
@@ -96,13 +99,25 @@ main: {
     inc sp+1
   !:
     lda sp+1
-    cmp #>SPRITE_DATA+SIZEOF_POINTER
+    cmp #>SPRITE_DATA+NUM_PROCESSING*$40
     bcc b2
     bne !+
     lda sp
-    cmp #<SPRITE_DATA+SIZEOF_POINTER
+    cmp #<SPRITE_DATA+NUM_PROCESSING*$40
     bcc b2
   !:
+    ldx #0
+  // Initialize sprites
+  b3:
+    lda #WHITE
+    sta SPRITES_COLS,x
+    inx
+    cpx #8
+    bne b3
+    lda #0
+    sta SPRITES_MC
+    sta SPRITES_EXPAND_X
+    sta SPRITES_EXPAND_Y
     jsr setupRasterIrq
     lda #<SCREEN_COPY
     sta dst
@@ -115,7 +130,7 @@ main: {
   // Fill screen with some chars
   //for( byte* sc: SCREEN..SCREEN+999) *sc = 'a'+(<sc&0x1f);
   // Copy screen to screen copy
-  b4:
+  b5:
     ldy #0
     lda (src),y
     sta (dst),y
@@ -129,30 +144,30 @@ main: {
   !:
     lda src+1
     cmp #>SCREEN+$3e8
-    bne b4
+    bne b5
     lda src
     cmp #<SCREEN+$3e8
-    bne b4
+    bne b5
     jsr initSquareTables
-  b3:
+  b4:
   // Main loop
     jsr getCharToProcess
-    ldy getCharToProcess.return_x
-    ldx getCharToProcess.return_y
+    ldx getCharToProcess.return_x
+    ldy getCharToProcess.return_y
     lda center_dist+1
     cmp #>NOT_FOUND
-    bne b7
+    bne b8
     lda center_dist
     cmp #<NOT_FOUND
-    bne b7
-  b8:
+    bne b8
+  b9:
     inc SCREEN+$3e7
-    jmp b8
-  b7:
-    sty startProcessing.center_x
-    stx startProcessing.center_y
+    jmp b9
+  b8:
+    stx startProcessing.center_x
+    sty startProcessing.center_y
     jsr startProcessing
-    jmp b3
+    jmp b4
 }
 // Start processing a char - by inserting it into the PROCESSING array
 // startProcessing(byte zeropage($1c) center_x, byte zeropage($1d) center_y)
@@ -326,7 +341,7 @@ startProcessing: {
     jmp b1
   b3:
     inc i
-    lda #1
+    lda #NUM_PROCESSING-1+1
     cmp i
     beq !b2+
     jmp b2
@@ -687,7 +702,9 @@ processChars: {
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
     lda (processing),y
     cmp #STATUS_FREE
-    beq b2
+    bne !b2+
+    jmp b2
+  !b2:
     lda (processing),y
     cmp #STATUS_NEW
     bne b3
@@ -744,6 +761,11 @@ processChars: {
     sec
     sbc #1
     sta (processing),y
+    iny
+    lda (processing),y
+    sbc #0
+    sta (processing),y
+    ldy #0
     lda (processing),y
     bne b2
     iny
@@ -760,7 +782,7 @@ processChars: {
     sta SPRITES_ENABLE
   b2:
     inc i
-    lda #1
+    lda #NUM_PROCESSING-1+1
     cmp i
     beq !b1+
     jmp b1

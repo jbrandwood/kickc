@@ -12,7 +12,7 @@ const byte* SPRITE_DATA = 0x2000;
 byte[1000] SCREEN_COPY;
 
 // Max number of chars processed at once
-const byte NUM_PROCESSING = 1;
+const byte NUM_PROCESSING = 8;
 
 
 // Struct holding char being processed
@@ -56,7 +56,14 @@ void main() {
     // Init processing array
     for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, STATUS_FREE, 0};
     // Clear sprites
-    for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+sizeof(SPRITE_DATA); sp++) *sp = 0;
+    for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++) *sp = 0;
+    // Initialize sprites
+    for( byte i: 0..7) {
+        SPRITES_COLS[i] = WHITE;
+    }
+    *SPRITES_MC = 0;
+    *SPRITES_EXPAND_X = 0;
+    *SPRITES_EXPAND_Y = 0;
     // Set-up raster interrupts
     setupRasterIrq(RASTER_IRQ_TOP, &irqTop);
     // Fill screen with some chars

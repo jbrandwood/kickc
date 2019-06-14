@@ -2,10 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.VariableUnversioned;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.SymbolRef;
 
@@ -45,6 +42,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
          if(tableSymbol instanceof VariableUnversioned) continue;
          if(tableSymbol instanceof ConstantVar) continue;
          if(tableSymbol instanceof StructDefinition) continue;
+         if(tableSymbol instanceof TypeDefsScope) continue;
          if(tableSymbol.getType() instanceof SymbolTypeStruct) continue;
          Symbol codeSymbol = null;
          String codeSymbolFullName = tableSymbol.getFullName();

@@ -454,6 +454,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    private List<Comment> declVarComments = null;
    /** State specifying that we are currently populating struct members. */
    private boolean declVarStructMember = false;
+   /** State specifying that we are currently populating a typedef. */
+   private boolean declVarTypeDef = false;
 
    /**
     * Visit the type/directive part of a declaration. Setup the local decl-variables
@@ -524,7 +526,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       //   lValue.setDeclaredVolatile(true);
       //}
       KickCParser.ExprContext initializer = ctx.expr();
-      if(declVarStructMember) {
+      if(declVarStructMember || declVarTypeDef) {
          if(initializer != null) {
             throw new CompileError("Initializers not supported inside structs " + type.getTypeName(), new StatementSource(ctx));
          }
@@ -1182,7 +1184,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else {
          structDefName = getCurrentScope().allocateIntermediateVariableName();
       }
-      StructDefinition structDefinition = getCurrentScope().addStructDefinition(structDefName);
+      StructDefinition structDefinition = program.getScope().addStructDefinition(structDefName);
       scopeStack.push(structDefinition);
       declVarStructMember = true;
       for(KickCParser.StructMembersContext memberCtx : ctx.structMembers()) {
@@ -1205,7 +1207,12 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
-      throw new InternalError("Not implemented typeef'ed types", new StatementSource(ctx));
+      Scope typeDefScope = program.getScope().getTypeDefScope();
+      Variable typeDefVariable = typeDefScope.getVariable(ctx.getText());
+      if(typeDefVariable!=null) {
+         return typeDefVariable.getType();
+      }
+      throw new CompileError("Unknown type "+ctx.getText(), new StatementSource(ctx));
    }
 
    @Override
@@ -1247,6 +1254,17 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    public Object visitTypeProcedure(KickCParser.TypeProcedureContext ctx) {
       SymbolType returnType = (SymbolType) visit(ctx.typeDecl());
       return new SymbolTypeProcedure(returnType);
+   }
+
+   @Override
+   public Object visitTypeDef(KickCParser.TypeDefContext ctx) {
+      Scope typedefScope = program.getScope().getTypeDefScope();
+      scopeStack.push(typedefScope);
+      this.declVarTypeDef = true;
+      super.visitTypeDef(ctx);
+      this.declVarTypeDef = false;
+      scopeStack.pop();
+      return null;
    }
 
    @Override

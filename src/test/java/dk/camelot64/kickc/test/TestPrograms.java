@@ -36,6 +36,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testTypedef1() throws IOException, URISyntaxException {
+      compileAndCompare("typedef-1");
+   }
+
+   @Test
+   public void testTypedef0() throws IOException, URISyntaxException {
+      compileAndCompare("typedef-0");
+   }
+
+   @Test
    public void testBlackhole() throws IOException, URISyntaxException {
       compileAndCompare("complex/blackhole/blackhole", log());
    }

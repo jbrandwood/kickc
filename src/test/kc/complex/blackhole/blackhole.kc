@@ -1,5 +1,4 @@
 // Black Hole at the center of the BASIC screen sucking in letters
-
 import "c64"
 import "multiply"
 
@@ -7,13 +6,16 @@ import "multiply"
 const byte* SCREEN = 0x0400;
 // Sprite data for the animating sprites
 const byte* SPRITE_DATA = 0x2000;
+// Values added to VX
+const word* VXSIN = 0x2200;
+// Values added to VY
+const word* VYSIN = 0x2280;
 
 // Copy of the screen used for finding chars to process
 byte[1000] SCREEN_COPY;
 
 // Max number of chars processed at once
 const byte NUM_PROCESSING = 8;
-
 
 // Struct holding char being processed
 struct ProcessingChar {
@@ -75,6 +77,7 @@ void main() {
             break;
         startProcessing(center);
     } while(true);
+    (*(SCREEN+999)) = '.';
     do {
         (*(COLS+999))++;
     } while (true);
@@ -136,11 +139,24 @@ void startProcessing(struct ProcessingChar center) {
     word spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4;
     byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
     // Put the sprite into the PROCESSING array
-    PROCESSING[spriteIdx] = { spriteX, spriteY, (word)-((signed byte)spriteIdx*2-8), (word)-16, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
+    PROCESSING[spriteIdx] = { spriteX, spriteY, 60, 60, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
 }
 
 const word XPOS_LEFTMOST = (word)(BORDER_XPOS_LEFT-8)<<4;
-const word YPOS_UPMOST = (word)(BORDER_YPOS_TOP-8)<<4;
+const word XPOS_RIGHTMOST = (word)(BORDER_XPOS_RIGHT)<<4;
+const word YPOS_TOPMOST = (word)(BORDER_YPOS_TOP-8)<<4;
+const word YPOS_BOTTOMMOST = (word)(BORDER_YPOS_BOTTOM)<<4;
+
+kickasm(pc VXSIN) {{
+  .for(var i=0; i<40; i++) {
+      .word -sin(toRadians([i*360]/40))*4
+    }
+}}
+kickasm(pc VYSIN) {{
+  .for(var i=0; i<25; i++) {
+      .word -sin(toRadians([i*360]/25))*4
+    }
+}}
 
 // Process any chars in the PROCESSING array
 void processChars() {
@@ -167,22 +183,27 @@ void processChars() {
                 *SPRITES_XMSB &= 0xff ^ bitmask;
             }
             SPRITES_XPOS[i*2] = (byte)xpos;
-            SPRITES_YPOS[i*2] = (byte)(processing->y>>4);
+            byte ypos = (byte)(processing->y>>4);
+            SPRITES_YPOS[i*2] = ypos;
 
             // Move sprite
-            if(processing->x < XPOS_LEFTMOST || processing->y < YPOS_UPMOST) {
+            if(processing->x < XPOS_LEFTMOST || processing->x > XPOS_RIGHTMOST || processing->y < YPOS_TOPMOST|| processing->y > YPOS_BOTTOMMOST  ) {
                 // Set status to FREE
                 processing->status = STATUS_FREE;
                 // Disable the sprite
                 *SPRITES_ENABLE &= 0xff ^ bitmask;
             } else {
+                byte xchar = (byte)(xpos/8) - BORDER_XPOS_LEFT/8;
+                processing->vx = processing->vx + VXSIN[xchar];
                 processing->x += processing->vx;
+                byte ychar = (byte)(ypos/8) - BORDER_YPOS_TOP/8;
+                processing->vy = processing->vy + VYSIN[ychar];
                 processing->y += processing->vy;
             }
             numActive++;
         }
     }
-    *(SCREEN+999) = '0'+numActive;
+    //*(SCREEN+999) = '0'+numActive;
 }
 
 // SQUARES_X[i] = (i-20)*(i-20)
@@ -241,11 +262,11 @@ const byte RASTER_IRQ_TOP = 0x30;
 // Raster Interrupt at the top of the screen
 interrupt(hardware_all) void irqTop() {
     for( byte i: 0..4) {}
-    *BORDERCOL = WHITE;
-    *BGCOL = WHITE;
+    //*BORDERCOL = WHITE;
+    //*BGCOL = WHITE;
     for( byte i: 0..7) {}
-    *BORDERCOL = LIGHT_BLUE;
-    *BGCOL = BLUE;
+    //*BORDERCOL = LIGHT_BLUE;
+    //*BGCOL = BLUE;
 
     // Trigger IRQ at the middle of the screen
     *RASTER = RASTER_IRQ_MIDDLE;
@@ -259,11 +280,11 @@ const byte RASTER_IRQ_MIDDLE = 0xff;
 // Raster Interrupt at the middle of the screen
 interrupt(hardware_all) void irqBottom() {
     for( byte i: 0..4) {}
-    *BORDERCOL = WHITE;
-    *BGCOL = WHITE;
+    //*BORDERCOL = WHITE;
+    //*BGCOL = WHITE;
     processChars();
-    *BORDERCOL = LIGHT_BLUE;
-    *BGCOL = BLUE;
+    //*BORDERCOL = LIGHT_BLUE;
+    //*BGCOL = BLUE;
 
     // Trigger IRQ at the top of the screen
     *RASTER = RASTER_IRQ_TOP;

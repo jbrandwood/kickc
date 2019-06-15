@@ -614,8 +614,7 @@ mul16u: {
     adc mb+3
     sta res+3
   b3:
-    clc
-    ror a+1
+    lsr a+1
     ror a
     asl mb
     rol mb+1

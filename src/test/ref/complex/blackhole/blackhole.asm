@@ -23,7 +23,9 @@
   .label CHARGEN = $d000
   // Positions of the border (in sprite positions)
   .const BORDER_XPOS_LEFT = $18
+  .const BORDER_XPOS_RIGHT = $158
   .const BORDER_YPOS_TOP = $32
+  .const BORDER_YPOS_BOTTOM = $fa
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
@@ -34,8 +36,6 @@
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label SPRITES_COLS = $d027
   .label VIC_CONTROL = $d011
   // VIC II IRQ Status Register
@@ -52,13 +52,15 @@
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  .const WHITE = 1
-  .const BLUE = 6
   .const LIGHT_BLUE = $e
   // Address of the screen
   .label SCREEN = $400
   // Sprite data for the animating sprites
   .label SPRITE_DATA = $2000
+  // Values added to VX
+  .label VXSIN = $2200
+  // Values added to VY
+  .label VYSIN = $2280
   // Max number of chars processed at once
   .const NUM_PROCESSING = 8
   // Distance value meaning not found
@@ -69,8 +71,10 @@
   .const STATUS_PROCESSING = 2
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
+  .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
+  .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
-  .const YPOS_UPMOST = BORDER_YPOS_TOP-8<<4
+  .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
 main: {
     .label src = 2
     .label dst = 4
@@ -150,9 +154,11 @@ main: {
     lda center_dist
     cmp #<NOT_FOUND
     bne b5
-  b6:
+    lda #'.'
+    sta SCREEN+$3e7
+  b7:
     inc COLS+$3e7
-    jmp b6
+    jmp b7
   b5:
     stx startProcessing.center_x
     sty startProcessing.center_y
@@ -160,34 +166,33 @@ main: {
     jmp b3
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($20) center_x, byte zeropage($21) center_y)
+// startProcessing(byte zeropage($1f) center_x, byte zeropage($20) center_y)
 startProcessing: {
-    .label _0 = $22
-    .label _1 = $22
-    .label _2 = $22
+    .label _0 = $21
+    .label _1 = $21
+    .label _2 = $21
     .label _4 = $a
     .label _5 = $a
     .label _7 = 8
     .label _8 = 8
-    .label _10 = $28
-    .label _11 = $28
-    .label _12 = $28
-    .label _14 = $2a
-    .label _15 = $2a
-    .label _16 = $2a
-    .label _25 = $2d
-    .label center_x = $20
-    .label center_y = $21
+    .label _10 = $27
+    .label _11 = $27
+    .label _12 = $27
+    .label _14 = $29
+    .label _15 = $29
+    .label _16 = $29
+    .label center_x = $1f
+    .label center_y = $20
     .label i = 7
-    .label screenPtr = $26
+    .label screenPtr = $25
     .label spriteData = $a
     .label chargenData = 8
-    .label spriteX = $28
-    .label spriteY = $2a
-    .label spritePtr = $2c
+    .label spriteX = $27
+    .label spriteY = $29
+    .label spritePtr = $2b
     .label freeIdx = 7
-    .label _48 = $24
-    .label _49 = $22
+    .label _42 = $23
+    .label _43 = $21
     ldx #$ff
   b1:
     lda #0
@@ -219,19 +224,19 @@ startProcessing: {
     sta _0+1
     lda _0
     asl
-    sta _48
+    sta _42
     lda _0+1
     rol
-    sta _48+1
-    asl _48
-    rol _48+1
-    lda _49
+    sta _42+1
+    asl _42
+    rol _42+1
+    lda _43
     clc
-    adc _48
-    sta _49
-    lda _49+1
-    adc _48+1
-    sta _49+1
+    adc _42
+    sta _43
+    lda _43+1
+    adc _42+1
+    sta _43+1
     asl _1
     rol _1+1
     asl _1
@@ -373,19 +378,6 @@ startProcessing: {
     stx spritePtr
     lda freeIdx
     asl
-    sec
-    sbc #8
-    eor #$ff
-    clc
-    adc #1
-    sta _25
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta _25+1
-    lda freeIdx
-    asl
     clc
     adc freeIdx
     asl
@@ -401,13 +393,13 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
     lda spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
-    lda _25
+    lda #$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    lda _25+1
+    lda #0
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
-    lda #<-$10
+    lda #$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
-    lda #>-$10
+    lda #0
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
     lda freeIdx
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
@@ -436,9 +428,9 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _9 = $2f
-    .label _10 = $2f
-    .label _11 = $2f
+    .label _9 = $2c
+    .label _10 = $2c
+    .label _11 = $2c
     .label return_dist = $14
     .label x = $f
     .label dist = $14
@@ -449,8 +441,8 @@ getCharToProcess: {
     .label closest_dist = $10
     .label closest_x = $12
     .label closest_y = $13
-    .label _15 = $31
-    .label _16 = $2f
+    .label _15 = $2e
+    .label _16 = $2c
     lda #0
     sta closest_y
     sta closest_x
@@ -765,14 +757,7 @@ irqBottom: {
     inx
     cpx #5
     bne b1
-    lda #WHITE
-    sta BORDERCOL
-    sta BGCOL
     jsr processChars
-    lda #LIGHT_BLUE
-    sta BORDERCOL
-    lda #BLUE
-    sta BGCOL
     // Trigger IRQ at the top of the screen
     lda #RASTER_IRQ_TOP
     sta RASTER
@@ -793,14 +778,16 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _17 = $38
-    .label processing = $33
-    .label bitmask = $35
+    .label _14 = $35
+    .label _24 = $33
+    .label _28 = $38
+    .label _33 = $3a
+    .label processing = $30
+    .label bitmask = $32
     .label i = $1e
-    .label xpos = $36
-    .label numActive = $1f
+    .label xpos = $33
+    .label ypos = $37
     lda #0
-    sta numActive
     sta i
   b1:
     lda i
@@ -899,42 +886,106 @@ processChars: {
     sta SPRITES_XPOS,x
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
-    sta _17
+    sta _14
     iny
     lda (processing),y
-    sta _17+1
-    lsr _17+1
-    ror _17
-    lsr _17+1
-    ror _17
-    lsr _17+1
-    ror _17
-    lsr _17+1
-    ror _17
-    lda _17
+    sta _14+1
+    lsr _14+1
+    ror _14
+    lsr _14+1
+    ror _14
+    lsr _14+1
+    ror _14
+    lsr _14+1
+    ror _14
+    lda _14
+    sta ypos
     sta SPRITES_YPOS,x
     // Move sprite
     ldy #1
     lda (processing),y
     cmp #>XPOS_LEFTMOST
-    bcc b6
+    bcs !b6+
+    jmp b6
+  !b6:
     bne !+
     dey
     lda (processing),y
     cmp #<XPOS_LEFTMOST
-    bcc b6
+    bcs !b6+
+    jmp b6
+  !b6:
+  !:
+    ldy #1
+    lda #>XPOS_RIGHTMOST
+    cmp (processing),y
+    bcs !b6+
+    jmp b6
+  !b6:
+    bne !+
+    dey
+    lda #<XPOS_RIGHTMOST
+    cmp (processing),y
+    bcs !b6+
+    jmp b6
+  !b6:
   !:
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     iny
     lda (processing),y
-    cmp #>YPOS_UPMOST
-    bcc b6
+    cmp #>YPOS_TOPMOST
+    bcs !b6+
+    jmp b6
+  !b6:
     bne !+
     dey
     lda (processing),y
-    cmp #<YPOS_UPMOST
-    bcc b6
+    cmp #<YPOS_TOPMOST
+    bcs !b6+
+    jmp b6
+  !b6:
   !:
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
+    iny
+    lda #>YPOS_BOTTOMMOST
+    cmp (processing),y
+    bcs !b6+
+    jmp b6
+  !b6:
+    bne !+
+    dey
+    lda #<YPOS_BOTTOMMOST
+    cmp (processing),y
+    bcs !b6+
+    jmp b6
+  !b6:
+  !:
+    lsr _24+1
+    ror _24
+    lsr _24+1
+    ror _24
+    lsr _24+1
+    ror _24
+    lda _24
+    sec
+    sbc #BORDER_XPOS_LEFT/8
+    asl
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
+    tax
+    lda (processing),y
+    clc
+    adc VXSIN,x
+    sta _28
+    iny
+    lda (processing),y
+    adc VXSIN+1,x
+    sta _28+1
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
+    lda _28
+    sta (processing),y
+    iny
+    lda _28+1
+    sta (processing),y
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
     sty $ff
     clc
@@ -948,6 +999,29 @@ processChars: {
     ldy #1
     adc (processing),y
     sta (processing),y
+    lda ypos
+    lsr
+    lsr
+    lsr
+    sec
+    sbc #BORDER_YPOS_TOP/8
+    asl
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
+    tax
+    lda (processing),y
+    clc
+    adc VYSIN,x
+    sta _33
+    iny
+    lda (processing),y
+    adc VYSIN+1,x
+    sta _33+1
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
+    lda _33
+    sta (processing),y
+    iny
+    lda _33+1
+    sta (processing),y
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
     clc
     lda (processing),y
@@ -959,8 +1033,6 @@ processChars: {
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y+1
     adc (processing),y
     sta (processing),y
-  b7:
-    inc numActive
   b2:
     inc i
     lda #NUM_PROCESSING-1+1
@@ -968,9 +1040,6 @@ processChars: {
     beq !b1+
     jmp b1
   !b1:
-    lax numActive
-    axs #-['0']
-    stx SCREEN+$3e7
     rts
   b6:
     // Set status to FREE
@@ -982,7 +1051,7 @@ processChars: {
     // Disable the sprite
     and SPRITES_ENABLE
     sta SPRITES_ENABLE
-    jmp b7
+    jmp b2
   b4:
     lda SPRITES_XMSB
     ora bitmask
@@ -999,18 +1068,13 @@ irqTop: {
     inx
     cpx #5
     bne b1
-    lda #WHITE
-    sta BORDERCOL
-    sta BGCOL
     ldx #0
-  b3:
+  //*BORDERCOL = WHITE;
+  //*BGCOL = WHITE;
+  b2:
     inx
     cpx #8
-    bne b3
-    lda #LIGHT_BLUE
-    sta BORDERCOL
-    lda #BLUE
-    sta BGCOL
+    bne b2
     // Trigger IRQ at the middle of the screen
     lda #RASTER_IRQ_MIDDLE
     sta RASTER
@@ -1037,3 +1101,13 @@ irqTop: {
   SQUARES_Y: .fill 2*$19, 0
   // Sprites currently being processed in the interrupt
   PROCESSING: .fill $d*NUM_PROCESSING, 0
+.pc = VXSIN "VXSIN"
+  .for(var i=0; i<40; i++) {
+      .word -sin(toRadians([i*360]/40))*4
+    }
+
+.pc = VYSIN "VYSIN"
+  .for(var i=0; i<25; i++) {
+      .word -sin(toRadians([i*360]/25))*4
+    }
+

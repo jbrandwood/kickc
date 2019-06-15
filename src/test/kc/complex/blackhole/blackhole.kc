@@ -30,10 +30,10 @@ const word NOT_FOUND = 0xffff;
 
 // Struct holding sprite being processed
 struct ProcessingSprite {
-    // sprite x-position (24-336)
+    // sprite x-position. Fixed point [12.4]. Values (24-336)
     word x;
-    // sprite y-position (30-228)
-    byte y;
+    // sprite y-position. Fixed point [12.4]. Values (30-228)
+    word y;
     // sprite ID (0-7)
     byte id;
     // sprite pointer (0-255)
@@ -55,14 +55,14 @@ struct ProcessingSprite[NUM_PROCESSING] PROCESSING;
 void main() {
     // Init squares table
     initSquareTables();
+    // Copy screen to screen copy
+    for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
     // Init processing array
     for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, STATUS_FREE, 0};
     // Init sprites
     initSprites();
     // Set-up raster interrupts
     setupRasterIrq(RASTER_IRQ_TOP, &irqTop);
-    // Copy screen to screen copy
-    for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
     // Main loop
     do {
         // Look for the non-space closest to the screen center
@@ -72,8 +72,32 @@ void main() {
         startProcessing(center);
     } while(true);
     do {
-        (*(SCREEN+999))++;
+        (*(COLS+999))++;
     } while (true);
+}
+
+// Find the non-space char closest to the center of the screen
+// If no non-space char is found the distance will be 0xffff
+struct ProcessingChar getCharToProcess() {
+    struct ProcessingChar closest = { 0, 0, NOT_FOUND };
+    byte* screen_line = SCREEN_COPY;
+    for( byte y: 0..24) {
+        for( byte x: 0..39) {
+            if(screen_line[x]!=' ') {
+                word dist = SQUARES_X[x]+SQUARES_Y[y];
+                if(dist<closest.dist) {
+                    // Update closest char
+                    closest = { x, y, dist };
+                }
+            }
+        }
+        screen_line += 40;
+    }
+    if(closest.dist != NOT_FOUND) {
+        // clear the found char on the screen copy
+        *(SCREEN_COPY+(word)closest.y*40+closest.x) = ' ';
+    }
+    return closest;
 }
 
 // Start processing a char - by inserting it into the PROCESSING array
@@ -104,15 +128,19 @@ void startProcessing(struct ProcessingChar center) {
     }
     *PROCPORT = PROCPORT_RAM_IO;
     asm { cli }
-    word spriteX = BORDER_XPOS_LEFT + (word)center.x*8;
-    byte spriteY = BORDER_YPOS_TOP + center.y*8;
+    word spriteX = (BORDER_XPOS_LEFT + (word)center.x*8) << 4;
+    word spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4;
     byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
     // Put the sprite into the PROCESSING array
     PROCESSING[spriteIdx] = { spriteX, spriteY, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
 }
 
+const word XPOS_LEFTMOST = (word)(BORDER_XPOS_LEFT-8)<<4;
+const word YPOS_UPMOST = (word)(BORDER_YPOS_TOP-8)<<4;
+
 // Process any chars in the PROCESSING array
 void processChars() {
+    byte numActive = 0;
     for( byte i: 0..NUM_PROCESSING-1 ) {
         struct ProcessingSprite* processing = PROCESSING+i;
         byte bitmask = 1<<processing->id;
@@ -127,27 +155,30 @@ void processChars() {
                 // Set status
                 processing->status = STATUS_PROCESSING;
             }
+            word xpos = processing->x >> 4;
             // Set sprite position
-            if(>processing->x) {
+            if(>xpos) {
                 *SPRITES_XMSB |= bitmask;
             } else {
                 *SPRITES_XMSB &= 0xff ^ bitmask;
             }
-            SPRITES_XPOS[i*2] = (byte)processing->x;
-            SPRITES_YPOS[i*2] = processing->y;
+            SPRITES_XPOS[i*2] = (byte)xpos;
+            SPRITES_YPOS[i*2] = (byte)(processing->y>>4);
 
             // Move sprite
-            if(processing->x==BORDER_XPOS_LEFT-8 || processing->y==BORDER_YPOS_TOP-8) {
+            if(processing->x < XPOS_LEFTMOST || processing->y < YPOS_UPMOST) {
                 // Set status to FREE
                 processing->status = STATUS_FREE;
                 // Disable the sprite
                 *SPRITES_ENABLE &= 0xff ^ bitmask;
             } else {
-                (processing->y)--;
-                (processing->x)--;
+                processing->y = processing->y - 16;
+                processing->x = processing->x - 16;
             }
+            numActive++;
         }
     }
+    *(SCREEN+999) = '0'+numActive;
 }
 
 // SQUARES_X[i] = (i-20)*(i-20)
@@ -179,31 +210,6 @@ void initSprites() {
     *SPRITES_EXPAND_X = 0;
     *SPRITES_EXPAND_Y = 0;
 }
-
-// Find the non-space char closest to the center of the screen
-// If no non-space char is found the distance will be 0xffff
-struct ProcessingChar getCharToProcess() {
-    struct ProcessingChar closest = { 0, 0, NOT_FOUND };
-    byte* screen_line = SCREEN_COPY;
-    for( byte y: 0..24) {
-        for( byte x: 0..39) {
-            if(screen_line[x]!=' ') {
-                word dist = SQUARES_X[x]+SQUARES_Y[y];
-                if(dist<closest.dist) {
-                    // Update closest char
-                    closest = { x, y, dist };
-                }
-            }
-        }
-        screen_line += 40;
-    }
-    if(closest.dist != NOT_FOUND) {
-        // clear the found char on the screen copy
-        *(SCREEN_COPY+(word)closest.y*40+closest.x) = ' ';
-    }
-    return closest;
-}
-
 
 // Setup Raster IRQ
 void setupRasterIrq(word raster, void()* irqRoutine) {

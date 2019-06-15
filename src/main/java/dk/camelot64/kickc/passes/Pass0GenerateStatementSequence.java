@@ -1313,9 +1313,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else if(lValue instanceof LvalueIntermediate) {
          return new LvalueIntermediate((VariableRef) copyLValue(((LvalueIntermediate) lValue).getVariable()));
       } else if(lValue instanceof PointerDereferenceSimple) {
-         return new PointerDereferenceSimple(((PointerDereferenceSimple) lValue).getPointer());
+         return new PointerDereferenceSimple(copyLValue((LValue) ((PointerDereferenceSimple) lValue).getPointer()));
       } else if(lValue instanceof PointerDereferenceIndexed) {
          return new PointerDereferenceIndexed(((PointerDereferenceIndexed) lValue).getPointer(), ((PointerDereferenceIndexed) lValue).getIndex());
+      } else if(lValue instanceof StructMemberRef) {
+         return new StructMemberRef(copyLValue((LValue) ((StructMemberRef) lValue).getStruct()), ((StructMemberRef) lValue).getMemberName());
       } else {
          throw new CompileError("Unknown LValue type " + lValue);
       }

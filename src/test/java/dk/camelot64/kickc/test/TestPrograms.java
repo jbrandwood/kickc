@@ -47,7 +47,7 @@ public class TestPrograms {
 
    @Test
    public void testBlackhole() throws IOException, URISyntaxException {
-      compileAndCompare("complex/blackhole/blackhole", log().verboseFragmentLog());
+      compileAndCompare("complex/blackhole/blackhole", log());
    }
 
    // TODO: Optimize unused IRQ's away (and other unused funtions that reference each other circularly)
@@ -66,6 +66,11 @@ public class TestPrograms {
    @Test
    public void testTextbox() throws IOException, URISyntaxException {
       compileAndCompare("textbox");
+   }
+
+   @Test
+   public void testStructPtr13() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-13");
    }
 
    /* TODO: Implement address-of (&) for struct values

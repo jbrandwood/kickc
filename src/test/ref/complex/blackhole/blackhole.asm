@@ -758,8 +758,6 @@ irqBottom: {
 // Process any chars in the PROCESSING array
 processChars: {
     .label _17 = $35
-    .label _22 = $37
-    .label _23 = $39
     .label processing = $30
     .label bitmask = $32
     .label i = $1d
@@ -903,31 +901,19 @@ processChars: {
     lda (processing),y
     sec
     sbc #<$10
-    sta _22
+    sta (processing),y
     iny
     lda (processing),y
     sbc #>$10
-    sta _22+1
-    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
-    lda _22
-    sta (processing),y
-    iny
-    lda _22+1
     sta (processing),y
     ldy #0
     lda (processing),y
     sec
     sbc #<$10
-    sta _23
+    sta (processing),y
     iny
     lda (processing),y
     sbc #>$10
-    sta _23+1
-    ldy #0
-    lda _23
-    sta (processing),y
-    iny
-    lda _23+1
     sta (processing),y
   b7:
     inc numActive

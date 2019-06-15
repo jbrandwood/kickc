@@ -560,12 +560,14 @@ sin16s: {
     sta mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
-    ldy #4
-  !:
     lsr x5_128+1
     ror x5_128
-    dey
-    bne !-
+    lsr x5_128+1
+    ror x5_128
+    lsr x5_128+1
+    ror x5_128
+    lsr x5_128+1
+    ror x5_128
     lda usinx
     clc
     adc x5_128

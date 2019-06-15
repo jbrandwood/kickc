@@ -630,12 +630,14 @@ div10: {
     lda val_3+1
     adc val_2+1
     sta val_3+1
-    ldy #4
-  !:
     lsr return+1
     ror return
-    dey
-    bne !-
+    lsr return+1
+    ror return
+    lsr return+1
+    ror return
+    lsr return+1
+    ror return
     rts
 }
 // Performs division on two 16 bit unsigned words

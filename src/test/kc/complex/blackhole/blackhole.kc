@@ -34,6 +34,10 @@ struct ProcessingSprite {
     word x;
     // sprite y-position. Fixed point [12.4]. Values (30-228)
     word y;
+    // sprite x velocity. Fixed point [12.4]
+    word vx;
+    // sprite y velocity. Fixed point [12.4]
+    word vy;
     // sprite ID (0-7)
     byte id;
     // sprite pointer (0-255)
@@ -58,7 +62,7 @@ void main() {
     // Copy screen to screen copy
     for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
     // Init processing array
-    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, STATUS_FREE, 0};
+    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, 0, 0, STATUS_FREE, 0};
     // Init sprites
     initSprites();
     // Set-up raster interrupts
@@ -132,7 +136,7 @@ void startProcessing(struct ProcessingChar center) {
     word spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4;
     byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
     // Put the sprite into the PROCESSING array
-    PROCESSING[spriteIdx] = { spriteX, spriteY, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
+    PROCESSING[spriteIdx] = { spriteX, spriteY, (word)-((signed byte)spriteIdx*2-8), (word)-16, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
 }
 
 const word XPOS_LEFTMOST = (word)(BORDER_XPOS_LEFT-8)<<4;
@@ -172,8 +176,8 @@ void processChars() {
                 // Disable the sprite
                 *SPRITES_ENABLE &= 0xff ^ bitmask;
             } else {
-                processing->y -= 16;
-                processing->x -= 16;
+                processing->x += processing->vx;
+                processing->y += processing->vy;
             }
             numActive++;
         }

@@ -3,10 +3,12 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_ID = 4
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_PTR = 5
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = 6
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = 7
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_VX = 4
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_VY = 6
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_ID = 8
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_PTR = 9
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $a
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $b
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -72,7 +74,8 @@
 main: {
     .label src = 2
     .label dst = 4
-    .label center_dist = $13
+    .label i = 6
+    .label center_dist = $14
     jsr initSquareTables
     lda #<SCREEN_COPY
     sta dst
@@ -101,22 +104,28 @@ main: {
     lda src
     cmp #<SCREEN+$3e8
     bne b1
-    ldy #0
+    lda #0
+    sta i
   // Init processing array
   b2:
-    tya
+    lda i
     asl
-    asl
-    asl
-    sty $ff
     clc
-    adc $ff
+    adc i
+    asl
+    asl
+    clc
+    adc i
     tax
     lda #0
     sta PROCESSING,x
     sta PROCESSING+1,x
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,x
     lda #STATUS_FREE
@@ -124,8 +133,9 @@ main: {
     lda #<0
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,x
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
-    iny
-    cpy #NUM_PROCESSING-1+1
+    inc i
+    lda #NUM_PROCESSING-1+1
+    cmp i
     bne b2
     jsr initSprites
     jsr setupRasterIrq
@@ -150,33 +160,34 @@ main: {
     jmp b3
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($1f) center_x, byte zeropage($20) center_y)
+// startProcessing(byte zeropage($20) center_x, byte zeropage($21) center_y)
 startProcessing: {
-    .label _0 = $21
-    .label _1 = $21
-    .label _2 = $21
-    .label _4 = 9
-    .label _5 = 9
-    .label _7 = 7
-    .label _8 = 7
-    .label _10 = $27
-    .label _11 = $27
-    .label _12 = $27
-    .label _14 = $29
-    .label _15 = $29
-    .label _16 = $29
-    .label center_x = $1f
-    .label center_y = $20
-    .label i = 6
-    .label screenPtr = $25
-    .label spriteData = 9
-    .label chargenData = 7
-    .label spriteX = $27
-    .label spriteY = $29
-    .label spritePtr = $2b
-    .label freeIdx = 6
-    .label _38 = $23
-    .label _39 = $21
+    .label _0 = $22
+    .label _1 = $22
+    .label _2 = $22
+    .label _4 = $a
+    .label _5 = $a
+    .label _7 = 8
+    .label _8 = 8
+    .label _10 = $28
+    .label _11 = $28
+    .label _12 = $28
+    .label _14 = $2a
+    .label _15 = $2a
+    .label _16 = $2a
+    .label _25 = $2d
+    .label center_x = $20
+    .label center_y = $21
+    .label i = 7
+    .label screenPtr = $26
+    .label spriteData = $a
+    .label chargenData = 8
+    .label spriteX = $28
+    .label spriteY = $2a
+    .label spritePtr = $2c
+    .label freeIdx = 7
+    .label _48 = $24
+    .label _49 = $22
     ldx #$ff
   b1:
     lda #0
@@ -184,6 +195,8 @@ startProcessing: {
   b2:
     lda i
     asl
+    clc
+    adc i
     asl
     asl
     clc
@@ -206,19 +219,19 @@ startProcessing: {
     sta _0+1
     lda _0
     asl
-    sta _38
+    sta _48
     lda _0+1
     rol
-    sta _38+1
-    asl _38
-    rol _38+1
-    lda _39
+    sta _48+1
+    asl _48
+    rol _48+1
+    lda _49
     clc
-    adc _38
-    sta _39
-    lda _39+1
-    adc _38+1
-    sta _39+1
+    adc _48
+    sta _49
+    lda _49+1
+    adc _48+1
+    sta _49+1
     asl _1
     rol _1+1
     asl _1
@@ -360,6 +373,21 @@ startProcessing: {
     stx spritePtr
     lda freeIdx
     asl
+    sec
+    sbc #8
+    eor #$ff
+    clc
+    adc #1
+    sta _25
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta _25+1
+    lda freeIdx
+    asl
+    clc
+    adc freeIdx
     asl
     asl
     clc
@@ -373,6 +401,14 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
     lda spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
+    lda _25
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
+    lda _25+1
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
+    lda #<-$10
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
+    lda #>-$10
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
     lda freeIdx
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
     lda spritePtr
@@ -400,21 +436,21 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _9 = $2c
-    .label _10 = $2c
-    .label _11 = $2c
-    .label return_dist = $13
-    .label x = $e
-    .label dist = $13
-    .label screen_line = $b
-    .label y = $d
-    .label return_x = $11
-    .label return_y = $12
-    .label closest_dist = $f
-    .label closest_x = $11
-    .label closest_y = $12
-    .label _15 = $2e
-    .label _16 = $2c
+    .label _9 = $2f
+    .label _10 = $2f
+    .label _11 = $2f
+    .label return_dist = $14
+    .label x = $f
+    .label dist = $14
+    .label screen_line = $c
+    .label y = $e
+    .label return_x = $12
+    .label return_y = $13
+    .label closest_dist = $10
+    .label closest_x = $12
+    .label closest_y = $13
+    .label _15 = $31
+    .label _16 = $2f
     lda #0
     sta closest_y
     sta closest_x
@@ -582,7 +618,7 @@ setupRasterIrq: {
 }
 // Initialize sprites
 initSprites: {
-    .label sp = $15
+    .label sp = $16
     lda #<SPRITE_DATA
     sta sp
     lda #>SPRITE_DATA
@@ -620,10 +656,10 @@ initSprites: {
 }
 // initialize SQUARES table
 initSquareTables: {
-    .label _6 = $19
-    .label _14 = $19
-    .label x = $17
-    .label y = $18
+    .label _6 = $1a
+    .label _14 = $1a
+    .label x = $18
+    .label y = $19
     lda #0
     sta x
   b1:
@@ -689,9 +725,9 @@ initSquareTables: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $1b
-    .label res = $19
-    .label return = $19
+    .label mb = $1c
+    .label res = $1a
+    .label return = $1a
     lda #0
     sta res
     sta res+1
@@ -757,18 +793,20 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _17 = $35
-    .label processing = $30
-    .label bitmask = $32
-    .label i = $1d
-    .label xpos = $33
-    .label numActive = $1e
+    .label _17 = $38
+    .label processing = $33
+    .label bitmask = $35
+    .label i = $1e
+    .label xpos = $36
+    .label numActive = $1f
     lda #0
     sta numActive
     sta i
   b1:
     lda i
     asl
+    clc
+    adc i
     asl
     asl
     clc
@@ -897,23 +935,29 @@ processChars: {
     cmp #<YPOS_UPMOST
     bcc b6
   !:
-    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
+    sty $ff
+    clc
     lda (processing),y
-    sec
-    sbc #<$10
-    sta (processing),y
-    iny
-    lda (processing),y
-    sbc #>$10
-    sta (processing),y
     ldy #0
-    lda (processing),y
-    sec
-    sbc #<$10
+    adc (processing),y
     sta (processing),y
+    ldy $ff
     iny
     lda (processing),y
-    sbc #>$10
+    ldy #1
+    adc (processing),y
+    sta (processing),y
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
+    clc
+    lda (processing),y
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
+    adc (processing),y
+    sta (processing),y
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY+1
+    lda (processing),y
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y+1
+    adc (processing),y
     sta (processing),y
   b7:
     inc numActive
@@ -992,4 +1036,4 @@ irqTop: {
   // SQUARES_Y[i] = (i-12)*(i-12)
   SQUARES_Y: .fill 2*$19, 0
   // Sprites currently being processed in the interrupt
-  PROCESSING: .fill 9*NUM_PROCESSING, 0
+  PROCESSING: .fill $d*NUM_PROCESSING, 0

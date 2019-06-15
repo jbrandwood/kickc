@@ -166,33 +166,34 @@ main: {
     jmp b3
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($1f) center_x, byte zeropage($20) center_y)
+// startProcessing(byte zeropage($20) center_x, byte zeropage($21) center_y)
 startProcessing: {
-    .label _0 = $21
-    .label _1 = $21
-    .label _2 = $21
+    .label _0 = $22
+    .label _1 = $22
+    .label _2 = $22
     .label _4 = $a
     .label _5 = $a
     .label _7 = 8
     .label _8 = 8
-    .label _10 = $27
-    .label _11 = $27
-    .label _12 = $27
-    .label _14 = $29
-    .label _15 = $29
-    .label _16 = $29
-    .label center_x = $1f
-    .label center_y = $20
+    .label _10 = $28
+    .label _11 = $28
+    .label _12 = $28
+    .label _14 = $2a
+    .label _15 = $2a
+    .label _16 = $2a
+    .label _22 = $2d
+    .label center_x = $20
+    .label center_y = $21
     .label i = 7
-    .label screenPtr = $25
+    .label screenPtr = $26
     .label spriteData = $a
     .label chargenData = 8
-    .label spriteX = $27
-    .label spriteY = $29
-    .label spritePtr = $2b
+    .label spriteX = $28
+    .label spriteY = $2a
+    .label spritePtr = $2c
     .label freeIdx = 7
-    .label _42 = $23
-    .label _43 = $21
+    .label _44 = $24
+    .label _45 = $22
     ldx #$ff
   b1:
     lda #0
@@ -224,19 +225,19 @@ startProcessing: {
     sta _0+1
     lda _0
     asl
-    sta _42
+    sta _44
     lda _0+1
     rol
-    sta _42+1
-    asl _42
-    rol _42+1
-    lda _43
+    sta _44+1
+    asl _44
+    rol _44+1
+    lda _45
     clc
-    adc _42
-    sta _43
-    lda _43+1
-    adc _42+1
-    sta _43+1
+    adc _44
+    sta _45
+    lda _45+1
+    adc _44+1
+    sta _45+1
     asl _1
     rol _1+1
     asl _1
@@ -378,6 +379,13 @@ startProcessing: {
     stx spritePtr
     lda freeIdx
     asl
+    asl
+    asl
+    sta _22
+    lda #0
+    sta _22+1
+    lda freeIdx
+    asl
     clc
     adc freeIdx
     asl
@@ -393,9 +401,9 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
     lda spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
-    lda #$3c
+    lda _22
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    lda #0
+    lda _22+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
     lda #$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
@@ -428,9 +436,9 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _9 = $2c
-    .label _10 = $2c
-    .label _11 = $2c
+    .label _9 = $2f
+    .label _10 = $2f
+    .label _11 = $2f
     .label return_dist = $14
     .label x = $f
     .label dist = $14
@@ -441,8 +449,8 @@ getCharToProcess: {
     .label closest_dist = $10
     .label closest_x = $12
     .label closest_y = $13
-    .label _15 = $2e
-    .label _16 = $2c
+    .label _15 = $31
+    .label _16 = $2f
     lda #0
     sta closest_y
     sta closest_x
@@ -778,16 +786,16 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _14 = $35
-    .label _24 = $33
-    .label _28 = $38
-    .label _33 = $3a
-    .label processing = $30
-    .label bitmask = $32
+    .label _16 = $38
+    .label _26 = $36
+    .label processing = $33
+    .label bitmask = $35
     .label i = $1e
-    .label xpos = $33
-    .label ypos = $37
+    .label xpos = $36
+    .label ypos = $3a
+    .label numActive = $1f
     lda #0
+    sta numActive
     sta i
   b1:
     lda i
@@ -886,19 +894,19 @@ processChars: {
     sta SPRITES_XPOS,x
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
-    sta _14
+    sta _16
     iny
     lda (processing),y
-    sta _14+1
-    lsr _14+1
-    ror _14
-    lsr _14+1
-    ror _14
-    lsr _14+1
-    ror _14
-    lsr _14+1
-    ror _14
-    lda _14
+    sta _16+1
+    lsr _16+1
+    ror _16
+    lsr _16+1
+    ror _16
+    lsr _16+1
+    ror _16
+    lsr _16+1
+    ror _16
+    lda _16
     sta ypos
     sta SPRITES_YPOS,x
     // Move sprite
@@ -960,31 +968,25 @@ processChars: {
     jmp b6
   !b6:
   !:
-    lsr _24+1
-    ror _24
-    lsr _24+1
-    ror _24
-    lsr _24+1
-    ror _24
-    lda _24
+    lsr _26+1
+    ror _26
+    lsr _26+1
+    ror _26
+    lsr _26+1
+    ror _26
+    lda _26
     sec
     sbc #BORDER_XPOS_LEFT/8
     asl
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
     tax
-    lda (processing),y
     clc
+    lda (processing),y
     adc VXSIN,x
-    sta _28
+    sta (processing),y
     iny
     lda (processing),y
     adc VXSIN+1,x
-    sta _28+1
-    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
-    lda _28
-    sta (processing),y
-    iny
-    lda _28+1
     sta (processing),y
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
     sty $ff
@@ -1008,19 +1010,13 @@ processChars: {
     asl
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
     tax
-    lda (processing),y
     clc
+    lda (processing),y
     adc VYSIN,x
-    sta _33
+    sta (processing),y
     iny
     lda (processing),y
     adc VYSIN+1,x
-    sta _33+1
-    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
-    lda _33
-    sta (processing),y
-    iny
-    lda _33+1
     sta (processing),y
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
     clc
@@ -1033,6 +1029,8 @@ processChars: {
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y+1
     adc (processing),y
     sta (processing),y
+  b7:
+    inc numActive
   b2:
     inc i
     lda #NUM_PROCESSING-1+1
@@ -1040,6 +1038,9 @@ processChars: {
     beq !b1+
     jmp b1
   !b1:
+    lax numActive
+    axs #-['0']
+    stx SCREEN+$3e7
     rts
   b6:
     // Set status to FREE
@@ -1051,7 +1052,7 @@ processChars: {
     // Disable the sprite
     and SPRITES_ENABLE
     sta SPRITES_ENABLE
-    jmp b2
+    jmp b7
   b4:
     lda SPRITES_XMSB
     ora bitmask

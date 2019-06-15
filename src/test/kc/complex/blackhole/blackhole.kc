@@ -139,7 +139,7 @@ void startProcessing(struct ProcessingChar center) {
     word spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4;
     byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
     // Put the sprite into the PROCESSING array
-    PROCESSING[spriteIdx] = { spriteX, spriteY, 60, 60, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
+    PROCESSING[spriteIdx] = { spriteX, spriteY, (word)(spriteIdx*8), 60, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
 }
 
 const word XPOS_LEFTMOST = (word)(BORDER_XPOS_LEFT-8)<<4;
@@ -194,16 +194,16 @@ void processChars() {
                 *SPRITES_ENABLE &= 0xff ^ bitmask;
             } else {
                 byte xchar = (byte)(xpos/8) - BORDER_XPOS_LEFT/8;
-                processing->vx = processing->vx + VXSIN[xchar];
+                processing->vx += VXSIN[xchar];
                 processing->x += processing->vx;
                 byte ychar = (byte)(ypos/8) - BORDER_YPOS_TOP/8;
-                processing->vy = processing->vy + VYSIN[ychar];
+                processing->vy += VYSIN[ychar];
                 processing->y += processing->vy;
             }
             numActive++;
         }
     }
-    //*(SCREEN+999) = '0'+numActive;
+    *(SCREEN+999) = '0'+numActive;
 }
 
 // SQUARES_X[i] = (i-20)*(i-20)

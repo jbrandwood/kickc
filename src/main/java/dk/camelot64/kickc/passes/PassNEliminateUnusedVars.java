@@ -6,8 +6,8 @@ import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.VariableRef;
 
@@ -41,9 +41,27 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                LValue lValue = assignment.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(variable==null || !variable.isDeclaredVolatile()) {
+                  boolean eliminate = false;
+                  if(variable == null) {
+                     // Already deleted
+                     eliminate = true;
+                  } else if(!variable.isDeclaredVolatile()) {
+                     // Not volatile
+                     eliminate = true;
+                  } else if(variable.isDeclaredVolatile() && variable.getType() instanceof SymbolTypeStruct) {
+                     // If an unwound volatile struct - eliminate it
+                     if(variable.getRef().isVersion()) {
+                        String fullNameUnversioned = variable.getRef().getFullNameUnversioned();
+                        VariableRef unversionedRef = new VariableRef(fullNameUnversioned);
+                        Pass1UnwindStructValues.StructUnwinding.VariableUnwinding variableUnwinding = getProgram().getStructUnwinding().getVariableUnwinding(unversionedRef);
+                        if(variableUnwinding != null) {
+                           eliminate = true;
+                        }
+                     }
+                  }
+                  if(eliminate) {
                      if(!pass2 && isReturnValue(variable)) {
-                        // Do not eliminate reutn variables in pass 1
+                        // Do not eliminate return variables in pass 1
                         continue;
                      }
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
@@ -124,11 +142,12 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
 
    /**
     * Determines if a variable is the return value for a procedure
+    *
     * @param variable The variable
     * @return true if this is the return variable for a function
     */
    private boolean isReturnValue(Variable variable) {
-      if(variable==null) return false;
+      if(variable == null) return false;
       return variable.getScope() instanceof Procedure && variable.getLocalName().equals("return");
    }
 

@@ -770,6 +770,28 @@ public interface ProgramValue {
 
    }
 
+   class ProgramValueStructUnwoundPlaceholderMember implements ProgramValue {
+      private StructUnwoundPlaceholder placeholder;
+      private int idx;
+
+      public ProgramValueStructUnwoundPlaceholderMember(StructUnwoundPlaceholder placeholder, int idx) {
+         this.placeholder = placeholder;
+         this.idx = idx;
+      }
+
+      @Override
+      public Value get() {
+         return placeholder.getUnwoundMembers().get(idx);
+      }
+
+      @Override
+      public void set(Value value) {
+         placeholder.getUnwoundMembers().set(idx, (RValue) value);
+      }
+
+   }
+
+
    /**
     * Pointer index inside a indexed pointer dererence value.
     */

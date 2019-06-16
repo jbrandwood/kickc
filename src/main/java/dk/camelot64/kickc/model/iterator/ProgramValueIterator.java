@@ -188,6 +188,11 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValuePointer((PointerDereference) value));
       } else if(value instanceof StructMemberRef) {
          subValues.add(new ProgramValue.ProgramValueStruct((StructMemberRef) value));
+      } else if(value instanceof StructUnwoundPlaceholder) {
+         int size = ((StructUnwoundPlaceholder) value).getUnwoundMembers().size();
+         for(int i = 0; i < size; i++) {
+            subValues.add(new ProgramValue.ProgramValueStructUnwoundPlaceholderMember((StructUnwoundPlaceholder) value, i));
+         }
       } else if(value instanceof ValueList) {
          ValueList valueList = (ValueList) value;
          int size = valueList.getList().size();
@@ -226,7 +231,6 @@ public class ProgramValueIterator {
             value instanceof ConstantLiteral ||
             value instanceof ConstantRef ||
             value instanceof StructZero ||
-            value instanceof StructUnwoundPlaceholder ||
             value instanceof LabelRef
             ) {
          // No sub values

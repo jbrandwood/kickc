@@ -274,6 +274,7 @@ public class Compiler {
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new PassNAddBooleanCasts(program));
       optimizations.add(new PassNStructPointerRewriting(program));
+      optimizations.add(new PassNStructAddressOfRewriting(program));
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
       optimizations.add(new Pass2ConstantIdentification(program));
@@ -387,7 +388,6 @@ public class Compiler {
    }
 
    private void pass3Analysis() {
-      new PassNEliminateStructUnwoundPlaceholder(program).step();
       new Pass3AssertNoTypeId(program).check();
       new Pass3AssertRValues(program).check();
       new Pass3AssertNoNumbers(program).check();

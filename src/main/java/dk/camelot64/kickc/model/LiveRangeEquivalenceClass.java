@@ -49,10 +49,12 @@ public class LiveRangeEquivalenceClass {
       }
       LiveRangeVariables liveRanges = set.getProgram().getLiveRangeVariables();
       LiveRange varLiveRange = liveRanges.getLiveRange(variable);
-      if(liveRange.overlaps(varLiveRange)) {
-         throw new RuntimeException("Compilation error! Variable live range overlaps live range equivalence class live range. " + variable);
+      if(varLiveRange!=null) {
+         if(liveRange.overlaps(varLiveRange)) {
+            throw new RuntimeException("Compilation error! Variable live range overlaps live range equivalence class live range. " + variable);
+         }
+         liveRange.add(varLiveRange);
       }
-      liveRange.add(varLiveRange);
       variables.add(variable);
       set.setVarClass(variable, this);
    }

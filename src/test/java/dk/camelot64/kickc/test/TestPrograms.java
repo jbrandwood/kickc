@@ -75,15 +75,13 @@ public class TestPrograms {
 
    @Test
    public void testStructPtr12Ref() throws IOException, URISyntaxException {
-      compileAndCompare("struct-ptr-12-ref", log());
+      compileAndCompare("struct-ptr-12-ref");
    }
 
-   /*
    @Test
    public void testStructPtr12() throws IOException, URISyntaxException {
-      compileAndCompare("struct-ptr-12", log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+      compileAndCompare("struct-ptr-12");
    }
-   */
 
    @Test
    public void testStructPtr11() throws IOException, URISyntaxException {

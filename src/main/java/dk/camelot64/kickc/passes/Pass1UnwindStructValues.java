@@ -276,9 +276,11 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
       if(assignment.getOperator() == null && assignment.getrValue2() instanceof StructZero && assignment.getlValue() instanceof VariableRef) {
          // Zero-initializing a struct - unwind to assigning zero to each member!
+         List<RValue> membersUnwound = new ArrayList<>();
          stmtIt.previous();
          for(String memberName : memberUnwinding.getMemberNames()) {
             VariableRef memberVarRef = (VariableRef) memberUnwinding.getMemberUnwinding(memberName);
+            membersUnwound.add(memberVarRef);
             Variable memberVar = getScope().getVariable(memberVarRef);
             Statement initStmt = Pass0GenerateStatementSequence.createDefaultInitializationStatement(memberVarRef, memberVar.getType(), assignment.getSource(), Comment.NO_COMMENTS);
             stmtIt.add(initStmt);
@@ -286,7 +288,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          }
          stmtIt.next();
          if(assignment.getlValue() instanceof VariableRef) {
-            assignment.setrValue2(new StructUnwoundPlaceholder(structType));
+            assignment.setrValue2(new StructUnwoundPlaceholder(structType, membersUnwound));
          } else {
             stmtIt.remove();
          }
@@ -298,16 +300,18 @@ public class Pass1UnwindStructValues extends Pass1Base {
             throw new CompileError("Struct initialization list has wrong size. Need  " + memberUnwinding.getMemberNames().size() + " got " + valueList.getList().size(), assignment);
          }
          stmtIt.previous();
+         List<RValue> membersUnwound = new ArrayList<>();
          int idx = 0;
          for(String memberName : memberUnwinding.getMemberNames()) {
             LValue memberLvalue = memberUnwinding.getMemberUnwinding(memberName);
+            membersUnwound.add(memberLvalue);
             Statement initStmt = new StatementAssignment(memberLvalue, valueList.getList().get(idx++), assignment.getSource(), Comment.NO_COMMENTS);
             stmtIt.add(initStmt);
             getLog().append("Adding struct value list initializer " + initStmt.toString(getProgram(), false));
          }
          stmtIt.next();
          if(assignment.getlValue() instanceof VariableRef) {
-            assignment.setrValue2(new StructUnwoundPlaceholder(structType));
+            assignment.setrValue2(new StructUnwoundPlaceholder(structType, membersUnwound));
          } else {
             stmtIt.remove();
          }
@@ -320,17 +324,19 @@ public class Pass1UnwindStructValues extends Pass1Base {
             // Copying a struct - unwind to assigning each member!
             StructMemberUnwinding sourceMemberUnwinding = getStructMemberUnwinding((LValue) assignment.getrValue2(), structType, structUnwinding, assignment, stmtIt, currentBlock);
             if(sourceMemberUnwinding != null) {
+               List<RValue> membersUnwound = new ArrayList<>();
                stmtIt.previous();
                for(String memberName : memberUnwinding.getMemberNames()) {
                   LValue assignedMemberVarRef = memberUnwinding.getMemberUnwinding(memberName);
                   LValue sourceMemberVarRef = sourceMemberUnwinding.getMemberUnwinding(memberName);
+                  membersUnwound.add(assignedMemberVarRef);
                   Statement copyStmt = new StatementAssignment(assignedMemberVarRef, sourceMemberVarRef, assignment.getSource(), Comment.NO_COMMENTS);
                   stmtIt.add(copyStmt);
                   getLog().append("Adding struct value member variable copy " + copyStmt.toString(getProgram(), false));
                }
                stmtIt.next();
                if(assignment.getlValue() instanceof VariableRef) {
-                  assignment.setrValue2(new StructUnwoundPlaceholder(structType));
+                  assignment.setrValue2(new StructUnwoundPlaceholder(structType, membersUnwound));
                } else {
                   stmtIt.remove();
                }

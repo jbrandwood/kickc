@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -80,11 +81,18 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          }
 
          if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType)) {
-               throw new CompileError(
-                     "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
-                           "\n value: (" + valueType.toString() + ") " + constVal.calculateLiteral(getScope()) +
-                           "\n value definition: " + constVal.toString(getProgram())
-               );
+            ConstantLiteral constantLiteral = null;
+            try {
+               constantLiteral = constVal.calculateLiteral(getScope());
+            } catch(ConstantNotLiteral e) {
+               // ignore
+            }
+            String literalStr = (constantLiteral == null) ? "null" : constantLiteral.toString(getProgram());
+            throw new CompileError(
+                  "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
+                        "\n value: (" + valueType.toString() + ") " + literalStr +
+                        "\n value definition: " + constVal.toString(getProgram())
+            );
          }
 
          ConstantVar constantVar = new ConstantVar(
@@ -197,7 +205,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             // Volatile variables cannot be constant
             return;
          }
-         if(assignment.getrValue1()==null && assignment.getOperator()==null && assignment.getrValue2() instanceof ConstantValue) {
+         if(assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof ConstantValue) {
             constants.put(variable, new ConstantVariableValue(variable, (ConstantValue) assignment.getrValue2(), assignment));
          }
       }
@@ -324,7 +332,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       // If the symbol is part of an unwound struct - look at the struct itself
       Pass1UnwindStructValues.StructUnwinding structUnwinding = program.getStructUnwinding();
       VariableRef structVarRef = structUnwinding.getContainingStructVariable(symbolRef);
-      if(structVarRef!=null) {
+      if(structVarRef != null) {
          return isAddressOfUsed(structVarRef, program);
       }
 

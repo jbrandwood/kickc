@@ -5,6 +5,8 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -40,6 +42,10 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
                   if(variable==null || !variable.isDeclaredVolatile()) {
+                     if(!pass2 && isReturnValue(variable)) {
+                        // Do not eliminate reutn variables in pass 1
+                        continue;
+                     }
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable " + lValue.toString(getProgram()) + " and assignment " + assignment.toString(getProgram(), false));
                      }
@@ -114,6 +120,16 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       getProgram().setVariableReferenceInfos(null);
       new PassNStatementIndices(getProgram()).clearStatementIndices();
       return modified;
+   }
+
+   /**
+    * Determines if a variable is the return value for a procedure
+    * @param variable The variable
+    * @return true if this is the return variable for a function
+    */
+   private boolean isReturnValue(Variable variable) {
+      if(variable==null) return false;
+      return variable.getScope() instanceof Procedure && variable.getLocalName().equals("return");
    }
 
 

@@ -60,7 +60,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                StatementAssignment assignment = (StatementAssignment) statement;
                SymbolType lValueType = SymbolTypeInference.inferType(getScope(), assignment.getlValue());
                if(lValueType instanceof SymbolTypeStruct) {
-                  modified |= unwindAssignment(assignment, (SymbolTypeStruct)lValueType, stmtIt, block, structUnwinding);
+                  modified |= unwindAssignment(assignment, (SymbolTypeStruct) lValueType, stmtIt, block, structUnwinding);
                }
             } else if(statement instanceof StatementCall) {
                modified |= unwindCall((StatementCall) statement, structUnwinding);
@@ -230,27 +230,27 @@ public class Pass1UnwindStructValues extends Pass1Base {
       for(Variable variable : getScope().getAllVariables(true)) {
          if(variable.getType() instanceof SymbolTypeStruct) {
             if(structUnwinding.getVariableUnwinding(variable.getRef()) == null) {
-                  // A non-volatile struct variable
-                  Scope scope = variable.getScope();
-                  if(!(scope instanceof StructDefinition)) {
-                     // Not inside another struct
-                     StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
-                     StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
-                     for(Variable member : structDefinition.getAllVariables(false)) {
-                        Variable memberVariable;
-                        if(variable.getRef().isIntermediate()) {
-                           memberVariable = scope.add(new VariableIntermediate(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType()));
-                        } else {
-                           memberVariable = scope.addVariable(variable.getLocalName() + "_" + member.getLocalName(), member.getType());
-                        }
-                        memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
-                        memberVariable.setDeclaredConstant(variable.isDeclaredConstant());
-                        variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
-                        getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
+               // A non-volatile struct variable
+               Scope scope = variable.getScope();
+               if(!(scope instanceof StructDefinition)) {
+                  // Not inside another struct
+                  StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
+                  StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
+                  for(Variable member : structDefinition.getAllVariables(false)) {
+                     Variable memberVariable;
+                     if(variable.getRef().isIntermediate()) {
+                        memberVariable = scope.add(new VariableIntermediate(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType()));
+                     } else {
+                        memberVariable = scope.addVariable(variable.getLocalName() + "_" + member.getLocalName(), member.getType());
                      }
-                     getLog().append("Converted struct value to member variables " + variable.toString(getProgram()));
-                     modified = true;
+                     memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
+                     memberVariable.setDeclaredConstant(variable.isDeclaredConstant());
+                     variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
+                     getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
                   }
+                  getLog().append("Converted struct value to member variables " + variable.toString(getProgram()));
+                  modified = true;
+               }
             }
          }
       }
@@ -261,7 +261,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * Unwind an assignment to a struct value variable into assignment of each member
     *
     * @param assignment The assignment statement
-    * @param structType  The struct type being unwound
+    * @param structType The struct type being unwound
     * @param stmtIt The statement iterator used for adding/removing statements
     * @param currentBlock The current code block
     * @param structUnwinding Information about unwound struct value variables
@@ -270,23 +270,27 @@ public class Pass1UnwindStructValues extends Pass1Base {
       boolean modified = false;
 
       StructMemberUnwinding memberUnwinding = getStructMemberUnwinding(assignment.getlValue(), structType, structUnwinding, assignment, stmtIt, currentBlock);
-      if(memberUnwinding==null) {
+      if(memberUnwinding == null) {
          throw new CompileError("Cannot unwind struct assignment " + assignment.toString(getProgram(), false), assignment);
       }
 
       if(assignment.getOperator() == null && assignment.getrValue2() instanceof StructZero && assignment.getlValue() instanceof VariableRef) {
          // Zero-initializing a struct - unwind to assigning zero to each member!
-            stmtIt.previous();
-            for(String memberName : memberUnwinding.getMemberNames()) {
-               VariableRef memberVarRef = (VariableRef) memberUnwinding.getMemberUnwinding(memberName);
-               Variable memberVar = getScope().getVariable(memberVarRef);
-               Statement initStmt = Pass0GenerateStatementSequence.createDefaultInitializationStatement(memberVarRef, memberVar.getType(), assignment.getSource(), Comment.NO_COMMENTS);
-               stmtIt.add(initStmt);
-               getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
-            }
-            stmtIt.next();
+         stmtIt.previous();
+         for(String memberName : memberUnwinding.getMemberNames()) {
+            VariableRef memberVarRef = (VariableRef) memberUnwinding.getMemberUnwinding(memberName);
+            Variable memberVar = getScope().getVariable(memberVarRef);
+            Statement initStmt = Pass0GenerateStatementSequence.createDefaultInitializationStatement(memberVarRef, memberVar.getType(), assignment.getSource(), Comment.NO_COMMENTS);
+            stmtIt.add(initStmt);
+            getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
+         }
+         stmtIt.next();
+         if(assignment.getlValue() instanceof VariableRef) {
+            assignment.setrValue2(new StructUnwoundPlaceholder(structType));
+         } else {
             stmtIt.remove();
-            modified = true;
+         }
+         modified = true;
       } else if(assignment.getOperator() == null && assignment.getrValue2() instanceof ValueList) {
          // Initializing struct with a value list - unwind to assigning each member with a value from the list
          ValueList valueList = (ValueList) assignment.getrValue2();
@@ -302,9 +306,15 @@ public class Pass1UnwindStructValues extends Pass1Base {
             getLog().append("Adding struct value list initializer " + initStmt.toString(getProgram(), false));
          }
          stmtIt.next();
-         stmtIt.remove();
+         if(assignment.getlValue() instanceof VariableRef) {
+            assignment.setrValue2(new StructUnwoundPlaceholder(structType));
+         } else {
+            stmtIt.remove();
+         }
          modified = true;
       } else if(assignment.getOperator() == null) {
+         if(assignment.getrValue2() instanceof StructUnwoundPlaceholder)
+            return false;
          SymbolType sourceType = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
          if(sourceType.equals(structType)) {
             // Copying a struct - unwind to assigning each member!
@@ -319,7 +329,11 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   getLog().append("Adding struct value member variable copy " + copyStmt.toString(getProgram(), false));
                }
                stmtIt.next();
-               stmtIt.remove();
+               if(assignment.getlValue() instanceof VariableRef) {
+                  assignment.setrValue2(new StructUnwoundPlaceholder(structType));
+               } else {
+                  stmtIt.remove();
+               }
                modified = true;
             }
          } else {
@@ -339,7 +353,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       } else if(lValue instanceof PointerDereferenceIndexed) {
          return new StructMemberUnwindingPointerDerefIndexed((PointerDereferenceIndexed) lValue, lValueType.getStructDefinition(getScope()), stmtIt, currentBlock, currentStmt);
       } else {
-         throw new InternalError("Struct unwinding not implemented for "+lValue.toString(getProgram()));
+         throw new InternalError("Struct unwinding not implemented for " + lValue.toString(getProgram()));
       }
    }
 

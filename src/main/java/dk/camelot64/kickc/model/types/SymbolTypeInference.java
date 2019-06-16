@@ -115,6 +115,8 @@ public class SymbolTypeInference {
          }
       } else if(rValue instanceof StructZero) {
          return ((StructZero)rValue).getTypeStruct();
+      } else if(rValue instanceof StructUnwoundPlaceholder) {
+         return ((StructUnwoundPlaceholder) rValue).getTypeStruct();
       }
       if(type == null) {
          throw new RuntimeException("Cannot infer type for " + rValue.toString());

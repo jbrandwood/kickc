@@ -387,6 +387,7 @@ public class Compiler {
    }
 
    private void pass3Analysis() {
+      new PassNEliminateStructUnwoundPlaceholder(program).step();
       new Pass3AssertNoTypeId(program).check();
       new Pass3AssertRValues(program).check();
       new Pass3AssertNoNumbers(program).check();

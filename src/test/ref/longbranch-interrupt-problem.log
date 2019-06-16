@@ -153,8 +153,6 @@ Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [7] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Rewriting conditional comparison [11] if((byte) col#12<=(byte) $a) goto main::@1
-Eliminating unused variable - keeping the phi block (byte) col#10
-Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $a+1 in if((byte) col#12<(byte) $a+(number) 1) goto main::@1
@@ -167,17 +165,21 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting irq::@3(between irq and irq::@return)
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
 
-Created 1 initial phi equivalence classes
+Created 2 initial phi equivalence classes
 Coalesced [6] col#15 ← col#0
 Coalesced [10] col#16 ← col#1
+Coalesced [15] col#18 ← col#3
+Coalesced [18] col#17 ← col#0
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @3
+Culled Empty Block (label) irq::@3
 Renumbering block @2 to @1
 Renumbering block main::@7 to main::@3
 Renumbering block irq::@2 to irq::@1
@@ -215,7 +217,8 @@ irq::@1: scope:[irq]  from irq
   [11] (byte) col#3 ← ++ (byte) col#0
   to:irq::@return
 irq::@return: scope:[irq]  from irq irq::@1
-  [12] return 
+  [12] (byte) col#10 ← phi( irq/(byte) col#0 irq::@1/(byte) col#3 )
+  [13] return 
   to:@return
 
 
@@ -223,19 +226,19 @@ VARIABLE REGISTER WEIGHTS
 (byte*) BGCOL
 (void()**) KERNEL_IRQ
 (byte) col
-(byte) col#0 1.6666666666666665
+(byte) col#0 1.9999999999999998
 (byte) col#1 22.0
+(byte) col#10 40.0
 (byte) col#12 114.0
-(byte) col#3 20.0
+(byte) col#3 4.0
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 
 Initial phi equivalence classes
-[ col#12 col#0 col#1 ]
-Coalescing volatile variable equivalence classes [ col#12 col#0 col#1 ] and [ col#3 ]
+[ col#10 col#12 col#0 col#1 col#3 ]
 Complete equivalence classes
-[ col#12 col#0 col#1 col#3 ]
-Allocated zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ]
+[ col#10 col#12 col#0 col#1 col#3 ]
+Allocated zp ZP_BYTE:2 [ col#10 col#12 col#0 col#1 col#3 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -308,16 +311,20 @@ irq: {
   //SEG24 [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda col
     cmp #0
-    beq breturn
+    beq breturn_from_irq
     jmp b1
   //SEG25 irq::@1
   b1:
   //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
+  //SEG27 [12] phi from irq irq::@1 to irq::@return [phi:irq/irq::@1->irq::@return]
+  breturn_from_irq:
+  breturn_from_b1:
+  //SEG28 [12] phi (byte) col#10 = (byte) col#0 [phi:irq/irq::@1->irq::@return#0] -- register_copy 
     jmp breturn
-  //SEG27 irq::@return
+  //SEG29 irq::@return
   breturn:
-  //SEG28 [12] return  - exit interrupt(KERNEL_MIN)
+  //SEG30 [13] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -329,18 +336,18 @@ Statement [7] (byte) col#1 ← (byte) 0 [ col#1 ] ( main:2 [ col#1 ] ) always cl
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 Statement [9] *((const byte*) BGCOL#0) ← (byte) col#0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
 Statement [10] if((byte) col#0==(byte) 0) goto irq::@return [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ] : zp ZP_BYTE:2 , 
+Potential registers zp ZP_BYTE:2 [ col#10 col#12 col#0 col#1 col#3 ] : zp ZP_BYTE:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 157.67: zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ] 
+Uplift Scope [] 182: zp ZP_BYTE:2 [ col#10 col#12 col#0 col#1 col#3 ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
 
-Uplifting [] best 1821 combination zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ] 
+Uplifting [] best 1821 combination zp ZP_BYTE:2 [ col#10 col#12 col#0 col#1 col#3 ] 
 Uplifting [main] best 1821 combination 
 Uplifting [irq] best 1821 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ]
-Uplifting [] best 1821 combination zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ col#10 col#12 col#0 col#1 col#3 ]
+Uplifting [] best 1821 combination zp ZP_BYTE:2 [ col#10 col#12 col#0 col#1 col#3 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -413,16 +420,20 @@ irq: {
   //SEG24 [10] if((byte) col#0==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda col
     cmp #0
-    beq breturn
+    beq breturn_from_irq
     jmp b1
   //SEG25 irq::@1
   b1:
   //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
+  //SEG27 [12] phi from irq irq::@1 to irq::@return [phi:irq/irq::@1->irq::@return]
+  breturn_from_irq:
+  breturn_from_b1:
+  //SEG28 [12] phi (byte) col#10 = (byte) col#0 [phi:irq/irq::@1->irq::@return#0] -- register_copy 
     jmp breturn
-  //SEG27 irq::@return
+  //SEG29 irq::@return
   breturn:
-  //SEG28 [12] return  - exit interrupt(KERNEL_MIN)
+  //SEG30 [13] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -437,11 +448,14 @@ Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1 with b2
 Replacing label b1_from_b2 with b2
+Replacing label breturn_from_irq with breturn
 Removing instruction b1_from_bbegin:
 Removing instruction bend_from_b1:
 Removing instruction b1_from_main:
 Removing instruction b1_from_b2:
 Removing instruction b1:
+Removing instruction breturn_from_irq:
+Removing instruction breturn_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b1:
 Removing instruction bend:
@@ -472,10 +486,11 @@ FINAL SYMBOL TABLE
 (void()**) KERNEL_IRQ
 (const void()**) KERNEL_IRQ#0 KERNEL_IRQ = (void()**) 788
 (byte) col
-(byte) col#0 col zp ZP_BYTE:2 1.6666666666666665
+(byte) col#0 col zp ZP_BYTE:2 1.9999999999999998
 (byte) col#1 col zp ZP_BYTE:2 22.0
+(byte) col#10 col zp ZP_BYTE:2 40.0
 (byte) col#12 col zp ZP_BYTE:2 114.0
-(byte) col#3 col zp ZP_BYTE:2 20.0
+(byte) col#3 col zp ZP_BYTE:2 4.0
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@1
 (label) irq::@return
@@ -484,7 +499,7 @@ interrupt(KERNEL_MIN)(void()) irq()
 (label) main::@2
 (label) main::@3
 
-zp ZP_BYTE:2 [ col#12 col#0 col#1 col#3 ]
+zp ZP_BYTE:2 [ col#10 col#12 col#0 col#1 col#3 ]
 
 
 FINAL ASSEMBLER
@@ -552,8 +567,10 @@ irq: {
   //SEG25 irq::@1
   //SEG26 [11] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
     inc col
-  //SEG27 irq::@return
-  //SEG28 [12] return  - exit interrupt(KERNEL_MIN)
+  //SEG27 [12] phi from irq irq::@1 to irq::@return [phi:irq/irq::@1->irq::@return]
+  //SEG28 [12] phi (byte) col#10 = (byte) col#0 [phi:irq/irq::@1->irq::@return#0] -- register_copy 
+  //SEG29 irq::@return
+  //SEG30 [13] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 

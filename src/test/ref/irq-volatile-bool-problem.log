@@ -214,9 +214,6 @@ Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [19] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Rewriting conditional comparison [34] if(*((const byte*) RASTER#0)<=(byte) $32) goto irq::@1
-Eliminating unused variable - keeping the phi block (bool) framedone#1
-Eliminating unused variable - keeping the phi block (bool) framedone#10
-Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $32+1 in if(*((const byte*) RASTER#0)<(byte) $32+(number) 1) goto irq::@1
@@ -229,20 +226,23 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting irq::@3(between irq and irq::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main::@1
 CALL GRAPH
 Calls in [] to main:3 
 
-Created 0 initial phi equivalence classes
-Coalesced down to 0 phi equivalence classes
+Created 2 initial phi equivalence classes
+Coalesced [13] framedone#15 ← framedone#11
+Coalesced [17] framedone#16 ← framedone#0
+Coalesced [22] framedone#18 ← framedone#3
+Coalesced [26] framedone#17 ← framedone#11
+Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @3
-Culled Empty Block (label) main::@1
-Renumbering block main::@2 to main::@1
-Renumbering block main::@7 to main::@2
+Culled Empty Block (label) irq::@3
+Renumbering block main::@7 to main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -269,25 +269,29 @@ main: scope:[main]  from @2
   [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq()
   asm { cli  }
   to:main::@1
-main::@1: scope:[main]  from main main::@1 main::@2
-  [12] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1
+main::@1: scope:[main]  from main main::@2 main::@3
+  [12] (bool) framedone#1 ← phi( main/(bool) framedone#11 main::@3/(bool) framedone#0 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [13] (bool) framedone#0 ← true
+  [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [14] (bool) framedone#0 ← true
   to:main::@1
 irq: scope:[irq]  from
-  [14] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
-  [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
-  [16] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1
+  [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0)
+  [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0
+  [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1
   to:irq::@2
 irq::@2: scope:[irq]  from irq
-  [17] (bool) framedone#3 ← false
+  [18] (bool) framedone#3 ← false
   to:irq::@1
 irq::@1: scope:[irq]  from irq irq::@2
-  [18] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
+  [19] (bool) framedone#10 ← phi( irq/(bool) framedone#11 irq::@2/(bool) framedone#3 )
+  [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@1
-  [19] return 
+  [21] return 
   to:@return
 
 
@@ -302,18 +306,19 @@ VARIABLE REGISTER WEIGHTS
 (byte*) RASTER
 (byte*) VIC_CONTROL
 (bool) framedone
-(bool) framedone#0 110.0
-(bool) framedone#11 20.0
-(bool) framedone#3 20.0
+(bool) framedone#0 22.0
+(bool) framedone#1 130.0
+(bool) framedone#10 40.0
+(bool) framedone#11 0.5
+(bool) framedone#3 4.0
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 
 Initial phi equivalence classes
-Coalescing volatile variable equivalence classes [ framedone#0 ] and [ framedone#3 ]
-Coalescing volatile variable equivalence classes [ framedone#0 framedone#3 ] and [ framedone#11 ]
+[ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
 Complete equivalence classes
-[ framedone#0 framedone#3 framedone#11 ]
-Allocated zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ]
+[ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
+Allocated zp ZP_BOOL:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -382,73 +387,87 @@ main: {
     sta KERNEL_IRQ+1
   //SEG18 asm { cli  }
     cli
+  //SEG19 [12] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  b1_from_main:
+  b1_from_b3:
+  //SEG20 [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG19 main::@1
+  //SEG21 [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    jmp b1
+  //SEG22 main::@1
   b1:
-  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    jmp b2
+  //SEG23 main::@2
+  b2:
+  //SEG24 [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
-    bcs b1
-    jmp b2
-  //SEG21 main::@2
-  b2:
-  //SEG22 [13] (bool) framedone#0 ← true -- vboz1=vboc1 
+    bcs b1_from_b2
+    jmp b3
+  //SEG25 main::@3
+  b3:
+  //SEG26 [14] (bool) framedone#0 ← true -- vboz1=vboc1 
     lda #1
     sta framedone
-    jmp b1
+    jmp b1_from_b3
 }
-//SEG23 irq
+//SEG27 irq
 irq: {
-  //SEG24 entry interrupt(KERNEL_MIN)
-  //SEG25 [14] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG28 entry interrupt(KERNEL_MIN)
+  //SEG29 [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG26 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG30 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG27 [16] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+  //SEG31 [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$32+1
-    bcc b1
+    bcc b1_from_irq
     jmp b2
-  //SEG28 irq::@2
+  //SEG32 irq::@2
   b2:
-  //SEG29 [17] (bool) framedone#3 ← false -- vboz1=vboc1 
+  //SEG33 [18] (bool) framedone#3 ← false -- vboz1=vboc1 
     lda #0
     sta framedone
+  //SEG34 [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+  b1_from_irq:
+  b1_from_b2:
+  //SEG35 [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp b1
-  //SEG30 irq::@1
+  //SEG36 irq::@1
   b1:
-  //SEG31 [18] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+  //SEG37 [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp breturn
-  //SEG32 irq::@return
+  //SEG38 irq::@return
   breturn:
-  //SEG33 [19] return  - exit interrupt(KERNEL_MIN)
+  //SEG39 [21] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (bool) framedone#11 ← false [ ] ( ) always clobbers reg byte a 
-Statement [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) RASTER#0) ← (byte) $fd [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [12] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [13] (bool) framedone#0 ← true [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [16] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [17] (bool) framedone#3 ← false [ ] (  [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ] : zp ZP_BOOL:2 , 
+Statement [1] (bool) framedone#11 ← false [ framedone#11 ] ( ) always clobbers reg byte a 
+Statement [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) RASTER#0) ← (byte) $fd [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) IRQ_ENABLE#0) ← (const byte) IRQ_RASTER#0 [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
+Statement [10] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) irq() [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
+Statement [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [14] (bool) framedone#0 ← true [ framedone#0 ] ( main:3 [ framedone#0 ] ) always clobbers reg byte a 
+Statement [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ framedone#11 ] (  [ framedone#11 ] ) always clobbers reg byte a 
+Statement [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 [ framedone#11 ] (  [ framedone#11 ] ) always clobbers reg byte a 
+Statement [18] (bool) framedone#3 ← false [ framedone#3 ] (  [ framedone#3 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BOOL:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ] : zp ZP_BOOL:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 150: zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ] 
+Uplift Scope [] 196.5: zp ZP_BOOL:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
 
-Uplifting [] best 1367 combination zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ] 
-Uplifting [main] best 1367 combination 
-Uplifting [irq] best 1367 combination 
+Uplifting [] best 1994 combination zp ZP_BOOL:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ] 
+Uplifting [main] best 1994 combination 
+Uplifting [irq] best 1994 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -517,48 +536,62 @@ main: {
     sta KERNEL_IRQ+1
   //SEG18 asm { cli  }
     cli
+  //SEG19 [12] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  b1_from_main:
+  b1_from_b3:
+  //SEG20 [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@3->main::@1#0] -- register_copy 
     jmp b1
-  //SEG19 main::@1
+  //SEG21 [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  b1_from_b2:
+    jmp b1
+  //SEG22 main::@1
   b1:
-  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    jmp b2
+  //SEG23 main::@2
+  b2:
+  //SEG24 [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
-    bcs b1
-    jmp b2
-  //SEG21 main::@2
-  b2:
-  //SEG22 [13] (bool) framedone#0 ← true -- vboz1=vboc1 
+    bcs b1_from_b2
+    jmp b3
+  //SEG25 main::@3
+  b3:
+  //SEG26 [14] (bool) framedone#0 ← true -- vboz1=vboc1 
     lda #1
     sta framedone
-    jmp b1
+    jmp b1_from_b3
 }
-//SEG23 irq
+//SEG27 irq
 irq: {
-  //SEG24 entry interrupt(KERNEL_MIN)
-  //SEG25 [14] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG28 entry interrupt(KERNEL_MIN)
+  //SEG29 [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG26 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG30 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG27 [16] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+  //SEG31 [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$32+1
-    bcc b1
+    bcc b1_from_irq
     jmp b2
-  //SEG28 irq::@2
+  //SEG32 irq::@2
   b2:
-  //SEG29 [17] (bool) framedone#3 ← false -- vboz1=vboc1 
+  //SEG33 [18] (bool) framedone#3 ← false -- vboz1=vboc1 
     lda #0
     sta framedone
+  //SEG34 [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+  b1_from_irq:
+  b1_from_b2:
+  //SEG35 [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp b1
-  //SEG30 irq::@1
+  //SEG36 irq::@1
   b1:
-  //SEG31 [18] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+  //SEG37 [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp breturn
-  //SEG32 irq::@return
+  //SEG38 irq::@return
   breturn:
-  //SEG33 [19] return  - exit interrupt(KERNEL_MIN)
+  //SEG39 [21] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 
@@ -568,22 +601,39 @@ Removing instruction jmp b2
 Removing instruction jmp bend
 Removing instruction jmp b1
 Removing instruction jmp b2
+Removing instruction jmp b3
 Removing instruction jmp b2
 Removing instruction jmp b1
 Removing instruction jmp breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label b1 with b2
+Replacing label b1_from_b2 with b2
+Replacing label b1_from_irq with b1
 Removing instruction b1:
 Removing instruction b2_from_b1:
 Removing instruction bend_from_b2:
+Removing instruction b1_from_main:
+Removing instruction b1_from_b2:
+Removing instruction b1:
+Removing instruction b1_from_irq:
+Removing instruction b1_from_b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b2:
 Removing instruction bend:
-Removing instruction b2:
+Removing instruction b3:
 Removing instruction b2:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Skipping double jump to b2 in jmp b1_from_b3
+Succesful ASM optimization Pass5DoubleJumpElimination
+Relabelling long label b1_from_b3 to b1
+Succesful ASM optimization Pass5RelabelLongLabels
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
+Removing instruction jmp b2
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -609,9 +659,11 @@ FINAL SYMBOL TABLE
 (byte*) VIC_CONTROL
 (const byte*) VIC_CONTROL#0 VIC_CONTROL = (byte*) 53265
 (bool) framedone
-(bool) framedone#0 framedone zp ZP_BOOL:2 110.0
-(bool) framedone#11 framedone zp ZP_BOOL:2 20.0
-(bool) framedone#3 framedone zp ZP_BOOL:2 20.0
+(bool) framedone#0 framedone zp ZP_BOOL:2 22.0
+(bool) framedone#1 framedone zp ZP_BOOL:2 130.0
+(bool) framedone#10 framedone zp ZP_BOOL:2 40.0
+(bool) framedone#11 framedone zp ZP_BOOL:2 0.5
+(bool) framedone#3 framedone zp ZP_BOOL:2 4.0
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@1
 (label) irq::@2
@@ -619,8 +671,9 @@ interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 (label) main::@1
 (label) main::@2
+(label) main::@3
 
-zp ZP_BOOL:2 [ framedone#0 framedone#3 framedone#11 ]
+zp ZP_BOOL:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
 
 
 FINAL ASSEMBLER
@@ -685,40 +738,46 @@ main: {
     sta KERNEL_IRQ+1
   //SEG18 asm { cli  }
     cli
-  //SEG19 main::@1
-  b1:
-  //SEG20 [12] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+  //SEG19 [12] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+  //SEG20 [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@3->main::@1#0] -- register_copy 
+  //SEG21 [12] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  //SEG22 main::@1
+  //SEG23 main::@2
+  b2:
+  //SEG24 [13] if(*((const byte*) RASTER#0)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
-    bcs b1
-  //SEG21 main::@2
-  //SEG22 [13] (bool) framedone#0 ← true -- vboz1=vboc1 
+    bcs b2
+  //SEG25 main::@3
+  //SEG26 [14] (bool) framedone#0 ← true -- vboz1=vboc1 
     lda #1
     sta framedone
-    jmp b1
+    jmp b2
 }
-//SEG23 irq
+//SEG27 irq
 irq: {
-  //SEG24 entry interrupt(KERNEL_MIN)
-  //SEG25 [14] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+  //SEG28 entry interrupt(KERNEL_MIN)
+  //SEG29 [15] *((const byte*) BGCOL#0) ← ++ *((const byte*) BGCOL#0) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-  //SEG26 [15] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
+  //SEG30 [16] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-  //SEG27 [16] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+  //SEG31 [17] if(*((const byte*) RASTER#0)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$32+1
     bcc b1
-  //SEG28 irq::@2
-  //SEG29 [17] (bool) framedone#3 ← false -- vboz1=vboc1 
+  //SEG32 irq::@2
+  //SEG33 [18] (bool) framedone#3 ← false -- vboz1=vboc1 
     lda #0
     sta framedone
-  //SEG30 irq::@1
+  //SEG34 [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
+  //SEG35 [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
+  //SEG36 irq::@1
   b1:
-  //SEG31 [18] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
+  //SEG37 [20] *((const byte*) BGCOL#0) ← -- *((const byte*) BGCOL#0) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
-  //SEG32 irq::@return
-  //SEG33 [19] return  - exit interrupt(KERNEL_MIN)
+  //SEG38 irq::@return
+  //SEG39 [21] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
 

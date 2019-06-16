@@ -46,12 +46,12 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
             Registers.RegisterType registerType = defaultRegister.getType();
             List<Registers.Register> potentials = new ArrayList<>();
             potentials.add(defaultRegister);
-            if(registerType.equals(Registers.RegisterType.ZP_BYTE) && !isAddressOfUsed(equivalenceClass) &&!varVolatile(equivalenceClass)) {
+            if(registerType.equals(Registers.RegisterType.ZP_BYTE) &&!varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
                potentials.add(Registers.getRegisterX());
                potentials.add(Registers.getRegisterY());
             }
-            if(registerType.equals(Registers.RegisterType.ZP_BOOL) && !isAddressOfUsed(equivalenceClass) &&!varVolatile(equivalenceClass)) {
+            if(registerType.equals(Registers.RegisterType.ZP_BOOL) &&!varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
             }
             registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
@@ -75,18 +75,5 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
       return false;
    }
 
-   /**
-    * Determines if a variable reference is ever created for the variable using the address-of "&" operator
-    * @param equivalenceClass The equivalence class
-    * @return true if a variable reference is extracted
-    */
-   private boolean isAddressOfUsed(LiveRangeEquivalenceClass equivalenceClass) {
-      for(VariableRef variableRef : equivalenceClass.getVariables()) {
-         if(Pass2ConstantIdentification.isAddressOfUsed(variableRef, getProgram())) {
-            return true;
-         }
-      }
-      return false;
-   }
 
 }

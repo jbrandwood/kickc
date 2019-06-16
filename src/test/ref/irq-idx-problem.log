@@ -359,8 +359,6 @@ if() condition always true - replacing block destination [53] if(true) goto tabl
 Successful SSA optimization Pass2ConstantIfs
 De-inlining pointer[w] to *(pointer+w)   [41] *((const byte*) SCREEN#0 + (word~) table_driven_irq::$6) ← (byte) table_driven_irq::val#0
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Eliminating unused variable - keeping the phi block (byte) irq_idx#3
-Successful SSA optimization PassNEliminateUnusedVars
 Constant right-side identified [9] (byte[]) IRQ_CHANGE_IDX#0 ← { (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT#0, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT#0, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT#0, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT#0 }
 Constant right-side identified [17] (byte~) table_driven_irq::$1 ← (const byte) VIC_SIZE#0 + (byte) 8
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -382,6 +380,7 @@ Converting *(pointer+n) to pointer[n] [19] *((byte*~) table_driven_irq::$7) ← 
 Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (byte*~) table_driven_irq::$7 and assignment [17] (byte*~) table_driven_irq::$7 ← (const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0
 Successful SSA optimization PassNEliminateUnusedVars
+Added new block during phi lifting table_driven_irq::@14(between table_driven_irq::@10 and table_driven_irq::@return)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @6
@@ -390,12 +389,15 @@ Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:4 
 
-Created 1 initial phi equivalence classes
+Created 2 initial phi equivalence classes
 Coalesced [16] irq_idx#13 ← irq_idx#0
-Coalesced [29] irq_idx#14 ← irq_idx#1
+Coalesced [27] irq_idx#16 ← irq_idx#2
+Coalesced [30] irq_idx#15 ← irq_idx#1
+Coalesced [32] irq_idx#14 ← irq_idx#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) @7
+Culled Empty Block (label) table_driven_irq::@14
 Culled Empty Block (label) table_driven_irq::@8
 Renumbering block @5 to @1
 Renumbering block @6 to @2
@@ -455,13 +457,14 @@ table_driven_irq::@6: scope:[table_driven_irq]  from table_driven_irq::@5
   [24] (byte) irq_idx#2 ← (byte) 0
   to:table_driven_irq::@return
 table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@5 table_driven_irq::@6
-  [25] return 
+  [25] (byte) irq_idx#3 ← phi( table_driven_irq::@5/(byte) irq_idx#1 table_driven_irq::@6/(byte) irq_idx#2 )
+  [26] return 
   to:@return
 table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@4
-  [26] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
+  [27] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
   to:table_driven_irq::@1
 table_driven_irq::@2: scope:[table_driven_irq]  from table_driven_irq::@1
-  [27] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
+  [28] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
   to:table_driven_irq::@1
 
 
@@ -482,8 +485,9 @@ VARIABLE REGISTER WEIGHTS
 (byte) VIC_SIZE
 (byte) irq_idx
 (byte) irq_idx#0 4.0
-(byte) irq_idx#1 6.6000000000000005
-(byte) irq_idx#2 20.0
+(byte) irq_idx#1 4.375
+(byte) irq_idx#2 4.0
+(byte) irq_idx#3 40.0
 (byte) irq_idx#4 19.0
 (void()) main()
 interrupt(KERNEL_MIN)(void()) table_driven_irq()
@@ -493,15 +497,14 @@ interrupt(KERNEL_MIN)(void()) table_driven_irq()
 (byte) table_driven_irq::val#0 6.166666666666666
 
 Initial phi equivalence classes
-[ irq_idx#4 irq_idx#0 irq_idx#1 ]
-Coalescing volatile variable equivalence classes [ irq_idx#4 irq_idx#0 irq_idx#1 ] and [ irq_idx#2 ]
+[ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
 Added variable table_driven_irq::idx#0 to zero page equivalence class [ table_driven_irq::idx#0 ]
 Added variable table_driven_irq::val#0 to zero page equivalence class [ table_driven_irq::val#0 ]
 Complete equivalence classes
-[ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
+[ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
 [ table_driven_irq::idx#0 ]
 [ table_driven_irq::val#0 ]
-Allocated zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
+Allocated zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
 Allocated zp ZP_BYTE:3 [ table_driven_irq::idx#0 ]
 Allocated zp ZP_BYTE:4 [ table_driven_irq::val#0 ]
 
@@ -638,28 +641,32 @@ table_driven_irq: {
     ldy val
     sta $ff
     cpy $ff
-    bcs breturn
+    bcs breturn_from_b5
     jmp b6
   //SEG37 table_driven_irq::@6
   b6:
   //SEG38 [24] (byte) irq_idx#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta irq_idx
+  //SEG39 [25] phi from table_driven_irq::@5 table_driven_irq::@6 to table_driven_irq::@return [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return]
+  breturn_from_b5:
+  breturn_from_b6:
+  //SEG40 [25] phi (byte) irq_idx#3 = (byte) irq_idx#1 [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return#0] -- register_copy 
     jmp breturn
-  //SEG39 table_driven_irq::@return
+  //SEG41 table_driven_irq::@return
   breturn:
-  //SEG40 [25] return  - exit interrupt(KERNEL_MIN)
+  //SEG42 [26] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
-  //SEG41 table_driven_irq::@3
+  //SEG43 table_driven_irq::@3
   b3:
-  //SEG42 [26] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG44 [27] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy idx
     sta SCREEN+-VIC_SIZE+$3f8,y
     jmp b1_from_b3
-  //SEG43 table_driven_irq::@2
+  //SEG45 table_driven_irq::@2
   b2:
-  //SEG44 [27] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG46 [28] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda val
     ldy idx
     sta VIC_BASE,y
@@ -679,11 +686,11 @@ Statement [11] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void(
 Statement [16] (byte) table_driven_irq::idx#0 ← *((const byte[]) IRQ_CHANGE_IDX#0 + (byte) irq_idx#4) [ irq_idx#4 table_driven_irq::idx#0 ] (  [ irq_idx#4 table_driven_irq::idx#0 ] ) always clobbers reg byte y 
 Statement [17] (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL#0 + (byte) irq_idx#4) [ irq_idx#4 table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ irq_idx#4 table_driven_irq::idx#0 table_driven_irq::val#0 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ table_driven_irq::idx#0 ]
-Statement [21] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] ) always clobbers reg byte a 
+Statement [21] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ irq_idx#1 table_driven_irq::val#0 ] (  [ irq_idx#1 table_driven_irq::val#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ table_driven_irq::val#0 ]
-Statement [24] (byte) irq_idx#2 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [26] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
-Statement [27] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
+Statement [24] (byte) irq_idx#2 ← (byte) 0 [ irq_idx#2 ] (  [ irq_idx#2 ] ) always clobbers reg byte a 
+Statement [27] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
+Statement [28] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
 Statement [1] (byte) irq_idx#0 ← (byte) 0 [ ] ( ) always clobbers reg byte a 
 Statement [6] *((const byte*) CIA1_INTERRUPT#0) ← (const byte) CIA_INTERRUPT_CLEAR#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) VIC_CONTROL#0) ← *((const byte*) VIC_CONTROL#0) & (byte) $7f [ ] ( main:3 [ ] ) always clobbers reg byte a 
@@ -693,24 +700,24 @@ Statement [10] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ ] (
 Statement [11] *((const void()**) KERNEL_IRQ#0) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [16] (byte) table_driven_irq::idx#0 ← *((const byte[]) IRQ_CHANGE_IDX#0 + (byte) irq_idx#4) [ irq_idx#4 table_driven_irq::idx#0 ] (  [ irq_idx#4 table_driven_irq::idx#0 ] ) always clobbers reg byte y 
 Statement [17] (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL#0 + (byte) irq_idx#4) [ irq_idx#4 table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ irq_idx#4 table_driven_irq::idx#0 table_driven_irq::val#0 ] ) always clobbers reg byte y 
-Statement [21] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] ) always clobbers reg byte a 
-Statement [24] (byte) irq_idx#2 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [26] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
-Statement [27] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] : zp ZP_BYTE:2 , 
+Statement [21] *((const byte*) IRQ_STATUS#0) ← (const byte) IRQ_RASTER#0 [ irq_idx#1 table_driven_irq::val#0 ] (  [ irq_idx#1 table_driven_irq::val#0 ] ) always clobbers reg byte a 
+Statement [24] (byte) irq_idx#2 ← (byte) 0 [ irq_idx#2 ] (  [ irq_idx#2 ] ) always clobbers reg byte a 
+Statement [27] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
+Statement [28] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
+Potential registers zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ table_driven_irq::idx#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , 
 Potential registers zp ZP_BYTE:4 [ table_driven_irq::val#0 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 49.6: zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
+Uplift Scope [] 71.38: zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
 Uplift Scope [table_driven_irq] 11: zp ZP_BYTE:3 [ table_driven_irq::idx#0 ] 6.17: zp ZP_BYTE:4 [ table_driven_irq::val#0 ] 
 Uplift Scope [main] 
 
-Uplifting [] best 928 combination zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
+Uplifting [] best 928 combination zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
 Uplifting [table_driven_irq] best 762 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
 Uplifting [main] best 762 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
-Uplifting [] best 762 combination zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
+Uplifting [] best 762 combination zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -837,28 +844,32 @@ table_driven_irq: {
     ldy RASTER
     sty $ff
     cpx $ff
-    bcs breturn
+    bcs breturn_from_b5
     jmp b6
   //SEG37 table_driven_irq::@6
   b6:
   //SEG38 [24] (byte) irq_idx#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta irq_idx
+  //SEG39 [25] phi from table_driven_irq::@5 table_driven_irq::@6 to table_driven_irq::@return [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return]
+  breturn_from_b5:
+  breturn_from_b6:
+  //SEG40 [25] phi (byte) irq_idx#3 = (byte) irq_idx#1 [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return#0] -- register_copy 
     jmp breturn
-  //SEG39 table_driven_irq::@return
+  //SEG41 table_driven_irq::@return
   breturn:
-  //SEG40 [25] return  - exit interrupt(KERNEL_MIN)
+  //SEG42 [26] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
-  //SEG41 table_driven_irq::@3
+  //SEG43 table_driven_irq::@3
   b3:
-  //SEG42 [26] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+  //SEG44 [27] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta SCREEN+-VIC_SIZE+$3f8,y
     jmp b1_from_b3
-  //SEG43 table_driven_irq::@2
+  //SEG45 table_driven_irq::@2
   b2:
-  //SEG44 [27] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+  //SEG46 [28] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta VIC_BASE,y
@@ -881,6 +892,7 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #IRQ_RASTER
 Removing instruction ldy irq_idx
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label breturn_from_b5 with breturn
 Replacing label b1_from_b3 with b1
 Replacing label b1_from_b2 with b1
 Removing instruction b1:
@@ -889,6 +901,8 @@ Removing instruction bend_from_b2:
 Removing instruction b1_from_table_driven_irq:
 Removing instruction b1_from_b2:
 Removing instruction b1_from_b3:
+Removing instruction breturn_from_b5:
+Removing instruction breturn_from_b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction b2:
 Removing instruction bend:
@@ -940,8 +954,9 @@ FINAL SYMBOL TABLE
 (const byte) VIC_SIZE#0 VIC_SIZE = (byte) $30
 (byte) irq_idx
 (byte) irq_idx#0 irq_idx zp ZP_BYTE:2 4.0
-(byte) irq_idx#1 irq_idx zp ZP_BYTE:2 6.6000000000000005
-(byte) irq_idx#2 irq_idx zp ZP_BYTE:2 20.0
+(byte) irq_idx#1 irq_idx zp ZP_BYTE:2 4.375
+(byte) irq_idx#2 irq_idx zp ZP_BYTE:2 4.0
+(byte) irq_idx#3 irq_idx zp ZP_BYTE:2 40.0
 (byte) irq_idx#4 irq_idx zp ZP_BYTE:2 19.0
 (void()) main()
 (label) main::@return
@@ -958,7 +973,7 @@ interrupt(KERNEL_MIN)(void()) table_driven_irq()
 (byte) table_driven_irq::val
 (byte) table_driven_irq::val#0 reg byte x 6.166666666666666
 
-zp ZP_BYTE:2 [ irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
+zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
 reg byte a [ table_driven_irq::idx#0 ]
 reg byte x [ table_driven_irq::val#0 ]
 
@@ -1078,19 +1093,21 @@ table_driven_irq: {
   //SEG38 [24] (byte) irq_idx#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta irq_idx
-  //SEG39 table_driven_irq::@return
-  //SEG40 [25] return  - exit interrupt(KERNEL_MIN)
+  //SEG39 [25] phi from table_driven_irq::@5 table_driven_irq::@6 to table_driven_irq::@return [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return]
+  //SEG40 [25] phi (byte) irq_idx#3 = (byte) irq_idx#1 [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return#0] -- register_copy 
+  //SEG41 table_driven_irq::@return
+  //SEG42 [26] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
-  //SEG41 table_driven_irq::@3
+  //SEG43 table_driven_irq::@3
   b3:
-  //SEG42 [26] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+  //SEG44 [27] *((const byte*) SCREEN#0+-(const byte) VIC_SIZE#0+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta SCREEN+-VIC_SIZE+$3f8,y
     jmp b1
-  //SEG43 table_driven_irq::@2
+  //SEG45 table_driven_irq::@2
   b2:
-  //SEG44 [27] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+  //SEG46 [28] *((const byte*) VIC_BASE#0 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta VIC_BASE,y

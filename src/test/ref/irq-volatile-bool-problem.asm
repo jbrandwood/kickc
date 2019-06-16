@@ -38,13 +38,13 @@ main: {
     lda #>irq
     sta KERNEL_IRQ+1
     cli
-  b1:
+  b2:
     lda RASTER
     cmp #$14
-    bcs b1
+    bcs b2
     lda #1
     sta framedone
-    jmp b1
+    jmp b2
 }
 irq: {
     inc BGCOL

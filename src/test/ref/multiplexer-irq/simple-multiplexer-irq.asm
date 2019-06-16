@@ -36,8 +36,8 @@
   .label PLEX_SCREEN_PTR = $400+$3f8
   .label plex_show_idx = 7
   .label plex_sprite_idx = 6
-  .label plex_sprite_msb = 8
-  .label plex_free_next = 9
+  .label plex_sprite_msb = 9
+  .label plex_free_next = 8
   .label framedone = $a
 bbegin:
   // The index in the PLEX tables of the next sprite to show
@@ -263,7 +263,7 @@ plex_irq: {
 plexShowSprite: {
     .label _6 = 6
     .label plex_sprite_idx2 = $e
-    .label plexFreeAdd1__2 = 9
+    .label plexFreeAdd1__2 = 8
     lda plex_sprite_idx
     asl
     sta plex_sprite_idx2

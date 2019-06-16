@@ -40,7 +40,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                LValue lValue = assignment.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
                   boolean eliminate = false;
                   if(variable == null) {
@@ -74,30 +74,34 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
             } else if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                LValue lValue = call.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
-                  if(pass2 || getLog().isVerbosePass1CreateSsa()) {
-                     getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
-                  }
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(variable != null) {
-                     variable.getScope().remove(variable);
+                  if(!variable.isVolatile()) {
+                     if(pass2 || getLog().isVerbosePass1CreateSsa()) {
+                        getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
+                     }
+                     if(variable != null) {
+                        variable.getScope().remove(variable);
+                     }
+                     call.setlValue(null);
+                     modified = true;
                   }
-                  call.setlValue(null);
-                  modified = true;
                }
             } else if(statement instanceof StatementCallPointer) {
                StatementCallPointer call = (StatementCallPointer) statement;
                LValue lValue = call.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue) && !Pass2ConstantIdentification.isAddressOfUsed((VariableRef) lValue, getProgram())) {
-                  if(pass2 || getLog().isVerbosePass1CreateSsa()) {
-                     getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
-                  }
+               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(variable != null) {
-                     variable.getScope().remove(variable);
+                  if(!variable.isVolatile()) {
+                     if(pass2 || getLog().isVerbosePass1CreateSsa()) {
+                        getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
+                     }
+                     if(variable != null) {
+                        variable.getScope().remove(variable);
+                     }
+                     call.setlValue(null);
+                     modified = true;
                   }
-                  call.setlValue(null);
-                  modified = true;
                }
             } else if(statement instanceof StatementPhiBlock) {
                StatementPhiBlock statementPhi = (StatementPhiBlock) statement;
@@ -105,16 +109,18 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                while(phiVarIt.hasNext()) {
                   StatementPhiBlock.PhiVariable phiVariable = phiVarIt.next();
                   VariableRef variableRef = phiVariable.getVariable();
-                  if(referenceInfos.isUnused(variableRef) && !Pass2ConstantIdentification.isAddressOfUsed(variableRef, getProgram())) {
-                     if(pass2 || getLog().isVerbosePass1CreateSsa()) {
-                        getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
-                     }
+                  if(referenceInfos.isUnused(variableRef)) {
                      Variable variable = getScope().getVariable(variableRef);
-                     if(variable != null) {
-                        variable.getScope().remove(variable);
+                     if(!variable.isVolatile()) {
+                        if(pass2 || getLog().isVerbosePass1CreateSsa()) {
+                           getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
+                        }
+                        if(variable != null) {
+                           variable.getScope().remove(variable);
+                        }
+                        phiVarIt.remove();
+                        modified = true;
                      }
-                     phiVarIt.remove();
-                     modified = true;
                   }
                }
             }

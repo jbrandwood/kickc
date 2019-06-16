@@ -118,45 +118,45 @@
   // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
-  .label keyboard_events_size = $42
-  .label render_screen_showing = $55
-  .label score_bcd = $28
+  .label keyboard_events_size = $43
+  .label render_screen_showing = 4
+  .label score_bcd = $29
   .label irq_raster_next = $56
   .label irq_sprite_ypos = $57
   .label irq_sprite_ptr = $58
   .label irq_cnt = $59
-  .label current_movedown_slow = $2d
-  .label current_ypos = $25
-  .label current_xpos = $35
-  .label current_orientation = $32
-  .label current_piece_gfx = $33
-  .label current_piece_char = $31
-  .label level_bcd = $2e
-  .label current_piece = $2f
-  .label game_over = $37
-  .label next_piece_idx = $36
-  .label level = $2c
+  .label current_movedown_slow = $2e
+  .label current_ypos = $26
+  .label current_xpos = $36
+  .label current_orientation = $33
+  .label current_piece_gfx = $34
+  .label current_piece_char = $32
+  .label level_bcd = $2f
+  .label current_piece = $30
+  .label game_over = $38
+  .label next_piece_idx = $37
+  .label level = $2d
   .label render_screen_render = 3
   .label render_screen_show = 2
-  .label current_movedown_counter = 4
-  .label lines_bcd = $26
-  .label current_piece_17 = $1e
-  .label render_screen_render_33 = $e
-  .label current_xpos_59 = $f
-  .label current_piece_gfx_64 = $10
-  .label current_piece_char_68 = $12
-  .label render_screen_render_65 = $e
-  .label current_xpos_119 = $f
-  .label current_xpos_120 = $f
-  .label current_piece_gfx_112 = $10
-  .label current_piece_gfx_113 = $10
-  .label current_piece_char_100 = $12
-  .label current_piece_char_101 = $12
-  .label current_piece_96 = $1e
-  .label current_piece_97 = $1e
-  .label current_piece_98 = $1e
-  .label current_piece_99 = $1e
-  .label current_piece_100 = $1e
+  .label current_movedown_counter = 5
+  .label lines_bcd = $27
+  .label current_piece_17 = $1f
+  .label render_screen_render_33 = $f
+  .label current_xpos_59 = $10
+  .label current_piece_gfx_64 = $11
+  .label current_piece_char_68 = $13
+  .label render_screen_render_65 = $f
+  .label current_xpos_119 = $10
+  .label current_xpos_120 = $10
+  .label current_piece_gfx_112 = $11
+  .label current_piece_gfx_113 = $11
+  .label current_piece_char_100 = $13
+  .label current_piece_char_101 = $13
+  .label current_piece_96 = $1f
+  .label current_piece_97 = $1f
+  .label current_piece_98 = $1f
+  .label current_piece_99 = $1f
+  .label current_piece_100 = $1f
 bbegin:
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
@@ -290,7 +290,7 @@ render_score: {
     .const score_offset = $28*5+$1c
     .const lines_offset = $28*1+$16
     .const level_offset = $28*$13+$1f
-    .label screen = 5
+    .label screen = 6
     lda render_screen_render
     cmp #0
     beq b1
@@ -356,12 +356,12 @@ render_score: {
 // - offset: offset on the screen
 // - bcd: The BCD-value to render
 // - only_low: if non-zero only renders the low digit
-// render_bcd(byte* zeropage(5) screen, word zeropage(7) offset, byte register(X) bcd, byte register(Y) only_low)
+// render_bcd(byte* zeropage(6) screen, word zeropage(8) offset, byte register(X) bcd, byte register(Y) only_low)
 render_bcd: {
     .const ZERO_CHAR = $35
-    .label screen = 5
-    .label screen_pos = 7
-    .label offset = 7
+    .label screen = 6
+    .label screen_pos = 8
+    .label offset = 8
     lda screen_pos
     clc
     adc screen
@@ -398,9 +398,9 @@ render_next: {
     // Find the screen area
     .const next_area_offset = $28*$c+$18+4
     .label next_piece_char = $5b
-    .label next_piece_gfx = $a
-    .label screen_next_area = $c
-    .label l = 9
+    .label next_piece_gfx = $b
+    .label screen_next_area = $d
+    .label l = $a
     cmp #0
     beq b1
     lda #<PLAYFIELD_SCREEN_2+next_area_offset
@@ -468,11 +468,11 @@ render_next: {
 // Render the current moving piece at position (current_xpos, current_ypos)
 // Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
 render_moving: {
-    .label ypos = $13
+    .label ypos = $14
     .label screen_line = $5c
-    .label xpos = $16
-    .label i = $15
-    .label l = $14
+    .label xpos = $17
+    .label i = $16
+    .label l = $15
     stx ypos
     lda #0
     sta l
@@ -522,10 +522,10 @@ render_moving: {
 }
 // Render the static playfield on the screen (all pieces already locked into place)
 render_playfield: {
-    .label screen_line = $19
-    .label i = $18
-    .label c = $1b
-    .label l = $17
+    .label screen_line = $1a
+    .label i = $19
+    .label c = $1c
+    .label l = $18
     lda #PLAYFIELD_COLS*2
     sta i
     lda #2
@@ -567,8 +567,8 @@ render_playfield: {
 // Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
 // play_movement(byte zeropage($5a) key_event)
 play_movement: {
-    .label render = $1c
-    .label return = $1c
+    .label render = $1d
+    .label return = $1d
     .label key_event = $5a
     lda key_event
     jsr play_move_down
@@ -595,7 +595,7 @@ play_movement: {
 // Return non-zero if a render is needed
 // play_move_rotate(byte register(A) key_event)
 play_move_rotate: {
-    .label orientation = $1d
+    .label orientation = $1e
     cmp #KEY_Z
     beq b1
     cmp #KEY_X
@@ -640,20 +640,20 @@ play_move_rotate: {
 }
 // Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
 // Returns information about the type of the collision detected
-// play_collision(byte zeropage($20) xpos, byte zeropage($21) ypos, byte register(X) orientation)
+// play_collision(byte zeropage($21) xpos, byte zeropage($22) ypos, byte register(X) orientation)
 play_collision: {
-    .label xpos = $20
-    .label ypos = $21
-    .label piece_gfx = $1e
-    .label yp = $21
+    .label xpos = $21
+    .label ypos = $22
+    .label piece_gfx = $1f
+    .label yp = $22
     .label playfield_line = $5e
     .label i = $60
-    .label xp = $24
-    .label l = $22
-    .label i_2 = $23
-    .label i_3 = $23
-    .label i_10 = $23
-    .label i_12 = $23
+    .label xp = $25
+    .label l = $23
+    .label i_2 = $24
+    .label i_3 = $24
+    .label i_10 = $24
+    .label i_12 = $24
     txa
     clc
     adc piece_gfx
@@ -850,7 +850,7 @@ play_move_down: {
 // Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
     .label _7 = $61
-    .label piece_idx = $36
+    .label piece_idx = $37
     // Move next piece into current
     ldx next_piece_idx
     txa
@@ -1001,10 +1001,10 @@ play_increase_level: {
 // Returns the number of lines removed
 play_remove_lines: {
     .label c = $67
-    .label x = $3a
-    .label y = $38
-    .label removed = $39
-    .label full = $3b
+    .label x = $3b
+    .label y = $39
+    .label removed = $3a
+    .label full = $3c
     lda #0
     sta removed
     sta y
@@ -1056,15 +1056,15 @@ play_remove_lines: {
 }
 // Lock the current piece onto the playfield
 play_lock_current: {
-    .label yp = $25
+    .label yp = $26
     .label playfield_line = $68
-    .label xp = $3e
+    .label xp = $3f
     .label i = $6a
-    .label l = $3c
-    .label i_2 = $3d
-    .label i_3 = $3d
-    .label i_7 = $3d
-    .label i_9 = $3d
+    .label l = $3d
+    .label i_2 = $3e
+    .label i_3 = $3e
+    .label i_7 = $3e
+    .label i_9 = $3e
     lda #0
     sta l
     sta i_3
@@ -1112,10 +1112,10 @@ play_lock_current: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte zeropage($3f) keycode)
+// keyboard_event_pressed(byte zeropage($40) keycode)
 keyboard_event_pressed: {
     .label row_bits = $6b
-    .label keycode = $3f
+    .label keycode = $40
     lda keycode
     lsr
     lsr
@@ -1151,8 +1151,8 @@ keyboard_event_get: {
 // Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
     .label row_scan = $6c
-    .label keycode = $41
-    .label row = $40
+    .label keycode = $42
+    .label row = $41
     lda #0
     sta keycode
     sta row
@@ -1266,8 +1266,8 @@ render_show: {
 }
 // Initialize play data tables
 play_init: {
-    .label pli = $43
-    .label idx = $45
+    .label pli = $44
+    .label idx = $46
     lda #0
     sta idx
     lda #<playfield
@@ -1357,7 +1357,7 @@ sprites_irq_init: {
 }
 // Setup the sprites
 sprites_init: {
-    .label xpos = $46
+    .label xpos = $47
     lda #$f
     sta SPRITES_ENABLE
     lda #0
@@ -1386,8 +1386,8 @@ sprites_init: {
 // Initialize rendering
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3
-    .label li_1 = $47
-    .label li_2 = $49
+    .label li_1 = $48
+    .label li_2 = $4a
     lda #3
     sta CIA2_PORT_A_DDR
     lda #vicSelectGfxBank1_toDd001_return
@@ -1456,14 +1456,14 @@ render_init: {
 }
 // Copy the original screen data to the passed screen
 // Also copies colors to $d800
-// render_screen_original(byte* zeropage($50) screen)
+// render_screen_original(byte* zeropage($51) screen)
 render_screen_original: {
     .const SPACE = 0
-    .label screen = $50
-    .label cols = $52
-    .label oscr = $4c
-    .label ocols = $4e
-    .label y = $4b
+    .label screen = $51
+    .label cols = $53
+    .label oscr = $4d
+    .label ocols = $4f
+    .label y = $4c
     lda #0
     sta y
     lda #<PLAYFIELD_COLORS_ORIGINAL+$20*2
@@ -1563,7 +1563,7 @@ sid_rnd_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
-    .label raster_sprite_gfx_modify = $54
+    .label raster_sprite_gfx_modify = $55
     sta rega+1
     stx regx+1
     //(*BGCOL)++;

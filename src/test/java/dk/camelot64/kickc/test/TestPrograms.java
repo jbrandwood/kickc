@@ -1257,7 +1257,6 @@ public class TestPrograms {
       compileAndCompare("var-init-problem");
    }
 
-
    @Test
    public void testFastMultiply8() throws IOException, URISyntaxException {
       compileAndCompare("examples/fastmultiply/fastmultiply8");

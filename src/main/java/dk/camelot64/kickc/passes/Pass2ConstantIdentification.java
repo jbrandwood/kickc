@@ -44,29 +44,8 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       Set<VariableRef> constVars = new LinkedHashSet<>(constants.keySet());
       for(VariableRef constRef : constVars) {
          Variable variable = getProgram().getScope().getVariable(constRef);
-
          ConstantVariableValue constVarVal = constants.get(constRef);
-
-         // Weed out all variables that are affected by the address-of operator
-         if(isAddressOfUsed(constRef, getProgram())) {
-
-            // If the assignment has an operator then replace it with the single constant value
-            if(constVarVal.getAssignment() instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) constVarVal.getAssignment();
-               if(assignment.getOperator() != null) {
-                  getLog().append("Constant right-side identified " + assignment.toString(getProgram(), false));
-                  assignment.setOperator(null);
-                  assignment.setrValue1(null);
-                  assignment.setrValue2(constVarVal.getConstantValue());
-               }
-            }
-
-            // But do not remove the variable
-            constants.remove(constRef);
-            continue;
-         }
          Scope constScope = variable.getScope();
-
          ConstantValue constVal = constVarVal.getConstantValue();
          SymbolType valueType = SymbolTypeInference.inferType(getScope(), constVal);
          SymbolType variableType = variable.getType();
@@ -295,17 +274,17 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    /**
     * Determines if the variable is ever operated on by the address-of operator
     *
-    * @param symbolRef tHe variable to examine
+    * @param procedureRef tHe variable to examine
     * @return true if the address-of operator is used on the variable
     */
-   public static boolean isAddressOfUsed(SymbolRef symbolRef, Program program) {
+   public static boolean isAddressOfUsed(ProcedureRef procedureRef, Program program) {
       final boolean[] found = {false};
       // Examine all program values in expressions
       ProgramValueIterator.execute(program, (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value value = programValue.get();
          if(value instanceof ConstantSymbolPointer) {
             ConstantSymbolPointer constantSymbolPointer = (ConstantSymbolPointer) value;
-            if(constantSymbolPointer.getToSymbol().equals(symbolRef)) {
+            if(constantSymbolPointer.getToSymbol().equals(procedureRef)) {
                found[0] = true;
             }
          }
@@ -319,18 +298,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && symbolRef.equals(assignment.getrValue2())) {
+               if(Operators.ADDRESS_OF.equals(assignment.getOperator()) && procedureRef.equals(assignment.getrValue2())) {
                   return true;
                }
             }
          }
-      }
-
-      // If the symbol is part of an unwound struct - look at the struct itself
-      StructUnwinding structUnwinding = program.getStructUnwinding();
-      VariableRef structVarRef = structUnwinding.getContainingStructVariable(symbolRef);
-      if(structVarRef != null) {
-         return isAddressOfUsed(structVarRef, program);
       }
 
       return false;

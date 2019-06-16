@@ -32,17 +32,15 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
             if(!isParameter(variableRef)) {
                Collection<StatementLValue> assignments = getAssignments(variable);
                if(assignments.size() == 1) {
-                  if(!Pass2ConstantIdentification.isAddressOfUsed(variableRef, getProgram())) {
-                     StatementLValue assignment = assignments.iterator().next();
-                     if(assignment instanceof StatementAssignment) {
-                        StatementAssignment assign = (StatementAssignment) assignment;
-                        if(assign.getrValue1() == null && assign.getOperator() == null && assign.getrValue2() instanceof ConstantValue) {
-                           getLog().append("Identified constant variable " + variable.toString(getProgram()));
-                           earlyConstants.add(variableRef);
-                        } else if(assign.getrValue1() == null && assign.getOperator() instanceof OperatorCastPtr && assign.getrValue2() instanceof ConstantValue) {
-                           getLog().append("Identified constant variable " + variable.toString(getProgram()));
-                           earlyConstants.add(variableRef);
-                        }
+                  StatementLValue assignment = assignments.iterator().next();
+                  if(assignment instanceof StatementAssignment) {
+                     StatementAssignment assign = (StatementAssignment) assignment;
+                     if(assign.getrValue1() == null && assign.getOperator() == null && assign.getrValue2() instanceof ConstantValue) {
+                        getLog().append("Identified constant variable " + variable.toString(getProgram()));
+                        earlyConstants.add(variableRef);
+                     } else if(assign.getrValue1() == null && assign.getOperator() instanceof OperatorCastPtr && assign.getrValue2() instanceof ConstantValue) {
+                        getLog().append("Identified constant variable " + variable.toString(getProgram()));
+                        earlyConstants.add(variableRef);
                      }
                   }
                }
@@ -55,6 +53,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
 
    /**
     * Examines whether a variable is a procedure parameter
+    *
     * @param variableRef The variable
     * @return true if the variable is a procedure parameter
     */

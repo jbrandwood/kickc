@@ -1,3 +1,5 @@
+Setting inferred volatile on symbol affected by address-of (byte*~) main::$0 ← & (byte) main::b
+Setting inferred volatile on symbol affected by address-of (byte**~) main::$1 ← & (byte*) main::pb
 Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
 
 CONTROL FLOW GRAPH SSA
@@ -44,15 +46,19 @@ Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Alias (byte*) main::pb#0 = (byte*~) main::$0 
+Alias candidate removed (volatile)(byte*) main::pb#0 = (byte*~) main::$0 
 Alias (byte**) main::ppb#0 = (byte**~) main::$1 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [2] (byte*) main::pb#0 ← & (byte) main::b#0
+Alias candidate removed (volatile)(byte*) main::pb#0 = (byte*~) main::$0 
+Constant right-side identified [2] (byte*~) main::$0 ← & (byte) main::b#0
 Constant right-side identified [4] (byte**) main::ppb#0 ← & (byte*) main::pb#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::$0 = &main::b#0
 Constant (const byte**) main::ppb#0 = &main::pb#0
 Successful SSA optimization Pass2ConstantIdentification
+Constant inlined main::$0 = &(byte) main::b#0
+Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -97,8 +103,6 @@ VARIABLE REGISTER WEIGHTS
 (byte**) main::ppb
 
 Initial phi equivalence classes
-Added variable main::b#0 to zero page equivalence class [ main::b#0 ]
-Added variable main::pb#0 to zero page equivalence class [ main::pb#0 ]
 Complete equivalence classes
 [ main::b#0 ]
 [ main::pb#0 ]

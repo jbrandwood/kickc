@@ -4,17 +4,18 @@
 .pc = $80d "Program"
   .label textid = 4
 main: {
-    .label screen = 5
     .label text = 2
-    ldx #0
+    .label screen = 5
+    lda #<0
+    sta text
+    sta text+1
+    tax
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
     txa
     sta textid
-    sta text
-    sta text+1
   b1:
     jsr nexttext
   b2:

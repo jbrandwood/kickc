@@ -73,6 +73,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                unwound.setDeclaredAlignment(((VariableUnversioned) symbol).getDeclaredAlignment());
                unwound.setDeclaredConstant(((VariableUnversioned) symbol).isDeclaredConstant());
                unwound.setDeclaredVolatile(((VariableUnversioned) symbol).isDeclaredVolatile());
+               unwound.setInferedVolatile(((VariableUnversioned) symbol).isInferedVolatile());
                unwound.setDeclaredRegister((((VariableUnversioned) symbol).getDeclaredRegister()));
                unwoundSymbols.put(symbol.getRef(), unwound.getRef());
             }  else if(symbol instanceof VariableIntermediate) {

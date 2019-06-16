@@ -301,6 +301,7 @@ public class Pass1ProcedureInline extends Pass1Base {
             inlineVar.setDeclaredConstant(procVar.isDeclaredConstant());
             inlineVar.setDeclaredRegister(procVar.getDeclaredRegister());
             inlineVar.setDeclaredVolatile(procVar.isDeclaredVolatile());
+            inlineVar.setInferedVolatile(procVar.isInferedVolatile());
          } else if(procSymbol instanceof Label) {
             String inlineLabelName = getInlineSymbolName(procedure, procSymbol, serial);
             callScope.addLabel(inlineLabelName);

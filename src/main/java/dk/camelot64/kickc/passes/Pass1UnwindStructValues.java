@@ -244,6 +244,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                         memberVariable = scope.addVariable(variable.getLocalName() + "_" + member.getLocalName(), member.getType());
                      }
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
+                     memberVariable.setInferedVolatile(variable.isInferedVolatile());
                      memberVariable.setDeclaredConstant(variable.isDeclaredConstant());
                      variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
                      getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));

@@ -53,8 +53,8 @@ main: {
 // Hexadecimal utoa() for an unsigned int (16bits)
 // utoa16w(word zeropage(2) value, byte* zeropage(4) dst)
 utoa16w: {
-    .label value = 2
     .label dst = 4
+    .label value = 2
     lda value+1
     lsr
     lsr

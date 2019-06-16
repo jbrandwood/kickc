@@ -38,6 +38,9 @@ public abstract class SymbolVariable implements Symbol {
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). */
    private boolean declaredVolatile;
 
+   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). */
+   private boolean inferedVolatile;
+
    /** Comments preceding the procedure in the source code. */
    private List<Comment> comments;
 
@@ -154,6 +157,18 @@ public abstract class SymbolVariable implements Symbol {
 
    public void setDeclaredVolatile(boolean declaredVolatile) {
       this.declaredVolatile = declaredVolatile;
+   }
+
+   public void setInferedVolatile(boolean inferedVolatile) {
+      this.inferedVolatile = inferedVolatile;
+   }
+
+   public boolean isInferedVolatile() {
+      return inferedVolatile;
+   }
+
+   public boolean isVolatile() {
+      return declaredVolatile || inferedVolatile;
    }
 
    public List<Comment> getComments() {

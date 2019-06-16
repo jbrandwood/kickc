@@ -1,3 +1,4 @@
+Setting inferred volatile on symbol affected by address-of (word*~) main::$0 ← & (word) main::p
 Identified literal word (word) { 2, 3 } in (word) main::p ← { (number) 2, (number) 3 }
 Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
 
@@ -57,10 +58,11 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (word) main::p#0 = (word~) main::$3 
+Alias candidate removed (volatile)(word) main::p#0 = (word~) main::$3 
 Alias (word*) main::q#0 = (word*~) main::$0 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (word) main::p#0 ← (byte) 2 w= (byte) 3
+Alias candidate removed (volatile)(word) main::p#0 = (word~) main::$3 
+Constant right-side identified [0] (word~) main::$3 ← (byte) 2 w= (byte) 3
 Constant right-side identified [2] (word*) main::q#0 ← & (word) main::p#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word*) main::q#0 = &main::p#0
@@ -68,11 +70,11 @@ Constant (const byte*) main::SCREEN#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero main::SCREEN#0 in [6] *((const byte*) main::SCREEN#0 + (byte) 0) ← (byte~) main::$1
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Adding number conversion cast (unumber) 2*$100+3 in (word) main::p#0 ← (byte) 2*(number) $100+(byte) 3
-Adding number conversion cast (unumber) 2*$100 in (word) main::p#0 ← ((unumber)) (byte) 2*(number) $100+(byte) 3
-Adding number conversion cast (unumber) $100 in (word) main::p#0 ← ((unumber)) (unumber)(byte) 2*(number) $100+(byte) 3
+Adding number conversion cast (unumber) 2*$100+3 in (word~) main::$3 ← (byte) 2*(number) $100+(byte) 3
+Adding number conversion cast (unumber) 2*$100 in (word~) main::$3 ← ((unumber)) (byte) 2*(number) $100+(byte) 3
+Adding number conversion cast (unumber) $100 in (word~) main::$3 ← ((unumber)) (unumber)(byte) 2*(number) $100+(byte) 3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word) main::p#0 ← (unumber)(unumber)(byte) 2*(unumber)(number) $100+(byte) 3
+Inlining cast (word~) main::$3 ← (unumber)(unumber)(byte) 2*(unumber)(number) $100+(byte) 3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast (unumber)(byte) 2*(unumber)(number) $100+(byte) 3
 Simplifying constant integer cast (byte) 2*(unumber)(number) $100
@@ -80,6 +82,11 @@ Simplifying constant integer cast $100
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)(word) main::p#0 = (word~) main::$3 
+Constant (const word) main::$3 = 2*$100+3
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined main::$3 = (byte) 2*(word) $100+(byte) 3
+Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN#0+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
@@ -128,7 +135,6 @@ VARIABLE REGISTER WEIGHTS
 (word*) main::q
 
 Initial phi equivalence classes
-Added variable main::p#0 to zero page equivalence class [ main::p#0 ]
 Added variable main::$1 to zero page equivalence class [ main::$1 ]
 Added variable main::$2 to zero page equivalence class [ main::$2 ]
 Complete equivalence classes

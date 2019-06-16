@@ -175,6 +175,8 @@ public class Compiler {
          getLog().append(program.getScope().toString(program, null));
       }
 
+      new Pass1AddressOfVolatile(program).execute();
+
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new Pass1PointerSizeofFix(program).execute(); // After this point in the code all pointer math is byte-based
@@ -184,6 +186,8 @@ public class Compiler {
 
       new PassNAddBooleanCasts(program).execute();
       new PassNAddTypeConversionAssignment(program).execute();
+
+
       new Pass1EarlyConstantIdentification(program).execute();
       new Pass1ProcedureInline(program).execute();
       new PassNStatementIndices(program).step();

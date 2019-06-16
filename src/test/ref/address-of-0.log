@@ -1,3 +1,4 @@
+Setting inferred volatile on symbol affected by address-of (byte*~) main::$0 ← & (byte) main::b
 Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
 Identified constant variable (byte*) main::SCREEN
 Culled Empty Block (label) main::@2
@@ -71,7 +72,6 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [3] (byte*) main::bp#0 ← & (byte) main::b#2
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::SCREEN#0 = (byte*) 1024
-Constant (const byte) main::b#0 = 0
 Constant (const byte*) main::bp#0 = &main::b#2
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [8] main::b#1 ← ++ main::b#2 to ++
@@ -82,27 +82,23 @@ Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining constant with var siblings (const byte) main::b#0
-Constant inlined main::b#0 = (byte) 0
-Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [12] main::b#3 ← main::b#1
+Coalesced [6] main::b#3 ← main::b#0
+Coalesced [13] main::b#4 ← main::b#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -115,10 +111,10 @@ FINAL CONTROL FLOW GRAPH
 @end: scope:[]  from @1
   [3] phi()
 main: scope:[main]  from @1
-  [4] phi()
+  [4] (byte) main::b#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte) main::b#2 ← phi( main/(byte) 0 main::@1/(byte) main::b#1 )
+  [5] (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
   [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1
   [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0
   [8] (byte) main::b#1 ← ++ (byte) main::b#2
@@ -133,19 +129,20 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*) main::SCREEN
 (byte) main::b
+(byte) main::b#0 4.0
 (byte) main::b#1 16.5
-(byte) main::b#2 11.0
+(byte) main::b#2 11.666666666666666
 (byte*) main::bp
 (byte) main::c
 (byte) main::c#0 22.0
 
 Initial phi equivalence classes
-[ main::b#2 main::b#1 ]
+[ main::b#2 main::b#0 main::b#1 ]
 Added variable main::c#0 to zero page equivalence class [ main::c#0 ]
 Complete equivalence classes
-[ main::b#2 main::b#1 ]
+[ main::b#2 main::b#0 main::b#1 ]
 [ main::c#0 ]
-Allocated zp ZP_BYTE:2 [ main::b#2 main::b#1 ]
+Allocated zp ZP_BYTE:2 [ main::b#2 main::b#0 main::b#1 ]
 Allocated zp ZP_BYTE:3 [ main::c#0 ]
 
 INITIAL ASM
@@ -164,67 +161,64 @@ b1_from_bbegin:
 //SEG5 @1
 b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+//SEG8 @end
 bend:
-//SEG10 main
+//SEG9 main
 main: {
     .label SCREEN = $400
     .label bp = b
-    .label c = 3
     .label b = 2
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG12 [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    .label c = 3
+  //SEG10 [4] (byte) main::b#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta b
-    jmp b1
-  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG11 [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  b1_from_main:
   b1_from_b1:
-  //SEG14 [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG12 [5] phi (byte) main::b#2 = (byte) main::b#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG15 main::@1
+  //SEG13 main::@1
   b1:
-  //SEG16 [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuz1=_deref_pbuc1_plus_1 
+  //SEG14 [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuz1=_deref_pbuc1_plus_1 
     ldy bp
     iny
     sty c
-  //SEG17 [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+  //SEG15 [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda c
     ldy b
     sta SCREEN,y
-  //SEG18 [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
+  //SEG16 [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  //SEG19 [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG17 [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp b
     bne b1_from_b1
     jmp breturn
-  //SEG20 main::@return
+  //SEG18 main::@return
   breturn:
-  //SEG21 [10] return 
+  //SEG19 [10] return 
     rts
 }
 
 REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] (byte) main::b#0 ← (byte) 0 [ main::b#0 ] ( main:2 [ main::b#0 ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 [ main::b#2 ] ( main:2 [ main::b#2 ] ) always clobbers reg byte y 
 Statement [9] if((byte) main::b#1!=(byte) $b) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::b#2 main::b#1 ] : zp ZP_BYTE:2 , 
+Potential registers zp ZP_BYTE:2 [ main::b#2 main::b#0 main::b#1 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ main::c#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::b#2 main::b#1 ] 22: zp ZP_BYTE:3 [ main::c#0 ] 
+Uplift Scope [main] 32.17: zp ZP_BYTE:2 [ main::b#2 main::b#0 main::b#1 ] 22: zp ZP_BYTE:3 [ main::c#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 443 combination zp ZP_BYTE:2 [ main::b#2 main::b#1 ] reg byte a [ main::c#0 ] 
-Uplifting [] best 443 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::b#2 main::b#1 ]
-Uplifting [main] best 443 combination zp ZP_BYTE:2 [ main::b#2 main::b#1 ] 
+Uplifting [main] best 368 combination zp ZP_BYTE:2 [ main::b#2 main::b#0 main::b#1 ] reg byte a [ main::c#0 ] 
+Uplifting [] best 368 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::b#2 main::b#0 main::b#1 ]
+Uplifting [main] best 368 combination zp ZP_BYTE:2 [ main::b#2 main::b#0 main::b#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -242,48 +236,44 @@ b1_from_bbegin:
 //SEG5 @1
 b1:
 //SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
   jsr main
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
 bend_from_b1:
   jmp bend
-//SEG9 @end
+//SEG8 @end
 bend:
-//SEG10 main
+//SEG9 main
 main: {
     .label SCREEN = $400
     .label bp = b
     .label b = 2
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-  //SEG12 [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG10 [4] (byte) main::b#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta b
-    jmp b1
-  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  //SEG11 [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  b1_from_main:
   b1_from_b1:
-  //SEG14 [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@1->main::@1#0] -- register_copy 
+  //SEG12 [5] phi (byte) main::b#2 = (byte) main::b#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     jmp b1
-  //SEG15 main::@1
+  //SEG13 main::@1
   b1:
-  //SEG16 [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
+  //SEG14 [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
     lda bp
     clc
     adc #1
-  //SEG17 [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+  //SEG15 [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy b
     sta SCREEN,y
-  //SEG18 [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
+  //SEG16 [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  //SEG19 [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG17 [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp b
     bne b1_from_b1
     jmp breturn
-  //SEG20 main::@return
+  //SEG18 main::@return
   breturn:
-  //SEG21 [10] return 
+  //SEG19 [10] return 
     rts
 }
 
@@ -296,19 +286,16 @@ Succesful ASM optimization Pass5NextJumpElimination
 Replacing label b1_from_b1 with b1
 Removing instruction b1_from_bbegin:
 Removing instruction b1:
-Removing instruction main_from_b1:
 Removing instruction bend_from_b1:
+Removing instruction b1_from_main:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
-Removing instruction b1_from_main:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -322,19 +309,20 @@ FINAL SYMBOL TABLE
 (byte*) main::SCREEN
 (const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
 (byte) main::b
+(byte) main::b#0 b zp ZP_BYTE:2 4.0
 (byte) main::b#1 b zp ZP_BYTE:2 16.5
-(byte) main::b#2 b zp ZP_BYTE:2 11.0
+(byte) main::b#2 b zp ZP_BYTE:2 11.666666666666666
 (byte*) main::bp
 (const byte*) main::bp#0 bp = &(byte) main::b#2
 (byte) main::c
 (byte) main::c#0 reg byte a 22.0
 
-zp ZP_BYTE:2 [ main::b#2 main::b#1 ]
+zp ZP_BYTE:2 [ main::b#2 main::b#0 main::b#1 ]
 reg byte a [ main::c#0 ]
 
 
 FINAL ASSEMBLER
-Score: 341
+Score: 296
 
 //SEG0 File Comments
 // Test address-of - use the pointer to get the value
@@ -347,37 +335,35 @@ Score: 341
 //SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
 //SEG5 @1
 //SEG6 [2] call main 
-//SEG7 [4] phi from @1 to main [phi:@1->main]
-//SEG8 [3] phi from @1 to @end [phi:@1->@end]
-//SEG9 @end
-//SEG10 main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
 main: {
     .label SCREEN = $400
     .label bp = b
     .label b = 2
-  //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
-  //SEG12 [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+  //SEG10 [4] (byte) main::b#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta b
-  //SEG13 [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  //SEG14 [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@1->main::@1#0] -- register_copy 
-  //SEG15 main::@1
+  //SEG11 [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  //SEG12 [5] phi (byte) main::b#2 = (byte) main::b#0 [phi:main/main::@1->main::@1#0] -- register_copy 
+  //SEG13 main::@1
   b1:
-  //SEG16 [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
+  //SEG14 [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
     lda bp
     clc
     adc #1
-  //SEG17 [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+  //SEG15 [7] *((const byte*) main::SCREEN#0 + (byte) main::b#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy b
     sta SCREEN,y
-  //SEG18 [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
+  //SEG16 [8] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc b
-  //SEG19 [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+  //SEG17 [9] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp b
     bne b1
-  //SEG20 main::@return
-  //SEG21 [10] return 
+  //SEG18 main::@return
+  //SEG19 [10] return 
     rts
 }
 

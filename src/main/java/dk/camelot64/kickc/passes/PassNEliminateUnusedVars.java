@@ -46,10 +46,10 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   if(variable == null) {
                      // Already deleted
                      eliminate = true;
-                  } else if(!variable.isDeclaredVolatile()) {
+                  } else if(!variable.isVolatile()) {
                      // Not volatile
                      eliminate = true;
-                  } else if(variable.isDeclaredVolatile() && variable.getType() instanceof SymbolTypeStruct) {
+                  } else if(variable.isVolatile() && variable.getType() instanceof SymbolTypeStruct) {
                      // If an unwound volatile struct - eliminate it
                      StructUnwinding.VariableUnwinding variableUnwinding = getProgram().getStructUnwinding().getVariableUnwinding(variable.getRef());
                      if(variableUnwinding != null) {

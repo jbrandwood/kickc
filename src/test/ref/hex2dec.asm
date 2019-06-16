@@ -176,8 +176,8 @@ utoa10w: {
 // Hexadecimal utoa() for an unsigned int (16bits)
 // utoa16w(word zeropage(8) value, byte* zeropage($a) dst)
 utoa16w: {
-    .label value = 8
     .label dst = $a
+    .label value = 8
     lda value+1
     lsr
     lsr

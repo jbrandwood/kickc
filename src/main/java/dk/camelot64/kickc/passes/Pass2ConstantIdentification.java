@@ -182,7 +182,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             if(getConstant(phiRValue.getrValue()) != null) {
                VariableRef variable = phiVariable.getVariable();
                Variable var = getScope().getVariable(variable);
-               if(var.isDeclaredVolatile()) {
+               if(var.isVolatile()) {
                   // Volatile variables cannot be constant
                   continue;
                }
@@ -198,7 +198,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       if(lValue instanceof VariableRef) {
          VariableRef variable = (VariableRef) lValue;
          Variable var = getScope().getVariable(variable);
-         if(var.isDeclaredVolatile()) {
+         if(var.isVolatile()) {
             // Volatile variables cannot be constant
             return;
          }

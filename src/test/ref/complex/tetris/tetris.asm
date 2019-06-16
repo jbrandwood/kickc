@@ -120,6 +120,7 @@
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
   .label keyboard_events_size = $42
   .label render_screen_showing = $55
+  .label score_bcd = $28
   .label irq_raster_next = $56
   .label irq_sprite_ypos = $57
   .label irq_sprite_ptr = $58
@@ -139,7 +140,6 @@
   .label render_screen_show = 2
   .label current_movedown_counter = 4
   .label lines_bcd = $26
-  .label score_bcd = $28
   .label current_piece_17 = $1e
   .label render_screen_render_33 = $e
   .label current_xpos_59 = $f
@@ -161,6 +161,11 @@ bbegin:
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
   sta render_screen_showing
+  // Current score in BCD-format
+  sta score_bcd
+  sta score_bcd+1
+  sta score_bcd+2
+  sta score_bcd+3
 // Original Color Data
   // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
@@ -218,10 +223,6 @@ main: {
     lda #0
     sta level_bcd
     sta level
-    sta score_bcd
-    sta score_bcd+1
-    sta score_bcd+2
-    sta score_bcd+3
     sta lines_bcd
     sta lines_bcd+1
     sta current_movedown_counter

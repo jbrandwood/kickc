@@ -95,7 +95,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          String unversionedFullName = null;
          for(VariableRef variableRef : aliasSet.getVars()) {
             Variable variable = programScope.getVariable(variableRef);
-            if(variable.isDeclaredVolatile()) {
+            if(variable.isVolatile()) {
                anyVolatile = true;
             }
             if(unversionedFullName == null) {

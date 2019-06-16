@@ -32,7 +32,7 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
 
       // Add all versions of volatile variables to the same equivalence class
       for(Variable variable : getSymbols().getAllVariables(true)) {
-         if(variable.isVersioned() && variable.isDeclaredVolatile()) {
+         if(variable.isVersioned() && variable.isVolatile()) {
             // Found a volatile non-versioned variable
             for(Variable otherVariable : variable.getScope().getAllVariables(false)) {
                if(otherVariable.isVersioned()) {

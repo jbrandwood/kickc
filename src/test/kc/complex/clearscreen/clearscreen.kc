@@ -2,6 +2,9 @@
 import "c64"
 import "multiply"
 
+// Generate debug code (raster time usage etc.)
+const bool DEBUG = false;
+
 // Address of the screen
 const byte* SCREEN = 0x0400;
 // Sprite data for the animating sprites
@@ -197,13 +200,15 @@ void processChars() {
                 processing->vx += VXSIN[xchar];
                 processing->x += processing->vx;
                 byte ychar = (byte)(ypos/8) - BORDER_YPOS_TOP/8;
-                processing->vy += VYSIN[ychar];
+                processing->vy +=   VYSIN[ychar];
                 processing->y += processing->vy;
             }
             numActive++;
         }
     }
-    *(SCREEN+999) = '0'+numActive;
+    if(DEBUG) {
+        *(SCREEN+999) = '0'+numActive;
+    }
 }
 
 // SQUARES_X[i] = (i-20)*(i-20)
@@ -261,12 +266,14 @@ const byte RASTER_IRQ_TOP = 0x30;
 
 // Raster Interrupt at the top of the screen
 interrupt(hardware_all) void irqTop() {
-    for( byte i: 0..4) {}
-    //*BORDERCOL = WHITE;
-    //*BGCOL = WHITE;
-    for( byte i: 0..7) {}
-    //*BORDERCOL = LIGHT_BLUE;
-    //*BGCOL = BLUE;
+    if(DEBUG) {
+        for( byte i: 0..4) {}
+        *BORDERCOL = WHITE;
+        *BGCOL = WHITE;
+        for( byte i: 0..7) {}
+        *BORDERCOL = LIGHT_BLUE;
+        *BGCOL = BLUE;
+    }
 
     // Trigger IRQ at the middle of the screen
     *RASTER = RASTER_IRQ_MIDDLE;
@@ -277,14 +284,18 @@ interrupt(hardware_all) void irqTop() {
 
 const byte RASTER_IRQ_MIDDLE = 0xff;
 
-// Raster Interrupt at the middle of the screen
+// Raster Interrupt at the bottom of the screen
 interrupt(hardware_all) void irqBottom() {
-    for( byte i: 0..4) {}
-    //*BORDERCOL = WHITE;
-    //*BGCOL = WHITE;
+    if(DEBUG) {
+        for( byte i: 0..4) {}
+        *BORDERCOL = WHITE;
+        *BGCOL = WHITE;
+    }
     processChars();
-    //*BORDERCOL = LIGHT_BLUE;
-    //*BGCOL = BLUE;
+    if(DEBUG) {
+        *BORDERCOL = LIGHT_BLUE;
+        *BGCOL = BLUE;
+    }
 
     // Trigger IRQ at the top of the screen
     *RASTER = RASTER_IRQ_TOP;

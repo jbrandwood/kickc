@@ -755,16 +755,11 @@ mul8u: {
     rol mb+1
     jmp b1
 }
-// Raster Interrupt at the middle of the screen
+// Raster Interrupt at the bottom of the screen
 irqBottom: {
     sta rega+1
     stx regx+1
     sty regy+1
-    ldx #0
-  b1:
-    inx
-    cpx #5
-    bne b1
     jsr processChars
     // Trigger IRQ at the top of the screen
     lda #RASTER_IRQ_TOP
@@ -786,8 +781,8 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _16 = $38
-    .label _26 = $36
+    .label _15 = $38
+    .label _25 = $36
     .label processing = $33
     .label bitmask = $35
     .label i = $1e
@@ -894,19 +889,19 @@ processChars: {
     sta SPRITES_XPOS,x
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
-    sta _16
+    sta _15
     iny
     lda (processing),y
-    sta _16+1
-    lsr _16+1
-    ror _16
-    lsr _16+1
-    ror _16
-    lsr _16+1
-    ror _16
-    lsr _16+1
-    ror _16
-    lda _16
+    sta _15+1
+    lsr _15+1
+    ror _15
+    lsr _15+1
+    ror _15
+    lsr _15+1
+    ror _15
+    lsr _15+1
+    ror _15
+    lda _15
     sta ypos
     sta SPRITES_YPOS,x
     // Move sprite
@@ -964,17 +959,15 @@ processChars: {
     dey
     lda #<YPOS_BOTTOMMOST
     cmp (processing),y
-    bcs !b6+
-    jmp b6
-  !b6:
+    bcc b6
   !:
-    lsr _26+1
-    ror _26
-    lsr _26+1
-    ror _26
-    lsr _26+1
-    ror _26
-    lda _26
+    lsr _25+1
+    ror _25
+    lsr _25+1
+    ror _25
+    lsr _25+1
+    ror _25
+    lda _25
     sec
     sbc #BORDER_XPOS_LEFT/8
     asl
@@ -1038,9 +1031,6 @@ processChars: {
     beq !b1+
     jmp b1
   !b1:
-    lax numActive
-    axs #-['0']
-    stx SCREEN+$3e7
     rts
   b6:
     // Set status to FREE
@@ -1064,18 +1054,6 @@ irqTop: {
     sta rega+1
     stx regx+1
     sty regy+1
-    ldx #0
-  b1:
-    inx
-    cpx #5
-    bne b1
-    ldx #0
-  //*BORDERCOL = WHITE;
-  //*BGCOL = WHITE;
-  b2:
-    inx
-    cpx #8
-    bne b2
     // Trigger IRQ at the middle of the screen
     lda #RASTER_IRQ_MIDDLE
     sta RASTER

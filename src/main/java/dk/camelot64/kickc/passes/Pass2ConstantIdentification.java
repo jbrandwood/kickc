@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ConstantNotLiteral;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -330,7 +327,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       }
 
       // If the symbol is part of an unwound struct - look at the struct itself
-      Pass1UnwindStructValues.StructUnwinding structUnwinding = program.getStructUnwinding();
+      StructUnwinding structUnwinding = program.getStructUnwinding();
       VariableRef structVarRef = structUnwinding.getContainingStructVariable(symbolRef);
       if(structVarRef != null) {
          return isAddressOfUsed(structVarRef, program);

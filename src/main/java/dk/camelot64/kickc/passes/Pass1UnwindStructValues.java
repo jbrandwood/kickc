@@ -269,7 +269,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
    private boolean unwindAssignment(StatementAssignment assignment, SymbolTypeStruct structType, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, StructUnwinding structUnwinding) {
       boolean modified = false;
 
-      StructMemberUnwinding memberUnwinding = getStructMemberUnwinding(assignment.getlValue(), structType, structUnwinding, assignment, stmtIt, currentBlock);
+      StructUnwinding.StructMemberUnwinding memberUnwinding = getStructMemberUnwinding(assignment.getlValue(), structType, structUnwinding, assignment, stmtIt, currentBlock);
       if(memberUnwinding == null) {
          throw new CompileError("Cannot unwind struct assignment " + assignment.toString(getProgram(), false), assignment);
       }
@@ -322,7 +322,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          SymbolType sourceType = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
          if(sourceType.equals(structType)) {
             // Copying a struct - unwind to assigning each member!
-            StructMemberUnwinding sourceMemberUnwinding = getStructMemberUnwinding((LValue) assignment.getrValue2(), structType, structUnwinding, assignment, stmtIt, currentBlock);
+            StructUnwinding.StructMemberUnwinding sourceMemberUnwinding = getStructMemberUnwinding((LValue) assignment.getrValue2(), structType, structUnwinding, assignment, stmtIt, currentBlock);
             if(sourceMemberUnwinding != null) {
                List<RValue> membersUnwound = new ArrayList<>();
                stmtIt.previous();
@@ -351,7 +351,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       return modified;
    }
 
-   private StructMemberUnwinding getStructMemberUnwinding(LValue lValue, SymbolTypeStruct lValueType, StructUnwinding structUnwinding, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   private StructUnwinding.StructMemberUnwinding getStructMemberUnwinding(LValue lValue, SymbolTypeStruct lValueType, StructUnwinding structUnwinding, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       if(lValue instanceof VariableRef) {
          return structUnwinding.getVariableUnwinding((VariableRef) lValue);
       } else if(lValue instanceof PointerDereferenceSimple) {
@@ -364,120 +364,15 @@ public class Pass1UnwindStructValues extends Pass1Base {
    }
 
 
-   /** Information about how members of an struct Lvalue is unwound. */
-   interface StructMemberUnwinding {
-
-      /**
-       * Get the names of the members of the struct
-       *
-       * @return the names
-       */
-      List<String> getMemberNames();
-
-      /**
-       * Get the LValue that a specific member was unwound to
-       *
-       * @param memberName The member name
-       * @return The unwinding of the member
-       */
-      LValue getMemberUnwinding(String memberName);
-   }
-
-
-   /**
-    * Keeps track of all structs that have been unwound into member variables.
-    */
-   public static class StructUnwinding {
-
-      /** Maps struct variables to unwinding of each member. */
-      Map<VariableRef, VariableUnwinding> structVariables = new LinkedHashMap<>();
-
-      /**
-       * Get information about how a struct variable was unwound into member variables
-       *
-       * @param ref The variable to look for
-       * @return Information about the unwinding. Null if not unwound
-       */
-      VariableUnwinding getVariableUnwinding(VariableRef ref) {
-         return structVariables.get(ref);
-      }
-
-      /**
-       * Add information about how a struct variable was unwound into member variables
-       *
-       * @param ref The variable to add information for
-       * @return The new information about the unwinding.
-       */
-      VariableUnwinding createVariableUnwinding(VariableRef ref) {
-         VariableUnwinding existing = structVariables.put(ref, new VariableUnwinding());
-         if(existing != null) {
-            throw new InternalError("ERROR! Struct unwinding was already created once! " + ref.toString());
-         }
-         return structVariables.get(ref);
-      }
-
-      /**
-       * Find the struct variable that the passed symbol was unwound from.
-       *
-       * @param symbolRef The symbol to look for
-       * @return The struct variable containing it. null if the passed symbol is not an unwound variable.
-       */
-      public VariableRef getContainingStructVariable(SymbolRef symbolRef) {
-         for(VariableRef structVarRef : structVariables.keySet()) {
-            VariableUnwinding variableUnwinding = getVariableUnwinding(structVarRef);
-            for(String memberName : variableUnwinding.getMemberNames()) {
-               LValue memberUnwinding = variableUnwinding.getMemberUnwinding(memberName);
-               if(memberUnwinding instanceof VariableRef && memberUnwinding.equals(symbolRef)) {
-                  return structVarRef;
-               }
-            }
-         }
-         return null;
-      }
-
-
-      /** Information about how a single struct variable was unwound. */
-      static class VariableUnwinding implements StructMemberUnwinding {
-
-         /** Maps member names to the unwound variables. */
-         Map<String, VariableRef> memberUnwinding = new LinkedHashMap<>();
-
-         /** Set how a member variable was unwound to a specific (new) variable. */
-         void setMemberUnwinding(String memberName, VariableRef memberVariableUnwound) {
-            this.memberUnwinding.put(memberName, memberVariableUnwound);
-         }
-
-         /**
-          * Get the names of the members of the struct
-          *
-          * @return the names
-          */
-         public List<String> getMemberNames() {
-            return new ArrayList<>(memberUnwinding.keySet());
-         }
-
-         /**
-          * Get the (new) variable that a specific member was unwound to
-          *
-          * @param memberName The member name
-          * @return The new variable
-          */
-         public LValue getMemberUnwinding(String memberName) {
-            return this.memberUnwinding.get(memberName);
-         }
-      }
-
-   }
-
    /** Unwinding for a simple pointer deref to a struct. */
-   private class StructMemberUnwindingPointerDerefSimple implements StructMemberUnwinding {
+   private class StructMemberUnwindingPointerDerefSimple implements StructUnwinding.StructMemberUnwinding {
       private final StructDefinition structDefinition;
       private final ControlFlowBlock currentBlock;
       private final ListIterator<Statement> stmtIt;
       private final PointerDereferenceSimple pointerDeref;
       private final Statement currentStmt;
 
-      public StructMemberUnwindingPointerDerefSimple(PointerDereferenceSimple pointerDeref, StructDefinition structDefinition, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, Statement currentStmt) {
+      StructMemberUnwindingPointerDerefSimple(PointerDereferenceSimple pointerDeref, StructDefinition structDefinition, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, Statement currentStmt) {
          this.structDefinition = structDefinition;
          this.currentBlock = currentBlock;
          this.stmtIt = stmtIt;
@@ -511,14 +406,14 @@ public class Pass1UnwindStructValues extends Pass1Base {
    }
 
    /** Unwinding for a indexed pointer deref to a struct. */
-   private class StructMemberUnwindingPointerDerefIndexed implements StructMemberUnwinding {
+   private class StructMemberUnwindingPointerDerefIndexed implements StructUnwinding.StructMemberUnwinding {
       private final StructDefinition structDefinition;
       private final ControlFlowBlock currentBlock;
       private final ListIterator<Statement> stmtIt;
       private final PointerDereferenceIndexed pointerDeref;
       private final Statement currentStmt;
 
-      public StructMemberUnwindingPointerDerefIndexed(PointerDereferenceIndexed pointerDeref, StructDefinition structDefinition, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, Statement currentStmt) {
+      StructMemberUnwindingPointerDerefIndexed(PointerDereferenceIndexed pointerDeref, StructDefinition structDefinition, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, Statement currentStmt) {
          this.structDefinition = structDefinition;
          this.currentBlock = currentBlock;
          this.stmtIt = stmtIt;

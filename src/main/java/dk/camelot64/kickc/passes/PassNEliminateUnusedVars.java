@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StructUnwinding;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
@@ -50,13 +51,9 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                      eliminate = true;
                   } else if(variable.isDeclaredVolatile() && variable.getType() instanceof SymbolTypeStruct) {
                      // If an unwound volatile struct - eliminate it
-                     if(variable.getRef().isVersion()) {
-                        String fullNameUnversioned = variable.getRef().getFullNameUnversioned();
-                        VariableRef unversionedRef = new VariableRef(fullNameUnversioned);
-                        Pass1UnwindStructValues.StructUnwinding.VariableUnwinding variableUnwinding = getProgram().getStructUnwinding().getVariableUnwinding(unversionedRef);
-                        if(variableUnwinding != null) {
-                           eliminate = true;
-                        }
+                     StructUnwinding.VariableUnwinding variableUnwinding = getProgram().getStructUnwinding().getVariableUnwinding(variable.getRef());
+                     if(variableUnwinding != null) {
+                        eliminate = true;
                      }
                   }
                   if(eliminate) {

@@ -47,6 +47,8 @@ struct ProcessingSprite {
     byte id;
     // sprite pointer (0-255)
     byte ptr;
+    // sprite color
+    byte col;
     // status of the processing (0: free, 1: new, 2: processing)
     byte status;
     // Pointer to screen char being processed (used for deletion)
@@ -67,7 +69,7 @@ void main() {
     // Copy screen to screen copy
     for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
     // Init processing array
-    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, 0, 0, STATUS_FREE, 0};
+    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, 0, 0, 0, STATUS_FREE, 0};
     // Init sprites
     initSprites();
     // Set-up raster interrupts
@@ -125,7 +127,10 @@ void startProcessing(struct ProcessingChar center) {
     // Found a free sprite
     byte spriteIdx = freeIdx;
     // Copy char into sprite
-    byte* screenPtr = SCREEN+(word)center.y*40+center.x;
+    word offset = (word)center.y*40+center.x;
+    byte* colPtr = COLS+offset;
+    byte spriteCol = *colPtr;
+    byte* screenPtr = SCREEN+offset;
     byte* spriteData = SPRITE_DATA+(word)spriteIdx*64;
     byte ch = (*screenPtr);
     byte* chargenData = CHARGEN+(word)ch*8;
@@ -142,7 +147,7 @@ void startProcessing(struct ProcessingChar center) {
     word spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4;
     byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
     // Put the sprite into the PROCESSING array
-    PROCESSING[spriteIdx] = { spriteX, spriteY, (word)(spriteIdx*8), 60, spriteIdx, spritePtr, STATUS_NEW, screenPtr };
+    PROCESSING[spriteIdx] = { spriteX, spriteY, (word)(spriteIdx*8), 60, spriteIdx, spritePtr, spriteCol, STATUS_NEW, screenPtr };
 }
 
 const word XPOS_LEFTMOST = (word)(BORDER_XPOS_LEFT-8)<<4;
@@ -173,6 +178,8 @@ void processChars() {
                 *(processing->screenPtr) = ' ';
                 // Enable the sprite
                 *SPRITES_ENABLE |= bitmask;
+                // Set the sprite color
+                SPRITES_COLS[processing->id] = processing->col;
                 // Set sprite pointer
                 *(SCREEN+SPRITE_PTRS+processing->id) = processing->ptr;
                 // Set status

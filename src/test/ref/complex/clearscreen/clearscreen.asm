@@ -7,8 +7,9 @@
   .const OFFSET_STRUCT_PROCESSINGSPRITE_VY = 6
   .const OFFSET_STRUCT_PROCESSINGSPRITE_ID = 8
   .const OFFSET_STRUCT_PROCESSINGSPRITE_PTR = 9
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $a
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $b
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -117,9 +118,9 @@ main: {
     clc
     adc i
     asl
-    asl
     clc
     adc i
+    asl
     tax
     lda #0
     sta PROCESSING,x
@@ -132,6 +133,7 @@ main: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,x
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,x
     lda #STATUS_FREE
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,x
     lda #<0
@@ -170,30 +172,32 @@ main: {
 startProcessing: {
     .label _0 = $22
     .label _1 = $22
-    .label _2 = $22
-    .label _4 = $a
     .label _5 = $a
-    .label _7 = 8
+    .label _6 = $a
     .label _8 = 8
-    .label _10 = $28
-    .label _11 = $28
-    .label _12 = $28
-    .label _14 = $2a
-    .label _15 = $2a
-    .label _16 = $2a
-    .label _22 = $2d
+    .label _9 = 8
+    .label _11 = $29
+    .label _12 = $29
+    .label _13 = $29
+    .label _15 = $2b
+    .label _16 = $2b
+    .label _17 = $2b
+    .label _23 = $2e
     .label center_x = $20
     .label center_y = $21
     .label i = 7
-    .label screenPtr = $26
+    .label offset = $22
+    .label colPtr = $26
+    .label spriteCol = $28
+    .label screenPtr = $22
     .label spriteData = $a
     .label chargenData = 8
-    .label spriteX = $28
-    .label spriteY = $2a
-    .label spritePtr = $2c
+    .label spriteX = $29
+    .label spriteY = $2b
+    .label spritePtr = $2d
     .label freeIdx = 7
-    .label _44 = $24
-    .label _45 = $22
+    .label _47 = $24
+    .label _48 = $22
     ldx #$ff
   b1:
     lda #0
@@ -204,9 +208,9 @@ startProcessing: {
     clc
     adc i
     asl
-    asl
     clc
     adc i
+    asl
     tay
     lda #STATUS_FREE
     cmp PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,y
@@ -225,55 +229,65 @@ startProcessing: {
     sta _0+1
     lda _0
     asl
-    sta _44
+    sta _47
     lda _0+1
     rol
-    sta _44+1
-    asl _44
-    rol _44+1
-    lda _45
+    sta _47+1
+    asl _47
+    rol _47+1
+    lda _48
     clc
-    adc _44
-    sta _45
-    lda _45+1
-    adc _44+1
-    sta _45+1
+    adc _47
+    sta _48
+    lda _48+1
+    adc _47+1
+    sta _48+1
     asl _1
     rol _1+1
     asl _1
     rol _1+1
     asl _1
     rol _1+1
-    clc
-    lda _2
-    adc #<SCREEN
-    sta _2
-    lda _2+1
-    adc #>SCREEN
-    sta _2+1
     lda center_x
     clc
-    adc _2
+    adc offset
+    sta offset
+    bcc !+
+    inc offset+1
+  !:
+    lda offset
+    clc
+    adc #<COLS
+    sta colPtr
+    lda offset+1
+    adc #>COLS
+    sta colPtr+1
+    ldy #0
+    lda (colPtr),y
+    sta spriteCol
+    clc
+    lda screenPtr
+    adc #<SCREEN
     sta screenPtr
-    lda #0
-    adc _2+1
+    lda screenPtr+1
+    adc #>SCREEN
     sta screenPtr+1
     lda freeIdx
-    sta _4
-    lda #0
-    sta _4+1
-    asl _5
-    rol _5+1
-    asl _5
-    rol _5+1
-    asl _5
-    rol _5+1
-    asl _5
-    rol _5+1
-    asl _5
-    rol _5+1
-    asl _5
-    rol _5+1
+    sta _5
+    tya
+    sta _5+1
+    asl _6
+    rol _6+1
+    asl _6
+    rol _6+1
+    asl _6
+    rol _6+1
+    asl _6
+    rol _6+1
+    asl _6
+    rol _6+1
+    asl _6
+    rol _6+1
     clc
     lda spriteData
     adc #<SPRITE_DATA
@@ -281,17 +295,16 @@ startProcessing: {
     lda spriteData+1
     adc #>SPRITE_DATA
     sta spriteData+1
-    ldy center_x
-    lda (_2),y
-    sta _7
-    lda #0
-    sta _7+1
-    asl _8
-    rol _8+1
-    asl _8
-    rol _8+1
-    asl _8
-    rol _8+1
+    lda (screenPtr),y
+    sta _8
+    tya
+    sta _8+1
+    asl _9
+    rol _9+1
+    asl _9
+    rol _9+1
+    asl _9
+    rol _9+1
     clc
     lda chargenData
     adc #<CHARGEN
@@ -325,21 +338,21 @@ startProcessing: {
     sta PROCPORT
     cli
     lda center_x
-    sta _10
+    sta _11
     lda #0
-    sta _10+1
-    asl _11
-    rol _11+1
-    asl _11
-    rol _11+1
-    asl _11
-    rol _11+1
+    sta _11+1
+    asl _12
+    rol _12+1
+    asl _12
+    rol _12+1
+    asl _12
+    rol _12+1
     lda #BORDER_XPOS_LEFT
     clc
-    adc _12
-    sta _12
+    adc _13
+    sta _13
     bcc !+
-    inc _12+1
+    inc _13+1
   !:
     asl spriteX
     rol spriteX+1
@@ -350,21 +363,21 @@ startProcessing: {
     asl spriteX
     rol spriteX+1
     lda center_y
-    sta _14
+    sta _15
     lda #0
-    sta _14+1
-    asl _15
-    rol _15+1
-    asl _15
-    rol _15+1
-    asl _15
-    rol _15+1
+    sta _15+1
+    asl _16
+    rol _16+1
+    asl _16
+    rol _16+1
+    asl _16
+    rol _16+1
     lda #BORDER_YPOS_TOP
     clc
-    adc _16
-    sta _16
+    adc _17
+    sta _17
     bcc !+
-    inc _16+1
+    inc _17+1
   !:
     asl spriteY
     rol spriteY+1
@@ -381,17 +394,17 @@ startProcessing: {
     asl
     asl
     asl
-    sta _22
+    sta _23
     lda #0
-    sta _22+1
+    sta _23+1
     lda freeIdx
     asl
     clc
     adc freeIdx
     asl
-    asl
     clc
     adc freeIdx
+    asl
     tax
     lda spriteX
     sta PROCESSING,x
@@ -401,9 +414,9 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
     lda spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
-    lda _22
+    lda _23
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    lda _22+1
+    lda _23+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
     lda #$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
@@ -413,6 +426,8 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
     lda spritePtr
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,x
+    lda spriteCol
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,x
     lda #STATUS_NEW
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,x
     lda screenPtr
@@ -436,9 +451,9 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _9 = $2f
-    .label _10 = $2f
-    .label _11 = $2f
+    .label _9 = $30
+    .label _10 = $30
+    .label _11 = $30
     .label return_dist = $14
     .label x = $f
     .label dist = $14
@@ -449,8 +464,8 @@ getCharToProcess: {
     .label closest_dist = $10
     .label closest_x = $12
     .label closest_y = $13
-    .label _15 = $31
-    .label _16 = $2f
+    .label _15 = $32
+    .label _16 = $30
     lda #0
     sta closest_y
     sta closest_x
@@ -781,13 +796,13 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _15 = $38
-    .label _25 = $36
-    .label processing = $33
-    .label bitmask = $35
+    .label _15 = $39
+    .label _25 = $37
+    .label processing = $34
+    .label bitmask = $36
     .label i = $1e
-    .label xpos = $36
-    .label ypos = $3a
+    .label xpos = $37
+    .label ypos = $3b
     .label numActive = $1f
     lda #0
     sta numActive
@@ -798,9 +813,9 @@ processChars: {
     clc
     adc i
     asl
-    asl
     clc
     adc i
+    asl
     clc
     adc #<PROCESSING
     sta processing
@@ -843,6 +858,15 @@ processChars: {
     lda SPRITES_ENABLE
     ora bitmask
     sta SPRITES_ENABLE
+    // Set the sprite color
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_COL
+    lda (processing),y
+    ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
+    pha
+    lda (processing),y
+    tay
+    pla
+    sta SPRITES_COLS,y
     // Set sprite pointer
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_PTR
     lda (processing),y
@@ -1079,7 +1103,7 @@ irqTop: {
   // SQUARES_Y[i] = (i-12)*(i-12)
   SQUARES_Y: .fill 2*$19, 0
   // Sprites currently being processed in the interrupt
-  PROCESSING: .fill $d*NUM_PROCESSING, 0
+  PROCESSING: .fill $e*NUM_PROCESSING, 0
 .pc = VXSIN "VXSIN"
   .for(var i=0; i<40; i++) {
       .word -sin(toRadians([i*360]/40))*4

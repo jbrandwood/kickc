@@ -89,10 +89,4 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
       return false;
    }
 
-   private boolean hasIntersection(Collection<VariableRef> vars1, List<VariableRef> vars2) {
-      ArrayList<VariableRef> set = new ArrayList<>(vars1);
-      set.retainAll(vars2);
-      return set.size() > 0;
-   }
-
 }

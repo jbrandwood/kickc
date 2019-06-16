@@ -170,7 +170,6 @@ public class Compiler {
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
 
-
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");
          getLog().append(program.getScope().toString(program, null));

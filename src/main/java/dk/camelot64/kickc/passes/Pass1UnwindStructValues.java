@@ -230,7 +230,6 @@ public class Pass1UnwindStructValues extends Pass1Base {
       for(Variable variable : getScope().getAllVariables(true)) {
          if(variable.getType() instanceof SymbolTypeStruct) {
             if(structUnwinding.getVariableUnwinding(variable.getRef()) == null) {
-               if(!variable.isDeclaredVolatile() && !Pass2ConstantIdentification.isAddressOfUsed(variable.getRef(), getProgram())) {
                   // A non-volatile struct variable
                   Scope scope = variable.getScope();
                   if(!(scope instanceof StructDefinition)) {
@@ -244,13 +243,14 @@ public class Pass1UnwindStructValues extends Pass1Base {
                         } else {
                            memberVariable = scope.addVariable(variable.getLocalName() + "_" + member.getLocalName(), member.getType());
                         }
+                        memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
+                        memberVariable.setDeclaredConstant(variable.isDeclaredConstant());
                         variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
                         getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
                      }
                      getLog().append("Converted struct value to member variables " + variable.toString(getProgram()));
                      modified = true;
                   }
-               }
             }
          }
       }
@@ -394,6 +394,25 @@ public class Pass1UnwindStructValues extends Pass1Base {
             throw new InternalError("ERROR! Struct unwinding was already created once! " + ref.toString());
          }
          return structVariables.get(ref);
+      }
+
+      /**
+       * Find the struct variable that the passed symbol was unwound from.
+       *
+       * @param symbolRef The symbol to look for
+       * @return The struct variable containing it. null if the passed symbol is not an unwound variable.
+       */
+      public VariableRef getContainingStructVariable(SymbolRef symbolRef) {
+         for(VariableRef structVarRef : structVariables.keySet()) {
+            VariableUnwinding variableUnwinding = getVariableUnwinding(structVarRef);
+            for(String memberName : variableUnwinding.getMemberNames()) {
+               LValue memberUnwinding = variableUnwinding.getMemberUnwinding(memberName);
+               if(memberUnwinding instanceof VariableRef && memberUnwinding.equals(symbolRef)) {
+                  return structVarRef;
+               }
+            }
+         }
+         return null;
       }
 
 

@@ -73,12 +73,12 @@ public class TestPrograms {
       compileAndCompare("struct-ptr-13");
    }
 
-   /* TODO: Implement address-of (&) for struct values
    @Test
    public void testStructPtr12Ref() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-12-ref", log());
    }
 
+   /*
    @Test
    public void testStructPtr12() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-12", log().verboseCreateSsa().verboseParse().verboseStatementSequence());
@@ -1706,13 +1706,18 @@ public class TestPrograms {
    }
 
    @Test
-   public void testAddressOfParam() throws IOException, URISyntaxException {
-      compileAndCompare("test-address-of-param");
+   public void testAddressOf2() throws IOException, URISyntaxException {
+      compileAndCompare("address-of-2");
    }
 
    @Test
-   public void testAddressOf() throws IOException, URISyntaxException {
-      compileAndCompare("test-address-of");
+   public void testAddressOf1() throws IOException, URISyntaxException {
+      compileAndCompare("address-of-1");
+   }
+
+   @Test
+   public void testAddressOf0() throws IOException, URISyntaxException {
+      compileAndCompare("address-of-0");
    }
 
    @Test

@@ -295,6 +295,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
     */
    public static boolean isAddressOfUsed(SymbolRef symbolRef, Program program) {
       final boolean[] found = {false};
+      // Examine all program values in expressions
       ProgramValueIterator.execute(program, (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value value = programValue.get();
          if(value instanceof ConstantSymbolPointer) {
@@ -308,6 +309,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          return true;
       }
 
+      // Examine all statements
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
@@ -318,6 +320,14 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             }
          }
       }
+
+      // If the symbol is part of an unwound struct - look at the struct itself
+      Pass1UnwindStructValues.StructUnwinding structUnwinding = program.getStructUnwinding();
+      VariableRef structVarRef = structUnwinding.getContainingStructVariable(symbolRef);
+      if(structVarRef!=null) {
+         return isAddressOfUsed(structVarRef, program);
+      }
+
       return false;
    }
 

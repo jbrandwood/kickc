@@ -172,7 +172,7 @@ public class KickC implements Callable<Void> {
             program = compiler.compile(kcFile.toString());
          } catch(CompileError e) {
             // Print the error and exit with compile error
-            System.err.print(e.getMessage());
+            System.err.println(e.getMessage());
             System.exit(COMPILE_ERROR);
          }
 

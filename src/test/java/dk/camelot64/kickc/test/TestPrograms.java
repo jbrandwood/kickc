@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMedusa() throws IOException, URISyntaxException {
+      compileAndCompare("complex/medusa/medusa");
+   }
+
+   @Test
    public void testClearscreen() throws IOException, URISyntaxException {
       compileAndCompare("complex/clearscreen/clearscreen");
    }

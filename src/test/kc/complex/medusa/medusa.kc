@@ -1,0 +1,29 @@
+// Display  MEDUSA PETSCII by Buzz_clik
+// https://csdb.dk/release/?id=178673
+
+import "c64"
+import "string"
+
+byte* MEDUSA_SCREEN = 0x1000;
+byte* MEDUSA_COLORS = 0x1400;
+
+byte* SCREEN = 0x0400;
+
+kickasm(pc MEDUSA_SCREEN, resource "medusas.prg" ) {{
+    .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
+    .fill fileScreen.getSize(), fileScreen.get(i)
+}}
+
+kickasm(pc MEDUSA_COLORS, resource "medusac.prg" ) {{
+    .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
+    .fill fileCols.getSize(), fileCols.get(i)
+}}
+
+void main() {
+    *BGCOL = BLACK;
+    memcpy(SCREEN, MEDUSA_SCREEN, 1000);
+    memcpy(COLS, MEDUSA_COLORS, 1000);
+    while(true) {
+        (*(SCREEN+999)) ^= 0x0e;
+    }
+}

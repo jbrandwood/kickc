@@ -1,4 +1,4 @@
-// Black Hole at the center of the BASIC screen sucking in letters
+// Clears start screen throwing around the letters (by turning them into sprites)
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

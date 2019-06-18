@@ -36,6 +36,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testEnumErr2() throws IOException, URISyntaxException {
+      assertError("enum-err-2", "Enum value not constant");
+   }
+
+   @Test
+   public void testEnumErr1() throws IOException, URISyntaxException {
+      assertError("enum-err-1", "Symbol already declared");
+   }
+
+   @Test
+   public void testEnumErr0() throws IOException, URISyntaxException {
+      assertError("enum-err-0", "Symbol already declared");
+   }
+
+   @Test
    public void testEnum8() throws IOException, URISyntaxException {
       compileAndCompare("enum-8");
    }

@@ -1207,26 +1207,30 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitEnumDef(KickCParser.EnumDefContext ctx) {
-      String enumDefName;
-      if(ctx.NAME() != null) {
-         enumDefName = ctx.NAME().getText();
-      } else {
-         enumDefName = getCurrentScope().allocateIntermediateVariableName();
+      try {
+         String enumDefName;
+         if(ctx.NAME() != null) {
+            enumDefName = ctx.NAME().getText();
+         } else {
+            enumDefName = getCurrentScope().allocateIntermediateVariableName();
+         }
+         EnumDefinition enumDefinition = new EnumDefinition(enumDefName, getCurrentScope());
+         getCurrentScope().add(enumDefinition);
+         this.currentEnum = enumDefinition;
+         scopeStack.push(currentEnum);
+         visit(ctx.enumMemberList());
+         scopeStack.pop();
+         this.currentEnum = null;
+         // Copy all members to upper-level scope
+         Scope parentScope = getCurrentScope();
+         while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
+         for(ConstantVar member : enumDefinition.getAllConstants(false)) {
+            parentScope.add(new ConstantVar(member.getLocalName(), parentScope, SymbolType.BYTE, member.getValue()));
+         }
+         return SymbolType.BYTE;
+      } catch (CompileError e) {
+         throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
-      EnumDefinition enumDefinition = new EnumDefinition(enumDefName, getCurrentScope());
-      getCurrentScope().add(enumDefinition);
-      this.currentEnum = enumDefinition;
-      scopeStack.push(currentEnum);
-      visit(ctx.enumMemberList());
-      scopeStack.pop();
-      this.currentEnum = null;
-      // Copy all members to upper-level scope
-      Scope parentScope = getCurrentScope();
-      while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
-      for(ConstantVar member : enumDefinition.getAllConstants(false)) {
-         parentScope.add(new ConstantVar(member.getLocalName(), parentScope, SymbolType.BYTE, member.getValue()));
-      }
-      return SymbolType.BYTE;
    }
 
    @Override

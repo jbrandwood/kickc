@@ -1,4 +1,5 @@
 Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
+Identified constant variable (byte) main::ubc1
 Identified constant variable (byte) main::ubc2
 
 CONTROL FLOW GRAPH SSA
@@ -6,12 +7,10 @@ CONTROL FLOW GRAPH SSA
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
   to:@1
 main: scope:[main]  from @1
-  (number~) main::$0 ← (number) $c + (number) $d
-  (number~) main::$1 ← (number~) main::$0 + (number) $e
-  (byte) main::ubc1#0 ← (number~) main::$1
+  (byte) main::ubc1#0 ← (number) $c+(number) $d+(number) $e
   (byte) main::ubc2#0 ← (number) $fa
-  (byte~) main::$2 ← (byte) main::ubc1#0 + (byte) main::ubc2#0
-  *((byte*) SCREEN#0 + (number) 0) ← (byte~) main::$2
+  (byte~) main::$0 ← (byte) main::ubc1#0 + (byte) main::ubc2#0
+  *((byte*) SCREEN#0 + (number) 0) ← (byte~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -31,21 +30,19 @@ SYMBOL TABLE SSA
 (byte*) SCREEN
 (byte*) SCREEN#0
 (void()) main()
-(number~) main::$0
-(number~) main::$1
-(byte~) main::$2
+(byte~) main::$0
 (label) main::@return
 (byte) main::ubc1
 (byte) main::ubc1#0
 (byte) main::ubc2
 (byte) main::ubc2#0
 
-Adding number conversion cast (unumber) main::$1 in (byte) main::ubc1#0 ← (number~) main::$1
+Adding number conversion cast (unumber) $c+$d+$e in (byte) main::ubc1#0 ← (number) $c+(number) $d+(number) $e
 Adding number conversion cast (unumber) $fa in (byte) main::ubc2#0 ← (number) $fa
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← (byte~) main::$2
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← (byte~) main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
-Inlining cast (byte) main::ubc1#0 ← (unumber)(number~) main::$1
+Inlining cast (byte) main::ubc1#0 ← (unumber)(number) $c+(number) $d+(number) $e
 Inlining cast (byte) main::ubc2#0 ← (unumber)(number) $fa
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -55,31 +52,19 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $fa
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [1] (number~) main::$0 ← (number) $c + (number) $d
+Constant right-side identified [1] (byte) main::ubc1#0 ← (unumber)(number) $c+(number) $d+(number) $e
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const number) main::$0 = $c+$d
+Constant (const byte) main::ubc1#0 = (unumber)$c+$d+$e
 Constant (const byte) main::ubc2#0 = $fa
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN#0 in [6] *((const byte*) SCREEN#0 + (byte) 0) ← (byte~) main::$2
+Simplifying expression containing zero SCREEN#0 in [4] *((const byte*) SCREEN#0 + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant right-side identified [0] (number~) main::$1 ← (const number) main::$0 + (number) $e
+Constant right-side identified [0] (byte~) main::$0 ← (const byte) main::ubc1#0 + (const byte) main::ubc2#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const number) main::$1 = main::$0+$e
+Constant (const byte) main::$0 = main::ubc1#0+main::ubc2#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (unumber)main::$1 in [1] (byte) main::ubc1#0 ← (unumber)(const number) main::$1
-Successful SSA optimization Pass2ConstantValues
-Constant (const byte) main::ubc1#0 = (unumber)main::$1
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant integer cast (const unumber) main::$1
-Successful SSA optimization PassNCastSimplification
-Constant right-side identified [0] (byte~) main::$2 ← (const byte) main::ubc1#0 + (const byte) main::ubc2#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = main::ubc1#0+main::ubc2#0
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$1 = (number) $c+(number) $d+(number) $e
-Constant inlined main::$2 = (const byte) main::ubc1#0+(const byte) main::ubc2#0
-Constant inlined main::$0 = (number) $c+(number) $d
+Constant inlined main::$0 = (const byte) main::ubc1#0+(const byte) main::ubc2#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -147,8 +132,8 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-    .const ubc2 = $fa
     .const ubc1 = $c+$d+$e
+    .const ubc2 = $fa
   //SEG10 [4] *((const byte*) SCREEN#0) ← (const byte) main::ubc1#0+(const byte) main::ubc2#0 -- _deref_pbuc1=vbuc2 
     lda #ubc1+ubc2
     sta SCREEN
@@ -194,8 +179,8 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-    .const ubc2 = $fa
     .const ubc1 = $c+$d+$e
+    .const ubc2 = $fa
   //SEG10 [4] *((const byte*) SCREEN#0) ← (const byte) main::ubc1#0+(const byte) main::ubc2#0 -- _deref_pbuc1=vbuc2 
     lda #ubc1+ubc2
     sta SCREEN
@@ -233,7 +218,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (byte) main::ubc1
-(const byte) main::ubc1#0 ubc1 = (number) $c+(number) $d+(number) $e
+(const byte) main::ubc1#0 ubc1 = (byte)(number) $c+(number) $d+(number) $e
 (byte) main::ubc2
 (const byte) main::ubc2#0 ubc2 = (byte) $fa
 
@@ -258,8 +243,8 @@ Score: 12
 //SEG8 @end
 //SEG9 main
 main: {
-    .const ubc2 = $fa
     .const ubc1 = $c+$d+$e
+    .const ubc2 = $fa
   //SEG10 [4] *((const byte*) SCREEN#0) ← (const byte) main::ubc1#0+(const byte) main::ubc2#0 -- _deref_pbuc1=vbuc2 
     lda #ubc1+ubc2
     sta SCREEN

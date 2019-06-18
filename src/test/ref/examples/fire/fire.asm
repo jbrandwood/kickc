@@ -175,16 +175,16 @@ sid_rnd: {
 }
 // Make a fire-friendly charset in chars $00-$3f of the passed charset
 makecharset: {
-    .label _13 = $15
-    .label _17 = $16
-    .label _18 = $16
-    .label _19 = $16
+    .label _10 = $15
+    .label _13 = $16
+    .label _14 = $16
+    .label _15 = $16
     .label font = $a
     .label font1 = $c
     .label ii = $10
     .label i = $f
     .label c = $e
-    .label _26 = $16
+    .label _18 = $16
     lda #<CHARSET
     sta font
     lda #>CHARSET
@@ -245,9 +245,9 @@ makecharset: {
     clc
     adc ii
     and #7
-    sta _13
+    sta _10
     tya
-    ldy _13
+    ldy _10
     clc
     adc bittab,y
     tay
@@ -257,32 +257,32 @@ makecharset: {
     cmp #8
     bcc b5
     lda c
-    sta _17
+    sta _13
     lda #0
-    sta _17+1
-    asl _18
-    rol _18+1
-    asl _18
-    rol _18+1
-    asl _18
-    rol _18+1
+    sta _13+1
+    asl _14
+    rol _14+1
+    asl _14
+    rol _14+1
+    asl _14
+    rol _14+1
     lda i
     clc
-    adc _19
-    sta _19
+    adc _15
+    sta _15
     bcc !+
-    inc _19+1
+    inc _15+1
   !:
     clc
-    lda _26
+    lda _18
     adc #<CHARSET+1*8
-    sta _26
-    lda _26+1
+    sta _18
+    lda _18+1
     adc #>CHARSET+1*8
-    sta _26+1
+    sta _18+1
     tya
     ldy #0
-    sta (_26),y
+    sta (_18),y
     inc i
     lda i
     cmp #8

@@ -11,7 +11,7 @@ main: {
     .label x = 4
     .label idx = 2
     .label y = 5
-    .label _16 = 6
+    .label _15 = 6
     lda #y0
     sta y
     ldx #y1/2
@@ -24,13 +24,13 @@ main: {
     lda idx
     clc
     adc #<screen
-    sta _16
+    sta _15
     lda idx+1
     adc #>screen
-    sta _16+1
+    sta _15+1
     lda #STAR
     ldy #0
-    sta (_16),y
+    sta (_15),y
     inc x
     inc idx
     bne !+

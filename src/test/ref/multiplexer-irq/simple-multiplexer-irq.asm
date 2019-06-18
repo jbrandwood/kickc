@@ -30,10 +30,10 @@
   .const GREEN = 5
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
-  .label SPRITE = $2000
-  .label YSIN = $2100
   // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
+  .label SPRITE = $2000
+  .label YSIN = $2100
   .label plex_show_idx = 7
   .label plex_sprite_idx = 6
   .label plex_sprite_msb = 9

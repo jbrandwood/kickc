@@ -14,8 +14,8 @@ scrollup3: {
     .label l2_1 = 4
     .label line = 2
     .label l2_2 = 4
-    .label _5 = $d
-    .label _6 = $f
+    .label _3 = $d
+    .label _4 = $f
     .label l2_4 = 4
     lda #0
     sta l2
@@ -30,20 +30,20 @@ scrollup3: {
     lda l2_2
     clc
     adc #<screen+$28
-    sta _5
+    sta _3
     lda l2_2+1
     adc #>screen+$28
-    sta _5+1
+    sta _3+1
     lda l2_2
     clc
     adc #<screen
-    sta _6
+    sta _4
     lda l2_2+1
     adc #>screen
-    sta _6+1
+    sta _4+1
     ldy #0
-    lda (_5),y
-    sta (_6),y
+    lda (_3),y
+    sta (_4),y
     inc l2_1
     bne !+
     inc l2_1+1
@@ -109,8 +109,8 @@ scrollup1: {
     .label _0 = $11
     .label _2 = $13
     .label line = $b
-    .label _7 = $13
-    .label _8 = $11
+    .label _5 = $13
+    .label _6 = $11
     lda #0
     sta line
     sta line+1
@@ -132,22 +132,22 @@ scrollup1: {
     adc line+1
     sta _2+1
     clc
-    lda _7
+    lda _5
     adc #<screen+$28
-    sta _7
-    lda _7+1
+    sta _5
+    lda _5+1
     adc #>screen+$28
-    sta _7+1
+    sta _5+1
     clc
-    lda _8
+    lda _6
     adc #<screen
-    sta _8
-    lda _8+1
+    sta _6
+    lda _6+1
     adc #>screen
-    sta _8+1
+    sta _6+1
     ldy #0
-    lda (_7),y
-    sta (_8),y
+    lda (_5),y
+    sta (_6),y
     inx
     cpx #$28
     bcc b2

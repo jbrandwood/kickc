@@ -12,7 +12,7 @@ main: {
   b1:
     lda #col
     sta COLS,x
-    lda #2/2+2
+    lda #2/2+1+1
     sta SCREEN,x
     inx
     cpx #$65

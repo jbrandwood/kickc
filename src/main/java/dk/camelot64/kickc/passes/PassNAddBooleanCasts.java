@@ -14,7 +14,9 @@ import dk.camelot64.kickc.model.symbols.VariableIntermediate;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.ConstantBinary;
 import dk.camelot64.kickc.model.values.ConstantInteger;
+import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.ListIterator;
@@ -56,8 +58,12 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
             SymbolType operandType = SymbolTypeInference.inferType(getScope(), operand);
             if(SymbolType.isInteger(operandType) || operandType instanceof SymbolTypePointer) {
                getLog().append("Warning! Adding boolean cast to non-boolean sub-expression "+operand.toString(getProgram()));
-               VariableIntermediate tmpVar = addBooleanCast(operand, currentStmt, stmtIt, currentBlock);
-               unaryExpression.setOperand(tmpVar.getRef());
+               if(operand instanceof ConstantValue) {
+                  unaryExpression.setOperand(new ConstantBinary(new ConstantInteger(0L, SymbolType.NUMBER), Operators.NEQ, (ConstantValue) operand));
+               }  else {
+                  VariableIntermediate tmpVar = addBooleanCast(operand, currentStmt, stmtIt, currentBlock);
+                  unaryExpression.setOperand(tmpVar.getRef());
+               }
             }
          }
       });

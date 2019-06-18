@@ -1,15 +1,12 @@
 Adding pointer type conversion cast (byte*) main::screen in (byte*) main::screen ← (number) $400
+Identified constant variable (byte) main::b
 Identified constant variable (byte*) main::screen
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 main: scope:[main]  from @1
-  (number~) main::$0 ← (number) $e / (number) 3
-  (number~) main::$1 ← (number) 6 * (number~) main::$0
-  (number~) main::$2 ← (number) $16 % (number) 3
-  (number~) main::$3 ← (number~) main::$1 + (number~) main::$2
-  (byte) main::b#0 ← (number~) main::$3
+  (byte) main::b#0 ← (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
   (byte*) main::screen#0 ← ((byte*)) (number) $400
   *((byte*) main::screen#0 + (number) 0) ← (byte) main::b#0
   to:main::@return
@@ -29,20 +26,16 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(number~) main::$0
-(number~) main::$1
-(number~) main::$2
-(number~) main::$3
 (label) main::@return
 (byte) main::b
 (byte) main::b#0
 (byte*) main::screen
 (byte*) main::screen#0
 
-Adding number conversion cast (unumber) main::$3 in (byte) main::b#0 ← (number~) main::$3
+Adding number conversion cast (unumber) 6*$e/3+$16%3 in (byte) main::b#0 ← (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
 Adding number conversion cast (unumber) 0 in *((byte*) main::screen#0 + (number) 0) ← (byte) main::b#0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::b#0 ← (unumber)(number~) main::$3
+Inlining cast (byte) main::b#0 ← (unumber)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
 Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -50,34 +43,13 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (number~) main::$0 ← (number) $e / (number) 3
-Constant right-side identified [2] (number~) main::$2 ← (number) $16 % (number) 3
+Constant right-side identified [0] (byte) main::b#0 ← (unumber)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const number) main::$0 = $e/3
-Constant (const number) main::$2 = $16%3
+Constant (const byte) main::b#0 = (unumber)6*$e/3+$16%3
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen#0 in [6] *((const byte*) main::screen#0 + (byte) 0) ← (byte) main::b#0
+Simplifying expression containing zero main::screen#0 in [2] *((const byte*) main::screen#0 + (byte) 0) ← (const byte) main::b#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant right-side identified [0] (number~) main::$1 ← (number) 6 * (const number) main::$0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const number) main::$1 = 6*main::$0
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [0] (number~) main::$3 ← (const number) main::$1 + (const number) main::$2
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const number) main::$3 = main::$1+main::$2
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (unumber)main::$3 in [1] (byte) main::b#0 ← (unumber)(const number) main::$3
-Successful SSA optimization Pass2ConstantValues
-Constant (const byte) main::b#0 = (unumber)main::$3
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant integer cast (const unumber) main::$3
-Successful SSA optimization PassNCastSimplification
-Constant inlined main::$3 = (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
-Constant inlined main::$1 = (number) 6*(number) $e/(number) 3
-Constant inlined main::$2 = (number) $16%(number) 3
-Constant inlined main::$0 = (number) $e/(number) 3
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -142,8 +114,8 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-    .label screen = $400
     .const b = 6*$e/3+mod($16,3)
+    .label screen = $400
   //SEG10 [4] *((const byte*) main::screen#0) ← (const byte) main::b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
@@ -188,8 +160,8 @@ bend_from_b1:
 bend:
 //SEG9 main
 main: {
-    .label screen = $400
     .const b = 6*$e/3+mod($16,3)
+    .label screen = $400
   //SEG10 [4] *((const byte*) main::screen#0) ← (const byte) main::b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
@@ -225,7 +197,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (byte) main::b
-(const byte) main::b#0 b = (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
+(const byte) main::b#0 b = (byte)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
 (byte*) main::screen
 (const byte*) main::screen#0 screen = (byte*) 1024
 
@@ -249,8 +221,8 @@ Score: 12
 //SEG8 @end
 //SEG9 main
 main: {
-    .label screen = $400
     .const b = 6*$e/3+mod($16,3)
+    .label screen = $400
   //SEG10 [4] *((const byte*) main::screen#0) ← (const byte) main::b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen

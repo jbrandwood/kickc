@@ -274,7 +274,7 @@ menu: {
 mode_8bppchunkybmm: {
     // 8BPP Chunky Bitmap (contains 8bpp pixels)
     .const PLANEB = $20000
-    .label _27 = $6f
+    .label _26 = $6f
     .label gfxb = 7
     .label x = 5
     .label y = 4
@@ -337,11 +337,11 @@ mode_8bppchunkybmm: {
     lda y
     clc
     adc x
-    sta _27
+    sta _26
     lda #0
     adc x+1
-    sta _27+1
-    lda _27
+    sta _26+1
+    lda _26
     ldy #0
     sta (gfxb),y
     inc gfxb

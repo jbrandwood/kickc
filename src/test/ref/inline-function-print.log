@@ -2,7 +2,7 @@ Adding pointer type conversion cast (byte*) screen in (byte*) screen ← (number
 Identified constant variable (byte*) screen
 Identified constant variable (byte*) main::hello
 Inlined call call print (byte*) screen (byte*) main::hello 
-Inlined call call print (byte*~) main::$2 (byte*) main::hello 
+Inlined call call print (byte*~) main::$1 (byte*) main::hello 
 Culled Empty Block (label) main::print1_@2
 Culled Empty Block (label) main::print1_@return
 Culled Empty Block (label) main::print2_@2
@@ -15,7 +15,7 @@ CONTROL FLOW GRAPH SSA
   (byte*) screen#0 ← ((byte*)) (number) $400
   to:@2
 main: scope:[main]  from @2
-  (byte*) main::hello#0 ← (const string) main::$4
+  (byte*) main::hello#0 ← (const string) main::$3
   (byte*) main::print1_at#0 ← (byte*) screen#0
   (byte*) main::print1_msg#0 ← (byte*) main::hello#0
   to:main::print1
@@ -37,9 +37,8 @@ main::print1_@1: scope:[main]  from main::print1 main::print1_@1
   if((bool~) main::print1_$0#0) goto main::print1_@1
   to:main::@1
 main::@1: scope:[main]  from main::print1_@1
-  (number~) main::$1 ← (number) 2 * (number) $28
-  (byte*~) main::$2 ← (byte*) screen#0 + (number~) main::$1
-  (byte*) main::print2_at#0 ← (byte*~) main::$2
+  (byte*~) main::$1 ← (byte*) screen#0 + (number) 2*(number) $28
+  (byte*) main::print2_at#0 ← (byte*~) main::$1
   (byte*) main::print2_msg#0 ← (byte*) main::hello#0
   to:main::print2
 main::print2: scope:[main]  from main::@1
@@ -75,9 +74,8 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(number~) main::$1
-(byte*~) main::$2
-(const string) main::$4 = (string) "hello world!@"
+(byte*~) main::$1
+(const string) main::$3 = (string) "hello world!@"
 (label) main::@1
 (label) main::@return
 (byte*) main::hello
@@ -128,7 +126,7 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 0 in (byte) main::print1_j#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) main::print1_i#0 ← (number) 0
 Adding number conversion cast (unumber) 2 in (byte) main::print1_j#1 ← (byte) main::print1_j#2 + (number) 2
-Adding number conversion cast (unumber) main::$1 in (byte*~) main::$2 ← (byte*) screen#0 + (number~) main::$1
+Adding number conversion cast (unumber) 2*$28 in (byte*~) main::$1 ← (byte*) screen#0 + (number) 2*(number) $28
 Adding number conversion cast (unumber) 0 in (byte) main::print2_j#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) main::print2_i#0 ← (number) 0
 Adding number conversion cast (unumber) 2 in (byte) main::print2_j#1 ← (byte) main::print2_j#2 + (number) 2
@@ -136,7 +134,6 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) screen#0 ← (byte*)(number) $400
 Inlining cast (byte) main::print1_j#0 ← (unumber)(number) 0
 Inlining cast (byte) main::print1_i#0 ← (unumber)(number) 0
-Inlining cast (unumber~) main::$5 ← (unumber)(number~) main::$1
 Inlining cast (byte) main::print2_j#0 ← (unumber)(number) 0
 Inlining cast (byte) main::print2_i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -157,7 +154,7 @@ Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) main::hello#0 = (byte*) main::print1_msg#0 (byte*) main::print1_msg#2 (byte*) main::print2_msg#0 (byte*) main::print2_msg#2 
 Alias (byte*) main::print1_at#0 = (byte*) main::print1_at#2 
-Alias (byte*) main::print2_at#0 = (byte*~) main::$2 (byte*) main::print2_at#2 
+Alias (byte*) main::print2_at#0 = (byte*~) main::$1 (byte*) main::print2_at#2 
 Successful SSA optimization Pass2AliasElimination
 Self Phi Eliminated (byte*) main::print1_msg#1
 Self Phi Eliminated (byte*) main::print1_at#1
@@ -170,29 +167,20 @@ Identical Phi Values (byte*) main::print2_msg#1 (byte*) main::hello#0
 Identical Phi Values (byte*) main::print2_at#1 (byte*) main::print2_at#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::print1_$0#0 [12] if(*((byte*) main::hello#0 + (byte) main::print1_i#1)!=(byte) '@') goto main::print1_@1
-Simple Condition (bool~) main::print2_$0#0 [26] if(*((byte*) main::hello#0 + (byte) main::print2_i#1)!=(byte) '@') goto main::print2_@1
+Simple Condition (bool~) main::print2_$0#0 [24] if(*((byte*) main::hello#0 + (byte) main::print2_i#1)!=(byte) '@') goto main::print2_@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [13] (number~) main::$1 ← (number) 2 * (number) $28
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) screen#0 = (byte*) 1024
-Constant (const byte*) main::hello#0 = main::$4
+Constant (const byte*) main::hello#0 = main::$3
 Constant (const byte) main::print1_j#0 = 0
 Constant (const byte) main::print1_i#0 = 0
-Constant (const number) main::$1 = 2*$28
 Constant (const byte) main::print2_j#0 = 0
 Constant (const byte) main::print2_i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::print1_at#0 = screen#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (unumber)main::$1 in [14] (unumber~) main::$5 ← (unumber)(const number) main::$1
-Successful SSA optimization Pass2ConstantValues
-Constant (const unumber) main::$5 = (unumber)main::$1
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant integer cast (const unumber) main::$1
-Successful SSA optimization PassNCastSimplification
-Constant right-side identified [5] (byte*) main::print2_at#0 ← (const byte*) screen#0 + (const unumber) main::$5
+Constant right-side identified [5] (byte*) main::print2_at#0 ← (const byte*) screen#0 + (byte)(number) 2*(number) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::print2_at#0 = screen#0+main::$5
+Constant (const byte*) main::print2_at#0 = screen#0+(byte)2*$28
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::print1_j#0
 Inlining constant with var siblings (const byte) main::print1_i#0
@@ -200,15 +188,11 @@ Inlining constant with var siblings (const byte) main::print2_j#0
 Inlining constant with var siblings (const byte) main::print2_i#0
 Constant inlined main::print2_j#0 = (byte) 0
 Constant inlined main::print1_at#0 = (const byte*) screen#0
+Constant inlined main::$3 = (const byte*) main::hello#0
 Constant inlined main::print2_i#0 = (byte) 0
-Constant inlined main::$1 = (number) 2*(number) $28
-Constant inlined main::$5 = (number) 2*(number) $28
-Constant inlined main::$4 = (const byte*) main::hello#0
 Constant inlined main::print1_i#0 = (byte) 0
 Constant inlined main::print1_j#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Adding number conversion cast (unumber) 2*$28 in 
-Successful SSA optimization PassNAddNumberTypeConversions
 Added new block during phi lifting main::@3(between main::print1_@1 and main::print1_@1)
 Added new block during phi lifting main::@4(between main::print2_@1 and main::print2_@1)
 Adding NOP phi() at start of @begin

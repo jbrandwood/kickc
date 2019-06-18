@@ -2,6 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const STATUS_FREE = 0
+  .const STATUS_NEW = 1
+  .const STATUS_PROCESSING = 2
   .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
   .const OFFSET_STRUCT_PROCESSINGSPRITE_VX = 4
   .const OFFSET_STRUCT_PROCESSINGSPRITE_VY = 6
@@ -66,10 +69,6 @@
   .const NUM_PROCESSING = 8
   // Distance value meaning not found
   .const NOT_FOUND = $ffff
-  // Values for ProcessingSprite.status
-  .const STATUS_FREE = 0
-  .const STATUS_NEW = 1
-  .const STATUS_PROCESSING = 2
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
   .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4

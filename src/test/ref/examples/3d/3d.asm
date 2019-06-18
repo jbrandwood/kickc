@@ -686,15 +686,15 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label _59 = $1d
-    .label _63 = $1f
-    .label _67 = $21
-    .label _71 = $23
-    .label _75 = $25
-    .label _79 = $27
-    .label _83 = $29
-    .label _87 = $2b
-    .label _91 = $2d
+    .label _41 = $1d
+    .label _44 = $1f
+    .label _47 = $21
+    .label _50 = $23
+    .label _53 = $25
+    .label _56 = $27
+    .label _59 = $29
+    .label _62 = $2b
+    .label _65 = $2d
     .label c = $a
     .label i = $b
     jsr print_cls
@@ -848,84 +848,84 @@ debug_print_init: {
     lda c
     clc
     adc #<at_cols
-    sta _59
+    sta _41
     lda #>at_cols
+    adc #0
+    sta _41+1
+    txa
+    sta (_41),y
+    lda c
+    clc
+    adc #<at_cols+$28*1
+    sta _44
+    lda #>at_cols+$28*1
+    adc #0
+    sta _44+1
+    txa
+    sta (_44),y
+    lda c
+    clc
+    adc #<at_cols+$28*2
+    sta _47
+    lda #>at_cols+$28*2
+    adc #0
+    sta _47+1
+    txa
+    sta (_47),y
+    lda c
+    clc
+    adc #<at_cols+$28*3
+    sta _50
+    lda #>at_cols+$28*3
+    adc #0
+    sta _50+1
+    txa
+    sta (_50),y
+    lda c
+    clc
+    adc #<at_cols+$28*4
+    sta _53
+    lda #>at_cols+$28*4
+    adc #0
+    sta _53+1
+    txa
+    sta (_53),y
+    lda c
+    clc
+    adc #<at_cols+$28*5
+    sta _56
+    lda #>at_cols+$28*5
+    adc #0
+    sta _56+1
+    txa
+    sta (_56),y
+    lda c
+    clc
+    adc #<at_cols+$28*6
+    sta _59
+    lda #>at_cols+$28*6
     adc #0
     sta _59+1
     txa
     sta (_59),y
     lda c
     clc
-    adc #<at_cols+$28*1
-    sta _63
-    lda #>at_cols+$28*1
-    adc #0
-    sta _63+1
-    txa
-    sta (_63),y
-    lda c
-    clc
-    adc #<at_cols+$28*2
-    sta _67
-    lda #>at_cols+$28*2
-    adc #0
-    sta _67+1
-    txa
-    sta (_67),y
-    lda c
-    clc
-    adc #<at_cols+$28*3
-    sta _71
-    lda #>at_cols+$28*3
-    adc #0
-    sta _71+1
-    txa
-    sta (_71),y
-    lda c
-    clc
-    adc #<at_cols+$28*4
-    sta _75
-    lda #>at_cols+$28*4
-    adc #0
-    sta _75+1
-    txa
-    sta (_75),y
-    lda c
-    clc
-    adc #<at_cols+$28*5
-    sta _79
-    lda #>at_cols+$28*5
-    adc #0
-    sta _79+1
-    txa
-    sta (_79),y
-    lda c
-    clc
-    adc #<at_cols+$28*6
-    sta _83
-    lda #>at_cols+$28*6
-    adc #0
-    sta _83+1
-    txa
-    sta (_83),y
-    lda c
-    clc
     adc #<at_cols+$28*7
-    sta _87
+    sta _62
     lda #>at_cols+$28*7
     adc #0
-    sta _87+1
+    sta _62+1
     txa
-    sta (_87),y
+    sta (_62),y
     lda c
     clc
     adc #<at_cols+$28*8
-    sta _91
+    sta _65
     lda #>at_cols+$28*8
     adc #0
-    sta _91+1
+    sta _65+1
     txa
-    sta (_91),y
+    sta (_65),y
     iny
     cpy #4
     beq !b2+

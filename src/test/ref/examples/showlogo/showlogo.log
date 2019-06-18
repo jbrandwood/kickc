@@ -78,8 +78,6 @@ CONTROL FLOW GRAPH SSA
 @4: scope:[]  from @begin
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
   (byte*) LOGO#0 ← ((byte*)) (number) $2000
-  (number~) $0 ← (number) 6 * (number) $28
-  (number~) $1 ← (number~) $0 * (number) 8
   kickasm(location (byte*) LOGO#0) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
@@ -119,18 +117,16 @@ main::@9: scope:[main]  from main::toD0181_@return
   *((byte*) D018#0) ← (byte~) main::$0
   (byte~) main::$1 ← (byte) VIC_MCM#0 | (byte) VIC_CSEL#0
   *((byte*) D016#0) ← (byte~) main::$1
-  (number~) main::$2 ← (number) $28 * (number) $19
   (byte*) fill::start#0 ← (byte*) SCREEN#0
-  (word) fill::size#0 ← (number~) main::$2
+  (word) fill::size#0 ← (number) $28*(number) $19
   (byte) fill::val#0 ← (byte) BLACK#0
   call fill 
   to:main::@10
 main::@10: scope:[main]  from main::@9
-  (number~) main::$4 ← (number) $28 * (number) $19
-  (number~) main::$5 ← (byte) WHITE#0 | (number) 8
+  (number~) main::$3 ← (byte) WHITE#0 | (number) 8
   (byte*) fill::start#1 ← (byte*) COLS#0
-  (word) fill::size#1 ← (number~) main::$4
-  (byte) fill::val#1 ← (number~) main::$5
+  (word) fill::size#1 ← (number) $28*(number) $19
+  (byte) fill::val#1 ← (number~) main::$3
   call fill 
   to:main::@11
 main::@11: scope:[main]  from main::@10
@@ -140,15 +136,15 @@ main::@1: scope:[main]  from main::@1 main::@11
   (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@11/(byte) main::ch#0 )
   *((byte*) SCREEN#0 + (byte) main::ch#2) ← (byte) main::ch#2
   (byte) main::ch#1 ← (byte) main::ch#2 + rangenext(0,$ef)
-  (bool~) main::$7 ← (byte) main::ch#1 != rangelast(0,$ef)
-  if((bool~) main::$7) goto main::@1
+  (bool~) main::$5 ← (byte) main::ch#1 != rangelast(0,$ef)
+  if((bool~) main::$5) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@4
   if(true) goto main::@4
   to:main::@return
 main::@4: scope:[main]  from main::@3
-  (byte*~) main::$10 ← (byte*) SCREEN#0 + (number) $3e7
-  *((byte*~) main::$10) ← ++ *((byte*~) main::$10)
+  (byte*~) main::$8 ← (byte*) SCREEN#0 + (number) $3e7
+  *((byte*~) main::$8) ← ++ *((byte*~) main::$8)
   kickasm() {{ inc $d020  }}
   to:main::@3
 main::@return: scope:[main]  from main::@3
@@ -182,8 +178,6 @@ fill::@return: scope:[fill]  from fill::@1
 @end: scope:[]  from @7
 
 SYMBOL TABLE SSA
-(number~) $0
-(number~) $1
 (label) @4
 (label) @6
 (label) @7
@@ -245,11 +239,9 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
-(byte*~) main::$10
-(number~) main::$2
-(number~) main::$4
-(number~) main::$5
-(bool~) main::$7
+(number~) main::$3
+(bool~) main::$5
+(byte*~) main::$8
 (label) main::@1
 (label) main::@10
 (label) main::@11
@@ -308,11 +300,11 @@ Adding number conversion cast (unumber) main::toD0181_$6#0 in (number~) main::to
 Adding number conversion cast (unumber) $f in (number~) main::toD0181_$7#0 ← (unumber~) main::toD0181_$6#0 & (number) $f
 Adding number conversion cast (unumber) main::toD0181_$7#0 in (number~) main::toD0181_$7#0 ← (unumber~) main::toD0181_$6#0 & (unumber)(number) $f
 Adding number conversion cast (unumber) main::toD0181_$8#0 in (number~) main::toD0181_$8#0 ← (unumber~) main::toD0181_$3#0 | (unumber~) main::toD0181_$7#0
-Adding number conversion cast (unumber) main::$2 in (word) fill::size#0 ← (number~) main::$2
-Adding number conversion cast (unumber) 8 in (number~) main::$5 ← (byte) WHITE#0 | (number) 8
-Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (byte) WHITE#0 | (unumber)(number) 8
-Adding number conversion cast (unumber) main::$4 in (word) fill::size#1 ← (number~) main::$4
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$10 ← (byte*) SCREEN#0 + (number) $3e7
+Adding number conversion cast (unumber) $28*$19 in (word) fill::size#0 ← (number) $28*(number) $19
+Adding number conversion cast (unumber) 8 in (number~) main::$3 ← (byte) WHITE#0 | (number) 8
+Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (byte) WHITE#0 | (unumber)(number) 8
+Adding number conversion cast (unumber) $28*$19 in (word) fill::size#1 ← (number) $28*(number) $19
+Adding number conversion cast (unumber) $3e7 in (byte*~) main::$8 ← (byte*) SCREEN#0 + (number) $3e7
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) BORDERCOL#0 ← (byte*)(number) $d020
 Inlining cast (byte*) BGCOL#0 ← (byte*)(number) $d021
@@ -330,8 +322,8 @@ Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
 Inlining cast (byte*) LOGO#0 ← (byte*)(number) $2000
 Inlining cast (word~) main::toD0181_$0#0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4#0 ← (word)(byte*) main::toD0181_gfx#1
-Inlining cast (word) fill::size#0 ← (unumber)(number~) main::$2
-Inlining cast (word) fill::size#1 ← (unumber)(number~) main::$4
+Inlining cast (word) fill::size#0 ← (unumber)(number) $28*(number) $19
+Inlining cast (word) fill::size#1 ← (unumber)(number) $28*(number) $19
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
@@ -372,11 +364,11 @@ Inferred type updated to byte in (unumber~) main::toD0181_$3#0 ← > (word~) mai
 Inferred type updated to byte in (unumber~) main::toD0181_$6#0 ← (byte~) main::toD0181_$5#0 / (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$7#0 ← (byte~) main::toD0181_$6#0 & (byte) $f
 Inferred type updated to byte in (unumber~) main::toD0181_$8#0 ← (byte~) main::toD0181_$3#0 | (byte~) main::toD0181_$7#0
-Inferred type updated to byte in (unumber~) main::$5 ← (byte) WHITE#0 | (byte) 8
+Inferred type updated to byte in (unumber~) main::$3 ← (byte) WHITE#0 | (byte) 8
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
 Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8#0 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$0 
-Alias (byte) fill::val#1 = (byte~) main::$5 
+Alias (byte) fill::val#1 = (byte~) main::$3 
 Alias (byte*) fill::end#0 = (byte*~) fill::$0 
 Alias (byte*) fill::addr#0 = (byte*) fill::start#2 
 Successful SSA optimization Pass2AliasElimination
@@ -386,12 +378,11 @@ Successful SSA optimization Pass2SelfPhiElimination
 Identical Phi Values (byte) fill::val#2 (byte) fill::val#3
 Identical Phi Values (byte*) fill::end#1 (byte*) fill::end#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$7 [57] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
-Simple Condition (bool~) fill::$1 [71] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
+Simple Condition (bool~) main::$5 [53] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
+Simple Condition (bool~) fill::$1 [67] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [14] (number~) $0 ← (number) 6 * (number) $28
-Constant right-side identified [41] (number~) main::$2 ← (number) $28 * (number) $19
-Constant right-side identified [46] (number~) main::$4 ← (number) $28 * (number) $19
+Constant right-side identified [40] (word) fill::size#0 ← (unumber)(number) $28*(number) $19
+Constant right-side identified [45] (word) fill::size#1 ← (unumber)(number) $28*(number) $19
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) BORDERCOL#0 = (byte*) 53280
 Constant (const byte*) BGCOL#0 = (byte*) 53281
@@ -407,9 +398,8 @@ Constant (const byte) WHITE#0 = 1
 Constant (const byte) DARK_GREY#0 = $b
 Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte*) LOGO#0 = (byte*) 8192
-Constant (const number) $0 = 6*$28
-Constant (const number) main::$2 = $28*$19
-Constant (const number) main::$4 = $28*$19
+Constant (const word) fill::size#0 = (unumber)$28*$19
+Constant (const word) fill::size#1 = (unumber)$28*$19
 Constant (const byte) main::ch#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::toD0181_screen#0 = SCREEN#0
@@ -418,15 +408,13 @@ Constant (const byte*) fill::start#0 = SCREEN#0
 Constant (const byte) fill::val#0 = BLACK#0
 Constant (const byte*) fill::start#1 = COLS#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::toD0181_screen#0 in [24] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
-Constant value identified (word)main::toD0181_gfx#0 in [28] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
-Constant value identified (unumber)main::$2 in [43] (word) fill::size#0 ← (unumber)(const number) main::$2
-Constant value identified (unumber)main::$4 in [49] (word) fill::size#1 ← (unumber)(const number) main::$4
+Constant value identified (word)main::toD0181_screen#0 in [22] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
+Constant value identified (word)main::toD0181_gfx#0 in [26] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [58] if(true) goto main::@4
+if() condition always true - replacing block destination [54] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [55] main::ch#1 ← ++ main::ch#2 to ++
-Resolved ranged comparison value [57] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
+Resolved ranged next value [51] main::ch#1 ← ++ main::ch#2 to ++
+Resolved ranged comparison value [53] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $f0 in if((byte) main::ch#1!=(number) $f0) goto main::@1
@@ -435,23 +423,16 @@ Simplifying constant integer cast $f0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $f0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (number~) $1 ← (const number) $0 * (number) 8
-Constant right-side identified [16] (byte~) main::$1 ← (const byte) VIC_MCM#0 | (const byte) VIC_CSEL#0
-Constant right-side identified [20] (byte) fill::val#1 ← (const byte) WHITE#0 | (byte) 8
-Constant right-side identified [27] (byte*~) main::$10 ← (const byte*) SCREEN#0 + (word) $3e7
+Constant right-side identified [15] (byte~) main::$1 ← (const byte) VIC_MCM#0 | (const byte) VIC_CSEL#0
+Constant right-side identified [18] (byte) fill::val#1 ← (const byte) WHITE#0 | (byte) 8
+Constant right-side identified [24] (byte*~) main::$8 ← (const byte*) SCREEN#0 + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const number) $1 = $0*8
 Constant (const word) main::toD0181_$0#0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4#0 = (word)main::toD0181_gfx#0
 Constant (const byte) main::$1 = VIC_MCM#0|VIC_CSEL#0
-Constant (const word) fill::size#0 = (unumber)main::$2
 Constant (const byte) fill::val#1 = WHITE#0|8
-Constant (const word) fill::size#1 = (unumber)main::$4
-Constant (const byte*) main::$10 = SCREEN#0+$3e7
+Constant (const byte*) main::$8 = SCREEN#0+$3e7
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant integer cast (const unumber) main::$2
-Simplifying constant integer cast (const unumber) main::$4
-Successful SSA optimization PassNCastSimplification
 Constant right-side identified [5] (word~) main::toD0181_$1#0 ← (const word) main::toD0181_$0#0 & (word) $3fff
 Constant right-side identified [8] (byte~) main::toD0181_$5#0 ← > (const word) main::toD0181_$4#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -475,41 +456,30 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::toD0181_return#0 = main::toD0181_$3#0|main::toD0181_$7#0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::ch#0
-Inlining constant with var siblings (const byte) fill::val#0
 Inlining constant with var siblings (const word) fill::size#0
-Inlining constant with var siblings (const byte) fill::val#1
 Inlining constant with var siblings (const word) fill::size#1
+Inlining constant with var siblings (const byte) fill::val#0
+Inlining constant with var siblings (const byte) fill::val#1
 Constant inlined fill::val#0 = (const byte) BLACK#0
 Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN#0
 Constant inlined main::toD0181_gfx#0 = (const byte*) LOGO#0
 Constant inlined fill::val#1 = (const byte) WHITE#0|(byte) 8
-Constant inlined fill::size#1 = (number) $28*(number) $19
+Constant inlined fill::size#1 = (word)(number) $28*(number) $19
 Constant inlined main::toD0181_$0#0 = (word)(const byte*) SCREEN#0
-Constant inlined fill::size#0 = (number) $28*(number) $19
+Constant inlined fill::size#0 = (word)(number) $28*(number) $19
 Constant inlined main::toD0181_$1#0 = (word)(const byte*) SCREEN#0&(word) $3fff
-Constant inlined $0 = (number) 6*(number) $28
-Constant inlined $1 = (number) 6*(number) $28*(number) 8
-Constant inlined main::$10 = (const byte*) SCREEN#0+(word) $3e7
 Constant inlined main::toD0181_$6#0 = >(word)(const byte*) LOGO#0/(byte) 4
 Constant inlined main::toD0181_$7#0 = >(word)(const byte*) LOGO#0/(byte) 4&(byte) $f
 Constant inlined fill::start#1 = (const byte*) COLS#0
 Constant inlined main::$1 = (const byte) VIC_MCM#0|(const byte) VIC_CSEL#0
 Constant inlined main::toD0181_$2#0 = (word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
 Constant inlined fill::start#0 = (const byte*) SCREEN#0
-Constant inlined main::$2 = (number) $28*(number) $19
 Constant inlined main::toD0181_$3#0 = >(word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
 Constant inlined main::toD0181_$4#0 = (word)(const byte*) LOGO#0
 Constant inlined main::toD0181_$5#0 = >(word)(const byte*) LOGO#0
-Constant inlined main::$4 = (number) $28*(number) $19
 Constant inlined main::ch#0 = (byte) 0
+Constant inlined main::$8 = (const byte*) SCREEN#0+(word) $3e7
 Successful SSA optimization Pass2ConstantInlining
-Adding number conversion cast (unumber) $28*$19 in [15] (byte) fill::val#3 ← phi( main::@10/(const byte) WHITE#0|(byte) 8 main::@9/(const byte) BLACK#0 )
-  [15] (word) fill::size#2 ← phi( main::@10/(number) $28*(number) $19 main::@9/(number) $28*(number) $19 )
-  [15] (byte*) fill::addr#0 ← phi( main::@10/(const byte*) COLS#0 main::@9/(const byte*) SCREEN#0 )
-Adding number conversion cast (unumber) $28*$19 in [15] (byte) fill::val#3 ← phi( main::@10/(const byte) WHITE#0|(byte) 8 main::@9/(const byte) BLACK#0 )
-  [15] (word) fill::size#2 ← phi( main::@10/(unumber)(number) $28*(number) $19 main::@9/(number) $28*(number) $19 )
-  [15] (byte*) fill::addr#0 ← phi( main::@10/(const byte*) COLS#0 main::@9/(const byte*) SCREEN#0 )
-Successful SSA optimization PassNAddNumberTypeConversions
 Added new block during phi lifting main::@12(between main::@1 and main::@1)
 Added new block during phi lifting fill::@3(between fill::@1 and fill::@1)
 Adding NOP phi() at start of @begin

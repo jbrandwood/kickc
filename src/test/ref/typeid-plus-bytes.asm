@@ -22,32 +22,32 @@ testSignedVals: {
     lda #sbc1
     sta SSCREEN+$28*3+1
     lda sbv1
-    sta SSCREEN+$28*3+2
+    sta SSCREEN+$28*3+1+1
     lda #-$46+-$32
-    sta SSCREEN+$28*3+3
+    sta SSCREEN+$28*3+1+1+1
     lda #sbc1+-$78
-    sta SSCREEN+$28*3+4
+    sta SSCREEN+$28*3+1+1+1+1
     lda #-$78+sbc1
-    sta SSCREEN+$28*3+5
+    sta SSCREEN+$28*3+1+1+1+1+1
     lda #-$78
     clc
     adc sbv1
-    sta SSCREEN+$28*3+6
+    sta SSCREEN+$28*3+1+1+1+1+1+1
     lda #-$78
     clc
     adc sbv1
-    sta SSCREEN+$28*3+7
+    sta SSCREEN+$28*3+1+1+1+1+1+1+1
     lda #sbc1
     clc
     adc sbv1
-    sta SSCREEN+$28*3+8
+    sta SSCREEN+$28*3+1+1+1+1+1+1+1+1
     lda #sbc1
     clc
     adc sbv1
-    sta SSCREEN+$28*3+9
+    sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1
     lda sbv1
     asl
-    sta SSCREEN+$28*3+$a
+    sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1+1
     rts
 }
 testSigned: {
@@ -58,17 +58,17 @@ testSigned: {
     sta SCREEN+$28*2
     lda #TYPEID_SIGNED_BYTE
     sta SCREEN+$28*2+1
-    sta SCREEN+$28*2+2
+    sta SCREEN+$28*2+1+1
     lda #0
-    sta SCREEN+$28*2+3
+    sta SCREEN+$28*2+1+1+1
     lda #TYPEID_SIGNED_BYTE
-    sta SCREEN+$28*2+4
-    sta SCREEN+$28*2+5
-    sta SCREEN+$28*2+6
-    sta SCREEN+$28*2+7
-    sta SCREEN+$28*2+8
-    sta SCREEN+$28*2+9
-    sta SCREEN+$28*2+$a
+    sta SCREEN+$28*2+1+1+1+1
+    sta SCREEN+$28*2+1+1+1+1+1
+    sta SCREEN+$28*2+1+1+1+1+1+1
+    sta SCREEN+$28*2+1+1+1+1+1+1+1
+    sta SCREEN+$28*2+1+1+1+1+1+1+1+1
+    sta SCREEN+$28*2+1+1+1+1+1+1+1+1+1
+    sta SCREEN+$28*2+1+1+1+1+1+1+1+1+1+1
     rts
 }
 testUnsignedVals: {

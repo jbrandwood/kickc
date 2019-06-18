@@ -1,6 +1,7 @@
 Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
-Adding pointer type conversion cast (byte*) SCREEN2 in (byte*) SCREEN2 ← (number~) $0
+Adding pointer type conversion cast (byte*) SCREEN2 in (byte*) SCREEN2 ← (number) $400+(number) $28
 Identified constant variable (byte*) SCREEN
+Identified constant variable (byte*) SCREEN2
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @1
 Culled Empty Block (label) sum::@1
@@ -10,15 +11,12 @@ Culled Empty Block (label) sum2::@1
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
-  (number~) $0 ← (number) $400 + (number) $28
-  (byte*) SCREEN2#0 ← ((byte*)) (number~) $0
+  (byte*) SCREEN2#0 ← ((byte*)) (number) $400+(number) $28
   to:@3
 main: scope:[main]  from @3
-  (byte*) SCREEN2#4 ← phi( @3/(byte*) SCREEN2#5 )
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
-  (byte*) SCREEN2#3 ← phi( main/(byte*) SCREEN2#4 main::@4/(byte*) SCREEN2#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
   (number~) main::$0 ← (byte) main::i#2 + (number) 1
   (number~) main::$1 ← (byte) main::i#2 + (number) 2
@@ -29,7 +27,6 @@ main::@1: scope:[main]  from main main::@4
   (byte) sum::return#0 ← (byte) sum::return#2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  (byte*) SCREEN2#2 ← phi( main::@1/(byte*) SCREEN2#3 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   (byte) sum::return#3 ← phi( main::@1/(byte) sum::return#0 )
   (byte~) main::$2 ← (byte) sum::return#3
@@ -44,10 +41,9 @@ main::@3: scope:[main]  from main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@3
   (byte) main::i#4 ← phi( main::@3/(byte) main::i#3 )
-  (byte*) SCREEN2#1 ← phi( main::@3/(byte*) SCREEN2#2 )
   (byte) sum2::return#3 ← phi( main::@3/(byte) sum2::return#0 )
   (byte~) main::$5 ← (byte) sum2::return#3
-  *((byte*) SCREEN2#1 + (byte) main::i#4) ← (byte~) main::$5
+  *((byte*) SCREEN2#0 + (byte) main::i#4) ← (byte~) main::$5
   (byte) main::i#1 ← (byte) main::i#4 + rangenext(0,$a)
   (bool~) main::$6 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$6) goto main::@1
@@ -82,7 +78,6 @@ sum2::@return: scope:[sum2]  from sum2
   return 
   to:@return
 @3: scope:[]  from @begin
-  (byte*) SCREEN2#5 ← phi( @begin/(byte*) SCREEN2#0 )
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -90,7 +85,6 @@ sum2::@return: scope:[sum2]  from sum2
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(number~) $0
 (label) @3
 (label) @4
 (label) @begin
@@ -99,11 +93,6 @@ SYMBOL TABLE SSA
 (byte*) SCREEN#0
 (byte*) SCREEN2
 (byte*) SCREEN2#0
-(byte*) SCREEN2#1
-(byte*) SCREEN2#2
-(byte*) SCREEN2#3
-(byte*) SCREEN2#4
-(byte*) SCREEN2#5
 (void()) main()
 (number~) main::$0
 (number~) main::$1
@@ -171,7 +160,7 @@ Adding number conversion cast (unumber) 2 in (number~) main::$4 ← (byte) main:
 Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (byte) main::i#3 + (unumber)(number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
-Inlining cast (byte*) SCREEN2#0 ← (byte*)(number~) $0
+Inlining cast (byte*) SCREEN2#0 ← (byte*)(number) $400+(number) $28
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
@@ -192,18 +181,12 @@ Alias (byte) sum::b#0 = (byte~) main::$0
 Alias (byte) sum::c#0 = (byte~) main::$1 
 Alias (byte) sum::return#0 = (byte) sum::return#3 
 Alias (byte) main::i#2 = (byte) main::i#3 (byte) main::i#4 
-Alias (byte*) SCREEN2#1 = (byte*) SCREEN2#2 (byte*) SCREEN2#3 
 Alias (byte) sum2::b#0 = (byte~) main::$3 
 Alias (byte) sum2::c#0 = (byte~) main::$4 
 Alias (byte) sum2::return#0 = (byte) sum2::return#3 
 Alias (byte) sum::return#1 = (byte~) sum::$1 (byte) sum::return#4 (byte) sum::return#2 
 Alias (byte) sum2::return#1 = (byte~) sum2::$1 (byte) sum2::return#4 (byte) sum2::return#2 
-Alias (byte*) SCREEN2#0 = (byte*) SCREEN2#5 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte*) SCREEN2#1
-Successful SSA optimization Pass2SelfPhiElimination
-Identical Phi Values (byte*) SCREEN2#4 (byte*) SCREEN2#0
-Identical Phi Values (byte*) SCREEN2#1 (byte*) SCREEN2#4
 Identical Phi Values (byte) sum::a#1 (byte) sum::a#0
 Identical Phi Values (byte) sum::b#1 (byte) sum::b#0
 Identical Phi Values (byte) sum::c#1 (byte) sum::c#0
@@ -211,28 +194,23 @@ Identical Phi Values (byte) sum2::a#1 (byte) sum2::a#0
 Identical Phi Values (byte) sum2::b#1 (byte) sum2::b#0
 Identical Phi Values (byte) sum2::c#1 (byte) sum2::c#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$6 [28] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$6 [26] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (number~) $0 ← (number) $400 + (number) $28
+Constant right-side identified [1] (byte*) SCREEN2#0 ← (byte*)(number) $400+(number) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) SCREEN#0 = (byte*) 1024
-Constant (const number) $0 = $400+$28
+Constant (const byte*) SCREEN2#0 = (byte*)$400+$28
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)$0 in [2] (byte*) SCREEN2#0 ← (byte*)(const number) $0
-Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [26] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [28] if(main::i#1!=rangelast(0,$a)) goto main::@1 to (number) $b
+Resolved ranged next value [24] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [26] if(main::i#1!=rangelast(0,$a)) goto main::@1 to (number) $b
 Adding number conversion cast (unumber) $b in if((byte) main::i#1!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) SCREEN2#0 = (byte*)$0
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined $0 = (number) $400+(number) $28
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@4 and main::@1)

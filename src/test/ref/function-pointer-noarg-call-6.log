@@ -19,9 +19,8 @@ main::@1: scope:[main]  from main main::@1
   call *((void()*) main::cls#1) 
   *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2)
   (byte*) main::cols#1 ← ++ (byte*) main::cols#2
-  (number~) main::$2 ← (number) $d800 + (number) $3e8
-  (bool~) main::$3 ← (byte*) main::cols#1 < (number~) main::$2
-  if((bool~) main::$3) goto main::@1
+  (bool~) main::$2 ← (byte*) main::cols#1 < (number) $d800+(number) $3e8
+  if((bool~) main::$2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -33,9 +32,8 @@ fn1::@1: scope:[fn1]  from fn1 fn1::@1
   (byte*) fn1::screen#2 ← phi( fn1/(byte*) fn1::screen#0 fn1::@1/(byte*) fn1::screen#1 )
   *((byte*) fn1::screen#2) ← ++ *((byte*) fn1::screen#2)
   (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#2
-  (number~) fn1::$0 ← (number) $400 + (number) $3e8
-  (bool~) fn1::$1 ← (byte*) fn1::screen#1 < (number~) fn1::$0
-  if((bool~) fn1::$1) goto fn1::@1
+  (bool~) fn1::$0 ← (byte*) fn1::screen#1 < (number) $400+(number) $3e8
+  if((bool~) fn1::$0) goto fn1::@1
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1::@1
   return 
@@ -53,8 +51,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) fn1()
-(number~) fn1::$0
-(bool~) fn1::$1
+(bool~) fn1::$0
 (label) fn1::@1
 (label) fn1::@return
 (byte*) fn1::screen
@@ -63,8 +60,7 @@ SYMBOL TABLE SSA
 (byte*) fn1::screen#2
 (void()) main()
 (void()*~) main::$0
-(number~) main::$2
-(bool~) main::$3
+(bool~) main::$2
 (label) main::@1
 (label) main::@return
 (void()*) main::cls
@@ -75,13 +71,11 @@ SYMBOL TABLE SSA
 (byte*) main::cols#1
 (byte*) main::cols#2
 
-Adding number conversion cast (unumber) main::$2 in (bool~) main::$3 ← (byte*) main::cols#1 < (number~) main::$2
-Adding number conversion cast (unumber) fn1::$0 in (bool~) fn1::$1 ← (byte*) fn1::screen#1 < (number~) fn1::$0
+Adding number conversion cast (unumber) $d800+$3e8 in (bool~) main::$2 ← (byte*) main::cols#1 < (number) $d800+(number) $3e8
+Adding number conversion cast (unumber) $400+$3e8 in (bool~) fn1::$0 ← (byte*) fn1::screen#1 < (number) $400+(number) $3e8
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::cols#0 ← (byte*)(number) $d800
-Inlining cast (unumber~) main::$4 ← (unumber)(number~) main::$2
 Inlining cast (byte*) fn1::screen#0 ← (byte*)(number) $400
-Inlining cast (unumber~) fn1::$2 ← (unumber)(number~) fn1::$0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 1024
@@ -92,44 +86,24 @@ Self Phi Eliminated (void()*) main::cls#1
 Successful SSA optimization Pass2SelfPhiElimination
 Identical Phi Values (void()*) main::cls#1 (void()*) main::cls#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [10] if((byte*) main::cols#1<(unumber~) main::$4) goto main::@1
-Simple Condition (bool~) fn1::$1 [19] if((byte*) fn1::screen#1<(unumber~) fn1::$2) goto fn1::@1
+Simple Condition (bool~) main::$2 [8] if((byte*) main::cols#1<(word)(number) $d800+(number) $3e8) goto main::@1
+Simple Condition (bool~) fn1::$0 [15] if((byte*) fn1::screen#1<(word)(number) $400+(number) $3e8) goto fn1::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (void()*) main::cls#0 ← & (void()) fn1()
-Constant right-side identified [7] (number~) main::$2 ← (number) $d800 + (number) $3e8
-Constant right-side identified [16] (number~) fn1::$0 ← (number) $400 + (number) $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void()*) main::cls#0 = &fn1
 Constant (const byte*) main::cols#0 = (byte*) 55296
-Constant (const number) main::$2 = $d800+$3e8
 Constant (const byte*) fn1::screen#0 = (byte*) 1024
-Constant (const number) fn1::$0 = $400+$3e8
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (unumber)main::$2 in [8] (unumber~) main::$4 ← (unumber)(const number) main::$2
-Constant value identified (unumber)fn1::$0 in [17] (unumber~) fn1::$2 ← (unumber)(const number) fn1::$0
-Successful SSA optimization Pass2ConstantValues
 Replacing constant pointer function [4] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::cls#0
 Successful SSA optimization PassNEliminateUnusedVars
-Constant (const unumber) main::$4 = (unumber)main::$2
-Constant (const unumber) fn1::$2 = (unumber)fn1::$0
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant integer cast (const unumber) main::$2
-Simplifying constant integer cast (const unumber) fn1::$0
-Successful SSA optimization PassNCastSimplification
 Inlining constant with var siblings (const byte*) main::cols#0
 Inlining constant with var siblings (const byte*) fn1::screen#0
-Constant inlined fn1::$2 = (number) $400+(number) $3e8
 Constant inlined fn1::screen#0 = (byte*) 1024
-Constant inlined fn1::$0 = (number) $400+(number) $3e8
-Constant inlined main::$4 = (number) $d800+(number) $3e8
-Constant inlined main::$2 = (number) $d800+(number) $3e8
 Constant inlined main::cols#0 = (byte*) 55296
 Successful SSA optimization Pass2ConstantInlining
-Adding number conversion cast (unumber) $d800+$3e8 in [4] if((byte*) main::cols#1<(number) $d800+(number) $3e8) goto main::@1
-Adding number conversion cast (unumber) $400+$3e8 in [9] if((byte*) fn1::screen#1<(number) $400+(number) $3e8) goto fn1::@1
-Successful SSA optimization PassNAddNumberTypeConversions
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Added new block during phi lifting fn1::@3(between fn1::@1 and fn1::@1)
 Adding NOP phi() at start of @begin

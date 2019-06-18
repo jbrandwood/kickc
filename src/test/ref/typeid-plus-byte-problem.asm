@@ -4,8 +4,8 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    .const ubc2 = $fa
     .const ubc1 = $c+$d+$e
+    .const ubc2 = $fa
     lda #ubc1+ubc2
     sta SCREEN
     rts

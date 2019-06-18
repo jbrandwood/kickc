@@ -35,12 +35,10 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   /* Awaiting better constant expression handling
    @Test
    public void testEnum3() throws IOException, URISyntaxException {
       compileAndCompare("enum-3");
    }
-   */
 
    @Test
    public void testEnum2() throws IOException, URISyntaxException {

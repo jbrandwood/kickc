@@ -10,12 +10,11 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (number~) main::$0 ← (number) $28 * (number) $a
-  (number~) main::$1 ← (number~) main::$0 + (byte) main::i#2
-  *((byte*) main::screen#0 + (number~) main::$1) ← (byte) 'a'
+  (number~) main::$0 ← (number) $28*(number) $a + (byte) main::i#2
+  *((byte*) main::screen#0 + (number~) main::$0) ← (byte) 'a'
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$27)
-  (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,$27)
-  if((bool~) main::$2) goto main::@1
+  (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$27)
+  if((bool~) main::$1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -34,8 +33,7 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (number~) main::$0
-(number~) main::$1
-(bool~) main::$2
+(bool~) main::$1
 (label) main::@1
 (label) main::@return
 (byte) main::i
@@ -45,48 +43,40 @@ SYMBOL TABLE SSA
 (byte*) main::screen
 (byte*) main::screen#0
 
-Adding number conversion cast (unumber) main::$0 in (number~) main::$1 ← (number~) main::$0 + (byte) main::i#2
-Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (unumber~) main::$3 + (byte) main::i#2
+Adding number conversion cast (unumber) $28*$a in (number~) main::$0 ← (number) $28*(number) $a + (byte) main::i#2
+Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) $28*(number) $a + (byte) main::i#2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Inlining cast (unumber~) main::$3 ← (unumber)(number~) main::$0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$2 [9] if((byte) main::i#1!=rangelast(0,$27)) goto main::@1
+Inferred type updated to word in (unumber~) main::$0 ← (word)(number) $28*(number) $a + (byte) main::i#2
+Simple Condition (bool~) main::$1 [7] if((byte) main::i#1!=rangelast(0,$27)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [3] (number~) main::$0 ← (number) $28 * (number) $a
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const byte) main::i#0 = 0
-Constant (const number) main::$0 = $28*$a
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (unumber)main::$0 in [4] (unumber~) main::$3 ← (unumber)(const number) main::$0
-Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [7] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [9] if(main::i#1!=rangelast(0,$27)) goto main::@1 to (number) $28
+Resolved ranged next value [5] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [7] if(main::i#1!=rangelast(0,$27)) goto main::@1 to (number) $28
+De-inlining pointer[w] to *(pointer+w)   [4] *((const byte*) main::screen#0 + (word~) main::$0) ← (byte) 'a'
+Successful SSA optimization Pass2DeInlineWordDerefIdx
 Adding number conversion cast (unumber) $28 in if((byte) main::i#1!=(number) $28) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const unumber) main::$3 = (unumber)main::$0
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant integer cast (const unumber) main::$0
-Successful SSA optimization PassNCastSimplification
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
-Constant inlined main::$3 = (number) $28*(number) $a
-Constant inlined main::$0 = (number) $28*(number) $a
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in assignment *(main::screen#0+$28*$a + main::$1)
+Consolidated constant in assignment main::$2
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding number conversion cast (unumber) $28*$a in [2] *((const byte*) main::screen#0+(number) $28*(number) $a + (unumber~) main::$1) ← (byte) 'a'
-Successful SSA optimization PassNAddNumberTypeConversions
-Inferred type updated to byte in [1] (unumber~) main::$1 ← (byte) main::i#2
-Alias (byte) main::i#2 = (byte~) main::$1 
+Alias (byte) main::i#2 = (word~) main::$0 
 Successful SSA optimization Pass2AliasElimination
+Converting *(pointer+n) to pointer[n] [3] *((byte*~) main::$2) ← (byte) 'a'  -- *(main::screen#0+(word)$28*$a + main::i#2)
+Successful SSA optimization Pass2InlineDerefIdx
+Eliminating unused variable (byte*~) main::$2 and assignment [1] (byte*~) main::$2 ← (const byte*) main::screen#0+(word)(number) $28*(number) $a + (byte) main::i#2
+Successful SSA optimization PassNEliminateUnusedVars
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1

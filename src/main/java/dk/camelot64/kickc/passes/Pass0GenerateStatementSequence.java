@@ -1561,15 +1561,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue right = (RValue) this.visit(ctx.expr(1));
       String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
       Operator operator = Operators.getBinary(op);
-     // if(left instanceof ConstantValue && right instanceof ConstantValue) {
-     //    return new ConstantBinary((ConstantValue) left, (OperatorBinary) operator, (ConstantValue) right);
-     // }  else {
+      if(left instanceof ConstantValue && right instanceof ConstantValue) {
+         return new ConstantBinary((ConstantValue) left, (OperatorBinary) operator, (ConstantValue) right);
+      }  else {
          VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
          return tmpVarRef;
-     // }
+      }
    }
 
    @Override
@@ -1586,8 +1586,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Special handling of negative literal number
       if(child instanceof ConstantInteger && operator.equals(Operators.NEG)) {
          return new ConstantInteger(-((ConstantInteger) child).getInteger(), ((ConstantInteger) child).getType());
-    //  } else if(child instanceof ConstantValue) {
-    //     return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);
+      } else if(child instanceof ConstantValue) {
+         return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);
       } else {
          VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();

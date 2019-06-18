@@ -46,7 +46,7 @@ Adding pointer type conversion cast (byte*) CIA2_PORT_B_DDR in (byte*) CIA2_PORT
 Adding pointer type conversion cast (byte*) CIA2_INTERRUPT in (byte*) CIA2_INTERRUPT ← (number) $dd0d
 Adding pointer type conversion cast (void()**) KERNEL_IRQ in (void()**) KERNEL_IRQ ← (number) $314
 Adding pointer type conversion cast (void()**) HARDWARE_IRQ in (void()**) HARDWARE_IRQ ← (number) $fffe
-Adding pointer type conversion cast (byte*) PLEX_SCREEN_PTR in (byte*) PLEX_SCREEN_PTR ← (number~) $0
+Adding pointer type conversion cast (byte*) PLEX_SCREEN_PTR in (byte*) PLEX_SCREEN_PTR ← (number) $400+(number) $3f8
 Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
 Adding pointer type conversion cast (byte*) SPRITE in (byte*) SPRITE ← (number) $2000
 Adding pointer type conversion cast (byte*) YSIN in (byte*) YSIN ← (number) $2100
@@ -116,8 +116,7 @@ CONTROL FLOW GRAPH SSA
   (word[PLEX_COUNT#0]) PLEX_XPOS#0 ← { fill( PLEX_COUNT#0, 0) }
   (byte[PLEX_COUNT#0]) PLEX_YPOS#0 ← { fill( PLEX_COUNT#0, 0) }
   (byte[PLEX_COUNT#0]) PLEX_PTR#0 ← { fill( PLEX_COUNT#0, 0) }
-  (number~) $0 ← (number) $400 + (number) $3f8
-  (byte*) PLEX_SCREEN_PTR#0 ← ((byte*)) (number~) $0
+  (byte*) PLEX_SCREEN_PTR#0 ← ((byte*)) (number) $400+(number) $3f8
   (byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 ← { fill( PLEX_COUNT#0, 0) }
   (byte) plex_show_idx#0 ← (number) 0
   (byte) plex_sprite_idx#0 ← (number) 0
@@ -694,7 +693,6 @@ loop::@return: scope:[loop]  from loop::@1
 @end: scope:[]  from @17
 
 SYMBOL TABLE SSA
-(number~) $0
 (label) @12
 (label) @14
 (label) @16
@@ -1313,7 +1311,7 @@ Inlining cast (byte) WHITE#0 ← (unumber)(number) 1
 Inlining cast (byte) RED#0 ← (unumber)(number) 2
 Inlining cast (byte) GREEN#0 ← (unumber)(number) 5
 Inlining cast (byte) PLEX_COUNT#0 ← (unumber)(number) $20
-Inlining cast (byte*) PLEX_SCREEN_PTR#0 ← (byte*)(number~) $0
+Inlining cast (byte*) PLEX_SCREEN_PTR#0 ← (byte*)(number) $400+(number) $3f8
 Inlining cast (byte) plex_show_idx#0 ← (unumber)(number) 0
 Inlining cast (byte) plex_sprite_idx#0 ← (unumber)(number) 0
 Inlining cast (byte) plex_sprite_msb#0 ← (unumber)(number) 1
@@ -1463,8 +1461,8 @@ Inferred type updated to byte in (unumber~) init::$1 ← (byte~) init::$0 | (byt
 Inferred type updated to byte in (unumber~) init::$4 ← (byte) PLEX_COUNT#0 - (byte) 1
 Inferred type updated to byte in (unumber~) plex_irq::$4 ← *((byte*) RASTER#0) + (byte) 2
 Inferred type updated to byte in (unumber~) loop::$1 ← (byte) PLEX_COUNT#0 - (byte) 1
-Inversing boolean not [53] (bool~) plexSort::$4 ← (byte) plexSort::nxt_y#0 >= *((byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2)) from [52] (bool~) plexSort::$3 ← (byte) plexSort::nxt_y#0 < *((byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))
-Inversing boolean not [124] (bool~) plexShowSprite::$8 ← (byte) plex_sprite_msb#3 != (byte) 0 from [123] (bool~) plexShowSprite::$7 ← (byte) plex_sprite_msb#3 == (byte) 0
+Inversing boolean not [52] (bool~) plexSort::$4 ← (byte) plexSort::nxt_y#0 >= *((byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2)) from [51] (bool~) plexSort::$3 ← (byte) plexSort::nxt_y#0 < *((byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))
+Inversing boolean not [123] (bool~) plexShowSprite::$8 ← (byte) plex_sprite_msb#3 != (byte) 0 from [122] (bool~) plexShowSprite::$7 ← (byte) plex_sprite_msb#3 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)(byte) plex_free_next#2 = (byte~) plexShowSprite::plexFreeAdd1_$2#0 (byte) plex_free_next#42 (byte) plex_free_next#32 (byte) plex_free_next#33 
 Alias candidate removed (volatile)(byte) plex_sprite_idx#29 = (byte) plex_sprite_idx#3 (byte~) plexShowSprite::$6 
@@ -1669,28 +1667,28 @@ Identical Phi Values (byte) plexSort::m#3 (byte) plexSort::m#2
 Identical Phi Values (byte) plex_free_next#14 (byte) plex_free_next#2
 Identical Phi Values (byte) plex_sprite_idx#16 (byte) plex_sprite_idx#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [108] (byte~) plexShowSprite::$11 ← (byte) plexShowSprite::xpos_idx#0 * (const byte) SIZEOF_WORD
+Identified duplicate assignment right side [107] (byte~) plexShowSprite::$11 ← (byte) plexShowSprite::xpos_idx#0 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) plexInit::$2 [42] if((byte) plexInit::i#1!=rangelast(0,plexInit::$1)) goto plexInit::@1
-Simple Condition (bool~) plexSort::$4 [54] if((byte) plexSort::nxt_y#0>=*((byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))) goto plexSort::@2
-Simple Condition (bool~) plexSort::$9 [58] if((byte) plexSort::m#1!=rangelast(0,plexSort::$1)) goto plexSort::@1
-Simple Condition (bool~) plexSort::plexFreePrepare1_$0#0 [81] if((byte) plexSort::plexFreePrepare1_s#1!=rangelast(0,7)) goto plexSort::plexFreePrepare1_@1
-Simple Condition (bool~) plexShowSprite::$4 [111] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1
-Simple Condition (bool~) plexShowSprite::$8 [125] if((byte) plex_sprite_msb#3!=(byte) 0) goto plexShowSprite::@return
-Simple Condition (bool~) init::$7 [183] if((byte) init::sx#1!=rangelast(0,init::$4)) goto init::@1
-Simple Condition (bool~) init::$8 [191] if((byte) init::ss#1!=rangelast(0,7)) goto init::@3
-Simple Condition (bool~) plex_irq::$0 [230] if((byte) plex_show_idx#16<(byte) PLEX_COUNT#0) goto plex_irq::@1
-Simple Condition (bool~) loop::$2 [261] if((byte) loop::sy#1!=rangelast(0,loop::$1)) goto loop::@10
+Simple Condition (bool~) plexInit::$2 [41] if((byte) plexInit::i#1!=rangelast(0,plexInit::$1)) goto plexInit::@1
+Simple Condition (bool~) plexSort::$4 [53] if((byte) plexSort::nxt_y#0>=*((byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::m#2))) goto plexSort::@2
+Simple Condition (bool~) plexSort::$9 [57] if((byte) plexSort::m#1!=rangelast(0,plexSort::$1)) goto plexSort::@1
+Simple Condition (bool~) plexSort::plexFreePrepare1_$0#0 [80] if((byte) plexSort::plexFreePrepare1_s#1!=rangelast(0,7)) goto plexSort::plexFreePrepare1_@1
+Simple Condition (bool~) plexShowSprite::$4 [110] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1
+Simple Condition (bool~) plexShowSprite::$8 [124] if((byte) plex_sprite_msb#3!=(byte) 0) goto plexShowSprite::@return
+Simple Condition (bool~) init::$7 [182] if((byte) init::sx#1!=rangelast(0,init::$4)) goto init::@1
+Simple Condition (bool~) init::$8 [190] if((byte) init::ss#1!=rangelast(0,7)) goto init::@3
+Simple Condition (bool~) plex_irq::$0 [229] if((byte) plex_show_idx#16<(byte) PLEX_COUNT#0) goto plex_irq::@1
+Simple Condition (bool~) loop::$2 [260] if((byte) loop::sy#1!=rangelast(0,loop::$1)) goto loop::@10
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting && if()-condition to two if()s [67] (bool~) plexSort::$8 ← (bool~) plexSort::$6 && (bool~) plexSort::$7
+Rewriting && if()-condition to two if()s [66] (bool~) plexSort::$8 ← (bool~) plexSort::$6 && (bool~) plexSort::$7
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting && if()-condition to two if()s [225] (bool~) plex_irq::$6 ← (bool~) plex_irq::$3 && (bool~) plex_irq::$5
+Rewriting && if()-condition to two if()s [224] (bool~) plex_irq::$6 ← (bool~) plex_irq::$3 && (bool~) plex_irq::$5
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Rewriting ! if()-condition to reversed if() [249] (bool~) loop::$0 ← ! (bool) framedone#12
+Rewriting ! if()-condition to reversed if() [248] (bool~) loop::$0 ← ! (bool) framedone#12
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant right-side identified [24] (number~) $0 ← (number) $400 + (number) $3f8
-Constant right-side identified [135] (byte[8]) PLEX_FREE_YPOS#0 ← { fill( 8, 0) }
-Constant right-side identified [197] (void()*~) init::$3 ← & interrupt(KERNEL_MIN)(void()) plex_irq()
+Constant right-side identified [24] (byte*) PLEX_SCREEN_PTR#0 ← (byte*)(number) $400+(number) $3f8
+Constant right-side identified [134] (byte[8]) PLEX_FREE_YPOS#0 ← { fill( 8, 0) }
+Constant right-side identified [196] (void()*~) init::$3 ← & interrupt(KERNEL_MIN)(void()) plex_irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) SPRITES_XPOS#0 = (byte*) 53248
 Constant (const byte*) SPRITES_YPOS#0 = (byte*) 53249
@@ -1713,7 +1711,7 @@ Constant (const byte) WHITE#0 = 1
 Constant (const byte) RED#0 = 2
 Constant (const byte) GREEN#0 = 5
 Constant (const byte) PLEX_COUNT#0 = $20
-Constant (const number) $0 = $400+$3f8
+Constant (const byte*) PLEX_SCREEN_PTR#0 = (byte*)$400+$3f8
 Constant (const byte) plexInit::i#0 = 0
 Constant (const byte) plexSort::m#0 = 0
 Constant (const byte) plexSort::plexFreePrepare1_s#0 = 0
@@ -1734,16 +1732,15 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant value identified { fill( PLEX_COUNT#0, 0) } in [21] (word[PLEX_COUNT#0]) PLEX_XPOS#0 ← { fill( PLEX_COUNT#0, 0) }
 Constant value identified { fill( PLEX_COUNT#0, 0) } in [22] (byte[PLEX_COUNT#0]) PLEX_YPOS#0 ← { fill( PLEX_COUNT#0, 0) }
 Constant value identified { fill( PLEX_COUNT#0, 0) } in [23] (byte[PLEX_COUNT#0]) PLEX_PTR#0 ← { fill( PLEX_COUNT#0, 0) }
-Constant value identified (byte*)$0 in [25] (byte*) PLEX_SCREEN_PTR#0 ← (byte*)(const number) $0
-Constant value identified { fill( PLEX_COUNT#0, 0) } in [26] (byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 ← { fill( PLEX_COUNT#0, 0) }
+Constant value identified { fill( PLEX_COUNT#0, 0) } in [25] (byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 ← { fill( PLEX_COUNT#0, 0) }
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [247] if(true) goto loop::@4
+if() condition always true - replacing block destination [246] if(true) goto loop::@4
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [79] plexSort::plexFreePrepare1_s#1 ← ++ plexSort::plexFreePrepare1_s#2 to ++
-Resolved ranged comparison value [81] if(plexSort::plexFreePrepare1_s#1!=rangelast(0,7)) goto plexSort::plexFreePrepare1_@1 to (number) 8
-Resolved ranged next value [189] init::ss#1 ← ++ init::ss#2 to ++
-Resolved ranged comparison value [191] if(init::ss#1!=rangelast(0,7)) goto init::@3 to (number) 8
-Eliminating unused variable (byte*) PLEX_SCREEN_PTR#1 and assignment [8] (byte*) PLEX_SCREEN_PTR#1 ← (const byte*) plexInit::screen#0 + (word) $3f8
+Resolved ranged next value [78] plexSort::plexFreePrepare1_s#1 ← ++ plexSort::plexFreePrepare1_s#2 to ++
+Resolved ranged comparison value [80] if(plexSort::plexFreePrepare1_s#1!=rangelast(0,7)) goto plexSort::plexFreePrepare1_@1 to (number) 8
+Resolved ranged next value [188] init::ss#1 ← ++ init::ss#2 to ++
+Resolved ranged comparison value [190] if(init::ss#1!=rangelast(0,7)) goto init::@3 to (number) 8
+Eliminating unused variable (byte*) PLEX_SCREEN_PTR#1 and assignment [7] (byte*) PLEX_SCREEN_PTR#1 ← (const byte*) plexInit::screen#0 + (word) $3f8
 Eliminating unused constant (const byte) plex_irq::rasterY#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const byte*) plexInit::screen#0
@@ -1767,25 +1764,24 @@ Alias (byte~) plexShowSprite::$11 = (byte~) plexShowSprite::$10
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)(byte) plex_free_next#2 = (byte~) plexShowSprite::plexFreeAdd1_$2#0 
 Alias candidate removed (volatile)(byte) plex_sprite_idx#3 = (byte~) plexShowSprite::$6 
-Simple Condition (bool~) plexSort::$6 [28] if((byte) plexSort::s#1!=(byte) $ff) goto plexSort::@8
-Simple Condition (bool~) plex_irq::$3 [109] if((byte) plex_show_idx#16<(const byte) PLEX_COUNT#0) goto plex_irq::@9
-Simple Condition (bool~) plexSort::$7 [134] if((byte) plexSort::nxt_y#0<*((byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#1))) goto plexSort::@3
-Simple Condition (bool~) plex_irq::$5 [135] if((byte) plex_irq::plexFreeNextYpos1_return#0<(byte~) plex_irq::$4) goto plex_irq::@3
+Simple Condition (bool~) plexSort::$6 [27] if((byte) plexSort::s#1!=(byte) $ff) goto plexSort::@8
+Simple Condition (bool~) plex_irq::$3 [108] if((byte) plex_show_idx#16<(const byte) PLEX_COUNT#0) goto plex_irq::@9
+Simple Condition (bool~) plexSort::$7 [133] if((byte) plexSort::nxt_y#0<*((byte[PLEX_COUNT#0]) PLEX_YPOS#0 + *((byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 + (byte) plexSort::s#1))) goto plexSort::@3
+Simple Condition (bool~) plex_irq::$5 [134] if((byte) plex_irq::plexFreeNextYpos1_return#0<(byte~) plex_irq::$4) goto plex_irq::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [28] if((byte) plexSort::s#1==(byte) $ff) goto plexSort::@4
-Negating conditional jump and destination [109] if((byte) plex_show_idx#16>=(const byte) PLEX_COUNT#0) goto plex_irq::@4
+Negating conditional jump and destination [27] if((byte) plexSort::s#1==(byte) $ff) goto plexSort::@4
+Negating conditional jump and destination [108] if((byte) plex_show_idx#16>=(const byte) PLEX_COUNT#0) goto plex_irq::@4
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant right-side identified [8] (byte~) plexInit::$1 ← (const byte) PLEX_COUNT#0 - (byte) 1
-Constant right-side identified [14] (byte~) plexSort::$1 ← (const byte) PLEX_COUNT#0 - (byte) 2
-Constant right-side identified [75] (byte~) init::$0 ← (const byte) VIC_DEN#0 | (const byte) VIC_RSEL#0
-Constant right-side identified [79] (byte~) init::$4 ← (const byte) PLEX_COUNT#0 - (byte) 1
-Constant right-side identified [81] (byte*~) init::$5 ← (const byte*) SPRITE#0 / (byte) $40
-Constant right-side identified [120] (byte~) loop::$1 ← (const byte) PLEX_COUNT#0 - (byte) 1
+Constant right-side identified [7] (byte~) plexInit::$1 ← (const byte) PLEX_COUNT#0 - (byte) 1
+Constant right-side identified [13] (byte~) plexSort::$1 ← (const byte) PLEX_COUNT#0 - (byte) 2
+Constant right-side identified [74] (byte~) init::$0 ← (const byte) VIC_DEN#0 | (const byte) VIC_RSEL#0
+Constant right-side identified [78] (byte~) init::$4 ← (const byte) PLEX_COUNT#0 - (byte) 1
+Constant right-side identified [80] (byte*~) init::$5 ← (const byte*) SPRITE#0 / (byte) $40
+Constant right-side identified [119] (byte~) loop::$1 ← (const byte) PLEX_COUNT#0 - (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word[PLEX_COUNT#0]) PLEX_XPOS#0 = { fill( PLEX_COUNT#0, 0) }
 Constant (const byte[PLEX_COUNT#0]) PLEX_YPOS#0 = { fill( PLEX_COUNT#0, 0) }
 Constant (const byte[PLEX_COUNT#0]) PLEX_PTR#0 = { fill( PLEX_COUNT#0, 0) }
-Constant (const byte*) PLEX_SCREEN_PTR#0 = (byte*)$0
 Constant (const byte[PLEX_COUNT#0]) PLEX_SORTED_IDX#0 = { fill( PLEX_COUNT#0, 0) }
 Constant (const byte) plexInit::$1 = PLEX_COUNT#0-1
 Constant (const byte) plexSort::$1 = PLEX_COUNT#0-2
@@ -1794,16 +1790,16 @@ Constant (const byte) init::$4 = PLEX_COUNT#0-1
 Constant (const byte*) init::$5 = SPRITE#0/$40
 Constant (const byte) loop::$1 = PLEX_COUNT#0-1
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)init::$5 in [82] (byte~) init::$6 ← (byte)(const byte*) init::$5
+Constant value identified (byte)init::$5 in [81] (byte~) init::$6 ← (byte)(const byte*) init::$5
 Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [11] plexInit::i#1 ← ++ plexInit::i#2 to ++
-Resolved ranged comparison value [12] if(plexInit::i#1!=rangelast(0,plexInit::$1)) goto plexInit::@1 to (const byte) plexInit::$1+(number) 1
-Resolved ranged next value [20] plexSort::m#1 ← ++ plexSort::m#2 to ++
-Resolved ranged comparison value [21] if(plexSort::m#1!=rangelast(0,plexSort::$1)) goto plexSort::@1 to (const byte) plexSort::$1+(number) 1
-Resolved ranged next value [87] init::sx#1 ← ++ init::sx#2 to ++
-Resolved ranged comparison value [88] if(init::sx#1!=rangelast(0,init::$4)) goto init::@1 to (const byte) init::$4+(number) 1
-Resolved ranged next value [124] loop::sy#1 ← ++ loop::sy#2 to ++
-Resolved ranged comparison value [125] if(loop::sy#1!=rangelast(0,loop::$1)) goto loop::@10 to (const byte) loop::$1+(number) 1
+Resolved ranged next value [10] plexInit::i#1 ← ++ plexInit::i#2 to ++
+Resolved ranged comparison value [11] if(plexInit::i#1!=rangelast(0,plexInit::$1)) goto plexInit::@1 to (const byte) plexInit::$1+(number) 1
+Resolved ranged next value [19] plexSort::m#1 ← ++ plexSort::m#2 to ++
+Resolved ranged comparison value [20] if(plexSort::m#1!=rangelast(0,plexSort::$1)) goto plexSort::@1 to (const byte) plexSort::$1+(number) 1
+Resolved ranged next value [86] init::sx#1 ← ++ init::sx#2 to ++
+Resolved ranged comparison value [87] if(init::sx#1!=rangelast(0,init::$4)) goto init::@1 to (const byte) init::$4+(number) 1
+Resolved ranged next value [123] loop::sy#1 ← ++ loop::sy#2 to ++
+Resolved ranged comparison value [124] if(loop::sy#1!=rangelast(0,loop::$1)) goto loop::@10 to (const byte) loop::$1+(number) 1
 Adding number conversion cast (unumber) plexInit::$1+1 in if((byte) plexInit::i#1!=(const byte) plexInit::$1+(number) 1) goto plexInit::@1
 Adding number conversion cast (unumber) 1 in if((byte) plexInit::i#1!=(unumber)(const byte) plexInit::$1+(number) 1) goto plexInit::@1
 Adding number conversion cast (unumber) plexSort::$1+1 in if((byte) plexSort::m#1!=(const byte) plexSort::$1+(number) 1) goto plexSort::@1
@@ -1856,7 +1852,6 @@ Constant inlined init::ss#0 = (byte) 0
 Constant inlined plexInit::i#0 = (byte) 0
 Constant inlined plexSort::m#0 = (byte) 0
 Constant inlined init::$3 = &interrupt(KERNEL_MIN)(void()) plex_irq()
-Constant inlined $0 = (number) $400+(number) $3f8
 Constant inlined init::$1 = (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3
 Constant inlined loop::sin_idx#0 = (byte) 0
 Constant inlined init::$0 = (const byte) VIC_DEN#0|(const byte) VIC_RSEL#0
@@ -2516,10 +2511,10 @@ INITIAL ASM
   .const GREEN = 5
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
-  .label SPRITE = $2000
-  .label YSIN = $2100
   // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
+  .label SPRITE = $2000
+  .label YSIN = $2100
   .label plex_show_idx = $e
   .label plex_sprite_idx = $d
   .label plex_sprite_msb = $10
@@ -3565,10 +3560,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const GREEN = 5
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
-  .label SPRITE = $2000
-  .label YSIN = $2100
   // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
+  .label SPRITE = $2000
+  .label YSIN = $2100
   .label plex_show_idx = 7
   .label plex_sprite_idx = 6
   .label plex_sprite_msb = 9
@@ -4646,10 +4641,10 @@ Score: 44248
   .const GREEN = 5
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
-  .label SPRITE = $2000
-  .label YSIN = $2100
   // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
+  .label SPRITE = $2000
+  .label YSIN = $2100
   .label plex_show_idx = 7
   .label plex_sprite_idx = 6
   .label plex_sprite_msb = 9

@@ -1834,7 +1834,7 @@ gfx_init_plane_charset8: {
 }
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
-    .label _9 = $82
+    .label _8 = $82
     .label gfxb = $40
     .label x = $3e
     .label y = $3d
@@ -1869,11 +1869,11 @@ gfx_init_plane_8bppchunky: {
     lda y
     clc
     adc x
-    sta _9
+    sta _8
     lda #0
     adc x+1
-    sta _9+1
-    lda _9
+    sta _8+1
+    lda _8
     ldy #0
     sta (gfxb),y
     inc gfxb

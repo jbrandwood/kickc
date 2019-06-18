@@ -1,11 +1,11 @@
 // Standard C strings.h - functions to manipulate C strings and arrays.
 
-// Copy block of memory
+// Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 byte* memcpy( byte* destination, byte* source, word num ) {
     byte* src = source;
     byte* dst = destination;
-    for( word i=0;i<num; i++) *dst++ = *src++;
+    for( word i=0; i<num; i++) *dst++ = *src++;
     return destination;
 }
 
@@ -13,15 +13,12 @@ byte* memcpy( byte* destination, byte* source, word num ) {
 // Copies the values of num bytes from the location pointed by source to the memory block pointed by destination. Copying takes place as if an intermediate buffer were used, allowing the destination and source to overlap.
 byte* memmove( byte* destination, byte* source, word num ) {
     if((word)destination<(word)source) {
-        // copy forwards
-        byte* src = source;
-        byte* dst = destination;
-        for( word i=0;i<num; i++) *dst++ = *src++;
+        memcpy(destination, source, num);
     } else {
         // copy backwards
         byte* src = source+num;
         byte* dst = destination+num;
-        for( word i=0;i<num; i++) *--dst = *--src;
+        for( word i=0; i<num; i++) *--dst = *--src;
     }
     return destination;
 }

@@ -614,6 +614,30 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code typeEnumRef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeEnumRef(KickCParser.TypeEnumRefContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeEnumRef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeEnumRef(KickCParser.TypeEnumRefContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code typeEnumDef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeEnumDef(KickCParser.TypeEnumDefContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeEnumDef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeEnumDef(KickCParser.TypeEnumDefContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#structRef}.
 	 * @param ctx the parse tree
 	 */
@@ -643,6 +667,46 @@ public interface KickCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStructMembers(KickCParser.StructMembersContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#enumRef}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumRef(KickCParser.EnumRefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#enumRef}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumRef(KickCParser.EnumRefContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#enumDef}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumDef(KickCParser.EnumDefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#enumDef}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumDef(KickCParser.EnumDefContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#enumMemberList}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumMemberList(KickCParser.EnumMemberListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#enumMemberList}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumMemberList(KickCParser.EnumMemberListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#enumMember}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumMember(KickCParser.EnumMemberContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#enumMember}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumMember(KickCParser.EnumMemberContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code commaNone}
 	 * labeled alternative in {@link KickCParser#commaExpr}.

@@ -24,6 +24,7 @@ declSeq
 decl
     : declVariables ';'
     | structDef ';'
+    | enumDef ';'
     | declFunction
     | declFunction
     | declKasm
@@ -123,6 +124,8 @@ typeDecl
     | typeDecl '(' ')' #typeProcedure
     | structDef  #typeStructDef
     | structRef  #typeStructRef
+    | enumDef  #typeEnumDef
+    | enumRef  #typeEnumRef
     | NAME  #typeNamedRef
     ;
 
@@ -136,6 +139,23 @@ structDef
 
 structMembers
     : declVariables ';'
+    ;
+
+enumRef
+    : 'enum' NAME
+    ;
+
+enumDef
+    : 'enum' NAME '{' enumMemberList '}'
+    ;
+
+enumMemberList
+    :  enumMember
+    |  enumMemberList ',' enumMember
+    ;
+
+enumMember
+    :   NAME ( '=' expr )?
     ;
 
 commaExpr

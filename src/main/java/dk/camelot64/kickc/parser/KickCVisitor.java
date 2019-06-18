@@ -367,6 +367,20 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code typeEnumRef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeEnumRef(KickCParser.TypeEnumRefContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeEnumDef}
+	 * labeled alternative in {@link KickCParser#typeDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeEnumDef(KickCParser.TypeEnumDefContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link KickCParser#structRef}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -384,6 +398,30 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStructMembers(KickCParser.StructMembersContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#enumRef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumRef(KickCParser.EnumRefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#enumDef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumDef(KickCParser.EnumDefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#enumMemberList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumMemberList(KickCParser.EnumMemberListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#enumMember}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumMember(KickCParser.EnumMemberContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code commaNone}
 	 * labeled alternative in {@link KickCParser#commaExpr}.

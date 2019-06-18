@@ -38,7 +38,7 @@ main: {
     sta SCREEN+$3e7
     jmp b1
 }
-// Copy block of memory
+// Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 memcpy: {
     .label src = 2

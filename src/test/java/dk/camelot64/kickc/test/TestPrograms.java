@@ -35,6 +35,28 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   /* Awaiting better constant expression handling
+   @Test
+   public void testEnum3() throws IOException, URISyntaxException {
+      compileAndCompare("enum-3");
+   }
+   */
+
+   @Test
+   public void testEnum2() throws IOException, URISyntaxException {
+      compileAndCompare("enum-2");
+   }
+
+   @Test
+   public void testEnum1() throws IOException, URISyntaxException {
+      compileAndCompare("enum-1");
+   }
+
+   @Test
+   public void testEnum0() throws IOException, URISyntaxException {
+      compileAndCompare("enum-0");
+   }
+
    @Test
    public void testTypedef1() throws IOException, URISyntaxException {
       compileAndCompare("typedef-1");

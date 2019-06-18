@@ -146,7 +146,7 @@ enumRef
     ;
 
 enumDef
-    : 'enum' NAME '{' enumMemberList '}'
+    : 'enum' NAME? '{' enumMemberList '}'
     ;
 
 enumMemberList

@@ -51,6 +51,6 @@ public class StructDefinition extends Scope {
 
    @Override
    public String toString(Program program) {
-      return "block-"+getFullName();
+      return "struct-"+getFullName();
    }
 }

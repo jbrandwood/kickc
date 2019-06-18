@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.StructUnwinding;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.EnumDefinition;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
@@ -129,12 +130,14 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
 
       Collection<ConstantVar> allConstants = getScope().getAllConstants(true);
       for(ConstantVar constant : allConstants) {
-         if(referenceInfos.isUnused(constant.getRef())) {
-            if(pass2 || getLog().isVerbosePass1CreateSsa()) {
-               getLog().append("Eliminating unused constant " + constant.toString(getProgram()));
+         if(!(constant.getScope() instanceof EnumDefinition)) {
+            if(referenceInfos.isUnused(constant.getRef())) {
+               if(pass2 || getLog().isVerbosePass1CreateSsa()) {
+                  getLog().append("Eliminating unused constant " + constant.toString(getProgram()));
+               }
+               constant.getScope().remove(constant);
+               modified = true;
             }
-            constant.getScope().remove(constant);
-            modified = true;
          }
       }
 

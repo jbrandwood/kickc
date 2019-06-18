@@ -4,11 +4,7 @@ import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.InternalError;
-import dk.camelot64.kickc.model.operators.Operator;
-import dk.camelot64.kickc.model.operators.OperatorSizeOf;
-import dk.camelot64.kickc.model.operators.OperatorTypeId;
-import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.*;
@@ -522,9 +518,6 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
          // Add comments to constant
          lValue.setComments(ensureUnusedComments(comments));
       }
-      //if(type instanceof SymbolTypeStruct) {
-      //   lValue.setDeclaredVolatile(true);
-      //}
       KickCParser.ExprContext initializer = ctx.expr();
       if(declVarStructMember || declVarTypeDef) {
          if(initializer != null) {
@@ -1206,6 +1199,80 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
+   public Object visitTypeEnumDef(KickCParser.TypeEnumDefContext ctx) {
+      return visit(ctx.enumDef());
+   }
+
+   private EnumDefinition currentEnum = null;
+
+   @Override
+   public Object visitEnumDef(KickCParser.EnumDefContext ctx) {
+      String enumDefName;
+      if(ctx.NAME() != null) {
+         enumDefName = ctx.NAME().getText();
+      } else {
+         enumDefName = getCurrentScope().allocateIntermediateVariableName();
+      }
+      EnumDefinition enumDefinition = new EnumDefinition(enumDefName, getCurrentScope());
+      getCurrentScope().add(enumDefinition);
+      this.currentEnum = enumDefinition;
+      scopeStack.push(currentEnum);
+      visit(ctx.enumMemberList());
+      scopeStack.pop();
+      this.currentEnum = null;
+      // Copy all members to upper-level scope
+      for(ConstantVar member : enumDefinition.getAllConstants(false)) {
+         getCurrentScope().add(new ConstantVar(member.getLocalName(), getCurrentScope(), SymbolType.BYTE, member.getValue()));
+      }
+      return SymbolType.BYTE;
+   }
+
+   @Override
+   public Object visitEnumMember(KickCParser.EnumMemberContext ctx) {
+      String memberName = ctx.NAME().getText();
+      ConstantValue enumValue;
+      if(ctx.expr()!=null) {
+         RValue exprVal = (RValue) visit(ctx.expr());
+         if(!(exprVal instanceof ConstantValue)) {
+            throw new CompileError("Enum value not constant "+memberName, new StatementSource(ctx));
+         }
+         enumValue = (ConstantValue) exprVal;
+      } else {
+         // No specific value - find previous value
+         List<ConstantVar> values = new ArrayList<>(currentEnum.getAllConstants(false));
+         if(values.isEmpty()) {
+            enumValue = new ConstantInteger(0L, SymbolType.BYTE);
+         } else {
+            ConstantVar prevEnumMember= values.get(values.size() - 1);
+            ConstantValue prevValue = prevEnumMember.getValue();
+            if(prevValue instanceof ConstantInteger) {
+               enumValue = new ConstantInteger(((ConstantInteger) prevValue).getInteger()+1, SymbolType.BYTE);
+            }  else {
+               enumValue = new ConstantBinary(prevValue, Operators.PLUS, new ConstantInteger(1L, SymbolType.BYTE));
+
+            }
+         }
+      }
+      currentEnum.add(new ConstantVar(memberName, getCurrentScope(), SymbolType.BYTE, enumValue));
+      return null;
+   }
+
+   @Override
+   public Object visitTypeEnumRef(KickCParser.TypeEnumRefContext ctx) {
+      return visit(ctx.enumRef());
+   }
+
+   @Override
+   public Object visitEnumRef(KickCParser.EnumRefContext ctx) {
+      String enumDefName = ctx.NAME().getText();
+      EnumDefinition enumDefinition = getCurrentScope().getEnumDefinition(enumDefName);
+      if(enumDefinition==null) {
+         throw new CompileError("Unknown enum "+enumDefName, new StatementSource(ctx));
+      }
+      return SymbolType.BYTE;
+   }
+
+   @Override
    public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
       Scope typeDefScope = program.getScope().getTypeDefScope();
       Variable typeDefVariable = typeDefScope.getVariable(ctx.getText());
@@ -1494,11 +1561,15 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       RValue right = (RValue) this.visit(ctx.expr(1));
       String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
       Operator operator = Operators.getBinary(op);
-      VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
-      VariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
-      sequence.addStatement(stmt);
-      return tmpVarRef;
+     // if(left instanceof ConstantValue && right instanceof ConstantValue) {
+     //    return new ConstantBinary((ConstantValue) left, (OperatorBinary) operator, (ConstantValue) right);
+     // }  else {
+         VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
+         VariableRef tmpVarRef = tmpVar.getRef();
+         Statement stmt = new StatementAssignment(tmpVarRef, left, operator, right, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
+         sequence.addStatement(stmt);
+         return tmpVarRef;
+     // }
    }
 
    @Override
@@ -1515,6 +1586,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       // Special handling of negative literal number
       if(child instanceof ConstantInteger && operator.equals(Operators.NEG)) {
          return new ConstantInteger(-((ConstantInteger) child).getInteger(), ((ConstantInteger) child).getType());
+    //  } else if(child instanceof ConstantValue) {
+    //     return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);
       } else {
          VariableIntermediate tmpVar = getCurrentScope().addVariableIntermediate();
          VariableRef tmpVarRef = tmpVar.getRef();
@@ -1588,6 +1661,8 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else if(symbol instanceof Procedure) {
          Procedure procedure = (Procedure) symbol;
          return procedure.getRef();
+      } else if(symbol instanceof ConstantVar) {
+         return ((ConstantVar) symbol).getRef();
       } else if(symbol == null) {
          // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
          return new ForwardVariableRef(ctx.NAME().getText());

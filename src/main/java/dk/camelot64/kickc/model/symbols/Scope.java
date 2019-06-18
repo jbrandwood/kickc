@@ -301,6 +301,11 @@ public abstract class Scope implements Symbol {
       return (StructDefinition) getSymbol(name);
    }
 
+   public EnumDefinition getEnumDefinition(String name) {
+      return (EnumDefinition) getSymbol(name);
+   }
+
+
    public Scope getScope(ScopeRef scopeRef) {
       if(scopeRef.getFullName().equals("") && this instanceof ProgramScope) {
          // Special case for the outer program scope

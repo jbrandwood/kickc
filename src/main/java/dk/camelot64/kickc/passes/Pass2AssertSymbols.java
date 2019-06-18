@@ -42,6 +42,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
          if(tableSymbol instanceof VariableUnversioned) continue;
          if(tableSymbol instanceof ConstantVar) continue;
          if(tableSymbol instanceof StructDefinition) continue;
+         if(tableSymbol instanceof EnumDefinition) continue;
          if(tableSymbol instanceof TypeDefsScope) continue;
          if(tableSymbol.getType() instanceof SymbolTypeStruct) continue;
          Symbol codeSymbol = null;

@@ -36,6 +36,31 @@ public class TestPrograms {
    }
 
    @Test
+   public void testEnum8() throws IOException, URISyntaxException {
+      compileAndCompare("enum-8");
+   }
+
+   @Test
+   public void testEnum7() throws IOException, URISyntaxException {
+      compileAndCompare("enum-7");
+   }
+
+   @Test
+   public void testEnum6() throws IOException, URISyntaxException {
+      compileAndCompare("enum-6");
+   }
+
+   @Test
+   public void testEnum5() throws IOException, URISyntaxException {
+      compileAndCompare("enum-5");
+   }
+
+   @Test
+   public void testEnum4() throws IOException, URISyntaxException {
+      compileAndCompare("enum-4");
+   }
+
+   @Test
    public void testEnum3() throws IOException, URISyntaxException {
       compileAndCompare("enum-3");
    }

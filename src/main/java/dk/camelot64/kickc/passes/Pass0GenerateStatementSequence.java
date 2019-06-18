@@ -1221,8 +1221,10 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       scopeStack.pop();
       this.currentEnum = null;
       // Copy all members to upper-level scope
+      Scope parentScope = getCurrentScope();
+      while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
       for(ConstantVar member : enumDefinition.getAllConstants(false)) {
-         getCurrentScope().add(new ConstantVar(member.getLocalName(), getCurrentScope(), SymbolType.BYTE, member.getValue()));
+         parentScope.add(new ConstantVar(member.getLocalName(), parentScope, SymbolType.BYTE, member.getValue()));
       }
       return SymbolType.BYTE;
    }

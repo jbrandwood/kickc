@@ -1,0 +1,319 @@
+Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
+Adding pointer type conversion cast (byte*) test::SCREEN in (byte*) test::SCREEN ← (number) $428
+Identified constant variable (byte) main::state
+Identified constant variable (byte) test::state
+Culled Empty Block (label) @1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@2
+main: scope:[main]  from @2
+  (byte) main::state#0 ← (const byte) main::ON
+  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  *((byte*) main::SCREEN#0) ← (byte) main::state#0
+  call test 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+test: scope:[test]  from main
+  (byte) test::state#0 ← (const byte) test::ON
+  (byte*) test::SCREEN#0 ← ((byte*)) (number) $428
+  *((byte*) test::SCREEN#0) ← (byte) test::state#0
+  to:test::@return
+test::@return: scope:[test]  from test
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@return
+(const byte) main::ON = (byte) 1
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(byte) main::state
+(byte) main::state#0
+(void()) test()
+(label) test::@return
+(const byte) test::ON = (byte) 8
+(byte*) test::SCREEN
+(byte*) test::SCREEN#0
+(byte) test::state
+(byte) test::state#0
+
+Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) test::SCREEN#0 ← (byte*)(number) $428
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 1064
+Successful SSA optimization PassNCastSimplification
+Constant (const byte) main::state#0 = main::ON
+Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte) test::state#0 = test::ON
+Constant (const byte*) test::SCREEN#0 = (byte*) 1064
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined test::state#0 = (const byte) test::ON
+Constant inlined main::state#0 = (const byte) main::ON
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to test:6 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@1
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON
+  [5] call test 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+test: scope:[test]  from main
+  [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON
+  to:test::@return
+test::@return: scope:[test]  from test
+  [8] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::SCREEN
+(byte) main::state
+(void()) test()
+(byte*) test::SCREEN
+(byte) test::state
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Test of simple enum - multiple inline enum definitions
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .const ON = 1
+    .label SCREEN = $400
+  //SEG10 [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    lda #ON
+    sta SCREEN
+  //SEG11 [5] call test 
+    jsr test
+    jmp breturn
+  //SEG12 main::@return
+  breturn:
+  //SEG13 [6] return 
+    rts
+}
+//SEG14 test
+test: {
+    .const ON = 8
+    .label SCREEN = $428
+  //SEG15 [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
+    lda #ON
+    sta SCREEN
+    jmp breturn
+  //SEG16 test::@return
+  breturn:
+  //SEG17 [8] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON [ ] ( main:2::test:5 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [test] 
+Uplift Scope [] 
+
+Uplifting [main] best 48 combination 
+Uplifting [test] best 48 combination 
+Uplifting [] best 48 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Test of simple enum - multiple inline enum definitions
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .const ON = 1
+    .label SCREEN = $400
+  //SEG10 [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    lda #ON
+    sta SCREEN
+  //SEG11 [5] call test 
+    jsr test
+    jmp breturn
+  //SEG12 main::@return
+  breturn:
+  //SEG13 [6] return 
+    rts
+}
+//SEG14 test
+test: {
+    .const ON = 8
+    .label SCREEN = $428
+  //SEG15 [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
+    lda #ON
+    sta SCREEN
+    jmp breturn
+  //SEG16 test::@return
+  breturn:
+  //SEG17 [8] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(const byte) main::ON ON = (byte) 1
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(byte) main::state
+(void()) test()
+(label) test::@return
+(const byte) test::ON ON = (byte) 8
+(byte*) test::SCREEN
+(const byte*) test::SCREEN#0 SCREEN = (byte*) 1064
+(byte) test::state
+
+
+
+FINAL ASSEMBLER
+Score: 30
+
+//SEG0 File Comments
+// Test of simple enum - multiple inline enum definitions
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .const ON = 1
+    .label SCREEN = $400
+  //SEG10 [4] *((const byte*) main::SCREEN#0) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    lda #ON
+    sta SCREEN
+  //SEG11 [5] call test 
+    jsr test
+  //SEG12 main::@return
+  //SEG13 [6] return 
+    rts
+}
+//SEG14 test
+test: {
+    .const ON = 8
+    .label SCREEN = $428
+  //SEG15 [7] *((const byte*) test::SCREEN#0) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
+    lda #ON
+    sta SCREEN
+  //SEG16 test::@return
+  //SEG17 [8] return 
+    rts
+}
+

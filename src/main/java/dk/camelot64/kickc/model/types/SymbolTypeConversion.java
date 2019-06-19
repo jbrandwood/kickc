@@ -131,7 +131,7 @@ public class SymbolTypeConversion {
    }
 
 
-   public static  SymbolType getSmallestSignedFixedIntegerType(ConstantValue constantValue, ProgramScope symbols) {
+   public static SymbolType getSmallestSignedFixedIntegerType(ConstantValue constantValue, ProgramScope symbols) {
       ConstantLiteral constantLiteral;
       try {
          constantLiteral = constantValue.calculateLiteral(symbols);
@@ -152,7 +152,7 @@ public class SymbolTypeConversion {
       return null;
    }
 
-   public static  SymbolType getSmallestUnsignedFixedIntegerType(ConstantValue constantValue, ProgramScope symbols) {
+   public static SymbolType getSmallestUnsignedFixedIntegerType(ConstantValue constantValue, ProgramScope symbols) {
       ConstantLiteral constantLiteral;
       try {
          constantLiteral = constantValue.calculateLiteral(symbols);
@@ -230,9 +230,8 @@ public class SymbolTypeConversion {
          return true;
       }
       if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer && assignmentTypeMatch(((SymbolTypePointer) lValueType).getElementType(), ((SymbolTypePointer) rValueType).getElementType())) {
-         // Pointer types assigned from each other
-         // TODO: Maybe handle sizes
-         return true;
+            // Pointer types assigned from each other
+            return true;
       }
       return false;
    }

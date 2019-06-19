@@ -1,0 +1,294 @@
+Setting inferred volatile on symbol affected by address-of (word*~) main::$0 ← & (word) main::w
+Adding pointer type conversion cast (byte*) main::SCREEN in (byte*) main::SCREEN ← (number) $400
+Adding void pointer type conversion cast (void*) main::wp in (void*) main::vp ← (word*) main::wp
+Adding pointer type conversion cast to void pointer (byte*) main::vp in (byte*) main::bp ← (void*) main::vp
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
+  (word) main::w#0 ← (number) $4d2
+  (word*~) main::$0 ← & (word) main::w#0
+  (word*) main::wp#0 ← (word*~) main::$0
+  (void*) main::vp#0 ← ((void*)) (word*) main::wp#0
+  (byte*) main::bp#0 ← ((byte*)) (void*) main::vp#0
+  *((byte*) main::SCREEN#0) ← *((byte*) main::bp#0)
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(void()) main()
+(word*~) main::$0
+(label) main::@return
+(byte*) main::SCREEN
+(byte*) main::SCREEN#0
+(byte*) main::bp
+(byte*) main::bp#0
+(void*) main::vp
+(void*) main::vp#0
+(word) main::w
+(word) main::w#0
+(word*) main::wp
+(word*) main::wp#0
+
+Adding number conversion cast (unumber) $4d2 in (word) main::w#0 ← (number) $4d2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (word) main::w#0 ← (unumber)(number) $4d2
+Inlining cast (void*) main::vp#0 ← (void*)(word*) main::wp#0
+Inlining cast (byte*) main::bp#0 ← (byte*)(void*) main::vp#0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $4d2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $4d2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (word*) main::wp#0 = (word*~) main::$0 
+Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [2] (word*) main::wp#0 ← & (word) main::w#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const word*) main::wp#0 = &main::w#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (void*)main::wp#0 in [4] (void*) main::vp#0 ← (void*)(const word*) main::wp#0
+Successful SSA optimization Pass2ConstantValues
+Constant (const void*) main::vp#0 = (void*)main::wp#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte*)main::vp#0 in [2] (byte*) main::bp#0 ← (byte*)(const void*) main::vp#0
+Successful SSA optimization Pass2ConstantValues
+Constant (const byte*) main::bp#0 = (byte*)main::vp#0
+Successful SSA optimization Pass2ConstantIdentification
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] (word) main::w#0 ← (word) $4d2
+  [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte*) main::SCREEN
+(byte*) main::bp
+(void*) main::vp
+(word) main::w
+(word) main::w#0 20.0
+(word*) main::wp
+
+Initial phi equivalence classes
+Complete equivalence classes
+[ main::w#0 ]
+Allocated zp ZP_WORD:2 [ main::w#0 ]
+
+INITIAL ASM
+//SEG0 File Comments
+// Test simple void pointer (conversion without casting)
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    .label wp = w
+    .label vp = wp
+    .label bp = vp
+    .label w = 2
+  //SEG10 [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
+    lda #<$4d2
+    sta w
+    lda #>$4d2
+    sta w+1
+  //SEG11 [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda bp
+    sta SCREEN
+    jmp breturn
+  //SEG12 main::@return
+  breturn:
+  //SEG13 [6] return 
+    rts
+}
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] (word) main::w#0 ← (word) $4d2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Potential registers zp ZP_WORD:2 [ main::w#0 ] : zp ZP_WORD:2 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 20: zp ZP_WORD:2 [ main::w#0 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 39 combination zp ZP_WORD:2 [ main::w#0 ] 
+Uplifting [] best 39 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Test simple void pointer (conversion without casting)
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    .label wp = w
+    .label vp = wp
+    .label bp = vp
+    .label w = 2
+  //SEG10 [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
+    lda #<$4d2
+    sta w
+    lda #>$4d2
+    sta w+1
+  //SEG11 [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda bp
+    sta SCREEN
+    jmp breturn
+  //SEG12 main::@return
+  breturn:
+  //SEG13 [6] return 
+    rts
+}
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@return
+(byte*) main::SCREEN
+(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(byte*) main::bp
+(const byte*) main::bp#0 bp = (byte*)(const void*) main::vp#0
+(void*) main::vp
+(const void*) main::vp#0 vp = (void*)(const word*) main::wp#0
+(word) main::w
+(word) main::w#0 w zp ZP_WORD:2 20.0
+(word*) main::wp
+(const word*) main::wp#0 wp = &(word) main::w#0
+
+zp ZP_WORD:2 [ main::w#0 ]
+
+
+FINAL ASSEMBLER
+Score: 24
+
+//SEG0 File Comments
+// Test simple void pointer (conversion without casting)
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label SCREEN = $400
+    .label wp = w
+    .label vp = wp
+    .label bp = vp
+    .label w = 2
+  //SEG10 [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
+    lda #<$4d2
+    sta w
+    lda #>$4d2
+    sta w+1
+  //SEG11 [5] *((const byte*) main::SCREEN#0) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda bp
+    sta SCREEN
+  //SEG12 main::@return
+  //SEG13 [6] return 
+    rts
+}
+

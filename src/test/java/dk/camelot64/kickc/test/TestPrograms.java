@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPointerVoid() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-void-0");
+   }
+
+   @Test
    public void testEnumErr2() throws IOException, URISyntaxException {
       assertError("enum-err-2", "Enum value not constant");
    }

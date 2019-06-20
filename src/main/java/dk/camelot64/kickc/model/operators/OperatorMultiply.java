@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model.operators;
 
-import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
@@ -17,7 +17,7 @@ public class OperatorMultiply extends OperatorBinary {
       if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
          return new ConstantInteger(((ConstantInteger) left).getInteger() * ((ConstantInteger) right).getInteger());
       }
-      throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
+      throw new ConstantNotLiteral("Not literal "+left.toString()+"*"+right.toString());
    }
 
    @Override

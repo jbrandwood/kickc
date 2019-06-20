@@ -1,7 +1,10 @@
 package dk.camelot64.kickc.model.operators;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.types.*;
+import dk.camelot64.kickc.model.InternalError;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
+import dk.camelot64.kickc.model.types.SymbolTypeInteger;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.ConstantChar;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
@@ -25,7 +28,7 @@ public class OperatorMinus extends OperatorBinary {
       } else if(left instanceof ConstantChar && right instanceof ConstantInteger) {
          return new ConstantInteger(((ConstantChar) left).getChar() - ((ConstantInteger) right).getInteger());
       }
-      throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
+      throw new InternalError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }
 
    @Override
@@ -40,7 +43,7 @@ public class OperatorMinus extends OperatorBinary {
       if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {
          return SymbolTypeConversion.convertedMathType((SymbolTypeInteger) type1, (SymbolTypeInteger) type2);
       }
-      throw new RuntimeException("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);
+      throw new InternalError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);
    }
 
 }

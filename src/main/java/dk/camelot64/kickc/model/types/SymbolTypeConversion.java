@@ -103,15 +103,12 @@ public class SymbolTypeConversion {
          if(rightType instanceof SymbolTypePointer) rightType = SymbolType.WORD;
 
          // Identify which of the two operands is a number and which is a fixed type
-         RValue numberVal;
          SymbolTypeIntegerFixed fixedType;
          if(SymbolType.NUMBER.equals(leftType) && SymbolType.isInteger(rightType)) {
             // Left is the number type - right is the fixed type
-            numberVal = left;
             fixedType = (SymbolTypeIntegerFixed) rightType;
          } else if(SymbolType.NUMBER.equals(rightType) && SymbolType.isInteger(leftType)) {
             // Right is the number type - left is the fixed type
-            numberVal = right;
             fixedType = (SymbolTypeIntegerFixed) leftType;
          } else {
             // Binary operator combining number and non-integer
@@ -187,6 +184,8 @@ public class SymbolTypeConversion {
     * @return true if the types match up
     */
    public static boolean assignmentTypeMatch(SymbolType lValueType, SymbolType rValueType) {
+      if(SymbolType.VAR.equals(rValueType))
+         return true;
       if(lValueType.equals(rValueType))
          return true;
       if(SymbolType.WORD.equals(lValueType) && SymbolType.BYTE.equals(rValueType))

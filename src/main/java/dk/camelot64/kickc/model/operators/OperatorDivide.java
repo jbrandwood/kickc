@@ -29,7 +29,7 @@ public class OperatorDivide extends OperatorBinary {
    @Override
    public SymbolType inferType(SymbolType left, SymbolType right) {
       if(left instanceof SymbolTypePointer) {
-         if(SymbolType.BYTE.equals(right) || SymbolType.WORD.equals(right) || SymbolType.NUMBER.equals(right)|| SymbolType.UNUMBER.equals(right)|| SymbolType.SNUMBER.equals(right)) {
+         if(SymbolType.isInteger(right)) {
             return left;
          } else {
             throw new NoMatchingType("Cannot divide pointer by "+right.toString());

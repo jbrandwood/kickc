@@ -4,9 +4,10 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionBinary;
 import dk.camelot64.kickc.model.iterator.ProgramExpressionIterator;
 import dk.camelot64.kickc.model.types.*;
-import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.ValueList;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -29,8 +30,7 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
             RValue right = binary.getRight();
             SymbolType leftType = SymbolTypeInference.inferType(getProgram().getScope(), left);
             SymbolType rightType = SymbolTypeInference.inferType(getProgram().getScope(), right);
-
-            if(!SymbolTypeConversion.assignmentTypeMatch(leftType, rightType)) {
+            if(!SymbolTypeConversion.assignmentTypeMatch(leftType, rightType) || SymbolType.VAR.equals(rightType)) {
                // Assigning a pointer from an unsigned word
                if(programExpression instanceof ProgramExpressionBinary.ProgramExpressionBinaryAssignmentLValue) {
                   if((leftType instanceof SymbolTypePointer) && SymbolType.isInteger(rightType)) {
@@ -45,19 +45,19 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
                      getLog().append("Adding pointer type conversion cast to void pointer (" + leftType + ") " + binary.getRight().toString() + " in " + currentStmt.toString(getProgram(), false));
                      binary.addRightCast(leftType, stmtIt, currentBlock.getScope(), getScope());
                      modified.set(true);
-                  } else if(SymbolType.WORD.equals(leftType) && isLiteralWordCandidate(rightType)) {
+                  } else if(SymbolType.WORD.equals(leftType) && isLiteralWordCandidate(right)) {
                      // Detect word literal constructor
                      SymbolType conversionType = SymbolType.WORD;
                      getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
                      binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
                      modified.set(true);
-                  } else if(leftType instanceof SymbolTypePointer && isLiteralWordCandidate(rightType)) {
+                  } else if(leftType instanceof SymbolTypePointer && !(leftType instanceof SymbolTypeArray) && isLiteralWordCandidate(right)) {
                      // Detect word literal constructor
                      SymbolType conversionType = SymbolType.WORD;
                      getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
                      binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
                      modified.set(true);
-                  } else if(SymbolType.DWORD.equals(leftType) && isLiteralWordCandidate(rightType)) {
+                  } else if(SymbolType.DWORD.equals(leftType) && isLiteralWordCandidate(right)) {
                      // Detect dword literal constructor
                      SymbolType conversionType = SymbolType.DWORD;
                      getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
@@ -72,12 +72,18 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
       return modified.get();
    }
 
-   public static boolean isLiteralWordCandidate(SymbolType rightType) {
-      if(rightType instanceof SymbolTypeArray) {
-         SymbolTypeArray rightArray = (SymbolTypeArray) rightType;
-         if(new ConstantInteger(2L, SymbolType.BYTE).equals(rightArray.getSize()))
-            if(SymbolType.isInteger(rightArray.getElementType()))
-               return true;
+   private boolean isLiteralWordCandidate(RValue rValue) {
+      if(rValue instanceof ValueList) {
+         List<RValue> list = ((ValueList) rValue).getList();
+         if(list.size() == 2) {
+            for(RValue elm : list) {
+               if(!SymbolType.isInteger(SymbolTypeInference.inferType(getProgram().getScope(), elm))) {
+                  return false;
+               }
+            }
+            // Two integer elements
+            return true;
+         }
       }
       return false;
    }

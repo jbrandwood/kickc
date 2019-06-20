@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -98,7 +99,7 @@ public class Pass2ConstantRValueConsolidation extends Pass2SsaOptimization {
                   } else {
                      if(!listType.equals(elmType)) {
                         // No overlap between list type and element type
-                        throw new RuntimeException("Array type " + listType + " does not match element type " + elmType + ". Array: " + valueList.toString(getProgram()));
+                        throw new InternalError("Array type " + listType + " does not match element type " + elmType + ". Array: " + valueList.toString(getProgram()));
                      }
                   }
                   elements.add(constantValue);

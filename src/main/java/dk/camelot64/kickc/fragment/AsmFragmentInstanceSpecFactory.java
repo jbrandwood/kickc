@@ -358,6 +358,8 @@ public class AsmFragmentInstanceSpecFactory {
             return "pds";
          } else if(SymbolType.BOOLEAN.equals(elementType)) {
             return "pbo";
+         } else if(SymbolType.VOID.equals(elementType)) {
+            return "pvo";
          } else if(elementType instanceof SymbolTypeProcedure) {
             return "ppr";
          } else if(elementType instanceof SymbolTypePointer) {

@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.types;
 
 import dk.camelot64.kickc.fragment.AsmFragmentInstanceSpec;
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -43,7 +44,7 @@ public class SymbolTypeInference {
          SymbolType rightType = inferType(symbols, constBin.getRight());
          return constBin.getOperator().inferType(leftType, rightType);
       } else if(rValue instanceof ValueList) {
-         type = inferTypeList(symbols, (ValueList) rValue);
+         return SymbolType.VAR;          
       } else if(rValue instanceof PointerDereference) {
          SymbolType pointerType = inferType(symbols, ((PointerDereference) rValue).getPointer());
          if(pointerType instanceof SymbolTypePointer) {
@@ -51,7 +52,7 @@ public class SymbolTypeInference {
          } else if(pointerType.equals(SymbolType.STRING)) {
             return SymbolType.BYTE;
          } else {
-            throw new RuntimeException("Cannot infer pointer element type from pointer type " + pointerType);
+            throw new InternalError("Cannot infer pointer element type from pointer type " + pointerType);
          }
       } else if(rValue instanceof ConstantArrayList) {
          return new SymbolTypeArray(((ConstantArrayList) rValue).getElementType());
@@ -97,7 +98,7 @@ public class SymbolTypeInference {
             SymbolType rightType = inferType(symbols, rValue2);
             rValueType = ((OperatorBinary) assignment.getOperator()).inferType(leftType, rightType);
          } else {
-            throw new CompileError("Cannot infer type of " + assignment.toString());
+            throw new InternalError("Cannot infer type of " + assignment.toString());
          }
          return rValueType;
       } else if(rValue instanceof StructMemberRef) {
@@ -119,35 +120,9 @@ public class SymbolTypeInference {
          return ((StructUnwoundPlaceholder) rValue).getTypeStruct();
       }
       if(type == null) {
-         throw new RuntimeException("Cannot infer type for " + rValue.toString());
+         throw new InternalError("Cannot infer type for " + rValue.toString());
       }
       return type;
-   }
-
-   private static SymbolType inferTypeList(ProgramScope symbols, ValueList list) {
-      SymbolType elmType = null;
-      for(RValue elm : list.getList()) {
-         SymbolType type = inferType(symbols, elm);
-         if(elmType == null) {
-            elmType = type;
-         } else {
-            if(!elmType.equals(type)) {
-               if(SymbolType.NUMBER.equals(elmType) && SymbolType.isInteger(type)) {
-                  elmType = SymbolType.NUMBER;
-               } else if(SymbolType.isInteger(elmType) && SymbolType.NUMBER.equals(type)) {
-                  elmType = SymbolType.NUMBER;
-               } else {
-                  throw new CompileError("Array element has type mismatch "+elm.toString() + " not matching type " + elmType.getTypeName());
-               }
-            }
-         }
-      }
-      if(elmType != null) {
-         long size = list.getList().size();
-         return new SymbolTypeArray(elmType, new ConstantInteger(size, size<256?SymbolType.BYTE:SymbolType.WORD));
-      } else {
-         throw new RuntimeException("Cannot infer list element type " + list.toString());
-      }
    }
 
 }

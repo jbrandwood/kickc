@@ -37,12 +37,12 @@ public class TestPrograms {
 
    @Test
    public void testCallParameterAutocast() throws IOException, URISyntaxException {
-      compileAndCompare("call-parameter-autocast", log());
+      compileAndCompare("call-parameter-autocast");
    }
 
    @Test
    public void testPointerVoid2() throws IOException, URISyntaxException {
-      compileAndCompare("pointer-void-2", log());
+      compileAndCompare("pointer-void-2");
    }
 
    @Test

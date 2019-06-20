@@ -166,7 +166,6 @@ public class Compiler {
       new PassNTypeInference(program).execute();
       new PassNTypeIdSimplification(program).execute();
       new Pass1StructTypeSizeFix(program).execute();
-      new Pass1AssertProcedureCallParameters(program).execute();
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
 
@@ -176,21 +175,19 @@ public class Compiler {
       }
 
       new Pass1AddressOfVolatile(program).execute();
-
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
+      new PassNAddTypeConversionAssignment(program).execute();
+      new Pass1AssertProcedureCallParameters(program).execute();
+
       new Pass1PointerSizeofFix(program).execute(); // After this point in the code all pointer math is byte-based
       new PassNSizeOfSimplification(program).execute(); // Needed to eliminate sizeof() referencing pointer value variables
-
-      //new PassNAddTypeConversionAssignment(program).execute();
-      //new Pass1AssertProcedureCallParameters(program).execute();
 
       new Pass1UnwindStructValues(program).execute();
       new PassNStructPointerRewriting(program).execute();
 
       new PassNAddBooleanCasts(program).execute();
       new PassNAddTypeConversionAssignment(program).execute();
-      //new Pass1AssertProcedureCallParameters(program).execute();
 
       new Pass1EarlyConstantIdentification(program).execute();
       new Pass1ProcedureInline(program).execute();

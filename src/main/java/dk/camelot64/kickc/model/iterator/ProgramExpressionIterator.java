@@ -2,12 +2,15 @@ package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.operators.OperatorBinary;
+import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
+import java.util.List;
 import java.util.ListIterator;
 
 /**
@@ -62,6 +65,16 @@ public class ProgramExpressionIterator {
                for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) stmt).getPhiVariables()) {
                   for(StatementPhiBlock.PhiRValue value : phiVariable.getValues()) {
                      handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryPhiValueAssignemnt(phiVariable, value), stmt, stmtIt, block);
+                  }
+               }
+            } else if(stmt instanceof StatementCall) {
+               StatementCall call = (StatementCall) stmt;
+               List<RValue> paramValues = call.getParameters();
+               Procedure procedure = program.getScope().getProcedure(call.getProcedure());
+               List<Variable> paramDefs = procedure.getParameters();
+               if(paramValues!=null && paramDefs.size()==paramValues.size()) {
+                  for(int i=0;i<paramDefs.size(); i++) {
+                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter(paramDefs.get(i).getRef(), new ProgramValue.CallParameter(call, i)), stmt, stmtIt, block);
                   }
                }
             }

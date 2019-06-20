@@ -123,6 +123,53 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
    }
 
+   /** Binary expression - call parameter . */
+   class ProgramExpressionBinaryCallParameter implements ProgramExpressionBinary {
+      private final VariableRef parameterDef;
+      private final ProgramValue parameterValue;
+
+      public ProgramExpressionBinaryCallParameter(VariableRef parameterDef, ProgramValue parameterValue) {
+         this.parameterDef = parameterDef;
+         this.parameterValue = parameterValue;
+      }
+
+      @Override
+      public RValue getLeft() {
+         return parameterDef;
+      }
+
+      @Override
+      public OperatorBinary getOperator() {
+         return Operators.ASSIGNMENT;
+      }
+
+      @Override
+      public RValue getRight() {
+         return (RValue) parameterValue.get();
+      }
+
+      @Override
+      public void set(Value value) {
+         throw new InternalError("Updating an entire call parameter is not allowed!");
+      }
+
+      @Override
+      public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+               throw new InternalError("Casting parameter variable not allowed. " + parameterDef.toString());
+      }
+
+      @Override
+      public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
+         Value value = parameterValue.get();
+         if(value instanceof ConstantValue) {
+            parameterValue.set(new ConstantCastValue(toType, (ConstantValue) value));
+         } else {
+            parameterValue.set(new CastValue(toType, (RValue) value));
+         }
+      }
+
+   }
+
    /** Binary expression - assignment lvalue and the "total" rvalue. */
    class ProgramExpressionBinaryAssignmentLValue implements ProgramExpressionBinary {
       private final StatementAssignment assignment;

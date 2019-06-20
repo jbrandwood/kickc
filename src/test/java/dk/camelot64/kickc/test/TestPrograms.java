@@ -40,12 +40,10 @@ public class TestPrograms {
       compileAndCompare("call-parameter-autocast", log());
    }
 
-   /** Awaiting type system fix for void pointers
    @Test
    public void testPointerVoid2() throws IOException, URISyntaxException {
       compileAndCompare("pointer-void-2", log());
    }
-    */
 
    @Test
    public void testPointerVoid1() throws IOException, URISyntaxException {

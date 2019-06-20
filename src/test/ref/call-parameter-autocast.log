@@ -1,5 +1,6 @@
-Fixing pointer array-indexing *((word*) SCREEN + (byte) idx)
+Identified literal word (word) { $12, $34 } in (void~) main::$2 ← call print { (number) $12, (number) $34 } 
 Adding pointer type conversion cast (word*) SCREEN in (word*) SCREEN ← (number) $400
+Fixing pointer array-indexing *((word*) SCREEN + (byte) idx)
 Identified constant variable (word) main::w
 
 CONTROL FLOW GRAPH SSA
@@ -20,7 +21,7 @@ main::@1: scope:[main]  from main
 main::@2: scope:[main]  from main::@1
   (byte) idx#9 ← phi( main::@1/(byte) idx#6 )
   (byte) idx#1 ← (byte) idx#9
-  (word) print::w#2 ← { (number) $12, (number) $34 }
+  (word) print::w#2 ← (word){ (number) $12, (number) $34 }
   call print 
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -101,6 +102,8 @@ SYMBOL TABLE SSA
 (word) print::w#2
 (word) print::w#3
 
+Fixing inline constructor with main::$3 ← (byte)$12 w= (byte)$34
+Successful SSA optimization Pass2FixInlineConstructorsNew
 Adding number conversion cast (unumber) $1234 in (word) main::w#0 ← (number) $1234
 Adding number conversion cast (unumber) $1234 in (word) print::w#0 ← (number) $1234
 Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
@@ -112,6 +115,8 @@ Inlining cast (byte) idx#4 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $1234
 Simplifying constant integer cast $1234
+Simplifying constant integer cast $12
+Simplifying constant integer cast $34
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
@@ -119,10 +124,9 @@ Finalized unsigned number type (word) $1234
 Finalized unsigned number type (word) $1234
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Identified literal word (word) { $12, $34 } in (word) print::w#2 ← { (number) $12, (number) $34 }
-Successful SSA optimization PassNAddTypeConversionAssignment
 Alias (byte) idx#0 = (byte) idx#8 
 Alias (byte) idx#1 = (byte) idx#9 
+Alias (word) print::w#2 = (word~) main::$3 
 Alias (byte) idx#10 = (byte) idx#2 (byte) idx#11 (byte) idx#3 
 Alias (byte) idx#13 = (byte) idx#5 (byte) idx#6 
 Alias (byte) idx#16 = (byte) idx#4 
@@ -134,6 +138,8 @@ Identical Phi Values (byte) idx#1 (byte) idx#13
 Identical Phi Values (byte) idx#10 (byte) idx#13
 Identical Phi Values (byte) idx#14 (byte) idx#10
 Successful SSA optimization Pass2IdenticalPhiElimination
+Constant right-side identified [10] (word) print::w#2 ← (byte) $12 w= (byte) $34
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::w#0 = $1234
 Constant (const word) print::w#0 = $1234
 Constant (const word*) SCREEN#0 = (word*) 1024
@@ -141,15 +147,6 @@ Constant (const byte) idx#16 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) print::w#1 = main::w#0
 Successful SSA optimization Pass2ConstantIdentification
-Fixing inline constructor with main::$3 ← (byte)$12 w= (byte)$34
-Successful SSA optimization Pass2FixInlineConstructorsNew
-Simplifying constant integer cast $12
-Simplifying constant integer cast $34
-Successful SSA optimization PassNCastSimplification
-Alias (word) print::w#2 = (word~) main::$3 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [2] (word) print::w#2 ← (byte) $12 w= (byte) $34
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Adding number conversion cast (unumber) $12*$100+$34 in (word) print::w#2 ← (byte) $12*(number) $100+(byte) $34
 Adding number conversion cast (unumber) $12*$100 in (word) print::w#2 ← ((unumber)) (byte) $12*(number) $100+(byte) $34
 Adding number conversion cast (unumber) $100 in (word) print::w#2 ← ((unumber)) (unumber)(byte) $12*(number) $100+(byte) $34

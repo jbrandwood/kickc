@@ -15,22 +15,22 @@ main: {
     lda #BLACK
     sta BGCOL
     lda #<SCREEN
-    sta memcpy.dst
+    sta memcpy.destination
     lda #>SCREEN
-    sta memcpy.dst+1
+    sta memcpy.destination+1
     lda #<MEDUSA_SCREEN
-    sta memcpy.src
+    sta memcpy.source
     lda #>MEDUSA_SCREEN
-    sta memcpy.src+1
+    sta memcpy.source+1
     jsr memcpy
     lda #<COLS
-    sta memcpy.dst
+    sta memcpy.destination
     lda #>COLS
-    sta memcpy.dst+1
+    sta memcpy.destination+1
     lda #<MEDUSA_COLORS
-    sta memcpy.src
+    sta memcpy.source
     lda #>MEDUSA_COLORS
-    sta memcpy.src+1
+    sta memcpy.source+1
     jsr memcpy
   b1:
     lda #$e
@@ -40,10 +40,13 @@ main: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// memcpy(void* zeropage(4) destination, void* zeropage(2) source)
 memcpy: {
-    .label src = 2
     .label dst = 4
+    .label src = 2
     .label i = 6
+    .label source = 2
+    .label destination = 4
     lda #0
     sta i
     sta i+1

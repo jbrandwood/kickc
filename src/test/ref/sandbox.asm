@@ -594,15 +594,17 @@ div10: {
     lda val_1+1
     adc val+1
     sta val_1+1
+    lsr
     sta _3+1
     lda val_1
+    ror
     sta _3
-    ldy #4
-  !:
     lsr _3+1
     ror _3
-    dey
-    bne !-
+    lsr _3+1
+    ror _3
+    lsr _3+1
+    ror _3
     lda val_2
     clc
     adc val_1

@@ -36,8 +36,18 @@ public class TestPrograms {
    }
 
    @Test
-   public void testBitmapPlot() throws IOException, URISyntaxException {
-      compileAndCompare("bitmap-plot", log());
+   public void testBitmapPlot2() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-plot-2", log());
+   }
+
+   @Test
+   public void testBitmapPlot1() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-plot-1");
+   }
+
+   @Test
+   public void testBitmapPlot0() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-plot-0");
    }
 
    @Test

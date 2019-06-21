@@ -55,7 +55,6 @@ main: {
     sta D016
     lda #toD0181_return
     sta D018
-    jsr memset
     jsr bitmap_init
     jsr bitmap_clear
     jsr sin16s_gen2
@@ -174,10 +173,10 @@ render_sine: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(4) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $34
-    .label plotter = $32
+    .label _1 = $33
+    .label plotter = $31
     .label x = 4
-    .label _3 = $32
+    .label _3 = $31
     lda bitmap_plot_yhi,x
     sta _3+1
     lda bitmap_plot_ylo,x
@@ -248,8 +247,8 @@ sin16s_gen2: {
     .const max = $140
     .label ampl = max-min
     .label _5 = $10
-    .label _6 = $3a
-    .label step = $36
+    .label _6 = $39
+    .label step = $35
     .label sintab = $c
     .label x = 8
     .label i = $e
@@ -326,8 +325,8 @@ sin16s_gen2: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage($21) a)
 mul16s: {
-    .label _9 = $3c
-    .label _16 = $3c
+    .label _9 = $3b
+    .label _16 = $3b
     .label m = $10
     .label return = $10
     .label a = $21
@@ -418,14 +417,14 @@ sin16s: {
     .label _4 = $1d
     .label x = $1d
     .label return = $21
-    .label x1 = $3e
+    .label x1 = $3d
     .label x2 = $23
     .label x3 = $23
-    .label x3_6 = $40
+    .label x3_6 = $3f
     .label usinx = $21
     .label x4 = $23
-    .label x5 = $40
-    .label x5_128 = $40
+    .label x5 = $3f
+    .label x5_128 = $3f
     .label sinx = $21
     .label isUpper = $1c
     lda x+3
@@ -578,13 +577,11 @@ sin16s: {
     cmp #0
     beq b3
     sec
-    lda sinx
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx
     sta sinx
-    lda sinx+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx+1
     sta sinx+1
   b3:
     rts
@@ -597,7 +594,7 @@ mulu16_sel: {
     .label _1 = $10
     .label v1 = $23
     .label v2 = $14
-    .label return = $40
+    .label return = $3f
     .label return_1 = $23
     .label return_10 = $23
     lda v1
@@ -631,9 +628,9 @@ mulu16_sel: {
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
-    .label quotient_hi = $42
+    .label quotient_hi = $41
     .label quotient_lo = $29
-    .label return = $36
+    .label return = $35
     lda #<PI2_u4f28>>$10
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
@@ -716,39 +713,66 @@ divr16u: {
     rts
 }
 // Clear all graphics on the bitmap
+// bgcol - the background color to fill the screen with
+// fgcol - the foreground color to fill the screen with
 bitmap_clear: {
-    .label bitmap = $2c
-    .label y = $2b
-    .label _3 = $2c
-    lda bitmap_plot_ylo
-    sta _3
-    lda bitmap_plot_yhi
-    sta _3+1
-    lda #0
-    sta y
-  b1:
+    .const col = WHITE*$10
+    ldx #col
+    lda #<$3e8
+    sta memset.num
+    lda #>$3e8
+    sta memset.num+1
+    lda #<SCREEN
+    sta memset.str
+    lda #>SCREEN
+    sta memset.str+1
+    jsr memset
     ldx #0
-  b2:
-    lda #0
-    tay
-    sta (bitmap),y
-    inc bitmap
+    lda #<$1f40
+    sta memset.num
+    lda #>$1f40
+    sta memset.num+1
+    lda #<BITMAP
+    sta memset.str
+    lda #>BITMAP
+    sta memset.str+1
+    jsr memset
+    rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zeropage($2b) str, byte register(X) c, word zeropage($2d) num)
+memset: {
+    .label end = $2d
+    .label dst = $2b
+    .label str = $2b
+    .label num = $2d
+    lda end
+    clc
+    adc str
+    sta end
+    lda end+1
+    adc str+1
+    sta end+1
+  b1:
+    txa
+    ldy #0
+    sta (dst),y
+    inc dst
     bne !+
-    inc bitmap+1
+    inc dst+1
   !:
-    inx
-    cpx #$c8
-    bne b2
-    inc y
-    lda #$28
-    cmp y
+    lda dst+1
+    cmp end+1
+    bne b1
+    lda dst
+    cmp end
     bne b1
     rts
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $44
-    .label yoffs = $2e
+    .label _7 = $43
+    .label yoffs = $2f
     ldx #0
     lda #$80
   b1:
@@ -788,32 +812,6 @@ bitmap_init: {
     inx
     cpx #0
     bne b3
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const num = $3e8
-    .label str = SCREEN
-    .label end = str+num
-    .label dst = $30
-    lda #<str
-    sta dst
-    lda #>str
-    sta dst+1
-  b1:
-    lda #WHITE
-    ldy #0
-    sta (dst),y
-    inc dst
-    bne !+
-    inc dst+1
-  !:
-    lda dst+1
-    cmp #>end
-    bne b1
-    lda dst
-    cmp #<end
-    bne b1
     rts
 }
   // Tables for the plotter - initialized by calling bitmap_init();

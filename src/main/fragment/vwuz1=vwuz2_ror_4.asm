@@ -1,10 +1,12 @@
 lda {z2}+1
+lsr
 sta {z1}+1
 lda {z2}
+ror
 sta {z1}
-ldy #4
-!:
 lsr {z1}+1
 ror {z1}
-dey
-bne !-
+lsr {z1}+1
+ror {z1}
+lsr {z1}+1
+ror {z1}

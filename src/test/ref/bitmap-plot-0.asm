@@ -1,4 +1,5 @@
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
+// Plots simple plots
 .pc = $801 "Basic"
 :BasicUpstart(bbegin)
 .pc = $80d "Program"

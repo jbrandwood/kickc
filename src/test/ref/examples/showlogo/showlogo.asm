@@ -32,24 +32,24 @@ main: {
     sta D016
     ldx #BLACK
     lda #<$28*$19
-    sta fill.size
+    sta memset.num
     lda #>$28*$19
-    sta fill.size+1
+    sta memset.num+1
     lda #<SCREEN
-    sta fill.addr
+    sta memset.str
     lda #>SCREEN
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
     ldx #WHITE|8
     lda #<$28*$19
-    sta fill.size
+    sta memset.num
     lda #>$28*$19
-    sta fill.size+1
+    sta memset.num+1
     lda #<COLS
-    sta fill.addr
+    sta memset.str
     lda #>COLS
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
     ldx #0
   b1:
     txa
@@ -62,31 +62,32 @@ main: {
     inc $d020 
     jmp b2
 }
-// Fill some memory with a value
-// fill(word zeropage(2) size, byte register(X) val)
-fill: {
-    .label end = 2
-    .label addr = 4
-    .label size = 2
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zeropage(2) str, byte register(X) c, word zeropage(4) num)
+memset: {
+    .label end = 4
+    .label dst = 2
+    .label str = 2
+    .label num = 4
     lda end
     clc
-    adc addr
+    adc str
     sta end
     lda end+1
-    adc addr+1
+    adc str+1
     sta end+1
   b1:
     txa
     ldy #0
-    sta (addr),y
-    inc addr
+    sta (dst),y
+    inc dst
     bne !+
-    inc addr+1
+    inc dst+1
   !:
-    lda addr+1
+    lda dst+1
     cmp end+1
     bne b1
-    lda addr
+    lda dst
     cmp end
     bne b1
     rts

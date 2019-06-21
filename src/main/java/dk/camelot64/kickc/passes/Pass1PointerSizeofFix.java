@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Comment;
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -10,6 +11,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableIntermediate;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.ConstantRef;
@@ -94,6 +96,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
       Variable variable = getScope().getVariable(varRef);
       if(variable.getType() instanceof SymbolTypePointer) {
          SymbolTypePointer pointerType = (SymbolTypePointer) variable.getType();
+         if(SymbolType.VOID.equals(pointerType.getElementType())) {
+            throw new CompileError("Void pointer math not allowed. ", assignment);
+         }
          if(pointerType.getElementType().getSizeBytes() > 1) {
             // Binary operation on a non-byte pointer - sizeof()-handling is probably needed!
             if(Operators.PLUS.equals(assignment.getOperator()) || Operators.MINUS.equals(assignment.getOperator())) {
@@ -122,6 +127,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
       Variable variable = getScope().getVariable(varRef);
       if(variable.getType() instanceof SymbolTypePointer) {
          SymbolTypePointer pointerType = (SymbolTypePointer) variable.getType();
+         if(SymbolType.VOID.equals(pointerType.getElementType())) {
+            throw new CompileError("Void pointer math not allowed. ", assignment);
+         }
          if(pointerType.getElementType().getSizeBytes() > 1) {
             // Unary operation on non-byte pointer type - sizeof()-handling is needed!
             if(Operators.INCREMENT.equals(assignment.getOperator())) {

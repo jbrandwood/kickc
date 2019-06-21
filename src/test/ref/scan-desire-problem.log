@@ -42,11 +42,20 @@ Adding pointer type conversion cast (byte*) CIA2_PORT_B_DDR in (byte*) CIA2_PORT
 Adding pointer type conversion cast (byte*) CIA2_INTERRUPT in (byte*) CIA2_INTERRUPT ← (number) $dd0d
 Adding pointer type conversion cast (void()**) KERNEL_IRQ in (void()**) KERNEL_IRQ ← (number) $314
 Adding pointer type conversion cast (void()**) HARDWARE_IRQ in (void()**) HARDWARE_IRQ ← (number) $fffe
+Adding pointer type conversion cast to void pointer (byte*) memcpy::source in (byte*) memcpy::src ← (void*) memcpy::source
+Adding pointer type conversion cast to void pointer (byte*) memcpy::destination in (byte*) memcpy::dst ← (void*) memcpy::destination
+Adding pointer type conversion cast to void pointer (byte*) memmove::$3 in (byte*) memmove::src ← (void*~) memmove::$3
+Adding pointer type conversion cast to void pointer (byte*) memmove::$4 in (byte*) memmove::dst ← (void*~) memmove::$4
+Adding pointer type conversion cast to void pointer (byte*) memset::$0 in (byte*) memset::end ← (void*~) memset::$0
+Adding pointer type conversion cast to void pointer (byte*) memset::str in (byte*) memset::dst ← (void*) memset::str
 Adding pointer type conversion cast (byte*) screen in (byte*) screen ← (number) $400
 Adding pointer type conversion cast (byte*) charset in (byte*) charset ← (number) $2000
 Adding pointer type conversion cast (byte*) tileset in (byte*) tileset ← (number) $2800
 Adding pointer type conversion cast (byte*) colors in (byte*) colors ← (number) $d800
 Adding pointer type conversion cast (byte*) level_address in (byte*) level_address ← (number) $3000
+Adding void pointer type conversion cast (void*) screen in (void*~) init::$1 ← call memset (byte*) screen (number) 0 (number) $3e8 
+Adding void pointer type conversion cast (void*) colors in (void*~) init::$2 ← call memset (byte*) colors (byte) BLACK (number) $3e8 
+Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call (byte~) init::$3 ← call toD018 (byte*) screen (byte*) charset 
 Culled Empty Block (label) @1
@@ -60,22 +69,25 @@ Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) fill::@2
 Culled Empty Block (label) @12
+Culled Empty Block (label) @13
+Culled Empty Block (label) memset::@3
+Culled Empty Block (label) @14
+Culled Empty Block (label) @15
 Culled Empty Block (label) mul8u::@5
 Culled Empty Block (label) mul8u::@6
 Culled Empty Block (label) mul8u::@8
 Culled Empty Block (label) mul8u::@9
-Culled Empty Block (label) @13
-Culled Empty Block (label) @14
-Culled Empty Block (label) @15
 Culled Empty Block (label) @16
+Culled Empty Block (label) @17
+Culled Empty Block (label) @18
+Culled Empty Block (label) @19
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@6
-Culled Empty Block (label) @18
+Culled Empty Block (label) @21
 Culled Empty Block (label) init::toD0181_@1
-Culled Empty Block (label) @19
-Culled Empty Block (label) @20
+Culled Empty Block (label) @22
+Culled Empty Block (label) @23
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -97,25 +109,32 @@ CONTROL FLOW GRAPH SSA
   (byte) GREEN#0 ← (number) 5
   (byte) BLUE#0 ← (number) 6
   (byte) YELLOW#0 ← (number) 7
-  to:@17
-fill: scope:[fill]  from init::@2 init::@3
-  (byte) fill::val#3 ← phi( init::@2/(byte) fill::val#0 init::@3/(byte) fill::val#1 )
-  (word) fill::size#2 ← phi( init::@2/(word) fill::size#0 init::@3/(word) fill::size#1 )
-  (byte*) fill::start#2 ← phi( init::@2/(byte*) fill::start#0 init::@3/(byte*) fill::start#1 )
-  (byte*~) fill::$0 ← (byte*) fill::start#2 + (word) fill::size#2
-  (byte*) fill::end#0 ← (byte*~) fill::$0
-  (byte*) fill::addr#0 ← (byte*) fill::start#2
-  to:fill::@1
-fill::@1: scope:[fill]  from fill fill::@1
-  (byte*) fill::end#1 ← phi( fill/(byte*) fill::end#0 fill::@1/(byte*) fill::end#1 )
-  (byte*) fill::addr#2 ← phi( fill/(byte*) fill::addr#0 fill::@1/(byte*) fill::addr#1 )
-  (byte) fill::val#2 ← phi( fill/(byte) fill::val#3 fill::@1/(byte) fill::val#2 )
-  *((byte*) fill::addr#2) ← (byte) fill::val#2
-  (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2
-  (bool~) fill::$1 ← (byte*) fill::addr#1 != (byte*) fill::end#1
-  if((bool~) fill::$1) goto fill::@1
-  to:fill::@return
-fill::@return: scope:[fill]  from fill::@1
+  to:@20
+memset: scope:[memset]  from init::@2 init::@3
+  (byte) memset::c#3 ← phi( init::@2/(byte) memset::c#0 init::@3/(byte) memset::c#1 )
+  (word) memset::num#2 ← phi( init::@2/(word) memset::num#0 init::@3/(word) memset::num#1 )
+  (void*) memset::str#2 ← phi( init::@2/(void*) memset::str#0 init::@3/(void*) memset::str#1 )
+  (void*~) memset::$0 ← (void*) memset::str#2 + (word) memset::num#2
+  (byte*) memset::end#0 ← ((byte*)) (void*~) memset::$0
+  (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
+  to:memset::@1
+memset::@1: scope:[memset]  from memset memset::@1
+  (void*) memset::str#4 ← phi( memset/(void*) memset::str#2 memset::@1/(void*) memset::str#4 )
+  (byte*) memset::end#1 ← phi( memset/(byte*) memset::end#0 memset::@1/(byte*) memset::end#1 )
+  (byte*) memset::dst#2 ← phi( memset/(byte*) memset::dst#0 memset::@1/(byte*) memset::dst#1 )
+  (byte) memset::c#2 ← phi( memset/(byte) memset::c#3 memset::@1/(byte) memset::c#2 )
+  *((byte*) memset::dst#2) ← (byte) memset::c#2
+  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  (bool~) memset::$1 ← (byte*) memset::dst#1 != (byte*) memset::end#1
+  if((bool~) memset::$1) goto memset::@1
+  to:memset::@2
+memset::@2: scope:[memset]  from memset::@1
+  (void*) memset::str#3 ← phi( memset::@1/(void*) memset::str#4 )
+  (void*) memset::return#0 ← (void*) memset::str#3
+  to:memset::@return
+memset::@return: scope:[memset]  from memset::@2
+  (void*) memset::return#4 ← phi( memset::@2/(void*) memset::return#0 )
+  (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
 mul8u: scope:[mul8u]  from draw_block
@@ -165,14 +184,14 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3
   (word) mul8u::return#1 ← (word) mul8u::return#3
   return 
   to:@return
-@17: scope:[]  from @begin
+@20: scope:[]  from @begin
   (byte*) screen#0 ← ((byte*)) (number) $400
   (byte*) charset#0 ← ((byte*)) (number) $2000
   (byte*) tileset#0 ← ((byte*)) (number) $2800
   (byte*) colors#0 ← ((byte*)) (number) $d800
   (byte*) level_address#0 ← ((byte*)) (number) $3000
-  to:@21
-main: scope:[main]  from @21
+  to:@24
+main: scope:[main]  from @24
   call init 
   to:main::@7
 main::@7: scope:[main]  from main
@@ -217,16 +236,18 @@ init: scope:[init]  from main
   call init_sprites 
   to:init::@2
 init::@2: scope:[init]  from init
-  (byte*) fill::start#0 ← (byte*) screen#0
-  (word) fill::size#0 ← (number) $3e8
-  (byte) fill::val#0 ← (number) 0
-  call fill 
+  (void*) memset::str#0 ← (void*)(byte*) screen#0
+  (byte) memset::c#0 ← (number) 0
+  (word) memset::num#0 ← (number) $3e8
+  call memset 
+  (void*) memset::return#2 ← (void*) memset::return#1
   to:init::@3
 init::@3: scope:[init]  from init::@2
-  (byte*) fill::start#1 ← (byte*) colors#0
-  (word) fill::size#1 ← (number) $3e8
-  (byte) fill::val#1 ← (byte) BLACK#0
-  call fill 
+  (void*) memset::str#1 ← (void*)(byte*) colors#0
+  (byte) memset::c#1 ← (byte) BLACK#0
+  (word) memset::num#1 ← (number) $3e8
+  call memset 
+  (void*) memset::return#3 ← (void*) memset::return#1
   to:init::@4
 init::@4: scope:[init]  from init::@3
   (byte*) init::toD0181_screen#0 ← (byte*) screen#0
@@ -317,17 +338,17 @@ draw_block::@1: scope:[draw_block]  from draw_block
 draw_block::@return: scope:[draw_block]  from draw_block::@1
   return 
   to:@return
-@21: scope:[]  from @17
+@24: scope:[]  from @20
   call main 
-  to:@22
-@22: scope:[]  from @21
+  to:@25
+@25: scope:[]  from @24
   to:@end
-@end: scope:[]  from @22
+@end: scope:[]  from @25
 
 SYMBOL TABLE SSA
-(label) @17
-(label) @21
-(label) @22
+(label) @20
+(label) @24
+(label) @25
 (label) @begin
 (label) @end
 (byte*) BGCOL1
@@ -406,31 +427,6 @@ SYMBOL TABLE SSA
 (word) draw_block::z
 (word) draw_block::z#0
 (word) draw_block::z#1
-(void()) fill((byte*) fill::start , (word) fill::size , (byte) fill::val)
-(byte*~) fill::$0
-(bool~) fill::$1
-(label) fill::@1
-(label) fill::@return
-(byte*) fill::addr
-(byte*) fill::addr#0
-(byte*) fill::addr#1
-(byte*) fill::addr#2
-(byte*) fill::end
-(byte*) fill::end#0
-(byte*) fill::end#1
-(word) fill::size
-(word) fill::size#0
-(word) fill::size#1
-(word) fill::size#2
-(byte*) fill::start
-(byte*) fill::start#0
-(byte*) fill::start#1
-(byte*) fill::start#2
-(byte) fill::val
-(byte) fill::val#0
-(byte) fill::val#1
-(byte) fill::val#2
-(byte) fill::val#3
 (void()) init()
 (byte~) init::$3
 (label) init::@1
@@ -500,6 +496,40 @@ SYMBOL TABLE SSA
 (byte) main::y#3
 (byte) main::z
 (byte) main::z#0
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(void*~) memset::$0
+(bool~) memset::$1
+(label) memset::@1
+(label) memset::@2
+(label) memset::@return
+(byte) memset::c
+(byte) memset::c#0
+(byte) memset::c#1
+(byte) memset::c#2
+(byte) memset::c#3
+(byte*) memset::dst
+(byte*) memset::dst#0
+(byte*) memset::dst#1
+(byte*) memset::dst#2
+(byte*) memset::end
+(byte*) memset::end#0
+(byte*) memset::end#1
+(word) memset::num
+(word) memset::num#0
+(word) memset::num#1
+(word) memset::num#2
+(void*) memset::return
+(void*) memset::return#0
+(void*) memset::return#1
+(void*) memset::return#2
+(void*) memset::return#3
+(void*) memset::return#4
+(void*) memset::str
+(void*) memset::str#0
+(void*) memset::str#1
+(void*) memset::str#2
+(void*) memset::str#3
+(void*) memset::str#4
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 (bool~) mul8u::$0
 (number~) mul8u::$1
@@ -568,9 +598,9 @@ Adding number conversion cast (unumber) 0 in (byte) main::x#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) main::y#0 ← (number) 0
 Adding number conversion cast (unumber) 9 in (bool~) main::$3 ← (byte) main::y#1 < (number) 9
 Adding number conversion cast (unumber) $10 in (bool~) main::$4 ← (byte) main::x#1 < (number) $10
-Adding number conversion cast (unumber) $3e8 in (word) fill::size#0 ← (number) $3e8
-Adding number conversion cast (unumber) 0 in (byte) fill::val#0 ← (number) 0
-Adding number conversion cast (unumber) $3e8 in (word) fill::size#1 ← (number) $3e8
+Adding number conversion cast (unumber) 0 in (byte) memset::c#0 ← (number) 0
+Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (word) memset::num#1 ← (number) $3e8
 Adding number conversion cast (unumber) $3fff in (number~) init::toD0181_$1#0 ← (word~) init::toD0181_$0#0 & (number) $3fff
 Adding number conversion cast (unumber) init::toD0181_$1#0 in (number~) init::toD0181_$1#0 ← (word~) init::toD0181_$0#0 & (unumber)(number) $3fff
 Adding number conversion cast (unumber) 4 in (number~) init::toD0181_$2#0 ← (unumber~) init::toD0181_$1#0 * (number) 4
@@ -624,6 +654,8 @@ Inlining cast (byte) RED#0 ← (unumber)(number) 2
 Inlining cast (byte) GREEN#0 ← (unumber)(number) 5
 Inlining cast (byte) BLUE#0 ← (unumber)(number) 6
 Inlining cast (byte) YELLOW#0 ← (unumber)(number) 7
+Inlining cast (byte*) memset::end#0 ← (byte*)(void*~) memset::$0
+Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (word) mul8u::res#0 ← (unumber)(number) 0
 Inlining cast (byte*) screen#0 ← (byte*)(number) $400
 Inlining cast (byte*) charset#0 ← (byte*)(number) $2000
@@ -632,9 +664,9 @@ Inlining cast (byte*) colors#0 ← (byte*)(number) $d800
 Inlining cast (byte*) level_address#0 ← (byte*)(number) $3000
 Inlining cast (byte) main::x#0 ← (unumber)(number) 0
 Inlining cast (byte) main::y#0 ← (unumber)(number) 0
-Inlining cast (word) fill::size#0 ← (unumber)(number) $3e8
-Inlining cast (byte) fill::val#0 ← (unumber)(number) 0
-Inlining cast (word) fill::size#1 ← (unumber)(number) $3e8
+Inlining cast (byte) memset::c#0 ← (unumber)(number) 0
+Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
+Inlining cast (word) memset::num#1 ← (unumber)(number) $3e8
 Inlining cast (word~) init::toD0181_$0#0 ← (word)(byte*) init::toD0181_screen#1
 Inlining cast (word~) init::toD0181_$4#0 ← (word)(byte*) init::toD0181_gfx#1
 Inlining cast *((byte*) SPRITES_ENABLE#0) ← (unumber)(number) 1
@@ -680,8 +712,8 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 9
 Simplifying constant integer cast $10
-Simplifying constant integer cast $3e8
 Simplifying constant integer cast 0
+Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
@@ -722,8 +754,8 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 9
 Finalized unsigned number type (byte) $10
-Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) 4
@@ -761,10 +793,9 @@ Inferred type updated to word in (unumber~) draw_block::$7 ← (word) draw_block
 Inferred type updated to word in (unumber~) draw_block::$8 ← (word) draw_block::z#1 + (byte) $28
 Inferred type updated to word in (unumber~) draw_block::$9 ← (word) draw_block::z#1 + (byte) $29
 Inferred type updated to word in (unumber~) draw_block::$10 ← (word) draw_block::z#1 + (byte) $29
-Inversing boolean not [37] (bool~) mul8u::$3 ← (byte~) mul8u::$1 == (byte) 0 from [36] (bool~) mul8u::$2 ← (byte~) mul8u::$1 != (byte) 0
+Inversing boolean not [41] (bool~) mul8u::$3 ← (byte~) mul8u::$1 == (byte) 0 from [40] (bool~) mul8u::$2 ← (byte~) mul8u::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte*) fill::end#0 = (byte*~) fill::$0 
-Alias (byte*) fill::addr#0 = (byte*) fill::start#2 
+Alias (void*) memset::return#0 = (void*) memset::str#3 (void*) memset::str#4 (void*) memset::return#4 (void*) memset::return#1 
 Alias (word) mul8u::mb#0 = (byte) mul8u::b#1 
 Alias (byte) mul8u::a#2 = (byte) mul8u::a#3 (byte) mul8u::a#6 
 Alias (word) mul8u::mb#3 = (word) mul8u::mb#4 (word) mul8u::mb#5 
@@ -788,12 +819,14 @@ Successful SSA optimization Pass2AliasElimination
 Alias (byte) mul8u::a#2 = (byte) mul8u::a#4 
 Alias (word) mul8u::mb#2 = (word) mul8u::mb#3 
 Successful SSA optimization Pass2AliasElimination
-Self Phi Eliminated (byte) fill::val#2
-Self Phi Eliminated (byte*) fill::end#1
+Self Phi Eliminated (byte) memset::c#2
+Self Phi Eliminated (byte*) memset::end#1
+Self Phi Eliminated (void*) memset::return#0
 Self Phi Eliminated (byte) main::x#2
 Successful SSA optimization Pass2SelfPhiElimination
-Identical Phi Values (byte) fill::val#2 (byte) fill::val#3
-Identical Phi Values (byte*) fill::end#1 (byte*) fill::end#0
+Identical Phi Values (byte) memset::c#2 (byte) memset::c#3
+Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
+Identical Phi Values (void*) memset::return#0 (void*) memset::str#2
 Identical Phi Values (word) mul8u::mb#0 (byte) mul8u::b#0
 Identical Phi Values (byte) mul8u::a#5 (byte) mul8u::a#1
 Identical Phi Values (byte) main::x#2 (byte) main::x#4
@@ -801,11 +834,11 @@ Identical Phi Values (byte) draw_block::tileno#2 (byte) draw_block::tileno#0
 Identical Phi Values (byte) draw_block::x#1 (byte) draw_block::x#0
 Identical Phi Values (byte) draw_block::y#2 (byte) draw_block::y#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) fill::$1 [26] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
-Simple Condition (bool~) mul8u::$0 [33] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2
-Simple Condition (bool~) mul8u::$3 [38] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@4
-Simple Condition (bool~) main::$3 [73] if((byte) main::y#1<(byte) 9) goto main::@2
-Simple Condition (bool~) main::$4 [77] if((byte) main::x#1<(byte) $10) goto main::@1
+Simple Condition (bool~) memset::$1 [26] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@1
+Simple Condition (bool~) mul8u::$0 [37] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2
+Simple Condition (bool~) mul8u::$3 [42] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@4
+Simple Condition (bool~) main::$3 [77] if((byte) main::y#1<(byte) 9) goto main::@2
+Simple Condition (bool~) main::$4 [81] if((byte) main::x#1<(byte) $10) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) SPRITES_XMSB#0 = (byte*) 53264
 Constant (const byte*) SPRITES_ENABLE#0 = (byte*) 53269
@@ -833,86 +866,96 @@ Constant (const byte*) colors#0 = (byte*) 55296
 Constant (const byte*) level_address#0 = (byte*) 12288
 Constant (const byte) main::x#0 = 0
 Constant (const byte) main::y#0 = 0
-Constant (const word) fill::size#0 = $3e8
-Constant (const byte) fill::val#0 = 0
-Constant (const word) fill::size#1 = $3e8
+Constant (const byte) memset::c#0 = 0
+Constant (const word) memset::num#0 = $3e8
+Constant (const word) memset::num#1 = $3e8
 Constant (const byte) mul8u::b#0 = $28
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) draw_block::color#0 = YELLOW#0
-Constant (const byte*) fill::start#0 = screen#0
-Constant (const byte*) fill::start#1 = colors#0
-Constant (const byte) fill::val#1 = BLACK#0
+Constant (const byte) memset::c#1 = BLACK#0
 Constant (const byte*) init::toD0181_screen#0 = screen#0
 Constant (const byte*) init::toD0181_gfx#0 = charset#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)init::toD0181_screen#0 in [92] (word~) init::toD0181_$0#0 ← (word)(const byte*) init::toD0181_screen#0
-Constant value identified (word)init::toD0181_gfx#0 in [96] (word~) init::toD0181_$4#0 ← (word)(const byte*) init::toD0181_gfx#0
+Constant value identified (void*)screen#0 in [85] (void*) memset::str#0 ← (void*)(const byte*) screen#0
+Constant value identified (void*)colors#0 in [90] (void*) memset::str#1 ← (void*)(const byte*) colors#0
+Constant value identified (word)init::toD0181_screen#0 in [98] (word~) init::toD0181_$0#0 ← (word)(const byte*) init::toD0181_screen#0
+Constant value identified (word)init::toD0181_gfx#0 in [102] (word~) init::toD0181_$4#0 ← (word)(const byte*) init::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [78] if(true) goto main::@5
+if() condition always true - replacing block destination [82] if(true) goto main::@5
 Successful SSA optimization Pass2ConstantIfs
-De-inlining pointer[w] to *(pointer+w)   [138] *((const byte*) screen#0 + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0
-De-inlining pointer[w] to *(pointer+w)   [139] *((const byte*) colors#0 + (word) draw_block::z#1) ← (const byte) YELLOW#0
-De-inlining pointer[w] to *(pointer+w)   [141] *((const byte*) screen#0 + (word~) draw_block::$5) ← (byte) 1
-De-inlining pointer[w] to *(pointer+w)   [143] *((const byte*) colors#0 + (word~) draw_block::$6) ← (const byte) YELLOW#0
-De-inlining pointer[w] to *(pointer+w)   [145] *((const byte*) screen#0 + (word~) draw_block::$7) ← (byte) 2
-De-inlining pointer[w] to *(pointer+w)   [147] *((const byte*) colors#0 + (word~) draw_block::$8) ← (const byte) YELLOW#0
-De-inlining pointer[w] to *(pointer+w)   [149] *((const byte*) screen#0 + (word~) draw_block::$9) ← (byte) 3
-De-inlining pointer[w] to *(pointer+w)   [151] *((const byte*) colors#0 + (word~) draw_block::$10) ← (const byte) YELLOW#0
+De-inlining pointer[w] to *(pointer+w)   [144] *((const byte*) screen#0 + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0
+De-inlining pointer[w] to *(pointer+w)   [145] *((const byte*) colors#0 + (word) draw_block::z#1) ← (const byte) YELLOW#0
+De-inlining pointer[w] to *(pointer+w)   [147] *((const byte*) screen#0 + (word~) draw_block::$5) ← (byte) 1
+De-inlining pointer[w] to *(pointer+w)   [149] *((const byte*) colors#0 + (word~) draw_block::$6) ← (const byte) YELLOW#0
+De-inlining pointer[w] to *(pointer+w)   [151] *((const byte*) screen#0 + (word~) draw_block::$7) ← (byte) 2
+De-inlining pointer[w] to *(pointer+w)   [153] *((const byte*) colors#0 + (word~) draw_block::$8) ← (const byte) YELLOW#0
+De-inlining pointer[w] to *(pointer+w)   [155] *((const byte*) screen#0 + (word~) draw_block::$9) ← (byte) 3
+De-inlining pointer[w] to *(pointer+w)   [157] *((const byte*) colors#0 + (word~) draw_block::$10) ← (const byte) YELLOW#0
 Successful SSA optimization Pass2DeInlineWordDerefIdx
+Eliminating unused variable (void*) memset::return#2 and assignment [35] (void*) memset::return#2 ← (void*) memset::str#2
+Eliminating unused variable (void*) memset::return#3 and assignment [38] (void*) memset::return#3 ← (void*) memset::str#2
 Eliminating unused constant (const byte) draw_block::color#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Constant (const void*) memset::str#0 = (void*)screen#0
+Constant (const void*) memset::str#1 = (void*)colors#0
 Constant (const word) init::toD0181_$0#0 = (word)init::toD0181_screen#0
 Constant (const word) init::toD0181_$4#0 = (word)init::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [32] (word~) init::toD0181_$1#0 ← (const word) init::toD0181_$0#0 & (word) $3fff
-Constant right-side identified [35] (byte~) init::toD0181_$5#0 ← > (const word) init::toD0181_$4#0
+Constant right-side identified [34] (word~) init::toD0181_$1#0 ← (const word) init::toD0181_$0#0 & (word) $3fff
+Constant right-side identified [37] (byte~) init::toD0181_$5#0 ← > (const word) init::toD0181_$4#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) init::toD0181_$1#0 = init::toD0181_$0#0&$3fff
 Constant (const byte) init::toD0181_$5#0 = >init::toD0181_$4#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [32] (word~) init::toD0181_$2#0 ← (const word) init::toD0181_$1#0 * (byte) 4
-Constant right-side identified [34] (byte~) init::toD0181_$6#0 ← (const byte) init::toD0181_$5#0 / (byte) 4
+Constant right-side identified [34] (word~) init::toD0181_$2#0 ← (const word) init::toD0181_$1#0 * (byte) 4
+Constant right-side identified [36] (byte~) init::toD0181_$6#0 ← (const byte) init::toD0181_$5#0 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) init::toD0181_$2#0 = init::toD0181_$1#0*4
 Constant (const byte) init::toD0181_$6#0 = init::toD0181_$5#0/4
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [32] (byte~) init::toD0181_$3#0 ← > (const word) init::toD0181_$2#0
-Constant right-side identified [33] (byte~) init::toD0181_$7#0 ← (const byte) init::toD0181_$6#0 & (byte) $f
+Constant right-side identified [34] (byte~) init::toD0181_$3#0 ← > (const word) init::toD0181_$2#0
+Constant right-side identified [35] (byte~) init::toD0181_$7#0 ← (const byte) init::toD0181_$6#0 & (byte) $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) init::toD0181_$3#0 = >init::toD0181_$2#0
 Constant (const byte) init::toD0181_$7#0 = init::toD0181_$6#0&$f
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [32] (byte) init::toD0181_return#0 ← (const byte) init::toD0181_$3#0 | (const byte) init::toD0181_$7#0
+Constant right-side identified [34] (byte) init::toD0181_return#0 ← (const byte) init::toD0181_$3#0 | (const byte) init::toD0181_$7#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) init::toD0181_return#0 = init::toD0181_$3#0|init::toD0181_$7#0
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const word) fill::size#0
-Inlining constant with var siblings (const byte) fill::val#0
-Inlining constant with var siblings (const word) fill::size#1
-Inlining constant with var siblings (const byte) fill::val#1
+Inlining Noop Cast [2] (byte*) memset::end#0 ← (byte*)(void*~) memset::$0 keeping memset::end#0
+Successful SSA optimization Pass2NopCastInlining
+Inlining Noop Cast [3] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2 keeping memset::str#2
+Successful SSA optimization Pass2NopCastInlining
+Inlining constant with var siblings (const byte) memset::c#0
+Inlining constant with var siblings (const word) memset::num#0
+Inlining constant with var siblings (const word) memset::num#1
+Inlining constant with var siblings (const byte) memset::c#1
+Inlining constant with var siblings (const void*) memset::str#0
+Inlining constant with var siblings (const void*) memset::str#1
 Inlining constant with var siblings (const word) mul8u::res#0
 Inlining constant with var siblings (const byte) main::x#0
 Inlining constant with var siblings (const byte) main::y#0
 Constant inlined init::toD0181_gfx#0 = (const byte*) charset#0
-Constant inlined fill::val#0 = (byte) 0
+Constant inlined memset::str#1 = (void*)(const byte*) colors#0
+Constant inlined memset::str#0 = (void*)(const byte*) screen#0
 Constant inlined init::toD0181_$0#0 = (word)(const byte*) screen#0
 Constant inlined init::toD0181_$2#0 = (word)(const byte*) screen#0&(word) $3fff*(byte) 4
-Constant inlined fill::val#1 = (const byte) BLACK#0
 Constant inlined init::toD0181_$1#0 = (word)(const byte*) screen#0&(word) $3fff
 Constant inlined init::toD0181_$4#0 = (word)(const byte*) charset#0
 Constant inlined init::toD0181_$3#0 = >(word)(const byte*) screen#0&(word) $3fff*(byte) 4
-Constant inlined fill::size#1 = (word) $3e8
 Constant inlined init::toD0181_$6#0 = >(word)(const byte*) charset#0/(byte) 4
-Constant inlined fill::size#0 = (word) $3e8
+Constant inlined memset::num#1 = (word) $3e8
 Constant inlined main::x#0 = (byte) 0
 Constant inlined init::toD0181_$5#0 = >(word)(const byte*) charset#0
+Constant inlined memset::num#0 = (word) $3e8
 Constant inlined main::y#0 = (byte) 0
 Constant inlined init::toD0181_$7#0 = >(word)(const byte*) charset#0/(byte) 4&(byte) $f
 Constant inlined mul8u::res#0 = (byte) 0
-Constant inlined fill::start#1 = (const byte*) colors#0
-Constant inlined fill::start#0 = (const byte*) screen#0
+Constant inlined memset::c#0 = (byte) 0
+Constant inlined memset::c#1 = (const byte) BLACK#0
 Constant inlined init::toD0181_screen#0 = (const byte*) screen#0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated constant in assignment draw_block::$13
@@ -924,16 +967,16 @@ Consolidated constant in assignment draw_block::$18
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias (word) draw_block::z#1 = (word~) draw_block::$5 (word~) draw_block::$6 (word~) draw_block::$7 (word~) draw_block::$8 (word~) draw_block::$9 (word~) draw_block::$10 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (word) fill::size#2 (word) $3e8
+Identical Phi Values (word) memset::num#2 (word) $3e8
 Successful SSA optimization Pass2IdenticalPhiElimination
-Added new block during phi lifting fill::@3(between fill::@1 and fill::@1)
+Added new block during phi lifting memset::@4(between memset::@1 and memset::@1)
 Added new block during phi lifting mul8u::@10(between mul8u::@2 and mul8u::@4)
 Added new block during phi lifting main::@9(between main::@3 and main::@1)
 Added new block during phi lifting main::@10(between main::@8 and main::@2)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @17
-Adding NOP phi() at start of @21
-Adding NOP phi() at start of @22
+Adding NOP phi() at start of @20
+Adding NOP phi() at start of @24
+Adding NOP phi() at start of @25
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@7
@@ -945,11 +988,12 @@ Adding NOP phi() at start of init::@3
 Adding NOP phi() at start of init::@4
 Adding NOP phi() at start of init::toD0181
 Adding NOP phi() at start of init::toD0181_@return
+Adding NOP phi() at start of memset::@2
 CALL GRAPH
 Calls in [] to main:3 
 Calls in [main] to init:7 draw_block:16 
 Calls in [draw_block] to mul8u:28 
-Calls in [init] to init_sprites:67 fill:69 fill:71 
+Calls in [init] to init_sprites:67 memset:69 memset:71 
 
 Created 9 initial phi equivalence classes
 Coalesced [22] main::x#6 ← main::x#1
@@ -960,11 +1004,10 @@ Coalesced [62] mul8u::a#8 ← mul8u::a#0
 Coalesced [63] mul8u::res#7 ← mul8u::res#6
 Coalesced [64] mul8u::mb#6 ← mul8u::mb#1
 Coalesced (already) [65] mul8u::res#8 ← mul8u::res#2
-Coalesced [85] fill::addr#3 ← fill::addr#0
-Coalesced [91] fill::addr#4 ← fill::addr#1
-Coalesced down to 7 phi equivalence classes
-Culled Empty Block (label) @17
-Culled Empty Block (label) @22
+Coalesced [92] memset::dst#4 ← memset::dst#1
+Coalesced down to 8 phi equivalence classes
+Culled Empty Block (label) @20
+Culled Empty Block (label) @25
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@9
 Culled Empty Block (label) main::@10
@@ -972,8 +1015,9 @@ Culled Empty Block (label) mul8u::@3
 Culled Empty Block (label) mul8u::@10
 Culled Empty Block (label) init::@4
 Culled Empty Block (label) init::toD0181_@return
-Culled Empty Block (label) fill::@3
-Renumbering block @21 to @1
+Culled Empty Block (label) memset::@2
+Culled Empty Block (label) memset::@4
+Renumbering block @24 to @1
 Renumbering block mul8u::@4 to mul8u::@3
 Renumbering block mul8u::@7 to mul8u::@4
 Renumbering block main::@5 to main::@4
@@ -1088,11 +1132,11 @@ init: scope:[init]  from main
   to:init::@2
 init::@2: scope:[init]  from init
   [57] phi()
-  [58] call fill 
+  [58] call memset 
   to:init::@3
 init::@3: scope:[init]  from init::@2
   [59] phi()
-  [60] call fill 
+  [60] call memset 
   to:init::toD0181
 init::toD0181: scope:[init]  from init::@3
   [61] phi()
@@ -1109,30 +1153,31 @@ init::@1: scope:[init]  from init::toD0181
 init::@return: scope:[init]  from init::@1
   [69] return 
   to:@return
-fill: scope:[fill]  from init::@2 init::@3
-  [70] (byte) fill::val#3 ← phi( init::@2/(byte) 0 init::@3/(const byte) BLACK#0 )
-  [70] (byte*) fill::addr#0 ← phi( init::@2/(const byte*) screen#0 init::@3/(const byte*) colors#0 )
-  [71] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word) $3e8
-  to:fill::@1
-fill::@1: scope:[fill]  from fill fill::@1
-  [72] (byte*) fill::addr#2 ← phi( fill/(byte*) fill::addr#0 fill::@1/(byte*) fill::addr#1 )
-  [73] *((byte*) fill::addr#2) ← (byte) fill::val#3
-  [74] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2
-  [75] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
-  to:fill::@return
-fill::@return: scope:[fill]  from fill::@1
-  [76] return 
+memset: scope:[memset]  from init::@2 init::@3
+  [70] (byte) memset::c#3 ← phi( init::@2/(byte) 0 init::@3/(const byte) BLACK#0 )
+  [70] (void*) memset::str#2 ← phi( init::@2/(void*)(const byte*) screen#0 init::@3/(void*)(const byte*) colors#0 )
+  [71] (void*) memset::end#0 ← (void*) memset::str#2 + (word) $3e8
+  [72] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#2
+  to:memset::@1
+memset::@1: scope:[memset]  from memset memset::@1
+  [73] (byte*) memset::dst#2 ← phi( memset/(byte*~) memset::dst#3 memset::@1/(byte*) memset::dst#1 )
+  [74] *((byte*) memset::dst#2) ← (byte) memset::c#3
+  [75] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [76] if((byte*) memset::dst#1!=(byte*)(void*) memset::end#0) goto memset::@1
+  to:memset::@return
+memset::@return: scope:[memset]  from memset::@1
+  [77] return 
   to:@return
 init_sprites: scope:[init_sprites]  from init
-  [77] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1
-  [78] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0
-  [79] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0
-  [80] *((const byte*) SPRITES_XMSB#0) ← (byte) 0
-  [81] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0
-  [82] *((const byte*) SPRITES_MC#0) ← (byte) 0
+  [78] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1
+  [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0
+  [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0
+  [81] *((const byte*) SPRITES_XMSB#0) ← (byte) 0
+  [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0
+  [83] *((const byte*) SPRITES_MC#0) ← (byte) 0
   to:init_sprites::@return
 init_sprites::@return: scope:[init_sprites]  from init_sprites
-  [83] return 
+  [84] return 
   to:@return
 
 
@@ -1182,17 +1227,6 @@ VARIABLE REGISTER WEIGHTS
 (word) draw_block::z
 (word) draw_block::z#0 4.0
 (word) draw_block::z#1 1.125
-(void()) fill((byte*) fill::start , (word) fill::size , (byte) fill::val)
-(byte*) fill::addr
-(byte*) fill::addr#0 2.0
-(byte*) fill::addr#1 16.5
-(byte*) fill::addr#2 17.5
-(byte*) fill::end
-(byte*) fill::end#0 2.6
-(word) fill::size
-(byte*) fill::start
-(byte) fill::val
-(byte) fill::val#3 1.8333333333333333
 (void()) init()
 (word~) init::toD0181_$0
 (number~) init::toD0181_$1
@@ -1219,6 +1253,19 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::y#2 57.714285714285715
 (byte) main::z
 (byte) main::z#0 202.0
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(byte) memset::c
+(byte) memset::c#3 1.5714285714285714
+(byte*) memset::dst
+(byte*) memset::dst#1 16.5
+(byte*) memset::dst#2 17.5
+(byte*~) memset::dst#3 4.0
+(byte*) memset::end
+(void*) memset::end#0 0.3333333333333333
+(word) memset::num
+(void*) memset::return
+(void*) memset::str
+(void*) memset::str#2 1.0
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 (byte~) mul8u::$1 2002.0
 (byte) mul8u::a
@@ -1244,8 +1291,9 @@ Initial phi equivalence classes
 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
 [ mul8u::mb#2 mul8u::mb#1 ]
-[ fill::val#3 ]
-[ fill::addr#2 fill::addr#0 fill::addr#1 ]
+[ memset::str#2 ]
+[ memset::c#3 ]
+[ memset::dst#2 memset::dst#3 memset::dst#1 ]
 Added variable main::z#0 to zero page equivalence class [ main::z#0 ]
 Added variable main::tile#0 to zero page equivalence class [ main::tile#0 ]
 Added variable draw_block::tileno#0 to zero page equivalence class [ draw_block::tileno#0 ]
@@ -1267,15 +1315,16 @@ Added variable draw_block::$16 to zero page equivalence class [ draw_block::$16 
 Added variable draw_block::$17 to zero page equivalence class [ draw_block::$17 ]
 Added variable draw_block::$18 to zero page equivalence class [ draw_block::$18 ]
 Added variable mul8u::$1 to zero page equivalence class [ mul8u::$1 ]
-Added variable fill::end#0 to zero page equivalence class [ fill::end#0 ]
+Added variable memset::end#0 to zero page equivalence class [ memset::end#0 ]
 Complete equivalence classes
 [ main::x#4 main::x#1 ]
 [ main::y#2 main::y#1 ]
 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
 [ mul8u::mb#2 mul8u::mb#1 ]
-[ fill::val#3 ]
-[ fill::addr#2 fill::addr#0 fill::addr#1 ]
+[ memset::str#2 ]
+[ memset::c#3 ]
+[ memset::dst#2 memset::dst#3 memset::dst#1 ]
 [ main::z#0 ]
 [ main::tile#0 ]
 [ draw_block::tileno#0 ]
@@ -1297,36 +1346,37 @@ Complete equivalence classes
 [ draw_block::$17 ]
 [ draw_block::$18 ]
 [ mul8u::$1 ]
-[ fill::end#0 ]
+[ memset::end#0 ]
 Allocated zp ZP_BYTE:2 [ main::x#4 main::x#1 ]
 Allocated zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
 Allocated zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 Allocated zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
 Allocated zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ]
-Allocated zp ZP_BYTE:9 [ fill::val#3 ]
-Allocated zp ZP_WORD:10 [ fill::addr#2 fill::addr#0 fill::addr#1 ]
-Allocated zp ZP_BYTE:12 [ main::z#0 ]
-Allocated zp ZP_BYTE:13 [ main::tile#0 ]
-Allocated zp ZP_BYTE:14 [ draw_block::tileno#0 ]
-Allocated zp ZP_BYTE:15 [ draw_block::x#0 ]
-Allocated zp ZP_BYTE:16 [ draw_block::y#0 ]
-Allocated zp ZP_BYTE:17 [ draw_block::tileno#1 ]
-Allocated zp ZP_WORD:18 [ draw_block::x1#0 ]
-Allocated zp ZP_BYTE:20 [ draw_block::y#1 ]
-Allocated zp ZP_WORD:21 [ mul8u::return#2 ]
-Allocated zp ZP_WORD:23 [ draw_block::z#0 ]
-Allocated zp ZP_WORD:25 [ draw_block::z#1 ]
-Allocated zp ZP_BYTE:27 [ draw_block::drawtile#0 ]
-Allocated zp ZP_WORD:28 [ draw_block::$11 ]
-Allocated zp ZP_WORD:30 [ draw_block::$12 ]
-Allocated zp ZP_WORD:32 [ draw_block::$13 ]
-Allocated zp ZP_WORD:34 [ draw_block::$14 ]
-Allocated zp ZP_WORD:36 [ draw_block::$15 ]
-Allocated zp ZP_WORD:38 [ draw_block::$16 ]
-Allocated zp ZP_WORD:40 [ draw_block::$17 ]
-Allocated zp ZP_WORD:42 [ draw_block::$18 ]
-Allocated zp ZP_BYTE:44 [ mul8u::$1 ]
-Allocated zp ZP_WORD:45 [ fill::end#0 ]
+Allocated zp ZP_WORD:9 [ memset::str#2 ]
+Allocated zp ZP_BYTE:11 [ memset::c#3 ]
+Allocated zp ZP_WORD:12 [ memset::dst#2 memset::dst#3 memset::dst#1 ]
+Allocated zp ZP_BYTE:14 [ main::z#0 ]
+Allocated zp ZP_BYTE:15 [ main::tile#0 ]
+Allocated zp ZP_BYTE:16 [ draw_block::tileno#0 ]
+Allocated zp ZP_BYTE:17 [ draw_block::x#0 ]
+Allocated zp ZP_BYTE:18 [ draw_block::y#0 ]
+Allocated zp ZP_BYTE:19 [ draw_block::tileno#1 ]
+Allocated zp ZP_WORD:20 [ draw_block::x1#0 ]
+Allocated zp ZP_BYTE:22 [ draw_block::y#1 ]
+Allocated zp ZP_WORD:23 [ mul8u::return#2 ]
+Allocated zp ZP_WORD:25 [ draw_block::z#0 ]
+Allocated zp ZP_WORD:27 [ draw_block::z#1 ]
+Allocated zp ZP_BYTE:29 [ draw_block::drawtile#0 ]
+Allocated zp ZP_WORD:30 [ draw_block::$11 ]
+Allocated zp ZP_WORD:32 [ draw_block::$12 ]
+Allocated zp ZP_WORD:34 [ draw_block::$13 ]
+Allocated zp ZP_WORD:36 [ draw_block::$14 ]
+Allocated zp ZP_WORD:38 [ draw_block::$15 ]
+Allocated zp ZP_WORD:40 [ draw_block::$16 ]
+Allocated zp ZP_WORD:42 [ draw_block::$17 ]
+Allocated zp ZP_WORD:44 [ draw_block::$18 ]
+Allocated zp ZP_BYTE:46 [ mul8u::$1 ]
+Allocated zp ZP_WORD:47 [ memset::end#0 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -1378,8 +1428,8 @@ bend_from_b1:
 bend:
 //SEG10 main
 main: {
-    .label z = $c
-    .label tile = $d
+    .label z = $e
+    .label tile = $f
     .label y = 3
     .label x = 2
   //SEG11 [5] call init 
@@ -1457,25 +1507,25 @@ main: {
     jmp b4_from_b4
 }
 //SEG37 draw_block
-// draw_block(byte zeropage($e) tileno, byte zeropage($f) x, byte zeropage($10) y)
+// draw_block(byte zeropage($10) tileno, byte zeropage($11) x, byte zeropage($12) y)
 draw_block: {
-    .label tileno = $e
-    .label x = $f
-    .label y = $10
-    .label tileno_1 = $11
-    .label x1 = $12
-    .label y_1 = $14
-    .label z = $17
-    .label z_1 = $19
-    .label drawtile = $1b
-    .label _11 = $1c
-    .label _12 = $1e
-    .label _13 = $20
-    .label _14 = $22
-    .label _15 = $24
-    .label _16 = $26
-    .label _17 = $28
-    .label _18 = $2a
+    .label tileno = $10
+    .label x = $11
+    .label y = $12
+    .label tileno_1 = $13
+    .label x1 = $14
+    .label y_1 = $16
+    .label z = $19
+    .label z_1 = $1b
+    .label drawtile = $1d
+    .label _11 = $1e
+    .label _12 = $20
+    .label _13 = $22
+    .label _14 = $24
+    .label _15 = $26
+    .label _16 = $28
+    .label _17 = $2a
+    .label _18 = $2c
   //SEG38 [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda tileno
     asl
@@ -1631,11 +1681,11 @@ draw_block: {
 // mul8u(byte zeropage(4) a)
 mul8u: {
     .const b = $28
-    .label _1 = $2c
+    .label _1 = $2e
     .label a = 4
     .label mb = 7
     .label res = 5
-    .label return = $15
+    .label return = $17
   //SEG68 [46] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   b1_from_mul8u:
   //SEG69 [46] phi (word) mul8u::mb#2 = (const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vbuc1 
@@ -1711,35 +1761,35 @@ init: {
     jmp b2
   //SEG93 init::@2
   b2:
-  //SEG94 [58] call fill 
-  //SEG95 [70] phi from init::@2 to fill [phi:init::@2->fill]
-  fill_from_b2:
-  //SEG96 [70] phi (byte) fill::val#3 = (byte) 0 [phi:init::@2->fill#0] -- vbuz1=vbuc1 
+  //SEG94 [58] call memset 
+  //SEG95 [70] phi from init::@2 to memset [phi:init::@2->memset]
+  memset_from_b2:
+  //SEG96 [70] phi (byte) memset::c#3 = (byte) 0 [phi:init::@2->memset#0] -- vbuz1=vbuc1 
     lda #0
-    sta fill.val
-  //SEG97 [70] phi (byte*) fill::addr#0 = (const byte*) screen#0 [phi:init::@2->fill#1] -- pbuz1=pbuc1 
+    sta memset.c
+  //SEG97 [70] phi (void*) memset::str#2 = (void*)(const byte*) screen#0 [phi:init::@2->memset#1] -- pvoz1=pvoc1 
     lda #<screen
-    sta fill.addr
+    sta memset.str
     lda #>screen
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
   //SEG98 [59] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
   b3_from_b2:
     jmp b3
   //SEG99 init::@3
   b3:
-  //SEG100 [60] call fill 
-  //SEG101 [70] phi from init::@3 to fill [phi:init::@3->fill]
-  fill_from_b3:
-  //SEG102 [70] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:init::@3->fill#0] -- vbuz1=vbuc1 
+  //SEG100 [60] call memset 
+  //SEG101 [70] phi from init::@3 to memset [phi:init::@3->memset]
+  memset_from_b3:
+  //SEG102 [70] phi (byte) memset::c#3 = (const byte) BLACK#0 [phi:init::@3->memset#0] -- vbuz1=vbuc1 
     lda #BLACK
-    sta fill.val
-  //SEG103 [70] phi (byte*) fill::addr#0 = (const byte*) colors#0 [phi:init::@3->fill#1] -- pbuz1=pbuc1 
+    sta memset.c
+  //SEG103 [70] phi (void*) memset::str#2 = (void*)(const byte*) colors#0 [phi:init::@3->memset#1] -- pvoz1=pvoc1 
     lda #<colors
-    sta fill.addr
+    sta memset.str
     lda #>colors
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
   //SEG104 [61] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
   toD0181_from_b3:
     jmp toD0181
@@ -1775,75 +1825,81 @@ init: {
   //SEG115 [69] return 
     rts
 }
-//SEG116 fill
-// Fill some memory with a value
-// fill(byte zeropage(9) val)
-fill: {
-    .label end = $2d
-    .label addr = $a
-    .label val = 9
-  //SEG117 [71] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
-    lda addr
+//SEG116 memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zeropage(9) str, byte zeropage($b) c)
+memset: {
+    .label end = $2f
+    .label dst = $c
+    .label str = 9
+    .label c = $b
+  //SEG117 [71] (void*) memset::end#0 ← (void*) memset::str#2 + (word) $3e8 -- pvoz1=pvoz2_plus_vwuc1 
+    lda str
     clc
     adc #<$3e8
     sta end
-    lda addr+1
+    lda str+1
     adc #>$3e8
     sta end+1
-  //SEG118 [72] phi from fill fill::@1 to fill::@1 [phi:fill/fill::@1->fill::@1]
-  b1_from_fill:
+  //SEG118 [72] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#2 -- pbuz1=pbuz2 
+    lda str
+    sta dst
+    lda str+1
+    sta dst+1
+  //SEG119 [73] phi from memset memset::@1 to memset::@1 [phi:memset/memset::@1->memset::@1]
+  b1_from_memset:
   b1_from_b1:
-  //SEG119 [72] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@1->fill::@1#0] -- register_copy 
+  //SEG120 [73] phi (byte*) memset::dst#2 = (byte*~) memset::dst#3 [phi:memset/memset::@1->memset::@1#0] -- register_copy 
     jmp b1
-  //SEG120 fill::@1
+  //SEG121 memset::@1
   b1:
-  //SEG121 [73] *((byte*) fill::addr#2) ← (byte) fill::val#3 -- _deref_pbuz1=vbuz2 
-    lda val
+  //SEG122 [74] *((byte*) memset::dst#2) ← (byte) memset::c#3 -- _deref_pbuz1=vbuz2 
+    lda c
     ldy #0
-    sta (addr),y
-  //SEG122 [74] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
-    inc addr
+    sta (dst),y
+  //SEG123 [75] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
     bne !+
-    inc addr+1
+    inc dst+1
   !:
-  //SEG123 [75] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuz2_then_la1 
-    lda addr+1
+  //SEG124 [76] if((byte*) memset::dst#1!=(byte*)(void*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuz2_then_la1 
+    lda dst+1
     cmp end+1
     bne b1_from_b1
-    lda addr
+    lda dst
     cmp end
     bne b1_from_b1
     jmp breturn
-  //SEG124 fill::@return
+  //SEG125 memset::@return
   breturn:
-  //SEG125 [76] return 
+  //SEG126 [77] return 
     rts
 }
-//SEG126 init_sprites
+//SEG127 init_sprites
 init_sprites: {
-  //SEG127 [77] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+  //SEG128 [78] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
-  //SEG128 [78] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG129 [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // one sprite enabled
     lda #0
     sta SPRITES_EXPAND_X
-  //SEG129 [79] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG130 [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_EXPAND_Y
-  //SEG130 [80] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG131 [81] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_XMSB
-  //SEG131 [81] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG132 [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta SPRITES_COLS
-  //SEG132 [82] *((const byte*) SPRITES_MC#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG133 [83] *((const byte*) SPRITES_MC#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_MC
     jmp breturn
-  //SEG133 init_sprites::@return
+  //SEG134 init_sprites::@return
   breturn:
-  //SEG134 [83] return 
+  //SEG135 [84] return 
     rts
 }
 
@@ -1852,16 +1908,16 @@ Statement [8] (byte) main::z#0 ← (byte) main::x#4 + (byte) main::y#2 [ main::x
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::x#4 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
 Statement [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:15 [ draw_block::x#0 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:16 [ draw_block::y#0 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:17 [ draw_block::x#0 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:18 [ draw_block::y#0 ]
 Statement [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:17 [ draw_block::tileno#1 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:19 [ draw_block::tileno#1 ]
 Statement [21] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 [ draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ) always clobbers reg byte a 
 Statement [24] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ) always clobbers reg byte a 
 Statement [25] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ) always clobbers reg byte a 
 Statement [26] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::tileno#1 draw_block::z#1 ] ) always clobbers reg byte a 
 Statement [28] (byte*~) draw_block::$11 ← (const byte*) screen#0 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:27 [ draw_block::drawtile#0 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:29 [ draw_block::drawtile#0 ]
 Statement [29] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::z#1 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::x#4 main::x#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
@@ -1888,17 +1944,18 @@ Statement [65] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 [ ] ( main:2::
 Statement [66] *((const byte*) BGCOL2#0) ← (const byte) RED#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement [67] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement [68] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [71] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word) $3e8 [ fill::addr#0 fill::val#3 fill::end#0 ] ( main:2::init:5::fill:58 [ fill::addr#0 fill::val#3 fill::end#0 ] main:2::init:5::fill:60 [ fill::addr#0 fill::val#3 fill::end#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ fill::val#3 ]
-Statement [73] *((byte*) fill::addr#2) ← (byte) fill::val#3 [ fill::val#3 fill::end#0 fill::addr#2 ] ( main:2::init:5::fill:58 [ fill::val#3 fill::end#0 fill::addr#2 ] main:2::init:5::fill:60 [ fill::val#3 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:9 [ fill::val#3 ]
-Statement [75] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 [ fill::val#3 fill::end#0 fill::addr#1 ] ( main:2::init:5::fill:58 [ fill::val#3 fill::end#0 fill::addr#1 ] main:2::init:5::fill:60 [ fill::val#3 fill::end#0 fill::addr#1 ] ) always clobbers reg byte a 
-Statement [77] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [78] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [79] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [80] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [81] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [82] *((const byte*) SPRITES_MC#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [71] (void*) memset::end#0 ← (void*) memset::str#2 + (word) $3e8 [ memset::str#2 memset::c#3 memset::end#0 ] ( main:2::init:5::memset:58 [ memset::str#2 memset::c#3 memset::end#0 ] main:2::init:5::memset:60 [ memset::str#2 memset::c#3 memset::end#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:11 [ memset::c#3 ]
+Statement [72] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#2 [ memset::c#3 memset::end#0 memset::dst#3 ] ( main:2::init:5::memset:58 [ memset::c#3 memset::end#0 memset::dst#3 ] main:2::init:5::memset:60 [ memset::c#3 memset::end#0 memset::dst#3 ] ) always clobbers reg byte a 
+Statement [74] *((byte*) memset::dst#2) ← (byte) memset::c#3 [ memset::c#3 memset::end#0 memset::dst#2 ] ( main:2::init:5::memset:58 [ memset::c#3 memset::end#0 memset::dst#2 ] main:2::init:5::memset:60 [ memset::c#3 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp ZP_BYTE:11 [ memset::c#3 ]
+Statement [76] if((byte*) memset::dst#1!=(byte*)(void*) memset::end#0) goto memset::@1 [ memset::c#3 memset::end#0 memset::dst#1 ] ( main:2::init:5::memset:58 [ memset::c#3 memset::end#0 memset::dst#1 ] main:2::init:5::memset:60 [ memset::c#3 memset::end#0 memset::dst#1 ] ) always clobbers reg byte a 
+Statement [78] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [81] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [83] *((const byte*) SPRITES_MC#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
 Statement [8] (byte) main::z#0 ← (byte) main::x#4 + (byte) main::y#2 [ main::x#4 main::y#2 main::z#0 ] ( main:2 [ main::x#4 main::y#2 main::z#0 ] ) always clobbers reg byte a 
 Statement [19] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ) always clobbers reg byte a 
 Statement [20] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( main:2::draw_block:13 [ main::x#4 main::y#2 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ) always clobbers reg byte a 
@@ -1931,87 +1988,90 @@ Statement [65] *((const byte*) BGCOL1#0) ← (const byte) BLACK#0 [ ] ( main:2::
 Statement [66] *((const byte*) BGCOL2#0) ← (const byte) RED#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement [67] *((const byte*) BGCOL3#0) ← (const byte) BLUE#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement [68] *((const byte*) BGCOL4#0) ← (const byte) GREEN#0 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
-Statement [71] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word) $3e8 [ fill::addr#0 fill::val#3 fill::end#0 ] ( main:2::init:5::fill:58 [ fill::addr#0 fill::val#3 fill::end#0 ] main:2::init:5::fill:60 [ fill::addr#0 fill::val#3 fill::end#0 ] ) always clobbers reg byte a 
-Statement [73] *((byte*) fill::addr#2) ← (byte) fill::val#3 [ fill::val#3 fill::end#0 fill::addr#2 ] ( main:2::init:5::fill:58 [ fill::val#3 fill::end#0 fill::addr#2 ] main:2::init:5::fill:60 [ fill::val#3 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a reg byte y 
-Statement [75] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 [ fill::val#3 fill::end#0 fill::addr#1 ] ( main:2::init:5::fill:58 [ fill::val#3 fill::end#0 fill::addr#1 ] main:2::init:5::fill:60 [ fill::val#3 fill::end#0 fill::addr#1 ] ) always clobbers reg byte a 
-Statement [77] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [78] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [79] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [80] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [81] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
-Statement [82] *((const byte*) SPRITES_MC#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [71] (void*) memset::end#0 ← (void*) memset::str#2 + (word) $3e8 [ memset::str#2 memset::c#3 memset::end#0 ] ( main:2::init:5::memset:58 [ memset::str#2 memset::c#3 memset::end#0 ] main:2::init:5::memset:60 [ memset::str#2 memset::c#3 memset::end#0 ] ) always clobbers reg byte a 
+Statement [72] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#2 [ memset::c#3 memset::end#0 memset::dst#3 ] ( main:2::init:5::memset:58 [ memset::c#3 memset::end#0 memset::dst#3 ] main:2::init:5::memset:60 [ memset::c#3 memset::end#0 memset::dst#3 ] ) always clobbers reg byte a 
+Statement [74] *((byte*) memset::dst#2) ← (byte) memset::c#3 [ memset::c#3 memset::end#0 memset::dst#2 ] ( main:2::init:5::memset:58 [ memset::c#3 memset::end#0 memset::dst#2 ] main:2::init:5::memset:60 [ memset::c#3 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [76] if((byte*) memset::dst#1!=(byte*)(void*) memset::end#0) goto memset::@1 [ memset::c#3 memset::end#0 memset::dst#1 ] ( main:2::init:5::memset:58 [ memset::c#3 memset::end#0 memset::dst#1 ] main:2::init:5::memset:60 [ memset::c#3 memset::end#0 memset::dst#1 ] ) always clobbers reg byte a 
+Statement [78] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [81] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
+Statement [83] *((const byte*) SPRITES_MC#0) ← (byte) 0 [ ] ( main:2::init:5::init_sprites:56 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::x#4 main::x#1 ] : zp ZP_BYTE:2 , reg byte x , 
 Potential registers zp ZP_BYTE:3 [ main::y#2 main::y#1 ] : zp ZP_BYTE:3 , reg byte x , 
 Potential registers zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] : zp ZP_WORD:5 , 
 Potential registers zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_BYTE:9 [ fill::val#3 ] : zp ZP_BYTE:9 , reg byte x , 
-Potential registers zp ZP_WORD:10 [ fill::addr#2 fill::addr#0 fill::addr#1 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_BYTE:12 [ main::z#0 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:13 [ main::tile#0 ] : zp ZP_BYTE:13 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:14 [ draw_block::tileno#0 ] : zp ZP_BYTE:14 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:15 [ draw_block::x#0 ] : zp ZP_BYTE:15 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:16 [ draw_block::y#0 ] : zp ZP_BYTE:16 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:17 [ draw_block::tileno#1 ] : zp ZP_BYTE:17 , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:18 [ draw_block::x1#0 ] : zp ZP_WORD:18 , 
-Potential registers zp ZP_BYTE:20 [ draw_block::y#1 ] : zp ZP_BYTE:20 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:21 [ mul8u::return#2 ] : zp ZP_WORD:21 , 
-Potential registers zp ZP_WORD:23 [ draw_block::z#0 ] : zp ZP_WORD:23 , 
-Potential registers zp ZP_WORD:25 [ draw_block::z#1 ] : zp ZP_WORD:25 , 
-Potential registers zp ZP_BYTE:27 [ draw_block::drawtile#0 ] : zp ZP_BYTE:27 , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:28 [ draw_block::$11 ] : zp ZP_WORD:28 , 
-Potential registers zp ZP_WORD:30 [ draw_block::$12 ] : zp ZP_WORD:30 , 
-Potential registers zp ZP_WORD:32 [ draw_block::$13 ] : zp ZP_WORD:32 , 
-Potential registers zp ZP_WORD:34 [ draw_block::$14 ] : zp ZP_WORD:34 , 
-Potential registers zp ZP_WORD:36 [ draw_block::$15 ] : zp ZP_WORD:36 , 
-Potential registers zp ZP_WORD:38 [ draw_block::$16 ] : zp ZP_WORD:38 , 
-Potential registers zp ZP_WORD:40 [ draw_block::$17 ] : zp ZP_WORD:40 , 
-Potential registers zp ZP_WORD:42 [ draw_block::$18 ] : zp ZP_WORD:42 , 
-Potential registers zp ZP_BYTE:44 [ mul8u::$1 ] : zp ZP_BYTE:44 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:45 [ fill::end#0 ] : zp ZP_WORD:45 , 
+Potential registers zp ZP_WORD:9 [ memset::str#2 ] : zp ZP_WORD:9 , 
+Potential registers zp ZP_BYTE:11 [ memset::c#3 ] : zp ZP_BYTE:11 , reg byte x , 
+Potential registers zp ZP_WORD:12 [ memset::dst#2 memset::dst#3 memset::dst#1 ] : zp ZP_WORD:12 , 
+Potential registers zp ZP_BYTE:14 [ main::z#0 ] : zp ZP_BYTE:14 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:15 [ main::tile#0 ] : zp ZP_BYTE:15 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:16 [ draw_block::tileno#0 ] : zp ZP_BYTE:16 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:17 [ draw_block::x#0 ] : zp ZP_BYTE:17 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:18 [ draw_block::y#0 ] : zp ZP_BYTE:18 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:19 [ draw_block::tileno#1 ] : zp ZP_BYTE:19 , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:20 [ draw_block::x1#0 ] : zp ZP_WORD:20 , 
+Potential registers zp ZP_BYTE:22 [ draw_block::y#1 ] : zp ZP_BYTE:22 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:23 [ mul8u::return#2 ] : zp ZP_WORD:23 , 
+Potential registers zp ZP_WORD:25 [ draw_block::z#0 ] : zp ZP_WORD:25 , 
+Potential registers zp ZP_WORD:27 [ draw_block::z#1 ] : zp ZP_WORD:27 , 
+Potential registers zp ZP_BYTE:29 [ draw_block::drawtile#0 ] : zp ZP_BYTE:29 , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:30 [ draw_block::$11 ] : zp ZP_WORD:30 , 
+Potential registers zp ZP_WORD:32 [ draw_block::$12 ] : zp ZP_WORD:32 , 
+Potential registers zp ZP_WORD:34 [ draw_block::$13 ] : zp ZP_WORD:34 , 
+Potential registers zp ZP_WORD:36 [ draw_block::$14 ] : zp ZP_WORD:36 , 
+Potential registers zp ZP_WORD:38 [ draw_block::$15 ] : zp ZP_WORD:38 , 
+Potential registers zp ZP_WORD:40 [ draw_block::$16 ] : zp ZP_WORD:40 , 
+Potential registers zp ZP_WORD:42 [ draw_block::$17 ] : zp ZP_WORD:42 , 
+Potential registers zp ZP_WORD:44 [ draw_block::$18 ] : zp ZP_WORD:44 , 
+Potential registers zp ZP_BYTE:46 [ mul8u::$1 ] : zp ZP_BYTE:46 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:47 [ memset::end#0 ] : zp ZP_WORD:47 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [mul8u] 3,503.83: zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 2,431: zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] 2,002: zp ZP_BYTE:44 [ mul8u::$1 ] 1,670.67: zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] 4: zp ZP_WORD:21 [ mul8u::return#2 ] 
-Uplift Scope [main] 209.21: zp ZP_BYTE:3 [ main::y#2 main::y#1 ] 202: zp ZP_BYTE:12 [ main::z#0 ] 202: zp ZP_BYTE:13 [ main::tile#0 ] 38.9: zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
-Uplift Scope [draw_block] 34.33: zp ZP_BYTE:14 [ draw_block::tileno#0 ] 34.33: zp ZP_BYTE:15 [ draw_block::x#0 ] 34.33: zp ZP_BYTE:16 [ draw_block::y#0 ] 4: zp ZP_BYTE:20 [ draw_block::y#1 ] 4: zp ZP_WORD:23 [ draw_block::z#0 ] 4: zp ZP_WORD:28 [ draw_block::$11 ] 4: zp ZP_WORD:30 [ draw_block::$12 ] 4: zp ZP_WORD:32 [ draw_block::$13 ] 4: zp ZP_WORD:34 [ draw_block::$14 ] 4: zp ZP_WORD:36 [ draw_block::$15 ] 4: zp ZP_WORD:38 [ draw_block::$16 ] 4: zp ZP_WORD:40 [ draw_block::$17 ] 4: zp ZP_WORD:42 [ draw_block::$18 ] 2: zp ZP_BYTE:27 [ draw_block::drawtile#0 ] 1.12: zp ZP_WORD:25 [ draw_block::z#1 ] 0.67: zp ZP_WORD:18 [ draw_block::x1#0 ] 0.5: zp ZP_BYTE:17 [ draw_block::tileno#1 ] 
-Uplift Scope [fill] 36: zp ZP_WORD:10 [ fill::addr#2 fill::addr#0 fill::addr#1 ] 2.6: zp ZP_WORD:45 [ fill::end#0 ] 1.83: zp ZP_BYTE:9 [ fill::val#3 ] 
+Uplift Scope [mul8u] 3,503.83: zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 2,431: zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] 2,002: zp ZP_BYTE:46 [ mul8u::$1 ] 1,670.67: zp ZP_BYTE:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] 4: zp ZP_WORD:23 [ mul8u::return#2 ] 
+Uplift Scope [main] 209.21: zp ZP_BYTE:3 [ main::y#2 main::y#1 ] 202: zp ZP_BYTE:14 [ main::z#0 ] 202: zp ZP_BYTE:15 [ main::tile#0 ] 38.9: zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
+Uplift Scope [draw_block] 34.33: zp ZP_BYTE:16 [ draw_block::tileno#0 ] 34.33: zp ZP_BYTE:17 [ draw_block::x#0 ] 34.33: zp ZP_BYTE:18 [ draw_block::y#0 ] 4: zp ZP_BYTE:22 [ draw_block::y#1 ] 4: zp ZP_WORD:25 [ draw_block::z#0 ] 4: zp ZP_WORD:30 [ draw_block::$11 ] 4: zp ZP_WORD:32 [ draw_block::$12 ] 4: zp ZP_WORD:34 [ draw_block::$13 ] 4: zp ZP_WORD:36 [ draw_block::$14 ] 4: zp ZP_WORD:38 [ draw_block::$15 ] 4: zp ZP_WORD:40 [ draw_block::$16 ] 4: zp ZP_WORD:42 [ draw_block::$17 ] 4: zp ZP_WORD:44 [ draw_block::$18 ] 2: zp ZP_BYTE:29 [ draw_block::drawtile#0 ] 1.12: zp ZP_WORD:27 [ draw_block::z#1 ] 0.67: zp ZP_WORD:20 [ draw_block::x1#0 ] 0.5: zp ZP_BYTE:19 [ draw_block::tileno#1 ] 
+Uplift Scope [memset] 38: zp ZP_WORD:12 [ memset::dst#2 memset::dst#3 memset::dst#1 ] 1.57: zp ZP_BYTE:11 [ memset::c#3 ] 1: zp ZP_WORD:9 [ memset::str#2 ] 0.33: zp ZP_WORD:47 [ memset::end#0 ] 
 Uplift Scope [init] 
 Uplift Scope [init_sprites] 
 Uplift Scope [] 
 
-Uplifting [mul8u] best 92824 combination zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp ZP_WORD:21 [ mul8u::return#2 ] 
-Uplifting [main] best 91824 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] reg byte a [ main::z#0 ] reg byte a [ main::tile#0 ] zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
-Uplifting [draw_block] best 90915 combination reg byte a [ draw_block::tileno#0 ] reg byte y [ draw_block::x#0 ] reg byte x [ draw_block::y#0 ] reg byte a [ draw_block::y#1 ] zp ZP_WORD:23 [ draw_block::z#0 ] zp ZP_WORD:28 [ draw_block::$11 ] zp ZP_WORD:30 [ draw_block::$12 ] zp ZP_WORD:32 [ draw_block::$13 ] zp ZP_WORD:34 [ draw_block::$14 ] zp ZP_WORD:36 [ draw_block::$15 ] zp ZP_WORD:38 [ draw_block::$16 ] zp ZP_WORD:40 [ draw_block::$17 ] zp ZP_WORD:42 [ draw_block::$18 ] zp ZP_BYTE:27 [ draw_block::drawtile#0 ] zp ZP_WORD:25 [ draw_block::z#1 ] zp ZP_WORD:18 [ draw_block::x1#0 ] zp ZP_BYTE:17 [ draw_block::tileno#1 ] 
+Uplifting [mul8u] best 92836 combination zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp ZP_WORD:7 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp ZP_WORD:23 [ mul8u::return#2 ] 
+Uplifting [main] best 91836 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] reg byte a [ main::z#0 ] reg byte a [ main::tile#0 ] zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
+Uplifting [draw_block] best 90927 combination reg byte a [ draw_block::tileno#0 ] reg byte y [ draw_block::x#0 ] reg byte x [ draw_block::y#0 ] reg byte a [ draw_block::y#1 ] zp ZP_WORD:25 [ draw_block::z#0 ] zp ZP_WORD:30 [ draw_block::$11 ] zp ZP_WORD:32 [ draw_block::$12 ] zp ZP_WORD:34 [ draw_block::$13 ] zp ZP_WORD:36 [ draw_block::$14 ] zp ZP_WORD:38 [ draw_block::$15 ] zp ZP_WORD:40 [ draw_block::$16 ] zp ZP_WORD:42 [ draw_block::$17 ] zp ZP_WORD:44 [ draw_block::$18 ] zp ZP_BYTE:29 [ draw_block::drawtile#0 ] zp ZP_WORD:27 [ draw_block::z#1 ] zp ZP_WORD:20 [ draw_block::x1#0 ] zp ZP_BYTE:19 [ draw_block::tileno#1 ] 
 Limited combination testing to 100 combinations of 1296 possible.
-Uplifting [fill] best 90899 combination zp ZP_WORD:10 [ fill::addr#2 fill::addr#0 fill::addr#1 ] zp ZP_WORD:45 [ fill::end#0 ] reg byte x [ fill::val#3 ] 
-Uplifting [init] best 90899 combination 
-Uplifting [init_sprites] best 90899 combination 
-Uplifting [] best 90899 combination 
+Uplifting [memset] best 90911 combination zp ZP_WORD:12 [ memset::dst#2 memset::dst#3 memset::dst#1 ] reg byte x [ memset::c#3 ] zp ZP_WORD:9 [ memset::str#2 ] zp ZP_WORD:47 [ memset::end#0 ] 
+Uplifting [init] best 90911 combination 
+Uplifting [init_sprites] best 90911 combination 
+Uplifting [] best 90911 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::y#2 main::y#1 ]
-Uplifting [main] best 90899 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] 
+Uplifting [main] best 90911 combination zp ZP_BYTE:3 [ main::y#2 main::y#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::x#4 main::x#1 ]
-Uplifting [main] best 90899 combination zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:27 [ draw_block::drawtile#0 ]
-Uplifting [draw_block] best 90895 combination reg byte x [ draw_block::drawtile#0 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:17 [ draw_block::tileno#1 ]
-Uplifting [draw_block] best 90895 combination zp ZP_BYTE:17 [ draw_block::tileno#1 ] 
-Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] ] with [ zp ZP_WORD:21 [ mul8u::return#2 ] ] - score: 1
-Coalescing zero page register with common assignment [ zp ZP_WORD:18 [ draw_block::x1#0 ] ] with [ zp ZP_WORD:25 [ draw_block::z#1 ] ] - score: 1
-Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 ] ] with [ zp ZP_WORD:23 [ draw_block::z#0 ] ] - score: 1
-Coalescing zero page register with common assignment [ zp ZP_WORD:18 [ draw_block::x1#0 draw_block::z#1 ] ] with [ zp ZP_WORD:42 [ draw_block::$18 ] ] - score: 1
+Uplifting [main] best 90911 combination zp ZP_BYTE:2 [ main::x#4 main::x#1 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:29 [ draw_block::drawtile#0 ]
+Uplifting [draw_block] best 90907 combination reg byte x [ draw_block::drawtile#0 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:19 [ draw_block::tileno#1 ]
+Uplifting [draw_block] best 90907 combination zp ZP_BYTE:19 [ draw_block::tileno#1 ] 
+Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] ] with [ zp ZP_WORD:23 [ mul8u::return#2 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:9 [ memset::str#2 ] ] with [ zp ZP_WORD:12 [ memset::dst#2 memset::dst#3 memset::dst#1 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:20 [ draw_block::x1#0 ] ] with [ zp ZP_WORD:27 [ draw_block::z#1 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 ] ] with [ zp ZP_WORD:25 [ draw_block::z#0 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:20 [ draw_block::x1#0 draw_block::z#1 ] ] with [ zp ZP_WORD:44 [ draw_block::$18 ] ] - score: 1
 Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 ]
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:6 [ mul8u::mb#2 mul8u::mb#1 ]
-Allocated (was zp ZP_WORD:10) zp ZP_WORD:8 [ fill::addr#2 fill::addr#0 fill::addr#1 ]
-Allocated (was zp ZP_BYTE:17) zp ZP_BYTE:10 [ draw_block::tileno#1 ]
-Allocated (was zp ZP_WORD:18) zp ZP_WORD:11 [ draw_block::x1#0 draw_block::z#1 draw_block::$18 ]
-Allocated (was zp ZP_WORD:28) zp ZP_WORD:13 [ draw_block::$11 ]
-Allocated (was zp ZP_WORD:30) zp ZP_WORD:15 [ draw_block::$12 ]
-Allocated (was zp ZP_WORD:32) zp ZP_WORD:17 [ draw_block::$13 ]
-Allocated (was zp ZP_WORD:34) zp ZP_WORD:19 [ draw_block::$14 ]
-Allocated (was zp ZP_WORD:36) zp ZP_WORD:21 [ draw_block::$15 ]
-Allocated (was zp ZP_WORD:38) zp ZP_WORD:23 [ draw_block::$16 ]
-Allocated (was zp ZP_WORD:40) zp ZP_WORD:25 [ draw_block::$17 ]
-Allocated (was zp ZP_WORD:45) zp ZP_WORD:27 [ fill::end#0 ]
+Allocated (was zp ZP_WORD:9) zp ZP_WORD:8 [ memset::str#2 memset::dst#2 memset::dst#3 memset::dst#1 ]
+Allocated (was zp ZP_BYTE:19) zp ZP_BYTE:10 [ draw_block::tileno#1 ]
+Allocated (was zp ZP_WORD:20) zp ZP_WORD:11 [ draw_block::x1#0 draw_block::z#1 draw_block::$18 ]
+Allocated (was zp ZP_WORD:30) zp ZP_WORD:13 [ draw_block::$11 ]
+Allocated (was zp ZP_WORD:32) zp ZP_WORD:15 [ draw_block::$12 ]
+Allocated (was zp ZP_WORD:34) zp ZP_WORD:17 [ draw_block::$13 ]
+Allocated (was zp ZP_WORD:36) zp ZP_WORD:19 [ draw_block::$14 ]
+Allocated (was zp ZP_WORD:38) zp ZP_WORD:21 [ draw_block::$15 ]
+Allocated (was zp ZP_WORD:40) zp ZP_WORD:23 [ draw_block::$16 ]
+Allocated (was zp ZP_WORD:42) zp ZP_WORD:25 [ draw_block::$17 ]
+Allocated (was zp ZP_WORD:47) zp ZP_WORD:27 [ memset::end#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -2368,33 +2428,33 @@ init: {
     jmp b2
   //SEG93 init::@2
   b2:
-  //SEG94 [58] call fill 
-  //SEG95 [70] phi from init::@2 to fill [phi:init::@2->fill]
-  fill_from_b2:
-  //SEG96 [70] phi (byte) fill::val#3 = (byte) 0 [phi:init::@2->fill#0] -- vbuxx=vbuc1 
+  //SEG94 [58] call memset 
+  //SEG95 [70] phi from init::@2 to memset [phi:init::@2->memset]
+  memset_from_b2:
+  //SEG96 [70] phi (byte) memset::c#3 = (byte) 0 [phi:init::@2->memset#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG97 [70] phi (byte*) fill::addr#0 = (const byte*) screen#0 [phi:init::@2->fill#1] -- pbuz1=pbuc1 
+  //SEG97 [70] phi (void*) memset::str#2 = (void*)(const byte*) screen#0 [phi:init::@2->memset#1] -- pvoz1=pvoc1 
     lda #<screen
-    sta fill.addr
+    sta memset.str
     lda #>screen
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
   //SEG98 [59] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
   b3_from_b2:
     jmp b3
   //SEG99 init::@3
   b3:
-  //SEG100 [60] call fill 
-  //SEG101 [70] phi from init::@3 to fill [phi:init::@3->fill]
-  fill_from_b3:
-  //SEG102 [70] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:init::@3->fill#0] -- vbuxx=vbuc1 
+  //SEG100 [60] call memset 
+  //SEG101 [70] phi from init::@3 to memset [phi:init::@3->memset]
+  memset_from_b3:
+  //SEG102 [70] phi (byte) memset::c#3 = (const byte) BLACK#0 [phi:init::@3->memset#0] -- vbuxx=vbuc1 
     ldx #BLACK
-  //SEG103 [70] phi (byte*) fill::addr#0 = (const byte*) colors#0 [phi:init::@3->fill#1] -- pbuz1=pbuc1 
+  //SEG103 [70] phi (void*) memset::str#2 = (void*)(const byte*) colors#0 [phi:init::@3->memset#1] -- pvoz1=pvoc1 
     lda #<colors
-    sta fill.addr
+    sta memset.str
     lda #>colors
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
   //SEG104 [61] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
   toD0181_from_b3:
     jmp toD0181
@@ -2430,74 +2490,76 @@ init: {
   //SEG115 [69] return 
     rts
 }
-//SEG116 fill
-// Fill some memory with a value
-// fill(byte register(X) val)
-fill: {
+//SEG116 memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zeropage(8) str, byte register(X) c)
+memset: {
     .label end = $1b
-    .label addr = 8
-  //SEG117 [71] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
-    lda addr
+    .label dst = 8
+    .label str = 8
+  //SEG117 [71] (void*) memset::end#0 ← (void*) memset::str#2 + (word) $3e8 -- pvoz1=pvoz2_plus_vwuc1 
+    lda str
     clc
     adc #<$3e8
     sta end
-    lda addr+1
+    lda str+1
     adc #>$3e8
     sta end+1
-  //SEG118 [72] phi from fill fill::@1 to fill::@1 [phi:fill/fill::@1->fill::@1]
-  b1_from_fill:
+  //SEG118 [72] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#2
+  //SEG119 [73] phi from memset memset::@1 to memset::@1 [phi:memset/memset::@1->memset::@1]
+  b1_from_memset:
   b1_from_b1:
-  //SEG119 [72] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@1->fill::@1#0] -- register_copy 
+  //SEG120 [73] phi (byte*) memset::dst#2 = (byte*~) memset::dst#3 [phi:memset/memset::@1->memset::@1#0] -- register_copy 
     jmp b1
-  //SEG120 fill::@1
+  //SEG121 memset::@1
   b1:
-  //SEG121 [73] *((byte*) fill::addr#2) ← (byte) fill::val#3 -- _deref_pbuz1=vbuxx 
+  //SEG122 [74] *((byte*) memset::dst#2) ← (byte) memset::c#3 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
-    sta (addr),y
-  //SEG122 [74] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
-    inc addr
+    sta (dst),y
+  //SEG123 [75] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
     bne !+
-    inc addr+1
+    inc dst+1
   !:
-  //SEG123 [75] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuz2_then_la1 
-    lda addr+1
+  //SEG124 [76] if((byte*) memset::dst#1!=(byte*)(void*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuz2_then_la1 
+    lda dst+1
     cmp end+1
     bne b1_from_b1
-    lda addr
+    lda dst
     cmp end
     bne b1_from_b1
     jmp breturn
-  //SEG124 fill::@return
+  //SEG125 memset::@return
   breturn:
-  //SEG125 [76] return 
+  //SEG126 [77] return 
     rts
 }
-//SEG126 init_sprites
+//SEG127 init_sprites
 init_sprites: {
-  //SEG127 [77] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+  //SEG128 [78] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
-  //SEG128 [78] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG129 [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // one sprite enabled
     lda #0
     sta SPRITES_EXPAND_X
-  //SEG129 [79] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG130 [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_EXPAND_Y
-  //SEG130 [80] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG131 [81] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_XMSB
-  //SEG131 [81] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG132 [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta SPRITES_COLS
-  //SEG132 [82] *((const byte*) SPRITES_MC#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG133 [83] *((const byte*) SPRITES_MC#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_MC
     jmp breturn
-  //SEG133 init_sprites::@return
+  //SEG134 init_sprites::@return
   breturn:
-  //SEG134 [83] return 
+  //SEG135 [84] return 
     rts
 }
 
@@ -2555,12 +2617,12 @@ Removing instruction b4_from_b4:
 Removing instruction b3_from_b2:
 Removing instruction b3_from_b4:
 Removing instruction b2_from_init:
-Removing instruction fill_from_b2:
+Removing instruction memset_from_b2:
 Removing instruction b3_from_b2:
-Removing instruction fill_from_b3:
+Removing instruction memset_from_b3:
 Removing instruction toD0181_from_b3:
 Removing instruction toD0181:
-Removing instruction b1_from_fill:
+Removing instruction b1_from_memset:
 Removing instruction b1_from_b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction bend:
@@ -2662,19 +2724,6 @@ FINAL SYMBOL TABLE
 (word) draw_block::z
 (word) draw_block::z#0 z zp ZP_WORD:4 4.0
 (word) draw_block::z#1 z#1 zp ZP_WORD:11 1.125
-(void()) fill((byte*) fill::start , (word) fill::size , (byte) fill::val)
-(label) fill::@1
-(label) fill::@return
-(byte*) fill::addr
-(byte*) fill::addr#0 addr zp ZP_WORD:8 2.0
-(byte*) fill::addr#1 addr zp ZP_WORD:8 16.5
-(byte*) fill::addr#2 addr zp ZP_WORD:8 17.5
-(byte*) fill::end
-(byte*) fill::end#0 end zp ZP_WORD:27 2.6
-(word) fill::size
-(byte*) fill::start
-(byte) fill::val
-(byte) fill::val#3 reg byte x 1.8333333333333333
 (void()) init()
 (label) init::@1
 (label) init::@2
@@ -2714,6 +2763,21 @@ FINAL SYMBOL TABLE
 (byte) main::y#2 y zp ZP_BYTE:3 57.714285714285715
 (byte) main::z
 (byte) main::z#0 reg byte a 202.0
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(label) memset::@1
+(label) memset::@return
+(byte) memset::c
+(byte) memset::c#3 reg byte x 1.5714285714285714
+(byte*) memset::dst
+(byte*) memset::dst#1 dst zp ZP_WORD:8 16.5
+(byte*) memset::dst#2 dst zp ZP_WORD:8 17.5
+(byte*~) memset::dst#3 dst zp ZP_WORD:8 4.0
+(byte*) memset::end
+(void*) memset::end#0 end zp ZP_WORD:27 0.3333333333333333
+(word) memset::num
+(void*) memset::return
+(void*) memset::str
+(void*) memset::str#2 str zp ZP_WORD:8 1.0
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 (byte~) mul8u::$1 reg byte a 2002.0
 (label) mul8u::@1
@@ -2746,8 +2810,8 @@ zp ZP_BYTE:3 [ main::y#2 main::y#1 ]
 reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 zp ZP_WORD:4 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 ]
 zp ZP_WORD:6 [ mul8u::mb#2 mul8u::mb#1 ]
-reg byte x [ fill::val#3 ]
-zp ZP_WORD:8 [ fill::addr#2 fill::addr#0 fill::addr#1 ]
+zp ZP_WORD:8 [ memset::str#2 memset::dst#2 memset::dst#3 memset::dst#1 ]
+reg byte x [ memset::c#3 ]
 reg byte a [ main::z#0 ]
 reg byte a [ main::tile#0 ]
 reg byte a [ draw_block::tileno#0 ]
@@ -2765,7 +2829,7 @@ zp ZP_WORD:21 [ draw_block::$15 ]
 zp ZP_WORD:23 [ draw_block::$16 ]
 zp ZP_WORD:25 [ draw_block::$17 ]
 reg byte a [ mul8u::$1 ]
-zp ZP_WORD:27 [ fill::end#0 ]
+zp ZP_WORD:27 [ memset::end#0 ]
 
 
 FINAL ASSEMBLER
@@ -3073,28 +3137,28 @@ init: {
     jsr init_sprites
   //SEG92 [57] phi from init to init::@2 [phi:init->init::@2]
   //SEG93 init::@2
-  //SEG94 [58] call fill 
-  //SEG95 [70] phi from init::@2 to fill [phi:init::@2->fill]
-  //SEG96 [70] phi (byte) fill::val#3 = (byte) 0 [phi:init::@2->fill#0] -- vbuxx=vbuc1 
+  //SEG94 [58] call memset 
+  //SEG95 [70] phi from init::@2 to memset [phi:init::@2->memset]
+  //SEG96 [70] phi (byte) memset::c#3 = (byte) 0 [phi:init::@2->memset#0] -- vbuxx=vbuc1 
     ldx #0
-  //SEG97 [70] phi (byte*) fill::addr#0 = (const byte*) screen#0 [phi:init::@2->fill#1] -- pbuz1=pbuc1 
+  //SEG97 [70] phi (void*) memset::str#2 = (void*)(const byte*) screen#0 [phi:init::@2->memset#1] -- pvoz1=pvoc1 
     lda #<screen
-    sta fill.addr
+    sta memset.str
     lda #>screen
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
   //SEG98 [59] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
   //SEG99 init::@3
-  //SEG100 [60] call fill 
-  //SEG101 [70] phi from init::@3 to fill [phi:init::@3->fill]
-  //SEG102 [70] phi (byte) fill::val#3 = (const byte) BLACK#0 [phi:init::@3->fill#0] -- vbuxx=vbuc1 
+  //SEG100 [60] call memset 
+  //SEG101 [70] phi from init::@3 to memset [phi:init::@3->memset]
+  //SEG102 [70] phi (byte) memset::c#3 = (const byte) BLACK#0 [phi:init::@3->memset#0] -- vbuxx=vbuc1 
     ldx #BLACK
-  //SEG103 [70] phi (byte*) fill::addr#0 = (const byte*) colors#0 [phi:init::@3->fill#1] -- pbuz1=pbuc1 
+  //SEG103 [70] phi (void*) memset::str#2 = (void*)(const byte*) colors#0 [phi:init::@3->memset#1] -- pvoz1=pvoc1 
     lda #<colors
-    sta fill.addr
+    sta memset.str
     lda #>colors
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
   //SEG104 [61] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
   //SEG105 init::toD0181
   //SEG106 init::@1
@@ -3122,65 +3186,67 @@ init: {
   //SEG115 [69] return 
     rts
 }
-//SEG116 fill
-// Fill some memory with a value
-// fill(byte register(X) val)
-fill: {
+//SEG116 memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zeropage(8) str, byte register(X) c)
+memset: {
     .label end = $1b
-    .label addr = 8
-  //SEG117 [71] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
-    lda addr
+    .label dst = 8
+    .label str = 8
+  //SEG117 [71] (void*) memset::end#0 ← (void*) memset::str#2 + (word) $3e8 -- pvoz1=pvoz2_plus_vwuc1 
+    lda str
     clc
     adc #<$3e8
     sta end
-    lda addr+1
+    lda str+1
     adc #>$3e8
     sta end+1
-  //SEG118 [72] phi from fill fill::@1 to fill::@1 [phi:fill/fill::@1->fill::@1]
-  //SEG119 [72] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@1->fill::@1#0] -- register_copy 
-  //SEG120 fill::@1
+  //SEG118 [72] (byte*~) memset::dst#3 ← (byte*)(void*) memset::str#2
+  //SEG119 [73] phi from memset memset::@1 to memset::@1 [phi:memset/memset::@1->memset::@1]
+  //SEG120 [73] phi (byte*) memset::dst#2 = (byte*~) memset::dst#3 [phi:memset/memset::@1->memset::@1#0] -- register_copy 
+  //SEG121 memset::@1
   b1:
-  //SEG121 [73] *((byte*) fill::addr#2) ← (byte) fill::val#3 -- _deref_pbuz1=vbuxx 
+  //SEG122 [74] *((byte*) memset::dst#2) ← (byte) memset::c#3 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
-    sta (addr),y
-  //SEG122 [74] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
-    inc addr
+    sta (dst),y
+  //SEG123 [75] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
     bne !+
-    inc addr+1
+    inc dst+1
   !:
-  //SEG123 [75] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuz2_then_la1 
-    lda addr+1
+  //SEG124 [76] if((byte*) memset::dst#1!=(byte*)(void*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuz2_then_la1 
+    lda dst+1
     cmp end+1
     bne b1
-    lda addr
+    lda dst
     cmp end
     bne b1
-  //SEG124 fill::@return
-  //SEG125 [76] return 
+  //SEG125 memset::@return
+  //SEG126 [77] return 
     rts
 }
-//SEG126 init_sprites
+//SEG127 init_sprites
 init_sprites: {
-  //SEG127 [77] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+  //SEG128 [78] *((const byte*) SPRITES_ENABLE#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
-  //SEG128 [78] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG129 [79] *((const byte*) SPRITES_EXPAND_X#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // one sprite enabled
     lda #0
     sta SPRITES_EXPAND_X
-  //SEG129 [79] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG130 [80] *((const byte*) SPRITES_EXPAND_Y#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     sta SPRITES_EXPAND_Y
-  //SEG130 [80] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG131 [81] *((const byte*) SPRITES_XMSB#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     sta SPRITES_XMSB
-  //SEG131 [81] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
+  //SEG132 [82] *((const byte*) SPRITES_COLS#0) ← (const byte) WHITE#0 -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta SPRITES_COLS
-  //SEG132 [82] *((const byte*) SPRITES_MC#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+  //SEG133 [83] *((const byte*) SPRITES_MC#0) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SPRITES_MC
-  //SEG133 init_sprites::@return
-  //SEG134 [83] return 
+  //SEG134 init_sprites::@return
+  //SEG135 [84] return 
     rts
 }
 

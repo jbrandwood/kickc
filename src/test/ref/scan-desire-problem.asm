@@ -208,16 +208,16 @@ init: {
     jsr init_sprites
     ldx #0
     lda #<screen
-    sta fill.addr
+    sta memset.str
     lda #>screen
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
     ldx #BLACK
     lda #<colors
-    sta fill.addr
+    sta memset.str
     lda #>colors
-    sta fill.addr+1
-    jsr fill
+    sta memset.str+1
+    jsr memset
     lda #toD0181_return
     sta D018
     lda #$5b
@@ -233,30 +233,31 @@ init: {
     sta BGCOL4
     rts
 }
-// Fill some memory with a value
-// fill(byte register(X) val)
-fill: {
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zeropage(8) str, byte register(X) c)
+memset: {
     .label end = $1b
-    .label addr = 8
-    lda addr
+    .label dst = 8
+    .label str = 8
+    lda str
     clc
     adc #<$3e8
     sta end
-    lda addr+1
+    lda str+1
     adc #>$3e8
     sta end+1
   b1:
     txa
     ldy #0
-    sta (addr),y
-    inc addr
+    sta (dst),y
+    inc dst
     bne !+
-    inc addr+1
+    inc dst+1
   !:
-    lda addr+1
+    lda dst+1
     cmp end+1
     bne b1
-    lda addr
+    lda dst
     cmp end
     bne b1
     rts

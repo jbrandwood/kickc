@@ -43,13 +43,21 @@ Adding pointer type conversion cast (byte*) CIA2_INTERRUPT in (byte*) CIA2_INTER
 Adding pointer type conversion cast (void()**) KERNEL_IRQ in (void()**) KERNEL_IRQ ← (number) $314
 Adding pointer type conversion cast (void()**) HARDWARE_IRQ in (void()**) HARDWARE_IRQ ← (number) $fffe
 Identified literal word (dword) { div32u16u::quotient_hi, div32u16u::quotient_lo } in (dword) div32u16u::quotient ← { (word) div32u16u::quotient_hi, (word) div32u16u::quotient_lo }
+Adding pointer type conversion cast to void pointer (byte*) memcpy::source in (byte*) memcpy::src ← (void*) memcpy::source
+Adding pointer type conversion cast to void pointer (byte*) memcpy::destination in (byte*) memcpy::dst ← (void*) memcpy::destination
+Adding pointer type conversion cast to void pointer (byte*) memmove::$3 in (byte*) memmove::src ← (void*~) memmove::$3
+Adding pointer type conversion cast to void pointer (byte*) memmove::$4 in (byte*) memmove::dst ← (void*~) memmove::$4
+Adding pointer type conversion cast to void pointer (byte*) memset::$0 in (byte*) memset::end ← (void*~) memset::$0
+Adding pointer type conversion cast to void pointer (byte*) memset::str in (byte*) memset::dst ← (void*) memset::str
 Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
 Adding pointer type conversion cast (byte*) BITMAP in (byte*) BITMAP ← (number) $2000
 Adding pointer type conversion cast (signed word*) sin2 in (signed word*) sin2 ← (number) $1400
+Adding void pointer type conversion cast (void*) SCREEN in (void*~) main::$5 ← call memset (byte*) SCREEN (byte) WHITE (number) $3e8 
 Fixing pointer increment (signed word*) sin16s_gen::sintab ← ++ (signed word*) sin16s_gen::sintab
 Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*) sin16s_gen2::sintab
 Fixing pointer addition (signed word*~) render_sine::$0 ← (signed word[$200]) sin + (word) render_sine::sin_idx
 Fixing pointer addition (signed word*~) render_sine::$3 ← (signed word*) sin2 + (word) render_sine::sin_idx
+Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) BITMAP
 Identified constant variable (signed word*) sin2
@@ -88,12 +96,15 @@ Culled Empty Block (label) @22
 Culled Empty Block (label) mulu16_sel::@1
 Culled Empty Block (label) @23
 Culled Empty Block (label) @24
-Culled Empty Block (label) fill::@2
 Culled Empty Block (label) @25
-Culled Empty Block (label) bitmap_init::@8
+Culled Empty Block (label) @26
+Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @27
-Culled Empty Block (label) bitmap_clear::@4
 Culled Empty Block (label) @28
+Culled Empty Block (label) bitmap_init::@8
+Culled Empty Block (label) @30
+Culled Empty Block (label) bitmap_clear::@4
+Culled Empty Block (label) @31
 Culled Empty Block (label) main::vicSelectGfxBank1_toDd001_@1
 Culled Empty Block (label) main::vicSelectGfxBank1_@return
 Culled Empty Block (label) main::toD0181_@1
@@ -101,9 +112,9 @@ Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
-Culled Empty Block (label) @30
+Culled Empty Block (label) @33
 Culled Empty Block (label) render_sine::@4
-Culled Empty Block (label) @31
+Culled Empty Block (label) @34
 Culled Empty Block (label) wrap_y::@4
 Culled Empty Block (label) wrap_y::@3
 Culled Empty Block (label) wrap_y::@5
@@ -363,7 +374,7 @@ mul16s::@return: scope:[mul16s]  from mul16s::@2
   (dword) PI2_u4f28#0 ← (number) $6487ed51
   (dword) PI_u4f28#0 ← (number) $3243f6a9
   (dword) PI_HALF_u4f28#0 ← (number) $1921fb54
-  to:@26
+  to:@29
 sin16s_gen2: scope:[sin16s_gen2]  from main::@11
   (signed word*) sin16s_gen2::sintab#6 ← phi( main::@11/(signed word*) sin16s_gen2::sintab#1 )
   (word) rem16u#21 ← phi( main::@11/(word) rem16u#23 )
@@ -592,32 +603,39 @@ mulu16_sel::@return: scope:[mulu16_sel]  from mulu16_sel::@2
   (word) mulu16_sel::return#6 ← (word) mulu16_sel::return#12
   return 
   to:@return
-fill: scope:[fill]  from main::@8
-  (byte) fill::val#2 ← phi( main::@8/(byte) fill::val#0 )
-  (word) fill::size#1 ← phi( main::@8/(word) fill::size#0 )
-  (byte*) fill::start#1 ← phi( main::@8/(byte*) fill::start#0 )
-  (byte*~) fill::$0 ← (byte*) fill::start#1 + (word) fill::size#1
-  (byte*) fill::end#0 ← (byte*~) fill::$0
-  (byte*) fill::addr#0 ← (byte*) fill::start#1
-  to:fill::@1
-fill::@1: scope:[fill]  from fill fill::@1
-  (byte*) fill::end#1 ← phi( fill/(byte*) fill::end#0 fill::@1/(byte*) fill::end#1 )
-  (byte*) fill::addr#2 ← phi( fill/(byte*) fill::addr#0 fill::@1/(byte*) fill::addr#1 )
-  (byte) fill::val#1 ← phi( fill/(byte) fill::val#2 fill::@1/(byte) fill::val#1 )
-  *((byte*) fill::addr#2) ← (byte) fill::val#1
-  (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2
-  (bool~) fill::$1 ← (byte*) fill::addr#1 != (byte*) fill::end#1
-  if((bool~) fill::$1) goto fill::@1
-  to:fill::@return
-fill::@return: scope:[fill]  from fill::@1
+memset: scope:[memset]  from main::@8
+  (byte) memset::c#2 ← phi( main::@8/(byte) memset::c#0 )
+  (word) memset::num#1 ← phi( main::@8/(word) memset::num#0 )
+  (void*) memset::str#1 ← phi( main::@8/(void*) memset::str#0 )
+  (void*~) memset::$0 ← (void*) memset::str#1 + (word) memset::num#1
+  (byte*) memset::end#0 ← ((byte*)) (void*~) memset::$0
+  (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#1
+  to:memset::@1
+memset::@1: scope:[memset]  from memset memset::@1
+  (void*) memset::str#3 ← phi( memset/(void*) memset::str#1 memset::@1/(void*) memset::str#3 )
+  (byte*) memset::end#1 ← phi( memset/(byte*) memset::end#0 memset::@1/(byte*) memset::end#1 )
+  (byte*) memset::dst#2 ← phi( memset/(byte*) memset::dst#0 memset::@1/(byte*) memset::dst#1 )
+  (byte) memset::c#1 ← phi( memset/(byte) memset::c#2 memset::@1/(byte) memset::c#1 )
+  *((byte*) memset::dst#2) ← (byte) memset::c#1
+  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  (bool~) memset::$1 ← (byte*) memset::dst#1 != (byte*) memset::end#1
+  if((bool~) memset::$1) goto memset::@1
+  to:memset::@2
+memset::@2: scope:[memset]  from memset::@1
+  (void*) memset::str#2 ← phi( memset::@1/(void*) memset::str#3 )
+  (void*) memset::return#0 ← (void*) memset::str#2
+  to:memset::@return
+memset::@return: scope:[memset]  from memset::@2
+  (void*) memset::return#3 ← phi( memset::@2/(void*) memset::return#0 )
+  (void*) memset::return#1 ← (void*) memset::return#3
   return 
   to:@return
-@26: scope:[]  from @17
+@29: scope:[]  from @17
   (word) rem16u#32 ← phi( @17/(word) rem16u#34 )
   (byte[$100]) bitmap_plot_ylo#0 ← { fill( $100, 0) }
   (byte[$100]) bitmap_plot_yhi#0 ← { fill( $100, 0) }
   (byte[$100]) bitmap_plot_bit#0 ← { fill( $100, 0) }
-  to:@29
+  to:@32
 bitmap_init: scope:[bitmap_init]  from main::@9
   (byte*) bitmap_init::bitmap#5 ← phi( main::@9/(byte*) bitmap_init::bitmap#0 )
   (byte) bitmap_init::bits#0 ← (number) $80
@@ -724,8 +742,8 @@ bitmap_plot: scope:[bitmap_plot]  from render_sine::@5 render_sine::@7
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   return 
   to:@return
-@29: scope:[]  from @26
-  (word) rem16u#30 ← phi( @26/(word) rem16u#32 )
+@32: scope:[]  from @29
+  (word) rem16u#30 ← phi( @29/(word) rem16u#32 )
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
   (byte*) BITMAP#0 ← ((byte*)) (number) $2000
   (word) SIN_SIZE#0 ← (number) $200
@@ -735,9 +753,9 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   	  .word sin(toRadians([i*360]/512))*320
     }
  }}
-  to:@32
-main: scope:[main]  from @32
-  (word) rem16u#43 ← phi( @32/(word) rem16u#25 )
+  to:@35
+main: scope:[main]  from @35
+  (word) rem16u#43 ← phi( @35/(word) rem16u#25 )
   asm { sei  }
   *((byte*) PROCPORT_DDR#0) ← (byte) PROCPORT_DDR_MEMORY_MASK#0
   *((byte*) PROCPORT#0) ← (byte) PROCPORT_RAM_IO#0
@@ -804,10 +822,11 @@ main::@8: scope:[main]  from main::toD0181_@return
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$4 ← (byte) main::toD0181_return#3
   *((byte*) D018#0) ← (byte~) main::$4
-  (byte*) fill::start#0 ← (byte*) SCREEN#0
-  (word) fill::size#0 ← (number) $3e8
-  (byte) fill::val#0 ← (byte) WHITE#0
-  call fill 
+  (void*) memset::str#0 ← (void*)(byte*) SCREEN#0
+  (byte) memset::c#0 ← (byte) WHITE#0
+  (word) memset::num#0 ← (number) $3e8
+  call memset 
+  (void*) memset::return#2 ← (void*) memset::return#1
   to:main::@9
 main::@9: scope:[main]  from main::@8
   (word) rem16u#33 ← phi( main::@8/(word) rem16u#35 )
@@ -945,22 +964,22 @@ wrap_y::@return: scope:[wrap_y]  from wrap_y::@9
   (byte) wrap_y::return#3 ← (byte) wrap_y::return#6
   return 
   to:@return
-@32: scope:[]  from @29
-  (word) rem16u#25 ← phi( @29/(word) rem16u#30 )
+@35: scope:[]  from @32
+  (word) rem16u#25 ← phi( @32/(word) rem16u#30 )
   call main 
-  to:@33
-@33: scope:[]  from @32
-  (word) rem16u#19 ← phi( @32/(word) rem16u#9 )
+  to:@36
+@36: scope:[]  from @35
+  (word) rem16u#19 ← phi( @35/(word) rem16u#9 )
   (word) rem16u#10 ← (word) rem16u#19
   to:@end
-@end: scope:[]  from @33
+@end: scope:[]  from @36
 
 SYMBOL TABLE SSA
 (label) @17
-(label) @26
 (label) @29
 (label) @32
-(label) @33
+(label) @35
+(label) @36
 (label) @6
 (label) @begin
 (label) @end
@@ -1212,28 +1231,6 @@ SYMBOL TABLE SSA
 (word) divr16u::return#4
 (word) divr16u::return#5
 (word) divr16u::return#6
-(void()) fill((byte*) fill::start , (word) fill::size , (byte) fill::val)
-(byte*~) fill::$0
-(bool~) fill::$1
-(label) fill::@1
-(label) fill::@return
-(byte*) fill::addr
-(byte*) fill::addr#0
-(byte*) fill::addr#1
-(byte*) fill::addr#2
-(byte*) fill::end
-(byte*) fill::end#0
-(byte*) fill::end#1
-(word) fill::size
-(word) fill::size#0
-(word) fill::size#1
-(byte*) fill::start
-(byte*) fill::start#0
-(byte*) fill::start#1
-(byte) fill::val
-(byte) fill::val#0
-(byte) fill::val#1
-(byte) fill::val#2
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -1305,6 +1302,36 @@ SYMBOL TABLE SSA
 (byte) main::vicSelectGfxBank1_toDd001_return#1
 (byte) main::vicSelectGfxBank1_toDd001_return#2
 (byte) main::vicSelectGfxBank1_toDd001_return#3
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(void*~) memset::$0
+(bool~) memset::$1
+(label) memset::@1
+(label) memset::@2
+(label) memset::@return
+(byte) memset::c
+(byte) memset::c#0
+(byte) memset::c#1
+(byte) memset::c#2
+(byte*) memset::dst
+(byte*) memset::dst#0
+(byte*) memset::dst#1
+(byte*) memset::dst#2
+(byte*) memset::end
+(byte*) memset::end#0
+(byte*) memset::end#1
+(word) memset::num
+(word) memset::num#0
+(word) memset::num#1
+(void*) memset::return
+(void*) memset::return#0
+(void*) memset::return#1
+(void*) memset::return#2
+(void*) memset::return#3
+(void*) memset::str
+(void*) memset::str#0
+(void*) memset::str#1
+(void*) memset::str#2
+(void*) memset::str#3
 (signed dword()) mul16s((signed word) mul16s::a , (signed word) mul16s::b)
 (word~) mul16s::$0
 (word~) mul16s::$1
@@ -1811,7 +1838,7 @@ Adding number conversion cast (unumber) main::toD0181_$6#0 in (number~) main::to
 Adding number conversion cast (unumber) $f in (number~) main::toD0181_$7#0 ← (unumber~) main::toD0181_$6#0 & (number) $f
 Adding number conversion cast (unumber) main::toD0181_$7#0 in (number~) main::toD0181_$7#0 ← (unumber~) main::toD0181_$6#0 & (unumber)(number) $f
 Adding number conversion cast (unumber) main::toD0181_$8#0 in (number~) main::toD0181_$8#0 ← (unumber~) main::toD0181_$3#0 | (unumber~) main::toD0181_$7#0
-Adding number conversion cast (unumber) $3e8 in (word) fill::size#0 ← (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
 Adding number conversion cast (snumber) -$140 in (signed word) sin16s_gen2::min#0 ← (number) -$140
 Adding number conversion cast (snumber) $140 in (signed word) sin16s_gen2::max#0 ← (number) $140
 Adding number conversion cast (unumber) 0 in (word) render_sine::xpos#0 ← (number) 0
@@ -1865,6 +1892,8 @@ Inlining cast (byte) mulu16_sel::select#3 ← (unumber)(number) 0
 Inlining cast (byte) mulu16_sel::select#4 ← (unumber)(number) 0
 Inlining cast (signed word~) sin16s::$14 ← (signed word)(word) sin16s::usinx#1
 Inlining cast (signed word~) sin16s::$19 ← (signed word)(word) sin16s::usinx#3
+Inlining cast (byte*) memset::end#0 ← (byte*)(void*~) memset::$0
+Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#1
 Inlining cast (byte) bitmap_init::bits#0 ← (unumber)(number) $80
 Inlining cast (byte) bitmap_init::bits#2 ← (unumber)(number) $80
 Inlining cast *((byte*) bitmap_clear::bitmap#2) ← (unumber)(number) 0
@@ -1876,7 +1905,7 @@ Inlining cast *((byte*) CIA2_PORT_A_DDR#0) ← (unumber)(number) 3
 Inlining cast (word~) main::vicSelectGfxBank1_toDd001_$0#0 ← (word)(byte*) main::vicSelectGfxBank1_toDd001_gfx#1
 Inlining cast (word~) main::toD0181_$0#0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4#0 ← (word)(byte*) main::toD0181_gfx#1
-Inlining cast (word) fill::size#0 ← (unumber)(number) $3e8
+Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (signed word) sin16s_gen2::min#0 ← (snumber)(number) -$140
 Inlining cast (signed word) sin16s_gen2::max#0 ← (snumber)(number) $140
 Inlining cast (word) render_sine::xpos#0 ← (unumber)(number) 0
@@ -2075,9 +2104,9 @@ Inversing boolean not [120] (bool~) mul16s::$6 ← (signed word) mul16s::b#2 >= 
 Inversing boolean not [188] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (dword) PI_u4f28#0 from [187] (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (dword) PI_u4f28#0
 Inversing boolean not [192] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (dword) PI_HALF_u4f28#0 from [191] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (dword) PI_HALF_u4f28#0
 Inversing boolean not [251] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [250] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
-Inversing boolean not [299] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [298] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [319] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [318] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
-Inversing boolean not [463] (bool~) render_sine::$8 ← (word) render_sine::xpos#1 != (word) $140 from [462] (bool~) render_sine::$7 ← (word) render_sine::xpos#1 == (word) $140
+Inversing boolean not [303] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [302] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [323] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [322] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
+Inversing boolean not [468] (bool~) render_sine::$8 ← (word) render_sine::xpos#1 != (word) $140 from [467] (bool~) render_sine::$7 ← (word) render_sine::xpos#1 == (word) $140
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2169,8 +2198,7 @@ Alias (signed word) sin16s::sinx#1 = (signed word~) sin16s::$20
 Alias (dword) mul16u::return#3 = (dword) mul16u::return#6 
 Alias (byte) mulu16_sel::select#5 = (byte) mulu16_sel::select#6 
 Alias (word) mulu16_sel::return#12 = (word) mulu16_sel::return#5 (word~) mulu16_sel::$2 (word) mulu16_sel::return#6 
-Alias (byte*) fill::end#0 = (byte*~) fill::$0 
-Alias (byte*) fill::addr#0 = (byte*) fill::start#1 
+Alias (void*) memset::return#0 = (void*) memset::str#2 (void*) memset::str#3 (void*) memset::return#3 (void*) memset::return#1 
 Alias (byte) bitmap_init::x#2 = (byte) bitmap_init::x#4 
 Alias (byte*) bitmap_init::bitmap#3 = (byte*) bitmap_init::bitmap#4 
 Alias (byte*) bitmap_init::bitmap#1 = (byte*) bitmap_init::bitmap#2 (byte*) bitmap_init::yoffs#0 
@@ -2222,8 +2250,9 @@ Self Phi Eliminated (signed word) sin16s_gen2::offs#1
 Self Phi Eliminated (dword) sin16s_gen2::step#1
 Self Phi Eliminated (word) sin16s_gen2::wavelength#2
 Self Phi Eliminated (word) rem16u#16
-Self Phi Eliminated (byte) fill::val#1
-Self Phi Eliminated (byte*) fill::end#1
+Self Phi Eliminated (byte) memset::c#1
+Self Phi Eliminated (byte*) memset::end#1
+Self Phi Eliminated (void*) memset::return#0
 Self Phi Eliminated (byte*) bitmap_init::bitmap#1
 Self Phi Eliminated (byte) bitmap_clear::y#2
 Self Phi Eliminated (word) rem16u#18
@@ -2248,11 +2277,12 @@ Identical Phi Values (dword) sin16s_gen2::step#1 (dword) sin16s_gen2::step#0
 Identical Phi Values (word) sin16s_gen2::wavelength#2 (word) sin16s_gen2::wavelength#1
 Identical Phi Values (word) rem16u#16 (word) rem16u#15
 Identical Phi Values (dword) sin16s::x#3 (dword) sin16s::x#0
-Identical Phi Values (byte*) fill::addr#0 (byte*) fill::start#0
-Identical Phi Values (word) fill::size#1 (word) fill::size#0
-Identical Phi Values (byte) fill::val#2 (byte) fill::val#0
-Identical Phi Values (byte) fill::val#1 (byte) fill::val#2
-Identical Phi Values (byte*) fill::end#1 (byte*) fill::end#0
+Identical Phi Values (void*) memset::str#1 (void*) memset::str#0
+Identical Phi Values (word) memset::num#1 (word) memset::num#0
+Identical Phi Values (byte) memset::c#2 (byte) memset::c#0
+Identical Phi Values (byte) memset::c#1 (byte) memset::c#2
+Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
+Identical Phi Values (void*) memset::return#0 (void*) memset::str#1
 Identical Phi Values (byte*) bitmap_init::bitmap#5 (byte*) bitmap_init::bitmap#0
 Identical Phi Values (byte*) bitmap_init::bitmap#1 (byte*) bitmap_init::bitmap#5
 Identical Phi Values (byte) bitmap_clear::y#2 (byte) bitmap_clear::y#4
@@ -2261,7 +2291,7 @@ Identical Phi Values (word) rem16u#17 (word) rem16u#16
 Identical Phi Values (word) rem16u#18 (word) rem16u#17
 Identical Phi Values (word) rem16u#10 (word) rem16u#18
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [317] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [321] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) divr16u::$4 [26] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
 Simple Condition (bool~) divr16u::$9 [34] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
@@ -2274,23 +2304,23 @@ Simple Condition (bool~) sin16s_gen2::$10 [181] if((word) sin16s_gen2::i#1<(word
 Simple Condition (bool~) sin16s::$1 [189] if((dword) sin16s::x#0<(dword) PI_u4f28#0) goto sin16s::@1
 Simple Condition (bool~) sin16s::$3 [193] if((dword) sin16s::x#4<(dword) PI_HALF_u4f28#0) goto sin16s::@2
 Simple Condition (bool~) sin16s::$16 [252] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
-Simple Condition (bool~) fill::$1 [286] if((byte*) fill::addr#1!=(byte*) fill::end#0) goto fill::@1
-Simple Condition (bool~) bitmap_init::$1 [300] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$2 [304] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$9 [320] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$11 [324] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) bitmap_clear::$1 [340] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
-Simple Condition (bool~) bitmap_clear::$2 [344] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
-Simple Condition (bool~) render_sine::$8 [464] if((word) render_sine::xpos#1!=(word) $140) goto render_sine::@2
-Simple Condition (bool~) render_sine::$9 [468] if((word) render_sine::sin_idx#1<(word) SIN_SIZE#0) goto render_sine::@1
-Simple Condition (bool~) wrap_y::$1 [475] if((signed word) wrap_y::y#4>=(signed word) $c8) goto wrap_y::@2
-Simple Condition (bool~) wrap_y::$2 [480] if((signed word) wrap_y::y#6<(signed byte) 0) goto wrap_y::@8
+Simple Condition (bool~) memset::$1 [286] if((byte*) memset::dst#1!=(byte*) memset::end#0) goto memset::@1
+Simple Condition (bool~) bitmap_init::$1 [304] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$2 [308] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$9 [324] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$11 [328] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) bitmap_clear::$1 [344] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
+Simple Condition (bool~) bitmap_clear::$2 [348] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
+Simple Condition (bool~) render_sine::$8 [469] if((word) render_sine::xpos#1!=(word) $140) goto render_sine::@2
+Simple Condition (bool~) render_sine::$9 [473] if((word) render_sine::sin_idx#1<(word) SIN_SIZE#0) goto render_sine::@1
+Simple Condition (bool~) wrap_y::$1 [480] if((signed word) wrap_y::y#4>=(signed word) $c8) goto wrap_y::@2
+Simple Condition (bool~) wrap_y::$2 [485] if((signed word) wrap_y::y#6<(signed byte) 0) goto wrap_y::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [219] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
-Constant right-side identified [289] (byte[$100]) bitmap_plot_ylo#0 ← { fill( $100, 0) }
-Constant right-side identified [290] (byte[$100]) bitmap_plot_yhi#0 ← { fill( $100, 0) }
-Constant right-side identified [291] (byte[$100]) bitmap_plot_bit#0 ← { fill( $100, 0) }
-Constant right-side identified [359] (signed word[$200]) sin#0 ← { fill( $200, 0) }
+Constant right-side identified [293] (byte[$100]) bitmap_plot_ylo#0 ← { fill( $100, 0) }
+Constant right-side identified [294] (byte[$100]) bitmap_plot_yhi#0 ← { fill( $100, 0) }
+Constant right-side identified [295] (byte[$100]) bitmap_plot_bit#0 ← { fill( $100, 0) }
+Constant right-side identified [363] (signed word[$200]) sin#0 ← { fill( $200, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) PROCPORT_DDR#0 = (byte*) 0
 Constant (const byte) PROCPORT_DDR_MEMORY_MASK#0 = 7
@@ -2339,7 +2369,7 @@ Constant (const byte*) BITMAP#0 = (byte*) 8192
 Constant (const word) SIN_SIZE#0 = $200
 Constant (const signed word[$200]) sin#0 = { fill( $200, 0) }
 Constant (const signed word*) sin2#0 = (signed word*) 5120
-Constant (const word) fill::size#0 = $3e8
+Constant (const word) memset::num#0 = $3e8
 Constant (const signed word) sin16s_gen2::min#0 = -$140
 Constant (const signed word) sin16s_gen2::max#0 = $140
 Constant (const word) render_sine::xpos#0 = 0
@@ -2350,8 +2380,7 @@ Constant (const dword) div32u16u::dividend#0 = PI2_u4f28#0
 Constant (const byte*) main::vicSelectGfxBank1_gfx#0 = SCREEN#0
 Constant (const byte*) main::toD0181_screen#0 = SCREEN#0
 Constant (const byte*) main::toD0181_gfx#0 = BITMAP#0
-Constant (const byte*) fill::start#0 = SCREEN#0
-Constant (const byte) fill::val#0 = WHITE#0
+Constant (const byte) memset::c#0 = WHITE#0
 Constant (const byte*) bitmap_init::bitmap#0 = BITMAP#0
 Constant (const signed word*) sin16s_gen2::sintab#1 = sin#0
 Constant (const word) sin16s_gen2::wavelength#0 = SIN_SIZE#0
@@ -2361,25 +2390,27 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
 Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::vicSelectGfxBank1_gfx#0 in [375] (word~) main::vicSelectGfxBank1_toDd001_$0#0 ← (word)(const byte*) main::vicSelectGfxBank1_gfx#0
-Constant value identified (word)main::toD0181_screen#0 in [390] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
-Constant value identified (word)main::toD0181_gfx#0 in [394] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
+Constant value identified (word)main::vicSelectGfxBank1_gfx#0 in [379] (word~) main::vicSelectGfxBank1_toDd001_$0#0 ← (word)(const byte*) main::vicSelectGfxBank1_gfx#0
+Constant value identified (word)main::toD0181_screen#0 in [394] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
+Constant value identified (word)main::toD0181_gfx#0 in [398] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
+Constant value identified (void*)SCREEN#0 in [409] (void*) memset::str#0 ← (void*)(const byte*) SCREEN#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [425] if(true) goto main::@2
+if() condition always true - replacing block destination [430] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [39] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [41] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [302] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [304] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [322] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [324] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-Resolved ranged next value [338] bitmap_clear::x#1 ← ++ bitmap_clear::x#2 to ++
-Resolved ranged comparison value [340] if(bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2 to (number) $c8
-Resolved ranged next value [342] bitmap_clear::y#1 ← ++ bitmap_clear::y#4 to ++
-Resolved ranged comparison value [344] if(bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1 to (number) $28
-Simplifying expression containing zero bitmap_plot_yhi#0 in [329] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) 0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) 0)
-Simplifying expression containing zero bitmap_plot_ylo#0 in [329] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) 0)
+Resolved ranged next value [306] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [308] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [326] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [328] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+Resolved ranged next value [342] bitmap_clear::x#1 ← ++ bitmap_clear::x#2 to ++
+Resolved ranged comparison value [344] if(bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2 to (number) $c8
+Resolved ranged next value [346] bitmap_clear::y#1 ← ++ bitmap_clear::y#4 to ++
+Resolved ranged comparison value [348] if(bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1 to (number) $28
+Simplifying expression containing zero bitmap_plot_yhi#0 in [333] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) 0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) 0)
+Simplifying expression containing zero bitmap_plot_ylo#0 in [333] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (void*) memset::return#2 and assignment [207] (void*) memset::return#2 ← (void*) memset::str#0
 Eliminating unused constant (const word) rem16u#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
@@ -2410,22 +2441,22 @@ Successful SSA optimization Pass2AliasElimination
 Constant right-side identified [18] (word) divr16u::dividend#1 ← > (const dword) div32u16u::dividend#0
 Constant right-side identified [22] (word) divr16u::dividend#2 ← < (const dword) div32u16u::dividend#0
 Constant right-side identified [58] (signed word) sin16s_gen2::ampl#0 ← (const signed word) sin16s_gen2::max#0 - (const signed word) sin16s_gen2::min#0
-Constant right-side identified [132] (byte*) fill::end#0 ← (const byte*) fill::start#0 + (const word) fill::size#0
-Constant right-side identified [182] (byte~) main::$0 ← (const byte) VIC_BMM#0 | (const byte) VIC_DEN#0
+Constant right-side identified [184] (byte~) main::$0 ← (const byte) VIC_BMM#0 | (const byte) VIC_DEN#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) divr16u::dividend#1 = >div32u16u::dividend#0
 Constant (const word) divr16u::dividend#2 = <div32u16u::dividend#0
 Constant (const signed word) sin16s_gen2::ampl#0 = sin16s_gen2::max#0-sin16s_gen2::min#0
-Constant (const byte*) fill::end#0 = fill::start#0+fill::size#0
 Constant (const byte) main::$0 = VIC_BMM#0|VIC_DEN#0
 Constant (const word) main::vicSelectGfxBank1_toDd001_$0#0 = (word)main::vicSelectGfxBank1_gfx#0
 Constant (const word) main::toD0181_$0#0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4#0 = (word)main::toD0181_gfx#0
+Constant (const void*) memset::str#0 = (void*)SCREEN#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const signed word) mul16s::b#0 = sin16s_gen2::ampl#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (word)mul16s::b#0 in [40] (word) mul16u::b#0 ← (word)(const signed word) mul16s::b#0
 Constant value identified (word)mul16s::b#0 in [48] (word~) mul16s::$10 ← (word)(const signed word) mul16s::b#0
+Constant value identified (byte*)memset::str#0 in [134] (byte*) memset::dst#0 ← (byte*)(const void*) memset::str#0
 Successful SSA optimization Pass2ConstantValues
 if() condition always true - replacing block destination [46] if((const signed word) mul16s::b#0>=(signed byte) 0) goto mul16s::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -2439,26 +2470,32 @@ Successful SSA optimization Pass2EliminateUnusedBlocks
 Alias (dword) mul16s::m#4 = (dword) mul16s::m#5 
 Successful SSA optimization Pass2AliasElimination
 Constant right-side identified [51] (signed word~) sin16s_gen2::$1 ← (const signed word) sin16s_gen2::ampl#0 >> (signed byte) 1
-Constant right-side identified [171] (byte~) main::$1 ← (const byte) main::$0 | (const byte) VIC_RSEL#0
-Constant right-side identified [175] (byte~) main::vicSelectGfxBank1_toDd001_$1#0 ← > (const word) main::vicSelectGfxBank1_toDd001_$0#0
-Constant right-side identified [180] (word~) main::toD0181_$1#0 ← (const word) main::toD0181_$0#0 & (word) $3fff
-Constant right-side identified [183] (byte~) main::toD0181_$5#0 ← > (const word) main::toD0181_$4#0
+Constant right-side identified [123] (void*~) memset::$0 ← (const void*) memset::str#0 + (const word) memset::num#0
+Constant right-side identified [174] (byte~) main::$1 ← (const byte) main::$0 | (const byte) VIC_RSEL#0
+Constant right-side identified [178] (byte~) main::vicSelectGfxBank1_toDd001_$1#0 ← > (const word) main::vicSelectGfxBank1_toDd001_$0#0
+Constant right-side identified [183] (word~) main::toD0181_$1#0 ← (const word) main::toD0181_$0#0 & (word) $3fff
+Constant right-side identified [186] (byte~) main::toD0181_$5#0 ← > (const word) main::toD0181_$4#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) mul16u::b#0 = (word)mul16s::b#0
 Constant (const word) mul16s::$10 = (word)mul16s::b#0
 Constant (const signed word) sin16s_gen2::$1 = sin16s_gen2::ampl#0>>1
+Constant (const void*) memset::$0 = memset::str#0+memset::num#0
+Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const byte) main::$1 = main::$0|VIC_RSEL#0
 Constant (const byte) main::vicSelectGfxBank1_toDd001_$1#0 = >main::vicSelectGfxBank1_toDd001_$0#0
 Constant (const word) main::toD0181_$1#0 = main::toD0181_$0#0&$3fff
 Constant (const byte) main::toD0181_$5#0 = >main::toD0181_$4#0
 Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte*)memset::$0 in [124] (byte*) memset::end#0 ← (byte*)(const void*) memset::$0
+Successful SSA optimization Pass2ConstantValues
 Constant right-side identified [48] (signed word) sin16s_gen2::offs#0 ← (const signed word) sin16s_gen2::min#0 + (const signed word) sin16s_gen2::$1
-Constant right-side identified [167] (byte~) main::$2 ← (const byte) main::$1 | (byte) 3
-Constant right-side identified [170] (byte~) main::vicSelectGfxBank1_toDd001_$2#0 ← (const byte) main::vicSelectGfxBank1_toDd001_$1#0 / (byte) $40
-Constant right-side identified [174] (word~) main::toD0181_$2#0 ← (const word) main::toD0181_$1#0 * (byte) 4
-Constant right-side identified [176] (byte~) main::toD0181_$6#0 ← (const byte) main::toD0181_$5#0 / (byte) 4
+Constant right-side identified [168] (byte~) main::$2 ← (const byte) main::$1 | (byte) 3
+Constant right-side identified [171] (byte~) main::vicSelectGfxBank1_toDd001_$2#0 ← (const byte) main::vicSelectGfxBank1_toDd001_$1#0 / (byte) $40
+Constant right-side identified [175] (word~) main::toD0181_$2#0 ← (const word) main::toD0181_$1#0 * (byte) 4
+Constant right-side identified [177] (byte~) main::toD0181_$6#0 ← (const byte) main::toD0181_$5#0 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const signed word) sin16s_gen2::offs#0 = sin16s_gen2::min#0+sin16s_gen2::$1
+Constant (const byte*) memset::end#0 = (byte*)memset::$0
 Constant (const byte) main::$2 = main::$1|3
 Constant (const byte) main::vicSelectGfxBank1_toDd001_$2#0 = main::vicSelectGfxBank1_toDd001_$1#0/$40
 Constant (const word) main::toD0181_$2#0 = main::toD0181_$1#0*4
@@ -2468,7 +2505,7 @@ Simplifying constant evaluating to zero (const signed word) sin16s_gen2::min#0+(
 Simplifying constant evaluating to zero (const byte) main::vicSelectGfxBank1_toDd001_$1#0/(byte) $40 in 
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero sin16s_gen2::$7 in [62] (signed word~) sin16s_gen2::$8 ← (const signed word) sin16s_gen2::offs#0 + (signed word~) sin16s_gen2::$7
-Simplifying expression containing zero 3 in [171] (byte) main::vicSelectGfxBank1_toDd001_return#0 ← (byte) 3 ^ (const byte) main::vicSelectGfxBank1_toDd001_$2#0
+Simplifying expression containing zero 3 in [172] (byte) main::vicSelectGfxBank1_toDd001_return#0 ← (byte) 3 ^ (const byte) main::vicSelectGfxBank1_toDd001_$2#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const signed word) sin16s_gen2::$1
 Eliminating unused constant (const signed word) sin16s_gen2::offs#0
@@ -2522,6 +2559,7 @@ Inlining constant with var siblings (const word) mulu16_sel::v2#2
 Inlining constant with var siblings (const byte) mulu16_sel::select#2
 Inlining constant with var siblings (const byte) mulu16_sel::select#3
 Inlining constant with var siblings (const byte) mulu16_sel::select#4
+Inlining constant with var siblings (const byte*) memset::dst#0
 Inlining constant with var siblings (const byte) bitmap_init::bits#0
 Inlining constant with var siblings (const byte) bitmap_init::x#0
 Inlining constant with var siblings (const byte) bitmap_init::bits#2
@@ -2539,7 +2577,6 @@ Constant inlined mulu16_sel::select#4 = (byte) 0
 Constant inlined mulu16_sel::select#2 = (byte) 1
 Constant inlined mulu16_sel::select#3 = (byte) 0
 Constant inlined mulu16_sel::select#0 = (byte) 0
-Constant inlined fill::start#0 = (const byte*) SCREEN#0
 Constant inlined sin16s::isUpper#1 = (byte) 1
 Constant inlined mulu16_sel::select#1 = (byte) 1
 Constant inlined mul16s::$10 = (word)(const signed word) sin16s_gen2::ampl#0
@@ -2551,9 +2588,10 @@ Constant inlined main::toD0181_$7#0 = >(word)(const byte*) BITMAP#0/(byte) 4&(by
 Constant inlined main::toD0181_$3#0 = >(word)(const byte*) SCREEN#0&(word) $3fff*(byte) 4
 Constant inlined main::toD0181_$5#0 = >(word)(const byte*) BITMAP#0
 Constant inlined sin16s_gen2::sintab#1 = (const signed word[$200]) sin#0
+Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
+Constant inlined memset::c#0 = (const byte) WHITE#0
 Constant inlined bitmap_init::x#0 = (byte) 0
 Constant inlined bitmap_init::bitmap#0 = (const byte*) BITMAP#0
-Constant inlined fill::val#0 = (const byte) WHITE#0
 Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN#0
 Constant inlined main::toD0181_gfx#0 = (const byte*) BITMAP#0
 Constant inlined divr16u::i#0 = (byte) 0
@@ -2561,6 +2599,7 @@ Constant inlined div32u16u::dividend#0 = (const dword) PI2_u4f28#0
 Constant inlined bitmap_init::bits#0 = (byte) $80
 Constant inlined render_sine::xpos#0 = (byte) 0
 Constant inlined bitmap_init::bits#2 = (byte) $80
+Constant inlined memset::$0 = (const void*) memset::str#0+(const word) memset::num#0
 Constant inlined divr16u::quotient#0 = (byte) 0
 Constant inlined sin16s_gen2::x#0 = (byte) 0
 Constant inlined mul16u::res#0 = (byte) 0
@@ -2594,7 +2633,7 @@ Added new block during phi lifting sin16s::@13(between sin16s and sin16s::@1)
 Fixing phi predecessor for sin16s::isUpper#2 to new block ( sin16s -> sin16s::@13 ) during phi lifting.
 Added new block during phi lifting sin16s::@14(between sin16s::@1 and sin16s::@2)
 Added new block during phi lifting sin16s::@15(between sin16s::@12 and sin16s::@3)
-Added new block during phi lifting fill::@3(between fill::@1 and fill::@1)
+Added new block during phi lifting memset::@4(between memset::@1 and memset::@1)
 Added new block during phi lifting bitmap_init::@9(between bitmap_init::@2 and bitmap_init::@1)
 Added new block during phi lifting bitmap_init::@10(between bitmap_init::@1 and bitmap_init::@2)
 Added new block during phi lifting bitmap_init::@11(between bitmap_init::@6 and bitmap_init::@5)
@@ -2607,9 +2646,9 @@ Added new block during phi lifting wrap_y::@14(between wrap_y::@1 and wrap_y::@7
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @17
-Adding NOP phi() at start of @26
-Adding NOP phi() at start of @32
-Adding NOP phi() at start of @33
+Adding NOP phi() at start of @29
+Adding NOP phi() at start of @35
+Adding NOP phi() at start of @36
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::vicSelectGfxBank1_toDd001
 Adding NOP phi() at start of main::vicSelectGfxBank1_toDd001_@return
@@ -2629,10 +2668,11 @@ Adding NOP phi() at start of div32u16u
 Adding NOP phi() at start of bitmap_init
 Adding NOP phi() at start of bitmap_init::@3
 Adding NOP phi() at start of bitmap_init::@4
-Adding NOP phi() at start of fill
+Adding NOP phi() at start of memset
+Adding NOP phi() at start of memset::@2
 CALL GRAPH
 Calls in [] to main:6 
-Calls in [main] to fill:21 bitmap_init:23 bitmap_clear:25 sin16s_gen2:27 render_sine:29 
+Calls in [main] to memset:21 bitmap_init:23 bitmap_clear:25 sin16s_gen2:27 render_sine:29 
 Calls in [render_sine] to wrap_y:40 bitmap_plot:47 wrap_y:53 bitmap_plot:60 
 Calls in [sin16s_gen2] to div32u16u:92 sin16s:97 mul16s:100 
 Calls in [mul16s] to mul16u:114 
@@ -2707,12 +2747,12 @@ Coalesced (already) [292] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
 Coalesced [293] bitmap_init::bits#5 ← bitmap_init::bits#4
 Coalesced [294] bitmap_init::x#5 ← bitmap_init::x#1
 Coalesced [295] bitmap_init::bits#6 ← bitmap_init::bits#1
-Coalesced [302] fill::addr#3 ← fill::addr#1
+Coalesced [303] memset::dst#3 ← memset::dst#1
 Coalesced down to 30 phi equivalence classes
 Culled Empty Block (label) @6
 Culled Empty Block (label) @17
-Culled Empty Block (label) @26
-Culled Empty Block (label) @33
+Culled Empty Block (label) @29
+Culled Empty Block (label) @36
 Culled Empty Block (label) main::vicSelectGfxBank1_toDd001_@return
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@13
@@ -2736,9 +2776,10 @@ Culled Empty Block (label) bitmap_init::@4
 Culled Empty Block (label) bitmap_init::@11
 Culled Empty Block (label) bitmap_init::@12
 Culled Empty Block (label) bitmap_init::@9
-Culled Empty Block (label) fill::@3
-Renumbering block @29 to @1
-Renumbering block @32 to @2
+Culled Empty Block (label) memset::@2
+Culled Empty Block (label) memset::@4
+Renumbering block @32 to @1
+Renumbering block @35 to @2
 Renumbering block div32u16u::@2 to div32u16u::@1
 Renumbering block div32u16u::@3 to div32u16u::@2
 Renumbering block mul16u::@4 to mul16u::@3
@@ -2788,7 +2829,7 @@ Adding NOP phi() at start of sin16s_gen2
 Adding NOP phi() at start of div32u16u
 Adding NOP phi() at start of bitmap_init
 Adding NOP phi() at start of bitmap_init::@6
-Adding NOP phi() at start of fill
+Adding NOP phi() at start of memset
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -2829,7 +2870,7 @@ main::toD0181: scope:[main]  from main::@2
   to:main::@3
 main::@3: scope:[main]  from main::toD0181
   [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0
-  [15] call fill 
+  [15] call memset 
   to:main::@4
 main::@4: scope:[main]  from main::@3
   [16] phi()
@@ -3220,16 +3261,16 @@ bitmap_init::@4: scope:[bitmap_init]  from bitmap_init::@3 bitmap_init::@5
 bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@4
   [219] return 
   to:@return
-fill: scope:[fill]  from main::@3
+memset: scope:[memset]  from main::@3
   [220] phi()
-  to:fill::@1
-fill::@1: scope:[fill]  from fill fill::@1
-  [221] (byte*) fill::addr#2 ← phi( fill/(const byte*) SCREEN#0 fill::@1/(byte*) fill::addr#1 )
-  [222] *((byte*) fill::addr#2) ← (const byte) WHITE#0
-  [223] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2
-  [224] if((byte*) fill::addr#1!=(const byte*) fill::end#0) goto fill::@1
-  to:fill::@return
-fill::@return: scope:[fill]  from fill::@1
+  to:memset::@1
+memset::@1: scope:[memset]  from memset memset::@1
+  [221] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@1/(byte*) memset::dst#1 )
+  [222] *((byte*) memset::dst#2) ← (const byte) WHITE#0
+  [223] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [224] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1
+  to:memset::@return
+memset::@return: scope:[memset]  from memset::@1
   [225] return 
   to:@return
 
@@ -3345,14 +3386,6 @@ VARIABLE REGISTER WEIGHTS
 (word) divr16u::return#0 5.285714285714286
 (word) divr16u::return#2 4.0
 (word) divr16u::return#3 4.0
-(void()) fill((byte*) fill::start , (word) fill::size , (byte) fill::val)
-(byte*) fill::addr
-(byte*) fill::addr#1 16.5
-(byte*) fill::addr#2 16.5
-(byte*) fill::end
-(word) fill::size
-(byte*) fill::start
-(byte) fill::val
 (void()) main()
 (word~) main::toD0181_$0
 (number~) main::toD0181_$1
@@ -3374,6 +3407,15 @@ VARIABLE REGISTER WEIGHTS
 (number~) main::vicSelectGfxBank1_toDd001_$3
 (byte*) main::vicSelectGfxBank1_toDd001_gfx
 (byte) main::vicSelectGfxBank1_toDd001_return
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(byte) memset::c
+(byte*) memset::dst
+(byte*) memset::dst#1 16.5
+(byte*) memset::dst#2 16.5
+(byte*) memset::end
+(word) memset::num
+(void*) memset::return
+(void*) memset::str
 (signed dword()) mul16s((signed word) mul16s::a , (signed word) mul16s::b)
 (word~) mul16s::$16 4.0
 (word~) mul16s::$9 4.0
@@ -3555,7 +3597,7 @@ Initial phi equivalence classes
 [ bitmap_init::x#2 bitmap_init::x#1 ]
 [ bitmap_init::y#2 bitmap_init::y#1 ]
 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
-[ fill::addr#2 fill::addr#1 ]
+[ memset::dst#2 memset::dst#1 ]
 Added variable render_sine::$10 to zero page equivalence class [ render_sine::$10 ]
 Added variable render_sine::$0 to zero page equivalence class [ render_sine::$0 ]
 Added variable render_sine::sin_val#0 to zero page equivalence class [ render_sine::sin_val#0 ]
@@ -3646,7 +3688,7 @@ Complete equivalence classes
 [ bitmap_init::x#2 bitmap_init::x#1 ]
 [ bitmap_init::y#2 bitmap_init::y#1 ]
 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
-[ fill::addr#2 fill::addr#1 ]
+[ memset::dst#2 memset::dst#1 ]
 [ render_sine::$10 ]
 [ render_sine::$0 ]
 [ render_sine::sin_val#0 ]
@@ -3736,7 +3778,7 @@ Allocated zp ZP_BYTE:58 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::b
 Allocated zp ZP_BYTE:59 [ bitmap_init::x#2 bitmap_init::x#1 ]
 Allocated zp ZP_BYTE:60 [ bitmap_init::y#2 bitmap_init::y#1 ]
 Allocated zp ZP_WORD:61 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
-Allocated zp ZP_WORD:63 [ fill::addr#2 fill::addr#1 ]
+Allocated zp ZP_WORD:63 [ memset::dst#2 memset::dst#1 ]
 Allocated zp ZP_WORD:65 [ render_sine::$10 ]
 Allocated zp ZP_WORD:67 [ render_sine::$0 ]
 Allocated zp ZP_WORD:69 [ render_sine::sin_val#0 ]
@@ -3907,10 +3949,10 @@ main: {
   //SEG27 [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  //SEG28 [15] call fill 
-  //SEG29 [220] phi from main::@3 to fill [phi:main::@3->fill]
-  fill_from_b3:
-    jsr fill
+  //SEG28 [15] call memset 
+  //SEG29 [220] phi from main::@3 to memset [phi:main::@3->memset]
+  memset_from_b3:
+    jsr memset
   //SEG30 [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
     jmp b4
@@ -5490,44 +5532,45 @@ bitmap_init: {
   //SEG422 [219] return 
     rts
 }
-//SEG423 fill
-// Fill some memory with a value
-fill: {
-    .const size = $3e8
-    .label end = SCREEN+size
-    .label addr = $3f
-  //SEG424 [221] phi from fill to fill::@1 [phi:fill->fill::@1]
-  b1_from_fill:
-  //SEG425 [221] phi (byte*) fill::addr#2 = (const byte*) SCREEN#0 [phi:fill->fill::@1#0] -- pbuz1=pbuc1 
-    lda #<SCREEN
-    sta addr
-    lda #>SCREEN
-    sta addr+1
+//SEG423 memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const num = $3e8
+    .label str = SCREEN
+    .label end = str+num
+    .label dst = $3f
+  //SEG424 [221] phi from memset to memset::@1 [phi:memset->memset::@1]
+  b1_from_memset:
+  //SEG425 [221] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
     jmp b1
-  //SEG426 [221] phi from fill::@1 to fill::@1 [phi:fill::@1->fill::@1]
+  //SEG426 [221] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
   b1_from_b1:
-  //SEG427 [221] phi (byte*) fill::addr#2 = (byte*) fill::addr#1 [phi:fill::@1->fill::@1#0] -- register_copy 
+  //SEG427 [221] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
     jmp b1
-  //SEG428 fill::@1
+  //SEG428 memset::@1
   b1:
-  //SEG429 [222] *((byte*) fill::addr#2) ← (const byte) WHITE#0 -- _deref_pbuz1=vbuc1 
+  //SEG429 [222] *((byte*) memset::dst#2) ← (const byte) WHITE#0 -- _deref_pbuz1=vbuc1 
     lda #WHITE
     ldy #0
-    sta (addr),y
-  //SEG430 [223] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
-    inc addr
+    sta (dst),y
+  //SEG430 [223] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
     bne !+
-    inc addr+1
+    inc dst+1
   !:
-  //SEG431 [224] if((byte*) fill::addr#1!=(const byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda addr+1
+  //SEG431 [224] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
     cmp #>end
     bne b1_from_b1
-    lda addr
+    lda dst
     cmp #<end
     bne b1_from_b1
     jmp breturn
-  //SEG432 fill::@return
+  //SEG432 memset::@return
   breturn:
   //SEG433 [225] return 
     rts
@@ -5660,8 +5703,8 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:57 [ b
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:57 [ bitmap_clear::x#2 bitmap_clear::x#1 ]
 Statement [215] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:3::bitmap_init:17 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:60 [ bitmap_init::y#2 bitmap_init::y#1 ]
-Statement [222] *((byte*) fill::addr#2) ← (const byte) WHITE#0 [ fill::addr#2 ] ( main:3::fill:15 [ fill::addr#2 ] ) always clobbers reg byte a reg byte y 
-Statement [224] if((byte*) fill::addr#1!=(const byte*) fill::end#0) goto fill::@1 [ fill::addr#1 ] ( main:3::fill:15 [ fill::addr#1 ] ) always clobbers reg byte a 
+Statement [222] *((byte*) memset::dst#2) ← (const byte) WHITE#0 [ memset::dst#2 ] ( main:3::memset:15 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [224] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:3::memset:15 [ memset::dst#1 ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) PROCPORT#0) ← (const byte) PROCPORT_RAM_IO#0 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) D011#0) ← (const byte) VIC_BMM#0|(const byte) VIC_DEN#0|(const byte) VIC_RSEL#0|(byte) 3 [ ] ( main:3 [ ] ) always clobbers reg byte a 
@@ -5766,8 +5809,8 @@ Statement [188] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word~) bitmap_clear:
 Statement [191] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ( main:3::bitmap_clear:19 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ) always clobbers reg byte a reg byte y 
 Statement [208] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] ( main:3::bitmap_init:17 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] ) always clobbers reg byte a 
 Statement [215] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:3::bitmap_init:17 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ) always clobbers reg byte a 
-Statement [222] *((byte*) fill::addr#2) ← (const byte) WHITE#0 [ fill::addr#2 ] ( main:3::fill:15 [ fill::addr#2 ] ) always clobbers reg byte a reg byte y 
-Statement [224] if((byte*) fill::addr#1!=(const byte*) fill::end#0) goto fill::@1 [ fill::addr#1 ] ( main:3::fill:15 [ fill::addr#1 ] ) always clobbers reg byte a 
+Statement [222] *((byte*) memset::dst#2) ← (const byte) WHITE#0 [ memset::dst#2 ] ( main:3::memset:15 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
+Statement [224] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 [ memset::dst#1 ] ( main:3::memset:15 [ memset::dst#1 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ render_sine::sin_idx#2 render_sine::sin_idx#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ render_sine::xpos#3 render_sine::xpos#8 render_sine::xpos#1 ] : zp ZP_WORD:4 , 
 Potential registers zp ZP_BYTE:6 [ bitmap_plot::y#2 bitmap_plot::y#0 bitmap_plot::y#1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
@@ -5798,7 +5841,7 @@ Potential registers zp ZP_BYTE:58 [ bitmap_init::bits#3 bitmap_init::bits#4 bitm
 Potential registers zp ZP_BYTE:59 [ bitmap_init::x#2 bitmap_init::x#1 ] : zp ZP_BYTE:59 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:60 [ bitmap_init::y#2 bitmap_init::y#1 ] : zp ZP_BYTE:60 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:61 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] : zp ZP_WORD:61 , 
-Potential registers zp ZP_WORD:63 [ fill::addr#2 fill::addr#1 ] : zp ZP_WORD:63 , 
+Potential registers zp ZP_WORD:63 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:63 , 
 Potential registers zp ZP_WORD:65 [ render_sine::$10 ] : zp ZP_WORD:65 , 
 Potential registers zp ZP_WORD:67 [ render_sine::$0 ] : zp ZP_WORD:67 , 
 Potential registers zp ZP_WORD:69 [ render_sine::sin_val#0 ] : zp ZP_WORD:69 , 
@@ -5871,7 +5914,7 @@ Uplift Scope [sin16s] 27.5: zp ZP_DWORD:36 [ sin16s::x#6 sin16s::x#4 sin16s::x#0
 Uplift Scope [mulu16_sel] 24: zp ZP_WORD:42 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] 21: zp ZP_WORD:44 [ mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] 4: zp ZP_WORD:130 [ mulu16_sel::return#0 ] 4: zp ZP_WORD:134 [ mulu16_sel::return#1 ] 4: zp ZP_WORD:138 [ mulu16_sel::return#2 ] 4: zp ZP_WORD:144 [ mulu16_sel::return#10 ] 4: zp ZP_WORD:148 [ mulu16_sel::return#11 ] 4: zp ZP_DWORD:160 [ mulu16_sel::$0 ] 4: zp ZP_DWORD:164 [ mulu16_sel::$1 ] 1.71: zp ZP_WORD:168 [ mulu16_sel::return#12 ] 0.33: zp ZP_BYTE:46 [ mulu16_sel::select#5 ] 
 Uplift Scope [sin16s_gen2] 22: zp ZP_DWORD:105 [ sin16s_gen2::$5 ] 18.33: zp ZP_WORD:17 [ sin16s_gen2::i#2 sin16s_gen2::i#1 ] 11: zp ZP_WORD:109 [ sin16s_gen2::$6 ] 10.33: zp ZP_DWORD:11 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ] 8.8: zp ZP_WORD:15 [ sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ] 0.87: zp ZP_DWORD:93 [ sin16s_gen2::step#0 ] 
 Uplift Scope [mul16s] 22: zp ZP_DWORD:101 [ mul16s::return#2 ] 10: zp ZP_DWORD:19 [ mul16s::m#4 mul16s::m#1 mul16s::m#0 ] 4.33: zp ZP_DWORD:119 [ mul16s::return#0 ] 4: zp ZP_WORD:115 [ mul16s::$9 ] 4: zp ZP_WORD:117 [ mul16s::$16 ] 2.6: zp ZP_WORD:99 [ mul16s::a#0 ] 
-Uplift Scope [fill] 33: zp ZP_WORD:63 [ fill::addr#2 fill::addr#1 ] 
+Uplift Scope [memset] 33: zp ZP_WORD:63 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [div32u16u] 4: zp ZP_DWORD:89 [ div32u16u::return#2 ] 4: zp ZP_WORD:176 [ div32u16u::quotient_lo#0 ] 1.33: zp ZP_DWORD:178 [ div32u16u::return#0 ] 0.8: zp ZP_WORD:172 [ div32u16u::quotient_hi#0 ] 
 Uplift Scope [] 0.8: zp ZP_WORD:184 [ rem16u#1 ] 
 Uplift Scope [main] 
@@ -5888,7 +5931,7 @@ Uplifting [sin16s] best 34594 combination zp ZP_DWORD:36 [ sin16s::x#6 sin16s::x
 Uplifting [mulu16_sel] best 34578 combination zp ZP_WORD:42 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] zp ZP_WORD:44 [ mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] zp ZP_WORD:130 [ mulu16_sel::return#0 ] zp ZP_WORD:134 [ mulu16_sel::return#1 ] zp ZP_WORD:138 [ mulu16_sel::return#2 ] zp ZP_WORD:144 [ mulu16_sel::return#10 ] zp ZP_WORD:148 [ mulu16_sel::return#11 ] zp ZP_DWORD:160 [ mulu16_sel::$0 ] zp ZP_DWORD:164 [ mulu16_sel::$1 ] zp ZP_WORD:168 [ mulu16_sel::return#12 ] reg byte x [ mulu16_sel::select#5 ] 
 Uplifting [sin16s_gen2] best 34578 combination zp ZP_DWORD:105 [ sin16s_gen2::$5 ] zp ZP_WORD:17 [ sin16s_gen2::i#2 sin16s_gen2::i#1 ] zp ZP_WORD:109 [ sin16s_gen2::$6 ] zp ZP_DWORD:11 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ] zp ZP_WORD:15 [ sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ] zp ZP_DWORD:93 [ sin16s_gen2::step#0 ] 
 Uplifting [mul16s] best 34578 combination zp ZP_DWORD:101 [ mul16s::return#2 ] zp ZP_DWORD:19 [ mul16s::m#4 mul16s::m#1 mul16s::m#0 ] zp ZP_DWORD:119 [ mul16s::return#0 ] zp ZP_WORD:115 [ mul16s::$9 ] zp ZP_WORD:117 [ mul16s::$16 ] zp ZP_WORD:99 [ mul16s::a#0 ] 
-Uplifting [fill] best 34578 combination zp ZP_WORD:63 [ fill::addr#2 fill::addr#1 ] 
+Uplifting [memset] best 34578 combination zp ZP_WORD:63 [ memset::dst#2 memset::dst#1 ] 
 Uplifting [div32u16u] best 34578 combination zp ZP_DWORD:89 [ div32u16u::return#2 ] zp ZP_WORD:176 [ div32u16u::quotient_lo#0 ] zp ZP_DWORD:178 [ div32u16u::return#0 ] zp ZP_WORD:172 [ div32u16u::quotient_hi#0 ] 
 Uplifting [] best 34578 combination zp ZP_WORD:184 [ rem16u#1 ] 
 Uplifting [main] best 34578 combination 
@@ -5961,7 +6004,7 @@ Allocated (was zp ZP_WORD:51) zp ZP_WORD:41 [ divr16u::quotient#3 divr16u::retur
 Allocated (was zp ZP_BYTE:54) zp ZP_BYTE:43 [ bitmap_clear::y#4 bitmap_clear::y#1 ]
 Allocated (was zp ZP_WORD:55) zp ZP_WORD:44 [ bitmap_clear::bitmap#2 bitmap_clear::bitmap#3 bitmap_clear::bitmap#5 bitmap_clear::bitmap#1 bitmap_clear::$3 ]
 Allocated (was zp ZP_WORD:61) zp ZP_WORD:46 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
-Allocated (was zp ZP_WORD:63) zp ZP_WORD:48 [ fill::addr#2 fill::addr#1 ]
+Allocated (was zp ZP_WORD:63) zp ZP_WORD:48 [ memset::dst#2 memset::dst#1 ]
 Allocated (was zp ZP_WORD:81) zp ZP_WORD:50 [ bitmap_plot::$3 bitmap_plot::plotter#1 ]
 Allocated (was zp ZP_WORD:83) zp ZP_WORD:52 [ bitmap_plot::$1 ]
 Allocated (was zp ZP_DWORD:89) zp ZP_DWORD:54 [ div32u16u::return#2 sin16s_gen2::step#0 div32u16u::return#0 ]
@@ -6082,10 +6125,10 @@ main: {
   //SEG27 [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  //SEG28 [15] call fill 
-  //SEG29 [220] phi from main::@3 to fill [phi:main::@3->fill]
-  fill_from_b3:
-    jsr fill
+  //SEG28 [15] call memset 
+  //SEG29 [220] phi from main::@3 to memset [phi:main::@3->memset]
+  memset_from_b3:
+    jsr memset
   //SEG30 [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   b4_from_b3:
     jmp b4
@@ -7405,44 +7448,45 @@ bitmap_init: {
   //SEG422 [219] return 
     rts
 }
-//SEG423 fill
-// Fill some memory with a value
-fill: {
-    .const size = $3e8
-    .label end = SCREEN+size
-    .label addr = $30
-  //SEG424 [221] phi from fill to fill::@1 [phi:fill->fill::@1]
-  b1_from_fill:
-  //SEG425 [221] phi (byte*) fill::addr#2 = (const byte*) SCREEN#0 [phi:fill->fill::@1#0] -- pbuz1=pbuc1 
-    lda #<SCREEN
-    sta addr
-    lda #>SCREEN
-    sta addr+1
+//SEG423 memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const num = $3e8
+    .label str = SCREEN
+    .label end = str+num
+    .label dst = $30
+  //SEG424 [221] phi from memset to memset::@1 [phi:memset->memset::@1]
+  b1_from_memset:
+  //SEG425 [221] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
     jmp b1
-  //SEG426 [221] phi from fill::@1 to fill::@1 [phi:fill::@1->fill::@1]
+  //SEG426 [221] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
   b1_from_b1:
-  //SEG427 [221] phi (byte*) fill::addr#2 = (byte*) fill::addr#1 [phi:fill::@1->fill::@1#0] -- register_copy 
+  //SEG427 [221] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
     jmp b1
-  //SEG428 fill::@1
+  //SEG428 memset::@1
   b1:
-  //SEG429 [222] *((byte*) fill::addr#2) ← (const byte) WHITE#0 -- _deref_pbuz1=vbuc1 
+  //SEG429 [222] *((byte*) memset::dst#2) ← (const byte) WHITE#0 -- _deref_pbuz1=vbuc1 
     lda #WHITE
     ldy #0
-    sta (addr),y
-  //SEG430 [223] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
-    inc addr
+    sta (dst),y
+  //SEG430 [223] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
     bne !+
-    inc addr+1
+    inc dst+1
   !:
-  //SEG431 [224] if((byte*) fill::addr#1!=(const byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda addr+1
+  //SEG431 [224] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
     cmp #>end
     bne b1_from_b1
-    lda addr
+    lda dst
     cmp #<end
     bne b1_from_b1
     jmp breturn
-  //SEG432 fill::@return
+  //SEG432 memset::@return
   breturn:
   //SEG433 [225] return 
     rts
@@ -7639,7 +7683,7 @@ Removing instruction vicSelectGfxBank1:
 Removing instruction vicSelectGfxBank1_b1:
 Removing instruction b2:
 Removing instruction b3:
-Removing instruction fill_from_b3:
+Removing instruction memset_from_b3:
 Removing instruction b4:
 Removing instruction b5:
 Removing instruction b6:
@@ -7703,7 +7747,7 @@ Removing instruction b2_from_b1:
 Removing instruction b3_from_b2:
 Removing instruction b5:
 Removing instruction breturn:
-Removing instruction b1_from_fill:
+Removing instruction b1_from_memset:
 Removing instruction breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
@@ -7895,18 +7939,6 @@ FINAL SYMBOL TABLE
 (word) divr16u::return#0 return zp ZP_WORD:41 5.285714285714286
 (word) divr16u::return#2 return zp ZP_WORD:41 4.0
 (word) divr16u::return#3 return zp ZP_WORD:41 4.0
-(void()) fill((byte*) fill::start , (word) fill::size , (byte) fill::val)
-(label) fill::@1
-(label) fill::@return
-(byte*) fill::addr
-(byte*) fill::addr#1 addr zp ZP_WORD:48 16.5
-(byte*) fill::addr#2 addr zp ZP_WORD:48 16.5
-(byte*) fill::end
-(const byte*) fill::end#0 end = (const byte*) SCREEN#0+(const word) fill::size#0
-(word) fill::size
-(const word) fill::size#0 size = (word) $3e8
-(byte*) fill::start
-(byte) fill::val
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -7941,6 +7973,20 @@ FINAL SYMBOL TABLE
 (byte*) main::vicSelectGfxBank1_toDd001_gfx
 (byte) main::vicSelectGfxBank1_toDd001_return
 (const byte) main::vicSelectGfxBank1_toDd001_return#0 vicSelectGfxBank1_toDd001_return = (byte) 3
+(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+(label) memset::@1
+(label) memset::@return
+(byte) memset::c
+(byte*) memset::dst
+(byte*) memset::dst#1 dst zp ZP_WORD:48 16.5
+(byte*) memset::dst#2 dst zp ZP_WORD:48 16.5
+(byte*) memset::end
+(const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
+(word) memset::num
+(const word) memset::num#0 num = (word) $3e8
+(void*) memset::return
+(void*) memset::str
+(const void*) memset::str#0 str = (void*)(const byte*) SCREEN#0
 (signed dword()) mul16s((signed word) mul16s::a , (signed word) mul16s::b)
 (word~) mul16s::$16 $16 zp ZP_WORD:60 4.0
 (word~) mul16s::$9 $9 zp ZP_WORD:60 4.0
@@ -8166,7 +8212,7 @@ reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
 reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ]
 reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ]
 zp ZP_WORD:46 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
-zp ZP_WORD:48 [ fill::addr#2 fill::addr#1 ]
+zp ZP_WORD:48 [ memset::dst#2 memset::dst#1 ]
 reg byte a [ wrap_y::return#0 ]
 reg byte x [ render_sine::ypos#0 ]
 reg byte a [ wrap_y::return#1 ]
@@ -8278,9 +8324,9 @@ main: {
   //SEG27 [14] *((const byte*) D018#0) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-  //SEG28 [15] call fill 
-  //SEG29 [220] phi from main::@3 to fill [phi:main::@3->fill]
-    jsr fill
+  //SEG28 [15] call memset 
+  //SEG29 [220] phi from main::@3 to memset [phi:main::@3->memset]
+    jsr memset
   //SEG30 [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   //SEG31 main::@4
   //SEG32 [17] call bitmap_init 
@@ -9408,39 +9454,40 @@ bitmap_init: {
   //SEG422 [219] return 
     rts
 }
-//SEG423 fill
-// Fill some memory with a value
-fill: {
-    .const size = $3e8
-    .label end = SCREEN+size
-    .label addr = $30
-  //SEG424 [221] phi from fill to fill::@1 [phi:fill->fill::@1]
-  //SEG425 [221] phi (byte*) fill::addr#2 = (const byte*) SCREEN#0 [phi:fill->fill::@1#0] -- pbuz1=pbuc1 
-    lda #<SCREEN
-    sta addr
-    lda #>SCREEN
-    sta addr+1
-  //SEG426 [221] phi from fill::@1 to fill::@1 [phi:fill::@1->fill::@1]
-  //SEG427 [221] phi (byte*) fill::addr#2 = (byte*) fill::addr#1 [phi:fill::@1->fill::@1#0] -- register_copy 
-  //SEG428 fill::@1
+//SEG423 memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const num = $3e8
+    .label str = SCREEN
+    .label end = str+num
+    .label dst = $30
+  //SEG424 [221] phi from memset to memset::@1 [phi:memset->memset::@1]
+  //SEG425 [221] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
+  //SEG426 [221] phi from memset::@1 to memset::@1 [phi:memset::@1->memset::@1]
+  //SEG427 [221] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@1->memset::@1#0] -- register_copy 
+  //SEG428 memset::@1
   b1:
-  //SEG429 [222] *((byte*) fill::addr#2) ← (const byte) WHITE#0 -- _deref_pbuz1=vbuc1 
+  //SEG429 [222] *((byte*) memset::dst#2) ← (const byte) WHITE#0 -- _deref_pbuz1=vbuc1 
     lda #WHITE
     ldy #0
-    sta (addr),y
-  //SEG430 [223] (byte*) fill::addr#1 ← ++ (byte*) fill::addr#2 -- pbuz1=_inc_pbuz1 
-    inc addr
+    sta (dst),y
+  //SEG430 [223] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc dst
     bne !+
-    inc addr+1
+    inc dst+1
   !:
-  //SEG431 [224] if((byte*) fill::addr#1!=(const byte*) fill::end#0) goto fill::@1 -- pbuz1_neq_pbuc1_then_la1 
-    lda addr+1
+  //SEG431 [224] if((byte*) memset::dst#1!=(const byte*) memset::end#0) goto memset::@1 -- pbuz1_neq_pbuc1_then_la1 
+    lda dst+1
     cmp #>end
     bne b1
-    lda addr
+    lda dst
     cmp #<end
     bne b1
-  //SEG432 fill::@return
+  //SEG432 memset::@return
   //SEG433 [225] return 
     rts
 }

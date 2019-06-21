@@ -46,6 +46,8 @@ Adding pointer type conversion cast to void pointer (byte*) memcpy::source in (b
 Adding pointer type conversion cast to void pointer (byte*) memcpy::destination in (byte*) memcpy::dst ← (void*) memcpy::destination
 Adding pointer type conversion cast to void pointer (byte*) memmove::$3 in (byte*) memmove::src ← (void*~) memmove::$3
 Adding pointer type conversion cast to void pointer (byte*) memmove::$4 in (byte*) memmove::dst ← (void*~) memmove::$4
+Adding pointer type conversion cast to void pointer (byte*) memset::$0 in (byte*) memset::end ← (void*~) memset::$0
+Adding pointer type conversion cast to void pointer (byte*) memset::str in (byte*) memset::dst ← (void*) memset::str
 Adding pointer type conversion cast (byte*) MEDUSA_SCREEN in (byte*) MEDUSA_SCREEN ← (number) $1000
 Adding pointer type conversion cast (byte*) MEDUSA_COLORS in (byte*) MEDUSA_COLORS ← (number) $1400
 Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
@@ -65,6 +67,7 @@ Culled Empty Block (label) @4
 Culled Empty Block (label) memcpy::@3
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
+Culled Empty Block (label) @7
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
@@ -75,7 +78,7 @@ CONTROL FLOW GRAPH SSA
   (byte*) BGCOL#0 ← ((byte*)) (number) $d021
   (byte*) COLS#0 ← ((byte*)) (number) $d800
   (byte) BLACK#0 ← (number) 0
-  to:@7
+  to:@8
 memcpy: scope:[memcpy]  from main main::@7
   (word) memcpy::num#3 ← phi( main/(word) memcpy::num#0 main::@7/(word) memcpy::num#1 )
   (void*) memcpy::destination#2 ← phi( main/(void*) memcpy::destination#0 main::@7/(void*) memcpy::destination#1 )
@@ -106,7 +109,7 @@ memcpy::@return: scope:[memcpy]  from memcpy::@2
   (void*) memcpy::return#1 ← (void*) memcpy::return#4
   return 
   to:@return
-@7: scope:[]  from @begin
+@8: scope:[]  from @begin
   (byte*) MEDUSA_SCREEN#0 ← ((byte*)) (number) $1000
   (byte*) MEDUSA_COLORS#0 ← ((byte*)) (number) $1400
   (byte*) SCREEN#0 ← ((byte*)) (number) $400
@@ -116,8 +119,8 @@ memcpy::@return: scope:[memcpy]  from memcpy::@2
   kickasm(location (byte*) MEDUSA_COLORS#0) {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
  }}
-  to:@8
-main: scope:[main]  from @8
+  to:@9
+main: scope:[main]  from @9
   *((byte*) BGCOL#0) ← (byte) BLACK#0
   (void*) memcpy::destination#0 ← (void*)(byte*) SCREEN#0
   (void*) memcpy::source#0 ← (void*)(byte*) MEDUSA_SCREEN#0
@@ -144,15 +147,15 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@8: scope:[]  from @7
-  call main 
-  to:@9
 @9: scope:[]  from @8
+  call main 
+  to:@10
+@10: scope:[]  from @9
   to:@end
-@end: scope:[]  from @9
+@end: scope:[]  from @10
 
 SYMBOL TABLE SSA
-(label) @7
+(label) @10
 (label) @8
 (label) @9
 (label) @begin
@@ -316,8 +319,8 @@ Identical Phi Values (word) memcpy::num#3 (word) $3e8
 Successful SSA optimization Pass2IdenticalPhiElimination
 Added new block during phi lifting memcpy::@4(between memcpy::@1 and memcpy::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @8
 Adding NOP phi() at start of @9
+Adding NOP phi() at start of @10
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@7
 Adding NOP phi() at start of main::@8
@@ -332,13 +335,13 @@ Coalesced [25] memcpy::src#4 ← memcpy::src#1
 Coalesced [26] memcpy::dst#4 ← memcpy::dst#1
 Coalesced [27] memcpy::i#3 ← memcpy::i#1
 Coalesced down to 5 phi equivalence classes
-Culled Empty Block (label) @9
+Culled Empty Block (label) @10
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) memcpy::@2
 Culled Empty Block (label) memcpy::@4
-Renumbering block @7 to @1
-Renumbering block @8 to @2
+Renumbering block @8 to @1
+Renumbering block @9 to @2
 Renumbering block main::@2 to main::@1
 Renumbering block main::@7 to main::@2
 Adding NOP phi() at start of @begin

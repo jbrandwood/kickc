@@ -1,4 +1,5 @@
 import "c64.kc"
+import "string"
 
 byte* SCREEN = $400;
 byte* LOGO = $2000;
@@ -17,8 +18,8 @@ void main() {
     *BGCOL3 = BLACK;
     *D018 = toD018(SCREEN, LOGO);
     *D016 = VIC_MCM | VIC_CSEL;
-    fill(SCREEN, 40*25, BLACK);
-    fill(COLS, 40*25, WHITE|8);
+    memset(SCREEN, BLACK, 40*25);
+    memset(COLS, WHITE|8, 40*25);
     for(byte ch: 0..239) {
         SCREEN[ch] = ch;
     }
@@ -27,12 +28,3 @@ void main() {
         kickasm {{ inc $d020 }}
     }
 }
-
-// Fill some memory with a value
-void fill(byte* start, word size, byte val) {
-    byte* end = start + size;
-    for(byte* addr = start; addr!=end; addr++) {
-        *addr = val;
-    }
-}
-

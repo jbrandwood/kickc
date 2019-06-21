@@ -55,7 +55,7 @@ main: {
     sta D016
     lda #toD0181_return
     sta D018
-    jsr fill
+    jsr memset
     jsr bitmap_init
     jsr bitmap_clear
     jsr sin16s_gen2
@@ -790,27 +790,28 @@ bitmap_init: {
     bne b3
     rts
 }
-// Fill some memory with a value
-fill: {
-    .const size = $3e8
-    .label end = SCREEN+size
-    .label addr = $30
-    lda #<SCREEN
-    sta addr
-    lda #>SCREEN
-    sta addr+1
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const num = $3e8
+    .label str = SCREEN
+    .label end = str+num
+    .label dst = $30
+    lda #<str
+    sta dst
+    lda #>str
+    sta dst+1
   b1:
     lda #WHITE
     ldy #0
-    sta (addr),y
-    inc addr
+    sta (dst),y
+    inc dst
     bne !+
-    inc addr+1
+    inc dst+1
   !:
-    lda addr+1
+    lda dst+1
     cmp #>end
     bne b1
-    lda addr
+    lda dst
     cmp #<end
     bne b1
     rts

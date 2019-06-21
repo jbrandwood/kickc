@@ -237,24 +237,20 @@ point_init: {
     jmp b5
   abs16s2_b1:
     sec
-    lda y_diff
-    eor #$ff
-    adc #0
+    lda #0
+    sbc y_diff
     sta abs16s2_return
-    lda y_diff+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc y_diff+1
     sta abs16s2_return+1
     jmp b6
   abs16s1_b1:
     sec
-    lda x_diff
-    eor #$ff
-    adc #0
+    lda #0
+    sbc x_diff
     sta abs16s1_return
-    lda x_diff+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc x_diff+1
     sta abs16s1_return+1
     jmp abs16s2
 }
@@ -282,25 +278,21 @@ divr16s: {
     cpy #0
     beq breturn
     sec
-    lda return
-    eor #$ff
-    adc #0
+    lda #0
+    sbc return
     sta return
-    lda return+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc return+1
     sta return+1
   breturn:
     rts
   b3:
     sec
-    lda divisoru
-    eor #$ff
-    adc #0
+    lda #0
+    sbc divisoru
     sta divisoru
-    lda divisoru+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc divisoru+1
     sta divisoru+1
     tya
     eor #1
@@ -308,13 +300,11 @@ divr16s: {
     jmp b4
   b1:
     sec
-    lda remu
-    eor #$ff
-    adc #0
+    lda #0
+    sbc remu
     sta remu
-    lda remu+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc remu+1
     sta remu+1
     ldy #1
     jmp b2

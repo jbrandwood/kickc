@@ -146,6 +146,9 @@ public class Pass4CodeGeneration {
          }
       }
       generateScopeEnding(asm, currentScope);
+
+      currentScope = ScopeRef.ROOT;
+      asm.startSegment(currentScope, null, "File Data");
       addData(asm, ScopeRef.ROOT);
       // Add all absolutely placed inline KickAsm
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {

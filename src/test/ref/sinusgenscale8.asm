@@ -268,13 +268,11 @@ print_sword: {
     lda #'-'
     jsr print_char
     sec
-    lda w
-    eor #$ff
-    adc #0
+    lda #0
+    sbc w
     sta w
-    lda w+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc w+1
     sta w+1
   b1:
     lda w

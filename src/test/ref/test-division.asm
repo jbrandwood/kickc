@@ -107,13 +107,11 @@ print_sword: {
     lda #'-'
     jsr print_char
     sec
-    lda w
-    eor #$ff
-    adc #0
+    lda #0
+    sbc w
     sta w
-    lda w+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc w+1
     sta w+1
   b1:
     jsr print_word
@@ -233,34 +231,28 @@ divr16s: {
     cpy #0
     beq breturn
     sec
-    lda rem16s
-    eor #$ff
-    adc #0
+    lda #0
+    sbc rem16s
     sta rem16s
-    lda rem16s+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc rem16s+1
     sta rem16s+1
     sec
-    lda return
-    eor #$ff
-    adc #0
+    lda #0
+    sbc return
     sta return
-    lda return+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc return+1
     sta return+1
   breturn:
     rts
   b3:
     sec
-    lda _13
-    eor #$ff
-    adc #0
+    lda #0
+    sbc _13
     sta _13
-    lda _13+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc _13+1
     sta _13+1
     tya
     eor #1
@@ -268,13 +260,11 @@ divr16s: {
     jmp b4
   b1:
     sec
-    lda _8
-    eor #$ff
-    adc #0
+    lda #0
+    sbc _8
     sta _8
-    lda _8+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc _8+1
     sta _8+1
     ldy #1
     jmp b2

@@ -97,7 +97,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
       if(variable.getType() instanceof SymbolTypePointer) {
          SymbolTypePointer pointerType = (SymbolTypePointer) variable.getType();
          if(SymbolType.VOID.equals(pointerType.getElementType())) {
-            throw new CompileError("Void pointer math not allowed. ", assignment);
+            if(Operators.PLUS.equals(assignment.getOperator()) || Operators.MINUS.equals(assignment.getOperator())) {
+               throw new CompileError("Void pointer math not allowed. ", assignment);
+            }
          }
          if(pointerType.getElementType().getSizeBytes() > 1) {
             // Binary operation on a non-byte pointer - sizeof()-handling is probably needed!
@@ -128,7 +130,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
       if(variable.getType() instanceof SymbolTypePointer) {
          SymbolTypePointer pointerType = (SymbolTypePointer) variable.getType();
          if(SymbolType.VOID.equals(pointerType.getElementType())) {
-            throw new CompileError("Void pointer math not allowed. ", assignment);
+            if(Operators.INCREMENT.equals(assignment.getOperator()) || Operators.DECREMENT.equals(assignment.getOperator())) {
+               throw new CompileError("Void pointer math not allowed. ", assignment);
+            }
          }
          if(pointerType.getElementType().getSizeBytes() > 1) {
             // Unary operation on non-byte pointer type - sizeof()-handling is needed!

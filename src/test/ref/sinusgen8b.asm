@@ -410,13 +410,11 @@ sin16s: {
     cmp #0
     beq b3
     sec
-    lda sinx
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx
     sta sinx
-    lda sinx+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx+1
     sta sinx+1
   b3:
     rts

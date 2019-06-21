@@ -57,13 +57,11 @@ anim: {
     lda ypos+1
     bpl b1
     sec
-    lda xvel
-    eor #$ff
-    adc #0
+    lda #0
+    sbc xvel
     sta xvel
-    lda xvel+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc xvel+1
     sta xvel+1
     lda yvel_init
     sec

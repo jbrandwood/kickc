@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testBitmapPlot() throws IOException, URISyntaxException {
+      compileAndCompare("bitmap-plot", log());
+   }
+
+   @Test
    public void testCallParameterAutocast() throws IOException, URISyntaxException {
       compileAndCompare("call-parameter-autocast");
    }

@@ -585,13 +585,11 @@ sin16s: {
     cmp #0
     beq b3
     sec
-    lda sinx
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx
     sta sinx
-    lda sinx+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx+1
     sta sinx+1
   b3:
     rts
@@ -725,16 +723,16 @@ divr16u: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zeropage($29) str, byte register(X) c)
 memset: {
-    .label _0 = $3e
+    .label end = $3e
     .label dst = $29
     .label str = $29
     lda str
     clc
     adc #<$3e8
-    sta _0
+    sta end
     lda str+1
     adc #>$3e8
-    sta _0+1
+    sta end+1
   b1:
     txa
     ldy #0
@@ -744,10 +742,10 @@ memset: {
     inc dst+1
   !:
     lda dst+1
-    cmp _0+1
+    cmp end+1
     bne b1
     lda dst
-    cmp _0
+    cmp end
     bne b1
     rts
 }

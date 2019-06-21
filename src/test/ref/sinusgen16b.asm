@@ -116,13 +116,11 @@ print_sword: {
     lda #'-'
     jsr print_char
     sec
-    lda w
-    eor #$ff
-    adc #0
+    lda #0
+    sbc w
     sta w
-    lda w+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc w+1
     sta w+1
   b1:
     jsr print_word
@@ -394,13 +392,11 @@ sin16sb: {
     cmp #0
     beq b3
     sec
-    lda sinx
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx
     sta sinx
-    lda sinx+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx+1
     sta sinx+1
   b3:
     rts
@@ -822,13 +818,11 @@ sin16s: {
     cmp #0
     beq b3
     sec
-    lda sinx
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx
     sta sinx
-    lda sinx+1
-    eor #$ff
-    adc #0
+    lda #0
+    sbc sinx+1
     sta sinx+1
   b3:
     rts

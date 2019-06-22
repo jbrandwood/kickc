@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMemcpy0() throws IOException, URISyntaxException {
+      compileAndCompare("memcpy-0", log());
+   }
+
+   @Test
    public void testBitmapPlot2() throws IOException, URISyntaxException {
       compileAndCompare("bitmap-plot-2", log());
    }

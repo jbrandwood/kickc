@@ -36,8 +36,13 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFontHex() throws IOException, URISyntaxException {
+      compileAndCompare("font-hex");
+   }
+
+   @Test
    public void testMemcpy0() throws IOException, URISyntaxException {
-      compileAndCompare("memcpy-0", log());
+      compileAndCompare("memcpy-0");
    }
 
    @Test

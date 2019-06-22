@@ -542,6 +542,12 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite wv.z1=(word)_ror_4 to wv.z1=(word)
       synths.add(new AsmFragmentTemplateSynthesisRule("vw(.*)z1=(.*)_ror_4", rvalAa, null, "vw$1z1=$2", "lsr {z1}+1\nror {z1}\nlsr {z1}+1\nror {z1}\nlsr {z1}+1\nror {z1}\nlsr {z1}+1\nror {z1}", null, null));
 
+      // Rewrite vbuaa=(byte)_rol_N to wbuz1=(byte)
+      synths.add(new AsmFragmentTemplateSynthesisRule("vbuaa=(.*)_rol_1", rvalAa, null, "vbuaa=$1", "asl", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("vbuaa=(.*)_rol_2", rvalAa, null, "vbuaa=$1", "asl\nasl", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("vbuaa=(.*)_rol_3", rvalAa, null, "vbuaa=$1", "asl\nasl\nasl", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("vbuaa=(.*)_rol_4", rvalAa, null, "vbuaa=$1", "asl\nasl\nasl\nasl", null, null));
+
       // Rewrite multiple _derefidx_vbuc1 to use YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuc1(.*)_derefidx_vbuc1(.*)", rvalYy+"|"+ threeC1, "ldy #{c1}", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, mapC1));
 

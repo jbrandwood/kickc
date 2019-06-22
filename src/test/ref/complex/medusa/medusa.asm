@@ -42,15 +42,27 @@ main: {
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 // memcpy(void* zeropage(4) destination, void* zeropage(2) source)
 memcpy: {
+    .label src_end = 6
     .label dst = 4
     .label src = 2
-    .label i = 6
     .label source = 2
     .label destination = 4
-    lda #0
-    sta i
-    sta i+1
+    lda source
+    clc
+    adc #<$3e8
+    sta src_end
+    lda source+1
+    adc #>$3e8
+    sta src_end+1
   b1:
+    lda src+1
+    cmp src_end+1
+    bne b2
+    lda src
+    cmp src_end
+    bne b2
+    rts
+  b2:
     ldy #0
     lda (src),y
     sta (dst),y
@@ -62,19 +74,7 @@ memcpy: {
     bne !+
     inc src+1
   !:
-    inc i
-    bne !+
-    inc i+1
-  !:
-    lda i+1
-    cmp #>$3e8
-    bcc b1
-    bne !+
-    lda i
-    cmp #<$3e8
-    bcc b1
-  !:
-    rts
+    jmp b1
 }
 .pc = MEDUSA_SCREEN "MEDUSA_SCREEN"
   .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)

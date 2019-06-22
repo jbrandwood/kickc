@@ -1,4 +1,4 @@
-// Test memcpy - copy charset and screen
+// Test memcpy - copy charset and screen using memcpy() from stdlib string
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -56,16 +56,28 @@ main: {
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 // memcpy(void* zeropage(4) destination, void* zeropage(2) source, word zeropage(6) num)
 memcpy: {
+    .label src_end = 6
     .label dst = 4
     .label src = 2
-    .label i = 8
     .label source = 2
     .label destination = 4
     .label num = 6
-    lda #0
-    sta i
-    sta i+1
+    lda src_end
+    clc
+    adc source
+    sta src_end
+    lda src_end+1
+    adc source+1
+    sta src_end+1
   b1:
+    lda src+1
+    cmp src_end+1
+    bne b2
+    lda src
+    cmp src_end
+    bne b2
+    rts
+  b2:
     ldy #0
     lda (src),y
     sta (dst),y
@@ -77,17 +89,5 @@ memcpy: {
     bne !+
     inc src+1
   !:
-    inc i
-    bne !+
-    inc i+1
-  !:
-    lda i+1
-    cmp num+1
-    bcc b1
-    bne !+
-    lda i
-    cmp num
-    bcc b1
-  !:
-    rts
+    jmp b1
 }

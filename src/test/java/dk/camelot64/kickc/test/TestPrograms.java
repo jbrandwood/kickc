@@ -36,8 +36,8 @@ public class TestPrograms {
    }
 
    @Test
-   public void testFontHex() throws IOException, URISyntaxException {
-      compileAndCompare("font-hex");
+   public void testFontHexShow() throws IOException, URISyntaxException {
+      compileAndCompare("font-hex-show");
    }
 
    @Test

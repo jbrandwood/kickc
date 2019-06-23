@@ -1,40 +1,26 @@
 // Creates a font where each char contains the number of the char (00-ff)
 
-import "c64"
-import "string"
-
-byte* SCREEN = 0x0400;
-byte* CHARSET = 0x2000;
-
-void main() {
-    *D018 = toD018(SCREEN, CHARSET);
-
-    // Make charset from proto chars
-    byte* charset = CHARSET;
+// Make charset from proto chars
+void init_font_hex(byte* charset) {
     byte* proto_hi = FONT_HEX_PROTO;
     for( byte c: 0..15 ) {
         byte* proto_lo = FONT_HEX_PROTO;
         for( byte c: 0..15 ) {
+            byte idx = 0;
+            charset[idx++] = 0;
             for( byte i: 0..4) {
-                charset[i] = proto_hi[i]<<3 | proto_lo[i];
+                charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
             }
-            charset[5] = 0;
-            charset[6] = 0;
-            charset[7] = 0;
+            charset[idx++] = 0;
+            charset[idx++] = 0;
             proto_lo += 5;
             charset += 8;
         }
         proto_hi += 5;
     }
-
-    // Show all chars on screen
-    for (byte c: 0..255) {
-        SCREEN[c] = c;
-    }
-
 }
 
-// Bit patterns for symbols 0-f (3x5 pixels)
+// Bit patterns for symbols 0-f (3x5 pixels) used in font hex
 byte[] FONT_HEX_PROTO = {
     // 0
     0b010,
@@ -109,11 +95,11 @@ byte[] FONT_HEX_PROTO = {
     0b101,
     0b110,
     // c
-    0b011,
+    0b010,
+    0b101,
     0b100,
-    0b100,
-    0b100,
-    0b011,
+    0b101,
+    0b010,
     // d
     0b110,
     0b101,
@@ -123,13 +109,13 @@ byte[] FONT_HEX_PROTO = {
     // e
     0b111,
     0b100,
-    0b111,
+    0b110,
     0b100,
     0b111,
     // f
     0b111,
     0b100,
-    0b111,
+    0b110,
     0b100,
     0b100
 };

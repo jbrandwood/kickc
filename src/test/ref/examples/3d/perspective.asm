@@ -264,13 +264,13 @@ mulf_init: {
     tya
     eor #$ff
     tax
-    axs #1+1
+    axs #-1-1
     lda val
     sta mulf_sqr2,x
     tya
     eor #$ff
     tax
-    axs #1+1
+    axs #-1-1
     lda val
     sta mulf_sqr2+$100,x
     lda sqr

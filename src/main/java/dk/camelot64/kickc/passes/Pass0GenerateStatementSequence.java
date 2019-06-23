@@ -1298,7 +1298,12 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       } else {
          simpleTypeName = "int";
       }
-      return SymbolType.get(signedness + " " + simpleTypeName);
+      String fullName = signedness + " " + simpleTypeName;
+      SymbolType symbolType = SymbolType.get(fullName);
+      if(symbolType==null) {
+         throw new CompileError("Unknown type "+fullName, new StatementSource(ctx));
+      }
+      return symbolType;
    }
 
    @Override

@@ -9,7 +9,7 @@ main: {
     tya
     eor #$ff
     tax
-    axs #$ff+1
+    axs #-$ff-1
     lda #0
     sta table,x
     iny

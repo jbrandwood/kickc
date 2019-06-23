@@ -36,6 +36,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testUnsignedVoidError() throws IOException, URISyntaxException {
+      assertError("unsigned-void-error", "Unknown type unsigned void");
+   }
+
+   @Test
+   public void testScreenCenterDistance() throws IOException, URISyntaxException {
+      compileAndCompare("screen-center-distance");
+   }
+
+   @Test
    public void testFontHexShow() throws IOException, URISyntaxException {
       compileAndCompare("font-hex-show");
    }
@@ -500,6 +510,16 @@ public class TestPrograms {
    @Test
    public void testMemoryHeap() throws IOException, URISyntaxException {
       compileAndCompare("memory-heap");
+   }
+
+   @Test
+   public void testMalloc1() throws IOException, URISyntaxException {
+      compileAndCompare("malloc-1");
+   }
+
+   @Test
+   public void testMalloc0() throws IOException, URISyntaxException {
+      compileAndCompare("malloc-0");
    }
 
    @Test

@@ -1,0 +1,86 @@
+// Calculate the distance to the center of the screen - and show it using font-hex
+
+import "stdlib"
+import "c64"
+import "font-hex"
+
+#reserve(08)
+
+const byte* CHARSET = 0x2000;
+const byte* SCREEN = 0x2800;
+
+void main() {
+    init_font_hex(CHARSET);
+    *D018 = toD018(SCREEN, CHARSET);
+    NUM_SQUARES = 0x30;
+    init_squares();
+    byte* screen = SCREEN;
+    for(byte y: 0..24) {
+        byte y2 = y*2;
+        byte yd = (y2>=24)?(y2-24):(24-y2);
+        word yds = sqr(yd);
+        for(byte x: 0..39) {
+            byte x2 = x*2;
+            byte xd = (x2>=39)?(x2-39):(39-x2);
+            word xds = sqr(xd);
+            word ds = xds+yds;
+            byte d = sqrt(ds);
+            *screen++ = d;
+        }
+    }
+}
+
+// The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
+byte NUM_SQUARES = 0xff;
+
+// Squares for each byte value SQUARES[i] = i*i
+// Initialized by init_squares()
+word* SQUARES;
+
+// Initialize squares table
+// Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
+void init_squares() {
+    SQUARES = malloc(NUM_SQUARES*sizeof(word));
+    word* squares = SQUARES;
+    word sqr = 0;
+    for( byte i: 0..NUM_SQUARES-1) {
+        *squares++ = sqr;
+        sqr += i*2+1;
+    }
+}
+
+// Find the square of a byte value
+// Uses a table of squares that must be initialized by calling init_squares()
+word sqr(byte val) {
+    return SQUARES[val];
+}
+
+// Find the (integer) square root of a word value
+// If the square is not an integer then it returns the largest integer N where N*N <= val
+// Uses a table of squares that must be initialized by calling init_squares()
+byte sqrt(word val) {
+    word* found = bsearch16u(val, SQUARES, NUM_SQUARES);
+    byte sqr1 = (byte)((byte*)found-(byte*)SQUARES)/2;
+    return sqr1;
+}
+
+// Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
+// - key - The value to look for
+// - items - Pointer to the start of the array to search in
+// - num - The number of items in the array
+// Returns pointer to an entry in the array that matches the search key
+word* bsearch16u(word key, word* items, byte num) {
+	while (num > 0) {
+		word* pivot = items + (num >> 1);
+		signed word result = (signed word)key-(signed word)*pivot;
+		if (result == 0)
+			return pivot;
+		if (result > 0) {
+			items = pivot+1;
+			num--;
+		}
+		num >>= 1;
+	}
+	// not found - return closest lower value
+    return *items<=key?items:items-1;
+}

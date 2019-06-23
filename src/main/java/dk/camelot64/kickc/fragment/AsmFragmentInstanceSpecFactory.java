@@ -7,7 +7,10 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
@@ -223,13 +226,29 @@ public class AsmFragmentInstanceSpecFactory {
       if(value instanceof CastValue) {
          CastValue cast = (CastValue) value;
          SymbolType toType = cast.getToType();
-         OperatorUnary castUnary = Operators.getCastUnary(toType);
          RValue castValue = cast.getValue();
          SymbolType castValueType = SymbolTypeInference.inferType(this.program.getScope(), castValue);
          if(castValueType.getSizeBytes() == toType.getSizeBytes()) {
-            return bind(castValue, toType);
+            if(castType != null) {
+               if(castType.getSizeBytes() == toType.getSizeBytes()) {
+                  return bind(castValue, castType);
+               } else {
+                  OperatorUnary castUnary = Operators.getCastUnary(castType);
+                  return getOperatorFragmentName(castUnary) + bind(castValue, toType);
+               }
+            } else {
+               return bind(castValue, toType);
+            }
          } else {
-            return getOperatorFragmentName(castUnary) + bind(castValue);
+            // Size of inner value and inner cast type mismatches - require explicit conversion
+            if(castType != null) {
+               OperatorUnary castUnaryInner = Operators.getCastUnary(toType);
+               OperatorUnary castUnaryOuter = Operators.getCastUnary(castType);
+               return getOperatorFragmentName(castUnaryOuter) + getOperatorFragmentName(castUnaryInner) + bind(castValue);
+            } else {
+               OperatorUnary castUnaryInner = Operators.getCastUnary(toType);
+               return getOperatorFragmentName(castUnaryInner) + bind(castValue);
+            }
          }
       } else if(value instanceof ConstantCastValue) {
          ConstantCastValue castVal = (ConstantCastValue) value;

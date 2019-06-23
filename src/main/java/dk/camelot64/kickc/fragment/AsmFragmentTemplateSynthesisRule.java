@@ -559,6 +559,8 @@ class AsmFragmentTemplateSynthesisRule {
       // Convert array indexing with A register to X/Y register by prefixing tax/tay (..._derefidx_vbuaa... -> ..._derefidx_vbuxx... /... _derefidx_vbuyy... )
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_derefidx_vbuaa(.*)", rvalXx, "tax", "$1=$2_derefidx_vbuxx$3", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_derefidx_vbuaa(.*)", rvalYy, "tay", "$1=$2_derefidx_vbuyy$3", null, null));
+      // Convert array indexing with X register to Y register by prefixing stx/ldy (..._derefidx_vbuxx... -> ..._derefidx_vbuyy...  )
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_derefidx_vbuxx(.*)", rvalYy, "stx $ff\nldy $ff", "$1=$2_derefidx_vbuyy$3", null, null));
 
       // Convert array indexing with zero page to x/y register by prefixing ldx z1 / ldy z1 ( ..._derefidx_vbuzn... -> ..._derefidx_vbuxx... / ..._derefidx_vbuyy... )
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_derefidx_vbuz1(.*)", rvalXx+"|"+twoZ1, "ldx {z1}", "$1=$2_derefidx_vbuxx$3", null, mapZ1));

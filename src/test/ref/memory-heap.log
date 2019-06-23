@@ -1,18 +1,20 @@
 Adding pointer type conversion cast (byte*) HEAP_START in (byte*) HEAP_START ← (number) $c000
-Adding void pointer type conversion cast (void*) main::buf1 in (void~) main::$2 ← call free (byte*) main::buf1 
-Adding void pointer type conversion cast (void*) main::buf2 in (void~) main::$3 ← call free (byte*) main::buf2 
 Adding pointer type conversion cast (byte*) main::screen in (byte*) main::screen ← (number) $400
+Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
+Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Identified constant variable (byte*) HEAP_START
 Identified constant variable (byte*) main::screen
 Culled Empty Block (label) malloc::@1
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
+Culled Empty Block (label) @3
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) HEAP_START#0 ← ((byte*)) (number) $c000
   (byte*) heap_head#0 ← (byte*) HEAP_START#0
-  to:@3
+  to:@4
 malloc: scope:[malloc]  from main main::@3
   (word) malloc::size#2 ← phi( main/(word) malloc::size#0 main::@3/(word) malloc::size#1 )
   (byte*) heap_head#7 ← phi( main/(byte*) heap_head#13 main::@3/(byte*) heap_head#3 )
@@ -32,8 +34,8 @@ free: scope:[free]  from main::@2 main::@5
 free::@return: scope:[free]  from free
   return 
   to:@return
-main: scope:[main]  from @3
-  (byte*) heap_head#13 ← phi( @3/(byte*) heap_head#15 )
+main: scope:[main]  from @4
+  (byte*) heap_head#13 ← phi( @4/(byte*) heap_head#15 )
   (word) malloc::size#0 ← (number) $64
   call malloc 
   (byte*) malloc::return#2 ← (byte*) malloc::return#1
@@ -73,14 +75,14 @@ main::@2: scope:[main]  from main::@1
   (byte*) heap_head#17 ← phi( main::@1/(byte*) heap_head#18 )
   (byte*) main::buf2#4 ← phi( main::@1/(byte*) main::buf2#1 )
   (byte*) main::buf1#2 ← phi( main::@1/(byte*) main::buf1#1 )
-  (void*) free::ptr#0 ← (void*)(byte*) main::buf1#2
+  (byte*) free::ptr#0 ← (byte*) main::buf1#2
   call free 
   to:main::@5
 main::@5: scope:[main]  from main::@2
   (byte*) heap_head#16 ← phi( main::@2/(byte*) heap_head#17 )
   (byte*) main::buf1#5 ← phi( main::@2/(byte*) main::buf1#2 )
   (byte*) main::buf2#2 ← phi( main::@2/(byte*) main::buf2#4 )
-  (void*) free::ptr#1 ← (void*)(byte*) main::buf2#2
+  (byte*) free::ptr#1 ← (byte*) main::buf2#2
   call free 
   to:main::@6
 main::@6: scope:[main]  from main::@5
@@ -96,28 +98,28 @@ main::@return: scope:[main]  from main::@6
   (byte*) heap_head#5 ← (byte*) heap_head#11
   return 
   to:@return
-@3: scope:[]  from @begin
+@4: scope:[]  from @begin
   (byte*) heap_head#15 ← phi( @begin/(byte*) heap_head#0 )
   call main 
-  to:@4
-@4: scope:[]  from @3
-  (byte*) heap_head#12 ← phi( @3/(byte*) heap_head#5 )
+  to:@5
+@5: scope:[]  from @4
+  (byte*) heap_head#12 ← phi( @4/(byte*) heap_head#5 )
   (byte*) heap_head#6 ← (byte*) heap_head#12
   to:@end
-@end: scope:[]  from @4
+@end: scope:[]  from @5
 
 SYMBOL TABLE SSA
-(label) @3
 (label) @4
+(label) @5
 (label) @begin
 (label) @end
 (byte*) HEAP_START
 (byte*) HEAP_START#0
-(void()) free((void*) free::ptr)
+(void()) free((byte*) free::ptr)
 (label) free::@return
-(void*) free::ptr
-(void*) free::ptr#0
-(void*) free::ptr#1
+(byte*) free::ptr
+(byte*) free::ptr#0
+(byte*) free::ptr#1
 (byte*) heap_head
 (byte*) heap_head#0
 (byte*) heap_head#1
@@ -251,8 +253,8 @@ Resolved ranged next value [31] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [33] if(main::i#1!=rangelast(0,$63)) goto main::@1 to (number) $64
 Simplifying expression containing zero main::screen#0 in [42] *((const byte*) main::screen#0 + (byte) 0) ← *((byte*) main::buf1#0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (void*) free::ptr#0 and assignment [17] (void*) free::ptr#0 ← (void*)(byte*) main::buf1#0
-Eliminating unused variable (void*) free::ptr#1 and assignment [19] (void*) free::ptr#1 ← (void*)(byte*) main::buf2#0
+Eliminating unused variable (byte*) free::ptr#0 and assignment [17] (byte*) free::ptr#0 ← (byte*) main::buf1#0
+Eliminating unused variable (byte*) free::ptr#1 and assignment [19] (byte*) free::ptr#1 ← (byte*) main::buf2#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) $64 in if((byte) main::i#1!=(number) $64) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -273,8 +275,8 @@ Identical Phi Values (word) malloc::size#2 (byte) $64
 Successful SSA optimization Pass2IdenticalPhiElimination
 Added new block during phi lifting main::@7(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
+Adding NOP phi() at start of @5
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
@@ -288,9 +290,9 @@ Created 2 initial phi equivalence classes
 Coalesced [9] heap_head#19 ← heap_head#1
 Coalesced [26] main::i#3 ← main::i#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @4
+Culled Empty Block (label) @5
 Culled Empty Block (label) main::@7
-Renumbering block @3 to @1
+Renumbering block @4 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -363,8 +365,8 @@ malloc::@return: scope:[malloc]  from malloc
 
 VARIABLE REGISTER WEIGHTS
 (byte*) HEAP_START
-(void()) free((void*) free::ptr)
-(void*) free::ptr
+(void()) free((byte*) free::ptr)
+(byte*) free::ptr
 (byte*) heap_head
 (byte*) heap_head#1 0.8
 (byte*) heap_head#7 3.0
@@ -849,9 +851,9 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte*) HEAP_START
 (const byte*) HEAP_START#0 HEAP_START = (byte*) 49152
-(void()) free((void*) free::ptr)
+(void()) free((byte*) free::ptr)
 (label) free::@return
-(void*) free::ptr
+(byte*) free::ptr
 (byte*) heap_head
 (byte*) heap_head#1 heap_head zp ZP_WORD:2 0.8
 (byte*) heap_head#7 heap_head zp ZP_WORD:2 3.0

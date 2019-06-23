@@ -1,18 +1,22 @@
 Adding pointer type conversion cast (byte*) HEAP_START in (byte*) HEAP_START ← (number) $c000
+Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
+Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer increment (word*) main::w ← ++ (word*) main::w
 Identified constant variable (byte*) HEAP_START
 Culled Empty Block (label) malloc::@1
 Culled Empty Block (label) @1
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) HEAP_START#0 ← ((byte*)) (number) $c000
   (byte*) heap_head#0 ← (byte*) HEAP_START#0
-  to:@2
-malloc: scope:[malloc]  from @2
-  (word) malloc::size#1 ← phi( @2/(word) malloc::size#0 )
-  (byte*) heap_head#4 ← phi( @2/(byte*) heap_head#7 )
+  to:@3
+malloc: scope:[malloc]  from @3
+  (word) malloc::size#1 ← phi( @3/(word) malloc::size#0 )
+  (byte*) heap_head#4 ← phi( @3/(byte*) heap_head#7 )
   (byte*) malloc::mem#0 ← (byte*) heap_head#4
   (byte*) heap_head#1 ← (byte*) heap_head#4 + (word) malloc::size#1
   (byte*) malloc::return#0 ← (byte*) malloc::mem#0
@@ -24,21 +28,21 @@ malloc::@return: scope:[malloc]  from malloc
   (byte*) heap_head#2 ← (byte*) heap_head#5
   return 
   to:@return
-@2: scope:[]  from @begin
+@3: scope:[]  from @begin
   (byte*) heap_head#7 ← phi( @begin/(byte*) heap_head#0 )
   (word) malloc::size#0 ← (number) $200
   call malloc 
   (byte*) malloc::return#2 ← (byte*) malloc::return#1
-  to:@4
-@4: scope:[]  from @2
-  (byte*) heap_head#6 ← phi( @2/(byte*) heap_head#2 )
-  (byte*) malloc::return#4 ← phi( @2/(byte*) malloc::return#2 )
+  to:@5
+@5: scope:[]  from @3
+  (byte*) heap_head#6 ← phi( @3/(byte*) heap_head#2 )
+  (byte*) malloc::return#4 ← phi( @3/(byte*) malloc::return#2 )
   (byte*~) $0 ← (byte*) malloc::return#4
   (byte*) heap_head#3 ← (byte*) heap_head#6
   (word*) WORDS#0 ← (byte*~) $0
-  to:@3
-main: scope:[main]  from @3
-  (word*) WORDS#1 ← phi( @3/(word*) WORDS#2 )
+  to:@4
+main: scope:[main]  from @4
+  (word*) WORDS#1 ← phi( @4/(word*) WORDS#2 )
   (word*) main::w#0 ← (word*) WORDS#1
   (byte) main::i#0 ← (byte) 0
   to:main::@1
@@ -54,20 +58,20 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@3: scope:[]  from @4
-  (word*) WORDS#2 ← phi( @4/(word*) WORDS#0 )
+@4: scope:[]  from @5
+  (word*) WORDS#2 ← phi( @5/(word*) WORDS#0 )
   call main 
-  to:@5
-@5: scope:[]  from @3
+  to:@6
+@6: scope:[]  from @4
   to:@end
-@end: scope:[]  from @5
+@end: scope:[]  from @6
 
 SYMBOL TABLE SSA
 (byte*~) $0
-(label) @2
 (label) @3
 (label) @4
 (label) @5
+(label) @6
 (label) @begin
 (label) @end
 (byte*) HEAP_START
@@ -170,10 +174,10 @@ Constant inlined WORDS#0 = (const byte*) HEAP_START#0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @5
+Adding NOP phi() at start of @4
+Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of malloc
@@ -184,11 +188,11 @@ Created 2 initial phi equivalence classes
 Coalesced [15] main::i#3 ← main::i#1
 Coalesced [16] main::w#3 ← main::w#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @5
+Culled Empty Block (label) @6
 Culled Empty Block (label) main::@3
-Renumbering block @2 to @1
-Renumbering block @3 to @2
+Renumbering block @3 to @1
+Renumbering block @4 to @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2

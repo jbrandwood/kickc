@@ -18,3 +18,24 @@ unsigned char* malloc(unsigned int size) {
 // If ptr is a null pointer, the function does nothing.
 void free(unsigned char* ptr) {
 }
+
+// Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
+// - key - The value to look for
+// - items - Pointer to the start of the array to search in
+// - num - The number of items in the array
+// Returns pointer to an entry in the array that matches the search key
+word* bsearch16u(word key, word* items, byte num) {
+	while (num > 0) {
+		word* pivot = items + (num >> 1);
+		signed word result = (signed word)key-(signed word)*pivot;
+		if (result == 0)
+			return pivot;
+		if (result > 0) {
+			items = pivot+1;
+			num--;
+		}
+		num >>= 1;
+	}
+	// not found - return closest lower value
+    return *items<=key?items:items-1;
+}

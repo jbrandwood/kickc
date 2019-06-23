@@ -9,6 +9,7 @@
   .label CHARSET = $2000
   .label SCREEN = $2800
   .const NUM_SQUARES = $30
+  .label SQUARES = HEAP_START
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label yds = $16
@@ -37,10 +38,10 @@ main: {
     adc #$18+1
   b4:
     jsr sqr
-    lda sqr.return_2
-    sta sqr.return
-    lda sqr.return_2+1
-    sta sqr.return+1
+    lda sqr.return
+    sta sqr.return_2
+    lda sqr.return+1
+    sta sqr.return_2+1
     lda #0
     sta x
   b5:
@@ -91,15 +92,15 @@ main: {
 // sqrt(word zeropage($18) val)
 sqrt: {
     .label _3 = 6
-    .label val = $18
     .label found = 6
+    .label val = $18
     jsr bsearch16u
     lda _3
     sec
-    sbc #<HEAP_START
+    sbc #<SQUARES
     sta _3
     lda _3+1
-    sbc #>HEAP_START
+    sbc #>SQUARES
     sta _3+1
     lda _3
     lsr
@@ -113,14 +114,14 @@ sqrt: {
 // bsearch16u(word zeropage($18) key, word* zeropage(6) items, byte register(X) num)
 bsearch16u: {
     .label _2 = 6
-    .label key = $18
-    .label return = 6
     .label pivot = $1a
     .label result = $1c
+    .label return = 6
     .label items = 6
-    lda #<HEAP_START
+    .label key = $18
+    lda #<SQUARES
     sta items
-    lda #>HEAP_START
+    lda #>SQUARES
     sta items+1
     ldx #NUM_SQUARES
   b3:
@@ -197,15 +198,14 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $16
-    .label return_1 = $18
-    .label return_2 = $18
+    .label return = $18
+    .label return_2 = $16
     asl
     tay
-    lda HEAP_START,y
-    sta return_2
-    lda #0
-    sta return_2+1
+    lda SQUARES,y
+    sta return
+    lda SQUARES+1,y
+    sta return+1
     rts
 }
 // Initialize squares table
@@ -215,9 +215,9 @@ init_squares: {
     .label sqr = 9
     jsr malloc
     ldx #0
-    lda #<HEAP_START
+    lda #<SQUARES
     sta squares
-    lda #>HEAP_START
+    lda #>SQUARES
     sta squares+1
     txa
     sta sqr

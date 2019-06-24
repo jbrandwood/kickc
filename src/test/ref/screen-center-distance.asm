@@ -12,12 +12,15 @@
   .label SQUARES = malloc.return
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label yds = $16
-    .label xds = $18
-    .label ds = $18
-    .label screen = 4
+    .label yds = $1c
+    .label xds = $1e
+    .label ds = $1e
+    .label screen = $b
     .label x = 3
+    .label screen_mirror1 = 4
     .label y = 2
+    .label screen_mirror = 9
+    .label y1 = 6
     jsr init_font_hex
     lda #toD0181_return
     sta D018
@@ -32,7 +35,9 @@ main: {
     lda y
     asl
     cmp #$18
-    bcs b2
+    bcc !b2+
+    jmp b2
+  !b2:
     eor #$ff
     clc
     adc #$18+1
@@ -48,7 +53,9 @@ main: {
     lda x
     asl
     cmp #$27
-    bcs b6
+    bcc !b6+
+    jmp b6
+  !b6:
     eor #$ff
     clc
     adc #$27+1
@@ -69,13 +76,67 @@ main: {
     inc screen+1
   !:
     inc x
-    lda #$28
+    lda #$14
     cmp x
     bne b5
+    lda screen
+    sta screen_mirror1
+    lda screen+1
+    sta screen_mirror1+1
+    ldx #0
+  b10:
+    lda screen_mirror1
+    bne !+
+    dec screen_mirror1+1
+  !:
+    dec screen_mirror1
+    ldy #0
+    lda (screen_mirror1),y
+    sta (screen),y
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    inx
+    cpx #$14
+    bne b10
     inc y
-    lda #$19
+    lda #$d
     cmp y
-    bne b1
+    beq !b1+
+    jmp b1
+  !b1:
+    lda screen
+    sec
+    sbc #<$28
+    sta screen_mirror
+    lda screen+1
+    sbc #>$28
+    sta screen_mirror+1
+    lda #0
+    sta y1
+  b13:
+    ldx #0
+  b14:
+    lda screen_mirror
+    bne !+
+    dec screen_mirror+1
+  !:
+    dec screen_mirror
+    ldy #0
+    lda (screen_mirror),y
+    sta (screen),y
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    inx
+    cpx #$28
+    bne b14
+    inc y1
+    lda #$c
+    cmp y1
+    bne b13
     rts
   b6:
     sec
@@ -89,12 +150,12 @@ main: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($18) val)
+// sqrt(word zeropage($1e) val)
 sqrt: {
-    .label _1 = 6
-    .label _3 = 6
-    .label found = 6
-    .label val = $18
+    .label _1 = $d
+    .label _3 = $d
+    .label found = $d
+    .label val = $1e
     jsr bsearch16u
     lda _3
     sec
@@ -113,14 +174,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($18) key, word* zeropage(6) items, byte register(X) num)
+// bsearch16u(word zeropage($1e) key, word* zeropage($d) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = 6
-    .label pivot = $1a
-    .label result = $1c
-    .label return = 6
-    .label items = 6
-    .label key = $18
+    .label _2 = $d
+    .label pivot = $20
+    .label result = $22
+    .label return = $d
+    .label items = $d
+    .label key = $1e
     lda #<SQUARES
     sta items
     lda #>SQUARES
@@ -200,8 +261,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $18
-    .label return_2 = $16
+    .label return = $1e
+    .label return_2 = $1c
     asl
     tay
     lda SQUARES,y
@@ -213,8 +274,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $b
-    .label sqr = 9
+    .label squares = $11
+    .label sqr = $f
     jsr malloc
     ldx #0
     lda #<SQUARES
@@ -260,15 +321,15 @@ malloc: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($10) charset)
+// init_font_hex(byte* zeropage($16) charset)
 init_font_hex: {
-    .label _0 = $1e
-    .label idx = $15
-    .label proto_lo = $12
-    .label charset = $10
-    .label c1 = $14
-    .label proto_hi = $d
-    .label c = $f
+    .label _0 = $24
+    .label idx = $1b
+    .label proto_lo = $18
+    .label charset = $16
+    .label c1 = $1a
+    .label proto_hi = $13
+    .label c = $15
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

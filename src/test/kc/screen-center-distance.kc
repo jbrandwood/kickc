@@ -16,17 +16,29 @@ void main() {
     NUM_SQUARES = 0x30;
     init_squares();
     byte* screen = SCREEN;
-    for(byte y: 0..24) {
+    for(byte y: 0..12) {
         byte y2 = y*2;
         byte yd = (y2>=24)?(y2-24):(24-y2);
         word yds = sqr(yd);
-        for(byte x: 0..39) {
+        for(byte x: 0..19) {
             byte x2 = x*2;
             byte xd = (x2>=39)?(x2-39):(39-x2);
             word xds = sqr(xd);
             word ds = xds+yds;
             byte d = sqrt(ds);
             *screen++ = d;
+        }
+        // Mirror x-axis
+        byte *screen_mirror = screen;
+        for(byte x: 0..19) {
+            *screen++ = *--screen_mirror;
+        }
+    }
+    // Mirror y-axis
+    byte *screen_mirror = screen-40;
+    for(byte y: 0..11) {
+        for(byte x: 0..39) {
+            *screen++ = *--screen_mirror;
         }
     }
 }

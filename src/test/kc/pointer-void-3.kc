@@ -1,24 +1,21 @@
 // Test void pointer - issues when assigning returns from malloc()
 
-void main() {
-    byte* buf1 = malloc(64);
-    byte* buf2 = malloc(64);
 
+const byte* SCREEN = 0x0400;
+
+void main() {
+    byte* buf1 = malloc();
+    byte* buf2 = malloc();
     *buf1 = 'a';
     *buf2 = 'b';
-
-    const byte* SCREEN = 0x0400;
     SCREEN[0] = *buf1;
     SCREEN[1] = *buf2;
-
 }
 
-unsigned char* HEAP_START = 0xc000;
 
-unsigned char* heap_head = HEAP_START;
+byte* heap_head = 0xc000;
 
-void* malloc(unsigned int size) {
-    void* mem = heap_head;
-    heap_head+= size;
-    return mem;
+void* malloc() {
+    heap_head++;
+    return heap_head;
 }

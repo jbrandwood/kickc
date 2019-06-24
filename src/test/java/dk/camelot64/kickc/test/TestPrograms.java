@@ -80,12 +80,10 @@ public class TestPrograms {
       assertError("pointer-void-err-0", "Void pointer math not allowed.");
    }
 
-   /*
    @Test
    public void testPointerVoid3() throws IOException, URISyntaxException {
       compileAndCompare("pointer-void-3");
    }
-   */
 
    @Test
    public void testPointerVoid2() throws IOException, URISyntaxException {
@@ -747,6 +745,11 @@ public class TestPrograms {
    @Test
    public void testWordPointerMath() throws IOException, URISyntaxException {
       compileAndCompare("word-pointer-math");
+   }
+
+   @Test
+   public void testWordPointerMath1() throws IOException, URISyntaxException {
+      compileAndCompare("word-pointer-math-1");
    }
 
    @Test

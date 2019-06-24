@@ -1,0 +1,278 @@
+Adding pointer type conversion cast (word*) main::w1 in (word*) main::w1 ← (number) $1000
+Adding pointer type conversion cast (word*) main::w2 in (word*) main::w2 ← (number) $1140
+Adding pointer type conversion cast (word*) main::SCREEN in (word*) main::SCREEN ← (number) $400
+Fixing pointer addition (word~) main::$0 ← (word*) main::w2 - (word*) main::w1
+Identified constant variable (word*) main::w1
+Identified constant variable (word*) main::w2
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+main: scope:[main]  from @1
+  (word*) main::w1#0 ← ((word*)) (number) $1000
+  (word*) main::w2#0 ← ((word*)) (number) $1140
+  (word*~) main::$1 ← (word*) main::w1#0 * (const byte) SIZEOF_WORD
+  (word~) main::$0 ← (word*) main::w2#0 - (word*~) main::$1
+  (word) main::wd#0 ← (word~) main::$0
+  (word*) main::SCREEN#0 ← ((word*)) (number) $400
+  *((word*) main::SCREEN#0) ← (word) main::wd#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(const byte) SIZEOF_WORD = (byte) 2
+(void()) main()
+(word~) main::$0
+(word*~) main::$1
+(label) main::@return
+(word*) main::SCREEN
+(word*) main::SCREEN#0
+(word*) main::w1
+(word*) main::w1#0
+(word*) main::w2
+(word*) main::w2#0
+(word) main::wd
+(word) main::wd#0
+
+Inlining cast (word*) main::w1#0 ← (word*)(number) $1000
+Inlining cast (word*) main::w2#0 ← (word*)(number) $1140
+Inlining cast (word*) main::SCREEN#0 ← (word*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (word*) 4096
+Simplifying constant pointer cast (word*) 4416
+Simplifying constant pointer cast (word*) 1024
+Successful SSA optimization PassNCastSimplification
+Alias (word) main::wd#0 = (word~) main::$0 
+Successful SSA optimization Pass2AliasElimination
+Constant (const word*) main::w1#0 = (word*) 4096
+Constant (const word*) main::w2#0 = (word*) 4416
+Constant (const word*) main::SCREEN#0 = (word*) 1024
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [0] (word*~) main::$1 ← (const word*) main::w1#0 * (const byte) SIZEOF_WORD
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word*) main::$1 = main::w1#0*SIZEOF_WORD
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [0] (word) main::wd#0 ← (const word*) main::w2#0 - (const word*) main::$1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word) main::wd#0 = main::w2#0-main::$1
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined main::$1 = (const word*) main::w1#0*(const byte) SIZEOF_WORD
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const word*) main::SCREEN#0) ← (const word) main::wd#0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(word*) main::SCREEN
+(word*) main::w1
+(word*) main::w2
+(word) main::wd
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Tests word pointer math - subtracting two word pointers
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label w1 = $1000
+    .label w2 = $1140
+    .label SCREEN = $400
+    .const wd = w2-w1*SIZEOF_WORD
+  //SEG10 [4] *((const word*) main::SCREEN#0) ← (const word) main::wd#0 -- _deref_pwuc1=vwuc2 
+    lda #<wd
+    sta SCREEN
+    lda #>wd
+    sta SCREEN+1
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+//SEG13 File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const word*) main::SCREEN#0) ← (const word) main::wd#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 33 combination 
+Uplifting [] best 33 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Tests word pointer math - subtracting two word pointers
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+    .label w1 = $1000
+    .label w2 = $1140
+    .label SCREEN = $400
+    .const wd = w2-w1*SIZEOF_WORD
+  //SEG10 [4] *((const word*) main::SCREEN#0) ← (const word) main::wd#0 -- _deref_pwuc1=vwuc2 
+    lda #<wd
+    sta SCREEN
+    lda #>wd
+    sta SCREEN+1
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+//SEG13 File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte) SIZEOF_WORD SIZEOF_WORD = (byte) 2
+(void()) main()
+(label) main::@return
+(word*) main::SCREEN
+(const word*) main::SCREEN#0 SCREEN = (word*) 1024
+(word*) main::w1
+(const word*) main::w1#0 w1 = (word*) 4096
+(word*) main::w2
+(const word*) main::w2#0 w2 = (word*) 4416
+(word) main::wd
+(const word) main::wd#0 wd = (const word*) main::w2#0-(const word*) main::w1#0*(const byte) SIZEOF_WORD
+
+
+
+FINAL ASSEMBLER
+Score: 18
+
+//SEG0 File Comments
+// Tests word pointer math - subtracting two word pointers
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .const SIZEOF_WORD = 2
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+    .label w1 = $1000
+    .label w2 = $1140
+    .label SCREEN = $400
+    .const wd = w2-w1*SIZEOF_WORD
+  //SEG10 [4] *((const word*) main::SCREEN#0) ← (const word) main::wd#0 -- _deref_pwuc1=vwuc2 
+    lda #<wd
+    sta SCREEN
+    lda #>wd
+    sta SCREEN+1
+  //SEG11 main::@return
+  //SEG12 [5] return 
+    rts
+}
+//SEG13 File Data
+

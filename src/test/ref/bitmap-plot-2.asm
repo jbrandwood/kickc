@@ -54,17 +54,18 @@ bbegin:
   rts
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label _9 = $35
+    .label _10 = $35
     .label _11 = $35
-    .label _15 = $37
+    .label _16 = $37
     .label _17 = $37
-    .label _18 = $37
     .label _32 = 9
     .label _33 = 9
     .label cos_x = 9
     .label xpos = $b
+    .label x = $35
     .label sin_y = 9
     .label ypos = $b
+    .label y = $37
     .label idx_x = 2
     .label idx_y = 6
     .label r = 4
@@ -112,9 +113,9 @@ main: {
     sta cos_x+1
     jsr mul16s
     lda xpos+2
-    sta _9
+    sta _10
     lda xpos+3
-    sta _9+1
+    sta _10+1
     lda _11+1
     cmp #$80
     ror _11+1
@@ -124,12 +125,12 @@ main: {
     ror _11+1
     ror _11
     clc
-    lda bitmap_plot.x
+    lda x
     adc #<$a0
-    sta bitmap_plot.x
-    lda bitmap_plot.x+1
+    sta x
+    lda x+1
     adc #>$a0
-    sta bitmap_plot.x+1
+    sta x+1
     lda idx_y
     asl
     sta _33
@@ -152,9 +153,9 @@ main: {
     sta sin_y+1
     jsr mul16s
     lda ypos+2
-    sta _15
+    sta _16
     lda ypos+3
-    sta _15+1
+    sta _16+1
     lda _17+1
     cmp #$80
     ror _17+1
@@ -171,13 +172,14 @@ main: {
   !:
     sta $ff
     clc
-    lda _18
+    lda y
     adc $fe
-    sta _18
-    lda _18+1
+    sta y
+    lda y+1
     adc $ff
-    sta _18+1
-    lda _18
+    sta y+1
+    lda y
+    tax
     jsr bitmap_plot
     ldx frame_cnt
     inc plots_per_frame,x
@@ -249,17 +251,15 @@ main: {
     jmp b7
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(signed word zeropage($35) x, byte register(A) y)
+// bitmap_plot(word zeropage($35) x, byte register(X) y)
 bitmap_plot: {
     .label _1 = $3b
     .label plotter = $39
     .label x = $35
-    .label _3 = $39
-    tay
-    lda bitmap_plot_yhi,y
-    sta _3+1
-    lda bitmap_plot_ylo,y
-    sta _3
+    lda bitmap_plot_yhi,x
+    sta plotter+1
+    lda bitmap_plot_ylo,x
+    sta plotter
     lda x
     and #<$fff8
     sta _1
@@ -534,7 +534,7 @@ sin16s_gen2: {
     .const max = $1001
     .const ampl = max-min
     .label _5 = $b
-    .label _6 = $46
+    .label _8 = $46
     .label step = $42
     .label sintab = $23
     .label x = $1f
@@ -569,14 +569,14 @@ sin16s_gen2: {
     sta mul16s.b+1
     jsr mul16s
     lda _5+2
-    sta _6
+    sta _8
     lda _5+3
-    sta _6+1
+    sta _8+1
     ldy #0
-    lda _6
+    lda _8
     sta (sintab),y
     iny
-    lda _6+1
+    lda _8+1
     sta (sintab),y
     lda #SIZEOF_SIGNED_WORD
     clc

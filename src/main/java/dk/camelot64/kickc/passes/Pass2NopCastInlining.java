@@ -25,7 +25,9 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
    }
 
    /** We can either inline intermediate vars or expressions - not both at once */
-   enum Mode { VARS, EXPR }
+   enum Mode {
+      VARS, EXPR
+   }
 
    /**
     * Inline cast assignments that has no effect (byte to/from signed byte, word to/from signed word)
@@ -45,7 +47,7 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
             if(stmt instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) stmt;
                // TODO: Handle constant values?
-               if(assignment.getOperator()==null && assignment.getrValue2() instanceof CastValue) {
+               if(assignment.getOperator() == null && assignment.getrValue2() instanceof CastValue) {
                   CastValue castValue = (CastValue) assignment.getrValue2();
                   SymbolType subValType = SymbolTypeInference.inferType(getScope(), castValue.getValue());
                   boolean isNopCast = false;
@@ -65,9 +67,13 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                      isNopCast = true;
                   }
                   if(isNopCast && assignment.getlValue() instanceof VariableRef) {
-                     boolean handled = false;
-                     if(castValue.getValue() instanceof VariableRef && ((VariableRef)castValue.getValue()).isIntermediate()) {
-                        if(mode==null || mode==Mode.VARS ) {
+
+                     boolean isIntermediateVar = false;
+                     if(castValue.getValue() instanceof VariableRef && ((VariableRef) castValue.getValue()).isIntermediate()) {
+                        isIntermediateVar = true;
+                     }
+                     if(isIntermediateVar) {
+                        if(mode == null || mode == Mode.VARS) {
                            mode = Mode.VARS;
                            Collection<Integer> varUseStatements = getProgram().getVariableReferenceInfos().getVarUseStatements((VariableRef) castValue.getValue());
                            if(varUseStatements.size() == 1 && assignment.getIndex().equals(varUseStatements.iterator().next())) {
@@ -85,13 +91,9 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                               assignmentVar.setType(castVar.getType());
                               // Remove the assignment
                               stmtIt.remove();
-                              handled = true;
                            }
                         }
-                     }
-
-                     if(!handled) {
-
+                     } else if(mode == null || mode == Mode.EXPR) {
                         boolean modifyExpr = false;
                         if(castValue.getValue() instanceof VariableRef) {
                            VariableRef castVarRef = (VariableRef) castValue.getValue();
@@ -100,11 +102,11 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                               // Same scope - optimize away
                               modifyExpr = true;
                            }
-                        }  else {
+                        } else {
                            modifyExpr = true;
                         }
 
-                        if(modifyExpr && (mode==null || mode==Mode.EXPR)) {
+                        if(modifyExpr) {
                            mode = Mode.EXPR;
                            getLog().append("Inlining Noop Cast " + assignment.toString(getProgram(), false) + " keeping " + castValue.getValue());
                            // 1. Inline the cast
@@ -121,7 +123,7 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
          }
       }
 
-      if(replace1.size()>0) {
+      if(replace1.size() > 0) {
          // 1. Perform first replace
          replaceVariables(replace1);
          // 2. Perform second replace

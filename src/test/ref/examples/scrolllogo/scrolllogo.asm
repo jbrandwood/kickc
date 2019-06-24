@@ -255,7 +255,7 @@ sin16s_gen2: {
     .const max = $140
     .label ampl = max-min
     .label _5 = $e
-    .label _6 = $34
+    .label _8 = $34
     .label step = $30
     .label sintab = $a
     .label x = 6
@@ -286,14 +286,14 @@ sin16s_gen2: {
     jsr sin16s
     jsr mul16s
     lda _5+2
-    sta _6
+    sta _8
     lda _5+3
-    sta _6+1
+    sta _8+1
     ldy #0
-    lda _6
+    lda _8
     sta (sintab),y
     iny
-    lda _6+1
+    lda _8+1
     sta (sintab),y
     lda #SIZEOF_SIGNED_WORD
     clc

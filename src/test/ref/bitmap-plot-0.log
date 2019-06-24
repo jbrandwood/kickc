@@ -1321,7 +1321,8 @@ Constant (const byte) main::toD0181_return#0 = main::toD0181_$3#0|main::toD0181_
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [1] (byte*~) memset::$0 ← (byte*)(void*) memset::str#2 keeping memset::str#2
 Inlining Noop Cast [3] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2 keeping memset::str#2
-Inlining Noop Cast [33] (byte*) bitmap_plot::plotter#0 ← (byte*)(word~) bitmap_plot::$3 keeping bitmap_plot::$3
+Successful SSA optimization Pass2NopCastInlining
+Inlining Noop Cast [33] (byte*) bitmap_plot::plotter#0 ← (byte*)(word~) bitmap_plot::$3 keeping bitmap_plot::plotter#0
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const word) memset::num#0
 Inlining constant with var siblings (const byte) memset::c#1
@@ -1533,9 +1534,9 @@ main::@4: scope:[main]  from main::@12 main::@6
   [27] *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0)
   to:main::@1
 bitmap_plot: scope:[bitmap_plot]  from main::@2
-  [28] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0)
+  [28] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0)
   [29] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8
-  [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1
+  [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1
   [31] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0
   [32] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit#0 + (byte~) bitmap_plot::$2)
   to:bitmap_plot::@return
@@ -1692,8 +1693,8 @@ VARIABLE REGISTER WEIGHTS
 (void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
 (word~) bitmap_plot::$1 4.0
 (byte~) bitmap_plot::$2 4.0
-(word~) bitmap_plot::$3 1.0
 (byte*) bitmap_plot::plotter
+(word) bitmap_plot::plotter#0 1.0
 (byte*) bitmap_plot::plotter#1 3.0
 (word) bitmap_plot::x
 (word) bitmap_plot::x#0 3.0
@@ -1768,7 +1769,7 @@ Initial phi equivalence classes
 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
 Added variable bitmap_plot::x#0 to zero page equivalence class [ bitmap_plot::x#0 ]
 Added variable bitmap_plot::y#0 to zero page equivalence class [ bitmap_plot::y#0 ]
-Added variable bitmap_plot::$3 to zero page equivalence class [ bitmap_plot::$3 ]
+Added variable bitmap_plot::plotter#0 to zero page equivalence class [ bitmap_plot::plotter#0 ]
 Added variable bitmap_plot::$1 to zero page equivalence class [ bitmap_plot::$1 ]
 Added variable bitmap_plot::plotter#1 to zero page equivalence class [ bitmap_plot::plotter#1 ]
 Added variable bitmap_plot::$2 to zero page equivalence class [ bitmap_plot::$2 ]
@@ -1793,7 +1794,7 @@ Complete equivalence classes
 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
 [ bitmap_plot::x#0 ]
 [ bitmap_plot::y#0 ]
-[ bitmap_plot::$3 ]
+[ bitmap_plot::plotter#0 ]
 [ bitmap_plot::$1 ]
 [ bitmap_plot::plotter#1 ]
 [ bitmap_plot::$2 ]
@@ -1817,7 +1818,7 @@ Allocated zp ZP_WORD:18 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init:
 Allocated zp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
 Allocated zp ZP_WORD:21 [ bitmap_plot::x#0 ]
 Allocated zp ZP_BYTE:23 [ bitmap_plot::y#0 ]
-Allocated zp ZP_WORD:24 [ bitmap_plot::$3 ]
+Allocated zp ZP_WORD:24 [ bitmap_plot::plotter#0 ]
 Allocated zp ZP_WORD:26 [ bitmap_plot::$1 ]
 Allocated zp ZP_WORD:28 [ bitmap_plot::plotter#1 ]
 Allocated zp ZP_BYTE:30 [ bitmap_plot::$2 ]
@@ -2060,16 +2061,16 @@ main: {
 bitmap_plot: {
     .label _1 = $1a
     .label _2 = $1e
-    .label plotter = $1c
+    .label plotter = $18
+    .label plotter_1 = $1c
     .label x = $15
     .label y = $17
-    .label _3 = $18
-  //SEG62 [28] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
+  //SEG62 [28] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
     ldy y
     lda bitmap_plot_yhi,y
-    sta _3+1
+    sta plotter+1
     lda bitmap_plot_ylo,y
-    sta _3
+    sta plotter
   //SEG63 [29] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda x
     and #<$fff8
@@ -2077,24 +2078,24 @@ bitmap_plot: {
     lda x+1
     and #>$fff8
     sta _1+1
-  //SEG64 [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 -- pbuz1=pbuz2_plus_vwuz3 
-    lda _3
+  //SEG64 [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz2_plus_vwuz3 
+    lda plotter
     clc
     adc _1
-    sta plotter
-    lda _3+1
+    sta plotter_1
+    lda plotter+1
     adc _1+1
-    sta plotter+1
+    sta plotter_1+1
   //SEG65 [31] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuz1=_lo_vwuz2 
     lda x
     sta _2
   //SEG66 [32] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit#0 + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
-    lda (plotter),y
+    lda (plotter_1),y
     ldy _2
     ora bitmap_plot_bit,y
     ldy #0
-    sta (plotter),y
+    sta (plotter_1),y
     jmp breturn
   //SEG67 bitmap_plot::@return
   breturn:
@@ -2448,9 +2449,9 @@ Statement [25] (byte) main::vy#1 ← - (byte) main::vy#2 [ frame_cnt#0 main::x#1
 Statement [27] *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) [ frame_cnt#0 main::x#1 main::y#1 main::vx#6 main::vy#8 ] ( main:3 [ frame_cnt#0 main::x#1 main::y#1 main::vx#6 main::vy#8 ] ) always clobbers reg byte x 
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:4 [ main::y#2 main::y#1 ]
 Removing always clobbered register reg byte x as potential for zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ]
-Statement [28] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::$3 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::$3 ] ) always clobbers reg byte a 
-Statement [29] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::$3 bitmap_plot::$1 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::$3 bitmap_plot::$1 ] ) always clobbers reg byte a 
-Statement [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
+Statement [28] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [29] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
+Statement [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [31] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
 Statement [32] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit#0 + (byte~) bitmap_plot::$2) [ ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ main::y#2 main::y#1 ]
@@ -2488,9 +2489,9 @@ Statement [23] if((byte) main::y#1==(byte) $c7) goto main::@6 [ frame_cnt#0 main
 Statement [24] if((byte) main::y#1!=(byte) 0) goto main::@4 [ frame_cnt#0 main::vy#2 main::x#1 main::y#1 main::vx#6 ] ( main:3 [ frame_cnt#0 main::vy#2 main::x#1 main::y#1 main::vx#6 ] ) always clobbers reg byte a 
 Statement [25] (byte) main::vy#1 ← - (byte) main::vy#2 [ frame_cnt#0 main::x#1 main::y#1 main::vx#6 main::vy#1 ] ( main:3 [ frame_cnt#0 main::x#1 main::y#1 main::vx#6 main::vy#1 ] ) always clobbers reg byte a 
 Statement [27] *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) [ frame_cnt#0 main::x#1 main::y#1 main::vx#6 main::vy#8 ] ( main:3 [ frame_cnt#0 main::x#1 main::y#1 main::vx#6 main::vy#8 ] ) always clobbers reg byte x 
-Statement [28] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::$3 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::$3 ] ) always clobbers reg byte a 
-Statement [29] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::$3 bitmap_plot::$1 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::$3 bitmap_plot::$1 ] ) always clobbers reg byte a 
-Statement [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
+Statement [28] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [29] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
+Statement [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [31] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
 Statement [32] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit#0 + (byte~) bitmap_plot::$2) [ ] ( main:3::bitmap_plot:16 [ frame_cnt#0 main::x#2 main::y#2 main::vx#2 main::vy#2 ] ) always clobbers reg byte a reg byte y 
 Statement [35] *((const byte*) PROCPORT_DDR#0) ← (const byte) PROCPORT_DDR_MEMORY_MASK#0 [ ] ( main:3::init_irq:12 [ frame_cnt#0 ] ) always clobbers reg byte a 
@@ -2526,7 +2527,7 @@ Potential registers zp ZP_WORD:18 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bi
 Potential registers zp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] : zp ZP_BYTE:20 , 
 Potential registers zp ZP_WORD:21 [ bitmap_plot::x#0 ] : zp ZP_WORD:21 , 
 Potential registers zp ZP_BYTE:23 [ bitmap_plot::y#0 ] : zp ZP_BYTE:23 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:24 [ bitmap_plot::$3 ] : zp ZP_WORD:24 , 
+Potential registers zp ZP_WORD:24 [ bitmap_plot::plotter#0 ] : zp ZP_WORD:24 , 
 Potential registers zp ZP_WORD:26 [ bitmap_plot::$1 ] : zp ZP_WORD:26 , 
 Potential registers zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] : zp ZP_WORD:28 , 
 Potential registers zp ZP_BYTE:30 [ bitmap_plot::$2 ] : zp ZP_BYTE:30 , reg byte a , reg byte x , reg byte y , 
@@ -2541,7 +2542,7 @@ Uplift Scope [bitmap_init] 39.88: zp ZP_WORD:18 [ bitmap_init::yoffs#2 bitmap_in
 Uplift Scope [main] 42.17: zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ] 33: zp ZP_WORD:5 [ main::vx#2 main::vx#6 main::vx#1 ] 12.25: zp ZP_WORD:2 [ main::x#2 main::x#1 ] 11: zp ZP_BYTE:4 [ main::y#2 main::y#1 ] 
 Uplift Scope [] 45.11: zp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] 
 Uplift Scope [memset] 38: zp ZP_WORD:13 [ memset::dst#2 memset::dst#3 memset::dst#1 ] 2.17: zp ZP_WORD:31 [ memset::end#0 ] 2: zp ZP_WORD:10 [ memset::num#2 ] 1.57: zp ZP_BYTE:12 [ memset::c#3 ] 0: zp ZP_WORD:8 [ memset::str#2 ] 
-Uplift Scope [bitmap_plot] 15: zp ZP_BYTE:23 [ bitmap_plot::y#0 ] 4: zp ZP_WORD:26 [ bitmap_plot::$1 ] 4: zp ZP_BYTE:30 [ bitmap_plot::$2 ] 3: zp ZP_WORD:21 [ bitmap_plot::x#0 ] 3: zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] 1: zp ZP_WORD:24 [ bitmap_plot::$3 ] 
+Uplift Scope [bitmap_plot] 15: zp ZP_BYTE:23 [ bitmap_plot::y#0 ] 4: zp ZP_WORD:26 [ bitmap_plot::$1 ] 4: zp ZP_BYTE:30 [ bitmap_plot::$2 ] 3: zp ZP_WORD:21 [ bitmap_plot::x#0 ] 3: zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] 1: zp ZP_WORD:24 [ bitmap_plot::plotter#0 ] 
 Uplift Scope [bitmap_clear] 
 Uplift Scope [init_irq] 
 Uplift Scope [irq] 
@@ -2551,7 +2552,7 @@ Limited combination testing to 100 combinations of 15360 possible.
 Uplifting [main] best 4327 combination zp ZP_BYTE:7 [ main::vy#2 main::vy#8 main::vy#1 ] zp ZP_WORD:5 [ main::vx#2 main::vx#6 main::vx#1 ] zp ZP_WORD:2 [ main::x#2 main::x#1 ] zp ZP_BYTE:4 [ main::y#2 main::y#1 ] 
 Uplifting [] best 4327 combination zp ZP_BYTE:20 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] 
 Uplifting [memset] best 4311 combination zp ZP_WORD:13 [ memset::dst#2 memset::dst#3 memset::dst#1 ] zp ZP_WORD:31 [ memset::end#0 ] zp ZP_WORD:10 [ memset::num#2 ] reg byte x [ memset::c#3 ] zp ZP_WORD:8 [ memset::str#2 ] 
-Uplifting [bitmap_plot] best 4274 combination reg byte x [ bitmap_plot::y#0 ] zp ZP_WORD:26 [ bitmap_plot::$1 ] reg byte a [ bitmap_plot::$2 ] zp ZP_WORD:21 [ bitmap_plot::x#0 ] zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] zp ZP_WORD:24 [ bitmap_plot::$3 ] 
+Uplifting [bitmap_plot] best 4274 combination reg byte x [ bitmap_plot::y#0 ] zp ZP_WORD:26 [ bitmap_plot::$1 ] reg byte a [ bitmap_plot::$2 ] zp ZP_WORD:21 [ bitmap_plot::x#0 ] zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] zp ZP_WORD:24 [ bitmap_plot::plotter#0 ] 
 Uplifting [bitmap_clear] best 4274 combination 
 Uplifting [init_irq] best 4274 combination 
 Uplifting [irq] best 4274 combination 
@@ -2570,10 +2571,10 @@ Uplifting [bitmap_init] best 4154 combination zp ZP_BYTE:33 [ bitmap_init::$7 ]
 Coalescing zero page register with common assignment [ zp ZP_WORD:2 [ main::x#2 main::x#1 ] ] with [ zp ZP_WORD:21 [ bitmap_plot::x#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:8 [ memset::str#2 ] ] with [ zp ZP_WORD:13 [ memset::dst#2 memset::dst#3 memset::dst#1 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:10 [ memset::num#2 ] ] with [ zp ZP_WORD:31 [ memset::end#0 ] ] - score: 1
-Coalescing zero page register with common assignment [ zp ZP_WORD:24 [ bitmap_plot::$3 ] ] with [ zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:24 [ bitmap_plot::plotter#0 ] ] with [ zp ZP_WORD:28 [ bitmap_plot::plotter#1 ] ] - score: 1
 Allocated (was zp ZP_WORD:18) zp ZP_WORD:12 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
 Allocated (was zp ZP_BYTE:20) zp ZP_BYTE:14 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
-Allocated (was zp ZP_WORD:24) zp ZP_WORD:15 [ bitmap_plot::$3 bitmap_plot::plotter#1 ]
+Allocated (was zp ZP_WORD:24) zp ZP_WORD:15 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ]
 Allocated (was zp ZP_WORD:26) zp ZP_WORD:17 [ bitmap_plot::$1 ]
 Allocated (was zp ZP_BYTE:33) zp ZP_BYTE:19 [ bitmap_init::$7 ]
 Interrupt procedure irq clobbers ACNZ
@@ -2813,12 +2814,11 @@ bitmap_plot: {
     .label _1 = $11
     .label plotter = $f
     .label x = 2
-    .label _3 = $f
-  //SEG62 [28] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+  //SEG62 [28] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
-    sta _3+1
+    sta plotter+1
     lda bitmap_plot_ylo,x
-    sta _3
+    sta plotter
   //SEG63 [29] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda x
     and #<$fff8
@@ -2826,7 +2826,7 @@ bitmap_plot: {
     lda x+1
     and #>$fff8
     sta _1+1
-  //SEG64 [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
+  //SEG64 [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     lda plotter
     clc
     adc _1
@@ -3340,9 +3340,9 @@ FINAL SYMBOL TABLE
 (void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
 (word~) bitmap_plot::$1 $1 zp ZP_WORD:17 4.0
 (byte~) bitmap_plot::$2 reg byte a 4.0
-(word~) bitmap_plot::$3 $3 zp ZP_WORD:15 1.0
 (label) bitmap_plot::@return
 (byte*) bitmap_plot::plotter
+(word) bitmap_plot::plotter#0 plotter zp ZP_WORD:15 1.0
 (byte*) bitmap_plot::plotter#1 plotter zp ZP_WORD:15 3.0
 (word) bitmap_plot::x
 (word) bitmap_plot::x#0 x zp ZP_WORD:2 3.0
@@ -3438,7 +3438,7 @@ reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ]
 zp ZP_WORD:12 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
 zp ZP_BYTE:14 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
 reg byte x [ bitmap_plot::y#0 ]
-zp ZP_WORD:15 [ bitmap_plot::$3 bitmap_plot::plotter#1 ]
+zp ZP_WORD:15 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ]
 zp ZP_WORD:17 [ bitmap_plot::$1 ]
 reg byte a [ bitmap_plot::$2 ]
 zp ZP_BYTE:19 [ bitmap_init::$7 ]
@@ -3635,12 +3635,11 @@ bitmap_plot: {
     .label _1 = $11
     .label plotter = $f
     .label x = 2
-    .label _3 = $f
-  //SEG62 [28] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+  //SEG62 [28] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
-    sta _3+1
+    sta plotter+1
     lda bitmap_plot_ylo,x
-    sta _3
+    sta plotter
   //SEG63 [29] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda x
     and #<$fff8
@@ -3648,7 +3647,7 @@ bitmap_plot: {
     lda x+1
     and #>$fff8
     sta _1+1
-  //SEG64 [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
+  //SEG64 [30] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     lda plotter
     clc
     adc _1

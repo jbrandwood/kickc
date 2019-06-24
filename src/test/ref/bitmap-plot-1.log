@@ -2729,12 +2729,13 @@ Constant (const byte) main::toD0181_return#0 = main::toD0181_$3#0|main::toD0181_
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [47] (word~) mul16s::$10 ← (word)(signed word) mul16s::b#3 keeping mul16s::b#3
 Inlining Noop Cast [53] (word~) mul16s::$14 ← (word)(signed word) mul16s::a#3 keeping mul16s::a#3
-Inlining Noop Cast [69] (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$6 keeping sin16s_gen2::$6
 Inlining Noop Cast [110] (signed word) sin16s::sinx#0 ← (signed word)(word) sin16s::usinx#1 keeping sin16s::usinx#1
 Inlining Noop Cast [114] (signed word~) sin16s::$19 ← (signed word)(word) sin16s::usinx#1 keeping sin16s::usinx#1
 Inlining Noop Cast [127] (byte*~) memset::$0 ← (byte*)(void*) memset::str#2 keeping memset::str#2
 Inlining Noop Cast [129] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2 keeping memset::str#2
-Inlining Noop Cast [159] (byte*) bitmap_plot::plotter#0 ← (byte*)(word~) bitmap_plot::$3 keeping bitmap_plot::$3
+Successful SSA optimization Pass2NopCastInlining
+Inlining Noop Cast [69] (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$6 keeping sin16s_gen2::$8
+Inlining Noop Cast [159] (byte*) bitmap_plot::plotter#0 ← (byte*)(word~) bitmap_plot::$3 keeping bitmap_plot::plotter#0
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [172] (word~) main::$24 ← (word) main::idx_x#3 * (const byte) SIZEOF_SIGNED_WORD
 Rewriting multiplication to use shift [182] (word~) main::$25 ← (word) main::idx_y#3 * (const byte) SIZEOF_SIGNED_WORD
@@ -3118,9 +3119,9 @@ main::@4: scope:[main]  from main::@13 main::@3
   [47] *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0)
   to:main::@1
 bitmap_plot: scope:[bitmap_plot]  from main::@10
-  [48] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0)
+  [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0)
   [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8
-  [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1
+  [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1
   [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0
   [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit#0 + (byte~) bitmap_plot::$2)
   to:bitmap_plot::@return
@@ -3289,8 +3290,8 @@ sin16s_gen2::@3: scope:[sin16s_gen2]  from sin16s_gen2::@1
   to:sin16s_gen2::@4
 sin16s_gen2::@4: scope:[sin16s_gen2]  from sin16s_gen2::@3
   [138] (signed dword~) sin16s_gen2::$5 ← (signed dword) mul16s::return#2
-  [139] (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5
-  [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$6
+  [139] (word~) sin16s_gen2::$8 ← > (signed dword~) sin16s_gen2::$5
+  [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$8
   [141] (signed word*) sin16s_gen2::sintab#0 ← (signed word*) sin16s_gen2::sintab#2 + (const byte) SIZEOF_SIGNED_WORD
   [142] (dword) sin16s_gen2::x#1 ← (dword) sin16s_gen2::x#2 + (dword) sin16s_gen2::step#0
   [143] (word) sin16s_gen2::i#1 ← ++ (word) sin16s_gen2::i#2
@@ -3515,8 +3516,8 @@ VARIABLE REGISTER WEIGHTS
 (void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
 (word~) bitmap_plot::$1 4.0
 (byte~) bitmap_plot::$2 4.0
-(word~) bitmap_plot::$3 1.0
 (byte*) bitmap_plot::plotter
+(word) bitmap_plot::plotter#0 1.0
 (byte*) bitmap_plot::plotter#1 3.0
 (word) bitmap_plot::x
 (word) bitmap_plot::x#0 3.75
@@ -3734,7 +3735,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (word) sin16s::x5_128#0 4.0
 (void()) sin16s_gen2((signed word*) sin16s_gen2::sintab , (word) sin16s_gen2::wavelength , (signed word) sin16s_gen2::min , (signed word) sin16s_gen2::max)
 (signed dword~) sin16s_gen2::$5 22.0
-(word~) sin16s_gen2::$6 11.0
+(word~) sin16s_gen2::$8 11.0
 (signed word) sin16s_gen2::ampl
 (word) sin16s_gen2::i
 (word) sin16s_gen2::i#1 16.5
@@ -3805,7 +3806,7 @@ Added variable main::$15 to zero page equivalence class [ main::$15 ]
 Added variable main::y#0 to zero page equivalence class [ main::y#0 ]
 Added variable bitmap_plot::y#0 to zero page equivalence class [ bitmap_plot::y#0 ]
 Added variable bitmap_plot::x#0 to zero page equivalence class [ bitmap_plot::x#0 ]
-Added variable bitmap_plot::$3 to zero page equivalence class [ bitmap_plot::$3 ]
+Added variable bitmap_plot::plotter#0 to zero page equivalence class [ bitmap_plot::plotter#0 ]
 Added variable bitmap_plot::$1 to zero page equivalence class [ bitmap_plot::$1 ]
 Added variable bitmap_plot::plotter#1 to zero page equivalence class [ bitmap_plot::plotter#1 ]
 Added variable bitmap_plot::$2 to zero page equivalence class [ bitmap_plot::$2 ]
@@ -3826,7 +3827,7 @@ Added variable sin16s_gen2::step#0 to zero page equivalence class [ sin16s_gen2:
 Added variable sin16s::return#0 to zero page equivalence class [ sin16s::return#0 ]
 Added variable mul16s::return#2 to zero page equivalence class [ mul16s::return#2 ]
 Added variable sin16s_gen2::$5 to zero page equivalence class [ sin16s_gen2::$5 ]
-Added variable sin16s_gen2::$6 to zero page equivalence class [ sin16s_gen2::$6 ]
+Added variable sin16s_gen2::$8 to zero page equivalence class [ sin16s_gen2::$8 ]
 Added variable sin16s::$4 to zero page equivalence class [ sin16s::$4 ]
 Added variable sin16s::x1#0 to zero page equivalence class [ sin16s::x1#0 ]
 Added variable mulu16_sel::return#0 to zero page equivalence class [ mulu16_sel::return#0 ]
@@ -3905,7 +3906,7 @@ Complete equivalence classes
 [ main::y#0 ]
 [ bitmap_plot::y#0 ]
 [ bitmap_plot::x#0 ]
-[ bitmap_plot::$3 ]
+[ bitmap_plot::plotter#0 ]
 [ bitmap_plot::$1 ]
 [ bitmap_plot::plotter#1 ]
 [ bitmap_plot::$2 ]
@@ -3926,7 +3927,7 @@ Complete equivalence classes
 [ sin16s::return#0 ]
 [ mul16s::return#2 ]
 [ sin16s_gen2::$5 ]
-[ sin16s_gen2::$6 ]
+[ sin16s_gen2::$8 ]
 [ sin16s::$4 ]
 [ sin16s::x1#0 ]
 [ mulu16_sel::return#0 ]
@@ -4004,7 +4005,7 @@ Allocated zp ZP_WORD:108 [ main::$15 ]
 Allocated zp ZP_WORD:110 [ main::y#0 ]
 Allocated zp ZP_BYTE:112 [ bitmap_plot::y#0 ]
 Allocated zp ZP_WORD:113 [ bitmap_plot::x#0 ]
-Allocated zp ZP_WORD:115 [ bitmap_plot::$3 ]
+Allocated zp ZP_WORD:115 [ bitmap_plot::plotter#0 ]
 Allocated zp ZP_WORD:117 [ bitmap_plot::$1 ]
 Allocated zp ZP_WORD:119 [ bitmap_plot::plotter#1 ]
 Allocated zp ZP_BYTE:121 [ bitmap_plot::$2 ]
@@ -4025,7 +4026,7 @@ Allocated zp ZP_DWORD:149 [ sin16s_gen2::step#0 ]
 Allocated zp ZP_WORD:153 [ sin16s::return#0 ]
 Allocated zp ZP_DWORD:155 [ mul16s::return#2 ]
 Allocated zp ZP_DWORD:159 [ sin16s_gen2::$5 ]
-Allocated zp ZP_WORD:163 [ sin16s_gen2::$6 ]
+Allocated zp ZP_WORD:163 [ sin16s_gen2::$8 ]
 Allocated zp ZP_DWORD:165 [ sin16s::$4 ]
 Allocated zp ZP_WORD:169 [ sin16s::x1#0 ]
 Allocated zp ZP_WORD:171 [ mulu16_sel::return#0 ]
@@ -4488,16 +4489,16 @@ main: {
 bitmap_plot: {
     .label _1 = $75
     .label _2 = $79
-    .label plotter = $77
+    .label plotter = $73
+    .label plotter_1 = $77
     .label x = $71
     .label y = $70
-    .label _3 = $73
-  //SEG90 [48] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
+  //SEG90 [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
     ldy y
     lda bitmap_plot_yhi,y
-    sta _3+1
+    sta plotter+1
     lda bitmap_plot_ylo,y
-    sta _3
+    sta plotter
   //SEG91 [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda x
     and #<$fff8
@@ -4505,24 +4506,24 @@ bitmap_plot: {
     lda x+1
     and #>$fff8
     sta _1+1
-  //SEG92 [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 -- pbuz1=pbuz2_plus_vwuz3 
-    lda _3
+  //SEG92 [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz2_plus_vwuz3 
+    lda plotter
     clc
     adc _1
-    sta plotter
-    lda _3+1
+    sta plotter_1
+    lda plotter+1
     adc _1+1
-    sta plotter+1
+    sta plotter_1+1
   //SEG93 [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuz1=_lo_vwuz2 
     lda x
     sta _2
   //SEG94 [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit#0 + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
-    lda (plotter),y
+    lda (plotter_1),y
     ldy _2
     ora bitmap_plot_bit,y
     ldy #0
-    sta (plotter),y
+    sta (plotter_1),y
     jmp breturn
   //SEG95 bitmap_plot::@return
   breturn:
@@ -5040,7 +5041,7 @@ sin16s_gen2: {
     .const max = $1001
     .const ampl = max-min
     .label _5 = $9f
-    .label _6 = $a3
+    .label _8 = $a3
     .label step = $95
     .label sintab = $2c
     .label x = $28
@@ -5154,17 +5155,17 @@ sin16s_gen2: {
     sta _5+2
     lda mul16s.return_2+3
     sta _5+3
-  //SEG257 [139] (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5 -- vwuz1=_hi_vdsz2 
+  //SEG257 [139] (word~) sin16s_gen2::$8 ← > (signed dword~) sin16s_gen2::$5 -- vwuz1=_hi_vdsz2 
     lda _5+2
-    sta _6
+    sta _8
     lda _5+3
-    sta _6+1
-  //SEG258 [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$6 -- _deref_pwsz1=vwsz2 
+    sta _8+1
+  //SEG258 [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$8 -- _deref_pwsz1=vwsz2 
     ldy #0
-    lda _6
+    lda _8
     sta (sintab),y
     iny
-    lda _6+1
+    lda _8+1
     sta (sintab),y
   //SEG259 [141] (signed word*) sin16s_gen2::sintab#0 ← (signed word*) sin16s_gen2::sintab#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
@@ -5943,9 +5944,9 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:112 [ 
 Statement [40] if((word) main::idx_x#1!=(word) $200) goto main::@12 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ( main:3 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ) always clobbers reg byte a 
 Statement [44] if((word) main::idx_y#1!=(word) $200) goto main::@13 [ frame_cnt#0 main::idx_x#10 main::idx_y#1 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#1 ] ) always clobbers reg byte a 
 Statement [47] *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ) always clobbers reg byte x 
-Statement [48] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::$3 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::$3 ] ) always clobbers reg byte a 
-Statement [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::$3 bitmap_plot::$1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::$3 bitmap_plot::$1 ] ) always clobbers reg byte a 
-Statement [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
+Statement [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
+Statement [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
 Statement [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit#0 + (byte~) bitmap_plot::$2) [ ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 ] ) always clobbers reg byte a reg byte y 
 Statement [55] (word) mul16u::a#1 ← (word)(signed word) mul16s::a#3 [ mul16s::a#3 mul16s::b#3 mul16u::a#1 ] ( main:3::mul16s:20 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] main:3::mul16s:30 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] main:3::sin16s_gen2:6::mul16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] ) always clobbers reg byte a 
@@ -5988,8 +5989,8 @@ Statement [134] (signed word) sin16s::return#0 ← (signed word) sin16s::return#
 Statement [135] (signed word) mul16s::a#0 ← (signed word) sin16s::return#0 [ mul16s::a#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 mul16s::a#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ) always clobbers reg byte a 
 Statement [137] (signed dword) mul16s::return#2 ← (signed dword) mul16s::return#0 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::return#2 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::return#2 ] ) always clobbers reg byte a 
 Statement [138] (signed dword~) sin16s_gen2::$5 ← (signed dword) mul16s::return#2 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$5 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$5 ] ) always clobbers reg byte a 
-Statement [139] (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$6 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$6 ] ) always clobbers reg byte a 
-Statement [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$6 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [139] (word~) sin16s_gen2::$8 ← > (signed dword~) sin16s_gen2::$5 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ) always clobbers reg byte a 
+Statement [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$8 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [141] (signed word*) sin16s_gen2::sintab#0 ← (signed word*) sin16s_gen2::sintab#2 + (const byte) SIZEOF_SIGNED_WORD [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::i#2 sin16s_gen2::sintab#0 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::i#2 sin16s_gen2::sintab#0 ] ) always clobbers reg byte a 
 Statement [142] (dword) sin16s_gen2::x#1 ← (dword) sin16s_gen2::x#2 + (dword) sin16s_gen2::step#0 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#1 sin16s_gen2::sintab#0 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#1 sin16s_gen2::sintab#0 ] ) always clobbers reg byte a 
 Statement [144] if((word) sin16s_gen2::i#1<(const word) sin16s_gen2::wavelength#0) goto sin16s_gen2::@1 [ sin16s_gen2::step#0 sin16s_gen2::x#1 sin16s_gen2::sintab#0 sin16s_gen2::i#1 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#1 sin16s_gen2::sintab#0 sin16s_gen2::i#1 ] ) always clobbers reg byte a 
@@ -6071,9 +6072,9 @@ Statement [37] (word) bitmap_plot::x#0 ← (word) main::x#0 [ frame_cnt#0 main::
 Statement [40] if((word) main::idx_x#1!=(word) $200) goto main::@12 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ( main:3 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ) always clobbers reg byte a 
 Statement [44] if((word) main::idx_y#1!=(word) $200) goto main::@13 [ frame_cnt#0 main::idx_x#10 main::idx_y#1 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#1 ] ) always clobbers reg byte a 
 Statement [47] *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame#0 + (byte) frame_cnt#0) [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ) always clobbers reg byte x 
-Statement [48] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::$3 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::$3 ] ) always clobbers reg byte a 
-Statement [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::$3 bitmap_plot::$1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::$3 bitmap_plot::$1 ] ) always clobbers reg byte a 
-Statement [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
+Statement [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
+Statement [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
 Statement [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit#0 + (byte~) bitmap_plot::$2) [ ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 ] ) always clobbers reg byte a reg byte y 
 Statement [55] (word) mul16u::a#1 ← (word)(signed word) mul16s::a#3 [ mul16s::a#3 mul16s::b#3 mul16u::a#1 ] ( main:3::mul16s:20 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] main:3::mul16s:30 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] main:3::sin16s_gen2:6::mul16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] ) always clobbers reg byte a 
@@ -6112,8 +6113,8 @@ Statement [134] (signed word) sin16s::return#0 ← (signed word) sin16s::return#
 Statement [135] (signed word) mul16s::a#0 ← (signed word) sin16s::return#0 [ mul16s::a#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 mul16s::a#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ) always clobbers reg byte a 
 Statement [137] (signed dword) mul16s::return#2 ← (signed dword) mul16s::return#0 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::return#2 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 mul16s::return#2 ] ) always clobbers reg byte a 
 Statement [138] (signed dword~) sin16s_gen2::$5 ← (signed dword) mul16s::return#2 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$5 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$5 ] ) always clobbers reg byte a 
-Statement [139] (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$6 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$6 ] ) always clobbers reg byte a 
-Statement [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$6 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [139] (word~) sin16s_gen2::$8 ← > (signed dword~) sin16s_gen2::$5 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 sin16s_gen2::$8 ] ) always clobbers reg byte a 
+Statement [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$8 [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s_gen2::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [141] (signed word*) sin16s_gen2::sintab#0 ← (signed word*) sin16s_gen2::sintab#2 + (const byte) SIZEOF_SIGNED_WORD [ sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::i#2 sin16s_gen2::sintab#0 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#2 sin16s_gen2::i#2 sin16s_gen2::sintab#0 ] ) always clobbers reg byte a 
 Statement [142] (dword) sin16s_gen2::x#1 ← (dword) sin16s_gen2::x#2 + (dword) sin16s_gen2::step#0 [ sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#1 sin16s_gen2::sintab#0 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#1 sin16s_gen2::sintab#0 ] ) always clobbers reg byte a 
 Statement [144] if((word) sin16s_gen2::i#1<(const word) sin16s_gen2::wavelength#0) goto sin16s_gen2::@1 [ sin16s_gen2::step#0 sin16s_gen2::x#1 sin16s_gen2::sintab#0 sin16s_gen2::i#1 ] ( main:3::sin16s_gen2:6 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::x#1 sin16s_gen2::sintab#0 sin16s_gen2::i#1 ] ) always clobbers reg byte a 
@@ -6219,7 +6220,7 @@ Potential registers zp ZP_WORD:108 [ main::$15 ] : zp ZP_WORD:108 , reg byte alu
 Potential registers zp ZP_WORD:110 [ main::y#0 ] : zp ZP_WORD:110 , 
 Potential registers zp ZP_BYTE:112 [ bitmap_plot::y#0 ] : zp ZP_BYTE:112 , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:113 [ bitmap_plot::x#0 ] : zp ZP_WORD:113 , 
-Potential registers zp ZP_WORD:115 [ bitmap_plot::$3 ] : zp ZP_WORD:115 , 
+Potential registers zp ZP_WORD:115 [ bitmap_plot::plotter#0 ] : zp ZP_WORD:115 , 
 Potential registers zp ZP_WORD:117 [ bitmap_plot::$1 ] : zp ZP_WORD:117 , 
 Potential registers zp ZP_WORD:119 [ bitmap_plot::plotter#1 ] : zp ZP_WORD:119 , 
 Potential registers zp ZP_BYTE:121 [ bitmap_plot::$2 ] : zp ZP_BYTE:121 , reg byte a , reg byte x , reg byte y , 
@@ -6240,7 +6241,7 @@ Potential registers zp ZP_DWORD:149 [ sin16s_gen2::step#0 ] : zp ZP_DWORD:149 ,
 Potential registers zp ZP_WORD:153 [ sin16s::return#0 ] : zp ZP_WORD:153 , 
 Potential registers zp ZP_DWORD:155 [ mul16s::return#2 ] : zp ZP_DWORD:155 , 
 Potential registers zp ZP_DWORD:159 [ sin16s_gen2::$5 ] : zp ZP_DWORD:159 , 
-Potential registers zp ZP_WORD:163 [ sin16s_gen2::$6 ] : zp ZP_WORD:163 , 
+Potential registers zp ZP_WORD:163 [ sin16s_gen2::$8 ] : zp ZP_WORD:163 , 
 Potential registers zp ZP_DWORD:165 [ sin16s::$4 ] : zp ZP_DWORD:165 , 
 Potential registers zp ZP_WORD:169 [ sin16s::x1#0 ] : zp ZP_WORD:169 , 
 Potential registers zp ZP_WORD:171 [ mulu16_sel::return#0 ] : zp ZP_WORD:171 , 
@@ -6277,10 +6278,10 @@ Uplift Scope [bitmap_init] 39.88: zp ZP_WORD:38 [ bitmap_init::yoffs#2 bitmap_in
 Uplift Scope [mul16s] 46.18: zp ZP_WORD:8 [ mul16s::b#3 mul16s::b#2 mul16s::b#1 ] 23: zp ZP_WORD:6 [ mul16s::a#3 mul16s::a#0 ] 22: zp ZP_DWORD:74 [ mul16s::return#3 ] 22: zp ZP_DWORD:96 [ mul16s::return#4 ] 22: zp ZP_DWORD:155 [ mul16s::return#2 ] 16.5: zp ZP_DWORD:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 ] 7: zp ZP_DWORD:134 [ mul16s::return#0 ] 4: zp ZP_WORD:126 [ mul16s::$9 ] 4: zp ZP_WORD:128 [ mul16s::$16 ] 4: zp ZP_WORD:130 [ mul16s::$13 ] 4: zp ZP_WORD:132 [ mul16s::$17 ] 
 Uplift Scope [sin16s] 27.5: zp ZP_DWORD:49 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] 22: zp ZP_WORD:153 [ sin16s::return#0 ] 13: zp ZP_WORD:53 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 ] 4: zp ZP_DWORD:165 [ sin16s::$4 ] 4: zp ZP_WORD:173 [ sin16s::x2#0 ] 4: zp ZP_WORD:181 [ sin16s::x3_6#0 ] 4: zp ZP_WORD:187 [ sin16s::x4#0 ] 4: zp ZP_WORD:191 [ sin16s::x5#0 ] 4: zp ZP_WORD:193 [ sin16s::x5_128#0 ] 1: zp ZP_WORD:177 [ sin16s::x3#0 ] 1: zp ZP_WORD:195 [ sin16s::usinx#1 ] 0.64: zp ZP_WORD:169 [ sin16s::x1#0 ] 0.33: zp ZP_WORD:183 [ sin16s::usinx#0 ] 0.06: zp ZP_BYTE:48 [ sin16s::isUpper#2 ] 
 Uplift Scope [mulu16_sel] 24: zp ZP_WORD:55 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] 21: zp ZP_WORD:57 [ mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] 4: zp ZP_WORD:171 [ mulu16_sel::return#0 ] 4: zp ZP_WORD:175 [ mulu16_sel::return#1 ] 4: zp ZP_WORD:179 [ mulu16_sel::return#2 ] 4: zp ZP_WORD:185 [ mulu16_sel::return#10 ] 4: zp ZP_WORD:189 [ mulu16_sel::return#11 ] 4: zp ZP_DWORD:201 [ mulu16_sel::$0 ] 4: zp ZP_DWORD:205 [ mulu16_sel::$1 ] 1.71: zp ZP_WORD:209 [ mulu16_sel::return#12 ] 0.33: zp ZP_BYTE:59 [ mulu16_sel::select#5 ] 
-Uplift Scope [sin16s_gen2] 22: zp ZP_DWORD:159 [ sin16s_gen2::$5 ] 18.33: zp ZP_WORD:46 [ sin16s_gen2::i#2 sin16s_gen2::i#1 ] 11: zp ZP_WORD:163 [ sin16s_gen2::$6 ] 10.33: zp ZP_DWORD:40 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ] 8.8: zp ZP_WORD:44 [ sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ] 0.87: zp ZP_DWORD:149 [ sin16s_gen2::step#0 ] 
+Uplift Scope [sin16s_gen2] 22: zp ZP_DWORD:159 [ sin16s_gen2::$5 ] 18.33: zp ZP_WORD:46 [ sin16s_gen2::i#2 sin16s_gen2::i#1 ] 11: zp ZP_WORD:163 [ sin16s_gen2::$8 ] 10.33: zp ZP_DWORD:40 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ] 8.8: zp ZP_WORD:44 [ sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ] 0.87: zp ZP_DWORD:149 [ sin16s_gen2::step#0 ] 
 Uplift Scope [] 44.64: zp ZP_BYTE:67 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] 0.8: zp ZP_WORD:225 [ rem16u#1 ] 
 Uplift Scope [memset] 38: zp ZP_WORD:33 [ memset::dst#2 memset::dst#3 memset::dst#1 ] 2.17: zp ZP_WORD:139 [ memset::end#0 ] 2: zp ZP_WORD:30 [ memset::num#2 ] 1.57: zp ZP_BYTE:32 [ memset::c#3 ] 0: zp ZP_WORD:28 [ memset::str#2 ] 
-Uplift Scope [bitmap_plot] 7.5: zp ZP_BYTE:112 [ bitmap_plot::y#0 ] 4: zp ZP_WORD:117 [ bitmap_plot::$1 ] 4: zp ZP_BYTE:121 [ bitmap_plot::$2 ] 3.75: zp ZP_WORD:113 [ bitmap_plot::x#0 ] 3: zp ZP_WORD:119 [ bitmap_plot::plotter#1 ] 1: zp ZP_WORD:115 [ bitmap_plot::$3 ] 
+Uplift Scope [bitmap_plot] 7.5: zp ZP_BYTE:112 [ bitmap_plot::y#0 ] 4: zp ZP_WORD:117 [ bitmap_plot::$1 ] 4: zp ZP_BYTE:121 [ bitmap_plot::$2 ] 3.75: zp ZP_WORD:113 [ bitmap_plot::x#0 ] 3: zp ZP_WORD:119 [ bitmap_plot::plotter#1 ] 1: zp ZP_WORD:115 [ bitmap_plot::plotter#0 ] 
 Uplift Scope [div32u16u] 4: zp ZP_DWORD:145 [ div32u16u::return#2 ] 4: zp ZP_WORD:217 [ div32u16u::quotient_lo#0 ] 1.33: zp ZP_DWORD:219 [ div32u16u::return#0 ] 0.8: zp ZP_WORD:213 [ div32u16u::quotient_hi#0 ] 
 Uplift Scope [bitmap_clear] 
 Uplift Scope [init_irq] 
@@ -6294,10 +6295,10 @@ Limited combination testing to 100 combinations of 15360 possible.
 Uplifting [mul16s] best 26195 combination zp ZP_WORD:8 [ mul16s::b#3 mul16s::b#2 mul16s::b#1 ] zp ZP_WORD:6 [ mul16s::a#3 mul16s::a#0 ] zp ZP_DWORD:74 [ mul16s::return#3 ] zp ZP_DWORD:96 [ mul16s::return#4 ] zp ZP_DWORD:155 [ mul16s::return#2 ] zp ZP_DWORD:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 ] zp ZP_DWORD:134 [ mul16s::return#0 ] zp ZP_WORD:126 [ mul16s::$9 ] zp ZP_WORD:128 [ mul16s::$16 ] zp ZP_WORD:130 [ mul16s::$13 ] zp ZP_WORD:132 [ mul16s::$17 ] 
 Uplifting [sin16s] best 26195 combination zp ZP_DWORD:49 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] zp ZP_WORD:153 [ sin16s::return#0 ] zp ZP_WORD:53 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 ] zp ZP_DWORD:165 [ sin16s::$4 ] zp ZP_WORD:173 [ sin16s::x2#0 ] zp ZP_WORD:181 [ sin16s::x3_6#0 ] zp ZP_WORD:187 [ sin16s::x4#0 ] zp ZP_WORD:191 [ sin16s::x5#0 ] zp ZP_WORD:193 [ sin16s::x5_128#0 ] zp ZP_WORD:177 [ sin16s::x3#0 ] zp ZP_WORD:195 [ sin16s::usinx#1 ] zp ZP_WORD:169 [ sin16s::x1#0 ] zp ZP_WORD:183 [ sin16s::usinx#0 ] zp ZP_BYTE:48 [ sin16s::isUpper#2 ] 
 Uplifting [mulu16_sel] best 26179 combination zp ZP_WORD:55 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] zp ZP_WORD:57 [ mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] zp ZP_WORD:171 [ mulu16_sel::return#0 ] zp ZP_WORD:175 [ mulu16_sel::return#1 ] zp ZP_WORD:179 [ mulu16_sel::return#2 ] zp ZP_WORD:185 [ mulu16_sel::return#10 ] zp ZP_WORD:189 [ mulu16_sel::return#11 ] zp ZP_DWORD:201 [ mulu16_sel::$0 ] zp ZP_DWORD:205 [ mulu16_sel::$1 ] zp ZP_WORD:209 [ mulu16_sel::return#12 ] reg byte x [ mulu16_sel::select#5 ] 
-Uplifting [sin16s_gen2] best 26179 combination zp ZP_DWORD:159 [ sin16s_gen2::$5 ] zp ZP_WORD:46 [ sin16s_gen2::i#2 sin16s_gen2::i#1 ] zp ZP_WORD:163 [ sin16s_gen2::$6 ] zp ZP_DWORD:40 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ] zp ZP_WORD:44 [ sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ] zp ZP_DWORD:149 [ sin16s_gen2::step#0 ] 
+Uplifting [sin16s_gen2] best 26179 combination zp ZP_DWORD:159 [ sin16s_gen2::$5 ] zp ZP_WORD:46 [ sin16s_gen2::i#2 sin16s_gen2::i#1 ] zp ZP_WORD:163 [ sin16s_gen2::$8 ] zp ZP_DWORD:40 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ] zp ZP_WORD:44 [ sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ] zp ZP_DWORD:149 [ sin16s_gen2::step#0 ] 
 Uplifting [] best 26179 combination zp ZP_BYTE:67 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] zp ZP_WORD:225 [ rem16u#1 ] 
 Uplifting [memset] best 26163 combination zp ZP_WORD:33 [ memset::dst#2 memset::dst#3 memset::dst#1 ] zp ZP_WORD:139 [ memset::end#0 ] zp ZP_WORD:30 [ memset::num#2 ] reg byte x [ memset::c#3 ] zp ZP_WORD:28 [ memset::str#2 ] 
-Uplifting [bitmap_plot] best 26146 combination reg byte x [ bitmap_plot::y#0 ] zp ZP_WORD:117 [ bitmap_plot::$1 ] reg byte a [ bitmap_plot::$2 ] zp ZP_WORD:113 [ bitmap_plot::x#0 ] zp ZP_WORD:119 [ bitmap_plot::plotter#1 ] zp ZP_WORD:115 [ bitmap_plot::$3 ] 
+Uplifting [bitmap_plot] best 26146 combination reg byte x [ bitmap_plot::y#0 ] zp ZP_WORD:117 [ bitmap_plot::$1 ] reg byte a [ bitmap_plot::$2 ] zp ZP_WORD:113 [ bitmap_plot::x#0 ] zp ZP_WORD:119 [ bitmap_plot::plotter#1 ] zp ZP_WORD:115 [ bitmap_plot::plotter#0 ] 
 Uplifting [div32u16u] best 26146 combination zp ZP_DWORD:145 [ div32u16u::return#2 ] zp ZP_WORD:217 [ div32u16u::quotient_lo#0 ] zp ZP_DWORD:219 [ div32u16u::return#0 ] zp ZP_WORD:213 [ div32u16u::quotient_hi#0 ] 
 Uplifting [bitmap_clear] best 26146 combination 
 Uplifting [init_irq] best 26146 combination 
@@ -6335,7 +6336,7 @@ Coalescing zero page register with common assignment [ zp ZP_DWORD:74 [ mul16s::
 Coalescing zero page register with common assignment [ zp ZP_WORD:88 [ main::x#0 ] ] with [ zp ZP_WORD:113 [ bitmap_plot::x#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:90 [ main::$25 ] ] with [ zp ZP_WORD:92 [ main::$27 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_DWORD:96 [ mul16s::return#4 ] ] with [ zp ZP_DWORD:100 [ main::ypos#0 ] ] - score: 1
-Coalescing zero page register with common assignment [ zp ZP_WORD:115 [ bitmap_plot::$3 ] ] with [ zp ZP_WORD:119 [ bitmap_plot::plotter#1 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:115 [ bitmap_plot::plotter#0 ] ] with [ zp ZP_WORD:119 [ bitmap_plot::plotter#1 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:126 [ mul16s::$9 ] ] with [ zp ZP_WORD:128 [ mul16s::$16 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_DWORD:145 [ div32u16u::return#2 ] ] with [ zp ZP_DWORD:149 [ sin16s_gen2::step#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_DWORD:145 [ div32u16u::return#2 sin16s_gen2::step#0 ] ] with [ zp ZP_DWORD:219 [ div32u16u::return#0 ] ] - score: 1
@@ -6377,13 +6378,13 @@ Allocated (was zp ZP_WORD:64) zp ZP_WORD:49 [ divr16u::quotient#3 divr16u::retur
 Allocated (was zp ZP_BYTE:67) zp ZP_BYTE:51 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
 Allocated (was zp ZP_WORD:88) zp ZP_WORD:52 [ main::x#0 bitmap_plot::x#0 ]
 Allocated (was zp ZP_WORD:110) zp ZP_WORD:54 [ main::y#0 ]
-Allocated (was zp ZP_WORD:115) zp ZP_WORD:56 [ bitmap_plot::$3 bitmap_plot::plotter#1 ]
+Allocated (was zp ZP_WORD:115) zp ZP_WORD:56 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ]
 Allocated (was zp ZP_WORD:117) zp ZP_WORD:58 [ bitmap_plot::$1 ]
 Allocated (was zp ZP_WORD:126) zp ZP_WORD:60 [ mul16s::$9 mul16s::$16 ]
 Allocated (was zp ZP_WORD:130) zp ZP_WORD:62 [ mul16s::$13 ]
 Allocated (was zp ZP_BYTE:141) zp ZP_BYTE:64 [ bitmap_init::$7 ]
 Allocated (was zp ZP_DWORD:145) zp ZP_DWORD:65 [ div32u16u::return#2 sin16s_gen2::step#0 div32u16u::return#0 ]
-Allocated (was zp ZP_WORD:163) zp ZP_WORD:69 [ sin16s_gen2::$6 ]
+Allocated (was zp ZP_WORD:163) zp ZP_WORD:69 [ sin16s_gen2::$8 ]
 Allocated (was zp ZP_WORD:169) zp ZP_WORD:71 [ sin16s::x1#0 ]
 Allocated (was zp ZP_WORD:171) zp ZP_WORD:73 [ mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 sin16s::x5_128#0 ]
 Allocated (was zp ZP_WORD:213) zp ZP_WORD:75 [ div32u16u::quotient_hi#0 ]
@@ -6762,12 +6763,11 @@ bitmap_plot: {
     .label _1 = $3a
     .label plotter = $38
     .label x = $34
-    .label _3 = $38
-  //SEG90 [48] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+  //SEG90 [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
-    sta _3+1
+    sta plotter+1
     lda bitmap_plot_ylo,x
-    sta _3
+    sta plotter
   //SEG91 [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda x
     and #<$fff8
@@ -6775,7 +6775,7 @@ bitmap_plot: {
     lda x+1
     and #>$fff8
     sta _1+1
-  //SEG92 [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
+  //SEG92 [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     lda plotter
     clc
     adc _1
@@ -7247,7 +7247,7 @@ sin16s_gen2: {
     .const max = $1001
     .const ampl = max-min
     .label _5 = $a
-    .label _6 = $45
+    .label _8 = $45
     .label step = $41
     .label sintab = $22
     .label x = $1e
@@ -7321,17 +7321,17 @@ sin16s_gen2: {
   //SEG255 sin16s_gen2::@4
   b4:
   //SEG256 [138] (signed dword~) sin16s_gen2::$5 ← (signed dword) mul16s::return#2
-  //SEG257 [139] (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5 -- vwuz1=_hi_vdsz2 
+  //SEG257 [139] (word~) sin16s_gen2::$8 ← > (signed dword~) sin16s_gen2::$5 -- vwuz1=_hi_vdsz2 
     lda _5+2
-    sta _6
+    sta _8
     lda _5+3
-    sta _6+1
-  //SEG258 [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$6 -- _deref_pwsz1=vwsz2 
+    sta _8+1
+  //SEG258 [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$8 -- _deref_pwsz1=vwsz2 
     ldy #0
-    lda _6
+    lda _8
     sta (sintab),y
     iny
-    lda _6+1
+    lda _8+1
     sta (sintab),y
   //SEG259 [141] (signed word*) sin16s_gen2::sintab#0 ← (signed word*) sin16s_gen2::sintab#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD
@@ -8293,9 +8293,9 @@ FINAL SYMBOL TABLE
 (void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
 (word~) bitmap_plot::$1 $1 zp ZP_WORD:58 4.0
 (byte~) bitmap_plot::$2 reg byte a 4.0
-(word~) bitmap_plot::$3 $3 zp ZP_WORD:56 1.0
 (label) bitmap_plot::@return
 (byte*) bitmap_plot::plotter
+(word) bitmap_plot::plotter#0 plotter zp ZP_WORD:56 1.0
 (byte*) bitmap_plot::plotter#1 plotter zp ZP_WORD:56 3.0
 (word) bitmap_plot::x
 (word) bitmap_plot::x#0 x zp ZP_WORD:52 3.75
@@ -8574,7 +8574,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (word) sin16s::x5_128#0 x5_128 zp ZP_WORD:73 4.0
 (void()) sin16s_gen2((signed word*) sin16s_gen2::sintab , (word) sin16s_gen2::wavelength , (signed word) sin16s_gen2::min , (signed word) sin16s_gen2::max)
 (signed dword~) sin16s_gen2::$5 $5 zp ZP_DWORD:10 22.0
-(word~) sin16s_gen2::$6 $6 zp ZP_WORD:69 11.0
+(word~) sin16s_gen2::$8 $8 zp ZP_WORD:69 11.0
 (label) sin16s_gen2::@1
 (label) sin16s_gen2::@2
 (label) sin16s_gen2::@3
@@ -8634,7 +8634,7 @@ zp ZP_WORD:52 [ main::x#0 bitmap_plot::x#0 ]
 reg byte alu [ main::$15 ]
 zp ZP_WORD:54 [ main::y#0 ]
 reg byte x [ bitmap_plot::y#0 ]
-zp ZP_WORD:56 [ bitmap_plot::$3 bitmap_plot::plotter#1 ]
+zp ZP_WORD:56 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ]
 zp ZP_WORD:58 [ bitmap_plot::$1 ]
 reg byte a [ bitmap_plot::$2 ]
 zp ZP_WORD:60 [ mul16s::$9 mul16s::$16 ]
@@ -8645,7 +8645,7 @@ reg byte a [ bitmap_init::$4 ]
 reg byte a [ bitmap_init::$5 ]
 reg byte a [ bitmap_init::$6 ]
 zp ZP_DWORD:65 [ div32u16u::return#2 sin16s_gen2::step#0 div32u16u::return#0 ]
-zp ZP_WORD:69 [ sin16s_gen2::$6 ]
+zp ZP_WORD:69 [ sin16s_gen2::$8 ]
 zp ZP_WORD:71 [ sin16s::x1#0 ]
 zp ZP_WORD:73 [ mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 sin16s::x5_128#0 ]
 zp ZP_WORD:75 [ div32u16u::quotient_hi#0 ]
@@ -8967,12 +8967,11 @@ bitmap_plot: {
     .label _1 = $3a
     .label plotter = $38
     .label x = $34
-    .label _3 = $38
-  //SEG90 [48] (word~) bitmap_plot::$3 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+  //SEG90 [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi#0 + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo#0 + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
-    sta _3+1
+    sta plotter+1
     lda bitmap_plot_ylo,x
-    sta _3
+    sta plotter
   //SEG91 [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda x
     and #<$fff8
@@ -8980,7 +8979,7 @@ bitmap_plot: {
     lda x+1
     and #>$fff8
     sta _1+1
-  //SEG92 [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word~) bitmap_plot::$3 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
+  //SEG92 [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     lda plotter
     clc
     adc _1
@@ -9387,7 +9386,7 @@ sin16s_gen2: {
     .const max = $1001
     .const ampl = max-min
     .label _5 = $a
-    .label _6 = $45
+    .label _8 = $45
     .label step = $41
     .label sintab = $22
     .label x = $1e
@@ -9447,17 +9446,17 @@ sin16s_gen2: {
   //SEG254 [137] (signed dword) mul16s::return#2 ← (signed dword) mul16s::return#0
   //SEG255 sin16s_gen2::@4
   //SEG256 [138] (signed dword~) sin16s_gen2::$5 ← (signed dword) mul16s::return#2
-  //SEG257 [139] (word~) sin16s_gen2::$6 ← > (signed dword~) sin16s_gen2::$5 -- vwuz1=_hi_vdsz2 
+  //SEG257 [139] (word~) sin16s_gen2::$8 ← > (signed dword~) sin16s_gen2::$5 -- vwuz1=_hi_vdsz2 
     lda _5+2
-    sta _6
+    sta _8
     lda _5+3
-    sta _6+1
-  //SEG258 [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$6 -- _deref_pwsz1=vwsz2 
+    sta _8+1
+  //SEG258 [140] *((signed word*) sin16s_gen2::sintab#2) ← (signed word)(word~) sin16s_gen2::$8 -- _deref_pwsz1=vwsz2 
     ldy #0
-    lda _6
+    lda _8
     sta (sintab),y
     iny
-    lda _6+1
+    lda _8+1
     sta (sintab),y
   //SEG259 [141] (signed word*) sin16s_gen2::sintab#0 ← (signed word*) sin16s_gen2::sintab#2 + (const byte) SIZEOF_SIGNED_WORD -- pwsz1=pwsz1_plus_vbuc1 
     lda #SIZEOF_SIGNED_WORD

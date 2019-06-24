@@ -143,13 +143,14 @@ Constant (const byte*) main::$6 = main::SCREEN#0+(byte)3*$28
 Constant (const byte*) main::$10 = main::SCREEN#0+(byte)5*$28
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [9] (signed byte~) main::$8 ← (signed byte)(byte) main::i#2 keeping main::i#2
-Inlining Noop Cast [12] (byte~) main::$12 ← (byte)(signed byte~) main::$11 keeping main::$11
+Successful SSA optimization Pass2NopCastInlining
+Inlining Noop Cast [12] (byte~) main::$12 ← (byte)(signed byte~) main::$11 keeping main::$12
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to remove identity multiply/divide [1] (byte~) main::$1 ← (byte) main::i#2 * (byte) 1
 Rewriting multiplication to use shift [3] (byte~) main::$3 ← (byte) main::i#2 * (byte) 2
 Rewriting multiplication to use shift [5] (byte~) main::$5 ← (byte) main::i#2 * (byte) 4
 Rewriting multiplication to use shift [7] (byte~) main::$7 ← (byte) main::i#2 * (byte) 8
-Rewriting multiplication to use shift [11] (signed byte~) main::$11 ← (signed byte) main::sb#0 * (signed byte) 2
+Rewriting multiplication to use shift [11] (signed byte~) main::$12 ← (signed byte) main::sb#0 * (signed byte) 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
@@ -203,8 +204,8 @@ main::@1: scope:[main]  from main main::@1
   [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 3
   [12] *((const byte*) main::SCREEN#0+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$7
   [13] (signed byte) main::sb#0 ← - (signed byte)(byte) main::i#2
-  [14] (signed byte~) main::$11 ← (signed byte) main::sb#0 << (byte) 1
-  [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$11
+  [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1
+  [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12
   [16] (byte) main::i#1 ← ++ (byte) main::i#2
   [17] if((byte) main::i#1!=(byte) $b) goto main::@1
   to:main::@return
@@ -215,7 +216,7 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(signed byte~) main::$11 11.0
+(signed byte~) main::$12 11.0
 (byte~) main::$3 22.0
 (byte~) main::$5 22.0
 (byte~) main::$7 22.0
@@ -232,20 +233,20 @@ Added variable main::$3 to zero page equivalence class [ main::$3 ]
 Added variable main::$5 to zero page equivalence class [ main::$5 ]
 Added variable main::$7 to zero page equivalence class [ main::$7 ]
 Added variable main::sb#0 to zero page equivalence class [ main::sb#0 ]
-Added variable main::$11 to zero page equivalence class [ main::$11 ]
+Added variable main::$12 to zero page equivalence class [ main::$12 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::$3 ]
 [ main::$5 ]
 [ main::$7 ]
 [ main::sb#0 ]
-[ main::$11 ]
+[ main::$12 ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Allocated zp ZP_BYTE:3 [ main::$3 ]
 Allocated zp ZP_BYTE:4 [ main::$5 ]
 Allocated zp ZP_BYTE:5 [ main::$7 ]
 Allocated zp ZP_BYTE:6 [ main::sb#0 ]
-Allocated zp ZP_BYTE:7 [ main::$11 ]
+Allocated zp ZP_BYTE:7 [ main::$12 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -277,7 +278,7 @@ main: {
     .label _3 = 3
     .label _5 = 4
     .label _7 = 5
-    .label _11 = 7
+    .label _12 = 7
     .label sb = 6
     .label i = 2
   //SEG11 [5] phi from main to main::@1 [phi:main->main::@1]
@@ -329,12 +330,12 @@ main: {
     clc
     adc #1
     sta sb
-  //SEG24 [14] (signed byte~) main::$11 ← (signed byte) main::sb#0 << (byte) 1 -- vbsz1=vbsz2_rol_1 
+  //SEG24 [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 -- vbsz1=vbsz2_rol_1 
     lda sb
     asl
-    sta _11
-  //SEG25 [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$11 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda _11
+    sta _12
+  //SEG25 [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12 -- pbuc1_derefidx_vbuz1=vbuz2 
+    lda _12
     ldy i
     sta SCREEN+5*$28,y
   //SEG26 [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -357,31 +358,31 @@ Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ ma
 Statement [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 2 [ main::i#2 main::$5 ] ( main:2 [ main::i#2 main::$5 ] ) always clobbers reg byte a 
 Statement [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 3 [ main::i#2 main::$7 ] ( main:2 [ main::i#2 main::$7 ] ) always clobbers reg byte a 
 Statement [13] (signed byte) main::sb#0 ← - (signed byte)(byte) main::i#2 [ main::i#2 main::sb#0 ] ( main:2 [ main::i#2 main::sb#0 ] ) always clobbers reg byte a 
-Statement [14] (signed byte~) main::$11 ← (signed byte) main::sb#0 << (byte) 1 [ main::i#2 main::$11 ] ( main:2 [ main::i#2 main::$11 ] ) always clobbers reg byte a 
+Statement [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 [ main::i#2 main::$12 ] ( main:2 [ main::i#2 main::$12 ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [7] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$3 ] ( main:2 [ main::i#2 main::$3 ] ) always clobbers reg byte a 
 Statement [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 2 [ main::i#2 main::$5 ] ( main:2 [ main::i#2 main::$5 ] ) always clobbers reg byte a 
 Statement [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 3 [ main::i#2 main::$7 ] ( main:2 [ main::i#2 main::$7 ] ) always clobbers reg byte a 
 Statement [13] (signed byte) main::sb#0 ← - (signed byte)(byte) main::i#2 [ main::i#2 main::sb#0 ] ( main:2 [ main::i#2 main::sb#0 ] ) always clobbers reg byte a 
-Statement [14] (signed byte~) main::$11 ← (signed byte) main::sb#0 << (byte) 1 [ main::i#2 main::$11 ] ( main:2 [ main::i#2 main::$11 ] ) always clobbers reg byte a 
+Statement [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 [ main::i#2 main::$12 ] ( main:2 [ main::i#2 main::$12 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:3 [ main::$3 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:4 [ main::$5 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:5 [ main::$7 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:6 [ main::sb#0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ main::$11 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:7 [ main::$12 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:3 [ main::$3 ] 22: zp ZP_BYTE:4 [ main::$5 ] 22: zp ZP_BYTE:5 [ main::$7 ] 22: zp ZP_BYTE:6 [ main::sb#0 ] 11: zp ZP_BYTE:7 [ main::$11 ] 
+Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:3 [ main::$3 ] 22: zp ZP_BYTE:4 [ main::$5 ] 22: zp ZP_BYTE:5 [ main::$7 ] 22: zp ZP_BYTE:6 [ main::sb#0 ] 11: zp ZP_BYTE:7 [ main::$12 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 863 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$3 ] reg byte a [ main::$5 ] reg byte a [ main::$7 ] zp ZP_BYTE:6 [ main::sb#0 ] zp ZP_BYTE:7 [ main::$11 ] 
+Uplifting [main] best 863 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$3 ] reg byte a [ main::$5 ] reg byte a [ main::$7 ] zp ZP_BYTE:6 [ main::sb#0 ] zp ZP_BYTE:7 [ main::$12 ] 
 Limited combination testing to 100 combinations of 3072 possible.
 Uplifting [] best 863 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:6 [ main::sb#0 ]
 Uplifting [main] best 803 combination reg byte a [ main::sb#0 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:7 [ main::$11 ]
-Uplifting [main] best 743 combination reg byte a [ main::$11 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:7 [ main::$12 ]
+Uplifting [main] best 743 combination reg byte a [ main::$12 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -447,9 +448,9 @@ main: {
     eor #$ff
     clc
     adc #1
-  //SEG24 [14] (signed byte~) main::$11 ← (signed byte) main::sb#0 << (byte) 1 -- vbsaa=vbsaa_rol_1 
+  //SEG24 [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 -- vbsaa=vbsaa_rol_1 
     asl
-  //SEG25 [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$11 -- pbuc1_derefidx_vbuxx=vbuaa 
+  //SEG25 [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+5*$28,x
   //SEG26 [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -494,7 +495,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (void()) main()
-(signed byte~) main::$11 reg byte a 11.0
+(signed byte~) main::$12 reg byte a 11.0
 (byte~) main::$3 reg byte a 22.0
 (byte~) main::$5 reg byte a 22.0
 (byte~) main::$7 reg byte a 22.0
@@ -513,7 +514,7 @@ reg byte a [ main::$3 ]
 reg byte a [ main::$5 ]
 reg byte a [ main::$7 ]
 reg byte a [ main::sb#0 ]
-reg byte a [ main::$11 ]
+reg byte a [ main::$12 ]
 
 
 FINAL ASSEMBLER
@@ -569,9 +570,9 @@ main: {
     eor #$ff
     clc
     adc #1
-  //SEG24 [14] (signed byte~) main::$11 ← (signed byte) main::sb#0 << (byte) 1 -- vbsaa=vbsaa_rol_1 
+  //SEG24 [14] (signed byte~) main::$12 ← (signed byte) main::sb#0 << (byte) 1 -- vbsaa=vbsaa_rol_1 
     asl
-  //SEG25 [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$11 -- pbuc1_derefidx_vbuxx=vbuaa 
+  //SEG25 [15] *((const byte*) main::SCREEN#0+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte)(signed byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+5*$28,x
   //SEG26 [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx

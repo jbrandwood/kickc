@@ -2374,7 +2374,8 @@ Inlining Noop Cast [111] (signed word) sin16s::sinx#0 ← (signed word)(word) si
 Inlining Noop Cast [115] (signed word~) sin16s::$19 ← (signed word)(word) sin16s::usinx#1 keeping sin16s::usinx#1
 Inlining Noop Cast [155] (signed byte) sin8s::sinx#0 ← (signed byte)(byte) sin8s::usinx#4 keeping sin8s::usinx#4
 Inlining Noop Cast [159] (signed byte~) sin8s::$21 ← (signed byte)(byte) sin8s::usinx#4 keeping sin8s::usinx#4
-Inlining Noop Cast [220] (signed byte~) main::$6 ← (signed byte)(byte~) main::$5 keeping main::$5
+Successful SSA optimization Pass2NopCastInlining
+Inlining Noop Cast [220] (signed byte~) main::$6 ← (signed byte)(byte~) main::$5 keeping main::$6
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [216] (word~) main::$11 ← (word~) main::$3 * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -2706,8 +2707,8 @@ main::@1: scope:[main]  from main::@3 main::@5
   [13] (word~) main::$11 ← (word~) main::$3 << (byte) 1
   [14] (signed word*~) main::$4 ← (const signed word[$c0]) main::sintabw#0 + (word~) main::$11
   [15] (signed word) main::sw#0 ← *((signed word*~) main::$4)
-  [16] (byte~) main::$5 ← > (signed word) main::sw#0
-  [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$5
+  [16] (byte~) main::$6 ← > (signed word) main::sw#0
+  [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$6
   [18] (signed byte) print_sbyte::b#1 ← (signed byte) main::sd#0
   [19] call print_sbyte 
   to:main::@4
@@ -3202,7 +3203,7 @@ VARIABLE REGISTER WEIGHTS
 (word~) main::$11 22.0
 (word~) main::$3 22.0
 (signed word*~) main::$4 22.0
-(byte~) main::$5 11.0
+(byte~) main::$6 11.0
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 2.75
@@ -3476,7 +3477,7 @@ Added variable main::$3 to zero page equivalence class [ main::$3 ]
 Added variable main::$11 to zero page equivalence class [ main::$11 ]
 Added variable main::$4 to zero page equivalence class [ main::$4 ]
 Added variable main::sw#0 to zero page equivalence class [ main::sw#0 ]
-Added variable main::$5 to zero page equivalence class [ main::$5 ]
+Added variable main::$6 to zero page equivalence class [ main::$6 ]
 Added variable main::sd#0 to zero page equivalence class [ main::sd#0 ]
 Added variable print_byte::b#0 to zero page equivalence class [ print_byte::b#0 ]
 Added variable print_byte::$0 to zero page equivalence class [ print_byte::$0 ]
@@ -3581,7 +3582,7 @@ Complete equivalence classes
 [ main::$11 ]
 [ main::$4 ]
 [ main::sw#0 ]
-[ main::$5 ]
+[ main::$6 ]
 [ main::sd#0 ]
 [ print_byte::b#0 ]
 [ print_byte::$0 ]
@@ -3685,7 +3686,7 @@ Allocated zp ZP_WORD:71 [ main::$3 ]
 Allocated zp ZP_WORD:73 [ main::$11 ]
 Allocated zp ZP_WORD:75 [ main::$4 ]
 Allocated zp ZP_WORD:77 [ main::sw#0 ]
-Allocated zp ZP_BYTE:79 [ main::$5 ]
+Allocated zp ZP_BYTE:79 [ main::$6 ]
 Allocated zp ZP_BYTE:80 [ main::sd#0 ]
 Allocated zp ZP_BYTE:81 [ print_byte::b#0 ]
 Allocated zp ZP_BYTE:82 [ print_byte::$0 ]
@@ -3792,7 +3793,7 @@ main: {
     .label wavelength = $c0
     .label _3 = $47
     .label _4 = $4b
-    .label _5 = $4f
+    .label _6 = $4f
     .label _11 = $49
     .label sb = $46
     .label sw = $4d
@@ -3869,13 +3870,13 @@ main: {
     iny
     lda (_4),y
     sta sw+1
-  //SEG33 [16] (byte~) main::$5 ← > (signed word) main::sw#0 -- vbuz1=_hi_vwsz2 
+  //SEG33 [16] (byte~) main::$6 ← > (signed word) main::sw#0 -- vbuz1=_hi_vwsz2 
     lda sw+1
-    sta _5
-  //SEG34 [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$5 -- vbsz1=vbsz2_minus_vbsz3 
+    sta _6
+  //SEG34 [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$6 -- vbsz1=vbsz2_minus_vbsz3 
     lda sb
     sec
-    sbc _5
+    sbc _6
     sta sd
   //SEG35 [18] (signed byte) print_sbyte::b#1 ← (signed byte) main::sd#0 -- vbsz1=vbsz2 
     lda sd
@@ -5583,8 +5584,8 @@ Statement [14] (signed word*~) main::$4 ← (const signed word[$c0]) main::sinta
 Statement [15] (signed word) main::sw#0 ← *((signed word*~) main::$4) [ main::i#2 print_char_cursor#42 main::sb#0 main::sw#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::sw#0 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:70 [ main::sb#0 ]
-Statement [16] (byte~) main::$5 ← > (signed word) main::sw#0 [ main::i#2 print_char_cursor#42 main::sb#0 main::$5 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::$5 ] ) always clobbers reg byte a 
-Statement [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$5 [ main::i#2 print_char_cursor#42 main::sd#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sd#0 ] ) always clobbers reg byte a 
+Statement [16] (byte~) main::$6 ← > (signed word) main::sw#0 [ main::i#2 print_char_cursor#42 main::sb#0 main::$6 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::$6 ] ) always clobbers reg byte a 
+Statement [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$6 [ main::i#2 print_char_cursor#42 main::sd#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sd#0 ] ) always clobbers reg byte a 
 Statement [27] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [29] *((byte*) print_char_cursor#19) ← *((byte*) print_str::str#2) [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [41] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#1 [ print_char_cursor#10 print_sbyte::b#0 ] ( main:2::print_sbyte:19 [ main::i#2 print_char_cursor#10 print_sbyte::b#0 ] ) always clobbers reg byte a 
@@ -5692,8 +5693,8 @@ Statement [12] (word~) main::$3 ← (word)(byte) main::i#2 [ main::i#2 print_cha
 Statement [13] (word~) main::$11 ← (word~) main::$3 << (byte) 1 [ main::i#2 print_char_cursor#42 main::sb#0 main::$11 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::$11 ] ) always clobbers reg byte a 
 Statement [14] (signed word*~) main::$4 ← (const signed word[$c0]) main::sintabw#0 + (word~) main::$11 [ main::i#2 print_char_cursor#42 main::sb#0 main::$4 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::$4 ] ) always clobbers reg byte a 
 Statement [15] (signed word) main::sw#0 ← *((signed word*~) main::$4) [ main::i#2 print_char_cursor#42 main::sb#0 main::sw#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::sw#0 ] ) always clobbers reg byte a reg byte y 
-Statement [16] (byte~) main::$5 ← > (signed word) main::sw#0 [ main::i#2 print_char_cursor#42 main::sb#0 main::$5 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::$5 ] ) always clobbers reg byte a 
-Statement [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$5 [ main::i#2 print_char_cursor#42 main::sd#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sd#0 ] ) always clobbers reg byte a 
+Statement [16] (byte~) main::$6 ← > (signed word) main::sw#0 [ main::i#2 print_char_cursor#42 main::sb#0 main::$6 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 main::$6 ] ) always clobbers reg byte a 
+Statement [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$6 [ main::i#2 print_char_cursor#42 main::sd#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sd#0 ] ) always clobbers reg byte a 
 Statement [27] if(*((byte*) print_str::str#2)!=(byte) '@') goto print_str::@2 [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [29] *((byte*) print_char_cursor#19) ← *((byte*) print_str::str#2) [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:21 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [41] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#1 [ print_char_cursor#10 print_sbyte::b#0 ] ( main:2::print_sbyte:19 [ main::i#2 print_char_cursor#10 print_sbyte::b#0 ] ) always clobbers reg byte a 
@@ -5827,7 +5828,7 @@ Potential registers zp ZP_WORD:71 [ main::$3 ] : zp ZP_WORD:71 ,
 Potential registers zp ZP_WORD:73 [ main::$11 ] : zp ZP_WORD:73 , 
 Potential registers zp ZP_WORD:75 [ main::$4 ] : zp ZP_WORD:75 , 
 Potential registers zp ZP_WORD:77 [ main::sw#0 ] : zp ZP_WORD:77 , 
-Potential registers zp ZP_BYTE:79 [ main::$5 ] : zp ZP_BYTE:79 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:79 [ main::$6 ] : zp ZP_BYTE:79 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:80 [ main::sd#0 ] : zp ZP_BYTE:80 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_BYTE:81 [ print_byte::b#0 ] : zp ZP_BYTE:81 , reg byte x , 
 Potential registers zp ZP_BYTE:82 [ print_byte::$0 ] : zp ZP_BYTE:82 , reg byte a , reg byte x , reg byte y , 
@@ -5896,7 +5897,7 @@ Uplift Scope [mul16u] 353.83: zp ZP_DWORD:33 [ mul16u::res#2 mul16u::res#6 mul16
 Uplift Scope [print_str] 303: zp ZP_WORD:3 [ print_str::str#2 print_str::str#0 ] 
 Uplift Scope [divr16u] 106.92: zp ZP_WORD:43 [ divr16u::rem#6 divr16u::rem#11 divr16u::rem#5 divr16u::rem#10 divr16u::rem#7 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] 35.12: zp ZP_WORD:47 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] 22: zp ZP_BYTE:155 [ divr16u::$1 ] 22: zp ZP_BYTE:156 [ divr16u::$2 ] 18.19: zp ZP_BYTE:49 [ divr16u::i#2 divr16u::i#1 ] 9.75: zp ZP_WORD:45 [ divr16u::dividend#4 divr16u::dividend#6 divr16u::dividend#0 ] 4: zp ZP_WORD:143 [ divr16u::return#3 ] 4: zp ZP_WORD:147 [ divr16u::return#4 ] 4: zp ZP_WORD:188 [ divr16u::return#2 ] 
 Uplift Scope [] 153.81: zp ZP_WORD:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#19 print_char_cursor#10 print_char_cursor#1 ] 0.8: zp ZP_WORD:157 [ rem16u#1 ] 
-Uplift Scope [main] 22: zp ZP_WORD:71 [ main::$3 ] 22: zp ZP_WORD:73 [ main::$11 ] 22: zp ZP_WORD:75 [ main::$4 ] 22: zp ZP_WORD:77 [ main::sw#0 ] 22: zp ZP_BYTE:80 [ main::sd#0 ] 19.25: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 11: zp ZP_BYTE:79 [ main::$5 ] 3.67: zp ZP_BYTE:70 [ main::sb#0 ] 
+Uplift Scope [main] 22: zp ZP_WORD:71 [ main::$3 ] 22: zp ZP_WORD:73 [ main::$11 ] 22: zp ZP_WORD:75 [ main::$4 ] 22: zp ZP_WORD:77 [ main::sw#0 ] 22: zp ZP_BYTE:80 [ main::sd#0 ] 19.25: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 11: zp ZP_BYTE:79 [ main::$6 ] 3.67: zp ZP_BYTE:70 [ main::sb#0 ] 
 Uplift Scope [sin8s] 27.5: zp ZP_WORD:57 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ] 22: zp ZP_BYTE:163 [ sin8s::return#0 ] 13: zp ZP_BYTE:60 [ sin8s::return#1 sin8s::return#5 sin8s::sinx#1 ] 10: zp ZP_BYTE:59 [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] 4: zp ZP_WORD:165 [ sin8s::$4 ] 4: zp ZP_BYTE:169 [ sin8s::x2#0 ] 4: zp ZP_BYTE:173 [ sin8s::x3_6#0 ] 4: zp ZP_BYTE:176 [ sin8s::x4#0 ] 4: zp ZP_BYTE:178 [ sin8s::x5#0 ] 4: zp ZP_BYTE:179 [ sin8s::x5_128#0 ] 1: zp ZP_BYTE:171 [ sin8s::x3#0 ] 0.64: zp ZP_BYTE:167 [ sin8s::x1#0 ] 0.33: zp ZP_BYTE:174 [ sin8s::usinx#0 ] 0.06: zp ZP_BYTE:56 [ sin8s::isUpper#10 ] 
 Uplift Scope [sin16s] 27.5: zp ZP_DWORD:20 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] 22: zp ZP_WORD:92 [ sin16s::return#0 ] 13: zp ZP_WORD:24 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 ] 4: zp ZP_DWORD:96 [ sin16s::$4 ] 4: zp ZP_WORD:104 [ sin16s::x2#0 ] 4: zp ZP_WORD:112 [ sin16s::x3_6#0 ] 4: zp ZP_WORD:118 [ sin16s::x4#0 ] 4: zp ZP_WORD:122 [ sin16s::x5#0 ] 4: zp ZP_WORD:124 [ sin16s::x5_128#0 ] 1: zp ZP_WORD:108 [ sin16s::x3#0 ] 1: zp ZP_WORD:126 [ sin16s::usinx#1 ] 0.64: zp ZP_WORD:100 [ sin16s::x1#0 ] 0.33: zp ZP_WORD:114 [ sin16s::usinx#0 ] 0.06: zp ZP_BYTE:19 [ sin16s::isUpper#2 ] 
 Uplift Scope [mulu16_sel] 24: zp ZP_WORD:26 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 ] 21: zp ZP_WORD:28 [ mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] 4: zp ZP_WORD:102 [ mulu16_sel::return#0 ] 4: zp ZP_WORD:106 [ mulu16_sel::return#1 ] 4: zp ZP_WORD:110 [ mulu16_sel::return#2 ] 4: zp ZP_WORD:116 [ mulu16_sel::return#10 ] 4: zp ZP_WORD:120 [ mulu16_sel::return#11 ] 4: zp ZP_DWORD:132 [ mulu16_sel::$0 ] 4: zp ZP_DWORD:136 [ mulu16_sel::$1 ] 1.71: zp ZP_WORD:140 [ mulu16_sel::return#12 ] 0.33: zp ZP_BYTE:30 [ mulu16_sel::select#5 ] 
@@ -5915,7 +5916,7 @@ Uplifting [mul16u] best 38396 combination zp ZP_DWORD:33 [ mul16u::res#2 mul16u:
 Uplifting [print_str] best 38396 combination zp ZP_WORD:3 [ print_str::str#2 print_str::str#0 ] 
 Uplifting [divr16u] best 38186 combination zp ZP_WORD:43 [ divr16u::rem#6 divr16u::rem#11 divr16u::rem#5 divr16u::rem#10 divr16u::rem#7 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp ZP_WORD:47 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp ZP_WORD:45 [ divr16u::dividend#4 divr16u::dividend#6 divr16u::dividend#0 ] zp ZP_WORD:143 [ divr16u::return#3 ] zp ZP_WORD:147 [ divr16u::return#4 ] zp ZP_WORD:188 [ divr16u::return#2 ] 
 Uplifting [] best 38186 combination zp ZP_WORD:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#19 print_char_cursor#10 print_char_cursor#1 ] zp ZP_WORD:157 [ rem16u#1 ] 
-Uplifting [main] best 37956 combination zp ZP_WORD:71 [ main::$3 ] zp ZP_WORD:73 [ main::$11 ] zp ZP_WORD:75 [ main::$4 ] zp ZP_WORD:77 [ main::sw#0 ] reg byte a [ main::sd#0 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$5 ] zp ZP_BYTE:70 [ main::sb#0 ] 
+Uplifting [main] best 37956 combination zp ZP_WORD:71 [ main::$3 ] zp ZP_WORD:73 [ main::$11 ] zp ZP_WORD:75 [ main::$4 ] zp ZP_WORD:77 [ main::sw#0 ] reg byte a [ main::sd#0 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$6 ] zp ZP_BYTE:70 [ main::sb#0 ] 
 Uplifting [sin8s] best 37851 combination zp ZP_WORD:57 [ sin8s::x#6 sin8s::x#4 sin8s::x#0 sin8s::x#1 sin8s::x#2 ] reg byte a [ sin8s::return#0 ] reg byte a [ sin8s::return#1 sin8s::return#5 sin8s::sinx#1 ] reg byte x [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] zp ZP_WORD:165 [ sin8s::$4 ] zp ZP_BYTE:169 [ sin8s::x2#0 ] zp ZP_BYTE:173 [ sin8s::x3_6#0 ] zp ZP_BYTE:176 [ sin8s::x4#0 ] zp ZP_BYTE:178 [ sin8s::x5#0 ] zp ZP_BYTE:179 [ sin8s::x5_128#0 ] zp ZP_BYTE:171 [ sin8s::x3#0 ] zp ZP_BYTE:167 [ sin8s::x1#0 ] zp ZP_BYTE:174 [ sin8s::usinx#0 ] zp ZP_BYTE:56 [ sin8s::isUpper#10 ] 
 Limited combination testing to 100 combinations of 5308416 possible.
 Uplifting [sin16s] best 37851 combination zp ZP_DWORD:20 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] zp ZP_WORD:92 [ sin16s::return#0 ] zp ZP_WORD:24 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 ] zp ZP_DWORD:96 [ sin16s::$4 ] zp ZP_WORD:104 [ sin16s::x2#0 ] zp ZP_WORD:112 [ sin16s::x3_6#0 ] zp ZP_WORD:118 [ sin16s::x4#0 ] zp ZP_WORD:122 [ sin16s::x5#0 ] zp ZP_WORD:124 [ sin16s::x5_128#0 ] zp ZP_WORD:108 [ sin16s::x3#0 ] zp ZP_WORD:126 [ sin16s::usinx#1 ] zp ZP_WORD:100 [ sin16s::x1#0 ] zp ZP_WORD:114 [ sin16s::usinx#0 ] zp ZP_BYTE:19 [ sin16s::isUpper#2 ] 
@@ -6152,9 +6153,9 @@ main: {
     iny
     lda (_4),y
     sta sw+1
-  //SEG33 [16] (byte~) main::$5 ← > (signed word) main::sw#0 -- vbuaa=_hi_vwsz1 
+  //SEG33 [16] (byte~) main::$6 ← > (signed word) main::sw#0 -- vbuaa=_hi_vwsz1 
     lda sw+1
-  //SEG34 [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$5 -- vbsaa=vbsz1_minus_vbsaa 
+  //SEG34 [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$6 -- vbsaa=vbsz1_minus_vbsaa 
     eor #$ff
     sec
     adc sb
@@ -7932,7 +7933,7 @@ FINAL SYMBOL TABLE
 (word~) main::$11 $11 zp ZP_WORD:59 22.0
 (word~) main::$3 $3 zp ZP_WORD:59 22.0
 (signed word*~) main::$4 $4 zp ZP_WORD:59 22.0
-(byte~) main::$5 reg byte a 11.0
+(byte~) main::$6 reg byte a 11.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -8276,7 +8277,7 @@ reg byte a [ mul8u::b#0 ]
 zp ZP_BYTE:58 [ main::sb#0 ]
 zp ZP_WORD:59 [ main::$3 main::$11 main::$4 ]
 zp ZP_WORD:61 [ main::sw#0 ]
-reg byte a [ main::$5 ]
+reg byte a [ main::$6 ]
 reg byte a [ main::sd#0 ]
 reg byte a [ print_byte::$0 ]
 reg byte a [ print_byte::$2 ]
@@ -8398,8 +8399,8 @@ main: {
     iny
     lda (_4),y
     sta sw+1
-  //SEG33 [16] (byte~) main::$5 ← > (signed word) main::sw#0 -- vbuaa=_hi_vwsz1 
-  //SEG34 [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$5 -- vbsaa=vbsz1_minus_vbsaa 
+  //SEG33 [16] (byte~) main::$6 ← > (signed word) main::sw#0 -- vbuaa=_hi_vwsz1 
+  //SEG34 [17] (signed byte) main::sd#0 ← (signed byte) main::sb#0 - (signed byte)(byte~) main::$6 -- vbsaa=vbsz1_minus_vbsaa 
     eor #$ff
     sec
     adc sb

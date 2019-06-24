@@ -121,11 +121,10 @@ bitmap_plot: {
     .label _1 = $11
     .label plotter = $f
     .label x = 2
-    .label _3 = $f
     lda bitmap_plot_yhi,x
-    sta _3+1
+    sta plotter+1
     lda bitmap_plot_ylo,x
-    sta _3
+    sta plotter
     lda x
     and #<$fff8
     sta _1

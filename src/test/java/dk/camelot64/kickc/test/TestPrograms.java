@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testDefaultFont() throws IOException, URISyntaxException {
+      compileAndCompare("default-font");
+   }
+
+   @Test
    public void testUnsignedVoidError() throws IOException, URISyntaxException {
       assertError("unsigned-void-error", "Unknown type unsigned void");
    }

@@ -9,7 +9,7 @@
   .label CHARSET = $2000
   .label SCREEN = $2800
   .const NUM_SQUARES = $30
-  .label SQUARES = HEAP_START
+  .label SQUARES = malloc.return
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label yds = $16
@@ -256,6 +256,7 @@ init_squares: {
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
+    .label return = HEAP_START
     rts
 }
 // Make charset from proto chars

@@ -176,11 +176,10 @@ bitmap_plot: {
     .label _1 = $33
     .label plotter = $31
     .label x = 4
-    .label _3 = $31
     lda bitmap_plot_yhi,x
-    sta _3+1
+    sta plotter+1
     lda bitmap_plot_ylo,x
-    sta _3
+    sta plotter
     lda x
     and #<$fff8
     sta _1
@@ -247,7 +246,7 @@ sin16s_gen2: {
     .const max = $140
     .label ampl = max-min
     .label _5 = $10
-    .label _6 = $39
+    .label _8 = $39
     .label step = $35
     .label sintab = $c
     .label x = 8
@@ -278,14 +277,14 @@ sin16s_gen2: {
     jsr sin16s
     jsr mul16s
     lda _5+2
-    sta _6
+    sta _8
     lda _5+3
-    sta _6+1
+    sta _8+1
     ldy #0
-    lda _6
+    lda _8
     sta (sintab),y
     iny
-    lda _6+1
+    lda _8+1
     sta (sintab),y
     lda #SIZEOF_SIGNED_WORD
     clc

@@ -212,14 +212,13 @@ div16s: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // divr16s(signed word zeropage($c) dividend, signed word zeropage($e) divisor)
 divr16s: {
-    .label _8 = $c
-    .label _13 = $e
+    .label _16 = $12
+    .label dividendu = $c
+    .label divisoru = $e
     .label resultu = $10
     .label return = $10
     .label dividend = $c
     .label divisor = $e
-    .label dividendu = $c
-    .label divisoru = $e
     lda dividend+1
     bmi b1
     ldy #0
@@ -249,11 +248,11 @@ divr16s: {
   b3:
     sec
     lda #0
-    sbc _13
-    sta _13
+    sbc divisoru
+    sta divisoru
     lda #0
-    sbc _13+1
-    sta _13+1
+    sbc divisoru+1
+    sta divisoru+1
     tya
     eor #1
     tay
@@ -261,11 +260,11 @@ divr16s: {
   b1:
     sec
     lda #0
-    sbc _8
-    sta _8
+    sbc dividendu
+    sta dividendu
     lda #0
-    sbc _8+1
-    sta _8+1
+    sbc dividendu+1
+    sta dividendu+1
     ldy #1
     jmp b2
 }

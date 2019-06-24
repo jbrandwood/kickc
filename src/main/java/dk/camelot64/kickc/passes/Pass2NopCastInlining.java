@@ -91,7 +91,20 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                      }
 
                      if(!handled) {
-                        if(mode==null || mode==Mode.EXPR) {
+
+                        boolean modifyExpr = false;
+                        if(castValue.getValue() instanceof VariableRef) {
+                           VariableRef castVarRef = (VariableRef) castValue.getValue();
+                           VariableRef lValueRef = (VariableRef) assignment.getlValue();
+                           if(castVarRef.getScopeNames().equals(lValueRef.getScopeNames())) {
+                              // Same scope - optimize away
+                              modifyExpr = true;
+                           }
+                        }  else {
+                           modifyExpr = true;
+                        }
+
+                        if(modifyExpr && (mode==null || mode==Mode.EXPR)) {
                            mode = Mode.EXPR;
                            getLog().append("Inlining Noop Cast " + assignment.toString(getProgram(), false) + " keeping " + castValue.getValue());
                            // 1. Inline the cast

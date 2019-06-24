@@ -27,7 +27,11 @@ main: {
     rts
 }
 anim: {
+    .label _4 = 5
+    .label _6 = 5
+    .label _9 = 5
     .label _10 = 5
+    .label _11 = 5
     .label _12 = 5
     .label x = $13
     .label y = $14
@@ -59,18 +63,18 @@ anim: {
     jsr mulf8u_prepare
     ldy x
     jsr mulf8s_prepared
-    lda mulf8s_prepared.m
+    lda _4
     asl
     sta xr
-    lda mulf8s_prepared.m+1
+    lda _4+1
     rol
     sta xr+1
     ldy y
     jsr mulf8s_prepared
-    lda mulf8s_prepared.m
+    lda _6
     asl
     sta yr
-    lda mulf8s_prepared.m+1
+    lda _6+1
     rol
     sta yr+1
     ldy angle
@@ -148,6 +152,7 @@ anim: {
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
+    tya
     jsr mulf8u_prepared
     lda memA
     cmp #0
@@ -169,12 +174,13 @@ mulf8s_prepared: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8u_prepare(byte a)
+// mulf8u_prepared(byte register(A) b)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
     .label return = 5
-    sty memB
-    ldx memB
+    sta memB
+    tax
     sec
   sm1:
     lda mulf_sqr1_lo,x

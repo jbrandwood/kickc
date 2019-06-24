@@ -129,8 +129,10 @@ print_char: {
     rts
 }
 // Print a byte as HEX
+// print_byte(byte zeropage(4) b)
 print_byte: {
-    lda print_sbyte.b
+    .label b = 4
+    lda b
     lsr
     lsr
     lsr
@@ -139,7 +141,7 @@ print_byte: {
     lda print_hextab,y
     jsr print_char
     lda #$f
-    and print_sbyte.b
+    and b
     tay
     lda print_hextab,y
     jsr print_char

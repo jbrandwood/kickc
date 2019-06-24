@@ -335,8 +335,7 @@ print_sbyte_at: {
     .label at = 7
     cpx #0
     bmi b1
-    lda #' '
-    sta print_char_at.ch
+    ldy #' '
     jsr print_char_at
   b2:
     inc print_byte_at.at
@@ -346,8 +345,7 @@ print_sbyte_at: {
     jsr print_byte_at
     rts
   b1:
-    lda #'-'
-    sta print_char_at.ch
+    ldy #'-'
     jsr print_char_at
     txa
     eor #$ff
@@ -357,17 +355,16 @@ print_sbyte_at: {
     jmp b2
 }
 // Print a single char
-// print_char_at(byte zeropage(9) ch, byte* zeropage(7) at)
+// print_char_at(byte register(Y) ch, byte* zeropage(7) at)
 print_char_at: {
     .label at = 7
-    .label ch = 9
-    lda ch
+    tya
     ldy #0
     sta (at),y
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte* zeropage(7) at)
+// print_byte_at(byte register(X) b, byte* zeropage(7) at)
 print_byte_at: {
     .label at = 7
     txa
@@ -377,7 +374,7 @@ print_byte_at: {
     lsr
     tay
     lda print_hextab,y
-    sta print_char_at.ch
+    tay
     jsr print_char_at
     lda #$f
     axs #0
@@ -385,8 +382,7 @@ print_byte_at: {
     bne !+
     inc print_char_at.at+1
   !:
-    lda print_hextab,x
-    sta print_char_at.ch
+    ldy print_hextab,x
     jsr print_char_at
     rts
 }
@@ -394,10 +390,10 @@ print_byte_at: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zeropage($12) y, signed byte zeropage($13) z)
+// rotate_matrix(signed byte register(X) x, signed byte zeropage($11) y, signed byte zeropage($12) z)
 rotate_matrix: {
-    .label y = $12
-    .label z = $13
+    .label y = $11
+    .label z = $12
     txa
     sta xr
     lda y
@@ -540,15 +536,15 @@ store_matrix: {
 // calculate_matrix(signed byte register(X) sx, signed byte zeropage(3) sy)
 calculate_matrix: {
     .label sy = 3
-    .label t1 = $14
-    .label t2 = $15
-    .label t3 = $16
-    .label t4 = $17
-    .label t5 = $18
-    .label t6 = $19
-    .label t7 = $1a
-    .label t8 = $1b
-    .label t9 = $1c
+    .label t1 = $13
+    .label t2 = $14
+    .label t3 = $15
+    .label t4 = $16
+    .label t5 = $17
+    .label t6 = $18
+    .label t7 = $19
+    .label t8 = $1a
+    .label t9 = $1b
     lda sy
     sta t1
     lda sy
@@ -686,17 +682,17 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label _41 = $1d
-    .label _44 = $1f
-    .label _47 = $21
-    .label _50 = $23
-    .label _53 = $25
-    .label _56 = $27
-    .label _59 = $29
-    .label _62 = $2b
-    .label _65 = $2d
-    .label c = $a
-    .label i = $b
+    .label _41 = $1c
+    .label _44 = $1e
+    .label _47 = $20
+    .label _50 = $22
+    .label _53 = $24
+    .label _56 = $26
+    .label _59 = $28
+    .label _62 = $2a
+    .label _65 = $2c
+    .label c = 9
+    .label i = $a
     jsr print_cls
     lda #<SCREEN+$22
     sta print_str_at.at
@@ -955,10 +951,10 @@ debug_print_init: {
     str11: .text "yp@"
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zeropage($c) str, byte* zeropage($e) at)
+// print_str_at(byte* zeropage($b) str, byte* zeropage($d) at)
 print_str_at: {
-    .label at = $e
-    .label str = $c
+    .label at = $d
+    .label str = $b
   b1:
     ldy #0
     lda (str),y
@@ -981,7 +977,7 @@ print_str_at: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = $10
+    .label sc = $f
     lda #<print_screen
     sta sc
     lda #>print_screen

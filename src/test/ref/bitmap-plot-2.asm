@@ -44,8 +44,8 @@
   .const PI_HALF_u4f28 = $1921fb54
   .label BITMAP = $2000
   .label SCREEN = $400
-  .label rem16u = $2c
-  .label frame_cnt = $32
+  .label rem16u = $2e
+  .label frame_cnt = $34
 bbegin:
   // Counts frames - updated by the IRQ
   lda #1
@@ -54,11 +54,11 @@ bbegin:
   rts
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label _9 = $33
-    .label _11 = $33
-    .label _15 = $35
-    .label _17 = $35
-    .label _18 = $35
+    .label _9 = $35
+    .label _11 = $35
+    .label _15 = $37
+    .label _17 = $37
+    .label _18 = $37
     .label _32 = 9
     .label _33 = 9
     .label cos_x = 9
@@ -249,12 +249,12 @@ main: {
     jmp b7
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(signed word zeropage($33) x, byte register(A) y)
+// bitmap_plot(signed word zeropage($35) x, byte register(A) y)
 bitmap_plot: {
-    .label _1 = $39
-    .label plotter = $37
-    .label x = $33
-    .label _3 = $37
+    .label _1 = $3b
+    .label plotter = $39
+    .label x = $35
+    .label _3 = $39
     tay
     lda bitmap_plot_yhi,y
     sta _3+1
@@ -285,25 +285,29 @@ bitmap_plot: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage(4) a, signed word zeropage(9) b)
 mul16s: {
-    .label _9 = $3b
-    .label _13 = $3d
-    .label _16 = $3b
-    .label _17 = $3d
+    .label _9 = $3d
+    .label _13 = $3f
+    .label _16 = $3d
+    .label _17 = $3f
     .label m = $b
     .label return = $b
     .label a = 4
     .label b = 9
-    lda b
-    sta mul16u.mb
-    lda b+1
-    sta mul16u.mb+1
-    lda #0
-    sta mul16u.mb+2
-    sta mul16u.mb+3
     lda a
     sta mul16u.a
     lda a+1
     sta mul16u.a+1
+    lda b
+    sta mul16u.b
+    lda b+1
+    sta mul16u.b+1
+    lda mul16u.b
+    sta mul16u.mb
+    lda mul16u.b+1
+    sta mul16u.mb+1
+    lda #0
+    sta mul16u.mb+2
+    sta mul16u.mb+3
     jsr mul16u
     lda a+1
     bpl b1
@@ -344,13 +348,14 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($11) a, word zeropage($f) b)
+// mul16u(word zeropage($13) a, word zeropage($f) b)
 mul16u: {
-    .label mb = $13
-    .label a = $11
+    .label mb = $15
+    .label a = $13
     .label res = $b
-    .label return = $b
     .label b = $f
+    .label return = $b
+    .label b_1 = $11
     lda #0
     sta res
     sta res+1
@@ -445,12 +450,12 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($17) str, byte register(X) c, word zeropage($19) num)
+// memset(void* zeropage($19) str, byte register(X) c, word zeropage($1b) num)
 memset: {
-    .label end = $19
-    .label dst = $17
-    .label str = $17
-    .label num = $19
+    .label end = $1b
+    .label dst = $19
+    .label str = $19
+    .label num = $1b
     lda end
     clc
     adc str
@@ -476,8 +481,8 @@ memset: {
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $3f
-    .label yoffs = $1b
+    .label _7 = $41
+    .label yoffs = $1d
     ldx #0
     lda #$80
   b1:
@@ -522,18 +527,18 @@ bitmap_init: {
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen2(signed word* zeropage($21) sintab)
+// sin16s_gen2(signed word* zeropage($23) sintab)
 sin16s_gen2: {
     .label wavelength = $200
     .const min = -$1001
     .const max = $1001
     .const ampl = max-min
     .label _5 = $b
-    .label _6 = $44
-    .label step = $40
-    .label sintab = $21
-    .label x = $1d
-    .label i = $23
+    .label _6 = $46
+    .label step = $42
+    .label sintab = $23
+    .label x = $1f
+    .label i = $25
     jsr div32u16u
     lda #0
     sta i
@@ -610,21 +615,21 @@ sin16s_gen2: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zeropage($26) x)
+// sin16s(dword zeropage($28) x)
 sin16s: {
-    .label _4 = $26
-    .label x = $26
+    .label _4 = $28
+    .label x = $28
     .label return = 4
-    .label x1 = $46
-    .label x2 = $2a
-    .label x3 = $2a
-    .label x3_6 = $48
+    .label x1 = $48
+    .label x2 = $2c
+    .label x3 = $2c
+    .label x3_6 = $4a
     .label usinx = 4
-    .label x4 = $2a
-    .label x5 = $48
-    .label x5_128 = $48
+    .label x4 = $2c
+    .label x5 = $4a
+    .label x5_128 = $4a
     .label sinx = 4
-    .label isUpper = $25
+    .label isUpper = $27
     lda x+3
     cmp #>PI_u4f28>>$10
     bcc b4
@@ -786,22 +791,22 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($2a) v1, word zeropage($f) v2, byte register(X) select)
+// mulu16_sel(word zeropage($2c) v1, word zeropage($11) v2, byte register(X) select)
 mulu16_sel: {
     .label _0 = $b
     .label _1 = $b
-    .label v1 = $2a
-    .label v2 = $f
-    .label return = $48
-    .label return_1 = $2a
-    .label return_10 = $2a
+    .label v1 = $2c
+    .label v2 = $11
+    .label return = $4a
+    .label return_1 = $2c
+    .label return_10 = $2c
     lda v1
     sta mul16u.a
     lda v1+1
     sta mul16u.a+1
-    lda mul16u.b
+    lda mul16u.b_1
     sta mul16u.mb
-    lda mul16u.b+1
+    lda mul16u.b_1+1
     sta mul16u.mb+1
     lda #0
     sta mul16u.mb+2
@@ -826,9 +831,9 @@ mulu16_sel: {
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
-    .label quotient_hi = $4a
-    .label quotient_lo = $30
-    .label return = $40
+    .label quotient_hi = $4c
+    .label quotient_lo = $32
+    .label return = $42
     lda #<PI2_u4f28>>$10
     sta divr16u.dividend
     lda #>PI2_u4f28>>$10
@@ -860,12 +865,12 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($2e) dividend, word zeropage($2c) rem)
+// divr16u(word zeropage($30) dividend, word zeropage($2e) rem)
 divr16u: {
-    .label rem = $2c
-    .label dividend = $2e
-    .label quotient = $30
-    .label return = $30
+    .label rem = $2e
+    .label dividend = $30
+    .label quotient = $32
+    .label return = $32
     ldx #0
     txa
     sta quotient

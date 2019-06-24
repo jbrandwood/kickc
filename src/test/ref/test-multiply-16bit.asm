@@ -337,10 +337,10 @@ print_sword: {
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mulf16s: {
-    .label _9 = $38
-    .label _13 = $3a
-    .label _16 = $38
-    .label _17 = $3a
+    .label _9 = $3a
+    .label _13 = $3c
+    .label _16 = $3a
+    .label _17 = $3c
     .label m = $11
     .label return = $11
     .label a = 3
@@ -516,25 +516,29 @@ mulf16u: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage(3) a, signed word zeropage(5) b)
 mul16s: {
-    .label _9 = $3c
-    .label _13 = $3e
-    .label _16 = $3c
-    .label _17 = $3e
+    .label _9 = $3e
+    .label _13 = $40
+    .label _16 = $3e
+    .label _17 = $40
     .label m = $19
     .label return = $19
     .label a = 3
     .label b = 5
-    lda b
-    sta mul16u.mb
-    lda b+1
-    sta mul16u.mb+1
-    lda #0
-    sta mul16u.mb+2
-    sta mul16u.mb+3
     lda a
     sta mul16u.a
     lda a+1
     sta mul16u.a+1
+    lda b
+    sta mul16u.b
+    lda b+1
+    sta mul16u.b+1
+    lda mul16u.b
+    sta mul16u.mb
+    lda mul16u.b+1
+    sta mul16u.mb+1
+    lda #0
+    sta mul16u.mb+2
+    sta mul16u.mb+3
     jsr mul16u
     lda a+1
     bpl b1
@@ -575,13 +579,14 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($1d) a, word zeropage($17) b)
+// mul16u(word zeropage($1f) a, word zeropage($1d) b)
 mul16u: {
-    .label mb = $1f
-    .label a = $1d
+    .label mb = $21
+    .label a = $1f
     .label res = $19
+    .label b = $1d
     .label return = $19
-    .label b = $17
+    .label b_1 = $17
     lda #0
     sta res
     sta res+1
@@ -625,9 +630,9 @@ mul16u: {
 // muls16s(signed word zeropage(3) a, signed word zeropage(5) b)
 muls16s: {
     .label m = $b
-    .label j = $23
+    .label j = $25
     .label return = $b
-    .label i = $25
+    .label i = $27
     .label a = 3
     .label b = 5
     lda a+1
@@ -730,7 +735,7 @@ mul16u_compare: {
     .label ms = $b
     .label mn = $19
     .label mf = $11
-    .label i = $27
+    .label i = $29
     lda #0
     sta i
     sta b
@@ -768,9 +773,9 @@ mul16u_compare: {
     sta mul16u.a
     lda a+1
     sta mul16u.a+1
-    lda mul16u.b
+    lda mul16u.b_1
     sta mul16u.mb
-    lda mul16u.b+1
+    lda mul16u.b_1+1
     sta mul16u.mb+1
     lda #0
     sta mul16u.mb+2
@@ -921,7 +926,7 @@ mul16u_error: {
 muls16u: {
     .label return = $b
     .label m = $b
-    .label i = $28
+    .label i = $2a
     .label a = $15
     .label b = $17
     lda a
@@ -971,13 +976,13 @@ muls16u: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label sqr1_hi = $2c
-    .label sqr = $2f
-    .label sqr1_lo = $2a
-    .label x_2 = $2e
-    .label sqr2_hi = $33
-    .label sqr2_lo = $31
-    .label dir = $35
+    .label sqr1_hi = $2e
+    .label sqr = $31
+    .label sqr1_lo = $2c
+    .label x_2 = $30
+    .label sqr2_hi = $35
+    .label sqr2_lo = $33
+    .label dir = $37
     lda #0
     sta x_2
     lda #<mulf_sqr1_hi+1
@@ -1079,7 +1084,7 @@ mulf_init: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
-    .label sc = $36
+    .label sc = $38
     lda #<$400
     sta sc
     lda #>$400

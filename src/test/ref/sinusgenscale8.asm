@@ -30,6 +30,7 @@ sin8u_table: {
     .const mid = sum/2+1
     .label step = $1d
     .label sinx = $21
+    .label sinx_sc = $11
     .label sintab = 4
     .label x = 2
     .label i = 6
@@ -105,7 +106,7 @@ sin8u_table: {
     sta sinx
     tay
     jsr mul8su
-    lda mul8su.m+1
+    lda sinx_sc+1
     tax
     axs #-[mid]
     txa
@@ -142,6 +143,10 @@ sin8u_table: {
     lda #>str7
     sta print_str.str+1
     jsr print_str
+    lda sinx_sc
+    sta print_sword.w
+    lda sinx_sc+1
+    sta print_sword.w+1
     jsr print_sword
     lda #<str8
     sta print_str.str
@@ -263,7 +268,7 @@ print_str: {
 // print_sword(signed word zeropage($d) w)
 print_sword: {
     .label w = $d
-    lda mul8su.m+1
+    lda w+1
     bpl b1
     lda #'-'
     jsr print_char
@@ -275,17 +280,13 @@ print_sword: {
     sbc w+1
     sta w+1
   b1:
-    lda w
-    sta print_word.w
-    lda w+1
-    sta print_word.w+1
     jsr print_word
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($11) w)
+// print_word(word zeropage($d) w)
 print_word: {
-    .label w = $11
+    .label w = $d
     lda w+1
     sta print_byte.b
     jsr print_byte
@@ -320,7 +321,7 @@ print_sbyte: {
 // mul8su(signed byte register(Y) a)
 mul8su: {
     .const b = sin8u_table.amplitude+1
-    .label m = $d
+    .label m = $11
     tya
     tax
     lda #b
@@ -341,8 +342,8 @@ mul8su: {
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
     .label mb = $13
-    .label res = $d
-    .label return = $d
+    .label res = $11
+    .label return = $11
     lda #0
     sta res
     sta res+1
@@ -486,8 +487,8 @@ sin8s: {
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
 // mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($18) select)
 mulu8_sel: {
-    .label _0 = $d
-    .label _1 = $d
+    .label _0 = $11
+    .label _1 = $11
     .label select = $18
     tya
     sta mul8u.mb

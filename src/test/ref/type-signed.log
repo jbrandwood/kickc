@@ -504,8 +504,6 @@ Simplifying constant integer cast 6
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining Noop Cast [6] (word) print_word::w#0 ← (word)(signed word) print_sword::w#3 keeping print_sword::w#3
-Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const byte) print_char::ch#0
 Inlining constant with var siblings (const byte) print_char::ch#3
 Inlining constant with var siblings (const signed word) main::a#0
@@ -539,7 +537,7 @@ Calls in [] to main:3
 Calls in [main] to print_sword:11 print_char:13 print_word:17 print_ln:19 
 Calls in [print_word] to print_byte:39 print_byte:43 
 Calls in [print_byte] to print_char:51 print_char:56 
-Calls in [print_sword] to print_char:65 print_word:72 
+Calls in [print_sword] to print_char:65 print_word:73 
 
 Created 14 initial phi equivalence classes
 Coalesced [12] print_char_cursor#55 ← print_char_cursor#12
@@ -563,9 +561,10 @@ Coalesced (already) [55] print_char_cursor#57 ← print_char_cursor#12
 Coalesced [64] print_char_cursor#58 ← print_char_cursor#44
 Coalesced [67] print_sword::w#7 ← print_sword::w#0
 Coalesced [68] print_char_cursor#50 ← print_char_cursor#12
-Coalesced (already) [71] print_char_cursor#52 ← print_char_cursor#40
-Coalesced [75] print_sword::w#6 ← print_sword::w#1
-Coalesced (already) [76] print_char_cursor#49 ← print_char_cursor#44
+Coalesced [71] print_word::w#5 ← print_word::w#0
+Coalesced (already) [72] print_char_cursor#52 ← print_char_cursor#40
+Coalesced [76] print_sword::w#6 ← print_sword::w#1
+Coalesced (already) [77] print_char_cursor#49 ← print_char_cursor#44
 Coalesced down to 9 phi equivalence classes
 Culled Empty Block (label) @12
 Culled Empty Block (label) @21
@@ -650,7 +649,7 @@ print_ln::@return: scope:[print_ln]  from print_ln::@1
   to:@return
 print_word: scope:[print_word]  from main::@3 print_sword::@1
   [25] (byte*) print_char_cursor#42 ← phi( main::@3/(byte*) print_char_cursor#12 print_sword::@1/(byte*) print_char_cursor#40 )
-  [25] (word) print_word::w#2 ← phi( main::@3/(word) print_word::w#1 print_sword::@1/(word~) print_word::w#5 )
+  [25] (word) print_word::w#2 ← phi( main::@3/(word) print_word::w#1 print_sword::@1/(word) print_word::w#0 )
   [26] (byte) print_byte::b#0 ← > (word) print_word::w#2
   [27] call print_byte 
   to:print_word::@1
@@ -698,7 +697,7 @@ print_sword::@3: scope:[print_sword]  from print_sword::@2
 print_sword::@1: scope:[print_sword]  from print_sword print_sword::@3
   [47] (byte*) print_char_cursor#40 ← phi( print_sword/(byte*) print_char_cursor#44 print_sword::@3/(byte*) print_char_cursor#12 )
   [47] (signed word) print_sword::w#3 ← phi( print_sword/(signed word) print_sword::w#1 print_sword::@3/(signed word) print_sword::w#0 )
-  [48] (word~) print_word::w#5 ← (word)(signed word) print_sword::w#3
+  [48] (word) print_word::w#0 ← (word)(signed word) print_sword::w#3
   [49] call print_word 
   to:print_sword::@return
 print_sword::@return: scope:[print_sword]  from print_sword::@1
@@ -751,16 +750,16 @@ VARIABLE REGISTER WEIGHTS
 (signed word) print_sword::w#3 4.0
 (void()) print_word((word) print_word::w)
 (word) print_word::w
+(word) print_word::w#0 4.0
 (word) print_word::w#1 22.0
 (word) print_word::w#2 5.666666666666667
-(word~) print_word::w#5 4.0
 
 Initial phi equivalence classes
 [ main::a#2 main::a#1 ]
 [ main::b#2 main::b#1 ]
 [ main::i#2 main::i#1 ]
 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
-[ print_word::w#2 print_word::w#1 print_word::w#5 ]
+[ print_word::w#2 print_word::w#1 print_word::w#0 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#4 print_char::ch#1 print_char::ch#2 ]
 [ print_char_cursor#31 print_char_cursor#43 print_char_cursor#42 print_char_cursor#12 print_char_cursor#40 print_char_cursor#44 print_char_cursor#59 ]
@@ -772,7 +771,7 @@ Complete equivalence classes
 [ main::b#2 main::b#1 ]
 [ main::i#2 main::i#1 ]
 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
-[ print_word::w#2 print_word::w#1 print_word::w#5 ]
+[ print_word::w#2 print_word::w#1 print_word::w#0 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#4 print_char::ch#1 print_char::ch#2 ]
 [ print_char_cursor#31 print_char_cursor#43 print_char_cursor#42 print_char_cursor#12 print_char_cursor#40 print_char_cursor#44 print_char_cursor#59 ]
@@ -783,7 +782,7 @@ Allocated zp ZP_WORD:2 [ main::a#2 main::a#1 ]
 Allocated zp ZP_WORD:4 [ main::b#2 main::b#1 ]
 Allocated zp ZP_BYTE:6 [ main::i#2 main::i#1 ]
 Allocated zp ZP_WORD:7 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
-Allocated zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#5 ]
+Allocated zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#0 ]
 Allocated zp ZP_BYTE:11 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Allocated zp ZP_BYTE:12 [ print_char::ch#4 print_char::ch#1 print_char::ch#2 ]
 Allocated zp ZP_WORD:13 [ print_char_cursor#31 print_char_cursor#43 print_char_cursor#42 print_char_cursor#12 print_char_cursor#40 print_char_cursor#44 print_char_cursor#59 ]
@@ -1118,7 +1117,7 @@ print_sword: {
     jmp b1
   //SEG107 print_sword::@1
   b1:
-  //SEG108 [48] (word~) print_word::w#5 ← (word)(signed word) print_sword::w#3 -- vwuz1=vwuz2 
+  //SEG108 [48] (word) print_word::w#0 ← (word)(signed word) print_sword::w#3 -- vwuz1=vwuz2 
     lda w
     sta print_word.w
     lda w+1
@@ -1127,7 +1126,7 @@ print_sword: {
   //SEG110 [25] phi from print_sword::@1 to print_word [phi:print_sword::@1->print_word]
   print_word_from_b1:
   //SEG111 [25] phi (byte*) print_char_cursor#42 = (byte*) print_char_cursor#40 [phi:print_sword::@1->print_word#0] -- register_copy 
-  //SEG112 [25] phi (word) print_word::w#2 = (word~) print_word::w#5 [phi:print_sword::@1->print_word#1] -- register_copy 
+  //SEG112 [25] phi (word) print_word::w#2 = (word) print_word::w#0 [phi:print_sword::@1->print_word#1] -- register_copy 
     jsr print_word
     jmp breturn
   //SEG113 print_sword::@return
@@ -1157,7 +1156,7 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ ma
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:11 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [43] if((signed word) print_sword::w#1>=(signed byte) 0) goto print_sword::@1 [ print_char_cursor#44 print_sword::w#1 ] ( main:2::print_sword:9 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_char_cursor#44 print_sword::w#1 ] ) always clobbers reg byte a 
 Statement [46] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#1 [ print_char_cursor#12 print_sword::w#0 ] ( main:2::print_sword:9 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_char_cursor#12 print_sword::w#0 ] ) always clobbers reg byte a 
-Statement [48] (word~) print_word::w#5 ← (word)(signed word) print_sword::w#3 [ print_word::w#5 print_char_cursor#40 ] ( main:2::print_sword:9 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_word::w#5 print_char_cursor#40 ] ) always clobbers reg byte a 
+Statement [48] (word) print_word::w#0 ← (word)(signed word) print_sword::w#3 [ print_word::w#0 print_char_cursor#40 ] ( main:2::print_sword:9 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_word::w#0 print_char_cursor#40 ] ) always clobbers reg byte a 
 Statement [6] (signed word) main::a#1 ← (signed word) main::a#2 + (signed byte) -7 [ main::b#2 print_char_cursor#44 print_line_cursor#13 main::i#2 main::a#1 ] ( main:2 [ main::b#2 print_char_cursor#44 print_line_cursor#13 main::i#2 main::a#1 ] ) always clobbers reg byte a 
 Statement [7] (word) main::b#1 ← (word) main::b#2 + (word) $141 [ print_char_cursor#44 print_line_cursor#13 main::i#2 main::a#1 main::b#1 ] ( main:2 [ print_char_cursor#44 print_line_cursor#13 main::i#2 main::a#1 main::b#1 ] ) always clobbers reg byte a 
 Statement [8] (signed word) print_sword::w#1 ← (signed word) main::a#1 [ print_char_cursor#44 print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_sword::w#1 ] ( main:2 [ print_char_cursor#44 print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_sword::w#1 ] ) always clobbers reg byte a 
@@ -1172,12 +1171,12 @@ Statement [35] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ p
 Statement [40] *((byte*) print_char_cursor#31) ← (byte) print_char::ch#4 [ print_char_cursor#31 ] ( main:2::print_char:11 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_char_cursor#31 ] main:2::print_word:13::print_byte:27::print_char:34 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_word::w#2 print_byte::b#2 print_char_cursor#31 ] main:2::print_sword:9::print_word:49::print_byte:27::print_char:34 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_word::w#2 print_byte::b#2 print_char_cursor#31 ] main:2::print_word:13::print_byte:29::print_char:34 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_byte::b#2 print_char_cursor#31 ] main:2::print_sword:9::print_word:49::print_byte:29::print_char:34 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_byte::b#2 print_char_cursor#31 ] main:2::print_word:13::print_byte:27::print_char:37 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_word::w#2 print_char_cursor#31 ] main:2::print_sword:9::print_word:49::print_byte:27::print_char:37 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_word::w#2 print_char_cursor#31 ] main:2::print_word:13::print_byte:29::print_char:37 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_char_cursor#31 ] main:2::print_sword:9::print_word:49::print_byte:29::print_char:37 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_char_cursor#31 ] main:2::print_sword:9::print_char:45 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_sword::w#1 print_char_cursor#31 ] ) always clobbers reg byte y 
 Statement [43] if((signed word) print_sword::w#1>=(signed byte) 0) goto print_sword::@1 [ print_char_cursor#44 print_sword::w#1 ] ( main:2::print_sword:9 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_char_cursor#44 print_sword::w#1 ] ) always clobbers reg byte a 
 Statement [46] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#1 [ print_char_cursor#12 print_sword::w#0 ] ( main:2::print_sword:9 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_char_cursor#12 print_sword::w#0 ] ) always clobbers reg byte a 
-Statement [48] (word~) print_word::w#5 ← (word)(signed word) print_sword::w#3 [ print_word::w#5 print_char_cursor#40 ] ( main:2::print_sword:9 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_word::w#5 print_char_cursor#40 ] ) always clobbers reg byte a 
+Statement [48] (word) print_word::w#0 ← (word)(signed word) print_sword::w#3 [ print_word::w#0 print_char_cursor#40 ] ( main:2::print_sword:9 [ print_line_cursor#13 main::i#2 main::a#1 main::b#1 print_word::w#0 print_char_cursor#40 ] ) always clobbers reg byte a 
 Potential registers zp ZP_WORD:2 [ main::a#2 main::a#1 ] : zp ZP_WORD:2 , 
 Potential registers zp ZP_WORD:4 [ main::b#2 main::b#1 ] : zp ZP_WORD:4 , 
 Potential registers zp ZP_BYTE:6 [ main::i#2 main::i#1 ] : zp ZP_BYTE:6 , reg byte x , 
 Potential registers zp ZP_WORD:7 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#5 ] : zp ZP_WORD:9 , 
+Potential registers zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#0 ] : zp ZP_WORD:9 , 
 Potential registers zp ZP_BYTE:11 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] : zp ZP_BYTE:11 , reg byte x , 
 Potential registers zp ZP_BYTE:12 [ print_char::ch#4 print_char::ch#1 print_char::ch#2 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp ZP_WORD:13 [ print_char_cursor#31 print_char_cursor#43 print_char_cursor#42 print_char_cursor#12 print_char_cursor#40 print_char_cursor#44 print_char_cursor#59 ] : zp ZP_WORD:13 , 
@@ -1188,7 +1187,7 @@ Potential registers zp ZP_BYTE:18 [ print_byte::$2 ] : zp ZP_BYTE:18 , reg byte 
 REGISTER UPLIFT SCOPES
 Uplift Scope [] 251.61: zp ZP_WORD:7 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] 52.74: zp ZP_WORD:13 [ print_char_cursor#31 print_char_cursor#43 print_char_cursor#42 print_char_cursor#12 print_char_cursor#40 print_char_cursor#44 print_char_cursor#59 ] 
 Uplift Scope [main] 24.54: zp ZP_WORD:2 [ main::a#2 main::a#1 ] 13.75: zp ZP_WORD:4 [ main::b#2 main::b#1 ] 13: zp ZP_BYTE:6 [ main::i#2 main::i#1 ] 
-Uplift Scope [print_word] 31.67: zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#5 ] 
+Uplift Scope [print_word] 31.67: zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#0 ] 
 Uplift Scope [print_byte] 10: zp ZP_BYTE:11 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:17 [ print_byte::$0 ] 4: zp ZP_BYTE:18 [ print_byte::$2 ] 
 Uplift Scope [print_char] 14: zp ZP_BYTE:12 [ print_char::ch#4 print_char::ch#1 print_char::ch#2 ] 
 Uplift Scope [print_sword] 12.25: zp ZP_WORD:15 [ print_sword::w#3 print_sword::w#1 print_sword::w#0 ] 
@@ -1196,16 +1195,16 @@ Uplift Scope [print_ln]
 
 Uplifting [] best 6227 combination zp ZP_WORD:7 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ] zp ZP_WORD:13 [ print_char_cursor#31 print_char_cursor#43 print_char_cursor#42 print_char_cursor#12 print_char_cursor#40 print_char_cursor#44 print_char_cursor#59 ] 
 Uplifting [main] best 6137 combination zp ZP_WORD:2 [ main::a#2 main::a#1 ] zp ZP_WORD:4 [ main::b#2 main::b#1 ] reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [print_word] best 6137 combination zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#5 ] 
+Uplifting [print_word] best 6137 combination zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#0 ] 
 Uplifting [print_byte] best 6129 combination zp ZP_BYTE:11 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte a [ print_byte::$2 ] 
 Uplifting [print_char] best 6114 combination reg byte a [ print_char::ch#4 print_char::ch#1 print_char::ch#2 ] 
 Uplifting [print_sword] best 6114 combination zp ZP_WORD:15 [ print_sword::w#3 print_sword::w#1 print_sword::w#0 ] 
 Uplifting [print_ln] best 6114 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:11 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Uplifting [print_byte] best 6114 combination zp ZP_BYTE:11 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 
-Coalescing zero page register with common assignment [ zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#5 ] ] with [ zp ZP_WORD:15 [ print_sword::w#3 print_sword::w#1 print_sword::w#0 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:9 [ print_word::w#2 print_word::w#1 print_word::w#0 ] ] with [ zp ZP_WORD:15 [ print_sword::w#3 print_sword::w#1 print_sword::w#0 ] ] - score: 1
 Allocated (was zp ZP_WORD:7) zp ZP_WORD:6 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
-Allocated (was zp ZP_WORD:9) zp ZP_WORD:8 [ print_word::w#2 print_word::w#1 print_word::w#5 print_sword::w#3 print_sword::w#1 print_sword::w#0 ]
+Allocated (was zp ZP_WORD:9) zp ZP_WORD:8 [ print_word::w#2 print_word::w#1 print_word::w#0 print_sword::w#3 print_sword::w#1 print_sword::w#0 ]
 Allocated (was zp ZP_BYTE:11) zp ZP_BYTE:10 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Allocated (was zp ZP_WORD:13) zp ZP_WORD:11 [ print_char_cursor#31 print_char_cursor#43 print_char_cursor#42 print_char_cursor#12 print_char_cursor#40 print_char_cursor#44 print_char_cursor#59 ]
 
@@ -1523,12 +1522,12 @@ print_sword: {
     jmp b1
   //SEG107 print_sword::@1
   b1:
-  //SEG108 [48] (word~) print_word::w#5 ← (word)(signed word) print_sword::w#3
+  //SEG108 [48] (word) print_word::w#0 ← (word)(signed word) print_sword::w#3
   //SEG109 [49] call print_word 
   //SEG110 [25] phi from print_sword::@1 to print_word [phi:print_sword::@1->print_word]
   print_word_from_b1:
   //SEG111 [25] phi (byte*) print_char_cursor#42 = (byte*) print_char_cursor#40 [phi:print_sword::@1->print_word#0] -- register_copy 
-  //SEG112 [25] phi (word) print_word::w#2 = (word~) print_word::w#5 [phi:print_sword::@1->print_word#1] -- register_copy 
+  //SEG112 [25] phi (word) print_word::w#2 = (word) print_word::w#0 [phi:print_sword::@1->print_word#1] -- register_copy 
     jsr print_word
     jmp breturn
   //SEG113 print_sword::@return
@@ -1675,15 +1674,15 @@ FINAL SYMBOL TABLE
 (label) print_word::@1
 (label) print_word::@return
 (word) print_word::w
+(word) print_word::w#0 w zp ZP_WORD:8 4.0
 (word) print_word::w#1 w zp ZP_WORD:8 22.0
 (word) print_word::w#2 w zp ZP_WORD:8 5.666666666666667
-(word~) print_word::w#5 w zp ZP_WORD:8 4.0
 
 zp ZP_WORD:2 [ main::a#2 main::a#1 ]
 zp ZP_WORD:4 [ main::b#2 main::b#1 ]
 reg byte x [ main::i#2 main::i#1 ]
 zp ZP_WORD:6 [ print_line_cursor#6 print_line_cursor#13 print_line_cursor#1 ]
-zp ZP_WORD:8 [ print_word::w#2 print_word::w#1 print_word::w#5 print_sword::w#3 print_sword::w#1 print_sword::w#0 ]
+zp ZP_WORD:8 [ print_word::w#2 print_word::w#1 print_word::w#0 print_sword::w#3 print_sword::w#1 print_sword::w#0 ]
 zp ZP_BYTE:10 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#4 print_char::ch#1 print_char::ch#2 ]
 zp ZP_WORD:11 [ print_char_cursor#31 print_char_cursor#43 print_char_cursor#42 print_char_cursor#12 print_char_cursor#40 print_char_cursor#44 print_char_cursor#59 ]
@@ -1952,11 +1951,11 @@ print_sword: {
   //SEG106 [47] phi (signed word) print_sword::w#3 = (signed word) print_sword::w#1 [phi:print_sword/print_sword::@3->print_sword::@1#1] -- register_copy 
   //SEG107 print_sword::@1
   b1:
-  //SEG108 [48] (word~) print_word::w#5 ← (word)(signed word) print_sword::w#3
+  //SEG108 [48] (word) print_word::w#0 ← (word)(signed word) print_sword::w#3
   //SEG109 [49] call print_word 
   //SEG110 [25] phi from print_sword::@1 to print_word [phi:print_sword::@1->print_word]
   //SEG111 [25] phi (byte*) print_char_cursor#42 = (byte*) print_char_cursor#40 [phi:print_sword::@1->print_word#0] -- register_copy 
-  //SEG112 [25] phi (word) print_word::w#2 = (word~) print_word::w#5 [phi:print_sword::@1->print_word#1] -- register_copy 
+  //SEG112 [25] phi (word) print_word::w#2 = (word) print_word::w#0 [phi:print_sword::@1->print_word#1] -- register_copy 
     jsr print_word
   //SEG113 print_sword::@return
   //SEG114 [50] return 

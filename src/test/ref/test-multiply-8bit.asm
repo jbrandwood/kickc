@@ -19,6 +19,8 @@ main: {
 // Perform all possible signed byte multiplications (slow and fast) and compare the results
 mul8s_compare: {
     .label ms = 8
+    .label mf = $10
+    .label mn = $c
     .label b = 3
     .label a = 2
     lda #-$80
@@ -35,10 +37,10 @@ mul8s_compare: {
     ldy b
     jsr mul8s
     lda ms
-    cmp mulf8s_prepared.m
+    cmp mf
     bne !+
     lda ms+1
-    cmp mulf8s_prepared.m+1
+    cmp mf+1
     beq b6
   !:
     ldx #0
@@ -47,10 +49,10 @@ mul8s_compare: {
     ldx #1
   b3:
     lda ms
-    cmp mul8s.m
+    cmp mn
     bne !+
     lda ms+1
-    cmp mul8s.m+1
+    cmp mn+1
     beq b4
   !:
     ldx #0
@@ -127,10 +129,12 @@ print_str: {
   !:
     jmp b1
 }
-// mul8s_error(signed byte register(X) a, signed byte zeropage(3) b, signed word zeropage(8) ms)
+// mul8s_error(signed byte register(X) a, signed byte zeropage(3) b, signed word zeropage(8) ms, signed word zeropage($c) mn, signed word zeropage($10) mf)
 mul8s_error: {
     .label b = 3
     .label ms = 8
+    .label mn = $c
+    .label mf = $10
     lda print_line_cursor
     sta print_char_cursor
     lda print_line_cursor+1
@@ -159,9 +163,9 @@ mul8s_error: {
     lda #>str3
     sta print_str.str+1
     jsr print_str
-    lda mul8s.m
+    lda mn
     sta print_sword.w
-    lda mul8s.m+1
+    lda mn+1
     sta print_sword.w+1
     jsr print_sword
     lda #<str4
@@ -169,9 +173,9 @@ mul8s_error: {
     lda #>str4
     sta print_str.str+1
     jsr print_str
-    lda mulf8s_prepared.m
+    lda mf
     sta print_sword.w
-    lda mulf8s_prepared.m+1
+    lda mf+1
     sta print_sword.w+1
     jsr print_sword
     jsr print_ln
@@ -263,11 +267,11 @@ print_sbyte: {
 mul8s: {
     .label m = $c
     .label a = 2
+    ldx a
     tya
     sta mul8u.mb
     lda #0
     sta mul8u.mb+1
-    ldx a
     jsr mul8u
     lda a
     cmp #0
@@ -323,6 +327,7 @@ mul8u: {
 // Fast multiply two signed bytes to a word result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
+    .label return = $10
     jsr mulf8u_prepare
     stx mulf8s_prepared.b
     jsr mulf8s_prepared

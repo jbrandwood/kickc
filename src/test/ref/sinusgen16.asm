@@ -110,11 +110,13 @@ print_sword: {
     rts
 }
 // Print a word as HEX
+// print_word(word zeropage(6) w)
 print_word: {
-    lda print_sword.w+1
+    .label w = 6
+    lda w+1
     tax
     jsr print_byte
-    lda print_sword.w
+    lda w
     tax
     jsr print_byte
     rts

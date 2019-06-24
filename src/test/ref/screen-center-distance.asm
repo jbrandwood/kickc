@@ -12,32 +12,33 @@
   .label SQUARES = malloc.return
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label yds = $1c
-    .label xds = $1e
-    .label ds = $1e
-    .label screen = $b
-    .label x = 3
-    .label screen_mirror1 = 4
+    .label yds = $19
+    .label xds = $1b
+    .label ds = $1b
+    .label x = 7
+    .label xb = 9
+    .label screen_topline = 3
+    .label screen_bottomline = 5
     .label y = 2
-    .label screen_mirror = 9
-    .label y1 = 6
     jsr init_font_hex
     lda #toD0181_return
     sta D018
     jsr init_squares
+    lda #<SCREEN+$28*$18
+    sta screen_bottomline
+    lda #>SCREEN+$28*$18
+    sta screen_bottomline+1
     lda #<SCREEN
-    sta screen
+    sta screen_topline
     lda #>SCREEN
-    sta screen+1
+    sta screen_topline+1
     lda #0
     sta y
   b1:
     lda y
     asl
     cmp #$18
-    bcc !b2+
-    jmp b2
-  !b2:
+    bcs b2
     eor #$ff
     clc
     adc #$18+1
@@ -47,15 +48,15 @@ main: {
     sta sqr.return_2
     lda sqr.return+1
     sta sqr.return_2+1
+    lda #$27
+    sta xb
     lda #0
     sta x
   b5:
     lda x
     asl
     cmp #$27
-    bcc !b6+
-    jmp b6
-  !b6:
+    bcs b6
     eor #$ff
     clc
     adc #$27+1
@@ -69,74 +70,35 @@ main: {
     adc yds+1
     sta ds+1
     jsr sqrt
-    ldy #0
-    sta (screen),y
-    inc screen
-    bne !+
-    inc screen+1
-  !:
+    ldy x
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    ldy xb
+    sta (screen_topline),y
+    sta (screen_bottomline),y
     inc x
-    lda #$14
-    cmp x
-    bne b5
-    lda screen
-    sta screen_mirror1
-    lda screen+1
-    sta screen_mirror1+1
-    ldx #0
-  b10:
-    lda screen_mirror1
-    bne !+
-    dec screen_mirror1+1
+    dec xb
+    lda x
+    cmp #$13+1
+    bcc b5
+    lda #$28
+    clc
+    adc screen_topline
+    sta screen_topline
+    bcc !+
+    inc screen_topline+1
   !:
-    dec screen_mirror1
-    ldy #0
-    lda (screen_mirror1),y
-    sta (screen),y
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-    inx
-    cpx #$14
-    bne b10
+    lda screen_bottomline
+    sec
+    sbc #<$28
+    sta screen_bottomline
+    lda screen_bottomline+1
+    sbc #>$28
+    sta screen_bottomline+1
     inc y
     lda #$d
     cmp y
-    beq !b1+
-    jmp b1
-  !b1:
-    lda screen
-    sec
-    sbc #<$28
-    sta screen_mirror
-    lda screen+1
-    sbc #>$28
-    sta screen_mirror+1
-    lda #0
-    sta y1
-  b13:
-    ldx #0
-  b14:
-    lda screen_mirror
-    bne !+
-    dec screen_mirror+1
-  !:
-    dec screen_mirror
-    ldy #0
-    lda (screen_mirror),y
-    sta (screen),y
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-    inx
-    cpx #$28
-    bne b14
-    inc y1
-    lda #$c
-    cmp y1
-    bne b13
+    bne b1
     rts
   b6:
     sec
@@ -150,12 +112,12 @@ main: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($1e) val)
+// sqrt(word zeropage($1b) val)
 sqrt: {
-    .label _1 = $d
-    .label _3 = $d
-    .label found = $d
-    .label val = $1e
+    .label _1 = $a
+    .label _3 = $a
+    .label found = $a
+    .label val = $1b
     jsr bsearch16u
     lda _3
     sec
@@ -174,14 +136,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($1e) key, word* zeropage($d) items, byte register(X) num)
+// bsearch16u(word zeropage($1b) key, word* zeropage($a) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = $d
-    .label pivot = $20
-    .label result = $22
-    .label return = $d
-    .label items = $d
-    .label key = $1e
+    .label _2 = $a
+    .label pivot = $1d
+    .label result = $1f
+    .label return = $a
+    .label items = $a
+    .label key = $1b
     lda #<SQUARES
     sta items
     lda #>SQUARES
@@ -261,8 +223,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $1e
-    .label return_2 = $1c
+    .label return = $1b
+    .label return_2 = $19
     asl
     tay
     lda SQUARES,y
@@ -274,8 +236,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $11
-    .label sqr = $f
+    .label squares = $e
+    .label sqr = $c
     jsr malloc
     ldx #0
     lda #<SQUARES
@@ -321,15 +283,15 @@ malloc: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($16) charset)
+// init_font_hex(byte* zeropage($13) charset)
 init_font_hex: {
-    .label _0 = $24
-    .label idx = $1b
-    .label proto_lo = $18
-    .label charset = $16
-    .label c1 = $1a
-    .label proto_hi = $13
-    .label c = $15
+    .label _0 = $21
+    .label idx = $18
+    .label proto_lo = $15
+    .label charset = $13
+    .label c1 = $17
+    .label proto_hi = $10
+    .label c = $12
     lda #0
     sta c
     lda #<FONT_HEX_PROTO

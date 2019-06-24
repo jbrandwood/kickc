@@ -91,6 +91,7 @@ main: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($18) val)
 sqrt: {
+    .label _1 = 6
     .label _3 = 6
     .label found = 6
     .label val = $18
@@ -102,8 +103,9 @@ sqrt: {
     lda _3+1
     sbc #>SQUARES
     sta _3+1
-    lda _3
-    lsr
+    lsr _1+1
+    ror _1
+    lda _1
     rts
 }
 // Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.

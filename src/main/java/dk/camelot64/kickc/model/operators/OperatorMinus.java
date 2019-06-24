@@ -27,6 +27,8 @@ public class OperatorMinus extends OperatorBinary {
          return new ConstantPointer(location, ((ConstantPointer) left).getElementType());
       } else if(left instanceof ConstantChar && right instanceof ConstantInteger) {
          return new ConstantInteger(((ConstantChar) left).getChar() - ((ConstantInteger) right).getInteger());
+      } else if(left instanceof ConstantPointer && right instanceof ConstantPointer) {
+         return new ConstantInteger(((ConstantPointer) left).getLocation()-((ConstantPointer) right).getLocation());
       }
       throw new InternalError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }

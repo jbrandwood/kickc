@@ -7,7 +7,7 @@ main: {
     .label w1 = $1000
     .label w2 = $1140
     .label SCREEN = $400
-    .const wd = w2-w1*SIZEOF_WORD
+    .const wd = (w2-w1)/SIZEOF_WORD
     lda #<wd
     sta SCREEN
     lda #>wd

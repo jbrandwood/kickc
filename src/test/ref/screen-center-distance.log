@@ -51,6 +51,7 @@ Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + 
 Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer increment (word*) init_squares::squares ← ++ (word*) init_squares::squares
+Fixing pointer addition (word~) sqrt::$1 ← (word*) sqrt::found - (word*) SQUARES
 Fixing pointer array-indexing *((word*) SQUARES + (byte) sqr::val)
 Identified constant variable (byte*) HEAP_START
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
@@ -257,12 +258,10 @@ sqrt::@2: scope:[sqrt]  from sqrt
   (word*) bsearch16u::return#5 ← phi( sqrt/(word*) bsearch16u::return#3 )
   (word*~) sqrt::$0 ← (word*) bsearch16u::return#5
   (word*) sqrt::found#0 ← (word*~) sqrt::$0
-  (byte*~) sqrt::$1 ← ((byte*)) (word*) sqrt::found#0
-  (byte*~) sqrt::$2 ← ((byte*)) (word*) SQUARES#9
-  (word~) sqrt::$3 ← (byte*~) sqrt::$1 - (byte*~) sqrt::$2
-  (byte~) sqrt::$4 ← ((byte)) (word~) sqrt::$3
-  (number~) sqrt::$5 ← (byte~) sqrt::$4 / (number) 2
-  (byte) sqrt::sq#0 ← (number~) sqrt::$5
+  (word~) sqrt::$3 ← (word*) sqrt::found#0 - (word*) SQUARES#9
+  (word~) sqrt::$1 ← (word~) sqrt::$3 / (const byte) SIZEOF_WORD
+  (byte~) sqrt::$2 ← ((byte)) (word~) sqrt::$1
+  (byte) sqrt::sq#0 ← (byte~) sqrt::$2
   (byte) sqrt::return#0 ← (byte) sqrt::sq#0
   to:sqrt::@return
 sqrt::@return: scope:[sqrt]  from sqrt::@2
@@ -1023,11 +1022,9 @@ SYMBOL TABLE SSA
 (byte) sqr::val#2
 (byte()) sqrt((word) sqrt::val)
 (word*~) sqrt::$0
-(byte*~) sqrt::$1
-(byte*~) sqrt::$2
+(word~) sqrt::$1
+(byte~) sqrt::$2
 (word~) sqrt::$3
-(byte~) sqrt::$4
-(number~) sqrt::$5
 (label) sqrt::@2
 (label) sqrt::@return
 (word*) sqrt::found
@@ -1061,8 +1058,6 @@ Adding number conversion cast (unumber) 2 in (number~) init_squares::$4 ← (byt
 Adding number conversion cast (unumber) init_squares::$4 in (number~) init_squares::$4 ← (byte) init_squares::i#2 * (unumber)(number) 2
 Adding number conversion cast (unumber) 1 in (number~) init_squares::$5 ← (unumber~) init_squares::$4 + (number) 1
 Adding number conversion cast (unumber) init_squares::$5 in (number~) init_squares::$5 ← (unumber~) init_squares::$4 + (unumber)(number) 1
-Adding number conversion cast (unumber) 2 in (number~) sqrt::$5 ← (byte~) sqrt::$4 / (number) 2
-Adding number conversion cast (unumber) sqrt::$5 in (number~) sqrt::$5 ← (byte~) sqrt::$4 / (unumber)(number) 2
 Adding number conversion cast (unumber) 0 in (byte) init_font_hex::idx#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#0) ← (number) 0
 Adding number conversion cast (unumber) 4 in (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#2 + (byte) init_font_hex::i#2) << (number) 4
@@ -1124,9 +1119,7 @@ Inlining cast (signed word~) bsearch16u::$9 ← (signed word)*((word*) bsearch16
 Inlining cast (byte) NUM_SQUARES#0 ← (unumber)(number) $ff
 Inlining cast (word*~) init_squares::$2 ← (word*)(byte*~) init_squares::$1
 Inlining cast (word) init_squares::sqr#0 ← (unumber)(number) 0
-Inlining cast (byte*~) sqrt::$1 ← (byte*)(word*) sqrt::found#0
-Inlining cast (byte*~) sqrt::$2 ← (byte*)(word*) SQUARES#9
-Inlining cast (byte~) sqrt::$4 ← (byte)(word~) sqrt::$3
+Inlining cast (byte~) sqrt::$2 ← (byte)(word~) sqrt::$1
 Inlining cast (byte*) D018#0 ← (byte*)(number) $d018
 Inlining cast (byte) init_font_hex::idx#0 ← (unumber)(number) 0
 Inlining cast *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#0) ← (unumber)(number) 0
@@ -1151,7 +1144,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 1
-Simplifying constant integer cast 2
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -1270,7 +1262,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 4
@@ -1299,7 +1290,6 @@ Inferred type updated to byte in (unumber~) bsearch16u::$18 ← (byte) 1 * (cons
 Inferred type updated to byte in (unumber~) init_squares::$3 ← (byte) NUM_SQUARES#5 - (byte) 1
 Inferred type updated to byte in (unumber~) init_squares::$4 ← (byte) init_squares::i#2 * (byte) 2
 Inferred type updated to byte in (unumber~) init_squares::$5 ← (byte~) init_squares::$4 + (byte) 1
-Inferred type updated to byte in (unumber~) sqrt::$5 ← (byte~) sqrt::$4 / (byte) 2
 Inferred type updated to word in (unumber~) main::toD0181_$1#0 ← (word~) main::toD0181_$0#0 & (word) $3fff
 Inferred type updated to word in (unumber~) main::toD0181_$2#0 ← (word~) main::toD0181_$1#0 * (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$3#0 ← > (word~) main::toD0181_$2#0
@@ -1344,7 +1334,7 @@ Alias (word) sqr::return#0 = (word) sqr::return#4 (word) sqr::return#1
 Alias (word*) bsearch16u::return#3 = (word*) bsearch16u::return#5 
 Alias (word*) SQUARES#8 = (word*) SQUARES#9 
 Alias (word*) sqrt::found#0 = (word*~) sqrt::$0 
-Alias (byte) sqrt::return#0 = (byte) sqrt::sq#0 (byte~) sqrt::$5 (byte) sqrt::return#3 (byte) sqrt::return#1 
+Alias (byte) sqrt::return#0 = (byte) sqrt::sq#0 (byte~) sqrt::$2 (byte) sqrt::return#3 (byte) sqrt::return#1 
 Alias (byte) NUM_SQUARES#0 = (byte) NUM_SQUARES#15 (byte) NUM_SQUARES#14 (byte) NUM_SQUARES#11 
 Alias (word*) SQUARES#0 = (word*) SQUARES#27 (word*) SQUARES#26 (word*) SQUARES#19 
 Alias (byte*) init_font_hex::charset#3 = (byte*) init_font_hex::charset#4 
@@ -1474,17 +1464,17 @@ Simple Condition (bool~) bsearch16u::$12 [25] if((signed word) bsearch16u::resul
 Simple Condition (bool~) bsearch16u::$0 [28] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@1
 Simple Condition (bool~) bsearch16u::$14 [32] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@10
 Simple Condition (bool~) init_squares::$6 [78] if((byte) init_squares::i#1!=rangelast(0,init_squares::$3)) goto init_squares::@1
-Simple Condition (bool~) init_font_hex::$3 [129] if((byte) init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3
-Simple Condition (bool~) init_font_hex::$4 [139] if((byte) init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2
-Simple Condition (bool~) init_font_hex::$5 [144] if((byte) init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1
-Simple Condition (bool~) main::$4 [183] if((byte) main::y2#0>=(byte) $18) goto main::@2
-Simple Condition (bool~) main::$12 [203] if((byte) main::x2#0>=(byte) $27) goto main::@6
-Simple Condition (bool~) main::$21 [230] if((byte) main::x#1!=rangelast(0,$27)) goto main::@5
-Simple Condition (bool~) main::$22 [234] if((byte) main::y#1!=rangelast(0,$18)) goto main::@1
+Simple Condition (bool~) init_font_hex::$3 [127] if((byte) init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3
+Simple Condition (bool~) init_font_hex::$4 [137] if((byte) init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2
+Simple Condition (bool~) init_font_hex::$5 [142] if((byte) init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1
+Simple Condition (bool~) main::$4 [181] if((byte) main::y2#0>=(byte) $18) goto main::@2
+Simple Condition (bool~) main::$12 [201] if((byte) main::x2#0>=(byte) $27) goto main::@6
+Simple Condition (bool~) main::$21 [228] if((byte) main::x#1!=rangelast(0,$27)) goto main::@5
+Simple Condition (bool~) main::$22 [232] if((byte) main::y#1!=rangelast(0,$18)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [41] (byte~) bsearch16u::$17 ← (byte) 1 * (const byte) SIZEOF_WORD
 Constant right-side identified [48] (byte~) bsearch16u::$18 ← (byte) 1 * (const byte) SIZEOF_WORD
-Constant right-side identified [147] (byte[]) FONT_HEX_PROTO#0 ← { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
+Constant right-side identified [145] (byte[]) FONT_HEX_PROTO#0 ← { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) HEAP_START#0 = (byte*) 49152
 Constant (const byte) bsearch16u::$17 = 1*SIZEOF_WORD
@@ -1518,22 +1508,22 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) init_squares::$1 = malloc::return#2
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (word*)init_squares::$1 in [64] (word*) SQUARES#1 ← (word*)(const byte*) init_squares::$1
-Constant value identified (word)main::toD0181_screen#0 in [157] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
-Constant value identified (word)main::toD0181_gfx#0 in [161] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
+Constant value identified (word)main::toD0181_screen#0 in [155] (word~) main::toD0181_$0#0 ← (word)(const byte*) main::toD0181_screen#0
+Constant value identified (word)main::toD0181_gfx#0 in [159] (word~) main::toD0181_$4#0 ← (word)(const byte*) main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [127] init_font_hex::i#1 ← ++ init_font_hex::i#2 to ++
-Resolved ranged comparison value [129] if(init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3 to (number) 5
-Resolved ranged next value [137] init_font_hex::c1#1 ← ++ init_font_hex::c1#4 to ++
-Resolved ranged comparison value [139] if(init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2 to (number) $10
-Resolved ranged next value [142] init_font_hex::c#1 ← ++ init_font_hex::c#5 to ++
-Resolved ranged comparison value [144] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to (number) $10
-Resolved ranged next value [228] main::x#1 ← ++ main::x#2 to ++
-Resolved ranged comparison value [230] if(main::x#1!=rangelast(0,$27)) goto main::@5 to (number) $28
-Resolved ranged next value [232] main::y#1 ← ++ main::y#10 to ++
-Resolved ranged comparison value [234] if(main::y#1!=rangelast(0,$18)) goto main::@1 to (number) $19
-Simplifying expression containing zero init_font_hex::charset#2 in [118] *((byte*) init_font_hex::charset#2 + (const byte) init_font_hex::idx#0) ← (byte) 0
+Resolved ranged next value [125] init_font_hex::i#1 ← ++ init_font_hex::i#2 to ++
+Resolved ranged comparison value [127] if(init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3 to (number) 5
+Resolved ranged next value [135] init_font_hex::c1#1 ← ++ init_font_hex::c1#4 to ++
+Resolved ranged comparison value [137] if(init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2 to (number) $10
+Resolved ranged next value [140] init_font_hex::c#1 ← ++ init_font_hex::c#5 to ++
+Resolved ranged comparison value [142] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to (number) $10
+Resolved ranged next value [226] main::x#1 ← ++ main::x#2 to ++
+Resolved ranged comparison value [228] if(main::x#1!=rangelast(0,$27)) goto main::@5 to (number) $28
+Resolved ranged next value [230] main::y#1 ← ++ main::y#10 to ++
+Resolved ranged comparison value [232] if(main::y#1!=rangelast(0,$18)) goto main::@1 to (number) $19
+Simplifying expression containing zero init_font_hex::charset#2 in [116] *((byte*) init_font_hex::charset#2 + (const byte) init_font_hex::idx#0) ← (byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) init_font_hex::idx#4 and assignment [66] (byte) init_font_hex::idx#4 ← ++ (byte) init_font_hex::idx#3
+Eliminating unused variable (byte) init_font_hex::idx#4 and assignment [64] (byte) init_font_hex::idx#4 ← ++ (byte) init_font_hex::idx#3
 Eliminating unused variable - keeping the phi block (byte*) heap_head#33
 Eliminating unused constant (const byte) NUM_SQUARES#0
 Eliminating unused constant (const word*) SQUARES#0
@@ -1571,7 +1561,7 @@ Identical Phi Values (word*) SQUARES#14 (word*) SQUARES#1
 Identical Phi Values (byte) NUM_SQUARES#19 (const byte) NUM_SQUARES#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant right-side identified [23] (byte~) init_squares::$3 ← (const byte) NUM_SQUARES#1 - (byte) 1
-Constant right-side identified [52] (byte) init_font_hex::idx#1 ← ++ (const byte) init_font_hex::idx#0
+Constant right-side identified [50] (byte) init_font_hex::idx#1 ← ++ (const byte) init_font_hex::idx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word*) SQUARES#1 = (word*)init_squares::$1
 Constant (const byte) init_squares::$3 = NUM_SQUARES#1-1
@@ -1583,8 +1573,6 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const word*) init_squares::squares#0 = SQUARES#1
 Constant (const word*) bsearch16u::items#1 = SQUARES#1
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)SQUARES#1 in [44] (byte*~) sqrt::$2 ← (byte*)(const word*) SQUARES#1
-Successful SSA optimization Pass2ConstantValues
 Resolved ranged next value [30] init_squares::i#1 ← ++ init_squares::i#2 to ++
 Resolved ranged comparison value [31] if(init_squares::i#1!=rangelast(0,init_squares::$3)) goto init_squares::@1 to (const byte) init_squares::$3+(number) 1
 Adding number conversion cast (unumber) init_squares::$3+1 in if((byte) init_squares::i#1!=(const byte) init_squares::$3+(number) 1) goto init_squares::@1
@@ -1595,39 +1583,37 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [67] (word~) main::toD0181_$1#0 ← (const word) main::toD0181_$0#0 & (word) $3fff
-Constant right-side identified [70] (byte~) main::toD0181_$5#0 ← > (const word) main::toD0181_$4#0
+Constant right-side identified [65] (word~) main::toD0181_$1#0 ← (const word) main::toD0181_$0#0 & (word) $3fff
+Constant right-side identified [68] (byte~) main::toD0181_$5#0 ← > (const word) main::toD0181_$4#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) sqrt::$2 = (byte*)SQUARES#1
 Constant (const word) main::toD0181_$1#0 = main::toD0181_$0#0&$3fff
 Constant (const byte) main::toD0181_$5#0 = >main::toD0181_$4#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [66] (word~) main::toD0181_$2#0 ← (const word) main::toD0181_$1#0 * (byte) 4
-Constant right-side identified [68] (byte~) main::toD0181_$6#0 ← (const byte) main::toD0181_$5#0 / (byte) 4
+Constant right-side identified [65] (word~) main::toD0181_$2#0 ← (const word) main::toD0181_$1#0 * (byte) 4
+Constant right-side identified [67] (byte~) main::toD0181_$6#0 ← (const byte) main::toD0181_$5#0 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::toD0181_$2#0 = main::toD0181_$1#0*4
 Constant (const byte) main::toD0181_$6#0 = main::toD0181_$5#0/4
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [66] (byte~) main::toD0181_$3#0 ← > (const word) main::toD0181_$2#0
-Constant right-side identified [67] (byte~) main::toD0181_$7#0 ← (const byte) main::toD0181_$6#0 & (byte) $f
+Constant right-side identified [65] (byte~) main::toD0181_$3#0 ← > (const word) main::toD0181_$2#0
+Constant right-side identified [66] (byte~) main::toD0181_$7#0 ← (const byte) main::toD0181_$6#0 & (byte) $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::toD0181_$3#0 = >main::toD0181_$2#0
 Constant (const byte) main::toD0181_$7#0 = main::toD0181_$6#0&$f
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [66] (byte) main::toD0181_return#0 ← (const byte) main::toD0181_$3#0 | (const byte) main::toD0181_$7#0
+Constant right-side identified [65] (byte) main::toD0181_return#0 ← (const byte) main::toD0181_$3#0 | (const byte) main::toD0181_$7#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::toD0181_return#0 = main::toD0181_$3#0|main::toD0181_$7#0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [6] (signed word~) bsearch16u::$8 ← (signed word)(word) bsearch16u::key#0 keeping bsearch16u::key#0
 Inlining Noop Cast [7] (signed word~) bsearch16u::$9 ← (signed word)*((word*) bsearch16u::pivot#0) keeping *(bsearch16u::pivot#0)
-Inlining Noop Cast [38] (byte*~) sqrt::$1 ← (byte*)(word*) sqrt::found#0 keeping sqrt::found#0
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [4] (byte~) bsearch16u::$16 ← (byte~) bsearch16u::$6 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [24] (byte~) init_squares::$4 ← (byte) init_squares::i#2 * (byte) 2
 Rewriting multiplication to use shift [31] (byte~) sqr::$0 ← (byte) sqr::val#2 * (const byte) SIZEOF_WORD
-Rewriting division to use shift [41] (byte) sqrt::return#0 ← (byte~) sqrt::$4 / (byte) 2
-Rewriting multiplication to use shift [69] (byte) main::y2#0 ← (byte) main::y#10 * (byte) 2
-Rewriting multiplication to use shift [79] (byte) main::x2#0 ← (byte) main::x#2 * (byte) 2
+Rewriting division to use shift [39] (word~) sqrt::$1 ← (word~) sqrt::$3 / (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [68] (byte) main::y2#0 ← (byte) main::y#10 * (byte) 2
+Rewriting multiplication to use shift [78] (byte) main::x2#0 ← (byte) main::x#2 * (byte) 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) bsearch16u::num#2
 Inlining constant with var siblings (const word*) bsearch16u::items#1
@@ -1655,7 +1641,6 @@ Constant inlined init_font_hex::charset#1 = (const byte*) CHARSET#0
 Constant inlined init_font_hex::c1#0 = (byte) 0
 Constant inlined malloc::return#2 = (const byte*) HEAP_START#0
 Constant inlined malloc::return#0 = (const byte*) HEAP_START#0
-Constant inlined sqrt::$2 = (byte*)(const word*) SQUARES#1
 Constant inlined bsearch16u::num#2 = (const byte) NUM_SQUARES#1
 Constant inlined main::toD0181_$0#0 = (word)(const byte*) SCREEN#0
 Constant inlined main::x#0 = (byte) 0
@@ -1876,9 +1861,9 @@ sqrt: scope:[sqrt]  from main::@12
   to:sqrt::@1
 sqrt::@1: scope:[sqrt]  from sqrt
   [44] (word*) sqrt::found#0 ← (word*) bsearch16u::return#3
-  [45] (word~) sqrt::$3 ← (byte*)(word*) sqrt::found#0 - (byte*)(const word*) SQUARES#1
-  [46] (byte~) sqrt::$4 ← (byte)(word~) sqrt::$3
-  [47] (byte) sqrt::return#0 ← (byte~) sqrt::$4 >> (byte) 1
+  [45] (word~) sqrt::$3 ← (word*) sqrt::found#0 - (const word*) SQUARES#1
+  [46] (word~) sqrt::$1 ← (word~) sqrt::$3 >> (byte) 1
+  [47] (byte) sqrt::return#0 ← (byte)(word~) sqrt::$1
   to:sqrt::@return
 sqrt::@return: scope:[sqrt]  from sqrt::@1
   [48] return 
@@ -2133,10 +2118,10 @@ VARIABLE REGISTER WEIGHTS
 (byte) sqr::val#1 202.0
 (byte) sqr::val#2 114.0
 (byte()) sqrt((word) sqrt::val)
-(word~) sqrt::$3 2.0
-(byte~) sqrt::$4 4.0
+(word~) sqrt::$1 2.0
+(word~) sqrt::$3 4.0
 (word*) sqrt::found
-(word*) sqrt::found#0 2.0
+(word*) sqrt::found#0 4.0
 (byte) sqrt::return
 (byte) sqrt::return#0 34.33333333333333
 (byte) sqrt::return#2 202.0
@@ -2177,7 +2162,7 @@ Added variable bsearch16u::key#0 to zero page equivalence class [ bsearch16u::ke
 Added variable bsearch16u::return#3 to zero page equivalence class [ bsearch16u::return#3 ]
 Added variable sqrt::found#0 to zero page equivalence class [ sqrt::found#0 ]
 Added variable sqrt::$3 to zero page equivalence class [ sqrt::$3 ]
-Added variable sqrt::$4 to zero page equivalence class [ sqrt::$4 ]
+Added variable sqrt::$1 to zero page equivalence class [ sqrt::$1 ]
 Added variable sqrt::return#0 to zero page equivalence class [ sqrt::return#0 ]
 Added variable bsearch16u::$6 to zero page equivalence class [ bsearch16u::$6 ]
 Added variable bsearch16u::$16 to zero page equivalence class [ bsearch16u::$16 ]
@@ -2224,7 +2209,7 @@ Complete equivalence classes
 [ bsearch16u::return#3 ]
 [ sqrt::found#0 ]
 [ sqrt::$3 ]
-[ sqrt::$4 ]
+[ sqrt::$1 ]
 [ sqrt::return#0 ]
 [ bsearch16u::$6 ]
 [ bsearch16u::$16 ]
@@ -2270,20 +2255,20 @@ Allocated zp ZP_WORD:44 [ bsearch16u::key#0 ]
 Allocated zp ZP_WORD:46 [ bsearch16u::return#3 ]
 Allocated zp ZP_WORD:48 [ sqrt::found#0 ]
 Allocated zp ZP_WORD:50 [ sqrt::$3 ]
-Allocated zp ZP_BYTE:52 [ sqrt::$4 ]
-Allocated zp ZP_BYTE:53 [ sqrt::return#0 ]
-Allocated zp ZP_BYTE:54 [ bsearch16u::$6 ]
-Allocated zp ZP_BYTE:55 [ bsearch16u::$16 ]
-Allocated zp ZP_WORD:56 [ bsearch16u::pivot#0 ]
-Allocated zp ZP_WORD:58 [ bsearch16u::result#0 ]
-Allocated zp ZP_BYTE:60 [ sqr::$0 ]
-Allocated zp ZP_WORD:61 [ sqr::return#0 ]
-Allocated zp ZP_BYTE:63 [ init_squares::$4 ]
-Allocated zp ZP_BYTE:64 [ init_squares::$5 ]
-Allocated zp ZP_BYTE:65 [ init_font_hex::$0 ]
-Allocated zp ZP_BYTE:66 [ init_font_hex::$1 ]
-Allocated zp ZP_BYTE:67 [ init_font_hex::$2 ]
-Allocated zp ZP_BYTE:68 [ init_font_hex::idx#3 ]
+Allocated zp ZP_WORD:52 [ sqrt::$1 ]
+Allocated zp ZP_BYTE:54 [ sqrt::return#0 ]
+Allocated zp ZP_BYTE:55 [ bsearch16u::$6 ]
+Allocated zp ZP_BYTE:56 [ bsearch16u::$16 ]
+Allocated zp ZP_WORD:57 [ bsearch16u::pivot#0 ]
+Allocated zp ZP_WORD:59 [ bsearch16u::result#0 ]
+Allocated zp ZP_BYTE:61 [ sqr::$0 ]
+Allocated zp ZP_WORD:62 [ sqr::return#0 ]
+Allocated zp ZP_BYTE:64 [ init_squares::$4 ]
+Allocated zp ZP_BYTE:65 [ init_squares::$5 ]
+Allocated zp ZP_BYTE:66 [ init_font_hex::$0 ]
+Allocated zp ZP_BYTE:67 [ init_font_hex::$1 ]
+Allocated zp ZP_BYTE:68 [ init_font_hex::$2 ]
+Allocated zp ZP_BYTE:69 [ init_font_hex::idx#3 ]
 
 INITIAL ASM
 //SEG0 File Comments
@@ -2548,10 +2533,10 @@ main: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($28) val)
 sqrt: {
+    .label _1 = $34
     .label _3 = $32
-    .label _4 = $34
     .label found = $30
-    .label return = $35
+    .label return = $36
     .label val = $28
     .label return_2 = $2a
   //SEG81 [41] (word) bsearch16u::key#0 ← (word) sqrt::val#0 -- vwuz1=vwuz2 
@@ -2576,7 +2561,7 @@ sqrt: {
     sta found
     lda bsearch16u.return_3+1
     sta found+1
-  //SEG87 [45] (word~) sqrt::$3 ← (byte*)(word*) sqrt::found#0 - (byte*)(const word*) SQUARES#1 -- vwuz1=pbuz2_minus_pbuc1 
+  //SEG87 [45] (word~) sqrt::$3 ← (word*) sqrt::found#0 - (const word*) SQUARES#1 -- vwuz1=pwuz2_minus_pwuc1 
     lda found
     sec
     sbc #<SQUARES
@@ -2584,12 +2569,15 @@ sqrt: {
     lda found+1
     sbc #>SQUARES
     sta _3+1
-  //SEG88 [46] (byte~) sqrt::$4 ← (byte)(word~) sqrt::$3 -- vbuz1=_byte_vwuz2 
-    lda _3
-    sta _4
-  //SEG89 [47] (byte) sqrt::return#0 ← (byte~) sqrt::$4 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
-    lda _4
+  //SEG88 [46] (word~) sqrt::$1 ← (word~) sqrt::$3 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
+    lda _3+1
     lsr
+    sta _1+1
+    lda _3
+    ror
+    sta _1
+  //SEG89 [47] (byte) sqrt::return#0 ← (byte)(word~) sqrt::$1 -- vbuz1=_byte_vwuz2 
+    lda _1
     sta return
     jmp breturn
   //SEG90 sqrt::@return
@@ -2606,10 +2594,10 @@ sqrt: {
 // bsearch16u(word zeropage($2c) key, word* zeropage(9) items, byte zeropage($b) num)
 bsearch16u: {
     .label _2 = 9
-    .label _6 = $36
-    .label _16 = $37
-    .label pivot = $38
-    .label result = $3a
+    .label _6 = $37
+    .label _16 = $38
+    .label pivot = $39
+    .label result = $3b
     .label return = 9
     .label num = $b
     .label items = 9
@@ -2757,8 +2745,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte zeropage($c) val)
 sqr: {
-    .label _0 = $3c
-    .label return = $3d
+    .label _0 = $3d
+    .label return = $3e
     .label val = $c
     .label return_2 = $1d
     .label return_3 = $22
@@ -2782,8 +2770,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label _4 = $3f
-    .label _5 = $40
+    .label _4 = $40
+    .label _5 = $41
     .label squares = $f
     .label sqr = $d
     .label i = $11
@@ -2872,12 +2860,12 @@ malloc: {
 // Make charset from proto chars
 // init_font_hex(byte* zeropage($15) charset)
 init_font_hex: {
-    .label _0 = $41
-    .label _1 = $42
-    .label _2 = $43
+    .label _0 = $42
+    .label _1 = $43
+    .label _2 = $44
     .label idx = $1b
     .label i = $1a
-    .label idx_3 = $44
+    .label idx_3 = $45
     .label proto_lo = $17
     .label charset = $15
     .label c1 = $19
@@ -3060,9 +3048,9 @@ Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ ma
 Statement [41] (word) bsearch16u::key#0 ← (word) sqrt::val#0 [ bsearch16u::key#0 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::key#0 ] ) always clobbers reg byte a 
 Statement [43] (word*) bsearch16u::return#3 ← (word*) bsearch16u::return#1 [ bsearch16u::return#3 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::return#3 ] ) always clobbers reg byte a 
 Statement [44] (word*) sqrt::found#0 ← (word*) bsearch16u::return#3 [ sqrt::found#0 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::found#0 ] ) always clobbers reg byte a 
-Statement [45] (word~) sqrt::$3 ← (byte*)(word*) sqrt::found#0 - (byte*)(const word*) SQUARES#1 [ sqrt::$3 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::$3 ] ) always clobbers reg byte a 
-Statement [46] (byte~) sqrt::$4 ← (byte)(word~) sqrt::$3 [ sqrt::$4 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::$4 ] ) always clobbers reg byte a 
-Statement [47] (byte) sqrt::return#0 ← (byte~) sqrt::$4 >> (byte) 1 [ sqrt::return#0 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::return#0 ] ) always clobbers reg byte a 
+Statement [45] (word~) sqrt::$3 ← (word*) sqrt::found#0 - (const word*) SQUARES#1 [ sqrt::$3 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::$3 ] ) always clobbers reg byte a 
+Statement [46] (word~) sqrt::$1 ← (word~) sqrt::$3 >> (byte) 1 [ sqrt::$1 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::$1 ] ) always clobbers reg byte a 
+Statement [47] (byte) sqrt::return#0 ← (byte)(word~) sqrt::$1 [ sqrt::return#0 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::return#0 ] ) always clobbers reg byte a 
 Statement [52] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@2 [ bsearch16u::items#2 ] ( main:2::sqrt:29::bsearch16u:42 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::items#2 ] ) always clobbers reg byte a reg byte y 
 Statement [53] (word*~) bsearch16u::$2 ← (word*) bsearch16u::items#2 - (byte) 1*(const byte) SIZEOF_WORD [ bsearch16u::$2 ] ( main:2::sqrt:29::bsearch16u:42 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::$2 ] ) always clobbers reg byte a 
 Statement [57] (byte~) bsearch16u::$6 ← (byte) bsearch16u::num#3 >> (byte) 1 [ bsearch16u::key#0 bsearch16u::num#3 bsearch16u::items#2 bsearch16u::$6 ] ( main:2::sqrt:29::bsearch16u:42 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::key#0 bsearch16u::num#3 bsearch16u::items#2 bsearch16u::$6 ] ) always clobbers reg byte a 
@@ -3092,7 +3080,7 @@ Statement [90] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:26 [ init_font_hex::i#2 init_font_hex::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:27 [ init_font_hex::idx#5 init_font_hex::idx#2 ]
 Statement [91] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:65 [ init_font_hex::$0 ]
+Removing always clobbered register reg byte a as potential for zp ZP_BYTE:66 [ init_font_hex::$0 ]
 Statement [97] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] ) always clobbers reg byte a 
 Statement [99] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ) always clobbers reg byte a 
 Statement [100] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ) always clobbers reg byte a 
@@ -3113,9 +3101,9 @@ Statement [32] *((byte*) main::screen#2) ← (byte) main::d#0 [ main::y#10 main:
 Statement [41] (word) bsearch16u::key#0 ← (word) sqrt::val#0 [ bsearch16u::key#0 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::key#0 ] ) always clobbers reg byte a 
 Statement [43] (word*) bsearch16u::return#3 ← (word*) bsearch16u::return#1 [ bsearch16u::return#3 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::return#3 ] ) always clobbers reg byte a 
 Statement [44] (word*) sqrt::found#0 ← (word*) bsearch16u::return#3 [ sqrt::found#0 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::found#0 ] ) always clobbers reg byte a 
-Statement [45] (word~) sqrt::$3 ← (byte*)(word*) sqrt::found#0 - (byte*)(const word*) SQUARES#1 [ sqrt::$3 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::$3 ] ) always clobbers reg byte a 
-Statement [46] (byte~) sqrt::$4 ← (byte)(word~) sqrt::$3 [ sqrt::$4 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::$4 ] ) always clobbers reg byte a 
-Statement [47] (byte) sqrt::return#0 ← (byte~) sqrt::$4 >> (byte) 1 [ sqrt::return#0 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::return#0 ] ) always clobbers reg byte a 
+Statement [45] (word~) sqrt::$3 ← (word*) sqrt::found#0 - (const word*) SQUARES#1 [ sqrt::$3 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::$3 ] ) always clobbers reg byte a 
+Statement [46] (word~) sqrt::$1 ← (word~) sqrt::$3 >> (byte) 1 [ sqrt::$1 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::$1 ] ) always clobbers reg byte a 
+Statement [47] (byte) sqrt::return#0 ← (byte)(word~) sqrt::$1 [ sqrt::return#0 ] ( main:2::sqrt:29 [ main::y#10 main::yds#0 main::x#2 main::screen#2 sqrt::return#0 ] ) always clobbers reg byte a 
 Statement [52] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@2 [ bsearch16u::items#2 ] ( main:2::sqrt:29::bsearch16u:42 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::items#2 ] ) always clobbers reg byte a reg byte y 
 Statement [53] (word*~) bsearch16u::$2 ← (word*) bsearch16u::items#2 - (byte) 1*(const byte) SIZEOF_WORD [ bsearch16u::$2 ] ( main:2::sqrt:29::bsearch16u:42 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::$2 ] ) always clobbers reg byte a 
 Statement [57] (byte~) bsearch16u::$6 ← (byte) bsearch16u::num#3 >> (byte) 1 [ bsearch16u::key#0 bsearch16u::num#3 bsearch16u::items#2 bsearch16u::$6 ] ( main:2::sqrt:29::bsearch16u:42 [ main::y#10 main::yds#0 main::x#2 main::screen#2 bsearch16u::key#0 bsearch16u::num#3 bsearch16u::items#2 bsearch16u::$6 ] ) always clobbers reg byte a 
@@ -3172,71 +3160,72 @@ Potential registers zp ZP_WORD:44 [ bsearch16u::key#0 ] : zp ZP_WORD:44 ,
 Potential registers zp ZP_WORD:46 [ bsearch16u::return#3 ] : zp ZP_WORD:46 , 
 Potential registers zp ZP_WORD:48 [ sqrt::found#0 ] : zp ZP_WORD:48 , 
 Potential registers zp ZP_WORD:50 [ sqrt::$3 ] : zp ZP_WORD:50 , 
-Potential registers zp ZP_BYTE:52 [ sqrt::$4 ] : zp ZP_BYTE:52 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:53 [ sqrt::return#0 ] : zp ZP_BYTE:53 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:54 [ bsearch16u::$6 ] : zp ZP_BYTE:54 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:55 [ bsearch16u::$16 ] : zp ZP_BYTE:55 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:56 [ bsearch16u::pivot#0 ] : zp ZP_WORD:56 , 
-Potential registers zp ZP_WORD:58 [ bsearch16u::result#0 ] : zp ZP_WORD:58 , 
-Potential registers zp ZP_BYTE:60 [ sqr::$0 ] : zp ZP_BYTE:60 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:61 [ sqr::return#0 ] : zp ZP_WORD:61 , 
-Potential registers zp ZP_BYTE:63 [ init_squares::$4 ] : zp ZP_BYTE:63 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:64 [ init_squares::$5 ] : zp ZP_BYTE:64 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:65 [ init_font_hex::$0 ] : zp ZP_BYTE:65 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:66 [ init_font_hex::$1 ] : zp ZP_BYTE:66 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:67 [ init_font_hex::$2 ] : zp ZP_BYTE:67 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:68 [ init_font_hex::idx#3 ] : zp ZP_BYTE:68 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:52 [ sqrt::$1 ] : zp ZP_WORD:52 , 
+Potential registers zp ZP_BYTE:54 [ sqrt::return#0 ] : zp ZP_BYTE:54 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:55 [ bsearch16u::$6 ] : zp ZP_BYTE:55 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:56 [ bsearch16u::$16 ] : zp ZP_BYTE:56 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:57 [ bsearch16u::pivot#0 ] : zp ZP_WORD:57 , 
+Potential registers zp ZP_WORD:59 [ bsearch16u::result#0 ] : zp ZP_WORD:59 , 
+Potential registers zp ZP_BYTE:61 [ sqr::$0 ] : zp ZP_BYTE:61 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_WORD:62 [ sqr::return#0 ] : zp ZP_WORD:62 , 
+Potential registers zp ZP_BYTE:64 [ init_squares::$4 ] : zp ZP_BYTE:64 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:65 [ init_squares::$5 ] : zp ZP_BYTE:65 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:66 [ init_font_hex::$0 ] : zp ZP_BYTE:66 , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:67 [ init_font_hex::$1 ] : zp ZP_BYTE:67 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:68 [ init_font_hex::$2 ] : zp ZP_BYTE:68 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp ZP_BYTE:69 [ init_font_hex::idx#3 ] : zp ZP_BYTE:69 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [bsearch16u] 7,563.11: zp ZP_BYTE:11 [ bsearch16u::num#5 bsearch16u::num#1 bsearch16u::num#3 bsearch16u::num#0 ] 2,852.83: zp ZP_WORD:9 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 ] 2,002: zp ZP_BYTE:54 [ bsearch16u::$6 ] 2,002: zp ZP_BYTE:55 [ bsearch16u::$16 ] 1,501.5: zp ZP_WORD:58 [ bsearch16u::result#0 ] 501: zp ZP_WORD:56 [ bsearch16u::pivot#0 ] 4: zp ZP_WORD:46 [ bsearch16u::return#3 ] 0.29: zp ZP_WORD:44 [ bsearch16u::key#0 ] 
-Uplift Scope [init_font_hex] 2,168.83: zp ZP_BYTE:26 [ init_font_hex::i#2 init_font_hex::i#1 ] 2,002: zp ZP_BYTE:66 [ init_font_hex::$1 ] 2,002: zp ZP_BYTE:67 [ init_font_hex::$2 ] 1,151.6: zp ZP_BYTE:27 [ init_font_hex::idx#5 init_font_hex::idx#2 ] 1,001: zp ZP_BYTE:65 [ init_font_hex::$0 ] 202: zp ZP_BYTE:68 [ init_font_hex::idx#3 ] 165.86: zp ZP_WORD:21 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] 164.97: zp ZP_BYTE:25 [ init_font_hex::c1#4 init_font_hex::c1#1 ] 143.04: zp ZP_WORD:23 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] 64.17: zp ZP_WORD:18 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] 17.66: zp ZP_BYTE:20 [ init_font_hex::c#6 init_font_hex::c#1 ] 
+Uplift Scope [bsearch16u] 7,563.11: zp ZP_BYTE:11 [ bsearch16u::num#5 bsearch16u::num#1 bsearch16u::num#3 bsearch16u::num#0 ] 2,852.83: zp ZP_WORD:9 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 ] 2,002: zp ZP_BYTE:55 [ bsearch16u::$6 ] 2,002: zp ZP_BYTE:56 [ bsearch16u::$16 ] 1,501.5: zp ZP_WORD:59 [ bsearch16u::result#0 ] 501: zp ZP_WORD:57 [ bsearch16u::pivot#0 ] 4: zp ZP_WORD:46 [ bsearch16u::return#3 ] 0.29: zp ZP_WORD:44 [ bsearch16u::key#0 ] 
+Uplift Scope [init_font_hex] 2,168.83: zp ZP_BYTE:26 [ init_font_hex::i#2 init_font_hex::i#1 ] 2,002: zp ZP_BYTE:67 [ init_font_hex::$1 ] 2,002: zp ZP_BYTE:68 [ init_font_hex::$2 ] 1,151.6: zp ZP_BYTE:27 [ init_font_hex::idx#5 init_font_hex::idx#2 ] 1,001: zp ZP_BYTE:66 [ init_font_hex::$0 ] 202: zp ZP_BYTE:69 [ init_font_hex::idx#3 ] 165.86: zp ZP_WORD:21 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] 164.97: zp ZP_BYTE:25 [ init_font_hex::c1#4 init_font_hex::c1#1 ] 143.04: zp ZP_WORD:23 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] 64.17: zp ZP_WORD:18 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] 17.66: zp ZP_BYTE:20 [ init_font_hex::c#6 init_font_hex::c#1 ] 
 Uplift Scope [main] 707: zp ZP_BYTE:7 [ main::xd#0 main::$16 main::$14 ] 202: zp ZP_BYTE:33 [ main::x2#0 ] 202: zp ZP_WORD:36 [ main::xds#0 ] 202: zp ZP_WORD:38 [ main::ds#0 ] 202: zp ZP_BYTE:43 [ main::d#0 ] 169.32: zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 77: zp ZP_BYTE:3 [ main::yd#0 main::$8 main::$6 ] 64.42: zp ZP_WORD:5 [ main::screen#2 main::screen#10 main::screen#1 ] 22: zp ZP_BYTE:28 [ main::y2#0 ] 17.64: zp ZP_BYTE:2 [ main::y#10 main::y#1 ] 5.6: zp ZP_WORD:31 [ main::yds#0 ] 
-Uplift Scope [sqr] 338: zp ZP_BYTE:12 [ sqr::val#2 sqr::val#0 sqr::val#1 ] 202: zp ZP_WORD:34 [ sqr::return#3 ] 28.5: zp ZP_WORD:61 [ sqr::return#0 ] 22: zp ZP_WORD:29 [ sqr::return#2 ] 4: zp ZP_BYTE:60 [ sqr::$0 ] 
-Uplift Scope [sqrt] 202: zp ZP_BYTE:42 [ sqrt::return#2 ] 103: zp ZP_WORD:40 [ sqrt::val#0 ] 34.33: zp ZP_BYTE:53 [ sqrt::return#0 ] 4: zp ZP_BYTE:52 [ sqrt::$4 ] 2: zp ZP_WORD:48 [ sqrt::found#0 ] 2: zp ZP_WORD:50 [ sqrt::$3 ] 
-Uplift Scope [init_squares] 22: zp ZP_BYTE:17 [ init_squares::i#2 init_squares::i#1 ] 22: zp ZP_BYTE:63 [ init_squares::$4 ] 22: zp ZP_BYTE:64 [ init_squares::$5 ] 20.17: zp ZP_WORD:15 [ init_squares::squares#2 init_squares::squares#1 ] 13.93: zp ZP_WORD:13 [ init_squares::sqr#2 init_squares::sqr#1 ] 
+Uplift Scope [sqr] 338: zp ZP_BYTE:12 [ sqr::val#2 sqr::val#0 sqr::val#1 ] 202: zp ZP_WORD:34 [ sqr::return#3 ] 28.5: zp ZP_WORD:62 [ sqr::return#0 ] 22: zp ZP_WORD:29 [ sqr::return#2 ] 4: zp ZP_BYTE:61 [ sqr::$0 ] 
+Uplift Scope [sqrt] 202: zp ZP_BYTE:42 [ sqrt::return#2 ] 103: zp ZP_WORD:40 [ sqrt::val#0 ] 34.33: zp ZP_BYTE:54 [ sqrt::return#0 ] 4: zp ZP_WORD:48 [ sqrt::found#0 ] 4: zp ZP_WORD:50 [ sqrt::$3 ] 2: zp ZP_WORD:52 [ sqrt::$1 ] 
+Uplift Scope [init_squares] 22: zp ZP_BYTE:17 [ init_squares::i#2 init_squares::i#1 ] 22: zp ZP_BYTE:64 [ init_squares::$4 ] 22: zp ZP_BYTE:65 [ init_squares::$5 ] 20.17: zp ZP_WORD:15 [ init_squares::squares#2 init_squares::squares#1 ] 13.93: zp ZP_WORD:13 [ init_squares::sqr#2 init_squares::sqr#1 ] 
 Uplift Scope [malloc] 
 Uplift Scope [] 
 
-Uplifting [bsearch16u] best 258797 combination reg byte x [ bsearch16u::num#5 bsearch16u::num#1 bsearch16u::num#3 bsearch16u::num#0 ] zp ZP_WORD:9 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 ] reg byte a [ bsearch16u::$6 ] reg byte a [ bsearch16u::$16 ] zp ZP_WORD:58 [ bsearch16u::result#0 ] zp ZP_WORD:56 [ bsearch16u::pivot#0 ] zp ZP_WORD:46 [ bsearch16u::return#3 ] zp ZP_WORD:44 [ bsearch16u::key#0 ] 
-Uplifting [init_font_hex] best 239797 combination reg byte x [ init_font_hex::i#2 init_font_hex::i#1 ] reg byte a [ init_font_hex::$1 ] reg byte a [ init_font_hex::$2 ] zp ZP_BYTE:27 [ init_font_hex::idx#5 init_font_hex::idx#2 ] zp ZP_BYTE:65 [ init_font_hex::$0 ] zp ZP_BYTE:68 [ init_font_hex::idx#3 ] zp ZP_WORD:21 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] zp ZP_BYTE:25 [ init_font_hex::c1#4 init_font_hex::c1#1 ] zp ZP_WORD:23 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] zp ZP_WORD:18 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] zp ZP_BYTE:20 [ init_font_hex::c#6 init_font_hex::c#1 ] 
+Uplifting [bsearch16u] best 258805 combination reg byte x [ bsearch16u::num#5 bsearch16u::num#1 bsearch16u::num#3 bsearch16u::num#0 ] zp ZP_WORD:9 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 ] reg byte a [ bsearch16u::$6 ] reg byte a [ bsearch16u::$16 ] zp ZP_WORD:59 [ bsearch16u::result#0 ] zp ZP_WORD:57 [ bsearch16u::pivot#0 ] zp ZP_WORD:46 [ bsearch16u::return#3 ] zp ZP_WORD:44 [ bsearch16u::key#0 ] 
+Uplifting [init_font_hex] best 239805 combination reg byte x [ init_font_hex::i#2 init_font_hex::i#1 ] reg byte a [ init_font_hex::$1 ] reg byte a [ init_font_hex::$2 ] zp ZP_BYTE:27 [ init_font_hex::idx#5 init_font_hex::idx#2 ] zp ZP_BYTE:66 [ init_font_hex::$0 ] zp ZP_BYTE:69 [ init_font_hex::idx#3 ] zp ZP_WORD:21 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] zp ZP_BYTE:25 [ init_font_hex::c1#4 init_font_hex::c1#1 ] zp ZP_WORD:23 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] zp ZP_WORD:18 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] zp ZP_BYTE:20 [ init_font_hex::c#6 init_font_hex::c#1 ] 
 Limited combination testing to 100 combinations of 6912 possible.
-Uplifting [main] best 237497 combination reg byte a [ main::xd#0 main::$16 main::$14 ] reg byte a [ main::x2#0 ] zp ZP_WORD:36 [ main::xds#0 ] zp ZP_WORD:38 [ main::ds#0 ] reg byte a [ main::d#0 ] zp ZP_BYTE:4 [ main::x#2 main::x#1 ] zp ZP_BYTE:3 [ main::yd#0 main::$8 main::$6 ] zp ZP_WORD:5 [ main::screen#2 main::screen#10 main::screen#1 ] zp ZP_BYTE:28 [ main::y2#0 ] zp ZP_BYTE:2 [ main::y#10 main::y#1 ] zp ZP_WORD:31 [ main::yds#0 ] 
+Uplifting [main] best 237505 combination reg byte a [ main::xd#0 main::$16 main::$14 ] reg byte a [ main::x2#0 ] zp ZP_WORD:36 [ main::xds#0 ] zp ZP_WORD:38 [ main::ds#0 ] reg byte a [ main::d#0 ] zp ZP_BYTE:4 [ main::x#2 main::x#1 ] zp ZP_BYTE:3 [ main::yd#0 main::$8 main::$6 ] zp ZP_WORD:5 [ main::screen#2 main::screen#10 main::screen#1 ] zp ZP_BYTE:28 [ main::y2#0 ] zp ZP_BYTE:2 [ main::y#10 main::y#1 ] zp ZP_WORD:31 [ main::yds#0 ] 
 Limited combination testing to 100 combinations of 4096 possible.
-Uplifting [sqr] best 237160 combination reg byte a [ sqr::val#2 sqr::val#0 sqr::val#1 ] zp ZP_WORD:34 [ sqr::return#3 ] zp ZP_WORD:61 [ sqr::return#0 ] zp ZP_WORD:29 [ sqr::return#2 ] reg byte a [ sqr::$0 ] 
-Uplifting [sqrt] best 236251 combination reg byte a [ sqrt::return#2 ] zp ZP_WORD:40 [ sqrt::val#0 ] reg byte a [ sqrt::return#0 ] reg byte a [ sqrt::$4 ] zp ZP_WORD:48 [ sqrt::found#0 ] zp ZP_WORD:50 [ sqrt::$3 ] 
-Uplifting [init_squares] best 236051 combination reg byte x [ init_squares::i#2 init_squares::i#1 ] reg byte a [ init_squares::$4 ] reg byte a [ init_squares::$5 ] zp ZP_WORD:15 [ init_squares::squares#2 init_squares::squares#1 ] zp ZP_WORD:13 [ init_squares::sqr#2 init_squares::sqr#1 ] 
-Uplifting [malloc] best 236051 combination 
-Uplifting [] best 236051 combination 
+Uplifting [sqr] best 237168 combination reg byte a [ sqr::val#2 sqr::val#0 sqr::val#1 ] zp ZP_WORD:34 [ sqr::return#3 ] zp ZP_WORD:62 [ sqr::return#0 ] zp ZP_WORD:29 [ sqr::return#2 ] reg byte a [ sqr::$0 ] 
+Uplifting [sqrt] best 236265 combination reg byte a [ sqrt::return#2 ] zp ZP_WORD:40 [ sqrt::val#0 ] reg byte a [ sqrt::return#0 ] zp ZP_WORD:48 [ sqrt::found#0 ] zp ZP_WORD:50 [ sqrt::$3 ] zp ZP_WORD:52 [ sqrt::$1 ] 
+Uplifting [init_squares] best 236065 combination reg byte x [ init_squares::i#2 init_squares::i#1 ] reg byte a [ init_squares::$4 ] reg byte a [ init_squares::$5 ] zp ZP_WORD:15 [ init_squares::squares#2 init_squares::squares#1 ] zp ZP_WORD:13 [ init_squares::sqr#2 init_squares::sqr#1 ] 
+Uplifting [malloc] best 236065 combination 
+Uplifting [] best 236065 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:27 [ init_font_hex::idx#5 init_font_hex::idx#2 ]
-Uplifting [init_font_hex] best 236051 combination zp ZP_BYTE:27 [ init_font_hex::idx#5 init_font_hex::idx#2 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:65 [ init_font_hex::$0 ]
-Uplifting [init_font_hex] best 236051 combination zp ZP_BYTE:65 [ init_font_hex::$0 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:68 [ init_font_hex::idx#3 ]
-Uplifting [init_font_hex] best 235451 combination reg byte y [ init_font_hex::idx#3 ] 
+Uplifting [init_font_hex] best 236065 combination zp ZP_BYTE:27 [ init_font_hex::idx#5 init_font_hex::idx#2 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:66 [ init_font_hex::$0 ]
+Uplifting [init_font_hex] best 236065 combination zp ZP_BYTE:66 [ init_font_hex::$0 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:69 [ init_font_hex::idx#3 ]
+Uplifting [init_font_hex] best 235465 combination reg byte y [ init_font_hex::idx#3 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::x#2 main::x#1 ]
-Uplifting [main] best 235451 combination zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 
+Uplifting [main] best 235465 combination zp ZP_BYTE:4 [ main::x#2 main::x#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:25 [ init_font_hex::c1#4 init_font_hex::c1#1 ]
-Uplifting [init_font_hex] best 235451 combination zp ZP_BYTE:25 [ init_font_hex::c1#4 init_font_hex::c1#1 ] 
+Uplifting [init_font_hex] best 235465 combination zp ZP_BYTE:25 [ init_font_hex::c1#4 init_font_hex::c1#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::yd#0 main::$8 main::$6 ]
-Uplifting [main] best 235381 combination reg byte a [ main::yd#0 main::$8 main::$6 ] 
+Uplifting [main] best 235395 combination reg byte a [ main::yd#0 main::$8 main::$6 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:28 [ main::y2#0 ]
-Uplifting [main] best 235281 combination reg byte a [ main::y2#0 ] 
+Uplifting [main] best 235295 combination reg byte a [ main::y2#0 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ init_font_hex::c#6 init_font_hex::c#1 ]
-Uplifting [init_font_hex] best 235281 combination zp ZP_BYTE:20 [ init_font_hex::c#6 init_font_hex::c#1 ] 
+Uplifting [init_font_hex] best 235295 combination zp ZP_BYTE:20 [ init_font_hex::c#6 init_font_hex::c#1 ] 
 Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::y#10 main::y#1 ]
-Uplifting [main] best 235281 combination zp ZP_BYTE:2 [ main::y#10 main::y#1 ] 
+Uplifting [main] best 235295 combination zp ZP_BYTE:2 [ main::y#10 main::y#1 ] 
 Coalescing zero page register with common assignment [ zp ZP_WORD:9 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 ] ] with [ zp ZP_WORD:46 [ bsearch16u::return#3 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:29 [ sqr::return#2 ] ] with [ zp ZP_WORD:31 [ main::yds#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:34 [ sqr::return#3 ] ] with [ zp ZP_WORD:36 [ main::xds#0 ] ] - score: 1
-Coalescing zero page register with common assignment [ zp ZP_WORD:34 [ sqr::return#3 main::xds#0 ] ] with [ zp ZP_WORD:61 [ sqr::return#0 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:34 [ sqr::return#3 main::xds#0 ] ] with [ zp ZP_WORD:62 [ sqr::return#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:38 [ main::ds#0 ] ] with [ zp ZP_WORD:40 [ sqrt::val#0 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:48 [ sqrt::found#0 ] ] with [ zp ZP_WORD:50 [ sqrt::$3 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:9 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 bsearch16u::return#3 ] ] with [ zp ZP_WORD:48 [ sqrt::found#0 sqrt::$3 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:34 [ sqr::return#3 main::xds#0 sqr::return#0 ] ] with [ zp ZP_WORD:38 [ main::ds#0 sqrt::val#0 ] ] - score: 1
+Coalescing zero page register with common assignment [ zp ZP_WORD:9 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 bsearch16u::return#3 sqrt::found#0 sqrt::$3 ] ] with [ zp ZP_WORD:52 [ sqrt::$1 ] ] - score: 1
 Coalescing zero page register with common assignment [ zp ZP_WORD:34 [ sqr::return#3 main::xds#0 sqr::return#0 main::ds#0 sqrt::val#0 ] ] with [ zp ZP_WORD:44 [ bsearch16u::key#0 ] ] - score: 1
 Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:3 [ main::x#2 main::x#1 ]
 Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ main::screen#2 main::screen#10 main::screen#1 ]
-Allocated (was zp ZP_WORD:9) zp ZP_WORD:6 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 bsearch16u::return#3 sqrt::found#0 sqrt::$3 ]
+Allocated (was zp ZP_WORD:9) zp ZP_WORD:6 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 bsearch16u::return#3 sqrt::found#0 sqrt::$3 sqrt::$1 ]
 Allocated (was zp ZP_WORD:13) zp ZP_WORD:9 [ init_squares::sqr#2 init_squares::sqr#1 ]
 Allocated (was zp ZP_WORD:15) zp ZP_WORD:11 [ init_squares::squares#2 init_squares::squares#1 ]
 Allocated (was zp ZP_WORD:18) zp ZP_WORD:13 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ]
@@ -3247,9 +3236,9 @@ Allocated (was zp ZP_BYTE:25) zp ZP_BYTE:20 [ init_font_hex::c1#4 init_font_hex:
 Allocated (was zp ZP_BYTE:27) zp ZP_BYTE:21 [ init_font_hex::idx#5 init_font_hex::idx#2 ]
 Allocated (was zp ZP_WORD:29) zp ZP_WORD:22 [ sqr::return#2 main::yds#0 ]
 Allocated (was zp ZP_WORD:34) zp ZP_WORD:24 [ sqr::return#3 main::xds#0 sqr::return#0 main::ds#0 sqrt::val#0 bsearch16u::key#0 ]
-Allocated (was zp ZP_WORD:56) zp ZP_WORD:26 [ bsearch16u::pivot#0 ]
-Allocated (was zp ZP_WORD:58) zp ZP_WORD:28 [ bsearch16u::result#0 ]
-Allocated (was zp ZP_BYTE:65) zp ZP_BYTE:30 [ init_font_hex::$0 ]
+Allocated (was zp ZP_WORD:57) zp ZP_WORD:26 [ bsearch16u::pivot#0 ]
+Allocated (was zp ZP_WORD:59) zp ZP_WORD:28 [ bsearch16u::result#0 ]
+Allocated (was zp ZP_BYTE:66) zp ZP_BYTE:30 [ init_font_hex::$0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
 //SEG0 File Comments
@@ -3472,6 +3461,7 @@ main: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($18) val)
 sqrt: {
+    .label _1 = 6
     .label _3 = 6
     .label found = 6
     .label val = $18
@@ -3485,7 +3475,7 @@ sqrt: {
   //SEG85 sqrt::@1
   b1:
   //SEG86 [44] (word*) sqrt::found#0 ← (word*) bsearch16u::return#3
-  //SEG87 [45] (word~) sqrt::$3 ← (byte*)(word*) sqrt::found#0 - (byte*)(const word*) SQUARES#1 -- vwuz1=pbuz1_minus_pbuc1 
+  //SEG87 [45] (word~) sqrt::$3 ← (word*) sqrt::found#0 - (const word*) SQUARES#1 -- vwuz1=pwuz1_minus_pwuc1 
     lda _3
     sec
     sbc #<SQUARES
@@ -3493,10 +3483,11 @@ sqrt: {
     lda _3+1
     sbc #>SQUARES
     sta _3+1
-  //SEG88 [46] (byte~) sqrt::$4 ← (byte)(word~) sqrt::$3 -- vbuaa=_byte_vwuz1 
-    lda _3
-  //SEG89 [47] (byte) sqrt::return#0 ← (byte~) sqrt::$4 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
-    lsr
+  //SEG88 [46] (word~) sqrt::$1 ← (word~) sqrt::$3 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
+    lsr _1+1
+    ror _1
+  //SEG89 [47] (byte) sqrt::return#0 ← (byte)(word~) sqrt::$1 -- vbuaa=_byte_vwuz1 
+    lda _1
     jmp breturn
   //SEG90 sqrt::@return
   breturn:
@@ -4225,12 +4216,12 @@ FINAL SYMBOL TABLE
 (byte) sqr::val#1 reg byte a 202.0
 (byte) sqr::val#2 reg byte a 114.0
 (byte()) sqrt((word) sqrt::val)
-(word~) sqrt::$3 $3 zp ZP_WORD:6 2.0
-(byte~) sqrt::$4 reg byte a 4.0
+(word~) sqrt::$1 $1 zp ZP_WORD:6 2.0
+(word~) sqrt::$3 $3 zp ZP_WORD:6 4.0
 (label) sqrt::@1
 (label) sqrt::@return
 (word*) sqrt::found
-(word*) sqrt::found#0 found zp ZP_WORD:6 2.0
+(word*) sqrt::found#0 found zp ZP_WORD:6 4.0
 (byte) sqrt::return
 (byte) sqrt::return#0 reg byte a 34.33333333333333
 (byte) sqrt::return#2 reg byte a 202.0
@@ -4243,7 +4234,7 @@ reg byte a [ main::yd#0 main::$8 main::$6 ]
 zp ZP_BYTE:3 [ main::x#2 main::x#1 ]
 zp ZP_WORD:4 [ main::screen#2 main::screen#10 main::screen#1 ]
 reg byte a [ main::xd#0 main::$16 main::$14 ]
-zp ZP_WORD:6 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 bsearch16u::return#3 sqrt::found#0 sqrt::$3 ]
+zp ZP_WORD:6 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 bsearch16u::return#3 sqrt::found#0 sqrt::$3 sqrt::$1 ]
 reg byte x [ bsearch16u::num#5 bsearch16u::num#1 bsearch16u::num#3 bsearch16u::num#0 ]
 reg byte a [ sqr::val#2 sqr::val#0 sqr::val#1 ]
 zp ZP_WORD:9 [ init_squares::sqr#2 init_squares::sqr#1 ]
@@ -4262,7 +4253,6 @@ reg byte a [ main::x2#0 ]
 zp ZP_WORD:24 [ sqr::return#3 main::xds#0 sqr::return#0 main::ds#0 sqrt::val#0 bsearch16u::key#0 ]
 reg byte a [ sqrt::return#2 ]
 reg byte a [ main::d#0 ]
-reg byte a [ sqrt::$4 ]
 reg byte a [ sqrt::return#0 ]
 reg byte a [ bsearch16u::$6 ]
 reg byte a [ bsearch16u::$16 ]
@@ -4278,7 +4268,7 @@ reg byte y [ init_font_hex::idx#3 ]
 
 
 FINAL ASSEMBLER
-Score: 200555
+Score: 200563
 
 //SEG0 File Comments
 // Calculate the distance to the center of the screen - and show it using font-hex
@@ -4454,6 +4444,7 @@ main: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($18) val)
 sqrt: {
+    .label _1 = 6
     .label _3 = 6
     .label found = 6
     .label val = $18
@@ -4464,7 +4455,7 @@ sqrt: {
   //SEG84 [43] (word*) bsearch16u::return#3 ← (word*) bsearch16u::return#1
   //SEG85 sqrt::@1
   //SEG86 [44] (word*) sqrt::found#0 ← (word*) bsearch16u::return#3
-  //SEG87 [45] (word~) sqrt::$3 ← (byte*)(word*) sqrt::found#0 - (byte*)(const word*) SQUARES#1 -- vwuz1=pbuz1_minus_pbuc1 
+  //SEG87 [45] (word~) sqrt::$3 ← (word*) sqrt::found#0 - (const word*) SQUARES#1 -- vwuz1=pwuz1_minus_pwuc1 
     lda _3
     sec
     sbc #<SQUARES
@@ -4472,10 +4463,11 @@ sqrt: {
     lda _3+1
     sbc #>SQUARES
     sta _3+1
-  //SEG88 [46] (byte~) sqrt::$4 ← (byte)(word~) sqrt::$3 -- vbuaa=_byte_vwuz1 
-    lda _3
-  //SEG89 [47] (byte) sqrt::return#0 ← (byte~) sqrt::$4 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
-    lsr
+  //SEG88 [46] (word~) sqrt::$1 ← (word~) sqrt::$3 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
+    lsr _1+1
+    ror _1
+  //SEG89 [47] (byte) sqrt::return#0 ← (byte)(word~) sqrt::$1 -- vbuaa=_byte_vwuz1 
+    lda _1
   //SEG90 sqrt::@return
   //SEG91 [48] return 
     rts

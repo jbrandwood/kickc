@@ -9,20 +9,17 @@ import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.symbols.VariableIntermediate;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.values.ConstantRef;
-import dk.camelot64.kickc.model.values.PointerDereferenceIndexed;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.LinkedHashMap;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Fixes pointer math to use sizeof(type)
@@ -64,7 +61,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                   // Array-indexing into a non-byte pointer - multiply by sizeof()
                   getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
                   VariableRef idx2VarRef = handled.getOrDefault(currentStmt, new LinkedHashMap<>()).get(deref.getIndex());
-                  if(idx2VarRef==null) {
+                  if(idx2VarRef == null) {
                      VariableIntermediate idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
                      idx2Var.setTypeInferred(SymbolTypeInference.inferType(getScope(), deref.getIndex()));
                      ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
@@ -102,17 +99,35 @@ public class Pass1PointerSizeofFix extends Pass1Base {
             }
          }
          if(pointerType.getElementType().getSizeBytes() > 1) {
-            // Binary operation on a non-byte pointer - sizeof()-handling is probably needed!
             if(Operators.PLUS.equals(assignment.getOperator()) || Operators.MINUS.equals(assignment.getOperator())) {
-               // Adding to a pointer - multiply by sizeof()
-               getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
-               VariableIntermediate tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
-               tmpVar.setTypeInferred(SymbolTypeInference.inferType(getScope(), assignment.getrValue2()));
-               stmtIt.remove();
-               ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
-               stmtIt.add(new StatementAssignment(tmpVar.getRef(), assignment.getrValue2(), Operators.MULTIPLY, sizeOfTargetType, assignment.getSource(), Comment.NO_COMMENTS));
-               stmtIt.add(assignment);
-               assignment.setrValue2(tmpVar.getRef());
+               boolean isPointerPlusConst = true;
+               if(assignment.getrValue2() instanceof SymbolVariableRef) {
+                  Symbol symbolR2 = getScope().getSymbol((SymbolVariableRef) assignment.getrValue2());
+                  if(symbolR2.getType() instanceof SymbolTypePointer) {
+                     // RValue 2 is a pointer
+                     isPointerPlusConst = false;
+                     getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
+                     LValue lValue = assignment.getlValue();
+                     VariableIntermediate tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
+                     tmpVar.setTypeInferred(SymbolTypeInference.inferType(getScope(), assignment.getlValue()));
+                     assignment.setlValue(tmpVar.getRef());
+                     ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
+                     stmtIt.add(new StatementAssignment(lValue, tmpVar.getRef(), Operators.DIVIDE, sizeOfTargetType, assignment.getSource(), Comment.NO_COMMENTS));
+                  }
+               }
+
+               if(isPointerPlusConst) {
+                  // Binary operation on a non-byte pointer - sizeof()-handling is probably needed!
+                  // Adding to a pointer - multiply by sizeof()
+                  getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
+                  VariableIntermediate tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
+                  tmpVar.setTypeInferred(SymbolTypeInference.inferType(getScope(), assignment.getrValue2()));
+                  stmtIt.remove();
+                  ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
+                  stmtIt.add(new StatementAssignment(tmpVar.getRef(), assignment.getrValue2(), Operators.MULTIPLY, sizeOfTargetType, assignment.getSource(), Comment.NO_COMMENTS));
+                  stmtIt.add(assignment);
+                  assignment.setrValue2(tmpVar.getRef());
+               }
             }
          }
       }

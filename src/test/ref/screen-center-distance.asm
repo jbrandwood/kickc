@@ -12,6 +12,15 @@
   .label SQUARES = malloc.return
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
+    jsr init_font_hex
+    lda #toD0181_return
+    sta D018
+    jsr init_dist_screen
+    rts
+}
+// Populates 1000 bytes (a screen) with values representing the distance to the center.
+// The actual value stored is distance*2 to increase precision
+init_dist_screen: {
     .label yds = $19
     .label xds = $1b
     .label ds = $1b
@@ -20,9 +29,6 @@ main: {
     .label screen_topline = 3
     .label screen_bottomline = 5
     .label y = 2
-    jsr init_font_hex
-    lda #toD0181_return
-    sta D018
     jsr init_squares
     lda #<SCREEN+$28*$18
     sta screen_bottomline

@@ -2,6 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const SIZEOF_WORD = 2
   .const STATUS_FREE = 0
   .const STATUS_NEW = 1
   .const STATUS_PROCESSING = 2
@@ -13,6 +14,8 @@
   .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
+  // Start of the heap used by malloc()
+  .label HEAP_START = $c000
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -68,10 +71,12 @@
   // Max number of chars processed at once
   .const NUM_PROCESSING = 8
   // Distance value meaning not found
-  .const NOT_FOUND = $ffff
+  .const NOT_FOUND = $ff
+  .const NUM_SQUARES = $30
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
   .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
+  .label SQUARES = malloc.return
   .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
   .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
@@ -79,8 +84,8 @@ main: {
     .label src = 2
     .label dst = 4
     .label i = 6
-    .label center_dist = $14
-    jsr initSquareTables
+    .label center_y = $25
+    jsr init_dist_screen
     lda #<SCREEN_COPY
     sta dst
     lda #>SCREEN_COPY
@@ -147,13 +152,11 @@ main: {
   b3:
   // Main loop
     jsr getCharToProcess
-    ldx getCharToProcess.return_x
-    ldy getCharToProcess.return_y
-    lda center_dist+1
-    cmp #>NOT_FOUND
-    bne b5
-    lda center_dist
-    cmp #<NOT_FOUND
+    ldy getCharToProcess.return_x
+    lda getCharToProcess.return_y
+    sta center_y
+    txa
+    cmp #NOT_FOUND
     bne b5
     lda #'.'
     sta SCREEN+$3e7
@@ -161,42 +164,41 @@ main: {
     inc COLS+$3e7
     jmp b7
   b5:
-    stx startProcessing.center_x
-    sty startProcessing.center_y
+    sty startProcessing.center_x
     jsr startProcessing
     jmp b3
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($20) center_x, byte zeropage($21) center_y)
+// startProcessing(byte zeropage($26) center_x, byte zeropage($25) center_y)
 startProcessing: {
-    .label _0 = $22
-    .label _1 = $22
+    .label _0 = $27
+    .label _1 = $27
     .label _5 = $a
     .label _6 = $a
     .label _8 = 8
     .label _9 = 8
-    .label _11 = $29
-    .label _12 = $29
-    .label _13 = $29
-    .label _15 = $2b
-    .label _16 = $2b
-    .label _17 = $2b
-    .label _23 = $2e
-    .label center_x = $20
-    .label center_y = $21
+    .label _11 = $2e
+    .label _12 = $2e
+    .label _13 = $2e
+    .label _15 = $30
+    .label _16 = $30
+    .label _17 = $30
+    .label _23 = $33
+    .label center_x = $26
+    .label center_y = $25
     .label i = 7
-    .label offset = $22
-    .label colPtr = $26
-    .label spriteCol = $28
-    .label screenPtr = $22
+    .label offset = $27
+    .label colPtr = $2b
+    .label spriteCol = $2d
+    .label screenPtr = $27
     .label spriteData = $a
     .label chargenData = 8
-    .label spriteX = $29
-    .label spriteY = $2b
-    .label spritePtr = $2d
+    .label spriteX = $2e
+    .label spriteY = $30
+    .label spritePtr = $32
     .label freeIdx = 7
-    .label _47 = $24
-    .label _48 = $22
+    .label _47 = $29
+    .label _48 = $27
     ldx #$ff
   b1:
     lda #0
@@ -450,156 +452,121 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _9 = $30
-    .label _10 = $30
-    .label _11 = $30
-    .label return_dist = $14
-    .label x = $f
-    .label dist = $14
+    .label _8 = $35
+    .label _9 = $35
+    .label _10 = $35
     .label screen_line = $c
-    .label y = $e
+    .label dist_line = $e
+    .label y = $10
     .label return_x = $12
     .label return_y = $13
-    .label closest_dist = $10
+    .label closest_dist = $11
     .label closest_x = $12
     .label closest_y = $13
-    .label _15 = $32
-    .label _16 = $30
+    .label _12 = $37
+    .label _13 = $35
     lda #0
     sta closest_y
     sta closest_x
-    lda #<NOT_FOUND
-    sta closest_dist
-    lda #>NOT_FOUND
-    sta closest_dist+1
-    lda #0
     sta y
+    lda #NOT_FOUND
+    sta closest_dist
+    lda #<SCREEN_DIST
+    sta dist_line
+    lda #>SCREEN_DIST
+    sta dist_line+1
     lda #<SCREEN_COPY
     sta screen_line
     lda #>SCREEN_COPY
     sta screen_line+1
   b1:
-    lda #0
-    sta x
+    ldy #0
   b2:
-    ldy x
     lda (screen_line),y
     cmp #' '
     bne !b11+
     jmp b11
   !b11:
-    tya
-    asl
+    lda (dist_line),y
     tax
-    lda y
-    asl
-    tay
-    lda SQUARES_X,x
-    clc
-    adc SQUARES_Y,y
-    sta dist
-    lda SQUARES_X+1,x
-    adc SQUARES_Y+1,y
-    sta dist+1
-    lda closest_dist+1
-    cmp dist+1
-    bne !+
-    lda closest_dist
-    cmp dist
-    bne !b12+
-    jmp b12
-  !b12:
-  !:
-    bcs !b12+
-    jmp b12
-  !b12:
-    lda x
-    sta return_x
+    cpx closest_dist
+    bcs b12
+    sty return_x
     lda y
     sta return_y
   b3:
-    inc x
-    lda #$28
-    cmp x
+    iny
+    cpy #$28
     bne b10
+    lda #$28
     clc
     adc screen_line
     sta screen_line
     bcc !+
     inc screen_line+1
   !:
+    lda #$28
+    clc
+    adc dist_line
+    sta dist_line
+    bcc !+
+    inc dist_line+1
+  !:
     inc y
     lda #$19
     cmp y
     bne b9
-    lda return_dist
-    cmp #<NOT_FOUND
-    bne !+
-    lda return_dist+1
-    cmp #>NOT_FOUND
+    cpx #NOT_FOUND
     beq breturn
-  !:
     lda return_y
-    sta _9
+    sta _8
     lda #0
-    sta _9+1
-    lda _9
+    sta _8+1
+    lda _8
     asl
-    sta _15
-    lda _9+1
+    sta _12
+    lda _8+1
     rol
-    sta _15+1
-    asl _15
-    rol _15+1
-    lda _16
+    sta _12+1
+    asl _12
+    rol _12+1
+    lda _13
     clc
-    adc _15
-    sta _16
-    lda _16+1
-    adc _15+1
-    sta _16+1
-    asl _10
-    rol _10+1
-    asl _10
-    rol _10+1
-    asl _10
-    rol _10+1
+    adc _12
+    sta _13
+    lda _13+1
+    adc _12+1
+    sta _13+1
+    asl _9
+    rol _9+1
+    asl _9
+    rol _9+1
+    asl _9
+    rol _9+1
     clc
-    lda _11
+    lda _10
     adc #<SCREEN_COPY
-    sta _11
-    lda _11+1
+    sta _10
+    lda _10+1
     adc #>SCREEN_COPY
-    sta _11+1
+    sta _10+1
     // clear the found char on the screen copy
     lda #' '
     ldy return_x
-    sta (_11),y
+    sta (_10),y
   breturn:
     rts
   b9:
-    lda return_dist
-    sta closest_dist
-    lda return_dist+1
-    sta closest_dist+1
+    stx closest_dist
     jmp b1
   b10:
-    lda return_dist
-    sta closest_dist
-    lda return_dist+1
-    sta closest_dist+1
+    stx closest_dist
     jmp b2
   b12:
-    lda closest_dist
-    sta return_dist
-    lda closest_dist+1
-    sta return_dist+1
+    ldx closest_dist
     jmp b3
   b11:
-    lda closest_dist
-    sta return_dist
-    lda closest_dist+1
-    sta return_dist+1
+    ldx closest_dist
     jmp b3
 }
 // Setup Raster IRQ
@@ -632,7 +599,7 @@ setupRasterIrq: {
 }
 // Initialize sprites
 initSprites: {
-    .label sp = $16
+    .label sp = $14
     lda #<SPRITE_DATA
     sta sp
     lda #>SPRITE_DATA
@@ -668,106 +635,275 @@ initSprites: {
     sta SPRITES_EXPAND_Y
     rts
 }
-// initialize SQUARES table
-initSquareTables: {
-    .label _6 = $1a
-    .label _14 = $1a
-    .label x = $18
-    .label y = $19
-    lda #0
-    sta x
-  b1:
-    lda x
-    cmp #$14
-    bcc b2
-    sec
-    sbc #$14
-  b4:
-    tax
-    sta mul8u.mb
-    lda #0
-    sta mul8u.mb+1
-    jsr mul8u
-    lda x
-    asl
-    tay
-    lda _6
-    sta SQUARES_X,y
-    lda _6+1
-    sta SQUARES_X+1,y
-    inc x
-    lda #$28
-    cmp x
-    bne b1
+// Populates 1000 bytes (a screen) with values representing the distance to the center.
+// The actual value stored is distance*2 to increase precision
+init_dist_screen: {
+    .label yds = $39
+    .label xds = $3b
+    .label ds = $3b
+    .label x = $1b
+    .label xb = $1c
+    .label screen_topline = $17
+    .label screen_bottomline = $19
+    .label y = $16
+    jsr init_squares
+    lda #<SCREEN_DIST+$28*$18
+    sta screen_bottomline
+    lda #>SCREEN_DIST+$28*$18
+    sta screen_bottomline+1
+    lda #<SCREEN_DIST
+    sta screen_topline
+    lda #>SCREEN_DIST
+    sta screen_topline+1
     lda #0
     sta y
-  b5:
-    lda y
-    cmp #$c
-    bcc b6
-    sec
-    sbc #$c
-  b8:
-    tax
-    sta mul8u.mb
-    lda #0
-    sta mul8u.mb+1
-    jsr mul8u
+  b1:
     lda y
     asl
-    tay
-    lda _14
-    sta SQUARES_Y,y
-    lda _14+1
-    sta SQUARES_Y+1,y
+    cmp #$18
+    bcs b2
+    eor #$ff
+    clc
+    adc #$18+1
+  b4:
+    jsr sqr
+    lda sqr.return
+    sta sqr.return_2
+    lda sqr.return+1
+    sta sqr.return_2+1
+    lda #$27
+    sta xb
+    lda #0
+    sta x
+  b5:
+    lda x
+    asl
+    cmp #$27
+    bcs b6
+    eor #$ff
+    clc
+    adc #$27+1
+  b8:
+    jsr sqr
+    lda ds
+    clc
+    adc yds
+    sta ds
+    lda ds+1
+    adc yds+1
+    sta ds+1
+    jsr sqrt
+    ldy x
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    ldy xb
+    sta (screen_topline),y
+    sta (screen_bottomline),y
+    inc x
+    dec xb
+    lda x
+    cmp #$13+1
+    bcc b5
+    lda #$28
+    clc
+    adc screen_topline
+    sta screen_topline
+    bcc !+
+    inc screen_topline+1
+  !:
+    lda screen_bottomline
+    sec
+    sbc #<$28
+    sta screen_bottomline
+    lda screen_bottomline+1
+    sbc #>$28
+    sta screen_bottomline+1
     inc y
-    lda #$19
+    lda #$d
     cmp y
-    bne b5
+    bne b1
     rts
   b6:
-    lda #$c
     sec
-    sbc y
+    sbc #$27
     jmp b8
   b2:
-    lda #$14
     sec
-    sbc x
+    sbc #$18
     jmp b4
 }
-// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
-// mul8u(byte register(X) a, byte register(A) b)
-mul8u: {
-    .label mb = $1c
-    .label res = $1a
-    .label return = $1a
-    lda #0
-    sta res
-    sta res+1
-  b1:
-    cpx #0
-    bne b2
+// Find the (integer) square root of a word value
+// If the square is not an integer then it returns the largest integer N where N*N <= val
+// Uses a table of squares that must be initialized by calling init_squares()
+// sqrt(word zeropage($3b) val)
+sqrt: {
+    .label _1 = $1d
+    .label _3 = $1d
+    .label found = $1d
+    .label val = $3b
+    jsr bsearch16u
+    lda _3
+    sec
+    sbc #<SQUARES
+    sta _3
+    lda _3+1
+    sbc #>SQUARES
+    sta _3+1
+    lsr _1+1
+    ror _1
+    lda _1
     rts
-  b2:
-    txa
-    and #1
-    cmp #0
-    beq b3
-    lda res
-    clc
-    adc mb
-    sta res
-    lda res+1
-    adc mb+1
-    sta res+1
+}
+// Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
+// - key - The value to look for
+// - items - Pointer to the start of the array to search in
+// - num - The number of items in the array
+// Returns pointer to an entry in the array that matches the search key
+// bsearch16u(word zeropage($3b) key, word* zeropage($1d) items, byte register(X) num)
+bsearch16u: {
+    .label _2 = $1d
+    .label pivot = $3d
+    .label result = $3f
+    .label return = $1d
+    .label items = $1d
+    .label key = $3b
+    lda #<SQUARES
+    sta items
+    lda #>SQUARES
+    sta items+1
+    ldx #NUM_SQUARES
   b3:
+    cpx #0
+    bne b4
+    ldy #1
+    lda (items),y
+    cmp key+1
+    bne !+
+    dey
+    lda (items),y
+    cmp key
+    beq b2
+  !:
+    bcc b2
+    lda _2
+    sec
+    sbc #<1*SIZEOF_WORD
+    sta _2
+    lda _2+1
+    sbc #>1*SIZEOF_WORD
+    sta _2+1
+  b2:
+    rts
+  b4:
+    txa
+    lsr
+    asl
+    clc
+    adc items
+    sta pivot
+    lda #0
+    adc items+1
+    sta pivot+1
+    sec
+    lda key
+    ldy #0
+    sbc (pivot),y
+    sta result
+    lda key+1
+    iny
+    sbc (pivot),y
+    sta result+1
+    bne b6
+    lda result
+    bne b6
+    lda pivot
+    sta return
+    lda pivot+1
+    sta return+1
+    rts
+  b6:
+    lda result+1
+    bmi b7
+    bne !+
+    lda result
+    beq b7
+  !:
+    lda #1*SIZEOF_WORD
+    clc
+    adc pivot
+    sta items
+    lda #0
+    adc pivot+1
+    sta items+1
+    dex
+  b7:
     txa
     lsr
     tax
-    asl mb
-    rol mb+1
-    jmp b1
+    jmp b3
+}
+// Find the square of a byte value
+// Uses a table of squares that must be initialized by calling init_squares()
+// sqr(byte register(A) val)
+sqr: {
+    .label return = $3b
+    .label return_2 = $39
+    asl
+    tay
+    lda SQUARES,y
+    sta return
+    lda SQUARES+1,y
+    sta return+1
+    rts
+}
+// Initialize squares table
+// Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
+init_squares: {
+    .label squares = $21
+    .label sqr = $1f
+    jsr malloc
+    ldx #0
+    lda #<SQUARES
+    sta squares
+    lda #>SQUARES
+    sta squares+1
+    txa
+    sta sqr
+    sta sqr+1
+  b1:
+    ldy #0
+    lda sqr
+    sta (squares),y
+    iny
+    lda sqr+1
+    sta (squares),y
+    lda #SIZEOF_WORD
+    clc
+    adc squares
+    sta squares
+    bcc !+
+    inc squares+1
+  !:
+    txa
+    asl
+    clc
+    adc #1
+    clc
+    adc sqr
+    sta sqr
+    bcc !+
+    inc sqr+1
+  !:
+    inx
+    cpx #NUM_SQUARES-1+1
+    bne b1
+    rts
+}
+// Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
+// The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+malloc: {
+    .label return = HEAP_START
+    rts
 }
 // Raster Interrupt at the bottom of the screen
 irqBottom: {
@@ -795,14 +931,14 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _15 = $39
-    .label _25 = $37
-    .label processing = $34
-    .label bitmask = $36
-    .label i = $1e
-    .label xpos = $37
-    .label ypos = $3b
-    .label numActive = $1f
+    .label _15 = $46
+    .label _25 = $44
+    .label processing = $41
+    .label bitmask = $43
+    .label i = $23
+    .label xpos = $44
+    .label ypos = $48
+    .label numActive = $24
     lda #0
     sta numActive
     sta i
@@ -1096,11 +1232,11 @@ irqTop: {
     rti
 }
   // Copy of the screen used for finding chars to process
+  .align $100
   SCREEN_COPY: .fill $3e8, 0
-  // SQUARES_X[i] = (i-20)*(i-20)
-  SQUARES_X: .fill 2*$28, 0
-  // SQUARES_Y[i] = (i-12)*(i-12)
-  SQUARES_Y: .fill 2*$19, 0
+  // Screen containing bytes representing the distance to the center
+  .align $100
+  SCREEN_DIST: .fill $3e8, 0
   // Sprites currently being processed in the interrupt
   PROCESSING: .fill $e*NUM_PROCESSING, 0
 .pc = VXSIN "VXSIN"

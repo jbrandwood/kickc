@@ -13,10 +13,16 @@ const byte* SCREEN = 0x2800;
 void main() {
     init_font_hex(CHARSET);
     *D018 = toD018(SCREEN, CHARSET);
+    init_dist_screen(SCREEN);
+}
+
+// Populates 1000 bytes (a screen) with values representing the distance to the center.
+// The actual value stored is distance*2 to increase precision
+void init_dist_screen(byte* screen) {
     NUM_SQUARES = 0x30;
     init_squares();
-    byte* screen_topline = SCREEN;
-    byte *screen_bottomline = SCREEN+40*24;
+    byte* screen_topline = screen;
+    byte *screen_bottomline = screen+40*24;
     for(byte y: 0..12) {
         byte y2 = y*2;
         byte yd = (y2>=24)?(y2-24):(24-y2);

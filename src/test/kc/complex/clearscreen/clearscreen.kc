@@ -1,6 +1,8 @@
 // Clears start screen throwing around the letters (by turning them into sprites)
-import "c64"
+import "stdlib"
+import "sqr"
 import "multiply"
+import "c64"
 
 // Generate debug code (raster time usage etc.)
 const bool DEBUG = false;
@@ -15,7 +17,10 @@ const word* VXSIN = 0x2200;
 const word* VYSIN = 0x2280;
 
 // Copy of the screen used for finding chars to process
-byte[1000] SCREEN_COPY;
+align(0x100) byte[1000] SCREEN_COPY;
+
+// Screen containing bytes representing the distance to the center
+align(0x100) byte[1000] SCREEN_DIST;
 
 // Max number of chars processed at once
 const byte NUM_PROCESSING = 8;
@@ -27,11 +32,11 @@ struct ProcessingChar {
     // y-position (0-24)
     byte y;
     // squared distance to center (0-569)
-    word dist;
+    byte dist;
 };
 
 // Distance value meaning not found
-const word NOT_FOUND = 0xffff;
+const byte NOT_FOUND = 0xff;
 
 // Struct holding sprite being processed
 struct ProcessingSprite {
@@ -61,8 +66,8 @@ struct ProcessingSprite {
 struct ProcessingSprite[NUM_PROCESSING] PROCESSING;
 
 void main() {
-    // Init squares table
-    initSquareTables();
+    // Initialize the screen containing distance to the center
+    init_dist_screen(SCREEN_DIST);
     // Copy screen to screen copy
     for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
     // Init processing array
@@ -90,10 +95,11 @@ void main() {
 struct ProcessingChar getCharToProcess() {
     struct ProcessingChar closest = { 0, 0, NOT_FOUND };
     byte* screen_line = SCREEN_COPY;
+    byte* dist_line = SCREEN_DIST;
     for( byte y: 0..24) {
         for( byte x: 0..39) {
             if(screen_line[x]!=' ') {
-                word dist = SQUARES_X[x]+SQUARES_Y[y];
+                byte dist = dist_line[x];
                 if(dist<closest.dist) {
                     // Update closest char
                     closest = { x, y, dist };
@@ -101,6 +107,7 @@ struct ProcessingChar getCharToProcess() {
             }
         }
         screen_line += 40;
+        dist_line += 40;
     }
     if(closest.dist != NOT_FOUND) {
         // clear the found char on the screen copy
@@ -215,20 +222,30 @@ void processChars() {
     }
 }
 
-// SQUARES_X[i] = (i-20)*(i-20)
-word[40] SQUARES_X;
-// SQUARES_Y[i] = (i-12)*(i-12)
-word[25] SQUARES_Y;
-
-// initialize SQUARES table
-void initSquareTables() {
-    for(byte x: 0..39) {
-        byte x_dist = (x<20)?20-x:x-20;
-        SQUARES_X[x] = mul8u(x_dist, x_dist);
-    }
-    for(byte y: 0..24) {
-        byte y_dist = (y<12)?12-y:y-12;
-        SQUARES_Y[y] = mul8u(y_dist, y_dist);
+// Populates 1000 bytes (a screen) with values representing the distance to the center.
+// The actual value stored is distance*2 to increase precision
+void init_dist_screen(byte* screen) {
+    NUM_SQUARES = 0x30;
+    init_squares();
+    byte* screen_topline = screen;
+    byte *screen_bottomline = screen+40*24;
+    for(byte y: 0..12) {
+        byte y2 = y*2;
+        byte yd = (y2>=24)?(y2-24):(24-y2);
+        word yds = sqr(yd);
+        for( byte x=0,xb=39; x<=19; x++, xb--) {
+            byte x2 = x*2;
+            byte xd = (x2>=39)?(x2-39):(39-x2);
+            word xds = sqr(xd);
+            word ds = xds+yds;
+            byte d = sqrt(ds);
+            screen_topline[x] = d;
+            screen_bottomline[x] = d;
+            screen_topline[xb] = d;
+            screen_bottomline[xb] = d;
+        }
+        screen_topline += 40;
+        screen_bottomline -= 40;
     }
 }
 

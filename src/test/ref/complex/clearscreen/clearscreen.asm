@@ -1,6 +1,6 @@
 // Clears start screen throwing around the letters (by turning them into sprites)
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(bbegin)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   .const STATUS_FREE = 0
@@ -76,19 +76,51 @@
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
   .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
-  .label SQUARES = malloc.return
   .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
   .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
+  .label heap_head = $23
+  .label SQUARES = $49
+  .label SCREEN_COPY = $29
+  .label SCREEN_DIST = $2b
+bbegin:
+  lda #<$3e8
+  sta malloc.size
+  lda #>$3e8
+  sta malloc.size+1
+  lda #<HEAP_START
+  sta heap_head
+  lda #>HEAP_START
+  sta heap_head+1
+  jsr malloc
+  lda malloc.mem
+  sta SCREEN_COPY
+  lda malloc.mem+1
+  sta SCREEN_COPY+1
+  lda #<$3e8
+  sta malloc.size
+  lda #>$3e8
+  sta malloc.size+1
+  jsr malloc
+  lda malloc.mem
+  sta SCREEN_DIST
+  lda malloc.mem+1
+  sta SCREEN_DIST+1
+  jsr main
+  rts
 main: {
-    .label src = 2
     .label dst = 4
+    .label src = 2
     .label i = 6
-    .label center_y = $25
+    .label center_y = $2d
+    lda SCREEN_DIST
+    sta init_dist_screen.screen
+    lda SCREEN_DIST+1
+    sta init_dist_screen.screen+1
     jsr init_dist_screen
-    lda #<SCREEN_COPY
+    lda SCREEN_COPY
     sta dst
-    lda #>SCREEN_COPY
+    lda SCREEN_COPY+1
     sta dst+1
     lda #<SCREEN
     sta src
@@ -169,36 +201,36 @@ main: {
     jmp b3
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($26) center_x, byte zeropage($25) center_y)
+// startProcessing(byte zeropage($2e) center_x, byte zeropage($2d) center_y)
 startProcessing: {
-    .label _0 = $27
-    .label _1 = $27
+    .label _0 = $2f
+    .label _1 = $2f
     .label _5 = $a
     .label _6 = $a
     .label _8 = 8
     .label _9 = 8
-    .label _11 = $2e
-    .label _12 = $2e
-    .label _13 = $2e
-    .label _15 = $30
-    .label _16 = $30
-    .label _17 = $30
-    .label _23 = $33
-    .label center_x = $26
-    .label center_y = $25
+    .label _11 = $36
+    .label _12 = $36
+    .label _13 = $36
+    .label _15 = $38
+    .label _16 = $38
+    .label _17 = $38
+    .label _23 = $3b
+    .label center_x = $2e
+    .label center_y = $2d
     .label i = 7
-    .label offset = $27
-    .label colPtr = $2b
-    .label spriteCol = $2d
-    .label screenPtr = $27
+    .label offset = $2f
+    .label colPtr = $33
+    .label spriteCol = $35
+    .label screenPtr = $2f
     .label spriteData = $a
     .label chargenData = 8
-    .label spriteX = $2e
-    .label spriteY = $30
-    .label spritePtr = $32
+    .label spriteX = $36
+    .label spriteY = $38
+    .label spritePtr = $3a
     .label freeIdx = 7
-    .label _47 = $29
-    .label _48 = $27
+    .label _47 = $31
+    .label _48 = $2f
     ldx #$ff
   b1:
     lda #0
@@ -452,9 +484,9 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label _8 = $35
-    .label _9 = $35
-    .label _10 = $35
+    .label _8 = $3d
+    .label _9 = $3d
+    .label _10 = $3d
     .label screen_line = $c
     .label dist_line = $e
     .label y = $10
@@ -463,22 +495,22 @@ getCharToProcess: {
     .label closest_dist = $11
     .label closest_x = $12
     .label closest_y = $13
-    .label _12 = $37
-    .label _13 = $35
+    .label _12 = $3f
+    .label _13 = $3d
+    lda SCREEN_COPY
+    sta screen_line
+    lda SCREEN_COPY+1
+    sta screen_line+1
+    lda SCREEN_DIST
+    sta dist_line
+    lda SCREEN_DIST+1
+    sta dist_line+1
     lda #0
     sta closest_y
     sta closest_x
     sta y
     lda #NOT_FOUND
     sta closest_dist
-    lda #<SCREEN_DIST
-    sta dist_line
-    lda #>SCREEN_DIST
-    sta dist_line+1
-    lda #<SCREEN_COPY
-    sta screen_line
-    lda #>SCREEN_COPY
-    sta screen_line+1
   b1:
     ldy #0
   b2:
@@ -543,12 +575,12 @@ getCharToProcess: {
     rol _9+1
     asl _9
     rol _9+1
-    clc
     lda _10
-    adc #<SCREEN_COPY
+    clc
+    adc SCREEN_COPY
     sta _10
     lda _10+1
-    adc #>SCREEN_COPY
+    adc SCREEN_COPY+1
     sta _10+1
     // clear the found char on the screen copy
     lda #' '
@@ -637,24 +669,25 @@ initSprites: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
+// init_dist_screen(byte* zeropage($17) screen)
 init_dist_screen: {
-    .label yds = $39
-    .label xds = $3b
-    .label ds = $3b
+    .label screen = $17
+    .label screen_bottomline = $19
+    .label yds = $41
+    .label xds = $43
+    .label ds = $43
     .label x = $1b
     .label xb = $1c
     .label screen_topline = $17
-    .label screen_bottomline = $19
     .label y = $16
     jsr init_squares
-    lda #<SCREEN_DIST+$28*$18
+    lda screen
+    clc
+    adc #<$28*$18
     sta screen_bottomline
-    lda #>SCREEN_DIST+$28*$18
+    lda screen+1
+    adc #>$28*$18
     sta screen_bottomline+1
-    lda #<SCREEN_DIST
-    sta screen_topline
-    lda #>SCREEN_DIST
-    sta screen_topline+1
     lda #0
     sta y
   b1:
@@ -735,19 +768,23 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($3b) val)
+// sqrt(word zeropage($43) val)
 sqrt: {
     .label _1 = $1d
     .label _3 = $1d
     .label found = $1d
-    .label val = $3b
+    .label val = $43
+    lda SQUARES
+    sta bsearch16u.items
+    lda SQUARES+1
+    sta bsearch16u.items+1
     jsr bsearch16u
     lda _3
     sec
-    sbc #<SQUARES
+    sbc SQUARES
     sta _3
     lda _3+1
-    sbc #>SQUARES
+    sbc SQUARES+1
     sta _3+1
     lsr _1+1
     ror _1
@@ -759,18 +796,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($3b) key, word* zeropage($1d) items, byte register(X) num)
+// bsearch16u(word zeropage($43) key, word* zeropage($1d) items, byte register(X) num)
 bsearch16u: {
     .label _2 = $1d
-    .label pivot = $3d
-    .label result = $3f
+    .label pivot = $45
+    .label result = $47
     .label return = $1d
     .label items = $1d
-    .label key = $3b
-    lda #<SQUARES
-    sta items
-    lda #>SQUARES
-    sta items+1
+    .label key = $43
     ldx #NUM_SQUARES
   b3:
     cpx #0
@@ -846,13 +879,14 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $3b
-    .label return_2 = $39
+    .label return = $43
+    .label return_2 = $41
     asl
     tay
-    lda SQUARES,y
+    lda (SQUARES),y
     sta return
-    lda SQUARES+1,y
+    iny
+    lda (SQUARES),y
     sta return+1
     rts
 }
@@ -861,12 +895,16 @@ sqr: {
 init_squares: {
     .label squares = $21
     .label sqr = $1f
+    lda #NUM_SQUARES*SIZEOF_WORD
+    sta malloc.size
+    lda #0
+    sta malloc.size+1
     jsr malloc
-    ldx #0
-    lda #<SQUARES
+    lda SQUARES
     sta squares
-    lda #>SQUARES
+    lda SQUARES+1
     sta squares+1
+    ldx #0
     txa
     sta sqr
     sta sqr+1
@@ -901,8 +939,21 @@ init_squares: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+// malloc(word zeropage($25) size)
 malloc: {
-    .label return = HEAP_START
+    .label mem = $49
+    .label size = $25
+    lda heap_head
+    sta mem
+    lda heap_head+1
+    sta mem+1
+    lda heap_head
+    clc
+    adc size
+    sta heap_head
+    lda heap_head+1
+    adc size+1
+    sta heap_head+1
     rts
 }
 // Raster Interrupt at the bottom of the screen
@@ -931,14 +982,14 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label _15 = $46
-    .label _25 = $44
-    .label processing = $41
-    .label bitmask = $43
-    .label i = $23
-    .label xpos = $44
-    .label ypos = $48
-    .label numActive = $24
+    .label _15 = $50
+    .label _25 = $4e
+    .label processing = $4b
+    .label bitmask = $4d
+    .label i = $27
+    .label xpos = $4e
+    .label ypos = $52
+    .label numActive = $28
     lda #0
     sta numActive
     sta i
@@ -1231,12 +1282,6 @@ irqTop: {
     ldy #00
     rti
 }
-  // Copy of the screen used for finding chars to process
-  .align $100
-  SCREEN_COPY: .fill $3e8, 0
-  // Screen containing bytes representing the distance to the center
-  .align $100
-  SCREEN_DIST: .fill $3e8, 0
   // Sprites currently being processed in the interrupt
   PROCESSING: .fill $e*NUM_PROCESSING, 0
 .pc = VXSIN "VXSIN"

@@ -1,0 +1,52 @@
+// Find atan2(x, y) using the CORDIC method
+// See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
+
+
+void main() {
+    byte* screen = 0x0400;
+    for(signed byte y: 0..24) {
+        for(signed byte x: 0..39) {
+            byte angle = atan2(x, y);
+            screen[x] = angle;
+        }
+        screen+=40;
+    }
+}
+
+// The number of iterations performed during CORDIC atan2 calculation
+const byte CORDIC_ITERATIONS = 8;
+
+// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+byte* CORDIC_ATAN2_ANGLES = 0x1000;
+
+// Populate cordic angles table
+kickasm(pc CORDIC_ATAN2_ANGLES) {{
+  .fill CORDIC_ITERATIONS, 256*atan(1/pow(2,i))/PI/2
+}}
+
+// Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
+// Finding the angle requires a binary search using CORDIC_ITERATIONS
+// Returns the angle in hex-degrees (0=0, 128=PI, 256=2*PI)
+byte atan2(signed byte x, signed byte y) {
+    byte angle = 0;
+    for( byte i: 0..CORDIC_ITERATIONS) {
+        if(y==0) {
+            // We found the correct angle!
+            break;
+        }
+        signed byte xd = x>>i;
+        signed byte yd = y>>i;
+        if(y>0) {
+            x += yd;
+            y -= xd;
+            angle += CORDIC_ATAN2_ANGLES[i];
+        } else {
+            x -= yd;
+            y += xd;
+            angle -= CORDIC_ATAN2_ANGLES[i];
+        }
+    
+    }
+    // Iterations complete - return estimated angle
+    return angle;
+}

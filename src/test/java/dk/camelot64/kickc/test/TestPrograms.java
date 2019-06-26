@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCordicAtan2() throws IOException, URISyntaxException {
+      compileAndCompare("cordic-atan2");
+   }
+
+   @Test
    public void testDefaultFont() throws IOException, URISyntaxException {
       compileAndCompare("default-font");
    }

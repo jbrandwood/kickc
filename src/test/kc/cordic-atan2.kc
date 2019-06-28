@@ -3,6 +3,8 @@
 
 import "font-hex"
 import "c64"
+import "atan2"
+
 
 const byte* CHARSET = 0x2000;
 const byte* SCREEN = 0x2800;
@@ -14,7 +16,7 @@ void main() {
     byte* screen = SCREEN;
     for(signed byte y: -12..12) {
         for(signed byte x: -19..20) {
-            byte angle = atan2(x, y);
+            byte angle = atan2_8(x, y);
             *screen++ = angle;
         }
     }
@@ -24,44 +26,3 @@ void main() {
 
 }
 
-// The number of iterations performed during CORDIC atan2 calculation
-const byte CORDIC_ITERATIONS = 8;
-
-// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
-byte* CORDIC_ATAN2_ANGLES = 0x1000;
-
-// Populate cordic angles table
-kickasm(pc CORDIC_ATAN2_ANGLES) {{
-  .fill CORDIC_ITERATIONS, 2*256*atan(1/pow(2,i))/PI/2
-}}
-
-// Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
-// Finding the angle requires a binary search using CORDIC_ITERATIONS
-// Returns the angle in hex-degrees (0=0, 128=PI, 256=2*PI)
-byte atan2(signed byte x, signed byte y) {
-    signed byte yi = (y>0)?y:-y;
-    signed byte xi = (x>0)?x:-x;
-    byte angle = 0;
-    for( byte i: 0..CORDIC_ITERATIONS) {
-        if(yi==0) {
-            // We found the correct angle!
-            break;
-        }
-        signed byte xd = xi>>i;
-        signed byte yd = yi>>i;
-        if(yi>0) {
-            xi += yd;
-            yi -= xd;
-            angle += CORDIC_ATAN2_ANGLES[i];
-        } else {
-            xi -= yd;
-            yi += xd;
-            angle -= CORDIC_ATAN2_ANGLES[i];
-        }
-    }
-    angle /=2;
-    if(x<0) angle = 128-angle;
-    if(y<0) angle = -angle;
-    // Iterations complete - return estimated angle
-    return angle;
-}

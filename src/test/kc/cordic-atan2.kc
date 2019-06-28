@@ -1,16 +1,27 @@
 // Find atan2(x, y) using the CORDIC method
 // See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
 
+import "font-hex"
+import "c64"
+
+const byte* CHARSET = 0x2000;
+const byte* SCREEN = 0x2800;
 
 void main() {
-    byte* screen = 0x0400;
-    for(signed byte y: 0..24) {
-        for(signed byte x: 0..39) {
+    init_font_hex(CHARSET);
+    *D018 = toD018(SCREEN, CHARSET);
+
+    byte* screen = SCREEN;
+    for(signed byte y: -12..12) {
+        for(signed byte x: -19..20) {
             byte angle = atan2(x, y);
-            screen[x] = angle;
+            *screen++ = angle;
         }
-        screen+=40;
     }
+
+    byte* col00 = COLS+12*40+19;
+    while(true) (*col00)++;
+
 }
 
 // The number of iterations performed during CORDIC atan2 calculation
@@ -21,32 +32,36 @@ byte* CORDIC_ATAN2_ANGLES = 0x1000;
 
 // Populate cordic angles table
 kickasm(pc CORDIC_ATAN2_ANGLES) {{
-  .fill CORDIC_ITERATIONS, 256*atan(1/pow(2,i))/PI/2
+  .fill CORDIC_ITERATIONS, 2*256*atan(1/pow(2,i))/PI/2
 }}
 
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS
 // Returns the angle in hex-degrees (0=0, 128=PI, 256=2*PI)
 byte atan2(signed byte x, signed byte y) {
+    signed byte yi = (y>0)?y:-y;
+    signed byte xi = (x>0)?x:-x;
     byte angle = 0;
     for( byte i: 0..CORDIC_ITERATIONS) {
-        if(y==0) {
+        if(yi==0) {
             // We found the correct angle!
             break;
         }
-        signed byte xd = x>>i;
-        signed byte yd = y>>i;
-        if(y>0) {
-            x += yd;
-            y -= xd;
+        signed byte xd = xi>>i;
+        signed byte yd = yi>>i;
+        if(yi>0) {
+            xi += yd;
+            yi -= xd;
             angle += CORDIC_ATAN2_ANGLES[i];
         } else {
-            x -= yd;
-            y += xd;
+            xi -= yd;
+            yi += xd;
             angle -= CORDIC_ATAN2_ANGLES[i];
         }
-    
     }
+    angle /=2;
+    if(x<0) angle = 128-angle;
+    if(y<0) angle = -angle;
     // Iterations complete - return estimated angle
     return angle;
 }

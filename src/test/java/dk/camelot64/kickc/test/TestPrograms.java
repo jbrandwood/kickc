@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testScreenCenterAngle() throws IOException, URISyntaxException {
+      compileAndCompare("screen-center-angle");
+   }
+
+   @Test
    public void testCordicAtan2Clear() throws IOException, URISyntaxException {
       compileAndCompare("cordic-atan2-clear");
    }

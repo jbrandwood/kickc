@@ -1,0 +1,31 @@
+// Calculate the angle to the center of the screen - and show it using font-hex
+// 4.65 million cycles
+import "stdlib"
+import "c64"
+import "font-hex"
+import "atan2"
+
+#reserve(08)
+
+const byte* CHARSET = 0x2000;
+const byte* SCREEN = 0x2800;
+
+void main() {
+    init_font_hex(CHARSET);
+    *D018 = toD018(SCREEN, CHARSET);
+    init_angle_screen(SCREEN);
+}
+
+// Populates 1000 bytes (a screen) with values representing the angle to the center.
+// The actual value stored is distance*2 to increase precision
+void init_angle_screen(byte* screen) {
+    for(signed byte y: -12..12) {
+        for(signed byte x: -19..20) {
+            signed word xw = (signed word)(word){ (byte)x, 0 };
+            signed word yw = (signed word)(word){ (byte)y, 0 };
+            word angle_w = atan2_16(xw, yw);
+            byte ang_w = >(angle_w+0x0080);
+            *screen++ = ang_w;
+        }
+    }
+}

@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCordicAtan2Clear() throws IOException, URISyntaxException {
+      compileAndCompare("cordic-atan2-clear");
+   }
+
+   @Test
    public void testCordicAtan2Ref() throws IOException, URISyntaxException {
       compileAndCompare("cordic-atan2-16-ref");
    }

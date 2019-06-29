@@ -1,0 +1,37 @@
+// Find atan2(x, y) using the CORDIC method
+// See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
+import "font-hex"
+import "atan2"
+import "c64"
+
+const byte* CHARSET = 0x2000;
+const byte* SCREEN = 0x2800;
+
+void main() {
+    init_font_hex(CHARSET);
+    *D018 = toD018(SCREEN, CHARSET);
+    init_screen();
+
+    // Clear the screen by modifying the charset
+    byte* clear_char = CHARSET;
+    while(true) {
+        do {} while(*RASTER!=0xff);
+        if(clear_char<CHARSET+0x0800) {
+            *clear_char++ = 0;
+        }
+    }
+}
+
+
+void init_screen() {
+    byte* screen = SCREEN;
+    for(signed byte y: -12..12) {
+        for(signed byte x: -19..20) {
+            signed word xw = (signed word)(word){ (byte)x, 0 };
+            signed word yw = (signed word)(word){ (byte)y, 0 };
+            word angle_w = atan2_16(xw, yw);
+            byte ang_w = >(angle_w+0x0080);
+            *screen++ = ang_w;
+        }
+    }
+}

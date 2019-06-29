@@ -170,7 +170,7 @@ atan2_8: {
     sta angle
   b14:
     inc i
-    lda #CORDIC_ITERATIONS_8+1
+    lda #CORDIC_ITERATIONS_8-1+1
     cmp i
     beq b12
     jmp b10

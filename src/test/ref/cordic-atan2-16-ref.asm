@@ -17,15 +17,18 @@
   .label CHARSET = $2000
   .label SCREEN = $2800
   .label SCREEN_REF = $2c00
+  .label print_char_cursor = 9
 // Populate cordic angles table
 // Populate cordic angles table
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label _11 = $c
-    .label xw = $17
-    .label yw = $19
-    .label angle_w = $c
-    .label screen = 5
+    .label _12 = $10
+    .label xw = $1b
+    .label yw = $1d
+    .label angle_w = $10
+    .label ang_w = $1f
+    .label diff_sum = 5
+    .label screen = 7
     .label screen_ref = 3
     .label y = 2
     jsr init_font_hex
@@ -35,6 +38,9 @@ main: {
     sta screen
     lda #>SCREEN
     sta screen+1
+    lda #0
+    sta diff_sum
+    sta diff_sum+1
     lda #<SCREEN_REF
     sta screen_ref
     lda #>SCREEN_REF
@@ -54,17 +60,28 @@ main: {
     jsr atan2_16
     lda #$80
     clc
-    adc _11
-    sta _11
+    adc _12
+    sta _12
     bcc !+
-    inc _11+1
+    inc _12+1
   !:
-    lda _11+1
+    lda _12+1
+    sta ang_w
+    ldy #0
+    lda (screen_ref),y
+    jsr diff
+    //*screen = (>angle_w)-angle_b;
+    //*screen = >angle_w;
+    clc
+    adc diff_sum
+    sta diff_sum
+    bcc !+
+    inc diff_sum+1
+  !:
+    lda ang_w
     sec
     ldy #0
     sbc (screen_ref),y
-    //*screen++ = (>angle_w)-angle_b;
-    //*screen++ = >angle_w;
     sta (screen),y
     inc screen
     bne !+
@@ -81,29 +98,90 @@ main: {
     lda #$d
     cmp y
     bne b1
-  b4:
+    jsr print_word
+  b5:
     lda COLS+$c*$28+$13
     clc
     adc #1
     sta COLS+$c*$28+$13
-    jmp b4
+    jmp b5
+}
+// Print a word as HEX
+// print_word(word zeropage(5) w)
+print_word: {
+    .label w = 5
+    lda w+1
+    tax
+    lda #<$400
+    sta print_char_cursor
+    lda #>$400
+    sta print_char_cursor+1
+    jsr print_byte
+    lda w
+    tax
+    jsr print_byte
+    rts
+}
+// Print a byte as HEX
+// print_byte(byte register(X) b)
+print_byte: {
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda print_hextab,y
+    jsr print_char
+    lda #$f
+    axs #0
+    lda print_hextab,x
+    jsr print_char
+    rts
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    ldy #0
+    sta (print_char_cursor),y
+    inc print_char_cursor
+    bne !+
+    inc print_char_cursor+1
+  !:
+    rts
+}
+// diff(byte zeropage($1f) bb1, byte register(A) bb2)
+diff: {
+    .label bb1 = $1f
+    cmp bb1
+    beq !+
+    bcs b1
+  !:
+    eor #$ff
+    sec
+    adc bb1
+    rts
+  b1:
+    sec
+    sbc bb1
+    rts
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($17) x, signed word zeropage($19) y)
+// atan2_16(signed word zeropage($1b) x, signed word zeropage($1d) y)
 atan2_16: {
-    .label _2 = 7
-    .label _7 = 9
-    .label yi = 7
-    .label xi = 9
-    .label xd = $1b
-    .label yd = $1d
-    .label angle = $c
-    .label i = $b
-    .label return = $c
-    .label x = $17
-    .label y = $19
+    .label _2 = $b
+    .label _7 = $d
+    .label yi = $b
+    .label xi = $d
+    .label xd = $20
+    .label yd = $22
+    .label angle = $10
+    .label i = $f
+    .label return = $10
+    .label x = $1b
+    .label y = $1d
     lda y+1
     bne !+
     lda y
@@ -238,7 +316,7 @@ atan2_16: {
     sta angle+1
   b14:
     inc i
-    lda #CORDIC_ITERATIONS_16+1
+    lda #CORDIC_ITERATIONS_16-1+1
     cmp i
     bne !b12+
     jmp b12
@@ -284,15 +362,15 @@ atan2_16: {
     jmp b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($11) charset)
+// init_font_hex(byte* zeropage($15) charset)
 init_font_hex: {
-    .label _0 = $1f
-    .label idx = $16
-    .label proto_lo = $13
-    .label charset = $11
-    .label c1 = $15
-    .label proto_hi = $e
-    .label c = $10
+    .label _0 = $24
+    .label idx = $1a
+    .label proto_lo = $17
+    .label charset = $15
+    .label c1 = $19
+    .label proto_hi = $12
+    .label c = $14
     lda #0
     sta c
     lda #<FONT_HEX_PROTO
@@ -375,6 +453,7 @@ init_font_hex: {
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
+  print_hextab: .text "0123456789abcdef"
 .pc = CORDIC_ATAN2_ANGLES_16 "CORDIC_ATAN2_ANGLES_16"
   .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
   .word 256*2*256*atan(1/pow(2,i))/PI/2

@@ -3,9 +3,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label D018 = $d018
-  // Color Ram
-  .label COLS = $d800
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
@@ -14,14 +11,22 @@
   .const CORDIC_ITERATIONS_8 = 8
   // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
   .label CORDIC_ATAN2_ANGLES_8 = $1100
+  .label D018 = $d018
+  // Color Ram
+  .label COLS = $d800
   .label CHARSET = $2000
   .label SCREEN = $2800
+  .label SCREEN_REF = $2c00
 // Populate cordic angles table
 // Populate cordic angles table
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label screen = 4
-    .label x = 3
+    .label _11 = $c
+    .label xw = $17
+    .label yw = $19
+    .label angle_w = $c
+    .label screen = 5
+    .label screen_ref = 3
     .label y = 2
     jsr init_font_hex
     lda #toD0181_return
@@ -30,23 +35,47 @@ main: {
     sta screen
     lda #>SCREEN
     sta screen+1
+    lda #<SCREEN_REF
+    sta screen_ref
+    lda #>SCREEN_REF
+    sta screen_ref+1
     lda #-$c
     sta y
   b1:
-    lda #-$13
-    sta x
+    ldx #-$13
   b2:
-    jsr atan2_8
-    txa
     ldy #0
+    txa
+    sta xw+1
+    sty xw
+    lda y
+    sta yw+1
+    sty yw
+    jsr atan2_16
+    lda #$80
+    clc
+    adc _11
+    sta _11
+    bcc !+
+    inc _11+1
+  !:
+    lda _11+1
+    sec
+    ldy #0
+    sbc (screen_ref),y
+    //*screen++ = (>angle_w)-angle_b;
+    //*screen++ = >angle_w;
     sta (screen),y
     inc screen
     bne !+
     inc screen+1
   !:
-    inc x
-    lda #$15
-    cmp x
+    inc screen_ref
+    bne !+
+    inc screen_ref+1
+  !:
+    inx
+    cpx #$15
     bne b2
     inc y
     lda #$d
@@ -60,153 +89,210 @@ main: {
     jmp b4
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
-// Finding the angle requires a binary search using CORDIC_ITERATIONS
-// Returns the angle in hex-degrees (0=0, 0x80=PI, 0x100=2*PI)
-// atan2_8(signed byte zeropage(3) x, signed byte zeropage(2) y)
-atan2_8: {
-    .label _7 = 6
-    .label xi = 6
-    .label xd = $12
-    .label angle = 8
-    .label i = 7
-    .label x = 3
-    .label y = 2
+// Finding the angle requires a binary search using CORDIC_ITERATIONS_16
+// Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
+// atan2_16(signed word zeropage($17) x, signed word zeropage($19) y)
+atan2_16: {
+    .label _2 = 7
+    .label _7 = 9
+    .label yi = 7
+    .label xi = 9
+    .label xd = $1b
+    .label yd = $1d
+    .label angle = $c
+    .label i = $b
+    .label return = $c
+    .label x = $17
+    .label y = $19
+    lda y+1
+    bne !+
     lda y
-    cmp #0
-    beq !+
+    beq !e+
+    lsr
+  !:
     bmi !b1+
     jmp b1
   !b1:
-  !:
-    lda y
-    eor #$ff
-    clc
-    adc #1
-    tax
+  !e:
+    sec
+    lda #0
+    sbc y
+    sta _2
+    lda #0
+    sbc y+1
+    sta _2+1
   b3:
+    lda x+1
+    bne !+
     lda x
-    cmp #0
-    beq !+
+    beq !e+
+    lsr
+  !:
     bmi !b4+
     jmp b4
   !b4:
-  !:
-    lda x
-    eor #$ff
-    clc
-    adc #1
+  !e:
+    sec
+    lda #0
+    sbc x
     sta _7
+    lda #0
+    sbc x+1
+    sta _7+1
   b6:
     lda #0
     sta angle
+    sta angle+1
     sta i
   b10:
-    txa
-    cmp #0
+    lda yi+1
+    bne b11
+    lda yi
     bne b11
   b12:
-    lda angle
-    lsr
-    tax
-    lda x
-    cmp #0
+    lsr angle+1
+    ror angle
+    lda x+1
     bpl b7
-    txa
-    eor #$ff
-    clc
-    adc #$80+1
-    tax
+    sec
+    lda #<$8000
+    sbc angle
+    sta angle
+    lda #>$8000
+    sbc angle+1
+    sta angle+1
   b7:
-    lda y
-    cmp #0
+    lda y+1
     bpl b8
-    dex
-    txa
-    eor #$ff
-    tax
+    sec
+    lda #0
+    sbc angle
+    sta angle
+    lda #0
+    sbc angle+1
+    sta angle+1
   b8:
     rts
   b11:
+    ldy i
     lda xi
-    ldy i
-    cpy #0
-    beq !e+
-  !l:
-    cmp #$80
-    ror
-    dey
-    bne !l-
-  !e:
     sta xd
-    ldy i
-    txa
+    lda xi+1
+    sta xd+1
     cpy #0
     beq !e+
-  !l:
-    cmp #$80
-    ror
-    dey
-    bne !l-
-  !e:
-    tay
-    txa
-    cmp #0
-    beq !+
-    bpl b13
   !:
-    tya
-    eor #$ff
+    lda xd+1
+    cmp #$80
+    ror xd+1
+    ror xd
+    dey
+    bne !-
+  !e:
+    ldy i
+    lda yi
+    sta yd
+    lda yi+1
+    sta yd+1
+    cpy #0
+    beq !e+
+  !:
+    lda yd+1
+    cmp #$80
+    ror yd+1
+    ror yd
+    dey
+    bne !-
+  !e:
+    lda yi+1
+    bne !+
+    lda yi
+    beq !e+
+    lsr
+  !:
+    bpl b13
+  !e:
+    lda xi
     sec
-    adc xi
+    sbc yd
     sta xi
-    txa
+    lda xi+1
+    sbc yd+1
+    sta xi+1
+    lda yi
     clc
     adc xd
-    tax
-    lda angle
-    ldy i
+    sta yi
+    lda yi+1
+    adc xd+1
+    sta yi+1
+    lda i
+    asl
+    tay
     sec
-    sbc CORDIC_ATAN2_ANGLES_8,y
+    lda angle
+    sbc CORDIC_ATAN2_ANGLES_16,y
     sta angle
+    lda angle+1
+    sbc CORDIC_ATAN2_ANGLES_16+1,y
+    sta angle+1
   b14:
     inc i
-    lda #CORDIC_ITERATIONS_8+1
+    lda #CORDIC_ITERATIONS_16+1
     cmp i
-    beq b12
+    bne !b12+
+    jmp b12
+  !b12:
     jmp b10
   b13:
-    tya
+    lda xi
     clc
-    adc xi
+    adc yd
     sta xi
-    txa
+    lda xi+1
+    adc yd+1
+    sta xi+1
+    lda yi
     sec
     sbc xd
-    tax
-    lda angle
-    ldy i
+    sta yi
+    lda yi+1
+    sbc xd+1
+    sta yi+1
+    lda i
+    asl
+    tay
     clc
-    adc CORDIC_ATAN2_ANGLES_8,y
+    lda angle
+    adc CORDIC_ATAN2_ANGLES_16,y
     sta angle
+    lda angle+1
+    adc CORDIC_ATAN2_ANGLES_16+1,y
+    sta angle+1
     jmp b14
   b4:
     lda x
     sta xi
+    lda x+1
+    sta xi+1
     jmp b6
   b1:
-    ldx y
+    lda y
+    sta yi
+    lda y+1
+    sta yi+1
     jmp b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($c) charset)
+// init_font_hex(byte* zeropage($11) charset)
 init_font_hex: {
-    .label _0 = $13
-    .label idx = $11
-    .label proto_lo = $e
-    .label charset = $c
-    .label c1 = $10
-    .label proto_hi = 9
-    .label c = $b
+    .label _0 = $1f
+    .label idx = $16
+    .label proto_lo = $13
+    .label charset = $11
+    .label c1 = $15
+    .label proto_hi = $e
+    .label c = $10
     lda #0
     sta c
     lda #<FONT_HEX_PROTO
@@ -295,4 +381,9 @@ init_font_hex: {
 
 .pc = CORDIC_ATAN2_ANGLES_8 "CORDIC_ATAN2_ANGLES_8"
   .fill CORDIC_ITERATIONS_8, 2*256*atan(1/pow(2,i))/PI/2
+
+.pc = SCREEN_REF "SCREEN_REF"
+  .for(var y=-12;y<=12;y++)
+        .for(var x=-19;x<=20;x++)
+            .byte round(256*atan2(y, x)/PI/2)
 

@@ -36,7 +36,17 @@ public class TestPrograms {
    }
 
    @Test
-   public void testCordicAtan2() throws IOException, URISyntaxException {
+   public void testCordicAtan2Ref() throws IOException, URISyntaxException {
+      compileAndCompare("cordic-atan2-16-ref");
+   }
+
+   @Test
+   public void testCordicAtan2_16() throws IOException, URISyntaxException {
+      compileAndCompare("cordic-atan2-16");
+   }
+
+   @Test
+   public void testCordicAtan2_8() throws IOException, URISyntaxException {
       compileAndCompare("cordic-atan2");
    }
 

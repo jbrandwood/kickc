@@ -4,6 +4,7 @@ import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -496,28 +497,11 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
    }
 
    @Override
-   public Object visitDeclVariableInit(KickCParser.DeclVariableInitContext ctx) {
-      List<Directive> directives = declVarDirectives;
+   public Object visitDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx) {
+      String varName = ctx.NAME().getText();
+      VariableUnversioned lValue = visitDeclVariableInit(varName, ctx);
       SymbolType type = declVarType;
       List<Comment> comments = declVarComments;
-
-      String varName = ctx.NAME().getText();
-      VariableUnversioned lValue;
-      try {
-         lValue = getCurrentScope().addVariable(varName, type);
-      } catch(CompileError e) {
-         throw new CompileError(e.getMessage(), new StatementSource(ctx));
-      }
-      // Add directives
-      addDirectives(lValue, type, directives, new StatementSource(ctx));
-      // Array / String variables are implicitly constant
-      if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
-         lValue.setDeclaredConstant(true);
-      }
-      if(lValue.isDeclaredConstant()) {
-         // Add comments to constant
-         lValue.setComments(ensureUnusedComments(comments));
-      }
       KickCParser.ExprContext initializer = ctx.expr();
       if(declVarStructMember || declVarTypeDef) {
          if(initializer != null) {
@@ -537,15 +521,44 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
       return null;
    }
 
+   @Override
+   public Object visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) {
+      throw new InternalError("Not implemented");
+   }
+
+   private VariableUnversioned visitDeclVariableInit(String varName, KickCParser.DeclVariableInitContext ctx) {
+      List<Directive> directives = declVarDirectives;
+      SymbolType type = declVarType;
+      List<Comment> comments = declVarComments;
+
+      VariableUnversioned lValue;
+      try {
+         lValue = getCurrentScope().addVariable(varName, type);
+      } catch(CompileError e) {
+         throw new CompileError(e.getMessage(), new StatementSource(ctx));
+      }
+      // Add directives
+      addDirectives(lValue, type, directives, new StatementSource(ctx));
+      // Array / String variables are implicitly constant
+      if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
+         lValue.setDeclaredConstant(true);
+      }
+      if(lValue.isDeclaredConstant()) {
+         // Add comments to constant
+         lValue.setComments(ensureUnusedComments(comments));
+      }
+      return lValue;
+   }
+
    /**
     * Create a statement that initializes a variable with the default (zero) value. The statement has to be added to the program by the caller.
-    * @param lValue The variable to initialize
+    * @param varRef The variable to initialize
     * @param type The type of the variable
     * @param statementSource The source line
     * @param comments Any comments to add to the output
     * @return The new statement
     */
-   public static Statement createDefaultInitializationStatement(VariableRef varRef, SymbolType type, StatementSource statementSource, List<Comment> comments) {
+   static Statement createDefaultInitializationStatement(VariableRef varRef, SymbolType type, StatementSource statementSource, List<Comment> comments) {
       Statement initStmt;
       if(type instanceof SymbolTypeIntegerFixed) {
          // Add an zero value initializer

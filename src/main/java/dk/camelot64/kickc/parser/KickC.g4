@@ -50,7 +50,8 @@ declVariableList
     ;
 
 declVariableInit
-    : NAME ('=' expr)?
+    : NAME ('=' expr)? #declVariableInitExpr
+    | NAME ('=' declKasm)? #declVariableInitKasm
     ;
 
 declFunction

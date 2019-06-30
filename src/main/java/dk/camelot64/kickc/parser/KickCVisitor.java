@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -71,11 +71,19 @@ public interface KickCVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclVariableList(KickCParser.DeclVariableListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#declVariableInit}.
+	 * Visit a parse tree produced by the {@code declVariableInitExpr}
+	 * labeled alternative in {@link KickCParser#declVariableInit}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDeclVariableInit(KickCParser.DeclVariableInitContext ctx);
+	T visitDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declVariableInitKasm}
+	 * labeled alternative in {@link KickCParser#declVariableInit}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#declFunction}.
 	 * @param ctx the parse tree

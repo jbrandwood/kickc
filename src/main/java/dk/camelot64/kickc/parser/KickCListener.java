@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickC.g4 by ANTLR 4.7
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickC.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -108,15 +108,29 @@ public interface KickCListener extends ParseTreeListener {
 	 */
 	void exitDeclVariableList(KickCParser.DeclVariableListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#declVariableInit}.
+	 * Enter a parse tree produced by the {@code declVariableInitExpr}
+	 * labeled alternative in {@link KickCParser#declVariableInit}.
 	 * @param ctx the parse tree
 	 */
-	void enterDeclVariableInit(KickCParser.DeclVariableInitContext ctx);
+	void enterDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#declVariableInit}.
+	 * Exit a parse tree produced by the {@code declVariableInitExpr}
+	 * labeled alternative in {@link KickCParser#declVariableInit}.
 	 * @param ctx the parse tree
 	 */
-	void exitDeclVariableInit(KickCParser.DeclVariableInitContext ctx);
+	void exitDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declVariableInitKasm}
+	 * labeled alternative in {@link KickCParser#declVariableInit}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declVariableInitKasm}
+	 * labeled alternative in {@link KickCParser#declVariableInit}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#declFunction}.
 	 * @param ctx the parse tree

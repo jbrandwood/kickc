@@ -53,6 +53,8 @@ public class Pass3AssertArrayLengths extends Pass2SsaAssertion {
                   if(!assignedSizeVal.equals(declaredSizeInt)) {
                      throw new CompileError("Error! Array length mismatch " + constantVar.toString(getProgram()));
                   }
+               } else if(constantValue instanceof ConstantArrayKickAsm) {
+                  // KickAsm array initializer is assumed good!
                } else {
                   ConstantLiteral constantLiteral = constantValue.calculateLiteral(getScope());
                   if(constantLiteral instanceof ConstantString) {

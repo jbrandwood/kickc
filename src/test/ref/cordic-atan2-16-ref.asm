@@ -5,12 +5,6 @@
 .pc = $80d "Program"
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
-  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
-  .label CORDIC_ATAN2_ANGLES_16 = $1000
-  // The number of iterations performed during 8-bit CORDIC atan2 calculation
-  .const CORDIC_ITERATIONS_8 = 8
-  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
-  .label CORDIC_ATAN2_ANGLES_8 = $1100
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
@@ -18,8 +12,6 @@
   .label SCREEN = $2800
   .label SCREEN_REF = $2c00
   .label print_char_cursor = 9
-// Populate cordic angles table
-// Populate cordic angles table
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label _12 = $10
@@ -453,14 +445,12 @@ init_font_hex: {
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
-  print_hextab: .text "0123456789abcdef"
-.pc = CORDIC_ATAN2_ANGLES_16 "CORDIC_ATAN2_ANGLES_16"
-  .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+CORDIC_ATAN2_ANGLES_16:
+.for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
-.pc = CORDIC_ATAN2_ANGLES_8 "CORDIC_ATAN2_ANGLES_8"
-  .fill CORDIC_ITERATIONS_8, 2*256*atan(1/pow(2,i))/PI/2
-
+  print_hextab: .text "0123456789abcdef"
 .pc = SCREEN_REF "SCREEN_REF"
   .for(var y=-12;y<=12;y++)
         .for(var x=-19;x<=20;x++)

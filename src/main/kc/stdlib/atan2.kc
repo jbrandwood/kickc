@@ -5,13 +5,10 @@
 const byte CORDIC_ITERATIONS_16 = 15;
 
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
-word* CORDIC_ATAN2_ANGLES_16 = 0x1000;
-
-// Populate cordic angles table
-kickasm(pc CORDIC_ATAN2_ANGLES_16, uses CORDIC_ITERATIONS_16) {{
+word[CORDIC_ITERATIONS_16] CORDIC_ATAN2_ANGLES_16 = kickasm {{
    .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
-}}
+}};
 
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
@@ -48,12 +45,9 @@ word atan2_16(signed word x, signed word y) {
 const byte CORDIC_ITERATIONS_8 = 8;
 
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
-byte* CORDIC_ATAN2_ANGLES_8 = 0x1100;
-
-// Populate cordic angles table
-kickasm(pc CORDIC_ATAN2_ANGLES_8, uses CORDIC_ITERATIONS_8) {{
+byte[CORDIC_ITERATIONS_8] CORDIC_ATAN2_ANGLES_8 = kickasm {{
   .fill CORDIC_ITERATIONS_8, 2*256*atan(1/pow(2,i))/PI/2
-}}
+}};
 
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS

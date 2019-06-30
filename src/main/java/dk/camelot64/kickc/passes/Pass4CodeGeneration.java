@@ -483,7 +483,7 @@ public class Pass4CodeGeneration {
                   if(size instanceof ConstantValue) {
                      ConstantLiteral sizeLiteral = ((ConstantValue) size).calculateLiteral(getScope());
                      if(sizeLiteral instanceof ConstantInteger) {
-                        bytes = (int)sizeLiteral.getValue() * elementType.getSizeBytes();
+                        bytes = (int)(((ConstantInteger) sizeLiteral).getInteger() * elementType.getSizeBytes());
                      }
                   }
                }

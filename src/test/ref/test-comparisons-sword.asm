@@ -12,7 +12,7 @@
   .const FF = $57
   // filled circle
   .const TT = $51
-  .label print_char_cursor = $c
+  .label print_char_cursor = $a
   .label print_line_cursor = 5
 main: {
     .label w1 = $11
@@ -105,9 +105,9 @@ print_ln: {
     rts
 }
 // Compare two words using an operator
-// compare(signed word zeropage($a) w1, signed word zeropage($13) w2, byte register(X) op)
+// compare(signed word zeropage($c) w1, signed word zeropage($13) w2, byte register(X) op)
 compare: {
-    .label w1 = $a
+    .label w1 = $c
     .label w2 = $13
     .label ops = 7
     .label r = 9
@@ -303,11 +303,17 @@ print_char: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage($a) w)
+// print_sword(signed word zeropage($c) w)
 print_sword: {
-    .label w = $a
+    .label w = $c
     lda w+1
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_word
+    rts
+  b1:
     lda #'-'
     jsr print_char
     sec
@@ -317,14 +323,12 @@ print_sword: {
     lda #0
     sbc w+1
     sta w+1
-  b1:
-    jsr print_word
-    rts
+    jmp b2
 }
 // Print a word as HEX
-// print_word(word zeropage($a) w)
+// print_word(word zeropage($c) w)
 print_word: {
-    .label w = $a
+    .label w = $c
     lda w+1
     sta print_byte.b
     jsr print_byte

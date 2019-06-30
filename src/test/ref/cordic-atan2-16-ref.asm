@@ -456,7 +456,7 @@ init_font_hex: {
   print_hextab: .text "0123456789abcdef"
 .pc = CORDIC_ATAN2_ANGLES_16 "CORDIC_ATAN2_ANGLES_16"
   .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
-  .word 256*2*256*atan(1/pow(2,i))/PI/2
+        .word 256*2*256*atan(1/pow(2,i))/PI/2
 
 .pc = CORDIC_ATAN2_ANGLES_8 "CORDIC_ATAN2_ANGLES_8"
   .fill CORDIC_ITERATIONS_8, 2*256*atan(1/pow(2,i))/PI/2

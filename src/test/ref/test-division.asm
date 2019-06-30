@@ -2,7 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 8
+  .label print_char_cursor = 7
   .label print_line_cursor = 3
   .label rem16u = $12
   .label rem16s = $12
@@ -103,7 +103,13 @@ print_ln: {
 print_sword: {
     .label w = 5
     lda w+1
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_word
+    rts
+  b1:
     lda #'-'
     jsr print_char
     sec
@@ -113,8 +119,17 @@ print_sword: {
     lda #0
     sbc w+1
     sta w+1
-  b1:
-    jsr print_word
+    jmp b2
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    ldy #0
+    sta (print_char_cursor),y
+    inc print_char_cursor
+    bne !+
+    inc print_char_cursor+1
+  !:
     rts
 }
 // Print a word as HEX
@@ -130,9 +145,9 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(7) b)
+// print_byte(byte zeropage(9) b)
 print_byte: {
-    .label b = 7
+    .label b = 9
     lda b
     lsr
     lsr
@@ -146,17 +161,6 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    ldy #0
-    sta (print_char_cursor),y
-    inc print_char_cursor
-    bne !+
-    inc print_char_cursor+1
-  !:
     rts
 }
 // Print a zero-terminated string
@@ -326,7 +330,7 @@ divr16u: {
     rts
 }
 test_8s: {
-    .label dividend = 7
+    .label dividend = 9
     .label divisor = $1e
     .label res = $1f
     .label i = $14
@@ -380,9 +384,9 @@ test_8s: {
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte zeropage(7) b)
+// print_sbyte(signed byte zeropage(9) b)
 print_sbyte: {
-    .label b = 7
+    .label b = 9
     lda b
     bmi b1
     lda #' '
@@ -592,7 +596,7 @@ div16u: {
     rts
 }
 test_8u: {
-    .label dividend = 7
+    .label dividend = 9
     .label divisor = $21
     .label res = $22
     .label i = $19

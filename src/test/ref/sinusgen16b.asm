@@ -15,7 +15,7 @@
   .const PI_HALF_u4f12 = $1922
   .label print_line_cursor = $400
   .label rem16u = $29
-  .label print_char_cursor = $b
+  .label print_char_cursor = $a
 main: {
     .label wavelength = $78
     .label sw = 8
@@ -112,7 +112,13 @@ print_str: {
 print_sword: {
     .label w = 8
     lda w+1
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_word
+    rts
+  b1:
     lda #'-'
     jsr print_char
     sec
@@ -122,8 +128,17 @@ print_sword: {
     lda #0
     sbc w+1
     sta w+1
-  b1:
-    jsr print_word
+    jmp b2
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    ldy #0
+    sta (print_char_cursor),y
+    inc print_char_cursor
+    bne !+
+    inc print_char_cursor+1
+  !:
     rts
 }
 // Print a word as HEX
@@ -139,9 +154,9 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage($a) b)
+// print_byte(byte zeropage($c) b)
 print_byte: {
-    .label b = $a
+    .label b = $c
     lda b
     lsr
     lsr
@@ -155,17 +170,6 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    ldy #0
-    sta (print_char_cursor),y
-    inc print_char_cursor
-    bne !+
-    inc print_char_cursor+1
-  !:
     rts
 }
 // Clear the screen. Also resets current line/char cursor.

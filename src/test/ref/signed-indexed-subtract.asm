@@ -3,7 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_line_cursor = 2
-  .label print_char_cursor = 7
+  .label print_char_cursor = 6
 main: {
     ldy #0
   b1:
@@ -75,7 +75,13 @@ print_ln: {
 print_sword: {
     .label w = 4
     lda w+1
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_word
+    rts
+  b1:
     lda #'-'
     jsr print_char
     sec
@@ -85,8 +91,17 @@ print_sword: {
     lda #0
     sbc w+1
     sta w+1
-  b1:
-    jsr print_word
+    jmp b2
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    ldy #0
+    sta (print_char_cursor),y
+    inc print_char_cursor
+    bne !+
+    inc print_char_cursor+1
+  !:
     rts
 }
 // Print a word as HEX
@@ -102,9 +117,9 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(6) b)
+// print_byte(byte zeropage(8) b)
 print_byte: {
-    .label b = 6
+    .label b = 8
     lda b
     lsr
     lsr
@@ -118,17 +133,6 @@ print_byte: {
     tay
     lda print_hextab,y
     jsr print_char
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    ldy #0
-    sta (print_char_cursor),y
-    inc print_char_cursor
-    bne !+
-    inc print_char_cursor+1
-  !:
     rts
 }
 // Clear the screen. Also resets current line/char cursor.

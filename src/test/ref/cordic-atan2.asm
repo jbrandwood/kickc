@@ -291,7 +291,7 @@ init_font_hex: {
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
 .pc = CORDIC_ATAN2_ANGLES_16 "CORDIC_ATAN2_ANGLES_16"
   .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
-  .word 256*2*256*atan(1/pow(2,i))/PI/2
+        .word 256*2*256*atan(1/pow(2,i))/PI/2
 
 .pc = CORDIC_ATAN2_ANGLES_8 "CORDIC_ATAN2_ANGLES_8"
   .fill CORDIC_ITERATIONS_8, 2*256*atan(1/pow(2,i))/PI/2

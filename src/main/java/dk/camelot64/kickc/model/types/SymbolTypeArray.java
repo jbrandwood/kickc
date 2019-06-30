@@ -7,7 +7,8 @@ import dk.camelot64.kickc.model.values.RValue;
  */
 public class SymbolTypeArray extends SymbolTypePointer {
 
-   /** The fixed size of the array. Can be null, if the size is not bound. (It will be constant before the compilation is done) */
+   /** The fixed size of the array. Can be null, if the size is not bound.
+    * If it si non-null it must be constant before the compilation is done. */
    private RValue size;
 
    public SymbolTypeArray(SymbolType elementType, RValue size) {

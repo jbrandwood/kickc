@@ -230,7 +230,13 @@ testInt: {
 print_sword: {
     .label w = 8
     lda w+1
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_word
+    rts
+  b1:
     lda #'-'
     jsr print_char
     sec
@@ -240,9 +246,7 @@ print_sword: {
     lda #0
     sbc w+1
     sta w+1
-  b1:
-    jsr print_word
-    rts
+    jmp b2
 }
 testShort: {
     .const u = $578

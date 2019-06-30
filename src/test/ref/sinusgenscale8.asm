@@ -7,7 +7,7 @@
   .const PI_u4f12 = $3244
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
-  .label print_char_cursor = $f
+  .label print_char_cursor = $b
   .label print_line_cursor = 8
 main: {
     .label tabsize = $14
@@ -241,9 +241,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($b) str)
+// print_str(byte* zeropage($d) str)
 print_str: {
-    .label str = $b
+    .label str = $d
   b1:
     ldy #0
     lda (str),y
@@ -265,11 +265,17 @@ print_str: {
     jmp b1
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage($d) w)
+// print_sword(signed word zeropage($f) w)
 print_sword: {
-    .label w = $d
+    .label w = $f
     lda w+1
-    bpl b1
+    bmi b1
+    lda #' '
+    jsr print_char
+  b2:
+    jsr print_word
+    rts
+  b1:
     lda #'-'
     jsr print_char
     sec
@@ -279,14 +285,12 @@ print_sword: {
     lda #0
     sbc w+1
     sta w+1
-  b1:
-    jsr print_word
-    rts
+    jmp b2
 }
 // Print a word as HEX
-// print_word(word zeropage($d) w)
+// print_word(word zeropage($f) w)
 print_word: {
-    .label w = $d
+    .label w = $f
     lda w+1
     sta print_byte.b
     jsr print_byte

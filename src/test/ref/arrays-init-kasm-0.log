@@ -1,0 +1,247 @@
+Adding pointer type conversion cast (byte*) SCREEN in (byte*) SCREEN ← (number) $400
+Identified constant variable (byte*) SCREEN
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte[]) SINTAB#0 ← kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
+ }}
+  (byte*) SCREEN#0 ← ((byte*)) (number) $400
+  to:@1
+main: scope:[main]  from @1
+  *((byte*) SCREEN#0 + (number) 0) ← *((byte[]) SINTAB#0 + (number) 0)
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte*) SCREEN#0
+(byte[]) SINTAB
+(byte[]) SINTAB#0
+(void()) main()
+(label) main::@return
+
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← *((byte[]) SINTAB#0 + (number) 0)
+Adding number conversion cast (unumber) 0 in *((byte*) SCREEN#0 + (number) 0) ← *((byte[]) SINTAB#0 + (unumber)(number) 0)
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN#0 ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant (const byte[]) SINTAB#0 = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
+ }}
+Constant (const byte*) SCREEN#0 = (byte*) 1024
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SINTAB#0 in [2] *((const byte*) SCREEN#0 + (byte) 0) ← *((const byte[]) SINTAB#0 + (byte) 0)
+Simplifying expression containing zero SCREEN#0 in [2] *((const byte*) SCREEN#0 + (byte) 0) ← *((const byte[]) SINTAB#0)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+main: scope:[main]  from @1
+  [4] *((const byte*) SCREEN#0) ← *((const byte[]) SINTAB#0)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte*) SCREEN
+(byte[]) SINTAB
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+//SEG0 File Comments
+// Test initializing array using KickAssembler
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [4] *((const byte*) SCREEN#0) ← *((const byte[]) SINTAB#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda SINTAB
+    sta SCREEN
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+//SEG13 File Data
+// Sinus table
+SINTAB:
+.fill 256, 128 + 128*sin(i*2*PI/256)
+
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) SCREEN#0) ← *((const byte[]) SINTAB#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 29 combination 
+Uplifting [] best 29 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+//SEG0 File Comments
+// Test initializing array using KickAssembler
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(bbegin)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+//SEG3 @begin
+bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
+  jmp b1
+//SEG5 @1
+b1:
+//SEG6 [2] call main 
+  jsr main
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+bend_from_b1:
+  jmp bend
+//SEG8 @end
+bend:
+//SEG9 main
+main: {
+  //SEG10 [4] *((const byte*) SCREEN#0) ← *((const byte[]) SINTAB#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda SINTAB
+    sta SCREEN
+    jmp breturn
+  //SEG11 main::@return
+  breturn:
+  //SEG12 [5] return 
+    rts
+}
+//SEG13 File Data
+// Sinus table
+SINTAB:
+.fill 256, 128 + 128*sin(i*2*PI/256)
+
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp b1
+Removing instruction jmp bend
+Removing instruction jmp breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction b1_from_bbegin:
+Removing instruction b1:
+Removing instruction bend_from_b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction bend:
+Removing instruction breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(byte[]) SINTAB
+(const byte[]) SINTAB#0 SINTAB = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
+ }}
+(void()) main()
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 14
+
+//SEG0 File Comments
+// Test initializing array using KickAssembler
+//SEG1 Basic Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+//SEG2 Global Constants & labels
+  .label SCREEN = $400
+//SEG3 @begin
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
+//SEG6 [2] call main 
+//SEG7 [3] phi from @1 to @end [phi:@1->@end]
+//SEG8 @end
+//SEG9 main
+main: {
+  //SEG10 [4] *((const byte*) SCREEN#0) ← *((const byte[]) SINTAB#0) -- _deref_pbuc1=_deref_pbuc2 
+    lda SINTAB
+    sta SCREEN
+  //SEG11 main::@return
+  //SEG12 [5] return 
+    rts
+}
+//SEG13 File Data
+// Sinus table
+SINTAB:
+.fill 256, 128 + 128*sin(i*2*PI/256)
+
+

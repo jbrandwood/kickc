@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -300,9 +301,7 @@ public class Pass4CodeGeneration {
 
    private boolean hasData(ConstantVar constantVar) {
       ConstantValue constantValue = constantVar.getValue();
-      if(constantValue instanceof ConstantArrayList) {
-         return true;
-      } else if(constantValue instanceof ConstantArrayFilled) {
+      if(constantValue instanceof ConstantArray) {
          return true;
       } else {
          try {
@@ -471,8 +470,24 @@ public class Pass4CodeGeneration {
                   asm.addDataFilled(asmName.replace("#", "_").replace("$", "_"), AsmDataNumeric.Type.WORD, asmSize, size, "0");
                   added.add(asmName);
                } else {
-                  throw new RuntimeException("Unhandled constant array element type " + constantArrayFilled.toString(program));
+                  throw new InternalError("Unhandled constant array element type " + constantArrayFilled.toString(program));
                }
+            } else if(constantVar.getValue() instanceof ConstantArrayKickAsm) {
+               ConstantArrayKickAsm kickAsm = (ConstantArrayKickAsm) constantVar.getValue();
+               SymbolType type = constantVar.getType();
+               // default - larger then 256
+               int bytes = 1023;
+               if(type instanceof SymbolTypeArray) {
+                  SymbolType elementType = ((SymbolTypeArray) type).getElementType();
+                  RValue size = ((SymbolTypeArray) type).getSize();
+                  if(size instanceof ConstantValue) {
+                     ConstantLiteral sizeLiteral = ((ConstantValue) size).calculateLiteral(getScope());
+                     if(sizeLiteral instanceof ConstantInteger) {
+                        bytes = (int)sizeLiteral.getValue() * elementType.getSizeBytes();
+                     }
+                  }
+               }
+               asm.addDataKickAsm(asmName.replace("#", "_").replace("$", "_"), bytes, kickAsm.getKickAsmCode());
             } else {
                try {
                   ConstantLiteral literal = constantVar.getValue().calculateLiteral(getScope());

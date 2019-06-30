@@ -247,6 +247,7 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
             }
          }
          sequence.addStatement(statementKickAsm);
+         return statementKickAsm;
       }
       return null;
    }
@@ -523,7 +524,37 @@ public class Pass0GenerateStatementSequence extends KickCBaseVisitor<Object> {
 
    @Override
    public Object visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) {
-      throw new InternalError("Not implemented");
+      String varName = ctx.NAME().getText();
+      VariableUnversioned lValue = visitDeclVariableInit(varName, ctx);
+      SymbolType type = this.declVarType;
+      List<Comment> comments = this.declVarComments;
+      if(!(type instanceof SymbolTypeArray)) {
+         throw new CompileError("KickAsm initializers only supported for arrays " + type.getTypeName(), new StatementSource(ctx));
+      }
+      // Add KickAsm statement
+      StatementKickAsm kasm = (StatementKickAsm) this.visit(ctx.declKasm());
+      if(kasm.getUses().size()>0) {
+         throw new CompileError("KickAsm initializers does not support 'uses' directive.", new StatementSource(ctx));
+      }
+      if(kasm.getLocation()!=null) {
+         throw new CompileError("KickAsm initializers does not support 'location' directive.", new StatementSource(ctx));
+      }
+      if(kasm.getCycles()!=null) {
+         throw new CompileError("KickAsm initializers does not support 'cycles' directive.", new StatementSource(ctx));
+      }
+      if(kasm.getBytes()!=null) {
+         throw new CompileError("KickAsm initializers does not support 'bytes' directive.", new StatementSource(ctx));
+      }
+      if(kasm.getDeclaredClobber()!=null) {
+         throw new CompileError("KickAsm initializers does not support 'clobbers' directive.", new StatementSource(ctx));
+      }
+      ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypeArray) type).getElementType(), kasm.getKickAsmCode());
+      // Remove the KickAsm statement
+      sequence.getStatements().remove(sequence.getStatements().size()-1);
+      // Add an initializer statement instead
+      Statement stmt = new StatementAssignment(lValue.getRef(), constantArrayKickAsm, new StatementSource(ctx), ensureUnusedComments(comments));
+      sequence.addStatement(stmt);
+      return null;
    }
 
    private VariableUnversioned visitDeclVariableInit(String varName, KickCParser.DeclVariableInitContext ctx) {

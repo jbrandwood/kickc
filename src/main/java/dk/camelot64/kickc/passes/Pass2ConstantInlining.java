@@ -93,7 +93,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
       for(ConstantVar constant : allConstants) {
          if(constant.getRef().isIntermediate()) {
-            if(!(constant.getType().equals(SymbolType.STRING)) && !(constant.getValue() instanceof ConstantArrayList) && !(constant.getValue() instanceof ConstantArrayFilled)) {
+            if(!(constant.getType().equals(SymbolType.STRING)) && !(constant.getValue() instanceof ConstantArray)) {
                unnamed.put(constant.getRef(), constant.getValue());
             }
          }
@@ -150,7 +150,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
                      break;
                   } else if(symbol instanceof ConstantVar) {
                      ConstantValue otherValue = ((ConstantVar) symbol).getValue();
-                     if(!otherValue.equals(value) && !(value instanceof ConstantString) && !(value instanceof ConstantArrayList) && !(value instanceof ConstantArrayFilled) && !(otherValue instanceof ConstantRef)) {
+                     if(!otherValue.equals(value) && !(value instanceof ConstantString) && !(value instanceof ConstantArray) && !(otherValue instanceof ConstantRef)) {
                         aliases.put(constant.getRef(), value);
                         getLog().append("Inlining constant with different constant siblings " + constant);
                         break;

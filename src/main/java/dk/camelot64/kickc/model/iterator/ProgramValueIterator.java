@@ -231,6 +231,7 @@ public class ProgramValueIterator {
             value instanceof ConstantLiteral ||
             value instanceof ConstantRef ||
             value instanceof StructZero ||
+            value instanceof ConstantArrayKickAsm ||
             value instanceof LabelRef
             ) {
          // No sub values

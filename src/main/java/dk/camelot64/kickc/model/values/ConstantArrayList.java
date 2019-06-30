@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * An array of constants. The array is allocated in the code memory (eg. as a set of .byte's ).
  */
-public class ConstantArrayList implements ConstantValue {
+public class ConstantArrayList implements ConstantArray {
 
    private List<ConstantValue> list;
 

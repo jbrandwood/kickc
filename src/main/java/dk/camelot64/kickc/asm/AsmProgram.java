@@ -145,6 +145,16 @@ public class AsmProgram {
    }
 
    /**
+    * Add data array initialized with inline kick assembler code
+    * @param label Name of the data
+    * @param bytes The number of bytes (from array definition)
+    * @param kickAsmCode Kick Assembler code to initialize the data
+    */
+   public void addDataKickAsm(String label, int bytes, String kickAsmCode) {
+      addLine(new AsmDataKickAsm(label, bytes, kickAsmCode));
+   }
+
+   /**
     * Get the number of bytes the segment occupies in memory.
     * Calculated by adding up the bytes of each ASM segment in the program.
     *

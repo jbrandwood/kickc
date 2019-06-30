@@ -36,6 +36,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testArraysInitKasm0() throws IOException, URISyntaxException {
+      compileAndCompare("arrays-init-kasm-0", log());
+   }
+
+   @Test
    public void testScreenCenterAngle() throws IOException, URISyntaxException {
       compileAndCompare("screen-center-angle");
    }

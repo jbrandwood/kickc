@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeArray;
 /**
  * An zero-filled constant array. The array is allocated in the code memory (as a .fill() ).
  */
-public class ConstantArrayFilled implements ConstantValue {
+public class ConstantArrayFilled implements ConstantArray {
 
    private ConstantValue size;
 

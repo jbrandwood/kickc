@@ -21,7 +21,6 @@
   // Location of screen & sprites
   .label SCREEN = $400
   .label SPRITE = $2000
-  .label YSIN = $2100
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
   .label plex_sprite_msb = 6
   .label plex_free_next = 3
@@ -264,6 +263,14 @@ plexInit: {
 }
   // Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
+  .align $100
+YSIN:
+.var min = 50
+    .var max = 250-21
+    .var ampl = max-min;
+    .for(var i=0;i<256;i++)
+        .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
+
   // The x-positions of the multiplexer sprites ($000-$1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.
@@ -272,13 +279,6 @@ plexInit: {
   PLEX_PTR: .fill PLEX_COUNT, 0
   // Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
   PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
-.pc = YSIN "YSIN"
-  .var min = 50
-    .var max = 250-21
-    .var ampl = max-min;
-    .for(var i=0;i<256;i++)
-        .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
-
 .pc = SPRITE "SPRITE"
   .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)

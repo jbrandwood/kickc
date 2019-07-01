@@ -1,6 +1,6 @@
 Resolved forward reference mulf_sqr1 to (byte[$200]) mulf_sqr1
 Resolved forward reference mulf_sqr2 to (byte[$200]) mulf_sqr2
-Resolved forward reference PERSP_Z to (signed byte*) PERSP_Z
+Resolved forward reference PERSP_Z to (signed byte[$100]) PERSP_Z
 Adding pointer type conversion cast (byte*) PROCPORT_DDR in (byte*) PROCPORT_DDR ← (number) 0
 Adding pointer type conversion cast (byte*) PROCPORT in (byte*) PROCPORT ← (number) 1
 Adding pointer type conversion cast (byte*) CHARGEN in (byte*) CHARGEN ← (number) $d000
@@ -51,13 +51,11 @@ Adding pointer type conversion cast (signed byte*) yr in (signed byte*) yr ← (
 Adding pointer type conversion cast (signed byte*) zr in (signed byte*) zr ← (number) $f2
 Adding pointer type conversion cast (word*) psp1 in (word*) psp1 ← (number) $f3
 Adding pointer type conversion cast (word*) psp2 in (word*) psp2 ← (number) $f5
-Adding pointer type conversion cast (signed byte*) PERSP_Z in (signed byte*) PERSP_Z ← (number) $2400
 Identified constant variable (signed byte*) xr
 Identified constant variable (signed byte*) yr
 Identified constant variable (signed byte*) zr
 Identified constant variable (word*) psp1
 Identified constant variable (word*) psp2
-Identified constant variable (signed byte*) PERSP_Z
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
@@ -493,8 +491,7 @@ mulf_init::@return: scope:[mulf_init]  from mulf_init::@1
   (byte*) print_screen#6 ← phi( @26/(byte*) print_screen#7 )
   (byte*) print_char_cursor#73 ← phi( @26/(byte*) print_char_cursor#77 )
   (byte*) print_line_cursor#24 ← phi( @26/(byte*) print_line_cursor#27 )
-  (signed byte*) PERSP_Z#0 ← ((signed byte*)) (number) $2400
-  kickasm(location (signed byte*) PERSP_Z#0) {{ {
+  (signed byte[$100]) PERSP_Z#0 ← kickasm {{ {
     .var d = 256.0	
     .var z0 = 5.0	
     .for(var z=0;z<$100;z++) {
@@ -526,8 +523,8 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(signed byte*) PERSP_Z
-(signed byte*) PERSP_Z#0
+(signed byte[$100]) PERSP_Z
+(signed byte[$100]) PERSP_Z#0
 (void()) do_perspective((signed byte) do_perspective::x , (signed byte) do_perspective::y , (signed byte) do_perspective::z)
 (byte~) do_perspective::$11
 (byte~) do_perspective::$8
@@ -894,7 +891,6 @@ Inlining cast (byte~) do_perspective::$8 ← (byte)*((signed byte*) xr#0)
 Inlining cast (byte~) do_perspective::$11 ← (byte)*((signed byte*) yr#0)
 Inlining cast (signed word) mulf_init::sqr#0 ← (snumber)(number) 0
 Inlining cast (signed word) mulf_init::add#0 ← (snumber)(number) 1
-Inlining cast (signed byte*) PERSP_Z#0 ← (signed byte*)(number) $2400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
@@ -921,7 +917,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast $100
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
-Simplifying constant pointer cast (signed byte*) 9216
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $28
 Finalized signed number type (signed byte) 0
@@ -1075,7 +1070,18 @@ Constant (const byte[$200]) mulf_sqr2#0 = { fill( $200, 0) }
 Constant (const signed word) mulf_init::sqr#0 = 0
 Constant (const signed word) mulf_init::add#0 = 1
 Constant (const byte) mulf_init::i#0 = 0
-Constant (const signed byte*) PERSP_Z#0 = (signed byte*) 9216
+Constant (const signed byte[$100]) PERSP_Z#0 = kickasm {{ {
+    .var d = 256.0	
+    .var z0 = 5.0	
+    .for(var z=0;z<$100;z++) {
+    	.if(z>127) {
+    		.byte round(d / (z0 - ((z - 256) / 64.0)));
+    	} else {
+    		.byte round(d / (z0 - (z / 64.0)));
+    	}
+    }
+	}
+ }}
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print_cls::sc#0 = print_line_cursor#0
 Constant (const signed byte) print_sbyte::b#1 = do_perspective::x#0
@@ -1175,6 +1181,7 @@ Adding NOP phi() at start of @4
 Adding NOP phi() at start of @16
 Adding NOP phi() at start of @23
 Adding NOP phi() at start of @26
+Adding NOP phi() at start of @27
 Adding NOP phi() at start of @28
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@2
@@ -1246,6 +1253,7 @@ Culled Empty Block (label) mulf_init::@3
 Renumbering block @27 to @1
 Renumbering block print_sbyte::@5 to print_sbyte::@4
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of do_perspective
@@ -1270,18 +1278,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  kickasm(location (const signed byte*) PERSP_Z#0) {{ {
-    .var d = 256.0	
-    .var z0 = 5.0	
-    .for(var z=0;z<$100;z++) {
-    	.if(z>127) {
-    		.byte round(d / (z0 - ((z - 256) / 64.0)));
-    	} else {
-    		.byte round(d / (z0 - (z / 64.0)));
-    	}
-    }
-	}
- }}
+  [1] phi()
   [2] call main 
   to:@end
 @end: scope:[]  from @1
@@ -1483,7 +1480,7 @@ mulf_init::@return: scope:[mulf_init]  from mulf_init::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(signed byte*) PERSP_Z
+(signed byte[$100]) PERSP_Z
 (void()) do_perspective((signed byte) do_perspective::x , (signed byte) do_perspective::y , (signed byte) do_perspective::z)
 (signed byte) do_perspective::x
 (signed byte) do_perspective::y
@@ -1625,16 +1622,15 @@ INITIAL ASM
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
   .label psp1 = $f3
   .label psp2 = $f5
-  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-  .label PERSP_Z = $2400
   .label print_char_cursor = 8
   .label print_line_cursor = 2
 //SEG3 @begin
 bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
 //SEG6 [2] call main 
   jsr main
 //SEG7 [3] phi from @1 to @end [phi:@1->@end]
@@ -2286,8 +2282,10 @@ mulf_init: {
   // g(x) =  >((( 1 - x ) * ( 1 - x )))
   .align $100
   mulf_sqr2: .fill $200, 0
-.pc = PERSP_Z "PERSP_Z"
-  {
+  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
+  .align $100
+PERSP_Z:
+{
     .var d = 256.0	
     .var z0 = 5.0	
     .for(var z=0;z<$100;z++) {
@@ -2395,20 +2393,20 @@ Uplift Scope [main]
 Uplift Scope [do_perspective] 
 Uplift Scope [perspective] 
 
-Uplifting [mulf_init] best 6602 combination reg byte y [ mulf_init::i#2 mulf_init::i#1 ] reg byte x [ mulf_init::$8 ] reg byte x [ mulf_init::$10 ] reg byte x [ mulf_init::$4 ] zp ZP_WORD:16 [ mulf_init::add#2 mulf_init::add#1 ] zp ZP_BYTE:20 [ mulf_init::val#0 ] zp ZP_WORD:13 [ mulf_init::sqr#2 mulf_init::sqr#1 ] 
+Uplifting [mulf_init] best 4015 combination reg byte y [ mulf_init::i#2 mulf_init::i#1 ] reg byte x [ mulf_init::$8 ] reg byte x [ mulf_init::$10 ] reg byte x [ mulf_init::$4 ] zp ZP_WORD:16 [ mulf_init::add#2 mulf_init::add#1 ] zp ZP_BYTE:20 [ mulf_init::val#0 ] zp ZP_WORD:13 [ mulf_init::sqr#2 mulf_init::sqr#1 ] 
 Limited combination testing to 100 combinations of 432 possible.
-Uplifting [] best 6602 combination zp ZP_WORD:2 [ print_line_cursor#11 print_line_cursor#1 ] zp ZP_WORD:8 [ print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ] 
-Uplifting [print_str] best 6602 combination zp ZP_WORD:4 [ print_str::str#7 print_str::str#9 print_str::str#0 ] 
-Uplifting [print_cls] best 6602 combination zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] 
-Uplifting [print_byte] best 6581 combination reg byte x [ print_byte::b#3 print_byte::b#5 print_byte::b#6 print_byte::b#0 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
-Uplifting [print_char] best 6566 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
-Uplifting [print_sbyte] best 6551 combination reg byte x [ print_sbyte::b#6 print_sbyte::b#0 print_sbyte::b#4 ] 
-Uplifting [print_ln] best 6551 combination 
-Uplifting [main] best 6551 combination 
-Uplifting [do_perspective] best 6551 combination 
-Uplifting [perspective] best 6551 combination 
+Uplifting [] best 4015 combination zp ZP_WORD:2 [ print_line_cursor#11 print_line_cursor#1 ] zp ZP_WORD:8 [ print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ] 
+Uplifting [print_str] best 4015 combination zp ZP_WORD:4 [ print_str::str#7 print_str::str#9 print_str::str#0 ] 
+Uplifting [print_cls] best 4015 combination zp ZP_WORD:11 [ print_cls::sc#2 print_cls::sc#1 ] 
+Uplifting [print_byte] best 3994 combination reg byte x [ print_byte::b#3 print_byte::b#5 print_byte::b#6 print_byte::b#0 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
+Uplifting [print_char] best 3979 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
+Uplifting [print_sbyte] best 3964 combination reg byte x [ print_sbyte::b#6 print_sbyte::b#0 print_sbyte::b#4 ] 
+Uplifting [print_ln] best 3964 combination 
+Uplifting [main] best 3964 combination 
+Uplifting [do_perspective] best 3964 combination 
+Uplifting [perspective] best 3964 combination 
 Attempting to uplift remaining variables inzp ZP_BYTE:20 [ mulf_init::val#0 ]
-Uplifting [mulf_init] best 6551 combination zp ZP_BYTE:20 [ mulf_init::val#0 ] 
+Uplifting [mulf_init] best 3964 combination zp ZP_BYTE:20 [ mulf_init::val#0 ] 
 Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ]
 Allocated (was zp ZP_WORD:11) zp ZP_WORD:8 [ print_cls::sc#2 print_cls::sc#1 ]
 Allocated (was zp ZP_WORD:13) zp ZP_WORD:10 [ mulf_init::sqr#2 mulf_init::sqr#1 ]
@@ -2433,16 +2431,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
   .label psp1 = $f3
   .label psp2 = $f5
-  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-  .label PERSP_Z = $2400
   .label print_char_cursor = 6
   .label print_line_cursor = 2
 //SEG3 @begin
 bbegin:
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+b1_from_bbegin:
   jmp b1
-//SEG4 @1
+//SEG5 @1
 b1:
-//SEG5 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
 //SEG6 [2] call main 
   jsr main
 //SEG7 [3] phi from @1 to @end [phi:@1->@end]
@@ -3059,8 +3056,10 @@ mulf_init: {
   // g(x) =  >((( 1 - x ) * ( 1 - x )))
   .align $100
   mulf_sqr2: .fill $200, 0
-.pc = PERSP_Z "PERSP_Z"
-  {
+  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
+  .align $100
+PERSP_Z:
+{
     .var d = 256.0	
     .var z0 = 5.0	
     .for(var z=0;z<$100;z++) {
@@ -3129,6 +3128,7 @@ Replacing label b2_from_b4 with b2
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
 Replacing label b1_from_b1 with b1
+Removing instruction b1_from_bbegin:
 Removing instruction b1:
 Removing instruction bend_from_b1:
 Removing instruction b2_from_b1:
@@ -3218,8 +3218,19 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(signed byte*) PERSP_Z
-(const signed byte*) PERSP_Z#0 PERSP_Z = (signed byte*) 9216
+(signed byte[$100]) PERSP_Z
+(const signed byte[$100]) PERSP_Z#0 PERSP_Z = kickasm {{ {
+    .var d = 256.0	
+    .var z0 = 5.0	
+    .for(var z=0;z<$100;z++) {
+    	.if(z>127) {
+    		.byte round(d / (z0 - ((z - 256) / 64.0)));
+    	} else {
+    		.byte round(d / (z0 - (z / 64.0)));
+    	}
+    }
+	}
+ }}
 (void()) do_perspective((signed byte) do_perspective::x , (signed byte) do_perspective::y , (signed byte) do_perspective::z)
 (label) do_perspective::@1
 (label) do_perspective::@10
@@ -3360,7 +3371,7 @@ reg byte x [ mulf_init::$10 ]
 
 
 FINAL ASSEMBLER
-Score: 5893
+Score: 3333
 
 //SEG0 File Comments
 // 3D Rotation using a Rotation Matrix
@@ -3379,13 +3390,11 @@ Score: 5893
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
   .label psp1 = $f3
   .label psp2 = $f5
-  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-  .label PERSP_Z = $2400
   .label print_char_cursor = 6
   .label print_line_cursor = 2
 //SEG3 @begin
-//SEG4 @1
-//SEG5 kickasm(location (const signed byte*) PERSP_Z#0) {{ {     .var d = 256.0	     .var z0 = 5.0	     .for(var z=0;z<$100;z++) {     	.if(z>127) {     		.byte round(d / (z0 - ((z - 256) / 64.0)));     	} else {     		.byte round(d / (z0 - (z / 64.0)));     	}     } 	}  }}
+//SEG4 [1] phi from @begin to @1 [phi:@begin->@1]
+//SEG5 @1
 //SEG6 [2] call main 
 //SEG7 [3] phi from @1 to @end [phi:@1->@end]
 //SEG8 @end
@@ -3883,8 +3892,10 @@ mulf_init: {
   // g(x) =  >((( 1 - x ) * ( 1 - x )))
   .align $100
   mulf_sqr2: .fill $200, 0
-.pc = PERSP_Z "PERSP_Z"
-  {
+  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
+  .align $100
+PERSP_Z:
+{
     .var d = 256.0	
     .var z0 = 5.0	
     .for(var z=0;z<$100;z++) {

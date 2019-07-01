@@ -12,8 +12,6 @@
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
   .label psp1 = $f3
   .label psp2 = $f5
-  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-  .label PERSP_Z = $2400
   .label print_char_cursor = 6
   .label print_line_cursor = 2
 main: {
@@ -308,8 +306,10 @@ mulf_init: {
   // g(x) =  >((( 1 - x ) * ( 1 - x )))
   .align $100
   mulf_sqr2: .fill $200, 0
-.pc = PERSP_Z "PERSP_Z"
-  {
+  // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
+  .align $100
+PERSP_Z:
+{
     .var d = 256.0	
     .var z0 = 5.0	
     .for(var z=0;z<$100;z++) {

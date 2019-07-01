@@ -10,7 +10,6 @@
   .label COLS = $d800
   .label CHARSET = $2000
   .label SCREEN = $2800
-  .label SCREEN_REF = $2c00
   .label print_char_cursor = 9
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
@@ -451,8 +450,8 @@ CORDIC_ATAN2_ANGLES_16:
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
   print_hextab: .text "0123456789abcdef"
-.pc = SCREEN_REF "SCREEN_REF"
-  .for(var y=-12;y<=12;y++)
+SCREEN_REF:
+.for(var y=-12;y<=12;y++)
         .for(var x=-19;x<=20;x++)
             .byte round(256*atan2(y, x)/PI/2)
 

@@ -64,10 +64,6 @@
   .label SCREEN = $400
   // Sprite data for the animating sprites
   .label SPRITE_DATA = $2000
-  // Values added to VX
-  .label VXSIN = $2200
-  // Values added to VY
-  .label VYSIN = $2280
   // Max number of chars processed at once
   .const NUM_PROCESSING = 8
   // Distance value meaning not found
@@ -1282,15 +1278,17 @@ irqTop: {
     ldy #00
     rti
 }
-  // Sprites currently being processed in the interrupt
-  PROCESSING: .fill $e*NUM_PROCESSING, 0
-.pc = VXSIN "VXSIN"
-  .for(var i=0; i<40; i++) {
+  // Values added to VX
+VXSIN:
+.for(var i=0; i<40; i++) {
       .word -sin(toRadians([i*360]/40))*4
     }
 
-.pc = VYSIN "VYSIN"
-  .for(var i=0; i<25; i++) {
+  // Values added to VY
+VYSIN:
+.for(var i=0; i<25; i++) {
       .word -sin(toRadians([i*360]/25))*4
     }
 
+  // Sprites currently being processed in the interrupt
+  PROCESSING: .fill $e*NUM_PROCESSING, 0

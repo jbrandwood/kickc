@@ -12,10 +12,6 @@
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .label SCREEN = $400
-  // Sine and Cosine tables  
-  // Angles: $00=0, $80=PI,$100=2*PI
-  // Sine/Cosine: signed fixed [-$7f,$7f]
-  .label COS = $2000
   // A single sprite
   .label SPRITE = $3000
   .label SIN = COS+$40
@@ -347,11 +343,12 @@ mulf_init: {
   // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
-  // Positions to rotate
-  xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
-  ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
-.pc = COS "COS"
-  {
+  // Sine and Cosine tables  
+  // Angles: $00=0, $80=PI,$100=2*PI
+  // Sine/Cosine: signed fixed [-$7f,$7f]
+  .align $40
+COS:
+{
     .var min = -$7fff
     .var max = $7fff
     .var ampl = max-min;
@@ -361,6 +358,9 @@ mulf_init: {
     }
     }
 
+  // Positions to rotate
+  xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
+  ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
 .pc = SPRITE "SPRITE"
   .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)

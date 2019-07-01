@@ -46,8 +46,13 @@
 (const byte) VIC_RSEL#0 VIC_RSEL = (byte) 8
 (byte) VIC_RST8
 (const byte) VIC_RST8#0 VIC_RST8 = (byte) $80
-(byte*) YSIN
-(const byte*) YSIN#0 YSIN = (byte*) 8448
+(byte[$100]) YSIN
+(const byte[$100]) YSIN#0 YSIN = kickasm {{ .var min = 50
+    .var max = 250-21
+    .var ampl = max-min;
+    .for(var i=0;i<256;i++)
+        .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
+ }}
 (void()) init()
 (byte~) init::$8 reg byte a 22.0
 (label) init::@1

@@ -23,7 +23,6 @@
   .label SCREEN1 = $2800
   .label SCREEN2 = $2c00
   .label CHARSET = $2000
-  .label SINTABLE = $1f00
   .label print_char_cursor = $12
   .label c1A = 4
   .label c1B = 5
@@ -320,7 +319,8 @@ sid_rnd_init: {
     sta SID_VOICE3_CONTROL
     rts
 }
-.pc = SINTABLE "SINTABLE"
-  .for(var i=0;i<$100;i++)
+  .align $100
+SINTABLE:
+.for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(toRadians(360*i/256)))
 

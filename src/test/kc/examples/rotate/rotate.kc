@@ -8,9 +8,7 @@ byte* SCREEN = $0400;
 // Sine and Cosine tables  
 // Angles: $00=0, $80=PI,$100=2*PI
 // Sine/Cosine: signed fixed [-$7f,$7f]
-byte* COS = $2000;
-byte* SIN = COS+$40; // sin(x) = cos(x+PI/2)
-kickasm(pc COS) {{
+byte[0x140] align(0x40) COS = kickasm {{
     {
     .var min = -$7fff
     .var max = $7fff
@@ -20,7 +18,9 @@ kickasm(pc COS) {{
         .byte >round(min+(ampl/2)+(ampl/2)*cos(rad))
     }
     }
-}}
+}};
+
+byte* SIN = COS+$40; // sin(x) = cos(x+PI/2)
 
 void main() {
 	asm { sei }

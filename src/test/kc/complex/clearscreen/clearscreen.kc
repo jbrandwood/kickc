@@ -12,9 +12,18 @@ const byte* SCREEN = 0x0400;
 // Sprite data for the animating sprites
 const byte* SPRITE_DATA = 0x2000;
 // Values added to VX
-const word* VXSIN = 0x2200;
+const word[40] VXSIN = kickasm {{
+  .for(var i=0; i<40; i++) {
+      .word -sin(toRadians([i*360]/40))*4
+    }
+}};
+
 // Values added to VY
-const word* VYSIN = 0x2280;
+const word[25] VYSIN = kickasm {{
+  .for(var i=0; i<25; i++) {
+      .word -sin(toRadians([i*360]/25))*4
+    }
+}};
 
 // Copy of the screen used for finding chars to process
 byte* SCREEN_COPY = malloc(1000);
@@ -159,16 +168,6 @@ const word XPOS_RIGHTMOST = (word)(BORDER_XPOS_RIGHT)<<4;
 const word YPOS_TOPMOST = (word)(BORDER_YPOS_TOP-8)<<4;
 const word YPOS_BOTTOMMOST = (word)(BORDER_YPOS_BOTTOM)<<4;
 
-kickasm(pc VXSIN) {{
-  .for(var i=0; i<40; i++) {
-      .word -sin(toRadians([i*360]/40))*4
-    }
-}}
-kickasm(pc VYSIN) {{
-  .for(var i=0; i<25; i++) {
-      .word -sin(toRadians([i*360]/25))*4
-    }
-}}
 
 // Process any chars in the PROCESSING array
 void processChars() {

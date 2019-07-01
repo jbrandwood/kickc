@@ -1,8 +1,19 @@
 (label) @1
 (label) @begin
 (label) @end
-(signed byte*) PERSP_Z
-(const signed byte*) PERSP_Z#0 PERSP_Z = (signed byte*) 9216
+(signed byte[$100]) PERSP_Z
+(const signed byte[$100]) PERSP_Z#0 PERSP_Z = kickasm {{ {
+    .var d = 256.0	
+    .var z0 = 5.0	
+    .for(var z=0;z<$100;z++) {
+    	.if(z>127) {
+    		.byte round(d / (z0 - ((z - 256) / 64.0)));
+    	} else {
+    		.byte round(d / (z0 - (z / 64.0)));
+    	}
+    }
+	}
+ }}
 (void()) do_perspective((signed byte) do_perspective::x , (signed byte) do_perspective::y , (signed byte) do_perspective::z)
 (label) do_perspective::@1
 (label) do_perspective::@10

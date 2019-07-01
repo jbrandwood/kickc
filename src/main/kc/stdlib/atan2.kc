@@ -14,8 +14,8 @@ word[CORDIC_ITERATIONS_16] CORDIC_ATAN2_ANGLES_16 = kickasm {{
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
 word atan2_16(signed word x, signed word y) {
-    signed word yi = (y>0)?y:-y;
-    signed word xi = (x>0)?x:-x;
+    signed word yi = (y>=0)?y:-y;
+    signed word xi = (x>=0)?x:-x;
     word angle = 0;
     for( byte i: 0..CORDIC_ITERATIONS_16-1) {
         if(yi==0) {
@@ -24,7 +24,7 @@ word atan2_16(signed word x, signed word y) {
         }
         signed word xd = xi>>i;
         signed word yd = yi>>i;
-        if(yi>0) {
+        if(yi>=0) {
             xi += yd;
             yi -= xd;
             angle += CORDIC_ATAN2_ANGLES_16[i];

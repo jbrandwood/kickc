@@ -42,7 +42,7 @@ public class TestPrograms {
 
    @Test
    public void testScreenCenterAngle() throws IOException, URISyntaxException {
-      compileAndCompare("screen-center-angle");
+      compileAndCompare("screen-center-angle", log());
    }
 
    @Test

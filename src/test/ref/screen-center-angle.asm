@@ -20,10 +20,10 @@ main: {
 // The actual value stored is distance*2 to increase precision
 // init_angle_screen(byte* zeropage(3) screen)
 init_angle_screen: {
-    .label _7 = $c
-    .label xw = $17
-    .label yw = $19
-    .label angle_w = $c
+    .label _7 = $a
+    .label xw = $15
+    .label yw = $17
+    .label angle_w = $a
     .label screen = 3
     .label y = 2
     lda #<SCREEN
@@ -69,29 +69,23 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($17) x, signed word zeropage($19) y)
+// atan2_16(signed word zeropage($15) x, signed word zeropage($17) y)
 atan2_16: {
     .label _2 = 5
-    .label _7 = 9
+    .label _7 = 7
     .label yi = 5
-    .label xi = 9
-    .label xd = $1b
-    .label yd = $1d
-    .label angle = $c
-    .label i = $b
-    .label return = $c
-    .label x = $17
-    .label y = $19
+    .label xi = 7
+    .label xd = $19
+    .label yd = $1b
+    .label angle = $a
+    .label i = 9
+    .label return = $a
+    .label x = $15
+    .label y = $17
     lda y+1
-    bne !+
-    lda y
-    beq !e+
-    lsr
-  !:
     bmi !b1+
     jmp b1
   !b1:
-  !e:
     sec
     lda #0
     sbc y
@@ -101,15 +95,9 @@ atan2_16: {
     sta _2+1
   b3:
     lda x+1
-    bne !+
-    lda x
-    beq !e+
-    lsr
-  !:
     bmi !b4+
     jmp b4
   !b4:
-  !e:
     sec
     lda #0
     sbc x
@@ -262,15 +250,15 @@ atan2_16: {
     jmp b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($11) charset)
+// init_font_hex(byte* zeropage($f) charset)
 init_font_hex: {
-    .label _0 = $1f
-    .label idx = $16
-    .label proto_lo = $13
-    .label charset = $11
-    .label c1 = $15
-    .label proto_hi = $e
-    .label c = $10
+    .label _0 = $1d
+    .label idx = $14
+    .label proto_lo = $11
+    .label charset = $f
+    .label c1 = $13
+    .label proto_hi = $c
+    .label c = $e
     lda #0
     sta c
     lda #<FONT_HEX_PROTO
